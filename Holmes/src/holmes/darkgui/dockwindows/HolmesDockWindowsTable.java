@@ -226,7 +226,7 @@ public class HolmesDockWindowsTable extends JPanel {
     public HolmesDockWindowsTable(SubWindow subType, Object... blackBox) {
         overlord = GUIManager.getDefaultGUIManager();
         switch (subType) {
-            case SIMULATOR -> createSimulatorSubWindow((NetSimulator) blackBox[0], (NetSimulatorXTPN) blackBox[1]);
+            case SIMULATOR -> createSimulatorSubWindow((NetSimulator) blackBox[0], (NetSimulatorXTPN) blackBox[1], (boolean) blackBox[2]);
             case PLACE -> createPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
             case TRANSITION -> createTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
             case TIMETRANSITION ->
@@ -250,7 +250,6 @@ public class HolmesDockWindowsTable extends JPanel {
             case KNOCKOUT -> createKnockoutData((ArrayList<ArrayList<Integer>>) blackBox[0]);
             case DECOMPOSITION -> createDecompositionData();
         }
-
     }
 
     //**************************************************************************************
@@ -264,7 +263,7 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param sim NetSimulator - obiekt symulatora sieci
      */
-    private void createSimulatorSubWindow(NetSimulator sim, NetSimulatorXTPN simXTPN) {
+    private void createSimulatorSubWindow(NetSimulator sim, NetSimulatorXTPN simXTPN, boolean XTPNmode) {
         int columnA_posX = 10;
         int columnB_posX = 80;
         int columnA_Y = 0;
@@ -274,7 +273,6 @@ public class HolmesDockWindowsTable extends JPanel {
 
         initiateContainers();
 
-        String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode", "Color"};
         mode = SIMULATOR;
         setSimulator(sim, simXTPN);
 
@@ -283,353 +281,354 @@ public class HolmesDockWindowsTable extends JPanel {
         netTypeLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
         components.add(netTypeLabel);
 
-        simMode = new JComboBox<>(simModeName);
-        simMode.setLocation(columnB_posX - 30, columnB_Y += 10);
-        simMode.setSize(colBCompLength + 30, 20);
-        simMode.setSelectedIndex(0);
-        simMode.addActionListener(actionEvent -> {
-            if (doNotUpdate)
-                return;
-
-            int selectedModeIndex = simMode.getSelectedIndex();
-            int change = simulator.setGraphicalSimulatorNetType(selectedModeIndex);
-            doNotUpdate = true;
-            c1Button.setEnabled(false);
-            c2Button.setEnabled(false);
-            if (change == 0) {
-                simMode.setSelectedIndex(0);
-            } else if (change == 1) {
-                simMode.setSelectedIndex(1);
-            } else if (change == 2) {
-                simMode.setSelectedIndex(2);
-            } else if (change == 3) {
-                simMode.setSelectedIndex(3);
-                c1Button.setEnabled(true);
-                c2Button.setEnabled(true);
-            } else {
-                overlord.log("Error while changing graphical simulator mode.", "error", true);
-            }
-            doNotUpdate = false;
-        });
-        components.add(simMode);
-
-        JLabel timeStepLabel = new JLabel("Time/step:");
-        timeStepLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-        components.add(timeStepLabel);
-
-        timeStepLabelValue = new JLabel("0");
-        timeStepLabelValue.setBounds(columnA_posX + 70, columnB_Y += 20, colACompLength, 20);
-        components.add(timeStepLabelValue);
-
-        // SIMULATOR CONTROLS
-        // metoda startSimulation obiektu simulator troszczy się o wygaszanie
-        // i aktywowanie odpowiednich przycisków
-        JLabel controlsLabel = new JLabel("Simulation options:");
-        controlsLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength * 2, 20);
-        components.add(controlsLabel);
-        columnB_Y += 20;
-
-        JButton oneActionBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
-        oneActionBack.setName("simB1");
-        oneActionBack.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
-        oneActionBack.setToolTipText("One action back");
-        oneActionBack.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.startSimulation(SimulatorMode.ACTION_BACK);
-            mode = SIMULATOR;
-        });
-        components.add(oneActionBack);
-
-        JButton oneTransitionForward = new JButton(
-                Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
-        oneTransitionForward.setName("simB2");
-        oneTransitionForward.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 30);
-        oneTransitionForward.setToolTipText("One transition forward");
-        oneTransitionForward.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION);
-            mode = SIMULATOR;
-        });
-        components.add(oneTransitionForward);
-
-        JButton loopBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_backLoop.png"));
-        loopBack.setName("simB3");
-        loopBack.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-        loopBack.setToolTipText("Loop back to oldest saved action");
-        loopBack.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.startSimulation(SimulatorMode.LOOP_BACK);
-            mode = SIMULATOR;
-        });
-        components.add(loopBack);
-        JButton oneStepForward = new JButton(
-                Tools.getResIcon22("/icons/simulation/control_sim_fwdLoop.png"));
-        oneStepForward.setName("simB4");
-        oneStepForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-        oneStepForward.setToolTipText("One step forward");
-        oneStepForward.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.startSimulation(SimulatorMode.STEP);
-            mode = SIMULATOR;
-        });
-        components.add(oneStepForward);
-
-        JButton loopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_loop.png"));
-        loopSimulation.setName("simB5");
-        loopSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-        loopSimulation.setToolTipText("Loop simulation");
-        loopSimulation.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.startSimulation(SimulatorMode.LOOP);
-            mode = SIMULATOR;
-        });
-        components.add(loopSimulation);
-
-        JButton singleTransitionLoopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_1transLoop.png"));
-        singleTransitionLoopSimulation.setName("simB6");
-        singleTransitionLoopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-        singleTransitionLoopSimulation.setToolTipText("Loop single transition simulation");
-        singleTransitionLoopSimulation.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
-            mode = SIMULATOR;
-        });
-        components.add(singleTransitionLoopSimulation);
-
-        JButton pauseSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_pause.png"));
-        pauseSimulation.setName("stop");
-        pauseSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-        pauseSimulation.setToolTipText("Pause simulation");
-        pauseSimulation.setEnabled(false);
-        pauseSimulation.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.pause();
-            mode = SIMULATOR;
-        });
-        components.add(pauseSimulation);
-
-        JButton stopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_stop.png"));
-        stopSimulation.setName("stop");
-        stopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-        stopSimulation.setToolTipText("Schedule a stop for the simulation");
-        stopSimulation.setEnabled(false);
-        stopSimulation.addActionListener(actionEvent -> {
-            simulator.stop();
-            mode = SIMULATOR;
-        });
-        components.add(stopSimulation);
-
-        JButton resetButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_reset.png"));
-        resetButton.setName("reset");
-        resetButton.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
-        resetButton.setToolTipText("Reset all tokens in places.");
-        resetButton.setEnabled(false);
-        resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
-        components.add(resetButton);
-
-        JButton saveButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_save_m0.png"));
-        saveButton.setName("Save m0");
-        saveButton.setBounds(columnB_posX, columnA_Y += 30, colBCompLength, 30);
-        saveButton.setToolTipText("Save m0 state.");
-        saveButton.addActionListener(actionEvent -> {
-            if (overlord.reset.isSimulatorActiveWarning(
-                    "Operation impossible while simulator is working.", "Warning"))
-                return;
-
-            Object[] options = {"Save new m0 state", "Cancel",};
-            int n = JOptionPane.showOptionDialog(null,
-                    "Add new net state to states table?",
-                    "Saving m0 state", JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-            if (n == 0) {
-                overlord.getWorkspace().getProject().accessStatesManager().addCurrentStatePN();
-            }
-        });
-        components.add(saveButton);
-
-        c1Button = new JButton("<html><center>Store<br>colors</center></html>");
-        c1Button.setName("reset");
-        c1Button.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
-        c1Button.setToolTipText("Reset all color tokens in places.");
-        c1Button.setEnabled(false);
-        c1Button.addActionListener(actionEvent -> {
-            //JOptionPane.showMessageDialog(null, "Color PN (experimental) simulator currently unavailable.",
-            //        "Module unavailable", JOptionPane.INFORMATION_MESSAGE);
-            overlord.getWorkspace().getProject().storeColors();
-        });
-        components.add(c1Button);
-
-        c2Button = new JButton("<html><center>Restore<br>colors</center></html>");
-        c2Button.setName("reset");
-        c2Button.setBounds(columnB_posX, columnA_Y += 30, colBCompLength, 30);
-        c2Button.setToolTipText("Reset all color tokens in places.");
-        c2Button.setEnabled(false);
-        c2Button.addActionListener(actionEvent -> {
-            //JOptionPane.showMessageDialog(null, "Color PN (experimental) simulator currently unavailable.",
-            //        "Module unavailable", JOptionPane.INFORMATION_MESSAGE);
-            overlord.getWorkspace().getProject().restoreColors();
-        });
-        components.add(c2Button);
-
-        JButton statesButton = new JButton("State manager");
-        statesButton.setName("State manager");
-        statesButton.setBounds(columnA_posX, columnB_Y += 35, colACompLength * 2, 30);
-        statesButton.setToolTipText("Open states manager window.");
-        statesButton.setEnabled(true);
-        statesButton.addActionListener(actionEvent -> {
-            if (overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
-                JOptionPane.showMessageDialog(null, "Net simulator must be stopped in order to access state manager.",
-                        "Simulator working", JOptionPane.WARNING_MESSAGE);
-            } else {
-                new HolmesStatesManager();
-            }
-        });
-        components.add(statesButton);
-
-        columnB_Y += 35;
-        columnA_Y += 35;
-        //doNotUpdate = false;
-        maximumModeCheckBox = new JCheckBox("Maximum mode");
-        maximumModeCheckBox.setBounds(columnA_posX, columnA_Y += 30, 200, 20);
-        maximumModeCheckBox.addActionListener(actionEvent -> {
-            if (doNotUpdate)
-                return;
-
-            if (singleModeCheckBox.isSelected()) {
-                JOptionPane.showMessageDialog(null, "Mode overrided by an active single mode.",
-                        "Cannot change now", JOptionPane.WARNING_MESSAGE);
-                doNotUpdate = true;
-                maximumModeCheckBox.setSelected(overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
-                doNotUpdate = false;
-            }
-
-            AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-            simulator.setMaxMode(abstractButton.getModel().isSelected());
-        });
-        components.add(maximumModeCheckBox);
-
-        singleModeCheckBox = new JCheckBox("Single mode");
-        singleModeCheckBox.setBounds(columnA_posX, columnA_Y += 20, 200, 20);
-        singleModeCheckBox.addActionListener(actionEvent -> {
-            AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-            if (abstractButton.getModel().isSelected()) {
-                simulator.setSingleMode(true);
-                doNotUpdate = true;
-                maximumModeCheckBox.setSelected(overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
-                doNotUpdate = false;
-            } else {
-                simulator.setSingleMode(false);
-
-                doNotUpdate = true;
-                maximumModeCheckBox.setSelected(false);
-                simulator.setMaxMode(false);
-                doNotUpdate = false;
-            }
-        });
-        components.add(singleModeCheckBox);
-
-
-
-
-        //PANEL SYMULATORA INWARIANTÓW
-        /*
-        JPanel invariantsSimulatorPanel = new JPanel();
-
-        invariantsSimulatorPanel.setLayout(null);
-        invariantsSimulatorPanel.setBorder(BorderFactory.createTitledBorder("Invariants simulator"));
-        invariantsSimulatorPanel.setBounds(columnA_posX - 5, columnA_Y += 20, 160, 160);
-
-        int internalXA = 10;
-        int internalXB = 60;
-        int internalY = 20;
-
-        JLabel simTypeLabel = new JLabel("Mode:");
-        simTypeLabel.setBounds(internalXA, internalY, 50, 20);
-        invariantsSimulatorPanel.add(simTypeLabel);
-
-        JRadioButton TimeMode = new JRadioButton("Time Mode");
-        TimeMode.setBounds(internalXB, internalY, 90, 20);
-        //TimeMode.setLocation(internalXB, internalY);
-        internalY += 20;
-        TimeMode.setSize(90, 20);
-        TimeMode.setActionCommand("0");
-        invariantsSimulatorPanel.add(TimeMode);
-        group.add(TimeMode);
-
-        columnA_Y += 20;
-        JRadioButton StepMode = new JRadioButton("Step Mode");
-        StepMode.setBounds(internalXB, internalY, 90, 20);
-        //StepMode.setLocation(internalXB, internalY);
-        internalY += 20;
-        StepMode.setSize(90, 20);
-        StepMode.setActionCommand("1");
-        invariantsSimulatorPanel.add(StepMode);
-        group.add(StepMode);
-
-        JRadioButton CycleMode = new JRadioButton("Cycle Mode");
-        CycleMode.setBounds(internalXB, internalY, 90, 20);
-        //CycleMode.setLocation(internalXB, internalY);
-        internalY += 20;
-        CycleMode.setSize(90, 20);
-        CycleMode.setActionCommand("2");
-        invariantsSimulatorPanel.add(CycleMode);
-        group.add(CycleMode);
-        group.setSelected(TimeMode.getModel(), true);
-
-
-        JLabel timeLabel = new JLabel("Time (min):");
-        timeLabel.setBounds(internalXA, internalY, 70, 20);
-        invariantsSimulatorPanel.add(timeLabel);
-
-        SpinnerModel timeCycle = new SpinnerNumberModel(1, 1, 9999, 1);
-        JSpinner spiner = new JSpinner(timeCycle);
-        spiner.setLocation(internalXB + 20, internalY + 3);
-        spiner.setSize(70, 20);
-        internalY += 25;
-        invariantsSimulatorPanel.add(spiner);
-
-        // INVARIANTS SIMULATION START BUTTON
-        //JButton startButton = new JButton("Start");
-        JButton startButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
-        startButton.setBounds(internalXA, internalY, 80, 30);
-        //startButton.setLocation(internalXA, internalY);
-        //startButton.setSize(80, 40);
-        startButton.addActionListener(actionEvent -> {
-            if(overlord.getWorkspace().getProject().get2ndFormInvariantsList().size()>0)
-            {
-
-                mode = INVARIANTSSIMULATOR;
-                setEnabledSimulationInitiateButtons(false);
-                setEnabledSimulationDisruptButtons(false);
-                overlord.getShortcutsBar().setEnabledSimulationInitiateButtons(false);
-                overlord.getShortcutsBar().setEnabledSimulationDisruptButtons(false);
-
-                try {
-                    //overlord.startInvariantsSimulation(Integer.valueOf(group.getSelection().getActionCommand()),
-                    //		(Integer) spiner.getValue()); //jaki tryb
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if (XTPNmode) { // inny comboBox
+            String[] simModeName = {"XTPN simulator", "Other simulators"};
+            simMode = new JComboBox<>(simModeName);
+            simMode.setLocation(columnB_posX - 30, columnB_Y += 10);
+            simMode.setSize(colBCompLength + 50, 20);
+            simMode.setSelectedIndex(0);
+            simMode.addActionListener(actionEvent -> {
+                if (doNotUpdate)
+                    return;
+                int selectedModeIndex = simMode.getSelectedIndex();
+                if(selectedModeIndex == 1) { //restore others
+                    overlord.getSimulatorBox().createSimulatorProperties(false);
+                    return;
                 }
-                //STOP:
-                setEnabledSimulationInitiateButtons(true);
-                setEnabledSimulationDisruptButtons(false);
-                overlord.getShortcutsBar().setEnabledSimulationInitiateButtons(true);
-                overlord.getShortcutsBar().setEnabledSimulationDisruptButtons(false);
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "There are no invariants to simulate.",
-                        "Invariant simulator", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
+                doNotUpdate = false;
+            });
+            components.add(simMode);
+        } else { //!XTPNmode
+            String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode", "Color", "XTPN"};
+            simMode = new JComboBox<>(simModeName);
+            simMode.setLocation(columnB_posX - 30, columnB_Y += 10);
+            simMode.setSize(colBCompLength + 30, 20);
+            simMode.setSelectedIndex(0);
+            simMode.addActionListener(actionEvent -> {
+                if (doNotUpdate)
+                    return;
+                int selectedModeIndex = simMode.getSelectedIndex();
+                if(selectedModeIndex == 4) { //XTPN
+                    overlord.getSimulatorBox().createSimulatorProperties(true);
+                    //doNotUpdate = false;
+                    return;
+                } else {
+                    int change = simulator.setGraphicalSimulatorNetType(selectedModeIndex);
+                    doNotUpdate = true;
+                    c1Button.setEnabled(false);
+                    c2Button.setEnabled(false);
+                    if (change == 0) {
+                        simMode.setSelectedIndex(0);
+                    } else if (change == 1) {
+                        simMode.setSelectedIndex(1);
+                    } else if (change == 2) {
+                        simMode.setSelectedIndex(2);
+                    } else if (change == 3) {
+                        simMode.setSelectedIndex(3);
+                        c1Button.setEnabled(true);
+                        c2Button.setEnabled(true);
+                    } else {
+                        overlord.log("Error while changing graphical simulator mode.", "error", true);
+                    }
+                }
 
-        TimeMode.setEnabled(false);
-        StepMode.setEnabled(false);
-        CycleMode.setEnabled(false);
-        spiner.setEnabled(false);
-        startButton.setEnabled(false);
-        invariantsSimulatorPanel.add(startButton);
-        //components.add(invariantsSimulatorPanel);
-        */
+                doNotUpdate = false;
+            });
+            components.add(simMode);
+        }
+
+
+        if(XTPNmode == false) {
+            JLabel timeStepLabel = new JLabel("Time/step:");
+            timeStepLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+            components.add(timeStepLabel);
+
+            timeStepLabelValue = new JLabel("0");
+            timeStepLabelValue.setBounds(columnA_posX + 70, columnB_Y += 20, colACompLength, 20);
+            components.add(timeStepLabelValue);
+
+            // SIMULATOR CONTROLS
+            // metoda startSimulation obiektu simulator troszczy się o wygaszanie
+            // i aktywowanie odpowiednich przycisków
+            JLabel controlsLabel = new JLabel("Simulation options:");
+            controlsLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength * 2, 20);
+            components.add(controlsLabel);
+            columnB_Y += 20;
+
+            JButton oneActionBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
+            oneActionBack.setName("simB1");
+            oneActionBack.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
+            oneActionBack.setToolTipText("One action back");
+            oneActionBack.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.ACTION_BACK);
+                mode = SIMULATOR;
+            });
+            components.add(oneActionBack);
+
+            JButton oneTransitionForward = new JButton(
+                    Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
+            oneTransitionForward.setName("simB2");
+            oneTransitionForward.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 30);
+            oneTransitionForward.setToolTipText("One transition forward");
+            oneTransitionForward.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION);
+                mode = SIMULATOR;
+            });
+            components.add(oneTransitionForward);
+
+            JButton loopBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_backLoop.png"));
+            loopBack.setName("simB3");
+            loopBack.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
+            loopBack.setToolTipText("Loop back to oldest saved action");
+            loopBack.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.LOOP_BACK);
+                mode = SIMULATOR;
+            });
+            components.add(loopBack);
+            JButton oneStepForward = new JButton(
+                    Tools.getResIcon22("/icons/simulation/control_sim_fwdLoop.png"));
+            oneStepForward.setName("simB4");
+            oneStepForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
+            oneStepForward.setToolTipText("One step forward");
+            oneStepForward.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.STEP);
+                mode = SIMULATOR;
+            });
+            components.add(oneStepForward);
+
+            JButton loopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_loop.png"));
+            loopSimulation.setName("simB5");
+            loopSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
+            loopSimulation.setToolTipText("Loop simulation");
+            loopSimulation.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.LOOP);
+                mode = SIMULATOR;
+            });
+            components.add(loopSimulation);
+
+            JButton singleTransitionLoopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_1transLoop.png"));
+            singleTransitionLoopSimulation.setName("simB6");
+            singleTransitionLoopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
+            singleTransitionLoopSimulation.setToolTipText("Loop single transition simulation");
+            singleTransitionLoopSimulation.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
+                mode = SIMULATOR;
+            });
+            components.add(singleTransitionLoopSimulation);
+
+            JButton pauseSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_pause.png"));
+            pauseSimulation.setName("stop");
+            pauseSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
+            pauseSimulation.setToolTipText("Pause simulation");
+            pauseSimulation.setEnabled(false);
+            pauseSimulation.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.pause();
+                mode = SIMULATOR;
+            });
+            components.add(pauseSimulation);
+
+            JButton stopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_stop.png"));
+            stopSimulation.setName("stop");
+            stopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
+            stopSimulation.setToolTipText("Schedule a stop for the simulation");
+            stopSimulation.setEnabled(false);
+            stopSimulation.addActionListener(actionEvent -> {
+                simulator.stop();
+                mode = SIMULATOR;
+            });
+            components.add(stopSimulation);
+
+            JButton resetButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_reset.png"));
+            resetButton.setName("reset");
+            resetButton.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
+            resetButton.setToolTipText("Reset all tokens in places.");
+            resetButton.setEnabled(false);
+            resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
+            components.add(resetButton);
+
+            JButton saveButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_save_m0.png"));
+            saveButton.setName("Save m0");
+            saveButton.setBounds(columnB_posX, columnA_Y += 30, colBCompLength, 30);
+            saveButton.setToolTipText("Save m0 state.");
+            saveButton.addActionListener(actionEvent -> {
+                if (overlord.reset.isSimulatorActiveWarning(
+                        "Operation impossible while simulator is working.", "Warning"))
+                    return;
+
+                Object[] options = {"Save new m0 state", "Cancel",};
+                int n = JOptionPane.showOptionDialog(null,
+                        "Add new net state to states table?",
+                        "Saving m0 state", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                if (n == 0) {
+                    overlord.getWorkspace().getProject().accessStatesManager().addCurrentStatePN();
+                }
+            });
+            components.add(saveButton);
+
+            c1Button = new JButton("<html><center>Store<br>colors</center></html>");
+            c1Button.setName("reset");
+            c1Button.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
+            c1Button.setToolTipText("Reset all color tokens in places.");
+            c1Button.setEnabled(false);
+            c1Button.addActionListener(actionEvent -> {
+                //JOptionPane.showMessageDialog(null, "Color PN (experimental) simulator currently unavailable.",
+                //        "Module unavailable", JOptionPane.INFORMATION_MESSAGE);
+                overlord.getWorkspace().getProject().storeColors();
+            });
+            components.add(c1Button);
+
+            c2Button = new JButton("<html><center>Restore<br>colors</center></html>");
+            c2Button.setName("reset");
+            c2Button.setBounds(columnB_posX, columnA_Y += 30, colBCompLength, 30);
+            c2Button.setToolTipText("Reset all color tokens in places.");
+            c2Button.setEnabled(false);
+            c2Button.addActionListener(actionEvent -> {
+                //JOptionPane.showMessageDialog(null, "Color PN (experimental) simulator currently unavailable.",
+                //        "Module unavailable", JOptionPane.INFORMATION_MESSAGE);
+                overlord.getWorkspace().getProject().restoreColors();
+            });
+            components.add(c2Button);
+
+            JButton statesButton = new JButton("State manager");
+            statesButton.setName("State manager");
+            statesButton.setBounds(columnA_posX, columnB_Y += 35, colACompLength * 2, 30);
+            statesButton.setToolTipText("Open states manager window.");
+            statesButton.setEnabled(true);
+            statesButton.addActionListener(actionEvent -> {
+                if (overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+                    JOptionPane.showMessageDialog(null, "Net simulator must be stopped in order to access state manager.",
+                            "Simulator working", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    new HolmesStatesManager();
+                }
+            });
+            components.add(statesButton);
+
+            columnB_Y += 35;
+            columnA_Y += 35;
+            //doNotUpdate = false;
+            maximumModeCheckBox = new JCheckBox("Maximum mode");
+            maximumModeCheckBox.setBounds(columnA_posX, columnA_Y += 30, 200, 20);
+            maximumModeCheckBox.addActionListener(actionEvent -> {
+                if (doNotUpdate)
+                    return;
+
+                if (singleModeCheckBox.isSelected()) {
+                    JOptionPane.showMessageDialog(null, "Mode overrided by an active single mode.",
+                            "Cannot change now", JOptionPane.WARNING_MESSAGE);
+                    doNotUpdate = true;
+                    maximumModeCheckBox.setSelected(overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
+                    doNotUpdate = false;
+                }
+
+                AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+                simulator.setMaxMode(abstractButton.getModel().isSelected());
+            });
+            components.add(maximumModeCheckBox);
+
+            singleModeCheckBox = new JCheckBox("Single mode");
+            singleModeCheckBox.setBounds(columnA_posX, columnA_Y += 20, 200, 20);
+            singleModeCheckBox.addActionListener(actionEvent -> {
+                AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+                if (abstractButton.getModel().isSelected()) {
+                    simulator.setSingleMode(true);
+                    doNotUpdate = true;
+                    maximumModeCheckBox.setSelected(overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
+                    doNotUpdate = false;
+                } else {
+                    simulator.setSingleMode(false);
+
+                    doNotUpdate = true;
+                    maximumModeCheckBox.setSelected(false);
+                    simulator.setMaxMode(false);
+                    doNotUpdate = false;
+                }
+            });
+            components.add(singleModeCheckBox);
+
+
+
+
+        } else { //XTPN MODE
+            JPanel xtmpSimPanel = new JPanel();
+            xtmpSimPanel.setLayout(null);
+            xtmpSimPanel.setBorder(BorderFactory.createTitledBorder("XTPN simulator"));
+            xtmpSimPanel.setBounds(columnA_posX - 5, columnA_Y += 20, 160, 200);
+
+            int internalX = 10;
+            int internalY = 0;
+
+            //JLabel xtmIntro = new JLabel("XTPN simulator:");
+            //xtmIntro.setBounds(internalX, internalY += 20, 90, 20);
+            //xtmpSimPanel.add(xtmIntro);
+
+            JLabel stepLabelText = new JLabel("Step:");
+            stepLabelText.setBounds(internalX, internalY += 20, 90, 20);
+            xtmpSimPanel.add(stepLabelText);
+
+            stepLabelXTPN = new JLabel("0");
+            stepLabelXTPN.setBounds(internalX+60, internalY , 90, 20);
+            xtmpSimPanel.add(stepLabelXTPN);
+
+            JLabel timeLabelText = new JLabel("Time:");
+            timeLabelText.setBounds(internalX, internalY += 20, 90, 20);
+            xtmpSimPanel.add(timeLabelText);
+
+            timeLabelXTPN = new JLabel("0.0");
+            timeLabelXTPN.setBounds(internalX+60, internalY , 90, 20);
+            xtmpSimPanel.add(timeLabelXTPN);
+
+            JLabel optionsLavel = new JLabel("Simulation buttons:");
+            optionsLavel.setBounds(internalX, internalY += 20, 120, 20);
+            xtmpSimPanel.add(optionsLavel);
+
+            HolmesRoundedButton loopSimulation = new HolmesRoundedButton(""
+                    , "/simulator/simStart1.png", "/simulator/simStart2.png", "/simulator/simStart3.png");
+            loopSimulation.setName("simB5");
+            loopSimulation.setBounds(internalX, internalY += 20, 50, 50);
+            loopSimulation.setToolTipText("Loop simulation");
+            loopSimulation.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulatorXTPN.startSimulation(NetSimulatorXTPN.SimulatorModeXTPN.XTPNLOOP);
+                mode = SIMULATOR;
+            });
+            xtmpSimPanel.add(loopSimulation);
+
+
+            HolmesRoundedButton pauseSimulation = new HolmesRoundedButton(""
+                    , "/simulator/simPause1.png", "/simulator/simPause2.png", "/simulator/simPause3.png");
+            pauseSimulation.setName("stop");
+            pauseSimulation.setBounds(internalX+40, internalY, 50, 50);
+            pauseSimulation.setToolTipText("Pause simulation");
+            // pauseSimulation.setEnabled(false);
+            pauseSimulation.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulatorXTPN.pause();
+                mode = SIMULATOR;
+            });
+            xtmpSimPanel.add(pauseSimulation);
+
+            HolmesRoundedButton stopSimulation = new HolmesRoundedButton(""
+                    , "/simulator/simStop1.png", "/simulator/simStop2.png", "/simulator/simStop2.png");
+            stopSimulation.setBounds(internalX+80, internalY, 50, 50);
+            stopSimulation.setToolTipText("Schedule a stop for the simulation");
+            //stopSimulation.setEnabled(false);
+            stopSimulation.addActionListener(actionEvent -> {
+                simulatorXTPN.stop();
+                mode = SIMULATOR;
+            });
+            xtmpSimPanel.add(stopSimulation);
+
+            components.add(xtmpSimPanel);
+        }
 
 
         panel.setLayout(null);
@@ -637,7 +636,7 @@ public class HolmesDockWindowsTable extends JPanel {
             panel.add(component);
         }
 
-        panel.add(createXTPNsimPanel(columnA_posX, columnA_Y)); //XTPN sim panel na końcu
+        //panel.add(createXTPNsimPanel(columnA_posX, columnA_Y)); //XTPN sim panel na końcu
 
         panel.setOpaque(true);
         panel.repaint();
@@ -4892,7 +4891,7 @@ public class HolmesDockWindowsTable extends JPanel {
         initiateContainers();
         // set mode
         mode = ARC;
-        if(arc.getArcType() == TypeOfArc.XTPN)
+        if(arc.isXTPN())
             mode = XARC;
 
         element = arc;

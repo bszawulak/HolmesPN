@@ -110,6 +110,17 @@ public class SimulatorXTPN implements IEngine {
         ArrayList<NextXTPNstep> stateVector = new ArrayList<>();
         double currentMinTime = Double.MAX_VALUE;
 
+        /*
+        //na początku tranzycje wejściowe, nieaktywne (będą miały czas zero):
+        for(Transition transition : transitions) {
+            if(!transition.isProducing_xTPN() && !transition.isActivated_xTPN()) { //nie produkuje i jest nieaktywna
+                if(transition.getInArcs().size() == 0) { //brak łuków wejściowych
+
+                }
+            }
+        }*/
+
+
         for(Place place : places) { //znajdź najmniejszy czas do zmiany w miejscach
             double gammaMin = place.getGammaMin_xTPN();
             double gammaMax = place.getGammaMax_xTPN();
@@ -144,7 +155,6 @@ public class SimulatorXTPN implements IEngine {
                 }
             }
         }
-
         for(Transition transition : transitions) { //znajdź najmniejszy czas do zmiany w tranzycjach
             double tauAlpha = transition.getTauAlpha_xTPN();
             double tauBeta = transition.getTauBeta_xTPN();
@@ -163,6 +173,7 @@ public class SimulatorXTPN implements IEngine {
                     currentMinTime = timeDifference;
                 }
             }
+
             if(transition.isBetaActiveXTPN() && transition.isProducing_xTPN()) { //tylko dla Beta-DPN i to tych produkujących tokeny
                 timeDifference = tauBeta - timerBeta;
                 if(Math.abs(timeDifference - currentMinTime) < sg.calculationsAccuracy) { //uznajmy, że to ten sam czas
@@ -174,11 +185,58 @@ public class SimulatorXTPN implements IEngine {
                     currentMinTime = timeDifference;
                 }
             }
+
+
         }
         return stateVector;
     }
 
+    /**
+     * Metoda zwiększa czas wszystkich czasowych komponentów sieci XTPN o zadaną wielkość.
+     * @param tau (<b>double</b>) wartość czasu.
+     */
+    private void updateState(double tau) {
+        for(Place place : places) {
+            if(place.isGammaModeActiveXTPN()) { //tylko dla miejsc czasowych
+                place.incTokensTime_XTPN(tau);
+            }
+        }
 
+        for(Transition transition : transitions) {
+            if(transition.isAlphaActiveXTPN() && transition.isActivated_xTPN()) { //tylko z włączonym trybem Alfa i aktywowane
+                transition.updateTimerAlfa_XTPN(tau);
+            }
+
+            if(transition.isBetaActiveXTPN() && transition.isProducing_xTPN()) { //tylko z włączonym trybem Beta i produkujące
+                transition.updateTimerBeta_XTPN(tau);
+            }
+        }
+    }
+
+    private void activateState() {
+        for(Place place : places) {
+            place.removeOldTokens_XTPN();
+        }
+
+        for(Transition transition : transitions) {
+            if(transition.getActiveStatusXTPN()) { //jeśli aktywna (ale nie produkuje, in-checked)
+                if(!transition.isActivated_xTPN() && transition.isAlphaActiveXTPN()) {
+                    double min = transition.getAlphaMin_xTPN();
+                    double max = transition.getAlphaMax_xTPN();
+                    double range =  max - min;
+                    if(range < sg.calculationsAccuracy) { //alfaMin=Max lub zero
+                        transition.setTimerAlfa_XTPN(transition.getAlphaMax_xTPN());
+                    } else {
+                        double timer = generator.nextDouble(min, max);
+                    }
+                }
+            }
+
+            if(!transition.isProducing_xTPN()) {
+
+            }
+        }
+    }
 
 
     /**

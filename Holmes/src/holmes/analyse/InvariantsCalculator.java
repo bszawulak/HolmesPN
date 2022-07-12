@@ -416,8 +416,7 @@ public class InvariantsCalculator implements Runnable {
             //    continue;
             //}
 
-            if(oneArc.getArcType() == TypeOfArc.NORMAL || oneArc.getArcType() == TypeOfArc.XTPN
-                        || oneArc.getArcType() == TypeOfArc.READARC) {
+            if(oneArc.getArcType() == TypeOfArc.NORMAL || oneArc.getArcType() == TypeOfArc.READARC) {
                 //działamy dalej
             } else {
                 continue;

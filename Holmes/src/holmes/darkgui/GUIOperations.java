@@ -82,7 +82,7 @@ public class GUIOperations {
 		boolean status = overlord.getWorkspace().getProject().loadFromFile(file.getPath());
 		if(status) {
 			overlord.setLastPath(file.getParentFile().getPath());
-			overlord.getSimulatorBox().createSimulatorProperties();
+			overlord.getSimulatorBox().createSimulatorProperties(false);
 			GUIManager.getDefaultGUIManager().getFrame().setTitle(
 					"Holmes "+GUIManager.getDefaultGUIManager().getSettingsManager().getValue("holmes_version")+
 					"  "+Tools.getFileName(file));
@@ -531,7 +531,7 @@ public class GUIOperations {
 		
 		if(t_inv) {
 			overlord.getT_invBox().showT_invBoxWindow(project.getT_InvMatrix());
-			overlord.getSimulatorBox().createSimulatorProperties();
+			overlord.getSimulatorBox().createSimulatorProperties(false);
 		} else {
 			overlord.getP_invBox().showP_invBoxWindow(project.getP_InvMatrix());
 		}
@@ -638,7 +638,7 @@ public class GUIOperations {
 			
 			if(t_inv) {
 				overlord.getT_invBox().showT_invBoxWindow(project.getT_InvMatrix());
-				overlord.getSimulatorBox().createSimulatorProperties();
+				overlord.getSimulatorBox().createSimulatorProperties(false);
 			} else {
 				overlord.getP_invBox().showP_invBoxWindow(project.getP_InvMatrix());
 			}

@@ -121,7 +121,7 @@ public class GUIReset {
 		overlord.simSettings.currentStep = 0;
 		overlord.accessStateSimulatorWindow().resetSimWindow();
 		overlord.accessClusterWindow().resetWindow();
-		overlord.getSimulatorBox().createSimulatorProperties();
+		overlord.getSimulatorBox().createSimulatorProperties(false);
 		overlord.resetModuls();
 		pNet.repaintAllGraphPanels();
 		

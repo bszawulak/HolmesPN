@@ -30,4 +30,6 @@ public interface IRandomGenerator {
 	 * @return double - losowa wartość
 	 */
 	public double nextDouble();
+
+	public double nextDouble(double min, double max);
 }

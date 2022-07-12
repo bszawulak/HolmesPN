@@ -1305,6 +1305,7 @@ public class ProjectReader {
 	private Arc parseArcLine(String line, ArrayList<Place> places, ArrayList<Transition> transitions, ArrayList<MetaNode> metanodes) {
 		// <Arc: NORMAL; P0(0) -> T3(0); 1>
 		String backup = line;
+		boolean XTPNarc = false;
 		try {
 			line = line.replace(" ", "");
 			String[] tab = line.split(";");
@@ -1321,8 +1322,9 @@ public class ProjectReader {
 				arcType = TypeOfArc.EQUAL;
 			else if(typeLine.contains("META_ARC"))
 				arcType = TypeOfArc.META_ARC;
-			else if(typeLine.contains("XTPN"))
-				arcType = TypeOfArc.XTPN;
+			else if(typeLine.contains("XTPN")) {
+				XTPNarc = true;
+			}
 			
 			tab[2] = tab[2].replace(">", "");
 			int weight = Integer.parseInt(tab[2]);
@@ -1385,6 +1387,8 @@ public class ProjectReader {
 					ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
 					ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 					Arc newArc = new Arc(pEL, tEL, "", weight, arcType);
+					if(XTPNarc)
+						newArc.setXTPNstatus(true);
 					
 					newArc.clearBreakPoints();
 					if(tab.length > 3)
@@ -1402,6 +1406,8 @@ public class ProjectReader {
 					ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
 					ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
 					Arc newArc = new Arc(pEL, mEL, "", weight, arcType);
+					if(XTPNarc)
+						newArc.setXTPNstatus(true);
 					
 					newArc.clearBreakPoints();
 					if(tab.length > 3)
@@ -1420,6 +1426,8 @@ public class ProjectReader {
 						ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
 						ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 						Arc newArc = new Arc(mEL, tEL, "", weight, arcType);
+						if(XTPNarc)
+							newArc.setXTPNstatus(true);
 						
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
@@ -1435,6 +1443,8 @@ public class ProjectReader {
 						ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
 						ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
 						Arc newArc = new Arc(mEL, pEL, "", weight, arcType);
+						if(XTPNarc)
+							newArc.setXTPNstatus(true);
 						
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
@@ -1454,6 +1464,8 @@ public class ProjectReader {
 						ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 						ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
 						Arc newArc = new Arc(tEL, mEL, "", weight, arcType);
+						if(XTPNarc)
+							newArc.setXTPNstatus(true);
 						
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
@@ -1471,6 +1483,8 @@ public class ProjectReader {
 						ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 						ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
 						Arc newArc = new Arc(tEL, pEL, "", weight, arcType);
+						if(XTPNarc)
+							newArc.setXTPNstatus(true);
 						
 						newArc.clearBreakPoints();
 						if(tab.length > 3)

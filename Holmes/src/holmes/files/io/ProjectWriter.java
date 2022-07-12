@@ -365,6 +365,9 @@ public class ProjectWriter {
 					int arcsNumber = tmp_outgoingArcs.size();
 					for (Arc arc : tmp_outgoingArcs) { //wszystkie łuki wyjściowe
 						String arcType = "" + arc.getArcType();
+						if(arc.isXTPN())
+							arcType = "XTPN";
+
 						Node endNode = arc.getEndNode();
 
 						if (endNode instanceof Transition) {

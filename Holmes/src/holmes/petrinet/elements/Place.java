@@ -34,6 +34,8 @@ public class Place extends Node {
 	protected static int realRadius = 18;
 	private int tokensNumber = 0;
 	private int reservedTokens = 0;
+
+
 	private boolean isColorChanged;
 	private Color placeColorValue;
 	private boolean valueVisibilityStatus;
@@ -705,15 +707,15 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Usuwa tokeny których czas życia jest większy GammaMax.
-	 * @return int - liczba usuniętych tokenów
+	 * Usuwa tokeny, których czas życia jest większy GammaMax.
+	 * @return (<b>int</b>) - liczba usuniętych tokenów.
 	 */
 	public int removeOldTokens_XTPN() {
 		int removed = 0;
 		if(isGammaModeActiveXTPN()) { //tylko gdy XTPN włączone
-			for (Double token : multisetK) {
-				if (token + GUIManager.getDefaultGUIManager().simSettings.calculationsAccuracy > gammaMax_xTPN) {
-					multisetK.remove(token);
+			for (Double kappa : multisetK) {
+				if (Math.abs(gammaMax_xTPN - kappa) < GUIManager.getDefaultGUIManager().simSettings.calculationsAccuracy) {
+					multisetK.remove(kappa);
 					removed++;
 				}
 			}
@@ -737,12 +739,14 @@ public class Place extends Node {
 
 		int counter = howMany;
 		if(howMany > multisetK.size()) {
+			GUIManager.getDefaultGUIManager().log("Error, trying to remove more tokens ("+howMany+") than\n" +
+					"the multiset size ("+multisetK.size()+")", "error", false);
 			return -1;
 		}
 
 		if(mode == 0) { //najstarsze
-			for(Double token : multisetK) {
-				multisetK.remove(token);
+			for(Double kappa : multisetK) {
+				multisetK.remove(kappa);
 				counter--;
 
 				if(counter == 0)
@@ -750,8 +754,8 @@ public class Place extends Node {
 			}
 		} else if (mode == 1) { //najmłodsze
 			Collections.reverse(multisetK);
-			for(Double token : multisetK) {
-				multisetK.remove(token);
+			for(Double kappa : multisetK) {
+				multisetK.remove(kappa);
 				counter--;
 
 				if(counter == 0) {
@@ -797,6 +801,17 @@ public class Place extends Node {
 		Collections.sort(multisetK);
 		Collections.reverse(multisetK);
 		return status;
+	}
+
+	/**
+	 * Uaktualnie (dodaje) ten sam czas do wszystkich tokenów w multizbiorze.
+	 * @param tau (<b>double</b>) wartość czasu do dodania.
+	 */
+	public void updateMultisetTime(double tau) {
+		for(int x=0; x<multisetK.size(); x++ ) {
+			Double kappa = multisetK.get(x);
+			multisetK.set(x, kappa + tau);
+		}
 	}
 
 	/**

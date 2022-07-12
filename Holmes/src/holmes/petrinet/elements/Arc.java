@@ -25,7 +25,6 @@ import holmes.petrinet.data.PetriNet;
 public class Arc extends PetriNetElement {
     @Serial
     private static final long serialVersionUID = 5365625190238686098L;
-
     private ElementLocation locationStart;
     private ElementLocation locationEnd = null;
     private Point tempEndPoint = null;
@@ -59,14 +58,17 @@ public class Arc extends PetriNetElement {
     public Color qSimForcedColor = Color.BLACK; //kolor wzmocnienia
 
     private int memoryOfArcWeight = -1;
-
     //comparison:
     private boolean isBranchEnd = false;
+
+
+    //XTPN:
+    private boolean isXTPN = false;
 
     /**
      * NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR, XTPN
      */
-    public enum TypeOfArc {NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR, XTPN}
+    public enum TypeOfArc {NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR}
 
     /**
      * Konstruktor obiektu klasy Arc - chwilowo nieużywany.
@@ -785,6 +787,14 @@ public class Arc extends PetriNetElement {
             if (breakPoints.size() == 0)
                 isBreakArc = false;
         }
+    }
+
+    public boolean isXTPN() {
+        return isXTPN;
+    }
+
+    public void setXTPNstatus(boolean status) {
+        isXTPN = status;
     }
 
     //********************************************************************************************************

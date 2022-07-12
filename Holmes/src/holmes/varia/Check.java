@@ -90,7 +90,7 @@ public final class Check {
 				equal++;
 			else if(a.getArcType() == TypeOfArc.META_ARC)
 				meta++;
-			else if(a.getArcType() == TypeOfArc.XTPN)
+			else if(a.isXTPN())
 				xtpnArc++;
 		}
 		result.add(normal);

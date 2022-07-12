@@ -310,7 +310,7 @@ public class SimulatorGlobals {
 	}
 	
 	/**
-	 * Reset do ustawień początkowych.
+	 * Reset do ustawień początkowych. Wywoływane przez GUIreset.
 	 */
 	public void reset() {
 		ARC_STEP_DELAY = 25;

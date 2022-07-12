@@ -1197,7 +1197,7 @@ public final class ElementDraw {
 				g.setStroke(backup);
 			} else {
 				//int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
-				if(arc.getArcType() == TypeOfArc.XTPN)
+				if(arc.isXTPN())
 					g.setStroke(new BasicStroke(2));
 				else
 					g.setStroke(new BasicStroke(eds.arcSize));
@@ -1291,24 +1291,22 @@ public final class ElementDraw {
 		g.setStroke(sizeStroke);
 		
 		if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.READARC ) {
-			//g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
-			//		new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
+			if(arc.isXTPN()) {
+				M += 2;
+				g.setColor( new Color(0, 0, 153, 250));
+				xl = endP.x + (endRadius + 20) * alfaCos * sign + M * alfaSin;
+				yl = endP.y + (endRadius + 20) * alfaSin * sign - M * alfaCos;
+				xk = endP.x + (endRadius + 20) * alfaCos * sign - M * alfaSin;
+				yk = endP.y + (endRadius + 20) * alfaSin * sign + M * alfaCos;
+				//double newxp = endP.x - (endRadius-45) * alfaCos * sign;
+				//double newyp = endP.y - (endRadius-45) * alfaSin * sign;
 
-			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk },
-					new int[] { (int) yp, (int) yl, (int) yk }, 3);
-		} else if(arc.getArcType() == TypeOfArc.XTPN ) {
-			M += 2;
-			g.setColor( new Color(0, 0, 153, 250));
-			xl = endP.x + (endRadius + 20) * alfaCos * sign + M * alfaSin;
-			yl = endP.y + (endRadius + 20) * alfaSin * sign - M * alfaCos;
-			xk = endP.x + (endRadius + 20) * alfaCos * sign - M * alfaSin;
-			yk = endP.y + (endRadius + 20) * alfaSin * sign + M * alfaCos;
-			//double newxp = endP.x - (endRadius-45) * alfaCos * sign;
-			//double newyp = endP.y - (endRadius-45) * alfaSin * sign;
-
-			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk },
-					new int[] { (int) yp, (int) yl, (int) yk }, 3);
-
+				g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk },
+						new int[] { (int) yp, (int) yl, (int) yk }, 3);
+			} else {
+				g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk },
+						new int[] { (int) yp, (int) yl, (int) yk }, 3);
+			}
 		} else if(arc.getArcType() == TypeOfArc.COLOR ) {
 			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);

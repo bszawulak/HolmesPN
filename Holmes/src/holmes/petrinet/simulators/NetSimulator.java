@@ -526,7 +526,7 @@ public class NetSimulator {
 					place = (Place) arc.getStartNode();
 				
 				if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR 
-						|| arc.getArcType() == TypeOfArc.READARC || arc.getArcType() == TypeOfArc.XTPN) { //!!!!!! było bez drugiego członu po ||
+						|| arc.getArcType() == TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
 					;
 				} else {
 					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
@@ -584,7 +584,7 @@ public class NetSimulator {
 					place = (Place) arc.getStartNode();
 				
 				if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR 
-						|| arc.getArcType() == TypeOfArc.READARC || arc.getArcType() == TypeOfArc.XTPN) { //!!!!!! było bez drugiego członu po ||
+						|| arc.getArcType() == TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
 					;
 				} else {
 					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 

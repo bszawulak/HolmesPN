@@ -1245,7 +1245,7 @@ public final class InvariantsTools {
     			Transition transition = transitions.get(e);
     			for(ElementLocation el : transition.getElementLocations()) {
     				for(Arc arc : el.getInArcs()) {
-    					if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.XTPN)
+    					if(arc.getArcType() == TypeOfArc.NORMAL)
     						continue;
     					
     					if(arc.getArcType() == TypeOfArc.READARC) {
@@ -1696,7 +1696,7 @@ public final class InvariantsTools {
 						inArcs++;
 					}
 					
-					if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.XTPN)
+					if(arc.getArcType() == TypeOfArc.NORMAL)
 						continue;
 					
 					if(arc.getArcType() == TypeOfArc.READARC) {

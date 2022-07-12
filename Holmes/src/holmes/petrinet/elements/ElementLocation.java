@@ -145,7 +145,7 @@ public class ElementLocation implements Serializable {
 
 	/**
 	 * Metoda pozwala pobrać ORYGINALNY obiekt listy łuków wyjściowych.
-	 * @return ArrayList[Arc] - lista łuków wyjściowych
+	 * @return (<b>ArrayList[Arc]</b>) lista łuków wyjściowych.
 	 */
 	public ArrayList<Arc> getOutArcs() {
 		//if(parentNode.isInvisible())
@@ -156,7 +156,7 @@ public class ElementLocation implements Serializable {
 
 	/**
 	 * Metoda pozwala ustawić listę łuków wyjściowych
-	 * @param outArcs ArrayList[Arc] - lista łuków wyjściowych do zastąpienia aktualnej
+	 * @param outArcs (<b>ArrayList[Arc]</b>) lista łuków wyjściowych do zastąpienia aktualnej.
 	 */
 	public void setOutArcs(ArrayList<Arc> outArcs) {
 		this.outArcs = outArcs;
@@ -164,13 +164,10 @@ public class ElementLocation implements Serializable {
 
 	/**
 	 * Metoda pozwala pobrać ORYGINALNY obiekt listy łuków wejściowych.
-	 * @return ArrayList[Arc] - lista łuków wejściowych
+	 * @return (<b>ArrayList[Arc]</b>) - lista łuków wejściowych.
 	 */
 	public ArrayList<Arc> getInArcs() {
-		//if(parentNode.isInvisible())
-		//	return new ArrayList<Arc>();
-		//else
-			return inArcs;
+		return inArcs;
 	}
 
 	/**

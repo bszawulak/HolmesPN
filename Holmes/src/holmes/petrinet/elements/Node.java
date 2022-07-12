@@ -540,13 +540,10 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala pobrać listę łuków wejściowych.
-	 * @return ArrayList[Arc] - lista łuków wejściowych
+	 * @return (<b>ArrayList[Arc]</b>) - lista łuków wejściowych.
 	 */
 	public ArrayList<Arc> getInArcs() {
 		ArrayList<Arc> totalInArcs = new ArrayList<>();
-		//if(isInvisible())
-		//	return totalInArcs;
-		
 		for (ElementLocation location : getNodeLocations()) {
 			totalInArcs.addAll(location.getInArcs());
 		}
@@ -555,13 +552,10 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala pobrać listę WSZYSTKICH łuków wyjściowych wierzchołka.
-	 * @return ArrayList[Arc] - lista łuków wyjściowych
+	 * @return (<b>ArrayList[Arc]</b>) - lista łuków wyjściowych
 	 */
 	public ArrayList<Arc> getOutArcs() {
 		ArrayList<Arc> totalOutArcs = new ArrayList<>();
-		//if(isInvisible())
-		//	return totalOutArcs;
-		
 		for (ElementLocation location : getNodeLocations()) {
 			totalOutArcs.addAll(location.getOutArcs());
 		}
@@ -570,7 +564,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala pobrać listę WSZYSTKICH wierzchołków wejściowych wierzchołka.
-	 * @return ArrayList[Node] - lista wierzchołków wejściowych
+	 * @return (<b>ArrayList[Node]</b>) - lista wierzchołków wejściowych.
 	 */
 	public ArrayList<Node> getInNodes() {
 		ArrayList<Node> totalInNodes = new ArrayList<>();
@@ -582,7 +576,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala pobrać listę wierzchołków wyjściowych.
-	 * @return ArrayList[Node] - lista wierzchołków wyjściowych
+	 * @return (<b>ArrayList[Node]</b>) - lista wierzchołków wyjściowych.
 	 */
 	public ArrayList<Node> getOutNodes() {
 		ArrayList<Node> totalOutNodes = new ArrayList<>();

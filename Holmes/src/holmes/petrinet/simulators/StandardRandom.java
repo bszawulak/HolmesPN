@@ -1,6 +1,7 @@
 package holmes.petrinet.simulators;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Klasa opakowująca standardowy generator liczb pseudo-losowych w Javie w interface IRandomGenerator.
@@ -75,5 +76,9 @@ public class StandardRandom implements IRandomGenerator  {
 	@Override
 	public double nextDouble() {
 		return generator.nextDouble();
+	}
+
+	public double nextDouble(double min, double max) {
+		return ThreadLocalRandom.current().nextDouble(min, max);
 	}
 }

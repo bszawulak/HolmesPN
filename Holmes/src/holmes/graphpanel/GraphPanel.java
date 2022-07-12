@@ -417,7 +417,7 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Metoda przewijania arkusza w poziomie za pomocą wałka myszy.
-	 * @param delta int - wielkość przewinięcia
+	 * @param delta int - wielkość przewinięcia.
 	 */
 	public void scrollSheetHorizontal(int delta) {
 		WorkspaceSheet sheet = overlord.getWorkspace().getSheets().get(overlord.IDtoIndex(sheetId));
@@ -426,9 +426,9 @@ public class GraphPanel extends JComponent {
 	
 	/**
 	 * Metoda zmiany lokalizacji elementu nazwy wskazanego wierzchołka w poziomie.
-	 * @param delta int - wielkość przewinięcia
-	 * @param nameType (GUIManager.locationMoveTyp) - NAME, ALPHA, BETA, GAMMA, TAU
-	 * @return Point - współrzędne po zmianie
+	 * @param delta int - wielkość przewinięcia.
+	 * @param nameType (GUIManager.locationMoveTyp) - NAME, ALPHA, BETA, GAMMA, TAU.
+	 * @return Point - współrzędne po zmianie.
 	 */
 	public Point nameLocationChangeHorizontal(int delta, GUIManager.locationMoveType nameType) {
 		Node n = overlord.getNameLocChangeNode();
@@ -443,7 +443,7 @@ public class GraphPanel extends JComponent {
 		int x = oldX+el.getPosition().x;
 		int y = oldY+el.getPosition().y;
 		
-		if(isLegalLocation(new Point(x, y)) == true)
+		if(isLegalLocation(new Point(x, y)))
 			n.getTextsLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX+delta, oldY);
 	
 		return n.getTextsLocations(nameType).get(nameLocIndex).getPosition();
@@ -1304,9 +1304,10 @@ public class GraphPanel extends JComponent {
 			if (drawnArc == null) {
 				if(arcType == DrawModes.ARC)
 					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
-				else if(arcType == DrawModes.XARC)
-					drawnArc = new Arc(clickedLocation, TypeOfArc.XTPN);
-				else if(arcType == DrawModes.READARC)
+				else if(arcType == DrawModes.XARC) {
+					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
+					drawnArc.setXTPNstatus(true);
+				} else if(arcType == DrawModes.READARC)
 					drawnArc = new Arc(clickedLocation, TypeOfArc.READARC);
 				else if(arcType == DrawModes.ARC_INHIBITOR)
 					drawnArc = new Arc(clickedLocation, TypeOfArc.INHIBITOR);
@@ -1428,7 +1429,8 @@ public class GraphPanel extends JComponent {
 									arc.setArcType(TypeOfArc.NORMAL); 
 								getArcs().add(arc);
 							} else if(arcType == DrawModes.XARC) {
-								arc.setArcType(TypeOfArc.XTPN);
+								arc.setArcType(TypeOfArc.NORMAL);
+								arc.setXTPNstatus(true);
 								getArcs().add(arc);
 							}else if(arcType == DrawModes.READARC) {
 								//arc.setArcType(TypesOfArcs.INHIBITOR);

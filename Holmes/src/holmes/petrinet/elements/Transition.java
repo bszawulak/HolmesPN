@@ -509,7 +509,7 @@ public class Transition extends Node {
             int startPlaceTokens = arcStartPlace.getNonReservedTokensNumber();
 
             if (arcType == TypeOfArc.INHIBITOR) {
-                if (startPlaceTokens > arc.getWeight())
+                if (startPlaceTokens >= arc.getWeight())
                     return false; //nieaktywna w przecwiwnym wypadku aktywna (nie jest w danej chwili blokowana)
             } else if (arcType == TypeOfArc.EQUAL && startPlaceTokens != arc.getWeight()) { //DOKŁADNIE TYLE CO WAGA
                 return false;
@@ -1195,8 +1195,8 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia dolną wartość alfaMin dla xTPN.
-     * @param value (double) czas alfaMin (=EFT)
-     * @param force (boolean) czy wymusić wartość bez weryfikacji
+     * @param value (<b>double</b>) czas alfaMin (=EFT)
+     * @param force (<b>boolean</b>) czy wymusić wartość bez weryfikacji
      */
     public void setAlphaMin_xTPN(double value, boolean force) {
         if(force) {
@@ -1216,7 +1216,7 @@ public class Transition extends Node {
 
     /**
      * Metoda pozwala odczytać dolną wartość alfaMin dla xTPN.
-     * @return (double) : czas alfaMin.
+     * @return (<b>double</b>) - czas alfaMin.
      */
     public double getAlphaMin_xTPN() {
         return this.alphaMin_xTPN;
@@ -1224,8 +1224,8 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia górną wartość alfaMax dla xTPN.
-     * @param value (double) czas alfaMax (=LFT)
-     * @param force (boolean) czy wymusić wartość bez weryfikacji
+     * @param value (<b>double</b>) czas alfaMax (=LFT)
+     * @param force (<b>boolean</b>) czy wymusić wartość bez weryfikacji
      */
     public void setAlphaMax_xTPN(double value, boolean force) {
         if(force) {
@@ -1253,8 +1253,8 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia dolną wartość betaMin dla xTPN.
-     * @param value (double) czas betaMin (=DPN duration lower value)
-     * @param force (boolean) czy wymusić wartość bez weryfikacji
+     * @param value (<b>double</b>) czas betaMin (=DPN duration lower value)
+     * @param force (<b>boolean</b>) czy wymusić wartość bez weryfikacji
      */
     public void setBetaMin_xTPN(double value, boolean force) {
         if(force) {
@@ -1274,7 +1274,7 @@ public class Transition extends Node {
 
     /**
      * Metoda pozwala odczytać dolną wartość betaMin dla xTPN.
-     * @return (double) : czas betaMin.
+     * @return (<b>double</b>) - czas betaMin.
      */
     public double getBetaMin_xTPN() {
         return this.betaMin_xTPN;
@@ -1282,8 +1282,8 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia dolną wartość betaMax dla xTPN.
-     * @param value (double) czas betaMax (=DPN duration upper value)
-     * @param force (boolean) czy wymusić wartość bez weryfikacji
+     * @param value (<b>double</b>) czas betaMax (=DPN duration upper value)
+     * @param force (<b>boolean</b>) czy wymusić wartość bez weryfikacji
      */
     public void setBetaMax_xTPN(double value, boolean force) {
         if(force) {
@@ -1303,7 +1303,7 @@ public class Transition extends Node {
 
     /**
      * Metoda pozwala odczytać górną wartość betaMax dla xTPN.
-     * @return (double) : czas betaMax.
+     * @return (<b>double</b>) - czas betaMax.
      */
     public double getBetaMax_xTPN() {
         return this.betaMax_xTPN;
@@ -1311,7 +1311,7 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia wartość docelową zegara U - tauAlpha tranzycji.
-     * @param value double - nowa wartość tauAlpha.
+     * @param value (<b>double</b>) nowa wartość tauAlpha.
      */
     public void setTauAlpha_xTPN(double value) {
         tauAlpha_xTPN = value;
@@ -1319,7 +1319,7 @@ public class Transition extends Node {
 
     /**
      * Metoda modyfikuje wartość docelową zegara U - tauAlfa tranzycji.
-     * @param delta double - o ile zmienić zegar tauAlpha.
+     * @param delta (<b>double</b>) o ile zmienić zegar tauAlpha.
      */
     public void updateTauAlpha_xTPN(double delta) {
         tauAlpha_xTPN += delta;
@@ -1327,7 +1327,7 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca wartość docelową zegara U - tauAlfa tranzycji.
-     * @return double - aktualny czas tauAlpha.
+     * @return (<b>double</b>) aktualny czas tauAlpha.
      */
     public double getTauAlpha_xTPN() {
         return tauAlpha_xTPN;
@@ -1335,7 +1335,7 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia wartość docelową zegara V - tauBeta tranzycji.
-     * @param value double - nowa wartość tauBeta.
+     * @param value (<b>double</b>) nowa wartość tauBeta.
      */
     public void setTauBeta_xTPN(double value) {
         tauBeta_xTPN = value;
@@ -1343,7 +1343,7 @@ public class Transition extends Node {
 
     /**
      * Metoda modyfikuje wartość docelową zegara V - tauBeta tranzycji.
-     * @param delta double - o ile zmienić zegar tauBeta.
+     * @param delta (<b>double</b>) o ile zmienić zegar tauBeta.
      */
     public void updateTauBeta_xTPN(double delta) {
         tauBeta_xTPN += delta;
@@ -1367,7 +1367,7 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca status zegarów zegarów alpha - pokazywać czy nie.
-     * @return boolean - true, jeśli zegary mają być pokazywane.
+     * @return (<b>boolean</b>) - true, jeśli zegary mają być pokazywane.
      */
     public boolean isTauTimerVisible() {
         return tauTimersVisibility_XTPN;
@@ -1407,7 +1407,7 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia wyświetlaną dokładność po przecinku.
-     * @param value - (int) nowa wartość liczby cyfr przecinku.
+     * @param value (<b>int</b>) nowa wartość liczby cyfr przecinku.
      */
     public void setFraction_xTPN(int value) {
         fractionDigits = value;
@@ -1415,7 +1415,7 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca wyświetlaną dokładność po przecinku.
-     * @return int - aktualna wartość liczby cyfr przecinku.
+     * @return (<b>int</b>) - aktualna wartość liczby cyfr przecinku.
      */
     public int getFraction_xTPN() {
         return fractionDigits;
@@ -1423,7 +1423,7 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia wartość docelową zegara U-alfa tranzycji.
-     * @param value double - nowa wartość zegara U-alfa.
+     * @param value (<b>double</b>) - nowa wartość zegara U-alfa.
      */
     public void setTimerAlfa_XTPN(double value) {
         timer_Ualfa_XTPN = value;
@@ -1431,7 +1431,7 @@ public class Transition extends Node {
 
     /**
      * Metoda modyfikuje wartość docelową zegara U-alfa tranzycji.
-     * @param delta double - o ile zmienić zegar U-alfa.
+     * @param delta (<b>double</b>) o ile zmienić zegar U-alfa.
      */
     public void updateTimerAlfa_XTPN(double delta) {
         timer_Ualfa_XTPN += delta;
@@ -1439,7 +1439,7 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca wartość docelową zegara U-alfa tranzycji.
-     * @return double - aktualny czas U-alfa.
+     * @return (<b>double</b>) aktualny czas U-alfa.
      */
     public double getTimerAlfa_XTPN() {
         return timer_Ualfa_XTPN;
@@ -1447,7 +1447,7 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia wartość docelową zegara V-beta tranzycji.
-     * @param value double - nowa wartość zegara V-beta.
+     * @param value (<b>double</b>) nowa wartość zegara V-beta.
      */
     public void setTimerBeta_XTPN(double value) {
         timer_Vbeta_XTPN = value;
@@ -1455,7 +1455,7 @@ public class Transition extends Node {
 
     /**
      * Metoda modyfikuje wartość docelową zegara V-beta tranzycji.
-     * @param delta double - o ile zmienić zegar V-beta.
+     * @param delta (<b>double</b>) o ile zmienić zegar V-beta.
      */
     public void updateTimerBeta_XTPN(double delta) {
         timer_Vbeta_XTPN += delta;
@@ -1463,7 +1463,7 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca wartość docelową zegara V-beta tranzycji.
-     * @return double - aktualny czas V-beta.
+     * @return (<b>double</b>) aktualny czas V-beta.
      */
     public double getTimerBeta_XTPN() {
         return timer_Vbeta_XTPN;
@@ -1471,7 +1471,7 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia status aktywacji tranzycji xTPN.
-     * @param status boolean - true, jeśli tranzycja jest aktywna.
+     * @param status (<b>boolean</b>) true, jeśli tranzycja jest aktywna.
      */
     public void setActivationStatusXTPN(boolean status) {
         isActivated_xTPN = status;
@@ -1479,7 +1479,7 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca status aktywacji tranzycji xTPN.
-     * @return boolean - true, jeśli tranzycja jest aktywna.
+     * @return (<b>boolean</b>) - true, jeśli tranzycja jest aktywna.
      */
     public boolean isActivated_xTPN() {
         return isActivated_xTPN;
@@ -1487,7 +1487,7 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia status produkcji tranzycji xTPN.
-     * @param status boolean - true, jeśli tranzycja rozpoczęła produkcję.
+     * @param status (<b>boolean</b>) true, jeśli tranzycja rozpoczęła produkcję.
      */
     public void setProductionStatus_xTPN(boolean status) {
         isProducing_xTPN = status;
@@ -1495,7 +1495,7 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca status status produkcji tranzycji xTPN.
-     * @return boolean - true, jeśli tranzycja rozpoczęła produkcję.
+     * @return (<b>boolean</b>) - true, jeśli tranzycja rozpoczęła produkcję.
      */
     public boolean isProducing_xTPN() {
         return isProducing_xTPN;
@@ -1503,7 +1503,7 @@ public class Transition extends Node {
 
     /**
      * Metoda włącza tryb XTPN dla tranzycji.
-     * @param status boolean - true, jeśli tryb XTPN ma być aktywny
+     * @param status (<b>boolean</b>) true, jeśli ma to być tranzycja XTPN.
      */
     public void setXTPNstatus(boolean status) {
         isXTPN = status;
@@ -1511,7 +1511,7 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca status tranzycji XTPN / wszystkie inne.
-     * @return boolean - true, jeśli XTPN aktywny
+     * @return (<b>boolean</b>) true, jeśli to tranzycja typu XTPN.
      */
     public boolean isXTPNtransition() {
         return isXTPN;
@@ -1528,23 +1528,22 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca status alfa tranzycji XTPN.
-     * @return boolean - true, jeśli status alfa-XTPN aktywny
+     * @return (<b>boolean</b>) - true, jeśli tryb alfa-XTPN aktywny.
      */
     public boolean isAlphaActiveXTPN() {
         return alphaMode_xTPN;
     }
     /**
      * Metoda włącza tryb beta-XTPN dla tranzycji.
-     * @param status boolean - true, jeśli tryb beta-XTPN ma być aktywny
+     * @param status (<b>boolean</b>) true, jeśli tryb beta-XTPN ma być aktywny.
      */
     public void setBetaXTPNstatus(boolean status) {
         betaMode_xTPN = status;
-        //setBetaRangeStatus(status);
     }
 
     /**
      * Metoda zwraca status beta tranzycji XTPN / wszystkie inne.
-     * @return boolean - true, jeśli status beta-XTPN aktywny
+     * @return (<b>boolean</b>) - true, jeśli tryb beta-XTPN aktywny.
      */
     public boolean isBetaActiveXTPN() {
         return betaMode_xTPN;
@@ -1552,7 +1551,7 @@ public class Transition extends Node {
 
     /**
      * Metoda włącza tryb mass-action kinetics XTPN dla tranzycji.
-     * @param status boolean - true, jeśli tryb mass-action kinetics XTPN ma być aktywny
+     * @param status (<b>boolean</b>) true, jeśli tryb mass-action kinetics XTPN ma być aktywny.
      */
     public void setMassActionKineticsXTPNstatus(boolean status) {
         massActionKinetics = status;
@@ -1560,9 +1559,76 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca status trybu mass-action kinetics XTPN dla tranzycji.
-     * @return boolean - true, jeśli tryb mass-action kinetics XTPN ma być aktywny
+     * @return (<b>boolean</b>) - true, jeśli tryb mass-action kinetics XTPN ma być aktywny
      */
     public boolean isMassActionKineticsActiveXTPN() {
         return massActionKinetics;
+    }
+
+    /**
+     * [2022-07-12] normal + inhibitor
+     * Metoda pozwala sprawdzić, czy tranzycja XTPN może być aktywowana i w jaki sposób.
+     * @return (<b>boolean</b>) true, jeżeli aktywna
+     */
+    public boolean getActiveStatusXTPN() {
+        if (offline || isProducing_xTPN())
+            return false;
+
+        double accuracy = GUIManager.getDefaultGUIManager().simSettings.calculationsAccuracy;
+
+        for (Arc arc : getInArcs()) { //jeśli brak, to aktywna wejściowa
+            Place arcStartPlace = (Place) arc.getStartNode();
+            TypeOfArc arcType = arc.getArcType();
+            int arcWeight = arc.getWeight();
+
+            if (arcStartPlace.isGammaModeActiveXTPN()) { //czy miejsce typu XTPN
+                if (arcStartPlace.accessMultiset().size() < arcWeight) {
+                    if(arcType == TypeOfArc.INHIBITOR) { //to dobrze, że nie ma zbioru, tranzycja wciąż aktywna
+                        ;
+                    } else {
+                        return false; //nie ma co sprawdzać, za mały multizbiór
+                    }
+                } else { //multizbiór ma przynajmniej tyle tokenów ile wynosi waga łuku, sprawdzamy podzbiór aktywujący:
+                    if (!isActivationMultiset(arcWeight, arcStartPlace.getGammaMin_xTPN(), arcStartPlace.accessMultiset(), accuracy)) { //jeśli nie istnieje
+                        if(arcType == TypeOfArc.INHIBITOR) { //to dobrze, że nie ma zbioru, tranzycja wciąż aktywna
+                            ;
+                        } else {
+                            return false; //brak multizbioru aktywującego, nieaktywna
+                        }
+                    }
+                }
+            } else { //miejsce traktowane jak klasyczne
+                int startPlaceTokens = arcStartPlace.getNonReservedTokensNumber();
+                if (arcWeight > startPlaceTokens) {
+                    if(arcType == TypeOfArc.INHIBITOR) {
+                        ; //wciąż aktywna
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+        //jeśli wciąż tutaj, to znaczy że aktywna
+    }
+
+    /**
+     * Metoda sprawdza czy istnieje podzbiór aktywujący o zadanych parametrach.
+     * @param size (<b>int</b>) minimalny rozmiar zbioru.
+     * @param gammaMin (<b>double</b>) gammaMinimum dla tranzycji.
+     * @param multiset (<b>ArrayList[Double]</b>)
+     * @param accuracy (<b>double</b>) dokładność obliczeń.
+     * @return (<b>double</b>) - true, jeżeli istnieje podzbiór aktywujący
+     */
+    private boolean isActivationMultiset(int size, double gammaMin, ArrayList<Double> multiset, double accuracy) {
+        int counter = 0;
+        for(Double kappa : multiset) {
+            if(kappa + accuracy > gammaMin) {
+                counter++;
+                if(counter == size)
+                    return true;
+            }
+        }
+        return false;
     }
 }

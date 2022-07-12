@@ -140,14 +140,15 @@ public class HolmesDockWindow extends SingleDock {
     /**
      * Metoda odpowiedzialna za wypełnienie sekcji symulatora sieci.
      */
-    public void createSimulatorProperties() {
+    public void createSimulatorProperties(boolean XTPN) {
         if (type == DockWindowType.SIMULATOR) {
             NetSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
             NetSimulatorXTPN netSimXTPN = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
-            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SIMULATOR, netSim, netSimXTPN));
+            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SIMULATOR, netSim, netSimXTPN, XTPN));
             scrollPane.getViewport().add(getCurrentDockWindow());
         }
     }
+
 
     /**
      * Metoda wywoływana po wygenerowaniu t-inwariantów przez program. Zleca wykonanie

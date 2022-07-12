@@ -410,7 +410,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		if(f.exists())
 			lastPath = path;	
 
-		getSimulatorBox().createSimulatorProperties();
+		getSimulatorBox().createSimulatorProperties(false);
 	}
 
 	/**

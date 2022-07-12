@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -45,6 +46,7 @@ import holmes.workspace.ExtensionFileFilter;
  * @author MR
  */
 public class HolmesInvariantsGenerator extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 5805567123988000425L;
 	private GUIManager overlord;
 	private JFrame ego;
@@ -931,7 +933,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 			int pPosition = 0;
 			int incidenceValue = 0;
 			
-			if(oneArc.getArcType() == TypeOfArc.NORMAL || oneArc.getArcType() == TypeOfArc.XTPN) {
+			if(oneArc.getArcType() == TypeOfArc.NORMAL) {
 				//idziemy dalej
 			} else {
 				continue;

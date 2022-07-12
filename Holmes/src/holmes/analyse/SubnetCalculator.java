@@ -325,8 +325,7 @@ public class SubnetCalculator implements Serializable {
             //    continue;
             //}
 
-            if (oneArc.getArcType() == Arc.TypeOfArc.NORMAL || oneArc.getArcType() == Arc.TypeOfArc.READARC
-                        || oneArc.getArcType() == Arc.TypeOfArc.XTPN) {
+            if (oneArc.getArcType() == Arc.TypeOfArc.NORMAL || oneArc.getArcType() == Arc.TypeOfArc.READARC) {
             } else {
                 continue;
             }
@@ -697,8 +696,7 @@ public class SubnetCalculator implements Serializable {
             //    continue;
             //}
 
-            if (oneArc.getArcType() == Arc.TypeOfArc.NORMAL || oneArc.getArcType() == Arc.TypeOfArc.READARC
-                    || oneArc.getArcType() == Arc.TypeOfArc.XTPN) {
+            if (oneArc.getArcType() == Arc.TypeOfArc.NORMAL || oneArc.getArcType() == Arc.TypeOfArc.READARC) {
             } else {
                 continue;
             }

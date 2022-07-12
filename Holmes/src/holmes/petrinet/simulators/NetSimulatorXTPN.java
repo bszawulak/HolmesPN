@@ -269,7 +269,7 @@ public class NetSimulatorXTPN {
                 Place place = (Place) arc.getEndNode();
 
                 if(!(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR
-                        || arc.getArcType() == TypeOfArc.READARC || arc.getArcType() == TypeOfArc.XTPN)) {
+                        || arc.getArcType() == TypeOfArc.READARC)) {
                     overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
                             " arc: "+arc.toString(), "error", true);
                 }
@@ -302,7 +302,7 @@ public class NetSimulatorXTPN {
 
                 Place place = (Place) arc.getEndNode();
                 if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR
-                        || arc.getArcType() == TypeOfArc.READARC || arc.getArcType() == TypeOfArc.XTPN) { //!!!!!! było bez drugiego członu po ||
+                        || arc.getArcType() == TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
                     ;
                 } else {
                     overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
@@ -480,18 +480,20 @@ public class NetSimulatorXTPN {
     private class SimulationPerformer implements ActionListener {
         protected int transitionDelay = overlord.simSettings.getTransDelay(); // licznik kroków graficznych
 
+        protected boolean stateChangeStarted = false;
+        protected boolean subtractPhase = true; // true - subtract, false - add
+        protected boolean addPhase = false;
+        protected boolean finishedAddPhase = false;
+        protected boolean scheduledStop = false;
+        protected int remainingTransitionsAmount = launchingTransitions.size();
+
+
+
+        //training:
         protected boolean timePassPhase = false;
         protected boolean transActivatedPhase = false;
         protected boolean transProdStartPhase = false;
         protected boolean transProdEndsPhase = false;
-
-
-        protected int decision = 0;
-
-        protected boolean subtractPhase = true; // true - subtract, false - add
-        protected boolean finishedAddPhase = true;
-        protected boolean scheduledStop = false;
-        protected int remainingTransitionsAmount = launchingTransitions.size();
 
         /**
          * Metoda aktualizuje wyświetlanie graficznej części symulacji po wykonaniu każdego kroku.
@@ -505,6 +507,10 @@ public class NetSimulatorXTPN {
             transActivatedPhase = false;
             transProdStartPhase = false;
             transProdEndsPhase = false;
+
+            subtractPhase = true;
+            addPhase = false;
+            finishedAddPhase = false;
         }
 
         /**
@@ -559,6 +565,92 @@ public class NetSimulatorXTPN {
          * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody
          */
         public void actionPerformed(ActionEvent event) {
+            //testDzialaniaSymulacji();
+            int DEFAULT_COUNTER = overlord.simSettings.getTransDelay(); //def: 25
+            if (scheduledStop) { // jeśli symulacja ma się zatrzymać
+                executeScheduledStop();
+            }
+
+            if(!stateChangeStarted) { //nowy krok symulacji
+                //najpierw aktywacja wszystkiego w danym stanie co da się aktywować
+
+                ArrayList<SimulatorXTPN.NextXTPNstep> nextXTPNsteps = engineXTPN.computeNextState();
+
+                if(nextXTPNsteps.size() == 0) {
+                    setSimulationActive(false);
+                    stopSimulation();
+                    JOptionPane.showMessageDialog(null, "Simulation stopped, no active transitions.",
+                            "Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
+                    transitionDelay = 0;
+                }
+                stateChangeStarted = true;
+            }
+
+
+/*
+            //updateStepCounter(); // rusz tokeny
+            petriNet.incrementSimulationStep();
+
+            if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
+                //z miejsc wejściowych i oddawania ich tranzycjom
+                if (scheduledStop) { // jeśli symulacja ma się zatrzymać
+                    executeScheduledStop();
+                } else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
+                    if (remainingTransitionsAmount == 0) {
+                        timeCounter++;
+                        overlord.io.updateTimeStep(""+timeCounter);
+                        overlord.simSettings.currentStep = timeCounter;
+
+                        launchingTransitions = engineXTPN.getTransLaunchList(false);
+                        remainingTransitionsAmount = launchingTransitions.size();
+                    }
+
+                    launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
+                    //usuń te tranzycje, które są w I fazie DPN
+                    for(int t=0; t<launchingTransitions.size(); t++) {
+                        Transition test_t = launchingTransitions.get(t);
+                        if(test_t.getDPNstatus()) {
+                            if(test_t.getDPNtimer() == 0 && test_t.getDPNduration() != 0) {
+                                launchingTransitions.remove(test_t);
+                                t--;
+                            }
+                        }
+                    }
+                    subtractPhase = false;
+                } else {
+                    // simulation ends, no possible steps remaining
+                    setSimulationActive(false);
+                    stopSimulation();
+                    JOptionPane.showMessageDialog(null, "Simulation stopped, no active transitions.",
+                            "Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
+                }
+                transitionDelay = 0;
+            } else if (transitionDelay >= DEFAULT_COUNTER && !subtractPhase) {
+                // koniec fazy zabierania tokenów, tutaj realizowany jest graficzny przepływ tokenów
+                launchAddPhaseGraphics(launchingTransitions);
+                finishedAddPhase = false;
+                transitionDelay = 0;
+            } else if (transitionDelay >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
+                boolean detailedLogging = true;
+                //nsl.logSimStepFinished(launchingTransitions, detailedLogging);
+
+                // koniec fazy przepływu tokenów, tutaj uaktualniane są wartości tokenów dla miejsc wyjściowych
+                launchAddPhase(launchingTransitions);
+                finishedAddPhase = true;
+                subtractPhase = true;
+                remainingTransitionsAmount = 0; // all transitions launched
+                // jeśli to nie tryb LOOP, zatrzymaj symulację
+
+                if (!loop)
+                    scheduleStop();
+
+                transitionDelay++;
+            } else
+                transitionDelay++; // empty steps
+                */
+        }
+
+        private void testDzialaniaSymulacji() { //for training purposes only, if u dont know how simulator works
             int DEFAULT_COUNTER = overlord.simSettings.getTransDelay(); //def: 25
             if (scheduledStop) { // jeśli symulacja ma się zatrzymać
                 executeScheduledStop();
@@ -656,68 +748,6 @@ public class NetSimulatorXTPN {
                     petriNet.repaintAllGraphPanels();
                 }
             }
-
-/*
-            //updateStepCounter(); // rusz tokeny
-            petriNet.incrementSimulationStep();
-
-            if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
-                //z miejsc wejściowych i oddawania ich tranzycjom
-                if (scheduledStop) { // jeśli symulacja ma się zatrzymać
-                    executeScheduledStop();
-                } else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
-                    if (remainingTransitionsAmount == 0) {
-                        timeCounter++;
-                        overlord.io.updateTimeStep(""+timeCounter);
-                        overlord.simSettings.currentStep = timeCounter;
-
-                        launchingTransitions = engineXTPN.getTransLaunchList(false);
-                        remainingTransitionsAmount = launchingTransitions.size();
-                    }
-
-                    launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
-                    //usuń te tranzycje, które są w I fazie DPN
-                    for(int t=0; t<launchingTransitions.size(); t++) {
-                        Transition test_t = launchingTransitions.get(t);
-                        if(test_t.getDPNstatus()) {
-                            if(test_t.getDPNtimer() == 0 && test_t.getDPNduration() != 0) {
-                                launchingTransitions.remove(test_t);
-                                t--;
-                            }
-                        }
-                    }
-                    subtractPhase = false;
-                } else {
-                    // simulation ends, no possible steps remaining
-                    setSimulationActive(false);
-                    stopSimulation();
-                    JOptionPane.showMessageDialog(null, "Simulation stopped, no active transitions.",
-                            "Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
-                }
-                transitionDelay = 0;
-            } else if (transitionDelay >= DEFAULT_COUNTER && !subtractPhase) {
-                // koniec fazy zabierania tokenów, tutaj realizowany jest graficzny przepływ tokenów
-                launchAddPhaseGraphics(launchingTransitions);
-                finishedAddPhase = false;
-                transitionDelay = 0;
-            } else if (transitionDelay >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
-                boolean detailedLogging = true;
-                //nsl.logSimStepFinished(launchingTransitions, detailedLogging);
-
-                // koniec fazy przepływu tokenów, tutaj uaktualniane są wartości tokenów dla miejsc wyjściowych
-                launchAddPhase(launchingTransitions);
-                finishedAddPhase = true;
-                subtractPhase = true;
-                remainingTransitionsAmount = 0; // all transitions launched
-                // jeśli to nie tryb LOOP, zatrzymaj symulację
-
-                if (!loop)
-                    scheduleStop();
-
-                transitionDelay++;
-            } else
-                transitionDelay++; // empty steps
-                */
         }
     }
 }
