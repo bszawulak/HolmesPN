@@ -32,7 +32,8 @@ public class SimulatorXTPN implements IEngine {
         double timeToChange;
 
         /**
-         * 0 - timeToMature, 1 - timeToDie, 2 - transProdStarts, 3 - transProdEnds
+         * 0 - timeToMature, 1 - timeToDie, 2 - transProdStarts, 3 - transProdEnds;<br>
+         * <b>W przypadku InfoNode: liczba obiektów NextXTPNstep w arraylistach.</b>
          */
         int changeType;
 
@@ -106,20 +107,13 @@ public class SimulatorXTPN implements IEngine {
      * miejscach/tranzycjach, w których w tym minimalnym czasie następuje jakaś zmiana.
      * @return (<b>ArrayList[NextXTPNstep]</b>) wektor elementów do zmiany w następnym stanie.
      */
-    public ArrayList<NextXTPNstep> computeNextState() {
-        ArrayList<NextXTPNstep> stateVector = new ArrayList<>();
+    public ArrayList<ArrayList<NextXTPNstep>> computeNextState() {
+        ArrayList<ArrayList<NextXTPNstep>> stateVector = new ArrayList<>();
+        ArrayList<NextXTPNstep> placesMaturity = new ArrayList<>();
+        ArrayList<NextXTPNstep> placesAging = new ArrayList<>();
+        ArrayList<NextXTPNstep> transProdStart = new ArrayList<>();
+        ArrayList<NextXTPNstep> transProdEnd = new ArrayList<>();
         double currentMinTime = Double.MAX_VALUE;
-
-        /*
-        //na początku tranzycje wejściowe, nieaktywne (będą miały czas zero):
-        for(Transition transition : transitions) {
-            if(!transition.isProducing_xTPN() && !transition.isActivated_xTPN()) { //nie produkuje i jest nieaktywna
-                if(transition.getInArcs().size() == 0) { //brak łuków wejściowych
-
-                }
-            }
-        }*/
-
 
         for(Place place : places) { //znajdź najmniejszy czas do zmiany w miejscach
             double gammaMin = place.getGammaMin_xTPN();
@@ -133,11 +127,15 @@ public class SimulatorXTPN implements IEngine {
                 if(kappa < gammaMin) { //obliczanie minimalnego czasu do dorośnięcia tokenu
                     timeDifference = gammaMin - kappa;
                     if(Math.abs(timeDifference - currentMinTime) < sg.calculationsAccuracy) { //uznajmy, że to ten sam czas
-                        stateVector.add(new NextXTPNstep(place, timeDifference, 0)); //token dojrzeje za timeDifference
+                        placesMaturity.add(new NextXTPNstep(place, timeDifference, 0)); //token dojrzeje za timeDifference
                     } else if (timeDifference < currentMinTime) {
-                        stateVector.clear(); // wcześniejsze rekordy, jeśli istnieją, zajdą za późniejszy czas
-                        stateVector.add(new NextXTPNstep(place, timeDifference, 0)); //token dojrzeje za timeDifference
+                        // wcześniejsze rekordy, jeśli istnieją, zajdą za późniejszy czas:
+                        placesMaturity.clear();
+                        placesAging.clear();
+                        transProdStart.clear();
+                        transProdEnd.clear();
 
+                        placesMaturity.add(new NextXTPNstep(place, timeDifference, 0)); //token dojrzeje za timeDifference
                         currentMinTime = timeDifference;
                     }
                 }
@@ -145,11 +143,15 @@ public class SimulatorXTPN implements IEngine {
                 if(kappa < gammaMax) { //obliczanie minimalnego czasu do usunięcia tokenu
                     timeDifference = gammaMax - kappa;
                     if(Math.abs(timeDifference - currentMinTime) < sg.calculationsAccuracy) { //uznajmy, że to ten sam czas
-                        stateVector.add(new NextXTPNstep(place, timeDifference, 1)); //token zniknie za timeDifference
+                        placesAging.add(new NextXTPNstep(place, timeDifference, 1)); //token zniknie za timeDifference
                     } else if (timeDifference < currentMinTime) {
-                        stateVector.clear(); // wcześniejsze rekordy, jeśli istnieją, zajdą za późniejszy czas
-                        stateVector.add(new NextXTPNstep(place, timeDifference, 1));  //token zniknie za timeDifference
+                        // wcześniejsze rekordy, jeśli istnieją, zajdą za późniejszy czas:
+                        placesMaturity.clear();
+                        placesAging.clear();
+                        transProdStart.clear();
+                        transProdEnd.clear();
 
+                        placesAging.add(new NextXTPNstep(place, timeDifference, 1));  //token zniknie za timeDifference
                         currentMinTime = timeDifference;
                     }
                 }
@@ -165,11 +167,15 @@ public class SimulatorXTPN implements IEngine {
             if(transition.isAlphaActiveXTPN() && transition.isActivated_xTPN()) { //tylko dla Alfa-TPN i to tych aktywnych
                 timeDifference = tauAlpha - timerAlpha;
                 if(Math.abs(timeDifference - currentMinTime) < sg.calculationsAccuracy) { //uznajmy, że to ten sam czas
-                    stateVector.add(new NextXTPNstep(transition, timeDifference, 2)); //tranzycja się uruchomi za timeDifference
+                    transProdStart.add(new NextXTPNstep(transition, timeDifference, 2)); //tranzycja się uruchomi za timeDifference
                 } else if (timeDifference < currentMinTime) {
-                    stateVector.clear(); // wcześniejsze rekordy, jeśli istnieją, zajdą za późniejszy czas
-                    stateVector.add(new NextXTPNstep(transition, timeDifference, 2));  //tranzycja się uruchomi za timeDifference
+                    // wcześniejsze rekordy, jeśli istnieją, zajdą za późniejszy czas:
+                    placesMaturity.clear();
+                    placesAging.clear();
+                    transProdStart.clear();
+                    transProdEnd.clear();
 
+                    transProdStart.add(new NextXTPNstep(transition, timeDifference, 2));  //tranzycja się uruchomi za timeDifference
                     currentMinTime = timeDifference;
                 }
             }
@@ -177,17 +183,30 @@ public class SimulatorXTPN implements IEngine {
             if(transition.isBetaActiveXTPN() && transition.isProducing_xTPN()) { //tylko dla Beta-DPN i to tych produkujących tokeny
                 timeDifference = tauBeta - timerBeta;
                 if(Math.abs(timeDifference - currentMinTime) < sg.calculationsAccuracy) { //uznajmy, że to ten sam czas
-                    stateVector.add(new NextXTPNstep(transition, timeDifference, 3)); //tranzycja skończy produkcję za timeDifference
+                    transProdEnd.add(new NextXTPNstep(transition, timeDifference, 3)); //tranzycja skończy produkcję za timeDifference
                 } else if (timeDifference < currentMinTime) {
-                    stateVector.clear(); // wcześniejsze rekordy, jeśli istnieją, zajdą za późniejszy czas
-                    stateVector.add(new NextXTPNstep(transition, timeDifference, 3));  //tranzycja skończy produkcję za timeDifference
+                    // wcześniejsze rekordy, jeśli istnieją, zajdą za późniejszy czas:
+                    placesMaturity.clear();
+                    placesAging.clear();
+                    transProdStart.clear();
+                    transProdEnd.clear();
 
+                    transProdEnd.add(new NextXTPNstep(transition, timeDifference, 3));  //tranzycja skończy produkcję za timeDifference
                     currentMinTime = timeDifference;
                 }
             }
-
-
         }
+        stateVector.add(placesMaturity);
+        stateVector.add(placesAging);
+        stateVector.add(transProdStart);
+        stateVector.add(transProdEnd);
+
+        int elements = placesMaturity.size() + placesAging.size() + transProdStart.size() + transProdEnd.size();
+        ArrayList<NextXTPNstep> specialVector = new ArrayList<>();
+        specialVector.add( new NextXTPNstep(null, currentMinTime, elements) );
+        //ostatnia, piąta lista zawiera tylko jeden wpis, informujący ile obiektów
+        //NextXTPNstep łącznie wpisano oraz jaki jest minimalny czas.
+        stateVector.add(specialVector);
         return stateVector;
     }
 
@@ -195,7 +214,7 @@ public class SimulatorXTPN implements IEngine {
      * Metoda zwiększa czas wszystkich czasowych komponentów sieci XTPN o zadaną wielkość.
      * @param tau (<b>double</b>) wartość czasu.
      */
-    private void updateState(double tau) {
+    public void updateState(double tau) {
         for(Place place : places) {
             if(place.isGammaModeActiveXTPN()) { //tylko dla miejsc czasowych
                 place.incTokensTime_XTPN(tau);
@@ -203,13 +222,17 @@ public class SimulatorXTPN implements IEngine {
         }
 
         for(Transition transition : transitions) {
-            if(transition.isAlphaActiveXTPN() && transition.isActivated_xTPN()) { //tylko z włączonym trybem Alfa i aktywowane
+            if(transition.isAlphaActiveXTPN() && transition.isActivated_xTPN()) { //aktywna tranzycja Alfa
                 transition.updateTimerAlfa_XTPN(tau);
+                continue;
             }
 
-            if(transition.isBetaActiveXTPN() && transition.isProducing_xTPN()) { //tylko z włączonym trybem Beta i produkujące
+            if(transition.isBetaActiveXTPN() && transition.isProducing_xTPN()) { //produkująca tranzycja Beta
                 transition.updateTimerBeta_XTPN(tau);
+                continue;
             }
+
+
         }
     }
 

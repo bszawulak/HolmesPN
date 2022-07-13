@@ -1,6 +1,7 @@
 package holmes.petrinet.simulators;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -83,5 +84,9 @@ public class HighQualityRandom implements IRandomGenerator {
 	@Override
 	public double nextDouble() {
 		return generator.nextDouble();
+	}
+
+	public double nextDouble(double min, double max) {
+		return ThreadLocalRandom.current().nextDouble(min, max);
 	}
 }

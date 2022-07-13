@@ -34,6 +34,9 @@ public class NetSimulatorXTPN {
     private long timeCounter = -1;
     //private Random generator;
 
+    ArrayList<ArrayList<SimulatorXTPN.NextXTPNstep>> nextXTPNsteps;
+    SimulatorXTPN.NextXTPNstep infoNode;
+
     private SimulatorXTPN engineXTPN;
     private GUIManager overlord;
 
@@ -574,15 +577,18 @@ public class NetSimulatorXTPN {
             if(!stateChangeStarted) { //nowy krok symulacji
                 //najpierw aktywacja wszystkiego w danym stanie co da się aktywować
 
-                ArrayList<SimulatorXTPN.NextXTPNstep> nextXTPNsteps = engineXTPN.computeNextState();
+                nextXTPNsteps = engineXTPN.computeNextState();
+                infoNode = nextXTPNsteps.get(4).get(0); //5-ta lista, pierwszy obiekt
 
-                if(nextXTPNsteps.size() == 0) {
+                if(infoNode.changeType == 0) {
                     setSimulationActive(false);
                     stopSimulation();
                     JOptionPane.showMessageDialog(null, "Simulation stopped, no active transitions.",
                             "Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
                     transitionDelay = 0;
                 }
+
+                engineXTPN.updateState(infoNode.timeToChange);
                 stateChangeStarted = true;
             }
 
