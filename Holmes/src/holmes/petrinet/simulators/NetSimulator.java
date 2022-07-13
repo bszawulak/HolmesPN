@@ -81,6 +81,7 @@ public class NetSimulator {
 	/**
 	 * Reset do ustawień domyślnych.
 	 */
+	@SuppressWarnings("unused")
 	public void resetSimulator() {
 		simulatorStatus = SimulatorMode.STOPPED;
 		previousSimStatus = SimulatorMode.STOPPED;
@@ -91,14 +92,6 @@ public class NetSimulator {
 		timeCounter = -1;
 		actionStack.removeAllElements();
 		engine = new SimulatorStandardPN();
-	}
-	
-	/**
-	 * Dostęp do obiektu silnika symulacji.
-	 * @return SimulatorEngine - silnik symulatora
-	 */
-	public SimulatorStandardPN accessEngine() {
-		return engine;
 	}
 
 	/**
@@ -111,7 +104,7 @@ public class NetSimulator {
 		ArrayList<Transition> transitions = petriNet.getTransitions();
 		ArrayList<Transition> time_transitions = petriNet.getTimeTransitions();
 		ArrayList<Place> places = petriNet.getPlaces();
-		nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode()); //TODO
+		nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode());
 
 		//setMaxMode(isSingleMode() && overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
 
@@ -354,84 +347,81 @@ public class NetSimulator {
 
 	/**
 	 * Metoda uruchamia fazę odejmowania tokenów z miejsc wejściowych jednej odpalonej tranzycji
-	 * (lub wyjściowych, dla trybu cofania). 
+	 * (lub wyjściowych, dla trybu cofania).
 	 * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
 	 * @param backtracking boolean - true, jeśli symulator pracuje w trybie cofania;
 	 * 		false w przeciwnym wypadku
 	 * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
-	 * @return boolean - true, jeśli faza została pomyślnie uruchomiona; false w przeciwnym razie
 	 */
-	public boolean launchSingleSubtractPhase(ArrayList<Transition> transitions, boolean backtracking, Transition chosenTransition) {
+	public void launchSingleSubtractPhase(ArrayList<Transition> transitions, boolean backtracking, Transition chosenTransition) {
 		if (transitions.size() < 1)
-			return false;
-		else {
-			Transition transition;
-			ArrayList<Arc> arcs;
-			if (!backtracking) {
-				transition = transitions.get(0);
-				arcs = transition.getInArcs();
-			} else {
-				transition = chosenTransition;
-				arcs = transition.getOutArcs();
-			}
-			transition.setLaunching(true);
-			for (Arc arc : arcs) {
-				arc.setSimulationForwardDirection(!backtracking);
-				arc.setTransportingTokens(true);
-				Place place;
-				
-				if (!backtracking) { //inArcs
-					place = (Place) arc.getStartNode();
-					
-					if(arc.getArcType() == TypeOfArc.INHIBITOR) {
-						arc.setTransportingTokens(false);
-						// nic nie zabieraj
-					//} else if(arc.getArcType() == TypeOfArc.READARC) {
-					//	arc.setTransportingTokens(false);
-						// nic nie zabieraj
-					} else if(arc.getArcType() == TypeOfArc.RESET) {
-						int tokens = place.getTokensNumber();
-						place.modifyTokensNumber(-tokens);
-					} else if(arc.getArcType() == TypeOfArc.EQUAL) {
-						place.modifyTokensNumber(-arc.getWeight());
-					} else if(arc.getArcType() == TypeOfArc.COLOR) {
-						place.modifyColorTokensNumber(-arc.getColorWeight(0), 0);
-						place.modifyColorTokensNumber(-arc.getColorWeight(1), 1);
-						place.modifyColorTokensNumber(-arc.getColorWeight(2), 2);
-						place.modifyColorTokensNumber(-arc.getColorWeight(3), 3);
-						place.modifyColorTokensNumber(-arc.getColorWeight(4), 4);
-						place.modifyColorTokensNumber(-arc.getColorWeight(5), 5);
-					} else {
-						FunctionsTools.functionalExtraction(transition, arc, place);
-						//place.modifyTokensNumber(-arc.getWeight());
-					}
-				} else { //outArcs
-					place = (Place) arc.getEndNode();
-					if(arc.getArcType() == TypeOfArc.INHIBITOR) {
-						arc.setTransportingTokens(false);
-						// nic nie oddawaj
-					//} else if(arc.getArcType() == TypeOfArc.READARC) {
-					//	arc.setTransportingTokens(false);
-						// nic nie oddawaj
-					} else if(arc.getArcType() == TypeOfArc.RESET) {
-						place.modifyTokensNumber(-1); 
-						// PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
-					} else if(arc.getArcType() == TypeOfArc.EQUAL) {
-						place.modifyTokensNumber(-arc.getWeight());
-					} else if(arc.getArcType() == TypeOfArc.COLOR) {
-						place.modifyColorTokensNumber(-arc.getColorWeight(0), 0);
-						place.modifyColorTokensNumber(-arc.getColorWeight(1), 1);
-						place.modifyColorTokensNumber(-arc.getColorWeight(2), 2);
-						place.modifyColorTokensNumber(-arc.getColorWeight(3), 3);
-						place.modifyColorTokensNumber(-arc.getColorWeight(4), 4);
-						place.modifyColorTokensNumber(-arc.getColorWeight(5), 5);
-					} else {
-						FunctionsTools.functionalExtraction(transition, arc, place);
-						//place.modifyTokensNumber(-arc.getWeight());
-					}
-				} // if (backtracking == false)
-			}
-			return true;
+			return;
+
+		Transition transition;
+		ArrayList<Arc> arcs;
+		if (!backtracking) {
+			transition = transitions.get(0);
+			arcs = transition.getInArcs();
+		} else {
+			transition = chosenTransition;
+			arcs = transition.getOutArcs();
+		}
+		transition.setLaunching(true);
+		for (Arc arc : arcs) {
+			arc.setSimulationForwardDirection(!backtracking);
+			arc.setTransportingTokens(true);
+			Place place;
+
+			if (!backtracking) { //inArcs
+				place = (Place) arc.getStartNode();
+
+				if(arc.getArcType() == TypeOfArc.INHIBITOR) {
+					arc.setTransportingTokens(false);
+					// nic nie zabieraj
+				//} else if(arc.getArcType() == TypeOfArc.READARC) {
+				//	arc.setTransportingTokens(false);
+					// nic nie zabieraj
+				} else if(arc.getArcType() == TypeOfArc.RESET) {
+					int tokens = place.getTokensNumber();
+					place.modifyTokensNumber(-tokens);
+				} else if(arc.getArcType() == TypeOfArc.EQUAL) {
+					place.modifyTokensNumber(-arc.getWeight());
+				} else if(arc.getArcType() == TypeOfArc.COLOR) {
+					place.modifyColorTokensNumber(-arc.getColorWeight(0), 0);
+					place.modifyColorTokensNumber(-arc.getColorWeight(1), 1);
+					place.modifyColorTokensNumber(-arc.getColorWeight(2), 2);
+					place.modifyColorTokensNumber(-arc.getColorWeight(3), 3);
+					place.modifyColorTokensNumber(-arc.getColorWeight(4), 4);
+					place.modifyColorTokensNumber(-arc.getColorWeight(5), 5);
+				} else {
+					FunctionsTools.functionalExtraction(transition, arc, place);
+					//place.modifyTokensNumber(-arc.getWeight());
+				}
+			} else { //outArcs
+				place = (Place) arc.getEndNode();
+				if(arc.getArcType() == TypeOfArc.INHIBITOR) {
+					arc.setTransportingTokens(false);
+					// nic nie oddawaj
+				//} else if(arc.getArcType() == TypeOfArc.READARC) {
+				//	arc.setTransportingTokens(false);
+					// nic nie oddawaj
+				} else if(arc.getArcType() == TypeOfArc.RESET) {
+					place.modifyTokensNumber(-1);
+					// PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
+				} else if(arc.getArcType() == TypeOfArc.EQUAL) {
+					place.modifyTokensNumber(-arc.getWeight());
+				} else if(arc.getArcType() == TypeOfArc.COLOR) {
+					place.modifyColorTokensNumber(-arc.getColorWeight(0), 0);
+					place.modifyColorTokensNumber(-arc.getColorWeight(1), 1);
+					place.modifyColorTokensNumber(-arc.getColorWeight(2), 2);
+					place.modifyColorTokensNumber(-arc.getColorWeight(3), 3);
+					place.modifyColorTokensNumber(-arc.getColorWeight(4), 4);
+					place.modifyColorTokensNumber(-arc.getColorWeight(5), 5);
+				} else {
+					FunctionsTools.functionalExtraction(transition, arc, place);
+					//place.modifyTokensNumber(-arc.getWeight());
+				}
+			} // if (backtracking == false)
 		}
 	}
 
@@ -469,32 +459,29 @@ public class NetSimulator {
 	 * @param backtracking boolean - true, jeśli symulator pracuje w trybie cofania;
 	 * 		false w przeciwnym wypadku
 	 * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
-	 * @return boolean - true, jeśli faza została pomyślnie uruchomiona; false w przeciwnym razie
 	 */
-	public boolean launchSingleAddPhaseGraphics( ArrayList<Transition> transitions, boolean backtracking, Transition chosenTransition) {
+	public void launchSingleAddPhaseGraphics( ArrayList<Transition> transitions, boolean backtracking, Transition chosenTransition) {
 		if (transitions.size() < 1)
-			return false;
-		else {
-			Transition tran;
-			ArrayList<Arc> arcs;
-			if (!backtracking) {
-				tran = transitions.get(0);
-				arcs = tran.getOutArcs();
-			} else {
-				tran = chosenTransition;
-				arcs = tran.getInArcs();
-			}
-			tran.setLaunching(true);
-			
-			for (Arc arc : arcs) {
-				//if(arc.getArcType() == TypeOfArc.INHIBITOR || arc.getArcType() == TypeOfArc.READARC)
-				if(arc.getArcType() == TypeOfArc.INHIBITOR)
-					continue;
-				
-				arc.setSimulationForwardDirection(!backtracking);
-				arc.setTransportingTokens(true);
-			}
-			return true;
+			return;
+
+		Transition tran;
+		ArrayList<Arc> arcs;
+		if (!backtracking) {
+			tran = transitions.get(0);
+			arcs = tran.getOutArcs();
+		} else {
+			tran = chosenTransition;
+			arcs = tran.getInArcs();
+		}
+		tran.setLaunching(true);
+
+		for (Arc arc : arcs) {
+			//if(arc.getArcType() == TypeOfArc.INHIBITOR || arc.getArcType() == TypeOfArc.READARC)
+			if(arc.getArcType() == TypeOfArc.INHIBITOR)
+				continue;
+
+			arc.setSimulationForwardDirection(!backtracking);
+			arc.setTransportingTokens(true);
 		}
 	}
 
@@ -525,12 +512,10 @@ public class NetSimulator {
 				else
 					place = (Place) arc.getStartNode();
 				
-				if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR 
-						|| arc.getArcType() == TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
-					;
-				} else {
-					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
-							" arc: "+arc.toString(), "error", true);
+				if(arc.getArcType() != TypeOfArc.NORMAL && arc.getArcType() != TypeOfArc.COLOR
+						&& arc.getArcType() != TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
+					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
+							" arc: "+arc, "error", true);
 				}
 				
 				if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {
@@ -558,55 +543,50 @@ public class NetSimulator {
 	 * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
 	 * @param backtracking boolean - true, jeśli symulator pracuje w trybie cofania; false w przeciwnym wypadku
 	 * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
-	 * @return boolean - true, jeśli faza została pomyślnie uruchomiona; false w przeciwnym razie
 	 */
-	public boolean launchSingleAddPhase(ArrayList<Transition> transitions, boolean backtracking, Transition chosenTransition) {
+	public void launchSingleAddPhase(ArrayList<Transition> transitions, boolean backtracking, Transition chosenTransition) {
 		if (transitions.size() < 1)
-			return false;
-		else {
-			Transition transition;
-			ArrayList<Arc> arcs;
-			if (!backtracking) {
-				transition = transitions.get(0);
-				arcs = transition.getOutArcs();
-			} else {
-				transition = chosenTransition;
-				arcs = transition.getInArcs();
-			}
-			for (Arc arc : arcs) {
-				if(arc.getArcType() == TypeOfArc.READARC)
-					continue;
-				
-				Place place;
-				if (!backtracking)
-					place = (Place) arc.getEndNode();
-				else
-					place = (Place) arc.getStartNode();
-				
-				if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR 
-						|| arc.getArcType() == TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
-					;
-				} else {
-					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ 
-							" arc: "+arc.toString(), "error", true);
-				}
-				
-				if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {
-					place.modifyColorTokensNumber(arc.getColorWeight(0), 0);
-					place.modifyColorTokensNumber(arc.getColorWeight(1), 1);
-					place.modifyColorTokensNumber(arc.getColorWeight(2), 2);
-					place.modifyColorTokensNumber(arc.getColorWeight(3), 3);
-					place.modifyColorTokensNumber(arc.getColorWeight(4), 4);
-					place.modifyColorTokensNumber(arc.getColorWeight(5), 5);
-				} else {
-					//tylko zwykły łuk
-					FunctionsTools.functionalAddition(transition, arc, place);
-					//place.modifyTokensNumber(arc.getWeight());
-				}
-			}
-			transitions.remove(transition);
-			return true;
+			return;
+
+		Transition transition;
+		ArrayList<Arc> arcs;
+		if (!backtracking) {
+			transition = transitions.get(0);
+			arcs = transition.getOutArcs();
+		} else {
+			transition = chosenTransition;
+			arcs = transition.getInArcs();
 		}
+		for (Arc arc : arcs) {
+			if(arc.getArcType() == TypeOfArc.READARC)
+				continue;
+
+			Place place;
+			if (!backtracking)
+				place = (Place) arc.getEndNode();
+			else
+				place = (Place) arc.getStartNode();
+
+			if(arc.getArcType() != TypeOfArc.NORMAL && arc.getArcType() != TypeOfArc.COLOR
+					&& arc.getArcType() != TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
+				overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
+						" arc: "+arc, "error", true);
+			}
+
+			if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {
+				place.modifyColorTokensNumber(arc.getColorWeight(0), 0);
+				place.modifyColorTokensNumber(arc.getColorWeight(1), 1);
+				place.modifyColorTokensNumber(arc.getColorWeight(2), 2);
+				place.modifyColorTokensNumber(arc.getColorWeight(3), 3);
+				place.modifyColorTokensNumber(arc.getColorWeight(4), 4);
+				place.modifyColorTokensNumber(arc.getColorWeight(5), 5);
+			} else {
+				//tylko zwykły łuk
+				FunctionsTools.functionalAddition(transition, arc, place);
+				//place.modifyTokensNumber(arc.getWeight());
+			}
+		}
+		transitions.remove(transition);
 	}
 
 	/**
@@ -745,6 +725,7 @@ public class NetSimulator {
 	 * Metoda pozwala ustawić czy symulator będzie zapamiętywac historię kroków.
 	 * @param status boolean - true, jeśli ma być zapisywana historia stanów
 	 */
+	@SuppressWarnings("unused")
 	public void setHistoryMode(boolean status) {
 		this.writeHistory = status;
 	}
@@ -774,10 +755,7 @@ public class NetSimulator {
 	}
 
 	private ArrayList<Transition> cloneTransitionArray(ArrayList<Transition> transitions) {
-		ArrayList<Transition> newArray = new ArrayList<Transition>();
-		for (Transition transition : transitions)
-			newArray.add(transition);
-		return newArray;
+		return new ArrayList<>(transitions);
 	}
 
 	// ================================================================================
@@ -912,7 +890,7 @@ public class NetSimulator {
 				} else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
 					if (remainingTransitionsAmount == 0) {
 						timeCounter++;
-						overlord.io.updateTimeStep(""+timeCounter);
+						overlord.io.updateTimeStep(false, timeCounter, 0);
 						overlord.simSettings.currentStep = timeCounter;
 						
 						launchingTransitions = engine.getTransLaunchList(emptySteps);
@@ -920,7 +898,7 @@ public class NetSimulator {
 					}
 					
 					//tutaj dodawany jest nowy krok w symulacji:
-					if(isHistoryMode() == true) {
+					if(isHistoryMode()) {
 						actionStack.push(new SimulationStep(SimulatorMode.STEP, cloneTransitionArray(launchingTransitions)));
 						if (actionStack.peek().getPendingTransitions() == null) {
 							overlord.log("Unknown problem in actionPerformed(ActionEvent event) in NetSimulator class.", "error", true);
@@ -1011,7 +989,7 @@ public class NetSimulator {
 				} else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
 					if (remainingTransitionsAmount == 0) {
 						timeCounter++;
-						overlord.io.updateTimeStep(""+timeCounter);
+						overlord.io.updateTimeStep(false, timeCounter, 0);
 						overlord.simSettings.currentStep = timeCounter;
 						
 						launchingTransitions = engine.getTransLaunchList(emptySteps);
@@ -1111,7 +1089,7 @@ public class NetSimulator {
 					executeScheduledStop();
 				} else if (!actionStack.empty()) { // if steps remaining
 					timeCounter--;
-					overlord.io.updateTimeStep(""+timeCounter);
+					overlord.io.updateTimeStep(false,timeCounter, 0);
 					overlord.simSettings.currentStep = timeCounter;
 					
 					//tutaj zdejmowany jest ostatni wykonany krok w symulacji:

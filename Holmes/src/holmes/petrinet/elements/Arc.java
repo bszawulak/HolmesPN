@@ -32,11 +32,10 @@ public class Arc extends PetriNetElement {
     private boolean isCorrect = false;
     private int weight = 1;
     public boolean isTransportingTokens = false;
-    private int simulationStep = 0;
+    private int graphicalSimulationSteps = 0;
     private boolean simulationForwardDirection = true;
 
     private ArrayList<Point> breakPoints;
-    private boolean isBreakArc = false;
 
     //colors:
     private int weight1green = 0;
@@ -248,26 +247,12 @@ public class Arc extends PetriNetElement {
      */
     public void setColorWeight(int w, int i) {
         switch (i) {
-            case 0:
-                this.weight = w;
-                break;
-            case 1:
-                this.weight1green = w;
-                break;
-            case 2:
-                this.weight2blue = w;
-                break;
-            case 3:
-                this.weight3yellow = w;
-                break;
-            case 4:
-                this.weight4grey = w;
-                break;
-            case 5:
-                this.weight5black = w;
-                break;
-            default:
-                this.weight = w;
+            case 1 -> this.weight1green = w;
+            case 2 -> this.weight2blue = w;
+            case 3 -> this.weight3yellow = w;
+            case 4 -> this.weight4grey = w;
+            case 5 -> this.weight5black = w;
+            default -> this.weight = w;
         }
     }
 
@@ -362,11 +347,11 @@ public class Arc extends PetriNetElement {
         if (!this.isTransportingTokens)
             return;
 
-        int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
-        this.simulationStep++;
+        int GRAPHICAL_STEPS_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
+        this.graphicalSimulationSteps++;
 
-        if (this.getSimulationStep() > STEP_COUNT) {
-            this.setSimulationStep(0);
+        if (this.getGraphicalSimulationSteps() > GRAPHICAL_STEPS_COUNTER) {
+            this.setGraphicalSimulationSteps(0);
             this.setTransportingTokens(false);
         }
     }
@@ -583,7 +568,7 @@ public class Arc extends PetriNetElement {
      */
     public void setTransportingTokens(boolean isTransportingTokens) {
         this.isTransportingTokens = isTransportingTokens;
-        this.setSimulationStep(0);
+        this.setGraphicalSimulationSteps(0);
         if (!isTransportingTokens) {
             if (isSimulationForwardDirection()) {
                 if (getStartNode().getType() == PetriNetElementType.TRANSITION)
@@ -597,20 +582,18 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala pobrać aktualny krok wizualizacji symulacji.
-     *
-     * @return int - numer aktualnego kroku wizualizacji symulacji
+     * @return (<b>int</b>) - numer aktualnego kroku wizualizacji symulacji
      */
-    public int getSimulationStep() {
-        return simulationStep;
+    public int getGraphicalSimulationSteps() {
+        return graphicalSimulationSteps;
     }
 
     /**
      * Metoda pozwala ustawić aktualny krok wizualizacji symulacji.
-     *
-     * @param value int - numer kroku symulacji
+     * @param value (<b>int</b>) numer kroku symulacji.
      */
-    private void setSimulationStep(int value) {
-        this.simulationStep = value;
+    private void setGraphicalSimulationSteps(int value) {
+        this.graphicalSimulationSteps = value;
     }
 
     /**
@@ -712,7 +695,6 @@ public class Arc extends PetriNetElement {
      */
     public void addBreakPoint(Point breakP) {
         this.breakPoints.add(breakP);
-        isBreakArc = true;
     }
 
     /**
@@ -720,7 +702,6 @@ public class Arc extends PetriNetElement {
      */
     public void clearBreakPoints() {
         this.breakPoints.clear();
-        isBreakArc = false;
     }
 
     public void updateAllBreakPointsLocations(Point delta) {
@@ -784,8 +765,6 @@ public class Arc extends PetriNetElement {
         Point toRemove = checkBreakIntersection(breakP);
         if (toRemove != null) {
             breakPoints.remove(toRemove);
-            if (breakPoints.size() == 0)
-                isBreakArc = false;
         }
     }
 
@@ -857,6 +836,7 @@ public class Arc extends PetriNetElement {
     }
 
 
+    @SuppressWarnings("unused")
     public int getMemoryOfArcWeight() {
         return memoryOfArcWeight;
     }

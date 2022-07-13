@@ -198,11 +198,8 @@ public final class ElementDraw {
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 						
 						try {
-							//BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/selectedSign.png"));
-							//g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), nodeBounds.y-(trans.getRadius()+2));
-
 							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.black, xTPNtrans);
-						} catch (Exception e) { }
+						} catch (Exception ignored) { }
 					}
 				}
 
@@ -242,8 +239,8 @@ public final class ElementDraw {
 				g.setColor(back);
 
 				if(trans.qSimDrawed && el.qSimDrawed) {
-					int w = nodeBounds.width;
-					int h = nodeBounds.height;
+					//int w = nodeBounds.width;
+					//int h = nodeBounds.height;
 					if(trans.qSimFired == 0) {
 						
 						if(trans.qSimDrawStats) {
@@ -356,7 +353,7 @@ public final class ElementDraw {
 						else if(timeInfo.length() < 12)
 							offset = -7;
 						
-						g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y + -4);
+						g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y - 4);
 					}
 					
 					if(trans.getDPNstatus()) {
@@ -367,7 +364,7 @@ public final class ElementDraw {
 							dur = " # / "+dur;
 						}
 						dur = "("+dur+")";
-						int offset = -9;
+						int offset;
 						if(dur.length() < 7)
 							offset = 2;
 						else if(dur.length() < 9)
@@ -398,69 +395,6 @@ public final class ElementDraw {
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 				} else if(trans.getTransType() == TransitionType.XTPN) { //tranzycja XTPN
 					// _XTPN mark
-
-					/*
-					g.setColor(Color.blue);
-					g.setFont(f_Big);
-					int franctionDigits = trans.getFraction_xTPN();
-					if(trans.isAlphaActiveXTPN()) {
-						String alfa = "\u03B1:" + Tools.cutValueExt(trans.getAlphaMin_xTPN(), franctionDigits) + " / "
-								+ Tools.cutValueExt(trans.getAlphaMax_xTPN(), franctionDigits);
-
-						if(!trans.isBetaActiveXTPN()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
-							g.drawString(alfa, nodeBounds.x - 20, nodeBounds.y - 4);
-						} else {
-							g.drawString(alfa, nodeBounds.x - 20, nodeBounds.y - 20);
-						}
-					}
-					if(trans.isBetaActiveXTPN()) {
-						g.setColor(darkGreen);
-						String beta = "\u03B2:" + Tools.cutValueExt(trans.getBetaMin_xTPN(), franctionDigits) + " / "
-								+ Tools.cutValueExt(trans.getBetaMax_xTPN(), franctionDigits);
-						g.drawString(beta, nodeBounds.x - 20, nodeBounds.y - 4);
-					}
-					*/
-					/*
-					int franctionDigits = trans.getFraction_xTPN();
-					g.setFont(f_BigL);
-					if(trans.isTauTimerVisible()) {
-						double alphaTime = trans.getTauAlpha_xTPN();
-						double betaTime = trans.getTauBeta_xTPN();
-						double u_alfaTime = trans.getTimer_Ualfa_XTPN();
-						double v_betaTime = trans.getTimer_Vbeta_XTPN();
-
-
-						String timerA = "";
-						String timerB = "";
-						g.setColor(Color.red);
-						if(alphaTime < 0 && betaTime < 0) {
-							timerA = "u\u279F\u03C4(\u03B1): #\u279F#";
-							g.drawString(timerA, nodeBounds.x + 40, nodeBounds.y + 12);
-							timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
-							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
-
-						} else if(alphaTime < 0) {
-							timerA = "u\u279F\u03C4(\u03B1): #\u279F#";
-							g.drawString(timerA, nodeBounds.x + 40, nodeBounds.y + 12);
-							timerB = "v\u279F\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, franctionDigits) + "\u279F"
-									+ Tools.cutValueExt(betaTime, franctionDigits);
-							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
-
-						} else if(betaTime < 0) {
-							timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, franctionDigits) + "\u279F"
-									+ Tools.cutValueExt(alphaTime, franctionDigits);
-							g.drawString(timerA, nodeBounds.x + 40, nodeBounds.y + 12);
-							timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
-							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
-						} else {
-							timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, franctionDigits) + "\u279F"
-									+ Tools.cutValueExt(alphaTime, franctionDigits);
-							g.drawString(timerA, nodeBounds.x + 40, nodeBounds.y + 12);
-							timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
-							g.drawString(timerB, nodeBounds.x + 40, nodeBounds.y + 26);
-						}
-					}
-					*/
 
 					//klepsydra:
 					g.setColor(Color.DARK_GRAY);
@@ -778,10 +712,8 @@ public final class ElementDraw {
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					
 					try {
-						//BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/selectedSign.png"));
-						//g.drawImage(img, null, nodeBounds.x-(place.getRadius()-4), nodeBounds.y-(place.getRadius()-4));
 						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.black, xTPNplace);
-					} catch (Exception e) {
+					} catch (Exception ignored) {
 						
 					}
 				} else if (el.isPortalSelected()) {
@@ -804,7 +736,7 @@ public final class ElementDraw {
 				}
 				g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				
-				if(eds.nonDefColors == false) {
+				if(!eds.nonDefColors) {
 					Color back = g.getColor(); // te 4 linie: lekki trojwymiar, ladniejsza
 					g.setColor(new Color(249,249,249));
 					g.fillOval(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width-3, nodeBounds.height-3);
@@ -823,8 +755,6 @@ public final class ElementDraw {
 				if(eds.crazyColors) {
 					g.setColor(getColor(place.getTokensNumber()));
 					g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					//g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					//g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					g.setColor(Color.DARK_GRAY);
 					g.setStroke(new BasicStroke(1.5F));
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -909,7 +839,7 @@ public final class ElementDraw {
 				}
 
 				//dodatkowy tekst nad miejscem
-				if(place.showAddText() == true) {
+				if(place.showAddText()) {
 					String txt = place.returnAddText();
 					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(txt) / 2);
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
@@ -993,7 +923,7 @@ public final class ElementDraw {
 				}
 				
 				//TODO: COLORS
-				if (eds.color == true || place.isColored) {
+				if (eds.color || place.isColored) {
 					Font currentFont = g.getFont();
 					Font newFont = currentFont.deriveFont(currentFont.getSize() * 1.4F);
 					g.setFont(newFont);
@@ -1059,15 +989,13 @@ public final class ElementDraw {
 				g.setColor(new Color(224,224,224));
 				g.setColor(Color.DARK_GRAY);
 				g.setStroke(new BasicStroke(1.5F));
-					
-				if(true) {
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					g.drawRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width, nodeBounds.height);
-					g.drawRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width, nodeBounds.height);
-					g.setColor(Color.LIGHT_GRAY);
-					g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				} 
-				
+
+				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				g.drawRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width, nodeBounds.height);
+				g.drawRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width, nodeBounds.height);
+				g.setColor(Color.LIGHT_GRAY);
+				g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
 				if(((MetaNode)node).getMetaType() == MetaType.SUBNETTRANS) {
 					g.setStroke(new BasicStroke(2F));
 					g.setColor(Color.RED);
@@ -1116,11 +1044,11 @@ public final class ElementDraw {
 		ArrayList<Point> breakPoints = arc.accessBreaks();
 		int breaks = breakPoints.size();
 
-		Point startP = new Point((Point)arc.getStartLocation().getPosition());
+		Point startP = new Point(arc.getStartLocation().getPosition());
 		Point endP = new Point();
 		int endRadius = 0;
 		if (arc.getEndLocation() == null) {
-			endP = (Point)arc.getTempEndPoint();
+			endP = arc.getTempEndPoint();
 		} else {
 			endP = (Point)arc.getEndLocation().getPosition().clone();
 			endRadius = arc.getEndLocation().getParentNode().getRadius();// * zoom / 100;
@@ -1298,8 +1226,6 @@ public final class ElementDraw {
 				yl = endP.y + (endRadius + 20) * alfaSin * sign - M * alfaCos;
 				xk = endP.x + (endRadius + 20) * alfaCos * sign - M * alfaSin;
 				yk = endP.y + (endRadius + 20) * alfaSin * sign + M * alfaCos;
-				//double newxp = endP.x - (endRadius-45) * alfaCos * sign;
-				//double newyp = endP.y - (endRadius-45) * alfaSin * sign;
 
 				g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk },
 						new int[] { (int) yp, (int) yl, (int) yk }, 3);
@@ -1320,14 +1246,12 @@ public final class ElementDraw {
 	    	if(arc.qSimForcedArc) {
 				g.setColor(arc.qSimForcedColor);
 				g.setStroke(new BasicStroke(4));
-				g.drawOval((int)(xPos-6-xT), (int)(yPos-6-yT), 12, 12);
+				g.drawOval(xPos-6-xT, yPos-6-yT, 12, 12);
 	    	} else {
-	    		g.drawOval((int)(xPos-5-xT), (int)(yPos-5-yT), 10, 10);
+	    		g.drawOval(xPos-5-xT, yPos-5-yT, 10, 10);
 	    	}
 	    	
 		} else if (arc.getArcType() == TypeOfArc.RESET) {
-			//g.fillPolygon(new int[] { (int) xp+leftRight, (int) xl+leftRight, (int) xk+leftRight }, 
-			//		new int[] { (int) yp+upDown, (int) yl+upDown, (int) yk+upDown }, 3);
 			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
 			
@@ -1337,9 +1261,7 @@ public final class ElementDraw {
 			yk = endP.y + (endRadius + 30) * alfaSin * sign + M * alfaCos;
 			double newxp = endP.x - (endRadius-45) * alfaCos * sign;
 			double newyp = endP.y - (endRadius-45) * alfaSin * sign;
-			
-			//g.fillPolygon(new int[] { (int) newxp, (int) xl+leftRight, (int) xk+leftRight }, 
-			//		new int[] { (int) newyp, (int) yl+upDown, (int) yk+upDown }, 3);
+
 			g.fillPolygon(new int[] { (int) newxp, (int) xl, (int) xk }, 
 					new int[] { (int) newyp, (int) yl, (int) yk }, 3);
 		} else if (arc.getArcType() == TypeOfArc.EQUAL) {
@@ -1348,12 +1270,12 @@ public final class ElementDraw {
 	    	int xT = (int) ((xPos - xp)/3.14);
 	    	int yT = (int) ((yPos - yp)/3.14);
 	    	
-	    	g.fillOval((int)(xPos-4-xT), (int)(yPos-4-yT), 8, 8);
+	    	g.fillOval(xPos-4-xT, yPos-4-yT, 8, 8);
 	    	
 	    	xT = (int) ((xPos - xp));
 	    	yT = (int) ((yPos - yp));
 	    	
-	    	g.fillOval((int)(xPos-4+xT), (int)(yPos-4+yT), 8, 8);
+	    	g.fillOval(xPos-4+xT, yPos-4+yT, 8, 8);
 		} else if (arc.getArcType() == TypeOfArc.META_ARC) {
 			double Mmeta = 6;
 			double xpmeta = endP.x + (endRadius-10) * alfaCos * sign;
@@ -1364,8 +1286,6 @@ public final class ElementDraw {
 			double ykmeta = endP.y + (endRadius + 13) * alfaSin * sign + Mmeta * alfaCos;
 			
 			g.setColor( new Color(30, 144, 255, 250));
-			//g.fillPolygon(new int[] { (int) xpmeta+leftRight, (int) xlmeta+leftRight, (int) xkmeta+leftRight }, 
-			//		new int[] { (int) ypmeta+upDown, (int) ylmeta+upDown, (int) ykmeta+upDown }, 3);
 			g.fillPolygon(new int[] { (int) xpmeta, (int) xlmeta, (int) xkmeta }, 
 					new int[] { (int) ypmeta, (int) ylmeta, (int) ykmeta }, 3);
 		}
@@ -1487,13 +1407,13 @@ public final class ElementDraw {
 			g.setStroke(new BasicStroke(4));
 		}
 		
-		g.drawLine(startP.x, startP.y, (int) breaksVector.get(0).x, (int) breaksVector.get(0).y);
+		g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 
 		if(arc.isColorChanged()) {
 			Color oldColor = g.getColor();
 			g.setColor(arc.getArcNewColor());
 			g.setStroke(EditorResources.glowStrokeArc);
-			g.drawLine(startP.x, startP.y, (int) breaksVector.get(0).x, (int) breaksVector.get(0).y);
+			g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 			g.setColor(oldColor);
 		}
 
@@ -1501,7 +1421,7 @@ public final class ElementDraw {
 			Color oldColor = g.getColor();
 			g.setColor(EditorResources.glowMTCTransitonColorLevel3);
 			g.setStroke(EditorResources.glowStrokeArc);
-			g.drawLine(startP.x, startP.y, (int) breaksVector.get(0).x, (int) breaksVector.get(0).y);
+			g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 			g.setColor(oldColor);
 		}
 
@@ -1511,12 +1431,12 @@ public final class ElementDraw {
 				g.setColor(Color.black);
 				Stroke backup = g.getStroke();
 				g.setStroke(new BasicStroke(3));
-				g.drawLine(startP.x+move, startP.y+move, (int) breaksVector.get(0).x+move, (int) breaksVector.get(0).y+move);
+				g.drawLine(startP.x+move, startP.y+move, breaksVector.get(0).x +move, breaksVector.get(0).y +move);
 				g.setColor(color);
 				g.setStroke(new BasicStroke(2));
-				g.drawLine(startP.x + move, startP.y + move, (int) breaksVector.get(0).x + move, (int) breaksVector.get(0).y + move);
-				g.drawLine(startP.x + move, startP.y + move, (int) breaksVector.get(0).x + move, (int) breaksVector.get(0).y + move);
-				g.drawLine(startP.x + move, startP.y + move, (int) breaksVector.get(0).x + move, (int) breaksVector.get(0).y + move);
+				g.drawLine(startP.x + move, startP.y + move, breaksVector.get(0).x + move, breaksVector.get(0).y + move);
+				g.drawLine(startP.x + move, startP.y + move, breaksVector.get(0).x + move, breaksVector.get(0).y + move);
+				g.drawLine(startP.x + move, startP.y + move, breaksVector.get(0).x + move, breaksVector.get(0).y + move);
 				g.setStroke(backup);
 				move = move + 3;
 			}
@@ -1525,7 +1445,7 @@ public final class ElementDraw {
 		for(int b=1; b<breaks; b++) {
 			Point breakPoint = breaksVector.get(b-1);
 			g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
-			g.fillOval((int)(breakPoint.x-3), (int)(breakPoint.y-3), 6, 6);
+			g.fillOval(breakPoint.x-3, breakPoint.y-3, 6, 6);
 
 			if(arc.isColorChanged() ) {
 				Color oldColor = g.getColor();
@@ -1547,19 +1467,19 @@ public final class ElementDraw {
 				g.setColor(Color.black);
 				Stroke backup = g.getStroke();
 				g.setStroke(new BasicStroke(3));
-				g.drawLine(breakPoint.x+move, breakPoint.y+move, (int) breaksVector.get(b).x+move, (int) breaksVector.get(b).y+move);
+				g.drawLine(breakPoint.x+move, breakPoint.y+move, breaksVector.get(b).x +move, breaksVector.get(b).y+move);
 				g.setColor(color);
 				g.setStroke(new BasicStroke(2));
-				g.drawLine(breakPoint.x+move, breakPoint.y+move, (int) breaksVector.get(b).x+move, (int) breaksVector.get(b).y+move);
-				g.drawLine(breakPoint.x+move, breakPoint.y+move, (int) breaksVector.get(b).x+move, (int) breaksVector.get(b).y+move);
-				g.drawLine(breakPoint.x+move, breakPoint.y+move, (int) breaksVector.get(b).x+move, (int) breaksVector.get(b).y+move);
+				g.drawLine(breakPoint.x+move, breakPoint.y+move, breaksVector.get(b).x+move, breaksVector.get(b).y+move);
+				g.drawLine(breakPoint.x+move, breakPoint.y+move, breaksVector.get(b).x+move, breaksVector.get(b).y+move);
+				g.drawLine(breakPoint.x+move, breakPoint.y+move, breaksVector.get(b).x+move, breaksVector.get(b).y+move);
 				g.setStroke(backup);
 				move=move+3;
 			}
 		}
 		Point lastPoint = breaksVector.get(breaks-1);
 		g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
-		g.fillOval((int)(lastPoint.x-3), (int)(lastPoint.y-3), 6, 6);
+		g.fillOval(lastPoint.x-3, lastPoint.y-3, 6, 6);
 		if(arc.isColorChanged()) {
 			Color oldColor = g.getColor();
 			g.setColor(arc.getArcNewColor());
@@ -1581,12 +1501,12 @@ public final class ElementDraw {
 				g.setColor(Color.black);
 				Stroke backup = g.getStroke();
 				g.setStroke(new BasicStroke(3));
-				g.drawLine(lastPoint.x+move, lastPoint.y+move, (int) endPx+move, (int) endPy+move);
+				g.drawLine(lastPoint.x+move, lastPoint.y+move, endPx+move, endPy+move);
 				g.setColor(color);
 				g.setStroke(new BasicStroke(2));
-				g.drawLine(lastPoint.x + move, lastPoint.y + move, (int) endPx + move, (int) endPy + move);
-				g.drawLine(lastPoint.x + move, lastPoint.y + move, (int) endPx + move, (int) endPy + move);
-				g.drawLine(lastPoint.x + move, lastPoint.y + move, (int) endPx + move, (int) endPy + move);
+				g.drawLine(lastPoint.x + move, lastPoint.y + move, endPx + move, endPy + move);
+				g.drawLine(lastPoint.x + move, lastPoint.y + move, endPx + move, endPy + move);
+				g.drawLine(lastPoint.x + move, lastPoint.y + move, endPx + move, endPy + move);
 				g.setStroke(backup);
 				move = move + 3;
 			}
@@ -1822,31 +1742,29 @@ public final class ElementDraw {
 	 */
 	public static void drawMovingToken(Graphics2D g, int sheetId, Arc arc) {
 		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
-		int step = arc.getSimulationStep();
-		int weight = 0; //arc.getWeight();
+		int step = arc.getGraphicalSimulationSteps();
+		int weight; //arc.getWeight();
 		
-		if (!arc.isTransportingTokens || arc.getLocationSheetId() != sheetId  || step > STEP_COUNT) {
+		if (!arc.isTransportingTokens || arc.getLocationSheetId() != sheetId  || step > STEP_COUNT) { //koniec rysowania ruchu tokenów
 			return;
-		} else {
 		}
 
 		weight = arc.getWeight();
-		ArrayList<Point> breakPoints = null;
-		int breaks = 0;
-		breaks = (breakPoints=arc.accessBreaks()).size(); //pro...
+		ArrayList<Point> breakPoints;
+		int breaks = (breakPoints=arc.accessBreaks()).size(); //pro...
 		Point startPos = arc.getStartLocation().getPosition();
 		Point endPos = arc.getEndLocation().getPosition();
 		
 
 		double arcWidth = 0;
-		double stepSize = 0;
+		double stepSize;
 		if(breaks > 0) { //o żesz...
 			handleBrokenArc(g, STEP_COUNT, step, breakPoints, breaks, startPos, endPos, arcWidth, weight, arc);
 		} else {
 			arcWidth = Math.hypot(startPos.x - endPos.x, startPos.y - endPos.y); //suma po breakach, potem wybrać odcinek, a potem jego dlugość
 			stepSize = arcWidth / (double) STEP_COUNT;
-			double a = 0;
-			double b = 0;
+			double a;
+			double b;
 			if (arc.isSimulationForwardDirection()) {
 				a = startPos.x - stepSize * step * (startPos.x - endPos.x) / arcWidth;
 				b = startPos.y - stepSize * step * (startPos.y - endPos.y) / arcWidth;
@@ -1901,7 +1819,7 @@ public final class ElementDraw {
 	private static void handleBrokenArc(Graphics2D g, int STEP_COUNT, int step, ArrayList<Point> breakPoints,
 			int breaks, Point startPos, Point endPos, double arcWidth, int weight, Arc arc) {
 		double stepSize;
-		double tmp = 0;
+		double tmp;
 		double a = 0;
 		double b = 0;
 		

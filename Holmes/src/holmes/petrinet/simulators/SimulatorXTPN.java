@@ -22,7 +22,7 @@ public class SimulatorXTPN implements IEngine {
     private ArrayList<Place> places = null;
     private ArrayList<Integer> transitionsIndexList = null;
     private ArrayList<Transition> launchableTransitions = null;
-    private IRandomGenerator generator = null;
+    private IRandomGenerator generator;
 
     /**
      * Klasa kontener, informacje o następnej zmianie stanu sieci XTPN.
@@ -113,6 +113,8 @@ public class SimulatorXTPN implements IEngine {
         ArrayList<NextXTPNstep> placesAging = new ArrayList<>();
         ArrayList<NextXTPNstep> transProdStart = new ArrayList<>();
         ArrayList<NextXTPNstep> transProdEnd = new ArrayList<>();
+        //ArrayList<NextXTPNstep> transInputClassical = null; //new ArrayList<>(); //wypełnione później, poza metodą
+        //ArrayList<NextXTPNstep> transOtherClassical = null; //new ArrayList<>(); //wypełnione jeszcze później, po aktualizacji czasów
         double currentMinTime = Double.MAX_VALUE;
 
         for(Place place : places) { //znajdź najmniejszy czas do zmiany w miejscach
@@ -132,8 +134,8 @@ public class SimulatorXTPN implements IEngine {
                         // wcześniejsze rekordy, jeśli istnieją, zajdą za późniejszy czas:
                         placesMaturity.clear();
                         placesAging.clear();
-                        transProdStart.clear();
-                        transProdEnd.clear();
+                        //transProdStart.clear(); //na tym etapie są jeszcze puste, pozostawić ten komentarz
+                        //transProdEnd.clear();
 
                         placesMaturity.add(new NextXTPNstep(place, timeDifference, 0)); //token dojrzeje za timeDifference
                         currentMinTime = timeDifference;
@@ -148,8 +150,8 @@ public class SimulatorXTPN implements IEngine {
                         // wcześniejsze rekordy, jeśli istnieją, zajdą za późniejszy czas:
                         placesMaturity.clear();
                         placesAging.clear();
-                        transProdStart.clear();
-                        transProdEnd.clear();
+                        //transProdStart.clear(); //na tym etapie są jeszcze puste, pozostawić ten komentarz
+                        //transProdEnd.clear();
 
                         placesAging.add(new NextXTPNstep(place, timeDifference, 1));  //token zniknie za timeDifference
                         currentMinTime = timeDifference;
@@ -157,6 +159,7 @@ public class SimulatorXTPN implements IEngine {
                 }
             }
         }
+
         for(Transition transition : transitions) { //znajdź najmniejszy czas do zmiany w tranzycjach
             double tauAlpha = transition.getTauAlpha_xTPN();
             double tauBeta = transition.getTauBeta_xTPN();
@@ -200,12 +203,14 @@ public class SimulatorXTPN implements IEngine {
         stateVector.add(placesAging);
         stateVector.add(transProdStart);
         stateVector.add(transProdEnd);
+        stateVector.add(null); //miejsce na klasyczne aktywne wejściowe
+        stateVector.add(null); //miejsce na klasyczne aktywne wewnętrzne / wyjściowe
 
         int elements = placesMaturity.size() + placesAging.size() + transProdStart.size() + transProdEnd.size();
         ArrayList<NextXTPNstep> specialVector = new ArrayList<>();
         specialVector.add( new NextXTPNstep(null, currentMinTime, elements) );
         //ostatnia, piąta lista zawiera tylko jeden wpis, informujący ile obiektów
-        //NextXTPNstep łącznie wpisano oraz jaki jest minimalny czas.
+        //NextXTPNstep łącznie wpisano do tej pory oraz jaki jest minimalny czas.
         stateVector.add(specialVector);
         return stateVector;
     }
@@ -214,53 +219,135 @@ public class SimulatorXTPN implements IEngine {
      * Metoda zwiększa czas wszystkich czasowych komponentów sieci XTPN o zadaną wielkość.
      * @param tau (<b>double</b>) wartość czasu.
      */
-    public void updateState(double tau) {
+    public void updateNetTime(double tau) {
         for(Place place : places) {
             if(place.isGammaModeActiveXTPN()) { //tylko dla miejsc czasowych
                 place.incTokensTime_XTPN(tau);
             }
         }
-
         for(Transition transition : transitions) {
             if(transition.isAlphaActiveXTPN() && transition.isActivated_xTPN()) { //aktywna tranzycja Alfa
                 transition.updateTimerAlfa_XTPN(tau);
+                transition.setActivationStatusXTPN(true);
                 continue;
             }
 
             if(transition.isBetaActiveXTPN() && transition.isProducing_xTPN()) { //produkująca tranzycja Beta
                 transition.updateTimerBeta_XTPN(tau);
+                transition.setProductionStatus_xTPN(true);
                 continue;
             }
-
-
         }
     }
 
-    private void activateState() {
-        for(Place place : places) {
-            place.removeOldTokens_XTPN();
-        }
+    /**
+     * Aktywacja tranzycji XTPN. W przypadku gdy aktywna jest tranzycja z alfa=beta=OFF, wtedy
+     * dodawana jest do listy zwracanej jako wynik.
+     * @return (<b>ArrayList[NextXTPNstep]</b>) - lista tranzycji klasycznych aktywnych.
+     */
+    public ArrayList<NextXTPNstep> activateTransitionsInNewTimeState() {
+        ArrayList<NextXTPNstep> classicalInternalTransitions = new ArrayList<>();
 
         for(Transition transition : transitions) {
-            if(transition.getActiveStatusXTPN()) { //jeśli aktywna (ale nie produkuje, in-checked)
-                if(!transition.isActivated_xTPN() && transition.isAlphaActiveXTPN()) {
+            //produkujące nas nie interesują, ani też już aktywne:
+            if(transition.isProducing_xTPN() || transition.isActivated_xTPN())
+                continue;
+
+            if(transition.getActiveStatusXTPN()) { //czy tranzycja jest aktywna?
+                /**
+                 * Tutaj do rozważenia: technicznie mogą istnieć tokeny, które są maks. stare, ale jeszcze są w multizbiorze
+                 * i jakakolwiek tranzycja aktywna dzięki nim, może przestać być aktywna w nowym stanie...
+                 * Z drugiej strony, aktywowane tutaj tranzycje długo takimi nie będą, a klasyczne mają szansę się jeszcze odpalić (time=0).
+                 */
+                if(transition.isAlphaActiveXTPN()) { //typ alfa
                     double min = transition.getAlphaMin_xTPN();
                     double max = transition.getAlphaMax_xTPN();
-                    double range =  max - min;
-                    if(range < sg.calculationsAccuracy) { //alfaMin=Max lub zero
-                        transition.setTimerAlfa_XTPN(transition.getAlphaMax_xTPN());
-                    } else {
-                        double timer = generator.nextDouble(min, max);
+
+                    transition.setTauAlpha_xTPN( getRandomValue(min, max) );
+                    transition.setActivationStatusXTPN(true);
+                    continue;
+                } else if(transition.getActiveStatusXTPN()) { //tylko typ beta
+                    double min = transition.getBetaMin_xTPN();
+                    double max = transition.getBetaMax_xTPN();
+
+                    transition.setTauBeta_xTPN( getRandomValue(min, max) );
+                    transition.setProductionStatus_xTPN(true);
+                    continue;
+                } else { //ani alfa, ani beta:
+                    classicalInternalTransitions.add( new NextXTPNstep(transition, -1, 2));
+                    //technicznie typ 2 i 3: tak tranzycja jeśli się uruchomi zabierze tokeny oraz wyprodukuje
+                    //natychmiast nowe
+                }
+            }
+        }
+        return classicalInternalTransitions;
+    }
+
+    /**
+     * Metoda aktywuje wszystkie nieaktywowane i nieprodukujące tranzycje wejściowe. Jeśli są
+     * typu non-alfa i non-beta, to dodaje taką do listy uruchomień na później (bo i tak nie ma
+     * jak ustawić zegara czasowego).
+     * Dodatkowo sprawdza, czy aktywne tranzycje wciąż mogą takie pozostać. Jak nie - deaktywuje.
+     *
+     * @return (<b>ArrayList[NextXTPNstep]</b>) - lista klasycznych, wejściowych i aktywnych tranzycji.
+     */
+    public ArrayList<NextXTPNstep> revalidateNetState() {
+        ArrayList<NextXTPNstep> classicalInputOnes = new ArrayList<>(); //klasyczne wejściowe będą uruchamiane osobno 50/50
+        //tutaj uruchamiany tranzycje wejściowe, one są niewrażliwe na zmiany w tokenach
+        for(Transition transition : transitions) {
+            if(!transition.isActivated_xTPN() && !transition.isProducing_xTPN()) { //nieaktywowana, nieprodukująca
+                if(transition.getInArcs().size() == 0) { //tranzycja wejściowa, więc aktywna teoretycznie
+                    if(transition.isAlphaActiveXTPN()) { //typ alfa, ustaw zegar
+                        double min = transition.getAlphaMin_xTPN();
+                        double max = transition.getAlphaMax_xTPN();
+
+                        transition.setTauAlpha_xTPN( getRandomValue(min, max) );
+                        transition.setActivationStatusXTPN(true);
+                        continue;
+                    } else if(transition.getActiveStatusXTPN()) { //tylko typ beta
+                        double min = transition.getBetaMin_xTPN();
+                        double max = transition.getBetaMax_xTPN();
+
+                        transition.setTauBeta_xTPN( getRandomValue(min, max) );
+                        transition.setProductionStatus_xTPN(true);
+                        continue;
+                    } else { //ani alfa, ani beta
+                        classicalInputOnes.add( new NextXTPNstep(transition, -1, 3));
+                        //technicznie typ 3: productionEnds, bo ta tranzycja niczego nie zabierze, ale (być może)
+                        //uruchomi się w obliczanym stanie (P=50/50) i wyprodukuje tokeny.
                     }
                 }
             }
+            //tutaj trzeba jednak sprawdzić globalny stan, pod koniec ostatniego mogły zniknąć zbyt stare tokeny:
+            if(transition.isActivated_xTPN()) {
+                if(transition.getInArcs().size() == 0)
+                    continue; //wejściowa, jak jest aktywna, to pozostanie
 
-            if(!transition.isProducing_xTPN()) {
-
+                if(!transition.getActiveStatusXTPN()) {
+                    transition.deactivateXTPN();
+                }
             }
+
         }
+        return classicalInputOnes;
     }
 
+    /**
+     * Zwraca wartość losową pomiędzy min a max, jeśli są takie same, wtedy zwraca min. Chodzi o to, że
+     * zgadywanie czasu dla double jest problematyczne, i NIE CHCEMY uruchamiać .nextDouble gdy np.
+     * min i max są równe.
+     * @param min (<b>double</b>) minimalna wartość.
+     * @param max (<b>double</b>) maksymalna wartość.
+     * @return (<b>double</b>) - wartość losowa [min, max) lub min jeśli są równe.
+     */
+    private double getRandomValue(double min, double max) {
+        double range =  max - min;
+        if(range < sg.calculationsAccuracy) { //alfaMin=Max lub zero
+            return min;
+        } else {
+            return generator.nextDouble(min, max);
+        }
+    }
 
     /**
      * Metoda generuje zbiór tranzycji do uruchomienia w ramach symulatora.
@@ -295,7 +382,7 @@ public class SimulatorXTPN implements IEngine {
                     safetyCounter++;
                     if(safetyCounter == 9) { // safety measure
                         if(isPossibleStep(transitions) == false) {
-                            GUIManager.getDefaultGUIManager().log("Error, no active transition, yet generateValidLaunchingTransitions "
+                            GUIManager.getDefaultGUIManager().log("Error, no active transition but option: generateValidLaunchingTransitions "
                                     + "has been activated. Please advise authors if this error show up frequently.", "error", true);
                             generated = true;
                             //return launchableTransitions;

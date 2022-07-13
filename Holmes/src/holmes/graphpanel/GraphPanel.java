@@ -1154,6 +1154,8 @@ public class GraphPanel extends JComponent {
 				} else if (getDrawMode() == DrawModes.ERASER) { //kasowanie czegoś
 					if(overlord.reset.isSimulatorActiveWarning("Operation impossible when simulator is working.", "Warning"))
 						return;
+					if(overlord.reset.isXTPNSimulatorActiveWarning("Operation impossible when XTPN simulator is working.", "Warning"))
+						return;
 					
 					Object[] options = {"Delete", "Cancel",};
 					int n = JOptionPane.showOptionDialog(null, "Do you want to delete selected elements?",
@@ -1191,6 +1193,9 @@ public class GraphPanel extends JComponent {
 				if (getDrawMode() == DrawModes.ERASER) {
 					if(overlord.reset.isSimulatorActiveWarning(
 							"Operation impossible when simulator is working.", "Warning") == true)
+						return;
+					if(overlord.reset.isXTPNSimulatorActiveWarning(
+							"Operation impossible when XTPN simulator is working.", "Warning") == true)
 						return;
 					
 					Object[] options = {"Delete", "Cancel",};

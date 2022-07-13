@@ -1265,7 +1265,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		if(windowNetTables != null) {
 			if(!reset.isSimulatorActiveWarning("Warning: simulator active. Cannot proceed until manually stopped."
 					, "Net simulator working")) {
-				windowNetTables.setVisible(true);
+				if(!reset.isXTPNSimulatorActiveWarning("Warning: XTPN simulator active. Cannot proceed until manually stopped."
+						, "Net simulator working")) {
+					windowNetTables.setVisible(true);
+				}
 			}
 		}
 	}

@@ -50,7 +50,7 @@ public class Rprotocols implements Runnable {
 				commands = commandsPearson;
 				executeCHmetricScripts();
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 	}
@@ -94,7 +94,7 @@ public class Rprotocols implements Runnable {
 	
 	/**
 	 * Konstruktor parametrowy klasy, określa tryb pracy
-	 * @param mode
+	 * @param mode (<b>int</b>) tryb.
 	 */
 	public Rprotocols(int mode) {
 		this();
@@ -111,7 +111,7 @@ public class Rprotocols implements Runnable {
 		BufferedReader in = new BufferedReader(we);
 		String linia;
 		StringBuilder sb = new StringBuilder();
-		while ((linia = in.readLine()) != null) sb.append(linia+"\n");
+		while ((linia = in.readLine()) != null) sb.append(linia).append("\n");
 		in.close();
 		return sb.toString();
 	}

@@ -44,8 +44,8 @@ public final class Tools {
 	 * @throws IOException - się zepsuło się...
 	 */
 	public static void copyFileByPath(String source, String target) throws IOException{
-    	InputStream inStream = null;
-    	OutputStream outStream = null;
+    	InputStream inStream;
+    	OutputStream outStream;
    	    File file1 =new File(source);
    	    File file2 =new File(target);
    	    inStream = new FileInputStream(file1);
@@ -56,9 +56,9 @@ public final class Tools {
    	    while ((length = inStream.read(buffer)) > 0){
    	    	outStream.write(buffer, 0, length);
    	    }
-   	    
-   	    if (inStream != null)inStream.close();
-   	    if (outStream != null)outStream.close();
+
+		inStream.close();
+		outStream.close();
     }
 	
 	/**
@@ -67,8 +67,8 @@ public final class Tools {
 	 * @param target File - plik który zastępujemy kopiowanym
 	 */
 	public static void copyFileDirectly(File source, File target) {
-    	InputStream inStream = null;
-    	OutputStream outStream = null;
+    	InputStream inStream;
+    	OutputStream outStream;
    	    try {
 			inStream = new FileInputStream(source);
 			outStream = new FileOutputStream(target);
@@ -78,16 +78,13 @@ public final class Tools {
 	   	    while ((length = inStream.read(buffer)) > 0){
 	   	    	outStream.write(buffer, 0, length);
 	   	    }
-	   	    
-	   	    if (inStream != null)
-	   	    	inStream.close();
-	   	    if (outStream != null)
-	   	    	outStream.close();
+
+			inStream.close();
+			outStream.close();
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null,
 					"I/O operation failed for reason unknown. You can now start panicking.\nHave a nice day!",
 					"Critical error", JOptionPane.ERROR_MESSAGE);
-			return;
 		}
     }
 	
@@ -101,7 +98,7 @@ public final class Tools {
 	 */
 	public static String selectFileDialog(String lastPath, FileFilter[] filter, 
 			String buttonText, String buttonToolTip, String suggestedFileName) {
-		String resultPath = "";
+		String resultPath;
 		JFileChooser fc;
 		if(lastPath == null)
 			fc = new JFileChooser();
@@ -110,8 +107,8 @@ public final class Tools {
 		
 		fc.setFileView(new HolmesFileView());
 
-		for(int i=0; i<filter.length; i++) {
-			fc.addChoosableFileFilter(filter[i]);
+		for (FileFilter fileFilter : filter) {
+			fc.addChoosableFileFilter(fileFilter);
 		}
 		fc.setFileFilter(filter[0]);
 
@@ -139,7 +136,7 @@ public final class Tools {
 	
 	public static String selectNetSaveFileDialog(String lastPath, FileFilter[] filter, 
 			String buttonText, String buttonToolTip, String suggestedFileName) {
-		String resultPath = "";
+		String resultPath;
 		JFileChooser fc;
 		if(lastPath == null)
 			fc = new JFileChooser();
@@ -148,8 +145,8 @@ public final class Tools {
 		
 		fc.setFileView(new HolmesFileView());
 
-		for(int i=0; i<filter.length; i++) {
-			fc.addChoosableFileFilter(filter[i]);
+		for (FileFilter fileFilter : filter) {
+			fc.addChoosableFileFilter(fileFilter);
 		}
 		//TODO: detekcja domyślnego filtra
 		fc.setFileFilter(filter[0]);
@@ -186,10 +183,10 @@ public final class Tools {
 	 */
 	public static String selectDirectoryDialog(String lastPath, String buttonText, String buttonToolTip) {
 		String resultDir = "";
-		JFileChooser fc = null;
+		JFileChooser fc;
 		if(lastPath == null)
 			fc = new JFileChooser();
-		else if(lastPath == "")
+		else if(lastPath.equals(""))
 			fc = new JFileChooser();
 		else
 			fc = new JFileChooser(lastPath);
@@ -249,8 +246,9 @@ public final class Tools {
 	 * @param resPath String - ścieżka do zasobów
 	 * @return ImageIcon - ikona obrazek z zasobów
 	 */
+	@SuppressWarnings("ConstantConditions")
 	public static ImageIcon getResIcon16(String resPath) {
-		ImageIcon icon=null;
+		ImageIcon icon;
 		try {
 			icon = new ImageIcon(Tools.class.getResource(resPath));
 		} catch (Exception e) {
@@ -268,8 +266,9 @@ public final class Tools {
 	 * @param resPath String - ścieżka do zasobów
 	 * @return ImageIcon - ikona obrazek z zasobów
 	 */
+	@SuppressWarnings("ConstantConditions")
 	public static ImageIcon getResIcon22(String resPath) {
-		ImageIcon icon=null;
+		ImageIcon icon;
 		try {
 			icon = new ImageIcon(Tools.class.getResource(resPath));
 		} catch (Exception e) {
@@ -288,8 +287,9 @@ public final class Tools {
 	 * @param resPath String - ścieżka do zasobów
 	 * @return ImageIcon - ikona obrazek z zasobów
 	 */
+	@SuppressWarnings("ConstantConditions")
 	public static ImageIcon getResIcon32(String resPath) {
-		ImageIcon icon=null;
+		ImageIcon icon;
 		try {
 			icon = new ImageIcon(Tools.class.getResource(resPath));
 		} catch (Exception e) {
@@ -308,8 +308,9 @@ public final class Tools {
 	 * @param resPath String - ścieżka do zasobów
 	 * @return ImageIcon - ikona obrazek z zasobów
 	 */
+	@SuppressWarnings("ConstantConditions")
 	public static ImageIcon getResIcon48(String resPath) {
-		ImageIcon icon=null;
+		ImageIcon icon;
 		try {
 			icon = new ImageIcon(Tools.class.getResource(resPath));
 		} catch (Exception e) {
@@ -333,10 +334,11 @@ public final class Tools {
 	 * @param resPath String - ścieżka do source katalogu zasobów
 	 * @return Image - obiekt kurwa klasy Image, niegodny Jar'a jak się okazuje
 	 */
+	@SuppressWarnings("ConstantConditions")
 	public static Image getImageFromIcon(String resPath) {
 		resPath = resPath.toLowerCase();
-		ImageIcon icon = null;
-		Image result = null;
+		ImageIcon icon;
+		Image result;
 		try {
 			icon = new ImageIcon(Tools.class.getResource(resPath));
 			result = icon.getImage();
@@ -375,13 +377,15 @@ public final class Tools {
 			return source;
 		
 		int oldSize = source.length();
-		for(int i=0; i<size-oldSize; i++) {
+		StringBuilder sourceBuilder = new StringBuilder(source);
+		for(int i = 0; i<size-oldSize; i++) {
 			if(left)
-				source = " "+source;
+				sourceBuilder.insert(0, " ");
 			else
-				source += " ";
+				sourceBuilder.append(" ");
 		}
-		
+		source = sourceBuilder.toString();
+
 		return source;
 	}
 	
@@ -406,18 +410,12 @@ public final class Tools {
 	 * @return String - liczba
 	 */
 	public static String cutValueExt(double value, int howMany) {
-		//if(value > Integer.MAX_VALUE) {
-		//	return "\u221E";
-		//}
-
 		NumberFormat formatter = DecimalFormat.getInstance();
 		formatter.setMinimumFractionDigits(2);
 		formatter.setMaximumFractionDigits(howMany);
 		formatter.setRoundingMode(RoundingMode.HALF_UP);
 
-		String result = formatter.format(value);
-
-		return result;
+		return formatter.format(value);
 		/*
 		String format = "#.";
 		for(int i=0; i<howMany; i++)
@@ -450,7 +448,7 @@ public final class Tools {
 	 */
 	public static boolean overwriteDecision(String selectedFilePath) {
 		File file = new File(selectedFilePath);
-		if(file.exists() == true) {
+		if(file.exists()) {
 			String name = selectedFilePath;
 			int ind = name.lastIndexOf("\\");
 			if(ind > 1) {

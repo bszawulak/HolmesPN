@@ -12,8 +12,8 @@ import holmes.petrinet.elements.Transition.StochaticsType;
  */
 public class SPNdataVector {
 	private ArrayList<SPNtransitionData> dataVector;
-	private SPNvectorSuperType SPNvectorType = SPNvectorSuperType.SPN;
-	private String SPNvectorDescription = "";
+	private SPNvectorSuperType SPNvectorType;
+	private String SPNvectorDescription;
 	
 	/** SPN, SSA */
 	public enum SPNvectorSuperType { SPN, SSA }
@@ -99,8 +99,7 @@ public class SPNdataVector {
 		else {
 			try {
 				//TODO: moduł obliczania z funkcji:
-				double fr = Double.parseDouble(dataVector.get(index).ST_function);
-				return fr;
+				return Double.parseDouble(dataVector.get(index).ST_function);
 			} catch(Exception e) {
 				GUIManager.getDefaultGUIManager().log("Firing rate function evaluation failed for t"+index+", returning 1.0.", "warning", true);
 				return 1.0;
@@ -138,7 +137,7 @@ public class SPNdataVector {
 	
 	/**
 	 * Ustawia nowy typ wektora danych tranzycji SPN.
-	 * @param description SPNvectorSuperType - typ wektora
+	 * @param type SPNvectorSuperType - typ wektora
 	 */
 	public void setSyperType(SPNvectorSuperType type) {
 		this.SPNvectorType = type;

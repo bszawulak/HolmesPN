@@ -1,7 +1,6 @@
 package holmes.graphpanel.popupmenu;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.Serial;
 
 import javax.swing.JOptionPane;
 
@@ -18,6 +17,7 @@ import holmes.petrinet.elements.Place;
  * @author MR - dynamiczna wersja
  */
 public class PlacePopupMenu extends NodePopupMenu {
+	@Serial
 	private static final long serialVersionUID = -5062389148117837851L;
 
 	/**
@@ -48,40 +48,38 @@ public class PlacePopupMenu extends NodePopupMenu {
 		}
 		*/
 		
-		this.addMenuItem("Invisibility ON/OFF", "smallInvisibility.png", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
-					return;
-				
-				Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
-				if(n instanceof Place) {
-					if(n.isInvisible() == true)
-						n.setInvisibility(false);
-					else
-						n.setInvisibility(true);
-				}
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+		this.addMenuItem("Invisibility ON/OFF", "smallInvisibility.png", e -> {
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+				return;
+
+			Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
+			if(n instanceof Place) {
+				n.setInvisibility(!n.isInvisible());
 			}
+			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 		});
 		
 		if(pne == PetriNetElementType.TRANSITION || pne == PetriNetElementType.PLACE) {
-			this.addMenuItem("Clone this Place into Portal", "portal.png", new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
-						if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-								"Operation impossible when simulator is working."
-								, "Warning"))
-							return;
-						
-						//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
-						getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
-						GUIManager.getDefaultGUIManager().markNetChange();
-					} else {
-						JOptionPane.showMessageDialog(null, "Option possible for one place only.", "Too many selections", 
-								JOptionPane.INFORMATION_MESSAGE);
-					}
-					
+			this.addMenuItem("Clone this Place into Portal", "portal.png", e -> {
+				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
+					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+							"Operation impossible when simulator is working."
+							, "Warning"))
+						return;
+
+					if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
+							"Operation impossible when XTPN simulator is working."
+							, "Warning"))
+						return;
+
+					//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
+					getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
+					GUIManager.getDefaultGUIManager().markNetChange();
+				} else {
+					JOptionPane.showMessageDialog(null, "Option possible for one place only.", "Too many selections",
+							JOptionPane.INFORMATION_MESSAGE);
 				}
+
 			});
 		}
 
@@ -91,8 +89,11 @@ public class PlacePopupMenu extends NodePopupMenu {
 						"Operation impossible when simulator is working."
 						, "Warning"))
 					return;
+				if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
+						"Operation impossible when XTPN simulator is working."
+						, "Warning"))
+					return;
 
-				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
 				getGraphPanel().getSelectionManager().saveSubnet();
 				GUIManager.getDefaultGUIManager().markNetChange();
 			} else {

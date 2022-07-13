@@ -854,7 +854,7 @@ public class GUIOperations {
 		try{
 			int invNumber = 0;
 			if(overlord.getWorkspace().getProject().getT_InvMatrix() == null) {
-				overlord.log("Warning: unable to check if given clusters number ("+howMany+") exceeds invariants "
+				overlord.log("Warning: unable to check if a given number of clusters ("+howMany+") exceeds invariants "
 						+ "number. If so, the procedure may fail.", "warning", true);
 			} else {
 				invNumber = overlord.getWorkspace().getProject().getT_InvMatrix().size();
@@ -1046,13 +1046,25 @@ public class GUIOperations {
 		result[4] = clustersPath+"//"+algorithm+"_"+metric+"_dendrogram_ext_"+howMany+".pdf";
 		return result;
 	}
-	
+
 	/**
 	 * Metoda odpowiedzialna za wpisanie nowej wartości czasu/kroku w podoknie symulatora.
-	 * @param value String - nowa wartość kroku symulacji
+	 * @param XTPN (<b>boolean</b>) true, jeżeli mówimy o symulatorze XTPN.
+	 * @param stepsValue (<b>long</b>) liczba kroków symulacji (aktualna).
+	 * @param timeValue (<b>double</b>) aktualny czas od startu symulacji (XTPN).
 	 */
-	public void updateTimeStep(String value) {
-		overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText(value);
+	public void updateTimeStep(boolean XTPN, long stepsValue, double timeValue) {
+		try {
+			if (XTPN) {
+				overlord.getSimulatorBox().getCurrentDockWindow().stepLabelXTPN.setText("" + stepsValue);
+				overlord.getSimulatorBox().getCurrentDockWindow().timeLabelXTPN.setText(Tools.cutValueExt(timeValue, 6));
+			} else {
+				overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("" + stepsValue);
+			}
+		} catch (Exception e) {
+			overlord.log("Error trying to update simulator fields: (XTPN="+XTPN+"; stepsValue="+stepsValue+"; stepsValue="+stepsValue
+					, "error", true);
+		}
 	}
 	
 	public void markTransitions(int mode) {

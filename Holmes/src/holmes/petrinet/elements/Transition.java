@@ -121,16 +121,15 @@ public class Transition extends Node {
     private boolean alphaRangeVisibility_XTPN = true;
     private double alphaMin_xTPN = 0.0;
     private double alphaMax_xTPN = 0.0;
-
     private boolean betaMode_xTPN = true;
     private double betaMin_xTPN = 0.0;
     private double betaMax_xTPN = 0.0;
     private boolean betaRangeVisibility_XTPN = true;
-    private boolean tauTimersVisibility_XTPN = false; //czy wyświetlać timery
     private double tauAlpha_xTPN = -1.0;
     private double tauBeta_xTPN = -1.0;
     private double timer_Ualfa_XTPN = -1.0;
     private double timer_Vbeta_XTPN = -1.0;
+    private boolean tauTimersVisibility_XTPN = false; //czy wyświetlać timery
 
     //jeśli miejsca wejściowe tracą szybciej tokeny ze starości niż z
     //produkcji, zmniejszamy tau Alfa i Beta (prawdopodobieństwo).
@@ -219,7 +218,7 @@ public class Transition extends Node {
         for (ElementLocation el : getElementLocations()) {
             for (Arc arc : el.getInArcs()) {
                 Node n = arc.getStartNode();
-                if (!prePlaces.contains(n)) {
+                if (!prePlaces.contains((Place)n)) {
                     prePlaces.add((Place) n);
                 }
             }
@@ -489,9 +488,8 @@ public class Transition extends Node {
     }
 
     /**
-     * Metoda pozwala sprawdzić, czy tranzycja jest aktywna i może zostać odpalona.
-     *
-     * @return boolean - true, jeśli tranzycja jest aktywna i może zostać odpalona; false w przeciwnym wypadku
+     * Metoda pozwala sprawdzić, czy tranzycja jest aktywna i może zostać uruchomiona.
+     * @return (<b>boolean</b>) - true, jeśli tranzycja jest aktywna i może zostać uruchomiona; false w przeciwnym wypadku.
      */
     public boolean isActive() {
         if (offline)
@@ -991,7 +989,7 @@ public class Transition extends Node {
                 continue;
 
             FunctionContainer fc = new FunctionContainer(this);
-            int placeIndex = places.indexOf(arc.getStartNode());
+            int placeIndex = places.indexOf((Place)arc.getStartNode());
             fc.fID = "p" + placeIndex + "-->T";
             fc.arc = arc;
             fc.inTransArc = true;
@@ -1003,7 +1001,7 @@ public class Transition extends Node {
                 continue;
 
             FunctionContainer fc = new FunctionContainer(this);
-            int placeIndex = places.indexOf(arc.getEndNode());
+            int placeIndex = places.indexOf((Place)arc.getEndNode());
             fc.fID = "T-->p" + placeIndex;
             fc.arc = arc;
             fc.inTransArc = false;
@@ -1470,11 +1468,15 @@ public class Transition extends Node {
     }
 
     /**
-     * Metoda ustawia status aktywacji tranzycji xTPN.
+     * Metoda ustawia status aktywacji tranzycji xTPN. Jeśli na true, to ustawia false dla produkcji.
      * @param status (<b>boolean</b>) true, jeśli tranzycja jest aktywna.
      */
     public void setActivationStatusXTPN(boolean status) {
         isActivated_xTPN = status;
+
+        if(status) { //jeśli true
+            isProducing_xTPN = false; //zawsze odwrotność
+        }
     }
 
     /**
@@ -1486,11 +1488,15 @@ public class Transition extends Node {
     }
 
     /**
-     * Metoda ustawia status produkcji tranzycji xTPN.
+     * Metoda ustawia status produkcji tranzycji xTPN. Jeśli na true, to ustawia false dla aktywacji.
      * @param status (<b>boolean</b>) true, jeśli tranzycja rozpoczęła produkcję.
      */
     public void setProductionStatus_xTPN(boolean status) {
         isProducing_xTPN = status;
+
+        if(status) { //jeśli true
+            isActivated_xTPN = false; //zawsze odwrotność
+        }
     }
 
     /**
@@ -1566,8 +1572,8 @@ public class Transition extends Node {
     }
 
     /**
-     * [2022-07-12] normal + inhibitor
-     * Metoda pozwala sprawdzić, czy tranzycja XTPN może być aktywowana i w jaki sposób.
+     * [2022-07-12] Dła łuków: normal, inhibitor
+     * Metoda pozwala sprawdzić, czy tranzycja XTPN może być aktywowana i w jaki sposób. Pomija produkujące - wtedy zwraca false.
      * @return (<b>boolean</b>) true, jeżeli aktywna
      */
     public boolean getActiveStatusXTPN() {
@@ -1589,6 +1595,8 @@ public class Transition extends Node {
                         return false; //nie ma co sprawdzać, za mały multizbiór
                     }
                 } else { //multizbiór ma przynajmniej tyle tokenów ile wynosi waga łuku, sprawdzamy podzbiór aktywujący:
+
+
                     if (!isActivationMultiset(arcWeight, arcStartPlace.getGammaMin_xTPN(), arcStartPlace.accessMultiset(), accuracy)) { //jeśli nie istnieje
                         if(arcType == TypeOfArc.INHIBITOR) { //to dobrze, że nie ma zbioru, tranzycja wciąż aktywna
                             ;
@@ -1610,6 +1618,23 @@ public class Transition extends Node {
         }
         return true;
         //jeśli wciąż tutaj, to znaczy że aktywna
+    }
+
+    /**
+     * Deaktywacja tranzycji XTPN.
+     */
+    public void deactivateXTPN() {
+        setActivationStatusXTPN(false);
+        if(alphaMode_xTPN) {
+            setTimerAlfa_XTPN(-1.0);
+            setTauAlpha_xTPN(-1.0);
+        }
+        if(betaMode_xTPN) {
+            setTimerBeta_XTPN(-1.0);
+            setTauBeta_xTPN(-1.0);
+        }
+
+        //TODO: inne, graficzne
     }
 
     /**

@@ -175,12 +175,19 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		if (node == null)
 			return;
 		
-		if(!node.getUserObject().toString().equals("Pointer"))
+		if(!node.getUserObject().toString().equals("Pointer")) {
 			if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
 					"Only Pointer is available when simulator is working.", "Warning") == true) {
 				guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
 				return;
 			}
+			if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
+					"Only Pointer is available when XTPN simulator is working.", "Warning") == true) {
+				guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
+				return;
+			}
+		}
+
 		
 		Object nodeInfo = node.getUserObject();
 		if (node.isLeaf()) {

@@ -53,6 +53,10 @@ public class GUIReset {
 		if(isSimulatorActiveWarning("Please stop simulation completely before continuing.", "Warning")) {
 			return false;
 		}
+		if(isXTPNSimulatorActiveWarning("Please stop XTPN simulation completely before continuing.", "Warning")) {
+			return false;
+		}
+
 
 		boolean hasSomethingChanged = overlord.getNetChangeStatus();
 		if(hasSomethingChanged) {
@@ -317,18 +321,22 @@ public class GUIReset {
 	 * @return (<b>boolean</b>) - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
-		Object obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
-		if(obj instanceof  NetSimulator) {
-			NetSimulator ns = (NetSimulator)obj;
-			if(ns.getSimulatorStatus() == SimulatorMode.STOPPED) {
+		NetSimulator obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
+		if(obj instanceof NetSimulator) {
+			if(obj.getSimulatorStatus() == SimulatorMode.STOPPED) {
 				return false;
 			} else {
 				JOptionPane.showMessageDialog(null, msg, msgTitle, JOptionPane.WARNING_MESSAGE);
 				return true;
 			}
-		} else if(obj instanceof  NetSimulatorXTPN) {
-			NetSimulatorXTPN ns = (NetSimulatorXTPN)obj;
-			if(ns.getXTPNsimulatorStatus() == NetSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
+		}
+		return false;
+	}
+
+	public boolean isXTPNSimulatorActiveWarning(String msg, String msgTitle) {
+		NetSimulatorXTPN obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulatorXTPN();
+		if(obj instanceof NetSimulatorXTPN) {
+			if(obj.getXTPNsimulatorStatus() == NetSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
 				return false;
 			} else {
 				JOptionPane.showMessageDialog(null, msg, msgTitle, JOptionPane.WARNING_MESSAGE);

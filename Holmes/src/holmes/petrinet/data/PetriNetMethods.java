@@ -10,7 +10,7 @@ import holmes.petrinet.elements.Transition;
  * @author MR
  */
 public class PetriNetMethods {
-	PetriNet overlord = null;
+	PetriNet overlord;
 	
 	/**
 	 * Konstruktor obiektu klasy PetriNetMethods.

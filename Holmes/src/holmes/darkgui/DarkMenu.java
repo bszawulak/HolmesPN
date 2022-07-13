@@ -102,7 +102,7 @@ public class DarkMenu extends JMenuBar {
 		// import from file
 		JMenuItem importMenuItem = new JMenuItem("Import network...", KeyEvent.VK_I);
 		importMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_importNet.png"));
-		importMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,ActionEvent.CTRL_MASK));
+		importMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
 		importMenuItem.getAccessibleContext().setAccessibleDescription("Import project");
 		importMenuItem.addActionListener(arg0 -> guiManager.io.importNetwork());
 		fileMenu.add(importMenuItem);

@@ -1,6 +1,7 @@
 package holmes.petrinet.elements;
 
 import java.awt.Point;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -13,9 +14,10 @@ import holmes.workspace.Workspace;
  * ma dwa - start i end EL.
  * 
  * @author students
- * @MR - meta łuki, poprawki, poprawki, poprawki
+ * MR - meta łuki, poprawki, poprawki, poprawki
  */
 public class ElementLocation implements Serializable {
+	@Serial
 	private static final long serialVersionUID = 2775375770782696276L;
 	private int sheetId;
 	private Point position;
@@ -158,6 +160,7 @@ public class ElementLocation implements Serializable {
 	 * Metoda pozwala ustawić listę łuków wyjściowych
 	 * @param outArcs (<b>ArrayList[Arc]</b>) lista łuków wyjściowych do zastąpienia aktualnej.
 	 */
+	@SuppressWarnings("unused")
 	public void setOutArcs(ArrayList<Arc> outArcs) {
 		this.outArcs = outArcs;
 	}
@@ -174,6 +177,7 @@ public class ElementLocation implements Serializable {
 	 * Metoda pozwala ustawić listę łuków wejściowych.
 	 * @param inArcs ArrayList[Arc] - lista łuków wejściowych do zastąpienia aktualnej
 	 */
+	@SuppressWarnings("unused")
 	public void setInArcs(ArrayList<Arc> inArcs) {
 		this.inArcs = inArcs;
 	}
@@ -271,23 +275,23 @@ public class ElementLocation implements Serializable {
 	 * @return String - łańcuch znaków
 	 */
 	public String toString() {
-		String s = "";
+		String s;
 		if(this.getParentNode() == null) {
 			s = "ParentNode: null"
 					+ "SheetID:" + this.getSheetID() + "; Pos:"
 					+ pointPos(this.getPosition()) 
-					+ "; inArcs: "+ Integer.toString(this.getInArcs().size())
-					+ "; outArcs: " + Integer.toString(this.getOutArcs().size());
+					+ "; inArcs: "+ this.getInArcs().size()
+					+ "; outArcs: " + this.getOutArcs().size();
 		} else {
 			int index = getParentNode().getElementLocations().indexOf(this);
 			
 			s = "Node: " + this.getParentNode() +"("+index+") [gID:"+this.getParentNode().getID()+"];\n "
 					+ "SheetID: " + this.getSheetID() + "; Pos:"
 					+ pointPos(this.getPosition()) 
-					+ "; inArcs: "+ Integer.toString(this.getInArcs().size())
-					+ "; outArcs: " + Integer.toString(this.getOutArcs().size())
-					+ "; mInArcs: "+ Integer.toString(this.accessMetaInArcs().size())
-					+ "; mOutArcs: " + Integer.toString(this.accessMetaOutArcs().size());
+					+ "; inArcs: "+ this.getInArcs().size()
+					+ "; outArcs: " + this.getOutArcs().size()
+					+ "; mInArcs: "+ this.accessMetaInArcs().size()
+					+ "; mOutArcs: " + this.accessMetaOutArcs().size();
 		}
 		return s;
 	}

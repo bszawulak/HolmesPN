@@ -17,9 +17,9 @@ import holmes.petrinet.elements.Transition;
  * @author MR
  */
 public class MauritiusMap {
-	BTNode root = null;
-	ArrayList<Transition> transitions = null;
-	ArrayList<String> transMCTNames = null;
+	BTNode root;
+	ArrayList<Transition> transitions;
+	ArrayList<String> transMCTNames;
 	public enum NodeType {
 		ROOT, BRANCH, LEAF, VERTEX
 	}
@@ -87,7 +87,7 @@ public class MauritiusMap {
 					if(x < treshold) {
 						antiVector.set(j, 0); //udawajmy, że jej tam w ogóle nie ma, na potrzeby bloku niżej
 					}
-				} catch (Exception e) {} //divide by zero - ignore
+				} catch (Exception ignored) {} //divide by zero - ignore
 			}
 			
 			for(int i=0; i<invariantsWITHroot.size(); i++) {
@@ -434,7 +434,7 @@ public class MauritiusMap {
 	 * @param subInvariants ArrayList[ArrayList[Integer]] - podmacierz inwariantów
 	 * @param chosenTrans int - id wierzchołka początkowego
 	 * @param currentNode BTNode - aktualnie przetwarzany węzeł drzewa
-	 * @param antiInvariants ArrayList[ArrayList[Integer]] - podmacierz inwariantów w których nie występuje RootTransition
+	 * @param antiVector ArrayList[ArrayList[Integer]] - podmacierz inwariantów w których nie występuje RootTransition
 	 */
 	@SuppressWarnings("unused")
 	private void createMTree(ArrayList<ArrayList<Integer>> subInvariants, int chosenTrans, BTNode currentNode, 

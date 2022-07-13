@@ -110,6 +110,10 @@ public class TransitionPopupMenu extends NodePopupMenu {
 						"Operation impossible when simulator is working."
 						, "Warning"))
 					return;
+				if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
+						"Operation impossible when XTPN simulator is working."
+						, "Warning"))
+					return;
 
 				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
 				getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
@@ -125,6 +129,10 @@ public class TransitionPopupMenu extends NodePopupMenu {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
 				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
 						"Operation impossible when simulator is working."
+						, "Warning"))
+					return;
+				if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
+						"Operation impossible when XTPN simulator is working."
 						, "Warning"))
 					return;
 

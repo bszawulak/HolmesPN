@@ -69,7 +69,7 @@ public class MCSDataMatrix {
 	 */
 	public void insertMCS(ArrayList<ArrayList<Integer>> mcsList, ArrayList<ArrayList<Integer>> mcsListInfo, int pos, boolean warning) {
 		if(pos < matrixSize) {
-			if(warning == false) {
+			if(!warning) {
 				mcsDataCore.set(pos, mcsList);
 				mcsSetsInfo.set(pos, mcsListInfo);
 			} else {
@@ -158,7 +158,7 @@ public class MCSDataMatrix {
 				return true;
 			} else {
 				boolean status = MCSoperations.saveAllMCS(this);
-				if(status == false) {
+				if(!status) {
 					JOptionPane.showMessageDialog(null, "Saving current MCS sets failed. Loading new sets cancelled.","Operation cancel.",JOptionPane.ERROR_MESSAGE);
 				}
 				return status;

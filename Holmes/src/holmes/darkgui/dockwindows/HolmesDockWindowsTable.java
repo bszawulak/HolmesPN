@@ -290,6 +290,13 @@ public class HolmesDockWindowsTable extends JPanel {
             simMode.addActionListener(actionEvent -> {
                 if (doNotUpdate)
                     return;
+
+                if(simulatorXTPN.getXTPNsimulatorStatus() != NetSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
+                    JOptionPane.showMessageDialog(null, "XTPN simulator must be stopped first.",
+                            "Simulator working", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
                 int selectedModeIndex = simMode.getSelectedIndex();
                 if(selectedModeIndex == 1) { //restore others
                     overlord.getSimulatorBox().createSimulatorProperties(false);
@@ -298,7 +305,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 doNotUpdate = false;
             });
             components.add(simMode);
-        } else { //!XTPNmode
+        } else { //XTPNmode == false
             String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode", "Color", "XTPN"};
             simMode = new JComboBox<>(simModeName);
             simMode.setLocation(columnB_posX - 30, columnB_Y += 10);
@@ -307,6 +314,13 @@ public class HolmesDockWindowsTable extends JPanel {
             simMode.addActionListener(actionEvent -> {
                 if (doNotUpdate)
                     return;
+
+                if(simulator.getSimulatorStatus() != SimulatorMode.STOPPED) {
+                    JOptionPane.showMessageDialog(null, "Net simulator must be stopped first.",
+                            "Simulator working", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
                 int selectedModeIndex = simMode.getSelectedIndex();
                 if(selectedModeIndex == 4) { //XTPN
                     overlord.getSimulatorBox().createSimulatorProperties(true);
@@ -460,6 +474,9 @@ public class HolmesDockWindowsTable extends JPanel {
             saveButton.addActionListener(actionEvent -> {
                 if (overlord.reset.isSimulatorActiveWarning(
                         "Operation impossible while simulator is working.", "Warning"))
+                    return;
+                if (overlord.reset.isXTPNSimulatorActiveWarning(
+                        "Operation impossible while XTPN simulator is working.", "Warning"))
                     return;
 
                 Object[] options = {"Save new m0 state", "Cancel",};

@@ -53,26 +53,25 @@ public class P_StateManager {
 	/**
 	 * Usuwa we wszystkich stanach dane o stanie właśnie kasowanego miejsca.
 	 * @param index (<b>int</b>) indeks miejsca.
-	 * @return (<b>boolean</b>) - true, jeśli operacja przebiegła poprawnie.
 	 */
-	public boolean removePlace(int index) {
-		boolean statusPN = true;
-		boolean statusXTPN = true;
+	public void removePlace(int index) {
+		//boolean statusPN = true;
+		//boolean statusXTPN = true;
 		for(StatePlacesVector pVector: statesMatrix) {
 			boolean status = pVector.removePlace(index);
 			if(!status) {
 				overlord.log("Critical error: invalid place index ("+index+") in states matrix.", "error", true);
-				statusPN = false;
+				//statusPN = false;
 			}
 		}
 		for(StatePlacesVectorXTPN pVector: statesMatrixXTPN) {
 			boolean status = pVector.removePlaceXTPN(index);
 			if(!status) {
 				overlord.log("Critical error: invalid XTPN place index ("+index+") in XTPN states matrix.", "error", true);
-				statusXTPN = false;
+				//statusXTPN = false;
 			}
 		}
-		return statusPN && statusXTPN;
+		//return statusPN && statusXTPN;
 	}
 	
 	/**

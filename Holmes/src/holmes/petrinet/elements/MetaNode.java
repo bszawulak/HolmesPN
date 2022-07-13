@@ -2,6 +2,7 @@ package holmes.petrinet.elements;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
@@ -15,6 +16,7 @@ import holmes.graphpanel.ElementDrawSettings;
  *
  */
 public class MetaNode extends Node {
+	@Serial
 	private static final long serialVersionUID = -1463839771476569949L;
 
 	/** SUBNETTRANS, SUBNETPLACE, SUBNET, UNKNOWN */
@@ -28,7 +30,6 @@ public class MetaNode extends Node {
 	 * @param sheetId int - nr okna podsieci
 	 * @param nodeId int - wewnętrzny identyfikator w systemie
 	 * @param nodePosition Point - współrzędne XY
-	 * @param radius int - promień rysowania figury
 	 * @param mt MetaType - typ meta-węzła
 	 */
 	public MetaNode(int sheetId, int nodeId, Point nodePosition, MetaType mt) {
@@ -93,7 +94,7 @@ public class MetaNode extends Node {
 	 */
 	public void draw(Graphics2D g, int sheetId, ElementDrawSettings eds)
 	{
-		g = ElementDraw.drawElement(this, g, sheetId, eds);
+		ElementDraw.drawElement(this, g, sheetId, eds);
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 package holmes.petrinet.data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import holmes.petrinet.simulators.SimulatorGlobals;
@@ -10,6 +11,7 @@ import holmes.petrinet.simulators.SimulatorGlobals;
  * @author MR
  */
 public class NetSimulationData implements Serializable {
+	@Serial
 	private static final long serialVersionUID = -6460640360048894282L;
 	//dane o symulacji:
 	public int placesNumber = 0;

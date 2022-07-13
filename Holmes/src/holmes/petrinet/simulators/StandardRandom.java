@@ -40,7 +40,7 @@ public class StandardRandom implements IRandomGenerator  {
 		double tmp = (double)v/(double)ref;
 		long result = (long) (tmp * max);
 		
-		if(result == max) //TODO:?
+		if(result == max)
 			result--;
 			
 		return result;
@@ -53,6 +53,7 @@ public class StandardRandom implements IRandomGenerator  {
 	 * @param max int - górna granica
 	 * @return int - liczba z zakresu [min, max]
 	 */
+	@SuppressWarnings("unused")
 	private int getRandomInt(int min, int max) {
 		if(min == 0 && max == 0)
 			return 0;
@@ -64,8 +65,7 @@ public class StandardRandom implements IRandomGenerator  {
 	
 	@Override
 	public long nextLong(long min, long max) {
-		long res = nextLong(max - min) + min;
-		return res;
+		return nextLong(max - min) + min;
 	}
 	
 	@Override

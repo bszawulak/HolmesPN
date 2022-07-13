@@ -1541,7 +1541,6 @@ public class ProjectReader {
 					return;
 
 				newArc.addBreakPoint(new Point(x, y));
-				;
 			} catch (Exception ignored) {
 			}
 		}
@@ -1641,7 +1640,7 @@ public class ProjectReader {
 	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readPInvariants(BufferedReader buffer) {
 		try {
-			String line = "";
+			String line;
 			while(!((line = buffer.readLine()).contains("<PlaceInv data>"))) //przewiń do inwariantów
 				;
 			

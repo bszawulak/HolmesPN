@@ -31,7 +31,8 @@ public class NetSimulatorXTPN {
     private boolean simulationActive = false;
     private Timer timer;
     private ArrayList<Transition> launchingTransitions;
-    private long timeCounter = -1;
+    private long stepCounter = 0;
+    private double simTotalTime = 0.0;
     //private Random generator;
 
     ArrayList<ArrayList<SimulatorXTPN.NextXTPNstep>> nextXTPNsteps;
@@ -64,7 +65,7 @@ public class NetSimulatorXTPN {
         simulatorStatusXTPN = SimulatorModeXTPN.STOPPED;
         previousSimStatusXTPN = SimulatorModeXTPN.STOPPED;
         simulationActive = false;
-        timeCounter = -1;
+        stepCounter = -1;
         engineXTPN = new SimulatorXTPN();
     }
 
@@ -93,6 +94,9 @@ public class NetSimulatorXTPN {
             notepad.setVisible(true);
         else
             notepad.dispose();
+
+        stepCounter = 0;
+        simTotalTime = 0.0;
 
         engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, false, false, transitions, null, places);
 
@@ -364,6 +368,9 @@ public class NetSimulatorXTPN {
         previousSimStatusXTPN = simulatorStatusXTPN;
         setSimulatorStatus(SimulatorModeXTPN.STOPPED);
 
+        stepCounter = 0;
+        simTotalTime = 0.0;
+
         //nsl.logSimStopped(timeCounter);
     }
 
@@ -465,8 +472,8 @@ public class NetSimulatorXTPN {
      * Metoda zwraca wartość aktualnego kroku symulacji (numer, tj. czas).
      * @return (<b>long</b>) - nr kroku symulacji
      */
-    public long getSimulatorTimeStep() {
-        return timeCounter;
+    public long getStepCounterXTPN() {
+        return stepCounter;
     }
 
     // ================================================================================
@@ -481,22 +488,16 @@ public class NetSimulatorXTPN {
      *
      */
     private class SimulationPerformer implements ActionListener {
-        protected int transitionDelay = overlord.simSettings.getTransDelay(); // licznik kroków graficznych
+        protected int repaintSteps = overlord.simSettings.getTransDelay(); // licznik kroków graficznych
 
-        protected boolean stateChangeStarted = false;
+        protected boolean newStateChangeStarts = true;
+        protected boolean timePassPhase = false;
         protected boolean subtractPhase = true; // true - subtract, false - add
         protected boolean addPhase = false;
         protected boolean finishedAddPhase = false;
         protected boolean scheduledStop = false;
         protected int remainingTransitionsAmount = launchingTransitions.size();
 
-
-
-        //training:
-        protected boolean timePassPhase = false;
-        protected boolean transActivatedPhase = false;
-        protected boolean transProdStartPhase = false;
-        protected boolean transProdEndsPhase = false;
 
         /**
          * Metoda aktualizuje wyświetlanie graficznej części symulacji po wykonaniu każdego kroku.
@@ -507,9 +508,6 @@ public class NetSimulatorXTPN {
 
         private void resetPhaseOrderXTPN() {
             timePassPhase = false;
-            transActivatedPhase = false;
-            transProdStartPhase = false;
-            transProdEndsPhase = false;
 
             subtractPhase = true;
             addPhase = false;
@@ -564,96 +562,100 @@ public class NetSimulatorXTPN {
         }
 
         /**
-         * Metoda wykonywana jako kolejny krok przez symulator.
-         * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody
+         * Metoda wykonywana jako kolejny krok przez symulator. Straszy.
+         * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody. Nie ma przypadków. Są tylko znaki.
          */
         public void actionPerformed(ActionEvent event) {
             //testDzialaniaSymulacji();
             int DEFAULT_COUNTER = overlord.simSettings.getTransDelay(); //def: 25
             if (scheduledStop) { // jeśli symulacja ma się zatrzymać
-                executeScheduledStop();
+                executeScheduledStop(); // egzorcyzmuj symulator
             }
 
-            if(!stateChangeStarted) { //nowy krok symulacji
-                //najpierw aktywacja wszystkiego w danym stanie co da się aktywować
-
+            //TUTAJ USTALENIE JAK WYGLĄDA AKTUALNY STAN, I O ILE CZASU IDZIEMY DO PRZODU Z SYMULACJĄ
+            if(newStateChangeStarts) { //nowy krok symulacji
+                //najpierw aktywacja tranzycji wejściowych, jeśli są nieaktywne:
+                ArrayList<SimulatorXTPN.NextXTPNstep> classicalInputTransitions = engineXTPN.revalidateNetState();
+                //teraz obliczamy minimalną zmianę czasu w sieci:
                 nextXTPNsteps = engineXTPN.computeNextState();
-                infoNode = nextXTPNsteps.get(4).get(0); //5-ta lista, pierwszy obiekt
+                //dodajemy tranzycje wejściowe klasyczne do listy uruchomień w nowym stanie +tau:
+                nextXTPNsteps.set(4, classicalInputTransitions);
+                nextXTPNsteps.get(6).get(0).changeType += classicalInputTransitions.size();
 
+                //azali, czy jestże coś do rozp... uruchomienia:
+                infoNode = nextXTPNsteps.get(6).get(0); //7-ta lista, pierwszy obiekt (8 wrota...)
                 if(infoNode.changeType == 0) {
                     setSimulationActive(false);
                     stopSimulation();
                     JOptionPane.showMessageDialog(null, "Simulation stopped, no active transitions.",
                             "Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
-                    transitionDelay = 0;
+                    repaintSteps = 0;
                 }
 
-                engineXTPN.updateState(infoNode.timeToChange);
-                stateChangeStarted = true;
+                newStateChangeStarts = false;
+                timePassPhase = true;
+            }
+            //TUTAJ NASTĘPUJE UPDATE STANU O WYLICZONĄ WCZEŚNIEJ WARTOŚĆ +TAU (infoNode.timeToChange)
+            if(timePassPhase) {
+                //teraz trzeba uaktualnić stan sieci (poza usunięciem tokenów starych, to na samym końcu,
+                //może coś je zje przedtem:
+                engineXTPN.updateNetTime(infoNode.timeToChange);
+
+                //aktualizacja czasu i kroku symulacji, wyświetlanie w oknie symulatora:
+                stepCounter++;
+                simTotalTime += infoNode.timeToChange;
+                overlord.io.updateTimeStep(true,stepCounter, simTotalTime);
+                overlord.simSettings.currentStep = stepCounter;
+                overlord.simSettings.currentTime = simTotalTime;
+
+                //aktywacja wszystkiego co się da w nowym stanie:
+                ArrayList<SimulatorXTPN.NextXTPNstep> classicalInternalTransitions = engineXTPN.activateTransitionsInNewTimeState();
+                nextXTPNsteps.set(5, classicalInternalTransitions);
+                nextXTPNsteps.get(6).get(0).changeType += classicalInternalTransitions.size();
+
+                subtractPhase = true;
+                repaintSteps = 0;
+                petriNet.repaintAllGraphPanels();
             }
 
-
-/*
-            //updateStepCounter(); // rusz tokeny
-            petriNet.incrementSimulationStep();
-
-            if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
-                //z miejsc wejściowych i oddawania ich tranzycjom
-                if (scheduledStop) { // jeśli symulacja ma się zatrzymać
-                    executeScheduledStop();
-                } else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
-                    if (remainingTransitionsAmount == 0) {
-                        timeCounter++;
-                        overlord.io.updateTimeStep(""+timeCounter);
-                        overlord.simSettings.currentStep = timeCounter;
-
-                        launchingTransitions = engineXTPN.getTransLaunchList(false);
-                        remainingTransitionsAmount = launchingTransitions.size();
-                    }
-
-                    launchSubtractPhase(launchingTransitions); //zabierz tokeny poprzez aktywne tranzycje
-                    //usuń te tranzycje, które są w I fazie DPN
-                    for(int t=0; t<launchingTransitions.size(); t++) {
-                        Transition test_t = launchingTransitions.get(t);
-                        if(test_t.getDPNstatus()) {
-                            if(test_t.getDPNtimer() == 0 && test_t.getDPNduration() != 0) {
-                                launchingTransitions.remove(test_t);
-                                t--;
-                            }
-                        }
-                    }
+            //tutaj faza zabierana tokenów:
+            if(subtractPhase) {
+                if(repaintSteps >= DEFAULT_COUNTER) {
+                    repaintSteps = 0;
                     subtractPhase = false;
+                    addPhase = true;
                 } else {
-                    // simulation ends, no possible steps remaining
-                    setSimulationActive(false);
-                    stopSimulation();
-                    JOptionPane.showMessageDialog(null, "Simulation stopped, no active transitions.",
-                            "Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
+                    repaintSteps++;
+
+
+                    petriNet.repaintAllGraphPanels();
                 }
-                transitionDelay = 0;
-            } else if (transitionDelay >= DEFAULT_COUNTER && !subtractPhase) {
-                // koniec fazy zabierania tokenów, tutaj realizowany jest graficzny przepływ tokenów
-                launchAddPhaseGraphics(launchingTransitions);
-                finishedAddPhase = false;
-                transitionDelay = 0;
-            } else if (transitionDelay >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
-                boolean detailedLogging = true;
-                //nsl.logSimStepFinished(launchingTransitions, detailedLogging);
+            }
 
-                // koniec fazy przepływu tokenów, tutaj uaktualniane są wartości tokenów dla miejsc wyjściowych
-                launchAddPhase(launchingTransitions);
-                finishedAddPhase = true;
-                subtractPhase = true;
-                remainingTransitionsAmount = 0; // all transitions launched
-                // jeśli to nie tryb LOOP, zatrzymaj symulację
+            if(addPhase) {
+                if(repaintSteps >= DEFAULT_COUNTER) {
+                    repaintSteps = 0;
+                    addPhase = false;
+                    finishedAddPhase = true;
+                } else {
+                    repaintSteps++;
 
-                if (!loop)
-                    scheduleStop();
 
-                transitionDelay++;
-            } else
-                transitionDelay++; // empty steps
-                */
+                    petriNet.repaintAllGraphPanels();
+                }
+            }
+
+            if(finishedAddPhase) {
+                if(repaintSteps >= DEFAULT_COUNTER-5) {
+                    repaintSteps = 0;
+                    finishedAddPhase = false;
+                    timePassPhase = true;
+                } else {
+                    repaintSteps++;
+
+                    petriNet.repaintAllGraphPanels();
+                }
+            }
         }
 
         private void testDzialaniaSymulacji() { //for training purposes only, if u dont know how simulator works
@@ -669,19 +671,19 @@ public class NetSimulatorXTPN {
                         "Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
             }
 
-            if(timePassPhase == false && transActivatedPhase == false && transProdStartPhase == false
-                && transProdEndsPhase == false) {
+            if(timePassPhase == false && subtractPhase == false && addPhase == false
+                && finishedAddPhase == false) {
                 timePassPhase = true;
-                transitionDelay = 0;
+                repaintSteps = 0;
             }
 
             if(timePassPhase) {
-                if(transitionDelay >= DEFAULT_COUNTER) {
-                    transitionDelay = 0;
+                if(repaintSteps >= DEFAULT_COUNTER) {
+                    repaintSteps = 0;
                     timePassPhase = false;
-                    transActivatedPhase = true;
+                    subtractPhase = true;
                 } else {
-                    transitionDelay++;
+                    repaintSteps++;
                     overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("Time pass...");
                     launchingTransitions = engineXTPN.getTransLaunchList(false);
                     for(Transition t : launchingTransitions) {
@@ -699,18 +701,18 @@ public class NetSimulatorXTPN {
                 }
             }
 
-            if(transActivatedPhase) {
-                if(transitionDelay >= DEFAULT_COUNTER) {
-                    transitionDelay = 0;
-                    transActivatedPhase = false;
-                    transProdStartPhase = true;
+            if(subtractPhase) {
+                if(repaintSteps >= DEFAULT_COUNTER) {
+                    repaintSteps = 0;
+                    subtractPhase = false;
+                    addPhase = true;
                 } else {
-                    transitionDelay++;
+                    repaintSteps++;
                     overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("Activated...");
                     launchingTransitions = engineXTPN.getTransLaunchList(false);
                     for(Transition t : launchingTransitions) {
                         t.setLaunching(false);
-                        t.setGlowedINV(true, transitionDelay);
+                        t.setGlowedINV(true, repaintSteps);
                         ArrayList<Arc> arcs = t.getInArcs();
                         // odejmij odpowiednią liczbę tokenów:
                         for (Arc arc : arcs) {
@@ -722,29 +724,29 @@ public class NetSimulatorXTPN {
                 }
             }
 
-            if(transProdStartPhase) {
-                if(transitionDelay >= DEFAULT_COUNTER) {
-                    transitionDelay = 0;
-                    transProdStartPhase = false;
-                    transProdEndsPhase = true;
+            if(addPhase) {
+                if(repaintSteps >= DEFAULT_COUNTER) {
+                    repaintSteps = 0;
+                    addPhase = false;
+                    finishedAddPhase = true;
                 } else {
-                    transitionDelay++;
+                    repaintSteps++;
                     overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("Producing...");
                     launchingTransitions = engineXTPN.getTransLaunchList(false);
                     for(Transition t : launchingTransitions) {
                         t.setFunctional(true);
-                        t.setGlowedINV(false, transitionDelay);
+                        t.setGlowedINV(false, repaintSteps);
                     }
                     petriNet.repaintAllGraphPanels();
                 }
             }
 
-            if(transProdEndsPhase) {
-                if(transitionDelay >= DEFAULT_COUNTER) {
-                    transitionDelay = 0;
-                    transProdEndsPhase = false;
+            if(finishedAddPhase) {
+                if(repaintSteps >= DEFAULT_COUNTER) {
+                    repaintSteps = 0;
+                    finishedAddPhase = false;
                 } else {
-                    transitionDelay++;
+                    repaintSteps++;
                     overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("Produced...");
                     launchingTransitions = engineXTPN.getTransLaunchList(false);
                     for(Transition t : launchingTransitions) {

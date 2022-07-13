@@ -70,6 +70,9 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
 							"Operation impossible when simulator is working.", "Warning") == true)
 						return;
+					if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
+							"Operation impossible when XTPN simulator is working.", "Warning") == true)
+						return;
 					
 					Object[] options = {"Delete", "Cancel",};
 					int n = JOptionPane.showOptionDialog(null,

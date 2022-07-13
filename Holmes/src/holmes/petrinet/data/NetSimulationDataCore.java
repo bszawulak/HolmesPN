@@ -1,12 +1,6 @@
 package holmes.petrinet.data;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 
 import javax.swing.filechooser.FileFilter;
@@ -21,6 +15,7 @@ import holmes.workspace.ExtensionFileFilter;
  * @author MR
  */
 public class NetSimulationDataCore implements Serializable {
+	@Serial
 	private static final long serialVersionUID = -2180386709205258057L;
 	private ArrayList<NetSimulationData> referenceSets = new ArrayList<NetSimulationData>();
 	private ArrayList<NetSimulationData> knockoutSets = new ArrayList<NetSimulationData>();
@@ -150,9 +145,8 @@ public class NetSimulationDataCore implements Serializable {
 	 */
 	public ArrayList<NetSimulationData> getSeriesDatasets(long IDseries) {
 		ArrayList<NetSimulationData> result = new ArrayList<NetSimulationData>();
-		int transSize = 0;
 		NetSimulationData tmp = returnSeriesFirst(IDseries);
-		transSize = tmp.transNumber;
+		int transSize = tmp.transNumber;
 		for(NetSimulationData data : knockoutSets) {
 			if(data.getIDseries() == IDseries) {
 				result.add(data);
@@ -180,7 +174,7 @@ public class NetSimulationDataCore implements Serializable {
 		String newLocation = "";
 		try
 		{
-			FileFilter filter[] = new FileFilter[1];
+			FileFilter[] filter = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Simulation Data (.sim)",  new String[] { "sim" });
 			newLocation = Tools.selectFileDialog(lastPath, filter, "Load data", "", "");
 			if(newLocation.equals("")) 
@@ -215,7 +209,7 @@ public class NetSimulationDataCore implements Serializable {
 		try{
 			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 			
-			FileFilter filter[] = new FileFilter[1];
+			FileFilter[] filter = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Simulation Data (.sim)",  new String[] { "sim" });
 			String newLocation = Tools.selectFileDialog(lastPath, filter, "Save data", "", "");
 			if(newLocation.equals(""))

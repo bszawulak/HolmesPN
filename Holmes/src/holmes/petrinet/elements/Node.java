@@ -438,7 +438,8 @@ public abstract class Node extends PetriNetElement {
 		for (ElementLocation el : this.getNodeLocations())
 			el.setPortalSelected(false);
 	}
-	
+
+	@SuppressWarnings("unused")
 	public void forceDeselection() {
 		if (!isPortal())
 			return;
