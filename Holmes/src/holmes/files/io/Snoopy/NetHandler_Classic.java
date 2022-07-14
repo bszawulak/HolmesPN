@@ -189,7 +189,7 @@ public class NetHandler_Classic extends NetHandler {
 					yoff_name -= 20; //20 default, czyli 0 w oY w Holmes
 					if(yoff_name < -8)
 						yoff_name = -55; //nad node, uwzględnia różnicę
-				} catch (Exception e) {} 
+				} catch (Exception ignored) {}
 			}
 
 			graphicNamesXYLocationsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
@@ -197,10 +197,10 @@ public class NetHandler_Classic extends NetHandler {
 
 		// Wczytywanie informacji odnosnie ID i pozycji noda
 
-		if ((endAtribute == true) && (atribute == false) && (graphics == true)
-				&& (graphic == true) && (metadata == false)
-				&& (edgeclass == false) && (point == false)
-				&& (points == false) && (node == true)) {
+		if ((endAtribute) && (!atribute) && (graphics)
+				&& (graphic) && (!metadata)
+				&& (!edgeclass) && (!point)
+				&& (!points) && (node)) {
 			if (attributes.getQName(0).equals("x")) {
 				double xPos = Double.parseDouble(attributes.getValue(0));
 				double yPos = Double.parseDouble(attributes.getValue(1));
@@ -218,7 +218,7 @@ public class NetHandler_Classic extends NetHandler {
 					
 					if(resizeFactor==0)
 						resizeFactor=1;
-				} catch (Exception e) { }
+				} catch (Exception ignored) { }
 				
 				xPos *= resizeFactor;
 				yPos *= resizeFactor;
@@ -252,10 +252,10 @@ public class NetHandler_Classic extends NetHandler {
 
 		// Zapis do zmiennej globalnej ID sorce i target Arca
 
-		if ((endAtribute == true) && (atribute == false) && (graphics == true)
-				&& (graphic == true) && (metadata == false)
-				&& (edgeclass == true) && (point == false) && (points == false)
-				&& (node == false) && (edge == true)) {
+		if ((endAtribute) && (!atribute) && (graphics)
+				&& (graphic) && (!metadata)
+				&& (edgeclass) && (!point) && (!points)
+				&& (!node) && (edge)) {
 
 			arcSource = Integer.parseInt(attributes.getValue(2));
 			arcTarget = Integer.parseInt(attributes.getValue(3));
@@ -300,13 +300,13 @@ public class NetHandler_Classic extends NetHandler {
 
 		// Zapis atrybutów wierzchołka i łuku
 		if (qName.equalsIgnoreCase("attribute")) {
-			if (node == true) {
-				if (variableName == true) {
+			if (node) {
+				if (variableName) {
 					nodeName = readString;
 					variableName = false;
 					readString = "";
 				}
-				if (variableMarking == true) {
+				if (variableMarking) {
 					if (readString.equals("")) {
 						nodeMarking = 0;
 					} else {
@@ -315,7 +315,7 @@ public class NetHandler_Classic extends NetHandler {
 						readString = "";
 					}
 				}
-				if (variableLogic == true) {
+				if (variableLogic) {
 					if (readString.equals("")) {
 						nodeLogic = 0;
 					} else {
@@ -324,15 +324,15 @@ public class NetHandler_Classic extends NetHandler {
 						readString = "";
 					}
 				}
-				if (variableComent == true) {
+				if (variableComent) {
 					nodeComment = readString;
 					variableComent = false;
 					readString = "";
 				}
 			}
-			if (edge == true && atribute == true) {
+			if (edge && atribute) {
 
-				if (variableMultiplicity == true) {
+				if (variableMultiplicity) {
 					if (readString.equals("")) {
 						arcMultiplicity = 0;
 					} else {
@@ -341,7 +341,7 @@ public class NetHandler_Classic extends NetHandler {
 					variableMultiplicity = false;
 					readString = "";
 				}
-				if (variableComent == true) {
+				if (variableComent) {
 					nodeComment = readString;
 					variableComent = false;
 					readString = "";
@@ -385,14 +385,14 @@ public class NetHandler_Classic extends NetHandler {
 						hei = globalElementLocationList.get(l).getPosition().y;
 					}
 				}
-				if (xFound == true && yFound == false) {
+				if (xFound && !yFound) {
 					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 150, hei));
 				}
-				if (xFound == false && yFound == true) {
+				if (!xFound && yFound) {
 					//graphPanel.setSize(new Dimension(graphPanel.getSize().width, globalElementLocationList.get(tmpY).getPosition().y + 150));
 					graphPanel.setSize(new Dimension(wid, globalElementLocationList.get(tmpY).getPosition().y + 150));
 				}
-				if (xFound == true && yFound == true) { //z każdym nowym punktem dostosowujemy rozmiar sieci
+				if (xFound && yFound) { //z każdym nowym punktem dostosowujemy rozmiar sieci
 					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 150, 
 							globalElementLocationList.get(tmpY).getPosition().y + 150));
 				}
@@ -413,7 +413,7 @@ public class NetHandler_Classic extends NetHandler {
 			ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
 			ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
 			
-			if(coarseCatcher == false) {
+			if(!coarseCatcher) {
 				if(graphicPointsXYLocationsList.size() != graphicNamesXYLocationsList.size()) {
 					GUIManager.getDefaultGUIManager().log("Warning: wrong number of names / nodes locations for "+nodeName+
 							". Resetting names locations.", "warning", true);
@@ -429,20 +429,18 @@ public class NetHandler_Classic extends NetHandler {
 					elementLocationsList.add(new ElementLocation(nodeSID, graphicPointsXYLocationsList.get(i), null));
 					namesElLocations.add(new ElementLocation(nodeSID, graphicNamesXYLocationsList.get(i), null));
 				}
+
+				globalElementLocationList.addAll(elementLocationsList);
 				
-				for (int j = 0; j < elementLocationsList.size(); j++) {
-					globalElementLocationList.add(elementLocationsList.get(j));
-				}
-				
-				if (nodeType == "Place") {
+				if (nodeType.equals("Place")) {
 					Place tmpPlace = new Place(nodeID, elementLocationsList, nodeName, nodeComment, nodeMarking);
 					tmpPlace.setTextsLocations(namesElLocations, GUIManager.locationMoveType.NAME);
 
 					//XTPN node preparation (just in case)
-					for(int i=0; i<namesElLocations.size(); i++) {
-						int x = namesElLocations.get(i).getPosition().x;
-						int y = namesElLocations.get(i).getPosition().y;
-						int _sheetID = namesElLocations.get(i).getSheetID();
+					for (ElementLocation namesElLocation : namesElLocations) {
+						int x = namesElLocation.getPosition().x;
+						int y = namesElLocation.getPosition().y;
+						int _sheetID = namesElLocation.getSheetID();
 						alphaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 						betaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 						gammaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
@@ -460,10 +458,10 @@ public class NetHandler_Classic extends NetHandler {
 					tmpTran.setTextsLocations(namesElLocations, GUIManager.locationMoveType.NAME);
 
 					//XTPN node preparation (just in case)
-					for(int i=0; i<namesElLocations.size(); i++) {
-						int x = namesElLocations.get(i).getPosition().x;
-						int y = namesElLocations.get(i).getPosition().y;
-						int _sheetID = namesElLocations.get(i).getSheetID();
+					for (ElementLocation namesElLocation : namesElLocations) {
+						int x = namesElLocation.getPosition().x;
+						int y = namesElLocation.getPosition().y;
+						int _sheetID = namesElLocation.getSheetID();
 						alphaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 						betaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 						gammaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
@@ -500,11 +498,8 @@ public class NetHandler_Classic extends NetHandler {
 			int tmpSource = 0;
 			int tmpTarget = 0;
 			
-			boolean cancel = false;
-			if(coarseProhibitedIDList.contains(arcSource) || coarseProhibitedIDList.contains(arcTarget)) {
-				cancel = true;
-			}
-			if(cancel == false) {
+			boolean cancel = ( coarseProhibitedIDList.contains(arcSource) || coarseProhibitedIDList.contains(arcTarget) );
+			if(!cancel) {
 				for (int j = 0; j < graphicPointsSnoopyIDList.size(); j++) {
 					if (graphicPointsSnoopyIDList.get(j) == arcSource) {
 						tmpSource = j;
@@ -533,18 +528,18 @@ public class NetHandler_Classic extends NetHandler {
 	 * @param start (int) indeks początkowy.
 	 * @param length (int) ilość wczytanych znaków.
 	 */
-	public void characters(char ch[], int start, int length) throws SAXException {
+	public void characters(char[] ch, int start, int length) throws SAXException {
 		// Wyłuskiwanie zawartosci <![CDATA[]]>
-		if (((node == true) || edge == true) && (atribute == true)) {
-			String temper = "";
-			char tm[] = new char[20000];
+		if (((node) || edge) && (atribute)) {
+			StringBuilder temper = new StringBuilder();
+			char[] tm = new char[20000];
 
 			for (int i = 0; i < length; i++) {
 				tm[i] = ch[i + start];
-				temper = temper + ch[i + start];
+				temper.append(ch[i + start]);
 			}
 			if (tm[0] != '\n') {
-				readString = temper;
+				readString = temper.toString();
 			}
 		}
 	}
@@ -555,6 +550,6 @@ public class NetHandler_Classic extends NetHandler {
 	 * @param start (int) indeks początkowy.
 	 * @param length (int) wielkość pustej przestrzeni.
 	 */
-	public void ignorableWhitespace(char ch[], int start, int length)
+	public void ignorableWhitespace(char[] ch, int start, int length)
 		throws SAXException { }
 }

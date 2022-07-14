@@ -6,6 +6,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -28,21 +29,17 @@ import holmes.tables.managers.SSAplacesTableRenderer;
 import holmes.utilities.Tools;
 
 public class HolmesSSAplacesEditor extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -6810858686209063022L;
 	private GUIManager overlord;
 	private JFrame parentWindow;
-	private SSAplacesTableRenderer tableRenderer;
 	private SSAplacesEditorTableModel tableModel;
-	private JTable table;
-	private JPanel tablePanel;
 	private SSAplacesVector ssaVector;
 	private int ssaIndex;
-	private JTextArea vectorDescrTextArea;
-	private SSAdataType dataType = SSAdataType.MOLECULES;
-	private String dataTypeUnits = "";
+	private SSAdataType dataType;
+	private String dataTypeUnits;
 	
 	private ArrayList<Place> places;
-	private PetriNet pn;
 	private SSAplacesManager ssaManager;
 	
 	/**
@@ -55,11 +52,11 @@ public class HolmesSSAplacesEditor extends JFrame {
 		setTitle("Holmes SSA components editor");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
-    	this.pn = overlord.getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
     	this.parentWindow = parent;
     	this.ssaVector = ssaVector;
     	this.ssaIndex = ssaIndex;
@@ -105,8 +102,8 @@ public class HolmesSSAplacesEditor extends JFrame {
 		setLocation(50, 50);
 		setResizable(true);
 		setLayout(new BorderLayout());
-		
-		tablePanel = getMainTablePanel();
+
+		JPanel tablePanel = getMainTablePanel();
 		add(getTopPanel(), BorderLayout.NORTH);
 		add(tablePanel, BorderLayout.CENTER);
 	}
@@ -142,8 +139,8 @@ public class HolmesSSAplacesEditor extends JFrame {
 		JLabel label2 = new JLabel(""+dataType+dataTypeUnits);
 		label2.setBounds(posX+330, posY, 230, 20);
 		filler.add(label2);
-		
-		vectorDescrTextArea = new JTextArea(ssaManager.accessSSAmatrix().get(ssaIndex).getDescription());
+
+		JTextArea vectorDescrTextArea = new JTextArea(ssaManager.accessSSAmatrix().get(ssaIndex).getDescription());
 		vectorDescrTextArea.setLineWrap(true);
 		vectorDescrTextArea.setEditable(true);
 		vectorDescrTextArea.addFocusListener(new FocusAdapter() {
@@ -180,8 +177,8 @@ public class HolmesSSAplacesEditor extends JFrame {
 		result.setPreferredSize(new Dimension(500, 500));
 		
 		tableModel = new SSAplacesEditorTableModel(this, ssaIndex, dataType);
-		table = new RXTable(tableModel);
-		((RXTable)table).setSelectAllForEdit(true);
+		RXTable table = new RXTable(tableModel);
+		table.setSelectAllForEdit(true);
 		
 		table.getColumnModel().getColumn(0).setHeaderValue("ID");
 		table.getColumnModel().getColumn(0).setPreferredWidth(30);
@@ -196,7 +193,7 @@ public class HolmesSSAplacesEditor extends JFrame {
         
 		table.setName("SSAplacesTable");
 		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		tableRenderer = new SSAplacesTableRenderer();
+		SSAplacesTableRenderer tableRenderer = new SSAplacesTableRenderer();
 		table.setDefaultRenderer(Object.class, tableRenderer);
 		table.setDefaultRenderer(Double.class, tableRenderer);
 
@@ -204,7 +201,7 @@ public class HolmesSSAplacesEditor extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		;	//cellClickAction();
           	    }
           	 }

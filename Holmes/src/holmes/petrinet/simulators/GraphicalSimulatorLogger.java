@@ -6,7 +6,7 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNotepad;
 
@@ -16,13 +16,13 @@ import holmes.windows.HolmesNotepad;
  * @author MR
  *
  */
-public class NetSimulatorLogger {
+public class GraphicalSimulatorLogger {
 	private HolmesNotepad log; // = GUIManager.getDefaultGUIManager().getSimLog();
 
 	/**
 	 * Konstruktor domyślny obiektu klasy NetSimulatorLogger.
 	 */
-	public NetSimulatorLogger() {
+	public GraphicalSimulatorLogger() {
 		log = GUIManager.getDefaultGUIManager().getSimLog();
 	}
 	

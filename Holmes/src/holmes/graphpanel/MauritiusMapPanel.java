@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +33,8 @@ import holmes.windows.HolmesKnockoutViewer;
  * @author MR
  */
 public class MauritiusMapPanel extends JPanel {
+	@Serial
 	private static final long serialVersionUID = 1028800481995974984L;
-	
-	private HolmesKnockout holmesKnockout;
 	private MauritiusMap mmbt;
 	private Map<Point, MapElement> mapLocations;
 	private int currentVerticalLevel = 0; //AKTUALNY poziom
@@ -45,8 +45,8 @@ public class MauritiusMapPanel extends JPanel {
 	private int baseThickness = 0;
 	private int zoom = 100;
 	
-	private int panelWidth = 0;
-	private int panelHeigth = 0;
+	private int panelWidth;
+	private int panelHeigth;
 	private Dimension originSize; //oryginalny rozmiar
 	
 	public boolean originalSizeKnown = false;
@@ -66,8 +66,7 @@ public class MauritiusMapPanel extends JPanel {
 	 * @param holmesKnockout HolmesKnockout - okno główne panelu
 	 */
     public MauritiusMapPanel(HolmesKnockout holmesKnockout) {
-    	this.holmesKnockout = holmesKnockout;
-    	panelWidth = 800;
+		panelWidth = 800;
     	panelHeigth = 600;
     	mapLocations = new HashMap<Point, MapElement>();
         setPreferredSize(new Dimension(panelWidth, panelHeigth));
@@ -98,7 +97,7 @@ public class MauritiusMapPanel extends JPanel {
 			normalizeSize();
 			verticalMulti = 0;
 			
-			if(originalSizeKnown == false) {
+			if(!originalSizeKnown) {
 				setOriginSize(new Dimension(panelWidth, panelHeigth));
 				originalSizeKnown = true;
 			}
@@ -125,7 +124,7 @@ public class MauritiusMapPanel extends JPanel {
      * @param fullName boolean - jeśli true, wyświetla pełne nazwy reakcji
      */
     private void readAndPaintTree(BTNode node, Graphics2D g2d, int x, int y, boolean fullName, ArrayList<Integer> disabledHistory) {
-    	ArrayList<Integer> disabledPath = null;
+    	ArrayList<Integer> disabledPath;
     	if(disabledHistory == null) {
     		disabledPath = new ArrayList<Integer>();
     		//disabledPath.add(node.transLocation);
@@ -146,7 +145,7 @@ public class MauritiusMapPanel extends JPanel {
     	int freq = node.transFrequency;
     	int currentMulti = verticalMulti;
     	
-    	if(fullName == false) {
+    	if(!fullName) {
     		int loc = node.transLocation;
     		name = "t_"+loc;
     	}
@@ -162,7 +161,7 @@ public class MauritiusMapPanel extends JPanel {
     	}
     	
     	//rysowanie okręgu i nazwy:
-    	if(mctDetected==true && contractedMode) {
+    	if(mctDetected && contractedMode) {
     		drawCenteredSquare(g2d, x, y, 40, Color.lightGray); //symbol MCT
     		disabledPath.add(node.transLocation);
     		mapLocations.put(new Point(x, y), new MapElement(node, disabledPath));
@@ -216,10 +215,8 @@ public class MauritiusMapPanel extends JPanel {
     		}
     		
     		currentVerticalLevel++;
-    		int currentAltitude = y;
-    		int lowerAltitude = y+offsetVertical+additionalDown;
-    		
-    		drawL_shapeArrow(g2d, x-45, currentAltitude, x-45, lowerAltitude, 3, Color.gray);
+			int lowerAltitude = y+offsetVertical+additionalDown;
+    		drawL_shapeArrow(g2d, x-45, y, x-45, lowerAltitude, 3, Color.gray);
 
     		//int disabledPathSize = disabledPath
     		
@@ -250,9 +247,8 @@ public class MauritiusMapPanel extends JPanel {
     //TODO ?
     @SuppressWarnings("unused")
 	private int normalizeThickness(int transFrequency) {
-    	double tFr = transFrequency;
-    	double base = baseThickness;
-    	double result = (tFr/base)*10;
+		double base = baseThickness;
+    	double result = ((double) transFrequency /base)*10;
     	return (int)result;
 	}
     
@@ -321,7 +317,7 @@ public class MauritiusMapPanel extends JPanel {
         int offX = 6; // >0 przesunięcie do przodu
         int offY = 0; // >0 przesunięcie w dół pod kreskę
         g2d.fillPolygon(new int[] {len + offX, len-ARR_SIZE+ offX, len-ARR_SIZE+ offX, len+ offX},
-        			new int[] {0 + offY, -ARR_SIZE+ offY, ARR_SIZE+ offY, 0+ offY}, 4);
+        			new int[] {offY, -ARR_SIZE+ offY, ARR_SIZE+ offY, offY}, 4);
         
         g2d.setPaint(old);
         g2d.setTransform(atOld);
@@ -337,6 +333,7 @@ public class MauritiusMapPanel extends JPanel {
      * @param width int - szerokość
      * @param color Color - kolor
      */
+	@SuppressWarnings("SameParameterValue")
 	private void drawL_shapeArrow(Graphics2D g2d, int x1, int y1, int x2, int y2, int width, Color color) {
         double dx = x2 - x1, dy = y2 - y1;
         double angle = Math.atan2(dy, dx);
@@ -404,6 +401,7 @@ public class MauritiusMapPanel extends JPanel {
 	 * @param text String - teks do wpisania
 	 * @param color Color - kolor tekstu
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private void drawText(Graphics2D g2d, int x, int y, String text, Color color) {
         Color oldColor = g2d.getColor();
         g2d.setColor(color);
@@ -420,7 +418,8 @@ public class MauritiusMapPanel extends JPanel {
      * @param r int - promień
      * @param color Color - kolor
      */
-    private void drawCenteredCircle(Graphics2D g2d, int x, int y, int r, Color color) {
+    @SuppressWarnings("SameParameterValue")
+	private void drawCenteredCircle(Graphics2D g2d, int x, int y, int r, Color color) {
     	int xPos = x-(r/2);
     	int yPos = y-(r/2);
     	
@@ -603,8 +602,7 @@ public class MauritiusMapPanel extends JPanel {
 			
 			MapElement data = mapLocations.get(key);
 			if(data != null)
-				new HolmesKnockoutViewer(data, holmesKnockout);
-			
+				new HolmesKnockoutViewer(data);
 			
 			e.getComponent().repaint();
 		}	

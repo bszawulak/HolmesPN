@@ -2,10 +2,9 @@ package holmes.windows.ssim;
 
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -21,8 +20,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.simulators.SimulatorGlobals;
@@ -38,6 +35,7 @@ import holmes.windows.managers.HolmesStatesManager;
  * @author MR
  */
 public class HolmesSimSetup extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -240275069200534886L;
 	private GUIManager overlord;
 	private JFrame parentWindow;
@@ -92,7 +90,7 @@ public class HolmesSimSetup extends JFrame {
 		setLocation(parentWindow.getX()+150, parentWindow.getY()+150);
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {}
+		} catch (Exception ignored) {}
 		setSize(new Dimension(620, 490));
 		
 		JPanel main = new JPanel(null); //główny panel okna
@@ -114,6 +112,7 @@ public class HolmesSimSetup extends JFrame {
 	 * @param height int - wysokość preferowana
 	 * @return JPanel - panel, okrętu się pan spodziewałeś?
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createGlobalOptionsPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel(null);
 		panel.setBounds(x, y, width, height);
@@ -129,18 +128,16 @@ public class HolmesSimSetup extends JFrame {
 		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(settings.getSimSteps(), 100, 10000000, 100);
 		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
 		simStepsSpinner.setBounds(posX, posY+20, 80, 20);
-		simStepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JSpinner spinner = (JSpinner) e.getSource();
-				int value = (int) spinner.getValue();
-				settings.setSimSteps(value);
-				
-				if(parentWindow instanceof HolmesSim) {
-					((HolmesSim)parentWindow).updateIntervalSpinner();
-				}
+		simStepsSpinner.addChangeListener(e -> {
+			if(doNotUpdate)
+				return;
+
+			JSpinner spinner = (JSpinner) e.getSource();
+			int value = (int) spinner.getValue();
+			settings.setSimSteps(value);
+
+			if(parentWindow instanceof HolmesSim) {
+				((HolmesSim)parentWindow).updateIntervalSpinner();
 			}
 		});
 		panel.add(simStepsSpinner);
@@ -152,15 +149,13 @@ public class HolmesSimSetup extends JFrame {
 		SpinnerModel simRepetsSpinnerModel = new SpinnerNumberModel(settings.getRepetitions(), 1, 100000, 10);
 		JSpinner simRepsSpinner = new JSpinner(simRepetsSpinnerModel);
 		simRepsSpinner.setBounds(posX+85, posY+20, 80, 20);
-		simRepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JSpinner spinner = (JSpinner) e.getSource();
-				int value = (int) spinner.getValue();
-				settings.setRepetitions(value);
-			}
+		simRepsSpinner.addChangeListener(e -> {
+			if(doNotUpdate)
+				return;
+
+			JSpinner spinner = (JSpinner) e.getSource();
+			int value = (int) spinner.getValue();
+			settings.setRepetitions(value);
 		});
 		panel.add(simRepsSpinner);
 
@@ -172,21 +167,18 @@ public class HolmesSimSetup extends JFrame {
 		generatorType = new JComboBox<String>(simulator);
 		generatorType.setBounds(posX+170, posY+20, 200, 20);
 		generatorType.setSelectedIndex(0);
-		generatorType.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate)
-					return;
+		generatorType.addActionListener(actionEvent -> {
+			if(doNotUpdate)
+				return;
 
-				int selected = generatorType.getSelectedIndex();
-				if(selected == 1) {
-					overlord.simSettings.setGeneratorType(1);
-				} else {
-					overlord.simSettings.setGeneratorType(0);
-				}
-				
-				doNotUpdate = false;
+			int selected = generatorType.getSelectedIndex();
+			if(selected == 1) {
+				overlord.simSettings.setGeneratorType(1);
+			} else {
+				overlord.simSettings.setGeneratorType(0);
 			}
+
+			doNotUpdate = false;
 		});
 		panel.add(generatorType);
 		
@@ -196,11 +188,7 @@ public class HolmesSimSetup extends JFrame {
 	    stateManagerButton.setBounds(posX+380, posY, 130, 40);
 	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
 	    stateManagerButton.setFocusPainted(false);
-	    stateManagerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesStatesManager();
-			}
-		});
+	    stateManagerButton.addActionListener(actionEvent -> new HolmesStatesManager());
 	    panel.add(stateManagerButton);
 		
 		JLabel simulatorLabel = new JLabel("Simulator selection:");
@@ -212,24 +200,21 @@ public class HolmesSimSetup extends JFrame {
 		simulatorType = new JComboBox<String>(simulatorName);
 		simulatorType.setBounds(posX, posY+60, 250, 20);
 		simulatorType.setSelectedIndex(0);
-		simulatorType.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate)
-					return;
-				
-				int selected = simulatorType.getSelectedIndex();
-				if(selected == 0) {
-					overlord.simSettings.setSimulatorType(0);
-				} else if(selected == 1) {
-					overlord.simSettings.setSimulatorType(1);
-				} else {
-					JOptionPane.showMessageDialog(ego, "This feature is not yet implemented.", 
-							"Simulator unavailable", JOptionPane.INFORMATION_MESSAGE);
-				}
-				
-				doNotUpdate = false;
+		simulatorType.addActionListener(actionEvent -> {
+			if(doNotUpdate)
+				return;
+
+			int selected = simulatorType.getSelectedIndex();
+			if(selected == 0) {
+				overlord.simSettings.setSimulatorType(0);
+			} else if(selected == 1) {
+				overlord.simSettings.setSimulatorType(1);
+			} else {
+				JOptionPane.showMessageDialog(ego, "This feature is not yet implemented.",
+						"Simulator unavailable", JOptionPane.INFORMATION_MESSAGE);
 			}
+
+			doNotUpdate = false;
 		});
 		panel.add(simulatorType);
 		
@@ -244,6 +229,7 @@ public class HolmesSimSetup extends JFrame {
 	 * @param height int - wysokość preferowana
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createStdSimulatorSettingsPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel(null);
 		panel.setBounds(x, y, width, height);
@@ -262,14 +248,12 @@ public class HolmesSimSetup extends JFrame {
 		classPNRadioButton = new JRadioButton("Classical Petri Net");
 		classPNRadioButton.setBounds(5, 20, 130, 20);
 		classPNRadioButton.setActionCommand("0");
-		classPNRadioButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
-				if(aButton.isSelected() == true) {
-					if(doNotUpdate)
-						return;
-					settings.setNetType(0);
-				}
+		classPNRadioButton.addActionListener(actionEvent -> {
+			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+			if(aButton.isSelected()) {
+				if(doNotUpdate)
+					return;
+				settings.setNetType(0);
 			}
 		});
 		netTypeModePanel.add(classPNRadioButton);
@@ -278,23 +262,21 @@ public class HolmesSimSetup extends JFrame {
 		timeNetRadioButtion = new JRadioButton("Time(d) Petri Net");
 		timeNetRadioButtion.setBounds(5, 40, 130, 20);
 		timeNetRadioButtion.setActionCommand("1");
-		timeNetRadioButtion.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
-				if(aButton.isSelected() == true) {
-					if(doNotUpdate)
-						return;
-					//doNotUpdate = true;
-					int res = settings.setNetType(1);
-					
-					if(res == 0) {
-						groupNetType.setSelected(classPNRadioButton.getModel(), true);
-					} else if(res == 2) {
-						groupNetType.setSelected(hybridNetRadioButton.getModel(), true);
-					}		
-					
-					doNotUpdate = false;
+		timeNetRadioButtion.addActionListener(actionEvent -> {
+			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+			if(aButton.isSelected()) {
+				if(doNotUpdate)
+					return;
+				//doNotUpdate = true;
+				int res = settings.setNetType(1);
+
+				if(res == 0) {
+					groupNetType.setSelected(classPNRadioButton.getModel(), true);
+				} else if(res == 2) {
+					groupNetType.setSelected(hybridNetRadioButton.getModel(), true);
 				}
+
+				doNotUpdate = false;
 			}
 		});
 		netTypeModePanel.add(timeNetRadioButtion);
@@ -303,14 +285,12 @@ public class HolmesSimSetup extends JFrame {
 		hybridNetRadioButton = new JRadioButton("Hybrid Net");
 		hybridNetRadioButton.setBounds(5, 60, 130, 20);
 		hybridNetRadioButton.setActionCommand("2");
-		hybridNetRadioButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
-				if(aButton.isSelected() == true) {
-					if(doNotUpdate)
-						return;
-					settings.setNetType(2);
-				}
+		hybridNetRadioButton.addActionListener(actionEvent -> {
+			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+			if(aButton.isSelected()) {
+				if(doNotUpdate)
+					return;
+				settings.setNetType(2);
 			}
 		});
 		netTypeModePanel.add(hybridNetRadioButton);
@@ -326,16 +306,14 @@ public class HolmesSimSetup extends JFrame {
 		fiftyModeRadioButton = new JRadioButton("50/50 mode (async.)");
 		fiftyModeRadioButton.setBounds(5, 20, 140, 20);
 		fiftyModeRadioButton.setActionCommand("0");
-		fiftyModeRadioButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate)
-					return;
-				
-				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
-				if(aButton.isSelected() == true) {
-					settings.setSingleMode(false);
-					settings.setMaxMode(false);
-				}
+		fiftyModeRadioButton.addActionListener(actionEvent -> {
+			if(doNotUpdate)
+				return;
+
+			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+			if(aButton.isSelected()) {
+				settings.setSingleMode(false);
+				settings.setMaxMode(false);
 			}
 		});
 		subModeModePanel.add(fiftyModeRadioButton);
@@ -344,16 +322,14 @@ public class HolmesSimSetup extends JFrame {
 		maxModeRadioButton = new JRadioButton("Maximum mode (sync.)");
 		maxModeRadioButton.setBounds(5, 40, 160, 20);
 		maxModeRadioButton.setActionCommand("1");
-		maxModeRadioButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate)
-					return;
-				
-				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
-				if(aButton.isSelected() == true) {
-					settings.setSingleMode(false);
-					settings.setMaxMode(true);
-				}
+		maxModeRadioButton.addActionListener(actionEvent -> {
+			if(doNotUpdate)
+				return;
+
+			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+			if(aButton.isSelected()) {
+				settings.setSingleMode(false);
+				settings.setMaxMode(true);
 			}
 		});
 		subModeModePanel.add(maxModeRadioButton);
@@ -362,15 +338,13 @@ public class HolmesSimSetup extends JFrame {
 		singleModeRadioButton = new JRadioButton("Single fire mode");
 		singleModeRadioButton.setBounds(5, 60, 140, 20);
 		singleModeRadioButton.setActionCommand("2");
-		singleModeRadioButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate)
-					return;
-				
-				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
-				if(aButton.isSelected() == true) {
-					settings.setSingleMode(true);
-				}
+		singleModeRadioButton.addActionListener(actionEvent -> {
+			if(doNotUpdate)
+				return;
+
+			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+			if(aButton.isSelected()) {
+				settings.setSingleMode(true);
 			}
 		});
 		subModeModePanel.add(singleModeRadioButton);
@@ -379,18 +353,12 @@ public class HolmesSimSetup extends JFrame {
 		
 		allowEmptySteps = new JCheckBox("Allow empty steps");
 		allowEmptySteps.setBounds(posX+325, posY, 150, 20);
-		allowEmptySteps.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate)
-					return;
+		allowEmptySteps.addActionListener(actionEvent -> {
+			if(doNotUpdate)
+				return;
 
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					settings.setEmptySteps(true);
-				} else {
-					settings.setEmptySteps(false);
-				}
-			}
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			settings.setEmptySteps(abstractButton.getModel().isSelected());
 		});
 		panel.add(allowEmptySteps);
 		
@@ -405,6 +373,7 @@ public class HolmesSimSetup extends JFrame {
 	 * @param height int - wysokość preferowana
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createStochasticSimSettingsPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel(null);
 		panel.setBounds(x, y, width, height);
@@ -418,27 +387,17 @@ public class HolmesSimSetup extends JFrame {
 		createFRWindowButton.setBounds(posX, posY, 120, 40);
 		createFRWindowButton.setFocusPainted(false);
 		createFRWindowButton.setToolTipText("Loop single transition simulation");
-		createFRWindowButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesSPNmanager(ego);
-			}
-		});
+		createFRWindowButton.addActionListener(actionEvent -> new HolmesSPNmanager(ego));
 		panel.add(createFRWindowButton);
 		
 		useMassActionKinetics = new JCheckBox("Mass action kinetics enabled");
 		useMassActionKinetics.setBounds(posX+130, posY, 200, 20);
-		useMassActionKinetics.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate)
-					return;
+		useMassActionKinetics.addActionListener(actionEvent -> {
+			if(doNotUpdate)
+				return;
 
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					settings.setSSAmassAction(true);
-				} else {
-					settings.setSSAmassAction(false);
-				}
-			}
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			settings.setSSAmassAction(abstractButton.getModel().isSelected());
 		});
 		panel.add(useMassActionKinetics);
 		
@@ -447,18 +406,12 @@ public class HolmesSimSetup extends JFrame {
 									+ "is no longer active, will be remove from the firing sequence. Otherwise, it will fire\n"
 									+ "as soon as it become activated again = will act as immediate in that moment.");
 		detRemoveMode.setBounds(posX+130, posY+20, 350, 20);
-		detRemoveMode.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate)
-					return;
+		detRemoveMode.addActionListener(actionEvent -> {
+			if(doNotUpdate)
+				return;
 
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					settings.setSPNdetRemoveMode(true);
-				} else {
-					settings.setSPNdetRemoveMode(false);
-				}
-			}
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			settings.setSPNdetRemoveMode(abstractButton.getModel().isSelected());
 		});
 		panel.add(detRemoveMode);
 		
@@ -472,15 +425,13 @@ public class HolmesSimSetup extends JFrame {
 		immOnly1RadioButton.setBounds(5, 20, 220, 20);
 		immOnly1RadioButton.setToolTipText("Only 1 transition with the highest priority will fire, then all will be evaluated from the beginning.");
 		immOnly1RadioButton.setActionCommand("0");
-		immOnly1RadioButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
-				if(aButton.isSelected() == true) {
-					if(doNotUpdate)
-						return;
-					
-					settings.setSPNimmediateMode(0);
-				}
+		immOnly1RadioButton.addActionListener(actionEvent -> {
+			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+			if(aButton.isSelected()) {
+				if(doNotUpdate)
+					return;
+
+				settings.setSPNimmediateMode(0);
 			}
 		});
 		immSPNModePanel.add(immOnly1RadioButton);
@@ -490,15 +441,13 @@ public class HolmesSimSetup extends JFrame {
 		immSchedRadioButton.setBounds(5, 40, 220, 20);
 		immOnly1RadioButton.setToolTipText("Sequenced firing of active immediate transition by priority.");
 		immSchedRadioButton.setActionCommand("1");
-		immSchedRadioButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
-				if(aButton.isSelected() == true) {
-					if(doNotUpdate)
-						return;
-					
-					settings.setSPNimmediateMode(1);
-				}
+		immSchedRadioButton.addActionListener(actionEvent -> {
+			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+			if(aButton.isSelected()) {
+				if(doNotUpdate)
+					return;
+
+				settings.setSPNimmediateMode(1);
 			}
 		});
 		immSPNModePanel.add(immSchedRadioButton);
@@ -508,15 +457,13 @@ public class HolmesSimSetup extends JFrame {
 		immProbRadioButton.setBounds(5, 60, 220, 20);
 		immProbRadioButton.setToolTipText("1 from active IM transition will fire, probability depends on priority set for transition.");
 		immProbRadioButton.setActionCommand("2");
-		immProbRadioButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
-				if(aButton.isSelected() == true) {
-					if(doNotUpdate)
-						return;
-					
-					settings.setSPNimmediateMode(2);
-				}
+		immProbRadioButton.addActionListener(actionEvent -> {
+			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+			if(aButton.isSelected()) {
+				if(doNotUpdate)
+					return;
+
+				settings.setSPNimmediateMode(2);
 			}
 		});
 		immSPNModePanel.add(immProbRadioButton);
@@ -532,6 +479,7 @@ public class HolmesSimSetup extends JFrame {
 	 * @param height int - wysokość preferowana
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createGillespieSSASimSettingsPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel(null);
 		panel.setBounds(x, y, width, height);
@@ -545,11 +493,7 @@ public class HolmesSimSetup extends JFrame {
 		createFRWindowButton.setBounds(posX, posY, 120, 40);
 		createFRWindowButton.setFocusPainted(false);
 		createFRWindowButton.setToolTipText("Set transition firing rates for SSA.");
-		createFRWindowButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesSPNmanager(ego);
-			}
-		});
+		createFRWindowButton.addActionListener(actionEvent -> new HolmesSPNmanager(ego));
 		panel.add(createFRWindowButton);
 		
 		JButton createCompoundsEditorWindowButton = new JButton("<html>Components<br>&nbsp;&nbsp;Manager&nbsp;</html>");
@@ -558,11 +502,7 @@ public class HolmesSimSetup extends JFrame {
 		createCompoundsEditorWindowButton.setFocusPainted(false);
 		createCompoundsEditorWindowButton.setBounds(posX+130, posY, 120, 40);
 		createCompoundsEditorWindowButton.setToolTipText("Component vectors managaer for SSA.");
-		createCompoundsEditorWindowButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesSSAwindowManager(ego);
-			}
-		});
+		createCompoundsEditorWindowButton.addActionListener(actionEvent -> new HolmesSSAwindowManager(ego));
 		panel.add(createCompoundsEditorWindowButton);
 		
 		return panel;
@@ -589,21 +529,12 @@ public class HolmesSimSetup extends JFrame {
 			groupSimMode.setSelected(maxModeRadioButton.getModel(), true);
 		else //50/50:
 			groupSimMode.setSelected(fiftyModeRadioButton.getModel(), true);
-		
-		if(settings.isEmptySteps())
-			allowEmptySteps.setSelected(true);
-		else
-			allowEmptySteps.setSelected(false);
-		
-		if(settings.isSSAMassAction())
-			useMassActionKinetics.setSelected(true);
-		else
-			useMassActionKinetics.setSelected(false);
-		
-		if(settings.isSPNdetRemoveMode())
-			detRemoveMode.setSelected(true);
-		else
-			detRemoveMode.setSelected(false);
+
+		allowEmptySteps.setSelected(settings.isEmptySteps());
+
+		useMassActionKinetics.setSelected(settings.isSSAMassAction());
+
+		detRemoveMode.setSelected(settings.isSPNdetRemoveMode());
 		
 		if(settings.getGeneratorType() == 0)
 			generatorType.setSelectedIndex(0);

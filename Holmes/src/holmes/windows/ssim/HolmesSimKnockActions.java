@@ -14,7 +14,7 @@ import holmes.petrinet.data.NetSimulationData;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNotepad;
 
@@ -86,12 +86,11 @@ public class HolmesSimKnockActions {
 	
 	/**
 	 * Wywoływana po zakończeniu symulacji do zbierania danych referencyjnych.
-	 * @param data NetSimulationData - zebrane dane
+	 * @param netSimData NetSimulationData - zebrane dane
 	 * @param places ArrayList[Place] - wektor miejsc
 	 * @param transitions ArrayList[Transition] - wektor tranzycji
 	 */
-	public void completeRefSimulationResults(NetSimulationData data, ArrayList<Transition> transitions, ArrayList<Place> places) {
-		NetSimulationData netSimData = data;
+	public void completeRefSimulationResults(NetSimulationData netSimData, ArrayList<Transition> transitions, ArrayList<Place> places) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		netSimData.date = dateFormat.format(date);
@@ -105,7 +104,7 @@ public class HolmesSimKnockActions {
 			notePad.addTextLineNL("", "text");
 			notePad.addTextLineNL("Transitions: ", "text");
 			notePad.addTextLineNL("", "text");
-			for(int t=0; t<netSimData.transFiringsAvg.size(); t++) {
+			for(int t = 0; t< netSimData.transFiringsAvg.size(); t++) {
 				String t_name = transitions.get(t).getName();
 				double valAvg = netSimData.transFiringsAvg.get(t);
 				double valMin = netSimData.transFiringsMin.get(t);
@@ -119,7 +118,7 @@ public class HolmesSimKnockActions {
 			notePad.addTextLineNL("", "text");
 			notePad.addTextLineNL("Places: ", "text");
 			notePad.addTextLineNL("", "text");
-			for(int t=0; t<netSimData.placeTokensAvg.size(); t++) {
+			for(int t = 0; t< netSimData.placeTokensAvg.size(); t++) {
 				String t_name = places.get(t).getName();
 				double valAvg = netSimData.placeTokensAvg.get(t);
 				double valMin = netSimData.placeTokensMin.get(t);
@@ -182,12 +181,11 @@ public class HolmesSimKnockActions {
 	
 	/**
 	 * Wywoływana po zakończeniu symulacji zbierania danych knockout.
-	 * @param data NetSimulationData - zebrane dane
-	 * @param places
-	 * @param  transitions
+	 * @param netSimData NetSimulationData - zebrane dane
+	 * @param transitions (<b>ArrayList[Transition]</b>) lista tranzycji.
+	 * @param places (<b>ArrayList[Place]</b>) lista miejsc.
 	 */
-	public void completeKnockoutSimulationResults(NetSimulationData data, ArrayList<Transition> transitions, ArrayList<Place> places) {
-		NetSimulationData netSimData = data;
+	public void completeKnockoutSimulationResults(NetSimulationData netSimData, ArrayList<Transition> transitions, ArrayList<Place> places) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		netSimData.date = dateFormat.format(date);
@@ -200,7 +198,7 @@ public class HolmesSimKnockActions {
 			notePad.addTextLineNL("", "text");
 			notePad.addTextLineNL("Transitions: ", "text");
 			notePad.addTextLineNL("", "text");
-			for(int t=0; t<netSimData.transFiringsAvg.size(); t++) {
+			for(int t = 0; t< netSimData.transFiringsAvg.size(); t++) {
 				String t_name = transitions.get(t).getName();
 				double valAvg = netSimData.transFiringsAvg.get(t);
 				double valMin = netSimData.transFiringsMin.get(t);
@@ -214,7 +212,7 @@ public class HolmesSimKnockActions {
 			notePad.addTextLineNL("", "text");
 			notePad.addTextLineNL("Places: ", "text");
 			notePad.addTextLineNL("", "text");
-			for(int t=0; t<netSimData.placeTokensAvg.size(); t++) {
+			for(int t = 0; t< netSimData.placeTokensAvg.size(); t++) {
 				String t_name = places.get(t).getName();
 				double valAvg = netSimData.placeTokensAvg.get(t);
 				double valMin = netSimData.placeTokensMin.get(t);
@@ -316,7 +314,7 @@ public class HolmesSimKnockActions {
 				pn.accessSimKnockoutData().addNewDataSet(returningData);
 			}
 			pingPongSimCurrentTrans++;
-			if(pingPongSimCurrentTrans == pingPongSimTransLimit || forceTerminate == true) {
+			if(pingPongSimCurrentTrans == pingPongSimTransLimit || forceTerminate) {
 				boss.mainSimWindow.setWorkInProgress(false);
 				boss.setSimWindowComponentsStatus(true);
 				boss.dataSimInProgress = false;
@@ -427,10 +425,7 @@ public class HolmesSimKnockActions {
 			}
 			
 			for(Transition trans : transitions) {
-				if(disableList.contains(trans))
-					trans.setOffline(true);
-				else
-					trans.setOffline(false);
+				trans.setOffline(disableList.contains(trans));
 			}
 		}
 	}

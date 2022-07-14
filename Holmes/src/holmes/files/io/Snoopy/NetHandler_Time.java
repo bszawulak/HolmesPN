@@ -157,7 +157,7 @@ public class NetHandler_Time extends NetHandler {
 			}
 		}
 		
-		if (qName.equalsIgnoreCase("colList_body") && variableDuration == true) {
+		if (qName.equalsIgnoreCase("colList_body") && variableDuration) {
 			colDPN = true; //jestesmy w sekcji gdzie bedą czasy udpalenia
 		}
 		
@@ -177,12 +177,12 @@ public class NetHandler_Time extends NetHandler {
 		}
 		
 		
-		if(colDPN == true && readString.equals("Main")) {
+		if(colDPN && readString.equals("Main")) {
 			readDPN = true;
 		}
 		
 		
-		if (qName.equalsIgnoreCase("colList_body") && variableInterval == true) {
+		if (qName.equalsIgnoreCase("colList_body") && variableInterval) {
 			colTPN = true; //jestesmy w sekcji gdzie beda zmienne czasowe EFT i LFT
 		}
 		if(readLFT) {
@@ -212,7 +212,7 @@ public class NetHandler_Time extends NetHandler {
 			readEFT = false;
 		}
 		
-		if(colTPN == true && readString.equals("Main")) {
+		if(colTPN && readString.equals("Main")) {
 			readEFT = true;
 		}
 		
@@ -221,10 +221,10 @@ public class NetHandler_Time extends NetHandler {
 
 		// Wczytywanie informacji odnosnie ID i pozycji noda
 
-		if ((endAtribute == true) && (atribute == false) && (graphics == true)
-				&& (graphic == true) && (metadata == false)
-				&& (edgeclass == false) && (point == false)
-				&& (points == false) && (node == true)) {
+		if ((endAtribute) && (!atribute) && (graphics)
+				&& (graphic) && (!metadata)
+				&& (!edgeclass) && (!point)
+				&& (!points) && (node)) {
 			if (attributes.getQName(0).equals("x")) {
 				double xPos = Double.parseDouble(attributes.getValue(0));
 				double yPos = Double.parseDouble(attributes.getValue(1));
@@ -236,7 +236,7 @@ public class NetHandler_Time extends NetHandler {
 				try {
 					int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
 					resizeFactor += ((double)addF/(double)100);
-				} catch (Exception e) { }
+				} catch (Exception ignored) { }
 				
 				xPos *= resizeFactor;
 				yPos *= resizeFactor;
@@ -295,17 +295,17 @@ public class NetHandler_Time extends NetHandler {
 					yoff_name -= 20; //20 default, czyli 0 w oY w Holmes
 					if(yoff_name < -8)
 						yoff_name = -55; //nad node, uwzględnia różnicę
-				} catch (Exception e) {} 
+				} catch (Exception ignored) {}
 			}
 			graphicNamesPointsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
 		}
 
 		// Zapis do zmiennej globalnej ID source i targetArc
 
-		if ((endAtribute == true) && (atribute == false) && (graphics == true)
-				&& (graphic == true) && (metadata == false)
-				&& (edgeclass == true) && (point == false) && (points == false)
-				&& (node == false) && (edge == true)) {
+		if ((endAtribute) && (!atribute) && (graphics)
+				&& (graphic) && (!metadata)
+				&& (edgeclass) && (!point) && (!points)
+				&& (!node) && (edge)) {
 
 			arcSource = Integer.parseInt(attributes.getValue(2));
 			arcTarget = Integer.parseInt(attributes.getValue(3));
@@ -336,13 +336,13 @@ public class NetHandler_Time extends NetHandler {
 		// Zapis atrybutow noda i arca
 
 		if (qName.equalsIgnoreCase("attribute")) {
-			if (node == true) {
-				if (variableName == true) {
+			if (node) {
+				if (variableName) {
 					nodeName = readString;
 					variableName = false;
 					readString = "";
 				}
-				if (variableMarking == true) {
+				if (variableMarking) {
 					if (readString.equals("")) {
 						nodeMarking = 0;
 					} else {
@@ -351,7 +351,7 @@ public class NetHandler_Time extends NetHandler {
 						readString = "";
 					}
 				}
-				if (variableLogic == true) {
+				if (variableLogic) {
 					if (readString.equals("")) {
 						nodeLogic = 0;
 					} else {
@@ -360,12 +360,12 @@ public class NetHandler_Time extends NetHandler {
 						readString = "";
 					}
 				}
-				if (variableComent == true) {
+				if (variableComent) {
 					nodeComment = readString;
 					variableComent = false;
 					readString = "";
 				}
-				if (variableInterval == true && colTPN == true) {
+				if (variableInterval && colTPN) {
 					if(!readString.equals("Main")) {
 						nodeLFT = Double.parseDouble(readString);
 					}
@@ -373,9 +373,9 @@ public class NetHandler_Time extends NetHandler {
 					readString = "";
 				}
 			}
-			if (edge == true && atribute == true) {
+			if (edge && atribute) {
 
-				if (variableMultiplicity == true) {
+				if (variableMultiplicity) {
 					if (readString.equals("")) {
 						arcMultiplicity = 0;
 					} else {
@@ -384,7 +384,7 @@ public class NetHandler_Time extends NetHandler {
 					variableMultiplicity = false;
 					readString = "";
 				}
-				if (variableComent == true) {
+				if (variableComent) {
 					nodeComment = readString;
 					variableComent = false;
 					readString = "";
@@ -415,13 +415,13 @@ public class NetHandler_Time extends NetHandler {
 					hei = globalElementLocationList.get(l).getPosition().y;
 				}
 			}
-			if (xFound == true && yFound == false) {
+			if (xFound && !yFound) {
 				graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 90, graphPanel.getSize().height));
 			}
-			if (yFound == true && xFound == false) {
+			if (yFound && !xFound) {
 				graphPanel.setSize(new Dimension(graphPanel.getSize().width,globalElementLocationList.get(tmpY).getPosition().y + 90));
 			}
-			if (xFound == true && yFound == true) {
+			if (xFound && yFound) {
 				graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX)
 					.getPosition().x + 90, globalElementLocationList.get(tmpY).getPosition().y + 90));
 			}
@@ -448,19 +448,17 @@ public class NetHandler_Time extends NetHandler {
 				namesElLocations.add(new ElementLocation(nodeSID, graphicNamesPointsList.get(k), null));
 			}
 
-			for (int u = 0; u < elementLocationsList.size(); u++) {
-				globalElementLocationList.add(elementLocationsList.get(u));
-			}
+			globalElementLocationList.addAll(elementLocationsList);
 			
-			if (nodeType == "Place") {
+			if (nodeType.equals("Place")) {
 				Place tmpPlace = new Place(nodeID, elementLocationsList, nodeName, nodeComment, nodeMarking);
 				tmpPlace.setTextsLocations(namesElLocations, GUIManager.locationMoveType.NAME);
 
 				//XTPN node preparation (just in case)
-				for(int i=0; i<namesElLocations.size(); i++) {
-					int x = namesElLocations.get(i).getPosition().x;
-					int y = namesElLocations.get(i).getPosition().y;
-					int _sheetID = namesElLocations.get(i).getSheetID();
+				for (ElementLocation namesElLocation : namesElLocations) {
+					int x = namesElLocation.getPosition().x;
+					int y = namesElLocation.getPosition().y;
+					int _sheetID = namesElLocation.getSheetID();
 					alphaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 					betaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 					gammaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
@@ -487,10 +485,10 @@ public class NetHandler_Time extends NetHandler {
 					tmpTTran.setTextsLocations(namesElLocations, GUIManager.locationMoveType.NAME);
 
 					//XTPN node preparation (just in case)
-					for(int i=0; i<namesElLocations.size(); i++) {
-						int x = namesElLocations.get(i).getPosition().x;
-						int y = namesElLocations.get(i).getPosition().y;
-						int _sheetID = namesElLocations.get(i).getSheetID();
+					for (ElementLocation namesElLocation : namesElLocations) {
+						int x = namesElLocation.getPosition().x;
+						int y = namesElLocation.getPosition().y;
+						int _sheetID = namesElLocation.getSheetID();
 						alphaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 						betaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 						gammaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
@@ -517,10 +515,10 @@ public class NetHandler_Time extends NetHandler {
 					tmpTran.setTextsLocations(namesElLocations, GUIManager.locationMoveType.NAME);
 
 					//XTPN node preparation (just in case)
-					for(int i=0; i<namesElLocations.size(); i++) {
-						int x = namesElLocations.get(i).getPosition().x;
-						int y = namesElLocations.get(i).getPosition().y;
-						int _sheetID = namesElLocations.get(i).getSheetID();
+					for (ElementLocation namesElLocation : namesElLocations) {
+						int x = namesElLocation.getPosition().x;
+						int y = namesElLocation.getPosition().y;
+						int _sheetID = namesElLocation.getSheetID();
 						alphaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 						betaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
 						gammaLoc.add(new ElementLocation(_sheetID, new Point(x, y), null));
@@ -574,18 +572,18 @@ public class NetHandler_Time extends NetHandler {
 	 * @param start (int) indeks początkowy.
 	 * @param length (int) ilość wczytanych znaków.
 	 */
-	public void characters(char ch[], int start, int length) throws SAXException {
+	public void characters(char[] ch, int start, int length) throws SAXException {
 		// Wyluskiwanie zawartosci <![CDATA[]]>
-		if (((node == true) || edge == true) && (atribute == true)) {
-			String temper = "";
-			char tm[] = new char[20000];
+		if (((node) || edge) && (atribute)) {
+			StringBuilder temper = new StringBuilder();
+			char[] tm = new char[20000];
 
 			for (int i = 0; i < length; i++) {
 				tm[i] = ch[i + start];
-				temper = temper + ch[i + start];
+				temper.append(ch[i + start]);
 			}
 			if (tm[0] != '\n') {
-				readString = temper;
+				readString = temper.toString();
 			}
 		}
 	}
@@ -596,7 +594,7 @@ public class NetHandler_Time extends NetHandler {
 	 * @param start (int) indeks początkowy.
 	 * @param length (int) wielkość pustej przestrzeni.
 	 */
-	public void ignorableWhitespace(char ch[], int start, int length)
+	public void ignorableWhitespace(char[] ch, int start, int length)
 			throws SAXException {
 	}
 }

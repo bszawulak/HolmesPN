@@ -145,12 +145,11 @@ public class StatesPlacesTableModelXTPN extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         Object returnValue;
         if(columnIndex < 2) {
-            return dataMatrix.get(rowIndex).get(columnIndex).toString();
+            return dataMatrix.get(rowIndex).get(columnIndex);
         } else {
             try {
                 returnValue = dataMatrix.get(rowIndex).get(columnIndex);
-                String strVal = returnValue.toString();
-                return strVal;
+                return returnValue.toString();
                 //return Double.parseDouble(strVal);
             } catch (Exception e) {
                 return -1;

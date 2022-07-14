@@ -1,5 +1,6 @@
 package holmes.tables.simKnock;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
@@ -14,6 +15,7 @@ import holmes.petrinet.elements.Place;
  *
  */
 public class SimKnockPlacesTableModel extends AbstractTableModel {
+	@Serial
 	private static final long serialVersionUID = 7417629500439797992L;
 	//private static final DecimalFormat formatter = new DecimalFormat( "#.###" );
 	
@@ -51,6 +53,7 @@ public class SimKnockPlacesTableModel extends AbstractTableModel {
 	 * @param index int - index miejsca
 	 * @param p Place - miejsce
 	 */
+	@SuppressWarnings("IntegerDivisionInFloatingPointContext")
 	public void addNew(NetSimulationData data, int index, Place p) {
 		PlaceContainer pc = new PlaceContainer();
 		pc.ID = index;
@@ -128,51 +131,22 @@ public class SimKnockPlacesTableModel extends AbstractTableModel {
      */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Object returnValue = null;
+		Object returnValue;
 		switch (columnIndex) {
-        case 0:
-            returnValue = dataMatrix.get(rowIndex).ID;
-            break;
-        case 1:
-        	returnValue = dataMatrix.get(rowIndex).name;
-            break;
-        case 2:
-        	returnValue = dataMatrix.get(rowIndex).tokenAvg;
-        	try{
-        		//Double value = Double.parseDouble(returnValue.toString());
-        		//returnValue = value;
-        	} catch (Exception e) { }
-            break;
-        case 3:
-        	returnValue = dataMatrix.get(rowIndex).tokenMin;
-            break;
-        case 4:
-        	returnValue = dataMatrix.get(rowIndex).tokenMax;
-            break;
-        case 5:
-        	returnValue = dataMatrix.get(rowIndex).noTokens;
-            break;
-        case 6:
-        	returnValue = dataMatrix.get(rowIndex).stdDev;
-            break;
-        case 7:
-        	returnValue = dataMatrix.get(rowIndex).s1;
-            break;
-        case 8:
-        	returnValue = dataMatrix.get(rowIndex).s2;
-            break;
-        case 9:
-        	returnValue = dataMatrix.get(rowIndex).s3;
-            break;
-        case 10:
-        	returnValue = dataMatrix.get(rowIndex).s4;
-            break;
-        case 11:
-        	returnValue = dataMatrix.get(rowIndex).s5;
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid column index");
-        }
+			case 0 -> returnValue = dataMatrix.get(rowIndex).ID;
+			case 1 -> returnValue = dataMatrix.get(rowIndex).name;
+			case 2 -> returnValue = dataMatrix.get(rowIndex).tokenAvg;
+			case 3 -> returnValue = dataMatrix.get(rowIndex).tokenMin;
+			case 4 -> returnValue = dataMatrix.get(rowIndex).tokenMax;
+			case 5 -> returnValue = dataMatrix.get(rowIndex).noTokens;
+			case 6 -> returnValue = dataMatrix.get(rowIndex).stdDev;
+			case 7 -> returnValue = dataMatrix.get(rowIndex).s1;
+			case 8 -> returnValue = dataMatrix.get(rowIndex).s2;
+			case 9 -> returnValue = dataMatrix.get(rowIndex).s3;
+			case 10 -> returnValue = dataMatrix.get(rowIndex).s4;
+			case 11 -> returnValue = dataMatrix.get(rowIndex).s5;
+			default -> throw new IllegalArgumentException("Invalid column index");
+		}
          
         return returnValue;
 	}

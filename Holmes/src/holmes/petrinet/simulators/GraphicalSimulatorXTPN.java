@@ -22,7 +22,7 @@ import holmes.windows.HolmesNotepad;
  * @author students - pierwsza wersja, klasyczne PN oraz TPN
  * @author MR - poprawki, zmiany, kolejne rodzaje trubów symulacji
  */
-public class NetSimulatorXTPN {
+public class GraphicalSimulatorXTPN {
     private SimulatorGlobals.SimNetType netSimTypeXTPN;
     private SimulatorModeXTPN simulatorStatusXTPN = SimulatorModeXTPN.STOPPED;
     private SimulatorModeXTPN previousSimStatusXTPN = SimulatorModeXTPN.STOPPED;
@@ -50,7 +50,7 @@ public class NetSimulatorXTPN {
      * @param type NetType - typ sieci
      * @param net PetriNet - sieć do symulacji
      */
-    public NetSimulatorXTPN(SimulatorGlobals.SimNetType type, PetriNet net) {
+    public GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType type, PetriNet net) {
         netSimTypeXTPN = type;
         petriNet = net;
         launchingTransitions = new ArrayList<Transition>();
@@ -278,7 +278,7 @@ public class NetSimulatorXTPN {
                 if(!(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR
                         || arc.getArcType() == TypeOfArc.READARC)) {
                     overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
-                            " arc: "+arc.toString(), "error", true);
+                            " arc: "+ arc, "error", true);
                 }
 
                 FunctionsTools.functionalAddition(transition, arc, place);
@@ -313,7 +313,7 @@ public class NetSimulatorXTPN {
                     ;
                 } else {
                     overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
-                            " arc: "+arc.toString(), "error", true);
+                            " arc: "+ arc, "error", true);
                 }
                 if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {
                     place.modifyColorTokensNumber(arc.getColorWeight(0), 0);
@@ -671,8 +671,8 @@ public class NetSimulatorXTPN {
                         "Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
             }
 
-            if(timePassPhase == false && subtractPhase == false && addPhase == false
-                && finishedAddPhase == false) {
+            if(!timePassPhase && !subtractPhase && !addPhase
+                && !finishedAddPhase) {
                 timePassPhase = true;
                 repaintSteps = 0;
             }

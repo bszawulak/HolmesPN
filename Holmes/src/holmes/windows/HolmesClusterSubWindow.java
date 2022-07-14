@@ -2,10 +2,9 @@ package holmes.windows;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -41,6 +40,7 @@ import holmes.workspace.ExtensionFileFilter;
  *
  */
 public class HolmesClusterSubWindow extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 6818230680946396781L;
 	private JFrame parentFrame;
 	private Clustering clusteringMetaData;
@@ -48,8 +48,6 @@ public class HolmesClusterSubWindow extends JFrame {
 	private String newline = "\n";
 	private StyledDocument doc; //
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
-	private JPanel editPanel; //główny panel okna
-	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel
 	private JButton buttonExcel;
 	private JButton buttonInjectCluster;
 	private JButton buttonTexTable;
@@ -69,13 +67,14 @@ public class HolmesClusterSubWindow extends JFrame {
 	/**
 	 * Główny konstruktor parametrowy okna klasy HolmesClusterSubWindow.
 	 * @param parent HolmesClusters - obiekt okna wywołującego
-	 * @param clusteringMetaData Clustering - dane do wyświetlenia
+	 * @param dataPackage Clustering - dane do wyświetlenia
+	 * @param mode int - tryb
 	 */
 	public HolmesClusterSubWindow(HolmesClusters parent, Clustering dataPackage, int mode) {
 		this();
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
 		clusterPath = parent.getClusterPath();
@@ -146,17 +145,15 @@ public class HolmesClusterSubWindow extends JFrame {
 	 */
 	private String getMSSFormatted(double clusterMSS) {
         DecimalFormat df = new DecimalFormat("#.########");
-        String txt = "";
-        txt += df.format(clusterMSS);
-        txt = txt.replace(",", ".");
-        if(txt.indexOf(".") == -1)
-        	txt += ".";
+        StringBuilder txt = new StringBuilder();
+        txt.append(df.format(clusterMSS));
+        txt = new StringBuilder(txt.toString().replace(",", "."));
+        if(!txt.toString().contains("."))
+        	txt.append(".");
         int size = txt.length();
-        for(int i=0; i<10-size; i++) {
-        	txt += "0";
-        }
+		txt.append("0".repeat(Math.max(0, 10 - size)));
         
-		return txt;
+		return txt.toString();
 	}
 
 	/**
@@ -242,7 +239,7 @@ public class HolmesClusterSubWindow extends JFrame {
 		    	}
 		    	
 		    	textPane.setCaretPosition(0);
-			} catch (Exception ex1) {
+			} catch (Exception ignored) {
 				
 			}
 			
@@ -344,7 +341,8 @@ public class HolmesClusterSubWindow extends JFrame {
 	 * @return JPanel - główny panel okna
 	 */
 	private JPanel createEditor() {
-		editPanel = new JPanel();
+		//główny panel okna
+		JPanel editPanel = new JPanel();
 		//editPanel.setBorder(BorderFactory.createTitledBorder("SSSSSSS"));
 		editPanel.setLayout(null);
 		editPanel.setBounds(0, 0, 500, 500);
@@ -352,7 +350,8 @@ public class HolmesClusterSubWindow extends JFrame {
            
         textPane = createTextPane();
         textPane.setEditable(false);
-        paneScrollPane = new JScrollPane(textPane);
+		//panel scrollbar -> editPanel
+		JScrollPane paneScrollPane = new JScrollPane(textPane);
         paneScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         paneScrollPane.setBounds(5, 5, 585, 500);
         editPanel.add(paneScrollPane);
@@ -360,53 +359,36 @@ public class HolmesClusterSubWindow extends JFrame {
         buttonExcel = new JButton(">> Excel", Tools.getResIcon48("/icons/clustWindow/buttonExportSingleToExcel.png"));
         buttonExcel.setBounds(5, 510, 190, 50);
         //button.setBounds(new Rectangle(150, 40));
-        buttonExcel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				layerUI.start();
-				turnOffButtons();
-				exportDataToExcel();
-				turnOnButtons();
-				layerUI.stop();
-			}	
+        buttonExcel.addActionListener(actionEvent -> {
+			layerUI.start();
+			turnOffButtons();
+			exportDataToExcel();
+			turnOnButtons();
+			layerUI.stop();
 		});
         editPanel.add(buttonExcel);
         
         buttonInjectCluster = new JButton(">> Net structure", Tools.getResIcon48("/icons/clustWindow/buttonSendToAbyss.png"));
         buttonInjectCluster.setBounds(200, 510, 190, 50);
-        buttonInjectCluster.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				layerUI.start();
-				turnOffButtons();
-				exportToHolmes();
-				turnOnButtons();
-				layerUI.stop();
-			}	
+        buttonInjectCluster.addActionListener(actionEvent -> {
+			layerUI.start();
+			turnOffButtons();
+			exportToHolmes();
+			turnOnButtons();
+			layerUI.stop();
 		});
         editPanel.add(buttonInjectCluster);
         
         buttonTexTable = new JButton(">> Cluster table", Tools.getResIcon48("/icons/menu/menu_exportTex.png"));
         buttonTexTable.setBounds(400, 510, 190, 50);
-        buttonTexTable.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				layerUI.start();
-				turnOffButtons();
-				exportToLatex();
-				turnOnButtons();
-				layerUI.stop();
-			}	
+        buttonTexTable.addActionListener(actionEvent -> {
+			layerUI.start();
+			turnOffButtons();
+			exportToLatex();
+			turnOnButtons();
+			layerUI.stop();
 		});
         editPanel.add(buttonTexTable);
-        /*
-        buttonInjectCluster = new JButton("test", 
-        		Tools.getResIcon48(""));
-        buttonInjectCluster.setBounds(400, 510, 190, 50);
-        buttonInjectCluster.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				layerUI.start();
-			}	
-		});
-        editPanel.add(buttonInjectCluster);
-        */
         editPanel.repaint();
         return editPanel;
 	}
@@ -501,7 +483,7 @@ public class HolmesClusterSubWindow extends JFrame {
 	 */
 	private String saveExcelOnly(ClusteringExtended fullData) {
 		ClusteringExcelWriter ew = new ClusteringExcelWriter(0, fullData, "tmp\\testSheets.xls");
-		if(ew.isSuccess() == false)
+		if(!ew.isSuccess())
 			return null;
 		
 		FileFilter[] filters = new FileFilter[1];
@@ -540,7 +522,7 @@ public class HolmesClusterSubWindow extends JFrame {
 		if(alg.equals("UPGMA"))
 			alg = "average";
 		
-		String resultFiles[] = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
+		String[] resultFiles = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
 				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
 		if(resultFiles != null) {
 			ClusterReader reader = new ClusterReader();
@@ -580,7 +562,7 @@ public class HolmesClusterSubWindow extends JFrame {
 	 * @return String - ścieżka do katalogu
 	 */
 	protected String getInvariantsCSVLocation() {
-		String targetDir = "";
+		String targetDir;
 		Object[] options = {"Use computed invariants", "Load CSV invariant file",};
 		int n = JOptionPane.showOptionDialog(null,
 						"Select CSV invariants manually or export from net computed invariants?",
@@ -720,7 +702,7 @@ public class HolmesClusterSubWindow extends JFrame {
 			alg = "average";
 		
 		//generowanie klastrowania:
-		String resultFiles[] = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
+		String[] resultFiles = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
 				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
 		if(resultFiles != null) {
 			ClusterReader reader = new ClusterReader();
@@ -797,7 +779,7 @@ public class HolmesClusterSubWindow extends JFrame {
 			}
 		}
 		
-		if(proceed == false)
+		if(!proceed)
 			return;
 		
 		String targetDir = getInvariantsCSVLocation();
@@ -812,7 +794,7 @@ public class HolmesClusterSubWindow extends JFrame {
 			alg = "average";
 		
 		//generowanie klastrowania:
-		String resultFiles[] = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
+		String[] resultFiles = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
 				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
 		if(resultFiles != null) {
 			ClusterReader reader = new ClusterReader();

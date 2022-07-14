@@ -3,8 +3,7 @@ package holmes.windows.ssim;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
@@ -34,6 +33,7 @@ import holmes.windows.managers.HolmesStatesManager;
  * @author MR
  */
 public class HolmesSimKnock extends JPanel {
+	@Serial
 	private static final long serialVersionUID = 4257940971120618716L;
 	public HolmesSimKnockActions action;
 	private GUIManager overlord;
@@ -79,9 +79,8 @@ public class HolmesSimKnock extends JPanel {
 	private JButton simSettingsButton; 
 	private JButton loadAllButton;
 	private JButton saveAllButton;
-	private JButton showVisualsButton;
-	
-	
+
+
 	public boolean refSimInProgress = false;
 	public boolean dataSimInProgress = false;
 	
@@ -92,7 +91,7 @@ public class HolmesSimKnock extends JPanel {
 	
 	/**
 	 * Konstruktor obiektu klasy HolmesStateSimulatorKnockout.
-	 * @param holmesStateSimulator 
+	 * @param holmesStateSimulator (<b>HolmesSim</b>) obiekt symulatora.
 	 */
 	public HolmesSimKnock(HolmesSim holmesStateSimulator) {
 		this.mainSimWindow = holmesStateSimulator;
@@ -138,11 +137,7 @@ public class HolmesSimKnock extends JPanel {
 		acqRefDataButton.setFocusPainted(false);
 		acqRefDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
 		acqRefDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
-		acqRefDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				action.acquireDataForRefSet();
-			}
-		});
+		acqRefDataButton.addActionListener(actionEvent -> action.acquireDataForRefSet());
 		result.add(acqRefDataButton);
 		
 		JButton cancelButton = new JButton();
@@ -152,11 +147,9 @@ public class HolmesSimKnock extends JPanel {
 		cancelButton.setBounds(posXda, posYda+55, 110, 25);
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		cancelButton.setFocusPainted(false);
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(refSimInProgress)
-					ssimKnock.setCancelStatus(true);
-			}
+		cancelButton.addActionListener(actionEvent -> {
+			if(refSimInProgress)
+				ssimKnock.setCancelStatus(true);
 		});
 		result.add(cancelButton);
 
@@ -172,19 +165,13 @@ public class HolmesSimKnock extends JPanel {
 	    
 	    JCheckBox showdataCheckBox = new JCheckBox("Show results in notepad");
 	    showdataCheckBox.setBounds(posXda+120, posYda+50, 170, 20);
-	    showdataCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					refShowNotepad = true;
-				} else {
-					refShowNotepad = false;
-				}
-			}
+	    showdataCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			refShowNotepad = abstractButton.getModel().isSelected();
 		});
 		result.add(showdataCheckBox);
 		
-		posYda += 40;
+		//posYda += 40;
 		return result;
 	}
 
@@ -212,17 +199,14 @@ public class HolmesSimKnock extends JPanel {
 		referencesCombo = new JComboBox<String>(data); //final, aby listener przycisku odczytał wartość
 		referencesCombo.setBounds(posXda+80, posYda, 400, 20);
 		referencesCombo.setMaximumRowCount(12);
-		referencesCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(mainSimWindow.doNotUpdate) 
-					return;
-				
-				int selected = referencesCombo.getSelectedIndex();
-				if(selected > 0) {
-					updateRefDetails(selected-1);
-				} 
+		referencesCombo.addActionListener(actionEvent -> {
+			if(mainSimWindow.doNotUpdate)
+				return;
+
+			int selected = referencesCombo.getSelectedIndex();
+			if(selected > 0) {
+				updateRefDetails(selected-1);
 			}
-			
 		});
 		result.add(referencesCombo);
 		
@@ -232,13 +216,11 @@ public class HolmesSimKnock extends JPanel {
 		removeRefButton.setFocusPainted(false);
 		removeRefButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
 		removeRefButton.setToolTipText("Remove selected reference data set.");
-		removeRefButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = referencesCombo.getSelectedIndex();
-				if(selected > 0) {
-					if(action.removeRedDataSet(selected-1))
-						updateFreshKnockoutTab();
-				}
+		removeRefButton.addActionListener(actionEvent -> {
+			int selected = referencesCombo.getSelectedIndex();
+			if(selected > 0) {
+				if(action.removeRedDataSet(selected-1))
+					updateFreshKnockoutTab();
 			}
 		});
 		result.add(removeRefButton);
@@ -302,11 +284,8 @@ public class HolmesSimKnock extends JPanel {
 		dataTransitionsCombo = new JComboBox<String>(data);
 		dataTransitionsCombo.setBounds(posXda+80, posYda, 400, 20);
 		dataTransitionsCombo.setMaximumRowCount(12);
-		dataTransitionsCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				//int selected = dataTransitionsCombo.getSelectedIndex();
-			}
-			
+		dataTransitionsCombo.addActionListener(actionEvent -> {
+			//int selected = dataTransitionsCombo.getSelectedIndex();
 		});
 		result.add(dataTransitionsCombo);
 		
@@ -316,12 +295,10 @@ public class HolmesSimKnock extends JPanel {
 		addTransButton.setFocusPainted(false);
 		addTransButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/addIcon.png"));
 		addTransButton.setToolTipText("Sets transition for offline in the incoming simulation sesssion.");
-		addTransButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = dataTransitionsCombo.getSelectedIndex();
-				if(selected > 0)
-					action.addOfflineElement(1, selected-1, dataSelectedTransTextArea);
-			}
+		addTransButton.addActionListener(actionEvent -> {
+			int selected = dataTransitionsCombo.getSelectedIndex();
+			if(selected > 0)
+				action.addOfflineElement(1, selected-1, dataSelectedTransTextArea);
 		});
 		result.add(addTransButton);
 		
@@ -331,12 +308,10 @@ public class HolmesSimKnock extends JPanel {
 		removeTransButton.setFocusPainted(false);
 		removeTransButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
 		removeTransButton.setToolTipText("Remove transitions from offline set.");
-		removeTransButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = dataTransitionsCombo.getSelectedIndex();
-				if(selected > 0)
-					action.removeOfflineElement(1, selected-1, dataSelectedTransTextArea);
-			}
+		removeTransButton.addActionListener(actionEvent -> {
+			int selected = dataTransitionsCombo.getSelectedIndex();
+			if(selected > 0)
+				action.removeOfflineElement(1, selected-1, dataSelectedTransTextArea);
 		});
 		result.add(removeTransButton);
 		
@@ -348,11 +323,8 @@ public class HolmesSimKnock extends JPanel {
 		dataMctCombo = new JComboBox<String>(data2);
 		dataMctCombo.setBounds(posXda+80, posYda+25, 400, 20);
 		dataMctCombo.setMaximumRowCount(12);
-		dataMctCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				//int selected = dataMctCombo.getSelectedIndex();
-			}
-			
+		dataMctCombo.addActionListener(actionEvent -> {
+			//int selected = dataMctCombo.getSelectedIndex();
 		});
 		result.add(dataMctCombo);
 		
@@ -362,12 +334,10 @@ public class HolmesSimKnock extends JPanel {
 		addMCTButton.setFocusPainted(false);
 		addMCTButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/addIcon.png"));
 		addMCTButton.setToolTipText("Sets whole MCT for offline in the incoming simulation sesssion.");
-		addMCTButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = dataMctCombo.getSelectedIndex();
-				if(selected > 0)
-					action.addOfflineElement(2, selected, dataSelectedTransTextArea);
-			}
+		addMCTButton.addActionListener(actionEvent -> {
+			int selected = dataMctCombo.getSelectedIndex();
+			if(selected > 0)
+				action.addOfflineElement(2, selected, dataSelectedTransTextArea);
 		});
 		result.add(addMCTButton);
 		
@@ -377,12 +347,10 @@ public class HolmesSimKnock extends JPanel {
 		removeMCTButton.setFocusPainted(false);
 		removeMCTButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
 		removeMCTButton.setToolTipText("Remove MCT set from offline set.");
-		removeMCTButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = dataMctCombo.getSelectedIndex();
-				if(selected > 0)
-					action.removeOfflineElement(2, selected, dataSelectedTransTextArea);
-			}
+		removeMCTButton.addActionListener(actionEvent -> {
+			int selected = dataMctCombo.getSelectedIndex();
+			if(selected > 0)
+				action.removeOfflineElement(2, selected, dataSelectedTransTextArea);
 		});
 		result.add(removeMCTButton);
 		
@@ -401,11 +369,7 @@ public class HolmesSimKnock extends JPanel {
         clearButton.setFocusPainted(false);
         clearButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/clearIcon.png"));
         clearButton.setToolTipText("Clear transitions and MCT field indicating offline simulation elements.");
-        clearButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				dataSelectedTransTextArea.setText("");
-			}
-		});
+        clearButton.addActionListener(actionEvent -> dataSelectedTransTextArea.setText(""));
 		result.add(clearButton);
 		
 		//przyciski symulacji:
@@ -418,29 +382,21 @@ public class HolmesSimKnock extends JPanel {
 		acqDataSimButton.setFocusPainted(false);
 		acqDataSimButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
 		acqDataSimButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
-		acqDataSimButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(dataSimUseEditorOffline && dataSimComputeAll) {
-					JOptionPane.showMessageDialog(mainSimWindow.getFrame(), 
-							"Simulation for manually disabled transition and for all transition are mutually\n"
-							+ "exclusive. Please choose only one.", 
-							"Forced stop",JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-				
-				if(dataSimComputeAll) {
-					action.acquireAll();
-					return;
-				} 
-				
-				if(dataSimUseEditorOffline) {
-					action.acquireDataForKnockoutSet(dataSelectedTransTextArea, true);
-					return;
-				} else {
-					action.acquireDataForKnockoutSet(dataSelectedTransTextArea, false);
-					return;
-				}
+		acqDataSimButton.addActionListener(actionEvent -> {
+			if(dataSimUseEditorOffline && dataSimComputeAll) {
+				JOptionPane.showMessageDialog(mainSimWindow.getFrame(),
+						"Simulation for manually disabled transition and for all transition are mutually\n"
+						+ "exclusive. Please choose only one.",
+						"Forced stop",JOptionPane.WARNING_MESSAGE);
+				return;
 			}
+
+			if(dataSimComputeAll) {
+				action.acquireAll();
+				return;
+			}
+
+			action.acquireDataForKnockoutSet(dataSelectedTransTextArea, dataSimUseEditorOffline);
 		});
 		result.add(acqDataSimButton);
 		
@@ -450,20 +406,18 @@ public class HolmesSimKnock extends JPanel {
 		cancelButton.setBounds(posXda, posYda+55, 110, 25);
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		cancelButton.setFocusPainted(false);
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(dataSimComputeAll && dataSimInProgress) {
-					Object[] options = {"Stop and remove", "Proceed with simulation",};
-					int n = JOptionPane.showOptionDialog(null,
-							"WARNING. This will cancel the whole-net knockout simulation and DELETE\n"
-							+ "all previously computed datased in this simulation session. Proceed?",
-							"Please confirm", JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-					if (n == 0) {
-						ssimKnock.setCancelStatus(true);
-						JOptionPane.showMessageDialog(mainSimWindow.getFrame(), "Simulation terminated. Currently processed transitions data rejected.", 
-								"Forced stop",JOptionPane.WARNING_MESSAGE);
-					}
+		cancelButton.addActionListener(actionEvent -> {
+			if(dataSimComputeAll && dataSimInProgress) {
+				Object[] options = {"Stop and remove", "Proceed with simulation",};
+				int n = JOptionPane.showOptionDialog(null,
+						"WARNING. This will cancel the whole-net knockout simulation and DELETE\n"
+						+ "all previously computed datased in this simulation session. Proceed?",
+						"Please confirm", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+				if (n == 0) {
+					ssimKnock.setCancelStatus(true);
+					JOptionPane.showMessageDialog(mainSimWindow.getFrame(), "Simulation terminated. Currently processed transitions data rejected.",
+							"Forced stop",JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
@@ -477,43 +431,25 @@ public class HolmesSimKnock extends JPanel {
 		dataSimUseEditorOfflineCheckBox = new JCheckBox("Manually disabled transitions");
 		dataSimUseEditorOfflineCheckBox.setBounds(10, 15, 190, 20);
 		//dataSimUseEditorOfflineCheckBox.setEnabled(false);
-		dataSimUseEditorOfflineCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					dataSimUseEditorOffline = true;
-				} else {
-					dataSimUseEditorOffline = false;
-				}
-			}
+		dataSimUseEditorOfflineCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			dataSimUseEditorOffline = abstractButton.getModel().isSelected();
 		});
 		special.add(dataSimUseEditorOfflineCheckBox);
 		
 		dataSimComputeForAllTransitions = new JCheckBox("All transitions (one by one)");
 		dataSimComputeForAllTransitions.setBounds(210, 15, 180, 20);
-		dataSimComputeForAllTransitions.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					dataSimComputeAll = true;
-				} else {
-					dataSimComputeAll = false;
-				}
-			}
+		dataSimComputeForAllTransitions.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			dataSimComputeAll = abstractButton.getModel().isSelected();
 		});
 		special.add(dataSimComputeForAllTransitions);
 		
 		JCheckBox showdataCheckBox = new JCheckBox("Show results in notepad");
 	    showdataCheckBox.setBounds(400, 15, 170, 20);
-	    showdataCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					dataShowNotepad = true;
-				} else {
-					dataShowNotepad = false;
-				}
-			}
+	    showdataCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			dataShowNotepad = abstractButton.getModel().isSelected();
 		});
 	    special.add(showdataCheckBox);
 		
@@ -556,17 +492,14 @@ public class HolmesSimKnock extends JPanel {
 		dataCombo = new JComboBox<String>(data); //final, aby listener przycisku odczytał wartość
 		dataCombo.setBounds(posXda+80, posYda, 600, 20);
 		dataCombo.setMaximumRowCount(12);
-		dataCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(mainSimWindow.doNotUpdate) 
-					return;
-				
-				int selected = dataCombo.getSelectedIndex();
-				if(selected > 0) {
-					updateDataDetails(selected-1);
-				} 
+		dataCombo.addActionListener(actionEvent -> {
+			if(mainSimWindow.doNotUpdate)
+				return;
+
+			int selected = dataCombo.getSelectedIndex();
+			if(selected > 0) {
+				updateDataDetails(selected-1);
 			}
-			
 		});
 		result.add(dataCombo);
 		
@@ -576,13 +509,11 @@ public class HolmesSimKnock extends JPanel {
 		removeDataButton.setFocusPainted(false);
 		removeDataButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
 		removeDataButton.setToolTipText("Remove selected knockout simulation dataset.");
-		removeDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = dataCombo.getSelectedIndex();
-				if(selected > 0) {
-					if(action.removeKnockDataSet(selected-1))
-						updateFreshKnockoutTab();
-				}
+		removeDataButton.addActionListener(actionEvent -> {
+			int selected = dataCombo.getSelectedIndex();
+			if(selected > 0) {
+				if(action.removeKnockDataSet(selected-1))
+					updateFreshKnockoutTab();
 			}
 		});
 		result.add(removeDataButton);
@@ -651,11 +582,7 @@ public class HolmesSimKnock extends JPanel {
 		loadAllButton.setFocusPainted(false);
 		loadAllButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/loadIcon.png"));
 		loadAllButton.setToolTipText("Load all simulation data from file (will overwrite old data in memory!).");
-		loadAllButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				action.loadDataSets();
-			}
-		});
+		loadAllButton.addActionListener(actionEvent -> action.loadDataSets());
 		result.add(loadAllButton);
 		
 		saveAllButton = new JButton("Save all");
@@ -664,24 +591,16 @@ public class HolmesSimKnock extends JPanel {
 		saveAllButton.setFocusPainted(false);
 		saveAllButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/saveIcon.png"));
 		saveAllButton.setToolTipText("Saves all simulation data to single file.");
-		saveAllButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				action.saveDataSets();
-			}
-		});
+		saveAllButton.addActionListener(actionEvent -> action.saveDataSets());
 		result.add(saveAllButton);
 
-		showVisualsButton = new JButton("Analyse");
+		JButton showVisualsButton = new JButton("Analyse");
 		showVisualsButton.setBounds(posXda+280, posYda, 130, 40);
 		showVisualsButton.setMargin(new Insets(0, 0, 0, 0));
 		showVisualsButton.setFocusPainted(false);
 		showVisualsButton.setToolTipText("Open window where detailed analysis of gathered data is possible.");
 		showVisualsButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/showIcon.png"));
-		showVisualsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesSimKnockVis(mainSimWindow.returnFrame());
-			}
-		});
+		showVisualsButton.addActionListener(actionEvent -> new HolmesSimKnockVis(mainSimWindow.returnFrame()));
 		result.add(showVisualsButton);
 		
 		simSettingsButton = new JButton("SimSettings");
@@ -690,11 +609,7 @@ public class HolmesSimKnock extends JPanel {
 		simSettingsButton.setFocusPainted(false);
 		simSettingsButton.setIcon(Tools.getResIcon32("/icons/simSettings/setupIcon.png"));
 		simSettingsButton.setToolTipText("Open simulator options window.");
-		simSettingsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesSimSetup(mainSimWindow.getFrame());
-			}
-		});
+		simSettingsButton.addActionListener(actionEvent -> new HolmesSimSetup(mainSimWindow.getFrame()));
 		result.add(simSettingsButton);
 		
 		stateManagerButton = new JButton();
@@ -704,11 +619,7 @@ public class HolmesSimKnock extends JPanel {
 	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
 	    stateManagerButton.setToolTipText("Opens States Manager window where initial net states can be selected.");
 	    stateManagerButton.setFocusPainted(false);
-	    stateManagerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesStatesManager();
-			}
-		});
+	    stateManagerButton.addActionListener(actionEvent -> new HolmesStatesManager());
 	    stateManagerButton.setFocusPainted(false);
 	    result.add(stateManagerButton);
 		
@@ -779,8 +690,7 @@ public class HolmesSimKnock extends JPanel {
 		ArrayList<NetSimulationData> references = pn.accessSimKnockoutData().accessReferenceSets();
 		int refSize = references.size();
 		mainSimWindow.doNotUpdate = true;
-		int oldSelected = 0;
-		oldSelected = referencesCombo.getSelectedIndex();
+		int oldSelected = referencesCombo.getSelectedIndex();
 		referencesCombo.removeAllItems();
 		referencesCombo.addItem(" ----- ");
 		if(refSize > 0) {
@@ -807,21 +717,21 @@ public class HolmesSimKnock extends JPanel {
 		ArrayList<NetSimulationData> knockout = pn.accessSimKnockoutData().accessKnockoutDataSets();
 		int knockSize = knockout.size();
 		mainSimWindow.doNotUpdate = true;
-		int oldKnockSelected = 0;
+		int oldKnockSelected;
 		oldKnockSelected = dataCombo.getSelectedIndex();
 		dataCombo.removeAllItems();
 		dataCombo.addItem(" ----- ");
 		if(knockSize > 0) {
 			for(int r=0; r<knockSize; r++) {
 				
-				String disTxt = "Disabled: ";
+				StringBuilder disTxt = new StringBuilder("Disabled: ");
 				for(int t : knockout.get(r).disabledTransitionsIDs) {
-					disTxt += "t"+t+", ";
+					disTxt.append("t").append(t).append(", ");
 				}
 				for(int t : knockout.get(r).disabledMCTids) {
-					disTxt += "MCT"+(t+1)+", ";
+					disTxt.append("MCT").append(t + 1).append(", ");
 				}
-				disTxt = disTxt.replace(", ", " ");
+				disTxt = new StringBuilder(disTxt.toString().replace(", ", " "));
 				
 				String name = "Data set:"+r+":    "+disTxt+"     NetMode:"+knockout.get(r).netSimType+
 						"   MaxMode:"+knockout.get(r).maxMode;
@@ -909,14 +819,14 @@ public class HolmesSimKnock extends JPanel {
 		dataLabelSteps.setText(""+selectedData.steps);
 		dataLabelReps.setText(""+selectedData.reps);
 		
-		String disTxt = "";
+		StringBuilder disTxt = new StringBuilder();
 		for(int t : selectedData.disabledTransitionsIDs) {
-			disTxt += "t"+t+", ";
+			disTxt.append("t").append(t).append(", ");
 		}
 		for(int t : selectedData.disabledMCTids) {
-			disTxt += "MCT"+(t+1)+", ";
+			disTxt.append("MCT").append(t + 1).append(", ");
 		}
-		disTxt = disTxt.replace(", ", " ");
-		dataLabelDisabled.setText(disTxt);
+		disTxt = new StringBuilder(disTxt.toString().replace(", ", " "));
+		dataLabelDisabled.setText(disTxt.toString());
 	}
 }

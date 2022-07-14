@@ -8,13 +8,12 @@ import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Insets;
 import java.awt.Paint;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,8 +38,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.jfree.chart.ChartFactory;
@@ -67,7 +64,7 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.StateSimulator;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNotepad;
 import holmes.windows.managers.HolmesStatesManager;
@@ -79,6 +76,7 @@ import holmes.workspace.ExtensionFileFilter;
  * @author MR
  */
 public class HolmesSim extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 5287992734385359453L;
 	private JFrame ego;
 	private GUIManager overlord;
@@ -121,8 +119,6 @@ public class HolmesSim extends JFrame {
 	private JButton acqDataButton;
 	//reset:
 	private JPanel knockoutTab;		//ZAKLADKA KNOCKOUT SIM //TODO
-	private JButton cancelButton;
-	private JButton simSettingsButton;
 	private boolean workInProgress;
 	
 	public JTabbedPane mainTabPanel;
@@ -161,7 +157,7 @@ public class HolmesSim extends JFrame {
 		setLocation(30,30);
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {}
+		} catch (Exception ignored) {}
 		setSize(new Dimension(1000, 750));
 		
 		JPanel main = new JPanel(new BorderLayout()); //główny panel okna
@@ -206,38 +202,26 @@ public class HolmesSim extends JFrame {
 		acqDataButton.setFocusPainted(false);
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
 		acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
-		acqDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				acquireDataFromSimulation();
-			}
-		});
+		acqDataButton.addActionListener(actionEvent -> acquireDataFromSimulation());
 		dataAcquisitionPanel.add(acqDataButton);
-		
-		cancelButton = new JButton();
+
+		JButton cancelButton = new JButton();
 		cancelButton.setText("<html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>");
 		cancelButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/stopIcon.png"));
 		cancelButton.setBounds(posXda, posYda+45, 110, 30);
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		cancelButton.setFocusPainted(false);
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				ssim.setCancelStatus(true);
-			}
-		});
+		cancelButton.addActionListener(actionEvent -> ssim.setCancelStatus(true));
 
 		dataAcquisitionPanel.add(cancelButton);
-		
-		simSettingsButton = new JButton("SimSettings");
+
+		JButton simSettingsButton = new JButton("SimSettings");
 		simSettingsButton.setBounds(posXda+120, posYda, 130, 40);
 		simSettingsButton.setMargin(new Insets(0, 0, 0, 0));
 		simSettingsButton.setFocusPainted(false);
 		simSettingsButton.setIcon(Tools.getResIcon32("/icons/simSettings/setupIcon.png"));
 		simSettingsButton.setToolTipText("Set simulator options.");
-		simSettingsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesSimSetup(ego);
-			}
-		});
+		simSettingsButton.addActionListener(actionEvent -> new HolmesSimSetup(ego));
 		dataAcquisitionPanel.add(simSettingsButton);
 		
 		stateManagerButton = new JButton();
@@ -246,11 +230,7 @@ public class HolmesSim extends JFrame {
 	    stateManagerButton.setBounds(posXda+260, posYda, 130, 40);
 	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
 	    stateManagerButton.setFocusPainted(false);
-	    stateManagerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesStatesManager();
-			}
-		});
+	    stateManagerButton.addActionListener(actionEvent -> new HolmesStatesManager());
 		dataAcquisitionPanel.add(stateManagerButton);
 		
 		JLabel stateLabel0 = new JLabel("Selected m0 state ID: ");
@@ -266,12 +246,10 @@ public class HolmesSim extends JFrame {
 		clearDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/clearData.png"));
 		clearDataButton.setToolTipText("Clear all charts and data vectors. Reset simulator.");
 		clearDataButton.setFocusPainted(false);
-		clearDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				clearPlacesChart();
-				clearTransitionsChart();
-				clearAllData();
-			}
+		clearDataButton.addActionListener(actionEvent -> {
+			clearPlacesChart();
+			clearTransitionsChart();
+			clearAllData();
 		});
 		dataAcquisitionPanel.add(clearDataButton);
 		
@@ -312,11 +290,7 @@ public class HolmesSim extends JFrame {
 		showAllButton.setFocusPainted(false);
 		showAllButton.setIcon(Tools.getResIcon16("/icons/stateSim/showAll.png"));
 		showAllButton.setToolTipText("Show average numbers of token in places through simulation steps.");
-		showAllButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				showAllPlacesData();
-			}
-		});
+		showAllButton.addActionListener(actionEvent -> showAllPlacesData());
 		placesChartOptionsPanel.add(showAllButton);
 		
 		JButton showNotepadButton = new JButton("Show notepad");
@@ -325,11 +299,7 @@ public class HolmesSim extends JFrame {
 		showNotepadButton.setFocusPainted(false);
 		showNotepadButton.setIcon(Tools.getResIcon16("/icons/stateSim/showNotepad.png"));
 		showNotepadButton.setToolTipText("Show average numbers of token in places through simulation steps.");
-		showNotepadButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				showPlacesAllInNotepad();
-			}
-		});
+		showNotepadButton.addActionListener(actionEvent -> showPlacesAllInNotepad());
 		placesChartOptionsPanel.add(showNotepadButton);
 		
 		JLabel labelInt = new JLabel("Interval:");
@@ -340,27 +310,19 @@ public class HolmesSim extends JFrame {
 		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(placesInterval, 0, mValue, 10);
 		placesIntervalSpinner = new JSpinner(intervSpinnerModel);
 		placesIntervalSpinner.setBounds(posXchart+330, posYchart+3, 60, 20);
-		placesIntervalSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				placesInterval = (int) spinner.getValue();
-				clearPlacesChart();
-			}
+		placesIntervalSpinner.addChangeListener(e -> {
+			JSpinner spinner = (JSpinner) e.getSource();
+			placesInterval = (int) spinner.getValue();
+			clearPlacesChart();
 		});
 		placesChartOptionsPanel.add(placesIntervalSpinner);
 		
 		JCheckBox sortedCheckBox = new JCheckBox("Sorted by tokens");
 		sortedCheckBox.setBounds(posXchart+460, posYchart+10, 130, 20);
-		sortedCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					sortedP = true;
-				} else {
-					sortedP = false;
-				}
-				fillPlacesAndTransitionsData();
-			}
+		sortedCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			sortedP = abstractButton.getModel().isSelected();
+			fillPlacesAndTransitionsData();
 		});
 		placesChartOptionsPanel.add(sortedCheckBox);
 		posYchart += 30;
@@ -375,10 +337,8 @@ public class HolmesSim extends JFrame {
 		placesCombo.setSize(500, 20);
 		placesCombo.setSelectedIndex(0);
 		placesCombo.setMaximumRowCount(12);
-		placesCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				
-			}
+		placesCombo.addActionListener(actionEvent -> {
+
 		});
 		placesChartOptionsPanel.add(placesCombo);
 		
@@ -390,24 +350,22 @@ public class HolmesSim extends JFrame {
 		addPlaceButton.setFocusPainted(false);
 		addPlaceButton.setIcon(Tools.getResIcon16("/icons/stateSim/addChart.png"));
 		addPlaceButton.setToolTipText("Add data about place tokens to the chart.");
-		addPlaceButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(placesRawData.size() == 0)
-					return;
-				
-				int selected = placesCombo.getSelectedIndex();
-				if(selected>0) {
-					String name = placesCombo.getSelectedItem().toString();
-					int sel = action.getRealNodeID(name);
-					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
-					
-					name = trimNodeName(name);
-					placesInChart.set(sel, 1);
-					placesInChartStr.set(sel, name);
-					
-					addNewPlaceSeries(sel, name);
-					updatePlacesGraphicChart("places");
-				}
+		addPlaceButton.addActionListener(actionEvent -> {
+			if(placesRawData.size() == 0)
+				return;
+
+			int selected = placesCombo.getSelectedIndex();
+			if(selected>0) {
+				String name = placesCombo.getSelectedItem().toString();
+				int sel = action.getRealNodeID(name);
+				if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
+
+				name = trimNodeName(name);
+				placesInChart.set(sel, 1);
+				placesInChartStr.set(sel, name);
+
+				addNewPlaceSeries(sel, name);
+				updatePlacesGraphicChart("places");
 			}
 		});
 		placesChartOptionsPanel.add(addPlaceButton);
@@ -418,22 +376,20 @@ public class HolmesSim extends JFrame {
 		removePlaceButton.setFocusPainted(false);
 		removePlaceButton.setIcon(Tools.getResIcon16("/icons/stateSim/removeChart.png"));
 		removePlaceButton.setToolTipText("Remove data about place tokens from the chart.");
-		removePlaceButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(placesRawData.size() == 0)
-					return;
-				
-				int selected = placesCombo.getSelectedIndex();
-				if(selected>0) {
-					String name = placesCombo.getSelectedItem().toString();
-					int sel = action.getRealNodeID(name);
-					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
-					
-					name = trimNodeName(name);
-					placesInChart.set(sel, -1);
-					placesInChartStr.set(sel, "");
-					removePlaceSeries(name);
-				}
+		removePlaceButton.addActionListener(actionEvent -> {
+			if(placesRawData.size() == 0)
+				return;
+
+			int selected = placesCombo.getSelectedIndex();
+			if(selected>0) {
+				String name = placesCombo.getSelectedItem().toString();
+				int sel = action.getRealNodeID(name);
+				if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
+
+				name = trimNodeName(name);
+				placesInChart.set(sel, -1);
+				placesInChartStr.set(sel, "");
+				removePlaceSeries(name);
 			}
 		});
 		placesChartOptionsPanel.add(removePlaceButton);
@@ -444,11 +400,7 @@ public class HolmesSim extends JFrame {
 		clearPlacesChartButton.setFocusPainted(false);
 		clearPlacesChartButton.setIcon(Tools.getResIcon16("/icons/stateSim/clearChart.png"));
 		clearPlacesChartButton.setToolTipText("Clears the chart.");
-		clearPlacesChartButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				clearPlacesChart();
-			}
-		});
+		clearPlacesChartButton.addActionListener(actionEvent -> clearPlacesChart());
 		placesChartOptionsPanel.add(clearPlacesChartButton);
 		
 		JButton savePlacesChartButton = new JButton("Save Image");
@@ -457,11 +409,7 @@ public class HolmesSim extends JFrame {
 		savePlacesChartButton.setFocusPainted(false);
 		savePlacesChartButton.setIcon(Tools.getResIcon16("/icons/stateSim/saveImage.png"));
 		savePlacesChartButton.setToolTipText("Saves the chart as image file.");
-		savePlacesChartButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				saveChartImage("places", 1200, 1024);
-			}
-		});
+		savePlacesChartButton.addActionListener(actionEvent -> saveChartImage("places", 1200, 1024));
 		placesChartOptionsPanel.add(savePlacesChartButton);
 		
 		JButton showPlaceButton = new JButton("Find place");
@@ -470,17 +418,15 @@ public class HolmesSim extends JFrame {
 		showPlaceButton.setFocusPainted(false);
 		showPlaceButton.setIcon(Tools.getResIcon16("/icons/stateSim/findNode.png"));
 		showPlaceButton.setToolTipText("Find selected place within the net.");
-		showPlaceButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = placesCombo.getSelectedIndex();
-				if(selected>0) {
-					String name = placesCombo.getSelectedItem().toString();
-					int sel = action.getRealNodeID(name);
-					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
-					
-					GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
-					GUIManager.getDefaultGUIManager().getSearchWindow().selectedManually(true, sel);
-				}
+		showPlaceButton.addActionListener(actionEvent -> {
+			int selected = placesCombo.getSelectedIndex();
+			if(selected>0) {
+				String name = placesCombo.getSelectedItem().toString();
+				int sel = action.getRealNodeID(name);
+				if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
+
+				GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
+				GUIManager.getDefaultGUIManager().getSearchWindow().selectedManually(true, sel);
 			}
 		});
 		placesChartOptionsPanel.add(showPlaceButton);
@@ -500,12 +446,12 @@ public class HolmesSim extends JFrame {
 		JRadioButton width1 = new JRadioButton("Thin");
 		width1.setBounds(posXGchart, posYGchart, 70, 20);
 		width1.setActionCommand("0");
-		width1.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent actionEvent) {
-			if(((AbstractButton) actionEvent.getSource()).isSelected() == true) {
+		width1.addActionListener(actionEvent -> {
+			if(((AbstractButton) actionEvent.getSource()).isSelected()) {
 				chartDetails.p_StrokeWidth = 1.0f;
 				updatePlacesGraphicChart("places");
 			}
-		}});
+		});
 		placesChartGraphicPanel.add(width1);
 		groupWidth.add(width1);
 		groupWidth.setSelected(width1.getModel(), true);
@@ -513,24 +459,24 @@ public class HolmesSim extends JFrame {
 		JRadioButton width2 = new JRadioButton("Normal");
 		width2.setBounds(posXGchart, posYGchart+20, 70, 20);
 		width2.setActionCommand("1");
-		width2.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent actionEvent) {
-			if(((AbstractButton) actionEvent.getSource()).isSelected() == true) {
+		width2.addActionListener(actionEvent -> {
+			if(((AbstractButton) actionEvent.getSource()).isSelected()) {
 				chartDetails.p_StrokeWidth = 2.0f;
 				updatePlacesGraphicChart("places");
 			}
-		}});
+		});
 		placesChartGraphicPanel.add(width2);
 		groupWidth.add(width2);
 		
 		JRadioButton width3 = new JRadioButton("Thick");
 		width3.setBounds(posXGchart, posYGchart+40, 70, 20);
 		width3.setActionCommand("2");
-		width3.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent actionEvent) {
-			if(((AbstractButton) actionEvent.getSource()).isSelected() == true) {
+		width3.addActionListener(actionEvent -> {
+			if(((AbstractButton) actionEvent.getSource()).isSelected()) {
 				chartDetails.p_StrokeWidth = 3.0f;
 				updatePlacesGraphicChart("places");
 			}
-		}});
+		});
 		placesChartGraphicPanel.add(width3);
 		groupWidth.add(width3);
 				
@@ -571,11 +517,7 @@ public class HolmesSim extends JFrame {
 		showAllButton.setFocusPainted(false);
 		showAllButton.setIcon(Tools.getResIcon16("/icons/stateSim/showAll.png"));
 		showAllButton.setToolTipText("Show average numbers of firings of transitions through simulation steps.");
-		showAllButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				showAllTransData();
-			}
-		});
+		showAllButton.addActionListener(actionEvent -> showAllTransData());
 		transChartOptionsPanel.add(showAllButton);
 		
 		JButton showNotepadButton = new JButton("Show notepad");
@@ -584,11 +526,7 @@ public class HolmesSim extends JFrame {
 		showNotepadButton.setFocusPainted(false);
 		showNotepadButton.setIcon(Tools.getResIcon16("/icons/stateSim/showNotepad.png"));
 		showNotepadButton.setToolTipText("Show average numbers of firings of transitions through simulation steps.");
-		showNotepadButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				showTransAllInNotepad();
-			}
-		});
+		showNotepadButton.addActionListener(actionEvent -> showTransAllInNotepad());
 		transChartOptionsPanel.add(showNotepadButton);
 		
 		JLabel label1 = new JLabel("Interval:");
@@ -599,27 +537,19 @@ public class HolmesSim extends JFrame {
 		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(transInterval, 0, mValue, 10);
 		transIntervalSpinner = new JSpinner(intervSpinnerModel);
 		transIntervalSpinner.setBounds(posXchart+330, posYchart+3, 60, 20);
-		transIntervalSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				transInterval = (int) spinner.getValue();
-				clearTransitionsChart();
-			}
+		transIntervalSpinner.addChangeListener(e -> {
+			JSpinner spinner = (JSpinner) e.getSource();
+			transInterval = (int) spinner.getValue();
+			clearTransitionsChart();
 		});
 		transChartOptionsPanel.add(transIntervalSpinner);
 
 		JCheckBox sortedCheckBox = new JCheckBox("Sorted by firing");
 		sortedCheckBox.setBounds(posXchart+460, posYchart+10, 130, 20);
-		sortedCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					sortedT = true;
-				} else {
-					sortedT = false;
-				}
-				fillPlacesAndTransitionsData();
-			}
+		sortedCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			sortedT = abstractButton.getModel().isSelected();
+			fillPlacesAndTransitionsData();
 		});
 		transChartOptionsPanel.add(sortedCheckBox);
 		posYchart += 30;
@@ -644,22 +574,20 @@ public class HolmesSim extends JFrame {
 		addTransitionButton.setFocusPainted(false);
 		addTransitionButton.setIcon(Tools.getResIcon16("/icons/stateSim/addChart.png"));
 		addTransitionButton.setToolTipText("Add data about transition firing to the chart.");
-		addTransitionButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(transitionsRawData.size() == 0)
-					return;
-				
-				int selected = transitionsCombo.getSelectedIndex();
-				if(selected>0) {
-					String name = transitionsCombo.getSelectedItem().toString();
-					int sel = action.getRealNodeID(name);
-					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
-					
-					//selected--;
-					name = trimNodeName(name);
-					addNewTransitionSeries(sel, name);
-					//updateTransitionsGraphicChart();
-				}
+		addTransitionButton.addActionListener(actionEvent -> {
+			if(transitionsRawData.size() == 0)
+				return;
+
+			int selected = transitionsCombo.getSelectedIndex();
+			if(selected>0) {
+				String name = transitionsCombo.getSelectedItem().toString();
+				int sel = action.getRealNodeID(name);
+				if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
+
+				//selected--;
+				name = trimNodeName(name);
+				addNewTransitionSeries(sel, name);
+				//updateTransitionsGraphicChart();
 			}
 		});
 		transChartOptionsPanel.add(addTransitionButton);
@@ -670,17 +598,15 @@ public class HolmesSim extends JFrame {
 		removeTransitionButton.setFocusPainted(false);
 		removeTransitionButton.setIcon(Tools.getResIcon16("/icons/stateSim/removeChart.png"));
 		removeTransitionButton.setToolTipText("Remove data about transition firing from the chart.");
-		removeTransitionButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(transitionsRawData.size() == 0)
-					return;
-				
-				int selected = transitionsCombo.getSelectedIndex();
-				if(selected>0) {
-					String name = transitionsCombo.getSelectedItem().toString();
-					name = trimNodeName(name);
-					removeTransitionSeries(name);
-				}
+		removeTransitionButton.addActionListener(actionEvent -> {
+			if(transitionsRawData.size() == 0)
+				return;
+
+			int selected = transitionsCombo.getSelectedIndex();
+			if(selected>0) {
+				String name = transitionsCombo.getSelectedItem().toString();
+				name = trimNodeName(name);
+				removeTransitionSeries(name);
 			}
 		});
 		transChartOptionsPanel.add(removeTransitionButton);
@@ -691,11 +617,7 @@ public class HolmesSim extends JFrame {
 		clearTransChartButton.setFocusPainted(false);
 		clearTransChartButton.setIcon(Tools.getResIcon16("/icons/stateSim/clearChart.png"));
 		clearTransChartButton.setToolTipText("Clears the transitions chart.");
-		clearTransChartButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				clearTransitionsChart();
-			}
-		});
+		clearTransChartButton.addActionListener(actionEvent -> clearTransitionsChart());
 		transChartOptionsPanel.add(clearTransChartButton);
 		
 		JButton saveTransitionsChartButton = new JButton("Save Image");
@@ -704,11 +626,7 @@ public class HolmesSim extends JFrame {
 		saveTransitionsChartButton.setFocusPainted(false);
 		saveTransitionsChartButton.setIcon(Tools.getResIcon16("/icons/stateSim/saveImage.png"));
 		saveTransitionsChartButton.setToolTipText("Saves the chart as image file.");
-		saveTransitionsChartButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				saveChartImage("transitions", 1200, 1024);
-			}
-		});
+		saveTransitionsChartButton.addActionListener(actionEvent -> saveChartImage("transitions", 1200, 1024));
 		transChartOptionsPanel.add(saveTransitionsChartButton);
 		
 		JButton showTransButton = new JButton("Find trans.");
@@ -717,17 +635,15 @@ public class HolmesSim extends JFrame {
 		showTransButton.setFocusPainted(false);
 		showTransButton.setIcon(Tools.getResIcon16("/icons/stateSim/findNode.png"));
 		showTransButton.setToolTipText("Find selected transition within the net.");
-		showTransButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = transitionsCombo.getSelectedIndex();
-				if(selected>0) {
-					//ustalanie prawdziwego ID:
-					int sel = action.getRealNodeID(transitionsCombo.getSelectedItem().toString());
-					if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
-					
-					GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
-					GUIManager.getDefaultGUIManager().getSearchWindow().selectedManually(false, sel);
-				}
+		showTransButton.addActionListener(actionEvent -> {
+			int selected = transitionsCombo.getSelectedIndex();
+			if(selected>0) {
+				//ustalanie prawdziwego ID:
+				int sel = action.getRealNodeID(transitionsCombo.getSelectedItem().toString());
+				if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
+
+				GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
+				GUIManager.getDefaultGUIManager().getSearchWindow().selectedManually(false, sel);
 			}
 		});
 		transChartOptionsPanel.add(showTransButton);
@@ -747,12 +663,12 @@ public class HolmesSim extends JFrame {
 		JRadioButton width1 = new JRadioButton("Thin");
 		width1.setBounds(posXGchart, posYGchart, 70, 20);
 		width1.setActionCommand("0");
-		width1.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent actionEvent) {
-			if(((AbstractButton) actionEvent.getSource()).isSelected() == true) {
+		width1.addActionListener(actionEvent -> {
+			if(((AbstractButton) actionEvent.getSource()).isSelected()) {
 				chartDetails.t_StrokeWidth = 1.0f;
 				updatePlacesGraphicChart("transitions");
 			}
-		}});
+		});
 		transChartGraphicPanel.add(width1);
 		groupWidth.add(width1);
 		groupWidth.setSelected(width1.getModel(), true);
@@ -760,24 +676,24 @@ public class HolmesSim extends JFrame {
 		JRadioButton width2 = new JRadioButton("Normal");
 		width2.setBounds(posXGchart, posYGchart+20, 70, 20);
 		width2.setActionCommand("1");
-		width2.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent actionEvent) {
-			if(((AbstractButton) actionEvent.getSource()).isSelected() == true) {
+		width2.addActionListener(actionEvent -> {
+			if(((AbstractButton) actionEvent.getSource()).isSelected()) {
 				chartDetails.t_StrokeWidth = 2.0f;
 				updatePlacesGraphicChart("transitions");
 			}
-		}});
+		});
 		transChartGraphicPanel.add(width2);
 		groupWidth.add(width2);
 		
 		JRadioButton width3 = new JRadioButton("Thick");
 		width3.setBounds(posXGchart, posYGchart+40, 70, 20);
 		width3.setActionCommand("2");
-		width3.addActionListener(new ActionListener() {public void actionPerformed(ActionEvent actionEvent) {
-			if(((AbstractButton) actionEvent.getSource()).isSelected() == true) {
+		width3.addActionListener(actionEvent -> {
+			if(((AbstractButton) actionEvent.getSource()).isSelected()) {
 				chartDetails.t_StrokeWidth = 3.0f;
 				updatePlacesGraphicChart("transitions");
 			}
-		}});
+		});
 		transChartGraphicPanel.add(width3);
 		groupWidth.add(width3);
 		
@@ -815,9 +731,8 @@ public class HolmesSim extends JFrame {
 		placesSeriesDataSet = new XYSeriesCollection();
 	    placesChart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, placesSeriesDataSet, 
 	    		PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
-	
-	    ChartPanel placesChartPanel = new ChartPanel(placesChart);
-	    return placesChartPanel;
+
+		return new ChartPanel(placesChart);
 	}
 	
 	/**
@@ -909,9 +824,9 @@ public class HolmesSim extends JFrame {
 		placesChartType = 0;
 		//int steps = placesRawData.size();
 		double max = 0.0;
-		for(int p=0; p<placesAvgData.size(); p++) {
-			if(placesAvgData.get(p) > max)
-				max = placesAvgData.get(p);
+		for (Double placesAvgDatum : placesAvgData) {
+			if (placesAvgDatum > max)
+				max = placesAvgDatum;
 		}
 		
 	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -1032,9 +947,8 @@ public class HolmesSim extends JFrame {
 		transitionsSeriesDataSet = new XYSeriesCollection();
 		transitionsChart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, transitionsSeriesDataSet,
 			PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
-		
-	    ChartPanel res = new ChartPanel(transitionsChart);
-	    return res;
+
+		return new ChartPanel(transitionsChart);
 	}
 	
 	/**
@@ -1072,7 +986,7 @@ public class HolmesSim extends JFrame {
 			for(int i=0; i<transInterval; i++) {
 				try {
 					value += transitionsRawData.get(step+i).get(selTransID);
-				} catch (Exception e) {
+				} catch (Exception ignored) {
 					
 				}
 			}
@@ -1125,9 +1039,9 @@ public class HolmesSim extends JFrame {
 		transChartType = 0;
 		
 		double max = 0.0;
-		for(int p=0; p<transitionsCompactData.size(); p++) {
-			if(transitionsCompactData.get(p) > max)
-				max = transitionsCompactData.get(p);
+		for (Integer transitionsCompactDatum : transitionsCompactData) {
+			if (transitionsCompactDatum > max)
+				max = transitionsCompactDatum;
 		}
 		
 	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -1207,10 +1121,10 @@ public class HolmesSim extends JFrame {
 		
 		double max = 0.0;
 		long total = 0;
-		for(int p=0; p<transitionsCompactData.size(); p++) {
-			total += transitionsCompactData.get(p);
-			if(transitionsCompactData.get(p) > max)
-				max = transitionsCompactData.get(p);
+		for (Integer transitionsCompactDatum : transitionsCompactData) {
+			total += transitionsCompactDatum;
+			if (transitionsCompactDatum > max)
+				max = transitionsCompactDatum;
 		}
 		
 		
@@ -1226,7 +1140,7 @@ public class HolmesSim extends JFrame {
  			if(val > 0)
  				notePad.addTextLineNL("  t_"+t+" "+t_name+" : Fired: "+val+" (max: "+max+")", "text");
  			else {
- 				if(trans_tmp.get(t).isOffline() == true) {
+ 				if(trans_tmp.get(t).isOffline()) {
  					notePad.addTextLineNL("MANUALLY DISABLED: t_"+t+" "+t_name+" : "+val, "text");
  				} else {
  					notePad.addTextLineNL("OFFLINE: t_"+t+" "+t_name+" : "+val, "text");
@@ -1244,6 +1158,7 @@ public class HolmesSim extends JFrame {
 	/**
 	 * Metoda zapisująca aktualnie wyświetlany wykres do pliku.
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private void saveChartImage(String chartType, int w, int h) {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
@@ -1256,17 +1171,14 @@ public class HolmesSim extends JFrame {
 			selectedFile += ".png";
 		
 		File imageFile = new File(selectedFile);
-		int width = w; //1024;
-		int height = h; //768;
-		 
 		try {
 			if(chartType.equals("places")) {
-				ChartUtilities.saveChartAsPNG(imageFile, placesChart, width, height);
+				ChartUtilities.saveChartAsPNG(imageFile, placesChart, w, h);
 			} else if(chartType.equals("transitions")) {
-				ChartUtilities.saveChartAsPNG(imageFile, transitionsChart, width, height);
+				ChartUtilities.saveChartAsPNG(imageFile, transitionsChart, w, h);
 			}
 		} catch (IOException ex) {
-		    System.err.println(ex);
+			overlord.log("Error:"+ex, "error", true);
 		}
 	}
 	
@@ -1289,7 +1201,7 @@ public class HolmesSim extends JFrame {
 		placesCombo.removeAllItems();
 		placesCombo.addItem("---");
 		if(placesAvgData.size() == places.size()) {
-			if(sortedP == false) {
+			if(!sortedP) {
 				for(int p=0; p < places.size(); p++) {
 					placesCombo.addItem("p"+(p)+"."+places.get(p).getName() + " "+formatD(placesAvgData.get(p)));
 				}
@@ -1300,7 +1212,7 @@ public class HolmesSim extends JFrame {
 					map.put(j, placesAvgData.get(j));
 				}
 				//sortuj po value (frequency)
-				Map<Integer, Double> sortedByValues = new HashMap<Integer, Double>(); 
+				Map<Integer, Double> sortedByValues;
 				sortedByValues = HolmesSimActions.crunchifySortMap(map); // dark magic happens here
 				for (Map.Entry<Integer, Double> entry : sortedByValues.entrySet()) {
 					placesCombo.addItem("p"+(entry.getKey())+"."+places.get(entry.getKey()).getName() + " "+formatD(entry.getValue()));
@@ -1320,7 +1232,7 @@ public class HolmesSim extends JFrame {
 		transitionsCombo.addItem("---");
 		
 		if(transAvgData.size() == transitions.size()) {
-			if(sortedT == false) {
+			if(!sortedT) {
 				for(int t=0; t < transitions.size(); t++) {
 					transitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName() + " "+formatD(transAvgData.get(t)));
 				}
@@ -1331,7 +1243,7 @@ public class HolmesSim extends JFrame {
 					map.put(j, transAvgData.get(j));
 				}
 				//sortuj po value (frequency)
-				Map<Integer, Double> sortedByValues = new HashMap<Integer, Double>(); 
+				Map<Integer, Double> sortedByValues;
 				sortedByValues = HolmesSimActions.crunchifySortMap(map); // dark magic happens here
 				for (Map.Entry<Integer, Double> entry : sortedByValues.entrySet()) {
 					transitionsCombo.addItem("t"+(entry.getKey())+"."+transitions.get(entry.getKey()).getName() + " "+formatD(entry.getValue()));
@@ -1370,7 +1282,7 @@ public class HolmesSim extends JFrame {
 		progressBar.setMaximum(overlord.simSettings.getSimSteps());
 
 		boolean success = ssim.initiateSim(true, null);
-		if(success == false)
+		if(!success)
 			return;
 		
 		//zablokuj kilka elementów okna symulatora

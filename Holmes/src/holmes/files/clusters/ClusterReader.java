@@ -19,7 +19,7 @@ import holmes.utilities.Tools;
  *
  */
 public class ClusterReader {
-	private String fileInfo[];
+	private String[] fileInfo;
 
 	/**
 	 * Konstruktor domyślny obiektu ClusterReader.
@@ -43,7 +43,7 @@ public class ClusterReader {
 			GUIManager.getDefaultGUIManager().log("Some files are still missing in "+path+" Possible further errors.", "error", true);
 		}
 		
-		int tableLocation = 0;
+		int tableLocation;
 		ArrayList<ArrayList<Clustering>> bigTable = new ArrayList<ArrayList<Clustering>>();
 		for(int metric=1; metric<=8; metric++) { //dla ośmiu miar
 			for(int alg=1; alg<=7; alg++) { //dla siedmiu algorytmów
@@ -71,8 +71,8 @@ public class ClusterReader {
 		int result = 0;
 		boolean firstFound = false;
 		String foundTemplateName = "";
-		int checkList[] = new int[57];
-		File check = null;
+		int[] checkList = new int[57];
+		File check;
 		for(int i=1; i<=56; i++) {
 			check = new File(path+"\\"+fileInfo[i]);
 			if(check.exists()) {
@@ -115,7 +115,7 @@ public class ClusterReader {
 	 * @param path String - katalog dla pliku tymczasowego
 	 */
 	private void nullFile(String filePath, String path) {
-		String line = "";
+		String line;
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(filePath));
 			BufferedWriter bw = new BufferedWriter(new FileWriter(path+"\\c_tmp.txt"));
@@ -162,7 +162,7 @@ public class ClusterReader {
 		
 		ArrayList<Clustering> resTable = new ArrayList<Clustering>();
 		Clustering entry; // = new Clustering();
-		String line = "";
+		String line;
 		try(BufferedReader br = new BufferedReader(new FileReader(path))) {
 	        while ((line = br.readLine()) != null) {
 	        	if(line.contains("Output:Silhouette of")) { //blok opisu klastrowania
@@ -183,10 +183,10 @@ public class ClusterReader {
 	        		while(!(line = br.readLine()).contains("Output:Individual")) {
 	        			//teraz czytamy parami linii, informacje o klastrach
 	        			line = line.replace(":", " ");
-	        			String line1[] = line.split("\\s+"); //wagi klastrów
+	        			String[] line1 = line.split("\\s+"); //wagi klastrów
 	        			line = br.readLine();
 	        			line = line.replace(":", " ");
-	        			String line2[] = line.split("\\s+"); //miara MSS
+	        			String[] line2 = line.split("\\s+"); //miara MSS
 	        			
 	        			for(int i=1; i<line1.length; i++) {
 	        				entry.clusterSize.add(Integer.parseInt(line1[i]));
@@ -324,28 +324,28 @@ public class ClusterReader {
 					br.close();
 
 					data.mctSets = new ArrayList<ArrayList<Integer>>();
-					for(int i=0; i<tmpMCT.size(); i++) {
+					for (String s : tmpMCT) {
 						ArrayList<Integer> newMctList = new ArrayList<Integer>();
-						
-						line = tmpMCT.get(i);
-						line = line.substring(line.indexOf("{")+1);
+
+						line = s;
+						line = line.substring(line.indexOf("{") + 1);
 						line = line.substring(0, line.indexOf("}"));
 						line = line.trim().replaceAll("\\s+", "");
 						String[] tmpSplit = line.split(",");
-						int transIndex = -1;
+						int transIndex;
 						int lastFound = 0;
-						for(int j=0; j<tmpSplit.length; j++) {
+						for (String value : tmpSplit) {
 							transIndex = -1;
-							for(int k=lastFound; k<data.transNames.length; k++) {
-								if(tmpSplit[j].equals(data.transNames[k])) {
+							for (int k = lastFound; k < data.transNames.length; k++) {
+								if (value.equals(data.transNames[k])) {
 									transIndex = k;
 									lastFound = k;
 									break;
 								}
 							}
-							if(transIndex == -1) {
+							if (transIndex == -1) {
 								transIndex = -1;
-								GUIManager.getDefaultGUIManager().log("Something is wrong with MCT data. File:"+filePaths[2], "error", true);
+								GUIManager.getDefaultGUIManager().log("Something is wrong with MCT data. File:" + filePaths[2], "error", true);
 								lastFound = 0; //nie zaszkodzi, choć już raczej nie pomoże...
 							}
 							newMctList.add(transIndex); //dodajemy nr porządkowy tranzycji
@@ -405,10 +405,10 @@ public class ClusterReader {
         		while(!(line = br.readLine()).contains("Output:Individual")) {
         			//teraz czytamy parami linii, informacje o klastrach
         			line = line.replace(":", " ");
-        			String line1[] = line.split("\\s+"); //wagi klastrów
+        			String[] line1 = line.split("\\s+"); //wagi klastrów
         			line = br.readLine();
         			line = line.replace(":", " ");
-        			String line2[] = line.split("\\s+"); //miara MSS
+        			String[] line2 = line.split("\\s+"); //miara MSS
         			
         			for(int i=1; i<line1.length; i++) {
         				mssVector.add(Float.parseFloat(line2[i]));
@@ -421,24 +421,24 @@ public class ClusterReader {
 				while((line = br.readLine()) != null && !line.contains("[1]"))
 					;
 				
-				String clusterLine = "";
+				StringBuilder clusterLine;
 				data.clustersInv = new ArrayList<ArrayList<Integer>>();
 				
 				while(line != null && line.contains("[1]")) {
-					clusterLine = line.substring(line.indexOf("]")+1);
+					clusterLine = new StringBuilder(line.substring(line.indexOf("]") + 1));
 					while((line = br.readLine()) != null && !line.contains("[1]") &&
 							line.contains("\"")) { //jeśli klaster ma wiele linii
 						line = line.substring(line.indexOf("]")+1);
-						clusterLine += line.substring(line.indexOf("]")+1);
+						clusterLine.append(line.substring(line.indexOf("]") + 1));
 						
 					}
 					
-					clusterLine = clusterLine.replace("\"", " "); //usuwanie cudzysłowów
-					clusterLine = clusterLine.trim().replaceAll("\\s+", " "); //wiele spacji na jedną
-					String[] clustInv  = clusterLine.split(" ");
+					clusterLine = new StringBuilder(clusterLine.toString().replace("\"", " ")); //usuwanie cudzysłowów
+					clusterLine = new StringBuilder(clusterLine.toString().trim().replaceAll("\\s+", " ")); //wiele spacji na jedną
+					String[] clustInv  = clusterLine.toString().split(" ");
 					ArrayList<Integer> cluster = new ArrayList<Integer>(); // wektor dla klastra
-					for(int i=0; i<clustInv.length; i++) {
-						int invNo = Integer.parseInt(clustInv[i]);
+					for (String s : clustInv) {
+						int invNo = Integer.parseInt(s);
 						cluster.add(invNo - 1); // 'invNo-1' to id inwariantu z csvInvariants[id][]
 					}
 					data.clustersInv.add(cluster); //dodajemy klaster (inwarianty) do macierzy

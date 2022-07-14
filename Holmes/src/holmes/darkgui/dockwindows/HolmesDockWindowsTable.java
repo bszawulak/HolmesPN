@@ -40,9 +40,9 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.elements.MetaNode.MetaType;
-import holmes.petrinet.simulators.NetSimulator;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
-import holmes.petrinet.simulators.NetSimulatorXTPN;
+import holmes.petrinet.simulators.GraphicalSimulator;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulatorXTPN;
 import holmes.petrinet.simulators.QuickSimTools;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.utilities.ColorPalette;
@@ -87,8 +87,8 @@ public class HolmesDockWindowsTable extends JPanel {
     public JLabel timeStepLabelValue;
     public JLabel timeLabelXTPN;
     public JLabel stepLabelXTPN;
-    private NetSimulator simulator;  // obiekt symulatora
-    private NetSimulatorXTPN simulatorXTPN;
+    private GraphicalSimulator simulator;  // obiekt symulatora
+    private GraphicalSimulatorXTPN simulatorXTPN;
     // P/T/M/A
     private final ButtonGroup groupRadioMetaType = new ButtonGroup();  //metanode
     private boolean nameLocChangeMode = false;
@@ -233,7 +233,7 @@ public class HolmesDockWindowsTable extends JPanel {
     public HolmesDockWindowsTable(SubWindow subType, Object... blackBox) {
         overlord = GUIManager.getDefaultGUIManager();
         switch (subType) {
-            case SIMULATOR -> createSimulatorSubWindow((NetSimulator) blackBox[0], (NetSimulatorXTPN) blackBox[1], (boolean) blackBox[2]);
+            case SIMULATOR -> createSimulatorSubWindow((GraphicalSimulator) blackBox[0], (GraphicalSimulatorXTPN) blackBox[1], (boolean) blackBox[2]);
             case PLACE -> createPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
             case TRANSITION -> createTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
             case TIMETRANSITION ->
@@ -270,7 +270,8 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param sim NetSimulator - obiekt symulatora sieci
      */
-    private void createSimulatorSubWindow(NetSimulator sim, NetSimulatorXTPN simXTPN, boolean XTPNmode) {
+    @SuppressWarnings("UnusedAssignment")
+    private void createSimulatorSubWindow(GraphicalSimulator sim, GraphicalSimulatorXTPN simXTPN, boolean XTPNmode) {
         int columnA_posX = 10;
         int columnB_posX = 80;
         int columnA_Y = 0;
@@ -298,7 +299,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                if(simulatorXTPN.getXTPNsimulatorStatus() != NetSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
+                if(simulatorXTPN.getXTPNsimulatorStatus() != GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
                     JOptionPane.showMessageDialog(null, "XTPN simulator must be stopped first.",
                             "Simulator working", JOptionPane.WARNING_MESSAGE);
                     return;
@@ -359,7 +360,7 @@ public class HolmesDockWindowsTable extends JPanel {
         }
 
 
-        if(XTPNmode == false) {
+        if(!XTPNmode) {
             JLabel timeStepLabel = new JLabel("Time/step:");
             timeStepLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
             components.add(timeStepLabel);
@@ -621,7 +622,7 @@ public class HolmesDockWindowsTable extends JPanel {
             loopSimulation.setToolTipText("Loop simulation");
             loopSimulation.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-                simulatorXTPN.startSimulation(NetSimulatorXTPN.SimulatorModeXTPN.XTPNLOOP);
+                simulatorXTPN.startSimulation(GraphicalSimulatorXTPN.SimulatorModeXTPN.XTPNLOOP);
                 mode = SIMULATOR;
             });
             xtmpSimPanel.add(loopSimulation);
@@ -668,6 +669,7 @@ public class HolmesDockWindowsTable extends JPanel {
         add(panel);
     }
 
+    @SuppressWarnings("UnusedAssignment")
     private JPanel createXTPNsimPanel(int columnA_posX, int columnA_Y) {
         JPanel xtmpSimPanel = new JPanel();
         xtmpSimPanel.setLayout(null);
@@ -708,7 +710,7 @@ public class HolmesDockWindowsTable extends JPanel {
         loopSimulation.setToolTipText("Loop simulation");
         loopSimulation.addActionListener(actionEvent -> {
             overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulatorXTPN.startSimulation(NetSimulatorXTPN.SimulatorModeXTPN.XTPNLOOP);
+            simulatorXTPN.startSimulation(GraphicalSimulatorXTPN.SimulatorModeXTPN.XTPNLOOP);
             mode = SIMULATOR;
         });
         xtmpSimPanel.add(loopSimulation);
@@ -754,6 +756,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param place    Place - obiekt miejsca
      * @param location ElementLocation - lokalizacja miejsca
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createPlaceSubWindow(Place place, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -1218,6 +1221,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param place    Place - obiekt miejsca
      * @param location ElementLocation - lokalizacja miejsca
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createXTPNPlaceSubWindow(Place place, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -1956,6 +1960,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param transition Transition - obiekt tranzycji sieci
      * @param location   ElementLocation - lokalizacja tranzycji
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createTransitionSubWindow(Transition transition, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -2382,6 +2387,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param transition (<b>Transition</b>) obiekt tranzycji sieci.
      * @param location (<b>ElementLocation</b>) - lokalizacja tranzycji.
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createColorTransitionSubWindow(Transition transition, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -2761,6 +2767,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param transition (<b>Transition</b>) obiekt tranzycji sieci.
      * @param location (<b>ElementLocation</b>) - lokalizacja tranzycji.
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createSPNTransitionSubWindow(Transition transition, ElementLocation location) {
         //[2022-07-06] na razie czysto na bazie zwykłej tranzycji, copy pase
 
@@ -3222,6 +3229,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param transition TimeTransition - obiekt tranzycji czasowej
      * @param location   ElementLocation - lokalizacja tranzycji
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createTimeTransitionSubWindow(final Transition transition, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -3679,6 +3687,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param transition (<b>Transition</b>) obiekt tranzycji czasowej.
      * @param location (<b>ElementLocation</b>) lokalizacja tranzycji.
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createXTPNTransitionSubWindow(final Transition transition, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -4526,6 +4535,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param metaNode TimeTransition - obiekt tranzycji czasowej
      * @param location ElementLocation - lokalizacja tranzycji
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createMetaNodeSubWindow(final MetaNode metaNode, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -4911,6 +4921,7 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param arc Arc - obiekt łuku
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createArcSubWindow(Arc arc) {
         int columnA_posX = 10;
         int columnB_posX = 110;
@@ -5323,6 +5334,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * [2022-07-06] ...i czasopisma... tfu, znaczy: i jeszcze projektu aktualnie wgranego.
      * @param sheet (<b>WorkspaceSheet</b>) obiekt arkusza
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createSheetSubWindow(WorkspaceSheet sheet) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -6130,6 +6142,7 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param pInvData ArrayList[ArrayList[Integer]] - macierz inwariantów
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createP_invSubWindow(ArrayList<ArrayList<Integer>> pInvData) {
         doNotUpdate = true;
         if (pInvData == null || pInvData.size() == 0) {
@@ -6332,7 +6345,7 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param mct ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("UnusedAssignment")
     private void createMCTSubWindow(ArrayList<ArrayList<Transition>> mct) {
 
 
@@ -6560,6 +6573,7 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param clusteringData int - w zależności od tego, tworzy dane okno
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createClustersSubWindow(ClusterDataPackage clusteringData) {
         initiateContainers();
         doNotUpdate = true;
@@ -6802,13 +6816,13 @@ public class HolmesDockWindowsTable extends JPanel {
         for (double avg : avgStatsVector) {
             avgMean += avg;
         }
-        avgMean /= (double) avgStatsVector.size();
+        avgMean /= avgStatsVector.size();
 
         double variance = 0;
         for (double avg : avgStatsVector) {
             variance += (avgMean - avg) * (avgMean - avg);
         }
-        variance /= (double) avgStatsVector.size();
+        variance /= avgStatsVector.size();
 
         double stdDev = Math.sqrt(variance);
 
@@ -6824,7 +6838,7 @@ public class HolmesDockWindowsTable extends JPanel {
     //TODO
     private void showClustersData() {
         PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-        ArrayList<Transition> transitions = pn.getTransitions();
+        //ArrayList<Transition> transitions = pn.getTransitions();
         ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
         if (invMatrix == null || invMatrix.size() == 0)
             return;
@@ -7131,9 +7145,9 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param mcsData MCSDataMatrix - obiekt danych zbiorów MCS
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createMCSSubWindow(MCSDataMatrix mcsData) {
         transitions = overlord.getWorkspace().getProject().getTransitions();
-
         initiateContainers();
 
         int posX = 10;
@@ -7148,7 +7162,6 @@ public class HolmesDockWindowsTable extends JPanel {
         for (int i = 0; i < transitions.size(); i++) {
             objRset[i + 1] = "t" + i + transitions.get(i).getName();
         }
-
 
         //WYBÓR REAKCJI ZE ZBIORAMI MCS
         mcsObjRCombo = new JComboBox<>(objRset);
@@ -7528,6 +7541,7 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Tworzy okno wykrywania i wskazywania problemów sieci.
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createQuickSimSubWindow() {
         int posX = 10;
         int posY = 10;
@@ -7620,10 +7634,8 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Tworzy okno z opcjami do dekompozycji
      */
-
+    @SuppressWarnings("unchecked")
     private void createDecompositionData() {
-
-
         int posX = 10;
         int posY = 10;
 
@@ -8140,6 +8152,7 @@ public class HolmesDockWindowsTable extends JPanel {
         };
     }
 
+    @SuppressWarnings("all")
     private Color calcMiddleColor(Color one, Color two) {
         int blue = 0;
         int red = 0;
@@ -8832,7 +8845,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param netSim (<b>NetSimulator</b>) simulator zwykły.
      * @param netSim (<b>NetSimulatorXTPN</b>) simulator XTPN.
      */
-    public void setSimulator(NetSimulator netSim, NetSimulatorXTPN netSimXTPN) {
+    public void setSimulator(GraphicalSimulator netSim, GraphicalSimulatorXTPN netSimXTPN) {
         simulator = netSim;
         simulatorXTPN = netSimXTPN;
     }
@@ -8841,7 +8854,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda zwraca obiekt aktywnego zwykłego symulatora z podokna symulacji.
      * @return (<b>NetSimulator</b>) obiekt symulatora sieci zwykłej.
      */
-    public NetSimulator getSimulator() {
+    public GraphicalSimulator getSimulator() {
         return simulator;
     }
 
@@ -8849,7 +8862,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda zwraca obiekt aktywnego symulatora XTPN z podokna symulacji.
      * @return (<b>NetSimulatorXTPN</b>) obiekt symulatora XTPN.
      */
-    public NetSimulatorXTPN getSimulatorXTPN() {
+    public GraphicalSimulatorXTPN getSimulatorXTPN() {
         return simulatorXTPN;
     }
 

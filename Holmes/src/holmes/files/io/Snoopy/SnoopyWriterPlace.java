@@ -60,8 +60,8 @@ public class SnoopyWriterPlace {
 		globalPlaceID = globalID;
 		int currID = snoopyStartingID;
 		int locations = 1;
-		int xOff = 25;
-		int yOff = 25;
+		int xOff;
+		int yOff;
 		
 		ArrayList<Integer> locationsSheetID = new ArrayList<Integer>();
 		int netMainID = 0;
@@ -134,8 +134,8 @@ public class SnoopyWriterPlace {
 		currID++; //teraz: 228
 		write(bw, "          <![CDATA[" + holmesPlace.getName() + "]]>");
 		write(bw,"          <graphics count=\"" + locations + "\">"); //ile logicznych
-		xOff = 5; //TODO: + holmesPlace.getNameOffX();
-		yOff = 20; //TODO: + holmesPlace.getNameOffY();
+		//xOff = 5; //TODO: + holmesPlace.getNameOffX();
+		//yOff = 20; //TODO: + holmesPlace.getNameOffY();
 		for(int i=0; i<locations; i++) { 
 			//TODO: decyzja, czy środkować czy brać offset z Holmesa
 			xOff = holmesPlace.getTextLocation_X(i, GUIManager.locationMoveType.NAME);
@@ -282,9 +282,8 @@ public class SnoopyWriterPlace {
 		}
 		write(bw,"        </graphics>");
 		write(bw, "      </node>");
-		
-		int lastParentID = grParents.get(locations-1);
-		return lastParentID;
+
+		return grParents.get(locations-1);
 	}
 	
 	/**
@@ -295,23 +294,23 @@ public class SnoopyWriterPlace {
 	private void write(BufferedWriter bw, String text) {
 		try {
 			bw.write(text+"\n");
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 	}
 	
 	public String toString() {
-		String txt = "";
+		StringBuilder txt = new StringBuilder();
 		int pPos = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().indexOf(holmesPlace);
-		txt += "P"+pPos + " [gPlaceID:"+globalPlaceID+"]";
-		txt += " [SnoopyStartID: "+snoopyStartingID+"]";
+		txt.append("P").append(pPos).append(" [gPlaceID:").append(globalPlaceID).append("]");
+		txt.append(" [SnoopyStartID: ").append(snoopyStartingID).append("]");
 		if(grParents.size()>0) {
-			txt += " [gParentID:";
+			txt.append(" [gParentID:");
 			for(int x : grParents) {
-				txt += " "+x;
+				txt.append(" ").append(x);
 			}
-			txt += "]";
+			txt.append("]");
 		}
-		return txt;
+		return txt.toString();
 	}
 }

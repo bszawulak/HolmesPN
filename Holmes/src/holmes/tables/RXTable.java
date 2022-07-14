@@ -2,6 +2,7 @@ package holmes.tables;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Serial;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
@@ -9,11 +10,12 @@ import javax.swing.text.*;
 
 /**
  * The RXTable provides some extensions to the default JTable
- * 
+ *
  * @author - well, the author, whoever he is. Not me (MR), just borrowed the code from
- * https://tips4java.wordpress.com/2008/10/20/table-select-all-editor/
+ * <a href="https://tips4java.wordpress.com/2008/10/20/table-select-all-editor/">...</a>
  */
 public class RXTable extends JTable {
+	@Serial
 	private static final long serialVersionUID = 7638147862995205299L;
 	private boolean isSelectAllForMouseEvent = false;
 	private boolean isSelectAllForActionEvent = false;

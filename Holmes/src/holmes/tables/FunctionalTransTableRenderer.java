@@ -35,7 +35,7 @@ public class FunctionalTransTableRenderer  implements TableCellRenderer {
 	 * @param isSelected boolean - czy zaznaczona komórka
 	 * @param hasFocus boolean - czy aktywna komórka
 	 * @param row int - numer wiersza
-	 * @param columnt int - numer kolumny
+	 * @param column int - numer kolumny
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
@@ -74,7 +74,7 @@ public class FunctionalTransTableRenderer  implements TableCellRenderer {
         			res.setBackground(Color.DARK_GRAY);
         		return res;
     		}
-    		
+
     		return null;
     	}
     }

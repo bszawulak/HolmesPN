@@ -156,6 +156,7 @@ public class StatesPlacesEditorTableModelXTPN extends DefaultTableModel {
         */
     }
 
+    @SuppressWarnings("unused")
     public void setQuietlyValueAt(Object value, int row, int col) {
         /*
         double newValue;

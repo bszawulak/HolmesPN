@@ -10,11 +10,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.Serial;
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -47,6 +46,7 @@ import holmes.workspace.ExtensionFileFilter;
  *
  */
 public class HolmesNetProperties extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -4382182770445745847L;
 	private GUIManager overlord;
 	private JFrame ego;
@@ -83,7 +83,7 @@ public class HolmesNetProperties extends JFrame {
 		ego = this;
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
 		this.setTitle("Petri net general information and properties");
@@ -129,7 +129,7 @@ public class HolmesNetProperties extends JFrame {
 		label_placesNumber.setText(places.size()+"");
 		int readArcs = arcClasses.get(1) / 2;
 		label_arcNumber.setText((arcs.size()-readArcs)+"");
-		int inv_number = 0;
+		int inv_number;
 		if(invariantsMatrix == null) {
 			inv_number = 0;
 		}
@@ -161,19 +161,19 @@ public class HolmesNetProperties extends JFrame {
 		int normal = 0;
 		if(invariantsMatrix != null) {
 			//sprawdza czy określono typy inwariantów, jeśli nie - wymusza przeliczenie 
-			if(overlord.getWorkspace().getProject().getT_invTypesComputed() == false) {
+			if(!overlord.getWorkspace().getProject().getT_invTypesComputed()) {
 				textField.append("Computing t-invariants types vector\n");
 				InvariantsCalculator ic = new InvariantsCalculator(true);
 				InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), invariantsMatrix, true);
 			}
 			ArrayList<Integer> invTypes = overlord.getWorkspace().getProject().accessT_InvTypesVector();
-			
-			for(int i=0; i<invTypes.size(); i++) {
-				if(invTypes.get(i) == 0) {
+
+			for (Integer invType : invTypes) {
+				if (invType == 0) {
 					normal++;
-				} else if(invTypes.get(i) == -1) {
+				} else if (invType == -1) {
 					sub++;
-				} else if(invTypes.get(i) == 1) {
+				} else if (invType == 1) {
 					sur++;
 				} else {
 					none++;
@@ -222,10 +222,9 @@ public class HolmesNetProperties extends JFrame {
 				textField.append("The net is not covered by t-invariants (only vectors x such as Cx=0 are considered).\n");
 				textField.append("Transitions not covered by the "+normal+" t-invariants:\n");
 				textField.append("\n");
-				for(int i=0; i<idTransNoInv.size(); i++) {
-					int tNumber = idTransNoInv.get(i);
-					String txt1 = Tools.setToSize("t"+tNumber, 5, false);
-					textField.append(txt1+" "+(tNumber)+transitions.get(tNumber).getName()+"\n");
+				for (int tNumber : idTransNoInv) {
+					String txt1 = Tools.setToSize("t" + tNumber, 5, false);
+					textField.append(txt1 + " " + (tNumber) + transitions.get(tNumber).getName() + "\n");
 				}
 				textField.append("\n");
 			}
@@ -258,7 +257,7 @@ public class HolmesNetProperties extends JFrame {
 	 */
 	private JPanel createMainPanel() {
 		JPanel panel = new JPanel();
-		panel.setLayout(null);  /** (ノಠ益ಠ)ノ彡┻━━━┻ |   */
+		panel.setLayout(null);  // (ノಠ益ಠ)ノ彡┻━━━┻ |
 		panel.setBorder(BorderFactory.createTitledBorder("General Petri net informations:"));
 		
 		int xPos = 10;
@@ -274,16 +273,14 @@ public class HolmesNetProperties extends JFrame {
 		
 		nameField = new JFormattedTextField();
 		nameField.setBounds(xPos+110, yPosA+2, 500, 20);
-		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					field.commitEdit();
-				} catch (ParseException ex) {
-				}
-				String newName = (String) field.getText();
-				overlord.getWorkspace().getProject().setName(newName);
+		nameField.addPropertyChangeListener("value", e -> {
+			JFormattedTextField field = (JFormattedTextField) e.getSource();
+			try {
+				field.commitEdit();
+			} catch (ParseException ignored) {
 			}
+			String newName = field.getText();
+			overlord.getWorkspace().getProject().setName(newName);
 		});
 		panel.add(nameField);
 		
@@ -371,11 +368,7 @@ public class HolmesNetProperties extends JFrame {
 		saveButton.setMargin(new Insets(0, 0, 0, 0));
 		saveButton.setIcon(Tools.getResIcon22("/icons/quickSave.png"));
 		saveButton.setBounds(xPos, yPosA, 130, 30);
-		saveButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				saveToFile();
-			}
-		});
+		saveButton.addActionListener(actionEvent -> saveToFile());
 		panel.add(saveButton);
 		
 		yPosA += 10;
@@ -414,7 +407,7 @@ public class HolmesNetProperties extends JFrame {
 			if (pr.size() < 2) {
 				pButton.setBackground(Color.GRAY);
 			} else {
-				if ((Boolean) pr.get(1) == true) {
+				if ((Boolean) pr.get(1)) {
 					pButton.setBackground(Color.green);
 					pButton.setForeground(Color.WHITE);
 				} else {
@@ -471,17 +464,17 @@ public class HolmesNetProperties extends JFrame {
 				bw.write("\n");
 				bw.write("Net static properties: \n");
 				int count = 1;
-				for(int i=0; i<properties.size(); i++) {
-					boolean isNet = (boolean)properties.get(i).get(1);
-					if(isNet) {
-						String[] data = (String[]) properties.get(i).get(2);
-						bw.write("Property "+count+": "+data[0]+"\n");
+				for (ArrayList<Object> property : properties) {
+					boolean isNet = (boolean) property.get(1);
+					if (isNet) {
+						String[] data = (String[]) property.get(2);
+						bw.write("Property " + count + ": " + data[0] + "\n");
 						String txt = data[1];
 						txt = txt.replace("\n", "");
-						bw.write("Meaning: "+txt+"\n");
+						bw.write("Meaning: " + txt + "\n");
 						txt = data[2];
 						txt = txt.replace("\n", "");
-						bw.write("Biological: "+data[2]+"\n\n");
+						bw.write("Biological: " + data[2] + "\n\n");
 						count++;
 					}
 				}
@@ -492,7 +485,7 @@ public class HolmesNetProperties extends JFrame {
 					bw.write(textField.getText());
 				}
 				bw.close();
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 				
 			}
 		}

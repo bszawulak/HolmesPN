@@ -2,12 +2,9 @@ package holmes.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.Serial;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -122,21 +119,18 @@ public class HolmesSearch extends JFrame {
 		placesCombo.setSize(400, 20);
 		placesCombo.setSelectedIndex(0);
 		placesCombo.setMaximumRowCount(6);
-		placesCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(listenerAllowed == false) 
-					return;
-				int selected = placesCombo.getSelectedIndex();
-				if(selected > 0) {
-					listenerAllowed = false;
-					transitionsCombo.setSelectedIndex(0);
-					listenerAllowed = true;
-					centerOnElement("place", selected -1, null);
-				} else {
-					clearSubPanel();
-				}
+		placesCombo.addActionListener(actionEvent -> {
+			if(!listenerAllowed)
+				return;
+			int selected = placesCombo.getSelectedIndex();
+			if(selected > 0) {
+				listenerAllowed = false;
+				transitionsCombo.setSelectedIndex(0);
+				listenerAllowed = true;
+				centerOnElement("place", selected -1, null);
+			} else {
+				clearSubPanel();
 			}
-			
 		});
 		choiceRowPx += 25;
 		choicePanel.add(placesCombo);
@@ -151,22 +145,19 @@ public class HolmesSearch extends JFrame {
 		transitionsCombo.setSize(400, 20);
 		transitionsCombo.setSelectedIndex(0);
 		transitionsCombo.setMaximumRowCount(6);
-		transitionsCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(listenerAllowed == false) 
-					return;
-				
-				int selected = transitionsCombo.getSelectedIndex();
-				if(selected > 0) {
-					listenerAllowed = false;
-					placesCombo.setSelectedIndex(0);
-					listenerAllowed = true;
-					centerOnElement("transition", selected -1, null);
-				} else {
-					clearSubPanel();
-				}
+		transitionsCombo.addActionListener(actionEvent -> {
+			if(!listenerAllowed)
+				return;
+
+			int selected = transitionsCombo.getSelectedIndex();
+			if(selected > 0) {
+				listenerAllowed = false;
+				placesCombo.setSelectedIndex(0);
+				listenerAllowed = true;
+				centerOnElement("transition", selected -1, null);
+			} else {
+				clearSubPanel();
 			}
-			
 		});
 		choiceRowPx += 25;
 		choicePanel.add(transitionsCombo);
@@ -182,18 +173,16 @@ public class HolmesSearch extends JFrame {
 		searchField.setLocation(choiceColPx + 75, choiceRowPx);
 		searchField.setSize(270, 20);
 		searchField.setValue("");
-		searchField.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					field.commitEdit();
-					String newName = (String) field.getText();
-					if(newName.length() > 0)
-						searchForString(newName);
-				} catch (ParseException ex) {
-				}
-				
+		searchField.addPropertyChangeListener("value", e -> {
+			JFormattedTextField field = (JFormattedTextField) e.getSource();
+			try {
+				field.commitEdit();
+				String newName = field.getText();
+				if(newName.length() > 0)
+					searchForString(newName);
+			} catch (ParseException ignored) {
 			}
+
 		});
 		choicePanel.add(searchField);
 		
@@ -208,20 +197,18 @@ public class HolmesSearch extends JFrame {
 		idField.setLocation(choiceColPx + 415, choiceRowPx);
 		idField.setSize(60, 20);
 		idField.setValue("");
-		idField.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					field.commitEdit();
-					String IDstr = (String) field.getText();
-					if(IDstr.length() == 0)
-						return;
-					int id = Integer.parseInt(IDstr);
-					selectByID(id);
-				} catch (Exception ex) {
-				}
-
+		idField.addPropertyChangeListener("value", e -> {
+			JFormattedTextField field = (JFormattedTextField) e.getSource();
+			try {
+				field.commitEdit();
+				String IDstr = field.getText();
+				if(IDstr.length() == 0)
+					return;
+				int id = Integer.parseInt(IDstr);
+				selectByID(id);
+			} catch (Exception ignored) {
 			}
+
 		});
 		choicePanel.add(idField);	
 		choiceRowPx += 20;
@@ -230,16 +217,14 @@ public class HolmesSearch extends JFrame {
 		placesMode.setBounds(choiceColPx, choiceRowPx, 120, 20);
 		placesMode.setLocation(choiceColPx, choiceRowPx);
 		placesMode.setActionCommand("0");
-		ActionListener placesModeActionListener = new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
-				if(aButton.isSelected() == true) {
-					String newName = (String) searchField.getText();
-					idField.setText("");
-					if(newName.length() > 0)
-						searchForString(newName);
-					//System.out.println("Selected: " + aButton.getText());
-				}
+		ActionListener placesModeActionListener = actionEvent -> {
+			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+			if(aButton.isSelected()) {
+				String newName = searchField.getText();
+				idField.setText("");
+				if(newName.length() > 0)
+					searchForString(newName);
+				//System.out.println("Selected: " + aButton.getText());
 			}
 		};
 		placesMode.addActionListener(placesModeActionListener);
@@ -250,16 +235,14 @@ public class HolmesSearch extends JFrame {
 		transitionMode.setBounds(choiceColPx+140, choiceRowPx, 140, 20);
 		transitionMode.setLocation(choiceColPx+140, choiceRowPx);
 		transitionMode.setActionCommand("1");
-		ActionListener transitionModeActionListener = new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton aButton = (AbstractButton) actionEvent.getSource();
-				if(aButton.isSelected() == true) {
-					String newName = (String) searchField.getText();
-					idField.setText("");
-					if(newName.length() > 0)
-						searchForString(newName);
-					//System.out.println("Selected: " + aButton.getText());
-				}
+		ActionListener transitionModeActionListener = actionEvent -> {
+			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
+			if(aButton.isSelected()) {
+				String newName = searchField.getText();
+				idField.setText("");
+				if(newName.length() > 0)
+					searchForString(newName);
+				//System.out.println("Selected: " + aButton.getText());
 			}
 		};
 		transitionMode.addActionListener(transitionModeActionListener);
@@ -280,21 +263,13 @@ public class HolmesSearch extends JFrame {
 		JButton prevButton = new JButton("Previous");
 		prevButton.setBounds(choiceColPx, choiceRowPx, 120, 32);
 		prevButton.setIcon(Tools.getResIcon32("/icons/searchWindow/prev.png"));
-		prevButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				showFound("prev");
-			}
-		});
+		prevButton.addActionListener(actionEvent -> showFound("prev"));
 		choicePanel.add(prevButton);
 		
 		JButton nextButton = new JButton("Next");
 		nextButton.setBounds(choiceColPx + 130, choiceRowPx, 120, 32);
 		nextButton.setIcon(Tools.getResIcon32("/icons/searchWindow/next.png"));
-		nextButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				showFound("next");
-			}
-		});
+		nextButton.addActionListener(actionEvent -> showFound("next"));
 		choicePanel.add(nextButton);
 		
 		panel.add(choicePanel);
@@ -388,8 +363,8 @@ public class HolmesSearch extends JFrame {
 		nodeOutArcs.setText("---");
 		nodeIsPortal.setText("---");
 		
-		if(places.size() == 0 || transitions.size() ==0)
-			return; //nothing else to do here
+		//if(places.size() == 0 || transitions.size() ==0)
+		//	return; //nothing else to do here
 	}
 	
 	/**
@@ -398,7 +373,7 @@ public class HolmesSearch extends JFrame {
 	 * @param index int - nr elementu w tablicach
 	 */
 	protected void centerOnElement(String type, int index, ElementLocation portalLoc) {
-		/**
+		/*
 		// THE HOLY CODE, ZOSTAWIĆ JAKO KOMENTARZ, NIERAZ SIĘ JESZCZE PRZYDA
 		ArrayList<Node> nod = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
 		if(nod.size() > 0) {
@@ -414,8 +389,8 @@ public class HolmesSearch extends JFrame {
 		}
 		 */
 		if(portalLoc == null) { //normalny tryb	
-			ElementLocation loc1st = null;
-			int sheetID = 0;
+			ElementLocation loc1st;
+			int sheetID;
 			if(type.equals("place")) {
 				Place x = places.get(index);
 				loc1st = x.getElementLocations().get(0);
@@ -486,7 +461,7 @@ public class HolmesSearch extends JFrame {
 	 * @param id int - id wierzchołka
 	 */
 	private void selectByID(int id) {
-		int mode = Integer.valueOf(group.getSelection().getActionCommand());
+		int mode = Integer.parseInt(group.getSelection().getActionCommand());
 		if(mode == 0) {
 			int maxPlaces = places.size();
 			if(id < maxPlaces) {
@@ -508,7 +483,7 @@ public class HolmesSearch extends JFrame {
 	 * @param searchString String - podciąg znaków
 	 */
 	private void searchForString(String searchString) {
-		int mode = Integer.valueOf(group.getSelection().getActionCommand());
+		int mode = Integer.parseInt(group.getSelection().getActionCommand());
 		searchString = searchString.toLowerCase();
 		selectedFound = -1;
 		foundNodes.clear();
@@ -532,7 +507,7 @@ public class HolmesSearch extends JFrame {
 			}
 		} else if (mode == 1) {
 			int maxTransitions = transitions.size();
-			int id = 99999;;
+			int id = 99999;
 			foundNodes.clear();
 			for(int i=0; i<maxTransitions; i++) {
 				if(transitions.get(i).getName().toLowerCase().contains(searchString)) {
@@ -581,8 +556,8 @@ public class HolmesSearch extends JFrame {
 				}
 			}
 		}
-		} catch (Exception e) {
-			return;
+		} catch (Exception ignored) {
+
 		}
 	}
 	

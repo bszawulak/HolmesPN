@@ -1,5 +1,6 @@
 package holmes.tables;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
@@ -10,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
  * @author MR
  */
 public class FunctionalTransAuxTableModel extends DefaultTableModel {
+	@Serial
 	private static final long serialVersionUID = -304515182472851604L;
 	private String[] columnNames = {"ID", "Tokens", "Place name"};
 	private ArrayList<ArrayList<String>> dataMatrix;

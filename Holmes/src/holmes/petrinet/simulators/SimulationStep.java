@@ -3,7 +3,7 @@ package holmes.petrinet.simulators;
 import java.util.ArrayList;
 
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 
 /**
  * Klasa przechowująca krok symulacji. Za każdym razem, gdy wykonywany jest krok symulacji

@@ -60,9 +60,8 @@ public class SnoopyWriterCoarse {
 		snoopyStartingID = newFreeId;
 		globalCoarseID = globalID;
 		int currID = snoopyStartingID;
-		//int locations = 1;
-		int xOff = 25;
-		int yOff = 25;
+		int xOff;
+		int yOff;
 		
 		//tylko 1 dozwolona lokalizacja
 		

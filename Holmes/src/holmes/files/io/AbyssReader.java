@@ -25,7 +25,6 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
  * @author MR
  */
 public class AbyssReader {
-
 	private ArrayList<Node> nodeArray = new ArrayList<Node>();
 	private ArrayList<Arc> arcArray = new ArrayList<Arc>();
 	private String pnName;
@@ -99,17 +98,15 @@ public class AbyssReader {
 	{
 		int x=0;
 		int y=0;
-		
-		for(int i =0; i< aln.size();i++)
-		{
-			ArrayList<ElementLocation> elementLocationList = aln.get(i).getElementLocations();
-			for (int j = 0; j < elementLocationList.size();j++)
-			{
-				if(x<elementLocationList.get(j).getPosition().x)
-					x=elementLocationList.get(j).getPosition().x;
-				if(y<elementLocationList.get(j).getPosition().y)
-					y=elementLocationList.get(j).getPosition().y;
-			}					
+
+		for (Node node : aln) {
+			ArrayList<ElementLocation> elementLocationList = node.getElementLocations();
+			for (ElementLocation elementLocation : elementLocationList) {
+				if (x < elementLocation.getPosition().x)
+					x = elementLocation.getPosition().x;
+				if (y < elementLocation.getPosition().y)
+					y = elementLocation.getPosition().y;
+			}
 		}
 		
 		GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0).getGraphPanel();

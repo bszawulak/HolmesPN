@@ -101,8 +101,10 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Konstruktor do testów
-     *
-     * @param pl,tr,ar,transCal
+     * @param pl ArrayList
+     * @param tr ArrayList
+     * @param ar ArrayList
+     * @param transCal boolean
      */
     public InvariantsCalculator(ArrayList<Place> pl, ArrayList<Transition> tr, ArrayList<Arc> ar, boolean transCal) {
         overlord = GUIManager.getDefaultGUIManager();
@@ -408,20 +410,12 @@ public class InvariantsCalculator implements Runnable {
         //wypełnianie macierzy incydencji
         //int disabledArcs = 0;
         for (Arc oneArc : arcs) {
-            int tPosition = 0;
-            int pPosition = 0;
-            int incidenceValue = 0;
-
-            //if (oneArc.getArcType() != TypeOfArc.NORMAL && !(oneArc.getArcType() == TypeOfArc.READARC)) {
-            //    continue;
-            //}
-
-            if(oneArc.getArcType() == TypeOfArc.NORMAL || oneArc.getArcType() == TypeOfArc.READARC) {
-                //działamy dalej
-            } else {
+            int tPosition;
+            int pPosition;
+            int incidenceValue;
+            if(oneArc.getArcType() != TypeOfArc.NORMAL && oneArc.getArcType() != TypeOfArc.READARC) {
                 continue;
             }
-
 
             if (oneArc.getStartNode().isInvisible() || oneArc.getEndNode().isInvisible()) {
                 //disabledArcs++;
@@ -431,7 +425,7 @@ public class InvariantsCalculator implements Runnable {
             if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION) {
                 tPosition = transitionsMap.get(oneArc.getStartNode());
                 pPosition = placesMap.get(oneArc.getEndNode());
-                incidenceValue = 1 * oneArc.getWeight();
+                incidenceValue = oneArc.getWeight();
             } else { //miejsca
                 tPosition = transitionsMap.get(oneArc.getEndNode());
                 pPosition = placesMap.get(oneArc.getStartNode());
@@ -650,9 +644,8 @@ public class InvariantsCalculator implements Runnable {
         ArrayList<Integer> numberOfNewRows = new ArrayList<>();
         ArrayList<Integer> positives = new ArrayList<>();
         ArrayList<Integer> negatives = new ArrayList<>();
-        int posCounter = 0;
-        int negCounter = 0;
-        int rowSize = globalIncidenceMatrix.size();
+        int posCounter;
+        int negCounter;
         int nonZeroColSize = nonZeroColumnVector.size();
 
         for (int col : nonZeroColumnVector) {
@@ -941,8 +934,8 @@ public class InvariantsCalculator implements Runnable {
         if (sizeRef != sizeCan)
             return 1; // z czym do ludzi?
 
-        int refElement = 0;
-        int canElement = 0;
+        int refElement;
+        int canElement;
         int CanInRef = 0; // >=  - każdy element wsparcia referencyjnego jest >= od elementu kandydata
         int CanInRefStrong = 0; // >
         int RefInCan = 0; // >=  - każdy element wsparcia kandydata jest >= od elementu referencyjnego
@@ -951,11 +944,9 @@ public class InvariantsCalculator implements Runnable {
         int candSuppSize = candSupport.size();
 
         //TODO: po sumie zbiorów wsparć - będzie szybciej
-        ArrayList<Integer> sumOfSupport = new ArrayList<>();
-        for (int el : refSupport)
-            sumOfSupport.add(el);
+        ArrayList<Integer> sumOfSupport = new ArrayList<>(refSupport);
         for (int el : candSupport) {
-            if (sumOfSupport.contains(el) == false)
+            if (!sumOfSupport.contains(el))
                 sumOfSupport.add(el);
         }
 
@@ -1248,7 +1239,7 @@ public class InvariantsCalculator implements Runnable {
         String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
         if (masterWindow != null) {
             JTextArea jta = masterWindow.accessLogField(t_InvMode);
-            if (date == false) {
+            if (!date) {
                 jta.append(msg);
                 jta.setCaretPosition(jta.getDocument().getLength());
             } else {

@@ -59,8 +59,8 @@ public class CHmetricReader {
 		for(int i = 3; i < lines.length; i=i+3) {
 			lines[i] = lines[i].replace("[2,]", "").trim();	
 			String[] hcValues = lines[i].split("[\\s\\t\\n]+");
-			for (int j = 0; j < hcValues.length; ++j)
-				measureValuesHC.add(ParseDouble(hcValues[j])); 
+			for (String hcValue : hcValues)
+				measureValuesHC.add(ParseDouble(hcValue));
 		}
 		return measureValuesHC;
 	}

@@ -16,21 +16,21 @@ import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.subnets.SubnetsTools;
 
 public class SnoopyWriterArc {
-	private ArrayList<Place> places = null;
-	private ArrayList<Transition> transitions = null;
-	private ArrayList<MetaNode> metanodes = null;
-	private ArrayList<Arc> arcs = null;
+	private ArrayList<Place> places;
+	private ArrayList<Transition> transitions;
+	private ArrayList<MetaNode> metanodes;
+	private ArrayList<Arc> arcs;
 	//private ArrayList<MetaNode> coarsePlaces = null;
 	//private ArrayList<MetaNode> coarseTransitions = null;
 	
-	private ArrayList<SnoopyWriterPlace> snoopyWriterPlaces = null;
-	private ArrayList<Integer> holmesPlacesID = null;
-	private ArrayList<SnoopyWriterTransition> snoopyWriterTransitions = null;
-	private ArrayList<Integer> holmesTransitionsID = null;
-	private ArrayList<SnoopyWriterCoarse> snoopyWriterCoarsePlaces = null;
-	private ArrayList<Integer> holmesCoarsePlacesID = null;
-	private ArrayList<SnoopyWriterCoarse> snoopyWriterCoarseTransitions = null;
-	private ArrayList<Integer> holmesCoarseTransitionsID = null;
+	private ArrayList<SnoopyWriterPlace> snoopyWriterPlaces;
+	private ArrayList<Integer> holmesPlacesID;
+	private ArrayList<SnoopyWriterTransition> snoopyWriterTransitions;
+	private ArrayList<Integer> holmesTransitionsID;
+	private ArrayList<SnoopyWriterCoarse> snoopyWriterCoarsePlaces;
+	private ArrayList<Integer> holmesCoarsePlacesID;
+	private ArrayList<SnoopyWriterCoarse> snoopyWriterCoarseTransitions;
+	private ArrayList<Integer> holmesCoarseTransitionsID;
 	
 	public SnoopyWriterArc(ArrayList<Place> places, ArrayList<Transition> transitions, ArrayList<MetaNode> metanodes
 			, ArrayList<Arc> arcs, ArrayList<MetaNode> coarsePlaces, ArrayList<MetaNode> coarseTransitions
@@ -1014,13 +1014,15 @@ public class SnoopyWriterArc {
 					}
 				}
 			}
-			if(!findAnything)
+			if(!findAnything) {
+				search = false;
 				return result;
+			}
 		}
 		return result;
 	}
 
-	/**
+	/*
 	 * Sprawdza, czy nie mamy doczynienia z wielopoziomową siecią.
 	 * @param metanode MetaNode - metawęzeł z podsieci zaraz 'pod' normalnym łukiem
 	 * @param startN Node - interfejs

@@ -3,6 +3,7 @@ package holmes.utilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.io.Serial;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -11,6 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 public class CustomDialog extends JDialog {
+	@Serial
 	private static final long serialVersionUID = -2614492110805839328L;
 
 	public CustomDialog(JFrame parent, String title, String message) {

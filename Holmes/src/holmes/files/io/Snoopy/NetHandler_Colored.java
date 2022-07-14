@@ -37,21 +37,21 @@ public class NetHandler_Colored extends NetHandler {
 
 	/**
 	 * Metoda odczytująca zawartość elementu.
-	 * @param ch[] - tablica wczytanych znaków
+	 * @param ch - tablica wczytanych znaków
 	 * @param start - indeks początkowy
 	 * @param length - ilość wczytanych znaków
 	 */
-	public void characters(char ch[], int start, int length) throws SAXException {
+	public void characters(char[] ch, int start, int length) throws SAXException {
 		// Wyluskiwanie zawartosci <![CDATA[]]>
 	}
 	
 	/**
 	 * Metoda służąca do wyłapywania i ignorowania pustych przestrzeni.
-	 * @param ch[] - tablica wczytanych znaków
+	 * @param ch - tablica wczytanych znaków
 	 * @param start - indeks początkowy
 	 * @param length - wielkość pustej przestrzeni
 	 */
-	public void ignorableWhitespace(char ch[], int start, int length)
+	public void ignorableWhitespace(char[] ch, int start, int length)
 			throws SAXException {
 	}
 }

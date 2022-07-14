@@ -22,8 +22,6 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import holmes.darkgui.GUIManager;
@@ -170,11 +168,9 @@ public class HolmesStatesEditor extends JFrame {
 		SpinnerModel tokensSpinnerModel = new SpinnerNumberModel(0, 0, Long.MAX_VALUE, 1);
 		JSpinner tokensSpinner = new JSpinner(tokensSpinnerModel);
 		tokensSpinner.setBounds(posX+750, posY+20, 120, 20);
-		tokensSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				double tokens = (double) ((JSpinner) e.getSource()).getValue();
-				globalTokensNumber = (int) tokens;
-			}
+		tokensSpinner.addChangeListener(e -> {
+			double tokens = (double) ((JSpinner) e.getSource()).getValue();
+			globalTokensNumber = (int) tokens;
 		});
 		result.add(tokensSpinner);
 		
@@ -196,13 +192,9 @@ public class HolmesStatesEditor extends JFrame {
 			for(int p=0; p<size; p++) {
 				stateVector.setTokens(p, globalTokensNumber);
 				tableModel.setQuietlyValueAt(globalTokensNumber, p, 2);
-				
-				if(p == size-1)
-					parentWindow.changeTableCell(stateIndex, p+2, globalTokensNumber, true);
-				else
-					parentWindow.changeTableCell(stateIndex, p+2, globalTokensNumber, false);
+
+				parentWindow.changeTableCell(stateIndex, p+2, globalTokensNumber, ( p == size - 1 ) );
 			}
-			
 			tableModel.fireTableDataChanged();
 		}
 	}
@@ -218,8 +210,8 @@ public class HolmesStatesEditor extends JFrame {
 		result.setPreferredSize(new Dimension(500, 500));
 		
 		tableModel = new StatesPlacesEditorTableModel(this, stateIndex);
-		JTable table = new RXTable(tableModel);
-		((RXTable) table).setSelectAllForEdit(true);
+		RXTable table = new RXTable(tableModel);
+		table.setSelectAllForEdit(true);
 		
 		table.getColumnModel().getColumn(0).setHeaderValue("ID");
 		table.getColumnModel().getColumn(0).setPreferredWidth(30);
@@ -241,7 +233,7 @@ public class HolmesStatesEditor extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		;	//cellClickAction();
           	    }
           	 }

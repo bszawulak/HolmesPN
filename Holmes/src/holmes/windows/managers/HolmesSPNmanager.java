@@ -3,12 +3,11 @@ package holmes.windows.managers;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -36,20 +35,16 @@ import holmes.utilities.Tools;
  * @author MR
  */
 public class HolmesSPNmanager extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 8184934957669150556L;
 	private GUIManager overlord;
 	private JFrame parentWindow;
 	private JFrame ego;
-	@SuppressWarnings("unused")
 	private boolean doNotUpdate = false;
-	private SPNdataVectorsRenderer tableRenderer;
 	private SPNdataVectorsTableModel tableModel;
 	private JTable table;
-	private JPanel tablePanel;
 	private JTextArea vectorDescrTextArea;
-	
 	private ArrayList<Transition> transitions;
-	private PetriNet pn;
 	private SPNdataVectorManager spnManager;
 	
 	private int selectedRow;
@@ -61,11 +56,11 @@ public class HolmesSPNmanager extends JFrame {
 		setTitle("Holmes SPN transitions data manager");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
-    	this.pn = overlord.getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
     	this.ego = this;
     	this.parentWindow = parent;
     	this.transitions = pn.getTransitions();
@@ -111,7 +106,7 @@ public class HolmesSPNmanager extends JFrame {
 
 		table.setName("FiringRatesTable");
 		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		tableRenderer = new SPNdataVectorsRenderer(table);
+		SPNdataVectorsRenderer tableRenderer = new SPNdataVectorsRenderer(table);
 		table.setDefaultRenderer(Object.class, tableRenderer);
 		table.setDefaultRenderer(Double.class, tableRenderer);
 		table.setDefaultRenderer(Integer.class, tableRenderer);
@@ -119,7 +114,7 @@ public class HolmesSPNmanager extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		cellClickAction();
           	    }
           	 }
@@ -147,8 +142,8 @@ public class HolmesSPNmanager extends JFrame {
 		JPanel main = new JPanel(new BorderLayout());
 
 		JPanel submain = new JPanel(new BorderLayout());
-		
-		tablePanel = getMainTablePanel();
+
+		JPanel tablePanel = getMainTablePanel();
 		submain.add(tablePanel, BorderLayout.CENTER);
 		submain.add(getBottomPanel(), BorderLayout.SOUTH);
 		
@@ -185,28 +180,26 @@ public class HolmesSPNmanager extends JFrame {
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
 		selectStateButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/selectVectorIcon.png"));
-		selectStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(transitions.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				int selected = table.getSelectedRow();
-				if(selected == -1)
-					return;
-				
-				Object[] options = {"Set new rates", "Keep old ones",};
-				int n = JOptionPane.showOptionDialog(null,
-								"Set all transitions of the net according to the selected\n"
-								+ "SPN data vector (table row: "+selected+") ?",
-								"Set new firing rates?", JOptionPane.YES_NO_OPTION,
-								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-				if (n == 0) {
-					tableModel.setSelected(selected);
-					spnManager.setNetworkSPNdataVector(selected);
-					tableModel.fireTableDataChanged();
+		selectStateButton.addActionListener(actionEvent -> {
+			if(transitions.size() == 0) {
+				noNetInfo();
+				return;
+			}
+			int selected = table.getSelectedRow();
+			if(selected == -1)
+				return;
 
-				}
+			Object[] options = {"Set new rates", "Keep old ones",};
+			int n = JOptionPane.showOptionDialog(null,
+							"Set all transitions of the net according to the selected\n"
+							+ "SPN data vector (table row: "+selected+") ?",
+							"Set new firing rates?", JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+			if (n == 0) {
+				tableModel.setSelected(selected);
+				spnManager.setNetworkSPNdataVector(selected);
+				tableModel.fireTableDataChanged();
+
 			}
 		});
 		result.add(selectStateButton);
@@ -216,23 +209,21 @@ public class HolmesSPNmanager extends JFrame {
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
 		addNewStateButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/addVectorIcon.png"));
-		addNewStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(transitions.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				Object[] options = {"Add new vector", "Cancel",};
-				int n = JOptionPane.showOptionDialog(null,
-								"Remember current net firing rates in the table?",
-								"Add new SPN data vactor?", JOptionPane.YES_NO_OPTION,
-								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-				if (n == 0) {
-					spnManager.addCurrentFRasSPNdataVector();
-					addLastStateToTable();
-					tableModel.fireTableDataChanged();
-					overlord.markNetChange();
-				}
+		addNewStateButton.addActionListener(actionEvent -> {
+			if(transitions.size() == 0) {
+				noNetInfo();
+				return;
+			}
+			Object[] options = {"Add new vector", "Cancel",};
+			int n = JOptionPane.showOptionDialog(null,
+							"Remember current net firing rates in the table?",
+							"Add new SPN data vactor?", JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+			if (n == 0) {
+				spnManager.addCurrentFRasSPNdataVector();
+				addLastStateToTable();
+				tableModel.fireTableDataChanged();
+				overlord.markNetChange();
 			}
 		});
 		result.add(addNewStateButton);
@@ -242,14 +233,12 @@ public class HolmesSPNmanager extends JFrame {
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
 		replaceStateButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/replaceVectorIcon.png"));
-		replaceStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(transitions.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				replaceStateAction();
+		replaceStateButton.addActionListener(actionEvent -> {
+			if(transitions.size() == 0) {
+				noNetInfo();
+				return;
 			}
+			replaceStateAction();
 		});
 		result.add(replaceStateButton);
 		
@@ -258,14 +247,12 @@ public class HolmesSPNmanager extends JFrame {
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
 		removeStateButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/removeVectorIcon.png"));
-		removeStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(transitions.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				removeStateAction();
+		removeStateButton.addActionListener(actionEvent -> {
+			if(transitions.size() == 0) {
+				noNetInfo();
+				return;
 			}
+			removeStateAction();
 		});
 		result.add(removeStateButton);
 		
@@ -274,16 +261,14 @@ public class HolmesSPNmanager extends JFrame {
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
 		editStateButton.setIcon(Tools.getResIcon32("/icons/fRatesManager/fireRateEdit.png"));
-		editStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(transitions.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				int selected = table.getSelectedRow();
-				if(selected > -1)
-					new HolmesSPNeditor(ego, spnManager.getSPNdataVector(selected), selected);
+		editStateButton.addActionListener(actionEvent -> {
+			if(transitions.size() == 0) {
+				noNetInfo();
+				return;
 			}
+			int selected = table.getSelectedRow();
+			if(selected > -1)
+				new HolmesSPNeditor(ego, spnManager.getSPNdataVector(selected), selected);
 		});
 		result.add(editStateButton);
 	    return result;
@@ -409,12 +394,11 @@ public class HolmesSPNmanager extends JFrame {
 	 */
 	protected void cellClickAction() {
 		try {
-			int newSelection = table.getSelectedRow();
 			//doNotUpdate = true;
-			selectedRow = newSelection;
+			selectedRow = table.getSelectedRow();
 			fillDescriptionField();
 			//doNotUpdate = false;
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 	}

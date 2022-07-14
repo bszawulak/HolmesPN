@@ -70,7 +70,7 @@ public class MCSCalculator implements Runnable {
     	em_obRinvID = new ArrayList<Integer>();
     	int counter = 0;
         for (ArrayList<Integer> inv : invariants) {
-            if (transInInvariant(inv, objective_Reaction) == true) {
+            if (transInInvariant(inv, objective_Reaction)) {
             	em_obR.add(binaryInv(inv)); //STEP 3
             	em_obRinvID.add(counter);
             }
@@ -84,7 +84,7 @@ public class MCSCalculator implements Runnable {
         for (int t : transitions) { //STEP 4
             Set<Integer> tSet = new HashSet<Integer>();
             tSet.add(t);
-            if (transitionCoverabilityTest(t) == true) 
+            if (transitionCoverabilityTest(t))
             	mcs.add(tSet); //jeśli tranzycja t bierze udział w każdym EM
             else
                 precutsets.add(tSet); // jeśli nie w każdym
@@ -146,7 +146,7 @@ public class MCSCalculator implements Runnable {
      */
     private boolean transitionCoverabilityTest(int trans) {
         for (ArrayList<Integer> invariant : em_obR)
-            if (transInInvariant(invariant, trans) == false) //if(invariant.contains(trans) == false)	
+            if (!transInInvariant(invariant, trans)) //if(invariant.contains(trans) == false)
                 return false;
         return true;
     }
@@ -156,10 +156,10 @@ public class MCSCalculator implements Runnable {
      * @return List[Set[Integer]] - zbiory MCS
      */
 	public ArrayList<Set<Integer>> findMcs() {
-    	if(ready == false)
+    	if(!ready)
     		return null;
     	
-        List<Set<Integer>> newPrecutsets = null;
+        List<Set<Integer>> newPrecutsets;
         int k = 1;
         while (++k <= maxCutSetSize) {
             newPrecutsets = new ArrayList<>();
@@ -205,7 +205,7 @@ public class MCSCalculator implements Runnable {
             int sizePre = newPrecutsets.size();
             int sizeMCS = mcs.size();
             
-            float incFactor = (float)((float)sizePre/(float)oldPrecutSetsSize);
+            float incFactor = (float)sizePre/(float)oldPrecutSetsSize;
             long currTimeNow = System.currentTimeMillis();
             long diffTime = currTimeNow - currTime;
             diffTime /= 1000; //sekundy
@@ -213,7 +213,7 @@ public class MCSCalculator implements Runnable {
             logInternal("MCS found: "+sizeMCS+" Precutsets list size:"+sizePre+" \n", false);
             logInternal("Precutsets increase factor: "+String.format("%.2f", incFactor)+" Last interval time: "+diffTime+" seconds.\n", false);
             
-            if (newPrecutsets.isEmpty() == true || maxSetsNumber < mcs.size())
+            if (newPrecutsets.isEmpty() || maxSetsNumber < mcs.size())
                 break;
             else
                 precutsets = newPrecutsets;
@@ -227,27 +227,25 @@ public class MCSCalculator implements Runnable {
 	 */
 	public HashSet<HashSet<Integer>> findMcs2() {
 		HashSet<HashSet<Integer>> result = new HashSet<HashSet<Integer>>();
-		int invMatrixSize = em_obR.size();
+		//int invMatrixSize = em_obR.size();
 		int invSize = transitions.size();
-		
-		int maxSize = 6;
-		maxSize =invSize;
-		
-		for(int i=0; i<invMatrixSize; i++) {
-			for(int j=0; j<invSize; j++) {
-				int val = em_obR.get(i).get(j);
-				if(val != 0) {
+		int maxSize = invSize;
+
+		for (ArrayList<Integer> integers : em_obR) {
+			for (int j = 0; j < invSize; j++) {
+				int val = integers.get(j);
+				if (val != 0) {
 					HashSet<Integer> newSet = new HashSet<Integer>();
-					
+
 					newSet.add(j);
 					result.add(newSet); //duplikatów nie doda
-					
+
 					//int resSize = result.size();
-					for(HashSet<Integer> test : result) {
-						if(test.size() <= maxSize) {
+					for (HashSet<Integer> test : result) {
+						if (test.size() <= maxSize) {
 							test.add(j); //duplikatów i tak nie doda
 						}
-					}	
+					}
 				}
 			}
 		}
@@ -257,7 +255,7 @@ public class MCSCalculator implements Runnable {
 		for(HashSet<Integer> test : result) {
 			found = false;
 			for(HashSet<Integer> ref : result) {
-				if(test.equals(ref) == false) {
+				if(!test.equals(ref)) {
 					if(test.containsAll(ref)) {
 						found = true;
 						break;
@@ -265,7 +263,7 @@ public class MCSCalculator implements Runnable {
 					
 				}
 			}
-			if(found == false) {
+			if(!found) {
 				minimal.add(test);
 			}
 		}
@@ -281,7 +279,7 @@ public class MCSCalculator implements Runnable {
     	Set<Integer> set;
     	for(int s=0; s<size; s++) {
     		set = precutsets.get(s);
-    		if (set.contains(trans) == true) {
+    		if (set.contains(trans)) {
     			precutsets.remove(s);
     			s--;
     			size--;
@@ -291,9 +289,9 @@ public class MCSCalculator implements Runnable {
     
     /**
      * Punkt 5.2.2 z artykułu, znajdź wszystkie takie zbiory z precutsets, 
-     * @param precutsets
-     * @param trans
-     * @return
+     * @param precutsets (<b>List[Set[Integer]]</b>)
+     * @param trans (<b>int</b>)
+     * @return (<b>List[Set[Integer]]</b>)
      */
     private List<Set<Integer>> calculatePreliminaryCutsets(List<Set<Integer>> precutsets, int trans) {
         List<Set<Integer>> newPrecutsets = new ArrayList<>();
@@ -308,8 +306,8 @@ public class MCSCalculator implements Runnable {
         		//invNumber++;
         		//invID = em_obRinvID.get(invNumber);
         		
-        		if (transInInvariant(invariant, trans) == true) {
-        			if(commonSubset(invariant, precutset).isEmpty() == true) {
+        		if (transInInvariant(invariant, trans)) {
+        			if(commonSubset(invariant, precutset).isEmpty()) {
         				correct = true;
                         break;
         			} else {
@@ -385,7 +383,7 @@ public class MCSCalculator implements Runnable {
 		Set<Integer> precutset;
 		for(int s=0; s<size; s++) {
 			precutset = precutsets.get(s);
-			if (coversAllTInvariants(precutset) == true) {
+			if (coversAllTInvariants(precutset)) {
                 mcs.add(precutset);
                 precutsets.remove(s);
                 s--;
@@ -402,7 +400,7 @@ public class MCSCalculator implements Runnable {
      */
     private boolean coversAllTInvariants(Set<Integer> set) {
         for (ArrayList<Integer> invariant : em_obR) {
-            if (commonSubset(invariant, set).isEmpty() == true)
+            if (commonSubset(invariant, set).isEmpty())
                 return false;
         }
         return true;
@@ -416,10 +414,7 @@ public class MCSCalculator implements Runnable {
      * 		przeciwnym przypadku
      */
     private boolean transInInvariant(ArrayList<Integer> invariant, int transition) {
-    	if(invariant.get(transition) > 0)
-    		return true;
-    	else
-    		return false;
+		return invariant.get(transition) > 0;
     }
     
     /**
@@ -441,10 +436,7 @@ public class MCSCalculator implements Runnable {
 		
     	if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisMCSReduction").equals("1")) {	
     		for(Set<Integer> mcsSet : results) {
-    			ArrayList<Integer> mcsSetData = new ArrayList<Integer>();
-    			for(int element : mcsSet) {
-    				mcsSetData.add(element);
-    			}
+				ArrayList<Integer> mcsSetData = new ArrayList<Integer>(mcsSet);
     			Collections.sort(mcsSetData);	
     			ArrayList<Integer> mcsInfo = new ArrayList<Integer>();
     			
@@ -469,10 +461,7 @@ public class MCSCalculator implements Runnable {
     		logInternal("Infeasible sets reduction completed. Remained: "+mcsDataMatrix.size()+"\n", false);
     	} else { //bez redukcji zbiorów
     		for(Set<Integer> mcsSet : results) {
-    			ArrayList<Integer> mcsSetData = new ArrayList<Integer>();
-    			for(int element : mcsSet) {
-    				mcsSetData.add(element);
-    			}
+				ArrayList<Integer> mcsSetData = new ArrayList<Integer>(mcsSet);
     			Collections.sort(mcsSetData);	
     			ArrayList<Integer> mcsInfo = new ArrayList<Integer>();
     			
@@ -498,13 +487,13 @@ public class MCSCalculator implements Runnable {
 		logInternal("Computed sets: "+mcsSize, false);
 		
 		for(int s=0; s<mcsSize; s++) {
-			String msg = "Set "+s+ ": [";
+			StringBuilder msg = new StringBuilder("Set " + s + ": [");
 			Set<Integer> mcsSet = mcs.get(s);
 			for(int el : mcsSet) {
-				msg += el+", ";
+				msg.append(el).append(", ");
 			}
-			msg += "]\n";
-			msg = msg.replace(", ]", "]");
+			msg.append("]\n");
+			msg = new StringBuilder(msg.toString().replace(", ]", "]"));
 			//logInternal(msg, false);
 		}
 	}
@@ -517,7 +506,7 @@ public class MCSCalculator implements Runnable {
 	private void logInternal(String msg, boolean date) {
 		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		if(masterWindow != null) {
-			if(date == false) {
+			if(!date) {
 				JTextArea jta = masterWindow.accessLogField();
 				jta.append(msg);
 				jta.setCaretPosition(jta.getDocument().getLength());

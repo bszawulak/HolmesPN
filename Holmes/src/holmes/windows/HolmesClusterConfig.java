@@ -2,10 +2,9 @@ package holmes.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
@@ -20,15 +19,12 @@ import holmes.darkgui.GUIManager;
 import holmes.utilities.Tools;
 
 public class HolmesClusterConfig extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 1694133455242675169L;
 
 	private ArrayList<String> commandsValidate;
 	private HolmesClusters boss;
-	
-	private JPanel mainPanel;
-	private JPanel upPanel;
-	private JPanel bottomPanel;
-	
+
 	private JCheckBox corAvgCB;
 	private JCheckBox corCentrCB;
 	private JCheckBox corComplCB;
@@ -99,7 +95,7 @@ public class HolmesClusterConfig extends JFrame {
 	public HolmesClusterConfig(ArrayList<String> comm, HolmesClusters parent) {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
 		commandsValidate = comm;
@@ -113,8 +109,8 @@ public class HolmesClusterConfig extends JFrame {
 		setSize(new Dimension(1050, 300));
 		setLocation(15, 15);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		
-		mainPanel = createMainPanel();
+
+		JPanel mainPanel = createMainPanel();
 		add(mainPanel, BorderLayout.CENTER);
 		
 		initiateListeners();
@@ -128,8 +124,8 @@ public class HolmesClusterConfig extends JFrame {
 		JPanel panel = new JPanel(new BorderLayout());
 
 		//Panel wyboru opcji szukania
-		upPanel = createUpPanel(0, 0, 1050, 50);
-		bottomPanel = createBottomPanel(0, 130, 1050, 250);
+		JPanel upPanel = createUpPanel(0, 0, 1050, 50);
+		JPanel bottomPanel = createBottomPanel(0, 130, 1050, 250);
 		
 		panel.add(upPanel, BorderLayout.NORTH);
 		panel.add(bottomPanel, BorderLayout.CENTER);
@@ -145,6 +141,7 @@ public class HolmesClusterConfig extends JFrame {
 	 * @param height int - wysokość panelu
 	 * @return JPanel - panel przycisków
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createUpPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -158,49 +155,30 @@ public class HolmesClusterConfig extends JFrame {
 		
 		JButton cleanAllCB = new JButton("Clean All");
 		cleanAllCB.setBounds(posX, posY, 140, 20);
-		cleanAllCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				commandsValidate.clear();
-				updateComponents();
-			}
+		cleanAllCB.addActionListener(actionEvent -> {
+			commandsValidate.clear();
+			updateComponents();
 		});
 		cleanAllCB.setSelected(true);
 		panel.add(cleanAllCB);
 		
 		JButton setAllCB = new JButton("Set All");
 		setAllCB.setBounds(posX+150, posY, 140, 20);
-		setAllCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				commandsAddAll();
-				updateComponents();
-			}
+		setAllCB.addActionListener(actionEvent -> {
+			commandsAddAll();
+			updateComponents();
 		});
 		setAllCB.setSelected(true);
 		panel.add(setAllCB);
 		
 		JButton pearsonsCB = new JButton("PearsonOnly");
 		pearsonsCB.setBounds(posX+300, posY, 140, 20);
-		pearsonsCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				selectPearsonOnly();
-				updateComponents();
-			}
+		pearsonsCB.addActionListener(actionEvent -> {
+			selectPearsonOnly();
+			updateComponents();
 		});
 		pearsonsCB.setSelected(true);
 		panel.add(pearsonsCB);
-		
-		/*
-		JButton aaa = new JButton("Test");
-		aaa.setBounds(posX+450, posY, 140, 20);
-		aaa.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				//pearsonsOnly();
-				//int x;
-				//x=1;
-			}
-		});
-		aaa.setSelected(true);
-		panel.add(aaa);*/
 		
 		return panel;
 	}
@@ -213,6 +191,7 @@ public class HolmesClusterConfig extends JFrame {
 	 * @param height int - wysokość panelu
 	 * @return JPanel - panel przycisków
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createBottomPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -226,15 +205,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		corAvgCB = new JCheckBox("CorPear-Average");
 		corAvgCB.setBounds(posX, posY, 140, 20);
-		corAvgCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"correlation\",\"average\""))
-						commandsValidate.add("\"correlation\",\"average\"");
-				} else {
-					commandsValidate.remove("\"correlation\",\"average\"");
-				}
+		corAvgCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"correlation\",\"average\""))
+					commandsValidate.add("\"correlation\",\"average\"");
+			} else {
+				commandsValidate.remove("\"correlation\",\"average\"");
 			}
 		});
 		corAvgCB.setSelected(true);
@@ -242,15 +219,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		corCentrCB = new JCheckBox("CorPear-Centroid");
 		corCentrCB.setBounds(posX+140, posY, 140, 20);
-		corCentrCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"correlation\",\"centroid\""))
-						commandsValidate.add("\"correlation\",\"centroid\"");
-				} else {
-					commandsValidate.remove("\"correlation\",\"centroid\"");
-				}
+		corCentrCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"correlation\",\"centroid\""))
+					commandsValidate.add("\"correlation\",\"centroid\"");
+			} else {
+				commandsValidate.remove("\"correlation\",\"centroid\"");
 			}
 		});
 		corCentrCB.setSelected(true);
@@ -258,15 +233,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		corComplCB = new JCheckBox("CorPear-Complete");
 		corComplCB.setBounds(posX+280, posY, 140, 20);
-		corComplCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"correlation\",\"complete\""))
-						commandsValidate.add("\"correlation\",\"complete\"");
-				} else {
-					commandsValidate.remove("\"correlation\",\"complete\"");
-				}
+		corComplCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"correlation\",\"complete\""))
+					commandsValidate.add("\"correlation\",\"complete\"");
+			} else {
+				commandsValidate.remove("\"correlation\",\"complete\"");
 			}
 		});
 		corComplCB.setSelected(true);
@@ -274,15 +247,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		corMcQCB = new JCheckBox("CorPear-McQuitty");
 		corMcQCB.setBounds(posX+420, posY, 140, 20);
-		corMcQCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"correlation\",\"mcquitty\""))
-						commandsValidate.add("\"correlation\",\"mcquitty\"");
-				} else {
-					commandsValidate.remove("\"correlation\",\"mcquitty\"");
-				}
+		corMcQCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"correlation\",\"mcquitty\""))
+					commandsValidate.add("\"correlation\",\"mcquitty\"");
+			} else {
+				commandsValidate.remove("\"correlation\",\"mcquitty\"");
 			}
 		});
 		corMcQCB.setSelected(true);
@@ -290,15 +261,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		corMedCB = new JCheckBox("CorPear-Median");
 		corMedCB.setBounds(posX+560, posY, 140, 20);
-		corMedCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"correlation\",\"median\""))
-						commandsValidate.add("\"correlation\",\"median\"");
-				} else {
-					commandsValidate.remove("\"correlation\",\"median\"");
-				}
+		corMedCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"correlation\",\"median\""))
+					commandsValidate.add("\"correlation\",\"median\"");
+			} else {
+				commandsValidate.remove("\"correlation\",\"median\"");
 			}
 		});
 		corMedCB.setSelected(true);
@@ -306,15 +275,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		corSingCB = new JCheckBox("CorPear-Single");
 		corSingCB.setBounds(posX+700, posY, 140, 20);
-		corSingCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"correlation\",\"single\""))
-						commandsValidate.add("\"correlation\",\"single\"");
-				} else {
-					commandsValidate.remove("\"correlation\",\"single\"");
-				}
+		corSingCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"correlation\",\"single\""))
+					commandsValidate.add("\"correlation\",\"single\"");
+			} else {
+				commandsValidate.remove("\"correlation\",\"single\"");
 			}
 		});
 		corSingCB.setSelected(true);
@@ -322,15 +289,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		corWardCB = new JCheckBox("CorPear-Ward");
 		corWardCB.setBounds(posX+840, posY, 140, 20);
-		corWardCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"correlation\",\"ward\""))
-						commandsValidate.add("\"correlation\",\"ward\"");
-				} else {
-					commandsValidate.remove("\"correlation\",\"ward\"");
-				}
+		corWardCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"correlation\",\"ward\""))
+					commandsValidate.add("\"correlation\",\"ward\"");
+			} else {
+				commandsValidate.remove("\"correlation\",\"ward\"");
 			}
 		});
 		corWardCB.setSelected(true);
@@ -341,15 +306,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		pearAvgCB = new JCheckBox("Pearson-Average");
 		pearAvgCB.setBounds(posX, posY, 140, 20);
-		pearAvgCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"pearson\",\"average\""))
-						commandsValidate.add("\"pearson\",\"average\"");
-				} else {
-					commandsValidate.remove("\"pearson\",\"average\"");
-				}
+		pearAvgCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"pearson\",\"average\""))
+					commandsValidate.add("\"pearson\",\"average\"");
+			} else {
+				commandsValidate.remove("\"pearson\",\"average\"");
 			}
 		});
 		pearAvgCB.setSelected(true);
@@ -357,15 +320,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		pearCentrCB = new JCheckBox("Pearson-Centroid");
 		pearCentrCB.setBounds(posX+140, posY, 140, 20);
-		pearCentrCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"pearson\",\"centroid\""))
-						commandsValidate.add("\"pearson\",\"centroid\"");
-				} else {
-					commandsValidate.remove("\"pearson\",\"centroid\"");
-				}
+		pearCentrCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"pearson\",\"centroid\""))
+					commandsValidate.add("\"pearson\",\"centroid\"");
+			} else {
+				commandsValidate.remove("\"pearson\",\"centroid\"");
 			}
 		});
 		pearCentrCB.setSelected(true);
@@ -373,15 +334,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		pearComplCB = new JCheckBox("Pearson-Complete");
 		pearComplCB.setBounds(posX+280, posY, 140, 20);
-		pearComplCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"pearson\",\"complete\""))
-						commandsValidate.add("\"pearson\",\"complete\"");
-				} else {
-					commandsValidate.remove("\"pearson\",\"complete\"");
-				}
+		pearComplCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"pearson\",\"complete\""))
+					commandsValidate.add("\"pearson\",\"complete\"");
+			} else {
+				commandsValidate.remove("\"pearson\",\"complete\"");
 			}
 		});
 		pearComplCB.setSelected(true);
@@ -389,15 +348,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		pearMcQCB = new JCheckBox("Pearson-McQuitty");
 		pearMcQCB.setBounds(posX+420, posY, 140, 20);
-		pearMcQCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"pearson\",\"mcquitty\""))
-						commandsValidate.add("\"pearson\",\"mcquitty\"");
-				} else {
-					commandsValidate.remove("\"pearson\",\"mcquitty\"");
-				}
+		pearMcQCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"pearson\",\"mcquitty\""))
+					commandsValidate.add("\"pearson\",\"mcquitty\"");
+			} else {
+				commandsValidate.remove("\"pearson\",\"mcquitty\"");
 			}
 		});
 		pearMcQCB.setSelected(true);
@@ -405,15 +362,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		pearMedCB = new JCheckBox("Pearson-Median");
 		pearMedCB.setBounds(posX+560, posY, 140, 20);
-		pearMedCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"pearson\",\"median\""))
-						commandsValidate.add("\"pearson\",\"median\"");
-				} else {
-					commandsValidate.remove("\"pearson\",\"median\"");
-				}
+		pearMedCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"pearson\",\"median\""))
+					commandsValidate.add("\"pearson\",\"median\"");
+			} else {
+				commandsValidate.remove("\"pearson\",\"median\"");
 			}
 		});
 		pearMedCB.setSelected(true);
@@ -421,15 +376,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		pearSingCB = new JCheckBox("Pearson-Single");
 		pearSingCB.setBounds(posX+700, posY, 140, 20);
-		pearSingCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"pearson\",\"single\""))
-						commandsValidate.add("\"pearson\",\"single\"");
-				} else {
-					commandsValidate.remove("\"pearson\",\"single\"");
-				}
+		pearSingCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"pearson\",\"single\""))
+					commandsValidate.add("\"pearson\",\"single\"");
+			} else {
+				commandsValidate.remove("\"pearson\",\"single\"");
 			}
 		});
 		pearSingCB.setSelected(true);
@@ -437,15 +390,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		pearWardCB = new JCheckBox("Pearson-Ward");
 		pearWardCB.setBounds(posX+840, posY, 140, 20);
-		pearWardCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"pearson\",\"ward\""))
-						commandsValidate.add("\"pearson\",\"ward\"");
-				} else {
-					commandsValidate.remove("\"pearson\",\"ward\"");
-				}
+		pearWardCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"pearson\",\"ward\""))
+					commandsValidate.add("\"pearson\",\"ward\"");
+			} else {
+				commandsValidate.remove("\"pearson\",\"ward\"");
 			}
 		});
 		pearWardCB.setSelected(true);
@@ -457,15 +408,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		binAvgCB = new JCheckBox("Binary-Average");
 		binAvgCB.setBounds(posX, posY, 140, 20);
-		binAvgCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"binary\",\"average\""))
-						commandsValidate.add("\"binary\",\"average\"");
-				} else {
-					commandsValidate.remove("\"binary\",\"average\"");
-				}
+		binAvgCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"binary\",\"average\""))
+					commandsValidate.add("\"binary\",\"average\"");
+			} else {
+				commandsValidate.remove("\"binary\",\"average\"");
 			}
 		});
 		binAvgCB.setSelected(true);
@@ -473,15 +422,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		binCentrCB = new JCheckBox("Binary-Centroid");
 		binCentrCB.setBounds(posX+140, posY, 140, 20);
-		binCentrCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"binary\",\"centroid\""))
-						commandsValidate.add("\"binary\",\"centroid\"");
-				} else {
-					commandsValidate.remove("\"binary\",\"centroid\"");
-				}
+		binCentrCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"binary\",\"centroid\""))
+					commandsValidate.add("\"binary\",\"centroid\"");
+			} else {
+				commandsValidate.remove("\"binary\",\"centroid\"");
 			}
 		});
 		binCentrCB.setSelected(true);
@@ -489,15 +436,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		binComplCB = new JCheckBox("Binary-Complete");
 		binComplCB.setBounds(posX+280, posY, 140, 20);
-		binComplCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"binary\",\"complete\""))
-						commandsValidate.add("\"binary\",\"complete\"");
-				} else {
-					commandsValidate.remove("\"binary\",\"complete\"");
-				}
+		binComplCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"binary\",\"complete\""))
+					commandsValidate.add("\"binary\",\"complete\"");
+			} else {
+				commandsValidate.remove("\"binary\",\"complete\"");
 			}
 		});
 		binComplCB.setSelected(true);
@@ -505,15 +450,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		binMcQCB = new JCheckBox("Binary-McQuitty");
 		binMcQCB.setBounds(posX+420, posY, 140, 20);
-		binMcQCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"binary\",\"mcquitty\""))
-						commandsValidate.add("\"binary\",\"mcquitty\"");
-				} else {
-					commandsValidate.remove("\"binary\",\"mcquitty\"");
-				}
+		binMcQCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"binary\",\"mcquitty\""))
+					commandsValidate.add("\"binary\",\"mcquitty\"");
+			} else {
+				commandsValidate.remove("\"binary\",\"mcquitty\"");
 			}
 		});
 		binMcQCB.setSelected(true);
@@ -521,15 +464,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		binMedCB = new JCheckBox("Binary-Median");
 		binMedCB.setBounds(posX+560, posY, 140, 20);
-		binMedCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"binary\",\"median\""))
-						commandsValidate.add("\"binary\",\"median\"");
-				} else {
-					commandsValidate.remove("\"binary\",\"median\"");
-				}
+		binMedCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"binary\",\"median\""))
+					commandsValidate.add("\"binary\",\"median\"");
+			} else {
+				commandsValidate.remove("\"binary\",\"median\"");
 			}
 		});
 		binMedCB.setSelected(true);
@@ -537,15 +478,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		binSingCB = new JCheckBox("Binary-Single");
 		binSingCB.setBounds(posX+700, posY, 140, 20);
-		binSingCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"binary\",\"single\""))
-						commandsValidate.add("\"binary\",\"single\"");
-				} else {
-					commandsValidate.remove("\"binary\",\"single\"");
-				}
+		binSingCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"binary\",\"single\""))
+					commandsValidate.add("\"binary\",\"single\"");
+			} else {
+				commandsValidate.remove("\"binary\",\"single\"");
 			}
 		});
 		binSingCB.setSelected(true);
@@ -553,15 +492,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		binWardCB = new JCheckBox("Binary-Ward");
 		binWardCB.setBounds(posX+840, posY, 140, 20);
-		binWardCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"binary\",\"ward.D\""))
-						commandsValidate.add("\"binary\",\"ward.D\"");
-				} else {
-					commandsValidate.remove("\"binary\",\"ward.D\"");
-				}
+		binWardCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"binary\",\"ward.D\""))
+					commandsValidate.add("\"binary\",\"ward.D\"");
+			} else {
+				commandsValidate.remove("\"binary\",\"ward.D\"");
 			}
 		});
 		binWardCB.setSelected(true);
@@ -572,15 +509,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		canAvgCB = new JCheckBox("Canberra-Average");
 		canAvgCB.setBounds(posX, posY, 140, 20);
-		canAvgCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"canberra\",\"average\""))
-						commandsValidate.add("\"canberra\",\"average\"");
-				} else {
-					commandsValidate.remove("\"canberra\",\"average\"");
-				}
+		canAvgCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"canberra\",\"average\""))
+					commandsValidate.add("\"canberra\",\"average\"");
+			} else {
+				commandsValidate.remove("\"canberra\",\"average\"");
 			}
 		});
 		canAvgCB.setSelected(true);
@@ -588,15 +523,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		canCentrCB = new JCheckBox("Canberra-Centroid");
 		canCentrCB.setBounds(posX+140, posY, 140, 20);
-		canCentrCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"canberra\",\"centroid\""))
-						commandsValidate.add("\"canberra\",\"centroid\"");
-				} else {
-					commandsValidate.remove("\"canberra\",\"centroid\"");
-				}
+		canCentrCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"canberra\",\"centroid\""))
+					commandsValidate.add("\"canberra\",\"centroid\"");
+			} else {
+				commandsValidate.remove("\"canberra\",\"centroid\"");
 			}
 		});
 		canCentrCB.setSelected(true);
@@ -604,15 +537,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		canComplCB = new JCheckBox("Canberra-Complete");
 		canComplCB.setBounds(posX+280, posY, 140, 20);
-		canComplCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"canberra\",\"complete\""))
-						commandsValidate.add("\"canberra\",\"complete\"");
-				} else {
-					commandsValidate.remove("\"canberra\",\"complete\"");
-				}
+		canComplCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"canberra\",\"complete\""))
+					commandsValidate.add("\"canberra\",\"complete\"");
+			} else {
+				commandsValidate.remove("\"canberra\",\"complete\"");
 			}
 		});
 		canComplCB.setSelected(true);
@@ -620,15 +551,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		canMcQCB = new JCheckBox("Canberra-McQuitty");
 		canMcQCB.setBounds(posX+420, posY, 140, 20);
-		canMcQCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"canberra\",\"mcquitty\""))
-						commandsValidate.add("\"canberra\",\"mcquitty\"");
-				} else {
-					commandsValidate.remove("\"canberra\",\"mcquitty\"");
-				}
+		canMcQCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"canberra\",\"mcquitty\""))
+					commandsValidate.add("\"canberra\",\"mcquitty\"");
+			} else {
+				commandsValidate.remove("\"canberra\",\"mcquitty\"");
 			}
 		});
 		canMcQCB.setSelected(true);
@@ -636,15 +565,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		canMedCB = new JCheckBox("Canberra-Median");
 		canMedCB.setBounds(posX+560, posY, 140, 20);
-		canMedCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"canberra\",\"median\""))
-						commandsValidate.add("\"canberra\",\"median\"");
-				} else {
-					commandsValidate.remove("\"canberra\",\"median\"");
-				}
+		canMedCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"canberra\",\"median\""))
+					commandsValidate.add("\"canberra\",\"median\"");
+			} else {
+				commandsValidate.remove("\"canberra\",\"median\"");
 			}
 		});
 		canMedCB.setSelected(true);
@@ -652,15 +579,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		canSingCB = new JCheckBox("Canberra-Single");
 		canSingCB.setBounds(posX+700, posY, 140, 20);
-		canSingCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"canberra\",\"single\""))
-						commandsValidate.add("\"canberra\",\"single\"");
-				} else {
-					commandsValidate.remove("\"canberra\",\"single\"");
-				}
+		canSingCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"canberra\",\"single\""))
+					commandsValidate.add("\"canberra\",\"single\"");
+			} else {
+				commandsValidate.remove("\"canberra\",\"single\"");
 			}
 		});
 		canSingCB.setSelected(true);
@@ -668,15 +593,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		canWardCB = new JCheckBox("Canberra-Ward");
 		canWardCB.setBounds(posX+840, posY, 140, 20);
-		canWardCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"canberra\",\"ward.D\""))
-						commandsValidate.add("\"canberra\",\"ward.D\"");
-				} else {
-					commandsValidate.remove("\"canberra\",\"ward.D\"");
-				}
+		canWardCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"canberra\",\"ward.D\""))
+					commandsValidate.add("\"canberra\",\"ward.D\"");
+			} else {
+				commandsValidate.remove("\"canberra\",\"ward.D\"");
 			}
 		});
 		canWardCB.setSelected(true);
@@ -687,15 +610,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		eucAvgCB = new JCheckBox("Euclidean-Average");
 		eucAvgCB.setBounds(posX, posY, 140, 20);
-		eucAvgCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"euclidean\",\"average\""))
-						commandsValidate.add("\"euclidean\",\"average\"");
-				} else {
-					commandsValidate.remove("\"euclidean\",\"average\"");
-				}
+		eucAvgCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"euclidean\",\"average\""))
+					commandsValidate.add("\"euclidean\",\"average\"");
+			} else {
+				commandsValidate.remove("\"euclidean\",\"average\"");
 			}
 		});
 		eucAvgCB.setSelected(true);
@@ -703,15 +624,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		eucCentrCB = new JCheckBox("Euclidean-Centroid");
 		eucCentrCB.setBounds(posX+140, posY, 140, 20);
-		eucCentrCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"euclidean\",\"centroid\""))
-						commandsValidate.add("\"euclidean\",\"centroid\"");
-				} else {
-					commandsValidate.remove("\"euclidean\",\"centroid\"");
-				}
+		eucCentrCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"euclidean\",\"centroid\""))
+					commandsValidate.add("\"euclidean\",\"centroid\"");
+			} else {
+				commandsValidate.remove("\"euclidean\",\"centroid\"");
 			}
 		});
 		eucCentrCB.setSelected(true);
@@ -719,15 +638,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		eucComplCB = new JCheckBox("Euclidean-Complete");
 		eucComplCB.setBounds(posX+280, posY, 140, 20);
-		eucComplCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"euclidean\",\"complete\""))
-						commandsValidate.add("\"euclidean\",\"complete\"");
-				} else {
-					commandsValidate.remove("\"euclidean\",\"complete\"");
-				}
+		eucComplCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"euclidean\",\"complete\""))
+					commandsValidate.add("\"euclidean\",\"complete\"");
+			} else {
+				commandsValidate.remove("\"euclidean\",\"complete\"");
 			}
 		});
 		eucComplCB.setSelected(true);
@@ -735,15 +652,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		eucMcQCB = new JCheckBox("Euclidean-McQuitty");
 		eucMcQCB.setBounds(posX+420, posY, 140, 20);
-		eucMcQCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"euclidean\",\"mcquitty\""))
-						commandsValidate.add("\"euclidean\",\"mcquitty\"");
-				} else {
-					commandsValidate.remove("\"euclidean\",\"mcquitty\"");
-				}
+		eucMcQCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"euclidean\",\"mcquitty\""))
+					commandsValidate.add("\"euclidean\",\"mcquitty\"");
+			} else {
+				commandsValidate.remove("\"euclidean\",\"mcquitty\"");
 			}
 		});
 		eucMcQCB.setSelected(true);
@@ -751,15 +666,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		eucMedCB = new JCheckBox("Euclidean-Median");
 		eucMedCB.setBounds(posX+560, posY, 140, 20);
-		eucMedCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"euclidean\",\"median\""))
-						commandsValidate.add("\"euclidean\",\"median\"");
-				} else {
-					commandsValidate.remove("\"euclidean\",\"median\"");
-				}
+		eucMedCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"euclidean\",\"median\""))
+					commandsValidate.add("\"euclidean\",\"median\"");
+			} else {
+				commandsValidate.remove("\"euclidean\",\"median\"");
 			}
 		});
 		eucMedCB.setSelected(true);
@@ -767,15 +680,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		eucSingCB = new JCheckBox("Euclidean-Single");
 		eucSingCB.setBounds(posX+700, posY, 140, 20);
-		eucSingCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"euclidean\",\"single\""))
-						commandsValidate.add("\"euclidean\",\"single\"");
-				} else {
-					commandsValidate.remove("\"euclidean\",\"single\"");
-				}
+		eucSingCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"euclidean\",\"single\""))
+					commandsValidate.add("\"euclidean\",\"single\"");
+			} else {
+				commandsValidate.remove("\"euclidean\",\"single\"");
 			}
 		});
 		eucSingCB.setSelected(true);
@@ -783,15 +694,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		eucWardCB = new JCheckBox("Euclidean-Ward");
 		eucWardCB.setBounds(posX+840, posY, 140, 20);
-		eucWardCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"euclidean\",\"ward.D\""))
-						commandsValidate.add("\"euclidean\",\"ward.D\"");
-				} else {
-					commandsValidate.remove("\"euclidean\",\"ward.D\"");
-				}
+		eucWardCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"euclidean\",\"ward.D\""))
+					commandsValidate.add("\"euclidean\",\"ward.D\"");
+			} else {
+				commandsValidate.remove("\"euclidean\",\"ward.D\"");
 			}
 		});
 		eucWardCB.setSelected(true);
@@ -802,15 +711,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		manAvgCB = new JCheckBox("Manhattan-Average");
 		manAvgCB.setBounds(posX, posY, 140, 20);
-		manAvgCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"manhattan\",\"average\""))
-						commandsValidate.add("\"manhattan\",\"average\"");
-				} else {
-					commandsValidate.remove("\"manhattan\",\"average\"");
-				}
+		manAvgCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"manhattan\",\"average\""))
+					commandsValidate.add("\"manhattan\",\"average\"");
+			} else {
+				commandsValidate.remove("\"manhattan\",\"average\"");
 			}
 		});
 		manAvgCB.setSelected(true);
@@ -818,15 +725,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		manCentrCB = new JCheckBox("Manhattan-Centroid");
 		manCentrCB.setBounds(posX+140, posY, 140, 20);
-		manCentrCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"manhattan\",\"centroid\""))
-						commandsValidate.add("\"manhattan\",\"centroid\"");
-				} else {
-					commandsValidate.remove("\"manhattan\",\"centroid\"");
-				}
+		manCentrCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"manhattan\",\"centroid\""))
+					commandsValidate.add("\"manhattan\",\"centroid\"");
+			} else {
+				commandsValidate.remove("\"manhattan\",\"centroid\"");
 			}
 		});
 		manCentrCB.setSelected(true);
@@ -834,15 +739,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		manComplCB = new JCheckBox("Manhattan-Complete");
 		manComplCB.setBounds(posX+280, posY, 140, 20);
-		manComplCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"manhattan\",\"complete\""))
-						commandsValidate.add("\"manhattan\",\"complete\"");
-				} else {
-					commandsValidate.remove("\"manhattan\",\"complete\"");
-				}
+		manComplCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"manhattan\",\"complete\""))
+					commandsValidate.add("\"manhattan\",\"complete\"");
+			} else {
+				commandsValidate.remove("\"manhattan\",\"complete\"");
 			}
 		});
 		manComplCB.setSelected(true);
@@ -850,15 +753,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		manMcQCB = new JCheckBox("Manhattan-McQuitty");
 		manMcQCB.setBounds(posX+420, posY, 140, 20);
-		manMcQCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"manhattan\",\"mcquitty\""))
-						commandsValidate.add("\"manhattan\",\"mcquitty\"");
-				} else {
-					commandsValidate.remove("\"manhattan\",\"mcquitty\"");
-				}
+		manMcQCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"manhattan\",\"mcquitty\""))
+					commandsValidate.add("\"manhattan\",\"mcquitty\"");
+			} else {
+				commandsValidate.remove("\"manhattan\",\"mcquitty\"");
 			}
 		});
 		manMcQCB.setSelected(true);
@@ -866,15 +767,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		manMedCB = new JCheckBox("Manhattan-Median");
 		manMedCB.setBounds(posX+560, posY, 140, 20);
-		manMedCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"manhattan\",\"median\""))
-						commandsValidate.add("\"manhattan\",\"median\"");
-				} else {
-					commandsValidate.remove("\"manhattan\",\"median\"");
-				}
+		manMedCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"manhattan\",\"median\""))
+					commandsValidate.add("\"manhattan\",\"median\"");
+			} else {
+				commandsValidate.remove("\"manhattan\",\"median\"");
 			}
 		});
 		manMedCB.setSelected(true);
@@ -882,15 +781,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		manSingCB = new JCheckBox("Manhattan-Single");
 		manSingCB.setBounds(posX+700, posY, 140, 20);
-		manSingCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"manhattan\",\"single\""))
-						commandsValidate.add("\"manhattan\",\"single\"");
-				} else {
-					commandsValidate.remove("\"manhattan\",\"single\"");
-				}
+		manSingCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"manhattan\",\"single\""))
+					commandsValidate.add("\"manhattan\",\"single\"");
+			} else {
+				commandsValidate.remove("\"manhattan\",\"single\"");
 			}
 		});
 		manSingCB.setSelected(true);
@@ -898,15 +795,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		manWardCB = new JCheckBox("Manhattan-Ward");
 		manWardCB.setBounds(posX+840, posY, 140, 20);
-		manWardCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"manhattan\",\"ward.D\""))
-						commandsValidate.add("\"manhattan\",\"ward.D\"");
-				} else {
-					commandsValidate.remove("\"manhattan\",\"ward.D\"");
-				}
+		manWardCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"manhattan\",\"ward.D\""))
+					commandsValidate.add("\"manhattan\",\"ward.D\"");
+			} else {
+				commandsValidate.remove("\"manhattan\",\"ward.D\"");
 			}
 		});
 		manWardCB.setSelected(true);
@@ -918,15 +813,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		maxAvgCB = new JCheckBox("Maximum-Average");
 		maxAvgCB.setBounds(posX, posY, 140, 20);
-		maxAvgCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"maximum\",\"average\""))
-						commandsValidate.add("\"maximum\",\"average\"");
-				} else {
-					commandsValidate.remove("\"maximum\",\"average\"");
-				}
+		maxAvgCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"maximum\",\"average\""))
+					commandsValidate.add("\"maximum\",\"average\"");
+			} else {
+				commandsValidate.remove("\"maximum\",\"average\"");
 			}
 		});
 		maxAvgCB.setSelected(true);
@@ -934,15 +827,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		maxCentrCB = new JCheckBox("Maximum-Centroid");
 		maxCentrCB.setBounds(posX+140, posY, 140, 20);
-		maxCentrCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"maximum\",\"centroid\""))
-						commandsValidate.add("\"maximum\",\"centroid\"");
-				} else {
-					commandsValidate.remove("\"maximum\",\"centroid\"");
-				}
+		maxCentrCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"maximum\",\"centroid\""))
+					commandsValidate.add("\"maximum\",\"centroid\"");
+			} else {
+				commandsValidate.remove("\"maximum\",\"centroid\"");
 			}
 		});
 		maxCentrCB.setSelected(true);
@@ -950,15 +841,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		maxComplCB = new JCheckBox("Maximum-Complete");
 		maxComplCB.setBounds(posX+280, posY, 140, 20);
-		maxComplCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"maximum\",\"complete\""))
-						commandsValidate.add("\"maximum\",\"complete\"");
-				} else {
-					commandsValidate.remove("\"maximum\",\"complete\"");
-				}
+		maxComplCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"maximum\",\"complete\""))
+					commandsValidate.add("\"maximum\",\"complete\"");
+			} else {
+				commandsValidate.remove("\"maximum\",\"complete\"");
 			}
 		});
 		maxComplCB.setSelected(true);
@@ -966,15 +855,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		maxMcQCB = new JCheckBox("Maximum-McQuitty");
 		maxMcQCB.setBounds(posX+420, posY, 140, 20);
-		maxMcQCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"maximum\",\"mcquitty\""))
-						commandsValidate.add("\"maximum\",\"mcquitty\"");
-				} else {
-					commandsValidate.remove("\"maximum\",\"mcquitty\"");
-				}
+		maxMcQCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"maximum\",\"mcquitty\""))
+					commandsValidate.add("\"maximum\",\"mcquitty\"");
+			} else {
+				commandsValidate.remove("\"maximum\",\"mcquitty\"");
 			}
 		});
 		maxMcQCB.setSelected(true);
@@ -982,15 +869,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		maxMedCB = new JCheckBox("Maximum-Median");
 		maxMedCB.setBounds(posX+560, posY, 140, 20);
-		maxMedCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"maximum\",\"median\""))
-						commandsValidate.add("\"maximum\",\"median\"");
-				} else {
-					commandsValidate.remove("\"maximum\",\"median\"");
-				}
+		maxMedCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"maximum\",\"median\""))
+					commandsValidate.add("\"maximum\",\"median\"");
+			} else {
+				commandsValidate.remove("\"maximum\",\"median\"");
 			}
 		});
 		maxMedCB.setSelected(true);
@@ -998,15 +883,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		maxSingCB = new JCheckBox("Maximum-Single");
 		maxSingCB.setBounds(posX+700, posY, 140, 20);
-		maxSingCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"maximum\",\"single\""))
-						commandsValidate.add("\"maximum\",\"single\"");
-				} else {
-					commandsValidate.remove("\"maximum\",\"single\"");
-				}
+		maxSingCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"maximum\",\"single\""))
+					commandsValidate.add("\"maximum\",\"single\"");
+			} else {
+				commandsValidate.remove("\"maximum\",\"single\"");
 			}
 		});
 		maxSingCB.setSelected(true);
@@ -1014,15 +897,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		maxWardCB = new JCheckBox("Maximum-Ward");
 		maxWardCB.setBounds(posX+840, posY, 140, 20);
-		maxWardCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"maximum\",\"ward.D\""))
-						commandsValidate.add("\"maximum\",\"ward.D\"");
-				} else {
-					commandsValidate.remove("\"maximum\",\"ward.D\"");
-				}
+		maxWardCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"maximum\",\"ward.D\""))
+					commandsValidate.add("\"maximum\",\"ward.D\"");
+			} else {
+				commandsValidate.remove("\"maximum\",\"ward.D\"");
 			}
 		});
 		maxWardCB.setSelected(true);
@@ -1034,15 +915,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		minAvgCB = new JCheckBox("Minkowski-Average");
 		minAvgCB.setBounds(posX, posY, 140, 20);
-		minAvgCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"minkowski\",\"average\""))
-						commandsValidate.add("\"minkowski\",\"average\"");
-				} else {
-					commandsValidate.remove("\"minkowski\",\"average\"");
-				}
+		minAvgCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"minkowski\",\"average\""))
+					commandsValidate.add("\"minkowski\",\"average\"");
+			} else {
+				commandsValidate.remove("\"minkowski\",\"average\"");
 			}
 		});
 		minAvgCB.setSelected(true);
@@ -1050,15 +929,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		minCentrCB = new JCheckBox("Minkowski-Centroid");
 		minCentrCB.setBounds(posX+140, posY, 140, 20);
-		minCentrCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"minkowski\",\"centroid\""))
-						commandsValidate.add("\"minkowski\",\"centroid\"");
-				} else {
-					commandsValidate.remove("\"minkowski\",\"centroid\"");
-				}
+		minCentrCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"minkowski\",\"centroid\""))
+					commandsValidate.add("\"minkowski\",\"centroid\"");
+			} else {
+				commandsValidate.remove("\"minkowski\",\"centroid\"");
 			}
 		});
 		minCentrCB.setSelected(true);
@@ -1066,15 +943,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		minComplCB = new JCheckBox("Minkowski-Complete");
 		minComplCB.setBounds(posX+280, posY, 140, 20);
-		minComplCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"minkowski\",\"complete\""))
-						commandsValidate.add("\"minkowski\",\"complete\"");
-				} else {
-					commandsValidate.remove("\"minkowski\",\"complete\"");
-				}
+		minComplCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"minkowski\",\"complete\""))
+					commandsValidate.add("\"minkowski\",\"complete\"");
+			} else {
+				commandsValidate.remove("\"minkowski\",\"complete\"");
 			}
 		});
 		minComplCB.setSelected(true);
@@ -1082,15 +957,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		minMcQCB = new JCheckBox("Minkowski-McQuitty");
 		minMcQCB.setBounds(posX+420, posY, 140, 20);
-		minMcQCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"minkowski\",\"mcquitty\""))
-						commandsValidate.add("\"minkowski\",\"mcquitty\"");
-				} else {
-					commandsValidate.remove("\"minkowski\",\"mcquitty\"");
-				}
+		minMcQCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"minkowski\",\"mcquitty\""))
+					commandsValidate.add("\"minkowski\",\"mcquitty\"");
+			} else {
+				commandsValidate.remove("\"minkowski\",\"mcquitty\"");
 			}
 		});
 		minMcQCB.setSelected(true);
@@ -1098,15 +971,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		minMedCB = new JCheckBox("Minkowski-Median");
 		minMedCB.setBounds(posX+560, posY, 140, 20);
-		minMedCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"minkowski\",\"median\""))
-						commandsValidate.add("\"minkowski\",\"median\"");
-				} else {
-					commandsValidate.remove("\"minkowski\",\"median\"");
-				}
+		minMedCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"minkowski\",\"median\""))
+					commandsValidate.add("\"minkowski\",\"median\"");
+			} else {
+				commandsValidate.remove("\"minkowski\",\"median\"");
 			}
 		});
 		minMedCB.setSelected(true);
@@ -1114,15 +985,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		minSingCB = new JCheckBox("Minkowski-Single");
 		minSingCB.setBounds(posX+700, posY, 140, 20);
-		minSingCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"minkowski\",\"single\""))
-						commandsValidate.add("\"minkowski\",\"single\"");
-				} else {
-					commandsValidate.remove("\"minkowski\",\"single\"");
-				}
+		minSingCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"minkowski\",\"single\""))
+					commandsValidate.add("\"minkowski\",\"single\"");
+			} else {
+				commandsValidate.remove("\"minkowski\",\"single\"");
 			}
 		});
 		minSingCB.setSelected(true);
@@ -1130,15 +999,13 @@ public class HolmesClusterConfig extends JFrame {
 		
 		minWardCB = new JCheckBox("Minkowski-Ward");
 		minWardCB.setBounds(posX+840, posY, 140, 20);
-		minWardCB.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					if(!commandsValidate.contains("\"minkowski\",\"ward.D\""))
-						commandsValidate.add("\"minkowski\",\"ward.D\"");
-				} else {
-					commandsValidate.remove("\"minkowski\",\"ward.D\"");
-				}
+		minWardCB.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				if(!commandsValidate.contains("\"minkowski\",\"ward.D\""))
+					commandsValidate.add("\"minkowski\",\"ward.D\"");
+			} else {
+				commandsValidate.remove("\"minkowski\",\"ward.D\"");
 			}
 		});
 		minWardCB.setSelected(true);
@@ -1175,298 +1042,69 @@ public class HolmesClusterConfig extends JFrame {
     }
     
     private void updateComponents() {
-    	if(commandsValidate.contains("\"correlation\",\"average\""))
-    		corAvgCB.setSelected(true);
-    	else
-    		corAvgCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"correlation\",\"centroid\""))
-    		corCentrCB.setSelected(true);
-    	else
-    		corCentrCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"correlation\",\"complete\""))
-    		corComplCB.setSelected(true);
-    	else
-    		corComplCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"correlation\",\"mcquitty\""))
-    		corMcQCB.setSelected(true);
-    	else
-    		corMcQCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"correlation\",\"median\""))
-    		corMedCB.setSelected(true);
-    	else
-    		corMedCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"correlation\",\"single\""))
-    		corSingCB.setSelected(true);
-    	else
-    		corSingCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"correlation\",\"ward\""))
-    		corWardCB.setSelected(true);
-    	else
-    		corWardCB.setSelected(false);
-    	
+		corAvgCB.setSelected(commandsValidate.contains("\"correlation\",\"average\""));
+		corCentrCB.setSelected(commandsValidate.contains("\"correlation\",\"centroid\""));
+		corComplCB.setSelected(commandsValidate.contains("\"correlation\",\"complete\""));
+		corMcQCB.setSelected(commandsValidate.contains("\"correlation\",\"mcquitty\""));
+		corMedCB.setSelected(commandsValidate.contains("\"correlation\",\"median\""));
+		corSingCB.setSelected(commandsValidate.contains("\"correlation\",\"single\""));
+		corWardCB.setSelected(commandsValidate.contains("\"correlation\",\"ward\""));
     	//---
-    	
-    	if(commandsValidate.contains("\"pearson\",\"average\""))
-    		pearAvgCB.setSelected(true);
-    	else
-    		pearAvgCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"pearson\",\"centroid\""))
-    		pearCentrCB.setSelected(true);
-    	else
-    		pearCentrCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"pearson\",\"complete\""))
-    		pearComplCB.setSelected(true);
-    	else
-    		pearComplCB.setSelected(false);
-    		
-    	if(commandsValidate.contains("\"pearson\",\"mcquitty\""))
-    		pearMcQCB.setSelected(true);
-    	else
-    		pearMcQCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"pearson\",\"median\""))
-    		pearMedCB.setSelected(true);
-    	else
-    		pearMedCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"pearson\",\"single\""))
-    		pearSingCB.setSelected(true);
-    	else
-    		pearSingCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"pearson\",\"ward\""))
-    		pearWardCB.setSelected(true);
-    	else
-    		pearWardCB.setSelected(false);
-    	
+		pearAvgCB.setSelected(commandsValidate.contains("\"pearson\",\"average\""));
+		pearCentrCB.setSelected(commandsValidate.contains("\"pearson\",\"centroid\""));
+		pearComplCB.setSelected(commandsValidate.contains("\"pearson\",\"complete\""));
+		pearMcQCB.setSelected(commandsValidate.contains("\"pearson\",\"mcquitty\""));
+		pearMedCB.setSelected(commandsValidate.contains("\"pearson\",\"median\""));
+		pearSingCB.setSelected(commandsValidate.contains("\"pearson\",\"single\""));
+		pearWardCB.setSelected(commandsValidate.contains("\"pearson\",\"ward\""));
     	//------
-    	if(commandsValidate.contains("\"binary\",\"average\""))
-    		binAvgCB.setSelected(true);
-    	else
-    		binAvgCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"binary\",\"centroid\""))
-    		binCentrCB.setSelected(true);
-    	else
-    		binCentrCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"binary\",\"complete\""))
-    		binComplCB.setSelected(true);
-    	else
-    		binComplCB.setSelected(false);
-    		
-    	if(commandsValidate.contains("\"binary\",\"mcquitty\""))
-    		binMcQCB.setSelected(true);
-    	else
-    		binMcQCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"binary\",\"median\""))
-    		binMedCB.setSelected(true);
-    	else
-    		binMedCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"binary\",\"single\""))
-    		binSingCB.setSelected(true);
-    	else
-    		binSingCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"binary\",\"ward.D\""))
-    		binWardCB.setSelected(true);
-    	else
-    		binWardCB.setSelected(false);
-    	
+		binAvgCB.setSelected(commandsValidate.contains("\"binary\",\"average\""));
+		binCentrCB.setSelected(commandsValidate.contains("\"binary\",\"centroid\""));
+		binComplCB.setSelected(commandsValidate.contains("\"binary\",\"complete\""));
+		binMcQCB.setSelected(commandsValidate.contains("\"binary\",\"mcquitty\""));
+		binMedCB.setSelected(commandsValidate.contains("\"binary\",\"median\""));
+		binSingCB.setSelected(commandsValidate.contains("\"binary\",\"single\""));
+		binWardCB.setSelected(commandsValidate.contains("\"binary\",\"ward.D\""));
     	//-----
-    	
-    	if(commandsValidate.contains("\"canberra\",\"average\""))
-    		canAvgCB.setSelected(true);
-    	else
-    		canAvgCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"canberra\",\"centroid\""))
-    		canCentrCB.setSelected(true);
-    	else
-    		canCentrCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"canberra\",\"complete\""))
-    		canComplCB.setSelected(true);
-    	else
-    		canComplCB.setSelected(false);
-    		
-    	if(commandsValidate.contains("\"canberra\",\"mcquitty\""))
-    		canMcQCB.setSelected(true);
-    	else
-    		canMcQCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"canberra\",\"median\""))
-    		canMedCB.setSelected(true);
-    	else
-    		canMedCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"canberra\",\"single\""))
-    		canSingCB.setSelected(true);
-    	else
-    		canSingCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"canberra\",\"ward.D\""))
-    		canWardCB.setSelected(true);
-    	else
-    		canWardCB.setSelected(false);
-    		
+		canAvgCB.setSelected(commandsValidate.contains("\"canberra\",\"average\""));
+		canCentrCB.setSelected(commandsValidate.contains("\"canberra\",\"centroid\""));
+		canComplCB.setSelected(commandsValidate.contains("\"canberra\",\"complete\""));
+		canMcQCB.setSelected(commandsValidate.contains("\"canberra\",\"mcquitty\""));
+		canMedCB.setSelected(commandsValidate.contains("\"canberra\",\"median\""));
+		canSingCB.setSelected(commandsValidate.contains("\"canberra\",\"single\""));
+		canWardCB.setSelected(commandsValidate.contains("\"canberra\",\"ward.D\""));
     	//---
-    	
-    	if(commandsValidate.contains("\"euclidean\",\"average\""))
-    		eucAvgCB.setSelected(true);
-    	else
-    		eucAvgCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"euclidean\",\"centroid\""))
-    		eucCentrCB.setSelected(true);
-    	else
-    		eucCentrCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"euclidean\",\"complete\""))
-    		eucComplCB.setSelected(true);
-    	else
-    		eucComplCB.setSelected(false);
-    		
-    	if(commandsValidate.contains("\"euclidean\",\"mcquitty\""))
-    		eucMcQCB.setSelected(true);
-    	else
-    		eucMcQCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"euclidean\",\"median\""))
-    		eucMedCB.setSelected(true);
-    	else
-    		eucMedCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"euclidean\",\"single\""))
-    		eucSingCB.setSelected(true);
-    	else
-    		eucSingCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"euclidean\",\"ward.D\""))
-    		eucWardCB.setSelected(true);
-    	else
-    		eucWardCB.setSelected(false);
-    		
+		eucAvgCB.setSelected(commandsValidate.contains("\"euclidean\",\"average\""));
+		eucCentrCB.setSelected(commandsValidate.contains("\"euclidean\",\"centroid\""));
+		eucComplCB.setSelected(commandsValidate.contains("\"euclidean\",\"complete\""));
+		eucMcQCB.setSelected(commandsValidate.contains("\"euclidean\",\"mcquitty\""));
+		eucMedCB.setSelected(commandsValidate.contains("\"euclidean\",\"median\""));
+		eucSingCB.setSelected(commandsValidate.contains("\"euclidean\",\"single\""));
+		eucWardCB.setSelected(commandsValidate.contains("\"euclidean\",\"ward.D\""));
     	//----
-    	
-    	if(commandsValidate.contains("\"manhattan\",\"average\""))
-    		manAvgCB.setSelected(true);
-    	else
-    		manAvgCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"manhattan\",\"centroid\""))
-    		manCentrCB.setSelected(true);
-    	else
-    		manCentrCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"manhattan\",\"complete\""))
-    		manComplCB.setSelected(true);
-    	else
-    		manComplCB.setSelected(false);
-    		
-    	if(commandsValidate.contains("\"manhattan\",\"mcquitty\""))
-    		manMcQCB.setSelected(true);
-    	else
-    		manMcQCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"manhattan\",\"median\""))
-    		manMedCB.setSelected(true);
-    	else
-    		manMedCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"manhattan\",\"single\""))
-    		manSingCB.setSelected(true);
-    	else
-    		manSingCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"manhattan\",\"ward.D\""))
-    		manWardCB.setSelected(true);
-    	else
-    		manWardCB.setSelected(false);
-    		
+		manAvgCB.setSelected(commandsValidate.contains("\"manhattan\",\"average\""));
+		manCentrCB.setSelected(commandsValidate.contains("\"manhattan\",\"centroid\""));
+		manComplCB.setSelected(commandsValidate.contains("\"manhattan\",\"complete\""));
+		manMcQCB.setSelected(commandsValidate.contains("\"manhattan\",\"mcquitty\""));
+		manMedCB.setSelected(commandsValidate.contains("\"manhattan\",\"median\""));
+		manSingCB.setSelected(commandsValidate.contains("\"manhattan\",\"single\""));
+		manWardCB.setSelected(commandsValidate.contains("\"manhattan\",\"ward.D\""));
     	//----
-    	
-    	if(commandsValidate.contains("\"maximum\",\"average\""))
-    		maxAvgCB.setSelected(true);
-    	else
-    		maxAvgCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"maximum\",\"centroid\""))
-    		maxCentrCB.setSelected(true);
-    	else
-    		maxCentrCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"maximum\",\"complete\""))
-    		maxComplCB.setSelected(true);
-    	else
-    		maxComplCB.setSelected(false);
-    		
-    	if(commandsValidate.contains("\"maximum\",\"mcquitty\""))
-    		maxMcQCB.setSelected(true);
-    	else
-    		maxMcQCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"maximum\",\"median\""))
-    		maxMedCB.setSelected(true);
-    	else
-    		maxMedCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"maximum\",\"single\""))
-    		maxSingCB.setSelected(true);
-    	else
-    		maxSingCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"maximum\",\"ward.D\""))
-    		maxWardCB.setSelected(true);
-    	else
-    		maxWardCB.setSelected(false);
-    		
+		maxAvgCB.setSelected(commandsValidate.contains("\"maximum\",\"average\""));
+		maxCentrCB.setSelected(commandsValidate.contains("\"maximum\",\"centroid\""));
+		maxComplCB.setSelected(commandsValidate.contains("\"maximum\",\"complete\""));
+		maxMcQCB.setSelected(commandsValidate.contains("\"maximum\",\"mcquitty\""));
+		maxMedCB.setSelected(commandsValidate.contains("\"maximum\",\"median\""));
+		maxSingCB.setSelected(commandsValidate.contains("\"maximum\",\"single\""));
+		maxWardCB.setSelected(commandsValidate.contains("\"maximum\",\"ward.D\""));
     	//---
-    	
-    	if(commandsValidate.contains("\"minkowski\",\"average\""))
-    		minAvgCB.setSelected(true);
-    	else
-    		minAvgCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"minkowski\",\"centroid\""))
-    		minCentrCB.setSelected(true);
-    	else
-    		minCentrCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"minkowski\",\"complete\""))
-    		minComplCB.setSelected(true);
-    	else
-    		minComplCB.setSelected(false);
-    		
-    	if(commandsValidate.contains("\"minkowski\",\"mcquitty\""))
-    		minMcQCB.setSelected(true);
-    	else
-    		minMcQCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"minkowski\",\"median\""))
-    		minMedCB.setSelected(true);
-    	else
-    		minMedCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"minkowski\",\"single\""))
-    		minSingCB.setSelected(true);
-    	else
-    		minSingCB.setSelected(false);
-    	
-    	if(commandsValidate.contains("\"minkowski\",\"ward.D\""))
-    		minWardCB.setSelected(true);
-    	else
-    		minWardCB.setSelected(false);
+		minAvgCB.setSelected(commandsValidate.contains("\"minkowski\",\"average\""));
+		minCentrCB.setSelected(commandsValidate.contains("\"minkowski\",\"centroid\""));
+		minComplCB.setSelected(commandsValidate.contains("\"minkowski\",\"complete\""));
+		minMcQCB.setSelected(commandsValidate.contains("\"minkowski\",\"mcquitty\""));
+		minMedCB.setSelected(commandsValidate.contains("\"minkowski\",\"median\""));
+		minSingCB.setSelected(commandsValidate.contains("\"minkowski\",\"single\""));
+		minWardCB.setSelected(commandsValidate.contains("\"minkowski\",\"ward.D\""));
     }
     
     private void commandsAddAll() {

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -23,21 +24,17 @@ import holmes.tables.InvariantsSimpleTableModel;
 import holmes.utilities.Tools;
 
 public class HolmesKnockoutViewer extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -6944527110471274930L;
 	private GUIManager overlord;
-	@SuppressWarnings("unused")
-	private HolmesKnockout parentWindow;
 	private PetriNet pn;
 	private MapElement data;
 	private ArrayList<Transition> transitions;
-	
-	private InvariantsSimpleTableModel tableModel;
 	private JTable table;
 	
-	public HolmesKnockoutViewer(MapElement data, HolmesKnockout holmesKnockout) {
+	public HolmesKnockoutViewer(MapElement data) {
 		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();
-		this.parentWindow = holmesKnockout;
 		this.data = data;
 		this.transitions = pn.getTransitions();
 		//parentWindow.setEnabled(false);
@@ -53,7 +50,7 @@ public class HolmesKnockoutViewer extends JFrame {
 	private void initalizeComponents() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) { }
+		} catch (Exception ignored) { }
 		setLayout(new BorderLayout());
 		setSize(new Dimension(640, 400));
 		setLocation(50, 50);
@@ -70,6 +67,7 @@ public class HolmesKnockoutViewer extends JFrame {
 	 * Tworzy panel przycisków bocznych.
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("UnusedAssignment")
 	public JPanel getUpperPanel() {
 		JPanel result = new JPanel(null);
 		result.setBorder(BorderFactory.createTitledBorder("Knockout element general information"));
@@ -151,8 +149,8 @@ public class HolmesKnockoutViewer extends JFrame {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setBorder(BorderFactory.createTitledBorder("Tables"));
 		result.setPreferredSize(new Dimension(640, 320));
-		
-		tableModel = new InvariantsSimpleTableModel();
+
+		InvariantsSimpleTableModel tableModel = new InvariantsSimpleTableModel();
 		table = new JTable(tableModel);
 		table.setName("Invariant description");
 		
@@ -197,7 +195,7 @@ public class HolmesKnockoutViewer extends JFrame {
 				new HolmesInvariantsViewer(invID);
 			}
 
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 	}
@@ -210,28 +208,28 @@ public class HolmesKnockoutViewer extends JFrame {
 		ArrayList<Integer> path = data.disabledHistory;
 		ArrayList<Integer> processed = new ArrayList<>();
 		
-		String resultPath = "";
+		StringBuilder resultPath = new StringBuilder();
 		for(Integer trans : path) {
 			if(processed.contains(trans))
 				continue;
 			
 			ArrayList<Integer> mct = checkMCT(trans);
 			if(mct.size() > 1) {
-				resultPath += "MCT#"+mct.get(0)+" ==> ";
+				resultPath.append("MCT#").append(mct.get(0)).append(" ==> ");
 				
 				for(int i=1; i<mct.size(); i++) {
 					processed.add(mct.get(i));
 				}
 			} else {
-				resultPath += "t"+trans+" ==> ";
+				resultPath.append("t").append(trans).append(" ==> ");
 				processed.add(trans);
 			}
 		}
 		
 		if(resultPath.length() > 5) 
-			resultPath = resultPath.substring(0, resultPath.length()-4);
+			resultPath = new StringBuilder(resultPath.substring(0, resultPath.length() - 4));
 		
-		descriptionTextArea.setText(resultPath);
+		descriptionTextArea.setText(resultPath.toString());
 	}
 
 	/**

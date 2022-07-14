@@ -5,13 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -40,8 +34,8 @@ import holmes.workspace.ExtensionFileFilter;
  * @author MR
  */
 public class HolmesNotepad extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 1694133455242675169L;
-
 	private String newline = "\r\n";
 	private StyledDocument doc; //
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
@@ -60,7 +54,7 @@ public class HolmesNotepad extends JFrame {
 		setTitle("Holmes Notepad");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
 		//setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -78,7 +72,7 @@ public class HolmesNotepad extends JFrame {
 		try {
 			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programUseSimpleEditor").equals("1"))
 				simpleMode = true;
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 		setPreferredSize(new Dimension(width, height));
@@ -137,6 +131,7 @@ public class HolmesNotepad extends JFrame {
 	 * @param height int - wysokość
 	 * @return JPanel - panel, okrętu się pan spodziewałeś?
 	 */
+	@SuppressWarnings("unused")
 	private Component createButtonsPanel(int width, int height) {
 		JPanel buttonPanel = new JPanel(null);
 		buttonPanel.setMinimumSize(new Dimension(width, 50));
@@ -151,11 +146,7 @@ public class HolmesNotepad extends JFrame {
 		savedButton.setIcon(Tools.getResIcon16("/icons/notepad/saveFile.png"));
 		savedButton.setToolTipText("Saves the content of notepad.");
 		savedButton.setFocusPainted(false);
-		savedButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				saveContent();
-			}
-		});
+		savedButton.addActionListener(actionEvent -> saveContent());
 		buttonPanel.add(savedButton);
 		
 		JButton loadButton = new JButton();
@@ -164,11 +155,7 @@ public class HolmesNotepad extends JFrame {
 		loadButton.setIcon(Tools.getResIcon16("/icons/notepad/loadFile.png"));
 		loadButton.setToolTipText("Load txt files.");
 		loadButton.setFocusPainted(false);
-		loadButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				loadContent();
-			}
-		});
+		loadButton.addActionListener(actionEvent -> loadContent());
 		buttonPanel.add(loadButton);
 		
 		JButton clearButton = new JButton();
@@ -177,11 +164,7 @@ public class HolmesNotepad extends JFrame {
 		clearButton.setIcon(Tools.getResIcon16("/icons/notepad/eraserIcon.png"));
 		clearButton.setToolTipText("Clear content");
 		clearButton.setFocusPainted(false);
-		clearButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				clearContent();
-			}
-		});
+		clearButton.addActionListener(actionEvent -> clearContent());
 		buttonPanel.add(clearButton);
 		
 		return buttonPanel;
@@ -195,8 +178,8 @@ public class HolmesNotepad extends JFrame {
 			int len = textPane.getDocument().getLength();
 			try {
 				doc.remove(0, len);
-			} catch (BadLocationException e) {
-				;
+			} catch (BadLocationException ignored) {
+
 			}
 		}
 	}
@@ -219,7 +202,7 @@ public class HolmesNotepad extends JFrame {
 				DataInputStream dis = new DataInputStream(new FileInputStream(selectedFile));
 				BufferedReader buffer = new BufferedReader(new InputStreamReader(dis));
 				
-				String line = "";
+				String line;
 				//addTextLineNL(line,  "text");
 				while((line = buffer.readLine()) != null) {
 					addTextLineNL(line,  "text");
@@ -245,7 +228,7 @@ public class HolmesNotepad extends JFrame {
 			return;
 		} else {
 			String extension = ".txt";
-			if(selectedFile.contains(extension) == false)
+			if(!selectedFile.contains(extension))
 				selectedFile += extension;
 			
 			try {
@@ -258,7 +241,7 @@ public class HolmesNotepad extends JFrame {
 				}
 				pw.close();
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Notepad saving operation for file "+selectedFile.toString()+" failed.", "error", true);
+				GUIManager.getDefaultGUIManager().log("Notepad saving operation for file "+ selectedFile +" failed.", "error", true);
 			}
 		}
 	}
@@ -393,29 +376,18 @@ public class HolmesNotepad extends JFrame {
 	 * @return int - numer stylu
 	 */
 	private int setWritingStyle(String mode) {
-		int style = 0;
-		if(mode.equals("text") || mode.equals("t")) {
-			style = 0;
-		} else if(mode.equals("italic") || mode.equals("i")) {
-			style = 1;
-		} else if(mode.equals("bold") || mode.equals("b")) {
-			style = 2;
-		} else if(mode.equals("small")) {
-			style = 3;
-		} else if(mode.equals("large")) {
-			style = 4;
-		} else if(mode.equals("warning")) {
-			style = 5;
-		} else if(mode.equals("error")) {
-			style = 6;
-		} else if(mode.equals("time")) {
-			style = 7;
-		} else if(mode.equals("nodeName")) {
-			style = 8;
-		} else {
-			style = 1;
-		}
-		return style;
+		return switch (mode) {
+			case "text", "t" -> 0;
+			case "italic", "i" -> 1;
+			case "bold", "b" -> 2;
+			case "small" -> 3;
+			case "large" -> 4;
+			case "warning" -> 5;
+			case "error" -> 6;
+			case "time" -> 7;
+			case "nodeName" -> 8;
+			default -> 1;
+		};
 	}
 	
 	/**

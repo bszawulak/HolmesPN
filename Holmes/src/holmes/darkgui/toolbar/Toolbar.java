@@ -2,7 +2,6 @@ package holmes.darkgui.toolbar;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serial;
@@ -15,16 +14,14 @@ import javax.swing.JTree;
 
 import holmes.analyse.GraphletsCalculator;
 import holmes.petrinet.elements.Node;
-import org.nfunk.jep.JEP;
 
 import holmes.analyse.MDTSCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel.DrawModes;
-import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.simulators.IRandomGenerator;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.petrinet.simulators.StandardRandom;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;

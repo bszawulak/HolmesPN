@@ -20,12 +20,12 @@ import holmes.petrinet.functions.FunctionsTools;
 import holmes.windows.HolmesNotepad;
 
 /**
- * Klasa zajmująca się zarządzaniem całym procesem symulacji.
+ * Klasa zajmująca się zarządzaniem całym procesem symulacji. Kiedyś nazywała się NetSimulator
  * 
  * @author students - pierwsza wersja, klasyczne PN oraz TPN
  * @author MR - poprawki, zmiany, kolejne rodzaje trubów symulacji
  */
-public class NetSimulator {
+public class GraphicalSimulator {
 	private SimulatorGlobals.SimNetType netSimType;
 	private SimulatorMode simulatorStatus = SimulatorMode.STOPPED;
 	private SimulatorMode previousSimStatus = SimulatorMode.STOPPED;
@@ -41,7 +41,7 @@ public class NetSimulator {
 	
 	private boolean writeHistory = true;
 	private long timeCounter = -1;
-	private NetSimulatorLogger nsl = new NetSimulatorLogger();
+	private GraphicalSimulatorLogger nsl = new GraphicalSimulatorLogger();
 	//private Random generator;
 	
 	private SimulatorStandardPN engine;
@@ -69,7 +69,7 @@ public class NetSimulator {
 	 * @param type (<b>SimulatorGlobals.SimNetType</b>) typ symulacji.
 	 * @param net (<b>PetriNet</b>) sieć do symulacji .
 	 */
-	public NetSimulator(SimulatorGlobals.SimNetType type, PetriNet net) {
+	public GraphicalSimulator(SimulatorGlobals.SimNetType type, PetriNet net) {
 		netSimType = type;
 		petriNet = net;
 		launchingTransitions = new ArrayList<Transition>();
@@ -750,7 +750,7 @@ public class NetSimulator {
 	 * Metoda zwraca obiekt zapisujący informacje o symulacji.
 	 * @return NetSimulatorLogger - obiekt komunikatora
 	 */
-	public NetSimulatorLogger getSimLogger() {
+	public GraphicalSimulatorLogger getSimLogger() {
 		return nsl;
 	}
 

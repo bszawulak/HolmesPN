@@ -1596,15 +1596,15 @@ public class Transition extends Node {
 
             if (arcStartPlace.isGammaModeActiveXTPN()) { //czy miejsce typu XTPN
                 if (arcStartPlace.accessMultiset().size() < arcWeight) {
+                    //jeśli nie istnieje podzbiór aktywujący (bo sam multizbiór jest mniejszy niż waga łuku), to:
                     if(arcType == TypeOfArc.INHIBITOR) { //to dobrze, że nie ma zbioru, tranzycja wciąż aktywna
                         ;
                     } else {
                         return false; //nie ma co sprawdzać, za mały multizbiór
                     }
                 } else { //multizbiór ma przynajmniej tyle tokenów ile wynosi waga łuku, sprawdzamy podzbiór aktywujący:
-
-
-                    if (!isActivationMultiset(arcWeight, arcStartPlace.getGammaMin_xTPN(), arcStartPlace.accessMultiset(), accuracy)) { //jeśli nie istnieje
+                    if (!isActivationMultiset(arcWeight, arcStartPlace.getGammaMin_xTPN(), arcStartPlace.accessMultiset(), accuracy)) {
+                        //jeśli nie istnieje podzbiór aktywujący (powyżej), to:
                         if(arcType == TypeOfArc.INHIBITOR) { //to dobrze, że nie ma zbioru, tranzycja wciąż aktywna
                             ;
                         } else {
@@ -1624,7 +1624,7 @@ public class Transition extends Node {
             }
         }
         return true;
-        //jeśli wciąż tutaj, to znaczy że aktywna
+        //jeśli wciąż tutaj dojdziemy, to znaczy, że aktywna
     }
 
     /**

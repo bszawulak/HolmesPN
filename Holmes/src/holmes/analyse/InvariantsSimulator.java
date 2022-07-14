@@ -24,6 +24,7 @@ import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
+import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.petrinet.simulators.SimulationStep;
 
 /**
@@ -640,10 +641,10 @@ public class InvariantsSimulator {
 				} else if (!actionStack.empty()) { // if steps remaining
 					currentStep = actionStack.pop();
 
-					if (currentStep.getType() == holmes.petrinet.simulators.NetSimulator.SimulatorMode.STEP) {
+					if (currentStep.getType() == GraphicalSimulator.SimulatorMode.STEP) {
 						launchSubtractPhase(
 								currentStep.getPendingTransitions(), true);
-					} else if (currentStep.getType() == holmes.petrinet.simulators.NetSimulator.SimulatorMode.SINGLE_TRANSITION) {
+					} else if (currentStep.getType() == GraphicalSimulator.SimulatorMode.SINGLE_TRANSITION) {
 						launchSingleSubtractPhase(
 								currentStep.getPendingTransitions(), true,
 								currentStep.getLaunchedTransition());
@@ -660,10 +661,10 @@ public class InvariantsSimulator {
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
 				// subtract phase ended, commencing add phase
-				if (currentStep.getType() == holmes.petrinet.simulators.NetSimulator.SimulatorMode.STEP)
+				if (currentStep.getType() == GraphicalSimulator.SimulatorMode.STEP)
 					launchAddPhaseGraphics(currentStep.getPendingTransitions(),
 							true);
-				else if (currentStep.getType() == holmes.petrinet.simulators.NetSimulator.SimulatorMode.SINGLE_TRANSITION)
+				else if (currentStep.getType() == GraphicalSimulator.SimulatorMode.SINGLE_TRANSITION)
 					launchSingleAddPhaseGraphics(
 							currentStep.getPendingTransitions(), true,
 							currentStep.getLaunchedTransition());
@@ -671,9 +672,9 @@ public class InvariantsSimulator {
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER - 5 && !finishedAddPhase) {
 				// ending add phase
-				if (currentStep.getType() == holmes.petrinet.simulators.NetSimulator.SimulatorMode.STEP)
+				if (currentStep.getType() == GraphicalSimulator.SimulatorMode.STEP)
 					launchAddPhase(currentStep.getPendingTransitions(), true);
-				else if (currentStep.getType() == holmes.petrinet.simulators.NetSimulator.SimulatorMode.SINGLE_TRANSITION)
+				else if (currentStep.getType() == GraphicalSimulator.SimulatorMode.SINGLE_TRANSITION)
 					launchSingleAddPhase(currentStep.getPendingTransitions(),
 							true, currentStep.getLaunchedTransition());
 				finishedAddPhase = true;
@@ -809,7 +810,7 @@ public class InvariantsSimulator {
 					}
 
 					//
-					actionStack.push(new SimulationStep(holmes.petrinet.simulators.NetSimulator.SimulatorMode.STEP,
+					actionStack.push(new SimulationStep(GraphicalSimulator.SimulatorMode.STEP,
 							cloneTransitionArray(launchingTransitions)));
 					if (actionStack.peek().getPendingTransitions() == null) {
 						//SettingsManager.log("Yay");
@@ -890,7 +891,7 @@ public class InvariantsSimulator {
 								.size();
 					}
 					actionStack.push(new SimulationStep(
-							holmes.petrinet.simulators.NetSimulator.SimulatorMode.SINGLE_TRANSITION,
+							GraphicalSimulator.SimulatorMode.SINGLE_TRANSITION,
 							launchingTransitions.get(0), cloneTransitionArray(launchingTransitions)));
 					launchSingleSubtractPhase(launchingTransitions, false, null);
 					subtractPhase = false;

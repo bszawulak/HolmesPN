@@ -266,9 +266,8 @@ public class SnoopyWriterTransition {
 		
 		write(bw,"        </graphics>");
 		write(bw, "      </node>");
-		
-		int lastParentID = grParents.get(locations-1);
-		return lastParentID;
+
+		return grParents.get(locations-1);
 	}
 
 	/**
@@ -279,23 +278,23 @@ public class SnoopyWriterTransition {
 	protected void write(BufferedWriter bw, String text) {
 		try {
 			bw.write(text+"\n");
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 	}
 	
 	public String toString() {
-		String txt = "";
+		StringBuilder txt = new StringBuilder();
 		int tPos = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(holmesTransition);
-		txt += "T"+tPos + " [gTransID:"+globalTransID+"]";
-		txt += " [SnoopyStartID: "+snoopyStartingID+"]";
+		txt.append("T").append(tPos).append(" [gTransID:").append(globalTransID).append("]");
+		txt.append(" [SnoopyStartID: ").append(snoopyStartingID).append("]");
 		if(grParents.size()>0) {
-			txt += " [gParentID:";
+			txt.append(" [gParentID:");
 			for(int x : grParents) {
-				txt += " "+x;
+				txt.append(" ").append(x);
 			}
-			txt += "]";
+			txt.append("]");
 		}
-		return txt;
+		return txt.toString();
 	}
 }

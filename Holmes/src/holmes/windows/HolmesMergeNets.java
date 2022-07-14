@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.Serial;
@@ -164,11 +163,7 @@ public class HolmesMergeNets extends JFrame {
 		mergeButton.setFocusPainted(false);
 		mergeButton.setIcon(Tools.getResIcon32("/icons/mergeWindow/mergeNet.png"));
 		mergeButton.setToolTipText("Integrate project net and imported net");
-		mergeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				mergeNets();
-			}
-		});
+		mergeButton.addActionListener(actionEvent -> mergeNets());
 		result.add(mergeButton);
 
 	    return result;
@@ -302,14 +297,12 @@ public class HolmesMergeNets extends JFrame {
 		JCheckBox placesViewCheckBox = new JCheckBox("Transition view");
 		placesViewCheckBox.setBounds(10, 15, 150, 20);
 		placesViewCheckBox.setSelected(true);
-		placesViewCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				transitionView = abstractButton.getModel().isSelected();
-				
-				fillProjectTable();
-				fillImportTable(newNodes);
-			}
+		placesViewCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			transitionView = abstractButton.getModel().isSelected();
+
+			fillProjectTable();
+			fillImportTable(newNodes);
 		});
 		topPanel.add(placesViewCheckBox);
 		
@@ -329,15 +322,13 @@ public class HolmesMergeNets extends JFrame {
 		removeButton.setFocusPainted(false);
 		removeButton.setIcon(Tools.getResIcon32("/icons/mergeWindow/removeMergeLine.png"));
 		removeButton.setToolTipText("Remove merge line");
-		removeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int row = mergeTable.getSelectedRow();
-		        if (row > -1) {
-		        	String value = (String) mergeTable.getValueAt(row, 0);
-		            ((MergeNodesTableModel) mergeTable.getModel()).removeRow(value);
-		        }
-		        ((MergeNodesTableModel) mergeTable.getModel()).fireTableDataChanged();
+		removeButton.addActionListener(actionEvent -> {
+			int row = mergeTable.getSelectedRow();
+			if (row > -1) {
+				String value = (String) mergeTable.getValueAt(row, 0);
+				((MergeNodesTableModel) mergeTable.getModel()).removeRow(value);
 			}
+			((MergeNodesTableModel) mergeTable.getModel()).fireTableDataChanged();
 		});
 		topPanel.add(removeButton);
 		
@@ -521,7 +512,7 @@ public class HolmesMergeNets extends JFrame {
 				String secondInt = str.substring(str.indexOf(" <== ")+6);
 				DataTuple newP = new DataTuple(Integer.parseInt(firstInt), Integer.parseInt(secondInt));
 				
-				if(str.substring(0,1).equals("p")) {
+				if(str.charAt(0) == 'p') {
 					dataPlaces.add(newP);
 				} else {
 					dataTrans.add(newP);

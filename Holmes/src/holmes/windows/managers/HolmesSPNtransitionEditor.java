@@ -4,11 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.io.Serial;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -34,6 +31,7 @@ import holmes.utilities.Tools;
  *
  */
 public class HolmesSPNtransitionEditor extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 3441899337352923949L;
 	private JFrame ego;
 	private GUIManager overlord;
@@ -62,7 +60,7 @@ public class HolmesSPNtransitionEditor extends JFrame {
 		setTitle("Holmes SPN transition editor");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
     	
@@ -134,13 +132,11 @@ public class HolmesSPNtransitionEditor extends JFrame {
 		spnTypeCombo.addItem("Scheduled Transition");
 		
 		spnTypeCombo.setBounds(posX+130, posY, 250, 20);
-		spnTypeCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				@SuppressWarnings("unchecked")
-				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
-				
-				handleSubTypeSelection(comboBox.getSelectedIndex());
-			}
+		spnTypeCombo.addActionListener(actionEvent -> {
+			@SuppressWarnings("unchecked")
+			JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+
+			handleSubTypeSelection(comboBox.getSelectedIndex());
 		});
 
 		JLabel label4 = new JLabel("Function / value:");
@@ -150,14 +146,12 @@ public class HolmesSPNtransitionEditor extends JFrame {
 		STfunctionValueEdit = new JFormattedTextField(format);
 		STfunctionValueEdit.setBounds(posX+130, posY, 250, 20);
 		STfunctionValueEdit.setValue(myData.ST_function);
-		STfunctionValueEdit.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					myData.ST_function = field.getText();
-				} catch (Exception ex) {
-					
-				}
+		STfunctionValueEdit.addPropertyChangeListener("value", e -> {
+			JFormattedTextField field = (JFormattedTextField) e.getSource();
+			try {
+				myData.ST_function = field.getText();
+			} catch (Exception ignored) {
+
 			}
 		});
 		main.add(STfunctionValueEdit);
@@ -169,22 +163,19 @@ public class HolmesSPNtransitionEditor extends JFrame {
 		IMpriorityValueEdit = new JFormattedTextField(format);
 		IMpriorityValueEdit.setBounds(posX+130, posY, 80, 20);
 		IMpriorityValueEdit.setValue(myData.IM_priority);
-		IMpriorityValueEdit.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					int priority = Integer.parseInt(field.getText());
-					myData.IM_priority = priority;
-				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(ego, "Invalid value, priority must be an integer.", "Error", 
-							JOptionPane.ERROR_MESSAGE);
-					doNotUpdate = true;
-					IMpriorityValueEdit.setValue(myData.IM_priority);
-					doNotUpdate = false;
-				}
+		IMpriorityValueEdit.addPropertyChangeListener("value", e -> {
+			if(doNotUpdate)
+				return;
+
+			JFormattedTextField field = (JFormattedTextField) e.getSource();
+			try {
+				myData.IM_priority = Integer.parseInt(field.getText());
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(ego, "Invalid value, priority must be an integer.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				doNotUpdate = true;
+				IMpriorityValueEdit.setValue(myData.IM_priority);
+				doNotUpdate = false;
 			}
 		});
 		main.add(IMpriorityValueEdit);
@@ -196,25 +187,23 @@ public class HolmesSPNtransitionEditor extends JFrame {
 		DTdelayValueEdit = new JFormattedTextField(format);
 		DTdelayValueEdit.setBounds(posX+130, posY, 80, 20);
 		DTdelayValueEdit.setValue(myData.DET_delay);
-		DTdelayValueEdit.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					int priority = Integer.parseInt(field.getText());
-					if(priority < 1)
-						throw new Exception();
-					
-					myData.DET_delay = priority;
-				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(ego, "Invalid value, delay must be a positive integer.", "Error", 
-							JOptionPane.ERROR_MESSAGE);
-					doNotUpdate = true;
-					DTdelayValueEdit.setValue(myData.DET_delay);
-					doNotUpdate = false;
-				}
+		DTdelayValueEdit.addPropertyChangeListener("value", e -> {
+			if(doNotUpdate)
+				return;
+
+			JFormattedTextField field = (JFormattedTextField) e.getSource();
+			try {
+				int priority = Integer.parseInt(field.getText());
+				if(priority < 1)
+					throw new Exception();
+
+				myData.DET_delay = priority;
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(ego, "Invalid value, delay must be a positive integer.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				doNotUpdate = true;
+				DTdelayValueEdit.setValue(myData.DET_delay);
+				doNotUpdate = false;
 			}
 		});
 		main.add(DTdelayValueEdit);
@@ -226,29 +215,27 @@ public class HolmesSPNtransitionEditor extends JFrame {
 		SCHstartValueEdit = new JFormattedTextField(format);
 		SCHstartValueEdit.setBounds(posX+130, posY, 80, 20);
 		SCHstartValueEdit.setValue(myData.SCH_start);
-		SCHstartValueEdit.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				String data = field.getText();
-				try {
-					int start = Integer.parseInt(data);
-					if(start < 0)
-						throw new Exception();
-					
-					myData.SCH_start = ""+start;
-				} catch (Exception ex) {
-					if(data.equals("start")) {
-						myData.SCH_start = data;
-					} else {
-						JOptionPane.showMessageDialog(ego, "Invalid value, either \"start\" text of non-negative value expected.", "Error", 
-								JOptionPane.ERROR_MESSAGE);
-						doNotUpdate = true;
-						SCHstartValueEdit.setValue(myData.SCH_start);
-						doNotUpdate = false;
-					}
+		SCHstartValueEdit.addPropertyChangeListener("value", e -> {
+			if(doNotUpdate)
+				return;
+
+			JFormattedTextField field = (JFormattedTextField) e.getSource();
+			String data = field.getText();
+			try {
+				int start = Integer.parseInt(data);
+				if(start < 0)
+					throw new Exception();
+
+				myData.SCH_start = ""+start;
+			} catch (Exception ex) {
+				if(data.equals("start")) {
+					myData.SCH_start = data;
+				} else {
+					JOptionPane.showMessageDialog(ego, "Invalid value, either \"start\" text of non-negative value expected.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					doNotUpdate = true;
+					SCHstartValueEdit.setValue(myData.SCH_start);
+					doNotUpdate = false;
 				}
 			}
 		});
@@ -261,25 +248,23 @@ public class HolmesSPNtransitionEditor extends JFrame {
 		SCHrepValueEdit = new JFormattedTextField(format);
 		SCHrepValueEdit.setBounds(posX+215, posY, 80, 20);
 		SCHrepValueEdit.setValue(myData.SCH_rep);
-		SCHrepValueEdit.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					int priority = Integer.parseInt(field.getText());
-					if(priority < 0)
-						throw new Exception();
-					
-					myData.SCH_rep = priority;
-				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(ego, "Invalid value, delay must be a non-negatice integer.", "Error", 
-							JOptionPane.ERROR_MESSAGE);
-					doNotUpdate = true;
-					SCHrepValueEdit.setValue(myData.SCH_rep);
-					doNotUpdate = false;
-				}
+		SCHrepValueEdit.addPropertyChangeListener("value", e -> {
+			if(doNotUpdate)
+				return;
+
+			JFormattedTextField field = (JFormattedTextField) e.getSource();
+			try {
+				int priority = Integer.parseInt(field.getText());
+				if(priority < 0)
+					throw new Exception();
+
+				myData.SCH_rep = priority;
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(ego, "Invalid value, delay must be a non-negatice integer.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				doNotUpdate = true;
+				SCHrepValueEdit.setValue(myData.SCH_rep);
+				doNotUpdate = false;
 			}
 		});
 		main.add(SCHrepValueEdit);
@@ -291,29 +276,27 @@ public class HolmesSPNtransitionEditor extends JFrame {
 		SCHendValueEdit = new JFormattedTextField(format);
 		SCHendValueEdit.setBounds(posX+300, posY, 80, 20);
 		SCHendValueEdit.setValue(myData.SCH_end);
-		SCHendValueEdit.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				String data = field.getText();
-				try {
-					int end = Integer.parseInt(data);
-					if(end < 0)
-						throw new Exception();
-					
-					myData.SCH_end = ""+end;
-				} catch (Exception ex) {
-					if(data.equals("end")) {
-						myData.SCH_end = data;
-					} else {
-						JOptionPane.showMessageDialog(ego, "Invalid value, either \"end\" text of non-negative value expected.", "Error", 
-								JOptionPane.ERROR_MESSAGE);
-						doNotUpdate = true;
-						SCHendValueEdit.setValue(myData.SCH_end);
-						doNotUpdate = false;
-					}
+		SCHendValueEdit.addPropertyChangeListener("value", e -> {
+			if(doNotUpdate)
+				return;
+
+			JFormattedTextField field = (JFormattedTextField) e.getSource();
+			String data = field.getText();
+			try {
+				int end = Integer.parseInt(data);
+				if(end < 0)
+					throw new Exception();
+
+				myData.SCH_end = ""+end;
+			} catch (Exception ex) {
+				if(data.equals("end")) {
+					myData.SCH_end = data;
+				} else {
+					JOptionPane.showMessageDialog(ego, "Invalid value, either \"end\" text of non-negative value expected.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					doNotUpdate = true;
+					SCHendValueEdit.setValue(myData.SCH_end);
+					doNotUpdate = false;
 				}
 			}
 		});
@@ -337,12 +320,7 @@ public class HolmesSPNtransitionEditor extends JFrame {
 		saveAndExit.setFocusPainted(false);
 		saveAndExit.setBounds(posX+115, posY+=25, 160, 32);
 		saveAndExit.setToolTipText("One action back");
-		saveAndExit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				ego.dispatchEvent(new WindowEvent(ego, WindowEvent.WINDOW_CLOSING));
-			}
-		});
+		saveAndExit.addActionListener(actionEvent -> ego.dispatchEvent(new WindowEvent(ego, WindowEvent.WINDOW_CLOSING)));
 		main.add(saveAndExit);
 		
 		add(main, BorderLayout.CENTER);

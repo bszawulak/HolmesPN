@@ -1998,30 +1998,16 @@ public class IOprotocols {
                     p.setTokensNumber(0);
                 }
             }
-			/*
-			for (Transition n: sn.getSubTransitions()) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().add(n);
-			}
-			for (Place n: sn.getSubPlaces()) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().add(n);
-			}
-			*/
             for (Arc n : sn.getSubArcs()) {
                 n.setSelected(false);
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().add(n);
             }
 
-            //ArrayList<StatePlacesVector> spv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().accessStateMatrix();
-
             in.close();
             file.close();
 
             System.out.println("Object has been deserialized ");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
     }

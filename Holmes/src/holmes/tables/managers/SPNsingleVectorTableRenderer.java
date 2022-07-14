@@ -17,7 +17,6 @@ import holmes.petrinet.elements.Transition.StochaticsType;
  */
 public class SPNsingleVectorTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
-	@SuppressWarnings("unused")
 	private JTable table;
 	private static final Font fontNormal =  new Font("Verdana", Font.PLAIN, 12);
 	
@@ -35,7 +34,7 @@ public class SPNsingleVectorTableRenderer implements TableCellRenderer {
 	 * @param isSelected boolean - czy zaznaczona komórka
 	 * @param hasFocus boolean - czy aktywna komórka
 	 * @param row int - numer wiersza
-	 * @param columnt int - numer kolumny
+	 * @param column int - numer kolumny
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {

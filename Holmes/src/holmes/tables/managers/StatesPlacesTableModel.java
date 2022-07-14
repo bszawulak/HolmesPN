@@ -113,11 +113,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
      * Zwraca status edytowalności komórek.
      */
     public boolean isCellEditable(int row, int column) {
-    	if(column > 1) {
-    		return true;
-    	} else { 
-    		return false;
-    	}
+		return ( column > 1 );
     }
     
     /**

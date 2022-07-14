@@ -255,11 +255,11 @@ public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 		
 		write(bw,"        </graphics>");
 		write(bw, "      </node>");
-		
-		int lastParentID = grParents.get(locations-1);
-		return lastParentID;
+
+		return grParents.get(locations-1);
 	}
-	
+
+	@SuppressWarnings("unused")
 	public void writeDurationData(BufferedWriter bw, int currID, int locations, ArrayList<Integer> locationsSheetID, 
 			ArrayList<Integer> durationsList, int xOff, int yOff, ArrayList<Integer> stateForEL ) {
 		int col_count = durationsList.size();
@@ -317,8 +317,9 @@ public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 		write(bw, "        </attribute>");
 	}
 	
-	public void writeIntervalData(BufferedWriter bw, int currID, int locations, ArrayList<Integer> locationsSheetID, 
-			ArrayList<ArrayList<Integer>> intervalMatrix, int xOff, int yOff, ArrayList<Integer> stateForEL) {
+	@SuppressWarnings("unused")
+	public void writeIntervalData(BufferedWriter bw, int currID, int locations, ArrayList<Integer> locationsSheetID,
+								  ArrayList<ArrayList<Integer>> intervalMatrix, int xOff, int yOff, ArrayList<Integer> stateForEL) {
 		
 		int col_count = intervalMatrix.size();
 		

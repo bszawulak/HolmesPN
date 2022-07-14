@@ -50,7 +50,7 @@ import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.StateSimulator;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.utilities.Tools;
 

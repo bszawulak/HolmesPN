@@ -1,5 +1,6 @@
 package holmes.tables;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
@@ -11,6 +12,7 @@ import holmes.darkgui.GUIManager;
  * @author MR
  */
 public class InvariantsSimulatorTableModel extends AbstractTableModel {
+	@Serial
 	private static final long serialVersionUID = -1557850148390063580L;
 	
 	private ArrayList<Integer> infeasibleInvariants;

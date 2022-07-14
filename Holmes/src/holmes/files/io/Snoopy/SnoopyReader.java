@@ -76,8 +76,8 @@ public class SnoopyReader {
 			try { 
 				buffer.close(); 
 			}
-			catch (Exception e2) {
-				;
+			catch (Exception ignored) {
+
 			}
 		}
 	}
@@ -135,6 +135,7 @@ public class SnoopyReader {
 	 * @param buffer BufferedReader - obiekt czytający
 	 * @param line String - ostatnio przeczytana linia
 	 */
+	@SuppressWarnings("StatementWithEmptyBody")
 	private void readSnoopyPlaces(BufferedReader buffer, String line) {
 		String backFirstLine = line;
 		int placesCounter = -1;
@@ -203,9 +204,9 @@ public class SnoopyReader {
 					} //2nd
 					
 					if(!firstPass) {
-						if(readAnything != true) {
+						if(!readAnything) {
 							while(!(line = buffer.readLine()).contains("</attribute>") ) {
-								;
+
 							}
 							line = buffer.readLine();
 						}
@@ -265,7 +266,7 @@ public class SnoopyReader {
 					if(line.contains("<attribute name=\"ID\"")) {
 						readAnything = true;
 						while(!(line = buffer.readLine()).contains("</attribute>")) { //ignore
-							;
+
 						}
 						line = buffer.readLine();
 					}
@@ -287,7 +288,7 @@ public class SnoopyReader {
 					if(line.contains("<attribute name=\"Logic\"")) {
 						readAnything = true;
 						while(!(line = buffer.readLine()).contains("</attribute>")) { //ignore
-							;
+
 						}
 						line = buffer.readLine();
 					}
@@ -329,7 +330,7 @@ public class SnoopyReader {
 									
 									if(resizeFactor==0)
 										resizeFactor=1;
-								} catch (Exception e) { }
+								} catch (Exception ignored) { }
 								
 								x *= resizeFactor;
 								y *= resizeFactor;
@@ -407,7 +408,7 @@ public class SnoopyReader {
 			} else if(node instanceof Transition) {
 				((Transition)node).defColor = new Color(r,g,b);
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 	}
@@ -417,6 +418,7 @@ public class SnoopyReader {
 	 * @param buffer BufferedReader - obiekt czytający
 	 * @param line String - ostatnio przeczytana linia
 	 */
+	@SuppressWarnings("StatementWithEmptyBody")
 	private void readSnoopyTransitions(BufferedReader buffer, String line) {
 		String backFirstLine = line;
 		int transitionsCounter = -1;
@@ -482,9 +484,9 @@ public class SnoopyReader {
 					} //2nd
 					
 					if(!firstPass) {
-						if(readAnything != true) {
+						if(!readAnything) {
 							while(!(line = buffer.readLine()).contains("</attribute>") ) {
-								;
+
 							}
 							line = buffer.readLine();
 						}
@@ -541,7 +543,7 @@ public class SnoopyReader {
 					if(line.contains("<attribute name=\"ID\"")) {
 						readAnything = true;
 						while(!(line = buffer.readLine()).contains("</attribute>")) { //ignore
-							;
+
 						}
 						line = buffer.readLine();
 					}
@@ -550,7 +552,7 @@ public class SnoopyReader {
 					if(line.contains("<attribute name=\"Logic\"")) {
 						readAnything = true;
 						while(!(line = buffer.readLine()).contains("</attribute>")) { //ignore
-							;
+
 						}
 						line = buffer.readLine();
 					}
@@ -617,7 +619,7 @@ public class SnoopyReader {
 									
 									if(resizeFactor==0)
 										resizeFactor=1;
-								} catch (Exception e) { }
+								} catch (Exception ignored) { }
 								
 								x *= resizeFactor;
 								y *= resizeFactor;
@@ -634,7 +636,7 @@ public class SnoopyReader {
 						}
 						snoopyNodesElLocIDList.add(subIDs);
 						
-						if(transition.getDPNstatus() == true || transition.getTPNstatus() == true)
+						if(transition.getDPNstatus() || transition.getTPNstatus())
 							transition.setTransType(TransitionType.TPN);
 					}
 				} //czytanie właściwości węzła
@@ -680,10 +682,7 @@ public class SnoopyReader {
 		// 0, 1 pierwszy wiersz (nazwy), 2 - tytuł wiersza, 3 wartość I wiersz, 4 jak 2, 5 jak 3
 		try {
 			transition.setDPNduration(Double.parseDouble((String) tableVector.get(3)));
-			if(transition.getDPNduration() != 0)
-				transition.setDPNstatus(true);
-			else
-				transition.setDPNstatus(false);
+			transition.setDPNstatus(transition.getDPNduration() != 0);
 		} catch (Exception e) {
 			transition.setDPNduration(0);
 			transition.setDPNstatus(false);
@@ -780,9 +779,9 @@ public class SnoopyReader {
 					} //2nd
 					
 					if(!firstPass) {
-						if(readAnything != true) {
+						if(!readAnything) {
 							while(!(line = buffer.readLine()).contains("</attribute>") ) {
-								;
+
 							}
 							line = buffer.readLine();
 						}
@@ -870,7 +869,7 @@ public class SnoopyReader {
 									
 									if(resizeFactor==0)
 										resizeFactor=1;
-								} catch (Exception e) { }
+								} catch (Exception ignored) { }
 								
 								x *= resizeFactor;
 								y *= resizeFactor;
@@ -929,6 +928,7 @@ public class SnoopyReader {
 	 * @param buffer BufferedReader - obiekt czytający
 	 * @param line String - ostatnio przeczytana linia
 	 */
+	@SuppressWarnings("StatementWithEmptyBody")
 	private void readSnoopyCoarseTransitions(BufferedReader buffer, String line) {
 		String backFirstLine = line;
 		int coarseTransitionsCounter = -1;
@@ -997,9 +997,9 @@ public class SnoopyReader {
 					} //2nd
 					
 					if(!firstPass) {
-						if(readAnything != true) {
+						if(!readAnything) {
 							while(!(line = buffer.readLine()).contains("</attribute>") ) {
-								;
+
 							}
 							line = buffer.readLine();
 						}
@@ -1086,7 +1086,7 @@ public class SnoopyReader {
 									
 									if(resizeFactor==0)
 										resizeFactor=1;
-								} catch (Exception e) { }
+								} catch (Exception ignored) { }
 								
 								x *= resizeFactor;
 								y *= resizeFactor;
@@ -1215,6 +1215,7 @@ public class SnoopyReader {
 	 * @param line String - ostatnio przeczytana linia
 	 * @param arcType TypesOfArcs - typ łuku wykryty w metodzie nadrzędnej
 	 */
+	@SuppressWarnings("StatementWithEmptyBody")
 	private void readEdges(BufferedReader buffer, String line, TypeOfArc arcType) {
 		String backFirstLine = line;
 		int edgesCounter = -1;
@@ -1278,9 +1279,9 @@ public class SnoopyReader {
 					} //2nd
 					
 					if(!firstPass) {
-						if(readAnything != true) {
+						if(!readAnything) {
 							while(!(line = buffer.readLine()).contains("</attribute>") ) {
-								;
+
 							}
 							line = buffer.readLine();
 						}
@@ -1372,7 +1373,7 @@ public class SnoopyReader {
 											int coarseID = snoopyNodesIdList.size() - snoopyCoarseNodesIdList.size() + coarseIndex;
 											sourceEL = nodesList.get(coarseID).getElementLocations().get(coarseSubLocation);
 											currentType = TypeOfArc.META_ARC;
-											if(snoopyErrorFixed == false) //tylko dla coarse-nodes
+											if(!snoopyErrorFixed) //tylko dla coarse-nodes
 												edgesCounter--;
 										}
 									} else {
@@ -1422,7 +1423,7 @@ public class SnoopyReader {
 											int coarseID = snoopyNodesIdList.size() - snoopyCoarseNodesIdList.size() + coarseIndex;
 											targetEL = nodesList.get(coarseID).getElementLocations().get(coarseSubLocation);
 											currentType = TypeOfArc.META_ARC;
-											if(snoopyErrorFixed == false) //tylko dla coarse-nodes
+											if(!snoopyErrorFixed) //tylko dla coarse-nodes
 												edgesCounter--;
 										}
 									} else {
@@ -1445,7 +1446,7 @@ public class SnoopyReader {
 											break;
 										}
 									}
-									if(foundCoarse==false)
+									if(!foundCoarse)
 										GUIManager.getDefaultGUIManager().log("Error: unable to load arc data (SnoopySourceID:"+sourceID+
 												", SnoopyTargetID:"+targetID+")", "error", true);
 									else {
@@ -1503,7 +1504,7 @@ public class SnoopyReader {
 			location = tmp.indexOf("\"");
 			tmp = tmp.substring(0, location);
 			result = Double.parseDouble(tmp);
-		} catch (Exception e) {	
+		} catch (Exception ignored) {
 		}
 		return result;
 	}
@@ -1522,7 +1523,7 @@ public class SnoopyReader {
 			String tmp = line.substring(location + signature.length());
 			location = tmp.indexOf("\"");
 			result = tmp.substring(0, location);
-		} catch (Exception e) {	
+		} catch (Exception ignored) {
 		}
 		return result;
 	}
@@ -1536,12 +1537,12 @@ public class SnoopyReader {
 	 */
 	private String readStrCDATA(BufferedReader buffer, String line, String defaultVal) {
 		try {
-			String resultLine = line;
+			StringBuilder resultLine = new StringBuilder(line);
 			boolean reset = false;
 			while(!(line.contains("]]>"))) {
 				buffer.mark(1024);
 				line = buffer.readLine();
-				resultLine += line;
+				resultLine.append(line);
 				reset = true;
 				
 				//if(line.contains("    <"))
@@ -1556,10 +1557,10 @@ public class SnoopyReader {
 			//do tego miejsca wchodza wszystkie monofunkcyjne]]>
 			
 			int location = resultLine.indexOf("[CDATA[");
-			resultLine = resultLine.substring(location + 7);
+			resultLine = new StringBuilder(resultLine.substring(location + 7));
 			location = resultLine.indexOf("]]>");
-			resultLine = resultLine.substring(0, location);
-			return resultLine;
+			resultLine = new StringBuilder(resultLine.substring(0, location));
+			return resultLine.toString();
 		} catch (Exception e) {	
 			return defaultVal;
 		}
@@ -1575,12 +1576,12 @@ public class SnoopyReader {
 	 */
 	private double readDoubleCDATA(BufferedReader buffer, String line, double defaultVal) {
 		try {
-			String resultLine = line;
+			StringBuilder resultLine = new StringBuilder(line);
 			boolean reset = false;
 			while(!(line.contains("]]>"))) {
 				buffer.mark(1024);
 				line = buffer.readLine();
-				resultLine += line;
+				resultLine.append(line);
 				reset = true;
 				
 				//if(line.contains("    <"))
@@ -1594,10 +1595,10 @@ public class SnoopyReader {
 			//
 			//do tego miejsca wchodza wszystkie monofunkcyjne]]>
 			int location = resultLine.indexOf("[CDATA[");
-			resultLine = resultLine.substring(location + 7);
+			resultLine = new StringBuilder(resultLine.substring(location + 7));
 			location = resultLine.indexOf("]]>");
-			resultLine = resultLine.substring(0, location);
-			return Double.parseDouble(resultLine);
+			resultLine = new StringBuilder(resultLine.substring(0, location));
+			return Double.parseDouble(resultLine.toString());
 		} catch (Exception e) {	
 			return defaultVal;
 		}

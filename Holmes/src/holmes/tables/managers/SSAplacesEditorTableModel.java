@@ -1,6 +1,7 @@
 package holmes.tables.managers;
 
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.EventObject;
 
@@ -16,6 +17,7 @@ import holmes.windows.managers.HolmesSSAplacesEditor;
  * @author MR
  */
 public class SSAplacesEditorTableModel extends DefaultTableModel {
+	@Serial
 	private static final long serialVersionUID = 5334544477964813872L;
 	private String[] columnNames;
 	private ArrayList<SSAdataClass> dataMatrix;
@@ -109,11 +111,7 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
      * Zwraca status edytowalności komórek.
      */
     public boolean isCellEditable(int row, int column) {
-    	if(column == 2) {
-    		return true;
-    	} else { 
-    		return false;
-    	}
+		return ( column == 2 );
     }
     
     /**

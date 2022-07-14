@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.io.Serial;
 import java.text.DecimalFormat;
 
 /**
@@ -13,8 +12,8 @@ import java.text.DecimalFormat;
  *
  */
 public class StatesPlacesTableRendererXTPN implements TableCellRenderer {
-    @Serial
-    private static final long serialVersionUID = 9082638442589827284L;
+   // @Serial
+    //private static final long serialVersionUID = 9082638442589827284L;
 
     public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
     private static final DecimalFormat formatter = new DecimalFormat( "#" );
@@ -73,7 +72,7 @@ public class StatesPlacesTableRendererXTPN implements TableCellRenderer {
             oLabel.setBackground(Color.lightGray);
 
         if(value instanceof Double) {
-            value = formatter.format((Number)value);
+            value = formatter.format(value);
         }
 
         oLabel.setText(value.toString());

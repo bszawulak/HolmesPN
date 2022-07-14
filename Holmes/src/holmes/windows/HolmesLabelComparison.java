@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 
 public class HolmesLabelComparison extends JFrame {
-
     JTextArea resultArea = null;
     PetriNetData fPND = null;
     PetriNetData sPND = null;
@@ -59,6 +58,7 @@ public class HolmesLabelComparison extends JFrame {
         hgp.compareDRGFwithoutDensity();
     }
 
+    @SuppressWarnings("SameParameterValue")
     private JPanel createOutputPanel(int x, int y, int width, int height) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());

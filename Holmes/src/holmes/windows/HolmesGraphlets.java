@@ -6,7 +6,6 @@ import holmes.analyse.comparison.experiment.NetGenerator;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.*;
 import holmes.utilities.ColorPalette;
-import jxl.write.WritableFont;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.stream.DoubleStream;
 
 public class HolmesGraphlets extends JFrame {
-
     private GUIManager overlord;
     private JPanel mainPanel;
     JComboBox<String> orbit;
@@ -180,7 +178,7 @@ public class HolmesGraphlets extends JFrame {
         infoPanel.add(oscroll);
         //panel.add(orbitPanel);
 
-        panel.add(infoPanel, BorderLayout.SOUTH);;
+        panel.add(infoPanel, BorderLayout.SOUTH);
 
         this.add(panel, BorderLayout.CENTER);
         this.setPreferredSize(new Dimension(600, 850));

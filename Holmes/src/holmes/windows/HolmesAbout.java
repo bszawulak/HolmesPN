@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.Serial;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -24,6 +25,7 @@ import holmes.utilities.Tools;
  *
  */
 public class HolmesAbout extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 6034143130559149651L;
 	JFrame parentFrame;
 	JTextArea textArea;
@@ -33,7 +35,7 @@ public class HolmesAbout extends JFrame {
 		parentFrame.setEnabled(false);
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
 		setTitle("About the program.");
@@ -49,7 +51,7 @@ public class HolmesAbout extends JFrame {
 		try {
 			BufferedImage wPic = ImageIO.read(this.getClass().getResource("/abyssHolmes2.png"));
 			((MyTextArea)textArea).setBackgroundImage(wPic);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 		
@@ -95,7 +97,7 @@ public class HolmesAbout extends JFrame {
 			JLabel wIcon = new JLabel(new ImageIcon(wPic));
 			wIcon.setBounds(10, 10, 160, 160);
 			panel.add(wIcon);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 		
@@ -178,7 +180,8 @@ public class HolmesAbout extends JFrame {
 		textArea.setCaretPosition(0);
 	}
 	
-	class MyTextArea extends JTextArea {
+	static class MyTextArea extends JTextArea {
+		@Serial
 		private static final long serialVersionUID = -6987188635486059891L;
 		private Image backgroundImage;
 

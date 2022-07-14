@@ -5,7 +5,7 @@ import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.data.P_StateManager;
 import holmes.petrinet.data.StatePlacesVectorXTPN;
 import holmes.petrinet.elements.Place;
-import holmes.petrinet.simulators.NetSimulator;
+import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.utilities.Tools;
 import holmes.windows.managers.HolmesStatesEditorXTPN;
 
@@ -55,7 +55,7 @@ public class HolmesXTPNtokens extends JFrame {
 
         }
 
-        if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != NetSimulator.SimulatorMode.STOPPED)
+        if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)
             mainSimulatorActive = true;
 
         //odblokowuje okno wywoławcze

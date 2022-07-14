@@ -125,10 +125,10 @@ public class ClusteringExcelWriter {
 	 * @throws Exception - płacze i jęki jxl'a
 	 */
 	private void fillClusterDatasheet(WritableSheet clusterSheet, int clusterIndex, boolean extended) throws Exception {
-		int rowIndex = 0;
-		int transStartRow = 0;
+		int rowIndex;
+		int transStartRow;
 		//int colIndex = 0;
-		String txt = "";
+		String txt;
 		//double clusterMSS = dataCore.metaData.clusterMSS[clusterIndex];
 		double clusterMSS = dataCore.metaData.clusterMSS.get(clusterIndex);
 		int clusterSize = dataCore.clustersInv.get(clusterIndex).size();
@@ -220,15 +220,15 @@ public class ClusteringExcelWriter {
 			ArrayList<String> invArray = dataCore.getNormalizedInvariant(invNo, false);
 			String nr = invArray.get(0);
 			String mct = invArray.get(1);
-			String transitions = "";
+			StringBuilder transitions = new StringBuilder();
 			for(int i=2; i<invArray.size(); i++)
 			{
-				transitions += invArray.get(i) + "  ;  ";
+				transitions.append(invArray.get(i)).append("  ;  ");
 			}
 			
 			addTextCell(clusterSheet, 1, rowIndex, ""+nr, defCellFormat, null);
 			addTextCell(clusterSheet, 2, rowIndex, mct, defCellFormat, null);
-			addTextCell(clusterSheet, 4, rowIndex, transitions, defCellFormat, null);
+			addTextCell(clusterSheet, 4, rowIndex, transitions.toString(), defCellFormat, null);
 			rowIndex++;
 		}
 		
@@ -411,8 +411,8 @@ public class ClusteringExcelWriter {
 	 * @param value Integer - wartość int do wpisania
 	 * @param format WritableCellFormat - domyślny format czcionek
 	 * @param col Colour - jeśli jest podany (a nie null) to wtedy jest uwzględniany
-	 * @throws WriteException
-	 * @throws RowsExceededException
+	 * @throws WriteException ex1
+	 * @throws RowsExceededException ex2
 	 */
 	private void addIntCell(WritableSheet sheet, int column, int row, Integer value, WritableCellFormat format, Colour col) throws WriteException, RowsExceededException {
 		if(col != null) {
@@ -450,8 +450,8 @@ public class ClusteringExcelWriter {
 	 * @param s String - wartość int do wpisania
 	 * @param format WritableCellFormat - domyślny format czcionek
 	 * @param col Colour - jeśli jest podany (a nie null) to wtedy jest uwzględniany
-	 * @throws WriteException
-	 * @throws RowsExceededException
+	 * @throws WriteException ex1
+	 * @throws RowsExceededException ex2
 	 */
 	private void addTextCell(WritableSheet sheet, int column, int row, String s, WritableCellFormat format, Colour col) throws WriteException, RowsExceededException {
 		if(col != null) {

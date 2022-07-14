@@ -22,7 +22,6 @@ import holmes.utilities.Tools;
  *
  */
 public class HolmesNodeInfoActions {
-	@SuppressWarnings("unused")
 	private JFrame parentFrame;
 	private GUIManager overlord;
 	
@@ -168,14 +167,13 @@ public class HolmesNodeInfoActions {
 		
 		counter = 0;
 		for(ArrayList<Integer> invariant : invariantsSubMatrix) {
-			String vector = "";
-			for(int t=0; t<invariant.size(); t++) {
-				int fireValue = invariant.get(t);
-				vector += fireValue+";";
-				if(fireValue == 0)
+			StringBuilder vector = new StringBuilder();
+			for (int fireValue : invariant) {
+				vector.append(fireValue).append(";");
+				if (fireValue == 0)
 					continue;
 			}
-			vector = vector.substring(0, vector.length()-1);
+			vector = new StringBuilder(vector.substring(0, vector.length() - 1));
 			notepad.addTextLineNL(counter+";"+vector, "text");
 			counter++;
 		}
@@ -220,14 +218,13 @@ public class HolmesNodeInfoActions {
 		
 		counter = 0;
 		for(ArrayList<Integer> invariant : invariantsSubMatrix) {
-			String vector = "";
-			for(int t=0; t<invariant.size(); t++) {
-				int fireValue = invariant.get(t);
-				vector += fireValue+";";
-				if(fireValue == 0)
+			StringBuilder vector = new StringBuilder();
+			for (int fireValue : invariant) {
+				vector.append(fireValue).append(";");
+				if (fireValue == 0)
 					continue;
 			}
-			vector = vector.substring(0, vector.length()-1);
+			vector = new StringBuilder(vector.substring(0, vector.length() - 1));
 			notepad.addTextLineNL(counter+";"+vector, "text");
 			counter++;
 		}
@@ -282,10 +279,10 @@ public class HolmesNodeInfoActions {
 			}
 		}
 		
-		String vector = "";
+		StringBuilder vector = new StringBuilder();
 		for(int t=0; t<invariant.size(); t++) {
 			int fireValue = invariant.get(t);
-			vector += fireValue+";";
+			vector.append(fireValue).append(";");
 			if(fireValue == 0)
 				continue;
 			
@@ -294,10 +291,10 @@ public class HolmesNodeInfoActions {
 			String t2 = Tools.setToSize("Fired: "+fireValue, 12, false);
 			notepad.addTextLineNL(t1 + t2 + " ; "+realT.getName(), "text");
 		}
-		vector = vector.substring(0, vector.length()-1);
+		vector = new StringBuilder(vector.substring(0, vector.length() - 1));
 		notepad.addTextLineNL("", "text");
 		notepad.addTextLineNL("Invariant vector:", "text");
-		notepad.addTextLineNL(vector, "text");
+		notepad.addTextLineNL(vector.toString(), "text");
 
 		//notepad.setCaretFirstLine();
 	}
@@ -330,32 +327,31 @@ public class HolmesNodeInfoActions {
 		notepad.addTextLineNL("Inv: "+(invNo)+" (original index in the program: "+(index+1)+")", "text");
 
 		for(int mct : mcts) {
-			String transInMCT = "";
+			StringBuilder transInMCT = new StringBuilder();
 			for(Transition trans : mctSets.get(mct)) {
-				transInMCT += "t"+transitions.indexOf(trans)+"_"+trans.getName()+",  ";
+				transInMCT.append("t").append(transitions.indexOf(trans)).append("_").append(trans.getName()).append(",  ");
 			}
-			transInMCT = transInMCT.substring(0, transInMCT.length()-3);
+			transInMCT = new StringBuilder(transInMCT.substring(0, transInMCT.length() - 3));
 			notepad.addTextLineNL("  [MCT_"+(mct+1)+": "+transInMCT+"]", "text");
 		}
 		
 		for(String transName : singleT)
 			notepad.addTextLineNL(transName, "text");
 
-		String vector = "";
-		for(int t=0; t<invariant.size(); t++) {
-			int fireValue = invariant.get(t);
-			vector += fireValue+";";
-			if(fireValue == 0)
+		StringBuilder vector = new StringBuilder();
+		for (int fireValue : invariant) {
+			vector.append(fireValue).append(";");
+			if (fireValue == 0)
 				continue;
-			
+
 			//Transition realT = transitions.get(t);
 			//String t1 = Tools.setToSize("t"+t, 5, false);
 			//String t2 = Tools.setToSize("Fired: "+fireValue, 12, false);
 			//notepad.addTextLineNL(t1 + t2 + " ; "+realT.getName(), "text");
 		}
-		vector = vector.substring(0, vector.length()-1);
+		vector = new StringBuilder(vector.substring(0, vector.length() - 1));
 		notepad.addTextLineNL("", "text");
 		notepad.addTextLineNL("Invariant vector:", "text");
-		notepad.addTextLineNL(vector, "text");
+		notepad.addTextLineNL(vector.toString(), "text");
 	}
 }

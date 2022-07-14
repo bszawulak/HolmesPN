@@ -20,11 +20,11 @@ import holmes.petrinet.elements.Transition;
  *
  */
 public class NetPropertiesAnalyzer {
-	private ArrayList<Arc> arcs = new ArrayList<Arc>();
-	private ArrayList<Place> places = new ArrayList<Place>();
-	private ArrayList<Transition> transitions = new ArrayList<Transition>();
-	private ArrayList<Node> nodes = new ArrayList<Node>();
-	private ArrayList<MetaNode> metaNodes = new ArrayList<MetaNode>();
+	private ArrayList<Arc> arcs;
+	private ArrayList<Place> places;
+	private ArrayList<Transition> transitions;
+	private ArrayList<Node> nodes;
+	private ArrayList<MetaNode> metaNodes;
 
 	ArrayList<Node> checked = new ArrayList<Node>();
 
@@ -198,14 +198,14 @@ public class NetPropertiesAnalyzer {
 			boolean arcIn = false;
 			boolean arcOut = false;
 			for (ElementLocation el : t.getElementLocations()) {
-				if (!el.getInArcs().isEmpty() && arcIn == false)
+				if (!el.getInArcs().isEmpty() && !arcIn)
 					arcIn = true;
-				if (!el.getOutArcs().isEmpty() && arcOut == false)
+				if (!el.getOutArcs().isEmpty() && !arcOut)
 					arcOut = true;
 			}
-			if (arcIn == false && arcOut == true)
+			if (!arcIn && arcOut)
 				isFT0 = true;
-			if (arcIn == true && arcOut == false)
+			if (arcIn && !arcOut)
 				isTF0 = true;
 		}
 
@@ -213,14 +213,14 @@ public class NetPropertiesAnalyzer {
 			boolean arcIn = false;
 			boolean arcOut = false;
 			for (ElementLocation el : p.getElementLocations()) {
-				if (!el.getInArcs().isEmpty() && arcIn == false)
+				if (!el.getInArcs().isEmpty() && !arcIn)
 					arcIn = true;
-				if (!el.getOutArcs().isEmpty() && arcOut == false)
+				if (!el.getOutArcs().isEmpty() && !arcOut)
 					arcOut = true;
 			}
-			if (arcIn == false && arcOut == true)
+			if (!arcIn && arcOut)
 				isFP0 = true;
-			if (arcIn == true && arcOut == false)
+			if (arcIn && !arcOut)
 				isPF0 = true;
 		}
 		ft0Prop.set(1, isFT0);
@@ -319,7 +319,7 @@ public class NetPropertiesAnalyzer {
 
 		// SC - strongly connected net
 		boolean isStronglyConnected = false;
-		if(fastStrongConnectivityTest() == true) {
+		if(fastStrongConnectivityTest()) {
 			visitedNodes = checkNetStrongConnectivity(start, new ArrayList<Node>());
 			if(visitedNodes == numberOfNodes)
 				isStronglyConnected = true;
@@ -345,7 +345,7 @@ public class NetPropertiesAnalyzer {
 	}
 
 	@SuppressWarnings("unused")
-	/**
+	/*
 	 * Metoda sprawdzająca silne połączenie elementów sieci.
 	 * @param n1 Node - wierzchołek nr 1
 	 * @param n2 Node - wierzchołek nr 2
@@ -354,7 +354,7 @@ public class NetPropertiesAnalyzer {
 	 * @return boolean - true, jeśli silnie połączona
 	 */
 	private boolean checkStronglyConnectionExist(Node n1, Node n2, Node last, boolean mode) {
-		if (mode == true && n1.getID() == n2.getID())
+		if (mode && n1.getID() == n2.getID())
 			return false;
 
 		if (n1.getInArcs()!=null)
@@ -423,7 +423,7 @@ public class NetPropertiesAnalyzer {
 		{
 			for (Arc a : start.getOutArcs()) { //łuki wychodzące z aktualnego
 				Node nod = a.getEndNode(); //wierzchołek końcowy łuku
-				if(reachable.contains(nod) == false) {//jeśli jeszcze nie ma
+				if(!reachable.contains(nod)) {//jeśli jeszcze nie ma
 					reachable.add(nod);
 					checkNetStrongConnectivity(nod, reachable);
 				}

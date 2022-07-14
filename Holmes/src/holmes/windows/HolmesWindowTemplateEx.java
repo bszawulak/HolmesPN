@@ -2,7 +2,7 @@ package holmes.windows;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Place;
-import holmes.petrinet.simulators.NetSimulator;
+import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.utilities.Tools;
 
 import javax.swing.*;
@@ -35,7 +35,7 @@ public class HolmesWindowTemplateEx extends JFrame {
 
         }
 
-        if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != NetSimulator.SimulatorMode.STOPPED)
+        if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)
             mainSimulatorActive = true;
 
         //oblokowuje główne okno

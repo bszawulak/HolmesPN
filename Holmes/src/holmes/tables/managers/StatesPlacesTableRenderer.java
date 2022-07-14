@@ -73,7 +73,7 @@ public class StatesPlacesTableRenderer implements TableCellRenderer {
     		oLabel.setBackground(Color.lightGray);
 
     	if(value instanceof Double) {
-            value = formatter.format((Number)value);
+            value = formatter.format(value);
         }
     	
     	oLabel.setText(value.toString());

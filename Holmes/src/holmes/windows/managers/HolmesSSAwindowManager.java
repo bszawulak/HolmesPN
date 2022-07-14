@@ -3,12 +3,11 @@ package holmes.windows.managers;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -38,18 +37,16 @@ import holmes.utilities.Tools;
  * @author MR
  */
 public class HolmesSSAwindowManager extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 8184934957669150556L;
 	private GUIManager overlord;
 	private JFrame parentWindow;
 	private JFrame ego;
-	private SSAplacesTableRenderer tableRenderer;
 	private SSAplacesTableModel tableModel;
 	private JTable table;
-	private JPanel tablePanel;
 	private JTextArea vectorDescrTextArea;
 	
 	private ArrayList<Place> places;
-	private PetriNet pn;
 	private SSAplacesManager ssaManager;
 	
 	private boolean doNotUpdate = false;
@@ -64,11 +61,11 @@ public class HolmesSSAwindowManager extends JFrame {
 		setTitle("Holmes SSA vectors manager");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
-    	this.pn = overlord.getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
     	this.ego = this;
     	this.parentWindow = parent;
     	this.places = pn.getPlaces();
@@ -118,7 +115,7 @@ public class HolmesSSAwindowManager extends JFrame {
         
 		table.setName("SSAvectorsTable");
 		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		tableRenderer = new SSAplacesTableRenderer();
+		SSAplacesTableRenderer tableRenderer = new SSAplacesTableRenderer();
 		table.setDefaultRenderer(Object.class, tableRenderer);
 		table.setDefaultRenderer(String.class, tableRenderer);
 		table.setDefaultRenderer(Double.class, tableRenderer);
@@ -127,7 +124,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		cellClickAction();
           	    }
           	 }
@@ -155,8 +152,8 @@ public class HolmesSSAwindowManager extends JFrame {
 		JPanel main = new JPanel(new BorderLayout());
 
 		JPanel submain = new JPanel(new BorderLayout());
-		
-		tablePanel = getMainTablePanel();
+
+		JPanel tablePanel = getMainTablePanel();
 		submain.add(tablePanel, BorderLayout.CENTER);
 		submain.add(getBottomPanel(), BorderLayout.SOUTH);
 		
@@ -172,6 +169,7 @@ public class HolmesSSAwindowManager extends JFrame {
 	 * @param column int - nr kolumny tablicy
 	 * @param value String - nowy opis
 	 */
+	@SuppressWarnings("unused")
 	public void changeState(int row, int column, String value) {
 		//TODO
 		//firingRatesManager.accessFRMatrix().get(row).setDescription(value);
@@ -194,27 +192,25 @@ public class HolmesSSAwindowManager extends JFrame {
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
 		selectStateButton.setIcon(Tools.getResIcon16("/icons/ssaWindow/selectSSAVectorIcon.png"));
-		selectStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				int selected = table.getSelectedRow();
-				if(selected == -1)
-					return;
-				
-				Object[] options = {"Set new SSA values", "Keep old ones",};
-				int n = JOptionPane.showOptionDialog(null,
-								"Set all places of the net according to the selected\n"
-								+ "SSA vector (table row: "+selected+") ?",
-								"Set new particles values?", JOptionPane.YES_NO_OPTION,
-								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-				if (n == 0) {
-					ssaManager.setNetworkSSAvector(selected);
-					tableModel.setSelected(selected);
-					tableModel.fireTableDataChanged();
-				}
+		selectStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfo();
+				return;
+			}
+			int selected = table.getSelectedRow();
+			if(selected == -1)
+				return;
+
+			Object[] options = {"Set new SSA values", "Keep old ones",};
+			int n = JOptionPane.showOptionDialog(null,
+							"Set all places of the net according to the selected\n"
+							+ "SSA vector (table row: "+selected+") ?",
+							"Set new particles values?", JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+			if (n == 0) {
+				ssaManager.setNetworkSSAvector(selected);
+				tableModel.setSelected(selected);
+				tableModel.fireTableDataChanged();
 			}
 		});
 		result.add(selectStateButton);
@@ -224,22 +220,20 @@ public class HolmesSSAwindowManager extends JFrame {
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
 		addNewStateButton.setIcon(Tools.getResIcon16("/icons/ssaWindow/addSSAVectorIcon.png"));
-		addNewStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				Object[] options = {"Add new vector", "Cancel",};
-				int n = JOptionPane.showOptionDialog(null,
-								"Remember current SSA particle numbers in the table?",
-								"Add new SSA vactor?", JOptionPane.YES_NO_OPTION,
-								JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-				if (n == 0) {
-					ssaManager.addCurrentStateAsSSAvector();
-					addLastStateToTable();
-					tableModel.fireTableDataChanged();
-				}
+		addNewStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfo();
+				return;
+			}
+			Object[] options = {"Add new vector", "Cancel",};
+			int n = JOptionPane.showOptionDialog(null,
+							"Remember current SSA particle numbers in the table?",
+							"Add new SSA vactor?", JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+			if (n == 0) {
+				ssaManager.addCurrentStateAsSSAvector();
+				addLastStateToTable();
+				tableModel.fireTableDataChanged();
 			}
 		});
 		result.add(addNewStateButton);
@@ -249,14 +243,12 @@ public class HolmesSSAwindowManager extends JFrame {
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
 		replaceStateButton.setIcon(Tools.getResIcon16("/icons/ssaWindow/replaceSSAVectorIcon.png"));
-		replaceStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				replaceStateAction();
+		replaceStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfo();
+				return;
 			}
+			replaceStateAction();
 		});
 		result.add(replaceStateButton);
 		
@@ -265,14 +257,12 @@ public class HolmesSSAwindowManager extends JFrame {
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
 		removeStateButton.setIcon(Tools.getResIcon16("/icons/ssaWindow/removeSSAVectorIcon.png"));
-		removeStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				removeStateAction();
+		removeStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfo();
+				return;
 			}
+			removeStateAction();
 		});
 		result.add(removeStateButton);
 		
@@ -281,16 +271,14 @@ public class HolmesSSAwindowManager extends JFrame {
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
 		editStateButton.setIcon(Tools.getResIcon32("/icons/ssaWindow/ssaEditor.png"));
-		editStateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(places.size() == 0) {
-					noNetInfo();
-					return;
-				}
-				int selected = table.getSelectedRow();
-				if(selected > -1)
-					new HolmesSSAplacesEditor(ego, ssaManager.getSSAvector(selected), selected);
+		editStateButton.addActionListener(actionEvent -> {
+			if(places.size() == 0) {
+				noNetInfo();
+				return;
 			}
+			int selected = table.getSelectedRow();
+			if(selected > -1)
+				new HolmesSSAplacesEditor(ego, ssaManager.getSSAvector(selected), selected);
 		});
 		result.add(editStateButton);
 		
@@ -413,25 +401,22 @@ public class HolmesSSAwindowManager extends JFrame {
 		else
 			typeCombo.setSelectedIndex(1);
 		
-		typeCombo.addActionListener(new ActionListener() {
-			@SuppressWarnings("unchecked")
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate)
-					return;
-				
-				JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
-				int mode = comboBox.getSelectedIndex();
-				if(mode == 0) {
-					ssaManager.getSSAvector(selectedRow).setType(SSAdataType.MOLECULES);
-					tableModel.changeType(selectedRow, SSAdataType.MOLECULES);
-					
-				} else {
-					ssaManager.getSSAvector(selectedRow).setType(SSAdataType.CONCENTRATION);
-					tableModel.changeType(selectedRow, SSAdataType.CONCENTRATION);
-				}
-				
-				tableModel.fireTableDataChanged();
+		typeCombo.addActionListener(actionEvent -> {
+			if(doNotUpdate)
+				return;
+
+			JComboBox<String> comboBox = (JComboBox<String>)actionEvent.getSource();
+			int mode = comboBox.getSelectedIndex();
+			if(mode == 0) {
+				ssaManager.getSSAvector(selectedRow).setType(SSAdataType.MOLECULES);
+				tableModel.changeType(selectedRow, SSAdataType.MOLECULES);
+
+			} else {
+				ssaManager.getSSAvector(selectedRow).setType(SSAdataType.CONCENTRATION);
+				tableModel.changeType(selectedRow, SSAdataType.CONCENTRATION);
 			}
+
+			tableModel.fireTableDataChanged();
 		});
 
 		result.add(typeCombo);
@@ -463,7 +448,7 @@ public class HolmesSSAwindowManager extends JFrame {
 				typeCombo.setSelectedIndex(1);
 			
 			doNotUpdate = false;
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 	}

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.Serial;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -36,6 +37,7 @@ import holmes.utilities.Tools;
  *
  */
 public class HolmesProgramProperties extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 2831478312283009975L;
 	@SuppressWarnings("unused")
 	private JFrame parentFrame;
@@ -54,7 +56,7 @@ public class HolmesProgramProperties extends JFrame {
 		
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
 		
@@ -141,6 +143,7 @@ public class HolmesProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createSnoopyReadSystemPanel(int x, int y, int w, int h) {
 		JPanel ioPanel = new JPanel(null);
 		ioPanel.setBorder(BorderFactory.createTitledBorder("I/O operations"));
@@ -158,11 +161,9 @@ public class HolmesProgramProperties extends JFrame {
 		JRadioButton resize80Button = new JRadioButton("80%");
 		resize80Button.setBounds(posX, posY+=20, 60, 20);
 		resize80Button.setActionCommand("0");
-		resize80Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "80", false);
-			}
+		resize80Button.addActionListener(actionEvent -> {
+			if(noAction) return;
+			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "80", false);
 		});
 		group.add(resize80Button);
 		ioPanel.add(resize80Button);
@@ -171,11 +172,9 @@ public class HolmesProgramProperties extends JFrame {
 		JRadioButton resize100Button = new JRadioButton("100%");
 		resize100Button.setBounds(posX+60, posY, 60, 20);
 		resize100Button.setActionCommand("1");
-		resize100Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "100", true);
-			}
+		resize100Button.addActionListener(actionEvent -> {
+			if(noAction) return;
+			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "100", true);
 		});
 		group.add(resize100Button);
 		ioPanel.add(resize100Button);
@@ -183,11 +182,9 @@ public class HolmesProgramProperties extends JFrame {
 		JRadioButton resize120Button = new JRadioButton("120%");
 		resize120Button.setBounds(posX+120, posY, 60, 20);
 		resize120Button.setActionCommand("2");
-		resize120Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "120", false);
-			}
+		resize120Button.addActionListener(actionEvent -> {
+			if(noAction) return;
+			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "120", false);
 		});
 		group.add(resize120Button);
 		ioPanel.add(resize120Button);
@@ -195,11 +192,9 @@ public class HolmesProgramProperties extends JFrame {
 		JRadioButton resize140Button = new JRadioButton("140%");
 		resize140Button.setBounds(posX, posY+=20, 60, 20);
 		resize140Button.setActionCommand("3");
-		resize140Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "140", false);
-			}
+		resize140Button.addActionListener(actionEvent -> {
+			if(noAction) return;
+			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "140", false);
 		});
 		group.add(resize140Button);
 		ioPanel.add(resize140Button);
@@ -207,11 +202,9 @@ public class HolmesProgramProperties extends JFrame {
 		JRadioButton resize160Button = new JRadioButton("160%");
 		resize160Button.setBounds(posX+60, posY, 60, 20);
 		resize160Button.setActionCommand("4");
-		resize160Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "160", false);
-			}
+		resize160Button.addActionListener(actionEvent -> {
+			if(noAction) return;
+			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "160", false);
 		});
 		group.add(resize160Button);
 		ioPanel.add(resize160Button);
@@ -219,22 +212,22 @@ public class HolmesProgramProperties extends JFrame {
 		JRadioButton resize180Button = new JRadioButton("180%");
 		resize180Button.setBounds(posX+120, posY, 60, 20);
 		resize180Button.setActionCommand("5");
-		resize180Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "180", false);
-			}
+		resize180Button.addActionListener(actionEvent -> {
+			if(noAction) return;
+			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "180", false);
 		});
 		group.add(resize180Button);
 		ioPanel.add(resize180Button);
 		
-		String netExtFactorValue = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor");	
-		if(netExtFactorValue.equals("80")) group.setSelected(resize80Button.getModel(), true);
-		else if(netExtFactorValue.equals("120")) group.setSelected(resize120Button.getModel(), true);
-		else if(netExtFactorValue.equals("140")) group.setSelected(resize140Button.getModel(), true);
-		else if(netExtFactorValue.equals("160")) group.setSelected(resize160Button.getModel(), true);
-		else if(netExtFactorValue.equals("180")) group.setSelected(resize180Button.getModel(), true);
-		else group.setSelected(resize100Button.getModel(), true);
+		String netExtFactorValue = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor");
+		switch (netExtFactorValue) {
+			case "80" -> group.setSelected(resize80Button.getModel(), true);
+			case "120" -> group.setSelected(resize120Button.getModel(), true);
+			case "140" -> group.setSelected(resize140Button.getModel(), true);
+			case "160" -> group.setSelected(resize160Button.getModel(), true);
+			case "180" -> group.setSelected(resize180Button.getModel(), true);
+			default -> group.setSelected(resize100Button.getModel(), true);
+		}
 		
 		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard("(Snoopy) Align to grid when saved", posX+200, posY-20, 240, 20, 
 				"editorGridAlignWhenSaved", true);
@@ -252,7 +245,7 @@ public class HolmesProgramProperties extends JFrame {
 				"editorExportCheckAndWarning", true);
 		ioPanel.add(checkSaveCheckBox);
 		
-		JCheckBox simpleEditorCheckBox = checkboxWizard("Use simple notepad (restart required)", posX, posY+=20, 300, 20, 
+		JCheckBox simpleEditorCheckBox = checkboxWizard("Use simple notepad (restart required)", posX, posY+=20, 300, 20,
 				"programUseSimpleEditor", true);
 		ioPanel.add(simpleEditorCheckBox);
 		
@@ -269,6 +262,7 @@ public class HolmesProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createOtherOptionsPanel(int x, int y, int w, int h) {
 		JPanel ioPanel = new JPanel(null);
 		ioPanel.setBorder(BorderFactory.createTitledBorder("Other options"));
@@ -296,6 +290,7 @@ public class HolmesProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createRoptionsSystemPanel(int x, int y, int w, int h) {
 		JPanel rOptionsPanel = new JPanel(null);
 		rOptionsPanel.setBorder(BorderFactory.createTitledBorder("R settings"));
@@ -323,13 +318,10 @@ public class HolmesProgramProperties extends JFrame {
 		rSetPath.setName("setRpath");
 		rSetPath.setBounds(10, 60, 120, 20);
 		rSetPath.setToolTipText("Manually set path to Rscript.exe");
-		rSetPath.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				action.setRPath();
-				textR_1.setText(sm.getValue("r_path"));
-				textR_2.setText(sm.getValue("r_path64"));
-			}
+		rSetPath.addActionListener(actionEvent -> {
+			action.setRPath();
+			textR_1.setText(sm.getValue("r_path"));
+			textR_2.setText(sm.getValue("r_path64"));
 		});
 		rOptionsPanel.add(rSetPath);
 		
@@ -369,6 +361,7 @@ public class HolmesProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createGraphicalEditorPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Graphical settings"));
@@ -387,12 +380,10 @@ public class HolmesProgramProperties extends JFrame {
 		JRadioButton size1Button = new JRadioButton("1");
 		size1Button.setBounds(posX, posY+20, 40, 20);
 		size1Button.setActionCommand("0");
-		size1Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphArcLineSize", "1", true);
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-			}
+		size1Button.addActionListener(actionEvent -> {
+			if(noAction) return;
+			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphArcLineSize", "1", true);
+			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 		});
 		group.add(size1Button);
 		panel.add(size1Button);
@@ -400,12 +391,10 @@ public class HolmesProgramProperties extends JFrame {
 		JRadioButton size2Button = new JRadioButton("2");
 		size2Button.setBounds(posX+40, posY+20, 40, 20);
 		size2Button.setActionCommand("1");
-		size2Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphArcLineSize", "2", true);
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-			}
+		size2Button.addActionListener(actionEvent -> {
+			if(noAction) return;
+			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphArcLineSize", "2", true);
+			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 		});
 		group.add(size2Button);
 		panel.add(size2Button);
@@ -413,20 +402,20 @@ public class HolmesProgramProperties extends JFrame {
 		JRadioButton size3Button = new JRadioButton("3");
 		size3Button.setBounds(posX+80, posY+20, 40, 20);
 		size3Button.setActionCommand("2");
-		size3Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction) return;
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphArcLineSize", "3", true);
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-			}
+		size3Button.addActionListener(actionEvent -> {
+			if(noAction) return;
+			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphArcLineSize", "3", true);
+			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 		});
 		group.add(size3Button);
 		panel.add(size3Button);
 		
-		String thickValue = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize");	
-		if(thickValue.equals("1")) group.setSelected(size1Button.getModel(), true);
-		else if(thickValue.equals("2")) group.setSelected(size2Button.getModel(), true);
-		else if(thickValue.equals("3")) group.setSelected(size3Button.getModel(), true);
+		String thickValue = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize");
+		switch (thickValue) {
+			case "1" -> group.setSelected(size1Button.getModel(), true);
+			case "2" -> group.setSelected(size2Button.getModel(), true);
+			case "3" -> group.setSelected(size3Button.getModel(), true);
+		}
 
 		//FONT SIZE:
 		JLabel labelFontSize = new JLabel("Font size:");
@@ -446,15 +435,13 @@ public class HolmesProgramProperties extends JFrame {
 				Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphFontSize")), 7, 30, 1);
 		JSpinner fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
 		fontSizeSpinner.setBounds(posX+150, posY+=20, 80, 20);
-		fontSizeSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if(noAction) return;
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphFontSize", ""+val, true);
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-			}
+		fontSizeSpinner.addChangeListener(e -> {
+			if(noAction) return;
+			JSpinner spinner = (JSpinner) e.getSource();
+			int val = (int) spinner.getValue();
+
+			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphFontSize", ""+val, true);
+			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 		});
 		panel.add(fontSizeSpinner);
 
@@ -486,6 +473,7 @@ public class HolmesProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createGeneralEditorPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("General settings"));
@@ -497,23 +485,18 @@ public class HolmesProgramProperties extends JFrame {
 		
 		JCheckBox snoopyCompatibilityCheckBox = new JCheckBox("(Snoopy/Holmes) Allow only Snoopy-compatible options", true);
 		snoopyCompatibilityCheckBox.setBounds(posX, posY, 350, 20);
-		snoopyCompatibilityCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction == true) return;
-				
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorSnoopyCompatibleMode", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorSnoopyCompatibleMode", "0", true);
-				}
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+		snoopyCompatibilityCheckBox.addActionListener(actionEvent -> {
+			if(noAction) return;
+
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorSnoopyCompatibleMode", "1", true);
+			} else {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorSnoopyCompatibleMode", "0", true);
 			}
+			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1")) 
-			snoopyCompatibilityCheckBox.setSelected(true);
-		else
-			snoopyCompatibilityCheckBox.setSelected(false);
+		snoopyCompatibilityCheckBox.setSelected(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1"));
 		panel.add(snoopyCompatibilityCheckBox);
 		
 		JCheckBox subnetCompressionCheckBox = checkboxWizard("Use meta-arcs compression for metanodes", posX, posY+=20, 350, 20, 
@@ -552,6 +535,7 @@ public class HolmesProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createSimPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Simulator engine options"));
@@ -590,6 +574,7 @@ public class HolmesProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createSimGraphic(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Simulator graphical options"));
@@ -613,19 +598,17 @@ public class HolmesProgramProperties extends JFrame {
 		arcDelaySlider.setPaintTicks(true);
 		arcDelaySlider.setPaintLabels(true);
 		arcDelaySlider.setLabelTable(arcDelaySlider.createStandardLabels(10));
-		arcDelaySlider.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-            	JSlider s = (JSlider) e.getSource();
-            	int val = (Integer) s.getValue();
-            	int reference = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
-            	if(val <= reference) {
-            		arcDelaySlider.setValue(val);
-            		GUIManager.getDefaultGUIManager().simSettings.setArcDelay(val);
-            	} else {
-            		s.setValue(reference);
-            	}
-            }
-        });
+		arcDelaySlider.addChangeListener(e -> {
+			JSlider s = (JSlider) e.getSource();
+			int val = s.getValue();
+			int reference = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
+			if(val <= reference) {
+				arcDelaySlider.setValue(val);
+				GUIManager.getDefaultGUIManager().simSettings.setArcDelay(val);
+			} else {
+				s.setValue(reference);
+			}
+		});
 	    panel.add(arcDelaySlider);
 	    
 		final JSlider transDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 55, 25);
@@ -639,7 +622,7 @@ public class HolmesProgramProperties extends JFrame {
 	    	private JSlider anotherSlider = null;
             public void stateChanged(ChangeEvent e) {
             	JSlider s = (JSlider) e.getSource();
-            	int value = (Integer) s.getValue();
+            	int value = s.getValue();
                 transDelaySlider.setValue(value);
                 GUIManager.getDefaultGUIManager().simSettings.setTransDelay(value);
                 if(value <  GUIManager.getDefaultGUIManager().simSettings.getArcDelay()) {
@@ -687,6 +670,7 @@ public class HolmesProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createInvariantsPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Clusters options"));
@@ -717,6 +701,7 @@ public class HolmesProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createClusteringPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Cluster algorithms options"));
@@ -740,6 +725,7 @@ public class HolmesProgramProperties extends JFrame {
 	 * @param h int - wysokość
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createMCSPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("MCS generator"));
@@ -765,8 +751,8 @@ public class HolmesProgramProperties extends JFrame {
 	
 	/**
 	 * Wypełnianie pustą zawartością
-	 * @param text
-	 * @return
+	 * @param text (<b>String</b>)
+	 * @return JComponent
 	 */
 	protected JComponent makeTextPanel(String text) {
         JPanel panel = new JPanel(false);
@@ -800,7 +786,7 @@ public class HolmesProgramProperties extends JFrame {
 			private String propName = "";
 			private boolean autoSave;
 			public void actionPerformed(ActionEvent actionEvent) {
-				if(noAction == true) return;
+				if(noAction) return;
 				
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
@@ -815,12 +801,9 @@ public class HolmesProgramProperties extends JFrame {
 				this.autoSave = autosave;
 		        return this;
 		    }
-		}.yesWeCan(propName, autosave)); 
-		
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue(propName).equals("1")) 
-			view3dCheckBox.setSelected(true);
-		else
-			view3dCheckBox.setSelected(false);
+		}.yesWeCan(propName, autosave));
+
+		view3dCheckBox.setSelected(GUIManager.getDefaultGUIManager().getSettingsManager().getValue(propName).equals("1"));
 		return view3dCheckBox;
 	}
 }

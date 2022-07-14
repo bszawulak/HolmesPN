@@ -8,18 +8,11 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -38,8 +31,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -63,23 +54,20 @@ import holmes.workspace.ExtensionFileFilter;
  *
  */
 public class HolmesClusters extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -8420712475473581772L;
-
 	private JTable table = new JTable();
 	private DefaultTableModel tableModel;
 	private int mode = 0; // 0 - tryb 56 klastrowań
 	private ClusterTableRenderer tableRenderer = new ClusterTableRenderer(mode, 18);
-	private JPanel tablePanel;
 	private JScrollPane scrollTablePane;
 	    
 	private int subRowsSize = 0;
     private final HolmesClusters myself;
-    private int clustersToGenerate = 0;
-    private SpinnerModel spinnerClustersModel;
-    private JSpinner spinnerClusters;
-    
-   
-    private ClusteringInfoMatrix dataTableCase56 = null;
+    private int clustersToGenerate;
+
+
+	private ClusteringInfoMatrix dataTableCase56 = null;
     private String pathCSVfile = "";
     private String pathClustersDir = "";
     
@@ -95,7 +83,7 @@ public class HolmesClusters extends JFrame {
     	myself.setTitle("Cluster Analyzer");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
     	this.setVisible(false);
@@ -122,8 +110,9 @@ public class HolmesClusters extends JFrame {
         gbc.gridy = 0;
         gbc.weightx = 0.1;
         gbc.weighty = 1.0;
-        
-        if(mode==0)
+
+		JPanel tablePanel;
+		if(mode==0)
         	tablePanel = createTablePanelCase56(); // !!!
         else
         	tablePanel = new JPanel();
@@ -162,18 +151,16 @@ public class HolmesClusters extends JFrame {
 		textPanel.add(clLabel);	
 		
 		// Komponent określenie górnego limitu klastrów dla obliczeń
-		spinnerClustersModel = new SpinnerNumberModel(20, 2, 300, 1);
+		SpinnerModel spinnerClustersModel = new SpinnerNumberModel(20, 2, 300, 1);
 		clustersToGenerate = 20;
-		spinnerClusters = new JSpinner(spinnerClustersModel);
+		JSpinner spinnerClusters = new JSpinner(spinnerClustersModel);
 		spinnerClusters.setPreferredSize(new Dimension(100, 30));
 		spinnerClusters.setMinimumSize(new Dimension(100, 30));
 		spinnerClusters.setMaximumSize(new Dimension(100, 30));
 		//spinnerClusters.setEnabled(false);
-		spinnerClusters.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				clustersToGenerate = (int) spinner.getValue();
-			}
+		spinnerClusters.addChangeListener(e -> {
+			JSpinner spinner = (JSpinner) e.getSource();
+			clustersToGenerate = (int) spinner.getValue();
 		});
 		spinnerClusters.setAlignmentX(Component.CENTER_ALIGNMENT);
 		textPanel.add(spinnerClusters);	
@@ -182,12 +169,7 @@ public class HolmesClusters extends JFrame {
 		JButton generateButton = createStandardButton("", 
 				Tools.getResIcon48("/icons/clustWindow/buttonGen56.png"));
 		generateButton.setToolTipText("Generate all 56 clusterings for a selected number of clusters.");
-		generateButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				buttonGenerateClusterings(commandsValidate);
-			}
-		});
+		generateButton.addActionListener(actionEvent -> buttonGenerateClusterings(commandsValidate));
 		generateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(generateButton);
         textPanel.add(Box.createVerticalStrut(7));
@@ -196,11 +178,7 @@ public class HolmesClusters extends JFrame {
      	JButton generateCHButton = createStandardButton("", 
      			Tools.getResIcon48("/icons/clustWindow/buttonComputeCH.png"));
      	generateCHButton.setToolTipText("Compute Caliński-Harabasz metrics for a given number of clusters.");
-     	generateCHButton.addActionListener(new ActionListener() {
-     		public void actionPerformed(ActionEvent actionEvent) {
-     			buttonComputeCHmetrics(commandsValidate);
-     		}
-     	});
+     	generateCHButton.addActionListener(actionEvent -> buttonComputeCHmetrics(commandsValidate));
      	generateCHButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(generateCHButton);
         textPanel.add(Box.createVerticalStrut(7));
@@ -209,11 +187,7 @@ public class HolmesClusters extends JFrame {
         JButton case56Button = createStandardButton("", 
         		Tools.getResIcon48("/icons/clustWindow/buttonLoadClusterDir.png"));
         case56Button.setToolTipText("Load 56 clusterings into table from the selected directory.");
-        case56Button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				buttonLoadClusteringDirectory();
-			}
-		});
+        case56Button.addActionListener(actionEvent -> buttonLoadClusteringDirectory());
         case56Button.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(case56Button);
         textPanel.add(Box.createVerticalStrut(7));
@@ -222,11 +196,7 @@ public class HolmesClusters extends JFrame {
      	JButton loadCHButton = createStandardButton("", 
      			Tools.getResIcon48("/icons/clustWindow/buttonLoadCHDir.png"));
      	loadCHButton.setToolTipText("Load Caliński-Harabasz metrics from the selected directory.");
-     	loadCHButton.addActionListener(new ActionListener() {
-     		public void actionPerformed(ActionEvent actionEvent) {
-     			buttonLoadCHmetricIntoTables();
-     		}
-     	});
+     	loadCHButton.addActionListener(actionEvent -> buttonLoadCHmetricIntoTables());
      	loadCHButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(loadCHButton);
      	textPanel.add(Box.createVerticalStrut(7));
@@ -235,11 +205,7 @@ public class HolmesClusters extends JFrame {
      	JButton saveTableButton = createStandardButton("", 
      			Tools.getResIcon48("/icons/clustWindow/buttonSaveTable.png"));
      	saveTableButton.setToolTipText("Save table data into the selected file");
-     	saveTableButton.addActionListener(new ActionListener() {
-     		public void actionPerformed(ActionEvent actionEvent) {
-     			buttonSerializeDataTable();
-     		}
-     	});
+     	saveTableButton.addActionListener(actionEvent -> buttonSerializeDataTable());
      	saveTableButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(saveTableButton);
      	textPanel.add(Box.createVerticalStrut(7));
@@ -248,11 +214,7 @@ public class HolmesClusters extends JFrame {
      	JButton loadTableButton = createStandardButton("", 
      			Tools.getResIcon48("/icons/clustWindow/buttonLoadTable.png"));
      	loadTableButton.setToolTipText("Load table data from the selected file");
-     	loadTableButton.addActionListener(new ActionListener() {
-     		public void actionPerformed(ActionEvent actionEvent) {
-     			buttonDeserializeFile();
-     		}
-     	});
+     	loadTableButton.addActionListener(actionEvent -> buttonDeserializeFile());
      	loadTableButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(loadTableButton);
      	textPanel.add(Box.createVerticalStrut(7));
@@ -261,12 +223,7 @@ public class HolmesClusters extends JFrame {
         JButton excelExport = createStandardButton("", 
         		Tools.getResIcon48("/icons/clustWindow/buttonExportToExcel.png"));
         excelExport.setToolTipText("Export results files into Excel document.");
-        excelExport.addActionListener(new ActionListener() {
- 			@Override
- 			public void actionPerformed(ActionEvent actionEvent) {
- 				buttonExportTableToExcel();
- 			}
- 		});
+        excelExport.addActionListener(actionEvent -> buttonExportTableToExcel());
         excelExport.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(excelExport);
         textPanel.add(Box.createVerticalStrut(7));
@@ -275,12 +232,7 @@ public class HolmesClusters extends JFrame {
         JButton configButton = createStandardButton("", 
         		Tools.getResIcon48("/icons/clustWindow/buttonConfig.png"));
         configButton.setToolTipText("R scripts run configurations");
-        configButton.addActionListener(new ActionListener() {
- 			@Override
- 			public void actionPerformed(ActionEvent actionEvent) {
- 				minion.setVisible(true);
- 			}
- 		});
+        configButton.addActionListener(actionEvent -> minion.setVisible(true));
         configButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(configButton);
         textPanel.add(Box.createVerticalStrut(7));
@@ -456,7 +408,7 @@ public class HolmesClusters extends JFrame {
 				//tutaj dzieje się magia na liczbach - jednakoż dzieje się prawidłowo, dlatego
 				//lepiej tutaj niczego nie zmieniać we wzorach
 				int clusterNumber = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
-				int algID = (int)((column-1) / 3); //1,2,3 -> 0; 4,5,6->1, itd.
+				int algID = (column-1) / 3; //1,2,3 -> 0; 4,5,6->1, itd.
 				
 				//obliczanie numery wiersza nagłówkowego nad klikniętym wierszem:
 				int headerRowNumber = row - (clusterNumber-1);
@@ -512,15 +464,15 @@ public class HolmesClusters extends JFrame {
             		
         			dataRow[1+alg*3] = ""+dataTableCase56.getMatrix().get(tableIndex).get(rows).zeroClusters;
         			
-        			Double val = dataTableCase56.getMatrix().get(tableIndex).get(rows).evalMSS;
+        			double val = dataTableCase56.getMatrix().get(tableIndex).get(rows).evalMSS;
         			String cuttedValue = cutValueMSS(val);
         			dataRow[1+alg*3+1] = ""+cuttedValue;
         			
-        			Double val2 = dataTableCase56.getMatrix().get(tableIndex).get(rows).evalCH;
+        			double val2 = dataTableCase56.getMatrix().get(tableIndex).get(rows).evalCH;
         			String cuttedValue2 = cutValueCH(val2);
         			dataRow[1+alg*3+2] = ""+cuttedValue2;
             	}
-    			tableModel.addRow((String[])dataRow);
+    			tableModel.addRow(dataRow);
 			}
     	}
     	GUIManager.getDefaultGUIManager().log("New clustering data table has been successfully read.", "text", true);
@@ -546,7 +498,7 @@ public class HolmesClusters extends JFrame {
     /**
 	 * Metoda formatuje liczbę typu double do wyznaczonej liczby miejsc po przecinku, a następnie
 	 * zwraca ją jako String.
-	 * @param evalMSS double - liczba do przycięcia
+	 * @param evalCH double - liczba do przycięcia
 	 * @return String - reprezentacja liczby
 	 */
     private String cutValueCH(double evalCH) {
@@ -558,8 +510,8 @@ public class HolmesClusters extends JFrame {
 
     /**
      * Metoda zwraca skalowalny kolor dla liczby.
-     * @param power
-     * @return
+     * @param power (<b>double</b>) wartość
+     * @return (<b>Color</b>) kolor
      */
     public Color getColor(double power)
 	{
@@ -569,9 +521,9 @@ public class HolmesClusters extends JFrame {
 	    //return Color.getHSBColor((float)H, (float)S, (float)B);
 		double R = (255 * power) / 100;
 		double G = (255 * (100 - power)) / 100; 
-		double B = 0;
+		//double B = 0;
 		try {
-			return new Color((int)R,(int)G,(int)B);
+			return new Color((int)R,(int)G, 0);
 		} catch (Exception e) {
 			return Color.white;
 		}
@@ -638,7 +590,7 @@ public class HolmesClusters extends JFrame {
 		
 		//czy plik startowy jest na miejscu?
 		pathCSVfile = choosenDir+"/cluster.csv";
-		if(Tools.ifExist(pathCSVfile) == false) {
+		if(!Tools.ifExist(pathCSVfile)) {
 			String msg = "Selected directory does not contain cluster.csv file. Further calculations "
 					+ "may not be possible.";
 			JOptionPane.showMessageDialog(null, "msg", "warning",JOptionPane.ERROR_MESSAGE);
@@ -676,7 +628,7 @@ public class HolmesClusters extends JFrame {
 			
 			File test = new File(dirPath+"//ClustersSummary.xls");
 			if(test.exists()) {
-				FileFilter filter[] = new FileFilter[1];
+				FileFilter[] filter = new FileFilter[1];
 				filter[0] = new ExtensionFileFilter(".xls - Excel 2003",  new String[] { "XLS" });
 				String newLocation = Tools.selectFileDialog(dirPath, filter, "Save", "", "");
 				if(newLocation.equals("")) { //czy chcemy przenieść plik w inne miejsce
@@ -778,7 +730,7 @@ public class HolmesClusters extends JFrame {
 		try{
 			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 			
-			FileFilter filter[] = new FileFilter[1];
+			FileFilter[] filter = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Holmes CLustering file (.hcl)",  new String[] { "hcl", "acl" });
 			String newLocation = Tools.selectFileDialog(lastPath, filter, "Save table", "", "");
 			if(newLocation.equals(""))
@@ -808,7 +760,7 @@ public class HolmesClusters extends JFrame {
 		String newLocation = "";
 		try
 		{
-			FileFilter filter[] = new FileFilter[1];
+			FileFilter[] filter = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Holmes CLustering file (.hcl)",  new String[] { "hcl", "acl" });
 			newLocation = Tools.selectFileDialog(lastPath, filter, "Load table", "", "");
 			if(newLocation.equals("")) 
@@ -827,7 +779,6 @@ public class HolmesClusters extends JFrame {
 		} catch(Exception ioe){
 			String msg = "Program was unable to load data table from "+newLocation;
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
-			return;
 		} 
 	}
     
@@ -1034,7 +985,7 @@ public class HolmesClusters extends JFrame {
 		    	} else { //cała reszta wierszy
 		    		((DefaultTableCellRenderer)renderer).setHorizontalAlignment(DefaultTableCellRenderer.LEFT);
 		    		renderer.setFont(new Font("Arial", Font.PLAIN, 12));
-		    		float cellValue = -1.0f;
+		    		float cellValue;
 		    		
 		    		try {
 		    			cellValue = Float.parseFloat(value.toString());	
@@ -1064,7 +1015,7 @@ public class HolmesClusters extends JFrame {
 
 		    				 if(r == 1) {
 		    					 Object nextCell = table.getValueAt(row+1, column);	
-		    					 Float next = Float.parseFloat(nextCell.toString());
+		    					 float next = Float.parseFloat(nextCell.toString());
 		    					 if(cellValue > next) {
 		    						 renderer.setFont(new Font("Arial", Font.BOLD, 12));
 		    						 //renderer.setBackground(Color.lightGray);
@@ -1074,7 +1025,7 @@ public class HolmesClusters extends JFrame {
 		    					 }
 		    				 } else if (r == subRows) {
 		    					 Object previousCell = table.getValueAt(row-1, column);
-		    					 Float previous = Float.parseFloat(previousCell.toString());
+		    					 float previous = Float.parseFloat(previousCell.toString());
 		    					 if(cellValue > previous) {
 		    						 renderer.setFont(new Font("Arial", Font.BOLD, 12));
 		    						 //renderer.setBackground(Color.lightGray);
@@ -1084,8 +1035,8 @@ public class HolmesClusters extends JFrame {
 		    				 } else {
 		    					 Object nextCell = table.getValueAt(row+1, column);
 		    					 Object previousCell = table.getValueAt(row-1, column);
-		    					 Float next = Float.parseFloat(nextCell.toString());
-		    					 Float previous = Float.parseFloat(previousCell.toString());
+		    					 float next = Float.parseFloat(nextCell.toString());
+		    					 float previous = Float.parseFloat(previousCell.toString());
 		    					 if(cellValue > previous && cellValue > next) {
 		    						 renderer.setFont(new Font("Arial", Font.BOLD, 12));
 		    						 renderer.setBackground(Color.gray);
@@ -1093,7 +1044,7 @@ public class HolmesClusters extends JFrame {
 		    						 //renderer.setBackground(Color.white);
 		    					 }
 		    				 }	    				 
-		    			 } catch (Exception e) {
+		    			 } catch (Exception ignored) {
 		    				 
 		    			 } 
 		    		}
@@ -1109,7 +1060,7 @@ public class HolmesClusters extends JFrame {
 		 */
 		public Color getSimpleColor(double power)
 		{
-			Color result = Color.white;
+			Color result;
 		    if(power < 30) {
 		    	result = new Color(250, 2, 2);
 		    } else if(power <40) {

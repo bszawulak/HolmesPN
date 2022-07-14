@@ -166,6 +166,7 @@ public class HolmesStatesManager extends JFrame {
 	 * Tworzy panel przycisków bocznych.
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("UnusedAssignment")
 	public JPanel getButtonsPanel() {
 		JPanel result = new JPanel(null);
 		result.setBorder(BorderFactory.createTitledBorder("Buttons"));
@@ -443,7 +444,7 @@ public class HolmesStatesManager extends JFrame {
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
         CreationPanel.add(new JScrollPane(stateDescrTextAreaPN), BorderLayout.CENTER);
-        CreationPanel.setBounds(posXda, posYda+=25, 600, 100);
+        CreationPanel.setBounds(posXda, posYda+25, 600, 100);
         result.add(CreationPanel, BorderLayout.CENTER);
 
 		
@@ -668,7 +669,7 @@ public class HolmesStatesManager extends JFrame {
 
 		HolmesRoundedButton editStateButton = new HolmesRoundedButton("State Editor"
 				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
-		editStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		editStateButton.setBounds(posXda, posYda+50, 130, 40);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
 		editStateButton.setToolTipText("Opens p-state editor window.");
@@ -831,7 +832,7 @@ public class HolmesStatesManager extends JFrame {
 		JPanel CreationPanel = new JPanel();
 		CreationPanel.setLayout(new BorderLayout());
 		CreationPanel.add(new JScrollPane(stateDescrTextAreaXTPN), BorderLayout.CENTER);
-		CreationPanel.setBounds(posXda, posYda+=25, 600, 100);
+		CreationPanel.setBounds(posXda, posYda+25, 600, 100);
 		result.add(CreationPanel, BorderLayout.CENTER);
 		return result;
 	}

@@ -9,13 +9,13 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.Timer;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.simulators.NetSimulator;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulator;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 
 public class Weird {
 	public boolean forceSimulatorStop() {
 		//final boolean success = true;
-		NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
+		GraphicalSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
 		Timer t = ns.getTimer();
 		if(t==null) {
 			return true;
@@ -68,8 +68,8 @@ public class Weird {
 	}
 	
 	public class SimStop implements Callable<Boolean> {
-		NetSimulator ns;
-		public SimStop(NetSimulator ns) {
+		GraphicalSimulator ns;
+		public SimStop(GraphicalSimulator ns) {
 			this.ns = ns;
 		}
         public Boolean call() throws Exception {
@@ -80,8 +80,8 @@ public class Weird {
     }
 	
 	public class SimWait implements Callable<Boolean> {
-		NetSimulator ns;
-		public SimWait(NetSimulator ns) {
+		GraphicalSimulator ns;
+		public SimWait(GraphicalSimulator ns) {
 			this.ns = ns;
 		}
         public Boolean call() throws Exception {

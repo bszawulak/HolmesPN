@@ -15,7 +15,6 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  *
  */
 public class AbyssWriter {
-
 	/**
 	 * Główna i jedyna metoda, zapisująca plik sieci.
 	 * @param path String - ścieżka do pliku

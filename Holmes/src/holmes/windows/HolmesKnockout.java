@@ -5,17 +5,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -34,8 +27,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 
 import holmes.analyse.InvariantsTools;
@@ -61,6 +52,7 @@ import holmes.workspace.ExtensionFileFilter;
  *
  */
 public class HolmesKnockout extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -9038958824842964847L;
 	private JComboBox<String> transitionsCombo;
 	private MauritiusMapPanel mmp;
@@ -86,7 +78,7 @@ public class HolmesKnockout extends JFrame {
 	public HolmesKnockout() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
 		setVisible(false);
@@ -131,6 +123,7 @@ public class HolmesKnockout extends JFrame {
 	 * @param height int - wysokość panelu
 	 * @return JPanel - panel przycisków
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createUpperButtonPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -164,11 +157,9 @@ public class HolmesKnockout extends JFrame {
 		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(currentTreshold, 0, 100, 1);
 		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
 		tokenSpinner.setBounds(posX+620, posY, 70, 20);
-		tokenSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				currentTreshold = (int) spinner.getValue();
-			}
+		tokenSpinner.addChangeListener(e -> {
+			JSpinner spinner = (JSpinner) e.getSource();
+			currentTreshold = (int) spinner.getValue();
 		});
 		panel.add(tokenSpinner);
 
@@ -180,20 +171,17 @@ public class HolmesKnockout extends JFrame {
 		modeCombo.addItem("Show tree for ramaining transitions");
 		modeCombo.addItem("Show tree for knocked transitions");
 		modeCombo.addItem("Show tree for knocked transitions (threshold)");
-		modeCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = modeCombo.getSelectedIndex();
-				if(selected == 0) {
-					globalMode = 0;
-				} else if (selected == 1) {
-					globalMode = 1;
-				} else if (selected == 2) {
-					globalMode = 2;
-				} else {
-					globalMode = 1;
-				}
+		modeCombo.addActionListener(actionEvent -> {
+			int selected = modeCombo.getSelectedIndex();
+			if(selected == 0) {
+				globalMode = 0;
+			} else if (selected == 1) {
+				globalMode = 1;
+			} else if (selected == 2) {
+				globalMode = 2;
+			} else {
+				globalMode = 1;
 			}
-			
 		});
 		
 		panel.add(modeCombo);
@@ -201,15 +189,9 @@ public class HolmesKnockout extends JFrame {
 		JCheckBox contractedModeBox = new JCheckBox("Contracted");
 		contractedModeBox.setBounds(posX+690, posY, 90, 20);
 		contractedModeBox.setSelected(true);
-		contractedModeBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					contractedMode = true;
-				} else {
-					contractedMode = false;
-				}
-			}
+		contractedModeBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			contractedMode = abstractButton.getModel().isSelected();
 		});
 		panel.add(contractedModeBox);
 		
@@ -218,13 +200,11 @@ public class HolmesKnockout extends JFrame {
 		generateButton.setMargin(new Insets(0, 0, 0, 0));
 		generateButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/computeData.png"));
 		generateButton.setToolTipText("Generate knockout map for the currently selected transition.");
-		generateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				//globalMode = 0;
-				mmCurrentObject = generateMap(globalMode);
-				if(mmCurrentObject != null) {
-					paintMap();
-				}
+		generateButton.addActionListener(actionEvent -> {
+			//globalMode = 0;
+			mmCurrentObject = generateMap(globalMode);
+			if(mmCurrentObject != null) {
+				paintMap();
 			}
 		});
 		generateButton.setFocusPainted(false);
@@ -235,28 +215,26 @@ public class HolmesKnockout extends JFrame {
 		showKnockoutButton.setMargin(new Insets(0, 0, 0, 0));
 		showKnockoutButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/showNotepad.png"));
 		showKnockoutButton.setToolTipText("For the selected transition show knockout detailed data in the notepad.");
-		showKnockoutButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				try {
-					//globalMode = 1;
-					MauritiusMap infoMap;
-					if(globalMode == 0)
-						infoMap = generateMap(1); //nie ma sensu dla 'remaining transitions', tylko dla knockoutowanych
-					else
-						infoMap = generateMap(globalMode);
-					
-					if(infoMap != null) {
-						HolmesNotepad notePad = new HolmesNotepad(900,600);
-						notePad.setVisible(true);
-						getKnockoutInfo(infoMap, notePad);
-					}
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Exception in invariants section.\n"+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-					GUIManager.getDefaultGUIManager().log("Error"+e.getMessage(), "error", true);
-				} catch (Error e2) {
-					JOptionPane.showMessageDialog(null, "Error in invariants section.\n"+e2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-					GUIManager.getDefaultGUIManager().log("Error"+e2.getMessage(), "error", true);
+		showKnockoutButton.addActionListener(actionEvent -> {
+			try {
+				//globalMode = 1;
+				MauritiusMap infoMap;
+				if(globalMode == 0)
+					infoMap = generateMap(1); //nie ma sensu dla 'remaining transitions', tylko dla knockoutowanych
+				else
+					infoMap = generateMap(globalMode);
+
+				if(infoMap != null) {
+					HolmesNotepad notePad = new HolmesNotepad(900,600);
+					notePad.setVisible(true);
+					getKnockoutInfo(infoMap, notePad);
 				}
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(null, "Exception in invariants section.\n"+e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				GUIManager.getDefaultGUIManager().log("Error"+e.getMessage(), "error", true);
+			} catch (Error e2) {
+				JOptionPane.showMessageDialog(null, "Error in invariants section.\n"+e2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+				GUIManager.getDefaultGUIManager().log("Error"+e2.getMessage(), "error", true);
 			}
 		});
 		showKnockoutButton.setFocusPainted(false);
@@ -266,13 +244,11 @@ public class HolmesKnockout extends JFrame {
 		fullDataKnockoutButton.setBounds(posX+130, posY+25, 120, 36);
 		fullDataKnockoutButton.setMargin(new Insets(0, 0, 0, 0));
 		fullDataKnockoutButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/fullKnockout.png"));
-		fullDataKnockoutButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
+		fullDataKnockoutButton.addActionListener(actionEvent -> {
 
-				HolmesNotepad notePad = new HolmesNotepad(900,600);
-				notePad.setVisible(true);
-				getKnockoutFullInfo(notePad);
-			}
+			HolmesNotepad notePad = new HolmesNotepad(900,600);
+			notePad.setVisible(true);
+			getKnockoutFullInfo(notePad);
 		});
 		fullDataKnockoutButton.setFocusPainted(false);
 		panel.add(fullDataKnockoutButton);
@@ -281,13 +257,11 @@ public class HolmesKnockout extends JFrame {
 		toNetKnockoutButton.setBounds(posX+130, posY+65, 120, 36);
 		toNetKnockoutButton.setMargin(new Insets(0, 0, 0, 0));
 		toNetKnockoutButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/sendToNet.png"));
-		toNetKnockoutButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				//globalMode = 1;
-				MauritiusMap infoMap = generateMap(globalMode);
-				if(infoMap != null) {
-					getKnockoutInfoToNet(infoMap);
-				}
+		toNetKnockoutButton.addActionListener(actionEvent -> {
+			//globalMode = 1;
+			MauritiusMap infoMap = generateMap(globalMode);
+			if(infoMap != null) {
+				getKnockoutInfoToNet(infoMap);
 			}
 		});
 		toNetKnockoutButton.setFocusPainted(false);
@@ -299,12 +273,10 @@ public class HolmesKnockout extends JFrame {
 		monaLisaButton.setBounds(posX+260, posY+25, 120, 36);
 		monaLisaButton.setMargin(new Insets(0, 0, 0, 0));
 		monaLisaButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/monaLisa.png"));
-		monaLisaButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				HolmesNotepad notePad = new HolmesNotepad(900,600);
-				notePad.setVisible(true);
-				showMonaLisaResults(notePad);
-			}
+		monaLisaButton.addActionListener(actionEvent -> {
+			HolmesNotepad notePad = new HolmesNotepad(900,600);
+			notePad.setVisible(true);
+			showMonaLisaResults(notePad);
 		});
 		monaLisaButton.setFocusPainted(false);
 		panel.add(monaLisaButton);
@@ -313,11 +285,7 @@ public class HolmesKnockout extends JFrame {
 		monaLisaToNetButton.setBounds(posX+260, posY+65, 120, 36);
 		monaLisaToNetButton.setMargin(new Insets(0, 0, 0, 0));
 		monaLisaToNetButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/monaLisa.png"));
-		monaLisaToNetButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				exportMonaLisaToNet();
-			}
-		});
+		monaLisaToNetButton.addActionListener(actionEvent -> exportMonaLisaToNet());
 		monaLisaToNetButton.setFocusPainted(false);
 		panel.add(monaLisaToNetButton);
 		
@@ -325,11 +293,7 @@ public class HolmesKnockout extends JFrame {
 		saveImgButton.setBounds(posX+390, posY+25, 120, 36);
 		saveImgButton.setMargin(new Insets(0, 0, 0, 0));
 		saveImgButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/saveImage.png"));
-		saveImgButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				exportToPicture();
-			}
-		});
+		saveImgButton.addActionListener(actionEvent -> exportToPicture());
 		saveImgButton.setFocusPainted(false);
 		panel.add(saveImgButton);
 		
@@ -337,26 +301,16 @@ public class HolmesKnockout extends JFrame {
 		expInvKnockButton.setBounds(posX+390, posY+65, 120, 36);
 		expInvKnockButton.setMargin(new Insets(0, 0, 0, 0));
 		expInvKnockButton.setIcon(Tools.getResIcon32("/icons/knockoutWindow/saaaamage.png"));
-		expInvKnockButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				invData();
-			}
-		});
+		expInvKnockButton.addActionListener(actionEvent -> invData());
 		expInvKnockButton.setFocusPainted(false);
 		panel.add(expInvKnockButton);
 		
 		JCheckBox shortTextCheckBox = new JCheckBox("Show full names");
 		shortTextCheckBox.setBounds(posX+490, posY, 130, 20);
-		shortTextCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					mmp.setFullName(true);
-				} else {
-					mmp.setFullName(false);
-				}
-				mmp.repaint();
-			}
+		shortTextCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			mmp.setFullName(abstractButton.getModel().isSelected());
+			mmp.repaint();
 		});
 		shortTextCheckBox.setSelected(true);
 		panel.add(shortTextCheckBox);
@@ -381,6 +335,7 @@ public class HolmesKnockout extends JFrame {
 	 * @param height int - wysokość panelu
 	 * @return JPanel - panel przycisków
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createGraphPanel(int x, int y, int width, int height) {
 		JPanel gr_panel = new JPanel(new BorderLayout());
 		//gr_panel.setBounds(x, y, width, height);
@@ -511,7 +466,6 @@ public class HolmesKnockout extends JFrame {
 	/**
 	 * Metoda wczytuje wyniki z MonyLisy i posyła na strukturę sieci
 	 */
-	@SuppressWarnings("resource")
 	private void exportMonaLisaToNet() {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
@@ -537,8 +491,7 @@ public class HolmesKnockout extends JFrame {
 		try {
 			DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
-			String line = "";
-			line = buffer.readLine(); //first line
+			String line = buffer.readLine(); //first line
 			line = buffer.readLine();
 			while(line != null && line.length() > 4) {
 				int tmp = line.indexOf(" ");
@@ -570,7 +523,7 @@ public class HolmesKnockout extends JFrame {
 				
 				line = buffer.readLine();
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 
@@ -629,8 +582,7 @@ public class HolmesKnockout extends JFrame {
 			DataInputStream in = new DataInputStream(new FileInputStream(selectedFile));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
 			
-			String line = "";
-			line = buffer.readLine(); //first line
+			String line = buffer.readLine(); //first line
 			line = buffer.readLine();
 			while(line != null && line.length() > 4) {
 				int tmp = line.indexOf(" ");
@@ -647,7 +599,7 @@ public class HolmesKnockout extends JFrame {
 							break;
 						} else { //z MCT
 							String[] elements = next.split(";");
-							float knockoutPercent = (float)((float)elements.length/(float)transSize);
+							float knockoutPercent = (float)elements.length/(float)transSize;
 							knockoutPercent *= 100;
 							String newLine = "t"+t+"_"+name+" | Knockout: "+String.format("%.2f", knockoutPercent)+ "% ("+elements.length+"/"+transSize+")  ";
 							newLine += mctOrNot.get(t);
@@ -660,7 +612,7 @@ public class HolmesKnockout extends JFrame {
 				
 				line = buffer.readLine();
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 		
@@ -695,9 +647,9 @@ public class HolmesKnockout extends JFrame {
 					String id = line.substring(0, line.indexOf("_"));
 					try {
 						int ident = Integer.parseInt(id);
-						invPercent = (float)((float)transInInvVector.get(ident)/(float)invNumber);
+						invPercent = (float)transInInvVector.get(ident)/(float)invNumber;
 						invPercent *= 100;
-					} catch (Exception e) { }
+					} catch (Exception ignored) { }
 					
 					line = line.substring(line.indexOf("_")+1);
 					//String name = line.substring(0, line.indexOf("|")-1); //nazwa tranzycji
@@ -716,9 +668,9 @@ public class HolmesKnockout extends JFrame {
 				
 				try {
 					int ident = Integer.parseInt(id);
-					invPercent = (float)((float)transInInvVector.get(ident)/(float)invNumber);
+					invPercent = (float)transInInvVector.get(ident)/(float)invNumber;
 					invPercent *= 100;
-				} catch (Exception e) { }
+				} catch (Exception ignored) { }
 						
 				line = line.substring(line.indexOf("_")+1);
 				String name = line.substring(0, line.indexOf("|")-1); //nazwa tranzycji
@@ -732,8 +684,8 @@ public class HolmesKnockout extends JFrame {
 		
 		
 		//wyświetlanie II bloku wyników:
-		for(int i=0; i<secondResultLines.size(); i++) {
-			notePad.addTextLineNL(secondResultLines.get(i), "text");
+		for (String secondResultLine : secondResultLines) {
+			notePad.addTextLineNL(secondResultLine, "text");
 		}
 
 		///III BLOK: sortowanie po inwariantach:
@@ -776,7 +728,7 @@ public class HolmesKnockout extends JFrame {
 					secondResultLines.set(nextMax, tmpLine);
 				}
 				
-			} catch (Exception e) {}	
+			} catch (Exception ignored) {}
 		}
 		
 		//wyświetlanie III bloku wyników:
@@ -790,17 +742,15 @@ public class HolmesKnockout extends JFrame {
 		notePad.addTextLineNL("\\hline ", "text");
 		notePad.addTextLineNL("\\bf MCT-set & \\bf \\centering{Biological function}  & \\bf Affected & \\bf Affected	\\\\", "text");
 		notePad.addTextLineNL("\\bf / transition & \\bf  & \\bf transition & \\bf invariants \\\\  \\hline ", "text");
-		for(int i=0; i<secondResultLines.size(); i++) {
-			String line2 = secondResultLines.get(i);
-			
-			if(line2.contains("MCT")) {
+		for (String line2 : secondResultLines) {
+			if (line2.contains("MCT")) {
 				line2 = line2.replace("   ", " & & ");
 			} else {
 				line2 = line2.replace("   ", " & ");
-	
+
 			}
 			line2 = line2.replace("%  ", "% & ");
-			line2 = line2+"  \\\\ \\hline  ";
+			line2 = line2 + "  \\\\ \\hline  ";
 			line2 = line2.replace("%", "\\%");
 			line2 = line2.replace("_", " ");
 			notePad.addTextLineNL(line2, "text");
@@ -813,7 +763,7 @@ public class HolmesKnockout extends JFrame {
 	
 	/**
 	 * Metoda przesyła dane o knockout na obraz sieci.
-	 * @param infoMap
+	 * @param infoMap (<b>MauritiusMap</b>) obiekt mapy.
 	 */
 	protected void getKnockoutInfoToNet(MauritiusMap infoMap) {
 		ArrayList<ArrayList<Integer>> dataMatrix = collectMapData(infoMap);
@@ -839,7 +789,7 @@ public class HolmesKnockout extends JFrame {
 			trans_TMP.setColorWithNumber(true, Color.red, false, -1, false, "");
 			
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 			
 		}
 	}
@@ -875,11 +825,11 @@ public class HolmesKnockout extends JFrame {
 		int freq = node.transFrequency;
 		int transID = node.transLocation;
 		if(freq == startSetValue) {
-			if(commonSetToObjR.contains(transID) == false) {
+			if(!commonSetToObjR.contains(transID)) {
 				commonSetToObjR.add(transID);
 			}
 		} else {
-			if(disabledSetByObjR.contains(transID) == false) {
+			if(!disabledSetByObjR.contains(transID)) {
 				disabledSetByObjR.add(transID);
 			}
 		}
@@ -916,7 +866,7 @@ public class HolmesKnockout extends JFrame {
 			return null;
 		}
 
-		MauritiusMap mm = null;
+		MauritiusMap mm;
 		try {
 			mm = new MauritiusMap(invariants, selection, currentTreshold, mode);
 		} catch (Exception e) {
@@ -1009,7 +959,6 @@ public class HolmesKnockout extends JFrame {
 				JOptionPane.showMessageDialog(null,
 						"Saving net sheet into picture failed.",
 						"Export Picture Error",JOptionPane.ERROR_MESSAGE);
-				return;
 			}
 		}
 	}
@@ -1017,6 +966,7 @@ public class HolmesKnockout extends JFrame {
 	/**
 	 * Metoda odpowiedzialna za dopasowywanie elementów okna.
 	 */
+	@SuppressWarnings("unused")
 	protected void resizeComponents() {
 		buttonPanel.setBounds(0, 0, mainPanel.getWidth(), 90);
 		logMainPanel.setBounds(0, 90, mainPanel.getWidth(), mainPanel.getHeight()-90);

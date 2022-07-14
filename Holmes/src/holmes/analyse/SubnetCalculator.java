@@ -1,6 +1,5 @@
 package holmes.analyse;
 
-import holmes.analyse.comparison.GraphletComparator;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
@@ -11,7 +10,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Collectors;
 
 /**

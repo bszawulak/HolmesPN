@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import holmes.darkgui.dockable.DockableMenuItem;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesMergeNets;

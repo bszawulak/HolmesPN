@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 public class HolmesPrototypeComparison extends JFrame {
     private GUIManager overlord;
-
     private JPanel mainPanel;
     private JPanel leftPanel;
     private JPanel rightPanel;
@@ -176,6 +175,7 @@ public class HolmesPrototypeComparison extends JFrame {
     }
 
 
+    @SuppressWarnings("SameParameterValue")
     private JPanel createInfoPanel(int x, int y, int width, int height) {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());

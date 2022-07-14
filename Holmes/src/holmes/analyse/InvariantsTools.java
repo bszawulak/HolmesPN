@@ -65,14 +65,14 @@ public final class InvariantsTools {
 		if(matrix == null || matrix.size() == 0)
 			return null;
 		
-		int rows = matrix.size();
+		//int rows = matrix.size();
 		int columns = matrix.get(0).size();
 		ArrayList<ArrayList<Integer>> resultMatrix = new ArrayList<ArrayList<Integer>>();
 		
 		for(int c=0; c<columns; c++) {
 			ArrayList<Integer> transposedRow = new ArrayList<Integer>();
-			for(int r=0; r<rows; r++) {
-				transposedRow.add(matrix.get(r).get(c));
+			for (ArrayList<Integer> integers : matrix) {
+				transposedRow.add(integers.get(c));
 			}
 			resultMatrix.add(transposedRow);
 		}
@@ -89,14 +89,14 @@ public final class InvariantsTools {
 		if(matrix == null || matrix.size() == 0)
 			return null;
 		
-		int rows = matrix.size();
+		//int rows = matrix.size();
 		int columns = matrix.get(0).size();
 		ArrayList<ArrayList<Integer>> resultMatrix = new ArrayList<ArrayList<Integer>>();
-		
-		for(int r=0; r<rows; r++) {
+
+		for (ArrayList<Integer> integers : matrix) {
 			ArrayList<Integer> binaryRow = new ArrayList<Integer>();
-			for(int c=0; c<columns; c++) {
-				if(matrix.get(r).get(c) != 0)
+			for (int c = 0; c < columns; c++) {
+				if (integers.get(c) != 0)
 					binaryRow.add(1);
 				else
 					binaryRow.add(0);
@@ -190,7 +190,7 @@ public final class InvariantsTools {
 		
 		ArrayList<Integer> invTypes = new ArrayList<Integer>();
 		
-		int elementsNumber = 0;
+		int elementsNumber;
 		if(t_inv)
 			elementsNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size();
 		else
@@ -203,7 +203,7 @@ public final class InvariantsTools {
 		}
 		
 		for(ArrayList<Integer> inv : invSet) {
-			ArrayList<Integer> vector = null;
+			ArrayList<Integer> vector;
 			if(t_inv)
 				vector = check_invariantV2(CMatrix, inv);
 			else

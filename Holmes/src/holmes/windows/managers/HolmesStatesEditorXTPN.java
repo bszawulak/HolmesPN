@@ -39,7 +39,6 @@ public class HolmesStatesEditorXTPN extends JFrame {
     private int stateIndex;
     private ArrayList<Place> places;
     private P_StateManager statesManager;
-
     private long globalTokensNumber = 0;
 
     /**
@@ -197,10 +196,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
                 //TODO:
                 //stateVector.setTokens(p, globalTokensNumber);
                 tableModel.setQuietlyValueAt(globalTokensNumber, p, 2);
-                if(p == size-1)
-                    parentWindow.changeTableCell(stateIndex, p+2, globalTokensNumber, true);
-                else
-                    parentWindow.changeTableCell(stateIndex, p+2, globalTokensNumber, false);
+                parentWindow.changeTableCell(stateIndex, p+2, globalTokensNumber, ( p == size - 1 ) );
             }
 
             tableModel.fireTableDataChanged();
@@ -218,8 +214,8 @@ public class HolmesStatesEditorXTPN extends JFrame {
         result.setPreferredSize(new Dimension(500, 500));
 
         tableModel = new StatesPlacesEditorTableModelXTPN(this, stateIndex);
-        JTable table = new RXTable(tableModel);
-        ((RXTable) table).setSelectAllForEdit(true);
+        RXTable table = new RXTable(tableModel);
+        table.setSelectAllForEdit(true);
 
         table.getColumnModel().getColumn(0).setHeaderValue("ID");
         table.getColumnModel().getColumn(0).setPreferredWidth(30);
@@ -264,6 +260,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
      * @param placeID int - indeks miejsca
      * @param newValue double - nowa wartość tokenów
      */
+    @SuppressWarnings("unused")
     public void changeRealValue(int index, int placeID, double newValue) {
         //TODO:
         //statesManager.getStateXTPN(index).accessVector().set(placeID, newValue);

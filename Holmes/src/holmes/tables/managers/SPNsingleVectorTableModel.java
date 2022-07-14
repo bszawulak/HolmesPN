@@ -1,6 +1,7 @@
 package holmes.tables.managers;
 
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.EventObject;
 
@@ -15,6 +16,7 @@ import holmes.windows.managers.HolmesSPNeditor;
  * @author MR
  */
 public class SPNsingleVectorTableModel extends DefaultTableModel {
+	@Serial
 	private static final long serialVersionUID = -6898959322396110431L;
 	private String[] columnNames;
 	private ArrayList<FRDataClass> dataMatrix;
@@ -136,17 +138,13 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
      * @param columnIndex int - numer kolumny
      */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		switch(columnIndex) {
-			case 0:
-				return dataMatrix.get(rowIndex).ID;
-			case 1:
-				return dataMatrix.get(rowIndex).name;
-			case 2:
-				return dataMatrix.get(rowIndex).dataVector;
-			case 3:
-				return dataMatrix.get(rowIndex).subType;
-		}
-		return null;
+		return switch (columnIndex) {
+			case 0 -> dataMatrix.get(rowIndex).ID;
+			case 1 -> dataMatrix.get(rowIndex).name;
+			case 2 -> dataMatrix.get(rowIndex).dataVector;
+			case 3 -> dataMatrix.get(rowIndex).subType;
+			default -> null;
+		};
 	}
 	
 	/**
@@ -162,7 +160,7 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 			} else if(col == 3) {
 				dataMatrix.get(row).subType = (StochaticsType)value;
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 
 		}
 	}

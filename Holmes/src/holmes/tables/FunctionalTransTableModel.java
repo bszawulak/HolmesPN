@@ -1,5 +1,6 @@
 package holmes.tables;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
@@ -12,6 +13,7 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
  * @author MR
  */
 public class FunctionalTransTableModel extends DefaultTableModel {
+	@Serial
 	private static final long serialVersionUID = 7486251580290447103L;
 
 	/**
@@ -116,35 +118,16 @@ public class FunctionalTransTableModel extends DefaultTableModel {
      */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Object returnValue = null;
-
-		switch (columnIndex) {
-        case 0:
-            returnValue = dataMatrix.get(rowIndex).pID;
-            break;
-        case 1:
-        	returnValue = dataMatrix.get(rowIndex).name;
-            break;
-        case 2:
-        	returnValue = dataMatrix.get(rowIndex).function;
-            break;
-        case 3:
-        	returnValue = dataMatrix.get(rowIndex).correct;
-            break;
-        case 4:
-        	returnValue = dataMatrix.get(rowIndex).arcType;
-            break;
-        case 5:
-        	returnValue = dataMatrix.get(rowIndex).weight;
-            break;
-        case 6:
-        	returnValue = dataMatrix.get(rowIndex).enabled;
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid column index");
-        }
-         
-        return returnValue;
+		return switch (columnIndex) {
+			case 0 -> dataMatrix.get(rowIndex).pID;
+			case 1 -> dataMatrix.get(rowIndex).name;
+			case 2 -> dataMatrix.get(rowIndex).function;
+			case 3 -> dataMatrix.get(rowIndex).correct;
+			case 4 -> dataMatrix.get(rowIndex).arcType;
+			case 5 -> dataMatrix.get(rowIndex).weight;
+			case 6 -> dataMatrix.get(rowIndex).enabled;
+			default -> throw new IllegalArgumentException("Invalid column index");
+		};
 	}
 	
 	/**
@@ -155,31 +138,14 @@ public class FunctionalTransTableModel extends DefaultTableModel {
 	 */
 	public void setValueAt(Object value, int row, int col) {
 		try {
-			switch(col) {
-				case 2:
-					String f = value.toString();
-					dataMatrix.get(row).function = f;
-					break;
-				case 3:
-					boolean correct = (boolean)value;
-					dataMatrix.get(row).correct = correct;
-					break;
-				case 4:
-					TypeOfArc toa = (TypeOfArc)value;
-					dataMatrix.get(row).arcType = toa;
-					break;
-				case 5:
-					int weight = (int)value;
-					dataMatrix.get(row).weight = weight;
-					break;
-				case 6:
-					boolean enable = (boolean)value;
-					dataMatrix.get(row).enabled = enable;
-					break;
+			switch (col) {
+				case 2 -> dataMatrix.get(row).function = value.toString();
+				case 3 -> dataMatrix.get(row).correct = (boolean) value;
+				case 4 -> dataMatrix.get(row).arcType = (TypeOfArc) value;
+				case 5 -> dataMatrix.get(row).weight = (int) value;
+				case 6 -> dataMatrix.get(row).enabled = (boolean) value;
 			}
-		} catch (Exception e) {
-			@SuppressWarnings("unused")
-			int xxx=1;
+		} catch (Exception ignored) {
 		}
 	}
 }

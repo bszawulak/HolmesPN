@@ -1,5 +1,6 @@
 package holmes.tables;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
@@ -8,6 +9,7 @@ import javax.swing.table.AbstractTableModel;
  * @author MR
  */
 public class InvariantsTableModel extends AbstractTableModel {
+	@Serial
 	private static final long serialVersionUID = 5760866352155772825L;
 	private String[] columnNames = {"ID", "Tr.#", "Min.", "Feas.", "In-T", "pIn-T", "Out-T", "R-arc", "Inh.", "Sur", "Sub", "Cx0", "Canon.", "Name"};
 	private ArrayList<InvariantContainer> dataMatrix;
@@ -35,7 +37,7 @@ public class InvariantsTableModel extends AbstractTableModel {
 	 * @param sur int - true = sur-invariant
 	 * @param sub int - true = sub-invariant
 	 * @param normal boolean - normalny inwariant (Cx=0)
-	 * @Param canon boolean - true oznacza kanoniczny
+	 * @param canon boolean - true oznacza kanoniczny
 	 * @param name String - nazwa (if any)
 	 */
 	public void addNew(int id, int transN, boolean min, boolean feas, int pInT, int inT, int outT, int readArcs, int inhibitors,
@@ -107,54 +109,22 @@ public class InvariantsTableModel extends AbstractTableModel {
      */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Object returnValue = null;
-		switch (columnIndex) {
-        case 0:
-            returnValue = dataMatrix.get(rowIndex).ID;
-            break;
-        case 1:
-        	returnValue = dataMatrix.get(rowIndex).transNumber;
-            break;
-        case 2:
-        	returnValue = dataMatrix.get(rowIndex).minimal;
-            break;
-        case 3:
-        	returnValue = dataMatrix.get(rowIndex).feasible;
-            break;
-        case 4:
-        	returnValue = dataMatrix.get(rowIndex).pureInTransitions;
-            break;
-        case 5:
-        	returnValue = dataMatrix.get(rowIndex).inTransitions;
-            break;
-        case 6:
-        	returnValue = dataMatrix.get(rowIndex).outTransitions;
-            break;
-        case 7:
-        	returnValue = dataMatrix.get(rowIndex).readArcs;
-            break;
-        case 8:
-        	returnValue = dataMatrix.get(rowIndex).inhibitors;
-            break;
-        case 9:
-        	returnValue = dataMatrix.get(rowIndex).sur;
-            break;
-        case 10:
-        	returnValue = dataMatrix.get(rowIndex).sub;
-            break;
-        case 11:
-        	returnValue = dataMatrix.get(rowIndex).normalInv;
-            break;
-        case 12:
-        	returnValue = dataMatrix.get(rowIndex).canonical;
-            break;
-        case 13:
-        	returnValue = dataMatrix.get(rowIndex).name;
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid column index");
-        }
-         
-        return returnValue;
+		return switch (columnIndex) {
+			case 0 -> dataMatrix.get(rowIndex).ID;
+			case 1 -> dataMatrix.get(rowIndex).transNumber;
+			case 2 -> dataMatrix.get(rowIndex).minimal;
+			case 3 -> dataMatrix.get(rowIndex).feasible;
+			case 4 -> dataMatrix.get(rowIndex).pureInTransitions;
+			case 5 -> dataMatrix.get(rowIndex).inTransitions;
+			case 6 -> dataMatrix.get(rowIndex).outTransitions;
+			case 7 -> dataMatrix.get(rowIndex).readArcs;
+			case 8 -> dataMatrix.get(rowIndex).inhibitors;
+			case 9 -> dataMatrix.get(rowIndex).sur;
+			case 10 -> dataMatrix.get(rowIndex).sub;
+			case 11 -> dataMatrix.get(rowIndex).normalInv;
+			case 12 -> dataMatrix.get(rowIndex).canonical;
+			case 13 -> dataMatrix.get(rowIndex).name;
+			default -> throw new IllegalArgumentException("Invalid column index");
+		};
 	}
 }

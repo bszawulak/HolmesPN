@@ -139,7 +139,7 @@ public class RClusteringParserToXLS{
 	    if (matcher.find())
 	    {
 	      String[] lines = source.split("Output:"); // podzial na linie
-	      int nrClusters = Integer.parseInt(matcher.group(1).toString());
+	      int nrClusters = Integer.parseInt(matcher.group(1));
 	      clusterSingle.nrClusters = nrClusters;
 	      
 	      for(int i = 2; i < lines.length; i++){
@@ -150,7 +150,8 @@ public class RClusteringParserToXLS{
 		    		  ++nrCurrentReadClustersValues;
 		    	  }
 		    	  String[] mssPerCluster = lines[i].split("[\\s\\t\\n]+");
-		    	  for (int j = 0; j < mssPerCluster.length; ++j) clusterSingle.mssPerCluster.add(clusterSingle.ParseDouble(mssPerCluster[j]));//Float.parseFloat(mssPerCluster[j]));
+				  for (String s : mssPerCluster)
+					  clusterSingle.mssPerCluster.add(clusterSingle.ParseDouble(s));//Float.parseFloat(mssPerCluster[j]));
 	    	  } else {
 	    		  if ( lines[i].indexOf("Mean") > 0 ) {
 	    			  String[] meanValue = lines[i+1].trim().split("\\s+");
@@ -187,42 +188,45 @@ public class RClusteringParserToXLS{
 		int column = 0, kolumna = column;
 		boolean newColumn = true;
 		String compare = dirList[0].substring(0, 4);
-		for (int i = 0; i < dirList.length; ++i) { // dla wszystkich plikow z katalogu
-			String fileContent = r.getFileContent(pathInput+"//"+dirList[i]);
+		for (String s : dirList) { // dla wszystkich plikow z katalogu
+			String fileContent = r.getFileContent(pathInput + "//" + s);
 			String[] clusters = fileContent.split("Output:Silhouette"); // tablica informacji o klastrach
-			
-			if (dirList[i].startsWith(compare)) { // ta sama miara, ale inna metoda
-				String[] parts = dirList[i].split("_");
+
+			if (s.startsWith(compare)) { // ta sama miara, ale inna metoda
+				String[] parts = s.split("_");
 				parts[0] = parts[0].substring(0, 1).toUpperCase() + parts[0].substring(1); //pierwsza litera nazwy z duzej
 				parts[1] = parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1); //pierwsza litera nazwy z duzej
 				if (newColumn) kolumna = column + 1;
 				else kolumna = column;
-				
-				if (newColumn) sheet.addCell(new Label(column, tabIndexes[column], parts[1], getCellFormat(Colour.WHITE, true)));
+
+				if (newColumn)
+					sheet.addCell(new Label(column, tabIndexes[column], parts[1], getCellFormat(Colour.WHITE, true)));
 				sheet.addCell(new Label(kolumna, tabIndexes[column], "1:", getCellFormat(Colour.WHITE, true)));
-				sheet.addCell(new Label(kolumna+1, tabIndexes[column]++, parts[0], getCellFormat(Colour.WHITE, true)));
-				if (newColumn) for (int k = 1; k < clusters.length; ++k) sheet.addCell(new Number(column, tabIndexes[column]+k-1, (k+1), getCellFormat(Colour.WHITE, false))); // numery kolejnych klastrow, od 2
-			}
-			else { // nowa miara
-				compare = dirList[i].substring(0, 4); 
+				sheet.addCell(new Label(kolumna + 1, tabIndexes[column]++, parts[0], getCellFormat(Colour.WHITE, true)));
+				if (newColumn) for (int k = 1; k < clusters.length; ++k)
+					sheet.addCell(new Number(column, tabIndexes[column] + k - 1, (k + 1), getCellFormat(Colour.WHITE, false))); // numery kolejnych klastrow, od 2
+			} else { // nowa miara
+				compare = s.substring(0, 4);
 				if (newColumn) column += 3;
 				else column += 2;
 				newColumn = false;
-				String[] parts = dirList[i].split("_");
+				String[] parts = s.split("_");
 				parts[0] = parts[0].substring(0, 1).toUpperCase() + parts[0].substring(1); //pierwsza litera nazwy z duzej
 				parts[1] = parts[1].substring(0, 1).toUpperCase() + parts[1].substring(1); //pierwsza litera nazwy z duzej
-				
+
 				sheet.addCell(new Label(column, tabIndexes[column], "1:", getCellFormat(Colour.WHITE, true)));
-				sheet.addCell(new Label(column+1, tabIndexes[column]++, parts[0], getCellFormat(Colour.WHITE, true)));
+				sheet.addCell(new Label(column + 1, tabIndexes[column]++, parts[0], getCellFormat(Colour.WHITE, true)));
 			}
-			for (int j = 1; j < clusters.length;  ++j) { // przetwarzanie dla kazdego klastrowania osobno
+			for (int j = 1; j < clusters.length; ++j) { // przetwarzanie dla kazdego klastrowania osobno
 				ClusterRepresentation cluster = r.parseSingleClusterInfo(clusters[j]); // dane pojedynczego klastrowania
 				int singleInvCluster = 0;
 				if (newColumn) kolumna = column + 1;
 				else kolumna = column;
-				for (int k = 0; k < cluster.nrInvariantsPerCluster.size(); ++k) if (cluster.nrInvariantsPerCluster.get(k) == 1) ++singleInvCluster; // zliczanie klasterow jedynkowych
+				for (int k = 0; k < cluster.nrInvariantsPerCluster.size(); ++k)
+					if (cluster.nrInvariantsPerCluster.get(k) == 1)
+						++singleInvCluster; // zliczanie klasterow jedynkowych
 				sheet.addCell(new Number(kolumna, tabIndexes[column], singleInvCluster, getCellFormat(setColorSingleInvariantPerCluster(singleInvCluster), false))); // ilosc klastrow jedynkowych
-				sheet.addCell(new Number(kolumna+1, tabIndexes[column]++, cluster.meanValue, getCellFormat(setColorMeanMssPerCluster(cluster.meanValue), false))); // srednie mss dla klastra
+				sheet.addCell(new Number(kolumna + 1, tabIndexes[column]++, cluster.meanValue, getCellFormat(setColorMeanMssPerCluster(cluster.meanValue), false))); // srednie mss dla klastra
 			}
 		}
 		// naglowek tabeli

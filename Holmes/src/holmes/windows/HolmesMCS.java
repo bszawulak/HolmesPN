@@ -4,10 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -25,8 +24,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultCaret;
 
 import holmes.analyse.MCSCalculator;
@@ -42,13 +39,12 @@ import holmes.utilities.Tools;
  *
  */
 public class HolmesMCS extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -5765964470006303431L;
-	
 	private MCSCalculator mcsGenerator = null;
 	private ArrayList<Transition> transitions;
-	
-	private int maxCutSize = 0; //wybrana kardynalność zbiorów
-	private int maximumMCS = 0; //górne ograniczenie kardynalności - przy szukaniu
+	private int maxCutSize; //wybrana kardynalność zbiorów
+	private int maximumMCS; //górne ograniczenie kardynalności - przy szukaniu
 	private int maxSetsNumber = 300; //maksymalna liczba zbiorów
 	
 	private boolean generateAll = true; 
@@ -70,7 +66,7 @@ public class HolmesMCS extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 			transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		} catch (Exception e ) {
+		} catch (Exception ignored) {
 			
 		}
 		setVisible(false);
@@ -106,7 +102,7 @@ public class HolmesMCS extends JFrame {
 	 */
 	private JPanel createMainPanel() {
 		JPanel panel = new JPanel();
-		panel.setLayout(null);  /**  ╯°□°）╯︵  ┻━━━┻   */
+		panel.setLayout(null);  //  ╯°□°）╯︵  ┻━━━┻
 		
 		//Panel wyboru opcji szukania
 		JPanel buttonPanel = createUpperButtonPanel(0, 0, 844, 110);
@@ -126,6 +122,7 @@ public class HolmesMCS extends JFrame {
 	 * @param height - wysokość panelu
 	 * @return JPanel - utworzony panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createUpperButtonPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -160,11 +157,9 @@ public class HolmesMCS extends JFrame {
 		SpinnerModel mcsSpinnerModel = new SpinnerNumberModel(maxCutSize, 0, maximumMCS, 1);
 		mcsSpinner = new JSpinner(mcsSpinnerModel);
 		mcsSpinner.setBounds(posX+90, posY+25, 60, 20);
-		mcsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				maxCutSize = (int) spinner.getValue();
-			}
+		mcsSpinner.addChangeListener(e -> {
+			JSpinner spinner = (JSpinner) e.getSource();
+			maxCutSize = (int) spinner.getValue();
 		});
 		panel.add(mcsSpinner);
 		
@@ -175,31 +170,23 @@ public class HolmesMCS extends JFrame {
 		SpinnerModel maxSizeSpinnerModel = new SpinnerNumberModel(300, 50, 5000, 100);
 		JSpinner maxSizeStepsSpinner = new JSpinner(maxSizeSpinnerModel);
 		maxSizeStepsSpinner.setBounds(posX+270, posY+25, 60, 20);
-		maxSizeStepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				maxSetsNumber = val;
-			}
+		maxSizeStepsSpinner.addChangeListener(e -> {
+			JSpinner spinner = (JSpinner) e.getSource();
+			maxSetsNumber = (int) spinner.getValue();
 		});
 		panel.add(maxSizeStepsSpinner);
 		
 		JCheckBox cleanMCSusingStructureCheckBox = new JCheckBox("Reduce MCSs", true);
 		cleanMCSusingStructureCheckBox.setBounds(posX+340, posY+25, 140, 20);
-		cleanMCSusingStructureCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisMCSReduction", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisMCSReduction", "0", true);
-				}
+		cleanMCSusingStructureCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisMCSReduction", "1", true);
+			} else {
+				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisMCSReduction", "0", true);
 			}
 		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisMCSReduction").equals("1"))
-			cleanMCSusingStructureCheckBox.setSelected(true);
-		else
-			cleanMCSusingStructureCheckBox.setSelected(false);
+		cleanMCSusingStructureCheckBox.setSelected(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisMCSReduction").equals("1"));
 		
 		panel.add(cleanMCSusingStructureCheckBox);
 
@@ -209,11 +196,9 @@ public class HolmesMCS extends JFrame {
 		generateButton.setBounds(posX, posY+55, 110, 32);
 		generateButton.setMargin(new Insets(0, 0, 0, 0));
 		generateButton.setIcon(Tools.getResIcon32("/icons/mcsWindow/computeData.png"));
-		generateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				launchMCSanalysis();
-				GUIManager.getDefaultGUIManager().showMCS();
-			}
+		generateButton.addActionListener(actionEvent -> {
+			launchMCSanalysis();
+			GUIManager.getDefaultGUIManager().showMCS();
 		});
 		generateButton.setFocusPainted(false);
 		panel.add(generateButton);
@@ -223,11 +208,9 @@ public class HolmesMCS extends JFrame {
 		cancelButton.setBounds(posX+110, posY+55, 50, 32);
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		//cancelButton.setIcon(Tools.getResIcon32("/icons/mcsWindow/a.png"));
-		cancelButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(mcsGenerator != null)
-					mcsGenerator.emergencyStop();
-			}
+		cancelButton.addActionListener(actionEvent -> {
+			if(mcsGenerator != null)
+				mcsGenerator.emergencyStop();
 		});
 		cancelButton.setFocusPainted(false);
 		panel.add(cancelButton);
@@ -237,11 +220,9 @@ public class HolmesMCS extends JFrame {
 		loadButton.setBounds(posX+170, posY+55, 110, 32);
 		loadButton.setMargin(new Insets(0, 0, 0, 0));
 		loadButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/loadMCS.png"));
-		loadButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				MCSoperations.loadSingleMCS();
-				GUIManager.getDefaultGUIManager().showMCS();
-			}
+		loadButton.addActionListener(actionEvent -> {
+			MCSoperations.loadSingleMCS();
+			GUIManager.getDefaultGUIManager().showMCS();
 		});
 		loadButton.setFocusPainted(false);
 		panel.add(loadButton);
@@ -251,11 +232,9 @@ public class HolmesMCS extends JFrame {
 		loadAllButton.setBounds(posX+290, posY+55, 110, 32);
 		loadAllButton.setMargin(new Insets(0, 0, 0, 0));
 		loadAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/loadAllMCS.png"));
-		loadAllButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				MCSoperations.loadAllMCS();
-				GUIManager.getDefaultGUIManager().showMCS();
-			}
+		loadAllButton.addActionListener(actionEvent -> {
+			MCSoperations.loadAllMCS();
+			GUIManager.getDefaultGUIManager().showMCS();
 		});
 		loadAllButton.setFocusPainted(false);
 		panel.add(loadAllButton);
@@ -265,11 +244,9 @@ public class HolmesMCS extends JFrame {
 		saveAllButton.setBounds(posX+410, posY+55, 110, 32);
 		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
 		saveAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveAllMCS.png"));
-		saveAllButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				MCSoperations.saveAllMCS(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore());
-				//fillData();
-			}
+		saveAllButton.addActionListener(actionEvent -> {
+			MCSoperations.saveAllMCS(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore());
+			//fillData();
 		});
 		saveAllButton.setFocusPainted(false);
 		panel.add(saveAllButton);
@@ -281,17 +258,15 @@ public class HolmesMCS extends JFrame {
 		addToButton.setBounds(posX+500, posY, 65, 20);
 		addToButton.setMargin(new Insets(0, 0, 0, 0));
 		addToButton.setIcon(Tools.getResIcon16("/icons/mcsWindow/add.png"));
-		addToButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				//reactionSetsTextField
-				int selected = transitionsCombo.getSelectedIndex();
-				if(selected == 0)
-					return;
-				selected--;
-				String msg = "t"+selected+",";
-				if(reactionSetsTextField.getText().contains(msg) == false)
-					reactionSetsTextField.append(msg);
-			}
+		addToButton.addActionListener(actionEvent -> {
+			//reactionSetsTextField
+			int selected = transitionsCombo.getSelectedIndex();
+			if(selected == 0)
+				return;
+			selected--;
+			String msg = "t"+selected+",";
+			if(!reactionSetsTextField.getText().contains(msg))
+				reactionSetsTextField.append(msg);
 		});
 		addToButton.setFocusPainted(false);
 		panel.add(addToButton);
@@ -301,17 +276,15 @@ public class HolmesMCS extends JFrame {
 		removeButton.setBounds(posX+575, posY, 65, 20);
 		removeButton.setMargin(new Insets(0, 0, 0, 0));
 		removeButton.setIcon(Tools.getResIcon16("/icons/mcsWindow/remove.png"));
-		removeButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = transitionsCombo.getSelectedIndex();
-				if(selected == 0)
-					return;
-				selected--;
-				String msg = "t"+selected+",";
-				String text = reactionSetsTextField.getText();
-				text = text.replace(msg, "");
-				reactionSetsTextField.setText(text);
-			}
+		removeButton.addActionListener(actionEvent -> {
+			int selected = transitionsCombo.getSelectedIndex();
+			if(selected == 0)
+				return;
+			selected--;
+			String msg = "t"+selected+",";
+			String text = reactionSetsTextField.getText();
+			text = text.replace(msg, "");
+			reactionSetsTextField.setText(text);
 		});
 		removeButton.setFocusPainted(false);
 		panel.add(removeButton);
@@ -321,11 +294,7 @@ public class HolmesMCS extends JFrame {
 		clearButton.setBounds(posX+650, posY, 65, 20);
 		clearButton.setMargin(new Insets(0, 0, 0, 0));
 		clearButton.setIcon(Tools.getResIcon16("/icons/mcsWindow/clear.png"));
-		clearButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				reactionSetsTextField.setText("");
-			}
-		});
+		clearButton.addActionListener(actionEvent -> reactionSetsTextField.setText(""));
 		clearButton.setFocusPainted(false);
 		panel.add(clearButton);
 		
@@ -340,15 +309,9 @@ public class HolmesMCS extends JFrame {
         
         JCheckBox allCheckBox = new JCheckBox("Compute all MCS", true);
 		allCheckBox.setBounds(posX+690, posY+55, 140, 20);
-		allCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					generateAll = true;
-				} else {
-					generateAll = false;
-				}
-			}
+		allCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			generateAll = abstractButton.getModel().isSelected();
 		});
 		panel.add(allCheckBox);
         
@@ -358,11 +321,7 @@ public class HolmesMCS extends JFrame {
         calcAllButton.setBounds(posX+725, posY, 100, 50);
         calcAllButton.setMargin(new Insets(0, 0, 0, 0));
         calcAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/computeSet.png"));
-        calcAllButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				calculateAllAction();
-			}
-		});
+        calcAllButton.addActionListener(actionEvent -> calculateAllAction());
         calcAllButton.setFocusPainted(false);
 		panel.add(calcAllButton);
 		
@@ -377,6 +336,7 @@ public class HolmesMCS extends JFrame {
 	 * @param height - wysokość panelu
 	 * @return JPanel - utworzony panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createMainPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -411,6 +371,7 @@ public class HolmesMCS extends JFrame {
 	 * @param height - wysokość panelu
 	 * @return JPanel - utworzony panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createSubButtonPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -436,25 +397,16 @@ public class HolmesMCS extends JFrame {
 				transitionsResultsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
 			}
 		}
-		transitionsResultsCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				
-			}
-			
+		transitionsResultsCombo.addActionListener(actionEvent -> {
+
 		});
 		panel.add(transitionsResultsCombo);
 		
 		JCheckBox showAllCheckBox = new JCheckBox("Show full info", true);
 		showAllCheckBox.setBounds(posX+490, posY, 120, 20);
-		showAllCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					showFullInfo = true;
-				} else {
-					showFullInfo = false;
-				}
-			}
+		showAllCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			showFullInfo = abstractButton.getModel().isSelected();
 		});
 		panel.add(showAllCheckBox);
 		
@@ -463,16 +415,14 @@ public class HolmesMCS extends JFrame {
 		saveButton.setBounds(posX, posY+25, 110, 32);
 		saveButton.setMargin(new Insets(0, 0, 0, 0));
 		saveButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveMCS.png"));
-		saveButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = transitionsResultsCombo.getSelectedIndex();
-				if(selected == 0) {
-					return;
-				}
-				selected--;
-				String name = (String) transitionsResultsCombo.getSelectedItem();
-				MCSoperations.saveSingleMCS(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore(), selected, name);
+		saveButton.addActionListener(actionEvent -> {
+			int selected = transitionsResultsCombo.getSelectedIndex();
+			if(selected == 0) {
+				return;
 			}
+			selected--;
+			String name = (String) transitionsResultsCombo.getSelectedItem();
+			MCSoperations.saveSingleMCS(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore(), selected, name);
 		});
 		saveButton.setFocusPainted(false);
 		panel.add(saveButton);
@@ -482,12 +432,10 @@ public class HolmesMCS extends JFrame {
 		showMCSButton.setBounds(posX+120, posY+25, 110, 32);
 		showMCSButton.setMargin(new Insets(0, 0, 0, 0));
 		showMCSButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/showData.png"));
-		showMCSButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = transitionsResultsCombo.getSelectedIndex();
-				if(selected > 0) {
-					showMCSData(selected-1);
-				}
+		showMCSButton.addActionListener(actionEvent -> {
+			int selected = transitionsResultsCombo.getSelectedIndex();
+			if(selected > 0) {
+				showMCSData(selected-1);
 			}
 		});
 		showMCSButton.setFocusPainted(false);
@@ -498,12 +446,10 @@ public class HolmesMCS extends JFrame {
 		calculateFragilityButton.setBounds(posX+240, posY+25, 110, 32);
 		calculateFragilityButton.setMargin(new Insets(0, 0, 0, 0));
 		calculateFragilityButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/fragility.png"));
-		calculateFragilityButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = transitionsResultsCombo.getSelectedIndex();
-				if(selected > 0) {
-					calculateFragility(selected-1);
-				}
+		calculateFragilityButton.addActionListener(actionEvent -> {
+			int selected = transitionsResultsCombo.getSelectedIndex();
+			if(selected > 0) {
+				calculateFragility(selected-1);
 			}
 		});
 		calculateFragilityButton.setFocusPainted(false);
@@ -518,7 +464,7 @@ public class HolmesMCS extends JFrame {
 	 * Metoda odpowiedzialna za generowanie zbioru MCS i dodanie go do bazy programu.
 	 */
 	protected void launchMCSanalysis() {
-		if(isMCSGeneratorWorking == true) {
+		if(isMCSGeneratorWorking) {
 			JOptionPane.showMessageDialog(null, "MCS calculation already in progress.", 
 					"MCS generator working", JOptionPane.WARNING_MESSAGE);
 		} else {
@@ -603,10 +549,8 @@ public class HolmesMCS extends JFrame {
 							s = s.replace("t", "");
 							int next = Integer.parseInt(s);
 							objReactions.add(next);
-						} catch (Exception e) {}
+						} catch (Exception ignored) {}
 					}
-					
-					
 				}
 			}
 		}
@@ -622,7 +566,7 @@ public class HolmesMCS extends JFrame {
 		if(objReactions.size() == 0)
 			return;
 		
-		if(isMCSGeneratorWorking == true) {
+		if(isMCSGeneratorWorking) {
 			JOptionPane.showMessageDialog(null, "MCS calculation already in progress.", 
 					"MCS generator working", JOptionPane.WARNING_MESSAGE);
 		} else {
@@ -670,7 +614,7 @@ public class HolmesMCS extends JFrame {
 			
 			for(int el : objReactions) {
 				
-				while(getGeneratorStatus() == true) {
+				while(getGeneratorStatus()) {
 					try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
 				}
 				
@@ -703,25 +647,25 @@ public class HolmesMCS extends JFrame {
 		logField.append("Minimal Cuttin Sets list size: "+dataVector.size()+"\n");
 		
 		int counter = 0;
-		String msg = "";
+		StringBuilder msg;
 		for(ArrayList<Integer> set : dataVector) {
 			logField.append("MSC#"+counter+" ");
-			msg = "[";
+			msg = new StringBuilder("[");
 			for(int el : set) {
-				msg += el+", ";
+				msg.append(el).append(", ");
 			}
-			msg += "]   : ";
-			msg = msg.replace(", ]", "]");
+			msg.append("]   : ");
+			msg = new StringBuilder(msg.toString().replace(", ]", "]"));
 			
 			if(showFullInfo) {
 				int transSize = transitions.size();
-				String names = "";
+				StringBuilder names = new StringBuilder();
 				for(int el : set) {
 					if(el < transSize) {
-						names += "t"+el+"_"+transitions.get(el).getName()+"; ";
+						names.append("t").append(el).append("_").append(transitions.get(el).getName()).append("; ");
 					}
 				}
-				msg += names;
+				msg.append(names);
 			}
 			
 			logField.append(msg+"\n");
@@ -750,15 +694,15 @@ public class HolmesMCS extends JFrame {
 		
 		for(ArrayList<Integer> set : dataVector) {
 			for(int el : set) {
-				if(reactions.contains(el) == false)
+				if(!reactions.contains(el))
 					reactions.add(el);
 			}
 		}
 		
 		Collections.sort(reactions);
 		
-		float reactSum = 0;
-		float setSizeSum = 0;	
+		float reactSum;
+		float setSizeSum;
 		for(int reaction : reactions) {
 			reactSum = 0;
 			setSizeSum = 0;

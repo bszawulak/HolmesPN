@@ -118,7 +118,7 @@ public class Rprotocols implements Runnable {
 
 	/**
 	 * Obliczanie miar CH dla klastrów.
-	 * @throws IOException
+	 * @throws IOException ex1
 	 */
 	public void executeCHmetricScripts() throws IOException{		
 		File file = new File(scriptName);
@@ -148,11 +148,11 @@ public class Rprotocols implements Runnable {
 			
 			//int reallyToCompute = nrClusters + 1; //don't ask (MR)
 			
-			String function = new String("veni1("+line+", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
+			String function = "veni1(" + line + ", \"" + pathOutput + "\",\"" + fileNameCSV + "\"," + nrClusters + ")";
 			code.addRCode(function);
 			String replaced = line.replace("\"", "");
 			String[] parts = replaced.split(",");
-			String filename = new String(pathOutput+parts[1]+"_"+parts[0]+	"_clusters.txt");
+			String filename = pathOutput + parts[1] + "_" + parts[0] + "_clusters.txt";
 			rcaller.redirectROutputToFile(filename, false);
 			rcaller.setRCode(code);
 			rcaller.runOnly();
@@ -192,11 +192,11 @@ public class Rprotocols implements Runnable {
 			
 			GUIManager.getDefaultGUIManager().log("Processing: "+line, "text", true);
 			//tu wstawić logi w zależności od 'line'
-			String function = new String("veni1("+line+", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
+			String function = "veni1(" + line + ", \"" + pathOutput + "\",\"" + fileNameCSV + "\"," + nrClusters + ")";
 			code.addRCode(function);
 			String replaced = line.replace("\"", "");
 			String[] parts = replaced.split(",");
-			String filename = new String(pathOutput+parts[1]+"_"+parts[0]+	"_clusters.txt");
+			String filename = pathOutput + parts[1] + "_" + parts[0] + "_clusters.txt";
 			rcaller.redirectROutputToFile(filename, false);
 			rcaller.setRCode(code);
 			rcaller.runOnly();
@@ -220,9 +220,9 @@ public class Rprotocols implements Runnable {
 		rcaller.setRscriptExecutable(pathToR);
 		rcaller.cleanRCode();
 		code.addRCode(str);
-		String function = new String("veni1(\""+miara_odl+"\",\""+algorytm_c+"\", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
+		String function = "veni1(\"" + miara_odl + "\",\"" + algorytm_c + "\", \"" + pathOutput + "\",\"" + fileNameCSV + "\"," + nrClusters + ")";
 		code.addRCode(function);
-		String filename = new String(pathOutput+algorytm_c+"_"+miara_odl+"_clusters_ext_"+nrClusters+".txt");
+		String filename = pathOutput + algorytm_c + "_" + miara_odl + "_clusters_ext_" + nrClusters + ".txt";
 		rcaller.redirectROutputToFile(filename, false);
 		rcaller.setRCode(code);
 		rcaller.runOnly();

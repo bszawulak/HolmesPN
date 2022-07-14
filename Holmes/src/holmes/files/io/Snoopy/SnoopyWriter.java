@@ -32,20 +32,20 @@ import holmes.varia.Check;
  *
  */
 public class SnoopyWriter {
-	private ArrayList<Place> places = null;
-	private ArrayList<Transition> transitions = null;
-	private ArrayList<MetaNode> metanodes = null;
-	private ArrayList<Arc> arcs = null;
+	private ArrayList<Place> places;
+	private ArrayList<Transition> transitions;
+	private ArrayList<MetaNode> metanodes;
+	private ArrayList<Arc> arcs;
 	private ArrayList<MetaNode> coarsePlaces = new ArrayList<MetaNode>();
 	private ArrayList<MetaNode> coarseTransitions = new ArrayList<MetaNode>();
 	
-	private ArrayList<SnoopyWriterPlace> snoopyWriterPlaces = new ArrayList<SnoopyWriterPlace>();
+	private ArrayList<SnoopyWriterPlace> snoopyWriterPlaces;
 	private ArrayList<Integer> holmesPlacesID = new ArrayList<Integer>();
-	private ArrayList<SnoopyWriterTransition> snoopyWriterTransitions = new ArrayList<SnoopyWriterTransition>();
+	private ArrayList<SnoopyWriterTransition> snoopyWriterTransitions;
 	private ArrayList<Integer> holmesTransitionsID = new ArrayList<Integer>();
-	private ArrayList<SnoopyWriterCoarse> snoopyWriterCoarsePlaces = new ArrayList<SnoopyWriterCoarse>();
+	private ArrayList<SnoopyWriterCoarse> snoopyWriterCoarsePlaces;
 	private ArrayList<Integer> holmesCoarsePlacesID = new ArrayList<Integer>();
-	private ArrayList<SnoopyWriterCoarse> snoopyWriterCoarseTransitions = new ArrayList<SnoopyWriterCoarse>();
+	private ArrayList<SnoopyWriterCoarse> snoopyWriterCoarseTransitions;
 	private ArrayList<Integer> holmesCoarseTransitionsID = new ArrayList<Integer>();
 
 	/**
@@ -113,7 +113,7 @@ public class SnoopyWriter {
 				
 				currentActiveID = sPlace.writePlaceInfoToFile(bw, currentActiveID, globalPlaceId);
 				
-				if(sPlace.portal == true) { //jeśli właśnie dodane było portalem
+				if(sPlace.portal) { //jeśli właśnie dodane było portalem
 					currentActiveID += 13; //bo tak, pytajcie w Brandenburgu 'a czymuuu?'
 				} else {
 					currentActiveID ++;
@@ -218,7 +218,7 @@ public class SnoopyWriter {
 	 */
 	public boolean writeSPEPT(String filePath) {
 		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
-		if(status == false) {
+		if(!status) {
 			JOptionPane.showMessageDialog(null, "Problems that cannot be automatically fixed detected.\n"
 					+ "Plaese save as Project.", 
 					"Problem", JOptionPane.ERROR_MESSAGE);
@@ -248,7 +248,7 @@ public class SnoopyWriter {
 				snoopyWriterPlaces.add(sPlace);
 				holmesPlacesID.add(p.getID());
 				currentActiveID = sPlace.writePlaceInfoToFile(bw, currentActiveID, globalPlaceId);
-				if(sPlace.portal == true) { //jeśli właśnie dodane było portalem
+				if(sPlace.portal) { //jeśli właśnie dodane było portalem
 					currentActiveID += 13; //bo tak, 13, pytajcie w Brandenburgu 'a czymuuu?' Nie ja pisałem Snoopiego.
 				} else {
 					currentActiveID ++;
@@ -394,7 +394,7 @@ public class SnoopyWriter {
 	 */
 	public boolean writeSPTPT(String filePath) {
 		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
-		if(status == false) {
+		if(!status) {
 			JOptionPane.showMessageDialog(null, "Problems that cannot be automatically fixed detected.\n"
 					+ "Plaese save as Project.", 
 					"Problem", JOptionPane.ERROR_MESSAGE);
@@ -431,7 +431,7 @@ public class SnoopyWriter {
 				
 				currentActiveID = sPlace.writePlaceInfoToFile(bw, currentActiveID, globalPlaceId);
 				
-				if(sPlace.portal == true) { //jeśli właśnie dodane było portalem
+				if(sPlace.portal) { //jeśli właśnie dodane było portalem
 					currentActiveID += 13; //bo tak, pytajcie 'a czymu?' w Brandenburgu 
 				} else {
 					currentActiveID ++;

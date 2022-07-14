@@ -16,9 +16,9 @@ import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.NetSimulator;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
-import holmes.petrinet.simulators.NetSimulatorXTPN;
+import holmes.petrinet.simulators.GraphicalSimulator;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulatorXTPN;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.workspace.Workspace;
 
@@ -117,8 +117,8 @@ public class GUIReset {
 		pNet.clearSimKnockoutData();
 		pNet.resetComm();
 		pNet.setMCTanalyzer(new MCTCalculator(pNet));
-		pNet.setSimulator(new NetSimulator(SimulatorGlobals.SimNetType.BASIC, pNet));
-		pNet.setSimulatorXTPN(new NetSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, pNet));
+		pNet.setSimulator(new GraphicalSimulator(SimulatorGlobals.SimNetType.BASIC, pNet));
+		pNet.setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, pNet));
 		pNet.setSimulationActive(false);
 		pNet.setFileName("");
 
@@ -312,7 +312,7 @@ public class GUIReset {
 	 */
 	@SuppressWarnings("unused")
 	public boolean isSimulatorActive() {
-		NetSimulator ns = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator();
+		GraphicalSimulator ns = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator();
 		return ns.getSimulatorStatus() != SimulatorMode.STOPPED; // STOPPED => return false (czyli NOT active);
 	}
 	
@@ -321,8 +321,8 @@ public class GUIReset {
 	 * @return (<b>boolean</b>) - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
-		NetSimulator obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
-		if(obj instanceof NetSimulator) {
+		GraphicalSimulator obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
+		if(obj instanceof GraphicalSimulator) {
 			if(obj.getSimulatorStatus() == SimulatorMode.STOPPED) {
 				return false;
 			} else {
@@ -334,9 +334,9 @@ public class GUIReset {
 	}
 
 	public boolean isXTPNSimulatorActiveWarning(String msg, String msgTitle) {
-		NetSimulatorXTPN obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulatorXTPN();
-		if(obj instanceof NetSimulatorXTPN) {
-			if(obj.getXTPNsimulatorStatus() == NetSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
+		GraphicalSimulatorXTPN obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulatorXTPN();
+		if(obj instanceof GraphicalSimulatorXTPN) {
+			if(obj.getXTPNsimulatorStatus() == GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
 				return false;
 			} else {
 				JOptionPane.showMessageDialog(null, msg, msgTitle, JOptionPane.WARNING_MESSAGE);

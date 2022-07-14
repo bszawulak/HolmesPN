@@ -3,11 +3,10 @@ package holmes.windows;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -34,7 +33,7 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.functions.FunctionContainer;
 import holmes.petrinet.functions.FunctionsTools;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.tables.FunctionalTransAuxTableModel;
 import holmes.tables.FunctionalTransTableModel;
 import holmes.tables.FunctionalTransTableRenderer;
@@ -48,21 +47,18 @@ import static java.lang.Double.valueOf;
  * @author MR
  */
 public class HolmesFunctionsBuilder extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 1235426932930026597L;
 	private static final DecimalFormat formatter = new DecimalFormat( "#.###" );
 	private Transition transition;
 	private ArrayList<Place> places;
 	private ArrayList<Arc> arcs;
-	private JPanel mainPanel;
 	private GUIManager overlord;
 	private PetriNet pn;
 	private boolean mainSimulatorActive;
-	private JPanel tablePanel;
 	private JTable tableFunc;
 	private FunctionalTransTableModel tableFuncModel;
-	private FunctionalTransTableRenderer tableRenderer;
-	private JScrollPane tableScrollPane;
-	
+
 	private JTextField idField;
 	private JTextField functionField;
 	private JCheckBox enabledCheckBox;
@@ -84,7 +80,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		setTitle("Transition: "+trans.getName());
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {}
+		} catch (Exception ignored) {}
 		
 		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
 			mainSimulatorActive = true;
@@ -119,8 +115,8 @@ public class HolmesFunctionsBuilder extends JFrame {
 	private void initializeComponents() {
 		this.setLocation(20, 20);
 		setSize(new Dimension(900, 650));
-		mainPanel = new JPanel(new BorderLayout());
-		tablePanel = createTablePanel();
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		JPanel tablePanel = createTablePanel();
 		mainPanel.add(tablePanel, BorderLayout.NORTH);
 		mainPanel.add(createAuxPanel(), BorderLayout.CENTER);
 		add(mainPanel);
@@ -193,11 +189,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		validateButton.setToolTipText("Validate the equation and add it to transition functions list");
 		validateButton.setMargin(new Insets(0, 0, 0, 0));
 		validateButton.setBounds(posX+650, posY+20, 120, 22);
-		validateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				addFunctionAction();
-			}
-		});
+		validateButton.addActionListener(actionEvent -> addFunctionAction());
 		resultPanel.add(validateButton);
 		
 		JButton clearButton = new JButton(Tools.getResIcon16("/icons/functionsWindow/removeFIcon.png"));
@@ -205,32 +197,30 @@ public class HolmesFunctionsBuilder extends JFrame {
 		clearButton.setToolTipText("Clear the equation from the list");
 		clearButton.setMargin(new Insets(0, 0, 0, 0));
 		clearButton.setBounds(posX+650, posY+50, 120, 22);
-		clearButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int row = tableFunc.getSelectedRow();
-				if(row == -1)
-					return;
+		clearButton.addActionListener(actionEvent -> {
+			int row = tableFunc.getSelectedRow();
+			if(row == -1)
+				return;
 
-				
-				String fID = (String) tableFunc.getValueAt(row, 0);
-				FunctionContainer container = transition.getFunctionContainer(fID);
-				container.simpleExpression = "";
-				container.correct = false;
-				container.enabled = false;
 
-				tableFunc.getModel().setValueAt("", row, 2);
-				tableFunc.getModel().setValueAt(false, row, 3);
-				tableFunc.getModel().setValueAt(false, row, 6);
-				tableFuncModel.fireTableDataChanged();
-				
-				idField.setText("");
-				functionField.setText("");
-				enabledCheckBox.setSelected(false);
-				currentResult.setText("");
-				commentField.setText("");
-				
-				overlord.markNetChange();
-			}
+			String fID = (String) tableFunc.getValueAt(row, 0);
+			FunctionContainer container = transition.getFunctionContainer(fID);
+			container.simpleExpression = "";
+			container.correct = false;
+			container.enabled = false;
+
+			tableFunc.getModel().setValueAt("", row, 2);
+			tableFunc.getModel().setValueAt(false, row, 3);
+			tableFunc.getModel().setValueAt(false, row, 6);
+			tableFuncModel.fireTableDataChanged();
+
+			idField.setText("");
+			functionField.setText("");
+			enabledCheckBox.setSelected(false);
+			currentResult.setText("");
+			commentField.setText("");
+
+			overlord.markNetChange();
 		});
 		resultPanel.add(clearButton);
 		
@@ -239,33 +229,18 @@ public class HolmesFunctionsBuilder extends JFrame {
 		helpButton.setToolTipText("Show list of operations and functions");
 		helpButton.setMargin(new Insets(0, 0, 0, 0));
 		helpButton.setBounds(posX+650, posY+80, 120, 22);
-		helpButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				helpNotepad();
-			}
-		});
+		helpButton.addActionListener(actionEvent -> helpNotepad());
 		resultPanel.add(helpButton);
 		
 		JCheckBox functionalActiveButton = new JCheckBox("Functional transition");
 		functionalActiveButton.setBounds(posX+650, posY+110, 150, 20);
-		if(transition.isFunctional()) {
-			functionalActiveButton.setSelected(true);
-		} else {
-			functionalActiveButton.setSelected(false);
-		}
+		functionalActiveButton.setSelected(transition.isFunctional());
 
-		functionalActiveButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					transition.setFunctional(true);
-				} else {
-					transition.setFunctional(false);
-				}
-				pn.repaintAllGraphPanels();
-				overlord.markNetChange();
-			}
+		functionalActiveButton.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			transition.setFunctional(abstractButton.getModel().isSelected());
+			pn.repaintAllGraphPanels();
+			overlord.markNetChange();
 		});
 		resultPanel.add(functionalActiveButton);
 		
@@ -438,8 +413,8 @@ public class HolmesFunctionsBuilder extends JFrame {
 		tableFunc.getColumnModel().getColumn(6).setPreferredWidth(60);
 		tableFunc.getColumnModel().getColumn(6).setMinWidth(60);
 		tableFunc.getColumnModel().getColumn(6).setMaxWidth(60);
-    	
-		tableRenderer = new FunctionalTransTableRenderer(tableFunc);
+
+		FunctionalTransTableRenderer tableRenderer = new FunctionalTransTableRenderer(tableFunc);
 		tableFunc.setDefaultRenderer(Object.class, tableRenderer);
 		tableFunc.setDefaultRenderer(Integer.class, tableRenderer);
 		tableFunc.setDefaultRenderer(Boolean.class, tableRenderer);
@@ -471,7 +446,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		}
 
 		tableFunc.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		tableScrollPane = new JScrollPane(tableFunc, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane tableScrollPane = new JScrollPane(tableFunc, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
 		return tablesSubPanel;
 	}

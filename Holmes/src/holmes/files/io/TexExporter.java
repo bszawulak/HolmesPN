@@ -179,7 +179,7 @@ public class TexExporter {
 		
 		ArrayList<ArrayList<String>> invariantsTable = new ArrayList<ArrayList<String>>();
 		try { //ekstrakcja informacji na bazie algorytmów MCT (Adam)
-			String line = "";
+			String line;
 			BufferedReader br = new BufferedReader(new FileReader(mctFile));
 			while((line = br.readLine()) != null && !line.contains("Invariants[IN MCT]")) 
 				; //przewijanie do sekcji ze zbiorami MCT
@@ -193,15 +193,15 @@ public class TexExporter {
 				invTableRow.add("$x_{"+cells[0].replace(".", "")+"}$");
 				if(cells[1].length() > 2) { //jeśli coś więcej niż [ ]
 					String[] mctSet = cells[1].replace("]", "").replace("[", "").split(",");
-					String mctTableCell = "";
+					StringBuilder mctTableCell = new StringBuilder();
 					for(int mct=0; mct<mctSet.length; mct++) {
-						mctTableCell += "$m_{";
-						mctTableCell += mctSet[mct].replace("m", ""); //sam numer, m już dodano wyżej
-						mctTableCell += "}$";
+						mctTableCell.append("$m_{");
+						mctTableCell.append(mctSet[mct].replace("m", "")); //sam numer, m już dodano wyżej
+						mctTableCell.append("}$");
 						if(mct+1 < mctSet.length) //jeśli będą kolejne: przecinek
-							mctTableCell += ",";
+							mctTableCell.append(",");
 					}
-					invTableRow.add(mctTableCell); //dodaj zbiór MCT
+					invTableRow.add(mctTableCell.toString()); //dodaj zbiór MCT
 				} else {
 					invTableRow.add(""); //NO MCT
 				}
@@ -388,13 +388,13 @@ public class TexExporter {
 			
 			for(int i=0; i<mctSet.size(); i++) {
 				String mctNo = "$m_{"+(i+1)+"}$";
-				String transLine = "";
+				StringBuilder transLine = new StringBuilder();
 				for(int t=0; t<mctSet.get(i).size(); t++) {
-					transLine += " $t_{";
+					transLine.append(" $t_{");
 					Transition trNumber = mctSet.get(i).get(t);
 					int trID = transitions.lastIndexOf(trNumber);
-					transLine += ""+trID;
-					transLine += "}$";
+					transLine.append("").append(trID);
+					transLine.append("}$");
 					
 					//transLine += " ";
 					//Transition trNumber = mctSet.get(i).get(t);
@@ -402,7 +402,7 @@ public class TexExporter {
 					//transLine += " "+transitions.get(trID).getName().replace("_", " ");
 					
 					if(t+1 < mctSet.get(i).size())
-						transLine += ",";
+						transLine.append(",");
 				}
 				bw.write(mctNo+" & "+transLine+" & \\\\ \\hline " + newline);
 			}
@@ -451,15 +451,15 @@ public class TexExporter {
 		
 			for(int cl=0; cl<data.metaData.clusterNumber; cl++) {	
 				String clCell = "$c_{"+(cl+1)+"}$ & ";  //nr klastra I komorka
-				String line = "";
+				StringBuilder line = new StringBuilder();
 				for(int inv=0; inv<data.clustersInv.get(cl).size(); inv++) { //tabelka inwariantów
-					line = "";
+					line = new StringBuilder();
 					int invNumber = data.clustersInv.get(cl).get(inv);		
 					ArrayList<String> invArray = data.getNormalizedInvariant(invNumber, true);
 					//String nr = invArray.get(0);// ID
 					
 					
-					line += "$x_{"+(invNumber+1)+"}$ & "; // nr inwariantu: II komorka
+					line.append("$x_{").append(invNumber + 1).append("}$ & "); // nr inwariantu: II komorka
 					
 					String mctLine = invArray.get(1); //MCT
 					mctLine = mctLine.replace("[", "");
@@ -468,20 +468,20 @@ public class TexExporter {
 						String[] mctVector = mctLine.split(",");
 						for(int mct=0; mct<mctVector.length; mct++) {
 							String mctTmp = mctVector[mct];
-							line += "$m_{"+(mctTmp)+"}$,";
+							line.append("$m_{").append(mctTmp).append("}$,");
 						}
 					}
 
-					line += "&";
-					line = line.replace(",&", " & ");
+					line.append("&");
+					line = new StringBuilder(line.toString().replace(",&", " & "));
 					
 					for(int i=2; i<invArray.size(); i++)
 					{
 						String t = invArray.get(i);
-						line += "$t_{"+t+"}$, ";
+						line.append("$t_{").append(t).append("}$, ");
 					}
-					line += "\\\\ \\hline ";
-					line = line.replace(", \\\\", " \\\\");
+					line.append("\\\\ \\hline ");
+					line = new StringBuilder(line.toString().replace(", \\\\", " \\\\"));
 					
 					if(inv==0) {
 						bw.write(clCell+line+newline);
@@ -530,13 +530,14 @@ public class TexExporter {
 				mctLine = mctLine.replace("]", "");
 				if(mctLine.length()>0) {
 					String[] mctVector = mctLine.split(",");
-					for(int mct=0; mct<mctVector.length; mct++) {
-						try{
-							int mctNumber = Integer.parseInt(mctVector[mct]);
+					for (String s : mctVector) {
+						try {
+							int mctNumber = Integer.parseInt(s);
 							int oldValue = mctRow.get(mctNumber);
 							oldValue++;
 							mctRow.set(mctNumber, oldValue); //występuje
-						} catch (Exception xx1) {}
+						} catch (Exception ignored) {
+						}
 					}
 				}
 				
@@ -547,7 +548,7 @@ public class TexExporter {
 						int oldValue = mctRow.get(tranNumber);
 						oldValue++;
 						transRow.set(tranNumber, oldValue); //występuje
-					} catch (Exception xx1) {}
+					} catch (Exception ignored) {}
 					
 				}
 			}
@@ -583,16 +584,16 @@ public class TexExporter {
 			bw.write("\\bf Cluster no & \\bf Contained MCT & \\bf Contained transitions  \\\\  \\hline " + newline);
 		
 			for(int cl=0; cl<data.metaData.clusterNumber; cl++) {	
-				String line = "$c_{"+(cl+1)+"$ & ";  //nr klastra
+				StringBuilder line = new StringBuilder("$c_{" + (cl + 1) + "$ & ");  //nr klastra
 				for(int mct=0; mct<clustersMCT.get(cl).size(); mct++) {
 					int number = clustersMCT.get(cl).get(mct);
 					if(number>0) {
-						line += "$m_{"+(mct+1)+"$, ";
+						line.append("$m_{").append(mct + 1).append("$, ");
 					}
 				}
 				
-				line += "&";
-				line = line.replace(", &", " &");
+				line.append("&");
+				line = new StringBuilder(line.toString().replace(", &", " &"));
 			}
 			
 			bw.write("\\end{longtable}"+newline);

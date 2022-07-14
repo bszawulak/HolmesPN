@@ -300,7 +300,7 @@ public class SimulatorXTPN implements IEngine {
         //tutaj uruchamiany tranzycje wejściowe, one są niewrażliwe na zmiany w tokenach
         for(Transition transition : transitions) {
             if(!transition.isActivated_xTPN() && !transition.isProducing_xTPN()) { //nieaktywowana, nieprodukująca
-                if(transition.getInArcs().size() == 0) { //tranzycja wejściowa, więc aktywna teoretycznie
+                if(transition.isInputTransition()) { //tranzycja wejściowa, więc zawsze aktywna
                     if(transition.isAlphaActiveXTPN()) { //typ alfa, ustaw zegar
                         double min = transition.getAlphaMin_xTPN();
                         double max = transition.getAlphaMax_xTPN();
@@ -328,7 +328,7 @@ public class SimulatorXTPN implements IEngine {
             }
             //tutaj trzeba jednak sprawdzić globalny stan, pod koniec ostatniego mogły zniknąć zbyt stare tokeny:
             if(transition.isActivated_xTPN()) {
-                if(transition.getInArcs().size() == 0)
+                if(transition.isInputTransition())
                     continue; //wejściowa, jak jest aktywna, to pozostanie
 
                 if(!transition.getActiveStatusXTPN()) {
