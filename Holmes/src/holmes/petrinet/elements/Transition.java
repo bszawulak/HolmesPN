@@ -120,10 +120,10 @@ public class Transition extends Node {
     private boolean alphaMode_xTPN = true;
     private boolean alphaRangeVisibility_XTPN = true;
     private double alphaMin_xTPN = 0.0;
-    private double alphaMax_xTPN = 0.0;
+    private double alphaMax_xTPN = 1.0;
     private boolean betaMode_xTPN = true;
     private double betaMin_xTPN = 0.0;
-    private double betaMax_xTPN = 0.0;
+    private double betaMax_xTPN = 1.0;
     private boolean betaRangeVisibility_XTPN = true;
     private double tauAlpha_xTPN = -1.0;
     private double tauBeta_xTPN = -1.0;
@@ -1569,6 +1569,13 @@ public class Transition extends Node {
      */
     public boolean isMassActionKineticsActiveXTPN() {
         return massActionKinetics;
+    }
+
+    public boolean isInputTransition() {
+        return getInArcs().size() == 0;
+    }
+    public boolean isOutputTransition() {
+        return getOutArcs().size() == 0;
     }
 
     /**

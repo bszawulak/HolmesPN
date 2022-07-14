@@ -262,15 +262,19 @@ public class SimulatorXTPN implements IEngine {
                 if(transition.isAlphaActiveXTPN()) { //typ alfa
                     double min = transition.getAlphaMin_xTPN();
                     double max = transition.getAlphaMax_xTPN();
+                    double rand = getRandomValue(min, max);
 
-                    transition.setTauAlpha_xTPN( getRandomValue(min, max) );
+                    transition.setTauAlpha_xTPN( rand );
+                    transition.setTimerAlfa_XTPN(0.0);
                     transition.setActivationStatusXTPN(true);
                     continue;
                 } else if(transition.getActiveStatusXTPN()) { //tylko typ beta
                     double min = transition.getBetaMin_xTPN();
                     double max = transition.getBetaMax_xTPN();
+                    double rand = getRandomValue(min, max);
 
-                    transition.setTauBeta_xTPN( getRandomValue(min, max) );
+                    transition.setTauBeta_xTPN( rand );
+                    transition.setTimerBeta_XTPN(0.0);
                     transition.setProductionStatus_xTPN(true);
                     continue;
                 } else { //ani alfa, ani beta:
@@ -301,14 +305,18 @@ public class SimulatorXTPN implements IEngine {
                         double min = transition.getAlphaMin_xTPN();
                         double max = transition.getAlphaMax_xTPN();
 
-                        transition.setTauAlpha_xTPN( getRandomValue(min, max) );
+                        double rand = getRandomValue(min, max);
+                        transition.setTauAlpha_xTPN( rand );
+                        transition.setTimerAlfa_XTPN(0.0);
                         transition.setActivationStatusXTPN(true);
                         continue;
                     } else if(transition.getActiveStatusXTPN()) { //tylko typ beta
                         double min = transition.getBetaMin_xTPN();
                         double max = transition.getBetaMax_xTPN();
 
-                        transition.setTauBeta_xTPN( getRandomValue(min, max) );
+                        double rand = getRandomValue(min, max);
+                        transition.setTauBeta_xTPN( rand );
+                        transition.setTimerBeta_XTPN(0.0);
                         transition.setProductionStatus_xTPN(true);
                         continue;
                     } else { //ani alfa, ani beta

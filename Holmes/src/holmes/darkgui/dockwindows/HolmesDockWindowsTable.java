@@ -44,6 +44,7 @@ import holmes.petrinet.simulators.NetSimulator;
 import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
 import holmes.petrinet.simulators.NetSimulatorXTPN;
 import holmes.petrinet.simulators.QuickSimTools;
+import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesFunctionsBuilder;
@@ -181,6 +182,12 @@ public class HolmesDockWindowsTable extends JPanel {
     private boolean betaLocChangeMode = false;
     private boolean gammaLocChangeMode = false;
     private boolean tauLocChangeMode = false;
+
+    //aby była możliwa zmiana bez odświeżania:
+    private JFormattedTextField alphaMinTextField;
+    private JFormattedTextField alphaMaxTextField;
+    private JFormattedTextField betaMinTextField;
+    private JFormattedTextField betaMaxTextField;
 
     // modes
     private static final int PLACE = 0;
@@ -4134,7 +4141,7 @@ public class HolmesDockWindowsTable extends JPanel {
         Double example = 3.14;
 
         // XTPN-transition alfaMin value
-        JFormattedTextField alphaMinTextField = new JFormattedTextField(formatter);
+        alphaMinTextField = new JFormattedTextField(formatter);
         alphaMinTextField.setValue(example);
         alphaMinTextField.setValue(transition.getAlphaMin_xTPN());
         alphaMinTextField.addPropertyChangeListener("value", e -> {
@@ -4161,10 +4168,12 @@ public class HolmesDockWindowsTable extends JPanel {
         });
 
         // alfaMax value
-        JFormattedTextField alphaMaxTextField = new JFormattedTextField(formatter);
+        alphaMaxTextField = new JFormattedTextField(formatter);
         alphaMaxTextField.setValue(example);
         alphaMaxTextField.setValue(transition.getAlphaMax_xTPN());
         alphaMaxTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
@@ -4203,10 +4212,12 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(betaLabel);
 
         // XTPN-transition betaMin value
-        JFormattedTextField betMinTextField = new JFormattedTextField(formatter);
-        betMinTextField.setValue(example);
-        betMinTextField.setValue(transition.getBetaMin_xTPN());
-        betMinTextField.addPropertyChangeListener("value", e -> {
+        betaMinTextField = new JFormattedTextField(formatter);
+        betaMinTextField.setValue(example);
+        betaMinTextField.setValue(transition.getBetaMin_xTPN());
+        betaMinTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
@@ -4225,10 +4236,12 @@ public class HolmesDockWindowsTable extends JPanel {
         });
 
         // XTPN-transition betaMax value
-        JFormattedTextField betaMaxTextField = new JFormattedTextField(formatter);
+        betaMaxTextField = new JFormattedTextField(formatter);
         betaMaxTextField.setValue(example);
         betaMaxTextField.setValue(transition.getBetaMax_xTPN());
         betaMaxTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
@@ -4246,12 +4259,12 @@ public class HolmesDockWindowsTable extends JPanel {
         });
 
         if(!transition.isBetaActiveXTPN()) {
-            betMinTextField.setEnabled(false);
+            betaMinTextField.setEnabled(false);
             betaMaxTextField.setEnabled(false);
         }
 
-        betMinTextField.setBounds(columnB_posX,columnB_Y+=20,80,20);
-        components.add(betMinTextField);
+        betaMinTextField.setBounds(columnB_posX,columnB_Y+=20,80,20);
+        components.add(betaMinTextField);
         JLabel slash2 = new JLabel(" / ", JLabel.LEFT);
         slash2.setBounds(columnB_posX+85, columnB_Y, 15, 20);
         components.add(slash2);
@@ -8342,11 +8355,17 @@ public class HolmesDockWindowsTable extends JPanel {
                 switch(answer) {
                     case 0: //powiększenie alphaMax do nowego alphaMin
                         transition.setAlphaMax_xTPN(newAlphaMin, true);
+                        doNotUpdate = true;
+                        alphaMaxTextField.setValue(newAlphaMin);
+                        doNotUpdate = false;
                         transition.setAlphaMin_xTPN(newAlphaMin, true);
                         repaintGraphPanel();
                         return true;
                     case 1: //redukcja nowego alphaMin do aktualnego alphaMax
                         transition.setAlphaMin_xTPN(alfaMax, true);
+                        doNotUpdate = true;
+                        alphaMinTextField.setValue(alfaMax);
+                        doNotUpdate = false;
                         repaintGraphPanel();
                         return true;
                     default: //cancel
@@ -8368,6 +8387,20 @@ public class HolmesDockWindowsTable extends JPanel {
         if (mode == XTPN_TRANS) {
             Transition transition = (Transition) element;
             double alfaMin = transition.getAlphaMin_xTPN();
+
+            if(alfaMin < SimulatorGlobals.calculationsAccuracy && newAlphaMax < SimulatorGlobals.calculationsAccuracy
+                    && transition.getBetaMin_xTPN() < SimulatorGlobals.calculationsAccuracy
+                    && transition.getBetaMax_xTPN() < SimulatorGlobals.calculationsAccuracy) {
+                if(transition.isInputTransition() || transition.isOutputTransition()) {
+                    JOptionPane.showMessageDialog(null,
+                                "Input or output XTPN transitions cannot be immediate. Alternatively" +
+                                        "\nturn off both Alfa and Beta modes for a classical immediate transition.",
+                            "Immediate int/out XTPN transitions problem", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+             }
+
+
             if(newAlphaMax < alfaMin) {
                 //String[] options = {"Increase \u03B1(max) to \u03B1(min)", "Decrease \u03B1(min) to \u03B1(max)", "Cancel"};
                 String[] options = {"\u25B2 Increase \u03B1-max to "+alfaMin, "\u25BC Decrease \u03B1-min "+newAlphaMax, "\u274C Cancel"};
@@ -8379,10 +8412,16 @@ public class HolmesDockWindowsTable extends JPanel {
                 switch(answer) {
                     case 0: //powiększenie nowego alphaMax do starej wartości alphaMin
                         transition.setAlphaMax_xTPN(alfaMin, true);
+                        doNotUpdate = true;
+                        alphaMaxTextField.setValue(alfaMin);
+                        doNotUpdate = false;
                         repaintGraphPanel();
                         return true;
                     case 1: //zmniejszenie starego alphaMin do nowego alphaMax
                         transition.setAlphaMin_xTPN(newAlphaMax, true);
+                        doNotUpdate = true;
+                        alphaMinTextField.setValue(newAlphaMax);
+                        doNotUpdate = false;
                         transition.setAlphaMax_xTPN(newAlphaMax, false);
                         repaintGraphPanel();
                         return true;
@@ -8416,11 +8455,17 @@ public class HolmesDockWindowsTable extends JPanel {
                 switch(answer) {
                     case 0: //powiększenie betaMax do nowego betaMin
                         transition.setBetaMax_xTPN(newBetaMin, true);
+                        doNotUpdate = true;
+                        betaMaxTextField.setValue(newBetaMin);
+                        doNotUpdate = false;
                         transition.setBetaMin_xTPN(newBetaMin, true);
                         repaintGraphPanel();
                         return true;
                     case 1: //redukcja nowego betaMin do aktualnego betaMax
                         transition.setBetaMin_xTPN(betaMax, true);
+                        doNotUpdate = true;
+                        betaMinTextField.setValue(betaMax);
+                        doNotUpdate = false;
                         repaintGraphPanel();
                         return true;
                     default: //cancel
@@ -8442,6 +8487,22 @@ public class HolmesDockWindowsTable extends JPanel {
         if (mode == XTPN_TRANS) {
             Transition transition = (Transition) element;
             double betaMin = transition.getBetaMin_xTPN();
+
+            if(betaMin < SimulatorGlobals.calculationsAccuracy && newBetaMax < SimulatorGlobals.calculationsAccuracy
+                    && transition.getAlphaMin_xTPN() < SimulatorGlobals.calculationsAccuracy
+                    && transition.getAlphaMax_xTPN() < SimulatorGlobals.calculationsAccuracy) {
+
+                boolean input = transition.isInputTransition();
+                boolean output = transition.isOutputTransition();
+                if( input || output ) {
+                    JOptionPane.showMessageDialog(null,
+                            "Input or output XTPN transitions cannot be immediate. Alternatively" +
+                                    "\nturn off both Alfa and Beta modes for a classical immediate transition.",
+                            "Immediate int/out XTPN transitions problem", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            }
+
             if(newBetaMax < betaMin) {
                 //String[] options = {"Increase \u03B2(max) to \u03B2(min)", "Decrease \u03B2(min) to \u03B2(max)", "Cancel"};
                 String[] options = {"\u25B2 Increase \u03B2-max to "+betaMin, "\u25BC Decrease \u03B2-min to "+newBetaMax, "\u274C Cancel"};
@@ -8451,12 +8512,18 @@ public class HolmesDockWindowsTable extends JPanel {
                         "Beta range problem: \u03B2-max too low",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
                 switch(answer) {
-                    case 0: //powiększenie nowego alphaMax do starej wartości alphaMin
+                    case 0: //powiększenie nowego betaMax do starej wartości betaMin
                         transition.setBetaMax_xTPN(betaMin, true);
+                        doNotUpdate = true;
+                        betaMaxTextField.setValue(betaMin);
+                        doNotUpdate = false;
                         repaintGraphPanel();
                         return true;
-                    case 1: //zmniejszenie starego alphaMin do nowego alphaMax
+                    case 1: //zmniejszenie starego betaMin do nowego betaMax
                         transition.setBetaMin_xTPN(newBetaMax, true);
+                        doNotUpdate = true;
+                        betaMinTextField.setValue(newBetaMax);
+                        doNotUpdate = false;
                         transition.setBetaMax_xTPN(newBetaMax, false);
                         repaintGraphPanel();
                         return true;

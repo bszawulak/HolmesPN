@@ -44,7 +44,7 @@ public class SimulatorGlobals {
 	public boolean quickSimToken = false;
 
 	//XTPN:
-	public double calculationsAccuracy = 0.000000001;
+	public static double calculationsAccuracy = 0.000000001;
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.
