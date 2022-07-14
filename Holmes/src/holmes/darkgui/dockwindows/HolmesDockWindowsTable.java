@@ -3794,25 +3794,26 @@ public class HolmesDockWindowsTable extends JPanel {
 
             JButton button = (JButton) e.getSource();
             if (transition.isAlphaActiveXTPN()) {
+
+                if(transition.isBetaActiveXTPN() && transition.getBetaMin_xTPN() < SimulatorGlobals.calculationsAccuracy
+                        && transition.getBetaMax_xTPN() < SimulatorGlobals.calculationsAccuracy ) {
+                    //czyli jeśli BETA=ON, ale bety są ustawione na zero
+                    if(transition.isInputTransition() || transition.isOutputTransition()) {
+                        JOptionPane.showMessageDialog(null,
+                                "Input or output XTPN transitions cannot be immediate. This transition" +
+                                        "\nis not in Beta-mode or Beta time values are zero. Change impossible.",
+                                "Immediate int/out XTPN transitions problem", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+
                 ((Transition) element).setAlphaXTPNstatus(false);
                 button.setText("Alfa: OFF");
                 button.setBackground(Color.RED);
-
-                //alfaVisibilityButton.setEnabled(false);
-                //alphaLocChangeButton.setEnabled(false);
-                //if(!transition.isBetaActiveXTPN()) { //jeśli dodatkowo beta=OFF
-                //    tauVisibilityButton.setEnabled(false);
-                //    tauLocChangeButton.setEnabled(false);
-                //}
             } else {
                 ((Transition) element).setAlphaXTPNstatus(true);
                 button.setText("Alfa: ON");
                 button.setBackground(Color.GREEN);
-
-                //alfaVisibilityButton.setEnabled(true);
-                //alphaLocChangeButton.setEnabled(true);
-                //tauVisibilityButton.setEnabled(true);
-                //tauLocChangeButton.setEnabled(true);
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
@@ -3838,25 +3839,25 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
             JButton button = (JButton) e.getSource();
             if (transition.isBetaActiveXTPN()) {
+
+                if(transition.isAlphaActiveXTPN() && transition.getAlphaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getAlphaMax_xTPN() < SimulatorGlobals.calculationsAccuracy ) {
+                    //czyli jeśli ALFA=ON, ale alfy są ustawione na zero
+                    if(transition.isInputTransition() || transition.isOutputTransition()) {
+                        JOptionPane.showMessageDialog(null,
+                                "Input or output XTPN transitions cannot be immediate. This transition" +
+                                        "\nis not in Alfa-mode and Beta time values are zero. Change impossible.",
+                                "Immediate int/out XTPN transitions problem", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+
                 ((Transition) element).setBetaXTPNstatus(false);
                 button.setText("Beta: OFF");
                 button.setBackground(Color.RED);
-
-                //betaVisibilityButton.setEnabled(false);
-                //betaLocChangeButton.setEnabled(false);
-                //if(!transition.isAlphaActiveXTPN()) { //jeśli dodatkowo alpha=OFF
-                //    tauVisibilityButton.setEnabled(false);
-                //    tauLocChangeButton.setEnabled(false);
-                //}
             } else {
                 ((Transition) element).setBetaXTPNstatus(true);
                 button.setText("Beta: ON");
                 button.setBackground(Color.GREEN);
-
-                //betaVisibilityButton.setEnabled(true);
-                //.setEnabled(true);
-                //tauVisibilityButton.setEnabled(true);
-                //tauLocChangeButton.setEnabled(true);
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
@@ -8401,9 +8402,9 @@ public class HolmesDockWindowsTable extends JPanel {
             Transition transition = (Transition) element;
             double alfaMin = transition.getAlphaMin_xTPN();
 
-            if(alfaMin < SimulatorGlobals.calculationsAccuracy && newAlphaMax < SimulatorGlobals.calculationsAccuracy
-                    && transition.getBetaMin_xTPN() < SimulatorGlobals.calculationsAccuracy
-                    && transition.getBetaMax_xTPN() < SimulatorGlobals.calculationsAccuracy) {
+            if(alfaMin < SimulatorGlobals.calculationsAccuracy && newAlphaMax < SimulatorGlobals.calculationsAccuracy &&
+                    ( ( transition.getBetaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getBetaMax_xTPN() < SimulatorGlobals.calculationsAccuracy )
+                    || !transition.isBetaActiveXTPN() ) ) { //albo bety są na zera, albo w ogóle tryb beta wyłączony
                 if(transition.isInputTransition() || transition.isOutputTransition()) {
                     JOptionPane.showMessageDialog(null,
                                 "Input or output XTPN transitions cannot be immediate. Alternatively" +
@@ -8501,10 +8502,9 @@ public class HolmesDockWindowsTable extends JPanel {
             Transition transition = (Transition) element;
             double betaMin = transition.getBetaMin_xTPN();
 
-            if(betaMin < SimulatorGlobals.calculationsAccuracy && newBetaMax < SimulatorGlobals.calculationsAccuracy
-                    && transition.getAlphaMin_xTPN() < SimulatorGlobals.calculationsAccuracy
-                    && transition.getAlphaMax_xTPN() < SimulatorGlobals.calculationsAccuracy) {
-
+            if(betaMin < SimulatorGlobals.calculationsAccuracy && newBetaMax < SimulatorGlobals.calculationsAccuracy &&
+                    ( ( transition.getAlphaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getAlphaMax_xTPN() < SimulatorGlobals.calculationsAccuracy)
+                    || !transition.isAlphaActiveXTPN() ) ) { //albo alfy są na zero, albo cały tryb alfa jest wyłączony
                 boolean input = transition.isInputTransition();
                 boolean output = transition.isOutputTransition();
                 if( input || output ) {

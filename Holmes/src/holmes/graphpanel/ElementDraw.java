@@ -1735,10 +1735,12 @@ public final class ElementDraw {
 	}
 
 	/**
-	 * Rysowanie tokenów w ruchu podczas symulacji.
-	 * @param g (Graphics2D) obiekt rysujący.
-	 * @param sheetId (int) indeks arkusza.
-	 * @param arc (Arc) łuk sieci po którym rusza się token.
+	 * Rysowanie tokenów w ruchu podczas symulacji. Odpalane przez symulator (time trigger) tyle razy, aż wartość
+	 * z getGraphicalSimulationSteps() przekroczy maksymalną. Sprawdzane to jest w Arc.incrementSimulationStep(), wartość
+	 * maksymalna to: GRAPHICAL_STEPS_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
+	 * @param g (<b>Graphics2D</b>) obiekt rysujący.
+	 * @param sheetId (<b>int</b>) indeks arkusza.
+	 * @param arc (<b>Arc</b>) łuk sieci, po którym rusza się token.
 	 */
 	public static void drawMovingToken(Graphics2D g, int sheetId, Arc arc) {
 		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
@@ -1754,7 +1756,6 @@ public final class ElementDraw {
 		int breaks = (breakPoints=arc.accessBreaks()).size(); //pro...
 		Point startPos = arc.getStartLocation().getPosition();
 		Point endPos = arc.getEndLocation().getPosition();
-		
 
 		double arcWidth = 0;
 		double stepSize;
