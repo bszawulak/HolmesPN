@@ -3,7 +3,6 @@ package holmes.petrinet.simulators;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -34,6 +33,8 @@ public class GraphicalSimulatorXTPN {
     private ArrayList<Transition> consumingTokensTransitionsXTPN;
     private ArrayList<Transition> consumingTokensTransitionsClassical;
     private ArrayList<Transition> producingTokensTransitionsAll;
+    //lista tranzycji XTPN i klasycznych które rozpoczęły produkcję
+    ArrayList<ArrayList<Transition>> transitionsAfterSubtracting;
     private long stepCounter = 0;
     private double simTotalTime = 0.0;
     //private Random generator;
@@ -297,7 +298,7 @@ public class GraphicalSimulatorXTPN {
 
         protected boolean newStateChangeStarts = true;
         protected boolean timePassPhase = false;
-        protected boolean subtractPhase = true; // true - subtract, false - add
+        protected boolean subtractPhase = false; // true - subtract, false - add
         protected boolean addPhase = false;
         protected boolean finishedAddPhase = false;
         protected boolean scheduledStop = false;
@@ -313,7 +314,7 @@ public class GraphicalSimulatorXTPN {
         private void resetPhaseOrderXTPN() {
             timePassPhase = false;
 
-            subtractPhase = true;
+            subtractPhase = false;
             addPhase = false;
             finishedAddPhase = false;
         }
@@ -407,94 +408,70 @@ public class GraphicalSimulatorXTPN {
                 overlord.simSettings.currentStep = stepCounter;
                 overlord.simSettings.currentTime = simTotalTime;
 
-                fillConsumingTransVector(); //działa na listach globalnych
-                fillProducingTransVector();  //działa na listach globalnych
+                //tutaj przygotowujemy wektory tranzycji które zabiorą tokeny (dwa, na razie klasyczne w drugiej
+                //kolejności po XTPN), oraz wspólny wektor tranzycji, które później wyprodukują tokeny.
+                consumingTokensTransitionsXTPN = engineXTPN.returnConsumingTransXTPNVector(nextXTPNsteps);
+                consumingTokensTransitionsClassical = engineXTPN.returnConsumingTransClassicalVector(nextXTPNsteps);
+                producingTokensTransitionsAll = engineXTPN.returnProducingTransVector(nextXTPNsteps);
 
                 newStateChangeStarts = false;
                 repaintSteps = 0;
                 if(consumingTokensTransitionsXTPN.size() > 0 || consumingTokensTransitionsClassical.size() > 0) {
                     subtractPhase = true;
-                } else { //tylko produkcja
+                } else if(producingTokensTransitionsAll.size() > 0) { //tylko produkcja
                     addPhase = true;
+                } else { //tylko upływ czasu?
+                    newStateChangeStarts = true;
                 }
                 petriNet.repaintAllGraphPanels();
-
             }
 
             //tutaj faza zabierana tokenów:
             if(subtractPhase) {
                 if(repaintSteps == 0) {
-                    //początek
-                    prepareSubtractPhase();
+                    transitionsAfterSubtracting = prepareSubtractPhaseGraphics();
                 }
 
                 if(repaintSteps < DEFAULT_COUNTER) {
                     repaintSteps++;
                     updateStepCounter();
                 } else { //zakończenie fazy zabierania tokenów
+                    engineXTPN.endSubtractPhase(transitionsAfterSubtracting);
 
                     subtractPhase = false;
-                    addPhase = true;
+                    if(producingTokensTransitionsAll.size() > 0) { //tylko produkcja
+                        addPhase = true;
+                    } else { //tylko upływ czasu?
+                        newStateChangeStarts = true;
+                    }
                 }
             }
 
             if(addPhase) {
                 if(repaintSteps == 0) {
-                    //początek
+                    prepareProductionPhaseGraphics();
                 }
 
                 if(repaintSteps < DEFAULT_COUNTER) {
                     repaintSteps++;
                     updateStepCounter();
                 } else { //zakończenie fazy produkcji tokenów
-
+                    engineXTPN.endProductionPhase(producingTokensTransitionsAll);
                     addPhase = false;
                     newStateChangeStarts = true;
                 }
             }
         }
 
-        private void fillConsumingTransVector() {
-            //nextXTPNsteps : [0] places maturity [1] places aging [2] transProdStart [3] transProdEnd
-            //              [4] transInputClassical [5] transOtherClassical
-            // konsumujące: 2 oraz 5
-            // produkujące: 3, 4 oraz 5
-            consumingTokensTransitionsXTPN.clear();
-            for(SimulatorXTPN.NextXTPNstep element : nextXTPNsteps.get(2)) {
-                consumingTokensTransitionsXTPN.add((Transition) element.nodeTP);
-            }
-            Collections.shuffle(consumingTokensTransitionsXTPN);
-
-            consumingTokensTransitionsClassical.clear();
-            for(SimulatorXTPN.NextXTPNstep element : nextXTPNsteps.get(5)) {
-                consumingTokensTransitionsClassical.add((Transition) element.nodeTP);
-            }
-            Collections.shuffle(consumingTokensTransitionsClassical);
-        }
-
-        private void fillProducingTransVector() {
-            //nextXTPNsteps : [0] places maturity [1] places aging [2] transProdStart [3] transProdEnd
-            //              [4] transInputClassical [5] transOtherClassical
-            // konsumujące: 2 oraz 5
-            // produkujące: 3, 4 oraz 5
-            producingTokensTransitionsAll.clear();
-            for(SimulatorXTPN.NextXTPNstep element : nextXTPNsteps.get(3)) {
-                producingTokensTransitionsAll.add((Transition) element.nodeTP);
-            }
-            for(SimulatorXTPN.NextXTPNstep element : nextXTPNsteps.get(4)) {
-                producingTokensTransitionsAll.add((Transition) element.nodeTP);
-            }
-            for(SimulatorXTPN.NextXTPNstep element : nextXTPNsteps.get(5)) {
-                producingTokensTransitionsAll.add((Transition) element.nodeTP);
-            }
-            //Collections.shuffle(producingTokensTransitionsAll); //bez sensu, przy produkcji kolejność dowolna
-        }
-
         /**
          * Metoda uruchamia fazę odejmowania tokenów z miejsc wejściowych tranzycji XTPN oraz osobno zwykłych.
          * [2022-07-15] Na razie osobno, czyli priorytet mają XTPN nad klasycznymi.
+         * @return (<b>ArrayList[ArrayList[Transition]]</b>) podwójna lista tranzycji (XTPN i klasycznych), które zostały uruchomione
          */
-        public void prepareSubtractPhase() {
+        public ArrayList<ArrayList<Transition>> prepareSubtractPhaseGraphics() {
+            ArrayList<ArrayList<Transition>> launchedTransitions = new ArrayList<>();
+            ArrayList<Transition> launchedXTPN = new ArrayList<>();
+            ArrayList<Transition> launchedClassical = new ArrayList<>();
             ArrayList<Arc> arcs;
 
             //dla : consumingTokensTransitionsXTPN
@@ -518,13 +495,63 @@ public class GraphicalSimulatorXTPN {
                             place.removeTokensForProduction(weight, 0, engineXTPN.getGenerator());
                         }
                     }
+                    launchedXTPN.add(transition);
+                } else {
+                    transition.deactivateXTPN(); // ???
+                }
+            }
+
+            for (Transition transition : consumingTokensTransitionsClassical) { //lista tych, które zabierają tokeny
+                if(transition.getActiveStatusXTPN()) { //jeżeli jest aktywna, to zabieramy tokeny
+                    transition.setLaunching(true);
+                    arcs = transition.getInArcs();
+                    for (Arc arc : arcs) {
+                        arc.setSimulationForwardDirection(true); //zawsze dla tego symulatora
+                        arc.setTransportingTokens(true);
+                        Place place = (Place) arc.getStartNode(); //miejsce, z którego zabieramy
+                        if(arc.getArcType() == TypeOfArc.INHIBITOR) {
+                            arc.setTransportingTokens(false);
+                        }  else { //teraz określamy ile
+                            int weight = arc.getWeight();
+                            if(transition.isFunctional()) {
+                                weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
+                            }
+                            place.removeTokensForProduction(weight, 0, engineXTPN.getGenerator());
+                        }
+                    }
+                    launchedClassical.add(transition);
                 } else {
                     transition.deactivateXTPN();
+                }
+            }
+            launchedTransitions.add(launchedXTPN);
+            launchedTransitions.add(launchedClassical);
+            return launchedTransitions;
+        }
+
+        /**
+         * Metoda uruchamia fazę wizualizacji dodawania tokenów do miejsc wyjściowych odpalonych tranzycji
+         * (lub wejściowych, dla trybu cofania).
+         */
+        public void prepareProductionPhaseGraphics() {
+            ArrayList<Arc> arcs;
+            for (Transition tran : producingTokensTransitionsAll) {
+                tran.setLaunching(true);
+                arcs = tran.getOutArcs();
+
+                for (Arc arc : arcs) { //read arc...
+                    if(arc.getArcType() == TypeOfArc.INHIBITOR )
+                        continue;
+
+                    arc.setSimulationForwardDirection(true);
+                    arc.setTransportingTokens(true);
                 }
             }
         }
 
 
+
+        /*
         private void testDzialaniaSymulacji() { //for training purposes only, if u dont know how simulator works
             int DEFAULT_COUNTER = overlord.simSettings.getTransDelay(); //def: 25
             if (scheduledStop) { // jeśli symulacja ma się zatrzymać
@@ -539,7 +566,7 @@ public class GraphicalSimulatorXTPN {
             }
 
             if(!timePassPhase && !subtractPhase && !addPhase
-                && !finishedAddPhase) {
+                    && !finishedAddPhase) {
                 timePassPhase = true;
                 repaintSteps = 0;
             }
@@ -624,173 +651,6 @@ public class GraphicalSimulatorXTPN {
                 }
             }
         }
-
-        private boolean isPossibleStep() {
-            ArrayList<Transition> transitions = petriNet.getTransitions();
-            for (Transition transition : transitions) {
-                if (transition.isActive()) {
-                    return true;
-                }
-                if(transition.getDPNtimer() >= 0 && transition.getDPNduration() != 0) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-
-
-        /**
-         * Metoda uruchamia fazę odejmowania tokenów z miejsc wejściowych jednej odpalonej tranzycji
-         * (lub wyjściowych, dla trybu cofania).
-         * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
-         * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
-         * @return boolean - true, jeśli faza została pomyślnie uruchomiona; false w przeciwnym razie
-         */
-        public boolean launchSingleSubtractPhase(ArrayList<Transition> transitions, Transition chosenTransition) {
-            if (transitions.size() < 1)
-                return false;
-            else {
-                Transition transition= transitions.get(0);
-                ArrayList<Arc> arcs = transition.getInArcs();
-
-                transition.setLaunching(true);
-                for (Arc arc : arcs) {
-                    arc.setSimulationForwardDirection(true);
-                    arc.setTransportingTokens(true);
-                    Place place = (Place) arc.getStartNode();
-
-                    if(arc.getArcType() == TypeOfArc.INHIBITOR) {
-                        arc.setTransportingTokens(false);
-                    } else {
-                        FunctionsTools.functionalExtraction(transition, arc, place);
-                        //place.modifyTokensNumber(-arc.getWeight());
-                    }
-                }
-                return true;
-            }
-        }
-
-        /**
-         * Metoda uruchamia fazę wizualizacji dodawania tokenów do miejsc wyjściowych odpalonych tranzycji
-         * (lub wejściowych, dla trybu cofania).
-         * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
-         */
-        public void launchAddPhaseGraphics(ArrayList<Transition> transitions) {
-            ArrayList<Arc> arcs;
-            for (Transition tran : transitions) {
-                tran.setLaunching(true);
-                arcs = tran.getOutArcs();
-
-                for (Arc arc : arcs) {
-                    //if(arc.getArcType() == TypeOfArc.INHIBITOR || arc.getArcType() == TypeOfArc.READARC)
-                    if(arc.getArcType() == TypeOfArc.INHIBITOR )
-                        continue;
-
-                    arc.setSimulationForwardDirection(true);
-                    arc.setTransportingTokens(true);
-                }
-            }
-        }
-
-        /**
-         * Metoda uruchamia fazę wizualizacji dodawania tokenów do miejsc wyjściowych dla pojedynczej
-         * spośród odpalanych tranzycji (lub wejściowych, dla trybu cofania).
-         * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
-         * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
-         * @return boolean - true, jeśli faza została pomyślnie uruchomiona; false w przeciwnym razie
-         */
-        public boolean launchSingleAddPhaseGraphics( ArrayList<Transition> transitions, Transition chosenTransition) {
-            if (transitions.size() < 1)
-                return false;
-            else {
-                Transition tran = transitions.get(0);
-                ArrayList<Arc> arcs = tran.getOutArcs();
-                tran.setLaunching(true);
-
-                for (Arc arc : arcs) {
-                    //if(arc.getArcType() == TypeOfArc.INHIBITOR || arc.getArcType() == TypeOfArc.READARC)
-                    if(arc.getArcType() == TypeOfArc.INHIBITOR)
-                        continue;
-
-                    arc.setSimulationForwardDirection(true);
-                    arc.setTransportingTokens(true);
-                }
-                return true;
-            }
-        }
-
-        /**
-         * Metoda uruchamia fazę faktycznego dodawania tokenów do miejsc wyjściowych odpalonych tranzycji
-         * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
-         */
-        public void launchAddPhase(ArrayList<Transition> transitions) {
-            ArrayList<Arc> arcs;
-            for (Transition transition : transitions) {
-                transition.setLaunching(false);  // skoro tutaj dotarliśmy, to znaczy że tranzycja już
-                //swoje zrobiła i jej status aktywnej się kończy w tym kroku
-                arcs = transition.getOutArcs();
-
-                //dodaj odpowiednią liczbę tokenów do miejsc
-                for (Arc arc : arcs) {
-                    Place place = (Place) arc.getEndNode();
-
-                    if(!(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR
-                            || arc.getArcType() == TypeOfArc.READARC)) {
-                        overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
-                                " arc: "+ arc, "error", true);
-                    }
-
-                    FunctionsTools.functionalAddition(transition, arc, place);
-
-                }
-                transition.resetTimeVariables();
-            }
-            transitions.clear();  //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)
-        }
-
-        /**
-         * Metoda uruchamia fazę faktycznego dodawania tokenów do miejsc wyjściowych dla pojedynczej
-         * spośród odpalanych tranzycji (lub wejściowych, dla trybu cofania).
-         * @param transitions ArrayList[Transition] - lista odpalanych tranzycji
-         * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
-         * @return boolean - true, jeśli faza została pomyślnie uruchomiona; false w przeciwnym razie
-         */
-        public boolean launchSingleAddPhase(ArrayList<Transition> transitions, Transition chosenTransition) {
-            if (transitions.size() < 1)
-                return false;
-            else {
-                Transition transition = transitions.get(0);
-                ArrayList<Arc> arcs = transition.getOutArcs();
-
-                for (Arc arc : arcs) {
-                    if(arc.getArcType() == TypeOfArc.READARC)
-                        continue;
-
-                    Place place = (Place) arc.getEndNode();
-                    if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.COLOR
-                            || arc.getArcType() == TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
-                        ;
-                    } else {
-                        overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
-                                " arc: "+ arc, "error", true);
-                    }
-                    if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {
-                        place.modifyColorTokensNumber(arc.getColorWeight(0), 0);
-                        place.modifyColorTokensNumber(arc.getColorWeight(1), 1);
-                        place.modifyColorTokensNumber(arc.getColorWeight(2), 2);
-                        place.modifyColorTokensNumber(arc.getColorWeight(3), 3);
-                        place.modifyColorTokensNumber(arc.getColorWeight(4), 4);
-                        place.modifyColorTokensNumber(arc.getColorWeight(5), 5);
-                    } else {
-                        //tylko zwykły łuk
-                        FunctionsTools.functionalAddition(transition, arc, place);
-                        //place.modifyTokensNumber(arc.getWeight());
-                    }
-                }
-                transitions.remove(transition);
-                return true;
-            }
-        }
+        */
     }
 }

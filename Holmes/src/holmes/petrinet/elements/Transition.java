@@ -877,7 +877,6 @@ public class Transition extends Node {
         TPNtimerLimit = -1;
         TPNtimer = -1;
         DPNtimer = -1;
-
     }
 
     /**
@@ -1645,7 +1644,7 @@ public class Transition extends Node {
     }
 
     /**
-     * Deaktywacja tranzycji XTPN.
+     * Deaktywacja tranzycji XTPN. Kiedy przestaje być aktywna z powodu utraty tokenó LUB po wyprodukowaniu
      */
     public void deactivateXTPN() {
         setActivationStatusXTPN(false);
@@ -1657,8 +1656,6 @@ public class Transition extends Node {
             setTimerBeta_XTPN(-1.0);
             setTauBeta_xTPN(-1.0);
         }
-
-        //TODO: inne, graficzne
     }
 
     /**

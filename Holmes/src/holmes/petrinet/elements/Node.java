@@ -356,7 +356,9 @@ public abstract class Node extends PetriNetElement {
 								timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, ((Transition)this).getFraction_xTPN()) + "\u279F"
 										+ Tools.cutValueExt(alphaTime, ((Transition)this).getFraction_xTPN());
 								g.drawString(timerA, drawX + 40, drawY + 12);
-								timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
+								//timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
+								timerB = "v\u279F\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, ((Transition)this).getFraction_xTPN()) + "\u279F"
+										+ Tools.cutValueExt(betaTime, ((Transition)this).getFraction_xTPN());
 								g.drawString(timerB, drawX + 40, drawY + 26);
 							}
 						}

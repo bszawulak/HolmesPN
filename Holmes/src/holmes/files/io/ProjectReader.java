@@ -1911,7 +1911,10 @@ public class ProjectReader {
 						String[] subTab = multiString.split(";");
 						ArrayList<Double> multisetK = new ArrayList<>();
 						for(String s : subTab) {
-							multisetK.add(Double.parseDouble(s));
+							double val = Double.parseDouble(s);
+							if(val > -1.0) {//oznaczenie braku tokenów
+								multisetK.add(val);
+							}
 						}
 						Collections.sort(multisetK);
 						Collections.reverse(multisetK);

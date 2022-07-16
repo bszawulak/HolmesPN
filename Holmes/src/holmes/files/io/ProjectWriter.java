@@ -362,14 +362,13 @@ public class ProjectWriter {
 					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<>(eLoc.getOutArcs());
 					ArrayList<Arc> metaOutArcs = eLoc.accessMetaOutArcs();
 					tmp_outgoingArcs.addAll(metaOutArcs);
-					int arcsNumber = tmp_outgoingArcs.size();
+					//int arcsNumber = tmp_outgoingArcs.size();
 					for (Arc arc : tmp_outgoingArcs) { //wszystkie łuki wyjściowe
 						String arcType = "" + arc.getArcType();
 						if(arc.isXTPN())
 							arcType = "XTPN";
 
 						Node endNode = arc.getEndNode();
-
 						if (endNode instanceof Transition) {
 							String startLoc = "P" + p + "(" + e + ")";
 							Transition endTransition = (Transition) endNode;
@@ -439,9 +438,12 @@ public class ProjectWriter {
 					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<>(eLoc.getOutArcs());
 					ArrayList<Arc> metaOutArcs = eLoc.accessMetaOutArcs();
 					tmp_outgoingArcs.addAll(metaOutArcs);
-					int arcsNumber = tmp_outgoingArcs.size();
+					//int arcsNumber = tmp_outgoingArcs.size();
 					for (Arc arc : tmp_outgoingArcs) { //wszystkie łuki wyjściowe
 						String arcType = "" + arc.getArcType();
+						if(arc.isXTPN())
+							arcType = "XTPN";
+
 						Node endNode = arc.getEndNode();
 						if (endNode instanceof Place) {
 							String startLoc = "T" + t + "(" + e + ")";
@@ -513,7 +515,7 @@ public class ProjectWriter {
 					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<>(eLoc.getOutArcs());
 					ArrayList<Arc> metaOutArcs = eLoc.accessMetaOutArcs();
 					tmp_outgoingArcs.addAll(metaOutArcs);
-					int arcsNumber = tmp_outgoingArcs.size();
+					//int arcsNumber = tmp_outgoingArcs.size();
 					for (Arc arc : tmp_outgoingArcs) { //wszystkie łuki wyjściowe
 						String arcType = "" + arc.getArcType();
 						Node endNode = arc.getEndNode();
@@ -805,11 +807,16 @@ public class ProjectWriter {
 
 			if(places.size() > 0) {
 				bw.write(spaces(sp)+"<States: "+statesNumber+">"+newline);
-				for (StatePlacesVectorXTPN vector : statesMatrixXTPN) {
-					sp = 4;
-					StringBuilder stateLine = new StringBuilder();
 
-					for(ArrayList<Double> multiset : vector.accessVector()) {
+				StringBuilder stateLine = new StringBuilder();
+				String type = "";
+				String description = "";
+				for (StatePlacesVectorXTPN vector : statesMatrixXTPN) {
+					type = vector.getStateType();
+					description = vector.getDescription();
+					sp = 4;
+
+					for(ArrayList<Double> multiset : vector.accessVector()) { //zapis multizbiorów tokenów
 						int counter = 0;
 						for(Double value : multiset) {
 							counter++;
@@ -819,14 +826,16 @@ public class ProjectWriter {
 								stateLine.append(value).append(";");
 							}
 						}
+						if(counter == 0) { //brak tokenów w miejscu
+							stateLine.append("-1.0;");
+						}
 					}
-					stateLine = new StringBuilder(stateLine.substring(0, stateLine.length() - 1)); //usun ostatni '|'
-					bw.write(spaces(sp) + stateLine + newline);
-
-					String type = vector.getStateType();
-					bw.write(spaces(sp) + type + ";" + newline);
-					bw.write(spaces(sp) + Tools.convertToCode(vector.getDescription()) + newline);
 				}
+				stateLine = new StringBuilder(stateLine.substring(0, stateLine.length() - 1)); //usun ostatni ';'
+
+				bw.write(spaces(sp) + stateLine + newline);
+				bw.write(spaces(sp) + type + ";" + newline);
+				bw.write(spaces(sp) + Tools.convertToCode(description) + newline);
 			} else {
 				bw.write(spaces(sp)+"<States: 0>"+newline);
 			}
@@ -835,7 +844,7 @@ public class ProjectWriter {
 
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Error while saving states data.", "error", true);
+			GUIManager.getDefaultGUIManager().log("Error while saving XTPN states data.", "error", true);
 			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
 			return false;
 		}
