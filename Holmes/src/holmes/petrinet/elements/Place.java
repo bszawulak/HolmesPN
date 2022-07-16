@@ -6,12 +6,12 @@ import java.awt.Point;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
+import holmes.petrinet.simulators.IRandomGenerator;
 
 import javax.swing.*;
 
@@ -726,12 +726,12 @@ public class Place extends Node {
 
 	/**
 	 * Usuwa tokeny na potrzeby produkcji tranzycji XTPN.
-	 * @param howMany (int) - ile usunąć
-	 * @param mode (int) tryb: 0 - najstarsze, 1 - najmłodsze, 2 - losowe
-	 * @param genetaror (Random) generator dla mode=2
-	 * @return (int) - liczba usuniętych tokenów lub -1 gdy wystąpił błąd
+	 * @param howMany (<b>int</b>) ile usunąć.
+	 * @param mode (<b>int</b>) tryb: 0 - najstarsze, 1 - najmłodsze, 2 - losowe.
+	 * @param generator (<b>Random</b>) generator dla mode=2.
+	 * @return (<b>int</b>) - liczba usuniętych tokenów lub -1 gdy wystąpił błąd.
 	 */
-	public int removeTokensForProduction(int howMany, int mode, Random genetaror) {
+	public int removeTokensForProduction(int howMany, int mode, IRandomGenerator generator) {
 		if(!isGammaModeActiveXTPN()) { //gdy XTPN wyłączone, tylko usuwamy liczbę
 			modifyTokensNumber(-howMany);
 			return howMany;
@@ -745,18 +745,26 @@ public class Place extends Node {
 		}
 
 		if(mode == 0) { //najstarsze
-			for(Double kappa : multisetK) {
+			double oldOne = Double.MAX_VALUE;
+			for(Double kappa : multisetK) { //zakładamy, że posortowany od największych
 				multisetK.remove(kappa);
 				counter--;
+
+				assert (oldOne >= kappa);
+				oldOne = kappa;
 
 				if(counter == 0)
 					break;
 			}
 		} else if (mode == 1) { //najmłodsze
 			Collections.reverse(multisetK);
+			double oldOne = -1.0;
 			for(Double kappa : multisetK) {
 				multisetK.remove(kappa);
 				counter--;
+
+				assert (oldOne <= kappa);
+				oldOne = kappa;
 
 				if(counter == 0) {
 					Collections.reverse(multisetK);
@@ -765,7 +773,7 @@ public class Place extends Node {
 			}
 		} else { //losowo
 			for(int i=0; i<howMany; i++) {
-				int index = genetaror.nextInt(multisetK.size());
+				int index = generator.nextInt(multisetK.size());
 				multisetK.remove(index);
 			}
 		}

@@ -190,8 +190,6 @@ public class GUIReset {
 
 			t_invGenerated = false;
 			overlord.log("T-invariants data removed from memory.", "text", true);
-			
-			
 		}
 		
 		if(p_invGenerated) {

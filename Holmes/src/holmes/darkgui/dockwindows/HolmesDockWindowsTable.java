@@ -175,6 +175,8 @@ public class HolmesDockWindowsTable extends JPanel {
     private JButton betaLocChangeButton;//tranzycja
     private JButton tauLocChangeButton;//tranzycja
 
+    private JButton buttonClassicMode;
+
     private JButton gammaVisibilityButton;//miejsce
     private JButton gammaLocChangeButton;//miejsce
 
@@ -3807,13 +3809,33 @@ public class HolmesDockWindowsTable extends JPanel {
                     }
                 }
 
-                ((Transition) element).setAlphaXTPNstatus(false);
+                transition.setAlphaXTPNstatus(false);
                 button.setText("Alfa: OFF");
                 button.setBackground(Color.RED);
+
+                if(!transition.isBetaActiveXTPN()) {
+                    //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
+                    buttonClassicMode.setBackground(Color.GREEN);
+                    tauVisibilityButton.setEnabled(false);
+                    transition.setTauTimersVisibility(false);
+                }
             } else {
-                ((Transition) element).setAlphaXTPNstatus(true);
+                transition.setAlphaXTPNstatus(true);
                 button.setText("Alfa: ON");
                 button.setBackground(Color.GREEN);
+
+                //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
+                if(transition.getAlphaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getAlphaMax_xTPN() < SimulatorGlobals.calculationsAccuracy) {
+                    transition.setAlphaMax_xTPN(1.0, false);
+                    doNotUpdate = true;
+                    alphaMaxTextField.setValue(0.0);
+                    doNotUpdate = false;
+                }
+
+                if(!transition.isBetaActiveXTPN()) { //jeśli był tryb klasyczny
+                    buttonClassicMode.setBackground(Color.RED);
+                    transition.setTauTimersVisibility(true);
+                }
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
@@ -3854,10 +3876,29 @@ public class HolmesDockWindowsTable extends JPanel {
                 ((Transition) element).setBetaXTPNstatus(false);
                 button.setText("Beta: OFF");
                 button.setBackground(Color.RED);
+
+                if(!transition.isAlphaActiveXTPN()) {
+                    //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
+                    buttonClassicMode.setBackground(Color.GREEN);
+                    transition.setTauTimersVisibility(false);
+                }
             } else {
                 ((Transition) element).setBetaXTPNstatus(true);
                 button.setText("Beta: ON");
                 button.setBackground(Color.GREEN);
+
+                //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
+                if(transition.getBetaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getBetaMax_xTPN() < SimulatorGlobals.calculationsAccuracy) {
+                    transition.setBetaMax_xTPN(1.0, false);
+                    doNotUpdate = true;
+                    betaMaxTextField.setValue(0.0);
+                    doNotUpdate = false;
+                }
+
+                if(!transition.isAlphaActiveXTPN()) { //jeśli był tryb klasyczny
+                    buttonClassicMode.setBackground(Color.RED);
+                    transition.setTauTimersVisibility(true);
+                }
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
@@ -3865,6 +3906,56 @@ public class HolmesDockWindowsTable extends JPanel {
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(buttonBetaMode);
+
+// XTPN transition przycisk Beta ON/OFF
+        buttonClassicMode = new JButton("<html><center>PN<b>trans.</center></html>");
+        buttonClassicMode.setName("ClassButton1");
+        buttonClassicMode.setMargin(new Insets(0, 0, 0, 0));
+        buttonClassicMode.setBounds(columnB_posX+130, columnB_Y, 65, 30);
+        if(!transition.isAlphaActiveXTPN() && !transition.isBetaActiveXTPN()) {
+            //buttonClassicMode.setText("<html><center>PN<b>trans.</center></html>");
+            buttonClassicMode.setBackground(Color.GREEN);
+        } else { //gdy jeden z trybów włączony
+            //buttonClassicMode.setText("<html><center>PN<b>trans.</center></html>");
+            buttonClassicMode.setBackground(Color.RED);
+        }
+        buttonClassicMode.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+            JButton button = (JButton) e.getSource();
+            if (transition.isAlphaActiveXTPN() || transition.isBetaActiveXTPN()) {
+                //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
+                transition.setAlphaXTPNstatus(false);
+                transition.setBetaXTPNstatus(false);
+                transition.setTauTimersVisibility(false);
+                button.setBackground(Color.RED);
+            } else { //wychodzimy z trybu klasycznego
+                transition.setAlphaXTPNstatus(true);
+                transition.setBetaXTPNstatus(true);
+                transition.setTauTimersVisibility(true);
+                button.setBackground(Color.GREEN);
+
+                //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
+                if(transition.getAlphaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getAlphaMax_xTPN() < SimulatorGlobals.calculationsAccuracy) {
+                    transition.setAlphaMax_xTPN(1.0, false);
+                    doNotUpdate = true;
+                    alphaMaxTextField.setValue(0.0);
+                    doNotUpdate = false;
+                }
+                //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
+                if(transition.getBetaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getBetaMax_xTPN() < SimulatorGlobals.calculationsAccuracy) {
+                    transition.setBetaMax_xTPN(1.0, false);
+                    doNotUpdate = true;
+                    betaMaxTextField.setValue(0.0);
+                    doNotUpdate = false;
+                }
+            }
+            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(buttonClassicMode);
 
         // XTPN transition alpha values visibility
         alfaVisibilityButton = new JButton("<html> Alpha<br>visible<html>");
@@ -3888,13 +3979,13 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
             JButton button = (JButton) e.getSource();
             if (transition.isAlphaRangeVisible()) { //wyłączamy
-                ((Transition) element).setAlphaRangeVisibility(false);
+                transition.setAlphaRangeVisibility(false);
                 button.setText("<html> Alpha<br>hidden<html>");
                 button.setBackground(Color.RED);
 
                 alphaLocChangeButton.setEnabled(false);
             } else { // włączamy
-                ((Transition) element).setAlphaRangeVisibility(true);
+                transition.setAlphaRangeVisibility(true);
                 button.setText("<html> Alpha<br>visible<html>");
                 button.setBackground(Color.GREEN);
 
@@ -3932,13 +4023,13 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
             JButton button = (JButton) e.getSource();
             if (transition.isBetaRangeVisible()) { //wyłączamy
-                ((Transition) element).setBetaRangeVisibility(false);
+                transition.setBetaRangeVisibility(false);
                 button.setText("<html>  Beta<br>hidden<html>");
                 button.setBackground(Color.RED);
 
                 betaLocChangeButton.setEnabled(false);
             } else { //włączamy
-                ((Transition) element).setBetaRangeVisibility(true);
+                transition.setBetaRangeVisibility(true);
                 button.setText("<html>  Beta<br>visible<html>");
                 button.setBackground(Color.GREEN);
 
@@ -3976,13 +4067,13 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
             JButton button = (JButton) e.getSource();
             if (transition.isTauTimerVisible()) { //wyłączamy
-                ((Transition) element).setTauTimersVisibility(false);
+                transition.setTauTimersVisibility(false);
                 button.setText("<html>  Tau<br>hidden<html>");
                 button.setBackground(Color.RED);
 
                 tauLocChangeButton.setEnabled(false);
             } else { //włączamy
-                ((Transition) element).setTauTimersVisibility(true);
+                transition.setTauTimersVisibility(true);
                 button.setText("<html>  Tau<br>visible<html>");
                 button.setBackground(Color.GREEN);
 
@@ -4242,7 +4333,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 field.setValue(transition.getBetaMin_xTPN());
                 doNotUpdate = false;
             }
-
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
 
         // XTPN-transition betaMax value
@@ -4266,6 +4358,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 field.setValue(transition.getBetaMax_xTPN());
                 doNotUpdate = false;
             }
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
 
         if(!transition.isBetaActiveXTPN()) {
@@ -8402,6 +8496,7 @@ public class HolmesDockWindowsTable extends JPanel {
             Transition transition = (Transition) element;
             double alfaMin = transition.getAlphaMin_xTPN();
 
+            //tranzycje wejściowe i wyjściowe nie mogą być XTPN z zerami, tylko klasycznymi
             if(alfaMin < SimulatorGlobals.calculationsAccuracy && newAlphaMax < SimulatorGlobals.calculationsAccuracy &&
                     ( ( transition.getBetaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getBetaMax_xTPN() < SimulatorGlobals.calculationsAccuracy )
                     || !transition.isBetaActiveXTPN() ) ) { //albo bety są na zera, albo w ogóle tryb beta wyłączony
@@ -8412,7 +8507,18 @@ public class HolmesDockWindowsTable extends JPanel {
                             "Immediate int/out XTPN transitions problem", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
-             }
+            }
+
+            //jeśli alfaMax=alfaMin=0, to Alfa=OFF
+            if(alfaMin < SimulatorGlobals.calculationsAccuracy && newAlphaMax < SimulatorGlobals.calculationsAccuracy) { //jeśli zero
+                doNotUpdate = true;
+                alphaMaxTextField.setValue(0.0);
+                doNotUpdate = false;
+                transition.setAlphaMax_xTPN(0.0, false);
+                transition.setAlphaXTPNstatus(false);
+                repaintGraphPanel();
+                return true;
+            }
 
 
             if(newAlphaMax < alfaMin) {
@@ -8514,6 +8620,17 @@ public class HolmesDockWindowsTable extends JPanel {
                             "Immediate int/out XTPN transitions problem", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
+            }
+
+            //jeśli betaMax=betaMin=0, to Beta=OFF
+            if(betaMin < SimulatorGlobals.calculationsAccuracy && newBetaMax < SimulatorGlobals.calculationsAccuracy) { //jeśli zero
+                doNotUpdate = true;
+                betaMaxTextField.setValue(0.0);
+                doNotUpdate = false;
+                transition.setBetaMax_xTPN(0.0, false);
+                transition.setBetaXTPNstatus(false);
+                repaintGraphPanel();
+                return true;
             }
 
             if(newBetaMax < betaMin) {

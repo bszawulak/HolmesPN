@@ -14,6 +14,7 @@ import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.functions.FunctionContainer;
 import holmes.petrinet.functions.FunctionsTools;
+import holmes.petrinet.simulators.SimulatorGlobals;
 
 /**
  * Klasa implementująca tranzycję w sieci Petriego. Zapewnia implementację szeregu funkcjonalności
@@ -32,7 +33,6 @@ import holmes.petrinet.functions.FunctionsTools;
 public class Transition extends Node {
     @Serial
     private static final long serialVersionUID = -4981812911464514746L;
-
     /**
      * PN, TPN, SPN, XTPN, CPNbasic
      */
@@ -134,6 +134,7 @@ public class Transition extends Node {
     //jeśli miejsca wejściowe tracą szybciej tokeny ze starości niż z
     //produkcji, zmniejszamy tau Alfa i Beta (prawdopodobieństwo).
     private boolean massActionKinetics = false;
+    private boolean isImmediateXTPN = false;
     private boolean isActivated_xTPN = false;
     private boolean isProducing_xTPN = false;
     //grafika:
@@ -1564,6 +1565,22 @@ public class Transition extends Node {
     }
 
     /**
+     * Metoda zwraca status trybu natychmiastowej tranzycji XTPN.
+     * @return (<b>boolean</b>) - true, jeśli tryb natychmiastowy.
+     */
+    public boolean isImmediateXTPN() {
+        return isImmediateXTPN;
+    }
+
+    /**
+     * Metoda ustawia status trybu natychmiastowej tranzycji XTPN.
+     * @param immediateXTPN (<b>boolean</b>) true, jeśli ma być natychmiastowa.
+     */
+    public void setImmediateXTPN(boolean immediateXTPN) {
+        isImmediateXTPN = immediateXTPN;
+    }
+
+    /**
      * Metoda zwraca status trybu mass-action kinetics XTPN dla tranzycji.
      * @return (<b>boolean</b>) - true, jeśli tryb mass-action kinetics XTPN ma być aktywny
      */
@@ -1587,7 +1604,7 @@ public class Transition extends Node {
         if (offline || isProducing_xTPN())
             return false;
 
-        double accuracy = GUIManager.getDefaultGUIManager().simSettings.calculationsAccuracy;
+        double accuracy = SimulatorGlobals.calculationsAccuracy;
 
         for (Arc arc : getInArcs()) { //jeśli brak, to aktywna wejściowa
             Place arcStartPlace = (Place) arc.getStartNode();

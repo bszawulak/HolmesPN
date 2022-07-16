@@ -223,28 +223,17 @@ public class FunctionsTools {
 				fc.currentValue = nonFuncWeight; //wartość początkowa: oryginalna waga
 			}
 			
-			if(fc != null && fc.enabled == true && fc.correct == true) {
+			if(fc != null && fc.enabled && fc.correct) {
 				fc.currentValue = getFunctionValue(fc); //wartość równania, ale:
 				fc.currentValue = fc.currentValue <= 0 ? nonFuncWeight : fc.currentValue; //like a boss
-				
-				if (startPlaceTokens < fc.currentValue)
-					return false;
-				else
-					return true;
+				return !(startPlaceTokens < fc.currentValue);
 				
 			} else { //oryginalna waga przypisana do fc.currentValue tak czy inaczej (ważne!)
-				if (startPlaceTokens < arc.getWeight())
-					return false;
-				else
-					return true;
+				return startPlaceTokens >= arc.getWeight();
 			}
-			
 		} catch (Exception e) {
 			//jak coś wybuchło, sprawdzamy po staremu:
-			if (startPlaceTokens < arc.getWeight())
-				return false;
-			else
-				return true;
+			return startPlaceTokens >= arc.getWeight();
 		}
 	}
 	
@@ -288,6 +277,23 @@ public class FunctionsTools {
 				place.modifyTokensNumber(-arc.getWeight());
 		} else {
 			place.modifyTokensNumber(-arc.getWeight());
+		}
+	}
+
+	/**
+	 * Na potrzeby symulatora XTPN, na bazie functionalExtraction.
+	 * @return
+	 */
+	public static int getFunctionalArcWeight(Transition transition, Arc arc, Place place) {
+		if(transition.isFunctional()) {
+			FunctionContainer fc = transition.getFunctionContainer(arc);
+			if(fc != null) //TODO: czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
+				return (int) fc.currentValue;
+				//nie ważne, aktywna czy nie, jeśli nie, to tu jest i tak oryginalna waga
+			else
+				return arc.getWeight();
+		} else {
+			return arc.getWeight();
 		}
 	}
 	

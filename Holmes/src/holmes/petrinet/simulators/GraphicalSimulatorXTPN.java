@@ -3,7 +3,6 @@ package holmes.petrinet.simulators;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 import javax.swing.JOptionPane;
@@ -426,6 +425,7 @@ public class GraphicalSimulatorXTPN {
             if(subtractPhase) {
                 if(repaintSteps == 0) {
                     //początek
+                    prepareSubtractPhase();
                 }
 
                 if(repaintSteps < DEFAULT_COUNTER) {
@@ -489,6 +489,41 @@ public class GraphicalSimulatorXTPN {
             }
             //Collections.shuffle(producingTokensTransitionsAll); //bez sensu, przy produkcji kolejność dowolna
         }
+
+        /**
+         * Metoda uruchamia fazę odejmowania tokenów z miejsc wejściowych tranzycji XTPN oraz osobno zwykłych.
+         * [2022-07-15] Na razie osobno, czyli priorytet mają XTPN nad klasycznymi.
+         */
+        public void prepareSubtractPhase() {
+            ArrayList<Arc> arcs;
+
+            //dla : consumingTokensTransitionsXTPN
+            //oraz osobno: consumingTokensTransitionsClassical
+
+            for (Transition transition : consumingTokensTransitionsXTPN) { //lista tych, które zabierają tokeny
+                if(transition.getActiveStatusXTPN()) { //jeżeli jest aktywna, to zabieramy tokeny
+                    transition.setLaunching(true);
+                    arcs = transition.getInArcs();
+                    for (Arc arc : arcs) {
+                        arc.setSimulationForwardDirection(true); //zawsze dla tego symulatora
+                        arc.setTransportingTokens(true);
+                        Place place = (Place) arc.getStartNode(); //miejsce, z którego zabieramy
+                        if(arc.getArcType() == TypeOfArc.INHIBITOR) {
+                            arc.setTransportingTokens(false);
+                        }  else { //teraz określamy ile
+                            int weight = arc.getWeight();
+                            if(transition.isFunctional()) {
+                                weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
+                            }
+                            place.removeTokensForProduction(weight, 0, engineXTPN.getGenerator());
+                        }
+                    }
+                } else {
+                    transition.deactivateXTPN();
+                }
+            }
+        }
+
 
         private void testDzialaniaSymulacji() { //for training purposes only, if u dont know how simulator works
             int DEFAULT_COUNTER = overlord.simSettings.getTransDelay(); //def: 25
@@ -603,33 +638,7 @@ public class GraphicalSimulatorXTPN {
             return false;
         }
 
-        /**
-         * Metoda uruchamia fazę odejmowania tokenów z miejsc wejściowych odpalonych tranzycji
-         * (lub wyjściowych, dla trybu cofania).
-         * @param transitions ArrayList[Transition] - lista uruchamianych tranzycji
-         */
-        public void launchSubtractPhase(ArrayList<Transition> transitions) {
-            ArrayList<Arc> arcs;
-            for (Transition transition : transitions) {
-                transition.setLaunching(true);
-                arcs = transition.getInArcs();
 
-                if(transition.getDPNtimer() > 0) //yeah, trust me, I'm an engineer
-                    continue;
-
-                // odejmij odpowiednią liczbę tokenów:
-                for (Arc arc : arcs) {
-                    arc.setSimulationForwardDirection(true);
-                    arc.setTransportingTokens(true);
-                    Place place = (Place) arc.getStartNode();
-                    if(arc.getArcType() == TypeOfArc.INHIBITOR) {
-                        arc.setTransportingTokens(false);
-                    }  else {
-                        FunctionsTools.functionalExtraction(transition, arc, place);
-                    }
-                }
-            }
-        }
 
         /**
          * Metoda uruchamia fazę odejmowania tokenów z miejsc wejściowych jednej odpalonej tranzycji
