@@ -5,13 +5,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.Serial;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -31,8 +27,6 @@ import javax.swing.JTextArea;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
 import org.jfree.chart.ChartFactory;
@@ -151,10 +145,16 @@ public class HolmesNodeInfo extends JFrame {
 	private void initializeCommon() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {}
+		} catch (Exception ignored) {}
 		
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
 			mainSimulatorActive = true;
+
+		//TODO: sprawdzić czy górne w ogóle potrzebne
+
+		if(overlord.getWorkspace().getProject().isSimulationActive()) {
+			mainSimulatorActive = true;
+		}
 
 		parentFrame.setEnabled(false);
 		setResizable(false);
@@ -232,16 +232,14 @@ public class HolmesNodeInfo extends JFrame {
 		if(mainSimulatorActive || problem) {
 			tokenSpinner.setEnabled(false);
 		}
-		tokenSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int tokens = (int) spinner.getValue();
-				action.setTokens(place, tokens);
-				
-				if(overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
-					ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-					overlord.getWorkspace().getProject().accessStatesManager().getStatePN(0).setTokens(places.indexOf(place), tokens);
-				}
+		tokenSpinner.addChangeListener(e -> {
+			JSpinner spinner = (JSpinner) e.getSource();
+			int tokens = (int) spinner.getValue();
+			action.setTokens(place, tokens);
+
+			if(overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
+				ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+				overlord.getWorkspace().getProject().accessStatesManager().getStatePN(0).setTokens(places.indexOf(place), tokens);
 			}
 		});
 		infoPanel.add(tokenSpinner);
@@ -285,18 +283,16 @@ public class HolmesNodeInfo extends JFrame {
 		nameField.setLocation(infPanelX+60, infPanelY);
 		nameField.setSize(460, 20);
 		nameField.setValue(place.getName());
-		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					field.commitEdit();
-				} catch (ParseException ex) {
-				}
-				String newName = (String) field.getText();
-				
-				action.changeName(place, newName);
-				action.parentTableUpdate(parentFrame, newName);
+		nameField.addPropertyChangeListener("value", e -> {
+			JFormattedTextField field = (JFormattedTextField) e.getSource();
+			try {
+				field.commitEdit();
+			} catch (ParseException ignored) {
 			}
+			String newName = field.getText();
+
+			action.changeName(place, newName);
+			action.parentTableUpdate(parentFrame, newName);
 		});
 		infoPanel.add(nameField);
 
@@ -360,11 +356,7 @@ public class HolmesNodeInfo extends JFrame {
 		tInvButton.setMargin(new Insets(0, 0, 0, 0));
 		tInvButton.setIcon(Tools.getResIcon32("/icons/nodeViewer/iconInv.png"));
 		tInvButton.setToolTipText("Show information about t-invariants going through place");
-		tInvButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				action.showTinvForPlace(place, progressBar);
-			}
-		});
+		tInvButton.addActionListener(actionEvent -> action.showTinvForPlace(place, progressBar));
 		panel.add(tInvButton);
 		
 		progressBar.setBounds(posX, posY+40, 500, 40);
@@ -399,11 +391,7 @@ public class HolmesNodeInfo extends JFrame {
 		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
 		acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
-		acqDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				acquireNewPlaceData();
-			}
-		});
+		acqDataButton.addActionListener(actionEvent -> acquireNewPlaceData());
 		chartButtonPanel.add(acqDataButton);
 		
 		JLabel labelSteps = new JLabel("Sim. Steps:");
@@ -413,12 +401,9 @@ public class HolmesNodeInfo extends JFrame {
 		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 50000, 100);
 		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
 		simStepsSpinner.setBounds(chartX +120, chartY_2nd, 80, 25);
-		simStepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				simSteps = val;
-			}
+		simStepsSpinner.addChangeListener(e -> {
+			JSpinner spinner = (JSpinner) e.getSource();
+			simSteps = (int) spinner.getValue();
 		});
 		chartButtonPanel.add(simStepsSpinner);
 		
@@ -429,12 +414,9 @@ public class HolmesNodeInfo extends JFrame {
 		SpinnerModel simStepsRepeatedSpinnerModel = new SpinnerNumberModel(repeated, 1, 50, 1);
 		JSpinner simStepsRepeatedSpinner = new JSpinner(simStepsRepeatedSpinnerModel);
 		simStepsRepeatedSpinner.setBounds(chartX +210, chartY_2nd, 60, 25);
-		simStepsRepeatedSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				repeated = val;
-			}
+		simStepsRepeatedSpinner.addChangeListener(e -> {
+			JSpinner spinner = (JSpinner) e.getSource();
+			repeated = (int) spinner.getValue();
 		});
 		chartButtonPanel.add(simStepsRepeatedSpinner);
 		
@@ -448,18 +430,16 @@ public class HolmesNodeInfo extends JFrame {
 		simMode.setBounds(chartX+280, chartY_2nd, 120, 25);
 		simMode.setSelectedIndex(0);
 		simMode.setMaximumRowCount(6);
-		simMode.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = simMode.getSelectedIndex();
-				if(selected == 0) {
-					maximumMode = false;
-					singleMode = false;
-				} else if(selected == 1) {
-					maximumMode = true;
-					singleMode = false;
-				} else {
-					singleMode = true;
-				}
+		simMode.addActionListener(actionEvent -> {
+			int selected = simMode.getSelectedIndex();
+			if(selected == 0) {
+				maximumMode = false;
+				singleMode = false;
+			} else if(selected == 1) {
+				maximumMode = true;
+				singleMode = false;
+			} else {
+				singleMode = true;
 			}
 		});
 		chartButtonPanel.add(simMode);
@@ -468,21 +448,12 @@ public class HolmesNodeInfo extends JFrame {
 		final JComboBox<String> simNetMode = new JComboBox<String>(simModeName);
 		simNetMode.setBounds(chartX+400, chartY_2nd, 120, 25);
 		simNetMode.setSelectedIndex(0);
-		simNetMode.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selectedModeIndex = simNetMode.getSelectedIndex();
-				switch(selectedModeIndex) {
-					case 0:
-						choosenNetType = SimulatorGlobals.SimNetType.BASIC;
-						break;
-					case 1:
-						choosenNetType = SimulatorGlobals.SimNetType.TIME;
-						break;
-					case 2:
-						choosenNetType = SimulatorGlobals.SimNetType.HYBRID;
-						break;
-				}
+		simNetMode.addActionListener(actionEvent -> {
+			int selectedModeIndex = simNetMode.getSelectedIndex();
+			switch (selectedModeIndex) {
+				case 0 -> choosenNetType = SimulatorGlobals.SimNetType.BASIC;
+				case 1 -> choosenNetType = SimulatorGlobals.SimNetType.TIME;
+				case 2 -> choosenNetType = SimulatorGlobals.SimNetType.HYBRID;
 			}
 		});
 		chartButtonPanel.add(simNetMode);
@@ -525,7 +496,7 @@ public class HolmesNodeInfo extends JFrame {
 		infoPanel.add(portalLabel);
 		
 		String port = "no";
-		if(transition.isPortal() == true) 
+		if(transition.isPortal())
 			port = "yes";
 		
 		JLabel portalLabel2 = new JLabel(port);
@@ -580,18 +551,16 @@ public class HolmesNodeInfo extends JFrame {
 		nameField.setLocation(infPanelX+60, infPanelY);
 		nameField.setSize(460, 20);
 		nameField.setValue(transition.getName());
-		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					field.commitEdit();
-				} catch (ParseException ex) {
-				}
-				String newName = (String) field.getText();
-				
-				action.changeName(transition, newName);
-				action.parentTableUpdate(parentFrame, newName);
+		nameField.addPropertyChangeListener("value", e -> {
+			JFormattedTextField field = (JFormattedTextField) e.getSource();
+			try {
+				field.commitEdit();
+			} catch (ParseException ex) {
 			}
+			String newName = field.getText();
+
+			action.changeName(transition, newName);
+			action.parentTableUpdate(parentFrame, newName);
 		});
 		infoPanel.add(nameField);
 		
@@ -655,11 +624,7 @@ public class HolmesNodeInfo extends JFrame {
 		tInvButton.setMargin(new Insets(0, 0, 0, 0));
 		tInvButton.setIcon(Tools.getResIcon32("/icons/nodeViewer/iconInv.png"));
 		tInvButton.setToolTipText("Show information about t-invariants going through transition");
-		tInvButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				action.showTinvForTransition(transition, progressBar);
-			}
-		});
+		tInvButton.addActionListener(actionEvent -> action.showTinvForTransition(transition, progressBar));
 		panel.add(tInvButton);
 		
 		
@@ -695,11 +660,7 @@ public class HolmesNodeInfo extends JFrame {
 		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
 		acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
-		acqDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				acquireNewTransitionData();
-			}
-		});
+		acqDataButton.addActionListener(actionEvent -> acquireNewTransitionData());
 		chartButtonPanel.add(acqDataButton);
 		
 		JLabel labelSteps = new JLabel("Sim. Steps:");
@@ -709,28 +670,25 @@ public class HolmesNodeInfo extends JFrame {
 		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 50000, 100);
 		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
 		simStepsSpinner.setBounds(chartX+120, chartY_2nd, 80, 25);
-		simStepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				simSteps = val;
-				
-				//update spinner przerw/srednich dla tranzycji:
-				int cVal = simSteps / 100;
-				int mVal = simSteps / 5;
-				if(cVal < 1)
-					cVal = 1;
-				if(cVal > mVal) {
-					cVal = 1;
-					mVal = 20;
-				}
-				try {
-					SpinnerNumberModel spinnerClustersModel = new SpinnerNumberModel(cVal, 1, mVal, 1);
-					transIntervalSpinner.setModel(spinnerClustersModel);
-					transInterval = cVal;
-				} catch (Exception ex) {
-					overlord.log("Cannot update transition interval for simulator (Transition Info Windows).", "warning", true);
-				}
+		simStepsSpinner.addChangeListener(e -> {
+			JSpinner spinner = (JSpinner) e.getSource();
+			simSteps = (int) spinner.getValue();
+
+			//update spinner przerw/srednich dla tranzycji:
+			int cVal = simSteps / 100;
+			int mVal = simSteps / 5;
+			if(cVal < 1)
+				cVal = 1;
+			if(cVal > mVal) {
+				cVal = 1;
+				mVal = 20;
+			}
+			try {
+				SpinnerNumberModel spinnerClustersModel = new SpinnerNumberModel(cVal, 1, mVal, 1);
+				transIntervalSpinner.setModel(spinnerClustersModel);
+				transInterval = cVal;
+			} catch (Exception ex) {
+				overlord.log("Cannot update transition interval for simulator (Transition Info Windows).", "warning", true);
 			}
 		});
 		chartButtonPanel.add(simStepsSpinner);
@@ -743,12 +701,10 @@ public class HolmesNodeInfo extends JFrame {
 		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(transInterval, 1, maxVal, 1);
 		transIntervalSpinner = new JSpinner(intervSpinnerModel);
 		transIntervalSpinner.setBounds(chartX+210, chartY_2nd, 60, 25);
-		transIntervalSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				transInterval = (int) spinner.getValue();
-				//clearTransitionsChart();
-			}
+		transIntervalSpinner.addChangeListener(e -> {
+			JSpinner spinner = (JSpinner) e.getSource();
+			transInterval = (int) spinner.getValue();
+			//clearTransitionsChart();
 		});
 		chartButtonPanel.add(transIntervalSpinner);
 		
@@ -761,18 +717,16 @@ public class HolmesNodeInfo extends JFrame {
 		simMode.setBounds(chartX+280, chartY_2nd, 120, 25);
 		simMode.setSelectedIndex(0);
 		simMode.setMaximumRowCount(6);
-		simMode.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = simMode.getSelectedIndex();
-				if(selected == 0) {
-					maximumMode = false;
-					singleMode = false;
-				} else if(selected == 1) {
-					maximumMode = true;
-					singleMode = false;
-				} else {
-					singleMode = true;
-				}
+		simMode.addActionListener(actionEvent -> {
+			int selected = simMode.getSelectedIndex();
+			if(selected == 0) {
+				maximumMode = false;
+				singleMode = false;
+			} else if(selected == 1) {
+				maximumMode = true;
+				singleMode = false;
+			} else {
+				singleMode = true;
 			}
 		});
 		chartButtonPanel.add(simMode);
@@ -786,21 +740,12 @@ public class HolmesNodeInfo extends JFrame {
 		else
 			simNetMode.setSelectedIndex(0);
 		
-		simNetMode.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selectedModeIndex = simNetMode.getSelectedIndex();
-				switch(selectedModeIndex) {
-					case 0:
-						choosenNetType = SimulatorGlobals.SimNetType.BASIC;
-						break;
-					case 1:
-						choosenNetType = SimulatorGlobals.SimNetType.TIME;
-						break;
-					case 2:
-						choosenNetType = SimulatorGlobals.SimNetType.HYBRID;
-						break;
-				}
+		simNetMode.addActionListener(actionEvent -> {
+			int selectedModeIndex = simNetMode.getSelectedIndex();
+			switch (selectedModeIndex) {
+				case 0 -> choosenNetType = SimulatorGlobals.SimNetType.BASIC;
+				case 1 -> choosenNetType = SimulatorGlobals.SimNetType.TIME;
+				case 2 -> choosenNetType = SimulatorGlobals.SimNetType.HYBRID;
 			}
 		});
 		chartButtonPanel.add(simNetMode);
@@ -815,7 +760,7 @@ public class HolmesNodeInfo extends JFrame {
 	 * @param chartMainPanel JPanel - panel wykresu
 	 */
 	private void fillPlaceDynamicData(JPanel chartMainPanel) {
-		if(mainSimulatorActive == false) {
+		if(!mainSimulatorActive) {
 			acquireNewPlaceData();			
 		} else {
 			chartMainPanel.setEnabled(false);
@@ -837,7 +782,7 @@ public class HolmesNodeInfo extends JFrame {
 	 */
 	private void fillTransitionDynamicData(JFormattedTextField avgFiredTextBox, JPanel chartMainPanel,
 			JPanel chartButtonPanel) {
-		if(mainSimulatorActive == false) {
+		if(!mainSimulatorActive) {
 			ArrayList<Integer> dataVector = acquireNewTransitionData();
 			if(dataVector != null) {
 				int sum = dataVector.get(dataVector.size()-2);
@@ -1014,8 +959,7 @@ public class HolmesNodeInfo extends JFrame {
         //Font font = new Font("Dialog", Font.PLAIN, 12); 
       	//plot.getDomainAxis().setLabelFont(font);
       	//plot.getRangeAxis().setLabelFont(font);
-	
-	    ChartPanel placesChartPanel = new ChartPanel(dynamicsChart);
-	    return placesChartPanel;
+
+		return new ChartPanel(dynamicsChart);
 	}
 }

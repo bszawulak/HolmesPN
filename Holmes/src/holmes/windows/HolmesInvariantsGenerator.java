@@ -75,7 +75,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		//ego = this;
 		
 		setLayout(new BorderLayout());
-		setSize(new Dimension(666, 560));
+		setSize(new Dimension(682, 570));
 		setLocation(50, 50);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

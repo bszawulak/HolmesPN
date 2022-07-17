@@ -1,4 +1,4 @@
-package holmes.windows.ssim;
+package holmes.windows.managers.ssim;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;

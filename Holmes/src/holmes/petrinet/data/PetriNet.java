@@ -914,16 +914,40 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void restoreMarkingZero() {
 		try {
 			if(checkIfXTPNpresent()) {
-				accessStatesManager().setNetworkStateXTPN(accessStatesManager().selectedStateXTPN);
-			} else {
-				accessStatesManager().setNetworkStatePN(accessStatesManager().selectedStatePN);
+				restoreMarkingZeroXTPN();
+				return;
 			}
+			accessStatesManager().setNetworkStatePN(accessStatesManager().selectedStatePN);
 
 			for(Transition trans : getTransitions()) {
 				trans.setLaunching(false);
 				if(trans.getTransType() == TransitionType.TPN) {
 					trans.resetTimeVariables();
 				}
+			}
+
+			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
+			setSimulator(new GraphicalSimulator(nt, this));
+			setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
+			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN()); //ustawia nowe instancje symulatorów
+			overlord.io.updateTimeStep(false, getSimulator().getSimulatorTimeStep(), 0); //-1 po resecie symulatorów
+			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep(); //-1, jak wyżej
+			
+			repaintAllGraphPanels();
+			getSimulator().getSimLogger().logSimReset();
+		} catch (Exception e) {
+			overlord.log("Unknown error: unable to restore state m0 on request.", "error", true);
+		}
+	}
+
+	/**
+	 * Wywołyana TYLKO przez restoreMarkingZero(), jeśli ta wykryje elementy XTPN.
+	 */
+	private void restoreMarkingZeroXTPN() {
+		try {
+			accessStatesManager().setNetworkStateXTPN(accessStatesManager().selectedStateXTPN);
+			for(Transition trans : getTransitions()) {
+				trans.setLaunching(false);
 				if(trans.isXTPNtransition()) {
 					trans.resetTimeVariables_xTPN();
 				}
@@ -933,13 +957,14 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			setSimulator(new GraphicalSimulator(nt, this));
 			setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
 			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN()); //ustawia nowe instancje symulatorów
-			overlord.io.updateTimeStep(false,getSimulator().getSimulatorTimeStep(), 0); //-1 po resecie symulatorów
-			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep(); //-1, jak wyżej
-			
+			overlord.io.updateTimeStep(true, getSimulatorXTPN().getStepsCounterXTPN(), getSimulatorXTPN().getTimeCounterXTPN()); //-1 po resecie symulatorów
+			overlord.simSettings.currentStep = getSimulatorXTPN().getStepsCounterXTPN(); //-1, jak wyżej
+			overlord.simSettings.currentTime = getSimulatorXTPN().getTimeCounterXTPN();
+
 			repaintAllGraphPanels();
 			getSimulator().getSimLogger().logSimReset();
 		} catch (Exception e) {
-			overlord.log("Unknown error: unable to restore state m0 on request.", "error", true);
+			overlord.log("Unknown error: unable to restore XTOM p-state m0 on request.", "error", true);
 		}
 	}
 	
@@ -1050,11 +1075,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * parametrze. Nie powoduje to jednak usunięcia zawartych na nim wierzchołków
 	 * oraz łuków.
 	 * @param sheetID int - identyfikator który ma zostać usunięty
-	 * @return boolean - true w sytuacji powodzenia operacji GraphPanel od podanym identyfikatorze istniał
+	 * @return boolean - true w sytuacji powodzenia operacji usunięcia, gdy GraphPanel o podanym identyfikatorze istniał;
 	 *		false w przypadku przeciwnym
 	 */
 	public boolean removeGraphPanel(int sheetID) {
-		System.out.println("Przed usunieciem:");
+		System.out.println("Before deletion:");
 		for (GraphPanel g : getGraphPanels())
 			System.out.println(g);
 		for (Node n : getNodes())
@@ -1081,7 +1106,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 						}
 					}
 				}
-				System.out.println("Po usunieciu:");
+				System.out.println("After deletion:");
 				for (GraphPanel g : getGraphPanels())
 					System.out.println(g);
 				for (Node n : getNodes())
@@ -1447,6 +1472,21 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
+	 * Metoda pozwala na zwiększenie kroku symulacji o 1. Jest ona wywoływana przez
+	 * NetSimulator danego projektu, co powoduje wywołanie metody incrementSimulationStep() 
+	 * dla każdego łuku zawartego w projekcie, odpowiedzialnego za wyświetlanie animacji 
+	 * tokenów przemieszczających się w trakcie symulacji.
+	 */
+	public void incrementGraphicalSimulationStep() {
+		for (Arc a : getArcs())
+			a.incrementSimulationStep();
+		for (GraphPanel g : this.getGraphPanels()) {
+			g.invalidate();
+			g.repaint();
+		}
+	}
+
+	/**
 	 * Metoda pozwala na pobranie stanu symulacji. W sytuacji gdy jest ona aktywna
 	 * (isSimulationActive = true) wszelka interakcja z arkuszami oraz obiektami
 	 * znajdującymi się na nich jest zablokowana.
@@ -1455,21 +1495,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public boolean isSimulationActive() {
 		return isSimulationActive;
-	}
-
-	/**
-	 * Metoda pozwala na zwiększenie kroku symulacji o 1. Jest ona wywoływana przez
-	 * NetSimulator danego projektu, co powoduje wywołanie metody incrementSimulationStep() 
-	 * dla każdego łuku zawartego w projekcie, odpowiedzialnego za wyświetlanie animacji 
-	 * tokenów przemieszczających się w trakcie symulacji.
-	 */
-	public void incrementSimulationStep() {
-		for (Arc a : getArcs())
-			a.incrementSimulationStep();
-		for (GraphPanel g : this.getGraphPanels()) {
-			g.invalidate();
-			g.repaint();
-		}
 	}
 
 	/**

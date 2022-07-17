@@ -11,8 +11,6 @@ import holmes.windows.managers.HolmesStatesEditorXTPN;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -21,15 +19,14 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 public class HolmesXTPNtokens extends JFrame {
-    private JFrame ego;
     private final GUIManager overlord;
 
     private HolmesStatesEditorXTPN parentWindow;
-    private Place place = null;
+    private Place place;
     private boolean mainSimulatorActive;
     private boolean listenerAllowed = true; //jeśli true, comboBoxy działają
 
-    private JComboBox tokensComboBox;
+    private JComboBox<String> tokensComboBox;
     private JLabel idTokenLabel;
     private JFormattedTextField tokenValueTextField;
     private JLabel tokensNoLabel;
@@ -47,8 +44,7 @@ public class HolmesXTPNtokens extends JFrame {
         spm = overlord.getWorkspace().getProject().accessStatesManager();
         vectorXTPN = spm.getCurrentStateXTPN();
         places = overlord.getWorkspace().getProject().getPlaces();
-        ego = this;
-        ego.setTitle("XPTN tokens window");
+        setTitle("XPTN tokens window");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ignored) {
@@ -132,17 +128,15 @@ public class HolmesXTPNtokens extends JFrame {
         tokensComboBox.setSize(180, 20);
         tokensComboBox.setSelectedIndex(0);
         tokensComboBox.setMaximumRowCount(10);
-        tokensComboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                if(!listenerAllowed)
-                    return;
+        tokensComboBox.addActionListener(actionEvent -> {
+            if(!listenerAllowed)
+                return;
 
-                int selected = tokensComboBox.getSelectedIndex();
-                idTokenLabel.setText("ID: "+selected);
+            int selected = tokensComboBox.getSelectedIndex();
+            idTokenLabel.setText("ID: "+selected);
 
-                if(selected >= 0) {
-                    tokenValueTextField.setValue(place.accessMultiset().get(selected));
-                }
+            if(selected >= 0) {
+                tokenValueTextField.setValue(place.accessMultiset().get(selected));
             }
         });
         comboPanel.add(tokensComboBox);
@@ -167,7 +161,7 @@ public class HolmesXTPNtokens extends JFrame {
         formatter.setRoundingMode(RoundingMode.HALF_UP);
 
         tokenValueTextField = new JFormattedTextField(formatter);
-        tokenValueTextField.setValue(Double.valueOf(0.0));
+        tokenValueTextField.setValue(0.0);
         tokenValueTextField.setBounds(comboPanelX+40, comboPanelY, 110, 20);
         tokenValueTextField.addPropertyChangeListener("value", e -> {
             if (!listenerAllowed)
@@ -184,9 +178,7 @@ public class HolmesXTPNtokens extends JFrame {
 
         //potwierdzenie zmiany wartości tokenu
 
-        //HolmesRoundedButton changeTokenValueButton = new HolmesRoundedButton(""
-        //        , "XTPNtokensWindow/HTWchange1.png", "XTPNtokensWindow/HTWchange2.png"
-        //        , "XTPNtokensWindow/HTWchange3.png");
+        //HolmesRoundedButton changeTokenValueButton = new HolmesRoundedButton("", "XTPNtokensWindow/HTWchange1.png", "XTPNtokensWindow/HTWchange2.png", "XTPNtokensWindow/HTWchange3.png");
         HolmesRoundedButton changeTokenValueButton = new HolmesRoundedButton("Change value"
                 , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         changeTokenValueButton.setMargin(new Insets(0, 0, 0, 0));
@@ -222,9 +214,7 @@ public class HolmesXTPNtokens extends JFrame {
         comboPanel.add(changeTokenValueButton);
 
         //usunięcie tokenu
-       // HolmesRoundedButton removeTokenValueButton = new HolmesRoundedButton(""
-       //         , "XTPNtokensWindow/HTWremove1.png", "XTPNtokensWindow/HTWremove2.png"
-        //        , "XTPNtokensWindow/HTWremove3.png");
+        // HolmesRoundedButton removeTokenValueButton = new HolmesRoundedButton("", "XTPNtokensWindow/HTWremove1.png", "XTPNtokensWindow/HTWremove2.png", "XTPNtokensWindow/HTWremove3.png");
         HolmesRoundedButton removeTokenValueButton = new HolmesRoundedButton("Remove"
                 , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         removeTokenValueButton.setMargin(new Insets(0, 0, 0, 0));
@@ -262,7 +252,7 @@ public class HolmesXTPNtokens extends JFrame {
 
         // pole dodawania nowego tokenu
         addNewTextField = new JFormattedTextField(formatter);
-        addNewTextField.setValue(Double.valueOf(0.0));
+        addNewTextField.setValue(0.0);
         addNewTextField.setBounds(comboPanelX+40, comboPanelY, 110, 20);
         addNewTextField.addPropertyChangeListener("value", e -> {
             if (!listenerAllowed)
@@ -291,7 +281,7 @@ public class HolmesXTPNtokens extends JFrame {
                 return;
             try {
                 String text = addNewTextField.getValue().toString();
-                Double val = Double.parseDouble(text);
+                double val = Double.parseDouble(text);
                 if(val < 0.0)
                     val = 0.0;
                 place.addTokens_XTPN(1, val);
@@ -299,7 +289,8 @@ public class HolmesXTPNtokens extends JFrame {
                 vectorXTPN.setNewMultisetK(location, new ArrayList<>(place.accessMultiset()) );
 
                 //listenerAllowed=false;
-                int oldSelectedIndex = tokensComboBox.getSelectedIndex();
+
+                //int oldSelectedIndex = tokensComboBox.getSelectedIndex();
                 recreateComboBox();
 
                 //if(oldSelectedIndex < 0)
@@ -323,7 +314,7 @@ public class HolmesXTPNtokens extends JFrame {
         HolmesRoundedButton clearAllButton = new HolmesRoundedButton("Clear all"
                 , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         clearAllButton.setMargin(new Insets(0, 0, 0, 0));
-        clearAllButton.setBounds(comboPanelX+10, comboPanelY+=25, 100, 30);
+        clearAllButton.setBounds(comboPanelX+10, comboPanelY+25, 100, 30);
         clearAllButton.addActionListener(e -> {
             if (!listenerAllowed)
                 return;
@@ -355,7 +346,7 @@ public class HolmesXTPNtokens extends JFrame {
 
         });
         comboPanel.add(pStateManagerButton);
-*/
+        */
 
         listenerAllowed = true;
 

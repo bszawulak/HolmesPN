@@ -17,16 +17,16 @@ import holmes.petrinet.functions.FunctionsTools;
 import holmes.windows.HolmesNotepad;
 
 /**
- * Klasa zajmująca się zarządzaniem całym procesem symulacji.
- *
- * @author students - pierwsza wersja, klasyczne PN oraz TPN
- * @author MR - poprawki, zmiany, kolejne rodzaje trubów symulacji
+ * Symulator XTPN. Odpowiada na bardzo mądre pytania, na przykład w stylu: czy jak stanę na torach,
+ * i chwycę się linii trakcyjnej, to pojadę jak tramwaj?
+ * @author MR
  */
 public class GraphicalSimulatorXTPN {
     private SimulatorGlobals.SimNetType netSimTypeXTPN;
     private SimulatorModeXTPN simulatorStatusXTPN = SimulatorModeXTPN.STOPPED;
     private SimulatorModeXTPN previousSimStatusXTPN = SimulatorModeXTPN.STOPPED;
     private PetriNet petriNet;
+    private SimulatorGlobals sg;
     private int delay = 30;	//opóźnienie
     private boolean simulationActive = false;
     private Timer timer;
@@ -46,7 +46,7 @@ public class GraphicalSimulatorXTPN {
     private GUIManager overlord;
 
     public enum SimulatorModeXTPN {
-        XTPNLOOP, STOPPED, PAUSED,
+        XTPNLOOP, SINGLE_STEP,LOOP, STOPPED, PAUSED,
     }
 
     /**
@@ -65,17 +65,6 @@ public class GraphicalSimulatorXTPN {
     }
 
     /**
-     * Reset do ustawień domyślnych symulatora XTPN.
-     */
-    public void resetSimulator() {
-        simulatorStatusXTPN = SimulatorModeXTPN.STOPPED;
-        previousSimStatusXTPN = SimulatorModeXTPN.STOPPED;
-        simulationActive = false;
-        stepCounter = -1;
-        engineXTPN = new SimulatorXTPN();
-    }
-
-    /**
      * Dostęp do obiektu silnika symulacji.
      * @return (<b>engineXTPN</b>) silnik symulatora XTPN.
      */
@@ -90,6 +79,9 @@ public class GraphicalSimulatorXTPN {
      * @param simulatorMode (<b>SimulatorModeXTPN</b>) wybrany tryb symulacji XTPN.
      */
     public void startSimulation(SimulatorModeXTPN simulatorMode) {
+        sg = overlord.simSettings;
+        //sg.setArcDelay(80);
+        //sg.setTransDelay(80);
         ArrayList<Transition> transitions = petriNet.getTransitions();
         ArrayList<Place> places = petriNet.getPlaces();
         //nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode()); //TODO
@@ -114,11 +106,14 @@ public class GraphicalSimulatorXTPN {
         ActionListener taskPerformer = new SimulationPerformer();
 
         //ustawiania stanu przycisków symulacji:
-        overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
+        overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtonsXTPN();
 
         switch (getXTPNsimulatorStatus()) {
             case XTPNLOOP:
                 taskPerformer = new StepLoopPerformerXTPN(true); //główny tryb
+                break;
+            case SINGLE_STEP:
+                taskPerformer = new StepLoopPerformerXTPN(false); //główny tryb
                 break;
             case PAUSED:
                 break;
@@ -169,7 +164,7 @@ public class GraphicalSimulatorXTPN {
      * za zatrzymanie symulacji.
      */
     private void stopSimulation() {
-        overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationInitiateButtons();
+        overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationInitiateButtonsXTPN();
         timer.stop();
         previousSimStatusXTPN = simulatorStatusXTPN;
         setSimulatorStatus(SimulatorModeXTPN.STOPPED);
@@ -177,7 +172,24 @@ public class GraphicalSimulatorXTPN {
         stepCounter = 0;
         simTotalTime = 0.0;
 
+        overlord.io.updateTimeStep(true,stepCounter, simTotalTime);
+        overlord.simSettings.currentStep = stepCounter;
+        overlord.simSettings.currentTime = simTotalTime;
+
+
         //nsl.logSimStopped(timeCounter);
+    }
+
+
+    /**
+     * Reset do ustawień domyślnych symulatora XTPN.
+     */
+    public void resetSimulator() {
+        simulatorStatusXTPN = SimulatorModeXTPN.STOPPED;
+        previousSimStatusXTPN = SimulatorModeXTPN.STOPPED;
+        simulationActive = false;
+        engineXTPN = new SimulatorXTPN();
+        sg = overlord.simSettings;
     }
 
     /**
@@ -185,7 +197,7 @@ public class GraphicalSimulatorXTPN {
      * za pauzowanie symulacji.
      */
     private void pauseSimulation() {
-        overlord.getSimulatorBox().getCurrentDockWindow().allowOnlyUnpauseButton();
+        overlord.getSimulatorBox().getCurrentDockWindow().allowOnlyUnpauseButtonXTPN();
         timer.stop();
         previousSimStatusXTPN = simulatorStatusXTPN;
         setSimulatorStatus(SimulatorModeXTPN.PAUSED);
@@ -198,7 +210,7 @@ public class GraphicalSimulatorXTPN {
      * za ponowne uruchomienie (po pauzie) symulacji.
      */
     private void unpauseSimulation() {
-        overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
+        overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtonsXTPN();
         if (previousSimStatusXTPN != SimulatorModeXTPN.STOPPED) {
             timer.start();
             setSimulatorStatus(previousSimStatusXTPN);
@@ -278,8 +290,12 @@ public class GraphicalSimulatorXTPN {
      * Metoda zwraca wartość aktualnego kroku symulacji (numer, tj. czas).
      * @return (<b>long</b>) - nr kroku symulacji
      */
-    public long getStepCounterXTPN() {
+    public long getStepsCounterXTPN() {
         return stepCounter;
+    }
+
+    public double getTimeCounterXTPN() {
+        return simTotalTime;
     }
 
     // ================================================================================
@@ -294,40 +310,32 @@ public class GraphicalSimulatorXTPN {
      *
      */
     private class SimulationPerformer implements ActionListener {
-        protected int repaintSteps = overlord.simSettings.getTransDelay(); // licznik kroków graficznych
-
+        protected int repaintSteps = overlord.simSettings.getTransitionGraphicDelay(); // licznik kroków graficznych
         protected boolean newStateChangeStarts = true;
-        protected boolean timePassPhase = false;
         protected boolean subtractPhase = false; // true - subtract, false - add
         protected boolean addPhase = false;
-        protected boolean finishedAddPhase = false;
         protected boolean scheduledStop = false;
-        protected int remainingTransitionsAmount = consumingTokensTransitionsXTPN.size();
 
         /**
          * Metoda aktualizuje wyświetlanie graficznej części symulacji po wykonaniu każdego kroku.
          */
-        protected void updateStepCounter() {
-            petriNet.incrementSimulationStep();
-        }
-
-        private void resetPhaseOrderXTPN() {
-            timePassPhase = false;
-
-            subtractPhase = false;
-            addPhase = false;
-            finishedAddPhase = false;
+        protected void initiateTokensMoveGraphics() {
+            petriNet.incrementGraphicalSimulationStep();
         }
 
         /**
-         * Metoda inicjuje zatrzymanie symulacji po zakończeniu aktualnego kroku.
+         * Metoda inicjuje zatrzymanie symulacji po zakończeniu aktualnego kroku. Wywoływana przez przycisk w oknie
+         * symulatora, ale pośrednio - poprzez metodę stop() w ramach action listener. Tak, też tego nie ogarniam,
+         * jak do tego doszło, nie wiem. Albo i wiem, ale winny jest poza zasięgiem.
          */
         public void scheduleStop() {
             scheduledStop = true;
         }
 
         /**
-         * Metoda natychmiast zatrzymuje symulację.
+         * Metoda natychmiast zatrzymuje symulację. Wywoływana na początku głównej metody działającej
+         * w wątku ( actionPerformed(ActionEvent event) ), po tym jak coś ustawiło zmienną scheduledStop
+         * na true. Na przykład przycisk okna interfejsu.
          */
         public void executeScheduledStop() {
             stopSimulation();
@@ -341,7 +349,7 @@ public class GraphicalSimulatorXTPN {
          * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody
          */
         public void actionPerformed(ActionEvent event) {
-            petriNet.incrementSimulationStep();
+            petriNet.incrementGraphicalSimulationStep();
         }
     }
 
@@ -360,7 +368,7 @@ public class GraphicalSimulatorXTPN {
 
         /**
          * Konstruktor obiektu klasy StepPerformer
-         * @param looping boolean - true, jeśli działanie w pętli
+         * @param looping (<b>boolean</b>)  true, jeśli działanie ciągłe, false jeśli tylko jeden stan na raz.
          */
         public StepLoopPerformerXTPN(boolean looping) {
             loop = looping;
@@ -368,20 +376,24 @@ public class GraphicalSimulatorXTPN {
 
         /**
          * Metoda wykonywana jako kolejny krok przez symulator. Straszy.
-         * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody. Nie ma przypadków. Są tylko znaki.
+         * @param event (<b>ActionEvent</b>) zdarzenie, które spowodowało wykonanie metody. Nie ma przypadków. Są tylko znaki.
          */
         public void actionPerformed(ActionEvent event) {
             //testDzialaniaSymulacji();
-            int DEFAULT_COUNTER = overlord.simSettings.getTransDelay(); //def: 25
+            int DEFAULT_COUNTER = overlord.simSettings.getTransitionGraphicDelay(); //def: 25
 
             //TUTAJ USTALENIE JAK WYGLĄDA AKTUALNY STAN, I O ILE CZASU IDZIEMY DO PRZODU Z SYMULACJĄ
             if(newStateChangeStarts) { //nowy krok symulacji
-                if (scheduledStop) { // jeśli symulacja ma się zatrzymać
+
+                if (scheduledStop) { // jeśli symulacja ma się zatrzymać, np. bo przycisk
                     executeScheduledStop(); // egzorcyzmuj symulator
+                    setSimulationActive(false);
+                    return;
                 }
                 //najpierw aktywacja tranzycji wejściowych, jeśli są nieaktywne:
                 ArrayList<SimulatorXTPN.NextXTPNstep> classicalInputTransitions = engineXTPN.revalidateNetState();
                 //teraz obliczamy minimalną zmianę czasu w sieci:
+
                 nextXTPNsteps = engineXTPN.computeNextState();
                 //dodajemy tranzycje wejściowe klasyczne do listy uruchomień w nowym stanie +tau:
                 nextXTPNsteps.set(4, classicalInputTransitions);
@@ -394,6 +406,7 @@ public class GraphicalSimulatorXTPN {
                     stopSimulation();
                     JOptionPane.showMessageDialog(null, "Simulation stopped, no active transitions.",
                             "Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
+                    return;
                 }
 
                 //TUTAJ NASTĘPUJE UPDATE STANU O WYLICZONĄ WCZEŚNIEJ WARTOŚĆ +TAU (infoNode.timeToChange)
@@ -417,11 +430,12 @@ public class GraphicalSimulatorXTPN {
                 newStateChangeStarts = false;
                 repaintSteps = 0;
                 if(consumingTokensTransitionsXTPN.size() > 0 || consumingTokensTransitionsClassical.size() > 0) {
+                    //faza zabierana tokenów, czyli uruchamianie tranzycji gdy timeAlfa = tauAlfa
                     subtractPhase = true;
-                } else if(producingTokensTransitionsAll.size() > 0) { //tylko produkcja
+                } else if(producingTokensTransitionsAll.size() > 0) { //tylko produkcja tokenów
                     addPhase = true;
-                } else { //tylko upływ czasu?
-                    newStateChangeStarts = true;
+                } else { //tylko upływ czasu, co już miało miejsce
+                    endThisSimulationStep();
                 }
                 petriNet.repaintAllGraphPanels();
             }
@@ -434,15 +448,16 @@ public class GraphicalSimulatorXTPN {
 
                 if(repaintSteps < DEFAULT_COUNTER) {
                     repaintSteps++;
-                    updateStepCounter();
+                    initiateTokensMoveGraphics();
                 } else { //zakończenie fazy zabierania tokenów
                     engineXTPN.endSubtractPhase(transitionsAfterSubtracting);
 
                     subtractPhase = false;
-                    if(producingTokensTransitionsAll.size() > 0) { //tylko produkcja
+                    repaintSteps = 0;
+                    if(producingTokensTransitionsAll.size() > 0) { //jeszcze produkcja
                         addPhase = true;
                     } else { //tylko upływ czasu?
-                        newStateChangeStarts = true;
+                        endThisSimulationStep();
                     }
                 }
             }
@@ -451,16 +466,34 @@ public class GraphicalSimulatorXTPN {
                 if(repaintSteps == 0) {
                     prepareProductionPhaseGraphics();
                 }
-
                 if(repaintSteps < DEFAULT_COUNTER) {
                     repaintSteps++;
-                    updateStepCounter();
+                    initiateTokensMoveGraphics();
                 } else { //zakończenie fazy produkcji tokenów
                     engineXTPN.endProductionPhase(producingTokensTransitionsAll);
                     addPhase = false;
-                    newStateChangeStarts = true;
+                    repaintSteps = 0;
+                    endThisSimulationStep();
                 }
             }
+        }
+
+        /**
+         * Metoda kończąca aktualny krok symulacji, gdy już wszystko się wykonało co miało.
+         */
+        private void endThisSimulationStep() {
+            newStateChangeStarts = true;
+            if (!loop) {
+                scheduleStop();
+            }
+            clearDataMatrix();
+        }
+
+        private void clearDataMatrix() {
+            consumingTokensTransitionsXTPN.clear();
+            consumingTokensTransitionsClassical.clear();
+            producingTokensTransitionsAll.clear();
+            nextXTPNsteps.clear();
         }
 
         /**
@@ -478,16 +511,16 @@ public class GraphicalSimulatorXTPN {
             //oraz osobno: consumingTokensTransitionsClassical
 
             for (Transition transition : consumingTokensTransitionsXTPN) { //lista tych, które zabierają tokeny
-                if(transition.getActiveStatusXTPN()) { //jeżeli jest aktywna, to zabieramy tokeny
+                if(transition.getActiveStatusXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                     transition.setLaunching(true);
                     arcs = transition.getInArcs();
                     for (Arc arc : arcs) {
-                        arc.setSimulationForwardDirection(true); //zawsze dla tego symulatora
+                        arc.setSimulationForwardDirection(true); //zawsze dla tego symulatora (nie działamy wstecz)
                         arc.setTransportingTokens(true);
                         Place place = (Place) arc.getStartNode(); //miejsce, z którego zabieramy
                         if(arc.getArcType() == TypeOfArc.INHIBITOR) {
                             arc.setTransportingTokens(false);
-                        }  else { //teraz określamy ile
+                        }  else { //teraz określamy ile zabrać
                             int weight = arc.getWeight();
                             if(transition.isFunctional()) {
                                 weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
@@ -502,7 +535,7 @@ public class GraphicalSimulatorXTPN {
             }
 
             for (Transition transition : consumingTokensTransitionsClassical) { //lista tych, które zabierają tokeny
-                if(transition.getActiveStatusXTPN()) { //jeżeli jest aktywna, to zabieramy tokeny
+                if(transition.getActiveStatusXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                     transition.setLaunching(true);
                     arcs = transition.getInArcs();
                     for (Arc arc : arcs) {
@@ -548,8 +581,6 @@ public class GraphicalSimulatorXTPN {
                 }
             }
         }
-
-
 
         /*
         private void testDzialaniaSymulacji() { //for training purposes only, if u dont know how simulator works

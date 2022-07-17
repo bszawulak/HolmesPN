@@ -1743,7 +1743,7 @@ public final class ElementDraw {
 	 * @param arc (<b>Arc</b>) łuk sieci, po którym rusza się token.
 	 */
 	public static void drawMovingToken(Graphics2D g, int sheetId, Arc arc) {
-		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
+		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcGraphicDelay();
 		int step = arc.getGraphicalSimulationSteps();
 		int weight; //arc.getWeight();
 		

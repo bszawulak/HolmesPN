@@ -44,7 +44,7 @@ public class SimulatorGlobals {
 	public boolean quickSimToken = false;
 
 	//XTPN:
-	public static double calculationsAccuracy = 0.000000001;
+	private double calculationsAccuracy = 0.000000001;
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.
@@ -275,7 +275,7 @@ public class SimulatorGlobals {
 	 * Metoda ustawia liczbę przystanków na drodze tokenu (grafika)
 	 * @param value int - nowa wartość, im mniej (min=5), tym szybciej
 	 */
-	public void setArcDelay(int value) {
+	public void setArcGraphicDelay(int value) {
 		//if(value < 5)
 		//	this.ARC_STEP_DELAY = 5;
 
@@ -286,7 +286,7 @@ public class SimulatorGlobals {
 	 * Zwraca liczbę przystanków na drodze rysowania tokenu
 	 * @return int
 	 */
-	public int getArcDelay() {
+	public int getArcGraphicDelay() {
 		return ARC_STEP_DELAY;
 	}
 	
@@ -294,7 +294,7 @@ public class SimulatorGlobals {
 	 * Metoda ustawia opóźnienie odpalenia tranzycji (grafika)
 	 * @param value int - nowa wartość, im mniej (min=10), tym szybciej
 	 */
-	public void setTransDelay(int value) {
+	public void setTransitionGraphicDelay(int value) {
 		//if(value < 10)
 		//	this.TRANS_FIRING_DELAY = 10;
 		
@@ -305,7 +305,7 @@ public class SimulatorGlobals {
 	 * Zwraca wartość opóźnienia tranzycji
 	 * @return int
 	 */
-	public int getTransDelay() {
+	public int getTransitionGraphicDelay() {
 		return TRANS_FIRING_DELAY;
 	}
 	
@@ -324,6 +324,7 @@ public class SimulatorGlobals {
 		simReps = 100;
 
 		currentStep = 0;
+		currentTime = 0;
 	}
 	
 	/**
@@ -373,5 +374,21 @@ public class SimulatorGlobals {
 	 */
 	public boolean isSSAMassAction() {
 		return this.ssaMassActionKineticsEnabled;
+	}
+
+	/**
+	 * Zwraca dokładność obliczeń dla XTPN, domyślnie 0.000000001
+	 * @return (<b>double</b>) - dokładność obliczeń.
+	 */
+	public double getCalculationsAccuracy() {
+		return calculationsAccuracy;
+	}
+
+	/**
+	 * Ustawia dokładność obliczeń dla XTPN, domyślnie 0.000000001
+	 * @param calculationsAccuracy (<b>double</b>) dokładność obliczeń.
+	 */
+	public void setCalculationsAccuracy(double calculationsAccuracy) {
+		this.calculationsAccuracy = calculationsAccuracy;
 	}
 }

@@ -1,4 +1,4 @@
-package holmes.windows.ssim;
+package holmes.windows.managers.ssim;
 
 import java.util.ArrayList;
 import java.util.Comparator;

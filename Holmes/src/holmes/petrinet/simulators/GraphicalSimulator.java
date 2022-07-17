@@ -805,7 +805,7 @@ public class GraphicalSimulator {
 	 *
 	 */
 	private class SimulationPerformer implements ActionListener {
-		protected int transitionDelay = overlord.simSettings.getTransDelay(); // licznik kroków graficznych
+		protected int transitionDelay = overlord.simSettings.getTransitionGraphicDelay(); // licznik kroków graficznych
 		protected boolean subtractPhase = true; // true - subtract, false - add
 		protected boolean finishedAddPhase = true;
 		protected boolean scheduledStop = false;
@@ -815,9 +815,7 @@ public class GraphicalSimulator {
 		 * Metoda aktualizuje wyświetlanie graficznej części symulacji po wykonaniu każdego kroku.
 		 */
 		protected void updateStepCounter() {
-			overlord.getWorkspace().getProject().incrementSimulationStep();
-			//tutaj nic się nie dzieje: a chyba chodziło o update podokna właściwości z liczbą tokenów
-			//overlord.getSimulatorBox().updateSimulatorProperties();
+			overlord.getWorkspace().getProject().incrementGraphicalSimulationStep();
 		}
 
 		/**
@@ -881,7 +879,7 @@ public class GraphicalSimulator {
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
-			int DEFAULT_COUNTER = overlord.simSettings.getTransDelay();
+			int DEFAULT_COUNTER = overlord.simSettings.getTransitionGraphicDelay();
 			updateStepCounter(); // rusz tokeny
 			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
 				//z miejsc wejściowych i oddawania ich tranzycjom
@@ -980,7 +978,7 @@ public class GraphicalSimulator {
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
-			int DEFAULT_COUNTER = overlord.simSettings.getTransDelay();
+			int DEFAULT_COUNTER = overlord.simSettings.getTransitionGraphicDelay();
 			updateStepCounter(); // update graphics
 			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // jeśli trwa faza zabierania tokenów
 				//z miejsc wejściowych i oddawania ich tranzycjom
@@ -1082,7 +1080,7 @@ public class GraphicalSimulator {
 		 * @param event ActionEvent - zdarzenie, które spowodowało wykonanie metody 
 		 */
 		public void actionPerformed(ActionEvent event) {
-			int DEFAULT_COUNTER = overlord.simSettings.getTransDelay();
+			int DEFAULT_COUNTER = overlord.simSettings.getTransitionGraphicDelay();
 			updateStepCounter(); // update graphics
 			if (transitionDelay >= DEFAULT_COUNTER && subtractPhase) { // subtract phase
 				if (scheduledStop) { // executing scheduled stop

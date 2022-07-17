@@ -821,9 +821,9 @@ public class ProjectWriter {
 						for(Double value : multiset) {
 							counter++;
 							if(counter == multiset.size())  {
-								stateLine.append(value).append(":"); //separator multizbiorów
+								stateLine.append(value).append(":"); //separator tokenów
 							} else {
-								stateLine.append(value).append(";");
+								stateLine.append(value).append(";"); //separator multizbiorów
 							}
 						}
 						if(counter == 0) { //brak tokenów w miejscu

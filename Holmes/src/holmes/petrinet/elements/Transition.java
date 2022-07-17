@@ -14,7 +14,6 @@ import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.functions.FunctionContainer;
 import holmes.petrinet.functions.FunctionsTools;
-import holmes.petrinet.simulators.SimulatorGlobals;
 
 /**
  * Klasa implementująca tranzycję w sieci Petriego. Zapewnia implementację szeregu funkcjonalności
@@ -624,7 +623,6 @@ public class Transition extends Node {
                     }
                 } else { //normalny łuk
                     if (isFunctional) { //fast, no method!
-                        //TODO:
                         FunctionContainer fc = getFunctionContainer(arc);
                         if (fc != null) //TODO: czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
                             origin.reserveTokens((int) fc.currentValue); //nie ważne, aktywna czy nie, jeśli nie, to tu jest i tak oryginalna waga
@@ -1182,7 +1180,6 @@ public class Transition extends Node {
      * Metoda resetuje zegary tranzycji XTPN.
      */
     public void resetTimeVariables_xTPN() {
-        //TODO: pewnie coś, wyjdzie przy symulatorze
         tauAlpha_xTPN = -1.0;
         tauBeta_xTPN = -1.0;
         timer_Ualfa_XTPN = -1.0;
@@ -1597,13 +1594,14 @@ public class Transition extends Node {
     /**
      * [2022-07-12] Dła łuków: normal, inhibitor
      * Metoda pozwala sprawdzić, czy tranzycja XTPN może być aktywowana i w jaki sposób. Pomija produkujące - wtedy zwraca false.
-     * @return (<b>boolean</b>) true, jeżeli aktywna
+     * @param accuracy (<b>double</b>) dokładność obliczeń.
+     * @return (<b>boolean</b>) true, jeżeli aktywna.
      */
-    public boolean getActiveStatusXTPN() {
+    public boolean getActiveStatusXTPN(double accuracy) {
         if (offline || isProducing_xTPN())
             return false;
 
-        double accuracy = SimulatorGlobals.calculationsAccuracy;
+        // accuracy = SimulatorGlobals.calculationsAccuracy;
 
         for (Arc arc : getInArcs()) { //jeśli brak, to aktywna wejściowa
             Place arcStartPlace = (Place) arc.getStartNode();

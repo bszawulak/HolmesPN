@@ -54,7 +54,7 @@ public class Workspace implements SelectionActionListener {
 	private Dock fillerDock;
 	private Dockable fillerDockable;
 	private PetriNet project;
-	private GUIManager guiManager;
+	private GUIManager overlord;
 	private CompositeTabDock workspaceDock;
 
 	/**
@@ -63,7 +63,7 @@ public class Workspace implements SelectionActionListener {
 	 */
 	public Workspace(GUIManager gui) {
 		setWorkspaceDock(new CompositeTabDock());
-		guiManager = gui;
+		overlord = gui;
 		setDockFactory(getWorkspaceDock().getChildDockFactory());
 		dockables = new ArrayList<Dockable>();
 		docks = new ArrayList<Dock>();
@@ -119,21 +119,21 @@ public class Workspace implements SelectionActionListener {
 	public int newTab(boolean addMetaNode, Point pos, int whichSubnet, MetaType type) {
 		int index = sheetsIDtable.size();
 		int id = index;
-		if (sheetsIDtable.indexOf(id) != -1)
+		if (sheetsIDtable.contains(id))
 			id = getMaximumSubnetID() + 1;
 		Point position = new Point(0, 0);
 		sheetsIDtable.add(id);
 		
-		sheets.add(new WorkspaceSheet("I am sheet " + Integer.toString(id), id, this));
-		Dockable tempDockable = new DefaultDockable("Sheet "+Integer.toString(id), sheets.get(index), "Sheet "+Integer.toString(id));
+		sheets.add(new WorkspaceSheet("I am sheet " + id, id, this));
+		Dockable tempDockable = new DefaultDockable("Sheet "+ id, sheets.get(index), "Sheet "+ id);
 		dockables.add(index, withListener(tempDockable));
 		
 		docks.add(getDockFactory().createDock(dockables.get(index), DockingMode.SINGLE));
 		docks.get(index).addDockable(dockables.get(index), position, position);
 		getWorkspaceDock().addChildDock(docks.get(index), new Position(index));
 		// add menu item to the menu
-		guiManager.getMenu().addSheetItem(dockables.get(index));
-		guiManager.globalSheetsList.add(tempDockable);
+		overlord.getMenu().addSheetItem(dockables.get(index));
+		overlord.globalSheetsList.add(tempDockable);
 		
 		if(addMetaNode) {
 			addMetaNode(pos, whichSubnet, id, type);
@@ -172,7 +172,11 @@ public class Workspace implements SelectionActionListener {
 	public void deleteSheetFromArrays(WorkspaceSheet sheet) {
 		//int gpIndex = getProject().getGraphPanels().indexOf(sheet.getGraphPanel());
 		int sheetID = sheet.getId();
-		getProject().removeGraphPanel(sheetID);
+		boolean result = getProject().removeGraphPanel(sheetID);
+		if(!result) {
+			GUIManager.getDefaultGUIManager().log("Error, removing graph panel in Workspace.deleteSheetFromArrays() failed" +
+					"for WorkspaceSheet "+sheet.getId(), "error", true);
+		}
 		
 		int id = sheets.indexOf(sheet);// + 1 - 1;
 		getWorkspaceDock().emptyChild(docks.get(id));
@@ -192,7 +196,7 @@ public class Workspace implements SelectionActionListener {
 			int indexSh = sheets.get(index).getId();
 			GUIManager.getDefaultGUIManager().subnetsHQ.removeMetaNode(indexSh);
 			deleteSheetFromArrays(sheets.get(index));
-			guiManager.getMenu().deleteSheetItem(dockables.get(index));
+			overlord.getMenu().deleteSheetItem(dockables.get(index));
 			dockables.remove(dockable);
 			return;
 		}
@@ -225,7 +229,7 @@ public class Workspace implements SelectionActionListener {
 			GUIManager.getDefaultGUIManager().subnetsHQ.removeMetaNode(indexSh);
 			//normal:
 			deleteSheetFromArrays(sheets.get(index));
-			guiManager.getMenu().deleteSheetItem(dockables.get(index));
+			overlord.getMenu().deleteSheetItem(dockables.get(index));
 			dockables.remove(dockable);
 		} else {
 			if (sheets.size() == 1 && n == 0)
@@ -234,14 +238,14 @@ public class Workspace implements SelectionActionListener {
 			
 			Point position = new Point(0, 0);
 			dockables.set(index, withListener(new DefaultDockable(
-					"Sheet " + Integer.toString(sheets.get(index).getId()), sheets.get(index), 
-					"Sheet " + Integer.toString(sheets.get(index).getId()))));
+					"Sheet " + sheets.get(index).getId(), sheets.get(index),
+					"Sheet " + sheets.get(index).getId())));
 			docks.get(index).addDockable(dockables.get(index), position, position);
 		}
 	}
 
 	private Dockable withListener(Dockable dockable) {
-		Dockable wrapper = guiManager.decorateDockableWithActions(dockable, true);
+		Dockable wrapper = overlord.decorateDockableWithActions(dockable, true);
 		wrapper.addDockingListener(GUIManager.getDefaultGUIManager().getDockingListener());
 		return wrapper;
 	}
@@ -318,8 +322,8 @@ public class Workspace implements SelectionActionListener {
 	 * @param e SelectionActionEvent - zdarzenie wyboru elementu myszą
 	 */
 	public void actionPerformed(SelectionActionEvent e) {
-		guiManager.getPropertiesBox().selectElement(e);
-		guiManager.getSelectionBox().getSelectionPanel().actionPerformed(e);
+		overlord.getPropertiesBox().selectElement(e);
+		overlord.getSelectionBox().getSelectionPanel().actionPerformed(e);
 	}
 
 	/**
@@ -355,7 +359,6 @@ public class Workspace implements SelectionActionListener {
 
 	/**
 	 * Metoda ustawiająca nowy obiekt dokowalny.
-	 * @return CompositeTabDock - obiekt
 	 */
 	private void setWorkspaceDock(CompositeTabDock workspaceDock) {
 		this.workspaceDock = workspaceDock;
@@ -378,7 +381,6 @@ public class Workspace implements SelectionActionListener {
 
 	/**
 	 * Metoda ustawiająca nowy obiekt dokowalny.
-	 * @return Dock - obiekt
 	 */
 	public void setFillerDock(Dock fillerDock) {
 		this.fillerDock = fillerDock;
@@ -394,7 +396,6 @@ public class Workspace implements SelectionActionListener {
 
 	/**
 	 * Metoda ustawiająca nowy obiekt dokowalny-wypełniający.
-	 * @return Dock - obiekt
 	 */
 	public void setFillerDockable(Dockable fillerDockable) {
 		this.fillerDockable = fillerDockable;
@@ -410,17 +411,9 @@ public class Workspace implements SelectionActionListener {
 
 	/**
 	 * Metoda ustawiająca nowy fabryki dokowalnej.
-	 * @return Dock - obiekt
 	 */
 	private void setDockFactory(DockFactory dockFactory) {
 		this.dockFactory = dockFactory;
 	}
-	
-	/**
-	 * Metoda zwraca obiekt główny interfejsu.
-	 * @return GUIManager - nadobiekt dla wszystkich elementów programu
-	 */
-	public GUIManager getGUI() {
-		return guiManager;
-	}
+
 }

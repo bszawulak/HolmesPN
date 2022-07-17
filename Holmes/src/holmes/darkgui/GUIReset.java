@@ -123,6 +123,7 @@ public class GUIReset {
 		pNet.setFileName("");
 
 		overlord.simSettings.currentStep = 0;
+		overlord.simSettings.currentTime = 0;
 		overlord.accessStateSimulatorWindow().resetSimWindow();
 		overlord.accessClusterWindow().resetWindow();
 		overlord.getSimulatorBox().createSimulatorProperties(false);
@@ -169,6 +170,7 @@ public class GUIReset {
 		
 		if(clearWindows) {
 			overlord.simSettings.currentStep = 0;
+			overlord.simSettings.currentTime = 0;
 			overlord.accessStateSimulatorWindow().resetSimWindow();
 			overlord.accessClusterWindow().resetWindow();
 		}

@@ -13,7 +13,7 @@ import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.functions.FunctionsTools;
-import holmes.windows.ssim.HolmesSim;
+import holmes.windows.managers.ssim.HolmesSim;
 
 /**
  * Klasa symulatora. Różnica między nią a symulatorem graficznym jest taka, że poniższe metody potrafią wygenerować
@@ -228,7 +228,7 @@ public class StateSimulator implements Runnable {
 	 * jeśli maximumMode = true, wtedy każda aktywna tranzycja musi się uruchomić.
 	 */
 	public void simulateNetAll() {
-		if(readyToSimulate == false) {
+		if(!readyToSimulate) {
 			JOptionPane.showMessageDialog(null,"Simulation cannot start, engine initialization failed.", 
 					"Simulation problem",JOptionPane.ERROR_MESSAGE);
 			return;
@@ -236,7 +236,7 @@ public class StateSimulator implements Runnable {
 		
 		prepareNetM0();
 		
-		ArrayList<Transition> launchableTransitions = null;
+		ArrayList<Transition> launchableTransitions;
 		int stepsLimit = overlord.simSettings.getSimSteps();
 		int updateTime = stepsLimit / 50;
 		
@@ -299,7 +299,7 @@ public class StateSimulator implements Runnable {
 		}
 		
 		for(int t=0; t<transitions.size(); t++) {
-			transitionsAvgData.add((double) ((double)transitionsTotalFiring.get(t)/(double)trueSteps));
+			transitionsAvgData.add((double)transitionsTotalFiring.get(t)/(double)trueSteps);
 		}
 		for(int p=0; p<places.size(); p++) {
 			double sumOfTokens = placesAvgData.get(p);
@@ -318,14 +318,14 @@ public class StateSimulator implements Runnable {
 	 * @return NetSimulationData - pakiet danych z powtórzonych symulacji.
 	 */
 	public NetSimulationData simulateNetReferenceAndKnockout() {
-		if(readyToSimulate == false) {
+		if(!readyToSimulate) {
 			JOptionPane.showMessageDialog(null,"Simulation cannot start, engine initialization failed.", 
 					"Simulation problem",JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		prepareNetM0();
 		int pBarTotal = 0;
-		ArrayList<Transition> launchingTransitions = null; //odpalone tranzycje
+		ArrayList<Transition> launchingTransitions; //odpalone tranzycje
 		
 		//	INIT MAIN VECTORS:
 		ArrayList<Long> totalPlaceTokensInTurn = new ArrayList<Long>();
@@ -422,7 +422,7 @@ public class StateSimulator implements Runnable {
 			ArrayList<Double> histVector = new ArrayList<Double>();
 			for(int p=0; p<placeNumber; p++) {
 				double simTokenValue = totalPlaceTokensInTurn.get(p);
-				simTokenValue /= (double)realStepCounter;
+				simTokenValue /= realStepCounter;
 				histVector.add(simTokenValue);
 				
 				double oldVal = currentDataPackage.placeTokensAvg.get(p) + simTokenValue;
@@ -430,11 +430,11 @@ public class StateSimulator implements Runnable {
 				
 				double oldMin = currentDataPackage.placeTokensMin.get(p);
 				if(simTokenValue < oldMin)
-					currentDataPackage.placeTokensMin.set(p, (double) simTokenValue);
+					currentDataPackage.placeTokensMin.set(p, simTokenValue);
 				
 				double oldMax = currentDataPackage.placeTokensMax.get(p);
 				if(simTokenValue > oldMax) {
-					currentDataPackage.placeTokensMax.set(p, (double) simTokenValue);
+					currentDataPackage.placeTokensMax.set(p, simTokenValue);
 				}
 				
 				if(simTokenValue == 0) {
@@ -447,7 +447,7 @@ public class StateSimulator implements Runnable {
 			histVector = new ArrayList<Double>();
 			for(int t=0; t<transNumber; t++) {
 				double simFiringValue = totalTransFiringInTurn.get(t);
-				simFiringValue /= (double)realStepCounter;
+				simFiringValue /= realStepCounter;
 				histVector.add(simFiringValue);
 				
 				double oldVal = currentDataPackage.transFiringsAvg.get(t) + simFiringValue;
@@ -455,11 +455,11 @@ public class StateSimulator implements Runnable {
 				
 				double oldMin = currentDataPackage.transFiringsMin.get(t);
 				if(simFiringValue < oldMin)
-					currentDataPackage.transFiringsMin.set(t, (double) simFiringValue);
+					currentDataPackage.transFiringsMin.set(t, simFiringValue);
 				
 				double oldMax = currentDataPackage.transFiringsMax.get(t);
 				if(simFiringValue > oldMax)
-					currentDataPackage.transFiringsMax.set(t, (double) simFiringValue);
+					currentDataPackage.transFiringsMax.set(t, simFiringValue);
 
 				if(simFiringValue == 0) {
 					int val = currentDataPackage.transZeroFiring.get(t) + 1;
@@ -483,7 +483,7 @@ public class StateSimulator implements Runnable {
 		}
 		
 		//stats data:
-		double variance = 0;
+		double variance;
 		for(int p=0; p<placeNumber; p++) {
 			variance = 0;
 			double avg = currentDataPackage.placeTokensAvg.get(p);
@@ -602,12 +602,12 @@ public class StateSimulator implements Runnable {
 	 * @return int - liczba rzeczywiście wykonanych kroków
 	 */
 	public int simulateNetSimple(int steps, boolean placesToo, boolean emptySteps) {
-		if(readyToSimulate == false) {
+		if(!readyToSimulate) {
 			overlord.log("Simulation simple mode cannot start.", "warning", true);
 			return 0;
 		}
 		prepareNetM0(); //backup, m0, etc.
-		ArrayList<Transition> launchableTransitions = null;
+		ArrayList<Transition> launchableTransitions;
 		int internalSteps = 0;
 		//boolean emptySteps = overlord.simSettings.isEmptySteps();
 		for(int i=0; i<steps; i++) {
@@ -630,7 +630,7 @@ public class StateSimulator implements Runnable {
 			}
 			launchAddPhase(launchableTransitions);
 			
-			if(placesToo == true)
+			if(placesToo)
 				for(int p=0; p<places.size(); p++) {
 					int tokens = places.get(p).getTokensNumber();
 					double sumOfTokens = placesAvgData.get(p);
@@ -644,13 +644,13 @@ public class StateSimulator implements Runnable {
 		}
 		
 		for(int t=0; t<transitions.size(); t++) {
-			transitionsAvgData.add((double) ((double)transitionsTotalFiring.get(t)/(double)internalSteps));
+			transitionsAvgData.add((double)transitionsTotalFiring.get(t)/(double)internalSteps);
 		}
 		
-		if(placesToo == true)
+		if(placesToo)
 			for(int p=0; p<places.size(); p++) {
 				double sumOfTokens = placesAvgData.get(p);
-				placesAvgData.set(p, (double)(sumOfTokens/(double)internalSteps));
+				placesAvgData.set(p, sumOfTokens/(double)internalSteps);
 			}
 	
 		readyToSimulate = false;
@@ -667,7 +667,7 @@ public class StateSimulator implements Runnable {
 	 * @return ArrayList[Integer] - wektor danych o tokenach w miejscu
 	 */
 	public ArrayList<Integer> simulateNetSinglePlace(int steps, Place place, boolean emptySteps) {
-		if(readyToSimulate == false) {
+		if(!readyToSimulate) {
 			overlord.log("Simulation for place "+place.getName()+" cannot start.", "warning", true);
 			return null;
 		}
@@ -675,7 +675,7 @@ public class StateSimulator implements Runnable {
 
 		ArrayList<Integer> placeDataVector = new ArrayList<Integer>();
 		//int internalSteps = 0;
-		ArrayList<Transition> launchableTransitions = null;
+		ArrayList<Transition> launchableTransitions;
 		for(int i=0; i<steps; i++) {
 			//internalSteps++;
 			if (isPossibleStep()){ 
@@ -702,12 +702,12 @@ public class StateSimulator implements Runnable {
 	 * @return ArrayList[Integer] - wektor danych o odpalaniu tranzycji
 	 */
 	public ArrayList<Integer> simulateNetSingleTransition(int steps, Transition trans, boolean emptySteps) {
-		if(readyToSimulate == false) {
+		if(!readyToSimulate) {
 			overlord.log("Simulation for transition "+trans.getName()+" cannot start.", "warning", true);
 			return null;
 		}
 		prepareNetM0();
-		ArrayList<Transition> launchableTransitions = null;
+		ArrayList<Transition> launchableTransitions;
 		int sum = 0;
 		int internalSteps = 0;
 		ArrayList<Integer> transDataVector = new ArrayList<Integer>();
@@ -752,12 +752,12 @@ public class StateSimulator implements Runnable {
 	 */
 	public ArrayList<ArrayList<Double>> simulateForInvariantTrans(int steps, int reps, boolean emptySteps) {
 		ArrayList<ArrayList<Double>> result = new ArrayList<>();
-		if(readyToSimulate == false) {
+		if(!readyToSimulate) {
 			overlord.log("Simulation simple mode cannot start.", "warning", true);
 			return null;
 		}
 		prepareNetM0(); //backup, m0, etc.
-		ArrayList<Transition> launchableTransitions = null;
+		ArrayList<Transition> launchableTransitions;
 		ArrayList<ArrayList<Double>> firingHistory = new ArrayList<>();
 		
 		for(int r=0; r<reps; r++) {
@@ -792,7 +792,7 @@ public class StateSimulator implements Runnable {
 			//srednia liczba odpaleń:
 			for(int t=0; t<transFiring.size(); t++) {
 				double fired = transFiring.get(t);
-				fired /= (double)internalSteps;
+				fired /= internalSteps;
 				transFiring.set(t, fired);
 			}
 			firingHistory.add(transFiring);
@@ -814,7 +814,7 @@ public class StateSimulator implements Runnable {
 				avgFiring.set(t, oldRes+value);
 			}
 			double oldRes = avgFiring.get(t);
-			oldRes /= (double)reps;
+			oldRes /= reps;
 			avgFiring.set(t, oldRes);
 		}
 		//stdDev
@@ -825,7 +825,7 @@ public class StateSimulator implements Runnable {
 				double diff = value - firingHistory.get(r).get(t); 
 				variance += (diff*diff);
 			}
-			variance /= (double)reps;
+			variance /= reps;
 			stdDev.add(Math.sqrt(variance));
 		}
 		
@@ -851,7 +851,7 @@ public class StateSimulator implements Runnable {
 	 */
 	public void setCancelStatus(boolean val) {
 		this.terminate = val;
-		if(val == true)
+		if(val)
 			readyToSimulate = false;
 	}
 	
@@ -956,11 +956,9 @@ public class StateSimulator implements Runnable {
 				if(arc.getArcType() == TypeOfArc.READARC)
 					continue;
 				
-				if(arc.getArcType() == TypeOfArc.NORMAL) {
-					;
-				} else {
+				if(arc.getArcType() != TypeOfArc.NORMAL) {
 					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
-							" arc: "+arc.toString(), "error", true);
+							" arc: "+ arc, "error", true);
 				}
 				
 				FunctionsTools.functionalAddition(transition, arc, place);
@@ -1038,13 +1036,13 @@ public class StateSimulator implements Runnable {
 	 * Czyści dane czasowe tranzycji i ustawia każdą na nie-odpalającą.
 	 */
 	private void clearTransitionsValues() {
-		for(int i=0; i<transitions.size(); i++) {
-			transitions.get(i).setLaunching(false);
-			if(transitions.get(i).getTransType() == TransitionType.TPN) {
-				transitions.get(i).resetTimeVariables();
+		for (Transition transition : transitions) {
+			transition.setLaunching(false);
+			if (transition.getTransType() == TransitionType.TPN) {
+				transition.resetTimeVariables();
 			}
-			if(transitions.get(i).getTransType() == TransitionType.XTPN) {
-				transitions.get(i).resetTimeVariables_xTPN();
+			if (transition.getTransType() == TransitionType.XTPN) {
+				transition.resetTimeVariables_xTPN();
 			}
 		}
 	}
@@ -1054,8 +1052,8 @@ public class StateSimulator implements Runnable {
 	 */
 	private void saveInternalMarkingZero() {
 		internalBackupMarkingZero.clear();
-		for(int i=0; i<places.size(); i++) {
-			internalBackupMarkingZero.add(places.get(i).getTokensNumber());
+		for (Place place : places) {
+			internalBackupMarkingZero.add(place.getTokensNumber());
 		}
 	}
 	
@@ -1109,12 +1107,12 @@ public class StateSimulator implements Runnable {
 	 * @return ArrayList[ArrayList[Double]] - macierz wektorów danych
 	 */
 	public ArrayList<ArrayList<Double>> quickSimGatherData() {
-		if(readyToSimulate == false) {
+		if(!readyToSimulate) {
 			overlord.log("Simulation simple mode cannot start.", "warning", true);
 			return null;
 		}
 		prepareNetM0(); //backup, m0, etc.
-		ArrayList<Transition> launchableTransitions = null;
+		ArrayList<Transition> launchableTransitions;
 		ArrayList<ArrayList<Double>> firingHistory = new ArrayList<>();
 		
 		ArrayList<ArrayList<Double>> tokensHistory = new ArrayList<>();
@@ -1181,14 +1179,14 @@ public class StateSimulator implements Runnable {
 			//srednia liczba odpaleń:
 			for(int t=0; t<transFiring.size(); t++) {
 				double fired = transFiring.get(t);
-				fired /= (double)internalSteps;
+				fired /= internalSteps;
 				transFiring.set(t, fired);
 			}
 			firingHistory.add(transFiring);
 			
 			for(int p=0; p<places.size(); p++) {
 				double tokens = tokensSum.get(p);
-				tokens /= (double)internalSteps;
+				tokens /= internalSteps;
 				tokensSum.set(p, tokens);
 			}
 			tokensHistory.add(tokensSum);
@@ -1215,7 +1213,7 @@ public class StateSimulator implements Runnable {
 				avgFiring.set(t, oldRes+value);
 			}
 			double oldRes = avgFiring.get(t);
-			oldRes /= (double)reps;
+			oldRes /= reps;
 			avgFiring.set(t, oldRes);
 		}
 		
@@ -1226,7 +1224,7 @@ public class StateSimulator implements Runnable {
 				avgTokens.set(p, oldRes+value);
 			}
 			double oldRes = avgTokens.get(p);
-			oldRes /= (double)reps;
+			oldRes /= reps;
 			avgTokens.set(p, oldRes);
 		}
 		
@@ -1239,7 +1237,7 @@ public class StateSimulator implements Runnable {
 				double diff = value - firingHistory.get(r).get(t); 
 				variance += (diff*diff);
 			}
-			variance /= (double)reps;
+			variance /= reps;
 			stdDev.add(Math.sqrt(variance));
 		}
 		
@@ -1259,12 +1257,12 @@ public class StateSimulator implements Runnable {
 	 * @return ArrayList[ArrayList[Double]] - macierz wektorów danych
 	 */
 	public ArrayList<ArrayList<Double>> quickSimGatherDataNoReps() {
-		if(readyToSimulate == false) {
+		if(!readyToSimulate) {
 			overlord.log("Simulation simple mode cannot start.", "warning", true);
 			return null;
 		}
 		prepareNetM0(); //backup, m0, etc.
-		ArrayList<Transition> launchableTransitions = null;
+		ArrayList<Transition> launchableTransitions;
 		
 		int steps = overlord.simSettings.getSimSteps();
 		boolean emptySteps = overlord.simSettings.isEmptySteps();
@@ -1314,12 +1312,12 @@ public class StateSimulator implements Runnable {
 		//srednia liczba odpaleń:
 		for(int t=0; t<transFiring.size(); t++) {
 			double fired = transFiring.get(t);
-			fired /= (double)internalSteps;
+			fired /= internalSteps;
 			transFiring.set(t, fired);
 		}
 		for(int p=0; p<places.size(); p++) {
 			double tokens = tokensSum.get(p);
-			tokens /= (double)internalSteps;
+			tokens /= internalSteps;
 			tokensSum.set(p, tokens);
 			
 		}

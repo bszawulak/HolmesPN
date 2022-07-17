@@ -71,7 +71,7 @@ public class HolmesSearch extends JFrame {
 		}
 		
 		setLayout(new BorderLayout());
-		setSize(new Dimension(506, 248));
+		setSize(new Dimension(518, 260));
 		setLocation(50, 50);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setResizable(false);

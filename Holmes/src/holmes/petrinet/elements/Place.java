@@ -6,6 +6,7 @@ import java.awt.Point;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.ElementDraw;
@@ -15,7 +16,6 @@ import holmes.petrinet.simulators.IRandomGenerator;
 
 import javax.swing.*;
 
-import static java.lang.Double.valueOf;
 
 /**
  * Klasa implementująca miejsce sieci Petriego. Zapewnia implementację stanu (przechowywania tokenów) oraz 
@@ -89,12 +89,7 @@ public class Place extends Node {
 
 	//tokeny:
 	private ArrayList<Double> multisetK;
-	private ArrayList<Double> reservedMultisetK;
-
-	//private int numberOfTokens_XTPN = 0;
-	//private int numberOfReservTokens_XTPN = 0;
-
-
+	//private ArrayList<Double> reservedMultisetK;
 
 	/**
 	 * Konstruktor obiektu miejsca sieci.
@@ -108,7 +103,7 @@ public class Place extends Node {
 		this.setType(PetriNetElementType.PLACE);
 
 		this.multisetK = new ArrayList<>();
-		this.reservedMultisetK = new ArrayList<>();
+		//this.reservedMultisetK = new ArrayList<>();
 	}
 
 	/**
@@ -127,7 +122,7 @@ public class Place extends Node {
 		this.setType(PetriNetElementType.PLACE);
 
 		this.multisetK = new ArrayList<>();
-		this.reservedMultisetK = new ArrayList<>();
+		//this.reservedMultisetK = new ArrayList<>();
 	}
 
 	/**
@@ -141,7 +136,7 @@ public class Place extends Node {
 		this.setType(PetriNetElementType.PLACE);
 
 		this.multisetK = new ArrayList<>();
-		this.reservedMultisetK = new ArrayList<>();
+		//this.reservedMultisetK = new ArrayList<>();
 	}
 
 	/**
@@ -152,7 +147,8 @@ public class Place extends Node {
 	 */
 	public void draw(Graphics2D g, int sheetId, ElementDrawSettings eds)
 	{
-		g = ElementDraw.drawElement(this, g, sheetId, eds);
+		ElementDraw.drawElement(this, g, sheetId, eds);
+		//g = ElementDraw.drawElement(this, g, sheetId, eds);
 		//super.draw(g, sheetId);
 	}
 	
@@ -165,7 +161,7 @@ public class Place extends Node {
 		for(ElementLocation el : getElementLocations()) {
 			for(Arc arc : el.getInArcs()) {
 				Node n = arc.getStartNode();
-				if(!preTransitions.contains(n)) {
+				if(!preTransitions.contains((Transition) n)) {
 					preTransitions.add((Transition)n);
 				}
 			}
@@ -695,7 +691,7 @@ public class Place extends Node {
 	public void addTokens_XTPN(int howMany, double initialTime) {
 		if(isGammaModeActiveXTPN()) { //tylko gdy XTPN włączone
 			for (int i = 0; i < howMany; i++) {
-				multisetK.add(valueOf(initialTime));
+				multisetK.add(initialTime);
 			}
 		}
 		modifyTokensNumber(howMany);
@@ -710,15 +706,43 @@ public class Place extends Node {
 	 * Usuwa tokeny, których czas życia jest większy GammaMax.
 	 * @return (<b>int</b>) - liczba usuniętych tokenów.
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	public int removeOldTokens_XTPN() {
 		int removed = 0;
 		if(isGammaModeActiveXTPN()) { //tylko gdy XTPN włączone
+			for (Iterator<Double> iterator = multisetK.iterator(); iterator.hasNext();) {
+				Double kappa = iterator.next();
+				if(kappa >= gammaMax_xTPN) {
+					iterator.remove(); //metoda remove() iteratora
+					removed++;
+					continue;
+				}
+				if (Math.abs(gammaMax_xTPN - kappa) < GUIManager.getDefaultGUIManager().simSettings.getCalculationsAccuracy()) {
+					iterator.remove(); //close enough, brakuje 1e-9 lub mniej
+					removed++;
+					continue;
+				}
+				//czyli jeśli nie jest większy niż limit, ani nawet w okolicy, to kończymy
+				//bo cała reszta w kolejności jest jeszcze młodsza:
+				break;
+			}
+			/* //Smuteczek, nie można usuwać w pętli foreach, bo ConcurrentModificationException
 			for (Double kappa : multisetK) {
-				if (Math.abs(gammaMax_xTPN - kappa) < GUIManager.getDefaultGUIManager().simSettings.calculationsAccuracy) {
+				if(kappa >= gammaMax_xTPN) { //to na pewno
 					multisetK.remove(kappa);
 					removed++;
+					continue;
 				}
+				if (Math.abs(gammaMax_xTPN - kappa) < GUIManager.getDefaultGUIManager().simSettings.getCalculationsAccuracy()) {
+					multisetK.remove(kappa); //close enough, brakuje 1e-9 lub mniej
+					removed++;
+					continue;
+				}
+				//czyli jeśli nie jest większy niż limit, ani nawet w okolicy, to kończymy
+				//bo cała reszta w kolejności jest jeszcze młodsza:
+				break;
 			}
+			 */
 		}
 		modifyTokensNumber(-removed);
 		return removed;
@@ -731,6 +755,7 @@ public class Place extends Node {
 	 * @param generator (<b>Random</b>) generator dla mode=2.
 	 * @return (<b>int</b>) - liczba usuniętych tokenów lub -1 gdy wystąpił błąd.
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	public int removeTokensForProduction(int howMany, int mode, IRandomGenerator generator) {
 		if(!isGammaModeActiveXTPN()) { //gdy XTPN wyłączone, tylko usuwamy liczbę
 			modifyTokensNumber(-howMany);
@@ -746,8 +771,9 @@ public class Place extends Node {
 
 		if(mode == 0) { //najstarsze
 			double oldOne = Double.MAX_VALUE;
-			for(Double kappa : multisetK) { //zakładamy, że posortowany od największych
-				multisetK.remove(kappa);
+			for (Iterator<Double> iterator = multisetK.iterator(); iterator.hasNext();) {  //zakładamy, że posortowany od największych
+				Double kappa = iterator.next();
+				iterator.remove();
 				counter--;
 
 				assert (oldOne >= kappa);
@@ -759,18 +785,19 @@ public class Place extends Node {
 		} else if (mode == 1) { //najmłodsze
 			Collections.reverse(multisetK);
 			double oldOne = -1.0;
-			for(Double kappa : multisetK) {
-				multisetK.remove(kappa);
+			for (Iterator<Double> iterator = multisetK.iterator(); iterator.hasNext();) {  //zakładamy, że posortowany od największych
+				Double kappa = iterator.next();
+				iterator.remove();
 				counter--;
 
 				assert (oldOne <= kappa);
 				oldOne = kappa;
 
 				if(counter == 0) {
-					Collections.reverse(multisetK);
 					break;
 				}
 			}
+			Collections.reverse(multisetK);
 		} else { //losowo
 			for(int i=0; i<howMany; i++) {
 				int index = generator.nextInt(multisetK.size());
@@ -801,6 +828,7 @@ public class Place extends Node {
 	 * @param value (<b>value</b>) nowa wartość tokenu.
 	 * @return (<b>boolean</b>) - true jeśli się udało.
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	public boolean updateToken(int ID, Double value) {
 		boolean status = false;
 		if(ID > -1 && ID < multisetK.size()) {
@@ -812,23 +840,12 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Uaktualnie (dodaje) ten sam czas do wszystkich tokenów w multizbiorze.
-	 * @param tau (<b>double</b>) wartość czasu do dodania.
+	 * Usuwanie tokenu po indeksie.
+	 * @param index (<b>int</b>) indeks tokenu.
 	 */
-	public void updateMultisetTime(double tau) {
-		for(int x=0; x<multisetK.size(); x++ ) {
-			Double kappa = multisetK.get(x);
-			multisetK.set(x, kappa + tau);
-		}
-	}
-
-	/**
-	 * Usuwanie tokenu po ID.
-	 * @param id (<b>int</b>) indeks tokenu.
-	 */
-	public void removeTokenByID(int id) {
-		if(ID > -1 && ID < multisetK.size()) {
-			multisetK.remove(id);
+	public void removeTokenByID(int index) {
+		if(index > -1 && index < multisetK.size()) {
+			multisetK.remove(index);
 		}
 		modifyTokensNumber(-1);
 		//Collections.sort(multisetK);
@@ -849,7 +866,7 @@ public class Place extends Node {
 	 */
 	public void replaceMultiset(ArrayList<Double> newMultiset) {
 		multisetK = newMultiset;
-		reservedMultisetK.clear(); // ?
+		//reservedMultisetK.clear(); // ?
 	}
 
 	/**
@@ -866,7 +883,7 @@ public class Place extends Node {
 	public void transformIntoXTPNplace() {
 		setGammaModeXTPNstatus(true);
 		for(int i=0; i<tokensNumber; i++) {
-			multisetK.add(valueOf(0.0));
+			multisetK.add(0.0);
 		}
 	}
 }

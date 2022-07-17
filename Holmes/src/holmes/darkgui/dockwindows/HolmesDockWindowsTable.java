@@ -44,7 +44,6 @@ import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.petrinet.simulators.GraphicalSimulatorXTPN;
 import holmes.petrinet.simulators.QuickSimTools;
-import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesFunctionsBuilder;
@@ -52,7 +51,7 @@ import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesNotepad;
 import holmes.windows.HolmesXTPNtokens;
 import holmes.windows.managers.HolmesStatesManager;
-import holmes.windows.ssim.HolmesSimSetup;
+import holmes.windows.managers.ssim.HolmesSimSetup;
 import holmes.workspace.WorkspaceSheet;
 
 /**
@@ -286,15 +285,15 @@ public class HolmesDockWindowsTable extends JPanel {
         mode = SIMULATOR;
         setSimulator(sim, simXTPN);
 
-        // SIMULATION MODE
-        JLabel netTypeLabel = new JLabel("Mode:");
-        netTypeLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
-        components.add(netTypeLabel);
-
         if (XTPNmode) { // inny comboBox
+            // SIMULATION MODE
+            JLabel netTypeLabel = new JLabel("Mode:");
+            netTypeLabel.setBounds(columnA_posX-5, columnA_Y += 10, colACompLength, 20);
+            components.add(netTypeLabel);
+
             String[] simModeName = {"XTPN simulator", "Other simulators"};
             simMode = new JComboBox<>(simModeName);
-            simMode.setLocation(columnB_posX - 30, columnB_Y += 10);
+            simMode.setLocation(columnB_posX - 40, columnB_Y += 10);
             simMode.setSize(colBCompLength + 50, 20);
             simMode.setSelectedIndex(0);
             simMode.addActionListener(actionEvent -> {
@@ -316,9 +315,14 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(simMode);
         } else { //XTPNmode == false
+            // SIMULATION MODE
+            JLabel netTypeLabel = new JLabel("Mode:");
+            netTypeLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+            components.add(netTypeLabel);
+
             String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode", "Color", "XTPN"};
             simMode = new JComboBox<>(simModeName);
-            simMode.setLocation(columnB_posX - 30, columnB_Y += 10);
+            simMode.setLocation(columnB_posX - 25, columnB_Y += 10);
             simMode.setSize(colBCompLength + 30, 20);
             simMode.setSelectedIndex(0);
             simMode.addActionListener(actionEvent -> {
@@ -361,8 +365,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(simMode);
         }
 
-
-        if(!XTPNmode) {
+        if(!XTPNmode) { //normalny symulator
             JLabel timeStepLabel = new JLabel("Time/step:");
             timeStepLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
             components.add(timeStepLabel);
@@ -379,54 +382,10 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(controlsLabel);
             columnB_Y += 20;
 
-            JButton oneActionBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
-            oneActionBack.setName("simB1");
-            oneActionBack.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
-            oneActionBack.setToolTipText("One action back");
-            oneActionBack.addActionListener(actionEvent -> {
-                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-                simulator.startSimulation(SimulatorMode.ACTION_BACK);
-                mode = SIMULATOR;
-            });
-            components.add(oneActionBack);
-
-            JButton oneTransitionForward = new JButton(
-                    Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
-            oneTransitionForward.setName("simB2");
-            oneTransitionForward.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 30);
-            oneTransitionForward.setToolTipText("One transition forward");
-            oneTransitionForward.addActionListener(actionEvent -> {
-                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-                simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION);
-                mode = SIMULATOR;
-            });
-            components.add(oneTransitionForward);
-
-            JButton loopBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_backLoop.png"));
-            loopBack.setName("simB3");
-            loopBack.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-            loopBack.setToolTipText("Loop back to oldest saved action");
-            loopBack.addActionListener(actionEvent -> {
-                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-                simulator.startSimulation(SimulatorMode.LOOP_BACK);
-                mode = SIMULATOR;
-            });
-            components.add(loopBack);
-            JButton oneStepForward = new JButton(
-                    Tools.getResIcon22("/icons/simulation/control_sim_fwdLoop.png"));
-            oneStepForward.setName("simB4");
-            oneStepForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-            oneStepForward.setToolTipText("One step forward");
-            oneStepForward.addActionListener(actionEvent -> {
-                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-                simulator.startSimulation(SimulatorMode.STEP);
-                mode = SIMULATOR;
-            });
-            components.add(oneStepForward);
 
             JButton loopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_loop.png"));
             loopSimulation.setName("simB5");
-            loopSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
+            loopSimulation.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
             loopSimulation.setToolTipText("Loop simulation");
             loopSimulation.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -437,7 +396,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             JButton singleTransitionLoopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_1transLoop.png"));
             singleTransitionLoopSimulation.setName("simB6");
-            singleTransitionLoopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
+            singleTransitionLoopSimulation.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 30);
             singleTransitionLoopSimulation.setToolTipText("Loop single transition simulation");
             singleTransitionLoopSimulation.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -447,7 +406,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(singleTransitionLoopSimulation);
 
             JButton pauseSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_pause.png"));
-            pauseSimulation.setName("stop");
+            pauseSimulation.setName("pause");
             pauseSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
             pauseSimulation.setToolTipText("Pause simulation");
             pauseSimulation.setEnabled(false);
@@ -500,8 +459,59 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(saveButton);
 
+            JLabel otherControlsLabel = new JLabel("Other modes:");
+            otherControlsLabel.setBounds(columnA_posX, columnA_Y += 30, colACompLength * 2, 20);
+            components.add(otherControlsLabel);
+            columnB_Y += 20;
+
+            JButton oneActionBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
+            oneActionBack.setName("simB1");
+            oneActionBack.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
+            oneActionBack.setToolTipText("One action back");
+            oneActionBack.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.ACTION_BACK);
+                mode = SIMULATOR;
+            });
+            components.add(oneActionBack);
+
+            JButton oneTransitionForward = new JButton(
+                    Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
+            oneTransitionForward.setName("simB2");
+            oneTransitionForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
+            oneTransitionForward.setToolTipText("One transition forward");
+            oneTransitionForward.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION);
+                mode = SIMULATOR;
+            });
+            components.add(oneTransitionForward);
+
+            JButton loopBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_backLoop.png"));
+            loopBack.setName("simB3");
+            loopBack.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
+            loopBack.setToolTipText("Loop back to oldest saved action");
+            loopBack.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.LOOP_BACK);
+                mode = SIMULATOR;
+            });
+            components.add(loopBack);
+
+            JButton oneStepForward = new JButton(
+                    Tools.getResIcon22("/icons/simulation/control_sim_fwdLoop.png"));
+            oneStepForward.setName("simB4");
+            oneStepForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
+            oneStepForward.setToolTipText("One step forward");
+            oneStepForward.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.STEP);
+                mode = SIMULATOR;
+            });
+            components.add(oneStepForward);
+
             c1Button = new JButton("<html><center>Store<br>colors</center></html>");
-            c1Button.setName("reset");
+            c1Button.setName("resetColor");
             c1Button.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
             c1Button.setToolTipText("Reset all color tokens in places.");
             c1Button.setEnabled(false);
@@ -513,7 +523,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(c1Button);
 
             c2Button = new JButton("<html><center>Restore<br>colors</center></html>");
-            c2Button.setName("reset");
+            c2Button.setName("SaveM0Color");
             c2Button.setBounds(columnB_posX, columnA_Y += 30, colBCompLength, 30);
             c2Button.setToolTipText("Reset all color tokens in places.");
             c2Button.setEnabled(false);
@@ -523,6 +533,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 overlord.getWorkspace().getProject().restoreColors();
             });
             components.add(c2Button);
+
 
             JButton statesButton = new JButton("State manager");
             statesButton.setName("State manager");
@@ -581,17 +592,9 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(singleModeCheckBox);
 
-
-
-
-        } else { //XTPN MODE
-            JPanel xtmpSimPanel = new JPanel();
-            xtmpSimPanel.setLayout(null);
-            xtmpSimPanel.setBorder(BorderFactory.createTitledBorder("XTPN simulator"));
-            xtmpSimPanel.setBounds(columnA_posX - 5, columnA_Y += 20, 160, 200);
-
-            int internalX = 10;
-            int internalY = 0;
+        } else { // nienormalny symulator: XTPN
+            int internalX = 5;
+            int internalY = 10;
 
             //JLabel xtmIntro = new JLabel("XTPN simulator:");
             //xtmIntro.setBounds(internalX, internalY += 20, 90, 20);
@@ -599,27 +602,27 @@ public class HolmesDockWindowsTable extends JPanel {
 
             JLabel stepLabelText = new JLabel("Step:");
             stepLabelText.setBounds(internalX, internalY += 20, 90, 20);
-            xtmpSimPanel.add(stepLabelText);
+            components.add(stepLabelText);
 
             stepLabelXTPN = new JLabel("0");
             stepLabelXTPN.setBounds(internalX+60, internalY , 90, 20);
-            xtmpSimPanel.add(stepLabelXTPN);
+            components.add(stepLabelXTPN);
 
             JLabel timeLabelText = new JLabel("Time:");
             timeLabelText.setBounds(internalX, internalY += 20, 90, 20);
-            xtmpSimPanel.add(timeLabelText);
+            components.add(timeLabelText);
 
             timeLabelXTPN = new JLabel("0.0");
             timeLabelXTPN.setBounds(internalX+60, internalY , 90, 20);
-            xtmpSimPanel.add(timeLabelXTPN);
+            components.add(timeLabelXTPN);
 
             JLabel optionsLavel = new JLabel("Simulation buttons:");
             optionsLavel.setBounds(internalX, internalY += 20, 120, 20);
-            xtmpSimPanel.add(optionsLavel);
+            components.add(optionsLavel);
 
             HolmesRoundedButton loopSimulation = new HolmesRoundedButton(""
                     , "/simulator/simStart1.png", "/simulator/simStart2.png", "/simulator/simStart3.png");
-            loopSimulation.setName("simB5");
+            loopSimulation.setName("XTPNstart");
             loopSimulation.setBounds(internalX, internalY += 20, 50, 50);
             loopSimulation.setToolTipText("Loop simulation");
             loopSimulation.addActionListener(actionEvent -> {
@@ -627,123 +630,51 @@ public class HolmesDockWindowsTable extends JPanel {
                 simulatorXTPN.startSimulation(GraphicalSimulatorXTPN.SimulatorModeXTPN.XTPNLOOP);
                 mode = SIMULATOR;
             });
-            xtmpSimPanel.add(loopSimulation);
-
+            components.add(loopSimulation);
 
             HolmesRoundedButton pauseSimulation = new HolmesRoundedButton(""
                     , "/simulator/simPause1.png", "/simulator/simPause2.png", "/simulator/simPause3.png");
-            pauseSimulation.setName("stop");
+            pauseSimulation.setName("XTPNpause");
             pauseSimulation.setBounds(internalX+40, internalY, 50, 50);
             pauseSimulation.setToolTipText("Pause simulation");
-            // pauseSimulation.setEnabled(false);
+            pauseSimulation.setEnabled(false);
             pauseSimulation.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
                 simulatorXTPN.pause();
                 mode = SIMULATOR;
             });
-            xtmpSimPanel.add(pauseSimulation);
+            components.add(pauseSimulation);
 
             HolmesRoundedButton stopSimulation = new HolmesRoundedButton(""
                     , "/simulator/simStop1.png", "/simulator/simStop2.png", "/simulator/simStop2.png");
+            stopSimulation.setName("XTPNstop");
             stopSimulation.setBounds(internalX+80, internalY, 50, 50);
             stopSimulation.setToolTipText("Schedule a stop for the simulation");
-            //stopSimulation.setEnabled(false);
+            stopSimulation.setEnabled(false);
             stopSimulation.addActionListener(actionEvent -> {
                 simulatorXTPN.stop();
                 mode = SIMULATOR;
             });
-            xtmpSimPanel.add(stopSimulation);
+            components.add(stopSimulation);
 
-            components.add(xtmpSimPanel);
+            HolmesRoundedButton resetButton = new HolmesRoundedButton("<html><center>Restore<br>p-state</center></html>"
+                    , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            resetButton.setName("resetM0button");
+            resetButton.setBounds(internalX, internalY+=40, 90, 50);
+            resetButton.setToolTipText("Reset all tokens in places.");
+            resetButton.setEnabled(false);
+            resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
+            components.add(resetButton);
         }
-
-
         panel.setLayout(null);
         for (JComponent component : components) {
             panel.add(component);
         }
 
-        //panel.add(createXTPNsimPanel(columnA_posX, columnA_Y)); //XTPN sim panel na końcu
-
         panel.setOpaque(true);
         panel.repaint();
         panel.setVisible(true);
         add(panel);
-    }
-
-    @SuppressWarnings("UnusedAssignment")
-    private JPanel createXTPNsimPanel(int columnA_posX, int columnA_Y) {
-        JPanel xtmpSimPanel = new JPanel();
-        xtmpSimPanel.setLayout(null);
-        xtmpSimPanel.setBorder(BorderFactory.createTitledBorder("XTPN simulator"));
-        xtmpSimPanel.setBounds(columnA_posX - 5, columnA_Y += 20, 160, 200);
-
-        int internalX = 10;
-        int internalY = 0;
-
-        //JLabel xtmIntro = new JLabel("XTPN simulator:");
-        //xtmIntro.setBounds(internalX, internalY += 20, 90, 20);
-        //xtmpSimPanel.add(xtmIntro);
-
-        JLabel stepLabelText = new JLabel("Step:");
-        stepLabelText.setBounds(internalX, internalY += 20, 90, 20);
-        xtmpSimPanel.add(stepLabelText);
-
-        stepLabelXTPN = new JLabel("0");
-        stepLabelXTPN.setBounds(internalX+60, internalY , 90, 20);
-        xtmpSimPanel.add(stepLabelXTPN);
-
-        JLabel timeLabelText = new JLabel("Time:");
-        timeLabelText.setBounds(internalX, internalY += 20, 90, 20);
-        xtmpSimPanel.add(timeLabelText);
-
-        timeLabelXTPN = new JLabel("0.0");
-        timeLabelXTPN.setBounds(internalX+60, internalY , 90, 20);
-        xtmpSimPanel.add(timeLabelXTPN);
-
-        JLabel optionsLavel = new JLabel("Simulation buttons:");
-        optionsLavel.setBounds(internalX, internalY += 20, 120, 20);
-        xtmpSimPanel.add(optionsLavel);
-
-        HolmesRoundedButton loopSimulation = new HolmesRoundedButton(""
-                , "/simulator/simStart1.png", "/simulator/simStart2.png", "/simulator/simStart3.png");
-        loopSimulation.setName("simB5");
-        loopSimulation.setBounds(internalX, internalY += 20, 50, 50);
-        loopSimulation.setToolTipText("Loop simulation");
-        loopSimulation.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulatorXTPN.startSimulation(GraphicalSimulatorXTPN.SimulatorModeXTPN.XTPNLOOP);
-            mode = SIMULATOR;
-        });
-        xtmpSimPanel.add(loopSimulation);
-
-
-        HolmesRoundedButton pauseSimulation = new HolmesRoundedButton(""
-                , "/simulator/simPause1.png", "/simulator/simPause2.png", "/simulator/simPause3.png");
-        pauseSimulation.setName("stop");
-        pauseSimulation.setBounds(internalX+40, internalY, 50, 50);
-        pauseSimulation.setToolTipText("Pause simulation");
-       // pauseSimulation.setEnabled(false);
-        pauseSimulation.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulatorXTPN.pause();
-            mode = SIMULATOR;
-        });
-        xtmpSimPanel.add(pauseSimulation);
-
-        HolmesRoundedButton stopSimulation = new HolmesRoundedButton(""
-                , "/simulator/simStop1.png", "/simulator/simStop2.png", "/simulator/simStop2.png");
-        stopSimulation.setBounds(internalX+80, internalY, 50, 50);
-        stopSimulation.setToolTipText("Schedule a stop for the simulation");
-        //stopSimulation.setEnabled(false);
-        stopSimulation.addActionListener(actionEvent -> {
-            simulatorXTPN.stop();
-            mode = SIMULATOR;
-        });
-        xtmpSimPanel.add(stopSimulation);
-
-
-        return xtmpSimPanel;
     }
 
     //**************************************************************************************
@@ -917,7 +848,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
-            WorkspaceSheet ws = overlord.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
@@ -3797,8 +3728,8 @@ public class HolmesDockWindowsTable extends JPanel {
             JButton button = (JButton) e.getSource();
             if (transition.isAlphaActiveXTPN()) {
 
-                if(transition.isBetaActiveXTPN() && transition.getBetaMin_xTPN() < SimulatorGlobals.calculationsAccuracy
-                        && transition.getBetaMax_xTPN() < SimulatorGlobals.calculationsAccuracy ) {
+                if(transition.isBetaActiveXTPN() && transition.getBetaMin_xTPN() < overlord.simSettings.getCalculationsAccuracy()
+                        && transition.getBetaMax_xTPN() < overlord.simSettings.getCalculationsAccuracy() ) {
                     //czyli jeśli BETA=ON, ale bety są ustawione na zero
                     if(transition.isInputTransition() || transition.isOutputTransition()) {
                         JOptionPane.showMessageDialog(null,
@@ -3825,7 +3756,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 button.setBackground(Color.GREEN);
 
                 //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
-                if(transition.getAlphaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getAlphaMax_xTPN() < SimulatorGlobals.calculationsAccuracy) {
+                if(transition.getAlphaMin_xTPN() < overlord.simSettings.getCalculationsAccuracy()
+                        && transition.getAlphaMax_xTPN() < overlord.simSettings.getCalculationsAccuracy()) {
                     transition.setAlphaMax_xTPN(1.0, false);
                     doNotUpdate = true;
                     alphaMaxTextField.setValue(0.0);
@@ -3861,8 +3793,9 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
             JButton button = (JButton) e.getSource();
             if (transition.isBetaActiveXTPN()) {
-
-                if(transition.isAlphaActiveXTPN() && transition.getAlphaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getAlphaMax_xTPN() < SimulatorGlobals.calculationsAccuracy ) {
+                double accuracy = overlord.simSettings.getCalculationsAccuracy();
+                if(transition.isAlphaActiveXTPN() && transition.getAlphaMin_xTPN() < accuracy
+                        && transition.getAlphaMax_xTPN() < accuracy ) {
                     //czyli jeśli ALFA=ON, ale alfy są ustawione na zero
                     if(transition.isInputTransition() || transition.isOutputTransition()) {
                         JOptionPane.showMessageDialog(null,
@@ -3888,7 +3821,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 button.setBackground(Color.GREEN);
 
                 //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
-                if(transition.getBetaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getBetaMax_xTPN() < SimulatorGlobals.calculationsAccuracy) {
+                double accuracy = overlord.simSettings.getCalculationsAccuracy();
+                if(transition.getBetaMin_xTPN() < accuracy && transition.getBetaMax_xTPN() < accuracy) {
                     transition.setBetaMax_xTPN(1.0, false);
                     doNotUpdate = true;
                     betaMaxTextField.setValue(0.0);
@@ -3924,6 +3858,17 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
             JButton button = (JButton) e.getSource();
             if (transition.isAlphaActiveXTPN() || transition.isBetaActiveXTPN()) {
+
+                Object[] options = {"Confirm", "Cancel",};
+                int n = JOptionPane.showOptionDialog(null,
+                        "Reduce XTPN transition into classical one? This can reset" +
+                                "\ncurrent time values assigned to Alfa/Beta ranges.",
+                        "XTPN transition reduction", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+                if (n == 1) {
+                    return;
+                }
+
                 //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
                 transition.setAlphaXTPNstatus(false);
                 transition.setBetaXTPNstatus(false);
@@ -3936,14 +3881,15 @@ public class HolmesDockWindowsTable extends JPanel {
                 button.setBackground(Color.GREEN);
 
                 //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
-                if(transition.getAlphaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getAlphaMax_xTPN() < SimulatorGlobals.calculationsAccuracy) {
+                double accuracy = overlord.simSettings.getCalculationsAccuracy();
+                if(transition.getAlphaMin_xTPN() < accuracy && transition.getAlphaMax_xTPN() < accuracy) {
                     transition.setAlphaMax_xTPN(1.0, false);
                     doNotUpdate = true;
                     alphaMaxTextField.setValue(0.0);
                     doNotUpdate = false;
                 }
                 //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
-                if(transition.getBetaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getBetaMax_xTPN() < SimulatorGlobals.calculationsAccuracy) {
+                if(transition.getBetaMin_xTPN() < accuracy && transition.getBetaMax_xTPN() < accuracy) {
                     transition.setBetaMax_xTPN(1.0, false);
                     doNotUpdate = true;
                     betaMaxTextField.setValue(0.0);
@@ -6129,11 +6075,6 @@ public class HolmesDockWindowsTable extends JPanel {
 
                     double fr = (double) freqVector.get(i) / (double) max_freq;
                     //double fr = freqVector.get(i) /max_freq;
-
-                    int usuwane = (int) ((1 - fr) * 255);
-                    //System.out.println(usuwane);
-
-
                     //int[] color = getRGB(usuwane);
                     //new Color(color[0],color[1],color[2]
 
@@ -7427,10 +7368,10 @@ public class HolmesDockWindowsTable extends JPanel {
         int transSize = transitions.size();
 
         ArrayList<String> mctOrNot = new ArrayList<>();
-        ArrayList<Integer> mctSize = new ArrayList<>();
+        //ArrayList<Integer> mctSize = new ArrayList<>();
         for (int i = 0; i < transSize; i++) {
             mctOrNot.add("");
-            mctSize.add(0);
+            //mctSize.add(0);
         }
         int mctNo = 0;
         for (ArrayList<Transition> arr : mct) {
@@ -7438,7 +7379,7 @@ public class HolmesDockWindowsTable extends JPanel {
             for (Transition t : arr) {
                 int id = transitions.indexOf(t);
                 mctOrNot.set(id, "MCT_" + mctNo);
-                mctSize.set(id, arr.size());
+                //mctSize.set(id, arr.size());
             }
         }
 
@@ -8045,6 +7986,8 @@ public class HolmesDockWindowsTable extends JPanel {
 
         //places
         boolean colorSubNet = false;
+
+        assert subnet != null;
         for (Place place : subnet.getSubPlaces()) {
             if (!colorSubNet) {
                 place.setGlowedSub(true);
@@ -8497,8 +8440,9 @@ public class HolmesDockWindowsTable extends JPanel {
             double alfaMin = transition.getAlphaMin_xTPN();
 
             //tranzycje wejściowe i wyjściowe nie mogą być XTPN z zerami, tylko klasycznymi
-            if(alfaMin < SimulatorGlobals.calculationsAccuracy && newAlphaMax < SimulatorGlobals.calculationsAccuracy &&
-                    ( ( transition.getBetaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getBetaMax_xTPN() < SimulatorGlobals.calculationsAccuracy )
+            double accuracy = overlord.simSettings.getCalculationsAccuracy();
+            if(alfaMin < accuracy && newAlphaMax < accuracy &&
+                    ( ( transition.getBetaMin_xTPN() < accuracy && transition.getBetaMax_xTPN() < accuracy )
                     || !transition.isBetaActiveXTPN() ) ) { //albo bety są na zera, albo w ogóle tryb beta wyłączony
                 if(transition.isInputTransition() || transition.isOutputTransition()) {
                     JOptionPane.showMessageDialog(null,
@@ -8510,7 +8454,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
 
             //jeśli alfaMax=alfaMin=0, to Alfa=OFF
-            if(alfaMin < SimulatorGlobals.calculationsAccuracy && newAlphaMax < SimulatorGlobals.calculationsAccuracy) { //jeśli zero
+            if(alfaMin < accuracy && newAlphaMax < accuracy) { //jeśli zero
                 doNotUpdate = true;
                 alphaMaxTextField.setValue(0.0);
                 doNotUpdate = false;
@@ -8608,8 +8552,9 @@ public class HolmesDockWindowsTable extends JPanel {
             Transition transition = (Transition) element;
             double betaMin = transition.getBetaMin_xTPN();
 
-            if(betaMin < SimulatorGlobals.calculationsAccuracy && newBetaMax < SimulatorGlobals.calculationsAccuracy &&
-                    ( ( transition.getAlphaMin_xTPN() < SimulatorGlobals.calculationsAccuracy && transition.getAlphaMax_xTPN() < SimulatorGlobals.calculationsAccuracy)
+            double accuracy = overlord.simSettings.getCalculationsAccuracy();
+            if(betaMin < accuracy && newBetaMax < accuracy &&
+                    ( ( transition.getAlphaMin_xTPN() < accuracy && transition.getAlphaMax_xTPN() < accuracy)
                     || !transition.isAlphaActiveXTPN() ) ) { //albo alfy są na zero, albo cały tryb alfa jest wyłączony
                 boolean input = transition.isInputTransition();
                 boolean output = transition.isOutputTransition();
@@ -8623,7 +8568,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
 
             //jeśli betaMax=betaMin=0, to Beta=OFF
-            if(betaMin < SimulatorGlobals.calculationsAccuracy && newBetaMax < SimulatorGlobals.calculationsAccuracy) { //jeśli zero
+            if(betaMin < accuracy && newBetaMax < accuracy) { //jeśli zero
                 doNotUpdate = true;
                 betaMaxTextField.setValue(0.0);
                 doNotUpdate = false;
@@ -8960,7 +8905,7 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda ustawia nowy obiekt symulatora sieci.
      * @param netSim (<b>NetSimulator</b>) simulator zwykły.
-     * @param netSim (<b>NetSimulatorXTPN</b>) simulator XTPN.
+     * @param netSimXTPN (<b>NetSimulatorXTPN</b>) simulator XTPN.
      */
     public void setSimulator(GraphicalSimulator netSim, GraphicalSimulatorXTPN netSimXTPN) {
         simulator = netSim;
@@ -8981,6 +8926,23 @@ public class HolmesDockWindowsTable extends JPanel {
      */
     public GraphicalSimulatorXTPN getSimulatorXTPN() {
         return simulatorXTPN;
+    }
+
+
+    /**
+     * Metoda uaktywnia tylko przyciski stop i pauza dla symulatora. Cała reszta - nieaktywna.
+     */
+    public void allowOnlySimulationDisruptButtons() {
+        setEnabledSimulationInitiateButtons(false);
+        setEnabledSimulationDisruptButtons(true);
+    }
+
+    /**
+     * Metoda uaktywnia tylko przycisku startu dla symulatora, blokuje stop i pauzę.
+     */
+    public void allowOnlySimulationInitiateButtons() {
+        setEnabledSimulationInitiateButtons(true);
+        setEnabledSimulationDisruptButtons(false);
     }
 
     /**
@@ -9018,22 +8980,6 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     /**
-     * Metoda uaktywnia tylko przycisku startu dla symulatora, bloku stop i pauzę.
-     */
-    public void allowOnlySimulationInitiateButtons() {
-        setEnabledSimulationInitiateButtons(true);
-        setEnabledSimulationDisruptButtons(false);
-    }
-
-    /**
-     * Metoda uaktywnia tylko przyciski stop i pauza dla symulatora. Cała reszta - nieaktywna.
-     */
-    public void allowOnlySimulationDisruptButtons() {
-        setEnabledSimulationInitiateButtons(false);
-        setEnabledSimulationDisruptButtons(true);
-    }
-
-    /**
      * Metoda zostawia aktywny tylko przycisku od-pauzowania.
      */
     public void allowOnlyUnpauseButton() {
@@ -9042,7 +8988,70 @@ public class HolmesDockWindowsTable extends JPanel {
         for (JComponent comp : components) {
             if (comp instanceof JButton && comp.getName() != null) {
                 if (comp.getName().equals("pause")) {
-                    comp.setEnabled(false);
+                    comp.setEnabled(true);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Metoda uaktywnia tylko przyciski stop i pauza dla symulatora XTPN. Cała reszta - nieaktywna.
+     */
+    public void allowOnlySimulationDisruptButtonsXTPN() {
+        setEnabledSimulationInitiateButtonsXTPN(false);
+        setEnabledSimulationDisruptButtonsXTPN(true);
+    }
+
+    /**
+     * Metoda uaktywnia tylko przycisku startu dla symulatora, blokuje stop i pauzę.
+     */
+    public void allowOnlySimulationInitiateButtonsXTPN() {
+        setEnabledSimulationInitiateButtonsXTPN(true);
+        setEnabledSimulationDisruptButtonsXTPN(false);
+    }
+
+    /**
+     * Metoda ustawia status wszystkich przycisków rozpoczęcia symulacji XTPN za wyjątkiem
+     * Pauzy, Stopu - w przypadku startu / stopu symulacji
+     * @param enabled boolean - true, jeśli mają być aktywne
+     */
+    private void setEnabledSimulationInitiateButtonsXTPN(boolean enabled) {
+        for (JComponent comp : components) {
+            if (comp instanceof HolmesRoundedButton && comp.getName() != null) {
+                if (comp.getName().equals("XTPNstart") || comp.getName().equals("resetM0button")) {
+                    comp.setEnabled(enabled);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Metoda ustawia status przycisków Stop, Pauza.
+     *
+     * @param enabled boolean - true, jeśli mają być aktywne
+     */
+    private void setEnabledSimulationDisruptButtonsXTPN(boolean enabled) {
+        for (JComponent comp : components) {
+            if (comp instanceof HolmesRoundedButton && comp.getName() != null) {
+                if (comp.getName().equals("XTPNstop") || comp.getName().equals("XTPNpause")) {
+                    comp.setEnabled(enabled);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Metoda zostawia aktywny tylko przycisku od-pauzowania.
+     */
+    public void allowOnlyUnpauseButtonXTPN() {
+        allowOnlySimulationDisruptButtonsXTPN();
+        for (JComponent comp : components) {
+            if (comp instanceof HolmesRoundedButton && comp.getName() != null) {
+                if (comp.getName().equals("XTPNpause")) {
+                    comp.setEnabled(true);
                     break;
                 }
             }

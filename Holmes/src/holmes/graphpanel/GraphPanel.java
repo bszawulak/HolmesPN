@@ -377,11 +377,11 @@ public class GraphPanel extends JComponent {
 			status = "Single mode OFF";
 		g2d.drawString(status, x, y+=20);
 		
-		int arcDelay = overlord.simSettings.getArcDelay();
+		int arcDelay = overlord.simSettings.getArcGraphicDelay();
 		status = "Arc delay: "+arcDelay;
 		g2d.drawString(status, x, y+=20);
 		
-		int transDelay = overlord.simSettings.getTransDelay();
+		int transDelay = overlord.simSettings.getTransitionGraphicDelay();
 		status = "Trans. firing delay: "+transDelay;
 		g2d.drawString(status, x, y); //last one y
 	}

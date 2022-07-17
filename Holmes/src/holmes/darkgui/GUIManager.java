@@ -17,7 +17,7 @@ import holmes.petrinet.subnets.SubnetsControl;
 import holmes.petrinet.subnets.SubnetsGraphics;
 import holmes.utilities.Tools;
 import holmes.windows.*;
-import holmes.windows.ssim.HolmesSim;
+import holmes.windows.managers.ssim.HolmesSim;
 import holmes.workspace.ExtensionFileFilter;
 import holmes.workspace.Workspace;
 

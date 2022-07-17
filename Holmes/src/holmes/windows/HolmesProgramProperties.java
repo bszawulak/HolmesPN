@@ -601,10 +601,10 @@ public class HolmesProgramProperties extends JFrame {
 		arcDelaySlider.addChangeListener(e -> {
 			JSlider s = (JSlider) e.getSource();
 			int val = s.getValue();
-			int reference = GUIManager.getDefaultGUIManager().simSettings.getTransDelay();
+			int reference = GUIManager.getDefaultGUIManager().simSettings.getTransitionGraphicDelay();
 			if(val <= reference) {
 				arcDelaySlider.setValue(val);
-				GUIManager.getDefaultGUIManager().simSettings.setArcDelay(val);
+				GUIManager.getDefaultGUIManager().simSettings.setArcGraphicDelay(val);
 			} else {
 				s.setValue(reference);
 			}
@@ -624,8 +624,8 @@ public class HolmesProgramProperties extends JFrame {
             	JSlider s = (JSlider) e.getSource();
             	int value = s.getValue();
                 transDelaySlider.setValue(value);
-                GUIManager.getDefaultGUIManager().simSettings.setTransDelay(value);
-                if(value <  GUIManager.getDefaultGUIManager().simSettings.getArcDelay()) {
+                GUIManager.getDefaultGUIManager().simSettings.setTransitionGraphicDelay(value);
+                if(value <  GUIManager.getDefaultGUIManager().simSettings.getArcGraphicDelay()) {
                 	anotherSlider.setValue(value);
                 }
             }

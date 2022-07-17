@@ -66,9 +66,9 @@ public class HolmesNetTables extends JFrame {
 	
 	/**
 	 * Główny konstruktor okna tabel sieci.
-	 * @param papa JFrame - ramka okna głównego
+	 * @param parent JFrame - ramka okna głównego
 	 */
-	public HolmesNetTables(JFrame papa) {
+	public HolmesNetTables(JFrame parent) {
 		//ego = this;
 		action  = new HolmesNetTablesActions(this);
 		//interface components:
@@ -329,12 +329,13 @@ public class HolmesNetTables extends JFrame {
 		simMode.setMaximumRowCount(6);
 		simMode.addActionListener(actionEvent -> {
 			int selected = simMode.getSelectedIndex();
-			if(selected == 0)
+			if(selected == 0) {
 				maxModeForSSInv = false;
-			else if(selected == 0)
+			} else if(selected == 1) {
 				maxModeForSSInv = true;
-			else
+			} else {
 				singleModeForSSInv = true;
+			}
 		});
 		buttonsInvariantsPanel.add(simMode);
 		

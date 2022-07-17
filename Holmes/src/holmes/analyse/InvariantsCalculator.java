@@ -50,10 +50,8 @@ public class InvariantsCalculator implements Runnable {
     private ArrayList<Integer> nonZeroColumnVector;
     private ArrayList<ArrayList<Integer>> doubleArcs;
 
-    private boolean t_InvMode = true;
-    @SuppressWarnings("unused")
+    private boolean t_InvMode;
     private int aac = 0;
-    @SuppressWarnings("unused")
     private int naac = 0;
 
     private int newRejected = 0;

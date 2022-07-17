@@ -347,7 +347,7 @@ public class Arc extends PetriNetElement {
         if (!this.isTransportingTokens)
             return;
 
-        int GRAPHICAL_STEPS_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
+        int GRAPHICAL_STEPS_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getArcGraphicDelay();
         this.graphicalSimulationSteps++;
 
         if (this.getGraphicalSimulationSteps() > GRAPHICAL_STEPS_COUNTER) {
@@ -831,8 +831,8 @@ public class Arc extends PetriNetElement {
         }
 
         return " ArcType: " + arcType.toString()
-                + " StartNode: " + startNode + startNodeLoc + "(" + startELLoc + ") [gID:" + startNodeID + "]  ==>  "
-                + " EndNode: " + endNode + endNodeLoc + "(" + endELLoc + ") [gID:" + endNodeID + "]";
+                + " " + startNode + startNodeLoc + "(" + startELLoc + ") [gID:" + startNodeID + "]  ==>  "
+                + " " + endNode + endNodeLoc + "(" + endELLoc + ") [gID:" + endNodeID + "]";
     }
 
 

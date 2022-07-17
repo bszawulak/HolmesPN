@@ -603,7 +603,7 @@ public class ProjectReader {
 				return;
 			}
 
-			query = "Place gammaMin:";
+			query = "Place XTPN gammaMin:";
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
@@ -617,7 +617,7 @@ public class ProjectReader {
 				return;
 			}
 
-			query = "Place gammaMax:";
+			query = "Place XTPN gammaMax:";
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
@@ -1905,15 +1905,15 @@ public class ProjectReader {
 					readedLine++;
 					StatePlacesVectorXTPN pVector = new StatePlacesVectorXTPN();
 					line = line.replace(" ", "");
-					String[] tab = line.split(":");
+					String[] tab = line.split(";"); //separator multizbiorów
 
-					for (String multiString : tab) {
-						String[] subTab = multiString.split(";");
+					for (String multisetString : tab) {
+						String[] multisetTab = multisetString.split(":"); //separator tokenów
 						ArrayList<Double> multisetK = new ArrayList<>();
-						for(String s : subTab) {
-							double val = Double.parseDouble(s);
-							if(val > -1.0) {//oznaczenie braku tokenów
-								multisetK.add(val);
+						for(String token : multisetTab) {
+							double tokenValue = Double.parseDouble(token);
+							if(tokenValue > -1.0) {//oznaczenie braku tokenów
+								multisetK.add(tokenValue);
 							}
 						}
 						Collections.sort(multisetK);
