@@ -209,13 +209,13 @@ public class TexExporter {
 				
 				if(cells[2].length() > 2) { //jeśli coś więcej niż [ ]
 					String[] transSet = cells[2].split(",");
-					String transTableCell = "";
+					StringBuilder transTableCell = new StringBuilder();
 					for(int tr=0; tr<transSet.length; tr++) {
-						transTableCell += "$t_{";
-						transTableCell += transSet[tr].replace("t", ""); //sam numer, t już dodano wyżej
-						transTableCell += "}$";
+						transTableCell.append("$t_{");
+						transTableCell.append(transSet[tr].replace("t", "")); //sam numer, t już dodano wyżej
+						transTableCell.append("}$");
 						if(tr+1 < transSet.length) //jeśli będą kolejne: przecinek
-							transTableCell += ", ";
+							transTableCell.append(", ");
 					}
 					invTableRow.add(transTableCell + " \\\\ \\hline"); //dodaj zbiór MCT
 				} else {
@@ -251,10 +251,9 @@ public class TexExporter {
 			bw.write("\\endhead"+newline);
 			bw.write("\\hline "+newline);
 			bw.write("\\bf Invariant & \\bf MCT & \\bf Contained transitions  \\\\  \\hline "+newline);
-			
-			for(int i=0; i<invariantsTable.size(); i++) {
-				ArrayList<String> row = invariantsTable.get(i);
-				bw.write(row.get(0)+" & "+row.get(1)+" & "+row.get(2)+newline);
+
+			for (ArrayList<String> row : invariantsTable) {
+				bw.write(row.get(0) + " & " + row.get(1) + " & " + row.get(2) + newline);
 			}
 			
 			bw.write("\\end{longtable}"+newline);
@@ -310,7 +309,6 @@ public class TexExporter {
 	 * MCT programu, po zweryfikowaniu - zgodnego z algorytmem mct.jar do tej pory stosowanym 
 	 * (i zawartym w pakiecie holmes.adam.mct)
 	 */
-	@SuppressWarnings("unchecked") //różne badziewne ostrzeżenia Eclipse
 	public void writeMCT() {
 		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTanalyzer();
 		ArrayList<ArrayList<Transition>> mctSet = analyzer.generateMCT();
@@ -319,7 +317,7 @@ public class TexExporter {
 			return;
 		}
 		
-		if(mctSet == null || mctSet.size() == 0) {
+		if(mctSet.size() == 0) {
 			String msg = "Unable to extract MCT data from the net.";
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
@@ -393,7 +391,7 @@ public class TexExporter {
 					transLine.append(" $t_{");
 					Transition trNumber = mctSet.get(i).get(t);
 					int trID = transitions.lastIndexOf(trNumber);
-					transLine.append("").append(trID);
+					transLine.append(trID);
 					transLine.append("}$");
 					
 					//transLine += " ";
@@ -466,8 +464,7 @@ public class TexExporter {
 					mctLine = mctLine.replace("]", "");
 					if(mctLine.length()>0) {
 						String[] mctVector = mctLine.split(",");
-						for(int mct=0; mct<mctVector.length; mct++) {
-							String mctTmp = mctVector[mct];
+						for (String mctTmp : mctVector) {
 							line.append("$m_{").append(mctTmp).append("}$,");
 						}
 					}

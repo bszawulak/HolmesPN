@@ -1062,8 +1062,8 @@ public class GUIOperations {
 				overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("" + stepsValue);
 			}
 		} catch (Exception e) {
-			overlord.log("Error trying to update simulator fields: (XTPN="+XTPN+"; stepsValue="+stepsValue+"; stepsValue="+stepsValue
-					, "error", true);
+			overlord.log("Unable to update simulator fields: (XTPN="+XTPN+"; stepsValue="+stepsValue+"; stepsValue="+stepsValue + "."
+					, "warning", true);
 		}
 	}
 	

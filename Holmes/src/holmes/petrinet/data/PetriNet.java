@@ -906,14 +906,33 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	//*********************************************************************************
-	
+
+	/**
+	 * Ustawia odpowiedni symulator w oknach symulacji. W sumie to chodzi o XTPN vs cała reszta.
+	 * @param XTPN (<b>boolean</b>) true, jeśli ma być ustawiony XTPN.
+	 */
+	public void selectProperSimulatorBox(boolean XTPN) {
+		int simulatorType = overlord.getSimulatorBox().getCurrentDockWindow().simulatorType;
+		if(XTPN) {
+			if(simulatorType == 0) { //jeśli wybrane są klasyczne, przełącz na XTPN
+				overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(4);
+			}
+		} else {
+			if(simulatorType == 1) { //wybrany jest XTPN, przełaczamy na normalne
+				overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);
+			}
+		}
+	}
+
+
 	/**
 	 * Metoda ta przywraca stan sieci przed rozpoczęciem symulacji. Liczba tokenów jest przywracana
 	 * z aktualnie wskazanego stanu w managerze stanów, tranzycje są resetowane wewnętrznie.
 	 */
 	public void restoreMarkingZero() {
 		try {
-			if(checkIfXTPNpresent()) {
+			boolean XTPN = checkIfXTPNpresent();
+			if(XTPN) {
 				restoreMarkingZeroXTPN();
 				return;
 			}
@@ -930,9 +949,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			setSimulator(new GraphicalSimulator(nt, this));
 			setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
 			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN()); //ustawia nowe instancje symulatorów
-			overlord.io.updateTimeStep(false, getSimulator().getSimulatorTimeStep(), 0); //-1 po resecie symulatorów
 			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep(); //-1, jak wyżej
-			
+			overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("" + getSimulator().getSimulatorTimeStep());
 			repaintAllGraphPanels();
 			getSimulator().getSimLogger().logSimReset();
 		} catch (Exception e) {

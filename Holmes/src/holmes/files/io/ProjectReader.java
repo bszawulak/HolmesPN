@@ -250,16 +250,15 @@ public class ProjectReader {
 	/**
 	 * Metoda czyta linie nagłówka pliku projektu.
 	 * @param line (<b>String</b>) linia do odczytu z pliku.
-	 * @return (<b>boolean</b>) - true, jeśli wszystko poszło ok.
 	 */
-	private boolean parseHeaderLine(String line) {
+	private void parseHeaderLine(String line) {
 		String backup = line;
 		try {
 			String query = "Project name";
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf("name:")+6);
 				projectCore.setName(line);
-				return true;
+				return;
 			}
 			query = "Date:";
 			if(line.contains(query)) {
@@ -267,17 +266,19 @@ public class ProjectReader {
 				//projectCore.setName(line);
 
 				//ignore
-				return true;
+				return;
 			}
 			query = "Net type:";
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf("type:")+6);
 				projectCore.setProjectType(projectCore.getNetTypeByName(line));
+				if(projectCore.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+					projectCore.selectProperSimulatorBox(true);
+				}
 			}
 		} catch (Exception e) {
 			overlord.log("Reading file error in line: "+backup+" for Transition "+transitionsProcessed, "error", true);
 		}
-		return false;
 	}
 
 	/**
@@ -285,42 +286,21 @@ public class ProjectReader {
 	 * @param line (<b>String</b>) linia do czytania.
 	 */
 	private void parseNetblocksLine(String line) {
-		String query = "";
 		try {
-			query = "subnets";
-			if(line.toLowerCase().contains(query)) {
+			if(line.toLowerCase().contains("subnets")) {
 				subnets = true;
-				return;
-			}
-			query = "statesmatrix";
-			if(line.toLowerCase().contains(query)) {
+			} else if(line.toLowerCase().contains("statesmatrix")) {
 				states = true;
-				return;
-			}
-			query = "statesxtpnmatrix";
-			if(line.toLowerCase().contains(query)) {
+			} else if(line.toLowerCase().contains("statesxtpnmatrix")) {
 				statesXTPN = true;
-				return;
-			}
-			query = "functions";
-			if(line.toLowerCase().contains(query)) {
+			} else if(line.toLowerCase().contains("functions")) {
 				functions = true;
-				return;
-			}
-			query = "firingratesdata";
-			if(line.toLowerCase().contains(query)) {
+			} else if(line.toLowerCase().contains("firingratesdata")) {
 				firingRates = true;
-				return;
-			}
-			query = "placeinvdata";
-			if(line.toLowerCase().contains(query)) {
+			} else if(line.toLowerCase().contains("placeinvdata")) {
 				pInvariants = true;
-				return;
-			}
-			query = "ssamatrix";
-			if(line.toLowerCase().contains(query)) {
+			} else if(line.toLowerCase().contains("ssamatrix")) {
 				ssaData = true;
-				return;
 			}
 		} catch (Exception e) {
 			overlord.log("Reading error in line: "+ line, "error", true);
@@ -334,20 +314,20 @@ public class ProjectReader {
 	 */
 	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readNetwork(BufferedReader buffer, boolean isLabelComparison) {
-		boolean status = false;
+		boolean status;
 		try {
 			String line; // = buffer.readLine();
 			//ID GENERATOR:
-			while(!((line = buffer.readLine()).contains("ID generator"))) //przewiń do ID generator
+			while(!((buffer.readLine()).contains("ID generator"))) //przewiń do ID generator
 				;
 
-			line = line.substring(line.indexOf("state:")+6);
-			line = line.replace(">", "");
+			//line = line.substring(line.indexOf("state:")+6);
+			//line = line.replace(">", "");
 
 			//PLACES:
 			line = buffer.readLine();
 			if(!line.contains("<Places: 0>")) { //są miejsca
-				line = buffer.readLine(); // -> Place: 0
+				buffer.readLine(); // przewiń do -> Place: 0
 				boolean go = true;
 				
 				while(go) {
@@ -356,7 +336,7 @@ public class ProjectReader {
 					while(!((line = buffer.readLine()).contains("<EOP>"))) {
 						parsePlaceLine(line, place);
 					}
-					line = buffer.readLine();
+					line = buffer.readLine(); // przewiń do --> Place : 1 albo patrz niżej:
 					if(line.contains("<Places data block end>")) {
 						go = false;
 					}
@@ -371,7 +351,7 @@ public class ProjectReader {
 				;
 
 			if(!line.contains("<Transitions: 0>")) { //są tranzycje
-				line = buffer.readLine(); // -> Transition: 0
+				buffer.readLine(); // przewiń do -> Transition: 0
 				boolean go = true;
 				
 				while(go) {
@@ -380,7 +360,7 @@ public class ProjectReader {
 					while(!((line = buffer.readLine()).contains("<EOT>"))) {
 						parseTransitionLine(line, transition);
 					}
-					line = buffer.readLine();
+					line = buffer.readLine(); // przewiń do -> Transition: 1 lub patrz niżej:
 					if(line.contains("<Transitions data block end>")) {
 						go = false;
 					}
@@ -396,7 +376,7 @@ public class ProjectReader {
 					;
 
 				if(!line.contains("<MetaNodes: 0>")) { //są tranzycje
-					line = buffer.readLine(); // -> Transition: 0
+					buffer.readLine(); // przewiń do -> Transition: 0
 					boolean go = true;
 					
 					while(go) {
@@ -405,7 +385,7 @@ public class ProjectReader {
 						while(!((line = buffer.readLine()).contains("<EOT>"))) {
 							parseMetaNodesLine(line, metanode);
 						}
-						line = buffer.readLine();
+						line = buffer.readLine(); // przewiń do -> Transition: 1 lub patrz niżej:
 						if(line.contains("<MetaNodes data block end>")) {
 							go = false;
 						}
@@ -429,7 +409,7 @@ public class ProjectReader {
 			}
 
 			//ARCS:
-			while(!((line = buffer.readLine()).contains("<Arcs data block>"))) //przewiń do łuków
+			while(!((buffer.readLine()).contains("<Arcs data block>"))) //przewiń do łuków
 				;
 
 			while(!(line = buffer.readLine()).contains("Arcs data block end")) {
@@ -447,7 +427,7 @@ public class ProjectReader {
 			int functionsRead = 0;
 			int functionsFailed = 0;
 			if(functions) {
-				while(!((line = buffer.readLine()).contains("<Functions data block>"))) //przewiń do funkcji
+				while(!((buffer.readLine()).contains("<Functions data block>"))) //przewiń do funkcji
 					;
 				
 				while(!((line = buffer.readLine()).contains("<Functions data block end>"))) {
@@ -520,8 +500,7 @@ public class ProjectReader {
 	private void parsePlaceLine(String line, Place place) {
 		String backup = line;
 		try {
-			String query = "";
-			query = "Place gID:";
+			String query = "Place gID:";
 			if(line.contains(query)) {
 				//line = line.substring(line.indexOf(query)+query.length());
 				return;
@@ -654,13 +633,13 @@ public class ProjectReader {
 				line = line.replace(">","");
 
 				String[] tab = line.split(":");
-				for(int i=0; i<tab.length; i++) {
+				for (String s : tab) {
 					try {
-						double token = Double.parseDouble(tab[i]);
+						double token = Double.parseDouble(s);
 						place.accessMultiset().add(token); //dodanie poza seterem, aby nie dublować wartości tokensNumber
 						//place.addTokens_XTPN(1, token);
 					} catch (Exception exc) {
-						overlord.log("XPTN token value reading failed for place "+placesProcessed, "error", true);
+						overlord.log("XPTN token value reading failed for place " + placesProcessed, "error", true);
 						place.addTokens_XTPN(1, 0);
 					}
 				}
@@ -1554,8 +1533,8 @@ public class ProjectReader {
 	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readTInvariants(BufferedReader buffer) {
 		try {
-			String line = "";
-			while(!((line = buffer.readLine()).contains("<Invariants data>"))) //przewiń do inwariantów
+			String line;
+			while(!((buffer.readLine()).contains("<Invariants data>"))) //przewiń do inwariantów
 				;
 			
 			line = buffer.readLine();
@@ -1595,7 +1574,7 @@ public class ProjectReader {
 				projectCore.setT_InvMatrix(t_invariantsMatrix, false);
 				
 				if(problems==0) {
-					while(!((line = buffer.readLine()).contains("<Invariants names>"))) //przewiń do nazw inwariantów
+					while(!((buffer.readLine()).contains("<Invariants names>"))) //przewiń do nazw inwariantów
 						;
 					t_invariantsNames = new ArrayList<String>();
 					line = buffer.readLine();
@@ -1641,7 +1620,7 @@ public class ProjectReader {
 	private boolean readPInvariants(BufferedReader buffer) {
 		try {
 			String line;
-			while(!((line = buffer.readLine()).contains("<PlaceInv data>"))) //przewiń do inwariantów
+			while(!((buffer.readLine()).contains("<PlaceInv data>"))) //przewiń do inwariantów
 				;
 			
 			line = buffer.readLine();
@@ -1682,7 +1661,7 @@ public class ProjectReader {
 				projectCore.setP_InvMatrix(p_invariantsMatrix);
 				
 				if(problems==0) {
-					while(!((line = buffer.readLine()).contains("<PInvariants names>"))) //przewiń do nazw inwariantów
+					while(!((buffer.readLine()).contains("<PInvariants names>"))) //przewiń do nazw inwariantów
 						;
 					
 					p_invariantsNames = new ArrayList<String>();
@@ -1732,7 +1711,7 @@ public class ProjectReader {
 	private boolean readMCT(BufferedReader buffer) {
 		try {
 			String line;
-			while(!((line = buffer.readLine()).contains("<MCT data>"))) //przewiń do zbiorów MCT
+			while(!((buffer.readLine()).contains("<MCT data>"))) //przewiń do zbiorów MCT
 				;
 			
 			line = buffer.readLine();
@@ -1773,7 +1752,7 @@ public class ProjectReader {
 				projectCore.setMCTMatrix(mctData, false);
 				
 				if(problems==0) {
-					while(!((line = buffer.readLine()).contains("<MCT names>"))) //przewiń do nazw inwariantów
+					while(!((buffer.readLine()).contains("<MCT names>"))) //przewiń do nazw inwariantów
 						;
 					
 					mctNames = new ArrayList<String>();
@@ -1821,8 +1800,8 @@ public class ProjectReader {
 	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readStates(BufferedReader buffer) {
 		try {
-			String line = "";
-			while(!((line = buffer.readLine()).contains("<States data>"))) //przewiń do wektorów stanów
+			String line;
+			while(!((buffer.readLine()).contains("<States data>"))) //przewiń do wektorów stanów
 				;
 			
 			line = buffer.readLine();
@@ -1865,7 +1844,7 @@ public class ProjectReader {
 				}
 			} catch (Exception ignored) {}
 			
-			if(((int)readedLine/3) > statesMngr.accessStateMatrix().size()) {
+			if((readedLine /3) > statesMngr.accessStateMatrix().size()) {
 				overlord.log("Error reading state vector number "+(readedLine), "error", true);
 				if(statesMngr.accessStateMatrix().size() == 0) {
 					statesMngr.createCleanStatePN();
@@ -1886,8 +1865,8 @@ public class ProjectReader {
 	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readStatesXTPN(BufferedReader buffer) {
 		try {
-			String line = "";
-			while(!((line = buffer.readLine()).contains("<States XTPN data>"))) //przewiń do wektorów stanów
+			String line;
+			while(!(buffer.readLine().contains("<States XTPN data>"))) //przewiń do wektorów stanów
 				;
 
 			line = buffer.readLine();
@@ -1940,7 +1919,7 @@ public class ProjectReader {
 				}
 			} catch (Exception ignored) {}
 
-			if(((int)readedLine/3) > statesMngr.accessStateMatrix().size()) {
+			if((readedLine /3) > statesMngr.accessStateMatrix().size()) {
 				overlord.log("Error reading state XTPN vector number "+(readedLine), "error", true);
 				if(statesMngr.accessStateMatrix().size() == 0) {
 					statesMngr.createCleanStatePN();
@@ -1961,8 +1940,8 @@ public class ProjectReader {
 	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readFiringRates(BufferedReader buffer) {
 		try {
-			String line = "";
-			while(!((line = buffer.readLine()).contains("<Firing rates data>"))) //przewiń do wektorów firing rates
+			String line;
+			while(!(buffer.readLine().contains("<Firing rates data>"))) //przewiń do wektorów firing rates
 				;
 			
 			line = buffer.readLine();
@@ -2127,8 +2106,8 @@ public class ProjectReader {
 	@SuppressWarnings("StatementWithEmptyBody")
 	private boolean readSSAvectors(BufferedReader buffer) {
 		try {
-			String line = "";
-			while(!((line = buffer.readLine()).contains("<SSA vectors data>"))) //przewiń do wektorów SSA
+			String line;
+			while(!(buffer.readLine().contains("<SSA vectors data>"))) //przewiń do wektorów SSA
 				;
 			
 			line = buffer.readLine();
@@ -2176,7 +2155,7 @@ public class ProjectReader {
 				}
 			} catch (Exception ignored) {}
 			
-			if(((int)readedLine/3) > ssaMngr.accessSSAmatrix().size()) {
+			if((readedLine /3) > ssaMngr.accessSSAmatrix().size()) {
 				overlord.log("Error reading state vector number "+(readedLine), "error", true);
 				if(ssaMngr.accessSSAmatrix().size() == 0) {
 					ssaMngr.createCleanSSAvector();

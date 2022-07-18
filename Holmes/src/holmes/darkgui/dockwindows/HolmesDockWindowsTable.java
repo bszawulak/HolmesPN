@@ -70,6 +70,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private ArrayList<JComponent> components;
     //private static final Color darkGreen = new Color(0, 75, 0);
     private int mode;
+    public int simulatorType = 0; //normalne symulatory
     private ArrayList<Transition> transitions; // j.w.
     private ArrayList<Place> places;
     private ArrayList<ArrayList<Transition>> mctGroups; //używane tylko w przypadku, gdy obiekt jest typu DockWindowType.MctANALYZER
@@ -284,6 +285,10 @@ public class HolmesDockWindowsTable extends JPanel {
 
         mode = SIMULATOR;
         setSimulator(sim, simXTPN);
+        if(XTPNmode)
+            simulatorType = 1; //XTPN
+        else
+            simulatorType = 0;
 
         if (XTPNmode) { // inny comboBox
             // SIMULATION MODE
@@ -533,7 +538,6 @@ public class HolmesDockWindowsTable extends JPanel {
                 overlord.getWorkspace().getProject().restoreColors();
             });
             components.add(c2Button);
-
 
             JButton statesButton = new JButton("State manager");
             statesButton.setName("State manager");
