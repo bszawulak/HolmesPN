@@ -128,7 +128,7 @@ public class Transition extends Node {
     private double tauBeta_xTPN = -1.0;
     private double timer_Ualfa_XTPN = -1.0;
     private double timer_Vbeta_XTPN = -1.0;
-    private boolean tauTimersVisibility_XTPN = false; //czy wyświetlać timery
+    private boolean tauTimersVisibility_XTPN = true; //czy wyświetlać timery
 
     //jeśli miejsca wejściowe tracą szybciej tokeny ze starości niż z
     //produkcji, zmniejszamy tau Alfa i Beta (prawdopodobieństwo).
@@ -137,7 +137,7 @@ public class Transition extends Node {
     private boolean isActivated_xTPN = false;
     private boolean isProducing_xTPN = false;
     //grafika:
-    private int fractionDigits = 6;
+    private int fractionDigits = 2;
 
 
     /**
@@ -1612,7 +1612,7 @@ public class Transition extends Node {
                 if (arcStartPlace.accessMultiset().size() < arcWeight) {
                     //jeśli nie istnieje podzbiór aktywujący (bo sam multizbiór jest mniejszy niż waga łuku), to:
                     if(arcType == TypeOfArc.INHIBITOR) { //to dobrze, że nie ma zbioru, tranzycja wciąż aktywna
-                        ;
+
                     } else {
                         return false; //nie ma co sprawdzać, za mały multizbiór
                     }
@@ -1620,7 +1620,7 @@ public class Transition extends Node {
                     if (!isActivationMultiset(arcWeight, arcStartPlace.getGammaMin_xTPN(), arcStartPlace.accessMultiset(), accuracy)) {
                         //jeśli nie istnieje podzbiór aktywujący (powyżej), to:
                         if(arcType == TypeOfArc.INHIBITOR) { //to dobrze, że nie ma zbioru, tranzycja wciąż aktywna
-                            ;
+
                         } else {
                             return false; //brak multizbioru aktywującego, nieaktywna
                         }
@@ -1630,7 +1630,7 @@ public class Transition extends Node {
                 int startPlaceTokens = arcStartPlace.getNonReservedTokensNumber();
                 if (arcWeight > startPlaceTokens) {
                     if(arcType == TypeOfArc.INHIBITOR) {
-                        ; //wciąż aktywna
+                         //wciąż aktywna
                     } else {
                         return false;
                     }

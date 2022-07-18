@@ -959,9 +959,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Wywołyana TYLKO przez restoreMarkingZero(), jeśli ta wykryje elementy XTPN.
+	 * Wywołyana TYLKO przez restoreMarkingZero(), jeśli ta wykryje elementy XTPN. Jedyny wyjątek to
+	 * dwa wywołania przy tworzeniu nowego miejsca i nowej tranzycji XTPN.
 	 */
-	private void restoreMarkingZeroXTPN() {
+	public void restoreMarkingZeroXTPN() {
 		try {
 			accessStatesManager().setNetworkStateXTPN(accessStatesManager().selectedStateXTPN);
 			for(Transition trans : getTransitions()) {

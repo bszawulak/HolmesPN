@@ -1553,9 +1553,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	/**
 	 * Metoda ustawia lub resetuje tryb zmieniania lokalizacji napisu dla klikniętego wierzchołka.
 	 * Faktyczna realizacja tego trybu odbywa się w GraphPanel.MouseWheelHandler.mouseWheelMoved(MouseWheelEvent e)
-	 * @param n Node - wybrany wierzchołek
-	 * @param el ElementLocation - wybrana lokalizacja wierzchołka (portal)
-	 * @param mode locationMoveType - NONE, ALPHA, BETA, GAMMA, TAU
+	 * @param n (<b>Node</b>) wybrany wierzchołek.
+	 * @param el (<b>ElementLocation</b>) wybrana lokalizacja wierzchołka (portal).
+	 * @param mode (<b>locationMoveType</b>) NONE, ALPHA, BETA, GAMMA, TAU.
 	 */
 	public void setNameLocationChangeMode(Node n, ElementLocation el, locationMoveType mode) {
 		this.nameSelectedNode = n;
@@ -1565,7 +1565,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda zwraca wartość flagi dla trybu zmiany lokalizacji nazwy wybranego wierzchołka sieci.
-	 * @return (locationMoveType) - NONE, NAME, ALPHA, BETA, GAMMA or TAU
+	 * @return (<b>locationMoveType</b>) - NONE, NAME, ALPHA, BETA, GAMMA or TAU
 	 */
 	public locationMoveType getNameLocChangeMode() {
 		return nameLocChangeMode;

@@ -516,6 +516,7 @@ public abstract class Node extends PetriNetElement {
 	 * @return boolean - false, jeśli usunięto jedyną (czyli ostatnią) lokalizację wierzchołka, 
 	 * 		true, jeżeli wierzchołek ma jeszcze inne lokalizacje
 	 */
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 	public boolean removeElementLocation(ElementLocation el) {
 		int nodeElLocIndex = this.getNodeLocations().indexOf(el);
 		this.getTextsLocations(GUIManager.locationMoveType.NAME).remove(nodeElLocIndex);
