@@ -426,9 +426,9 @@ public class GraphPanel extends JComponent {
 	
 	/**
 	 * Metoda zmiany lokalizacji elementu nazwy wskazanego wierzchołka w poziomie.
-	 * @param delta int - wielkość przewinięcia.
-	 * @param nameType (GUIManager.locationMoveTyp) - NAME, ALPHA, BETA, GAMMA, TAU.
-	 * @return Point - współrzędne po zmianie.
+	 * @param delta (<b>int</b>) wielkość przewinięcia.
+	 * @param nameType (<b>GUIManager.locationMoveTyp</b>) NAME, ALPHA, BETA, GAMMA, TAU.
+	 * @return (<b>Point</b>) - współrzędne po zmianie.
 	 */
 	public Point nameLocationChangeHorizontal(int delta, GUIManager.locationMoveType nameType) {
 		Node n = overlord.getNameLocChangeNode();
@@ -1229,36 +1229,42 @@ public class GraphPanel extends JComponent {
 		}
 
 		private void _putPlace() {
+			overlord.getWorkspace().getProject().selectProperSimulatorBox(false);
 			overlord.getWorkspace().getProject().restoreMarkingZero();
 			addNewPlace(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
 		}
 		private void _putTransition() {
+			overlord.getWorkspace().getProject().selectProperSimulatorBox(false);
 			overlord.getWorkspace().getProject().restoreMarkingZero();
 			addNewTransition(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
 		}
 		private void _putStochasticTransition() {
+			overlord.getWorkspace().getProject().selectProperSimulatorBox(false);
 			overlord.getWorkspace().getProject().restoreMarkingZero();
 			addNewStochasticTransition(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
 		}
 		private void _putTimeTransition() {
+			overlord.getWorkspace().getProject().selectProperSimulatorBox(false);
 			overlord.getWorkspace().getProject().restoreMarkingZero();
 			addNewTimeTransition(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
 		}
 		private void _putColorPlace() {
+			overlord.getWorkspace().getProject().selectProperSimulatorBox(false);
 			overlord.getWorkspace().getProject().restoreMarkingZero();
 			addNewCPlace(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
 		}
 		private void _putColorTransition() {
+			overlord.getWorkspace().getProject().selectProperSimulatorBox(false);
 			overlord.getWorkspace().getProject().restoreMarkingZero();
 			addNewCTransition(mousePt);
 			overlord.reset.reset2ndOrderData(true);
@@ -1266,14 +1272,16 @@ public class GraphPanel extends JComponent {
 		}
 		private void _putXTPNtransition(PetriNet project) {
 			project.setProjectType(PetriNet.GlobalNetType.XTPN); // ustawia status projektu
-			overlord.getWorkspace().getProject().restoreMarkingZero();
+			overlord.getWorkspace().getProject().selectProperSimulatorBox(true);
+			overlord.getWorkspace().getProject().restoreMarkingZeroXTPN();
 			addNewXTPNTransition(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
 		}
 		private void _putXTPNplace(PetriNet project) {
 			project.setProjectType(PetriNet.GlobalNetType.XTPN);
-			overlord.getWorkspace().getProject().restoreMarkingZero();
+			overlord.getWorkspace().getProject().selectProperSimulatorBox(true);
+			overlord.getWorkspace().getProject().restoreMarkingZeroXTPN();
 			addNewNXTPNPlace(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
@@ -1289,7 +1297,7 @@ public class GraphPanel extends JComponent {
 			getSelectionManager().deselectAllElements();
 			
 			Node node = clickedLocation.getParentNode();
-			if(node.isInvisible() == true) {
+			if(node.isInvisible()) {
 				JOptionPane.showMessageDialog(null, "Cannot draw arc to invisible node!", 
 						"Problem", JOptionPane.WARNING_MESSAGE);
 				return;
@@ -1503,8 +1511,8 @@ public class GraphPanel extends JComponent {
 			Point dragPoint = e.getPoint();
 			dragPoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
 			if(arcBreakPoint != null) {
-				int x = dragPoint.x < 10 ? 10 : dragPoint.x;
-				int y = dragPoint.y < 10 ? 10 : dragPoint.y;
+				int x = Math.max(dragPoint.x, 10);
+				int y = Math.max(dragPoint.y, 10);
 				arcBreakPoint.setLocation(x, y);
 				e.getComponent().repaint();
 				return;
@@ -1728,7 +1736,7 @@ public class GraphPanel extends JComponent {
 		for(ElementLocation el : node.getElementLocations()) {
 			ArrayList<Arc> candidates = el.getOutArcs();
 			for (Arc a : candidates) {
-				if (locationFamily(a.getEndLocation(), startLocation) == true) {
+				if (locationFamily(a.getEndLocation(), startLocation)) {
 					//if(a.getArcType() != TypesOfArcs.NORMAL) {
 					return true;
 					//}

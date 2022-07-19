@@ -68,8 +68,8 @@ public class HolmesDockWindowsTable extends JPanel {
     private static final long serialVersionUID = 4510802239873443705L;
     private final GUIManager overlord;
     private ArrayList<JComponent> components;
-    //private static final Color darkGreen = new Color(0, 75, 0);
     private int mode;
+    public int simulatorType = 0; //normalne symulatory
     private ArrayList<Transition> transitions; // j.w.
     private ArrayList<Place> places;
     private ArrayList<ArrayList<Transition>> mctGroups; //używane tylko w przypadku, gdy obiekt jest typu DockWindowType.MctANALYZER
@@ -284,6 +284,10 @@ public class HolmesDockWindowsTable extends JPanel {
 
         mode = SIMULATOR;
         setSimulator(sim, simXTPN);
+        if(XTPNmode)
+            simulatorType = 1; //XTPN
+        else
+            simulatorType = 0;
 
         if (XTPNmode) { // inny comboBox
             // SIMULATION MODE
@@ -533,7 +537,6 @@ public class HolmesDockWindowsTable extends JPanel {
                 overlord.getWorkspace().getProject().restoreColors();
             });
             components.add(c2Button);
-
 
             JButton statesButton = new JButton("State manager");
             statesButton.setName("State manager");
@@ -1086,6 +1089,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(token5Spinner);
         }
 
+        /*
         JLabel debugModeLabel1 = new JLabel("Debug1:", JLabel.LEFT);
         debugModeLabel1.setBounds(columnA_posX, columnA_Y += 45, colACompLength, 20);
         components.add(debugModeLabel1);
@@ -1125,6 +1129,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 }
             }
         });
+
         components.add(debugChangeID);
         JButton aaa = new JButton();
         aaa.setName("ChangeID");
@@ -1134,6 +1139,9 @@ public class HolmesDockWindowsTable extends JPanel {
         aaa.addActionListener(actionEvent -> {
         });
         components.add(aaa);
+
+         */
+
         panel.setLayout(null);
         for (JComponent component : components) {
             panel.add(component);
@@ -1246,6 +1254,7 @@ public class HolmesDockWindowsTable extends JPanel {
         buttonGammaMode.setName("AlfaButton1");
         buttonGammaMode.setMargin(new Insets(0, 0, 0, 0));
         buttonGammaMode.setBounds(columnB_posX, columnB_Y +=25, 65, 30);
+        buttonGammaMode.setFocusPainted(false);
         if(place.isGammaModeActiveXTPN()) {
             buttonGammaMode.setText("<html>Gamma:<br>  ON</html>");
             buttonGammaMode.setBackground(Color.GREEN);
@@ -1307,6 +1316,7 @@ public class HolmesDockWindowsTable extends JPanel {
         gammaVisibilityButton.setName("GammaVButton1");
         gammaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         gammaVisibilityButton.setBounds(columnB_posX+65, columnB_Y, 65, 30);
+        gammaVisibilityButton.setFocusPainted(false);
         if(place.isGammaModeActiveXTPN()) {
             if (place.isGammaRangeVisible()) {
                 gammaVisibilityButton.setText("<html> Gamma<br>visible<html>");
@@ -1345,6 +1355,7 @@ public class HolmesDockWindowsTable extends JPanel {
         gammaLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         gammaLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
         gammaLocChangeButton.setBounds(columnB_posX+130, columnB_Y, 65, 30);
+        gammaLocChangeButton.setFocusPainted(false);
         if(place.isGammaModeActiveXTPN() && place.isGammaRangeVisible()) {
             if (gammaLocChangeMode) {
                 gammaLocChangeButton.setText("<html>Change<br>location<html>");
@@ -1360,26 +1371,23 @@ public class HolmesDockWindowsTable extends JPanel {
         }
         gammaLocChangeButton.addActionListener(new ActionListener() {
             // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
-            private Place placeTmp;
+            private Place place_tmp;
             private ElementLocation el_tmp;
             public void actionPerformed(ActionEvent actionEvent) {
-                JButton button_tmp = (JButton) actionEvent.getSource();
-
-                if (!gammaLocChangeMode) {
+                if (!gammaLocChangeMode) { //włączamy tryb przesuwania napisu
                     gammaLocChangeButton.setText("<html>Change<br>location<html>");
                     gammaLocChangeButton.setBackground(Color.BLUE);
                     gammaLocChangeMode = true;
-                    //GUIManager.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                    overlord.setNameLocationChangeMode(place_tmp, el_tmp, GUIManager.locationMoveType.GAMMA);
                 } else {
                     gammaLocChangeButton.setText("<html>Gamma<br>offset<html>");
                     gammaLocChangeButton.setBackground(Color.GREEN);
-
                     gammaLocChangeMode = false;
                     overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
             private ActionListener yesWeCan(Place place, ElementLocation inLoc) {
-                placeTmp = place;
+                place_tmp = place;
                 el_tmp = inLoc;
                 return this;
             }
@@ -1485,7 +1493,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // XTPN-place przycisk dodania tokenu XTPN
         //JButton add0tokenButton = new JButton("<html>Add<br>0-token</html>");
-        HolmesRoundedButton add0tokenButton = new HolmesRoundedButton("<html><center>Add<br>token</center></html>"
+        HolmesRoundedButton add0tokenButton = new HolmesRoundedButton("<html><center>Add<br>0-token</center></html>"
                 , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         add0tokenButton.setMargin(new Insets(0, 0, 0, 0));
         add0tokenButton.setBounds(columnB_posX, columnB_Y, 90, 40);
@@ -1513,7 +1521,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // XTPN-place przycisk usunięcia tokenu XTPN
         //JButton remove0tokenButton = new JButton("<html>Remove<br>0-token</html>");
-        HolmesRoundedButton remove0tokenButton = new HolmesRoundedButton("<html><center>Remove<br>token</center></html>"
+        HolmesRoundedButton remove0tokenButton = new HolmesRoundedButton("<html><center>Remove<br>0-token</center></html>"
                 , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         remove0tokenButton.setMargin(new Insets(0, 0, 0, 0));
         remove0tokenButton.setBounds(columnB_posX+90, columnB_Y, 90, 40);
@@ -1596,25 +1604,26 @@ public class HolmesDockWindowsTable extends JPanel {
         JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
         locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(locLabel);
-        SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
-        SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
 
+        SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
         JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
+        locationXSpinner.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
         locationXSpinner.addChangeListener(e -> setX((int) ((JSpinner) e.getSource()).getValue()));
+
+        JLabel labelCom = new JLabel(" , ");
+        labelCom.setBounds(columnB_posX+60, columnB_Y, 10, 20);
+
+        SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
         JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
+        locationYSpinner.setBounds(columnB_posX+70, columnB_Y, 60, 20);
         locationYSpinner.addChangeListener(e -> setY((int) ((JSpinner) e.getSource()).getValue()));
         if (zoom != 100) {
             locationXSpinner.setEnabled(false);
             locationYSpinner.setEnabled(false);
         }
-        JPanel locationSpinnerPanel = new JPanel();
-        locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel, BoxLayout.X_AXIS));
-        locationSpinnerPanel.add(locationXSpinner);
-        locationSpinnerPanel.add(new JLabel(" , "));
-        locationSpinnerPanel.add(locationYSpinner);
-
-        locationSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, colBCompLength, 20);
-        components.add(locationSpinnerPanel);
+        components.add(locationXSpinner);
+        components.add(labelCom);
+        components.add(locationYSpinner);
 
         // XTPN-place  WSPÓŁRZĘDNE NAPISU:
         columnA_Y += 20;
@@ -1631,12 +1640,12 @@ public class HolmesDockWindowsTable extends JPanel {
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
 
-        JLabel locNameLabelX = new JLabel("xOff: ", JLabel.LEFT);
-        locNameLabelX.setBounds(columnA_posX + 90, columnA_Y, 40, 20);
+        JLabel locNameLabelX = new JLabel("x: ", JLabel.LEFT);
+        locNameLabelX.setBounds(columnA_posX + 90, columnA_Y, 20, 20);
         components.add(locNameLabelX);
 
         JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
-        nameLocationXSpinner.setBounds(columnA_posX + 125, columnA_Y, 60, 20);
+        nameLocationXSpinner.setBounds(columnA_posX + 105, columnA_Y, 45, 20);
         nameLocationXSpinner.addChangeListener(new ChangeListener() {
             private Place place_tmp;
             private ElementLocation el_tmp;
@@ -1660,12 +1669,12 @@ public class HolmesDockWindowsTable extends JPanel {
 
         components.add(nameLocationXSpinner);
 
-        JLabel locNameLabelY = new JLabel("yOff: ", JLabel.LEFT);
-        locNameLabelY.setBounds(columnA_posX + 195, columnB_Y, 40, 20);
+        JLabel locNameLabelY = new JLabel("y: ", JLabel.LEFT);
+        locNameLabelY.setBounds(columnA_posX + 160, columnA_Y, 15, 20);
         components.add(locNameLabelY);
 
         JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
-        nameLocationYSpinner.setBounds(columnA_posX + 230, columnA_Y, 60, 20);
+        nameLocationYSpinner.setBounds(columnA_posX + 175, columnA_Y, 45, 20);
         nameLocationYSpinner.addChangeListener(new ChangeListener() {
             private Place place_tmp;
             private ElementLocation el_tmp;
@@ -1689,31 +1698,34 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(nameLocationYSpinner);
 
         // XTPN-place przycisk zmiany lokalizacj napisu
-        JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
+        //JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
+        JButton nameLocChangeButton = new JButton("<html><center>Name<br>offset</center><html>");
         nameLocChangeButton.setName("LocNameChanger");
+        nameLocChangeButton.setBackground(Color.GREEN);
         nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
-        nameLocChangeButton.setBounds(columnA_posX + 90, columnA_Y += 25, 150, 40);
+        //nameLocChangeButton.setBounds(columnA_posX + 90, columnA_Y += 25, 150, 40);
+        nameLocChangeButton.setBounds(columnB_posX+131, columnA_Y - 15, 65, 30);
         nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         nameLocChangeButton.setFocusPainted(false);
         nameLocChangeButton.addActionListener(new ActionListener() {
             // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
             private Place place_tmp;
             private ElementLocation el_tmp;
-
             public void actionPerformed(ActionEvent actionEvent) {
                 JButton button_tmp = (JButton) actionEvent.getSource();
 
                 if (!nameLocChangeMode) {
-                    button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
+                    //button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
+                    button_tmp.setBackground(Color.BLUE);
                     nameLocChangeMode = true;
                     overlord.setNameLocationChangeMode(place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
-                    button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
+                    //button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
+                    button_tmp.setBackground(Color.GREEN);
                     nameLocChangeMode = false;
                     overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
-
             private ActionListener yesWeCan(Place inPlace, ElementLocation inLoc) {
                 place_tmp = inPlace;
                 el_tmp = inLoc;
@@ -1722,108 +1734,7 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(place, location));
         components.add(nameLocChangeButton);
 
-        //COLORS:
-        if (place.isColored) {
-            // PLACE TOKEN
-            JLabel tokenLabel = new JLabel("T0 Red:", JLabel.LEFT);
-            tokenLabel.setBounds(columnA_posX, columnA_Y += 50, colACompLength, 20);
-            components.add(tokenLabel);
-            int tok0 = place.getTokensNumber();
-            boolean problem = false;
-            if (tok0 < 0) {
-                overlord.log("Negative number of tokens in " + place.getName(), "error", true);
-                tok0 = 0;
-                problem = true;
-            }
-            SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok0, 0, Integer.MAX_VALUE, 1);
-            JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
-            tokenSpinner.setBounds(columnB_posX - 30, columnB_Y += 75, 75, 20);
-            tokenSpinner.addChangeListener(e -> {
-                int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-                setTokens(tokenz);
-                overlord.markNetChange();
-            });
-            if (problem)
-                tokenSpinner.setEnabled(false);
-            components.add(tokenSpinner);
-
-            JLabel token3Label = new JLabel("T3 Yellow:", JLabel.LEFT);
-            token3Label.setBounds(columnB_posX + 60, columnB_Y, colACompLength, 20);
-            components.add(token3Label);
-            int tok3 = place.getColorTokensNumber(3);
-
-            SpinnerModel token3SpinnerModel = new SpinnerNumberModel(tok3, 0, Integer.MAX_VALUE, 1);
-            JSpinner token3Spinner = new JSpinner(token3SpinnerModel);
-            token3Spinner.setBounds(columnB_posX + 130, columnB_Y, 75, 20);
-            token3Spinner.addChangeListener(e -> {
-                int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-                setColorTokens(tokenz, 3);
-                overlord.markNetChange();
-            });
-            components.add(token3Spinner);
-
-
-            JLabel token1Label = new JLabel("T1 Green:", JLabel.LEFT);
-            token1Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-            components.add(token1Label);
-            int tok1 = place.getColorTokensNumber(1);
-
-            SpinnerModel token1SpinnerModel = new SpinnerNumberModel(tok1, 0, Integer.MAX_VALUE, 1);
-            JSpinner token1Spinner = new JSpinner(token1SpinnerModel);
-            token1Spinner.setBounds(columnB_posX - 30, columnB_Y += 20, 75, 20);
-            token1Spinner.addChangeListener(e -> {
-                int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-                setColorTokens(tokenz, 1);
-                overlord.markNetChange();
-            });
-            components.add(token1Spinner);
-
-            JLabel token4Label = new JLabel("T4 Grey:", JLabel.LEFT);
-            token4Label.setBounds(columnB_posX + 60, columnB_Y, colACompLength, 20);
-            components.add(token4Label);
-            int tok4 = place.getColorTokensNumber(4);
-
-            SpinnerModel token4SpinnerModel = new SpinnerNumberModel(tok4, 0, Integer.MAX_VALUE, 1);
-            JSpinner token4Spinner = new JSpinner(token4SpinnerModel);
-            token4Spinner.setBounds(columnB_posX + 130, columnB_Y, 75, 20);
-            token4Spinner.addChangeListener(e -> {
-                int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-                setColorTokens(tokenz, 4);
-                overlord.markNetChange();
-            });
-            components.add(token4Spinner);
-
-            JLabel token2Label = new JLabel("T2 Blue:", JLabel.LEFT);
-            token2Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-            components.add(token2Label);
-            int tok2 = place.getColorTokensNumber(2);
-
-            SpinnerModel token2SpinnerModel = new SpinnerNumberModel(tok2, 0, Integer.MAX_VALUE, 1);
-            JSpinner token2Spinner = new JSpinner(token2SpinnerModel);
-            token2Spinner.setBounds(columnB_posX - 30, columnB_Y += 20, 75, 20);
-            token2Spinner.addChangeListener(e -> {
-                int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-                setColorTokens(tokenz, 2);
-                overlord.markNetChange();
-            });
-            components.add(token2Spinner);
-
-            JLabel token5Label = new JLabel("T5 Black:", JLabel.LEFT);
-            token5Label.setBounds(columnB_posX + 60, columnB_Y, colACompLength, 20);
-            components.add(token5Label);
-            int tok5 = place.getColorTokensNumber(5);
-
-            SpinnerModel token5SpinnerModel = new SpinnerNumberModel(tok5, 0, Integer.MAX_VALUE, 1);
-            JSpinner token5Spinner = new JSpinner(token5SpinnerModel);
-            token5Spinner.setBounds(columnB_posX + 130, columnB_Y, 75, 20);
-            token5Spinner.addChangeListener(e -> {
-                int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-                setColorTokens(tokenz, 5);
-                overlord.markNetChange();
-            });
-            components.add(token5Spinner);
-        }
-
+        /*
         JLabel debugModeLabel1 = new JLabel("Debug1:", JLabel.LEFT);
         debugModeLabel1.setBounds(columnA_posX, columnA_Y += 45, colACompLength, 20);
         components.add(debugModeLabel1);
@@ -1872,6 +1783,9 @@ public class HolmesDockWindowsTable extends JPanel {
         aaa.addActionListener(actionEvent -> {
         });
         components.add(aaa);
+         */
+
+
         panel.setLayout(null);
         for (JComponent component : components) {
             panel.add(component);
@@ -3908,6 +3822,7 @@ public class HolmesDockWindowsTable extends JPanel {
         alfaVisibilityButton.setName("<html> Alpha<br>visible<html>");
         alfaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         alfaVisibilityButton.setBounds(columnB_posX, columnB_Y+=30, 65, 30);
+        alfaVisibilityButton.setFocusPainted(false);
         if(transition.isAlphaActiveXTPN()) {
             if(transition.isAlphaRangeVisible()) {
                 alfaVisibilityButton.setText("<html> Alpha<br>visible<html>");
@@ -3953,6 +3868,7 @@ public class HolmesDockWindowsTable extends JPanel {
         betaVisibilityButton.setName("TauButton1");
         betaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         betaVisibilityButton.setBounds(columnB_posX+65, columnB_Y, 65, 30);
+        betaVisibilityButton.setFocusPainted(false);
         if(transition.isBetaActiveXTPN()) {
             if (transition.isBetaRangeVisible()) {
                 betaVisibilityButton.setText("<html>  Beta<br>visible<html>");
@@ -3997,6 +3913,7 @@ public class HolmesDockWindowsTable extends JPanel {
         tauVisibilityButton.setName("TauButton1");
         tauVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         tauVisibilityButton.setBounds(columnB_posX+130, columnB_Y, 65, 30);
+        tauVisibilityButton.setFocusPainted(false);
         if(transition.isAlphaActiveXTPN() || transition.isBetaActiveXTPN()) {
             if (transition.isTauTimerVisible()) {
                 tauVisibilityButton.setText("<html>  Tau<br>visible<html>");
@@ -4016,16 +3933,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 transition.setTauTimersVisibility(false);
                 button.setText("<html>  Tau<br>hidden<html>");
                 button.setBackground(Color.RED);
-
                 tauLocChangeButton.setEnabled(false);
             } else { //włączamy
                 transition.setTauTimersVisibility(true);
                 button.setText("<html>  Tau<br>visible<html>");
                 button.setBackground(Color.GREEN);
-
-                //tauLocChangeButton.setEnabled(false);
-                //tauLocChangeButton.setText("<html>Alpha<br>offset<html>");
-                //tauLocChangeButton.setBackground(Color.GREEN);
                 tauLocChangeMode = false;
                 overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
             }
@@ -4042,6 +3954,7 @@ public class HolmesDockWindowsTable extends JPanel {
         alphaLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         alphaLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
         alphaLocChangeButton.setBounds(columnB_posX, columnB_Y += 30, 65, 30);
+        alphaLocChangeButton.setFocusPainted(false);
         if(transition.isAlphaActiveXTPN() && transition.isAlphaRangeVisible()) {
             if(alphaLocChangeMode) {
                 alphaLocChangeButton.setText("<html>Change<br>location<html>");
@@ -4052,7 +3965,6 @@ public class HolmesDockWindowsTable extends JPanel {
             }
         } else {
             alphaLocChangeButton.setText("<html>Alpha<br>offset<html>");
-            //alphaLocChangeButton.setBackground(Color.GREEN);
             alphaLocChangeMode = false;
             alphaLocChangeButton.setEnabled(false);
         }
@@ -4061,18 +3973,16 @@ public class HolmesDockWindowsTable extends JPanel {
             private Transition trans_tmp;
             private ElementLocation el_tmp;
             public void actionPerformed(ActionEvent actionEvent) {
-                JButton button_tmp = (JButton) actionEvent.getSource();
-
                 if (!alphaLocChangeMode) {
                     alphaLocChangeButton.setText("<html><br>location<html>");
                     alphaLocChangeButton.setBackground(Color.BLUE);
                     alphaLocChangeMode = true;
-                    //overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.ALPHA);
                 } else {
                     alphaLocChangeButton.setText("<html>Alpha<br>offset<html>");
                     alphaLocChangeButton.setBackground(Color.GREEN);
                     alphaLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.ALPHA);
                 }
             }
             private ActionListener yesWeCan(Transition transition, ElementLocation inLoc) {
@@ -4089,6 +3999,7 @@ public class HolmesDockWindowsTable extends JPanel {
         betaLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         betaLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
         betaLocChangeButton.setBounds(columnB_posX+65, columnB_Y, 65, 30);
+        betaLocChangeButton.setFocusPainted(false);
         if(transition.isBetaActiveXTPN() && transition.isBetaRangeVisible()) {
             if (betaLocChangeMode) {
                 betaLocChangeButton.setText("<html>Change<br>location<html>");
@@ -4099,7 +4010,6 @@ public class HolmesDockWindowsTable extends JPanel {
             }
         } else {
             betaLocChangeButton.setText("<html>Beta<br>offset<html>");
-            //betaLocChangeButton.setBackground(Color.GREEN);
             betaLocChangeMode = false;
             betaLocChangeButton.setEnabled(false);
         }
@@ -4113,12 +4023,12 @@ public class HolmesDockWindowsTable extends JPanel {
                     betaLocChangeButton.setText("<html>Change<br>location<html>");
                     betaLocChangeButton.setBackground(Color.BLUE);
                     betaLocChangeMode = true;
-                    //overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.BETA);
                 } else {
                     betaLocChangeButton.setText("<html>Beta<br>offset<html>");
                     betaLocChangeButton.setBackground(Color.GREEN);
                     betaLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.BETA);
                 }
             }
             private ActionListener yesWeCan(Transition transition, ElementLocation inLoc) {
@@ -4135,6 +4045,7 @@ public class HolmesDockWindowsTable extends JPanel {
         tauLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         tauLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
         tauLocChangeButton.setBounds(columnB_posX+130, columnB_Y, 65, 30);
+        tauLocChangeButton.setFocusPainted(false);
         if(transition.isAlphaActiveXTPN() || transition.isBetaActiveXTPN()) {
             if (tauLocChangeMode) {
                 tauLocChangeButton.setText("<html>Change<br>location<html>");
@@ -4159,12 +4070,12 @@ public class HolmesDockWindowsTable extends JPanel {
                     tauLocChangeButton.setText("<html>Change<br>location<html>");
                     tauLocChangeButton.setBackground(Color.BLUE);
                     tauLocChangeMode = true;
-                    //overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.TAU);
                 } else {
                     tauLocChangeButton.setText("<html>Tau<br>offset<html>");
                     tauLocChangeButton.setBackground(Color.GREEN);
                     tauLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.TAU);
                 }
             }
             private ActionListener yesWeCan(Transition transition, ElementLocation inLoc) {
@@ -4323,7 +4234,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         //mass-action for XTPN transition
         JCheckBox makCheckBox = new JCheckBox("Mass-Action kinetics");
-        makCheckBox.setBounds(columnA_posX-5, columnA_Y += 20, 160, 20);
+        makCheckBox.setBounds(columnA_posX-5, columnA_Y += 20, 150, 20);
         makCheckBox.setSelected(transition.isMassActionKineticsActiveXTPN());
         makCheckBox.addActionListener(actionEvent -> {
             if (doNotUpdate)
@@ -4335,6 +4246,17 @@ public class HolmesDockWindowsTable extends JPanel {
             //transition.setMassActionKineticsXTPNstatus(abstractButton.getModel().isSelected());
         });
         components.add(makCheckBox);
+
+        // immediate classical
+        JCheckBox immediateCheckBox = new JCheckBox("Immediate");
+        immediateCheckBox.setBounds(columnA_posX+150, columnA_Y, 100, 20);
+        immediateCheckBox.setSelected(transition.isMassActionKineticsActiveXTPN());
+        immediateCheckBox.addActionListener(actionEvent -> {
+            if (doNotUpdate)
+                return;
+            transition.setImmediateXTPN(immediateCheckBox.isSelected());
+        });
+        components.add(immediateCheckBox);
 
         // XTPN-transition FUNKCYJNOŚĆ
         JCheckBox functionalCheckBox = new JCheckBox("Functional", transition.isFunctional());
@@ -4381,6 +4303,19 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(portalBox);
 
+        JLabel fractionLabel = new JLabel("Fraction:", JLabel.LEFT);
+        fractionLabel.setBounds(columnA_posX, columnA_Y += 20, 50, 20);
+        components.add(fractionLabel);
+        int fract = transition.getFraction_xTPN();
+        SpinnerModel fractionSpinnerModel = new SpinnerNumberModel(fract, 1, 6, 1);
+        JSpinner fractionSpinner = new JSpinner(fractionSpinnerModel);
+        fractionSpinner.setBounds(columnB_posX, columnB_Y += 80, 40, 20);
+        fractionSpinner.addChangeListener(e -> {
+            int fraction = (int) ((JSpinner) e.getSource()).getValue();
+            transition.setFraction_xTPN(fraction);
+        });
+        components.add(fractionSpinner);
+
         // XTPN-transition SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
@@ -4396,7 +4331,7 @@ public class HolmesDockWindowsTable extends JPanel {
         sheetLabel.setBounds(columnA_posX, columnA_Y += 25, colACompLength, 20);
         components.add(sheetLabel);
         JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
-        sheetIdLabel.setBounds(columnB_posX, columnB_Y += 85, 100, 20);
+        sheetIdLabel.setBounds(columnB_posX, columnB_Y += 25, 100, 20);
         sheetIdLabel.setFont(normalFont);
         components.add(sheetIdLabel);
 
@@ -4416,22 +4351,25 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(comLabel2);
 
         SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
-        SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
         JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
+        locationXSpinner.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
         locationXSpinner.addChangeListener(e -> setX((int) ((JSpinner) e.getSource()).getValue()));
+
+        JLabel labelCom = new JLabel(" , ");
+        labelCom.setBounds(columnB_posX+60, columnB_Y, 10, 20);
+
+        SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
         JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
+        locationYSpinner.setBounds(columnB_posX+70, columnB_Y, 60, 20);
         locationYSpinner.addChangeListener(e -> setY((int) ((JSpinner) e.getSource()).getValue()));
         if (zoom != 100) {
             locationXSpinner.setEnabled(false);
             locationYSpinner.setEnabled(false);
         }
-        JPanel locationSpinnerPanel = new JPanel();
-        locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel, BoxLayout.X_AXIS));
-        locationSpinnerPanel.add(locationXSpinner);
-        locationSpinnerPanel.add(new JLabel(" , "));
-        locationSpinnerPanel.add(locationYSpinner);
-        locationSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, 160, 20);
-        components.add(locationSpinnerPanel);
+
+        components.add(locationXSpinner);
+        components.add(labelCom);
+        components.add(locationYSpinner);
 
         // XTPN-transition WSPÓŁRZĘDNE NAPISU:
         columnA_Y += 20;
@@ -4453,7 +4391,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locNameLabelX);
 
         JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
-        nameLocationXSpinner.setBounds(columnA_posX + 105, columnB_Y, 60, 20);
+        nameLocationXSpinner.setBounds(columnA_posX + 105, columnB_Y, 45, 20);
         nameLocationXSpinner.addChangeListener(new ChangeListener() {
             private Transition trans_tmp;
             private ElementLocation el_tmp;
@@ -4474,15 +4412,14 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(nameLocationXSpinner);
 
         JLabel locNameLabelY = new JLabel("y:", JLabel.LEFT);
-        locNameLabelY.setBounds(columnA_posX + 175, columnB_Y, 20, 20);
+        locNameLabelY.setBounds(columnA_posX + 160, columnB_Y, 10, 20);
         components.add(locNameLabelY);
 
         JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
-        nameLocationYSpinner.setBounds(columnA_posX + 190, columnA_Y, 60, 20);
+        nameLocationYSpinner.setBounds(columnA_posX + 175, columnA_Y, 45, 20);
         nameLocationYSpinner.addChangeListener(new ChangeListener() {
             private Transition trans_tmp;
             private ElementLocation el_tmp;
-
             public void stateChanged(ChangeEvent e) {
                 if (doNotUpdate)
                     return;
@@ -4502,11 +4439,13 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(nameLocationYSpinner);
 
         // XTPN-transition zmiana lokalizacji napisu
-        JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
+        JButton nameLocChangeButton = new JButton("<html><center>Name<br>offset</center><html>");
         nameLocChangeButton.setName("LocNameChanger");
+        nameLocChangeButton.setBackground(Color.GREEN);
         nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
-        nameLocChangeButton.setBounds(columnA_posX + 90, columnA_Y += 25, 150, 40);
+        nameLocChangeButton.setBounds(columnB_posX+131, columnA_Y - 15, 65, 30);
+        nameLocChangeButton.setFocusPainted(false);
         nameLocChangeButton.addActionListener(new ActionListener() {
             // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
             private Transition trans_tmp;
@@ -4516,11 +4455,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 JButton button_tmp = (JButton) actionEvent.getSource();
 
                 if (!nameLocChangeMode) {
-                    button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
+                    button_tmp.setBackground(Color.BLUE);
                     nameLocChangeMode = true;
                     overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
-                    button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
+                    button_tmp.setBackground(Color.GREEN);
                     nameLocChangeMode = false;
                     overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }

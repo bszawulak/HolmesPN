@@ -864,6 +864,7 @@ public class SelectionManager {
 				if(place.isXTPNplace()) {
 					JOptionPane.showMessageDialog(null, "Cannot fast-increase tokens in XTPN place.",
 							"Operation unavailable", JOptionPane.WARNING_MESSAGE);
+					return;
 				} else {
 					if(overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
 						int tokens = place.getTokensNumber();
@@ -871,8 +872,6 @@ public class SelectionManager {
 						overlord.getWorkspace().getProject().accessStatesManager().getStatePN(0).setTokens(places.indexOf(place), tokens);
 					}
 				}
-
-
 			} else if(el.getParentNode().getType() == PetriNetElementType.META && !safetyNodesList.contains(el.getParentNode())) {
 				try {
 					MetaNode node = (MetaNode)el.getParentNode();

@@ -85,7 +85,7 @@ public class Place extends Node {
 	private boolean showTokenSet_xTPN = false; //czy wyświetlać zbiór tokenów
 
 	private boolean gammaRangeVisibility_XTPN = true;
-	private int franctionDigits = 6;
+	private int franctionDigits = 2;
 
 	//tokeny:
 	private ArrayList<Double> multisetK;

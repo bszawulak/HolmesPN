@@ -5,6 +5,7 @@ import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.data.P_StateManager;
 import holmes.petrinet.data.StatePlacesVectorXTPN;
 import holmes.petrinet.elements.Place;
+import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.utilities.Tools;
 import holmes.windows.managers.HolmesStatesEditorXTPN;
@@ -374,7 +375,10 @@ public class HolmesXTPNtokens extends JFrame {
     private void recreateComboBox() {
         tokensComboBox.removeAllItems();
         for(int p=0; p < place.accessMultiset().size(); p++) {
-            tokensComboBox.addItem("(\u03BA"+(p)+")  "+place.accessMultiset().get(p));
+            double token = place.accessMultiset().get(p);
+
+
+            tokensComboBox.addItem("(\u03BA"+(p)+")  " + Tools.cutValueExt(token, place.getFraction_xTPN()) );
         }
     }
 }

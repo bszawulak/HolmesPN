@@ -198,7 +198,7 @@ public class IOprotocols {
             DataInputStream in = new DataInputStream(new FileInputStream(path));
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
             String readLine = buffer.readLine();
-            String backup = readLine;
+            //String backup = readLine;
 
             buffer.readLine();
             while (!readLine.contains("semipositive transition invariants =")) {
@@ -262,16 +262,12 @@ public class IOprotocols {
      * @return boolean - true, jeśli operacja się powiodła
      */
     public ArrayList<ArrayList<Integer>> readP_invariantsOut(String path) {
-
-        //TODO
-        //unifikować z t?
-
         try {
             resetComponents();
             DataInputStream in = new DataInputStream(new FileInputStream(path));
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
             String readLine = buffer.readLine();
-            String backup = readLine;
+            //String backup = readLine;
 
             buffer.readLine();
             while (!readLine.contains("semipositive place invariants =")) {
@@ -643,10 +639,10 @@ public class IOprotocols {
             ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
             int transSetSize = transitions.size();
 
-            ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+            ArrayList<Integer> tmpInvariant;
 
             line = buffer.readLine();
-            while (line != null && line.length() > 0 && line.contains("Elementary")) {
+            while (line != null && line.contains("Elementary")) {
                 tmpInvariant = new ArrayList<Integer>();
                 for (int t = 0; t < transSetSize; t++) //init
                     tmpInvariant.add(0);
@@ -717,10 +713,10 @@ public class IOprotocols {
 
             ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
             int placesSetSize = places.size();
-            ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+            ArrayList<Integer> tmpInvariant;
 
             line = buffer.readLine();
-            while (line != null && line.length() > 0 && line.contains("Place")) {
+            while (line != null && line.contains("Place")) {
                 tmpInvariant = new ArrayList<Integer>();
                 for (int t = 0; t < placesSetSize; t++) //init
                     tmpInvariant.add(0);
@@ -1357,8 +1353,8 @@ public class IOprotocols {
                         // Etap II
                         // Wczytywanie danych o miejscach
 
-                        if ((readLine.contains("capacity") && readLine.contains("time")
-                                && readLine.contains("name")) || readLine.equals("@")) {
+                        if ((readLine.contains("capacity") && readLine.contains("time") && readLine.contains("name")) || readLine.equals("@")) {
+
                         } else {
                             tabWczytanaLinia = readLine.split(": ");
                             //String[] tmp4 = tabWczytanaLinia[0].split(" ");
@@ -1907,7 +1903,7 @@ public class IOprotocols {
         ArrayList<HolmesBranchVerticesPrototype.BranchStructure> sn = new ArrayList<>();
         try {
             // Reading the object from a file
-            FileInputStream file = new FileInputStream(new File(absolutePath));
+            FileInputStream file = new FileInputStream(absolutePath);
             ObjectInputStream in = new ObjectInputStream(file);
 
             // Method for deserialization of object
@@ -1973,7 +1969,7 @@ public class IOprotocols {
     public void importSubnetFromFile(String absolutePath, int x, int y) {
         try {
             // Reading the object from a file
-            FileInputStream file = new FileInputStream(new File(absolutePath));
+            FileInputStream file = new FileInputStream(absolutePath);
             ObjectInputStream in = new ObjectInputStream(file);
 
             // Method for deserialization of object

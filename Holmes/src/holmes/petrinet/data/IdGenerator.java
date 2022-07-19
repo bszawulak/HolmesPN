@@ -2,7 +2,6 @@ package holmes.petrinet.data;
 
 /**
  * Generator identyfikatorów dla elementów sieci.
- * 
  * @author students
  * @author MR
  */
@@ -19,7 +18,11 @@ public class IdGenerator {
 		lastPlaceId = 0;
 		lastTransitionId = 0;
 	}
-	
+
+	/**
+	 * Zwraca w formie tekstowej trzy wartości graniczne: lastID, ID ostatniego miejsca i ostatniej tranzycji.
+	 * @return (<b>String</b>) lista trzech ID.
+	 */
 	public static String getCurrentValues() {
 		String result = "";
 		result += lastId;
@@ -32,7 +35,7 @@ public class IdGenerator {
 	
 	/**
 	 * Metoda zwraca nowy wolny identyfikator.
-	 * @return int - wartość ID
+	 * @return (<b>int</b>) - wartość ID.
 	 */
 	public static int getNextId()
 	{
@@ -41,7 +44,7 @@ public class IdGenerator {
 	
 	/**
 	 * Metoda ustawia początkową wartość identyfikatora.
-	 * @param id int - nowa wartość startowa
+	 * @param id (<b>int</b>) nowa wartość startowa.
 	 */
 	public static void setStartId(int id)
 	{

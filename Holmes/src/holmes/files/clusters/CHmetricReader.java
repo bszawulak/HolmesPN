@@ -38,8 +38,8 @@ public class CHmetricReader {
 	 * w nim zawarte na obiekt ArrayList[Double]
 	 * @param source String - ścieżka do pliku
 	 * @return ArrayList[Double] - wartości miary
-	 * @throws NumberFormatException
-	 * @throws IOException
+	 * @throws NumberFormatException ex1
+	 * @throws IOException ex1
 	 */
 	private ArrayList<Double> parseSingleClusterInfo(String source) throws NumberFormatException, IOException {
 		ArrayList<Double> measureValuesHC = new ArrayList<Double>();
