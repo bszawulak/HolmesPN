@@ -180,6 +180,22 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public GUIManager(JFrame frejm) {
 		super(new BorderLayout());
+		/*
+		try {
+			for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (Exception e) {
+			// If Nimbus is not available, you can set the GUI to another look and feel.
+		}
+
+		 */
+
+
+
 
 		//JavaDocking wysypuje się jeśli numer wersji nie posiada przynajmniej jednej .
 		if(!System.getProperty("java.version").contains("."))
