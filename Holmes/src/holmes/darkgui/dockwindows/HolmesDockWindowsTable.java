@@ -624,7 +624,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(optionsLavel);
 
             HolmesRoundedButton loopSimulation = new HolmesRoundedButton(""
-                    , "/simulator/simStart1.png", "/simulator/simStart2.png", "/simulator/simStart3.png");
+                    , "simulator/simStart1.png", "simulator/simStart2.png", "simulator/simStart3.png");
             loopSimulation.setName("XTPNstart");
             loopSimulation.setBounds(internalX, internalY += 20, 50, 50);
             loopSimulation.setToolTipText("Loop simulation");
@@ -636,7 +636,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(loopSimulation);
 
             HolmesRoundedButton pauseSimulation = new HolmesRoundedButton(""
-                    , "/simulator/simPause1.png", "/simulator/simPause2.png", "/simulator/simPause3.png");
+                    , "simulator/simPause1.png", "simulator/simPause2.png", "simulator/simPause3.png");
             pauseSimulation.setName("XTPNpause");
             pauseSimulation.setBounds(internalX+40, internalY, 50, 50);
             pauseSimulation.setToolTipText("Pause simulation");
@@ -649,7 +649,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(pauseSimulation);
 
             HolmesRoundedButton stopSimulation = new HolmesRoundedButton(""
-                    , "/simulator/simStop1.png", "/simulator/simStop2.png", "/simulator/simStop2.png");
+                    , "simulator/simStop1.png", "simulator/simStop2.png", "simulator/simStop2.png");
             stopSimulation.setName("XTPNstop");
             stopSimulation.setBounds(internalX+80, internalY, 50, 50);
             stopSimulation.setToolTipText("Schedule a stop for the simulation");
