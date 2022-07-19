@@ -29,6 +29,7 @@ import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.subnets.SubnetsTools;
 import holmes.utilities.Tools;
+import holmes.varia.NetworkTransformations;
 import holmes.workspace.WorkspaceSheet;
 
 /**
@@ -65,11 +66,8 @@ public class GraphPanel extends JComponent {
 		SUBNET_T, SUBNET_P, SUBNET_PT, CPLACE, CARC, XTRANSITION, XPLACE */
 	public enum DrawModes { POINTER, ERASER, PLACE, 
 		TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, STOCHASTICTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
-		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
-		SUBNET_T, SUBNET_P, SUBNET_PT,
-		CPLACE, CTRANSITION, CARC,
-
-		XTRANSITION, XPLACE, XARC}
+		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER, SUBNET_T, SUBNET_P, SUBNET_PT, CPLACE,
+		CTRANSITION, CARC, XTRANSITION, XPLACE, XARC}
 	
 	/** Jeśli nie jest równy null, to znaczy, że właśnie przesuwamy jakiś punkt łamiący łuk */
 	public Point arcBreakPoint = null;
@@ -515,7 +513,8 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewPlace(Point p) {
 		if (isLegalLocation(p)) {
-			Place place = new Place(IdGenerator.getNextId(), this.sheetId, p);
+
+			Place place = new Place(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
 			this.getSelectionManager().selectOneElementLocation(place.getLastLocation());
 			getNodes().add(place);
 			overlord.getWorkspace().getProject().accessStatesManager().addPlace(place);
@@ -529,7 +528,7 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewCPlace(Point p) {
 		if (isLegalLocation(p)) {
-			Place place = new Place(IdGenerator.getNextId(), this.sheetId, p);
+			Place place = new Place(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
 			place.isColored = true;
 			this.getSelectionManager().selectOneElementLocation(place.getLastLocation());
 			getNodes().add(place);
@@ -544,7 +543,7 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewTransition(Point p) {
 		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, p);
+			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
@@ -557,7 +556,7 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewStochasticTransition(Point p) {
 		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, p);
+			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
 			n.setSPNtype(Transition.StochaticsType.ST);
 			n.setTransType(TransitionType.SPN);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
@@ -572,7 +571,7 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewCTransition(Point p) {
 		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, p);
+			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
 			n.setTransType(TransitionType.CPNbasic);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
@@ -586,7 +585,7 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewTimeTransition(Point p) {
 		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, p);
+			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
 			n.setTransType(TransitionType.TPN);
 			n.setTPNstatus(true);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
@@ -601,7 +600,7 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewXTPNTransition(Point p) {
 		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, p);
+			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
 			n.setTransType(TransitionType.XTPN);
 			n.setXTPNstatus(true);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
@@ -616,7 +615,7 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewNXTPNPlace(Point p) {
 		if (isLegalLocation(p)) {
-			Place place = new Place(IdGenerator.getNextId(), this.sheetId, p);
+			Place place = new Place(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
 			place.setXTPNplaceStatus(true);
 			this.getSelectionManager().selectOneElementLocation(place.getLastLocation());
 			getNodes().add(place);
@@ -632,7 +631,7 @@ public class GraphPanel extends JComponent {
 	@SuppressWarnings("unused")
 	private void addNewFunctionalTransition(Point p) {
 		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, p);
+			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
 			n.setFunctional(true);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
