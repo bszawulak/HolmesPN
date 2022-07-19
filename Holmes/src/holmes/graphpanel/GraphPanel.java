@@ -1568,6 +1568,11 @@ public class GraphPanel extends JComponent {
 				movePoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
 				drawnArc.setEndPoint(movePoint);
 				drawnArc.checkIsCorect(getSelectionManager().getPossiblySelectedElementLocation(movePoint));
+				if(drawnArc.getIsCorect())
+				{
+					ElementLocation el = getSelectionManager().getPossiblySelectedElementLocation(movePoint);
+					drawnArc.setEndPoint(el.getPosition());
+				}
 				e.getComponent().repaint();
 			} else {
 				//clearDrawnArc(); //WTH?!
