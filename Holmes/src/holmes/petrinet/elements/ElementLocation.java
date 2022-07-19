@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.varia.NetworkTransformations;
 import holmes.workspace.Workspace;
 
 /**
@@ -41,7 +42,7 @@ public class ElementLocation implements Serializable {
 	 * @param parentNode Node - wierzchołek, do którego należy lokalizacja
 	 */
 	public ElementLocation(int sheetId, Point position, Node parentNode) {
-		this.position = position;
+		this.position = NetworkTransformations.alignToGrid(position);
 		this.notSnappedPosition = position;
 		this.sheetId = sheetId;
 		this.parentNode = parentNode;
