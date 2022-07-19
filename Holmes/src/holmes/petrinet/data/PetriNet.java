@@ -791,7 +791,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * wierzchołków oraz łuków.
 	 * @param graphPanel - nowy arkusz
 	 */
-	@SuppressWarnings("unused")
 	public void addGraphPanel(GraphPanel graphPanel) {
 		graphPanel.setNodesAndArcs(this.getDataCore().nodes, this.getDataCore().arcs);
 		this.getGraphPanels().add(graphPanel);

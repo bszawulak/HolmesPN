@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
@@ -27,13 +28,13 @@ import holmes.workspace.ExtensionFileFilter;
  * @author students
  */
 public class SheetPopupMenu extends GraphPanelPopupMenu {
+    @Serial
     private static final long serialVersionUID = 3206422633820189233L;
-    public int x = 0;
-    public int y = 0;
+    public int x;
+    public int y;
 
     /**
      * Konstruktor obiektu klasy SheetPopupMenu.
-     *
      * @param graphPanel GraphPanel - panel dla którego powstaje menu
      */
     public SheetPopupMenu(GraphPanel graphPanel, PetriNetElementType pne) {
@@ -164,9 +165,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         netMenu.add(createMenuItem("Show TPN transitions", "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(0)));
         netMenu.add(createMenuItem("Show DPN transitions", "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(1)));
         netMenu.add(createMenuItem("Show TPN/DPN transitions", "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(2)));
-
         netMenu.add(createMenuItem("Fix Snoopy compatibility", "", null, arg0 -> GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility()));
-
 
         //SUBNET IMPORT PROTOTYP
         this.addSeparator();
@@ -227,7 +226,6 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
     /**
      * Metoda eksportująca rysunek sieci do pliku - dla klikniętego arkusza.
      */
-
     private void exportToFile() {
         JFileChooser fc = new JFileChooser();
         FileFilter pngFilter = new ExtensionFileFilter(

@@ -7,12 +7,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.XMLEncoder;
 import java.io.FileOutputStream;
+import java.io.Serial;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
-import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.utilities.Tools;
@@ -23,10 +23,9 @@ import holmes.utilities.Tools;
  *
  */
 public class GraphPanelPopupMenu extends JPopupMenu {
+	@Serial
 	private static final long serialVersionUID = 2192129184059718857L;
-	
-	@SuppressWarnings("unused")
-	private GUIManager guiManager;
+
 	private GraphPanel graphPanel;
 
 	protected JMenuItem cutMenuItem;
@@ -38,7 +37,6 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	 * @param graphPanel GraphPanel - obiekt dla którego powstaje menu kontekstowe
 	 */
 	public GraphPanelPopupMenu(GraphPanel graphPanel, PetriNetElementType pne) {
-		this.guiManager = GUIManager.getDefaultGUIManager();
 		this.setGraphPanel(graphPanel);
 		
 		if(pne != PetriNetElementType.META)
@@ -50,7 +48,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	 */
 	public void createPredefineMenuItems() {
 		cutMenuItem = this.createMenuItem("Cut", "cut.png",
-				KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK),
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						// getGraphPanel().removeAllSelectedElementLocations();
@@ -58,7 +56,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 				});
 
 		copyMenuItem = this.createMenuItem("Copy", "copying_and_distribution.png",
-				KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),
+				KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK),
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						@SuppressWarnings("unused")

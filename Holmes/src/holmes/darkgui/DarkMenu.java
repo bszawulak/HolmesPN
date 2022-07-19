@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import holmes.darkgui.dockable.DockableMenuItem;
+import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesInvariantsViewer;
@@ -185,6 +186,51 @@ public class DarkMenu extends JMenuBar {
 					}
 		});
 		fileMenu.add(exitMenuItem);
+
+		//*********************************************************************************************
+		//***********************************                 *****************************************
+		//***********************************     VIEW MENU   *****************************************
+		//***********************************                 *****************************************
+		//*********************************************************************************************
+
+		JMenu viewMenu = new JMenu("View");
+		viewMenu.setMnemonic(KeyEvent.VK_V);
+		viewMenu.getAccessibleContext().setAccessibleDescription("View menu");
+		this.add(viewMenu);
+
+		// Net properties
+		JMenuItem resetZoomItem = new JMenuItem("Zoom 100%", KeyEvent.VK_1);
+		resetZoomItem.setIcon(Tools.getResIcon32("/icons/menu/menu_zoom_reset.png"));
+		resetZoomItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F10, InputEvent.CTRL_DOWN_MASK));
+		resetZoomItem.getAccessibleContext().setAccessibleDescription("Reset zoom to 100%");
+		resetZoomItem.addActionListener(arg0 -> {
+			for(GraphPanel gp : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels()) {
+				gp.setZoom(100, gp.getZoom());
+			}
+		});
+		viewMenu.add(resetZoomItem);
+
+		JMenuItem incZoomItem = new JMenuItem("Increase zoom 10%", KeyEvent.VK_2);
+		incZoomItem.setIcon(Tools.getResIcon32("/icons/menu/menu_zoom_inc.png"));
+		incZoomItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, InputEvent.CTRL_DOWN_MASK));
+		incZoomItem.getAccessibleContext().setAccessibleDescription("Increase zoom 10%");
+		incZoomItem.addActionListener(arg0 -> {
+			for(GraphPanel gp : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels()) {
+				gp.setZoom((int)(gp.getZoom() * 1.1), gp.getZoom());
+			}
+		});
+		viewMenu.add(incZoomItem);
+
+		JMenuItem decZoomItem = new JMenuItem("Decrease zoom 10%", KeyEvent.VK_2);
+		decZoomItem.setIcon(Tools.getResIcon32("/icons/menu/menu_zoom_dec.png"));
+		decZoomItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F12, InputEvent.CTRL_DOWN_MASK));
+		decZoomItem.getAccessibleContext().setAccessibleDescription("Decrease zoom 10%");
+		decZoomItem.addActionListener(arg0 -> {
+			for(GraphPanel gp : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels()) {
+				gp.setZoom((int)(gp.getZoom() * 0.9), gp.getZoom());
+			}
+		});
+		viewMenu.add(decZoomItem);
 		
 		//*********************************************************************************************
 		//***********************************                 *****************************************

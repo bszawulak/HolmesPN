@@ -999,7 +999,7 @@ public class GraphPanel extends JComponent {
 			
 			mousePt = e.getPoint();
 			mousePt.setLocation(e.getPoint().getX() * 100 / zoom, e.getPoint().getY() * 100 / zoom);
-			ElementLocation el = getSelectionManager().getPossiblySelectedElementLocation(mousePt);
+			ElementLocation el = getSelectionManager().getPossiblySelectedElementLocation(mousePt, 0);
 			Arc a = getSelectionManager().getPossiblySelectedArc(mousePt);
 			
 			if(a != null && el == null && e.getButton() == MouseEvent.BUTTON1) {
@@ -1566,10 +1566,10 @@ public class GraphPanel extends JComponent {
 				Point movePoint = e.getPoint();
 				movePoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
 				drawnArc.setEndPoint(movePoint);
-				drawnArc.checkIsCorect(getSelectionManager().getPossiblySelectedElementLocation(movePoint));
+				drawnArc.checkIsCorect(getSelectionManager().getPossiblySelectedElementLocation(movePoint, 0));
 				if(drawnArc.getIsCorect())
 				{
-					ElementLocation el = getSelectionManager().getPossiblySelectedElementLocation(movePoint);
+					ElementLocation el = getSelectionManager().getPossiblySelectedElementLocation(movePoint, 20);
 					drawnArc.setEndPoint(el.getPosition());
 				}
 				e.getComponent().repaint();
@@ -1594,7 +1594,6 @@ public class GraphPanel extends JComponent {
 		 * też SHIFT czy też żaden klawisz - działania są różne.
 		 * @param e MouseWheelEvent - obiekt klasy przekazywany w efekcie użycia wałka myszy
 		 */
-		@SuppressWarnings("unused")
 		public void mouseWheelMoved(MouseWheelEvent e) {
 			if (e.isControlDown()) { //zoom
 				double oldZoom = getZoom();
@@ -1605,15 +1604,8 @@ public class GraphPanel extends JComponent {
 				Point dragPoint = e.getPoint();
 				Point newPoint = new Point();
 				newPoint.setLocation(e.getX() * 100 / newZoom, e.getY() * 100 / newZoom);
-				
 				centerOnPoint(newPoint);
-				
-				try {
-					//Robot robot = new Robot();
-					//robot.mouseMove(dragPoint.x, dragPoint.y);
-				} catch (Exception e1) {
-					//e1.printStackTrace();
-				}
+
 			} else if (e.isShiftDown()) {  // przewijanie lewo/prawo
 				if(overlord.getNameLocChangeMode() != GUIManager.locationMoveType.NONE) { //przewijanie lokalizacji napisu
 					Point newP = nameLocationChangeHorizontal(e.getWheelRotation() * e.getScrollAmount()

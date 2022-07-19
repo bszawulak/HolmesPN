@@ -36,24 +36,24 @@ public class Transition extends Node {
      * PN, TPN, SPN, XTPN, CPNbasic
      */
     public enum TransitionType {PN, TPN, SPN, XTPN, CPNbasic} //, DPN, TDPN, CPNbasic }
-    private TransitionType transType;
-    private static final int realRadius = 15;
+    protected TransitionType transType;
+    protected static final int realRadius = 15;
 
     //podstawowe właściwości:
-    private boolean isLaunching;
-    private boolean isGlowedINV = false;
-    private boolean isGlowedMTC = false;
+    protected boolean isLaunching;
+    protected boolean isGlowedINV = false;
+    protected boolean isGlowedMTC = false;
     //protected boolean isGlowedSub = false;
     protected boolean offline = false;        // czy wyłączona (MCS, inne)
 
 
     //wyświetlanie dodatkowych tekstów nad ikoną:
-    private boolean isColorChanged = false;        //zmiana koloru - status
-    private double transNumericalValue = 0.0;        //dodatkowa liczba do wyświetlenia
-    private String transAdditionalText = "";
-    private boolean showTransitionAddText = false;
-    private Color transColorValue = new Color(255, 255, 255);
-    private boolean valueVisibilityStatus = false;
+    protected boolean isColorChanged = false;        //zmiana koloru - status
+    protected double transNumericalValue = 0.0;        //dodatkowa liczba do wyświetlenia
+    protected String transAdditionalText = "";
+    protected boolean showTransitionAddText = false;
+    protected Color transColorValue = new Color(255, 255, 255);
+    protected boolean valueVisibilityStatus = false;
     //inne napisy, np MCT (?)
     public int txtXoff = 0;
     public int txtYoff = 0;
@@ -73,40 +73,39 @@ public class Transition extends Node {
     public boolean borderFrame = false;
 
     //opcje czasowe:
-    private double TPN_eft = 0; //TPN
-    private double TPN_lft = 0; //TPN
-    private double TPNtimerLimit = -1; //TPN
-    private double TPNtimer = -1; //TPN
-    private double DPNduration = 0; //DPN
-    private double DPNtimer = -1; //DPN
-    private boolean TPNactive = false;
-    private boolean DPNactive = false;
+    protected double TPN_eft = 0; //TPN
+    protected double TPN_lft = 0; //TPN
+    protected double TPNtimerLimit = -1; //TPN
+    protected double TPNtimer = -1; //TPN
+    protected double DPNduration = 0; //DPN
+    protected double DPNtimer = -1; //DPN
+    protected boolean TPNactive = false;
+    protected boolean DPNactive = false;
 
     //opcje kolorow (basic) ?
-    private int reqT0red = 1;
-    private int reqT1green = 0;
-    private int reqT2blue = 0;
-    private int reqT3yellow = 0;
-    private int reqT4gray = 0;
-    private int reqT5black = 0;
+    protected int reqT0red = 1;
+    protected int reqT1green = 0;
+    protected int reqT2blue = 0;
+    protected int reqT3yellow = 0;
+    protected int reqT4gray = 0;
+    protected int reqT5black = 0;
 
     //tranzycja funkcyjna:
-    private boolean isFunctional = false;
-    private ArrayList<FunctionContainer> fList;
+    protected boolean isFunctional = false;
+    protected ArrayList<FunctionContainer> fList;
 
     //tranzycja stochastyczna:
     /**
      * ST, DT, IM, SchT, NONE - Stochastic Transition, Deterministic T., Immediate T., Scheduled T.
      */
     public enum StochaticsType {ST, DT, IM, SchT, NONE}
-    private StochaticsType stochasticType;
-    private double firingRate = 1.0;
-    private SPNtransitionData SPNbox = null;
+    protected StochaticsType stochasticType;
+    protected double firingRate = 1.0;
+    protected SPNtransitionData SPNbox = null;
     //SSA
-    private double SPNprobTime = 0.0;
-
+    protected double SPNprobTime = 0.0;
     //inne:
-    private int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
+    protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 
 
     /*  ***********************************************************************************
@@ -689,7 +688,6 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca podtyp tranzycji.
-     *
      * @return TransitionType - podtyp
      */
     public TransitionType getTransType() {

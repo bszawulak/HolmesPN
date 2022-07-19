@@ -2,8 +2,6 @@ package holmes.petrinet.data;
 
 /**
  * Generator identyfikatorów dla elementów sieci.
- * @author students
- * @author MR
  */
 public class IdGenerator {
 	private static int lastId = 0;

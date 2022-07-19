@@ -236,14 +236,16 @@ public class SelectionManager {
 	 * ElementLocation wszystkich wierzchołków zawartych na danym arkuszu, dla których
 	 * odległość punktu przekazanego w parametrze od punktu środkowego pozycji Point danej
 	 * lokalizacji wierzchołka ElementLocation.Postion jest mniejsza od promienia danego wierzchołka.
-	 * @param p Point - punkt dla którego będą sprawdzane warunki przecięcia
-	 * @return ElementLocation - dla którego warunek przecięcia został spełniony. Jeśli taka
+	 * @param p (<b>Point</b>) - punkt dla którego będą sprawdzane warunki przecięcia
+	 * @param additionalRange (<b>int</b>) [2022-07] dodatkowy zakres wyszukiwania w pixelach, do tej pory
+	 *                        tego nie było, więc tak jakby 0 dla działania domyślnego.
+	 * @return (<b>ElementLocation</b>) - dla którego warunek przecięcia został spełniony. Jeśli taka
 	 * 		lokalizacja nie została znaleziona, zwracana jest wartość null
 	 */
-	public ElementLocation getPossiblySelectedElementLocation(Point p) {
+	public ElementLocation getPossiblySelectedElementLocation(Point p, int additionalRange) {
 		for (Node n : this.getGraphPanelNodes()) {
 			int sheetID = this.getGraphPanel().getSheetId();
-			ElementLocation el = n.getLocationWhichContains(p, sheetID);
+			ElementLocation el = n.getLocationWhichContains(p, sheetID, additionalRange);
 			if (el != null)
 				return el;
 		}

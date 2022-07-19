@@ -42,7 +42,6 @@ public class ElementLocation implements Serializable {
 	 * @param parentNode Node - wierzchołek, do którego należy lokalizacja
 	 */
 	public ElementLocation(int sheetId, Point position, Node parentNode) {
-		//this.position = NetworkTransformations.alignToGrid(position);
 		this.position = position;
 		this.notSnappedPosition = position;
 		this.sheetId = sheetId;

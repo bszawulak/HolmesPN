@@ -17,11 +17,9 @@ import holmes.utilities.Tools;
 /**
  * Klasa implementująca wierzchołek sieci Petriego. Dziedziczą po niej klasy
  * reprezentujące miejsca (Place) oraz tranzycje (Transition). Zapewnia
- * implementację wspólnych dla nich funkcjonalności, jak rysowanie ich na
+ * implementację wspólnych dla nich funkcjonalności, takie jak rysowanie ich na
  * odpowiednim arkuszu czy umożliwienie tworzenia portali (wielu odnośników
  * graficznych do jednego wierzchołka sieci).
- * @author students - główna forma
- * @author MR - drobne poprawki
  */
 public abstract class Node extends PetriNetElement {
 	@Serial
@@ -35,8 +33,6 @@ public abstract class Node extends PetriNetElement {
 	private ArrayList<ElementLocation> tauLocations = new ArrayList<>();
 	private boolean isPortal = false;
 	private int radius = 20;
-	//final static float[] dash1 = { 2.0f };
-	//final static BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f);
 	private static final Font f_Big = new Font("TimesRoman", Font.BOLD, 14);
 	private static final Font f_BigL = new Font("TimesRoman", Font.PLAIN, 14);
 	private static final Color darkGreen = new Color(0, 75, 0);
@@ -388,15 +384,17 @@ public abstract class Node extends PetriNetElement {
 	/**
 	 * Metoda pozwala pobrać lokalizację wierzchołka sieci Petriego, której 
 	 * obszar rysowania zawiera dany punkt na danym arkuszu.
-	 * @param point Point - sprawdzany punkt
-	 * @param sheetId int - identyfikator arkusza
-	 * @return ElementLocation - lokalizacja wierzchołka sieci Petriego, 
-	 * 		której obszar rysowania zawiera wybrany punkt na wybranym arkuszu
+	 * @param point (<b>Point</b>) sprawdzany punkt.
+	 * @param sheetId (<b>int</b>) identyfikator arkusza.
+	 * @param additionalRange (<b>int</b>) [2022-07] dodatkowy zakres wyszukiwania w pixelach, do tej pory
+	 *                        tego nie było, więc tak jakby 0 dla działania domyślnego.
+	 * @return (<b>ElementLocation</b>) - lokalizacja wierzchołka sieci Petriego,
+	 * 		której obszar rysowania zawiera wybrany punkt na wybranym arkuszu.
 	 */
-	public ElementLocation getLocationWhichContains(Point point, int sheetId) {
+	public ElementLocation getLocationWhichContains(Point point, int sheetId, int additionalRange) {
 		for (ElementLocation e : this.getNodeLocations(sheetId)) {
-			if (e.getPosition().x - getRadius() < point.x && e.getPosition().y - getRadius() < point.y
-					&& e.getPosition().x + getRadius() > point.x && e.getPosition().y + getRadius() > point.y)
+			if (e.getPosition().x - getRadius() - additionalRange < point.x && e.getPosition().y - getRadius() - additionalRange < point.y
+					&& e.getPosition().x + getRadius() + additionalRange > point.x && e.getPosition().y + getRadius() + additionalRange > point.y)
 				return e;
 		}
 		return null;

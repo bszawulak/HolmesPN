@@ -32,16 +32,14 @@ public class Place extends Node {
 	@Serial
 	private static final long serialVersionUID = 2346995422046987174L;
 	protected static int realRadius = 18;
-	private int tokensNumber = 0;
-	private int reservedTokens = 0;
-
-
-	private boolean isColorChanged;
-	private Color placeColorValue;
-	private boolean valueVisibilityStatus;
-	private double placeNumericalValue;
-	private boolean showPlaceAddText;
-	private String placeAdditionalText;
+	protected int tokensNumber = 0;
+	protected int reservedTokens = 0;
+	protected boolean isColorChanged;
+	protected Color placeColorValue;
+	protected boolean valueVisibilityStatus;
+	protected double placeNumericalValue;
+	protected boolean showPlaceAddText;
+	protected String placeAdditionalText;
 	public int txtXoff;
 	public int txtYoff;
 	public int valueXoff;
@@ -49,7 +47,7 @@ public class Place extends Node {
 	public Color defColor = Color.WHITE;
 	
 	//SSA:
-	private double ssaValue = 0.0;
+	protected double ssaValue = 0.0;
 	//quickSim
 	public boolean qSimDrawed = false; //czy rysować dodatkowe oznaczenie miejsca - okrąg
 	public int qSimOvalSize = 10; //rozmiar okręgu oznaczającego
@@ -73,29 +71,28 @@ public class Place extends Node {
 	public int reserved4grey = 0;
 	public int reserved5black = 0;
 
+
+	protected boolean isXTPN = false; //czy tokeny marzą o elektrycznych tranzycjach?
+
 	/* ***********************************************************************************
 	   ********************************    xTPN    ***************************************
 	   *********************************************************************************** */
-	private boolean isXTPN = false; //czy tokeny marzą o elektrycznych tranzycjach?
 	private double gammaMin_xTPN = 0.0;
 	private double gammaMax_xTPN = 99;
 	private boolean gammaMode_xTPN = true;
-
 	//grafika:
 	private boolean showTokenSet_xTPN = false; //czy wyświetlać zbiór tokenów
-
 	private boolean gammaRangeVisibility_XTPN = true;
 	private int franctionDigits = 2;
-
 	//tokeny:
 	private ArrayList<Double> multisetK;
-	//private ArrayList<Double> reservedMultisetK;
+
 
 	/**
 	 * Konstruktor obiektu miejsca sieci.
-	 * @param nodeId int - identyfikator wierzchołka
-	 * @param sheetId int - identyfikator arkusza
-	 * @param placePosition Point - punkt lokalizacji
+	 * @param nodeId (<b>int</b>) identyfikator wierzchołka.
+	 * @param sheetId (<b>int</b>) identyfikator arkusza.
+	 * @param placePosition (<b>Point</b>) punkt lokalizacji.
 	 */
 	public Place(int nodeId, int sheetId, Point placePosition) {
 		super(sheetId, nodeId, placePosition, realRadius);
@@ -103,16 +100,15 @@ public class Place extends Node {
 		this.setType(PetriNetElementType.PLACE);
 
 		this.multisetK = new ArrayList<>();
-		//this.reservedMultisetK = new ArrayList<>();
 	}
 
 	/**
-	 * Konstruktor obiektu miejsca sieci - wczytywanie sieci zewnętrznej, np. ze Snoopy
-	 * @param nodeId int - identyfikator wierzchołka
-	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji 
-	 * @param name String - nazwa miejsca
-	 * @param comment String - komentarz miejsca
-	 * @param tokensNumber int - liczba tokenów
+	 * Konstruktor obiektu miejsca sieci - wczytywanie sieci zewnętrznej, np. ze Snoopy.
+	 * @param nodeId (<b>int</b>) identyfikator wierzchołka.
+	 * @param elementLocations (<b>ArrayList[ElementLocation]</b>) lista lokalizacji .
+	 * @param name (<b>String</b>) nazwa miejsca.
+	 * @param comment (<b>String</b>) komentarz miejsca.
+	 * @param tokensNumber (<b>int</b>) liczba tokenów.
 	 */
 	public Place(int nodeId, ArrayList<ElementLocation> elementLocations, String name, String comment, int tokensNumber) {
 		super(nodeId, elementLocations, realRadius);
@@ -122,13 +118,12 @@ public class Place extends Node {
 		this.setType(PetriNetElementType.PLACE);
 
 		this.multisetK = new ArrayList<>();
-		//this.reservedMultisetK = new ArrayList<>();
 	}
 
 	/**
 	 * Konstruktor obiektu miejsca sieci - tworzenie portali.
-	 * @param nodeId int - identyfikator wierzchołka
-	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji 
+	 * @param nodeId (<b>int</b>) identyfikator wierzchołka.
+	 * @param elementLocations (<b>ArrayList[ElementLocation]</b>) lista lokalizacji.
 	 */
 	public Place(int nodeId, ArrayList<ElementLocation> elementLocations) {
 		super(nodeId, elementLocations, realRadius);
@@ -136,7 +131,6 @@ public class Place extends Node {
 		this.setType(PetriNetElementType.PLACE);
 
 		this.multisetK = new ArrayList<>();
-		//this.reservedMultisetK = new ArrayList<>();
 	}
 
 	/**
