@@ -8,9 +8,12 @@ import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
+import holmes.darkgui.toolbar.GUIController;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.P_StateManager;
@@ -103,6 +106,19 @@ public class HolmesStatesManager extends JFrame {
 		tabbedPane.addTab("XTPN", mainXTPN);
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 		add(tabbedPane, BorderLayout.CENTER);
+
+		tabbedPane.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				int selected = ((JTabbedPane)e.getSource()).getSelectedIndex();
+				if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
+					if(selected == 0) {
+
+					}
+				}
+				//
+				//System.out.println("Tab: " + tabbedPane.getSelectedIndex());
+			}
+		});
 	}
 	
 	/**

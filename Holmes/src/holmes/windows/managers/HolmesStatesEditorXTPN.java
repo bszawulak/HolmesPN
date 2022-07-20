@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import holmes.darkgui.GUIManager;
@@ -34,12 +36,14 @@ public class HolmesStatesEditorXTPN extends JFrame {
     private static final long serialVersionUID = 3176765993380657329L;
     private HolmesStatesManager parentWindow;
     private HolmesStatesEditorXTPN ego;
+    private RXTable multisetsTable;
     private StatesPlacesEditorTableModelXTPN tableModel;
     private StatePlacesVectorXTPN stateVectorXTPN;
     private int stateIndex;
     private ArrayList<Place> places;
     private P_StateManager statesManager;
-    private long globalTokensNumber = 0;
+
+    private boolean doNotListen;
 
     /**
      * Główny konstruktor okna edycji stanu sieci.
@@ -54,6 +58,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
         } catch (Exception ignored) {
 
         }
+        doNotListen = true;
         GUIManager overlord = GUIManager.getDefaultGUIManager();
         PetriNet pn = overlord.getWorkspace().getProject();
         this.parentWindow = parent;
@@ -67,7 +72,9 @@ public class HolmesStatesEditorXTPN extends JFrame {
         initiateListeners();
         fillTable();
         setVisible(true);
+        //multisetsTable.setRowSelectionInterval(0, 0);
         parentWindow.setEnabled(false);
+        doNotListen = false;
     }
 
     /**
@@ -76,13 +83,19 @@ public class HolmesStatesEditorXTPN extends JFrame {
     public void fillTable() {
         tableModel.clearModel();
         int size = stateVectorXTPN.getSize();
-        for(int p=0; p<size; p++) {
-            ArrayList<Double> multiset = stateVectorXTPN.getMultisetK(p);
+        for(int placeIndex=0; placeIndex<size; placeIndex++) {
+            ArrayList<Double> multiset = stateVectorXTPN.getMultisetK(placeIndex);
             StringBuilder line = new StringBuilder();
+            if(multiset.size() == 0) {
+
+            }
             for(Double d : multiset) {
                 line.append(d).append(" | ");
             }
-            tableModel.addNew(p, places.get(p).getName(), line.toString());
+            tableModel.addNew(placeIndex, places.get(placeIndex).getName(), line.toString());
+        }
+        if(size > 0) {
+            //multisetsTable.setRowSelectionInterval(0, 0);
         }
 
         tableModel.fireTableDataChanged();
@@ -147,60 +160,8 @@ public class HolmesStatesEditorXTPN extends JFrame {
         CreationPanel.setBounds(posX, posY+=20, 600, 50);
         filler.add(CreationPanel);
 
-        /*
-        JButton changeAllButton = new JButton("<html>&nbsp;Set tokens&nbsp;<br>in all places</html>");
-        changeAllButton.setBounds(posX+620, posY, 120, 40);
-        changeAllButton.setMargin(new Insets(0, 0, 0, 0));
-        changeAllButton.setFocusPainted(false);
-        changeAllButton.setToolTipText("Sets same number of tokens in all places.");
-        changeAllButton.setIcon(Tools.getResIcon16("/icons/stateManager/changeAll.png"));
-        changeAllButton.addActionListener(actionEvent -> {
-            if(places.size() == 0) {
-                return;
-            }
-            changeGlobalTokensNumber();
-        });
-        result.add(changeAllButton);
-
-        JLabel locLabel = new JLabel("New tokens number:", JLabel.LEFT);
-        locLabel.setBounds(posX+750, posY, 120, 20);
-        result.add(locLabel);
-
-        SpinnerModel tokensSpinnerModel = new SpinnerNumberModel(0, 0, Long.MAX_VALUE, 1);
-        JSpinner tokensSpinner = new JSpinner(tokensSpinnerModel);
-        tokensSpinner.setBounds(posX+750, posY+20, 120, 20);
-        tokensSpinner.addChangeListener(e -> {
-            double tokens = (double) ((JSpinner) e.getSource()).getValue();
-            globalTokensNumber = (int) tokens;
-        });
-        result.add(tokensSpinner);
-        */
-
-
         result.add(filler, BorderLayout.CENTER);
         return result;
-    }
-
-    /**
-     * Metoda zmienia liczbę tokenów w wektorze na podaną w oknie.
-     */
-    protected void changeGlobalTokensNumber() {
-        Object[] options = {"Change all", "Cancel",};
-        int n = JOptionPane.showOptionDialog(null,
-                "Change ALL current tokens in state to the new value: "+globalTokensNumber+"?",
-                "Change whole state?", JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-        if (n == 0) {
-            int size = stateVectorXTPN.getSize();
-            for(int p=0; p<size; p++) {
-                //TODO:
-                //stateVector.setTokens(p, globalTokensNumber);
-                tableModel.setQuietlyValueAt(globalTokensNumber, p, 2);
-                parentWindow.changeTableCell(stateIndex, p+2, globalTokensNumber, ( p == size - 1 ) );
-            }
-
-            tableModel.fireTableDataChanged();
-        }
     }
 
     /**
@@ -214,58 +175,61 @@ public class HolmesStatesEditorXTPN extends JFrame {
         result.setPreferredSize(new Dimension(500, 500));
 
         tableModel = new StatesPlacesEditorTableModelXTPN(this, stateIndex);
-        RXTable table = new RXTable(tableModel);
-        table.setSelectAllForEdit(true);
+        multisetsTable = new RXTable(tableModel);
+        multisetsTable.setSelectAllForEdit(false);
 
-        table.getColumnModel().getColumn(0).setHeaderValue("ID");
-        table.getColumnModel().getColumn(0).setPreferredWidth(30);
-        table.getColumnModel().getColumn(0).setMinWidth(30);
-        table.getColumnModel().getColumn(0).setMaxWidth(30);
-        table.getColumnModel().getColumn(1).setHeaderValue("Place name");
-        table.getColumnModel().getColumn(1).setPreferredWidth(200);
-        table.getColumnModel().getColumn(1).setMinWidth(100);
-        table.getColumnModel().getColumn(2).setHeaderValue("Tokens");
-        table.getColumnModel().getColumn(2).setPreferredWidth(500);
-        table.getColumnModel().getColumn(2).setMinWidth(50);
+        multisetsTable.getColumnModel().getColumn(0).setHeaderValue("ID");
+        multisetsTable.getColumnModel().getColumn(0).setPreferredWidth(30);
+        multisetsTable.getColumnModel().getColumn(0).setMinWidth(30);
+        multisetsTable.getColumnModel().getColumn(0).setMaxWidth(30);
+        multisetsTable.getColumnModel().getColumn(1).setHeaderValue("Place name");
+        multisetsTable.getColumnModel().getColumn(1).setPreferredWidth(200);
+        multisetsTable.getColumnModel().getColumn(1).setMinWidth(100);
+        multisetsTable.getColumnModel().getColumn(2).setHeaderValue("Tokens");
+        multisetsTable.getColumnModel().getColumn(2).setPreferredWidth(500);
+        multisetsTable.getColumnModel().getColumn(2).setMinWidth(50);
 
-        table.setName("p-stateVectorTable");
-        table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
+        multisetsTable.setName("p-stateVectorTable");
+        multisetsTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
         DefaultTableCellRenderer tableRenderer = new DefaultTableCellRenderer();
-        table.setDefaultRenderer(Object.class, tableRenderer);
-        table.setDefaultRenderer(Double.class, tableRenderer);
-        table.addMouseListener(new MouseAdapter() {
+        multisetsTable.setDefaultRenderer(Integer.class, tableRenderer);
+        multisetsTable.setDefaultRenderer(String.class, tableRenderer);
+
+        multisetsTable.getSelectionModel().addListSelectionListener(event -> {
+            if(!doNotListen)
+                cellClickAction();
+        });
+        //z nieznanych mi powodów powyższy kod działa, poniższy za cholerę. Tj. gorzej: działa, ale dopiero od
+        //drugiego kliknięcia w tabelę. Za pierszym tabele na selectedRow() zawsze zwraca -1...
+        /*
+        multisetsTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
                     if(!e.isControlDown()) {
-                        int row = table.getSelectedRow();
-                        new HolmesXTPNtokens(places.get(row), ego);
+                        //cellClickAction();
                     }
                 }
             }
         });
+         */
 
-        table.setRowSelectionAllowed(false);
-
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        JScrollPane tableScrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        multisetsTable.setRowSelectionAllowed(true);
+        multisetsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        JScrollPane tableScrollPane = new JScrollPane(multisetsTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         result.add(tableScrollPane, BorderLayout.CENTER);
-
         return result;
     }
 
     /**
-     * Metoda ustawia nową wartość dla miejsca w wektorze stanu, wywoływana przez metodę TableModel która odpowiada za zmianę
-     * wartości pola value.
-     * @param index int - indeks wektora
-     * @param placeID int - indeks miejsca
-     * @param newValue double - nowa wartość tokenów
+     * Metoda obsługująca kliknięcie dowolnej komórki.
      */
-    @SuppressWarnings("unused")
-    public void changeRealValue(int index, int placeID, double newValue) {
-        //TODO:
-        //statesManager.getStateXTPN(index).accessVector().set(placeID, newValue);
-        //parentWindow.changeTableCell(index, placeID+2, newValue, true);
-        //overlord.markNetChange();
+    protected void cellClickAction() {
+        try {
+            int x = multisetsTable.getSelectedRow();
+            new HolmesXTPNtokens(places.get(x), ego);
+        } catch (Exception ignored) {
+
+        }
     }
 
     /**

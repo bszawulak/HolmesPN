@@ -234,7 +234,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda pozwala zmienić liczbę tokenów w miejscu, dodając ich określoną wartość.
-	 * @param delta (<b>int</b>) wartość o którą zmieni się liczba tokenów
+	 * @param delta (<b>int</b>) wartość, o którą zmieni się liczba tokenów
 	 */
 	public void modifyTokensNumber(int delta) {
 		this.tokensNumber += delta;
@@ -678,7 +678,7 @@ public class Place extends Node {
 	}
 
 	/**
-	 * Dodawanie nowych tokenów do multizbioru K.
+	 * Dodawanie nowych tokenów do multizbioru K. Jeśli tranzycja nieczasowa - tylko modyfikuje sumę.
 	 * @param howMany (int) ile tokenów dodać
 	 * @param initialTime (double) wartość początkowa
 	 */
@@ -687,13 +687,12 @@ public class Place extends Node {
 			for (int i = 0; i < howMany; i++) {
 				multisetK.add(initialTime);
 			}
+			if(initialTime > 0) {
+				Collections.sort(multisetK);
+				Collections.reverse(multisetK);
+			}
 		}
 		modifyTokensNumber(howMany);
-
-		if(initialTime > 0) {
-			Collections.sort(multisetK);
-			Collections.reverse(multisetK);
-		}
 	}
 
 	/**

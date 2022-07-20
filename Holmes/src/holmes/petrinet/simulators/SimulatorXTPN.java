@@ -232,8 +232,6 @@ public class SimulatorXTPN implements IEngine {
         ArrayList<NextXTPNstep> transOtherClassical = new ArrayList<>();
         double currentMinTime = Double.MAX_VALUE;
 
-
-
         for(Place place : places) { //znajdź najmniejszy czas do zmiany w miejscach
             if(!place.isGammaModeActiveXTPN() || place.accessMultiset().size() == 0) {
                 //czyli nie dotyczy miejsc klasycznych, lub pusty multizbiór

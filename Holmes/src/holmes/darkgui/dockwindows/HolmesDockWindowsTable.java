@@ -24,6 +24,7 @@ import holmes.clusters.ClusterDataPackage;
 import holmes.clusters.ClusterTransition;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
+import holmes.darkgui.toolbar.GUIController;
 import holmes.graphpanel.EditorResources;
 import holmes.graphpanel.GraphPanel;
 import holmes.graphpanel.GraphPanel.DrawModes;
@@ -370,6 +371,12 @@ public class HolmesDockWindowsTable extends JPanel {
         }
 
         if(!XTPNmode) { //normalny symulator
+            //i tyle, jakby kto pytał, to są obiekty, można im zmienić tekst, ale się nie wyświetla
+            //NA RAZIE tak ma być:
+            stepLabelXTPN = new JLabel("0");
+            timeLabelXTPN = new JLabel("0.0");
+
+
             JLabel timeStepLabel = new JLabel("Time/step:");
             timeStepLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
             components.add(timeStepLabel);
@@ -603,6 +610,10 @@ public class HolmesDockWindowsTable extends JPanel {
             //xtmIntro.setBounds(internalX, internalY += 20, 90, 20);
             //xtmpSimPanel.add(xtmIntro);
 
+            //i tyle, jakby kto pytał, to jest obiekt, można mu zmienić tekst, ale się nie wyświetla
+            //NA RAZIE tak ma być
+            timeStepLabelValue = new JLabel("0");
+
             JLabel stepLabelText = new JLabel("Step:");
             stepLabelText.setBounds(internalX, internalY += 20, 90, 20);
             components.add(stepLabelText);
@@ -665,7 +676,7 @@ public class HolmesDockWindowsTable extends JPanel {
             resetButton.setName("resetM0button");
             resetButton.setBounds(internalX, internalY+=40, 90, 50);
             resetButton.setToolTipText("Reset all tokens in places.");
-            resetButton.setEnabled(false);
+            resetButton.setEnabled(true);
             resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
             components.add(resetButton);
         }
@@ -5333,7 +5344,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         projectTypeLabelText = new JLabel("Petri net (normal)", JLabel.LEFT);
         projectTypeLabelText.setBounds(columnB_posX, columnB_Y += 10, 200, 20);
-        projectTypeLabelText.setText(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getProjectType()+"");
+        projectTypeLabelText.setText(GUIController.access().getCurrentNetType()+"");
         components.add(projectTypeLabelText);
 
         //ArrayList<Integer> nodeTypes = Check.getSuggestedNetType();

@@ -44,7 +44,6 @@ public class P_StateManager {
 		for(StatePlacesVector pVector: statesMatrix) {
 			pVector.addPlace(0.0);
 		}
-
 		for(StatePlacesVectorXTPN pVector: statesMatrixXTPN) {
 			pVector.addPlaceXTPN( new ArrayList<>(place.accessMultiset()) );
 		}

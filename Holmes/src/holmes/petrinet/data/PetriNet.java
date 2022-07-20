@@ -2,6 +2,7 @@ package holmes.petrinet.data;
 
 import holmes.analyse.MCTCalculator;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.toolbar.GUIController;
 import holmes.files.io.AbyssReader;
 import holmes.files.io.AbyssWriter;
 import holmes.files.io.IOprotocols;
@@ -96,10 +97,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 *  CLEAN, FUNCTIONAL, EXT_ARCS, FUN_EXT_ARCS
 	 */
-	public enum GlobalNetSubType { CLEAN, FUNCTIONAL, EXT_ARCS, FUN_EXT_ARCS }
+	public enum GlobalNetSubType {CLEAN_XTPN, FUNCTIONAL, EXT_ARCS, FUNCTIONAL_EXT_ARCS}
 
 	private GlobalNetType projectType = GlobalNetType.PN;
-	private GlobalNetSubType projectSubType = GlobalNetSubType.CLEAN;
+	private GlobalNetSubType projectSubType = GlobalNetSubType.CLEAN_XTPN;
 
 	/** SPPED, SPEPT, SPTPT, HOLMESPROJECT */
 	public enum GlobalFileNetType { SPPED, SPEPT, SPTPT, HOLMESPROJECT }
@@ -930,8 +931,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void restoreMarkingZero() {
 		try {
-			boolean XTPN = checkIfXTPNpresent();
-			if(XTPN) {
+			if(GUIController.access().getCurrentNetType() == GlobalNetType.XTPN) {
 				restoreMarkingZeroXTPN();
 				return;
 			}
@@ -1725,14 +1725,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Zwraca typ sieci.
-	 * @return (<b>GlobalNetType</b>) - np. PN, timePN, <b>ext</b>PN, funcPN, timeFuncPN, time<b>Ext</b>PN, func<b>Ext</b>PN, timeFunc<b>Ext</b>PN, stochasticPN, stochasticFuncPN, XTPN
-	 */
-	public GlobalNetType getProjectType() {
-		return projectType;
-	}
-
-	/**
 	 * Metoda zwraca typ sieci po nazwie.
 	 * @param name (<b>String</b>) nazwa typu.
 	 * @return (<b>GlobalNetType</b>) enum typ sieci.
@@ -1754,12 +1746,22 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Ustawia główny typ sieci.
+	 * Ustawia główny typ sieci. Także w obiekcie kontrolera.
 	 * @param projectType (<b>GlobalNetType</b>) - PN, timePN, <b>ext</b>PN, funcPN, timeFuncPN, time<b>Ext</b>PN, func<b>Ext</b>PN, timeFunc<b>Ext</b>PN, stochasticPN, stochasticFuncPN, XTPN
 	 */
 	public void setProjectType(GlobalNetType projectType) {
 		this.projectType = projectType;
+		GUIController.access().setCurrentNetType(projectType);
 	}
+
+	/**
+	 * Zwraca typ sieci. Używać tylko dla zapisu lub odczytu. Poza tym używać kontrolera do ustalenia, jaki jest główny AKTYWNY typ sieci programu.
+	 * @return (<b>GlobalNetType</b>) - np. PN, timePN, <b>ext</b>PN, funcPN, timeFuncPN, time<b>Ext</b>PN, func<b>Ext</b>PN, timeFunc<b>Ext</b>PN, stochasticPN, stochasticFuncPN, XTPN
+	 */
+	public GlobalNetType getProjectType() {
+		return projectType;
+	}
+
 
 	/**
 	 * Zwraca podtyp sieci.

@@ -10,8 +10,6 @@ import holmes.petrinet.elements.Place;
 
 /**
  * Klasa zarządzająca stanem sieci XTPN, tj. liczbą tokenów w miejscach.
- * @author MR
- *
  */
 public class StatePlacesVectorXTPN implements Serializable {
     @Serial
@@ -31,7 +29,7 @@ public class StatePlacesVectorXTPN implements Serializable {
 
     /**
      * Dodaje nowe miejsce z zadanym zbiorem tokenów do wektora.
-     * @param multisetK (<b>ArrayList[Double]</b>) multizbiór tokenów.
+     * @param multisetK (<b>ArrayList[Double]</b>) nowy multizbiór tokenów.
      */
     public void addPlaceXTPN(ArrayList<Double> multisetK) {
         stateVectorXTPN.add(multisetK);
@@ -89,8 +87,8 @@ public class StatePlacesVectorXTPN implements Serializable {
     public void addTokensMultiset(int index, ArrayList<Double> newMultiSetK, boolean sort) {
         if(index < stateVectorXTPN.size()) {
             ArrayList<Double> oldMultiset = stateVectorXTPN.get(index);
-            for(double d : newMultiSetK) {
-                oldMultiset.add(Double.valueOf(d));
+            for(double token : newMultiSetK) {
+                oldMultiset.add(token);
             }
             //stateVectorXTPN.set(index, oldValue+tokens);
             if(sort) {

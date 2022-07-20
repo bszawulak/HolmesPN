@@ -1490,7 +1490,6 @@ public class HolmesSim extends JFrame {
 		SpinnerModel intervSpinnerModel2 = new SpinnerNumberModel(100, 0, mValue, 10);
 		placesIntervalSpinner.setModel(intervSpinnerModel2);
 		
-		
 		((HolmesSimKnock)knockoutTab).resetWindow();
 		doNotUpdate = false;
 	}

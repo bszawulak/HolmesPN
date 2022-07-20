@@ -10,7 +10,6 @@ import javax.swing.text.*;
 
 /**
  * The RXTable provides some extensions to the default JTable
- *
  * @author - well, the author, whoever he is. Not me (MR), just borrowed the code from
  * <a href="https://tips4java.wordpress.com/2008/10/20/table-select-all-editor/">...</a>
  */

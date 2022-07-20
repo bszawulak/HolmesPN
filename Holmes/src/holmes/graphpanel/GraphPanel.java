@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.toolbar.GUIController;
 import holmes.graphpanel.popupmenu.ArcPopupMenu;
 import holmes.graphpanel.popupmenu.MetaNodePopupMenu;
 import holmes.graphpanel.popupmenu.PlacePopupMenu;
@@ -36,10 +37,6 @@ import holmes.workspace.WorkspaceSheet;
  * Klasa, której zadaniem jest reprezentacja graficzna używanej w programie
  * sieci Petriego oraz oferowanie interfejsu umożliwiającego interakcję ze
  * strony użytkownika.
- * Drobne zmiany
- * 
- * @author students
- * @author MR - zmiany, zmiany, zmiany
  */
 public class GraphPanel extends JComponent {
 	@Serial
@@ -1035,7 +1032,7 @@ public class GraphPanel extends JComponent {
 						clearDrawnArc();
 					}
 					case PLACE -> {
-						if(project.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
 							JOptionPane.showMessageDialog(null, "Normal place cannot be used with XTPN nodes.",
 									"Problem", JOptionPane.WARNING_MESSAGE);
 						} else {
@@ -1043,7 +1040,7 @@ public class GraphPanel extends JComponent {
 						}
 					}
 					case TRANSITION -> {
-						if(project.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
 							JOptionPane.showMessageDialog(null, "Normal transition cannot be used with XTPN nodes.",
 									"Problem", JOptionPane.WARNING_MESSAGE);
 						} else {
@@ -1051,7 +1048,7 @@ public class GraphPanel extends JComponent {
 						}
 					}
 					case STOCHASTICTRANS -> {
-						if(project.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
 							JOptionPane.showMessageDialog(null, "Stochastic transition cannot be used with XTPN nodes.",
 									"Problem", JOptionPane.WARNING_MESSAGE);
 						} else {
@@ -1063,7 +1060,7 @@ public class GraphPanel extends JComponent {
 						clearDrawnArc();
 					}
 					case TIMETRANSITION -> {
-						if(project.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
 							JOptionPane.showMessageDialog(null, "Time transition cannot be used with XTPN nodes.",
 									"Problem", JOptionPane.WARNING_MESSAGE);
 						} else {
@@ -1111,7 +1108,7 @@ public class GraphPanel extends JComponent {
 						}
 					}
 					case CPLACE -> {
-						if(project.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
 							JOptionPane.showMessageDialog(null, "Color place cannot be used with XTPN nodes.",
 									"Problem", JOptionPane.WARNING_MESSAGE);
 						} else {
@@ -1119,7 +1116,7 @@ public class GraphPanel extends JComponent {
 						}
 					}
 					case CTRANSITION -> {
-						if(project.getProjectType() == PetriNet.GlobalNetType.XTPN) {
+						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
 							JOptionPane.showMessageDialog(null, "Color transition cannot be used with XTPN nodes.",
 									"Problem", JOptionPane.WARNING_MESSAGE);
 						} else {
@@ -1229,42 +1226,42 @@ public class GraphPanel extends JComponent {
 
 		private void _putPlace() {
 			overlord.getWorkspace().getProject().selectProperSimulatorBox(false);
-			overlord.getWorkspace().getProject().restoreMarkingZero();
+			//overlord.getWorkspace().getProject().restoreMarkingZero();
 			addNewPlace(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
 		}
 		private void _putTransition() {
 			overlord.getWorkspace().getProject().selectProperSimulatorBox(false);
-			overlord.getWorkspace().getProject().restoreMarkingZero();
+			//overlord.getWorkspace().getProject().restoreMarkingZero();
 			addNewTransition(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
 		}
 		private void _putStochasticTransition() {
 			overlord.getWorkspace().getProject().selectProperSimulatorBox(false);
-			overlord.getWorkspace().getProject().restoreMarkingZero();
+			//overlord.getWorkspace().getProject().restoreMarkingZero();
 			addNewStochasticTransition(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
 		}
 		private void _putTimeTransition() {
 			overlord.getWorkspace().getProject().selectProperSimulatorBox(false);
-			overlord.getWorkspace().getProject().restoreMarkingZero();
+			//overlord.getWorkspace().getProject().restoreMarkingZero();
 			addNewTimeTransition(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
 		}
 		private void _putColorPlace() {
 			overlord.getWorkspace().getProject().selectProperSimulatorBox(false);
-			overlord.getWorkspace().getProject().restoreMarkingZero();
+			//overlord.getWorkspace().getProject().restoreMarkingZero();
 			addNewCPlace(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
 		}
 		private void _putColorTransition() {
 			overlord.getWorkspace().getProject().selectProperSimulatorBox(false);
-			overlord.getWorkspace().getProject().restoreMarkingZero();
+			//overlord.getWorkspace().getProject().restoreMarkingZero();
 			addNewCTransition(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();
@@ -1272,7 +1269,7 @@ public class GraphPanel extends JComponent {
 		private void _putXTPNtransition(PetriNet project) {
 			project.setProjectType(PetriNet.GlobalNetType.XTPN); // ustawia status projektu
 			overlord.getWorkspace().getProject().selectProperSimulatorBox(true);
-			overlord.getWorkspace().getProject().restoreMarkingZeroXTPN();
+			//overlord.getWorkspace().getProject().restoreMarkingZeroXTPN();
 			addNewXTPNTransition(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();

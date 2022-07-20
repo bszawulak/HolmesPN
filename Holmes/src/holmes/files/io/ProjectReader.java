@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.toolbar.GUIController;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.*;
 import holmes.petrinet.data.SSAplacesVector.SSAdataType;
@@ -1884,10 +1885,10 @@ public class ProjectReader {
 					readedLine++;
 					StatePlacesVectorXTPN pVector = new StatePlacesVectorXTPN();
 					line = line.replace(" ", "");
-					String[] tab = line.split(";"); //separator multizbiorów
+					String[] stateTable = line.split(":"); //separator multizbiorów
 
-					for (String multisetString : tab) {
-						String[] multisetTab = multisetString.split(":"); //separator tokenów
+					for (String multisetString : stateTable) {
+						String[] multisetTab = multisetString.split(";"); //separator tokenów
 						ArrayList<Double> multisetK = new ArrayList<>();
 						for(String token : multisetTab) {
 							double tokenValue = Double.parseDouble(token);
@@ -1902,8 +1903,8 @@ public class ProjectReader {
 
 					line = buffer.readLine(); //dane dodatkowe
 					line = line.trim();
-					tab = line.split(";");
-					pVector.setStateType(tab[0]);
+					stateTable = line.split(";");
+					pVector.setStateType(stateTable[0]);
 
 					line = buffer.readLine();
 					line = line.trim();
