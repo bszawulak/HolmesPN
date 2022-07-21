@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 import holmes.darkgui.GUIManager;
-import holmes.darkgui.toolbar.GUIController;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.*;
 import holmes.petrinet.data.SSAplacesVector.SSAdataType;
@@ -1886,21 +1885,28 @@ public class ProjectReader {
 					StatePlacesVectorXTPN pVector = new StatePlacesVectorXTPN();
 					line = line.replace(" ", "");
 					String[] stateTable = line.split(":"); //separator multizbiorów
-
+					int placeIndex = -1;
 					for (String multisetString : stateTable) {
+						placeIndex++;
 						String[] multisetTab = multisetString.split(";"); //separator tokenów
 						ArrayList<Double> multisetK = new ArrayList<>();
 						for(String token : multisetTab) {
-							double tokenValue = Double.parseDouble(token);
-							if(tokenValue > -1.0) {//oznaczenie braku tokenów
-								multisetK.add(tokenValue);
+							if(token.contains("(C)")) {
+								token.replace("(C)", "");
+								int tokenValue = Integer.parseInt(token);
+								((Place)nodes.get(placeIndex)).setTokensNumber(tokenValue);
+								//miejsca są pierwsze dodawane do nodes, więc powinno zadziałać...
+							} else {
+								double tokenValue = Double.parseDouble(token);
+								if(tokenValue > -1.0) {//oznaczenie braku tokenów
+									multisetK.add(tokenValue);
+								}
 							}
 						}
 						Collections.sort(multisetK);
 						Collections.reverse(multisetK);
 						pVector.addPlaceXTPN(multisetK);
 					}
-
 					line = buffer.readLine(); //dane dodatkowe
 					line = line.trim();
 					stateTable = line.split(";");

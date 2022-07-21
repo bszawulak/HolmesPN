@@ -328,17 +328,13 @@ public class PlaceXTPN extends Place {
      * Aktualizacja wartości czasowej tokenu. Potem sortowanie multizbioru.
      * @param ID (<b>ID</b>) indeks tokenu.
      * @param value (<b>value</b>) nowa wartość tokenu.
-     * @return (<b>boolean</b>) - true jeśli się udało.
      */
-    @SuppressWarnings("UnusedReturnValue")
-    public boolean updateToken(int ID, Double value) {
-        boolean status = false;
+    public void updateToken(int ID, Double value) {
         if(ID > -1 && ID < multisetK.size()) {
             multisetK.set(ID, value);
         }
         Collections.sort(multisetK);
         Collections.reverse(multisetK);
-        return status;
     }
 
     /**
@@ -350,8 +346,6 @@ public class PlaceXTPN extends Place {
             multisetK.remove(index);
         }
         modifyTokensNumber(-1);
-        //Collections.sort(multisetK);
-        //Collections.reverse(multisetK);
     }
 
     /**

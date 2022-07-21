@@ -11,7 +11,6 @@ import holmes.analyse.MCTCalculator;
 import holmes.clusters.ClusterDataPackage;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable.SubWindow;
-import holmes.darkgui.toolbar.GUIController;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.MCSDataMatrix;

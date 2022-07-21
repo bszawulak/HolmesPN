@@ -24,7 +24,7 @@ import holmes.clusters.ClusterDataPackage;
 import holmes.clusters.ClusterTransition;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
-import holmes.darkgui.toolbar.GUIController;
+import holmes.darkgui.GUIController;
 import holmes.graphpanel.EditorResources;
 import holmes.graphpanel.GraphPanel;
 import holmes.graphpanel.GraphPanel.DrawModes;
@@ -921,7 +921,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -950,7 +950,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -1503,7 +1503,6 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(tokensWindowButton);
 
         // XTPN-place przycisk dodania tokenu XTPN
-        //JButton add0tokenButton = new JButton("<html>Add<br>0-token</html>");
         HolmesRoundedButton add0tokenButton = new HolmesRoundedButton("<html><center>Add<br>0-token</center></html>"
                 , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         add0tokenButton.setMargin(new Insets(0, 0, 0, 0));
@@ -1538,16 +1537,28 @@ public class HolmesDockWindowsTable extends JPanel {
         remove0tokenButton.setBounds(columnB_posX+90, columnB_Y, 90, 40);
         if(place.isGammaModeActiveXTPN()) {
             remove0tokenButton.setText("<html>Remove<br>0-token</html>");
-            remove0tokenButton.setBackground(Color.GREEN);
         } else {
             remove0tokenButton.setText("<html>Remove<br>token</html>");
-            //remove0tokenButton.setBackground(Color.RED);
-            add0tokenButton.setBackground(null);
         }
         remove0tokenButton.addActionListener(e -> {
             if (doNotUpdate)
                 return;
             JButton button = (JButton) e.getSource();
+
+            if(place.isGammaModeActiveXTPN()) {
+                int size = place.accessMultiset().size();
+                if(size > 0) {
+                    double lastToken = place.accessMultiset().get(size-1);
+                    if(lastToken == 0.0) {
+                        place.accessMultiset().remove(size-1);
+                        place.modifyTokensNumber(-1);
+                    }
+
+                }
+            } else {
+                int tokens = place.getTokensNumber();
+                place.modifyTokensNumber(-1);
+            }
 
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
@@ -1665,7 +1676,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -1694,7 +1705,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -2100,7 +2111,7 @@ public class HolmesDockWindowsTable extends JPanel {
             public void stateChanged(ChangeEvent e) {
                 if (doNotUpdate)
                     return;
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -2129,7 +2140,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -2444,7 +2455,7 @@ public class HolmesDockWindowsTable extends JPanel {
             public void stateChanged(ChangeEvent e) {
                 if (doNotUpdate)
                     return;
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -2473,7 +2484,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -2939,7 +2950,7 @@ public class HolmesDockWindowsTable extends JPanel {
             public void stateChanged(ChangeEvent e) {
                 if (doNotUpdate)
                     return;
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -2968,7 +2979,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -3450,7 +3461,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -3479,7 +3490,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -3545,7 +3556,6 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param transition (<b>Transition</b>) obiekt tranzycji czasowej.
      * @param location (<b>ElementLocation</b>) lokalizacja tranzycji.
      */
-    @SuppressWarnings("UnusedAssignment")
     private void createXTPNTransitionSubWindow(final Transition transition, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -4029,7 +4039,7 @@ public class HolmesDockWindowsTable extends JPanel {
             private Transition trans_tmp;
             private ElementLocation el_tmp;
             public void actionPerformed(ActionEvent actionEvent) {
-                JButton button_tmp = (JButton) actionEvent.getSource();
+                //JButton button_tmp = (JButton) actionEvent.getSource();
                 if (!betaLocChangeMode) {
                     betaLocChangeButton.setText("<html>Change<br>location<html>");
                     betaLocChangeButton.setBackground(Color.BLUE);
@@ -4076,7 +4086,7 @@ public class HolmesDockWindowsTable extends JPanel {
             private Transition trans_tmp;
             private ElementLocation el_tmp;
             public void actionPerformed(ActionEvent actionEvent) {
-                JButton button_tmp = (JButton) actionEvent.getSource();
+                //JButton button_tmp = (JButton) actionEvent.getSource();
                 if (!tauLocChangeMode) {
                     tauLocChangeButton.setText("<html>Change<br>location<html>");
                     tauLocChangeButton.setBackground(Color.BLUE);
@@ -4409,7 +4419,7 @@ public class HolmesDockWindowsTable extends JPanel {
             public void stateChanged(ChangeEvent e) {
                 if (doNotUpdate)
                     return;
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -4435,7 +4445,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -4818,7 +4828,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), meta_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), meta_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationXSpinnerModel.setValue(res.x);
                 doNotUpdate = false;
@@ -4847,7 +4857,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), meta_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), meta_tmp, el_tmp);
                 doNotUpdate = true;
                 nameLocationYSpinnerModel.setValue(res.y);
                 doNotUpdate = false;
@@ -6370,7 +6380,8 @@ public class HolmesDockWindowsTable extends JPanel {
         JComboBox<String> chooseMctBox = new JComboBox<>(mctHeaders);
         chooseMctBox.setBounds(colB_posX, positionY, 150, 20);
         chooseMctBox.addActionListener(actionEvent -> {
-            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            JComboBox<?> comboBox = (JComboBox<?>) actionEvent.getSource();
+            //JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             int selected = comboBox.getSelectedIndex();
             if (selected == 0) {
                 selectedMCTindex = -1;
@@ -7349,7 +7360,8 @@ public class HolmesDockWindowsTable extends JPanel {
         JComboBox<String> chooseMctBox = new JComboBox<>(headers);
         chooseMctBox.setBounds(colB_posX, positionY, 150, 20);
         chooseMctBox.addActionListener(actionEvent -> {
-            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            JComboBox<?> comboBox = (JComboBox<?>) actionEvent.getSource();
+            //JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             int selected = comboBox.getSelectedIndex();
             if (selected == 0) {
                 showKnockout(-1, false);
@@ -7736,7 +7748,8 @@ public class HolmesDockWindowsTable extends JPanel {
         JComboBox<String> newCB = generateButton(index);
         newCB.setBounds(10, 70, 150, 20);
         newCB.addActionListener(actionEvent -> {
-            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            JComboBox<?> comboBox = (JComboBox<?>) actionEvent.getSource();
+            //JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             int selected = comboBox.getSelectedIndex();
             if (selected == 0) {
                 selectedSubNetindex = -1;
@@ -7786,7 +7799,8 @@ public class HolmesDockWindowsTable extends JPanel {
         JComboBox<String> newCB = new JComboBox<>(newComoList);
         newCB.setBounds(10, 70, 150, 20);
         newCB.addActionListener(actionEvent -> {
-            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            JComboBox<?> comboBox = (JComboBox<?>) actionEvent.getSource();
+            //JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             int selected = comboBox.getSelectedIndex();
             if (selected == 0) {
                 selectedSubNetindex = -1;
@@ -7820,7 +7834,8 @@ public class HolmesDockWindowsTable extends JPanel {
         JComboBox<String> newCB = new JComboBox<>(newComoList);
         newCB.setBounds(10, 70, 150, 20);
         newCB.addActionListener(actionEvent -> {
-            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            JComboBox<?> comboBox = (JComboBox<?>) actionEvent.getSource();
+            //JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             int selected = comboBox.getSelectedIndex();
             if (selected == 0) {
                 selectedSubNetindex = -1;
@@ -8185,7 +8200,6 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda zwraca okno tekstowe na bazie podanego comboBox.
-     *
      * @param spinner JSpinner - ComboBox po ludzku
      * @return JFormattedTextField - chyba TextBox?
      */
@@ -8667,21 +8681,20 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param oldY (int) współrzędna Y.
      * @param n (Node) wierzchołek sieci.
      * @param el (ElementLocation) obiekt lokalizacji wierzchołka.
-     * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU.
      * @return (Point) prawidłowe współrzędne.
      */
-    private Point setNameOffsetY(int oldY, Node n, ElementLocation el, GUIManager.locationMoveType nameType) {
+    private Point setNameOffsetY(int oldY, Node n, ElementLocation el) {
         int nameLocIndex = n.getElementLocations().indexOf(el);
-        int oldX = n.getTextsLocations(nameType).get(nameLocIndex).getPosition().x;
+        int oldX = n.getTextsLocations(GUIManager.locationMoveType.NAME).get(nameLocIndex).getPosition().x;
 
         int sheetIndex = overlord.IDtoIndex(el.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 
         if (graphPanel.isLegalLocation(new Point(oldX + el.getPosition().x, oldY + el.getPosition().y))) {
-            n.getTextsLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+            n.getTextsLocations(GUIManager.locationMoveType.NAME).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
             graphPanel.repaint();
         }
-        return n.getTextsLocations(nameType).get(nameLocIndex).getPosition();
+        return n.getTextsLocations(GUIManager.locationMoveType.NAME).get(nameLocIndex).getPosition();
     }
 
     /**
@@ -8690,21 +8703,20 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param oldX  (int) współrzędna X.
      * @param n  (Node) wierzchołek sieci.
      * @param el (ElementLocation) - obiekt lokalizacji wierzchołka.
-     * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU.
      * @return (Point) prawidłowe współrzędne.
      */
-    private Point setNameOffsetX(int oldX, Node n, ElementLocation el, GUIManager.locationMoveType nameType) {
+    private Point setNameOffsetX(int oldX, Node n, ElementLocation el) {
         int nameLocIndex = n.getElementLocations().indexOf(el);
-        int oldY = n.getTextsLocations(nameType).get(nameLocIndex).getPosition().y;
+        int oldY = n.getTextsLocations(GUIManager.locationMoveType.NAME).get(nameLocIndex).getPosition().y;
 
         int sheetIndex = overlord.IDtoIndex(el.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 
         if (graphPanel.isLegalLocation(new Point(oldX + el.getPosition().x, oldY + el.getPosition().y))) {
-            n.getTextsLocations(nameType).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+            n.getTextsLocations(GUIManager.locationMoveType.NAME).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
             graphPanel.repaint();
         }
-        return n.getTextsLocations(nameType).get(nameLocIndex).getPosition();
+        return n.getTextsLocations(GUIManager.locationMoveType.NAME).get(nameLocIndex).getPosition();
     }
 
     /**

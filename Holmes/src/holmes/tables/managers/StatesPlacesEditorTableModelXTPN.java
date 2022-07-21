@@ -112,10 +112,9 @@ public class StatesPlacesEditorTableModelXTPN extends DefaultTableModel {
      * @param evt EventObject
      * @return boolean
      */
-    @SuppressWarnings("unused")
     public boolean isCellEditable(EventObject evt) {
         if (evt instanceof MouseEvent) {
-            int clickCount = 1;
+            int clickCount = 0;
             return ((MouseEvent)evt).getClickCount() >= clickCount;
         }
         return true;

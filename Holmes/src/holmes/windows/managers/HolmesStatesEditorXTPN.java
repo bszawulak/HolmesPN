@@ -4,21 +4,16 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import holmes.darkgui.GUIManager;
@@ -78,26 +73,27 @@ public class HolmesStatesEditorXTPN extends JFrame {
     }
 
     /**
-     * Wypełnianie tabeli nowymi danymi - tj. odświeżanie.
+     * Wypełnianie tabeli tokenami.
      */
     public void fillTable() {
         tableModel.clearModel();
         int size = stateVectorXTPN.getSize();
         for(int placeIndex=0; placeIndex<size; placeIndex++) {
-            ArrayList<Double> multiset = stateVectorXTPN.getMultisetK(placeIndex);
+            ArrayList<Double> multiset = stateVectorXTPN.accessMultisetK(placeIndex);
             StringBuilder line = new StringBuilder();
-            if(multiset.size() == 0) {
-
-            }
-            for(Double d : multiset) {
-                line.append(d).append(" | ");
+            if(multiset.size() == 0) { //jeśli nic nie ma w multizbiorze
+                if(places.get(placeIndex).isGammaModeActiveXTPN()) {
+                    line.append(" <empty> "); //puste miejsce XTPN
+                } else { //liczba tokenów miejsca klasycznego:
+                    line.append(places.get(placeIndex).getTokensNumber()+" <non-time place> ");
+                }
+            } else {
+                for(Double d : multiset) {
+                    line.append(d).append(" | ");
+                }
             }
             tableModel.addNew(placeIndex, places.get(placeIndex).getName(), line.toString());
         }
-        if(size > 0) {
-            //multisetsTable.setRowSelectionInterval(0, 0);
-        }
-
         tableModel.fireTableDataChanged();
     }
 
@@ -149,7 +145,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
                     String newComment = field.getText();
                     statesManager.accessStateMatrixXTPN().get(stateIndex).setDescription(newComment);
                     fillTable();
-                    parentWindow.fillDescriptionField();
+                    parentWindow.fillDescriptionFieldXTPN();
                 }
             }
         });
@@ -157,7 +153,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
         CreationPanel.add(new JScrollPane(vectorDescrTextArea), BorderLayout.CENTER);
-        CreationPanel.setBounds(posX, posY+=20, 600, 50);
+        CreationPanel.setBounds(posX, posY+20, 600, 50);
         filler.add(CreationPanel);
 
         result.add(filler, BorderLayout.CENTER);

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
-import holmes.darkgui.toolbar.GUIController;
+import holmes.darkgui.GUIController;
 import holmes.graphpanel.popupmenu.ArcPopupMenu;
 import holmes.graphpanel.popupmenu.MetaNodePopupMenu;
 import holmes.graphpanel.popupmenu.PlacePopupMenu;

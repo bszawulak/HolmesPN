@@ -61,7 +61,7 @@ public class StatePlacesVectorXTPN implements Serializable {
      * @param index (<b>int</b>) indeks miejsca.
      * @return (<b>ArrayList<Double></b>) multizbiór K tokenów miejsca.
      */
-    public ArrayList<Double> getMultisetK(int index) { //było: getTokens
+    public ArrayList<Double> accessMultisetK(int index) { //było: getTokens
         if(index >= stateVectorXTPN.size())
             return null;
         else

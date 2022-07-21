@@ -1,4 +1,4 @@
-package holmes.darkgui.toolbar;
+package holmes.darkgui;
 
 import holmes.petrinet.data.PetriNet;
 

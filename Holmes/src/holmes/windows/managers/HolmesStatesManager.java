@@ -13,7 +13,7 @@ import javax.swing.event.ChangeListener;
 
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
-import holmes.darkgui.toolbar.GUIController;
+import holmes.darkgui.GUIController;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.P_StateManager;
@@ -92,7 +92,7 @@ public class HolmesStatesManager extends JFrame {
 		main.add(getButtonsPanel(), BorderLayout.EAST);
 
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Normal Petri net", main);
+		tabbedPane.addTab("PN p-states", Tools.getResIcon22("/icons/stateManager/PNtab.png"), main, "Petri net, TPN, DPN, SPN");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
 		JPanel mainXTPN = new JPanel(new BorderLayout());
@@ -103,7 +103,8 @@ public class HolmesStatesManager extends JFrame {
 		mainXTPN.add(submainXTPN, BorderLayout.CENTER);
 		mainXTPN.add(getButtonsPanelXTPN(), BorderLayout.EAST);
 
-		tabbedPane.addTab("XTPN", mainXTPN);
+		//tabbedPane.addTab("XTPN", mainXTPN);
+		tabbedPane.addTab("XTPN p-states", Tools.getResIcon22("/icons/stateManager/XTPNtab.png"), mainXTPN, "XTPN p-states manager");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 		add(tabbedPane, BorderLayout.CENTER);
 
@@ -793,7 +794,7 @@ public class HolmesStatesManager extends JFrame {
 		rowVector.add("");
 		rowVector.add("m0("+(states)+")");
 		for(int p=0; p<psVector.getSize(); p++) {
-			int value = psVector.getMultisetK(p).size();
+			int value = psVector.accessMultisetK(p).size();
 			rowVector.add(""+value);
 		}
 		tableModelXTPN.addNew(rowVector);
@@ -819,7 +820,7 @@ public class HolmesStatesManager extends JFrame {
 			rowVector.add("m0("+(row+1)+")");
 
 			for(int placeIndex=0; placeIndex<psVector.getSize(); placeIndex++) {
-				int value = psVector.getMultisetK(placeIndex).size();
+				int value = psVector.accessMultisetK(placeIndex).size();
 				if(places.get(placeIndex).isGammaModeActiveXTPN())
 					rowVector.add(""+value);
 				else
@@ -866,16 +867,12 @@ public class HolmesStatesManager extends JFrame {
 
 	/**
 	 * Metoda wywoływana przez akcję renderera tablicy, gdy następuje zmiana w komórce.
-	 * @param row int - nr wiersza tablicy
-	 * @param column int - nr kolumny tablicy
-	 * @param value double - nowa wartość
-	 *
+	 * @param row int - nr wiersza tablicy.
+	 * @param column int - nr kolumny tablicy.
+	 * @param value double - nowa wartość.
 	 *     NIEUŻYWANA, WSZYSTKIE KOLUMNY READ ONLY!
 	 */
-	@SuppressWarnings("unused")
 	public void changeStateXTPN(int row, int column, double value) {
-		//statesManager.getStateXTPN(row).accessVector().set(column-2, value);
-		//overlord.markNetChange();
 		tableModelXTPN.fireTableDataChanged();
 	}
 
@@ -893,7 +890,7 @@ public class HolmesStatesManager extends JFrame {
 	protected void cellClickActionXTPN() {
 		try {
 			selectedRow = statesTableXTPN.getSelectedRow();
-			fillDescriptionField();
+			fillDescriptionFieldXTPN();
 		} catch (Exception ignored) {
 
 		}

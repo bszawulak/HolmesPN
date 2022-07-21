@@ -807,35 +807,41 @@ public class ProjectWriter {
 
 			if(places.size() > 0) {
 				bw.write(spaces(sp)+"<States: "+statesNumber+">"+newline);
-
 				StringBuilder stateLine = new StringBuilder();
 				String type = "";
 				String description = "";
+				int placeIndex = -1;
 				for (StatePlacesVectorXTPN vector : statesMatrixXTPN) {
 					type = vector.getStateType();
 					description = vector.getDescription();
 					sp = 4;
 
 					for(ArrayList<Double> multiset : vector.accessVector()) { //zapis multizbiorów tokenów
+						placeIndex++;
 						int counter = 0;
 						for(Double value : multiset) {
 							counter++;
 							if(counter == multiset.size())  {
 								stateLine.append(value).append(":"); //separator tokenów
-							} else {
+							} else { //multizbiór pusty
 								stateLine.append(value).append(";"); //separator multizbiorów
 							}
 						}
 						if(counter == 0) { //brak tokenów w miejscu
-							stateLine.append("-1.0;");
+							if(places.get(placeIndex).isGammaModeActiveXTPN()) {
+								stateLine.append("-1.0;");
+							} else {
+								stateLine.append(places.get(placeIndex).getTokensNumber()+"(C);");
+							}
 						}
 					}
+					stateLine = new StringBuilder(stateLine.substring(0, stateLine.length() - 1)); //usun ostatni ';'
+					bw.write(spaces(sp) + stateLine + newline);
+					bw.write(spaces(sp) + type + ";" + newline);
+					bw.write(spaces(sp) + Tools.convertToCode(description) + newline);
+					placeIndex = -1;
 				}
-				stateLine = new StringBuilder(stateLine.substring(0, stateLine.length() - 1)); //usun ostatni ';'
 
-				bw.write(spaces(sp) + stateLine + newline);
-				bw.write(spaces(sp) + type + ";" + newline);
-				bw.write(spaces(sp) + Tools.convertToCode(description) + newline);
 			} else {
 				bw.write(spaces(sp)+"<States: 0>"+newline);
 			}

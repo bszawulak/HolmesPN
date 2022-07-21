@@ -206,11 +206,11 @@ public class P_StateManager {
 		if(psVector.getSize() == places.size()) {
 			for (int placeIndex = 0; placeIndex < places.size(); placeIndex++) {
 				Place place = places.get(placeIndex);
-				place.replaceMultiset(new ArrayList<>(psVector.getMultisetK(placeIndex)));
+				place.replaceMultiset(new ArrayList<>(psVector.accessMultisetK(placeIndex)));
 				if(place.isGammaModeActiveXTPN()) {
-					place.setTokensNumber(psVector.getMultisetK(placeIndex).size());
+					place.setTokensNumber(psVector.accessMultisetK(placeIndex).size());
 				} else {
-					place.setTokensNumber(psVector.getMultisetK(placeIndex).get(0).intValue());
+					place.setTokensNumber(psVector.accessMultisetK(placeIndex).get(0).intValue());
 					//jeśli miejsca klasyczne, to pierwsza i jedyna wartość w multizbiorze to liczba tokenów
 				}
 

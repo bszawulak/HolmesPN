@@ -2,7 +2,7 @@ package holmes.petrinet.data;
 
 import holmes.analyse.MCTCalculator;
 import holmes.darkgui.GUIManager;
-import holmes.darkgui.toolbar.GUIController;
+import holmes.darkgui.GUIController;
 import holmes.files.io.AbyssReader;
 import holmes.files.io.AbyssWriter;
 import holmes.files.io.IOprotocols;
