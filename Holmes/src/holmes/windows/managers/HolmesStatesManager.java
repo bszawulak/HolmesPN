@@ -110,15 +110,23 @@ public class HolmesStatesManager extends JFrame {
 		tabbedPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				int selected = ((JTabbedPane)e.getSource()).getSelectedIndex();
-				if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-					if(selected == 0) {
-
-					}
+				if(selected == 1 && GUIController.access().getCurrentNetType() != PetriNet.GlobalNetType.XTPN ) {
+					JOptionPane.showMessageDialog(null, "XTPN state manager unavailable for normal nets.",
+							"Wrong tab", JOptionPane.INFORMATION_MESSAGE);
+					((JTabbedPane)e.getSource()).setSelectedIndex(0);
+				} else if(selected == 0 && GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
+					JOptionPane.showMessageDialog(null, "Normal state manager unavailable for XTPN nets.",
+							"Wrong tab", JOptionPane.INFORMATION_MESSAGE);
+					((JTabbedPane) e.getSource()).setSelectedIndex(1);
 				}
 				//
 				//System.out.println("Tab: " + tabbedPane.getSelectedIndex());
 			}
 		});
+
+		if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
+			tabbedPane.setSelectedIndex(1);
+		}
 	}
 	
 	/**
@@ -190,7 +198,7 @@ public class HolmesStatesManager extends JFrame {
 
 		int posXda = 10;
 		int posYda = 25;
-		
+
 		JButton selectStateButton = new JButton("Set net state");
 		selectStateButton.setBounds(posXda, posYda, 130, 40);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
@@ -364,7 +372,7 @@ public class HolmesStatesManager extends JFrame {
 			return;
 		}
 		
-		statesManager.replaceStateWithNetStatePN(selected);
+		statesManager.replaceStoredStateWithNetStatePN(selected);
 		fillTable();
 		overlord.markNetChange();
 	}
@@ -571,7 +579,7 @@ public class HolmesStatesManager extends JFrame {
 		int posXda = 10;
 		int posYda = 25;
 
-		HolmesRoundedButton selectStateButton = new HolmesRoundedButton("Set new p-state"
+		HolmesRoundedButton selectStateButton = new HolmesRoundedButton("<html><center>Restore<br>selected state</center></html>"
 				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		selectStateButton.setBounds(posXda, posYda, 130, 40);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
@@ -605,12 +613,12 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(selectStateButton);
 
-		HolmesRoundedButton addNewStateButton = new HolmesRoundedButton("<html><center>Add current<br>p-state</center></html>"
+		HolmesRoundedButton addNewStateButton = new HolmesRoundedButton("<html><center>Store current<br>net state</center></html>"
 				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
-		addNewStateButton.setToolTipText("Create new XTPN state vector based on current p-state.");
+		addNewStateButton.setToolTipText("Store current XTPN net p-state as a state vector.");
 		addNewStateButton.addActionListener(actionEvent -> {
 			if(places.size() == 0) {
 				noNetInfoXTPN();
@@ -629,12 +637,12 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewStateButton);
 
-		HolmesRoundedButton addNewCleanStateButton = new HolmesRoundedButton("<html><center>Create<br>new p-state</center></html>"
+		HolmesRoundedButton addNewCleanStateButton = new HolmesRoundedButton("<html><center>Create clean<br>state</center></html>"
 				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		addNewCleanStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewCleanStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewCleanStateButton.setFocusPainted(false);
-		addNewCleanStateButton.setToolTipText("Create new clean p-state vector (all tokens values set to 0).");
+		addNewCleanStateButton.setToolTipText("Create new clean p-state vector (no tokens, clean multisets).");
 		addNewCleanStateButton.addActionListener(actionEvent -> {
 			if(places.size() == 0) {
 				noNetInfoXTPN();
@@ -653,12 +661,12 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewCleanStateButton);
 
-		HolmesRoundedButton replaceStateButton = new HolmesRoundedButton("Replace p-state"
+		HolmesRoundedButton replaceStateButton = new HolmesRoundedButton("<html><center>Overwrite<br>selected state</center></html>"
 				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
-		replaceStateButton.setToolTipText("<html>Replace the values of the selected XTPN p-state vector<br>from the table with the current XTPN net p-state.</html>");
+		replaceStateButton.setToolTipText("<html>Replace the values of the selected XTPN p-state from the table<br>with the current XTPN net p-state.</html>");
 		replaceStateButton.addActionListener(actionEvent -> {
 			if(places.size() == 0) {
 				noNetInfoXTPN();
@@ -668,7 +676,7 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(replaceStateButton);
 
-		HolmesRoundedButton removeStateButton = new HolmesRoundedButton("Remove p-state"
+		HolmesRoundedButton removeStateButton = new HolmesRoundedButton("<html><center>Remove stored<br>state</center></html>"
 				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
@@ -683,12 +691,12 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(removeStateButton);
 
-		HolmesRoundedButton editStateButton = new HolmesRoundedButton("State Editor"
+		HolmesRoundedButton editStateButton = new HolmesRoundedButton("<html><center>XTPN<br>state editor</center></html>"
 				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		editStateButton.setBounds(posXda, posYda+50, 130, 40);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
-		editStateButton.setToolTipText("Opens p-state editor window.");
+		editStateButton.setToolTipText("Opens p-state editor window based on the currently selected p-state.");
 		editStateButton.addActionListener(actionEvent -> {
 			if(places.size() == 0) {
 				noNetInfoXTPN();
@@ -754,7 +762,7 @@ public class HolmesStatesManager extends JFrame {
 			return;
 		}
 
-		statesManager.replaceStateWithNetStateXTPN(selected);
+		statesManager.replaceStoredStateWithNetStateXTPN(selected);
 		fillTableXTPN();
 		overlord.markNetChange();
 	}
@@ -810,9 +818,12 @@ public class HolmesStatesManager extends JFrame {
 			StatePlacesVectorXTPN psVector = statesManager.getStateXTPN(row);
 			rowVector.add("m0("+(row+1)+")");
 
-			for(int p=0; p<psVector.getSize(); p++) {
-				int value = psVector.getMultisetK(p).size();
-				rowVector.add(""+value);
+			for(int placeIndex=0; placeIndex<psVector.getSize(); placeIndex++) {
+				int value = psVector.getMultisetK(placeIndex).size();
+				if(places.get(placeIndex).isGammaModeActiveXTPN())
+					rowVector.add(""+value);
+				else
+					rowVector.add(""+value+" (C)");
 			}
 			tableModelXTPN.addNew(rowVector);
 		}

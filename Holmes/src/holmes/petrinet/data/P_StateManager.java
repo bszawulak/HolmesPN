@@ -187,16 +187,16 @@ public class P_StateManager {
 	public void setNetworkStatePN(int stateID) {
 		ArrayList<Place> places = pn.getPlaces();
 		StatePlacesVector psVector = statesMatrix.get(stateID);
-		for(int p=0; p<places.size(); p++) {
-			Place place = places.get(p);
-			place.setTokensNumber((int)psVector.getTokens(p));
+		for(int placeIndex=0; placeIndex<places.size(); placeIndex++) {
+			Place place = places.get(placeIndex);
+			place.setTokensNumber((int)psVector.getTokens(placeIndex));
 			place.freeReservedTokens();
 		}
 		selectedStatePN = stateID;
 	}
 
 	/**
-	 * Metoda ustawia nowy stan miejsc sieci XTPN na bazie wybranego stanu.
+	 * Metoda nadpisuje aktualny stan miejsc w sieci XTPN na bazie wybranego stanu przechowywanego w managerze.
 	 * @param stateID (<b>int</b>) indeks stanu z listy.
 	 * @return (<b>boolean</b>) - true, jeżeli się udało.
 	 */
@@ -204,10 +204,16 @@ public class P_StateManager {
 		ArrayList<Place> places = pn.getPlaces();
 		StatePlacesVectorXTPN psVector = statesMatrixXTPN.get(stateID);
 		if(psVector.getSize() == places.size()) {
-			for (int p = 0; p < places.size(); p++) {
-				Place place = places.get(p);
-				place.replaceMultiset(new ArrayList<>(psVector.getMultisetK(p)));
-				place.setTokensNumber(psVector.getMultisetK(p).size());
+			for (int placeIndex = 0; placeIndex < places.size(); placeIndex++) {
+				Place place = places.get(placeIndex);
+				place.replaceMultiset(new ArrayList<>(psVector.getMultisetK(placeIndex)));
+				if(place.isGammaModeActiveXTPN()) {
+					place.setTokensNumber(psVector.getMultisetK(placeIndex).size());
+				} else {
+					place.setTokensNumber(psVector.getMultisetK(placeIndex).get(0).intValue());
+					//jeśli miejsca klasyczne, to pierwsza i jedyna wartość w multizbiorze to liczba tokenów
+				}
+
 			}
 			selectedStateXTPN = stateID;
 			return true;
@@ -235,10 +241,10 @@ public class P_StateManager {
 	}
 	
 	/**
-	 * Zastępuje wskazany stan aktualnym stanem sieci (normalnej).
+	 * Nadpisuje wskazany stan przechowywany w managerze aktualnym stanem sieci (normalnej).
 	 * @param stateID (<b>int</b>) indeks wskazanego stanu z listy.
 	 */
-	public void replaceStateWithNetStatePN(int stateID) {
+	public void replaceStoredStateWithNetStatePN(int stateID) {
 		ArrayList<Place> places = pn.getPlaces();
 		StatePlacesVector psVector = statesMatrix.get(stateID);
 		for(int p=0; p<places.size(); p++) {
@@ -247,16 +253,20 @@ public class P_StateManager {
 	}
 
 	/**
-	 * Zastępuje wskazany stan aktualnym stanem sieci XTPN.
+	 * Nadpisuje wskazany stan przechowywany w managerze aktualnym stanem sieci XTPN.
 	 * @param stateID (<b>int</b>) indeks wskazanego stanu XTPN z listy.
 	 */
-	public void replaceStateWithNetStateXTPN(int stateID) {
+	public void replaceStoredStateWithNetStateXTPN(int stateID) {
 		ArrayList<Place> places = pn.getPlaces();
 		StatePlacesVectorXTPN psVector = statesMatrixXTPN.get(stateID);
 		psVector.accessVector().clear();
 
 		for (Place place : places) {
 			ArrayList<Double> currentPlaceMultiset = new ArrayList<>(place.accessMultiset());
+			if(!place.isGammaModeActiveXTPN()) { //w przypadku gdy klasyczne, jedyna liczba w multizbiorze to liczba tokenów klasycznych
+				currentPlaceMultiset.clear();
+				currentPlaceMultiset.add((double)place.getTokensNumber());
+			}
 			psVector.addPlaceXTPN(currentPlaceMultiset);
 		}
 	}
