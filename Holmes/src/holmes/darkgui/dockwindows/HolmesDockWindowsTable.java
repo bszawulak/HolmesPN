@@ -1499,7 +1499,7 @@ public class HolmesDockWindowsTable extends JPanel {
             tokensWindowButton.setBackground(Color.RED);
             tokensWindowButton.setEnabled(false);
         }
-        tokensWindowButton.addActionListener(actionEvent -> new HolmesXTPNtokens((Place) element, null));
+        tokensWindowButton.addActionListener(actionEvent -> new HolmesXTPNtokens((Place) element, null, place.accessMultiset(), place.isGammaModeActiveXTPN()));
         components.add(tokensWindowButton);
 
         // XTPN-place przycisk dodania tokenu XTPN

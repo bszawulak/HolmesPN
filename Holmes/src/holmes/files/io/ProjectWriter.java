@@ -41,7 +41,7 @@ public class ProjectWriter {
 	private final ArrayList<ArrayList<Transition>> mctData;
 	private final ArrayList<String> mctNames;
 	private final ArrayList<StatePlacesVector> statesMatrix;
-	private final ArrayList<StatePlacesVectorXTPN> statesMatrixXTPN;
+	private final ArrayList<MultisetM> statesMatrixXTPN;
 	private final ArrayList<SPNdataVector> firingRatesMatrix;
 	private final ArrayList<SSAplacesVector> ssaMatrix;
 	
@@ -811,12 +811,12 @@ public class ProjectWriter {
 				String type = "";
 				String description = "";
 				int placeIndex = -1;
-				for (StatePlacesVectorXTPN vector : statesMatrixXTPN) {
+				for (MultisetM vector : statesMatrixXTPN) {
 					type = vector.getStateType();
 					description = vector.getDescription();
 					sp = 4;
 
-					for(ArrayList<Double> multiset : vector.accessVector()) { //zapis multizbiorów tokenów
+					for(ArrayList<Double> multiset : vector.accessMultiset_M()) { //zapis multizbiorów tokenów
 						placeIndex++;
 						int counter = 0;
 						for(Double value : multiset) {

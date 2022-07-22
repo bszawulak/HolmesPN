@@ -861,19 +861,20 @@ public class SelectionManager {
 			if (el.getParentNode().getType() == PetriNetElementType.PLACE && !safetyNodesList.contains(el.getParentNode())) {
 				safetyNodesList.add(el.getParentNode());
 				Place place = (Place) el.getParentNode();
-				place.modifyTokensNumber(1);
 
 				if(place.isXTPNplace()) {
 					JOptionPane.showMessageDialog(null, "Cannot fast-increase tokens in XTPN place.",
 							"Operation unavailable", JOptionPane.WARNING_MESSAGE);
 					return;
-				} else {
-					if(overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
-						int tokens = place.getTokensNumber();
-						ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-						overlord.getWorkspace().getProject().accessStatesManager().getStatePN(0).setTokens(places.indexOf(place), tokens);
-					}
 				}
+
+				place.modifyTokensNumber(1);
+				if(overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
+					int tokens = place.getTokensNumber();
+					ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+					overlord.getWorkspace().getProject().accessStatesManager().getStatePN(0).setTokens(places.indexOf(place), tokens);
+				}
+
 			} else if(el.getParentNode().getType() == PetriNetElementType.META && !safetyNodesList.contains(el.getParentNode())) {
 				try {
 					MetaNode node = (MetaNode)el.getParentNode();

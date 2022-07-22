@@ -963,7 +963,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	public void restoreMarkingZeroXTPN() {
 		try {
-			accessStatesManager().setNetworkStateXTPN(accessStatesManager().selectedStateXTPN);
+			accessStatesManager().replaceNetStateWithSelectedMultiset_M(accessStatesManager().selectedStateXTPN);
 			for(Transition trans : getTransitions()) {
 				trans.setLaunching(false);
 				if(trans.isXTPNtransition()) {
@@ -993,7 +993,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void restoreMarkingZeroFast(ArrayList<Transition> transitions) {
 		try {
 			if(checkIfXTPNpresent()) {
-				accessStatesManager().setNetworkStateXTPN(accessStatesManager().selectedStateXTPN);
+				accessStatesManager().replaceNetStateWithSelectedMultiset_M(accessStatesManager().selectedStateXTPN);
 			} else {
 				accessStatesManager().setNetworkStatePN(accessStatesManager().selectedStatePN);
 			}

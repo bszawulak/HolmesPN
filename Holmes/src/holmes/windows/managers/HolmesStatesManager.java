@@ -17,7 +17,7 @@ import holmes.darkgui.GUIController;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.P_StateManager;
-import holmes.petrinet.data.StatePlacesVectorXTPN;
+import holmes.petrinet.data.MultisetM;
 import holmes.petrinet.elements.Place;
 import holmes.tables.RXTable;
 import holmes.tables.managers.StatesPlacesTableModel;
@@ -415,12 +415,10 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void fillTable() {
 		tableModelPN.clearModel(places.size());
-		
-		int selectedStatePN = statesManager.selectedStatePN;
     	for(int row=0; row<statesManager.accessStateMatrix().size(); row++) {
     		ArrayList<String> rowVector = new ArrayList<>();
     		
-    		if(selectedStatePN == row)
+    		if(statesManager.selectedStatePN == row)
     			rowVector.add("X");
     		else
     			rowVector.add("");
@@ -600,7 +598,7 @@ public class HolmesStatesManager extends JFrame {
 					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				tableModelXTPN.setSelected(selected);
-				boolean status = statesManager.setNetworkStateXTPN(selected);
+				boolean status = statesManager.replaceNetStateWithSelectedMultiset_M(selected);
 				if(status) {
 					pn.repaintAllGraphPanels();
 					tableModelXTPN.fireTableDataChanged();
@@ -631,7 +629,7 @@ public class HolmesStatesManager extends JFrame {
 					"New state", JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
-				statesManager.addCurrentStateXTPN();
+				statesManager.createNewMultiset_M_basedOnNet();
 				addLastStateToTableXTPN();
 				tableModelXTPN.fireTableDataChanged();
 			}
@@ -655,7 +653,7 @@ public class HolmesStatesManager extends JFrame {
 					"New clean state", JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
-				statesManager.addNewCleanStateXTPN();
+				statesManager.addNewCleanMultiset_M();
 				addLastStateToTableXTPN();
 				tableModelXTPN.fireTableDataChanged();
 			}
@@ -705,7 +703,7 @@ public class HolmesStatesManager extends JFrame {
 			}
 			int selected = statesTableXTPN.getSelectedRow();
 			if(selected > -1)
-				new HolmesStatesEditorXTPN((HolmesStatesManager)ego, statesManager.getStateXTPN(selected), selected);
+				new HolmesStatesEditorXTPN((HolmesStatesManager)ego, statesManager.getMultiset_M(selected), selected);
 			else {
 				JOptionPane.showMessageDialog(ego, "Please click on any XTPN state row.",
 						"No XTPN state selected", JOptionPane.WARNING_MESSAGE);
@@ -744,7 +742,7 @@ public class HolmesStatesManager extends JFrame {
 			return;
 		}
 
-		statesManager.removeStateXTPN(selected);
+		statesManager.removeMultiset_M(selected);
 		fillTableXTPN();
 		overlord.markNetChange();
 	}
@@ -763,7 +761,7 @@ public class HolmesStatesManager extends JFrame {
 			return;
 		}
 
-		statesManager.replaceStoredStateWithNetStateXTPN(selected);
+		statesManager.replaceStoredMultiset_M_withCurrentNetState(selected);
 		fillTableXTPN();
 		overlord.markNetChange();
 	}
@@ -788,13 +786,13 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void addLastStateToTableXTPN() {
 		int states = statesManager.accessStateMatrixXTPN().size();
-		StatePlacesVectorXTPN psVector = statesManager.getStateXTPN(states-1);
+		MultisetM psVector = statesManager.getMultiset_M(states-1);
 		ArrayList<String> rowVector = new ArrayList<>();
 
 		rowVector.add("");
 		rowVector.add("m0("+(states)+")");
-		for(int p=0; p<psVector.getSize(); p++) {
-			int value = psVector.accessMultisetK(p).size();
+		for(int p = 0; p<psVector.getMultiset_M_Size(); p++) {
+			int value = psVector.accessMultiset_K(p).size();
 			rowVector.add(""+value);
 		}
 		tableModelXTPN.addNew(rowVector);
@@ -806,22 +804,20 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void fillTableXTPN() {
 		tableModelXTPN.clearModel(places.size());
-
-		int selectedStateXTPN = statesManager.selectedStateXTPN;
 		for(int row=0; row<statesManager.accessStateMatrixXTPN().size(); row++) {
 			ArrayList<String> rowVector = new ArrayList<>();
 
-			if(selectedStateXTPN == row)
+			if(statesManager.selectedStateXTPN == row)
 				rowVector.add("X");
 			else
 				rowVector.add("");
 
-			StatePlacesVectorXTPN psVector = statesManager.getStateXTPN(row);
+			MultisetM multisetM = statesManager.getMultiset_M(row);
 			rowVector.add("m0("+(row+1)+")");
 
-			for(int placeIndex=0; placeIndex<psVector.getSize(); placeIndex++) {
-				int value = psVector.accessMultisetK(placeIndex).size();
-				if(places.get(placeIndex).isGammaModeActiveXTPN())
+			for(int placeIndex = 0; placeIndex<multisetM.getMultiset_M_Size(); placeIndex++) {
+				int value = multisetM.accessMultiset_K(placeIndex).size();
+				if( multisetM.isPlaceStoredAsGammaActive(placeIndex) )
 					rowVector.add(""+value);
 				else
 					rowVector.add(""+value+" (C)");
@@ -852,7 +848,7 @@ public class HolmesStatesManager extends JFrame {
 				JTextArea field = (JTextArea) e.getSource();
 				if(field != null) {
 					String newComment = field.getText();
-					statesManager.setStateDescriptionXTPN(selectedRow, newComment);
+					statesManager.setMultiset_M_Description(selectedRow, newComment);
 				}
 			}
 		});
@@ -880,7 +876,7 @@ public class HolmesStatesManager extends JFrame {
 	 * Ustawia pole opisy wybranego stanu.
 	 */
 	public void fillDescriptionFieldXTPN() {
-		String description = statesManager.getStateDescriptionXTPN(selectedRow);
+		String description = statesManager.getMultiset_M_Description(selectedRow);
 		stateDescrTextAreaXTPN.setText(description);
 	}
 

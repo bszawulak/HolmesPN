@@ -2,13 +2,10 @@ package holmes.windows;
 
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
-import holmes.petrinet.data.P_StateManager;
-import holmes.petrinet.data.StatePlacesVectorXTPN;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.utilities.Tools;
 import holmes.windows.managers.HolmesStatesEditorXTPN;
-import holmes.workspace.WorkspaceSheet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +23,9 @@ public class HolmesXTPNtokens extends JFrame {
     private Place place;
     private boolean mainSimulatorActive;
     private boolean isGammaPlace;
-    private StatePlacesVectorXTPN vectorXTPN; //aktualny stan sieci
+    //private StatePlacesVectorXTPN vectorXTPN; //aktualny stan sieci
+
+    private ArrayList<Double> multisetK;
     private ArrayList<Place> places;
     private boolean listenerAllowed = true; //jeśli true, comboBoxy działają
     private JComboBox<String> tokensComboBox;
@@ -44,14 +43,17 @@ public class HolmesXTPNtokens extends JFrame {
      * @param parent (<b>HolmesStatesEditorXTPN</b>) potencjalny obiekt okna managera stanów. Lub nie. Gdy null, to znaczy,
      *               że wywołanie nastąpiło w głównego okna Holmesa.
      */
-    public HolmesXTPNtokens(Place placeObj, HolmesStatesEditorXTPN parent) {
+    public HolmesXTPNtokens(Place placeObj, HolmesStatesEditorXTPN parent, ArrayList<Double> multK, boolean isGammaPlace) {
         overlord = GUIManager.getDefaultGUIManager();
         parentWindow = parent;
-        place = placeObj;
-        isGammaPlace = place.isGammaModeActiveXTPN();
-        P_StateManager spm = overlord.getWorkspace().getProject().accessStatesManager();
-        vectorXTPN = spm.getCurrentStateXTPN();
         places = overlord.getWorkspace().getProject().getPlaces();
+        place = placeObj;
+
+        multisetK = multK;
+
+        this.isGammaPlace = isGammaPlace;
+
+
         setTitle("XPTN tokens window");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
@@ -118,11 +120,11 @@ public class HolmesXTPNtokens extends JFrame {
         mainPanel.setLayout(null);
         mainPanel.setBounds(0, 0, 380, 180);
         mainPanel.setLocation(0, 0);
-        mainPanel.add(getDockPanel());
+        mainPanel.add(createMainPanel());
         add(mainPanel, BorderLayout.CENTER);
     }
 
-    private JPanel getDockPanel() {
+    private JPanel createMainPanel() {
         JPanel comboPanel = new JPanel();
         comboPanel.setLayout(null);
         comboPanel.setBounds(0, 0, 360, 140);
@@ -147,7 +149,13 @@ public class HolmesXTPNtokens extends JFrame {
             idTokenLabel.setText("ID: "+selected);
 
             if(selected >= 0) {
-                tokenValueTextField.setValue(place.accessMultiset().get(selected));
+                if(parentWindow == null) {
+                    //wywołanie z Holmesa - wyświetl rzeczywisty multizbiór miejsca
+                    tokenValueTextField.setValue(place.accessMultiset().get(selected));
+                } else { //wywołanie z managera - wyświetl token z multizbioru wziętego z przechowywanego p-stanu
+                    tokenValueTextField.setValue(multisetK.get(selected));
+                }
+
             }
         });
         comboPanel.add(tokensComboBox);
@@ -177,11 +185,11 @@ public class HolmesXTPNtokens extends JFrame {
         tokenValueTextField.addPropertyChangeListener("value", e -> {
             if (!listenerAllowed)
                 return;
-
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
+                overlord.log("Exception: "+ex, "error", false);
                 System.out.println(ex.getMessage());
             }
         });
@@ -212,15 +220,12 @@ public class HolmesXTPNtokens extends JFrame {
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                 } else { // modyfikujemy tylko przechowywany p-stan
                     int location = places.indexOf(place);
-                    vectorXTPN.accessMultisetK(location).set(selected, val);
-                    Collections.sort(vectorXTPN.accessMultisetK(location));
-                    Collections.reverse(vectorXTPN.accessMultisetK(location));
+                    multisetK.set(selected, val);
+                    Collections.sort(multisetK);
+                    Collections.reverse(multisetK);
                 }
-
-
                 recreateComboBox();
                 tokensComboBox.setSelectedIndex(selected);
-
                 listenerAllowed=true;
             } catch (Exception exc) {
                 JOptionPane.showMessageDialog(null, "Cannot convert "+tokenValueTextField.getValue()+ " into Double",
@@ -243,25 +248,30 @@ public class HolmesXTPNtokens extends JFrame {
                 return;
 
             try {
-                //Double val = Double.parseDouble((String) tokenValueTextField.getValue());
                 listenerAllowed=false;
-
                 if(parentWindow == null) { //to znaczy, że usuwamy bezpośrednio z miejsca
                     place.removeTokenByID(selected);
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                 } else { // usuwamy token tylko z przechowywanego p-stanu
-                    int location = places.indexOf(place);
-                    vectorXTPN.accessMultisetK(location).remove(selected);
+                    if(selected > -1 && selected < multisetK.size()) {
+                        multisetK.remove(selected);
+                    } else {
+                        overlord.log("Error while removing token no. "+selected+"from state for place "+places.indexOf(place), "error", false);
+                    }
                 }
 
                 recreateComboBox();
-                listenerAllowed=true;
-                tokensNoLabel.setText("Tokens:"+place.getTokensNumber());
-
-                recalculateTokens();
+                writeTokensNumberInLabel();
                 checkInterfaceConditions();
-                if(place.accessMultiset().size() != 0)
-                    tokensComboBox.setSelectedIndex(0);
+                listenerAllowed=true;
+
+                if(parentWindow == null) {
+                    if(place.accessMultiset().size() != 0)
+                        tokensComboBox.setSelectedIndex(0);
+                } else { //osobno dla edycji stanu, nie miejsca
+                    if(multisetK.size() != 0)
+                        tokensComboBox.setSelectedIndex(0);
+                }
             } catch (Exception exc) {
                 JOptionPane.showMessageDialog(null, "Cannot convert "+tokenValueTextField.getValue()+ " into Double",
                         "Conversion eror", JOptionPane.ERROR_MESSAGE);
@@ -312,20 +322,15 @@ public class HolmesXTPNtokens extends JFrame {
                         place.addTokens_XTPN(1, val);
                         GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                     } else { // dodajemy token tylko do przechowywanego p-stanu
-                        int location = places.indexOf(place);
-                        vectorXTPN.accessMultisetK(location).add(val);
+                        multisetK.add(val);
                         if(val > 0) {
-                            Collections.sort(vectorXTPN.accessMultisetK(location));
-                            Collections.reverse(vectorXTPN.accessMultisetK(location));
+                            Collections.sort(multisetK);
+                            Collections.reverse(multisetK);
                         }
+
                     }
-
                     recreateComboBox();
-                    tokenValueTextField.setEnabled(true);
-                    changeTokenValueButton.setEnabled(true);
-                    removeTokenValueButton.setEnabled(true);
-                    recalculateTokens();
-
+                    writeTokensNumberInLabel();
                     checkInterfaceConditions();
                     tokensComboBox.setSelectedIndex(0);
                 } else { //miejsce klasyczne
@@ -333,12 +338,12 @@ public class HolmesXTPNtokens extends JFrame {
                         place.addTokens_XTPN(1, 0.0);
                         GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                     } else { // dodajemy token tylko do przechowywanego p-stanu
-                        int location = places.indexOf(place);
-                        double tokensNumber = vectorXTPN.accessMultisetK(location).get(0);
+                        double tokensNumber = multisetK.get(0);
                         tokensNumber++;
-                        vectorXTPN.accessMultisetK(location).set(0, tokensNumber);
+                        multisetK.set(0, tokensNumber);
                     }
                     checkInterfaceConditions();
+                    writeTokensNumberInLabel();
                 }
             } catch (Exception exc) {
                 JOptionPane.showMessageDialog(null, "Cannot convert "+tokenValueTextField.getValue()+ " into Double",
@@ -366,12 +371,11 @@ public class HolmesXTPNtokens extends JFrame {
                     place.setTokensNumber(0);
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                 } else { // czyścimy tylko przechowywany p-stan
-                    int location = places.indexOf(place);
-                    vectorXTPN.accessMultisetK(location).clear();
+                    multisetK.clear();
                 }
 
                 recreateComboBox();
-                recalculateTokens();
+                writeTokensNumberInLabel();
                 listenerAllowed=true;
             }
         });
@@ -418,15 +422,19 @@ public class HolmesXTPNtokens extends JFrame {
     /**
      * Metoda przelicza ile jest tokenów i wyświetla w tokensNoLabel.
      */
-    private void recalculateTokens() {
-        int val = place.accessMultiset().size();
-        tokensNoLabel.setText("Tokens: "+val);
+    private void writeTokensNumberInLabel() {
+        if(parentWindow == null) {
+            int tokensNo = place.accessMultiset().size();
+            tokensNoLabel.setText("Tokens: "+tokensNo);
 
-        if(isGammaPlace) {
-            if(val != place.getTokensNumber()) {
-                overlord.log("Error, multiset size and variable tokenNumber missmatch for place p_"+place.getID(),
-                        "error", false);
+            if(isGammaPlace) {
+                if(tokensNo != place.getTokensNumber()) {
+                    overlord.log("Error, multiset size and variable tokenNumber missmatch for place p_"+place.getID(),
+                            "error", false);
+                }
             }
+        } else { //wywołanie z managera stanów
+            tokensNoLabel.setText("Tokens: "+multisetK.size());
         }
     }
 
@@ -435,11 +443,17 @@ public class HolmesXTPNtokens extends JFrame {
      */
     private void recreateComboBox() {
         tokensComboBox.removeAllItems();
-        for(int p=0; p < place.accessMultiset().size(); p++) {
-            double token = place.accessMultiset().get(p);
 
-
-            tokensComboBox.addItem("(\u03BA"+(p)+")  " + Tools.cutValueExt(token, place.getFraction_xTPN()) );
+        if(parentWindow == null) {
+            for(int p=0; p < place.accessMultiset().size(); p++) {
+                double token = place.accessMultiset().get(p);
+                tokensComboBox.addItem("(\u03BA"+(p)+")  " + Tools.cutValueExt(token, place.getFraction_xTPN()) );
+            }
+        } else { //dla state managera:
+            for(int p=0; p < multisetK.size(); p++) {
+                double token = multisetK.get(p);
+                tokensComboBox.addItem("(\u03BA"+(p)+")  " + Tools.cutValueExt(token, place.getFraction_xTPN()) );
+            }
         }
     }
 }

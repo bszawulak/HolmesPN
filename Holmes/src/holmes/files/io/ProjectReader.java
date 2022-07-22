@@ -188,10 +188,10 @@ public class ProjectReader {
 			if(statesXTPN) {
 				status = readStatesXTPN(buffer);
 				if(!status) {
-					projectCore.accessStatesManager().createCleanStateXTPN();
+					projectCore.accessStatesManager().createFirstMultiset_M();
 				}
 			} else {
-				projectCore.accessStatesManager().createCleanStateXTPN();
+				projectCore.accessStatesManager().createFirstMultiset_M();
 			}
 			
 			if(firingRates) {
@@ -1876,25 +1876,27 @@ public class ProjectReader {
 
 			boolean go = true;
 			P_StateManager statesMngr = projectCore.accessStatesManager();
-			statesMngr.resetXTPN(false);
+			statesMngr.removeAllMultisets_M(false);
 
 			line = buffer.readLine();
 			try {
 				while(go) {
 					readedLine++;
-					StatePlacesVectorXTPN pVector = new StatePlacesVectorXTPN();
+					MultisetM pVector = new MultisetM();
 					line = line.replace(" ", "");
-					String[] stateTable = line.split(":"); //separator multizbiorów
+					String[] stateTable = line.split(";"); //separator multizbiorów
 					int placeIndex = -1;
 					for (String multisetString : stateTable) {
 						placeIndex++;
-						String[] multisetTab = multisetString.split(";"); //separator tokenów
+						String[] multisetTab = multisetString.split(":"); //separator tokenów
 						ArrayList<Double> multisetK = new ArrayList<>();
+						int placeTag = 1; //jeśli 1, to miejsce jest czasowe
 						for(String token : multisetTab) {
 							if(token.contains("(C)")) {
-								token.replace("(C)", "");
+								token = token.replace("(C)", "");
 								int tokenValue = Integer.parseInt(token);
 								((Place)nodes.get(placeIndex)).setTokensNumber(tokenValue);
+								placeTag = 0; //miejsce klasyczne
 								//miejsca są pierwsze dodawane do nodes, więc powinno zadziałać...
 							} else {
 								double tokenValue = Double.parseDouble(token);
@@ -1905,7 +1907,8 @@ public class ProjectReader {
 						}
 						Collections.sort(multisetK);
 						Collections.reverse(multisetK);
-						pVector.addPlaceXTPN(multisetK);
+
+						pVector.addPlaceToMultiset_M(multisetK, placeTag); //TODO
 					}
 					line = buffer.readLine(); //dane dodatkowe
 					line = line.trim();

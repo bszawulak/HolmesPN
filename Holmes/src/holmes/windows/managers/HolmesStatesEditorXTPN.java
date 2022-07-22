@@ -19,7 +19,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.P_StateManager;
-import holmes.petrinet.data.StatePlacesVectorXTPN;
+import holmes.petrinet.data.MultisetM;
 import holmes.petrinet.elements.Place;
 import holmes.tables.RXTable;
 import holmes.tables.managers.StatesPlacesEditorTableModelXTPN;
@@ -30,10 +30,9 @@ public class HolmesStatesEditorXTPN extends JFrame {
     @Serial
     private static final long serialVersionUID = 3176765993380657329L;
     private HolmesStatesManager parentWindow;
-    private HolmesStatesEditorXTPN ego;
     private RXTable multisetsTable;
     private StatesPlacesEditorTableModelXTPN tableModel;
-    private StatePlacesVectorXTPN stateVectorXTPN;
+    private MultisetM multisetM;
     private int stateIndex;
     private ArrayList<Place> places;
     private P_StateManager statesManager;
@@ -46,7 +45,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
      * @param stateVector StatePlacesVector - wektor SSA
      * @param stateIndex int - indeks powyższego wektora w tablicy
      */
-    public HolmesStatesEditorXTPN(HolmesStatesManager parent, StatePlacesVectorXTPN stateVector, int stateIndex) {
+    public HolmesStatesEditorXTPN(HolmesStatesManager parent, MultisetM stateVector, int stateIndex) {
         setTitle("Holmes p-state editor XTPN");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
@@ -57,8 +56,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
         PetriNet pn = overlord.getWorkspace().getProject();
         this.parentWindow = parent;
-        ego = this;
-        this.stateVectorXTPN = stateVector;
+        this.multisetM = stateVector;
         this.stateIndex = stateIndex;
         this.places = pn.getPlaces();
         this.statesManager = pn.accessStatesManager();
@@ -77,18 +75,19 @@ public class HolmesStatesEditorXTPN extends JFrame {
      */
     public void fillTable() {
         tableModel.clearModel();
-        int size = stateVectorXTPN.getSize();
+        int size = multisetM.getMultiset_M_Size();
         for(int placeIndex=0; placeIndex<size; placeIndex++) {
-            ArrayList<Double> multiset = stateVectorXTPN.accessMultisetK(placeIndex);
+            ArrayList<Double> multisetK = multisetM.accessMultiset_K(placeIndex);
+            boolean isGammaModeON = multisetM.isPlaceStoredAsGammaActive(placeIndex);
             StringBuilder line = new StringBuilder();
-            if(multiset.size() == 0) { //jeśli nic nie ma w multizbiorze
-                if(places.get(placeIndex).isGammaModeActiveXTPN()) {
+            if(multisetK.size() == 0) { //jeśli nic nie ma w multizbiorze
+                if(isGammaModeON) {
                     line.append(" <empty> "); //puste miejsce XTPN
                 } else { //liczba tokenów miejsca klasycznego:
-                    line.append(places.get(placeIndex).getTokensNumber()+" <non-time place> ");
+                    line.append(places.get(placeIndex).getTokensNumber()).append(" <ClassicalPlace> ");
                 }
             } else {
-                for(Double d : multiset) {
+                for(Double d : multisetK) {
                     line.append(d).append(" | ");
                 }
             }
@@ -98,7 +97,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
     }
 
     /**
-     * Główna metoda tworząca panele okna.
+     * Główna metoda tworząca wygląd okna.
      */
     private void initalizeComponents() {
         setLayout(new BorderLayout());
@@ -114,7 +113,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
 
     /**
      * Buduje i zwraca panel górny okna.
-     * @return JPanel - panel
+     * @return (<b>JPanel</b>) - panel górny.
      */
     private JPanel getTopPanel() {
         JPanel result = new JPanel(new BorderLayout());
@@ -162,7 +161,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
 
     /**
      * Tworzy panel główny tablicy stanu sieci.
-     * @return JPanel - panel
+     * @return (<b>JPanel</b>) - panel główny okna.
      */
     public JPanel getMainTablePanel() {
         JPanel result = new JPanel(new BorderLayout());
@@ -195,8 +194,8 @@ public class HolmesStatesEditorXTPN extends JFrame {
             if(!doNotListen)
                 cellClickAction();
         });
-        //z nieznanych mi powodów powyższy kod działa, poniższy za cholerę. Tj. gorzej: działa, ale dopiero od
-        //drugiego kliknięcia w tabelę. Za pierszym tabele na selectedRow() zawsze zwraca -1...
+        //z nieznanych mi powodów powyższy kod działa, a poniższy za cholerę. Tj. gorzej: działa, ale dopiero od
+        //drugiego kliknięcia w tabelę. Za pierszym tabela na kliknięcie i na selectedRow() zawsze zwraca -1...
         /*
         multisetsTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -217,12 +216,15 @@ public class HolmesStatesEditorXTPN extends JFrame {
     }
 
     /**
-     * Metoda obsługująca kliknięcie dowolnej komórki.
+     * Metoda obsługująca kliknięcie dowolnej komórki w edytorze stanów. Powoduje wywołanie okna
+     * edycji tokenów, do którego przesyła obiekt miejsca, obiekt wywołujący (to okno), multizbiór K miejsca
+     * oraz informację, czy w przechowywanym stanie (multizbiorze M) miejsce jest oznaczone jako czasowe czy nie.
      */
     protected void cellClickAction() {
         try {
-            int x = multisetsTable.getSelectedRow();
-            new HolmesXTPNtokens(places.get(x), ego);
+            int selectedPlace = multisetsTable.getSelectedRow();
+            new HolmesXTPNtokens(places.get(selectedPlace), this, multisetM.accessMultiset_K(selectedPlace)
+                    , multisetM.isPlaceStoredAsGammaActive(selectedPlace));
         } catch (Exception ignored) {
 
         }
@@ -234,7 +236,9 @@ public class HolmesStatesEditorXTPN extends JFrame {
     private void initiateListeners() { //HAIL SITHIS
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                parentWindow.setEnabled(true);
+                //gdy okno jest zamykane, odblokowuje okno wywołujące - zapewne XTPN state manager
+                if(parentWindow != null)
+                    parentWindow.setEnabled(true);
             }
         });
     }
