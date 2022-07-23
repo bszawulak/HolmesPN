@@ -1885,19 +1885,20 @@ public class ProjectReader {
 					MultisetM pVector = new MultisetM();
 					line = line.replace(" ", "");
 					String[] stateTable = line.split(";"); //separator multizbiorów
-					int placeIndex = -1;
+					//int placeIndex = -1;
 					for (String multisetString : stateTable) {
-						placeIndex++;
+						//placeIndex++;
 						String[] multisetTab = multisetString.split(":"); //separator tokenów
 						ArrayList<Double> multisetK = new ArrayList<>();
-						int placeTag = 1; //jeśli 1, to miejsce jest czasowe
+						int isXTPNplace = 1; //jeśli 1, to miejsce jest czasowe
 						for(String token : multisetTab) {
 							if(token.contains("(C)")) {
 								token = token.replace("(C)", "");
-								int tokenValue = Integer.parseInt(token);
-								((Place)nodes.get(placeIndex)).setTokensNumber(tokenValue);
-								placeTag = 0; //miejsce klasyczne
-								//miejsca są pierwsze dodawane do nodes, więc powinno zadziałać...
+								double tokenValue = Double.parseDouble(token); //musi być przeczytane jako double
+								//((Place)nodes.get(placeIndex)).setTokensNumber((int)tokenValue); //WTF?!
+								multisetK.add(tokenValue);
+								isXTPNplace = 0; //miejsce klasyczne
+								break; //technicznie, nie powinno być ŻADNYCH innych wartości w tym "multizbiorze" miejsca klasycznego!
 							} else {
 								double tokenValue = Double.parseDouble(token);
 								if(tokenValue > -1.0) {//oznaczenie braku tokenów
@@ -1907,8 +1908,7 @@ public class ProjectReader {
 						}
 						Collections.sort(multisetK);
 						Collections.reverse(multisetK);
-
-						pVector.addPlaceToMultiset_M(multisetK, placeTag); //TODO
+						pVector.addMultiset_K_toMultiset_M(multisetK, isXTPNplace);
 					}
 					line = buffer.readLine(); //dane dodatkowe
 					line = line.trim();

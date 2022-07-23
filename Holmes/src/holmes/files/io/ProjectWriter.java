@@ -811,28 +811,35 @@ public class ProjectWriter {
 				String type = "";
 				String description = "";
 				int placeIndex = -1;
-				for (MultisetM vector : statesMatrixXTPN) {
-					type = vector.getStateType();
-					description = vector.getDescription();
+				for (MultisetM multisetMobject : statesMatrixXTPN) {
+					stateLine.setLength(0);
+					type = multisetMobject.getStateType();
+					description = multisetMobject.getDescription();
 					sp = 4;
 
-					for(ArrayList<Double> multiset : vector.accessMultiset_M()) { //zapis multizbiorów tokenów
+					for(ArrayList<Double> multisetK : multisetMobject.accessArrayListSOfMultiset_M()) { //zapis multizbiorów tokenów
 						placeIndex++;
 						int counter = 0;
-						for(Double value : multiset) {
-							counter++;
-							if(counter == multiset.size())  {
-								stateLine.append(value).append(":"); //separator tokenów
-							} else { //multizbiór pusty
-								stateLine.append(value).append(";"); //separator multizbiorów
+						boolean isXTPNplace = multisetMobject.isPlaceStoredAsGammaActive(placeIndex);
+						for(Double token : multisetK) {
+							if(isXTPNplace) {
+								counter++;
+								if(counter == multisetK.size())  { //jeżeli to ostatni token
+									stateLine.append(token).append(";"); //separator multizbiorów
+								} else {
+									stateLine.append(token).append(":"); //separator multizbiorów
+								}
+							} else {
+								stateLine.append(token).append("(C);");
 							}
 						}
-						if(counter == 0) { //brak tokenów w miejscu
+						if(counter == 0 && isXTPNplace) { //brak tokenów w miejscu
 							if(places.get(placeIndex).isGammaModeActiveXTPN()) {
 								stateLine.append("-1.0;");
-							} else {
-								stateLine.append(places.get(placeIndex).getTokensNumber()+"(C);");
 							}
+							//else {
+								//stateLine.append(places.get(placeIndex).getTokensNumber()+"(C);");
+							//}
 						}
 					}
 					stateLine = new StringBuilder(stateLine.substring(0, stateLine.length() - 1)); //usun ostatni ';'

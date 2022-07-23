@@ -237,13 +237,14 @@ public class Place extends Node {
 	 * @param delta (<b>int</b>) wartość, o którą zmieni się liczba tokenów
 	 */
 	public void modifyTokensNumber(int delta) {
-		this.tokensNumber += delta;
-		
-		if(tokensNumber < 0) {
+		if((tokensNumber + delta) < 0) {
 			this.tokensNumber = 0;
-			GUIManager.getDefaultGUIManager().log("Simulation error: number of tokens in place: "
-					+this.getName()+ " below zero: ("+this.getTokensNumber()+").", "error", true);
+			GUIManager.getDefaultGUIManager().log("Error: something tried to lower tokens below zero! Place: "
+					+this.getName(), "error", true);
+		} else {
+			this.tokensNumber += delta;
 		}
+
 	}
 	
 	/**
@@ -400,7 +401,7 @@ public class Place extends Node {
 	
 	/**
 	 * Metoda zamieniająca dane o miejscu sieci na łańcuch znaków.
-	 * @return String - łańcuch znaków
+	 * @return (<b>String</b>) - łańcuch znaków reprezentujący miejsca.
 	 */
 	public String toString() {
 		String name =  getName();
@@ -838,6 +839,7 @@ public class Place extends Node {
 		}
 		modifyTokensNumber(-1);
 	}
+
 
 	/**
 	 * Metoda umożliwia dostęp do multizbioru K tokenów.

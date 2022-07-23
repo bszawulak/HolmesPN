@@ -78,17 +78,22 @@ public class HolmesStatesEditorXTPN extends JFrame {
         int size = multisetM.getMultiset_M_Size();
         for(int placeIndex=0; placeIndex<size; placeIndex++) {
             ArrayList<Double> multisetK = multisetM.accessMultiset_K(placeIndex);
-            boolean isGammaModeON = multisetM.isPlaceStoredAsGammaActive(placeIndex);
+            boolean isXTPNplace = multisetM.isPlaceStoredAsGammaActive(placeIndex);
             StringBuilder line = new StringBuilder();
             if(multisetK.size() == 0) { //jeśli nic nie ma w multizbiorze
-                if(isGammaModeON) {
+                if(isXTPNplace) {
                     line.append(" <empty> "); //puste miejsce XTPN
                 } else { //liczba tokenów miejsca klasycznego:
-                    line.append(places.get(placeIndex).getTokensNumber()).append(" <ClassicalPlace> ");
+                    line.append(0).append(" <ClassicalPlace> ");
                 }
             } else {
-                for(Double d : multisetK) {
-                    line.append(d).append(" | ");
+                if(isXTPNplace) {
+                    for(Double d : multisetK) {
+                        line.append(d).append(" | ");
+                    }
+                } else {
+                    double tokensNumber = multisetK.get(0);
+                    line.append((int)tokensNumber).append(" <ClassicalPlace> ");
                 }
             }
             tableModel.addNew(placeIndex, places.get(placeIndex).getName(), line.toString());

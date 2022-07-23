@@ -45,14 +45,14 @@ public class P_StateManager {
 		}
 		for(MultisetM pVector: statesMatrixXTPN) {
 			if(place.isGammaModeActiveXTPN())
-				pVector.addPlaceToMultiset_M( new ArrayList<>(place.accessMultiset()), 1 );
+				pVector.addMultiset_K_toMultiset_M( new ArrayList<>(place.accessMultiset()), 1 );
 			else
-				pVector.addPlaceToMultiset_M( new ArrayList<>(place.accessMultiset()), 0 );
+				pVector.addMultiset_K_toMultiset_M( new ArrayList<>(place.accessMultiset()), 0 );
 		}
 	}
 	
 	/**
-	 * Usuwa we wszystkich stanach dane o stanie właśnie kasowanego miejsca.
+	 * Usuwa we wszystkich stanach dane o stanie właśnie kasowanego miejsca. Wspólna metoda dla sieci zwykłych i XTPN.
 	 * @param index (<b>int</b>) indeks miejsca.
 	 */
 	public void removePlace(int index) {
@@ -83,18 +83,6 @@ public class P_StateManager {
 	}
 
 	/**
-	 * Zwraca multizbiór M o zadanym indeksie z przechowywanych w managerze stanów.
-	 * @param index (<b>int</b>) indeks przechowywanego stanu.
-	 * @return (<b>PlacesStateVector</b>) - multizbiór M.
-	 */
-	public MultisetM getMultiset_M(int index) {
-		if(index >= statesMatrixXTPN.size())
-			return null;
-		else
-			return statesMatrixXTPN.get(index);
-	}
-	
-	/**
 	 * Zwraca obiekt wektora stanu normalnej sieci o aktualnie ustalonym indeksie.
 	 * @return (<b>PlacesStateVector</b>) obiekt wektora stanów.
 	 */
@@ -102,14 +90,6 @@ public class P_StateManager {
 		return statesMatrix.get(selectedStatePN);
 	}
 
-	/**
-	 * Zwraca multizbiór M który jest aktualnie aktywny w managerze.
-	 * @return (<b>StatePlacesVectorXTPN</b>) obiekt wektora stanów XTPN.
-	 */
-	public MultisetM getCurrentMultiset_M() { //odpowienik PN działa w StateSimulator
-		return statesMatrixXTPN.get(selectedStateXTPN);
-	}
-	
 	/**
 	 * Metoda dodaje nowy stan klasycznej sieci na bazie istniejącego w danej chwili w edytorze.
 	 */
@@ -119,20 +99,6 @@ public class P_StateManager {
 			pVector.addPlace(place.getTokensNumber());
 		}
 		statesMatrix.add(pVector);
-	}
-
-	/**
-	 * Metoda dodaje nowy stan sieci XTPN na bazie istniejącego w danej chwili w edytorze.
-	 */
-	public void createNewMultiset_M_basedOnNet() {
-		MultisetM pVectorXTPN = new MultisetM();
-		for(Place place : pn.getPlaces()) {
-			if(place.isGammaModeActiveXTPN())
-				pVectorXTPN.addPlaceToMultiset_M(new ArrayList<>(place.accessMultiset()), 1);
-			else
-				pVectorXTPN.addPlaceToMultiset_M(new ArrayList<>(place.accessMultiset()), 0);
-		}
-		statesMatrixXTPN.add(pVectorXTPN);
 	}
 	
 	/**
@@ -148,18 +114,6 @@ public class P_StateManager {
 	}
 
 	/**
-	 * Metoda dodaje nowy czysty stan sieci XTPN - pusty multizbiór bez tokenów.
-	 */
-	public void addNewCleanMultiset_M() { //przycisk okna
-		MultisetM pVector = new MultisetM();
-		for(int p=0; p<pn.getPlacesNumber(); p++) {
-			pVector.addPlaceToMultiset_M(new ArrayList<>(), 1);
-			//nowy stan tylko XTPN dla miejsc, TODO
-		}
-		statesMatrixXTPN.add(pVector);
-	}
-
-	/**
 	 * Czyści stany i tworzy nowy pierwszy stan sieci. Jak dotąd używana tylko do wczytywania sieci, np. Snoopiego.
 	 */
 	public void createCleanStatePN() {
@@ -167,20 +121,6 @@ public class P_StateManager {
 		ArrayList<Place> places = pn.getPlaces();
 		for(Place place : places) {
 			statesMatrix.get(0).addPlace(place.getTokensNumber());
-		}
-	}
-
-	/**
-	 * Czyści stany i tworzy nowy pierwszy stan sieci XTPN.
-	 */
-	public void createFirstMultiset_M() {
-		removeAllMultisets_M(true); //czyść + dodaj czysty nowy wektor
-		ArrayList<Place> places = pn.getPlaces();
-		for(Place place : places) {
-			if(place.isGammaModeActiveXTPN())
-				statesMatrixXTPN.get(0).addPlaceToMultiset_M( new ArrayList<>(place.accessMultiset()), 1 );
-			else
-				statesMatrixXTPN.get(0).addPlaceToMultiset_M( new ArrayList<>(place.accessMultiset()), 0 );
 		}
 	}
 	
@@ -197,6 +137,137 @@ public class P_StateManager {
 			place.freeReservedTokens();
 		}
 		selectedStatePN = stateID;
+	}
+
+	/**
+	 * Metoda służąca do usuwania stanów sieci normalnej.
+	 * @param stateID (<b>int</b>) indeks stanu.
+	 */
+	public void removeStatePN(int stateID) {
+		statesMatrix.remove(stateID);
+		selectedStatePN = 0;
+	}
+	
+	/**
+	 * Nadpisuje wskazany stan przechowywany w managerze aktualnym stanem sieci (normalnej).
+	 * @param stateID (<b>int</b>) indeks wskazanego stanu z listy.
+	 */
+	public void replaceStoredStateWithNetStatePN(int stateID) {
+		ArrayList<Place> places = pn.getPlaces();
+		StatePlacesVector psVector = statesMatrix.get(stateID);
+		for(int p=0; p<places.size(); p++) {
+			psVector.accessVector().set(p, (double) places.get(p).getTokensNumber());
+		}
+	}
+	
+	/**
+	 * Zwraca opis stanu normalnej sieci.
+	 * @param selected (<b>int</b>) indeks stanu sieci normalnej.
+	 * @return (<b>String</b>) opis stanu.
+	 */
+	public String getStateDescriptionPN(int selected) {
+		return statesMatrix.get(selected).getDescription();
+	}
+
+	/**
+	 *  Ustawia opis stanu sieci XTPN.
+	 * @param selected (<b>int</b>) indeks stanu sieci normalnej.
+	 * @param newText (<b>String</b>) nowy opis stanu.
+	 */
+	public void setStateDescriptionPN(int selected, String newText) {
+		statesMatrix.get(selected).setDescription(newText);
+	}
+	
+	/**
+	 * NA POTRZEBY ZAPISU PROJEKTU: dostęp do tablicy stanów.
+	 * @return (<b>ArrayList[PlacesStateVector]</b>) tablica stanów sieci.
+	 */
+	public ArrayList<StatePlacesVector> accessStateMatrix() {
+		return this.statesMatrix;
+	}
+
+	/**
+	 * Metoda czyści tablicę stanów i ich nazw- tworzony jest nowy stan pierwszy.
+	 * @param createFirstVector (<b>boolean</b>) jeśli false, nie tworzy pierwszych elementów (na potrzeby <b>ProjectReader</b>)
+	 */
+	public void resetPN(boolean createFirstVector) {
+		statesMatrix = new ArrayList<>();
+		if(createFirstVector) {
+			statesMatrix.add(new StatePlacesVector());
+			statesMatrix.get(0).setDescription("Default first (0) working state for current net.");
+		}
+		selectedStatePN = 0;
+	}
+
+	// ********************************************************************************************
+	// **************************************              ****************************************
+	// **************************************     XTPN     ****************************************
+	// **************************************              ****************************************
+	// ********************************************************************************************
+
+	/**
+	 * Zwraca multizbiór M o zadanym indeksie z przechowywanych w managerze stanów.
+	 * @param index (<b>int</b>) indeks przechowywanego stanu.
+	 * @return (<b>PlacesStateVector</b>) - multizbiór M.
+	 */
+	public MultisetM getMultiset_M(int index) {
+		if(index >= statesMatrixXTPN.size())
+			return null;
+		else
+			return statesMatrixXTPN.get(index);
+	}
+
+	/**
+	 * Zwraca multizbiór M który jest aktualnie aktywny w managerze.
+	 * @return (<b>StatePlacesVectorXTPN</b>) obiekt wektora stanów XTPN.
+	 */
+	public MultisetM getCurrentMultiset_M() { //odpowienik PN działa w StateSimulator
+		return statesMatrixXTPN.get(selectedStateXTPN);
+	}
+
+	/**
+	 * Metoda dodaje nowy stan sieci XTPN (multizbiór M) na bazie istniejącego w danej chwili p-stanu aktualnej sieci.
+	 */
+	public void createNewMultiset_M_basedOnNet() {
+		MultisetM multisetM = new MultisetM();
+		for(Place place : pn.getPlaces()) {
+			if(place.isGammaModeActiveXTPN())
+				multisetM.addMultiset_K_toMultiset_M(new ArrayList<>(place.accessMultiset()), 1);
+			else {
+				int tokens = place.getTokensNumber();
+				ArrayList<Double> fakeMultiset = new ArrayList<>();
+				fakeMultiset.add((double) tokens);
+				multisetM.addMultiset_K_toMultiset_M(fakeMultiset, 0);
+			}
+			//multisetM.addPlaceToMultiset_M(new ArrayList<>(place.accessMultiset()), 0);
+		}
+		statesMatrixXTPN.add(multisetM);
+	}
+
+	/**
+	 * Metoda dodaje nowy czysty stan sieci XTPN - multizbiór M z czystymi (bez tokenów) multizbiorami K.
+	 */
+	public void addNewCleanMultiset_M() { //przycisk okna
+		MultisetM multisetM = new MultisetM();
+		for(int p=0; p<pn.getPlacesNumber(); p++) {
+			multisetM.addMultiset_K_toMultiset_M(new ArrayList<>(), 1);
+			//nowy stan tylko dla miejsc XTPN, TODO?
+		}
+		statesMatrixXTPN.add(multisetM);
+	}
+
+	/**
+	 * Czyści stany i tworzy nowy pierwszy stan sieci XTPN (multizbiór M).
+	 */
+	public void createFirstMultiset_M() {
+		removeAllMultisets_M(true); //czyść + dodaj czysty nowy wektor
+		ArrayList<Place> places = pn.getPlaces();
+		for(Place place : places) {
+			if(place.isGammaModeActiveXTPN())
+				statesMatrixXTPN.get(0).addMultiset_K_toMultiset_M( new ArrayList<>(place.accessMultiset()), 1 );
+			else
+				statesMatrixXTPN.get(0).addMultiset_K_toMultiset_M( new ArrayList<>(place.accessMultiset()), 0 );
+		}
 	}
 
 	/**
@@ -227,33 +298,12 @@ public class P_StateManager {
 	}
 
 	/**
-	 * Metoda służąca do usuwania stanów sieci normalnej.
-	 * @param stateID (<b>int</b>) indeks stanu.
-	 */
-	public void removeStatePN(int stateID) {
-		statesMatrix.remove(stateID);
-		selectedStatePN = 0;
-	}
-
-	/**
 	 * Usuwa wskazany stan sieci - multizbiór M przechowywany w managerze.
 	 * @param stateID (<b>int</b>) indeks p-stanu XTPN.
 	 */
 	public void removeMultiset_M(int stateID) {
 		statesMatrixXTPN.remove(stateID);
 		selectedStateXTPN = 0;
-	}
-	
-	/**
-	 * Nadpisuje wskazany stan przechowywany w managerze aktualnym stanem sieci (normalnej).
-	 * @param stateID (<b>int</b>) indeks wskazanego stanu z listy.
-	 */
-	public void replaceStoredStateWithNetStatePN(int stateID) {
-		ArrayList<Place> places = pn.getPlaces();
-		StatePlacesVector psVector = statesMatrix.get(stateID);
-		for(int p=0; p<places.size(); p++) {
-			psVector.accessVector().set(p, (double) places.get(p).getTokensNumber());
-		}
 	}
 
 	/**
@@ -263,7 +313,7 @@ public class P_StateManager {
 	public void replaceStoredMultiset_M_withCurrentNetState(int stateID) {
 		ArrayList<Place> places = pn.getPlaces();
 		MultisetM multisetM = statesMatrixXTPN.get(stateID);
-		multisetM.accessMultiset_M().clear();
+		multisetM.accessArrayListSOfMultiset_M().clear();
 
 		for (Place place : places) {
 			ArrayList<Double> currentPlaceMultiset = new ArrayList<>(place.accessMultiset());
@@ -273,17 +323,8 @@ public class P_StateManager {
 				currentPlaceMultiset.add((double)place.getTokensNumber());
 				placeTag = 0; //jednak miejsce zwykłe
 			}
-			multisetM.addPlaceToMultiset_M(currentPlaceMultiset, placeTag);
+			multisetM.addMultiset_K_toMultiset_M(currentPlaceMultiset, placeTag);
 		}
-	}
-	
-	/**
-	 * Zwraca opis stanu normalnej sieci.
-	 * @param selected (<b>int</b>) indeks stanu sieci normalnej.
-	 * @return (<b>String</b>) opis stanu.
-	 */
-	public String getStateDescriptionPN(int selected) {
-		return statesMatrix.get(selected).getDescription();
 	}
 
 	/**
@@ -294,15 +335,6 @@ public class P_StateManager {
 	public String getMultiset_M_Description(int selected) {
 		return statesMatrixXTPN.get(selected).getDescription();
 	}
-	
-	/**
-	 *  Ustawia opis stanu sieci XTPN.
-	 * @param selected (<b>int</b>) indeks stanu sieci normalnej.
-	 * @param newText (<b>String</b>) nowy opis stanu.
-	 */
-	public void setStateDescriptionPN(int selected, String newText) {
-		statesMatrix.get(selected).setDescription(newText);
-	}
 
 	/**
 	 * Ustawia opis wskazanego multizbioru M.
@@ -312,14 +344,6 @@ public class P_StateManager {
 	public void setMultiset_M_Description(int selected, String newText) {
 		statesMatrixXTPN.get(selected).setDescription(newText);
 	}
-	
-	/**
-	 * NA POTRZEBY ZAPISU PROJEKTU: dostęp do tablicy stanów.
-	 * @return (<b>ArrayList[PlacesStateVector]</b>) tablica stanów sieci.
-	 */
-	public ArrayList<StatePlacesVector> accessStateMatrix() {
-		return this.statesMatrix;
-	}
 
 	/**
 	 * NA POTRZEBY ZAPISU PROJEKTU: dostęp do tablicy stanów XTPN.
@@ -327,19 +351,6 @@ public class P_StateManager {
 	 */
 	public ArrayList<MultisetM> accessStateMatrixXTPN() {
 		return this.statesMatrixXTPN;
-	}
-
-	/**
-	 * Metoda czyści tablicę stanów i ich nazw- tworzony jest nowy stan pierwszy.
-	 * @param createFirstVector (<b>boolean</b>) jeśli false, nie tworzy pierwszych elementów (na potrzeby <b>ProjectReader</b>)
-	 */
-	public void resetPN(boolean createFirstVector) {
-		statesMatrix = new ArrayList<>();
-		if(createFirstVector) {
-			statesMatrix.add(new StatePlacesVector());
-			statesMatrix.get(0).setDescription("Default first (0) working state for current net.");
-		}
-		selectedStatePN = 0;
 	}
 
 	/**

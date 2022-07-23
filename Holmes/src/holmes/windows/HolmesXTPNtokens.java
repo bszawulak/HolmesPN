@@ -17,6 +17,14 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Klasa okna dodawania i usuwania tokenów. Działa dla głównego okna oraz managera stanów XTPN.
+ *
+ * UWAGA!!! Gdy miejsce jest klasyczne (GAMMA = OFF), to jego multizbiór K jest pusty, a liczba tokenów jest
+ * przechowywana w tokensNumber jak dla klasycznych miejsc. ALE JEST WYJĄTEK: dla managera stanów, jeśli
+ * miejsce jest przechowywane jako klasyczne, wtedy liczba tokenów to jedyna, pierwsza wartość w multizbiorze K. Np.
+ * dla takiego miejsca gdy multizbiór zawiera element 8.0, to znaczy, że miejsca ma 8 klasycznych tokenów.
+ */
 public class HolmesXTPNtokens extends JFrame {
     private final GUIManager overlord;
     private HolmesStatesEditorXTPN parentWindow;
@@ -24,7 +32,6 @@ public class HolmesXTPNtokens extends JFrame {
     private boolean mainSimulatorActive;
     private boolean isGammaPlace;
     //private StatePlacesVectorXTPN vectorXTPN; //aktualny stan sieci
-
     private ArrayList<Double> multisetK;
     private ArrayList<Place> places;
     private boolean listenerAllowed = true; //jeśli true, comboBoxy działają
@@ -219,7 +226,7 @@ public class HolmesXTPNtokens extends JFrame {
                     place.updateToken(selected, val);
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                 } else { // modyfikujemy tylko przechowywany p-stan
-                    int location = places.indexOf(place);
+                    //int location = places.indexOf(place);
                     multisetK.set(selected, val);
                     Collections.sort(multisetK);
                     Collections.reverse(multisetK);
@@ -249,29 +256,43 @@ public class HolmesXTPNtokens extends JFrame {
 
             try {
                 listenerAllowed=false;
-                if(parentWindow == null) { //to znaczy, że usuwamy bezpośrednio z miejsca
-                    place.removeTokenByID(selected);
-                    GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                } else { // usuwamy token tylko z przechowywanego p-stanu
-                    if(selected > -1 && selected < multisetK.size()) {
-                        multisetK.remove(selected);
-                    } else {
-                        overlord.log("Error while removing token no. "+selected+"from state for place "+places.indexOf(place), "error", false);
+
+                if(isGammaPlace) {
+                    if(parentWindow == null) { //to znaczy, że usuwamy bezpośrednio z miejsca
+                        place.removeTokenByID(selected); //poprzez metodę, a nie bezpośrednio z multisetK!
+                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                    } else { // usuwamy token tylko z przechowywanego p-stanu
+                        if(selected > -1 && selected < multisetK.size()) {
+                            multisetK.remove(selected);
+                        } else {
+                            overlord.log("Error while removing token no. "+selected+"from state for place "+places.indexOf(place), "error", false);
+                        }
+                    }
+                } else { //miejsca klasyczne
+                    if(parentWindow == null) { //to znaczy, że usuwamy bezpośrednio z miejsca
+                        place.modifyTokensNumber(-1); //poprzez metodę, a nie bezpośrednio z multisetK!
+                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                    } else { // usuwamy token tylko z przechowywanego p-stanu z managera:
+                        double tokensNumber = multisetK.get(0);
+                        int tokens = (int)tokensNumber;
+                        if(tokens >= 0) {
+                            tokensNumber--;
+                            multisetK.set(0, tokensNumber);
+                        }
                     }
                 }
+
 
                 recreateComboBox();
                 writeTokensNumberInLabel();
                 checkInterfaceConditions();
                 listenerAllowed=true;
 
-                if(parentWindow == null) {
-                    if(place.accessMultiset().size() != 0)
-                        tokensComboBox.setSelectedIndex(0);
-                } else { //osobno dla edycji stanu, nie miejsca
+                if(isGammaPlace) {
                     if(multisetK.size() != 0)
                         tokensComboBox.setSelectedIndex(0);
                 }
+
             } catch (Exception exc) {
                 JOptionPane.showMessageDialog(null, "Cannot convert "+tokenValueTextField.getValue()+ " into Double",
                         "Conversion eror", JOptionPane.ERROR_MESSAGE);
@@ -411,8 +432,9 @@ public class HolmesXTPNtokens extends JFrame {
         } else { //zwykłe miejsce
             tokenValueTextField.setEnabled(false);
             changeTokenValueButton.setEnabled(false);
-            removeTokenValueButton.setEnabled(false);
             clearAllButton.setEnabled(false);
+
+            removeTokenValueButton.setEnabled(true);
 
             tokensComboBox.setEnabled(false);
             addNewTextField.setEnabled(false);
@@ -423,18 +445,26 @@ public class HolmesXTPNtokens extends JFrame {
      * Metoda przelicza ile jest tokenów i wyświetla w tokensNoLabel.
      */
     private void writeTokensNumberInLabel() {
-        if(parentWindow == null) {
-            int tokensNo = place.accessMultiset().size();
-            tokensNoLabel.setText("Tokens: "+tokensNo);
+        if(isGammaPlace) {
+            int tokensNo = multisetK.size();
+            tokensNoLabel.setText("Tokens: " + tokensNo );
 
-            if(isGammaPlace) {
+            if(parentWindow == null) { //tylko dla głównego okna odwołujemy się do miejsca
                 if(tokensNo != place.getTokensNumber()) {
                     overlord.log("Error, multiset size and variable tokenNumber missmatch for place p_"+place.getID(),
                             "error", false);
                 }
             }
-        } else { //wywołanie z managera stanów
-            tokensNoLabel.setText("Tokens: "+multisetK.size());
+        } else { //classical place
+            double tokensNo = multisetK.get(0);
+            tokensNoLabel.setText("Tokens: " + (int)tokensNo );
+
+            if(parentWindow == null) { //tylko dla głównego okna odwołujemy się do miejsca
+                if(tokensNo != place.getTokensNumber()) {
+                    overlord.log("Error, classical place tokens number in a multiset at .get(0) and variable tokenNumber missmatch for place p_"+place.getID(),
+                            "error", false);
+                }
+            }
         }
     }
 

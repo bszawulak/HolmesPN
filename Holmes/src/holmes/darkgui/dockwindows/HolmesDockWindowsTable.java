@@ -1557,7 +1557,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 }
             } else {
                 int tokens = place.getTokensNumber();
-                place.modifyTokensNumber(-1);
+                if(tokens > 0)
+                    place.modifyTokensNumber(-1);
             }
 
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();

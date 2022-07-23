@@ -1,7 +1,6 @@
 package holmes.darkgui;
 
 import java.awt.Dimension;
-import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.Serial;
@@ -25,9 +24,6 @@ import com.javadocking.dockable.Dockable;
 
 /**
  * Klasa implementująca metody tworzenia i obsługi głównego menu programu.
- * @author students - już by tej klasy nie poznali...
- * @author MR (2015: totalna rearanżacja)
- *
  */
 public class DarkMenu extends JMenuBar {
 	@Serial
@@ -126,7 +122,7 @@ public class DarkMenu extends JMenuBar {
 		fileMenu.add(saveMenuItem);
 		
 		// saveAs file
-		JMenuItem saveAsMenuItem = new JMenuItem("Export network...", KeyEvent.VK_S);
+		JMenuItem saveAsMenuItem = new JMenuItem("Export network...");
 		saveAsMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_saveAs.png"));
 		saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 		saveAsMenuItem.getAccessibleContext().setAccessibleDescription("Save project");
@@ -420,7 +416,7 @@ public class DarkMenu extends JMenuBar {
 		
 		JMenuItem netSimItem = new JMenuItem("State Simulator...", KeyEvent.VK_5);
 		netSimItem.setIcon(Tools.getResIcon32("/icons/menu/menu_stateSim.png"));
-		netSimItem.setAccelerator(KeyStroke.getKeyStroke('Q', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		netSimItem.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK));
 		netSimItem.getAccessibleContext().setAccessibleDescription("Show state simulator window");
 		netSimItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showStateSimulatorWindow());
 		analysisMenu.add(netSimItem);

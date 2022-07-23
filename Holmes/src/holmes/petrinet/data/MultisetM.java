@@ -15,7 +15,7 @@ import holmes.petrinet.elements.Place;
 public class MultisetM implements Serializable {
     @Serial
     private static final long serialVersionUID = 2161649872359143583L;
-    private final ArrayList<ArrayList<Double>> multisetM;
+    private final ArrayList<ArrayList<Double>> multisetM_ArrayLists;
     private final ArrayList<Integer> placesGammasVector;
 
     private String stateType;
@@ -25,20 +25,20 @@ public class MultisetM implements Serializable {
      * Konstruktor obiektu klasy StatePlacesVectorXTPN.
      */
     public MultisetM() {
-        multisetM = new ArrayList<>();
+        multisetM_ArrayLists = new ArrayList<>();
         placesGammasVector = new ArrayList<>();
         stateType = "XTPN";
         stateDescription = "Default description for XTPN state.";
     }
 
     /**
-     * Dodaje nowe miejsce z zadanym zbiorem tokenów do multizbioru M. Używane także przy wczytywaniu
-     * sieci z pliku.
+     * Dodaje nowe miejsce (a raczej jego multizbiór K) z zadanym zbiorem tokenów do multizbioru M.
+     * Używana także przy wczytywaniu sieci z pliku.
      * @param multisetK (<b>ArrayList[Double]</b>) nowy multizbiór tokenów.
      * @param isGammaMode (<b>int</b>) 1 jeśli GAMMA=ON, 0 jeśli GAMMA=OFF
      */
-    public void addPlaceToMultiset_M(ArrayList<Double> multisetK, int isGammaMode) {
-        multisetM.add(multisetK);
+    public void addMultiset_K_toMultiset_M(ArrayList<Double> multisetK, int isGammaMode) {
+        multisetM_ArrayLists.add(multisetK);
         placesGammasVector.add(isGammaMode);
     }
 
@@ -48,10 +48,10 @@ public class MultisetM implements Serializable {
      * @return boolean - true, jeśli operacja się udała
      */
     public boolean removePlaceFromMultiset_M(int index) {
-        if(index >= multisetM.size())
+        if(index >= multisetM_ArrayLists.size())
             return false;
 
-        multisetM.remove(index);
+        multisetM_ArrayLists.remove(index);
         placesGammasVector.remove(index);
         return true;
     }
@@ -61,7 +61,7 @@ public class MultisetM implements Serializable {
      * @return (<b>int</b>) liczba miejsca w wektorze stanu.
      */
     public int getMultiset_M_Size() {
-        return multisetM.size();
+        return multisetM_ArrayLists.size();
     }
 
     /**
@@ -70,10 +70,10 @@ public class MultisetM implements Serializable {
      * @return (<b>ArrayList<Double></b>) multizbiór K tokenów dla miejsca.
      */
     public ArrayList<Double> accessMultiset_K(int index) { //było: getTokens
-        if(index >= multisetM.size())
+        if(index >= multisetM_ArrayLists.size())
             return null;
         else
-            return multisetM.get(index);
+            return multisetM_ArrayLists.get(index);
     }
 
     /**
@@ -82,8 +82,8 @@ public class MultisetM implements Serializable {
      * @param multisetK (<b>ArrayList<Double></b>) nowy multizbiór K.
      */
     public void setNewMultiset_K(int index, ArrayList<Double> multisetK, int isGammaMode) { //było setTokens
-        if(index < multisetM.size()) {
-            multisetM.set(index, multisetK);
+        if(index < multisetM_ArrayLists.size()) {
+            multisetM_ArrayLists.set(index, multisetK);
             placesGammasVector.set(index, isGammaMode);
         }
     }
@@ -95,8 +95,8 @@ public class MultisetM implements Serializable {
      * @param sort (<b>boolean</b>) true, jeśli mamy sortować, niepotrzebne, gdy dodajemy zera.
      */
     public void addTokensMultiset_K(int index, ArrayList<Double> newMultiSetK, boolean sort) {
-        if(index < multisetM.size()) {
-            ArrayList<Double> oldMultiset = multisetM.get(index);
+        if(index < multisetM_ArrayLists.size()) {
+            ArrayList<Double> oldMultiset = multisetM_ArrayLists.get(index);
             oldMultiset.addAll(newMultiSetK);
 
             if(sort) {
@@ -119,13 +119,13 @@ public class MultisetM implements Serializable {
     }
 
     /**
-     * Dodawanie jednego tokenu.
+     * Dodawanie jednego tokenu to multizbiór K na pozycji index..
      * @param index (<b>int</b>) indeks miejsca.
      * @param token (<b>double</b>) wartość tokenu do dodania.
      */
     public void addToken(int index, double token) {
-        if(index < multisetM.size()) {
-            ArrayList<Double> oldMultiset = multisetM.get(index);
+        if(index < multisetM_ArrayLists.size()) {
+            ArrayList<Double> oldMultiset = multisetM_ArrayLists.get(index);
             oldMultiset.add(token);
             if(token == 0) {
                 Collections.sort(oldMultiset);
@@ -144,7 +144,7 @@ public class MultisetM implements Serializable {
             ArrayList<Double> multiset = places.get(p).accessMultiset();
             ArrayList<Double> newMultiset = new ArrayList<>(multiset);
 
-            multisetM.set(p, newMultiset);
+            multisetM_ArrayLists.set(p, newMultiset);
             if(places.get(p).isGammaModeActiveXTPN())
                 placesGammasVector.set(p, 1);
             else
@@ -188,7 +188,7 @@ public class MultisetM implements Serializable {
      * Umożliwia dostęp do wektora danych stanu sieci - multizbioru M.
      * @return (<b>ArrayList[ArrayList[Double]]</b>) multizbiór M
      */
-    public ArrayList<ArrayList<Double>> accessMultiset_M() {
-        return this.multisetM;
+    public ArrayList<ArrayList<Double>> accessArrayListSOfMultiset_M() {
+        return this.multisetM_ArrayLists;
     }
 }

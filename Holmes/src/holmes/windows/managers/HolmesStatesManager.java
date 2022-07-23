@@ -786,14 +786,19 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void addLastStateToTableXTPN() {
 		int states = statesManager.accessStateMatrixXTPN().size();
-		MultisetM psVector = statesManager.getMultiset_M(states-1);
+		MultisetM multisetM = statesManager.getMultiset_M(states-1);
 		ArrayList<String> rowVector = new ArrayList<>();
 
 		rowVector.add("");
 		rowVector.add("m0("+(states)+")");
-		for(int p = 0; p<psVector.getMultiset_M_Size(); p++) {
-			int value = psVector.accessMultiset_K(p).size();
-			rowVector.add(""+value);
+		for(int p = 0; p<multisetM.getMultiset_M_Size(); p++) {
+			if(multisetM.isPlaceStoredAsGammaActive(p)) {
+				int value = multisetM.accessMultiset_K(p).size();
+				rowVector.add(""+value);
+			} else {
+				double value = multisetM.accessMultiset_K(p).get(0);
+				rowVector.add((int)value+" (C)");
+			}
 		}
 		tableModelXTPN.addNew(rowVector);
 		overlord.markNetChange();
@@ -816,11 +821,15 @@ public class HolmesStatesManager extends JFrame {
 			rowVector.add("m0("+(row+1)+")");
 
 			for(int placeIndex = 0; placeIndex<multisetM.getMultiset_M_Size(); placeIndex++) {
-				int value = multisetM.accessMultiset_K(placeIndex).size();
-				if( multisetM.isPlaceStoredAsGammaActive(placeIndex) )
+				if( multisetM.isPlaceStoredAsGammaActive(placeIndex) ) {
+					int value = multisetM.accessMultiset_K(placeIndex).size();
 					rowVector.add(""+value);
-				else
-					rowVector.add(""+value+" (C)");
+				}
+				else {
+					double value = multisetM.accessMultiset_K(placeIndex).get(0);
+					rowVector.add((int)value+" (C)");
+				}
+
 			}
 			tableModelXTPN.addNew(rowVector);
 		}
