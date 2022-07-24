@@ -65,6 +65,23 @@ public class GraphicalSimulatorXTPN {
     }
 
     /**
+     * Reset do ustawień domyślnych symulatora XTPN.
+     */
+    public void resetSimulator() {
+        setSimulatorStatus(SimulatorModeXTPN.STOPPED);
+        setSimulationActive(true);
+        previousSimStatusXTPN = SimulatorModeXTPN.STOPPED;
+
+        stepCounter = 0;
+        simTotalTime = 0.0;
+        nextXTPNsteps.clear();
+        engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, false, false, petriNet.getTransitions(), null, petriNet.getPlaces());
+
+        //engineXTPN = new SimulatorXTPN();
+        //sg = overlord.simSettings;
+    }
+
+    /**
      * Dostęp do obiektu silnika symulacji.
      * @return (<b>engineXTPN</b>) silnik symulatora XTPN.
      */
@@ -95,7 +112,6 @@ public class GraphicalSimulatorXTPN {
 
         stepCounter = 0;
         simTotalTime = 0.0;
-
         engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, false, false, transitions, null, places);
 
         //nsl.logBackupCreated(); //TODO
@@ -175,21 +191,7 @@ public class GraphicalSimulatorXTPN {
         overlord.io.updateTimeStep(true,stepCounter, simTotalTime);
         overlord.simSettings.currentStep = stepCounter;
         overlord.simSettings.currentTime = simTotalTime;
-
-
         //nsl.logSimStopped(timeCounter);
-    }
-
-
-    /**
-     * Reset do ustawień domyślnych symulatora XTPN.
-     */
-    public void resetSimulator() {
-        simulatorStatusXTPN = SimulatorModeXTPN.STOPPED;
-        previousSimStatusXTPN = SimulatorModeXTPN.STOPPED;
-        simulationActive = false;
-        engineXTPN = new SimulatorXTPN();
-        sg = overlord.simSettings;
     }
 
     /**

@@ -554,7 +554,6 @@ public class SelectionManager {
 	 * @author students
 	 * @author MR
 	 */
-	@SuppressWarnings("unused")
 	public void transformSelectedIntoPortal() {
 		// sprawdzenie czy wszystkie elementy sa tego samego typu (Place lub Transition)
 		for (int i = 1; i < this.getSelectedElementLocations().size(); i++) {
@@ -566,7 +565,7 @@ public class SelectionManager {
 			}
 		}
 		
-		overlord.getWorkspace().getProject().restoreMarkingZero();
+		//overlord.getWorkspace().getProject().restoreMarkingZero();
 		int selectedNodeIndex = getGraphPanelNodes().indexOf(getSelectedElementLocations().get(0).getParentNode());
 		
 		for (ElementLocation el : this.getSelectedElementLocations()) {
@@ -676,7 +675,7 @@ public class SelectionManager {
 			return;
 		}
 		
-		overlord.getWorkspace().getProject().restoreMarkingZero();
+		//overlord.getWorkspace().getProject().restoreMarkingZero();
 		
 		ElementLocation selectedEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
 		Node parent = selectedEL.getParentNode();
@@ -703,7 +702,6 @@ public class SelectionManager {
 	 * Metoda zmienia aktualnie kliknięty element w portal, tworząc jego klona.
 	 * @author MR
 	 */
-	@SuppressWarnings("unused")
 	public void cloneNodeIntoPortal() {
 		// sprawdzenie czy wszystkie elementy sa tego samego typu (Place lub Transition)
 		if(this.getSelectedElementLocations().size() > 1) {
@@ -713,7 +711,7 @@ public class SelectionManager {
 			return;
 		}
 		
-		overlord.getWorkspace().getProject().restoreMarkingZero();
+		//overlord.getWorkspace().getProject().restoreMarkingZero();
 		//dodawanie innych miejsc dla samego portalu do selectedElementLocations
 		ElementLocation nodeSelectedEL = this.getSelectedElementLocations().get(0); //wybrana lokalizacja
 		Node nodeSelected = nodeSelectedEL.getParentNode(); //wybrany wierzchołek

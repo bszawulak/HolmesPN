@@ -1056,7 +1056,7 @@ public class GraphPanel extends JComponent {
 						}
 					}
 					case ARC, XARC -> {
-						overlord.getWorkspace().getProject().restoreMarkingZero();
+						//overlord.getWorkspace().getProject().restoreMarkingZero();
 						clearDrawnArc();
 					}
 					case TIMETRANSITION -> {
@@ -1158,7 +1158,7 @@ public class GraphPanel extends JComponent {
 							"Deletion warning?", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					if (n == 0) {
-						overlord.getWorkspace().getProject().restoreMarkingZero();
+						//overlord.getWorkspace().getProject().restoreMarkingZero();
 						
 						getSelectionManager().deleteElementLocation(el);
 						overlord.reset.reset2ndOrderData(true);
@@ -1200,7 +1200,7 @@ public class GraphPanel extends JComponent {
 							"Deletion warning?", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					if (n == 0) {
-						overlord.getWorkspace().getProject().restoreMarkingZero();
+						//overlord.getWorkspace().getProject().restoreMarkingZero();
 						
 						getSelectionManager().deleteArc(a);
 						overlord.reset.reset2ndOrderData(true);
@@ -1428,7 +1428,7 @@ public class GraphPanel extends JComponent {
 									JOptionPane.WARNING_MESSAGE);
 							clearDrawnArc();
 						} else {
-							overlord.getWorkspace().getProject().restoreMarkingZero();
+							//overlord.getWorkspace().getProject().restoreMarkingZero();
 							TypeOfArc thisArc = convertType(arcType);
 							
 							Arc arc = new Arc(IdGenerator.getNextId(), drawnArc.getStartLocation(), clickedLocation, thisArc);

@@ -250,7 +250,6 @@ public class GUIReset {
 			overlord.getDecompositionBox().validate();
 			overlord.getDecompositionBox().repaint();
 */
-
 			subNetGenerated = false;
 			overlord.log("Decomposition data removed from memory.", "text", true);
 		}

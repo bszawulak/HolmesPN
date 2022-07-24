@@ -79,7 +79,7 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 							"Do you want to delete selected elements?", "Deletion warning?", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					if (n == 0) {
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+						//GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
 						getGraphPanel().getSelectionManager().deleteAllSelectedElements();
 						getGraphPanel().getSelectionManager().deselectAllElementLocations();
 						GUIManager.getDefaultGUIManager().markNetChange();

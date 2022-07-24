@@ -81,7 +81,6 @@ public class GraphicalSimulator {
 	/**
 	 * Reset do ustawień domyślnych.
 	 */
-	@SuppressWarnings("unused")
 	public void resetSimulator() {
 		simulatorStatus = SimulatorMode.STOPPED;
 		previousSimStatus = SimulatorMode.STOPPED;
@@ -91,7 +90,10 @@ public class GraphicalSimulator {
 		writeHistory = true;
 		timeCounter = -1;
 		actionStack.removeAllElements();
-		engine = new SimulatorStandardPN();
+		//engine = new SimulatorStandardPN();
+		engine.setEngine(netSimType, isMaxMode(), isSingleMode(), petriNet.getTransitions()
+				, petriNet.getTimeTransitions(), petriNet.getPlaces());
+		emptySteps = false;
 	}
 
 	/**

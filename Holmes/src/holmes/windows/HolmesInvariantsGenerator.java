@@ -1144,7 +1144,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 		if(invariants == null)
 			return;
 
-		overlord.getWorkspace().getProject().restoreMarkingZero();
+		//overlord.getWorkspace().getProject().restoreMarkingZero(); //TODO: zapytać, czy przywrócić?
+
 		InvariantsCalculatorFeasible invF = new InvariantsCalculatorFeasible(invariants, true);
 		invariants = invF.getMinFeasible(feasibleCalcMode);
 		

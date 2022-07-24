@@ -3,7 +3,6 @@ package holmes.darkgui.toolbar;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Set;
@@ -185,6 +184,7 @@ public class Toolbar extends BorderDock {
 		//nowa zakładka
 		ToolbarButtonAction addButton = new ToolbarButtonAction(this, 
 				"New tab", "Add new network tab/sheet", Tools.getResIcon48("/icons/toolbar/add_panel.png")) {
+					@Serial
 					private static final long serialVersionUID = -3039335266465055547L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -195,6 +195,7 @@ public class Toolbar extends BorderDock {
 		
 		ToolbarButtonAction openButton = new ToolbarButtonAction(this,
 				"Open project...", "Open Abyss project file (.abyss)", Tools.getResIcon48("/icons/toolbar/open.png")) {
+					@Serial
 					private static final long serialVersionUID = -8017306615290773915L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -206,6 +207,7 @@ public class Toolbar extends BorderDock {
 		//import projektu ze snoopiego
 		ToolbarButtonAction importButton = new ToolbarButtonAction(this,
 				"Import project...", "Import Petri net saved in other file formats", Tools.getResIcon48("/icons/toolbar/import_net.png")) {
+					@Serial
 					private static final long serialVersionUID = 5723070117312880726L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -217,6 +219,7 @@ public class Toolbar extends BorderDock {
 		//zapis jako projekt
 		ToolbarButtonAction saveProjectButton = new ToolbarButtonAction(this,
 				"Save project", "Save Petri net as Holmes project file (always right option)", Tools.getResIcon48("/icons/toolbar/holmesSave.png")) {
+					@Serial
 					private static final long serialVersionUID = 5723070117312880726L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -228,6 +231,7 @@ public class Toolbar extends BorderDock {
 		//export projektu do snoopiego
 		ToolbarButtonAction exportButton = new ToolbarButtonAction(this,
 				"Export net", "Export Petri net to other file formats", Tools.getResIcon48("/icons/toolbar/snoopyExport.png")) {
+					@Serial
 					private static final long serialVersionUID = 5723070117312880726L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -239,6 +243,7 @@ public class Toolbar extends BorderDock {
 		//zapis obrazu sieci do pliku
 		ToolbarButtonAction pictureButton = new ToolbarButtonAction(this,
 				"Save picture...", "Save the network as picture", Tools.getResIcon48("/icons/toolbar/save_picture.png")) {
+					@Serial
 					private static final long serialVersionUID = 932011484445458070L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -248,6 +253,7 @@ public class Toolbar extends BorderDock {
 		ioDockables.add(createButtonDockable("ButtonDockableImport", pictureButton));
 		ToolbarButtonAction refreshButton = new ToolbarButtonAction(this,
 				"Refresh", "Refresh all graph panels with net structures", Tools.getResIcon48("/icons/toolbar/refresh.png")) {
+					@Serial
 					private static final long serialVersionUID = -5107926050446252487L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -258,6 +264,7 @@ public class Toolbar extends BorderDock {
 
 		ToolbarButtonAction clearProject = new ToolbarButtonAction(this,
 				"Clear project", "Clears all data of the project", Tools.getResIcon48("/icons/toolbar/clear_project.png")) {
+					@Serial
 					private static final long serialVersionUID = 2969893062492924300L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -269,7 +276,6 @@ public class Toolbar extends BorderDock {
 		return ioDockables;
 	}
 
-	@SuppressWarnings("serial")
 	/**
 	 * Metoda odpowiedzialna za tworzenie tablicy przycisków analizatora.
 	 * @return ArrayList[ButtonDockable] - tablica zawierająca obiekty przycisków
@@ -346,9 +352,9 @@ public class Toolbar extends BorderDock {
 				for(Transition t : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
 					t.setTransType(TransitionType.TPN);
 					int value = (int) generator2.nextLong(10);
-					int eft = 0;
-					int lft = 1;
-					int duration = 2;
+					int eft;
+					int lft;
+					int duration;
 					
 					if(value > 7) {
 						eft = (int) generator2.nextLong(6);
@@ -426,18 +432,18 @@ public class Toolbar extends BorderDock {
 				
 				notePad.addTextLineNL("", "text");
 				notePad.addTextLineNL("Maximal Dependend Transition sets:", "text");
-				String text = "";
+				StringBuilder text;
 				int setNo = 0;
 				for(Set<Integer> set : results) {
-					text = "";
+					text = new StringBuilder();
 					setNo++;
-					text += "Set #"+setNo+": [";
+					text.append("Set #").append(setNo).append(": [");
 					for(int i : set) {
-						text += "t"+i+", ";
+						text.append("t").append(i).append(", ");
 					}
-					text += "]";
-					text = text.replace(", ]", "]");
-					notePad.addTextLineNL(text, "text");
+					text.append("]");
+					text = new StringBuilder(text.toString().replace(", ]", "]"));
+					notePad.addTextLineNL(text.toString(), "text");
 				}
 				
 				
@@ -486,13 +492,9 @@ public class Toolbar extends BorderDock {
 		};
 		//testGraphletButton.setEnabled(true);
 		//analysisDockables.add(createButtonDockable("Testing graphlets", testGraphletButton));
-
-
-
 		return analysisDockables;
 	}
-	
-	@SuppressWarnings("serial")
+
 	private ArrayList<ButtonDockable> createNetTransormBar() {
 		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
 		ToolbarButtonAction extendNetButton = new ToolbarButtonAction(this, "ExtNet",  "Extend the net by 10%",
@@ -734,11 +736,8 @@ public class Toolbar extends BorderDock {
 		button1.setPreferredSize(new Dimension(60,40));
 		//button1.setBounds(0, 0, 60, 60);
 		button1.setToolTipText("Extend net elements");
-		button1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				
-			}
+		button1.addActionListener(actionEvent -> {
+
 		});
 		panel.add(button1);
 		
