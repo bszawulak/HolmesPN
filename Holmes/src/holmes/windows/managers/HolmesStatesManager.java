@@ -8,8 +8,6 @@ import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
@@ -108,21 +106,19 @@ public class HolmesStatesManager extends JFrame {
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 		add(tabbedPane, BorderLayout.CENTER);
 
-		tabbedPane.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				int selected = ((JTabbedPane)e.getSource()).getSelectedIndex();
-				if(selected == 1 && GUIController.access().getCurrentNetType() != PetriNet.GlobalNetType.XTPN ) {
-					JOptionPane.showMessageDialog(null, "XTPN state manager unavailable for normal nets.",
-							"Wrong tab", JOptionPane.INFORMATION_MESSAGE);
-					((JTabbedPane)e.getSource()).setSelectedIndex(0);
-				} else if(selected == 0 && GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-					JOptionPane.showMessageDialog(null, "Normal state manager unavailable for XTPN nets.",
-							"Wrong tab", JOptionPane.INFORMATION_MESSAGE);
-					((JTabbedPane) e.getSource()).setSelectedIndex(1);
-				}
-				//
-				//System.out.println("Tab: " + tabbedPane.getSelectedIndex());
+		tabbedPane.addChangeListener(e -> {
+			int selected = ((JTabbedPane)e.getSource()).getSelectedIndex();
+			if(selected == 1 && GUIController.access().getCurrentNetType() != PetriNet.GlobalNetType.XTPN ) {
+				JOptionPane.showMessageDialog(null, "XTPN state manager unavailable for normal nets.",
+						"Wrong tab", JOptionPane.INFORMATION_MESSAGE);
+				((JTabbedPane)e.getSource()).setSelectedIndex(0);
+			} else if(selected == 0 && GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
+				JOptionPane.showMessageDialog(null, "Normal state manager unavailable for XTPN nets.",
+						"Wrong tab", JOptionPane.INFORMATION_MESSAGE);
+				((JTabbedPane) e.getSource()).setSelectedIndex(1);
 			}
+			//
+			//System.out.println("Tab: " + tabbedPane.getSelectedIndex());
 		});
 
 		if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
@@ -877,6 +873,7 @@ public class HolmesStatesManager extends JFrame {
 	 * @param value double - nowa wartość.
 	 *     NIEUŻYWANA, WSZYSTKIE KOLUMNY READ ONLY!
 	 */
+	@SuppressWarnings("unused")
 	public void changeStateXTPN(int row, int column, double value) {
 		tableModelXTPN.fireTableDataChanged();
 	}

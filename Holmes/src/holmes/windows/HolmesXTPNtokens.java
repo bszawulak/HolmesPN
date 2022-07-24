@@ -394,7 +394,7 @@ public class HolmesXTPNtokens extends JFrame {
                 } else { // czyścimy tylko przechowywany p-stan
                     multisetK.clear();
                 }
-
+                checkInterfaceConditions();
                 recreateComboBox();
                 writeTokensNumberInLabel();
                 listenerAllowed=true;

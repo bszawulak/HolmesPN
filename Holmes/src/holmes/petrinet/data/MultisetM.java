@@ -17,7 +17,6 @@ public class MultisetM implements Serializable {
     private static final long serialVersionUID = 2161649872359143583L;
     private final ArrayList<ArrayList<Double>> multisetM_ArrayLists;
     private final ArrayList<Integer> placesGammasVector;
-
     private String stateType;
     private String stateDescription;
 
@@ -191,4 +190,5 @@ public class MultisetM implements Serializable {
     public ArrayList<ArrayList<Double>> accessArrayListSOfMultiset_M() {
         return this.multisetM_ArrayLists;
     }
+
 }

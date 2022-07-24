@@ -281,6 +281,19 @@ public class P_StateManager {
 		if(multisetM.getMultiset_M_Size() == places.size()) {
 			for (int placeIndex = 0; placeIndex < places.size(); placeIndex++) {
 				Place place = places.get(placeIndex);
+				if(multisetM.isPlaceStoredAsGammaActive(placeIndex)) { //jeśli w managerze miejsce przechowywane jest jako XTPN
+					place.setGammaModeXTPNstatus(true);
+					place.replaceMultiset( new ArrayList<>(multisetM.accessMultiset_K(placeIndex)) );
+					place.setTokensNumber( multisetM.accessMultiset_K(placeIndex).size() );
+				} else { //jeśli w managerze miejsce jest przechowywane jako klasyczne
+					place.setGammaModeXTPNstatus(false);
+					place.accessMultiset().clear();
+					//place.replaceMultiset( new ArrayList<>(multisetM.accessMultiset_K(placeIndex)) );
+					double tokensNo = multisetM.accessMultiset_K(placeIndex).get(0);
+					place.setTokensNumber( (int)tokensNo );
+
+				}
+				/*
 				place.replaceMultiset(new ArrayList<>(multisetM.accessMultiset_K(placeIndex)));
 				if(place.isGammaModeActiveXTPN()) {
 					place.setTokensNumber(multisetM.accessMultiset_K(placeIndex).size());
@@ -288,7 +301,7 @@ public class P_StateManager {
 					place.setTokensNumber(multisetM.accessMultiset_K(placeIndex).get(0).intValue());
 					//jeśli miejsca klasyczne, to pierwsza i jedyna wartość w multizbiorze to liczba tokenów
 				}
-
+				 */
 			}
 			selectedStateXTPN = stateID;
 			return true;

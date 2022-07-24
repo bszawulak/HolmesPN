@@ -175,7 +175,7 @@ public class StatesPlacesTableModelXTPN extends AbstractTableModel {
             ArrayList<String> rowVector = dataMatrix.get(row);
             rowVector.set(col, ""+(int)newValue);
 
-            boss.changeStateXTPN(row, col, newValue);
+            //boss.changeStateXTPN(row, col, newValue);
         } catch (Exception ignored) {
         }
     }
