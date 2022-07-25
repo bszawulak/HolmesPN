@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.functions.FunctionsTools;
 
 /**
@@ -19,10 +16,10 @@ public class SimulatorXTPN implements IEngine {
     private GUIManager overlord;
     private SimulatorGlobals sg;
     private SimulatorGlobals.SimNetType netSimTypeXTPN = SimulatorGlobals.SimNetType.XTPN;
-    private ArrayList<Transition> transitions = null;
-    private ArrayList<Place> places = null;
+    private ArrayList<TransitionXTPN> transitions = null;
+    private ArrayList<PlaceXTPN> places = null;
     private ArrayList<Integer> transitionsIndexList = null;
-    private ArrayList<Transition> launchableTransitions = null;
+    private ArrayList<TransitionXTPN> launchableTransitions = null;
     private IRandomGenerator generator;
 
 
@@ -53,6 +50,9 @@ public class SimulatorXTPN implements IEngine {
         this.overlord = GUIManager.getDefaultGUIManager();
         generator = new StandardRandom(System.currentTimeMillis());
         this.sg = overlord.simSettings;
+
+        transitions = new ArrayList<>();
+        places = new ArrayList<>();
     }
 
     /**
@@ -77,14 +77,37 @@ public class SimulatorXTPN implements IEngine {
         }
 
         //INIT:
-        this.transitions = transitions;
-        this.places = places;
+        initiateXTPNtransitions(transitions);
+        initiateXTPNplaces(places);
         transitionsIndexList = new ArrayList<Integer>();
+        launchableTransitions =  new ArrayList<TransitionXTPN>(); //TODO REMOVE
 
-        launchableTransitions =  new ArrayList<Transition>(); //TODO REMOVE
-
-        for(int t=0; t<transitions.size(); t++) {
+        for(int t = 0; t<transitions.size(); t++) {
             transitionsIndexList.add(t);
+        }
+    }
+
+    private void initiateXTPNtransitions(ArrayList<Transition> inputT) {
+        transitions.clear();
+        for(Transition trans : inputT) {
+            if( !(trans instanceof TransitionXTPN)) {
+                transitions.clear();
+                overlord.log("Error, non-XTPN transitions found in list sent into SimulatorXTPN!", "error", false);
+                return;
+            }
+            transitions.add( (TransitionXTPN) trans);
+        }
+    }
+
+    private void initiateXTPNplaces(ArrayList<Place> inputP) {
+        places.clear();
+        for(Place place : inputP) {
+            if( !(place instanceof PlaceXTPN)) {
+                transitions.clear();
+                overlord.log("Error, non-XTPN places found in list sent into SimulatorXTPN!", "error", false);
+                return;
+            }
+            places.add( (PlaceXTPN) place);
         }
     }
 
@@ -114,13 +137,13 @@ public class SimulatorXTPN implements IEngine {
      */
     public ArrayList<NextXTPNstep> revalidateNetState() {
         //czyszczenie miejsc ze starych tokenów:
-        for(Place place : places) {
+        for(PlaceXTPN place : places) {
             place.removeOldTokens_XTPN();
         }
 
         ArrayList<NextXTPNstep> classicalInputOnes = new ArrayList<>(); //klasyczne wejściowe będą uruchamiane osobno 50/50
         //tutaj uruchamiany tranzycje wejściowe, one są niewrażliwe na zmiany czasów w tokenach
-        for(Transition transition : transitions) {
+        for(TransitionXTPN transition : transitions) {
             if(transition.isProducing_xTPN()) { //produkujące zostawiamy w spokoju
                 continue;
             }
@@ -216,7 +239,6 @@ public class SimulatorXTPN implements IEngine {
         return classicalInputOnes;
     }
 
-
     /**
      * Metoda oblicza minimalny czas do zmiany stanu sieci. W liście zwraca informacje o tych
      * miejscach/tranzycjach, w których w tym minimalnym czasie następuje jakaś zmiana.
@@ -232,7 +254,7 @@ public class SimulatorXTPN implements IEngine {
         ArrayList<NextXTPNstep> transOtherClassical = new ArrayList<>();
         double currentMinTime = Double.MAX_VALUE;
 
-        for(Place place : places) { //znajdź najmniejszy czas do zmiany w miejscach
+        for(PlaceXTPN place : places) { //znajdź najmniejszy czas do zmiany w miejscach
             if(!place.isGammaModeActiveXTPN() || place.accessMultiset().size() == 0) {
                 //czyli nie dotyczy miejsc klasycznych, lub pusty multizbiór
                 continue;
@@ -299,9 +321,8 @@ public class SimulatorXTPN implements IEngine {
             }
         }
 
-        for(Transition transition : transitions) { //znajdź najmniejszy czas do zmiany w tranzycjach
+        for(TransitionXTPN transition : transitions) { //znajdź najmniejszy czas do zmiany w tranzycjach
             //podtyp: 0 - timeToMature, 1 - timeToDie, 2 - transProdStarts, 3 - transProdEnds; 4 - classical transition
-
             //znajdujemy wszystkie tranzycje klasyczne, które są niezależne od czasu:
             if(!transition.isAlphaActiveXTPN() && !transition.isBetaActiveXTPN()) { //tranzycje klasyczne
                 if(transition.getActiveStatusXTPN(sg.getCalculationsAccuracy())) { //jeśli jest aktywna
@@ -402,12 +423,12 @@ public class SimulatorXTPN implements IEngine {
      * @param tau (<b>double</b>) wartość czasu.
      */
     public void updateNetTime(double tau) {
-        for(Place place : places) {
+        for(PlaceXTPN place : places) {
             if(place.isGammaModeActiveXTPN()) { //tylko dla miejsc czasowych
                 place.incTokensTime_XTPN(tau);
             }
         }
-        for(Transition transition : transitions) {
+        for(TransitionXTPN transition : transitions) {
             if(transition.isAlphaActiveXTPN() && transition.isActivated_xTPN()) { //aktywna tranzycja Alfa
                 transition.updateTimerAlfa_XTPN(tau);
 
@@ -428,11 +449,11 @@ public class SimulatorXTPN implements IEngine {
      * Tutaj zapewne zmiana stanu niektórych tranzycji...
      * @param launchedTransitions (<b>ArrayList[ArrayList[Transition]]</b>) podwójna lista tranzycji które się uruchomiły: XTPN i klasyczne
      */
-    public void endSubtractPhase(ArrayList<ArrayList<Transition>> launchedTransitions) {
-        ArrayList<Transition> launchedXTPN = launchedTransitions.get(0);
-        ArrayList<Transition> launchedClassical = launchedTransitions.get(1);
+    public void endSubtractPhase(ArrayList<ArrayList<TransitionXTPN>> launchedTransitions) {
+        ArrayList<TransitionXTPN> launchedXTPN = launchedTransitions.get(0);
+        ArrayList<TransitionXTPN> launchedClassical = launchedTransitions.get(1);
 
-        for(Transition transition : launchedXTPN) {
+        for(TransitionXTPN transition : launchedXTPN) {
             transition.setLaunching(false);
             if(Math.abs(transition.getTauAlpha_xTPN() - transition.getTimerAlfa_XTPN()) < sg.getCalculationsAccuracy()) {
                 //jeśli timerAlfa = tauAlfa
@@ -458,16 +479,16 @@ public class SimulatorXTPN implements IEngine {
     /**
      * Metoda uruchamia fazę faktycznego dodawania tokenów do miejsc wyjściowych odpalonych tranzycji
      */
-    public void endProductionPhase(ArrayList<Transition> producingTokensTransitionsAll) {
+    public void endProductionPhase(ArrayList<TransitionXTPN> producingTokensTransitionsAll) {
         ArrayList<Arc> arcs;
-        for (Transition transition : producingTokensTransitionsAll) {
+        for (TransitionXTPN transition : producingTokensTransitionsAll) {
             transition.setLaunching(false);  // skoro tutaj dotarliśmy, to znaczy że tranzycja już
             //swoje zrobiła i jej status aktywnej się kończy w tym kroku
             arcs = transition.getOutArcs();
 
             //dodaj odpowiednią liczbę tokenów do miejsc
             for (Arc arc : arcs) {
-                Place place = (Place) arc.getEndNode();
+                PlaceXTPN place = (PlaceXTPN) arc.getEndNode();
                 if(!(arc.getArcType() == Arc.TypeOfArc.NORMAL || arc.getArcType() == Arc.TypeOfArc.READARC)) {
                     overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
                             " arc: "+ arc, "error", true);
@@ -486,48 +507,48 @@ public class SimulatorXTPN implements IEngine {
         //producingTokensTransitionsAll.clear();  //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)
     }
 
-    public ArrayList<Transition> returnConsumingTransXTPNVector(ArrayList<ArrayList<NextXTPNstep>> nextXTPNsteps) {
+    public ArrayList<TransitionXTPN> returnConsumingTransXTPNVector(ArrayList<ArrayList<NextXTPNstep>> nextXTPNsteps) {
         //nextXTPNsteps : [0] places maturity [1] places aging [2] transProdStart [3] transProdEnd
         //              [4] transInputClassical [5] transOtherClassical
         // konsumujące: 2 oraz 5
         // produkujące: 3, 4 oraz 5
-        ArrayList<Transition> consumingTokensTransitionsXTPN = new ArrayList<>();
+        ArrayList<TransitionXTPN> consumingTokensTransitionsXTPN = new ArrayList<>();
         for(NextXTPNstep element : nextXTPNsteps.get(2)) {
             //if(!((Transition)element.nodeTP).isInputTransition()) {// jeśli NIE jest to tranzycja wejściowa:
-            consumingTokensTransitionsXTPN.add((Transition) element.nodeTP);
+            consumingTokensTransitionsXTPN.add((TransitionXTPN) element.nodeTP);
             //}
         }
         Collections.shuffle(consumingTokensTransitionsXTPN);
         return consumingTokensTransitionsXTPN;
     }
 
-    public ArrayList<Transition> returnConsumingTransClassicalVector(ArrayList<ArrayList<NextXTPNstep>> nextXTPNsteps) {
+    public ArrayList<TransitionXTPN> returnConsumingTransClassicalVector(ArrayList<ArrayList<NextXTPNstep>> nextXTPNsteps) {
         //nextXTPNsteps : [0] places maturity [1] places aging [2] transProdStart [3] transProdEnd
         //              [4] transInputClassical [5] transOtherClassical
         // konsumujące: 2 oraz 5
         // produkujące: 3, 4 oraz 5
-        ArrayList<Transition> consumingTokensTransitionsClassical = new ArrayList<>();
+        ArrayList<TransitionXTPN> consumingTokensTransitionsClassical = new ArrayList<>();
         for(NextXTPNstep element : nextXTPNsteps.get(5)) {
-            consumingTokensTransitionsClassical.add((Transition) element.nodeTP);
+            consumingTokensTransitionsClassical.add((TransitionXTPN) element.nodeTP);
         }
         Collections.shuffle(consumingTokensTransitionsClassical);
         return consumingTokensTransitionsClassical;
     }
 
-    public ArrayList<Transition> returnProducingTransVector(ArrayList<ArrayList<NextXTPNstep>> nextXTPNsteps) {
+    public ArrayList<TransitionXTPN> returnProducingTransVector(ArrayList<ArrayList<NextXTPNstep>> nextXTPNsteps) {
         //nextXTPNsteps : [0] places maturity [1] places aging [2] transProdStart [3] transProdEnd
         //              [4] transInputClassical [5] transOtherClassical
         // konsumujące: 2 oraz 5
         // produkujące: 3, 4 oraz 5
-        ArrayList<Transition> producingTokensTransitions = new ArrayList<>();
+        ArrayList<TransitionXTPN> producingTokensTransitions = new ArrayList<>();
         for(NextXTPNstep element : nextXTPNsteps.get(3)) {
-            producingTokensTransitions.add((Transition) element.nodeTP);
+            producingTokensTransitions.add((TransitionXTPN) element.nodeTP);
         }
         for(NextXTPNstep element : nextXTPNsteps.get(4)) {
-            producingTokensTransitions.add((Transition) element.nodeTP);
+            producingTokensTransitions.add((TransitionXTPN) element.nodeTP);
         }
         for(NextXTPNstep element : nextXTPNsteps.get(5)) {
-            producingTokensTransitions.add((Transition) element.nodeTP);
+            producingTokensTransitions.add((TransitionXTPN) element.nodeTP);
         }
         return producingTokensTransitions;
         //Collections.shuffle(producingTokensTransitionsAll); //bez sensu, przy produkcji kolejność dowolna

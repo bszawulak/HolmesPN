@@ -60,6 +60,8 @@ public class ProjectReader {
 	private boolean pInvariants = false;
 	private boolean ssaData = false;
 
+
+	private boolean XTPNdataMode = false; //jeśli true, to znaczy, że odczytujemy sieć XTPN
 	
 	/**
 	 * Konstruktor obiektu klasy odczytywania projektu.
@@ -191,7 +193,9 @@ public class ProjectReader {
 					projectCore.accessStatesManager().createFirstMultiset_M();
 				}
 			} else {
-				projectCore.accessStatesManager().createFirstMultiset_M();
+				if(XTPNdataMode) { //tylko dla XTPN
+					projectCore.accessStatesManager().createFirstMultiset_M();
+				}
 			}
 			
 			if(firingRates) {
@@ -274,6 +278,7 @@ public class ProjectReader {
 				projectCore.setProjectType(projectCore.getNetTypeByName(line));
 				if(projectCore.getProjectType() == PetriNet.GlobalNetType.XTPN) {
 					projectCore.selectProperSimulatorBox(true);
+					XTPNdataMode = true; //tryb XTPN, tworzymy obiekty PlaceXTPN i TransitionXTPN zamiast zwykłych
 				}
 			}
 		} catch (Exception e) {
@@ -331,17 +336,29 @@ public class ProjectReader {
 				boolean go = true;
 				
 				while(go) {
-					Place place = new Place(IdGenerator.getNextId(), 0, new Point(20,20));
-					
-					while(!((line = buffer.readLine()).contains("<EOP>"))) {
-						parsePlaceLine(line, place);
+					if(XTPNdataMode) { //tworzymy sieć XTPN
+						PlaceXTPN place = new PlaceXTPN(IdGenerator.getNextId(), 0, new Point(20,20));
+						while(!((line = buffer.readLine()).contains("<EOP>"))) {
+							parsePlaceLine(line, place);
+						}
+						line = buffer.readLine(); // przewiń do --> Place : 1 albo patrz niżej:
+						if(line.contains("<Places data block end>")) {
+							go = false;
+						}
+						placesProcessed++;
+						nodes.add(place);
+					} else { //tryb zwykłej sieci
+						Place place = new Place(IdGenerator.getNextId(), 0, new Point(20,20));
+						while(!((line = buffer.readLine()).contains("<EOP>"))) {
+							parsePlaceLine(line, place);
+						}
+						line = buffer.readLine(); // przewiń do --> Place : 1 albo patrz niżej:
+						if(line.contains("<Places data block end>")) {
+							go = false;
+						}
+						placesProcessed++;
+						nodes.add(place);
 					}
-					line = buffer.readLine(); // przewiń do --> Place : 1 albo patrz niżej:
-					if(line.contains("<Places data block end>")) {
-						go = false;
-					}
-					placesProcessed++;
-					nodes.add(place);
 				}
 				//przeczytano miejsca
 			}
@@ -355,17 +372,33 @@ public class ProjectReader {
 				boolean go = true;
 				
 				while(go) {
-					Transition transition = new Transition(IdGenerator.getNextId(), 0, new Point(20,20));
-					
-					while(!((line = buffer.readLine()).contains("<EOT>"))) {
-						parseTransitionLine(line, transition);
+					if(XTPNdataMode) { //tworzymy sieć XTPN
+						TransitionXTPN transition = new TransitionXTPN(IdGenerator.getNextId(), 0, new Point(20,20));
+
+						while(!((line = buffer.readLine()).contains("<EOT>"))) {
+							parseTransitionLine(line, transition);
+						}
+						line = buffer.readLine(); // przewiń do -> Transition: 1 lub patrz niżej:
+						if(line.contains("<Transitions data block end>")) {
+							go = false;
+						}
+						transitionsProcessed++;
+						nodes.add(transition);
+
+					} else { //tryb zwykłej sieci
+						Transition transition = new Transition(IdGenerator.getNextId(), 0, new Point(20,20));
+
+						while(!((line = buffer.readLine()).contains("<EOT>"))) {
+							parseTransitionLine(line, transition);
+						}
+						line = buffer.readLine(); // przewiń do -> Transition: 1 lub patrz niżej:
+						if(line.contains("<Transitions data block end>")) {
+							go = false;
+						}
+						transitionsProcessed++;
+						nodes.add(transition);
 					}
-					line = buffer.readLine(); // przewiń do -> Transition: 1 lub patrz niżej:
-					if(line.contains("<Transitions data block end>")) {
-						go = false;
-					}
-					transitionsProcessed++;
-					nodes.add(transition);
+
 				}
 				//przeczytano tranzycje
 			}
@@ -538,7 +571,9 @@ public class ProjectReader {
 			}
 
 			query = "Place XTPN status:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
+				return;
+				/*
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {//isGammaModeActiveXTPN
@@ -550,85 +585,86 @@ public class ProjectReader {
 					place.setXTPNplaceStatus(false);
 				}
 				return;
+				*/
 			}
 
 			query = "Place XTPN gammaMode:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {//isGammaModeActiveXTPN
-					place.setGammaModeXTPNstatus(true);
+					((PlaceXTPN)place).setGammaModeXTPNstatus(true);
 				} else if(line.contains("false")) {
-					place.setGammaModeXTPNstatus(false);
+					((PlaceXTPN)place).setGammaModeXTPNstatus(false);
 				} else {
 					overlord.log("Gamma mode status reading failed for place "+placesProcessed, "error", true);
-					place.setGammaModeXTPNstatus(true);
+					((PlaceXTPN)place).setGammaModeXTPNstatus(true);
 				}
 				return;
 			}
 
 			query = "Place XTPN gammaVisible:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {//isGammaModeActiveXTPN
-					place.setGammaRangeStatus(true);
+					((PlaceXTPN)place).setGammaRangeStatus(true);
 				} else if(line.contains("false")) {
-					place.setGammaRangeStatus(false);
+					((PlaceXTPN)place).setGammaRangeStatus(false);
 				} else {
 					overlord.log("Gamma range visibility reading failed for place "+placesProcessed, "error", true);
-					place.setGammaRangeStatus(true);
+					((PlaceXTPN)place).setGammaRangeStatus(true);
 				}
 				return;
 			}
 
 			query = "Place XTPN gammaMin:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				try {
 					double gammaMin = Double.parseDouble(line);
-					place.setGammaMin_xTPN(gammaMin, true);
+					((PlaceXTPN)place).setGammaMin_xTPN(gammaMin, true);
 				} catch (Exception exc) {
 					overlord.log("Gamma minimum reading failed for place "+placesProcessed, "error", true);
-					place.setGammaMin_xTPN(0, true);
+					((PlaceXTPN)place).setGammaMin_xTPN(0, true);
 				}
 				return;
 			}
 
 			query = "Place XTPN gammaMax:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				try {
 					double gammaMax = Double.parseDouble(line);
-					place.setGammaMax_xTPN(gammaMax, true);
+					((PlaceXTPN)place).setGammaMax_xTPN(gammaMax, true);
 				} catch (Exception exc) {
 					overlord.log("Gamma maximum failed for place "+placesProcessed, "error", true);
-					if(place.getGammaMin_xTPN() > 0)
-						place.setGammaMax_xTPN(place.getGammaMin_xTPN(), true);
+					if(((PlaceXTPN)place).getGammaMin_xTPN() > 0)
+						((PlaceXTPN)place).setGammaMax_xTPN(((PlaceXTPN)place).getGammaMin_xTPN(), true);
 					else
-						place.setGammaMax_xTPN(0, true);
+						((PlaceXTPN)place).setGammaMax_xTPN(0, true);
 				}
 				return;
 			}
 
 			query = "Place XTPN fractionSize:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				try {
 					int fractionSize = Integer.parseInt(line);
-					place.setFraction_xTPN(fractionSize);
+					((PlaceXTPN)place).setFraction_xTPN(fractionSize);
 				} catch (Exception exc) {
 					overlord.log("Fraction XTPN reading failed for place "+placesProcessed, "error", true);
-					place.setFraction_xTPN(6);
+					((PlaceXTPN)place).setFraction_xTPN(6);
 				}
 				return;
 			}
 
 			query = "Place XTPN multiset:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 
@@ -636,11 +672,11 @@ public class ProjectReader {
 				for (String s : tab) {
 					try {
 						double token = Double.parseDouble(s);
-						place.accessMultiset().add(token); //dodanie poza seterem, aby nie dublować wartości tokensNumber
+						((PlaceXTPN)place).accessMultiset().add(token); //dodanie poza seterem, aby nie dublować wartości tokensNumber
 						//place.addTokens_XTPN(1, token);
 					} catch (Exception exc) {
 						overlord.log("XPTN token value reading failed for place " + placesProcessed, "error", true);
-						place.addTokens_XTPN(1, 0);
+						((PlaceXTPN)place).addTokens_XTPN(1, 0);
 					}
 				}
 				return;
@@ -871,7 +907,9 @@ public class ProjectReader {
 			}
 
 			query = "Transition XTPN status:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
+				return;
+				/*
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {//is XTPN?
@@ -883,169 +921,172 @@ public class ProjectReader {
 					transition.setXTPNstatus(false);
 				}
 				return;
+
+				 */
 			}
 
 			query = "Transition XTPN alphaMode:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {
-					transition.setAlphaXTPNstatus(true);
+					((TransitionXTPN)transition).setAlphaXTPNstatus(true);
 				} else if(line.contains("false")) {
-					transition.setAlphaXTPNstatus(false);
+					((TransitionXTPN)transition).setAlphaXTPNstatus(false);
 				} else {
 					overlord.log("Alpha mode status reading failed for transition "+transitionsProcessed, "error", true);
-					transition.setAlphaXTPNstatus(true);
+					((TransitionXTPN)transition).setAlphaXTPNstatus(true);
 				}
 				return;
 			}
 
 			query = "Transition XTPN alphaVisible:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {//isGammaModeActiveXTPN
-					transition.setAlphaRangeVisibility(true);
+					((TransitionXTPN)transition).setAlphaRangeVisibility(true);
 				} else if(line.contains("false")) {
-					transition.setAlphaRangeVisibility(false);
+					((TransitionXTPN)transition).setAlphaRangeVisibility(false);
 				} else {
 					overlord.log("Alpha range visibility reading failed for transition "+transitionsProcessed, "error", true);
-					transition.setAlphaRangeVisibility(true);
+					((TransitionXTPN)transition).setAlphaRangeVisibility(true);
 				}
 				return;
 			}
 
 			query = "Transition XTPN alphaMin:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				try {
 					double gammaMin = Double.parseDouble(line);
-					transition.setAlphaMin_xTPN(gammaMin, true);
+					((TransitionXTPN)transition).setAlphaMin_xTPN(gammaMin, true);
 				} catch (Exception exc) {
 					overlord.log("Alpha minimum reading failed for transition "+transitionsProcessed, "error", true);
-					transition.setAlphaMin_xTPN(0, true);
+					((TransitionXTPN)transition).setAlphaMin_xTPN(0, true);
 				}
 				return;
 			}
 
 			query = "Transition XTPN alphaMax:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				try {
 					double gammaMax = Double.parseDouble(line);
-					transition.setAlphaMax_xTPN(gammaMax, true);
+					((TransitionXTPN)transition).setAlphaMax_xTPN(gammaMax, true);
 				} catch (Exception exc) {
 					overlord.log("Alpha maximum failed for transition "+transitionsProcessed, "error", true);
-					if(transition.getAlphaMin_xTPN() > 0)
-						transition.setAlphaMax_xTPN(transition.getAlphaMin_xTPN(), true);
+					if(((TransitionXTPN)transition).getAlphaMin_xTPN() > 0)
+						((TransitionXTPN)transition).setAlphaMax_xTPN(((TransitionXTPN)transition).getAlphaMin_xTPN(), true);
 					else
-						transition.setAlphaMax_xTPN(0, true);
+						((TransitionXTPN)transition).setAlphaMax_xTPN(0, true);
 				}
 				return;
 			}
 
 			query = "Transition XTPN betaMode:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {
-					transition.setBetaXTPNstatus(true);
+					((TransitionXTPN)transition).setBetaXTPNstatus(true);
 				} else if(line.contains("false")) {
-					transition.setBetaXTPNstatus(false);
+					((TransitionXTPN)transition).setBetaXTPNstatus(false);
 				} else {
 					overlord.log("Beta mode status reading failed for transition "+transitionsProcessed, "error", true);
-					transition.setBetaXTPNstatus(true);
+					((TransitionXTPN)transition).setBetaXTPNstatus(true);
 				}
 				return;
 			}
 
 			query = "Transition XTPN betaVisible:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {//isGammaModeActiveXTPN
-					transition.setBetaRangeVisibility(true);
+					((TransitionXTPN)transition).setBetaRangeVisibility(true);
 				} else if(line.contains("false")) {
-					transition.setBetaRangeVisibility(false);
+					((TransitionXTPN)transition).setBetaRangeVisibility(false);
 				} else {
 					overlord.log("Beta range visibility reading failed for transition "+transitionsProcessed, "error", true);
-					transition.setBetaRangeVisibility(true);
+					((TransitionXTPN)transition).setBetaRangeVisibility(true);
 				}
 				return;
 			}
 
 			query = "Transition XTPN betaMin:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				try {
 					double gammaMin = Double.parseDouble(line);
-					transition.setBetaMin_xTPN(gammaMin, true);
+					((TransitionXTPN)transition).setBetaMin_xTPN(gammaMin, true);
 				} catch (Exception exc) {
 					overlord.log("Beta minimum reading failed for transition "+transitionsProcessed, "error", true);
-					transition.setBetaMin_xTPN(0, true);
+					((TransitionXTPN)transition).setBetaMin_xTPN(0, true);
 				}
 				return;
 			}
 
 			query = "Transition XTPN betaMax:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				try {
 					double gammaMax = Double.parseDouble(line);
-					transition.setBetaMax_xTPN(gammaMax, true);
+					((TransitionXTPN)transition).setBetaMax_xTPN(gammaMax, true);
 				} catch (Exception exc) {
 					overlord.log("Beta maximum failed for transition "+transitionsProcessed, "error", true);
-					if(transition.getBetaMin_xTPN() > 0)
-						transition.setBetaMax_xTPN(transition.getBetaMin_xTPN(), true);
+					if(((TransitionXTPN)transition).getBetaMin_xTPN() > 0)
+						((TransitionXTPN)transition).setBetaMax_xTPN(((TransitionXTPN)transition).getBetaMin_xTPN(), true);
 					else
-						transition.setBetaMax_xTPN(0, true);
+						((TransitionXTPN)transition).setBetaMax_xTPN(0, true);
 				}
 				return;
 			}
 
 			query = "Transition XTPN tauVisible:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {//isGammaModeActiveXTPN
-					transition.setTauTimersVisibility(true);
+					((TransitionXTPN)transition).setTauTimersVisibility(true);
 				} else if(line.contains("false")) {
-					transition.setTauTimersVisibility(false);
+					((TransitionXTPN)transition).setTauTimersVisibility(false);
 				} else {
 					overlord.log("Tau timers visibility reading failed for transition "+transitionsProcessed, "error", true);
-					transition.setTauTimersVisibility(true);
+					((TransitionXTPN)transition).setTauTimersVisibility(true);
 				}
 				return;
 			}
 
 			query = "Transition XTPN massAction:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {
-					transition.setMassActionKineticsXTPNstatus(true);
+					((TransitionXTPN)transition).setMassActionKineticsXTPNstatus(true);
 				} else if(line.contains("false")) {
-					transition.setMassActionKineticsXTPNstatus(false);
+					((TransitionXTPN)transition).setMassActionKineticsXTPNstatus(false);
 				} else {
 					overlord.log("Mass-action kinetics status reading failed for transition "+transitionsProcessed, "error", true);
-					transition.setMassActionKineticsXTPNstatus(false);
+					((TransitionXTPN)transition).setMassActionKineticsXTPNstatus(false);
 				}
 				return;
 			}
+
 			query = "Transition XTPN fractionSize:";
-			if(line.contains(query)) {
+			if(line.contains(query) && XTPNdataMode) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				try {
 					int fractionSize = Integer.parseInt(line);
-					transition.setFraction_xTPN(fractionSize);
+					((TransitionXTPN)transition).setFraction_xTPN(fractionSize);
 				} catch (Exception exc) {
 					overlord.log("Fraction XTPN reading failed for transition "+transitionsProcessed, "error", true);
-					transition.setFraction_xTPN(6);
+					((TransitionXTPN)transition).setFraction_xTPN(6);
 				}
 				return;
 			}

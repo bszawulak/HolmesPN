@@ -8,10 +8,7 @@ import holmes.analyse.InvariantsTools;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet.GlobalFileNetType;
 import holmes.petrinet.data.PetriNet.GlobalNetType;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
@@ -125,7 +122,7 @@ public final class Check {
 		for(Node node : nodes) {
 			if (node.getType() == PetriNetElementType.PLACE) {
 				places++;
-				if(((Place)node).isXTPNplace()) {
+				if( node instanceof PlaceXTPN ) {
 					placesXTPN++;
 				}
 			} else if (node.getType() == PetriNetElementType.TRANSITION ) {

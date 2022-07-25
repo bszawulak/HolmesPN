@@ -8,12 +8,12 @@ public class TransitionXTPN extends Transition {
     @Serial
     private static final long serialVersionUID = 4766270474155264671L;
 
-    private ArrayList<ElementLocation> alphaLocations = new ArrayList<>();
-    private ArrayList<ElementLocation> betaLocations = new ArrayList<>();
-    private ArrayList<ElementLocation> gammaLocations = new ArrayList<>();
-    private ArrayList<ElementLocation> tauLocations = new ArrayList<>();
+    //private ArrayList<ElementLocation> alphaLocations = new ArrayList<>();
+    //private ArrayList<ElementLocation> betaLocations = new ArrayList<>();
+    //private ArrayList<ElementLocation> gammaLocations = new ArrayList<>();
+    //private ArrayList<ElementLocation> tauLocations = new ArrayList<>();
 
-    private boolean isXTPN = false; //po narysowaniu w Holmesie będzie niezmienialne true
+    //private boolean isXTPN = false; //po narysowaniu w Holmesie będzie niezmienialne true
     //co oznacza, że tej tranzycji NIE MOŻNA przekonwertować na klasyczną inaczej, niż
     //odpowiednio ustawiając poniższe parametry. (alphaL=0; alphaU=-1; betaL=betaU=0)
     //parametry xTPN:
@@ -407,21 +407,6 @@ public class TransitionXTPN extends Transition {
         return isProducing_xTPN;
     }
 
-    /**
-     * Metoda włącza tryb XTPN dla tranzycji.
-     * @param status (<b>boolean</b>) true, jeśli ma to być tranzycja XTPN.
-     */
-    public void setXTPNstatus(boolean status) {
-        isXTPN = status;
-    }
-
-    /**
-     * Metoda zwraca status tranzycji XTPN / wszystkie inne.
-     * @return (<b>boolean</b>) true, jeśli to tranzycja typu XTPN.
-     */
-    public boolean isXTPNtransition() {
-        return isXTPN;
-    }
 
     /**
      * Metoda włącza tryb alfa-XTPN dla tranzycji.
@@ -507,7 +492,12 @@ public class TransitionXTPN extends Transition {
         // accuracy = SimulatorGlobals.calculationsAccuracy;
 
         for (Arc arc : getInArcs()) { //jeśli brak, to aktywna wejściowa
-            Place arcStartPlace = (Place) arc.getStartNode();
+            if( !(arc.getStartNode() instanceof PlaceXTPN) ) {
+                break; //TODO! IMPOSSIBRU!!!
+            }
+
+            PlaceXTPN arcStartPlace = (PlaceXTPN) arc.getStartNode();
+
             Arc.TypeOfArc arcType = arc.getArcType();
             int arcWeight = arc.getWeight();
 

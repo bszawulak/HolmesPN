@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Place;
+import holmes.petrinet.elements.PlaceXTPN;
 
 /**
  * Klasa zarządzająca listą stanów sieci.
@@ -43,12 +44,15 @@ public class P_StateManager {
 		for(StatePlacesVector pVector: statesMatrix) {
 			pVector.addPlace(0.0);
 		}
-		for(MultisetM pVector: statesMatrixXTPN) {
-			if(place.isGammaModeActiveXTPN())
-				pVector.addMultiset_K_toMultiset_M( new ArrayList<>(place.accessMultiset()), 1 );
-			else
-				pVector.addMultiset_K_toMultiset_M( new ArrayList<>(place.accessMultiset()), 0 );
+		if(place instanceof PlaceXTPN) {
+			for(MultisetM multisetM: statesMatrixXTPN) {
+				if( ((PlaceXTPN)place).isGammaModeActiveXTPN())
+					multisetM.addMultiset_K_toMultiset_M( new ArrayList<>( ((PlaceXTPN)place).accessMultiset()), 1 );
+				else
+					multisetM.addMultiset_K_toMultiset_M( new ArrayList<>( ((PlaceXTPN)place).accessMultiset()), 0 );
+			}
 		}
+
 	}
 	
 	/**
@@ -231,8 +235,13 @@ public class P_StateManager {
 	public void createNewMultiset_M_basedOnNet() {
 		MultisetM multisetM = new MultisetM();
 		for(Place place : pn.getPlaces()) {
-			if(place.isGammaModeActiveXTPN())
-				multisetM.addMultiset_K_toMultiset_M(new ArrayList<>(place.accessMultiset()), 1);
+			if( !(place instanceof PlaceXTPN) ) {
+				overlord.log("Critical error, wrong place object. ID: 54832123.", "error", false);
+				return;
+			}
+
+			if( ((PlaceXTPN)place).isGammaModeActiveXTPN())
+				multisetM.addMultiset_K_toMultiset_M(new ArrayList<>( ((PlaceXTPN)place).accessMultiset()), 1);
 			else {
 				int tokens = place.getTokensNumber();
 				ArrayList<Double> fakeMultiset = new ArrayList<>();
@@ -249,7 +258,7 @@ public class P_StateManager {
 	 */
 	public void addNewCleanMultiset_M() { //przycisk okna
 		MultisetM multisetM = new MultisetM();
-		for(int p=0; p<pn.getPlacesNumber(); p++) {
+		for(int placeID = 0; placeID<pn.getPlacesNumber(); placeID++) {
 			multisetM.addMultiset_K_toMultiset_M(new ArrayList<>(), 1);
 			//nowy stan tylko dla miejsc XTPN, TODO?
 		}
@@ -263,10 +272,15 @@ public class P_StateManager {
 		removeAllMultisets_M(true); //czyść + dodaj czysty nowy wektor
 		ArrayList<Place> places = pn.getPlaces();
 		for(Place place : places) {
-			if(place.isGammaModeActiveXTPN())
-				statesMatrixXTPN.get(0).addMultiset_K_toMultiset_M( new ArrayList<>(place.accessMultiset()), 1 );
+			if( !(place instanceof PlaceXTPN) ) {
+				overlord.log("Error code: 54284123. Non-XTPN nodes detected.", "error", false);
+				return;
+			}
+
+			if( ((PlaceXTPN)place).isGammaModeActiveXTPN())
+				statesMatrixXTPN.get(0).addMultiset_K_toMultiset_M( new ArrayList<>( ((PlaceXTPN)place).accessMultiset()), 1 );
 			else
-				statesMatrixXTPN.get(0).addMultiset_K_toMultiset_M( new ArrayList<>(place.accessMultiset()), 0 );
+				statesMatrixXTPN.get(0).addMultiset_K_toMultiset_M( new ArrayList<>( ((PlaceXTPN)place).accessMultiset()), 0 );
 		}
 	}
 
@@ -281,13 +295,18 @@ public class P_StateManager {
 		if(multisetM.getMultiset_M_Size() == places.size()) {
 			for (int placeIndex = 0; placeIndex < places.size(); placeIndex++) {
 				Place place = places.get(placeIndex);
+				if( !(place instanceof PlaceXTPN) ) {
+					overlord.log("Critical error, wrong place object. ID: 19284133.", "error", false);
+					return false;
+				}
+
 				if(multisetM.isPlaceStoredAsGammaActive(placeIndex)) { //jeśli w managerze miejsce przechowywane jest jako XTPN
-					place.setGammaModeXTPNstatus(true);
-					place.replaceMultiset( new ArrayList<>(multisetM.accessMultiset_K(placeIndex)) );
+					((PlaceXTPN)place).setGammaModeXTPNstatus(true);
+					((PlaceXTPN)place).replaceMultiset( new ArrayList<>(multisetM.accessMultiset_K(placeIndex)) );
 					place.setTokensNumber( multisetM.accessMultiset_K(placeIndex).size() );
 				} else { //jeśli w managerze miejsce jest przechowywane jako klasyczne
-					place.setGammaModeXTPNstatus(false);
-					place.accessMultiset().clear();
+					((PlaceXTPN)place).setGammaModeXTPNstatus(false);
+					((PlaceXTPN)place).accessMultiset().clear();
 					//place.replaceMultiset( new ArrayList<>(multisetM.accessMultiset_K(placeIndex)) );
 					double tokensNo = multisetM.accessMultiset_K(placeIndex).get(0);
 					place.setTokensNumber( (int)tokensNo );
@@ -329,9 +348,14 @@ public class P_StateManager {
 		multisetM.accessArrayListSOfMultiset_M().clear();
 
 		for (Place place : places) {
-			ArrayList<Double> currentPlaceMultiset = new ArrayList<>(place.accessMultiset());
+			if( !(place instanceof PlaceXTPN) ) {
+				overlord.log("Critical error, wrong place object. ID: 93214125.", "error", false);
+				return;
+			}
+
+			ArrayList<Double> currentPlaceMultiset = new ArrayList<>( ((PlaceXTPN)place).accessMultiset());
 			int placeTag = 1; //zakładamy, że miejsce czasowe
-			if(!place.isGammaModeActiveXTPN()) { //w przypadku gdy klasyczne, jedyna liczba w multizbiorze to liczba tokenów klasycznych
+			if( !((PlaceXTPN)place).isGammaModeActiveXTPN() ) { //w przypadku gdy klasyczne, jedyna liczba w multizbiorze to liczba tokenów klasycznych
 				currentPlaceMultiset.clear();
 				currentPlaceMultiset.add((double)place.getTokensNumber());
 				placeTag = 0; //jednak miejsce zwykłe

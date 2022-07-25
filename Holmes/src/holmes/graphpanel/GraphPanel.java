@@ -17,12 +17,7 @@ import holmes.graphpanel.popupmenu.SheetPopupMenu;
 import holmes.graphpanel.popupmenu.TransitionPopupMenu;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.MetaNode;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
@@ -597,9 +592,9 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewXTPNTransition(Point p) {
 		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
+			TransitionXTPN n = new TransitionXTPN(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
 			n.setTransType(TransitionType.XTPN);
-			n.setXTPNstatus(true);
+			//n.setXTPNstatus(true);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans(); // TODO: ?????
@@ -612,8 +607,8 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewNXTPNPlace(Point p) {
 		if (isLegalLocation(p)) {
-			Place place = new Place(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
-			place.setXTPNplaceStatus(true);
+			PlaceXTPN place = new PlaceXTPN(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
+			//place.setXTPNplaceStatus(true);
 			this.getSelectionManager().selectOneElementLocation(place.getLastLocation());
 			getNodes().add(place);
 			overlord.getWorkspace().getProject().accessStatesManager().addPlace(place);
@@ -1071,6 +1066,10 @@ public class GraphPanel extends JComponent {
 						if(project.getNodes().size() == 0) {
 							_putXTPNtransition(project);
 						} else if (project.hasNonXTPNnodes()){
+							JOptionPane.showMessageDialog(null, "TODO: transformation. Please create clean new project to use XTPN nodes.",
+									"Compatibility issue", JOptionPane.INFORMATION_MESSAGE);
+							//TODO
+							/*
 							String[] options = {"Place and transform project", "Cancel placement"};
 							int answer = JOptionPane.showOptionDialog(null,
 									"Holmes detected non-XTPN places or transitions. XTPN transition can only be" +
@@ -1083,6 +1082,8 @@ public class GraphPanel extends JComponent {
 								project.transformAllIntoXTPNnodes();
 								_putXTPNtransition(project);
 							}
+
+							 */
 						} else { //to samo co w pierwszy ifie
 							_putXTPNtransition(project);
 						}
@@ -1091,6 +1092,10 @@ public class GraphPanel extends JComponent {
 						if(project.getNodes().size() == 0) {
 							_putXTPNplace(project);
 						} else if (project.hasNonXTPNnodes()){
+							JOptionPane.showMessageDialog(null, "TODO: transformation. Please create clean new project to use XTPN nodes.",
+									"Compatibility issue", JOptionPane.INFORMATION_MESSAGE);
+							//TODO
+							/*
 							String[] options = {"Place and transform project", "Cancel placement"};
 							int answer = JOptionPane.showOptionDialog(null,
 									"Holmes detected non-XTPN places or transitions. XTPN place can only be" +
@@ -1103,6 +1108,7 @@ public class GraphPanel extends JComponent {
 								project.transformAllIntoXTPNnodes();
 								_putXTPNplace(project);
 							}
+							 */
 						} else { //to samo co w pierwszy ifie
 							_putXTPNplace(project);
 						}

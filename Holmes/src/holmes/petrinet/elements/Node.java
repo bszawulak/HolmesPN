@@ -234,7 +234,7 @@ public abstract class Node extends PetriNetElement {
 		}
 
 		if(this instanceof Place) {
-			if(((Place)this).isXTPNplace() ) {
+			if( this instanceof PlaceXTPN ) {
 				//ArrayList<Point> gammaPoints = getNodeNamePositions(sheetId, GUIManager.locationMoveType.GAMMA); //XTPN, jw
 				for (int i=0; i<gammaLocations.size(); i++) {
 					if(gammaLocations.get(i).getSheetID() != sheetId) //tylko dla danego arkusza
@@ -245,16 +245,16 @@ public abstract class Node extends PetriNetElement {
 					int drawX = (nodePoint.x) + gammaPoint.x - 40;
 					int drawY =  (nodePoint.y) + gammaPoint.y - 24;
 
-					if(((Place)this).isGammaModeActiveXTPN() && ((Place)this).isGammaRangeVisible()) {
-						int franctionDigits = ((Place)this).getFraction_xTPN();
+					if(((PlaceXTPN)this).isGammaModeActiveXTPN() && ((PlaceXTPN)this).isGammaRangeVisible()) {
+						int franctionDigits = ((PlaceXTPN)this).getFraction_xTPN();
 						g.setColor(Color.blue);
 						g.setFont(f_Big);
-						double gamma = ((Place)this).getGammaMax_xTPN();
+						double gamma = ((PlaceXTPN)this).getGammaMax_xTPN();
 						String gammaMaxVal = "\u221E";
 						if(gamma < Integer.MAX_VALUE-2) {
-							gammaMaxVal = Tools.cutValueExt(((Place)this).getGammaMax_xTPN(), franctionDigits);
+							gammaMaxVal = Tools.cutValueExt(((PlaceXTPN)this).getGammaMax_xTPN(), franctionDigits);
 						}
-						String gammaStr = "\u03B3:" + Tools.cutValueExt(((Place)this).getGammaMin_xTPN(), franctionDigits) + " / "
+						String gammaStr = "\u03B3:" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMin_xTPN(), franctionDigits) + " / "
 								+ gammaMaxVal;
 
 						g.drawString(gammaStr, drawX, drawY);
@@ -267,7 +267,7 @@ public abstract class Node extends PetriNetElement {
 			}
 
 		} else if (this instanceof Transition) {
-			if(((Transition)this).isXTPNtransition()) {
+			if( this instanceof TransitionXTPN ) {
 				if(alphaLocations.size() + betaLocations.size() - tauLocations.size() - namesLocations.size() != 0) {
 					//error, impossible
 					GUIManager.getDefaultGUIManager().log("Alpha, beta, tau and name arrays size do not match. "
@@ -279,7 +279,7 @@ public abstract class Node extends PetriNetElement {
 						continue;
 
 					Point nodePoint = nodePoints.get(i);
-					if(((Transition)this).isAlphaActiveXTPN() && ((Transition)this).isAlphaRangeVisible()) {
+					if(((TransitionXTPN)this).isAlphaActiveXTPN() && ((TransitionXTPN)this).isAlphaRangeVisible()) {
 						Point alphaPoint = alphaLocations.get(i).getPosition();
 
 						int drawX = (nodePoint.x) + alphaPoint.x - 40;
@@ -287,11 +287,11 @@ public abstract class Node extends PetriNetElement {
 
 						g.setColor(Color.blue);
 						g.setFont(f_Big);
-						if(((Transition)this).isAlphaActiveXTPN()) {
-							String alfa = "\u03B1:" + Tools.cutValueExt(((Transition)this).getAlphaMin_xTPN(), ((Transition)this).getFraction_xTPN()) + " / "
-									+ Tools.cutValueExt(((Transition)this).getAlphaMax_xTPN(), ((Transition)this).getFraction_xTPN());
+						if(((TransitionXTPN)this).isAlphaActiveXTPN()) {
+							String alfa = "\u03B1:" + Tools.cutValueExt(((TransitionXTPN)this).getAlphaMin_xTPN(), ((TransitionXTPN)this).getFraction_xTPN()) + " / "
+									+ Tools.cutValueExt(((TransitionXTPN)this).getAlphaMax_xTPN(), ((TransitionXTPN)this).getFraction_xTPN());
 
-							if(!((Transition)this).isBetaActiveXTPN()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
+							if(!((TransitionXTPN)this).isBetaActiveXTPN()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
 								g.drawString(alfa,drawX, drawY);
 							} else {
 								g.drawString(alfa, drawX, drawY - 16);
@@ -299,32 +299,32 @@ public abstract class Node extends PetriNetElement {
 						}
 					}
 
-					if(((Transition)this).isBetaActiveXTPN() && ((Transition)this).isBetaRangeVisible()) {
+					if(((TransitionXTPN)this).isBetaActiveXTPN() && ((TransitionXTPN)this).isBetaRangeVisible()) {
 						Point betaPoint = betaLocations.get(i).getPosition();
 						int drawX = (nodePoint.x) + betaPoint.x - 40;
 						int drawY =  (nodePoint.y) + betaPoint.y - 24;
 
 						//g.setColor(Color.blue);
 						g.setFont(f_Big);
-						if(((Transition)this).isBetaActiveXTPN()) {
+						if(((TransitionXTPN)this).isBetaActiveXTPN()) {
 							g.setColor(darkGreen);
-							String beta = "\u03B2:" + Tools.cutValueExt(((Transition)this).getBetaMin_xTPN(), ((Transition)this).getFraction_xTPN()) + " / "
-									+ Tools.cutValueExt(((Transition)this).getBetaMax_xTPN(), ((Transition)this).getFraction_xTPN());
+							String beta = "\u03B2:" + Tools.cutValueExt(((TransitionXTPN)this).getBetaMin_xTPN(), ((TransitionXTPN)this).getFraction_xTPN()) + " / "
+									+ Tools.cutValueExt(((TransitionXTPN)this).getBetaMax_xTPN(), ((TransitionXTPN)this).getFraction_xTPN());
 							g.drawString(beta, drawX, drawY);
 						}
 					}
 
-					if(((Transition)this).isTauTimerVisible() && ((Transition)this).isBetaRangeVisible()) {
+					if(((TransitionXTPN)this).isTauTimerVisible() && ((TransitionXTPN)this).isBetaRangeVisible()) {
 						Point tauPoint = tauLocations.get(i).getPosition();
 						int drawX = (nodePoint.x) + tauPoint.x-5;
 						int drawY =  (nodePoint.y) + tauPoint.y-10;
 
 						g.setFont(f_BigL);
-						if(((Transition)this).isTauTimerVisible()) {
-							double alphaTime = ((Transition)this).getTauAlpha_xTPN();
-							double betaTime = ((Transition)this).getTauBeta_xTPN();
-							double u_alfaTime = ((Transition)this).getTimerAlfa_XTPN();
-							double v_betaTime = ((Transition)this).getTimerBeta_XTPN();
+						if(((TransitionXTPN)this).isTauTimerVisible()) {
+							double alphaTime = ((TransitionXTPN)this).getTauAlpha_xTPN();
+							double betaTime = ((TransitionXTPN)this).getTauBeta_xTPN();
+							double u_alfaTime = ((TransitionXTPN)this).getTimerAlfa_XTPN();
+							double v_betaTime = ((TransitionXTPN)this).getTimerBeta_XTPN();
 
 							String timerA;
 							String timerB;
@@ -338,23 +338,23 @@ public abstract class Node extends PetriNetElement {
 							} else if(alphaTime < 0) {
 								timerA = "u\u279F\u03C4(\u03B1): #\u279F#";
 								g.drawString(timerA, drawX + 40, drawY + 12);
-								timerB = "v\u279F\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, ((Transition)this).getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(betaTime, ((Transition)this).getFraction_xTPN());
+								timerB = "v\u279F\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, ((TransitionXTPN)this).getFraction_xTPN()) + "\u279F"
+										+ Tools.cutValueExt(betaTime, ((TransitionXTPN)this).getFraction_xTPN());
 								g.drawString(timerB, drawX + 40, drawY + 26);
 
 							} else if(betaTime < 0) {
-								timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, ((Transition)this).getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(alphaTime, ((Transition)this).getFraction_xTPN());
+								timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, ((TransitionXTPN)this).getFraction_xTPN()) + "\u279F"
+										+ Tools.cutValueExt(alphaTime, ((TransitionXTPN)this).getFraction_xTPN());
 								g.drawString(timerA, drawX + 40, drawY + 12);
 								timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
 								g.drawString(timerB, drawX + 40, drawY + 26);
 							} else {
-								timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, ((Transition)this).getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(alphaTime, ((Transition)this).getFraction_xTPN());
+								timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, ((TransitionXTPN)this).getFraction_xTPN()) + "\u279F"
+										+ Tools.cutValueExt(alphaTime, ((TransitionXTPN)this).getFraction_xTPN());
 								g.drawString(timerA, drawX + 40, drawY + 12);
 								//timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
-								timerB = "v\u279F\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, ((Transition)this).getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(betaTime, ((Transition)this).getFraction_xTPN());
+								timerB = "v\u279F\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, ((TransitionXTPN)this).getFraction_xTPN()) + "\u279F"
+										+ Tools.cutValueExt(betaTime, ((TransitionXTPN)this).getFraction_xTPN());
 								g.drawString(timerB, drawX + 40, drawY + 26);
 							}
 						}
@@ -362,7 +362,6 @@ public abstract class Node extends PetriNetElement {
 				}
 			}
 		}
-
 	}
 
 	/**

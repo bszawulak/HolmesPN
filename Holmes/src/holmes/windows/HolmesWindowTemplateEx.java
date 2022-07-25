@@ -111,7 +111,7 @@ public class HolmesWindowTemplateEx extends JFrame {
         comboPanelX += 25;
         comboPanel.add(tokensComboBox);
 
-        multisetK.addAll(place.accessMultiset());
+        //multisetK.addAll(place.accessMultiset());
 
         tokensComboBox.removeAllItems();
         tokensComboBox.addItem("---");

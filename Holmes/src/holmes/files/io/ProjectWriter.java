@@ -10,13 +10,8 @@ import java.util.Date;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.*;
-import holmes.petrinet.elements.Arc;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.MetaNode;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
 import holmes.petrinet.functions.FunctionContainer;
 import holmes.utilities.Tools;
 import holmes.varia.Check;
@@ -46,6 +41,8 @@ public class ProjectWriter {
 	private final ArrayList<SSAplacesVector> ssaMatrix;
 	
 	private final String newline = "\n";
+
+	private boolean XTPNdataMode = false; //jeśli true, to znaczy, że zapisujemy sieć XTPN
 	
 	/**
 	 * Konstruktor obiektu klasy ProjectWriter.
@@ -78,6 +75,9 @@ public class ProjectWriter {
 			trans.checkFunctions(arcs, places);
 		
 		try {
+			if(projectCore.getProjectType() == PetriNet.GlobalNetType.XTPN)
+				XTPNdataMode = true;
+
 			//BufferedWriter bw = new BufferedWriter(new FileWriter("tmp//test.apf"));
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
 			String projName = projectCore.getName();
@@ -120,10 +120,13 @@ public class ProjectWriter {
 			boolean statusStates = saveStates(bw);
 			bw.write("<States data end>"+newline);
 
-			bw.write("<States XTPN data>"+newline);
-			boolean statusXTPNStates = saveStatesXTPN(bw);
-			bw.write("<States XTPN data end>"+newline);
-			
+			boolean statusXTPNStates = false;
+			if(XTPNdataMode) {
+				bw.write("<States XTPN data>"+newline);
+				statusXTPNStates = saveStatesXTPN(bw);
+				bw.write("<States XTPN data end>"+newline);
+			}
+
 			bw.write("<Firing rates data>"+newline);
 			boolean statusFR = saveFiringRates(bw);
 			bw.write("<Firing rates data end>"+newline);
@@ -171,18 +174,20 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Place comment:"+Tools.convertToCode(place.getComment())+">"+newline); //komentarz
 				bw.write(spaces(sp)+"<Place tokens:"+place.getTokensNumber()+">"+newline); //tokeny
 
-				bw.write(spaces(sp)+"<Place XTPN status:"+place.isXTPNplace()+">"+newline); //czy to miejsce XTPN?
-				bw.write(spaces(sp)+"<Place XTPN gammaMode:"+place.isGammaModeActiveXTPN()+">"+newline); //czy gamma włączone
-				bw.write(spaces(sp)+"<Place XTPN gammaVisible:"+place.isGammaRangeVisible()+">"+newline); //czy gamma widoczne
-				bw.write(spaces(sp)+"<Place XTPN gammaMin:"+place.getGammaMin_xTPN()+">"+newline); //gamma minimum
-				bw.write(spaces(sp)+"<Place XTPN gammaMax:"+place.getGammaMax_xTPN()+">"+newline); //gamma maximum
-				bw.write(spaces(sp)+"<Place XTPN fractionSize:"+place.getFraction_xTPN()+">"+newline); //dokładność po przecinku
+				if(XTPNdataMode) {
+					//bw.write(spaces(sp) + "<Place XTPN status:" + ((PlaceXTPN)place).isXTPNplace() + ">" + newline); //czy to miejsce XTPN?
+					bw.write(spaces(sp) + "<Place XTPN gammaMode:" + ((PlaceXTPN)place).isGammaModeActiveXTPN() + ">" + newline); //czy gamma włączone
+					bw.write(spaces(sp) + "<Place XTPN gammaVisible:" + ((PlaceXTPN)place).isGammaRangeVisible() + ">" + newline); //czy gamma widoczne
+					bw.write(spaces(sp) + "<Place XTPN gammaMin:" + ((PlaceXTPN)place).getGammaMin_xTPN() + ">" + newline); //gamma minimum
+					bw.write(spaces(sp) + "<Place XTPN gammaMax:" + ((PlaceXTPN)place).getGammaMax_xTPN() + ">" + newline); //gamma maximum
+					bw.write(spaces(sp) + "<Place XTPN fractionSize:" + ((PlaceXTPN)place).getFraction_xTPN() + ">" + newline); //dokładność po przecinku
 
-				bw.write(spaces(sp)+"<Place XTPN multiset"); //multisetK
-				for(int token=0; token<place.accessMultiset().size(); token++) {
-					bw.write(":"+place.accessMultiset().get(token)); //tokeny
+					bw.write(spaces(sp) + "<Place XTPN multiset"); //multisetK
+					for (int token = 0; token < ((PlaceXTPN)place).accessMultiset().size(); token++) {
+						bw.write(":" + ((PlaceXTPN)place).accessMultiset().get(token)); //tokeny
+					}
+					bw.write(">" + newline); //tokeny
 				}
-				bw.write(">"+newline); //tokeny
 
 				bw.write(spaces(sp)+"<Place colored:"+place.isColored+">"+newline);
 				bw.write(spaces(sp)+"<Place colors:"
@@ -247,18 +252,21 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition DPN status:"+trans.getDPNstatus()+">"+newline); //is DPN active?
 				bw.write(spaces(sp)+"<Transition function flag:"+trans.isFunctional()+">"+newline); //is functional?
 
-				bw.write(spaces(sp)+"<Transition XTPN status:"+trans.isXTPNtransition()+">"+newline); //czy XTPN?
-				bw.write(spaces(sp)+"<Transition XTPN alphaMode:"+trans.isAlphaActiveXTPN()+">"+newline); //czy alpha włączone
-				bw.write(spaces(sp)+"<Transition XTPN alphaVisible:"+trans.isAlphaRangeVisible()+">"+newline); //czy alpha widoczne
-				bw.write(spaces(sp)+"<Transition XTPN alphaMin:"+trans.getAlphaMin_xTPN()+">"+newline); //alpha minimum
-				bw.write(spaces(sp)+"<Transition XTPN alphaMax:"+trans.getAlphaMax_xTPN()+">"+newline); //alpha maximum
-				bw.write(spaces(sp)+"<Transition XTPN betaMode:"+trans.isBetaActiveXTPN()+">"+newline); //czy beta włączone
-				bw.write(spaces(sp)+"<Transition XTPN betaVisible:"+trans.isBetaRangeVisible()+">"+newline); //czy beta widoczne
-				bw.write(spaces(sp)+"<Transition XTPN betaMin:"+trans.getBetaMin_xTPN()+">"+newline); //beta minimum
-				bw.write(spaces(sp)+"<Transition XTPN betaMax:"+trans.getBetaMax_xTPN()+">"+newline); //beta maximum
-				bw.write(spaces(sp)+"<Transition XTPN tauVisible:"+trans.isTauTimerVisible()+">"+newline); //czy beta widoczne
-				bw.write(spaces(sp)+"<Transition XTPN massAction:"+trans.isMassActionKineticsActiveXTPN()+">"+newline); //mass-action
-				bw.write(spaces(sp)+"<Transition XTPN fractionSize:"+trans.getFraction_xTPN()+">"+newline); //dokładność po przecinku
+				if(XTPNdataMode) {
+					//bw.write(spaces(sp)+"<Transition XTPN status:"+((TransitionXTPN)trans).isXTPNtransition()+">"+newline); //czy XTPN?
+					bw.write(spaces(sp)+"<Transition XTPN alphaMode:"+((TransitionXTPN)trans).isAlphaActiveXTPN()+">"+newline); //czy alpha włączone
+					bw.write(spaces(sp)+"<Transition XTPN alphaVisible:"+((TransitionXTPN)trans).isAlphaRangeVisible()+">"+newline); //czy alpha widoczne
+					bw.write(spaces(sp)+"<Transition XTPN alphaMin:"+((TransitionXTPN)trans).getAlphaMin_xTPN()+">"+newline); //alpha minimum
+					bw.write(spaces(sp)+"<Transition XTPN alphaMax:"+((TransitionXTPN)trans).getAlphaMax_xTPN()+">"+newline); //alpha maximum
+					bw.write(spaces(sp)+"<Transition XTPN betaMode:"+((TransitionXTPN)trans).isBetaActiveXTPN()+">"+newline); //czy beta włączone
+					bw.write(spaces(sp)+"<Transition XTPN betaVisible:"+((TransitionXTPN)trans).isBetaRangeVisible()+">"+newline); //czy beta widoczne
+					bw.write(spaces(sp)+"<Transition XTPN betaMin:"+((TransitionXTPN)trans).getBetaMin_xTPN()+">"+newline); //beta minimum
+					bw.write(spaces(sp)+"<Transition XTPN betaMax:"+((TransitionXTPN)trans).getBetaMax_xTPN()+">"+newline); //beta maximum
+					bw.write(spaces(sp)+"<Transition XTPN tauVisible:"+((TransitionXTPN)trans).isTauTimerVisible()+">"+newline); //czy beta widoczne
+					bw.write(spaces(sp)+"<Transition XTPN massAction:"+((TransitionXTPN)trans).isMassActionKineticsActiveXTPN()+">"+newline); //mass-action
+					bw.write(spaces(sp)+"<Transition XTPN fractionSize:"+((TransitionXTPN)trans).getFraction_xTPN()+">"+newline); //dokładność po przecinku
+				}
+
 				
 				bw.write(spaces(sp)+"<Transition colored:"+trans.isColored()+">"+newline); //is colored?
 				bw.write(spaces(sp)+"<Transition colors threshold:"
@@ -834,7 +842,7 @@ public class ProjectWriter {
 							}
 						}
 						if(counter == 0 && isXTPNplace) { //brak tokenów w miejscu
-							if(places.get(placeIndex).isGammaModeActiveXTPN()) {
+							if( ((PlaceXTPN)places.get(placeIndex)).isGammaModeActiveXTPN()) {
 								stateLine.append("-1.0;");
 							}
 							//else {

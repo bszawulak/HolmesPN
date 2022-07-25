@@ -16,12 +16,7 @@ import holmes.files.io.Snoopy.SnoopyWriter;
 import holmes.graphpanel.GraphPanel;
 import holmes.graphpanel.SelectionActionListener;
 import holmes.graphpanel.GraphPanel.DrawModes;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.MetaNode;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
@@ -946,7 +941,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
 			getSimulator().resetSimulator();
-			getSimulatorXTPN().resetSimulator();
+
+			//getSimulatorXTPN().resetSimulator();
 
 			//setSimulator(new GraphicalSimulator(nt, this));
 			//setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
@@ -968,15 +964,19 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		try {
 			accessStatesManager().replaceNetStateWithSelectedMultiset_M(accessStatesManager().selectedStateXTPN);
 			for(Transition trans : getTransitions()) {
-				trans.setLaunching(false);
-				if(trans.isXTPNtransition()) {
-					trans.resetTimeVariables_xTPN();
+				if( !(trans instanceof TransitionXTPN)) {
+					overlord.log("Critical error, wrong place object. ID: 83452836.", "error", false);
+					return;
 				}
+
+				trans.setLaunching(false);
+				((TransitionXTPN)trans).resetTimeVariables_xTPN();
 			}
 
 			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
-			getSimulator().resetSimulator();
+			//getSimulator().resetSimulator();
 			getSimulatorXTPN().resetSimulator();
+
 			//setSimulator(new GraphicalSimulator(nt, this));
 			//setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
 			//overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN()); //ustawia nowe instancje symulatorów
@@ -1008,8 +1008,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				if(trans.getTransType() == TransitionType.TPN) {
 					trans.resetTimeVariables();
 				}
-				if(trans.isXTPNtransition()) {
-					trans.resetTimeVariables_xTPN();
+				if( trans instanceof TransitionXTPN ) {
+					((TransitionXTPN)trans).resetTimeVariables_xTPN();
 				}
 			}
 			getSimulator().getSimLogger().logSimReset();
@@ -1793,11 +1793,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public boolean hasNonXTPNnodes() {
 		boolean result = false;
 		for (Node n : this.dataCore.nodes) {
-			if (n instanceof Place) {
-				if(!((Place) n).isXTPNplace())
-					return true; //zawiera node nie-XTPN
+			if ( !(n instanceof PlaceXTPN)) {
+				return true; //zawiera node nie-XTPN
 			} else if (n instanceof Transition){
-				if(!((Transition) n).isXTPNtransition())
+				if( !(n instanceof TransitionXTPN) )
 					return true; //zawiera node nie-XTPN
 			}
 		}
@@ -1811,12 +1810,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public boolean checkIfXTPNpresent() {
 		boolean result = false;
 		for (Node n : this.dataCore.nodes) {
-			if (n instanceof Place) {
-				if(((Place) n).isXTPNplace())
-					return true; //zawiera node XTPN
-			} else if (n instanceof Transition){
-				if(((Transition) n).isXTPNtransition())
-					return true; //zawiera node XTPN
+			if (n instanceof PlaceXTPN) {
+				return true; //zawiera node XTPN
+			} else if (n instanceof TransitionXTPN){
+				return true; //zawiera node XTPN
 			}
 		}
 		return result;
@@ -1825,17 +1822,17 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Zmienia wszystkie non-XTPN nodes w XTPN
 	 */
-	public void transformAllIntoXTPNnodes() {
+	public void transformAllIntoXTPNnodes_TODO() { //TODO
 		for (Node n : this.dataCore.nodes) {
 			if (n instanceof Place) {
 				Place place = ((Place) n);
-				place.setXTPNplaceStatus(true);
-				place.setGammaMin_xTPN(99, true);
-				place.setGammaMax_xTPN(99, true);
-				place.setGammaModeXTPNstatus(false); //!! tak! można ręcznie każde miejsce potem zmienić
+				//place.setXTPNplaceStatus(true);
+				//place.setGammaMin_xTPN(99, true);
+				//place.setGammaMax_xTPN(99, true);
+				//place.setGammaModeXTPNstatus(false); //!! tak! można ręcznie każde miejsce potem zmienić
 			} else if (n instanceof Transition){
 				Transition transition = ((Transition) n);
-				transition.setXTPNstatus(true);
+				//transition.setXTPNstatus(true);
 				transition.setTransType(TransitionType.XTPN);
 				transition.setTPNstatus(false);
 				transition.setDPNstatus(false);

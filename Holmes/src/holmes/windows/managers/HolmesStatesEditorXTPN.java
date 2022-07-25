@@ -21,6 +21,7 @@ import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.P_StateManager;
 import holmes.petrinet.data.MultisetM;
 import holmes.petrinet.elements.Place;
+import holmes.petrinet.elements.PlaceXTPN;
 import holmes.tables.RXTable;
 import holmes.tables.managers.StatesPlacesEditorTableModelXTPN;
 import holmes.utilities.Tools;
@@ -228,7 +229,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
     protected void cellClickAction() {
         try {
             int selectedPlace = multisetsTable.getSelectedRow();
-            new HolmesXTPNtokens(places.get(selectedPlace), this, multisetM.accessMultiset_K(selectedPlace)
+            new HolmesXTPNtokens( (PlaceXTPN)places.get(selectedPlace), this, multisetM.accessMultiset_K(selectedPlace)
                     , multisetM.isPlaceStoredAsGammaActive(selectedPlace));
         } catch (Exception ignored) {
 

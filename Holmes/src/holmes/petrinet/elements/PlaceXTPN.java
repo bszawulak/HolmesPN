@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Iterator;
 
 public class PlaceXTPN extends Place {
-    private boolean isXTPN = false; //czy tokeny marzą o elektrycznych tranzycjach?
     private double gammaMin_xTPN = 0.0;
     private double gammaMax_xTPN = 99;
     private boolean gammaMode_xTPN = true;
@@ -121,22 +120,6 @@ public class PlaceXTPN extends Place {
     }
 
     /**
-     * Metoda włącza status miejsca typu XTPN.
-     * @param status (boolean) true, jeśli tryb XTPN ma być aktywny dla miejsca.
-     */
-    public void setXTPNplaceStatus(boolean status) {
-        isXTPN = status;
-    }
-
-    /**
-     * Metoda zwraca status XTPN dla miejsca.
-     * @return (boolean) - true, jeśli to miejsce typu XTPN
-     */
-    public boolean isXTPNplace() {
-        return isXTPN;
-    }
-
-    /**
      * Metoda włącza tryb gamma-XTPN dla miejsca.
      * @param status (boolean) true, jeśli tryb gamma-XTPN ma być aktywny
      */
@@ -186,7 +169,7 @@ public class PlaceXTPN extends Place {
     }
 
     /**
-     * Dodawanie nowych tokenów do multizbioru K.
+     * Dodawanie nowych tokenów do multizbioru K. Jeśli tranzycja nieczasowa - tylko modyfikuje sumę.
      * @param howMany (int) ile tokenów dodać
      * @param initialTime (double) wartość początkowa
      */
@@ -195,13 +178,12 @@ public class PlaceXTPN extends Place {
             for (int i = 0; i < howMany; i++) {
                 multisetK.add(initialTime);
             }
+            if(initialTime > 0) {
+                Collections.sort(multisetK);
+                Collections.reverse(multisetK);
+            }
         }
         modifyTokensNumber(howMany);
-
-        if(initialTime > 0) {
-            Collections.sort(multisetK);
-            Collections.reverse(multisetK);
-        }
     }
 
     /**
@@ -347,6 +329,7 @@ public class PlaceXTPN extends Place {
         }
         modifyTokensNumber(-1);
     }
+
 
     /**
      * Metoda umożliwia dostęp do multizbioru K tokenów.

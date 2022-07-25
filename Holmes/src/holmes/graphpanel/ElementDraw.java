@@ -15,12 +15,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.MetaNode;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.Transition.TransitionType;
@@ -99,7 +94,7 @@ public final class ElementDraw {
 	public static Graphics2D drawElement(Node node, Graphics2D g, int sheetId, ElementDrawSettings eds) {
 		if(node instanceof Transition) { 
 			Transition trans = (Transition)node;
-			boolean xTPNtrans = trans.isXTPNtransition();
+			boolean xTPNtrans = (node instanceof TransitionXTPN);//trans.isXTPNtransition();
 			Color portalColor = new Color(224,224,224);
 			Color portalSelColor = EditorResources.selectionColorLevel3;
 			Color normalColor = new Color(224,224,224);
@@ -651,7 +646,7 @@ public final class ElementDraw {
 			}
 		} else if(node instanceof Place) { // MIEJSCA  //TODO: znacznik miejsc
 			Place place = (Place)node;
-			boolean xTPNplace = place.isXTPNplace();
+			boolean xTPNplace = (node instanceof PlaceXTPN); //place.isXTPNplace();
 			Color portalColor = Color.WHITE;
 			Color portalSelColor = EditorResources.selectionColorLevel3;
             Color subNetColor = EditorResources.glowMTCTransitonColorLevel3;
@@ -769,7 +764,7 @@ public final class ElementDraw {
 				}
 
 				// _XTPN symbol
-				if(place.isXTPNplace()) { //miejsce XTPN
+				if( place instanceof PlaceXTPN ) { //miejsce XTPN
 					//klepsydra:
 					g.setColor(Color.LIGHT_GRAY);
 					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 9, nodeBounds.x + 28, nodeBounds.y + 9);
@@ -1537,7 +1532,7 @@ public final class ElementDraw {
 		}
 
 		//rozdzielone, XTPN może będzie mieć inne tokeny
-		if(place.isXTPNplace()) {
+		if( place instanceof PlaceXTPN) {
 			if (place.getTokensNumber() == 1) {
 				int x = nodeBounds.x + nodeBounds.width / 2;
 				int y = nodeBounds.y + nodeBounds.height / 2;

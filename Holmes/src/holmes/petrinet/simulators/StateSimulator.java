@@ -12,6 +12,7 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.elements.TransitionXTPN;
 import holmes.petrinet.functions.FunctionsTools;
 import holmes.windows.managers.ssim.HolmesSim;
 
@@ -1041,8 +1042,8 @@ public class StateSimulator implements Runnable {
 			if (transition.getTransType() == TransitionType.TPN) {
 				transition.resetTimeVariables();
 			}
-			if (transition.getTransType() == TransitionType.XTPN) {
-				transition.resetTimeVariables_xTPN();
+			if ( transition instanceof TransitionXTPN ) {
+				((TransitionXTPN)transition).resetTimeVariables_xTPN();
 			}
 		}
 	}

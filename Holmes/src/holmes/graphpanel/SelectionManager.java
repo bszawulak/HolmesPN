@@ -13,12 +13,7 @@ import holmes.graphpanel.SelectionActionListener.SelectionActionEvent;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.MetaNode;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.functions.FunctionsTools;
@@ -860,7 +855,7 @@ public class SelectionManager {
 				safetyNodesList.add(el.getParentNode());
 				Place place = (Place) el.getParentNode();
 
-				if(place.isXTPNplace()) {
+				if(place instanceof PlaceXTPN) {
 					JOptionPane.showMessageDialog(null, "Cannot fast-increase tokens in XTPN place.",
 							"Operation unavailable", JOptionPane.WARNING_MESSAGE);
 					return;
@@ -903,7 +898,7 @@ public class SelectionManager {
 		ArrayList<Node> safetyNodesList = new ArrayList<>();
 		for (ElementLocation el : getSelectedElementLocations()) {
 			if (el.getParentNode().getType() == PetriNetElementType.PLACE && !safetyNodesList.contains(el.getParentNode())) {
-				if(((Place) el.getParentNode()).isXTPNplace()) {
+				if( el.getParentNode() instanceof PlaceXTPN) {
 					JOptionPane.showMessageDialog(null, "Cannot fast-decrease tokens in XTPN place.",
 							"Operation unavailable", JOptionPane.WARNING_MESSAGE);
 				} else {

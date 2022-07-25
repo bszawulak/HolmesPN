@@ -9,9 +9,7 @@ import javax.swing.Timer;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.functions.FunctionsTools;
 import holmes.windows.HolmesNotepad;
@@ -30,11 +28,11 @@ public class GraphicalSimulatorXTPN {
     private int delay = 30;	//opóźnienie
     private boolean simulationActive = false;
     private Timer timer;
-    private ArrayList<Transition> consumingTokensTransitionsXTPN;
-    private ArrayList<Transition> consumingTokensTransitionsClassical;
-    private ArrayList<Transition> producingTokensTransitionsAll;
+    private ArrayList<TransitionXTPN> consumingTokensTransitionsXTPN;
+    private ArrayList<TransitionXTPN> consumingTokensTransitionsClassical;
+    private ArrayList<TransitionXTPN> producingTokensTransitionsAll;
     //lista tranzycji XTPN i klasycznych które rozpoczęły produkcję
-    ArrayList<ArrayList<Transition>> transitionsAfterSubtracting;
+    ArrayList<ArrayList<TransitionXTPN>> transitionsAfterSubtracting;
     private long stepCounter = 0;
     private double simTotalTime = 0.0;
     //private Random generator;
@@ -57,10 +55,11 @@ public class GraphicalSimulatorXTPN {
     public GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType type, PetriNet net) {
         netSimTypeXTPN = type;
         petriNet = net;
-        consumingTokensTransitionsXTPN = new ArrayList<Transition>();
-        consumingTokensTransitionsClassical = new ArrayList<Transition>();
-        producingTokensTransitionsAll = new ArrayList<Transition>();
+        consumingTokensTransitionsXTPN = new ArrayList<TransitionXTPN>();
+        consumingTokensTransitionsClassical = new ArrayList<TransitionXTPN>();
+        producingTokensTransitionsAll = new ArrayList<TransitionXTPN>();
         engineXTPN = new SimulatorXTPN();
+        nextXTPNsteps = new ArrayList<>();
         overlord = GUIManager.getDefaultGUIManager();
     }
 
@@ -501,25 +500,25 @@ public class GraphicalSimulatorXTPN {
         /**
          * Metoda uruchamia fazę odejmowania tokenów z miejsc wejściowych tranzycji XTPN oraz osobno zwykłych.
          * [2022-07-15] Na razie osobno, czyli priorytet mają XTPN nad klasycznymi.
-         * @return (<b>ArrayList[ArrayList[Transition]]</b>) podwójna lista tranzycji (XTPN i klasycznych), które zostały uruchomione
+         * @return (<b>ArrayList[ArrayList[TransitionXTPN]]</b>) podwójna lista tranzycji (XTPN i klasycznych), które zostały uruchomione
          */
-        public ArrayList<ArrayList<Transition>> prepareSubtractPhaseGraphics() {
-            ArrayList<ArrayList<Transition>> launchedTransitions = new ArrayList<>();
-            ArrayList<Transition> launchedXTPN = new ArrayList<>();
-            ArrayList<Transition> launchedClassical = new ArrayList<>();
+        public ArrayList<ArrayList<TransitionXTPN>> prepareSubtractPhaseGraphics() {
+            ArrayList<ArrayList<TransitionXTPN>> launchedTransitions = new ArrayList<>();
+            ArrayList<TransitionXTPN> launchedXTPN = new ArrayList<>();
+            ArrayList<TransitionXTPN> launchedClassical = new ArrayList<>();
             ArrayList<Arc> arcs;
 
             //dla : consumingTokensTransitionsXTPN
             //oraz osobno: consumingTokensTransitionsClassical
 
-            for (Transition transition : consumingTokensTransitionsXTPN) { //lista tych, które zabierają tokeny
+            for (TransitionXTPN transition : consumingTokensTransitionsXTPN) { //lista tych, które zabierają tokeny
                 if(transition.getActiveStatusXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                     transition.setLaunching(true);
                     arcs = transition.getInArcs();
                     for (Arc arc : arcs) {
                         arc.setSimulationForwardDirection(true); //zawsze dla tego symulatora (nie działamy wstecz)
                         arc.setTransportingTokens(true);
-                        Place place = (Place) arc.getStartNode(); //miejsce, z którego zabieramy
+                        PlaceXTPN place = (PlaceXTPN) arc.getStartNode(); //miejsce, z którego zabieramy
                         if(arc.getArcType() == TypeOfArc.INHIBITOR) {
                             arc.setTransportingTokens(false);
                         }  else { //teraz określamy ile zabrać
@@ -536,14 +535,14 @@ public class GraphicalSimulatorXTPN {
                 }
             }
 
-            for (Transition transition : consumingTokensTransitionsClassical) { //lista tych, które zabierają tokeny
+            for (TransitionXTPN transition : consumingTokensTransitionsClassical) { //lista tych, które zabierają tokeny
                 if(transition.getActiveStatusXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                     transition.setLaunching(true);
                     arcs = transition.getInArcs();
                     for (Arc arc : arcs) {
                         arc.setSimulationForwardDirection(true); //zawsze dla tego symulatora
                         arc.setTransportingTokens(true);
-                        Place place = (Place) arc.getStartNode(); //miejsce, z którego zabieramy
+                        PlaceXTPN place = (PlaceXTPN) arc.getStartNode(); //miejsce, z którego zabieramy
                         if(arc.getArcType() == TypeOfArc.INHIBITOR) {
                             arc.setTransportingTokens(false);
                         }  else { //teraz określamy ile
@@ -570,7 +569,7 @@ public class GraphicalSimulatorXTPN {
          */
         public void prepareProductionPhaseGraphics() {
             ArrayList<Arc> arcs;
-            for (Transition tran : producingTokensTransitionsAll) {
+            for (TransitionXTPN tran : producingTokensTransitionsAll) {
                 tran.setLaunching(true);
                 arcs = tran.getOutArcs();
 

@@ -3,6 +3,7 @@ package holmes.windows;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.elements.Place;
+import holmes.petrinet.elements.PlaceXTPN;
 import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.utilities.Tools;
 import holmes.windows.managers.HolmesStatesEditorXTPN;
@@ -28,7 +29,7 @@ import java.util.Collections;
 public class HolmesXTPNtokens extends JFrame {
     private final GUIManager overlord;
     private HolmesStatesEditorXTPN parentWindow;
-    private Place place;
+    private PlaceXTPN place;
     private boolean mainSimulatorActive;
     private boolean isGammaPlace;
     //private StatePlacesVectorXTPN vectorXTPN; //aktualny stan sieci
@@ -46,11 +47,11 @@ public class HolmesXTPNtokens extends JFrame {
 
     /**
      * Konstruktor okna dodawania i edycji tokenów XTPN.
-     * @param placeObj (<b>Place</b>) obiekt miejsca.
+     * @param placeObj (<b>PlaceXTPN</b>) obiekt miejsca.
      * @param parent (<b>HolmesStatesEditorXTPN</b>) potencjalny obiekt okna managera stanów. Lub nie. Gdy null, to znaczy,
      *               że wywołanie nastąpiło w głównego okna Holmesa.
      */
-    public HolmesXTPNtokens(Place placeObj, HolmesStatesEditorXTPN parent, ArrayList<Double> multK, boolean isGammaPlace) {
+    public HolmesXTPNtokens(PlaceXTPN placeObj, HolmesStatesEditorXTPN parent, ArrayList<Double> multK, boolean isGammaPlace) {
         overlord = GUIManager.getDefaultGUIManager();
         parentWindow = parent;
         places = overlord.getWorkspace().getProject().getPlaces();

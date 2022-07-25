@@ -7,6 +7,7 @@ import java.util.Collections;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Place;
+import holmes.petrinet.elements.PlaceXTPN;
 
 /**
  * Klasa zarządzająca stanem sieci XTPN, tj. liczbą tokenów w miejscach. Zawiera multizbiory reprezentujące
@@ -140,11 +141,16 @@ public class MultisetM implements Serializable {
         ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
         int placesNumber = places.size();
         for(int p=0; p<placesNumber; p++) {
-            ArrayList<Double> multiset = places.get(p).accessMultiset();
+            if( !(places.get(p) instanceof PlaceXTPN) ) {
+                GUIManager.getDefaultGUIManager().log("Error 26y30923", "error", false);
+                return;
+            }
+
+            ArrayList<Double> multiset = ((PlaceXTPN)places.get(p)).accessMultiset();
             ArrayList<Double> newMultiset = new ArrayList<>(multiset);
 
             multisetM_ArrayLists.set(p, newMultiset);
-            if(places.get(p).isGammaModeActiveXTPN())
+            if(((PlaceXTPN)places.get(p)).isGammaModeActiveXTPN())
                 placesGammasVector.set(p, 1);
             else
                 placesGammasVector.set(p, 1);
