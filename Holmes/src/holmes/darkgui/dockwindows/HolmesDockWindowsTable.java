@@ -4262,10 +4262,10 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(makCheckBox);
 
-        // immediate classical
+        // XTPM immediate classical-XTPN
         JCheckBox immediateCheckBox = new JCheckBox("Immediate");
         immediateCheckBox.setBounds(columnA_posX+150, columnA_Y, 100, 20);
-        immediateCheckBox.setSelected(transition.isMassActionKineticsActiveXTPN());
+        immediateCheckBox.setSelected(transition.isImmediateXTPN());
         immediateCheckBox.addActionListener(actionEvent -> {
             if (doNotUpdate)
                 return;

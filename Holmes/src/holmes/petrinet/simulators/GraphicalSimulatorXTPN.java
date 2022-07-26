@@ -441,7 +441,7 @@ public class GraphicalSimulatorXTPN {
                 petriNet.repaintAllGraphPanels();
             }
 
-            //tutaj faza zabierana tokenów:
+            //tutaj faza zabierania tokenów:
             if(subtractPhase) {
                 if(repaintSteps == 0) {
                     transitionsAfterSubtracting = prepareSubtractPhaseGraphics();

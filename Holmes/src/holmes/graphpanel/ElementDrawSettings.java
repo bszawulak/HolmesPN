@@ -36,32 +36,11 @@ public class ElementDrawSettings {
 	 */
 	private void checkSettings() {
 		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
-		if(sm.getValue("editor3Dview").equals("1")) {
-			view3d = true;
-		} else {
-			view3d = false;
-		}
-		
-		if(sm.getValue("editorSnoopyStyleGraphic").equals("1")) {
-			snoopyMode = true;
-		} else {
-			snoopyMode = false;
-		}
-		
-		if(sm.getValue("simPlacesColors").equals("1")) {
-			crazyColors = true;
-		} else {
-			crazyColors = false;
-		}
-		
-		if(sm.getValue("editorSnoopyColors").equals("1")) {
-			nonDefColors = true;
-		} else {
-			nonDefColors = false;
-		}
-		
+		view3d = sm.getValue("editor3Dview").equals("1");
+		snoopyMode = sm.getValue("editorSnoopyStyleGraphic").equals("1");
+		crazyColors = sm.getValue("simPlacesColors").equals("1");
+		nonDefColors = sm.getValue("editorSnoopyColors").equals("1");
 		quickSimMode = GUIManager.getDefaultGUIManager().simSettings.quickSimToken;
-		
 		arcSize = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
 	}
 }

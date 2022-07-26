@@ -1090,6 +1090,21 @@ public class ProjectReader {
 				}
 				return;
 			}
+
+			query = "Transition XTPN immediate:";
+			if(line.contains(query) && XTPNdataMode) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {
+					((TransitionXTPN)transition).setImmediateXTPN(true);
+				} else if(line.contains("false")) {
+					((TransitionXTPN)transition).setImmediateXTPN(false);
+				} else {
+					overlord.log("Immediate status reading failed for transition "+transitionsProcessed, "error", true);
+					((TransitionXTPN)transition).setImmediateXTPN(false);
+				}
+				return;
+			}
 			
 			query = "Transition locations:";
 			if(line.contains(query)) {
@@ -1940,14 +1955,15 @@ public class ProjectReader {
 
 			line = buffer.readLine();
 			try {
+				int statesProcessed = 0;
 				while(go) {
 					readedLine++;
 					MultisetM pVector = new MultisetM();
 					line = line.replace(" ", "");
 					String[] stateTable = line.split(";"); //separator multizbiorów
-					//int placeIndex = -1;
+					int placesProcessed = 0;
 					for (String multisetString : stateTable) {
-						//placeIndex++;
+						placesProcessed++;
 						String[] multisetTab = multisetString.split(":"); //separator tokenów
 						ArrayList<Double> multisetK = new ArrayList<>();
 						int isXTPNplace = 1; //jeśli 1, to miejsce jest czasowe
@@ -1970,6 +1986,16 @@ public class ProjectReader {
 						Collections.reverse(multisetK);
 						pVector.addMultiset_K_toMultiset_M(multisetK, isXTPNplace);
 					}
+					statesProcessed++;
+
+					if(placesProcessed < this.placesProcessed) {
+						for(int i = 0; i< this.placesProcessed -placesProcessed; i++) {
+							pVector.addMultiset_K_toMultiset_M(new ArrayList<Double>(), 1);
+						}
+						overlord.log("Problems while reading XTPN state "+statesProcessed+". Too few stored places, only: "
+								+placesProcessed+" out of "+placesProcessed+". Missing multisets type-K replaced as empty.", "error", true);
+					}
+
 					line = buffer.readLine(); //dane dodatkowe
 					line = line.trim();
 					stateTable = line.split(";");
@@ -2168,7 +2194,6 @@ public class ProjectReader {
 					case "SchT" -> box.sType = StochaticsType.SchT;
 					default -> box.sType = StochaticsType.ST;
 				}
-				
 				spnVector.add(box);
 			}
 		}

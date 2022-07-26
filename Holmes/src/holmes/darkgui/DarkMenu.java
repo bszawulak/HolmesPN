@@ -58,7 +58,6 @@ public class DarkMenu extends JMenuBar {
 		// Build the File menu.
 		// menus
 		JMenu fileMenu = new JMenu("File");
-		
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 		fileMenu.getAccessibleContext().setAccessibleDescription("The File Menu");
 		this.add(fileMenu);
@@ -91,6 +90,7 @@ public class DarkMenu extends JMenuBar {
 		// open file
 		JMenuItem openMenuItem = new JMenuItem("Open project...", KeyEvent.VK_O);
 		openMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_open.png"));
+		openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
 		openMenuItem.getAccessibleContext().setAccessibleDescription("Open project");
 		openMenuItem.addActionListener(arg0 -> guiManager.io.selectAndOpenHolmesProject());
 		fileMenu.add(openMenuItem);
@@ -98,7 +98,7 @@ public class DarkMenu extends JMenuBar {
 		// import from file
 		JMenuItem importMenuItem = new JMenuItem("Import network...", KeyEvent.VK_I);
 		importMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_importNet.png"));
-		importMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+		importMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK+InputEvent.SHIFT_DOWN_MASK));
 		importMenuItem.getAccessibleContext().setAccessibleDescription("Import project");
 		importMenuItem.addActionListener(arg0 -> guiManager.io.importNetwork());
 		fileMenu.add(importMenuItem);
@@ -116,7 +116,7 @@ public class DarkMenu extends JMenuBar {
 		// save file
 		JMenuItem saveMenuItem = new JMenuItem("Save project...", KeyEvent.VK_S);
 		saveMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_save.png"));
-		//saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,ActionEvent.CTRL_MASK));
+		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 		saveMenuItem.getAccessibleContext().setAccessibleDescription("Save project");
 		saveMenuItem.addActionListener(arg0 -> guiManager.io.saveAsAbyssFile());
 		fileMenu.add(saveMenuItem);
@@ -124,22 +124,22 @@ public class DarkMenu extends JMenuBar {
 		// saveAs file
 		JMenuItem saveAsMenuItem = new JMenuItem("Export network...");
 		saveAsMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_saveAs.png"));
-		saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+		saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
 		saveAsMenuItem.getAccessibleContext().setAccessibleDescription("Save project");
 		saveAsMenuItem.addActionListener(arg0 -> guiManager.io.saveAsGlobal());
 		fileMenu.add(saveAsMenuItem);
 
 		// Export net as .pnt file
-		JMenuItem exportMenuItem = new JMenuItem("Export as PNT...", KeyEvent.VK_E);
+		JMenuItem exportMenuItem = new JMenuItem("Export as PNT...");
 		exportMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportNet.png"));
-		exportMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
 		exportMenuItem.getAccessibleContext().setAccessibleDescription("Export project to PNT file");
 		exportMenuItem.addActionListener(arg0 -> guiManager.io.exportAsPNT());
 		fileMenu.add(exportMenuItem);
 
 		// Export image file
-		JMenuItem expImgMenuItem = new JMenuItem("Export to image...", KeyEvent.VK_E);
+		JMenuItem expImgMenuItem = new JMenuItem("Export to image...");
 		expImgMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportPicture.png"));
+		expImgMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK+InputEvent.SHIFT_DOWN_MASK));
 		expImgMenuItem.getAccessibleContext().setAccessibleDescription("Export project to image");
 		expImgMenuItem.addActionListener(arg0 -> guiManager.io.exportProjectToImage());
 		fileMenu.add(expImgMenuItem);
@@ -337,7 +337,6 @@ public class DarkMenu extends JMenuBar {
 		
 		// Build the File menu.
 		JMenu hierachyMenu = new JMenu("Subnets");
-		hierachyMenu.setMnemonic(KeyEvent.VK_F);
 		hierachyMenu.getAccessibleContext().setAccessibleDescription("Subnets tools");
 		this.add(hierachyMenu);
 		
@@ -375,14 +374,13 @@ public class DarkMenu extends JMenuBar {
 		
 		//INVARIANTS MENU
 		JMenu analysisMenu = new JMenu("Analysis");
-		analysisMenu.setMnemonic(KeyEvent.VK_I);
+		analysisMenu.setMnemonic(KeyEvent.VK_A);
 		analysisMenu.getAccessibleContext().setAccessibleDescription("Net analysis");
 		this.add(analysisMenu);
 		
 		// Invariants window
 		JMenuItem invWindowItem = new JMenuItem("Invariants generator...", KeyEvent.VK_1);
 		invWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_analysis_invariants.png"));
-		//invWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
 		invWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK));
 		invWindowItem.getAccessibleContext().setAccessibleDescription("Invariants generator and tools");
 		invWindowItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showInvariantsWindow());

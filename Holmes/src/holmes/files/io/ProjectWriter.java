@@ -275,6 +275,7 @@ public class ProjectWriter {
 					bw.write(spaces(sp)+"<Transition XTPN tauVisible:"+((TransitionXTPN)trans).isTauTimerVisible()+">"+newline); //czy beta widoczne
 					bw.write(spaces(sp)+"<Transition XTPN massAction:"+((TransitionXTPN)trans).isMassActionKineticsActiveXTPN()+">"+newline); //mass-action
 					bw.write(spaces(sp)+"<Transition XTPN fractionSize:"+((TransitionXTPN)trans).getFraction_xTPN()+">"+newline); //dokładność po przecinku
+					bw.write(spaces(sp)+"<Transition XTPN immediate:"+((TransitionXTPN)trans).isImmediateXTPN()+">"+newline); //czy immediate (dla classXTPN)
 				}
 
 				
@@ -844,8 +845,8 @@ public class ProjectWriter {
 			if(places.size() > 0) {
 				bw.write(spaces(sp)+"<States: "+statesNumber+">"+newline);
 				StringBuilder stateLine = new StringBuilder();
-				String type = "";
-				String description = "";
+				String type;
+				String description;
 				int placeIndex = -1;
 				for (MultisetM multisetMobject : statesMatrixXTPN) {
 					stateLine.setLength(0);
@@ -855,8 +856,28 @@ public class ProjectWriter {
 
 					for(ArrayList<Double> multisetK : multisetMobject.accessArrayListSOfMultiset_M()) { //zapis multizbiorów tokenów
 						placeIndex++;
-						int counter = 0;
+
 						boolean isXTPNplace = multisetMobject.isPlaceStoredAsGammaActive(placeIndex);
+						if(isXTPNplace) {
+							if(multisetK.size() == 0) {
+								stateLine.append("-1.0;");
+							} else {
+								int counter = 0;
+								for(Double token : multisetK) {
+									counter++;
+									if(counter == multisetK.size())  { //jeżeli to ostatni token
+										stateLine.append(token).append(";"); //separator multizbiorów
+									} else {
+										stateLine.append(token).append(":"); //separator multizbiorów
+									}
+								}
+							}
+						} else {
+							double classTokens = multisetK.get(0);
+							stateLine.append((int)classTokens).append("(C);");
+						}
+
+						/*
 						for(Double token : multisetK) {
 							if(isXTPNplace) {
 								counter++;
@@ -877,6 +898,7 @@ public class ProjectWriter {
 								//stateLine.append(places.get(placeIndex).getTokensNumber()+"(C);");
 							//}
 						}
+						 */
 					}
 					stateLine = new StringBuilder(stateLine.substring(0, stateLine.length() - 1)); //usun ostatni ';'
 					bw.write(spaces(sp) + stateLine + newline);

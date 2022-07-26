@@ -1793,11 +1793,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public boolean hasNonXTPNnodes() {
 		boolean result = false;
 		for (Node n : this.dataCore.nodes) {
-			if ( !(n instanceof PlaceXTPN)) {
-				return true; //zawiera node nie-XTPN
-			} else if (n instanceof Transition){
-				if( !(n instanceof TransitionXTPN) )
-					return true; //zawiera node nie-XTPN
+			if( (n instanceof Place) && !(n instanceof PlaceXTPN)) {
+				return true;
+			}
+			if( (n instanceof Transition) && !(n instanceof TransitionXTPN)) {
+				return true;
 			}
 		}
 		return result;

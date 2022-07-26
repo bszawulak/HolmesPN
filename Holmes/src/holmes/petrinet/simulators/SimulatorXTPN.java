@@ -16,8 +16,8 @@ public class SimulatorXTPN implements IEngine {
     private GUIManager overlord;
     private SimulatorGlobals sg;
     private SimulatorGlobals.SimNetType netSimTypeXTPN = SimulatorGlobals.SimNetType.XTPN;
-    private ArrayList<TransitionXTPN> transitions = null;
-    private ArrayList<PlaceXTPN> places = null;
+    private ArrayList<TransitionXTPN> transitions;
+    private ArrayList<PlaceXTPN> places;
     private ArrayList<Integer> transitionsIndexList = null;
     private ArrayList<TransitionXTPN> launchableTransitions = null;
     private IRandomGenerator generator;
@@ -221,7 +221,6 @@ public class SimulatorXTPN implements IEngine {
                             transition.setTimerBeta_XTPN(0.0);
                             transition.setProductionStatus_xTPN(true);
                         }
-
                         //jeśli alfa i beta=OFF, to ich "aktywacją" zajmie się inna metoda
                     }
                 }
@@ -406,6 +405,10 @@ public class SimulatorXTPN implements IEngine {
         int elements = placesMaturity.size() + placesAging.size() + transProdStart.size() + transProdEnd.size();
         ArrayList<NextXTPNstep> specialVector = new ArrayList<>();
 
+        if(currentMinTime == Double.MAX_VALUE) {
+            currentMinTime = 0;
+        }
+
         if( (currentMinTime > Double.MAX_VALUE - 1) && transOtherClassical.size() > 0) {
             //znaleziono tylko aktywne klasyczne, nic więcej
             currentMinTime = 0;
@@ -469,11 +472,15 @@ public class SimulatorXTPN implements IEngine {
                     transition.setTimerAlfa_XTPN(-1.0);
                 } else { //czysty TPN
                     transition.setProductionStatus_xTPN(true);
-
                 }
             }
         }
         //TODO:
+
+        for(TransitionXTPN transition : launchedClassical) {
+            //transition.setLaunching(false);
+
+        }
     }
 
     /**

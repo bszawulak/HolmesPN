@@ -69,6 +69,8 @@ public class HolmesStatesManager extends JFrame {
     	overlord.getFrame().setEnabled(false);
     	fillTable();
 		fillTableXTPN();
+
+		statesTableXTPN.setRowSelectionInterval(0,0);
     	setVisible(true);
 	}
 
@@ -210,6 +212,11 @@ public class HolmesStatesManager extends JFrame {
 				return;
 			}
 			int selected = statesTablePN.getSelectedRow();
+			if(selected == -1) {
+				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+
 			Object[] options = {"Set new state", "Keep current state",};
 			int n = JOptionPane.showOptionDialog(null,
 							"Set all places of the net according to the selected (table row: "+(selected+1)+") state?",
@@ -284,6 +291,11 @@ public class HolmesStatesManager extends JFrame {
 				noNetInfo();
 				return;
 			}
+			int selected = statesTablePN.getSelectedRow();
+			if(selected == -1) {
+				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
 			replaceStateAction();
 		});
 		result.add(replaceStateButton);
@@ -298,6 +310,11 @@ public class HolmesStatesManager extends JFrame {
 			if(places.size() == 0) {
 				noNetInfo();
 				return;
+			}
+			int selected = statesTablePN.getSelectedRow();
+			if(selected == -1) {
+				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+						JOptionPane.INFORMATION_MESSAGE);
 			}
 			removeStateAction();
 		});
@@ -314,8 +331,13 @@ public class HolmesStatesManager extends JFrame {
 				return;
 			}
 			int selected = statesTablePN.getSelectedRow();
-			if(selected > -1)
+			if(selected > -1) {
 				new HolmesStatesEditor((HolmesStatesManager)ego, statesManager.getStatePN(selected), selected);
+			} else {
+				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+
 		});
 		result.add(editStateButton);
 		
@@ -588,6 +610,12 @@ public class HolmesStatesManager extends JFrame {
 				return;
 			}
 			int selected = statesTableXTPN.getSelectedRow();
+			if(selected == -1) {
+				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+						JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+
 			Object[] options = {"Set new state", "Keep current state",};
 			int n = JOptionPane.showOptionDialog(null,
 					"Set all places of the net according to the selected (table row: "+(selected+1)+") state?",
@@ -668,7 +696,14 @@ public class HolmesStatesManager extends JFrame {
 				noNetInfoXTPN();
 				return;
 			}
-			replaceStateActionXTPN();
+
+			int selected = statesTableXTPN.getSelectedRow();
+			if(selected == -1) {
+				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+						JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				replaceStateActionXTPN();
+			}
 		});
 		result.add(replaceStateButton);
 
@@ -683,7 +718,14 @@ public class HolmesStatesManager extends JFrame {
 				noNetInfoXTPN();
 				return;
 			}
-			removeStateActionXTPN();
+
+			int selected = statesTableXTPN.getSelectedRow();
+			if(selected == -1) {
+				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+						JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				removeStateActionXTPN();
+			}
 		});
 		result.add(removeStateButton);
 
@@ -749,6 +791,11 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void replaceStateActionXTPN() {
 		int selected = statesTableXTPN.getSelectedRow();
+		if(selected == -1) {
+			JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+					JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
 		Object[] options = {"Replace XTPN state", "Cancel",};
 		int n = JOptionPane.showOptionDialog(null,
 				"Replace selected XTPN state (table row: "+(selected+1)+") with the current net state?",

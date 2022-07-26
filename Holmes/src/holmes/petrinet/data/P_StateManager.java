@@ -2,6 +2,7 @@ package holmes.petrinet.data;
 
 import java.util.ArrayList;
 
+import holmes.darkgui.GUIController;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.PlaceXTPN;
@@ -66,10 +67,12 @@ public class P_StateManager {
 				overlord.log("Critical error: invalid place index ("+index+") in states matrix.", "error", true);
 			}
 		}
-		for(MultisetM multisetM: statesMatrixXTPN) {
-			boolean status = multisetM.removePlaceFromMultiset_M(index);
-			if(!status) {
-				overlord.log("Critical error: invalid XTPN place index ("+index+") in XTPN states matrix.", "error", true);
+		if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
+			for(MultisetM multisetM: statesMatrixXTPN) {
+				boolean status = multisetM.removePlaceFromMultiset_M(index);
+				if(!status) {
+					overlord.log("Critical error: invalid XTPN place index ("+index+") in XTPN states matrix.", "error", true);
+				}
 			}
 		}
 	}
@@ -222,14 +225,6 @@ public class P_StateManager {
 	}
 
 	/**
-	 * Zwraca multizbiór M który jest aktualnie aktywny w managerze.
-	 * @return (<b>StatePlacesVectorXTPN</b>) obiekt wektora stanów XTPN.
-	 */
-	public MultisetM getCurrentMultiset_M() { //odpowienik PN działa w StateSimulator
-		return statesMatrixXTPN.get(selectedStateXTPN);
-	}
-
-	/**
 	 * Metoda dodaje nowy stan sieci XTPN (multizbiór M) na bazie istniejącego w danej chwili p-stanu aktualnej sieci.
 	 */
 	public void createNewMultiset_M_basedOnNet() {
@@ -346,6 +341,7 @@ public class P_StateManager {
 		ArrayList<Place> places = pn.getPlaces();
 		MultisetM multisetM = statesMatrixXTPN.get(stateID);
 		multisetM.accessArrayListSOfMultiset_M().clear();
+		multisetM.accessPlacesGammaVector().clear();
 
 		for (Place place : places) {
 			if( !(place instanceof PlaceXTPN) ) {

@@ -639,7 +639,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda ustawia nową ścieżkę do ostatnio używanego katalagu. Zapisuje ją do pliku ustawień programu.
-	 * @return String - ścieżka do katalogu
 	 */
 	public void setLastPath(String path) {
 		lastPath = path;
@@ -752,21 +751,18 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ustawia nowe podokno dekompozycji.
 	 * @param deompositionBox HolmesDockWindow - nowe okno dekompozycji
 	 */
-	//-//
-	/*
-	public void setDecompositionBox(HolmesDockWindow deompositionBox){
-		this.decompositionBox = deompositionBox;
-	}
-*/
+	//public void setDecompositionBox(HolmesDockWindow deompositionBox){
+		//this.decompositionBox = deompositionBox;
+	//}
+
 	/**
 	 * Metoda zwraca obiekt podokna dekompozycji.
 	 * @return HolmesDockWindow - okno dekompozycji
 	 */
-	/*
-	public HolmesDockWindow getDecompositionBox() {
-		return decompositionBox;
-	}
-*/
+	//public HolmesDockWindow getDecompositionBox() {
+		//return decompositionBox;
+	//}
+
 	/**
 	 * Metoda zwraca obiekt podokna symulatora QuickSim.
 	 * @return HolmesDockWindow - okno QuickSim
@@ -1133,7 +1129,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda rozpoczyna symulację uruchamiania inwariantów.
 	 * @param type int - 0-basic, 1- time
 	 * @param value - wartość
-	 * @throws CloneNotSupportedException
+	 * @throws CloneNotSupportedException ex
 	 */
 	public void startInvariantsSimulation(int type, int value) throws CloneNotSupportedException{
 		this.getWorkspace().getProject().startInvSim(type, value);
@@ -1185,15 +1181,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void createAboutWindow() {
 		windowAbout = new HolmesAbout(frame);
-	}
-	
-	/**
-	 * Metoda służy do wyświetlenia okna informacji o programie.
-	 */
-	public void showAboutWindow() {
-		if(windowAbout != null) {
-			windowAbout.setVisible(true);
-		}
 	}
 	
 	/**
@@ -1391,8 +1378,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda umożliwia dostęp do obiektu okna narzedzi MCS
-	 * @return
+	 * Metoda umożliwia dostęp do obiektu okna narzędzi MCS.
+	 * @return (<b>HolmesMCS</b>) obiekt okna MCS.
 	 */
 	public HolmesMCS accessMCSWindow() {
 		if(windowMCS != null)

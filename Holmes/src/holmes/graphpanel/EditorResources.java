@@ -9,6 +9,7 @@ import java.awt.Stroke;
  * @author students
  *
  */
+@SuppressWarnings("unused")
 public class EditorResources {
 	
 	public static final Color selectionColorLevel1 = new Color(30, 144, 255, 20);

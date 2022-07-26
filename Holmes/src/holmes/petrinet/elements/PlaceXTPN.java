@@ -120,8 +120,8 @@ public class PlaceXTPN extends Place {
     }
 
     /**
-     * Metoda włącza tryb gamma-XTPN dla miejsca.
-     * @param status (boolean) true, jeśli tryb gamma-XTPN ma być aktywny
+     * Ustawia miejsce XTPN na czasowe lub klasyczne.
+     * @param status (boolean) true, jeśli tryb gamma ma być aktywny - czyli miejsce ma być czasowe.
      */
     public void setGammaModeXTPNstatus(boolean status) {
         gammaMode_xTPN = status;
@@ -129,8 +129,8 @@ public class PlaceXTPN extends Place {
     }
 
     /**
-     * Metoda zwraca status gamma miejsca XTPN.
-     * @return (boolean) - true, jeśli status gamma-XTPN miejsca
+     * Sprawdzenie, czy miejsce jest typu XTPN (z włączonymi zakresami gamma).
+     * @return (<b>boolean</b>>) - true, jeśli jest to miejsce czasowe.
      */
     public boolean isGammaModeActiveXTPN() {
         return gammaMode_xTPN;

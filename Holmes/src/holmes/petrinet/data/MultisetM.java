@@ -191,10 +191,17 @@ public class MultisetM implements Serializable {
 
     /**
      * Umożliwia dostęp do wektora danych stanu sieci - multizbioru M.
-     * @return (<b>ArrayList[ArrayList[Double]]</b>) multizbiór M
+     * @return (<b>ArrayList[ArrayList[Double]]</b>) multizbiór M.
      */
     public ArrayList<ArrayList<Double>> accessArrayListSOfMultiset_M() {
         return this.multisetM_ArrayLists;
     }
 
+    /**
+     * Umożliwia dostęp do wektora przechowującego informację, czy miejsce jest klasyczne czy czasowe.
+     * @return (<b>ArrayList[ArrayList[Integer]]</b>) wektor miejsc.
+     */
+    public ArrayList<Integer> accessPlacesGammaVector() {
+        return this.placesGammasVector;
+    }
 }

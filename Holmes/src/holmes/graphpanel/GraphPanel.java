@@ -1051,8 +1051,8 @@ public class GraphPanel extends JComponent {
 						}
 					}
 					case ARC, XARC -> {
-						//overlord.getWorkspace().getProject().restoreMarkingZero();
 						clearDrawnArc();
+						//overlord.getWorkspace().getProject().restoreMarkingZero();
 					}
 					case TIMETRANSITION -> {
 						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
@@ -1194,10 +1194,10 @@ public class GraphPanel extends JComponent {
 			} else if (a != null) { // kliknięto w łuk, więc zostanie on zaznaczony
 				if (getDrawMode() == DrawModes.ERASER) {
 					if(overlord.reset.isSimulatorActiveWarning(
-							"Operation impossible when simulator is working.", "Warning") == true)
+							"Operation impossible when simulator is working.", "Warning"))
 						return;
 					if(overlord.reset.isXTPNSimulatorActiveWarning(
-							"Operation impossible when XTPN simulator is working.", "Warning") == true)
+							"Operation impossible when XTPN simulator is working.", "Warning"))
 						return;
 					
 					Object[] options = {"Delete", "Cancel",};
@@ -1283,7 +1283,7 @@ public class GraphPanel extends JComponent {
 		private void _putXTPNplace(PetriNet project) {
 			project.setProjectType(PetriNet.GlobalNetType.XTPN);
 			overlord.getWorkspace().getProject().selectProperSimulatorBox(true);
-			overlord.getWorkspace().getProject().restoreMarkingZeroXTPN();
+			//overlord.getWorkspace().getProject().restoreMarkingZeroXTPN();
 			addNewNXTPNPlace(mousePt);
 			overlord.reset.reset2ndOrderData(true);
 			overlord.markNetChange();

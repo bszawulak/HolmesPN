@@ -584,9 +584,9 @@ public class MauritiusMapPanel extends JPanel {
 		 */
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
-				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown() == false)
+				if (e.getButton() == MouseEvent.BUTTON1 && !e.isShiftDown())
 					; //getSelectionManager().doubleClickReactionHandler();
-				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown() == true)
+				if (e.getButton() == MouseEvent.BUTTON1 && e.isShiftDown())
 					; //getSelectionManager().decreaseTokensNumber();
 			}
 		}

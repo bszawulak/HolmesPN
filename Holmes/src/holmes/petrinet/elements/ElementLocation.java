@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
-import holmes.varia.NetworkTransformations;
 import holmes.workspace.Workspace;
 
 /**
