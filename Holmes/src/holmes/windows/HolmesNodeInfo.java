@@ -145,7 +145,9 @@ public class HolmesNodeInfo extends JFrame {
 	private void initializeCommon() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {}
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (488078573) | Exception:  "+ex.getMessage(), "error", false);
+		}
 		
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
 			mainSimulatorActive = true;
@@ -287,7 +289,8 @@ public class HolmesNodeInfo extends JFrame {
 			JFormattedTextField field = (JFormattedTextField) e.getSource();
 			try {
 				field.commitEdit();
-			} catch (ParseException ignored) {
+			} catch (ParseException ex) {
+				GUIManager.getDefaultGUIManager().log("Error (611156405) | Exception:  "+ex.getMessage(), "error", false);
 			}
 			String newName = field.getText();
 

@@ -169,7 +169,9 @@ public class NetHandler_Extended extends NetHandler {
 					yoff_name -= 20; //20 default, czyli 0 w oY w Holmes
 					if(yoff_name < -8)
 						yoff_name = -55; //nad node, uwzględnia różnicę
-				} catch (Exception ignored) {}
+				} catch (Exception ex) {
+					GUIManager.getDefaultGUIManager().log("Error (989048217) | Exception:  "+ex.getMessage(), "error", false);
+				}
 			}
 
 			graphicNamesXYLocationsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
@@ -198,7 +200,9 @@ public class NetHandler_Extended extends NetHandler {
 					
 					if(resizeFactor==0)
 						resizeFactor=1;
-				} catch (Exception ignored) { }
+				} catch (Exception ex) {
+					GUIManager.getDefaultGUIManager().log("Error (474849019) | Exception:  "+ex.getMessage(), "error", false);
+				}
 				
 				xPos *= resizeFactor;
 				yPos *= resizeFactor;

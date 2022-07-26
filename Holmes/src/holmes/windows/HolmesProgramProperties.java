@@ -56,8 +56,8 @@ public class HolmesProgramProperties extends JFrame {
 		
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (688341781) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		
 		try {

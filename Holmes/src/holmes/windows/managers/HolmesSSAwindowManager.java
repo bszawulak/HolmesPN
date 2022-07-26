@@ -61,8 +61,8 @@ public class HolmesSSAwindowManager extends JFrame {
 		setTitle("Holmes SSA vectors manager");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (151044901) | Exception:  "+ex.getMessage(), "error", false);
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
 		PetriNet pn = overlord.getWorkspace().getProject();
@@ -448,8 +448,8 @@ public class HolmesSSAwindowManager extends JFrame {
 				typeCombo.setSelectedIndex(1);
 			
 			doNotUpdate = false;
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (311913047) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 	

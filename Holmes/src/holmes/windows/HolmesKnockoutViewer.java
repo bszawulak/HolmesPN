@@ -50,7 +50,9 @@ public class HolmesKnockoutViewer extends JFrame {
 	private void initalizeComponents() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) { }
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (671785427) | Exception:  "+ex.getMessage(), "error", false);
+		}
 		setLayout(new BorderLayout());
 		setSize(new Dimension(640, 400));
 		setLocation(50, 50);
@@ -194,9 +196,8 @@ public class HolmesKnockoutViewer extends JFrame {
 				int invID = Integer.parseInt(id);
 				new HolmesInvariantsViewer(invID);
 			}
-
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (153648685) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 	

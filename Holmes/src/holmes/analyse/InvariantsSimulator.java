@@ -953,8 +953,6 @@ public class InvariantsSimulator {
 				zawartoscPliku += "\n";
 				zapis.println(zawartoscPliku);
 				zapis.close();
-				
-								
 			} catch (Exception e) {
 				System.err.println("Error: " + e.getMessage());
 				JOptionPane.showMessageDialog(null,"Program cannot write invariants into file", "Error", JOptionPane.ERROR_MESSAGE);

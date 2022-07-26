@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -24,6 +22,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import holmes.darkgui.GUIManager;
 import holmes.utilities.HolmesFileView;
 import holmes.utilities.Tools;
 
@@ -53,8 +52,8 @@ public class HolmesConsole extends JFrame {
 		setTitle("Holmes Status Console");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (316619924) | Exception:  "+ex.getMessage(), "error", false);
 		}
     	setVisible(false);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

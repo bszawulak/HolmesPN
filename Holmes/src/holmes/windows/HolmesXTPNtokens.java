@@ -65,8 +65,8 @@ public class HolmesXTPNtokens extends JFrame {
         setTitle("XPTN tokens window");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-        } catch (Exception ignored) {
-
+        } catch (Exception ex) {
+            GUIManager.getDefaultGUIManager().log("Error (310108837) | Exception:  "+ex.getMessage(), "error", false);
         }
 
         if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)

@@ -53,7 +53,8 @@ public class HolmesStatesManager extends JFrame {
 		setTitle("Holmes p-states states manager");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (281108210) | Exception:  "+ex.getMessage(), "error", false);
 		}
     	overlord = GUIManager.getDefaultGUIManager();
     	ego = this;
@@ -497,8 +498,8 @@ public class HolmesStatesManager extends JFrame {
 		try {
 			selectedRow = statesTablePN.getSelectedRow();
 			fillDescriptionField();
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (581229108) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 
@@ -893,8 +894,8 @@ public class HolmesStatesManager extends JFrame {
 		try {
 			selectedRow = statesTableXTPN.getSelectedRow();
 			fillDescriptionFieldXTPN();
-		} catch (Exception ignored) {
-
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (164166738) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 

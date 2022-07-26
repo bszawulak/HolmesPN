@@ -144,7 +144,7 @@ public class GUIOperations {
 			}
 			try {
 				//overlord.getWorkspace().getProject().storeColors();  //TODO? WTH?
-			} catch (Exception ignored) {
+			} catch (Exception ex) {
 				
 			}
 		}

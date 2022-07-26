@@ -74,8 +74,8 @@ public class HolmesClusterSubWindow extends JFrame {
 		this();
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (536032607) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		clusterPath = parent.getClusterPath();
 		this.clusteringMetaData = dataPackage;
@@ -239,10 +239,9 @@ public class HolmesClusterSubWindow extends JFrame {
 		    	}
 		    	
 		    	textPane.setCaretPosition(0);
-			} catch (Exception ignored) {
-				
+			} catch (Exception ex) {
+				GUIManager.getDefaultGUIManager().log("Error (604785942) | Exception:  "+ex.getMessage(), "error", false);
 			}
-			
 		}
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -678,7 +677,7 @@ public class HolmesClusterSubWindow extends JFrame {
 
 				dataCore.clSize = new ArrayList<Integer>(fullData.metaData.clusterSize);
 				for(int cl=0; cl<dataCore.clSize.size(); cl++) {
-					;//dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
+					//dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
 				}
 				GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Holmes (JFrame)
 				JOptionPane.showMessageDialog(null, "Operation successfull. Clusters are ready to show.", 
@@ -732,7 +731,7 @@ public class HolmesClusterSubWindow extends JFrame {
 			
 			dataCore.clSize = new ArrayList<Integer>(fullData.metaData.clusterSize);
 			for(int cl=0; cl<dataCore.clSize.size(); cl++) {
-				;//dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
+				//dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
 			}
 			
 			GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Holmes (JFrame)

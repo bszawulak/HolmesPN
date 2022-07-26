@@ -157,7 +157,9 @@ public class HolmesSim extends JFrame {
 		setLocation(30,30);
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {}
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (418594315) | Exception:  "+ex.getMessage(), "error", false);
+		}
 		setSize(new Dimension(1000, 750));
 		
 		JPanel main = new JPanel(new BorderLayout()); //główny panel okna
@@ -986,8 +988,8 @@ public class HolmesSim extends JFrame {
 			for(int i=0; i<transInterval; i++) {
 				try {
 					value += transitionsRawData.get(step+i).get(selTransID);
-				} catch (Exception ignored) {
-					
+				} catch (Exception ex) {
+					GUIManager.getDefaultGUIManager().log("Error (906615096) | Exception:  "+ex.getMessage(), "error", false);
 				}
 			}
 			

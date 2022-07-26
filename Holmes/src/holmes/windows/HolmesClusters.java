@@ -83,8 +83,8 @@ public class HolmesClusters extends JFrame {
     	myself.setTitle("Cluster Analyzer");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (390036959) | Exception:  "+ex.getMessage(), "error", false);
 		}
     	this.setVisible(false);
     	
@@ -1044,8 +1044,8 @@ public class HolmesClusters extends JFrame {
 		    						 //renderer.setBackground(Color.white);
 		    					 }
 		    				 }	    				 
-		    			 } catch (Exception ignored) {
-		    				 
+		    			 } catch (Exception ex) {
+							 GUIManager.getDefaultGUIManager().log("Error (747155147) | Exception:  "+ex.getMessage(), "error", false);
 		    			 } 
 		    		}
 		    	}

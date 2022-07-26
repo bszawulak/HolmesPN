@@ -59,8 +59,8 @@ public class HolmesSPNeditor extends JFrame {
 		setTitle("Holmes SPN data editor");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (567384259) | Exception:  "+ex.getMessage(), "error", false);
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
 		PetriNet pn = overlord.getWorkspace().getProject();

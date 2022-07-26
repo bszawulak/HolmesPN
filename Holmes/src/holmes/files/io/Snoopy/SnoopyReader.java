@@ -76,8 +76,8 @@ public class SnoopyReader {
 			try { 
 				buffer.close(); 
 			}
-			catch (Exception ignored) {
-
+			catch (Exception ex) {
+				GUIManager.getDefaultGUIManager().log("Error: 818881476 | Exception "+ex, "error", false);
 			}
 		}
 	}
@@ -166,7 +166,7 @@ public class SnoopyReader {
 				
 				int nodeSnoopyID = (int) getAttributeValue(line, " id=\"", -1);
 				if(nodeSnoopyID == -1) {
-					GUIManager.getDefaultGUIManager().log("Catastrophic error: could not read Snoopy Place ID from line: "+backFirstLine, "error", true);
+					GUIManager.getDefaultGUIManager().log("Error: program cannot read Snoopy Place ID from line: "+backFirstLine, "error", true);
 					break;
 				} else {
 					snoopyNodesIdList.add(nodeSnoopyID);
@@ -330,7 +330,9 @@ public class SnoopyReader {
 									
 									if(resizeFactor==0)
 										resizeFactor=1;
-								} catch (Exception ignored) { }
+								} catch (Exception ex) {
+									GUIManager.getDefaultGUIManager().log("Error (721736374) | Exception:  "+ex.getMessage(), "error", false);
+								}
 								
 								x *= resizeFactor;
 								y *= resizeFactor;
@@ -408,8 +410,8 @@ public class SnoopyReader {
 			} else if(node instanceof Transition) {
 				((Transition)node).defColor = new Color(r,g,b);
 			}
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (288907374) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 
@@ -619,8 +621,9 @@ public class SnoopyReader {
 									
 									if(resizeFactor==0)
 										resizeFactor=1;
-								} catch (Exception ignored) { }
-								
+								} catch (Exception ex) {
+									GUIManager.getDefaultGUIManager().log("Error (289585336) | Exception:  "+ex.getMessage(), "error", false);
+								}
 								x *= resizeFactor;
 								y *= resizeFactor;
 								
@@ -869,7 +872,9 @@ public class SnoopyReader {
 									
 									if(resizeFactor==0)
 										resizeFactor=1;
-								} catch (Exception ignored) { }
+								} catch (Exception ex) {
+									GUIManager.getDefaultGUIManager().log("Error (805518514) | Exception:  "+ex.getMessage(), "error", false);
+								}
 								
 								x *= resizeFactor;
 								y *= resizeFactor;
@@ -1086,7 +1091,9 @@ public class SnoopyReader {
 									
 									if(resizeFactor==0)
 										resizeFactor=1;
-								} catch (Exception ignored) { }
+								} catch (Exception ex) {
+									GUIManager.getDefaultGUIManager().log("Error (979647504) | Exception:  "+ex.getMessage(), "error", false);
+								}
 								
 								x *= resizeFactor;
 								y *= resizeFactor;
@@ -1504,7 +1511,8 @@ public class SnoopyReader {
 			location = tmp.indexOf("\"");
 			tmp = tmp.substring(0, location);
 			result = Double.parseDouble(tmp);
-		} catch (Exception ignored) {
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (251415203) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		return result;
 	}
@@ -1523,7 +1531,8 @@ public class SnoopyReader {
 			String tmp = line.substring(location + signature.length());
 			location = tmp.indexOf("\"");
 			result = tmp.substring(0, location);
-		} catch (Exception ignored) {
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (835501362) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		return result;
 	}

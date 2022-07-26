@@ -31,8 +31,8 @@ public class HolmesWindowTemplateEx extends JFrame {
         ego.setTitle("XPTN place tokens manager");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-        } catch (Exception ignored) {
-
+        } catch (Exception ex) {
+            GUIManager.getDefaultGUIManager().log("Error (533315487) | Exception:  "+ex.getMessage(), "error", false);
         }
 
         if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)

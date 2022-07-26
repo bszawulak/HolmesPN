@@ -69,8 +69,8 @@ public class HolmesNetTablesActions {
 	  	    			antWindow);
 	  	    	window.setVisible(true);
 			}
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (437771981) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 	

@@ -60,8 +60,8 @@ public class HolmesSPNtransitionEditor extends JFrame {
 		setTitle("Holmes SPN transition editor");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (736888893) | Exception:  "+ex.getMessage(), "error", false);
 		}
     	
     	this.ego = this;
@@ -150,8 +150,8 @@ public class HolmesSPNtransitionEditor extends JFrame {
 			JFormattedTextField field = (JFormattedTextField) e.getSource();
 			try {
 				myData.ST_function = field.getText();
-			} catch (Exception ignored) {
-
+			} catch (Exception ex) {
+				GUIManager.getDefaultGUIManager().log("Error (222582756) | Exception:  "+ex.getMessage(), "error", false);
 			}
 		});
 		main.add(STfunctionValueEdit);

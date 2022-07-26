@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
 
+import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 
 /**
@@ -145,7 +146,8 @@ public class FunctionalTransTableModel extends DefaultTableModel {
 				case 5 -> dataMatrix.get(row).weight = (int) value;
 				case 6 -> dataMatrix.get(row).enabled = (boolean) value;
 			}
-		} catch (Exception ignored) {
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (267990506) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 }

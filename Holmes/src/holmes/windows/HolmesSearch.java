@@ -66,8 +66,8 @@ public class HolmesSearch extends JFrame {
 		ego.setTitle("Net nodes search window");
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (375431746) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		
 		setLayout(new BorderLayout());
@@ -180,9 +180,9 @@ public class HolmesSearch extends JFrame {
 				String newName = field.getText();
 				if(newName.length() > 0)
 					searchForString(newName);
-			} catch (ParseException ignored) {
+			} catch (ParseException ex) {
+				GUIManager.getDefaultGUIManager().log("Error (762682665) | Exception:  "+ex.getMessage(), "error", false);
 			}
-
 		});
 		choicePanel.add(searchField);
 		
@@ -206,9 +206,9 @@ public class HolmesSearch extends JFrame {
 					return;
 				int id = Integer.parseInt(IDstr);
 				selectByID(id);
-			} catch (Exception ignored) {
+			} catch (Exception ex) {
+				GUIManager.getDefaultGUIManager().log("Error (554893398) | Exception:  "+ex.getMessage(), "error", false);
 			}
-
 		});
 		choicePanel.add(idField);	
 		choiceRowPx += 20;
@@ -556,8 +556,8 @@ public class HolmesSearch extends JFrame {
 				}
 			}
 		}
-		} catch (Exception ignored) {
-
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (145588510) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 	

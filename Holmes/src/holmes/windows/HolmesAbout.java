@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import holmes.darkgui.GUIManager;
 import holmes.utilities.Tools;
 
 /**
@@ -35,8 +36,8 @@ public class HolmesAbout extends JFrame {
 		parentFrame.setEnabled(false);
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (801625237) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		setTitle("About the program.");
 		setLayout(null);
@@ -51,10 +52,9 @@ public class HolmesAbout extends JFrame {
 		try {
 			BufferedImage wPic = ImageIO.read(this.getClass().getResource("/abyssHolmes2.png"));
 			((MyTextArea)textArea).setBackgroundImage(wPic);
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (936370008) | Exception:  "+ex.getMessage(), "error", false);
 		}
-		
 		
 		textArea.setEditable(false);
 		textArea.setLineWrap(true);
@@ -97,8 +97,8 @@ public class HolmesAbout extends JFrame {
 			JLabel wIcon = new JLabel(new ImageIcon(wPic));
 			wIcon.setBounds(10, 10, 160, 160);
 			panel.add(wIcon);
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (835870912) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		
 		JLabel nameLabel = new JLabel("Holmes v1.5.0 Alpha");

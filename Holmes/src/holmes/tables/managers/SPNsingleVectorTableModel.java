@@ -7,6 +7,7 @@ import java.util.EventObject;
 
 import javax.swing.table.DefaultTableModel;
 
+import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Transition.StochaticsType;
 import holmes.windows.managers.HolmesSPNeditor;
 
@@ -160,8 +161,8 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 			} else if(col == 3) {
 				dataMatrix.get(row).subType = (StochaticsType)value;
 			}
-		} catch (Exception ignored) {
-
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (497476884) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 }

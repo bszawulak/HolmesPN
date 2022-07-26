@@ -294,8 +294,8 @@ public class SnoopyWriterPlace {
 	private void write(BufferedWriter bw, String text) {
 		try {
 			bw.write(text+"\n");
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (198617391) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 	

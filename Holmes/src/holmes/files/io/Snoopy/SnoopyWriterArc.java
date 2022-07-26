@@ -148,7 +148,7 @@ public class SnoopyWriterArc {
 					
 					if(startN instanceof Place) {
 						if(metanode.getMetaType() != MetaType.SUBNETTRANS) {
-							GUIManager.getDefaultGUIManager().log("Critical error: wrong subnet type for interface node.", "error", true);
+							GUIManager.getDefaultGUIManager().log("Error (759317895): wrong subnet type for interface node.", "error", true);
 						}
 						
 						boolean holmes = weNeedToGoDeeper(metanode, startN, true);

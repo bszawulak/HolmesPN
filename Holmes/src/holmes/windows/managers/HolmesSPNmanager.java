@@ -56,8 +56,8 @@ public class HolmesSPNmanager extends JFrame {
 		setTitle("Holmes SPN transitions data manager");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (634466444) | Exception:  "+ex.getMessage(), "error", false);
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
 		PetriNet pn = overlord.getWorkspace().getProject();
@@ -398,8 +398,8 @@ public class HolmesSPNmanager extends JFrame {
 			selectedRow = table.getSelectedRow();
 			fillDescriptionField();
 			//doNotUpdate = false;
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (502046909) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 	

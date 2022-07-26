@@ -95,12 +95,11 @@ public class HolmesClusterConfig extends JFrame {
 	public HolmesClusterConfig(ArrayList<String> comm, HolmesClusters parent) {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (656756737) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		commandsValidate = comm;
 		boss = parent;
-		
 		
 		setVisible(false);
 		this.setTitle("Clustering config");

@@ -143,8 +143,8 @@ public class SnoopyWriterCoarse {
 	private void write(BufferedWriter bw, String text) {
 		try {
 			bw.write(text+"\n");
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (620782847) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 	

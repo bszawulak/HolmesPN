@@ -194,7 +194,9 @@ public final class ElementDraw {
 						
 						try {
 							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.black, xTPNtrans);
-						} catch (Exception ignored) { }
+						} catch (Exception ex) {
+							GUIManager.getDefaultGUIManager().log("Error (272399642) | Exception:  "+ex.getMessage(), "error", false);
+						}
 					}
 				}
 
@@ -253,17 +255,16 @@ public final class ElementDraw {
 								g.drawLine(nodeBounds.x+15, nodeBounds.y+11, nodeBounds.x+13, nodeBounds.y+15);
 								g.drawLine(nodeBounds.x+13, nodeBounds.y+15, nodeBounds.x+16, nodeBounds.y+14);
 								g.drawLine(nodeBounds.x+16, nodeBounds.y+14, nodeBounds.x+14, nodeBounds.y+19);
-							} catch (Exception ignored) { }
+							} catch (Exception ex) {
+								GUIManager.getDefaultGUIManager().log("Error (762886747) | Exception:  "+ex.getMessage(), "error", false);
+							}
 						}
-						
-						
 						g.setColor(trans.qSimOvalColor);
 						g.setStroke(new BasicStroke(2.5F));
 						
 						int os = trans.qSimOvalSize;
 						g.drawOval(nodeBounds.x-os, nodeBounds.y-os, nodeBounds.width +(2*os), nodeBounds.height +(2*os));
 						g.drawOval(nodeBounds.x-(os+1), nodeBounds.y-(os+1), nodeBounds.width +(2*os+2), nodeBounds.height +(2*os+2));
-
 					} else {
 						if(trans.qSimDrawStats) {
 							g.setColor(trans.qSimFillColor);
@@ -457,7 +458,9 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/offlineTransition2.png"));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
 								nodeBounds.y-(trans.getRadius()+2));
-					} catch (Exception ignored) { }
+					} catch (Exception ex) {
+						GUIManager.getDefaultGUIManager().log("Error (858049410) | Exception:  "+ex.getMessage(), "error", false);
+					}
 				}
 				
 				if(trans.isInvisible()) {
@@ -465,7 +468,9 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
 								nodeBounds.y-(trans.getRadius()+2));
-					} catch (Exception ignored) { }
+					} catch (Exception ex) {
+						GUIManager.getDefaultGUIManager().log("Error (856997329) | Exception:  "+ex.getMessage(), "error", false);
+					}
 				}
 				
 				//dodatkowy tekst nad tranzycją
@@ -708,8 +713,8 @@ public final class ElementDraw {
 					
 					try {
 						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.black, xTPNplace);
-					} catch (Exception ignored) {
-						
+					} catch (Exception ex) {
+						GUIManager.getDefaultGUIManager().log("Error (777866480) | Exception:  "+ex.getMessage(), "error", false);
 					}
 				} else if (el.isPortalSelected()) {
 					g.setColor(EditorResources.selectionColorLevel1);
@@ -760,7 +765,9 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
 						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-4), 
 								nodeBounds.y-(place.getRadius()-3));
-					} catch (Exception ignored) { }
+					} catch (Exception ex) {
+						GUIManager.getDefaultGUIManager().log("Error (372587144) | Exception:  "+ex.getMessage(), "error", false);
+					}
 				}
 
 				// _XTPN symbol

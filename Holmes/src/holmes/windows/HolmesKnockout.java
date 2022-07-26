@@ -78,8 +78,8 @@ public class HolmesKnockout extends JFrame {
 	public HolmesKnockout() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (629849961) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		setVisible(false);
 		this.setTitle("Knockout analysis");
@@ -520,13 +520,11 @@ public class HolmesKnockout extends JFrame {
 						}
 					}
 				}
-				
 				line = buffer.readLine();
 			}
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (526939437) | Exception:  "+ex.getMessage(), "error", false);
 		}
-
 		GUIManager.getDefaultGUIManager().showKnockout(knockoutMatrix);
 	}
 	
@@ -612,8 +610,8 @@ public class HolmesKnockout extends JFrame {
 				
 				line = buffer.readLine();
 			}
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (424094127) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		
 		notePad.addTextLineNL("", "text");
@@ -649,7 +647,9 @@ public class HolmesKnockout extends JFrame {
 						int ident = Integer.parseInt(id);
 						invPercent = (float)transInInvVector.get(ident)/(float)invNumber;
 						invPercent *= 100;
-					} catch (Exception ignored) { }
+					} catch (Exception ex) {
+						GUIManager.getDefaultGUIManager().log("Error (930795539) | Exception:  "+ex.getMessage(), "error", false);
+					}
 					
 					line = line.substring(line.indexOf("_")+1);
 					//String name = line.substring(0, line.indexOf("|")-1); //nazwa tranzycji
@@ -670,7 +670,9 @@ public class HolmesKnockout extends JFrame {
 					int ident = Integer.parseInt(id);
 					invPercent = (float)transInInvVector.get(ident)/(float)invNumber;
 					invPercent *= 100;
-				} catch (Exception ignored) { }
+				} catch (Exception ex) {
+					GUIManager.getDefaultGUIManager().log("Error (495583551) | Exception:  "+ex.getMessage(), "error", false);
+				}
 						
 				line = line.substring(line.indexOf("_")+1);
 				String name = line.substring(0, line.indexOf("|")-1); //nazwa tranzycji
@@ -728,7 +730,9 @@ public class HolmesKnockout extends JFrame {
 					secondResultLines.set(nextMax, tmpLine);
 				}
 				
-			} catch (Exception ignored) {}
+			} catch (Exception ex) {
+				GUIManager.getDefaultGUIManager().log("Error (269968675) | Exception:  "+ex.getMessage(), "error", false);
+			}
 		}
 		
 		//wyświetlanie III bloku wyników:
@@ -789,8 +793,8 @@ public class HolmesKnockout extends JFrame {
 			trans_TMP.setColorWithNumber(true, Color.red, false, -1, false, "");
 			
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (187924584) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 	

@@ -50,8 +50,8 @@ public class HolmesStatesEditorXTPN extends JFrame {
         setTitle("Holmes p-state editor XTPN");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-        } catch (Exception ignored) {
-
+        } catch (Exception ex) {
+            GUIManager.getDefaultGUIManager().log("Error (640125897) | Exception:  "+ex.getMessage(), "error", false);
         }
         doNotListen = true;
         GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -231,8 +231,8 @@ public class HolmesStatesEditorXTPN extends JFrame {
             int selectedPlace = multisetsTable.getSelectedRow();
             new HolmesXTPNtokens( (PlaceXTPN)places.get(selectedPlace), this, multisetM.accessMultiset_K(selectedPlace)
                     , multisetM.isPlaceStoredAsGammaActive(selectedPlace));
-        } catch (Exception ignored) {
-
+        } catch (Exception ex) {
+            GUIManager.getDefaultGUIManager().log("Error (860120239) | Exception:  "+ex.getMessage(), "error", false);
         }
     }
 

@@ -192,8 +192,8 @@ public class HolmesInvariantsViewer extends JFrame {
 	private void initalizeComponents() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (775450119) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		setLayout(new BorderLayout());
 		setSize(new Dimension(800, 650));
@@ -862,7 +862,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		cellClickAction();
           	    }
           	 }
@@ -885,8 +885,8 @@ public class HolmesInvariantsViewer extends JFrame {
 				int transId = Integer.parseInt(id);
 				new HolmesNodeInfo(transitions.get(transId), this);
 			}
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (759541509) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 

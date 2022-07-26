@@ -96,7 +96,9 @@ public class HolmesNetTables extends JFrame {
 	private void initialize_components() {
 		setTitle("Net data tables");
     	try { setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png")); } 
-    	catch (Exception ignored) { }
+    	catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (475821524) | Exception:  "+ex.getMessage(), "error", false);
+		}
     	
     	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setLocation(20, 20);

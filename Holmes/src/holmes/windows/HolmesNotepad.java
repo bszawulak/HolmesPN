@@ -54,8 +54,8 @@ public class HolmesNotepad extends JFrame {
 		setTitle("Holmes Notepad");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (694653943) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		//setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -72,8 +72,8 @@ public class HolmesNotepad extends JFrame {
 		try {
 			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programUseSimpleEditor").equals("1"))
 				simpleMode = true;
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (330239517) | Exception:  "+ex.getMessage(), "error", false);
 		}
 		setPreferredSize(new Dimension(width, height));
 		setLocation(50,50);
@@ -178,8 +178,8 @@ public class HolmesNotepad extends JFrame {
 			int len = textPane.getDocument().getLength();
 			try {
 				doc.remove(0, len);
-			} catch (BadLocationException ignored) {
-
+			} catch (BadLocationException ex) {
+				GUIManager.getDefaultGUIManager().log("Error (359758146) | Exception:  "+ex.getMessage(), "error", false);
 			}
 		}
 	}

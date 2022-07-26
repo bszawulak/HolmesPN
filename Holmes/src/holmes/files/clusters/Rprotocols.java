@@ -50,8 +50,8 @@ public class Rprotocols implements Runnable {
 				commands = commandsPearson;
 				executeCHmetricScripts();
 			}
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error: 579016465 (Rprotocols) | Exception "+ex, "error", false);
 		}
 	}
 	

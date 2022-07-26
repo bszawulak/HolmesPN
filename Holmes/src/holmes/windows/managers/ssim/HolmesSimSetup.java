@@ -90,7 +90,9 @@ public class HolmesSimSetup extends JFrame {
 		setLocation(parentWindow.getX()+150, parentWindow.getY()+150);
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {}
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (766220006) | Exception:  "+ex.getMessage(), "error", false);
+		}
 		setSize(new Dimension(620, 490));
 		
 		JPanel main = new JPanel(null); //główny panel okna

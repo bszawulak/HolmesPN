@@ -533,7 +533,8 @@ public class TexExporter {
 							int oldValue = mctRow.get(mctNumber);
 							oldValue++;
 							mctRow.set(mctNumber, oldValue); //występuje
-						} catch (Exception ignored) {
+						} catch (Exception ex) {
+							GUIManager.getDefaultGUIManager().log("Error (552019684) | Exception:  "+ex.getMessage(), "error", false);
 						}
 					}
 				}
@@ -545,14 +546,13 @@ public class TexExporter {
 						int oldValue = mctRow.get(tranNumber);
 						oldValue++;
 						transRow.set(tranNumber, oldValue); //występuje
-					} catch (Exception ignored) {}
-					
+					} catch (Exception ex) {
+						GUIManager.getDefaultGUIManager().log("Error (231781194) | Exception:  "+ex.getMessage(), "error", false);
+					}
 				}
 			}
-			
 			clustersMCT.add(mctRow);
 			clustersTransitions.add(transRow);
-			
 		}
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];

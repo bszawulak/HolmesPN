@@ -80,7 +80,9 @@ public class HolmesFunctionsBuilder extends JFrame {
 		setTitle("Transition: "+trans.getName());
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {}
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (282969598) | Exception:  "+ex.getMessage(), "error", false);
+		}
 		
 		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
 			mainSimulatorActive = true;

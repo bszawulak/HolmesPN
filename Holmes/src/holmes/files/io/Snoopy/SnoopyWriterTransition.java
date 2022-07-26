@@ -278,8 +278,8 @@ public class SnoopyWriterTransition {
 	protected void write(BufferedWriter bw, String text) {
 		try {
 			bw.write(text+"\n");
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (116799585) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 	

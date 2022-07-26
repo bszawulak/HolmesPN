@@ -7,6 +7,7 @@ import java.util.EventObject;
 
 import javax.swing.table.AbstractTableModel;
 
+import holmes.darkgui.GUIManager;
 import holmes.windows.managers.HolmesStatesManager;
 
 /**
@@ -147,7 +148,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Object returnValue;
 		if(columnIndex < 2) {
-			return dataMatrix.get(rowIndex).get(columnIndex).toString();
+			return dataMatrix.get(rowIndex).get(columnIndex);
 		} else {
 			try {
 				returnValue = dataMatrix.get(rowIndex).get(columnIndex);
@@ -175,8 +176,8 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 			rowVector.set(col, ""+(int)newValue);
 
 			boss.changeState(row, col, newValue);
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (688206518) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 	
@@ -188,8 +189,8 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 				newValue = 0;
 			ArrayList<String> rowVector = dataMatrix.get(row);
 			rowVector.set(col, ""+(int)newValue);
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (128622084) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 }

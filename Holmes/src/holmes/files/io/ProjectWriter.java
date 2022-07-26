@@ -93,7 +93,9 @@ public class ProjectWriter {
 			bw.write("  <PlaceInvData>"+newline);
 			bw.write("  <MCT data>"+newline);
 			bw.write("  <StatesMatrix>"+newline);
-			bw.write("  <StatesXTPNMatrix>"+newline);
+			if(XTPNdataMode) {
+				bw.write("  <StatesXTPNMatrix>" + newline);
+			}
 			bw.write("  <FunctionsData>"+newline);
 			bw.write("  <FiringRatesData>"+newline);
 			bw.write("  <SSAmatrix>"+newline);
@@ -135,6 +137,7 @@ public class ProjectWriter {
 			boolean statusSSA = saveSSAvectors(bw);
 			bw.write("<SSA vectors data end>"+newline);
 
+			GUIManager.getDefaultGUIManager().log("*******************************************************","text", true);
 			GUIManager.getDefaultGUIManager().log("Net saved: "+statusNet, "text", true);
 			GUIManager.getDefaultGUIManager().log("T-invariants saved: "+statusInv, "text", true);
 			GUIManager.getDefaultGUIManager().log("P-invariants saved: "+statusPInv, "text", true);
@@ -143,6 +146,7 @@ public class ProjectWriter {
 			GUIManager.getDefaultGUIManager().log("Net XTPN states saved: "+statusXTPNStates, "text", true);
 			GUIManager.getDefaultGUIManager().log("Firing rates saved: "+statusFR, "text", true);
 			GUIManager.getDefaultGUIManager().log("SSA vectors saved: "+statusSSA, "text", true);
+			GUIManager.getDefaultGUIManager().log("*******************************************************","text", true);
 
 			bw.close();
 			return true;
@@ -218,11 +222,17 @@ public class ProjectWriter {
 					pointY = nameLoc.getPosition().y;
 					bw.write(spaces(sp)+"<Place name offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 
-					ElementLocation gammaLoc = place.getTextsLocations(GUIManager.locationMoveType.GAMMA).get(e);
-					sheetId = gammaLoc.getSheetID();
-					pointX = gammaLoc.getPosition().x;
-					pointY = gammaLoc.getPosition().y;
-					bw.write(spaces(sp)+"<Place gamma offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+					if(XTPNdataMode) {
+						try {
+							ElementLocation gammaLoc = place.getTextsLocations(GUIManager.locationMoveType.GAMMA).get(e);
+							sheetId = gammaLoc.getSheetID();
+							pointX = gammaLoc.getPosition().x;
+							pointY = gammaLoc.getPosition().y;
+							bw.write(spaces(sp) + "<Place gamma offset data sheet/x/y/elIndex:" + sheetId + ";" + pointX + ";" + pointY + ";" + e + ">" + newline); //sheetID/x/y
+						} catch (Exception exc) {
+							GUIManager.getDefaultGUIManager().log("Error: gamma location for place "+place.getName()+ " unavailable. (Portal problem?)", "error", false);
+						}
+					}
 				}
 				sp = 6;
 				bw.write(spaces(sp)+"<Location data block end"+">"+newline);
@@ -296,19 +306,28 @@ public class ProjectWriter {
 					pointY = nameLoc.getPosition().y;
 					bw.write(spaces(sp)+"<Transition name offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 
-					ElementLocation alphaLoc = trans.getTextsLocations(GUIManager.locationMoveType.ALPHA).get(e);
-					sheetId = alphaLoc.getSheetID();
-					pointX = alphaLoc.getPosition().x;
-					pointY = alphaLoc.getPosition().y;
-					bw.write(spaces(sp)+"<Transition alpha offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+					if(XTPNdataMode) {
+						try {
+							ElementLocation alphaLoc = trans.getTextsLocations(GUIManager.locationMoveType.ALPHA).get(e);
+							sheetId = alphaLoc.getSheetID();
+							pointX = alphaLoc.getPosition().x;
+							pointY = alphaLoc.getPosition().y;
+							bw.write(spaces(sp)+"<Transition alpha offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+						} catch (Exception exc) {
+							GUIManager.getDefaultGUIManager().log("Error: alpha location for place "+trans.getName()+ " unavailable. (Portal problem?)", "error", false);
+						}
 
-					ElementLocation betaLoc = trans.getTextsLocations(GUIManager.locationMoveType.BETA).get(e);
-					sheetId = betaLoc.getSheetID();
-					pointX = betaLoc.getPosition().x;
-					pointY = betaLoc.getPosition().y;
-					bw.write(spaces(sp)+"<Transition beta offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+						try {
+							ElementLocation betaLoc = trans.getTextsLocations(GUIManager.locationMoveType.BETA).get(e);
+							sheetId = betaLoc.getSheetID();
+							pointX = betaLoc.getPosition().x;
+							pointY = betaLoc.getPosition().y;
+							bw.write(spaces(sp)+"<Transition beta offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+						} catch (Exception exc) {
+							GUIManager.getDefaultGUIManager().log("Error: beta location for transition "+trans.getName()+ " unavailable. (Portal problem?)", "error", false);
+						}
+					}
 				}
-
 				sp = 6;
 				bw.write(spaces(sp)+"<Location data block end"+">"+newline);
 				sp = 4;
@@ -412,8 +431,12 @@ public class ProjectWriter {
 							String coloredWeights = "" + arc.getColorWeight(0) + ":" + arc.getColorWeight(1) + ":" + arc.getColorWeight(2) + ":"
 									+ arc.getColorWeight(3) + ":" + arc.getColorWeight(4) + ":" + arc.getColorWeight(5);
 
-							bw.write(spaces(sp) + "<Arc: " + arcType + "; " + startLoc + " -> " + endLoc + "; " + weight + ">" + brokenLine + ";" + isColored
-									+ ";" + coloredWeights + newline);
+							if(isColored) {
+								bw.write(spaces(sp) + "<Arc: " + arcType + "; " + startLoc + " -> " + endLoc + "; " + weight + ">" + brokenLine + ";" + isColored
+										+ ";" + coloredWeights + newline);
+							} else {
+								bw.write(spaces(sp) + "<Arc: " + arcType + "; " + startLoc + " -> " + endLoc + "; " + weight + ">" + brokenLine + newline);
+							}
 							savedArcs++;
 						} else if (endNode instanceof MetaNode) {
 							String startLoc = "P" + p + "(" + e + ")";
@@ -488,8 +511,13 @@ public class ProjectWriter {
 							String coloredWeights = "" + arc.getColorWeight(0) + ":" + arc.getColorWeight(1) + ":" + arc.getColorWeight(2) + ":"
 									+ arc.getColorWeight(3) + ":" + arc.getColorWeight(4) + ":" + arc.getColorWeight(5);
 
-							bw.write(spaces(sp) + "<Arc: " + arcType + "; " + startLoc + " -> " + endLoc + "; " + weight + ">" + brokenLine + ";" + isColored
-									+ ";" + coloredWeights + newline);
+							if(isColored) {
+								bw.write(spaces(sp) + "<Arc: " + arcType + "; " + startLoc + " -> " + endLoc + "; " + weight + ">" + brokenLine + ";" + isColored
+										+ ";" + coloredWeights + newline);
+							} else {
+								bw.write(spaces(sp) + "<Arc: " + arcType + "; " + startLoc + " -> " + endLoc + "; " + weight + ">" + brokenLine + newline);
+							}
+
 							savedArcs++;
 						} else if (endNode instanceof MetaNode) {
 							String startLoc = "T" + t + "(" + e + ")";

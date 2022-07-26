@@ -7,6 +7,7 @@ import java.util.EventObject;
 
 import javax.swing.table.DefaultTableModel;
 
+import holmes.darkgui.GUIManager;
 import holmes.windows.managers.HolmesStatesEditor;
 
 public class StatesPlacesEditorTableModel extends DefaultTableModel {
@@ -151,8 +152,8 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
 				dataMatrix.get(row).tokens = newValue;
 				boss.changeRealValue(stateVectorIndex, row, newValue);
 			}
-		} catch (Exception e) {
-			//dataMatrix.get(row).firingRate = 1.0;
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (118743644) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 	
@@ -163,7 +164,8 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
 				newValue = Double.parseDouble(value.toString());
 				dataMatrix.get(row).tokens = newValue;
 			}
-		} catch (Exception ignored) {
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (179729339) | Exception:  "+ex.getMessage(), "error", false);
 		}
 	}
 }

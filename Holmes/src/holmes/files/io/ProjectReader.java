@@ -464,7 +464,7 @@ public class ProjectReader {
 					;
 				
 				while(!((line = buffer.readLine()).contains("<Functions data block end>"))) {
-					boolean fReadStatus = parseFunction(line, transitions, places);
+					boolean fReadStatus = parseFunction(line, transitions);
 					if(fReadStatus)
 						functionsRead++;
 					else
@@ -498,10 +498,9 @@ public class ProjectReader {
 	 * Metoda odpowiedzialna za odczyt linii funkcji.
 	 * @param functionLine String - przeczytana linia
 	 * @param transitions ArrayList[Transition] - wektor tranzycji
-	 * @param places ArrayList[Place] - wektor miejsc
 	 * @return boolean - true, jeśli się udało
 	 */
-	private boolean parseFunction(String functionLine, ArrayList<Transition> transitions, ArrayList<Place> places) {
+	private boolean parseFunction(String functionLine, ArrayList<Transition> transitions) {
 		try {
 			//TODO:
 			String[] table = functionLine.split(";");
@@ -790,8 +789,9 @@ public class ProjectReader {
 					place.setColorTokensNumber(Integer.parseInt(tab[3]), 3);
 					place.setColorTokensNumber(Integer.parseInt(tab[4]), 4);
 					place.setColorTokensNumber(Integer.parseInt(tab[5]), 5);
-				} catch (Exception ignored) {}
-
+				} catch (Exception ex) {
+					overlord.log("Error (806949108) | Exception: "+ex.getMessage(), "error", false);
+				}
 			}
 		} catch (Exception e) {
 			overlord.log("Reading file error in line: "+backup+" for Place "+placesProcessed, "error", true);
@@ -1196,7 +1196,9 @@ public class ProjectReader {
 					transition.setRequiredColoredTokens(Integer.parseInt(tab[3]), 3);
 					transition.setRequiredColoredTokens(Integer.parseInt(tab[4]), 4);
 					transition.setRequiredColoredTokens(Integer.parseInt(tab[5]), 5);
-				} catch (Exception ignored) {}
+				} catch (Exception ex) {
+					overlord.log("Error (519160440) | Exception: "+ex.getMessage(), "error", false);
+				}
 				//return;
 			}
 		} catch (Exception e) {
@@ -1388,14 +1390,24 @@ public class ProjectReader {
 			String[] colorsWeights = null;
 			try {
 				int len = tab.length;
-				if(len > 4) {
-					if(tab[4].equals("true")) {
-						colorStatus = true;
+				if(len > 4) { //kolor, opcjonalnie
+					if(tab[3].contains("true") || tab[3].contains("false")) { //jakimś cudem brak info o łuku łamanym
+						if(tab[3].equals("true")) {
+							colorStatus = true;
+						}
+						colorsWeights = tab[4].split(":");
+						colorReadOk = true;
+					} else {
+						if(tab[4].equals("true")) {
+							colorStatus = true;
+						}
+						colorsWeights = tab[5].split(":");
+						colorReadOk = true;
 					}
-					colorsWeights = tab[5].split(":");
-					colorReadOk = true;
 				}
-			} catch (Exception ignored) {}
+			} catch (Exception ex) {
+				GUIManager.getDefaultGUIManager().log("Error (552674791) | Exception:  "+ex.getMessage(), "error", false);
+			}
 			
 			if(placeFirst) { //pierwsze jest miejsce
 				if(!metaSecond) {
@@ -1550,6 +1562,10 @@ public class ProjectReader {
 	 * @param brokenLine String - linia punktów
 	 */
 	private void addBroken(Arc newArc, String brokenLine) {
+		if(!brokenLine.contains("-")) { //musi mieć, jeśli to faktycznie blok danych o łuku łamanych, choćby 99999-11111 przy jego braku
+			return;
+		}
+
 		String[] tab = brokenLine.split("x");
 		for (String s : tab) {
 			try {
@@ -1561,7 +1577,8 @@ public class ProjectReader {
 					return;
 
 				newArc.addBreakPoint(new Point(x, y));
-			} catch (Exception ignored) {
+			} catch (Exception ex) {
+				GUIManager.getDefaultGUIManager().log("Error (478781728) | Exception:  "+ex.getMessage(), "error", false);
 			}
 		}
 	}
@@ -1883,7 +1900,9 @@ public class ProjectReader {
 					
 					statesMngr.accessStateMatrix().add(pVector);
 				}
-			} catch (Exception ignored) {}
+			} catch (Exception ex) {
+				GUIManager.getDefaultGUIManager().log("Error (651052447) | Exception:  "+ex.getMessage(), "error", false);
+			}
 			
 			if((readedLine /3) > statesMngr.accessStateMatrix().size()) {
 				overlord.log("Error reading state vector number "+(readedLine), "error", true);
@@ -1968,8 +1987,9 @@ public class ProjectReader {
 
 					statesMngr.accessStateMatrixXTPN().add(pVector);
 				}
-			} catch (Exception ignored) {}
-
+			} catch (Exception ex) {
+				GUIManager.getDefaultGUIManager().log("Error (248790053) | Exception:  "+ex.getMessage(), "error", false);
+			}
 			if((readedLine /3) > statesMngr.accessStateMatrix().size()) {
 				overlord.log("Error reading state XTPN vector number "+(readedLine), "error", true);
 				if(statesMngr.accessStateMatrix().size() == 0) {
@@ -2130,10 +2150,16 @@ public class ProjectReader {
 			for(int i=0; i<transitionsProcessed; i++) {
 				SPNtransitionData box = frVector.newContainer();
 				box.ST_function = dataVectorTable[i*7];
-				try { box.IM_priority = Integer.parseInt(dataVectorTable[(i*7)+1]); } catch(Exception ignored) {}
-				try { box.DET_delay = Integer.parseInt(dataVectorTable[(i*7)+2]); } catch(Exception ignored) {}
+				try { box.IM_priority = Integer.parseInt(dataVectorTable[(i*7)+1]); } catch(Exception ex) {
+					GUIManager.getDefaultGUIManager().log("Error (186837711) | Exception:  "+ex.getMessage(), "error", false);
+				}
+				try { box.DET_delay = Integer.parseInt(dataVectorTable[(i*7)+2]); } catch(Exception ex) {
+					GUIManager.getDefaultGUIManager().log("Error (535627810) | Exception:  "+ex.getMessage(), "error", false);
+				}
 				box.SCH_start = dataVectorTable[(i*7)+3];
-				try { box.SCH_rep = Integer.parseInt(dataVectorTable[(i*7)+4]); } catch(Exception ignored) {}
+				try { box.SCH_rep = Integer.parseInt(dataVectorTable[(i*7)+4]); } catch(Exception ex) {
+					GUIManager.getDefaultGUIManager().log("Error (229044942) | Exception:  "+ex.getMessage(), "error", false);
+				}
 				box.SCH_end = dataVectorTable[(i*7)+5];
 
 				switch (dataVectorTable[(i * 7) + 6]) {
@@ -2204,7 +2230,9 @@ public class ProjectReader {
 					}
 					ssaMngr.accessSSAmatrix().add(pVector);
 				}
-			} catch (Exception ignored) {}
+			} catch (Exception ex) {
+				GUIManager.getDefaultGUIManager().log("Error (652374812) | Exception:  "+ex.getMessage(), "error", false);
+			}
 			
 			if((readedLine /3) > ssaMngr.accessSSAmatrix().size()) {
 				overlord.log("Error reading state vector number "+(readedLine), "error", true);

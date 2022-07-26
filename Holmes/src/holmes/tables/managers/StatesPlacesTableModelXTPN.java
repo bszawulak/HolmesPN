@@ -1,5 +1,6 @@
 package holmes.tables.managers;
 
+import holmes.darkgui.GUIManager;
 import holmes.windows.managers.HolmesStatesManager;
 
 import javax.swing.table.AbstractTableModel;
@@ -176,7 +177,8 @@ public class StatesPlacesTableModelXTPN extends AbstractTableModel {
             rowVector.set(col, ""+(int)newValue);
 
             //boss.changeStateXTPN(row, col, newValue);
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
+            GUIManager.getDefaultGUIManager().log("Error (620968626) | Exception:  "+ex.getMessage(), "error", false);
         }
     }
 
@@ -188,8 +190,8 @@ public class StatesPlacesTableModelXTPN extends AbstractTableModel {
                 newValue = 0;
             ArrayList<String> rowVector = dataMatrix.get(row);
             rowVector.set(col, ""+(int)newValue);
-        } catch (Exception ignored) {
-
+        } catch (Exception ex) {
+            GUIManager.getDefaultGUIManager().log("Error (706019146) | Exception:  "+ex.getMessage(), "error", false);
         }
     }
 }

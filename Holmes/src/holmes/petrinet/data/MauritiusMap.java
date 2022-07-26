@@ -87,7 +87,9 @@ public class MauritiusMap {
 					if(x < treshold) {
 						antiVector.set(j, 0); //udawajmy, że jej tam w ogóle nie ma, na potrzeby bloku niżej
 					}
-				} catch (Exception ignored) {} //divide by zero - ignore
+				} catch (Exception ex) {
+					GUIManager.getDefaultGUIManager().log("Error (251316489) | Exception:  "+ex.getMessage(), "error", false);
+				} //divide by zero - ignore
 			}
 			
 			for(int i=0; i<invariantsWITHroot.size(); i++) {

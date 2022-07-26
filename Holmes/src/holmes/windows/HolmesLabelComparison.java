@@ -3,6 +3,7 @@ package holmes.windows;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import holmes.analyse.comparison.LabelNetComparator;
+import holmes.darkgui.GUIManager;
 import holmes.files.io.ProjectReader;
 import holmes.petrinet.data.PetriNetData;
 
@@ -114,10 +115,9 @@ public class HolmesLabelComparison extends JFrame {
                     fPND = new PetriNetData(pRdr.getNodes(),pRdr.getArcs(), "First Net");
                 else
                     sPND = new PetriNetData(pRdr.getNodes(),pRdr.getArcs(), "Second Net");
-            } catch (Exception ignored) {
-
+            } catch (Exception ex) {
+                GUIManager.getDefaultGUIManager().log("Error (236840455) | Exception:  "+ex.getMessage(), "error", false);
             }
         }
     }
-
 }

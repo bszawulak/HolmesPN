@@ -52,8 +52,8 @@ public class HolmesSSAplacesEditor extends JFrame {
 		setTitle("Holmes SSA components editor");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception ignored) {
-			
+		} catch (Exception ex) {
+			GUIManager.getDefaultGUIManager().log("Error (343775994) | Exception:  "+ex.getMessage(), "error", false);
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
 		PetriNet pn = overlord.getWorkspace().getProject();
