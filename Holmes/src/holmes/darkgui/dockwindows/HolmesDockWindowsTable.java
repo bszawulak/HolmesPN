@@ -673,6 +673,63 @@ public class HolmesDockWindowsTable extends JPanel {
             resetButton.setEnabled(true);
             resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
             components.add(resetButton);
+
+
+
+
+
+            JLabel transDelayLabel = new JLabel("Firing delay:");
+            transDelayLabel.setBounds(internalX, internalY+=80, 150, 20);
+            components.add(transDelayLabel);
+
+            final JSlider arcDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
+            arcDelaySlider.setBounds(internalX, internalY+=20, 150, 50);
+            arcDelaySlider.setMinorTickSpacing(5);
+            arcDelaySlider.setMajorTickSpacing(20);
+            arcDelaySlider.setPaintTicks(true);
+            arcDelaySlider.setPaintLabels(true);
+            arcDelaySlider.setLabelTable(arcDelaySlider.createStandardLabels(20));
+            arcDelaySlider.addChangeListener(e -> {
+                JSlider s = (JSlider) e.getSource();
+                int val = s.getValue();
+                int reference = GUIManager.getDefaultGUIManager().simSettings.getTransitionGraphicDelay();
+                if(val <= reference) {
+                    arcDelaySlider.setValue(val);
+                    GUIManager.getDefaultGUIManager().simSettings.setArcGraphicDelay(val);
+                } else {
+                    s.setValue(reference);
+                }
+            });
+            components.add(arcDelaySlider);
+
+            JLabel arcDelayLabel = new JLabel("Tokens delay:");
+            arcDelayLabel.setBounds(internalX, internalY+=50, 120, 20);
+            components.add(arcDelayLabel);
+
+            final JSlider transDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
+            transDelaySlider.setBounds(internalX, internalY+=20, 150, 50);
+            transDelaySlider.setMinorTickSpacing(5);
+            transDelaySlider.setMajorTickSpacing(20);
+            transDelaySlider.setPaintTicks(true);
+            transDelaySlider.setPaintLabels(true);
+            transDelaySlider.setLabelTable(transDelaySlider.createStandardLabels(20));
+            transDelaySlider.addChangeListener(new ChangeListener() {
+                private JSlider anotherSlider = null;
+                public void stateChanged(ChangeEvent e) {
+                    JSlider s = (JSlider) e.getSource();
+                    int value = s.getValue();
+                    transDelaySlider.setValue(value);
+                    GUIManager.getDefaultGUIManager().simSettings.setTransitionGraphicDelay(value);
+                    if(value <  GUIManager.getDefaultGUIManager().simSettings.getArcGraphicDelay()) {
+                        anotherSlider.setValue(value);
+                    }
+                }
+                private ChangeListener yesWeCan(JSlider slider){
+                    anotherSlider = slider;
+                    return this;
+                }
+            }.yesWeCan(arcDelaySlider) );
+            components.add(transDelaySlider);
         }
         panel.setLayout(null);
         for (JComponent component : components) {

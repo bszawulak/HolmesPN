@@ -9,7 +9,6 @@ import java.awt.Stroke;
  * @author students
  *
  */
-@SuppressWarnings("unused")
 public class EditorResources {
 	
 	public static final Color selectionColorLevel1 = new Color(30, 144, 255, 20);
@@ -51,4 +50,7 @@ public class EditorResources {
 	public static final Color launchColorLevel1 = new Color(230, 20, 0, 20);
 	public static final Color launchColorLevel2 = new Color(230, 20, 0, 50);
 	public static final Color launchColorLevel3 = new Color(230, 20, 0, 100);
+
+	public static final Color actXTPNcolor = new Color(0, 220, 0, 255);
+	public static final Color prodXTPNcolor = new Color(250, 80, 0, 255); //blue: 20, 100, 240, 255
 }

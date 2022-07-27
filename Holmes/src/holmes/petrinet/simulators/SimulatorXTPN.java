@@ -7,6 +7,8 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.functions.FunctionsTools;
 
+import static holmes.graphpanel.EditorResources.actXTPNcolor;
+
 /**
  * Silnik symulatora XTPN. Procedury odpowiedzialne za symulację modelu
  * opartego na XTPN.
@@ -22,6 +24,11 @@ public class SimulatorXTPN implements IEngine {
     private ArrayList<TransitionXTPN> launchableTransitions = null;
     private IRandomGenerator generator;
 
+    private boolean graphicalSimulation = false;
+
+    public void setGraphicalSimulation(boolean status) {
+        this.graphicalSimulation = status;
+    }
 
     /**
      * Klasa kontener, informacje o następnej zmianie stanu sieci XTPN.
@@ -183,13 +190,18 @@ public class SimulatorXTPN implements IEngine {
                         transition.setProductionStatus_xTPN(true);
                         continue;
                     } else { //ani alfa, ani beta
-                        classicalInputOnes.add(new NextXTPNstep(transition, -1, 3));
-                        transition.setProductionStatus_xTPN(true);
+                        //TODO: immediate or 50/50
+                        //if ((generator.nextInt(100) < 50) || transition.isImmediateXTPN()) {
+                            //classicalInputOnes.add(new NextXTPNstep(transition, -1, 3));
+                            //transition.setProductionStatus_xTPN(true);
+                        //}
+
                         //technicznie typ 3: productionEnds, bo ta tranzycja niczego nie zabierze, ale (być może)
                         //uruchomi się w obliczanym stanie (P=50/50) i wyprodukuje tokeny.
                     }
-                } else { //nieaktywna, ale nie jest wejściowa
+                } else { // nie jest wejściowa, jest nieaktywna:
                     if(transition.getActiveStatusXTPN(sg.getCalculationsAccuracy())) { //sprawdź zbiór aktywujący, czy może stać się aktywna
+                        //dla poprzedniego dużego if'a odpowiednikiem tego było sprawdzanie, czy T jest wejściowa
                         if(transition.isAlphaActiveXTPN()) { //typ alfa
                             double min = transition.getAlphaMin_xTPN();
                             double max = transition.getAlphaMax_xTPN();
@@ -212,7 +224,7 @@ public class SimulatorXTPN implements IEngine {
                                 transition.setTimerAlfa_XTPN(0.0);
                                 transition.setActivationStatusXTPN(true);
                             }
-                        } else if(transition.getActiveStatusXTPN(sg.getCalculationsAccuracy())) { //tylko typ beta
+                        } else if(transition.isBetaActiveXTPN()) { // nie jest alfa, to może beta?
                             double min = transition.getBetaMin_xTPN();
                             double max = transition.getBetaMax_xTPN();
                             double rand = getSafeRandomValueXTPN(min, max);
@@ -220,9 +232,21 @@ public class SimulatorXTPN implements IEngine {
                             transition.setTauBeta_xTPN( rand );
                             transition.setTimerBeta_XTPN(0.0);
                             transition.setProductionStatus_xTPN(true);
+                        } else { //nieaktywna, nie wejściowa, może być aktywna, brak alfa i beta -> klasyczna wewnętrzna
+                            //TODO: immediate or 50/50
+                            if ((generator.nextInt(100) < 50) || transition.isImmediateXTPN()) {
+                                //transition.setActivationStatusXTPN(true);
+                            }
                         }
-                        //jeśli alfa i beta=OFF, to ich "aktywacją" zajmie się inna metoda
-                    }
+
+                        //jakikolwiek powyższy scenariusz by nie był, jest to aktywna tranzycja, więc:
+                        if(graphicalSimulation) { //ustaw zielony kolor łuku
+                            ArrayList<Arc> arcs = transition.getInArcs();
+                            for (Arc arc : arcs) {
+                                arc.setXTPNactStatus(true);
+                            }
+                        }
+                    } //else nie ma: nie jest wejściowa i nie może być aktywna, bo brakuje tokenów. "niech spierdala".
                 }
             } else { //tranzycja była do tej pory aktywna, sprawdzamy, czy wciąż w tym stanie może być
                 //tutaj trzeba sprawdzić stan, pod koniec ostatniego mogły zniknąć zbyt stare tokeny:
@@ -231,7 +255,7 @@ public class SimulatorXTPN implements IEngine {
                 }
 
                 if(!transition.getActiveStatusXTPN(sg.getCalculationsAccuracy())) {
-                    transition.deactivateXTPN();
+                    transition.deactivateXTPN(graphicalSimulation);
                 }
             }
         }
@@ -447,7 +471,6 @@ public class SimulatorXTPN implements IEngine {
         }
     }
 
-
     /**
      * Tutaj zapewne zmiana stanu niektórych tranzycji...
      * @param launchedTransitions (<b>ArrayList[ArrayList[Transition]]</b>) podwójna lista tranzycji które się uruchomiły: XTPN i klasyczne
@@ -475,11 +498,9 @@ public class SimulatorXTPN implements IEngine {
                 }
             }
         }
-        //TODO:
 
         for(TransitionXTPN transition : launchedClassical) {
-            //transition.setLaunching(false);
-
+            transition.setProductionStatus_xTPN(true); //samo ustawi false na activationStatus
         }
     }
 
@@ -495,6 +516,10 @@ public class SimulatorXTPN implements IEngine {
 
             //dodaj odpowiednią liczbę tokenów do miejsc
             for (Arc arc : arcs) {
+                if(graphicalSimulation) { //koniec zaznaczania łuku jako produkcyjnego
+                    arc.setXTPNprodStatus(false);
+                }
+
                 PlaceXTPN place = (PlaceXTPN) arc.getEndNode();
                 if(!(arc.getArcType() == Arc.TypeOfArc.NORMAL || arc.getArcType() == Arc.TypeOfArc.READARC)) {
                     overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
@@ -508,7 +533,7 @@ public class SimulatorXTPN implements IEngine {
                 place.addTokens_XTPN(weight, 0.0);
 
             }
-            transition.deactivateXTPN();
+            transition.deactivateXTPN(graphicalSimulation);
             transition.setProductionStatus_xTPN(false);
         }
         //producingTokensTransitionsAll.clear();  //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)

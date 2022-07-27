@@ -14,6 +14,8 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.functions.FunctionsTools;
 import holmes.windows.HolmesNotepad;
 
+import static holmes.graphpanel.EditorResources.prodXTPNcolor;
+
 /**
  * Symulator XTPN. Odpowiada na bardzo mądre pytania, na przykład w stylu: czy jak stanę na torach,
  * i chwycę się linii trakcyjnej, to pojadę jak tramwaj?
@@ -75,17 +77,7 @@ public class GraphicalSimulatorXTPN {
         simTotalTime = 0.0;
         nextXTPNsteps.clear();
         engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, false, false, petriNet.getTransitions(), null, petriNet.getPlaces());
-
-        //engineXTPN = new SimulatorXTPN();
-        //sg = overlord.simSettings;
-    }
-
-    /**
-     * Dostęp do obiektu silnika symulacji.
-     * @return (<b>engineXTPN</b>) silnik symulatora XTPN.
-     */
-    public SimulatorXTPN accessEngine() {
-        return engineXTPN;
+        //engineXTPN.setGraphicalSimulation(true);
     }
 
     /**
@@ -112,8 +104,14 @@ public class GraphicalSimulatorXTPN {
         stepCounter = 0;
         simTotalTime = 0.0;
         engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, false, false, transitions, null, places);
-
+        engineXTPN.setGraphicalSimulation(true);
         //nsl.logBackupCreated(); //TODO
+
+        ArrayList<Arc> arcs = petriNet.getArcs();
+        for(Arc arc : arcs) {
+            arc.setXTPNactStatus(false);
+            arc.setXTPNprodStatus(false);
+        }
 
         previousSimStatusXTPN = getXTPNsimulatorStatus();
         setSimulatorStatus(simulatorMode);
@@ -191,6 +189,12 @@ public class GraphicalSimulatorXTPN {
         overlord.simSettings.currentStep = stepCounter;
         overlord.simSettings.currentTime = simTotalTime;
         //nsl.logSimStopped(timeCounter);
+
+        ArrayList<Arc> arcs = petriNet.getArcs();
+        for(Arc arc : arcs) {
+            arc.setXTPNactStatus(false);
+            arc.setXTPNprodStatus(false);
+        }
     }
 
     /**
@@ -441,6 +445,7 @@ public class GraphicalSimulatorXTPN {
                 petriNet.repaintAllGraphPanels();
             }
 
+            //GRAFIKA
             //tutaj faza zabierania tokenów:
             if(subtractPhase) {
                 if(repaintSteps == 0) {
@@ -531,7 +536,7 @@ public class GraphicalSimulatorXTPN {
                     }
                     launchedXTPN.add(transition);
                 } else {
-                    transition.deactivateXTPN(); // ???
+                    transition.deactivateXTPN(true); // ???
                 }
             }
 
@@ -555,7 +560,7 @@ public class GraphicalSimulatorXTPN {
                     }
                     launchedClassical.add(transition);
                 } else {
-                    transition.deactivateXTPN();
+                    transition.deactivateXTPN(true);
                 }
             }
             launchedTransitions.add(launchedXTPN);
@@ -579,6 +584,8 @@ public class GraphicalSimulatorXTPN {
 
                     arc.setSimulationForwardDirection(true);
                     arc.setTransportingTokens(true);
+
+                    arc.setXTPNprodStatus(true); //ustaw produkcję tokenów na łuku (kolor)
                 }
             }
         }

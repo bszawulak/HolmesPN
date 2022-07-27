@@ -63,6 +63,8 @@ public class Arc extends PetriNetElement {
 
     //XTPN:
     private boolean isXTPN = false;
+    private boolean isXTPNact = false;
+    private boolean isXTPNprod = false;
 
     /**
      * NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR, XTPN
@@ -774,6 +776,20 @@ public class Arc extends PetriNetElement {
 
     public void setXTPNstatus(boolean status) {
         isXTPN = status;
+    }
+
+
+    public void setXTPNactStatus(boolean value) {
+        isXTPNact = value;
+    }
+    public boolean getXTPNactStatus() {
+        return isXTPNact;
+    }
+    public void setXTPNprodStatus(boolean value) {
+        isXTPNprod = value;
+    }
+    public boolean getXTPNprodStatus() {
+        return isXTPNprod;
     }
 
     //********************************************************************************************************

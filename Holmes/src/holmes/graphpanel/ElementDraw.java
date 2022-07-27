@@ -21,6 +21,9 @@ import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.utilities.Tools;
 
+import static holmes.graphpanel.EditorResources.actXTPNcolor;
+import static holmes.graphpanel.EditorResources.prodXTPNcolor;
+
 /**
  * Klasa pomocnicza, odpowiedzialna za operacje rysowania grafiki w panelach dla sieci.
  * @author MR
@@ -1031,16 +1034,19 @@ public final class ElementDraw {
 	
 	/**
 	 * Główna metoda statyczna odpowiedzialna za rysowanie łuku sieci.
-	 * @param arc (Arc) obiekt łuku
-	 * @param g (Graphics2D) obiekt rysujący
-	 * @param sheetId (int) numer arkusza
-	 * @param zoom (int) zoom
-	 * @param eds (ElementDrawSettings) ustawienia rysowania
-	 * @return (Graphics2D) obiekt rysujący
+	 * @param arc (<b>Arc</b>) obiekt łuku
+	 * @param g (<b>Graphics2D</b>) obiekt rysujący
+	 * @param sheetId (<b>int</b>) numer arkusza
+	 * @param zoom (<b>int</b>) zoom
+	 * @param eds (<b>ElementDrawSettings</b>) ustawienia rysowania
+	 * @return (<b>Graphics2D</b>) obiekt rysujący
 	 */
 	public static Graphics2D drawArc(Arc arc, Graphics2D g, int sheetId, int zoom, ElementDrawSettings eds) { //TODO: metoda drawArc
 		if (arc.getLocationSheetId() != sheetId)
 			return g;
+
+		boolean prodSim = arc.getXTPNprodStatus();
+		boolean actSim = arc.getXTPNactStatus();
 
 		Stroke sizeStroke = g.getStroke();
 		ArrayList<Point> breakPoints = arc.accessBreaks();
@@ -1127,15 +1133,16 @@ public final class ElementDraw {
 				g.setStroke(backup);
 			} else {
 				//int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
-				if(arc.isXTPN())
+				if(arc.isXTPN()) {
 					g.setStroke(new BasicStroke(2));
-				else
+				} else {
 					g.setStroke(new BasicStroke(eds.arcSize));
-				if(breaks > 0)
-					drawBreaks(g, arc, startP, (int)xp, (int)yp, breakPoints, breaks);
-				else {
-					if(!arc.layers.isEmpty())
-					{
+				}
+
+				if(breaks > 0) {
+					drawBreaks(g, arc, startP, (int) xp, (int) yp, breakPoints, breaks);
+				} else {
+					if(!arc.layers.isEmpty()) {
 						int move=0;
 						for (Color color : arc.layers) {
 							g.setColor(Color.black);
@@ -1151,20 +1158,36 @@ public final class ElementDraw {
 							move=move+3;
 						}
 						//arc.layers.clear();
-					}else{
-						g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+					} else {
+						if(arc.isXTPN()) {
+							if(actSim) {
+								g.setColor(actXTPNcolor);
+								g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+							} else if(prodSim) {
+								g.setColor(prodXTPNcolor);
+								g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+							} else {
+								g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+							}
+						} else {
+							g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+						}
 					}
 				}
 			}
 			///TODO ZMIENIĆ LOKALIZACJE
 
 		} else {
-			g.setStroke(new BasicStroke(eds.arcSize));
-			if(breaks > 0)
-				drawBreaks(g, arc, startP, (int)xp, (int)yp, breakPoints, breaks);
-			else {
-				if(!arc.layers.isEmpty())
-				{
+			if(arc.isXTPN()) { //łuki XTPN mają grubszą kreskę
+				g.setStroke(new BasicStroke(2));
+			} else {
+				g.setStroke(new BasicStroke(eds.arcSize));
+			}
+
+			if(breaks > 0) {
+				drawBreaks(g, arc, startP, (int) xp, (int) yp, breakPoints, breaks);
+			} else {
+				if(!arc.layers.isEmpty()) {
 					int move=0;
 					for (Color color : arc.layers) {
 						g.setColor(Color.black);
@@ -1181,7 +1204,19 @@ public final class ElementDraw {
 					}
 					//arc.layers.clear();
 				} else {
-					g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+					if(arc.isXTPN()) {
+						if(actSim) { //jeśli łuk jest z miejsca, które podtrzymuje aktywność tranzycji:
+							g.setColor(actXTPNcolor);
+							g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+						} else if(prodSim) { //jeśli łuk jest z tranzycji, która po nim coś wyprodukuje
+							g.setColor(prodXTPNcolor);
+							g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+						} else {
+							g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+						}
+					} else {
+						g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+					}
 				}
 			}
 		}
@@ -1223,7 +1258,14 @@ public final class ElementDraw {
 		if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.READARC ) {
 			if(arc.isXTPN()) {
 				M += 2;
-				g.setColor( new Color(0, 0, 153, 250));
+				if(actSim) {
+					g.setColor( actXTPNcolor );
+				} else if(prodSim) {
+					g.setColor( prodXTPNcolor );
+				} else {
+					g.setColor( new Color(0, 0, 153, 250));
+				}
+
 				xl = endP.x + (endRadius + 20) * alfaCos * sign + M * alfaSin;
 				yl = endP.y + (endRadius + 20) * alfaSin * sign - M * alfaCos;
 				xk = endP.x + (endRadius + 20) * alfaCos * sign - M * alfaSin;
@@ -1408,8 +1450,25 @@ public final class ElementDraw {
 			g.setColor(arc.qSimForcedColor);
 			g.setStroke(new BasicStroke(4));
 		}
+
+		boolean prodSim = arc.getXTPNprodStatus();
+		boolean actSim = arc.getXTPNactStatus();
+
+		if(arc.isXTPN()) {
+			if(actSim) {
+				g.setColor(actXTPNcolor);
+				g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
+			} else if(prodSim) {
+				g.setColor(prodXTPNcolor);
+				g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
+			} else {
+				g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
+			}
+		} else {
+			g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
+		}
 		
-		g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
+		//g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 
 		if(arc.isColorChanged()) {
 			Color oldColor = g.getColor();
@@ -1446,7 +1505,21 @@ public final class ElementDraw {
 
 		for(int b=1; b<breaks; b++) {
 			Point breakPoint = breaksVector.get(b-1);
-			g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
+
+			if(arc.isXTPN()) {
+				if(actSim) {
+					g.setColor(actXTPNcolor);
+					g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
+				} else if(prodSim) {
+					g.setColor(prodXTPNcolor);
+					g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
+				} else {
+					g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
+				}
+			} else {
+				g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
+			}
+			//g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 			g.fillOval(breakPoint.x-3, breakPoint.y-3, 6, 6);
 
 			if(arc.isColorChanged() ) {
@@ -1480,7 +1553,22 @@ public final class ElementDraw {
 			}
 		}
 		Point lastPoint = breaksVector.get(breaks-1);
-		g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
+
+		if(arc.isXTPN()) {
+			if(actSim) {
+				g.setColor(actXTPNcolor);
+				g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
+			} else if(prodSim) {
+				g.setColor(prodXTPNcolor);
+				g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
+			} else {
+				g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
+			}
+		} else {
+			g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
+		}
+
+		//g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 		g.fillOval(lastPoint.x-3, lastPoint.y-3, 6, 6);
 		if(arc.isColorChanged()) {
 			Color oldColor = g.getColor();

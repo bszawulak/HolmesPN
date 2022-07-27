@@ -407,7 +407,6 @@ public class TransitionXTPN extends Transition {
         return isProducing_xTPN;
     }
 
-
     /**
      * Metoda włącza tryb alfa-XTPN dla tranzycji.
      * @param status (<b>boolean</b>) true, jeśli tryb alfa-XTPN ma być aktywny
@@ -535,9 +534,10 @@ public class TransitionXTPN extends Transition {
     }
 
     /**
-     * Deaktywacja tranzycji XTPN. Kiedy przestaje być aktywna z powodu utraty tokenó LUB po wyprodukowaniu
+     * Deaktywacja tranzycji XTPN. Kiedy przestaje być aktywna z powodu utraty tokenów LUB po wyprodukowaniu
+     * @param graphics (<b>boolean</b>) true, jeżeli działamy w trybie graficznym, wtedy czyści kolor łuków wejściowych
      */
-    public void deactivateXTPN() {
+    public void deactivateXTPN(boolean graphics) {
         setActivationStatusXTPN(false);
         if(alphaMode_xTPN) {
             setTimerAlfa_XTPN(-1.0);
@@ -546,6 +546,14 @@ public class TransitionXTPN extends Transition {
         if(betaMode_xTPN) {
             setTimerBeta_XTPN(-1.0);
             setTauBeta_xTPN(-1.0);
+        }
+
+        if(graphics) {
+            ArrayList<Arc> arcs = getInArcs();
+            for (Arc arc : arcs) {
+                arc.setXTPNactStatus(false);
+                //arc.setXTPNprodStatus(false);
+            }
         }
     }
 
