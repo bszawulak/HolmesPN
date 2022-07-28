@@ -21,8 +21,7 @@ import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.utilities.Tools;
 
-import static holmes.graphpanel.EditorResources.actXTPNcolor;
-import static holmes.graphpanel.EditorResources.prodXTPNcolor;
+import static holmes.graphpanel.EditorResources.*;
 
 /**
  * Klasa pomocnicza, odpowiedzialna za operacje rysowania grafiki w panelach dla sieci.
@@ -1133,7 +1132,7 @@ public final class ElementDraw {
 				g.setStroke(backup);
 			} else {
 				//int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
-				if(arc.isXTPN()) {
+				if(arc.isXTPN() || arc.isXTPNinhibitor()) {
 					g.setStroke(new BasicStroke(2));
 				} else {
 					g.setStroke(new BasicStroke(eds.arcSize));
@@ -1160,25 +1159,25 @@ public final class ElementDraw {
 						//arc.layers.clear();
 					} else {
 						if(arc.isXTPN()) {
-							if(actSim) {
-								g.setColor(actXTPNcolor);
-								g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
-							} else if(prodSim) {
-								g.setColor(prodXTPNcolor);
-								g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+							if (actSim) {
+								g.setColor(activationXTPNcolor);
+							} else if (prodSim) {
+								g.setColor(productionXTPNcolor);
 							} else {
-								g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+								g.setColor(arcNeutralXTPNcolor);
 							}
-						} else {
-							g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+						} else if (arc.isXTPNinhibitor()) {
+							g.setColor(inhibitorXTPNcolor);
 						}
+
+						g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
 					}
 				}
 			}
 			///TODO ZMIENIĆ LOKALIZACJE
 
 		} else {
-			if(arc.isXTPN()) { //łuki XTPN mają grubszą kreskę
+			if(arc.isXTPN() || arc.isXTPNinhibitor()) { //łuki XTPN mają grubszą kreskę
 				g.setStroke(new BasicStroke(2));
 			} else {
 				g.setStroke(new BasicStroke(eds.arcSize));
@@ -1206,17 +1205,15 @@ public final class ElementDraw {
 				} else {
 					if(arc.isXTPN()) {
 						if(actSim) { //jeśli łuk jest z miejsca, które podtrzymuje aktywność tranzycji:
-							g.setColor(actXTPNcolor);
-							g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+							g.setColor(activationXTPNcolor);
 						} else if(prodSim) { //jeśli łuk jest z tranzycji, która po nim coś wyprodukuje
-							g.setColor(prodXTPNcolor);
-							g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
-						} else {
-							g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+							g.setColor(productionXTPNcolor);
 						}
-					} else {
-						g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
+					} else if(arc.isXTPNinhibitor()) {
+						g.setColor(inhibitorXTPNcolor);
 					}
+
+					g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
 				}
 			}
 		}
@@ -1259,11 +1256,11 @@ public final class ElementDraw {
 			if(arc.isXTPN()) {
 				M += 2;
 				if(actSim) {
-					g.setColor( actXTPNcolor );
+					g.setColor(activationXTPNcolor);
 				} else if(prodSim) {
-					g.setColor( prodXTPNcolor );
+					g.setColor(productionXTPNcolor);
 				} else {
-					g.setColor( new Color(0, 0, 153, 250));
+					g.setColor(arcNeutralXTPNcolor);
 				}
 
 				xl = endP.x + (endRadius + 20) * alfaCos * sign + M * alfaSin;
@@ -1280,8 +1277,12 @@ public final class ElementDraw {
 		} else if(arc.getArcType() == TypeOfArc.COLOR ) {
 			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
-			
 		} else if (arc.getArcType() == TypeOfArc.INHIBITOR) {
+			if(arc.isXTPNinhibitor()) {
+				g.setColor(inhibitorXTPNcolor);
+				g.setStroke(new BasicStroke(2));
+			}
+
 			int xPos = (int) ((xl + xk)/2);
 	    	int yPos = (int) ((yl + yk)/2);
 	    	int xT = (int) ((xPos - xp)/3.14);
@@ -1456,12 +1457,13 @@ public final class ElementDraw {
 
 		if(arc.isXTPN()) {
 			if(actSim) {
-				g.setColor(actXTPNcolor);
+				g.setColor(activationXTPNcolor);
 				g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 			} else if(prodSim) {
-				g.setColor(prodXTPNcolor);
+				g.setColor(productionXTPNcolor);
 				g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 			} else {
+				g.setColor(arcNeutralXTPNcolor);
 				g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 			}
 		} else {
@@ -1508,12 +1510,13 @@ public final class ElementDraw {
 
 			if(arc.isXTPN()) {
 				if(actSim) {
-					g.setColor(actXTPNcolor);
+					g.setColor(activationXTPNcolor);
 					g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 				} else if(prodSim) {
-					g.setColor(prodXTPNcolor);
+					g.setColor(productionXTPNcolor);
 					g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 				} else {
+					g.setColor(arcNeutralXTPNcolor);
 					g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 				}
 			} else {
@@ -1556,12 +1559,13 @@ public final class ElementDraw {
 
 		if(arc.isXTPN()) {
 			if(actSim) {
-				g.setColor(actXTPNcolor);
+				g.setColor(activationXTPNcolor);
 				g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 			} else if(prodSim) {
-				g.setColor(prodXTPNcolor);
+				g.setColor(productionXTPNcolor);
 				g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 			} else {
+				g.setColor(arcNeutralXTPNcolor);
 				g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 			}
 		} else {

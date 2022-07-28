@@ -72,6 +72,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		xTPNNode.add(new DefaultMutableTreeNode("xPlace"));
 		xTPNNode.add(new DefaultMutableTreeNode("xTransition"));
 		xTPNNode.add(new DefaultMutableTreeNode("xArc"));
+		xTPNNode.add(new DefaultMutableTreeNode("xInhibitor"));
 
 		DefaultMutableTreeNode extArcsNode = new DefaultMutableTreeNode("extended Arcs");
 		extArcsNode.add(new DefaultMutableTreeNode("Inhibitor Arc"));
@@ -177,12 +178,12 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		
 		if(!node.getUserObject().toString().equals("Pointer")) {
 			if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-					"Only Pointer is available when simulator is working.", "Warning") == true) {
+					"Only Pointer is available when simulator is working.", "Warning")) {
 				guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
 				return;
 			}
 			if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
-					"Only Pointer is available when XTPN simulator is working.", "Warning") == true) {
+					"Only Pointer is available when XTPN simulator is working.", "Warning")) {
 				guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
 				return;
 			}
@@ -211,6 +212,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 				case "Modifier Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.ARC_MODIFIER);
 				case "xPlace" -> guiManager.getWorkspace().setGraphMode(DrawModes.XPLACE);
 				case "xArc" -> guiManager.getWorkspace().setGraphMode(DrawModes.XARC);
+				case "xInhibitor" -> guiManager.getWorkspace().setGraphMode(DrawModes.XINHIBITOR);
 				case "xTransition" -> guiManager.getWorkspace().setGraphMode(DrawModes.XTRANSITION);
 				case "Subnet T-type" -> guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_T);
 				case "Subnet P-type" -> guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_P);
@@ -235,7 +237,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 
 		private ImageIcon arcIcon, arcIconRead, arcIconInh, arcIconRst, arcIconEql, arcIconModifier;
 
-		private ImageIcon xPlaceIcon, xTransIcon, xArcIcon;
+		private ImageIcon xPlaceIcon, xTransIcon, xArcIcon, xInhArcIcon;
 		
 		private ImageIcon subnetT, subnetP, subnetPT;
 		
@@ -268,6 +270,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 			xPlaceIcon= Tools.getResIcon16("/icons/xPlaceIcon.gif");
 			xTransIcon = Tools.getResIcon16("/icons/xTransIcon.gif");
 			xArcIcon = Tools.getResIcon16("/icons/xArcIcon.gif");
+			xInhArcIcon = Tools.getResIcon16("/icons/xArcInhIcon.gif");
 			
 			subnetT = Tools.getResIcon16("/icons/subnetT.gif");
 			subnetP = Tools.getResIcon16("/icons/subnetP.gif");
@@ -372,6 +375,10 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 					case "xArc" -> {
 						setIcon(xArcIcon);
 						setToolTipText("xTPN new arc");
+					}
+					case "xInhibitor" -> {
+						setIcon(xInhArcIcon);
+						setToolTipText("xTPN new inhibitor arc");
 					}
 					case "Subnet T-type" -> {
 						setIcon(subnetT);

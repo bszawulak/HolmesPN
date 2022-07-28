@@ -1343,24 +1343,28 @@ public class ProjectReader {
 		// <Arc: NORMAL; P0(0) -> T3(0); 1>
 		String backup = line;
 		boolean XTPNarc = false;
+		boolean XTPNinh = false;
 		try {
 			line = line.replace(" ", "");
 			String[] tab = line.split(";");
 			
 			String typeLine = tab[0];
 			TypeOfArc arcType = TypeOfArc.NORMAL;
-			if(typeLine.contains("READARC"))
+			if(typeLine.contains("READARC")) {
 				arcType = TypeOfArc.READARC;
-			else if(typeLine.contains("INHIBITOR"))
+			} else if(typeLine.contains("INHIBITOR")) {
 				arcType = TypeOfArc.INHIBITOR;
-			else if(typeLine.contains("RESET"))
+			} else if(typeLine.contains("RESET")) {
 				arcType = TypeOfArc.RESET;
-			else if(typeLine.contains("EQUAL"))
+			} else if(typeLine.contains("EQUAL")) {
 				arcType = TypeOfArc.EQUAL;
-			else if(typeLine.contains("META_ARC"))
+			} else if(typeLine.contains("META_ARC")) {
 				arcType = TypeOfArc.META_ARC;
-			else if(typeLine.contains("XTPN")) {
+			} else if(typeLine.contains("XTPN")) {
 				XTPNarc = true;
+			} else if(typeLine.contains("XINH")) {
+				arcType = TypeOfArc.INHIBITOR;
+				XTPNinh = true;
 			}
 			
 			tab[2] = tab[2].replace(">", "");
@@ -1436,6 +1440,8 @@ public class ProjectReader {
 					Arc newArc = new Arc(pEL, tEL, "", weight, arcType);
 					if(XTPNarc)
 						newArc.setXTPNstatus(true);
+					if(XTPNinh)
+						newArc.setXTPNinhibitorStatus(true);
 					
 					newArc.clearBreakPoints();
 					if(tab.length > 3)
@@ -1455,6 +1461,8 @@ public class ProjectReader {
 					Arc newArc = new Arc(pEL, mEL, "", weight, arcType);
 					if(XTPNarc)
 						newArc.setXTPNstatus(true);
+					if(XTPNinh)
+						newArc.setXTPNinhibitorStatus(true);
 					
 					newArc.clearBreakPoints();
 					if(tab.length > 3)
@@ -1475,6 +1483,8 @@ public class ProjectReader {
 						Arc newArc = new Arc(mEL, tEL, "", weight, arcType);
 						if(XTPNarc)
 							newArc.setXTPNstatus(true);
+						if(XTPNinh)
+							newArc.setXTPNinhibitorStatus(true);
 						
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
@@ -1492,6 +1502,8 @@ public class ProjectReader {
 						Arc newArc = new Arc(mEL, pEL, "", weight, arcType);
 						if(XTPNarc)
 							newArc.setXTPNstatus(true);
+						if(XTPNinh)
+							newArc.setXTPNinhibitorStatus(true);
 						
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
@@ -1513,6 +1525,8 @@ public class ProjectReader {
 						Arc newArc = new Arc(tEL, mEL, "", weight, arcType);
 						if(XTPNarc)
 							newArc.setXTPNstatus(true);
+						if(XTPNinh)
+							newArc.setXTPNinhibitorStatus(true);
 						
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
@@ -1532,6 +1546,8 @@ public class ProjectReader {
 						Arc newArc = new Arc(tEL, pEL, "", weight, arcType);
 						if(XTPNarc)
 							newArc.setXTPNstatus(true);
+						if(XTPNinh)
+							newArc.setXTPNinhibitorStatus(true);
 						
 						newArc.clearBreakPoints();
 						if(tab.length > 3)

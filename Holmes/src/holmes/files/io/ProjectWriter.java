@@ -395,6 +395,8 @@ public class ProjectWriter {
 						String arcType = "" + arc.getArcType();
 						if(arc.isXTPN())
 							arcType = "XTPN";
+						if(arc.isXTPNinhibitor())
+							arcType = "XINH";
 
 						Node endNode = arc.getEndNode();
 						if (endNode instanceof Transition) {

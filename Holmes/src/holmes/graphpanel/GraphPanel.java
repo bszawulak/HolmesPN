@@ -53,13 +53,13 @@ public class GraphPanel extends JComponent {
 	private Dimension originSize;
 	private boolean drawMesh = false;
 	private boolean snapToMesh = false;
-	/** TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
-		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER,
-		SUBNET_T, SUBNET_P, SUBNET_PT, CPLACE, CARC, XTRANSITION, XPLACE */
+	/** TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, STOCHASTICTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
+	 ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER, SUBNET_T, SUBNET_P, SUBNET_PT, CPLACE,
+	 CTRANSITION, CARC, XTRANSITION, XPLACE, XARC, XINHIBITOR */
 	public enum DrawModes { POINTER, ERASER, PLACE, 
 		TRANSITION, TIMETRANSITION, FUNCTIONALTRANS, STOCHASTICTRANS, IMMEDIATETRANS, DETERMINISTICTRANS, SCHEDULEDTRANS,
 		ARC, ARC_INHIBITOR, ARC_RESET, ARC_EQUAL, READARC, ARC_MODIFIER, SUBNET_T, SUBNET_P, SUBNET_PT, CPLACE,
-		CTRANSITION, CARC, XTRANSITION, XPLACE, XARC}
+		CTRANSITION, CARC, XTRANSITION, XPLACE, XARC, XINHIBITOR}
 	
 	/** Jeśli nie jest równy null, to znaczy, że właśnie przesuwamy jakiś punkt łamiący łuk */
 	public Point arcBreakPoint = null;
@@ -1050,7 +1050,7 @@ public class GraphPanel extends JComponent {
 							_putStochasticTransition();
 						}
 					}
-					case ARC, XARC -> {
+					case ARC, XARC, XINHIBITOR -> {
 						clearDrawnArc();
 						//overlord.getWorkspace().getProject().restoreMarkingZero();
 					}
@@ -1150,7 +1150,8 @@ public class GraphPanel extends JComponent {
 						|| getDrawMode() == DrawModes.ARC_RESET 
 						|| getDrawMode() == DrawModes.ARC_EQUAL
 						|| getDrawMode() == DrawModes.CARC
-						|| getDrawMode() == DrawModes.XARC) {
+						|| getDrawMode() == DrawModes.XARC
+						|| getDrawMode() == DrawModes.XINHIBITOR) {
 					handleArcsDrawing(el, getDrawMode());
 					
 				} else if (getDrawMode() == DrawModes.ERASER) { //kasowanie czegoś
@@ -1317,20 +1318,23 @@ public class GraphPanel extends JComponent {
 			}
 			
 			if (drawnArc == null) {
-				if(arcType == DrawModes.ARC)
+				if(arcType == DrawModes.ARC) {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
-				else if(arcType == DrawModes.XARC) {
+				} else if(arcType == DrawModes.XARC) {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
 					drawnArc.setXTPNstatus(true);
-				} else if(arcType == DrawModes.READARC)
-					drawnArc = new Arc(clickedLocation, TypeOfArc.READARC);
-				else if(arcType == DrawModes.ARC_INHIBITOR)
+				} else if(arcType == DrawModes.XINHIBITOR) {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.INHIBITOR);
-				else if(arcType == DrawModes.ARC_RESET)
+					drawnArc.setXTPNinhibitorStatus(true);
+				}else if(arcType == DrawModes.READARC) {
+					drawnArc = new Arc(clickedLocation, TypeOfArc.READARC);
+				} else if(arcType == DrawModes.ARC_INHIBITOR) {
+					drawnArc = new Arc(clickedLocation, TypeOfArc.INHIBITOR);
+				} else if(arcType == DrawModes.ARC_RESET) {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.RESET);
-				else if(arcType == DrawModes.ARC_EQUAL)
+				} else if(arcType == DrawModes.ARC_EQUAL) {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.EQUAL);
-				else if(arcType == DrawModes.CARC) {
+				} else if(arcType == DrawModes.CARC) {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
 				}
 			} else {
@@ -1428,7 +1432,8 @@ public class GraphPanel extends JComponent {
 					}
 					
 					if(proceed) { //dokończ rysowanie łuku, dodaj do listy
-						if ((arcType == DrawModes.ARC_INHIBITOR || arcType == DrawModes.ARC_RESET || arcType == DrawModes.ARC_EQUAL) 
+						if ((arcType == DrawModes.ARC_INHIBITOR || arcType == DrawModes.ARC_RESET || arcType == DrawModes.ARC_EQUAL
+								|| arcType == DrawModes.XINHIBITOR)
 								&& clickedLocation.getParentNode() instanceof Place) {
 							JOptionPane.showMessageDialog(null,  "This type of arc can only go FROM place TO transition!", "Problem", 
 									JOptionPane.WARNING_MESSAGE);
@@ -1447,7 +1452,11 @@ public class GraphPanel extends JComponent {
 								arc.setArcType(TypeOfArc.NORMAL);
 								arc.setXTPNstatus(true);
 								getArcs().add(arc);
-							}else if(arcType == DrawModes.READARC) {
+							} else if(arcType == DrawModes.XINHIBITOR) {
+								arc.setArcType(TypeOfArc.INHIBITOR);
+								arc.setXTPNinhibitorStatus(true);
+								getArcs().add(arc);
+							} else if(arcType == DrawModes.READARC) {
 								//arc.setArcType(TypesOfArcs.INHIBITOR);
 								getArcs().add(arc);
 								Arc arc2 = new Arc(IdGenerator.getNextId(), clickedLocation, drawnArc.getStartLocation(), TypeOfArc.READARC);
@@ -1522,7 +1531,7 @@ public class GraphPanel extends JComponent {
 			
 			if ((getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.READARC || getDrawMode() == DrawModes.ARC_INHIBITOR 
 					|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL
-					|| getDrawMode() == DrawModes.CARC || getDrawMode() == DrawModes.XARC)
+					|| getDrawMode() == DrawModes.CARC || getDrawMode() == DrawModes.XARC || getDrawMode() == DrawModes.ARC_INHIBITOR)
 					&& drawnArc != null)
 				return;
 			if (getSelectingRect() != null) {
@@ -1565,7 +1574,7 @@ public class GraphPanel extends JComponent {
 			
 			if ((getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.READARC ||getDrawMode() == DrawModes.ARC_INHIBITOR 
 					|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL 
-					|| getDrawMode() == DrawModes.CARC || getDrawMode() == DrawModes.XARC) && drawnArc != null) {
+					|| getDrawMode() == DrawModes.CARC || getDrawMode() == DrawModes.XARC || getDrawMode() == DrawModes.XINHIBITOR ) && drawnArc != null) {
 				Point movePoint = e.getPoint();
 				movePoint.setLocation(e.getX() * 100 / zoom, e.getY() * 100 / zoom);
 				drawnArc.setEndPoint(movePoint);

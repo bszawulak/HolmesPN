@@ -512,19 +512,23 @@ public class TransitionXTPN extends Transition {
                 } else { //multizbiór ma przynajmniej tyle tokenów ile wynosi waga łuku, sprawdzamy podzbiór aktywujący:
                     if (!isActivationMultiset(arcWeight, arcStartPlace.getGammaMin_xTPN(), arcStartPlace.accessMultiset(), accuracy)) {
                         //jeśli nie istnieje podzbiór aktywujący (powyżej), to:
-                        if(arcType == Arc.TypeOfArc.INHIBITOR) { //to dobrze, że nie ma zbioru, tranzycja wciąż aktywna
-                            //czyli to nic nie znaczy że nie ma podzbioru Akt.: przynajmniej inhibitor nie blokuje
-                        } else {
+                        if(arcType != Arc.TypeOfArc.INHIBITOR) { //jeśli to inhibitor, to ok, jeżeli nie false
                             return false; //brak multizbioru aktywującego, nieaktywna
+                        }
+                    } else { //istnieje zbiór aktywujący
+                        if(arcType == Arc.TypeOfArc.INHIBITOR) {
+                            return false;
                         }
                     }
                 }
             } else { //miejsce traktowane jak klasyczne
                 int startPlaceTokens = arcStartPlace.getNonReservedTokensNumber();
-                if (arcWeight > startPlaceTokens) {
+                if (arcWeight > startPlaceTokens) { //większa waga niż liczba tokenów w miejscu
+                    if(arcType != Arc.TypeOfArc.INHIBITOR) {
+                        return false; //tylko gdy to nie inhibitor
+                    }
+                } else { //waga mniejsza lub równa tokenom
                     if(arcType == Arc.TypeOfArc.INHIBITOR) {
-                        //wciąż aktywna
-                    } else {
                         return false;
                     }
                 }

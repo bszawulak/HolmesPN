@@ -63,6 +63,7 @@ public class Arc extends PetriNetElement {
 
     //XTPN:
     private boolean isXTPN = false;
+    private boolean isXTPNinhibitor = false;
     private boolean isXTPNact = false;
     private boolean isXTPNprod = false;
 
@@ -778,6 +779,13 @@ public class Arc extends PetriNetElement {
         isXTPN = status;
     }
 
+    public boolean isXTPNinhibitor() {
+        return isXTPNinhibitor;
+    }
+
+    public void setXTPNinhibitorStatus(boolean status) {
+        isXTPNinhibitor = status;
+    }
 
     public void setXTPNactStatus(boolean value) {
         isXTPNact = value;
