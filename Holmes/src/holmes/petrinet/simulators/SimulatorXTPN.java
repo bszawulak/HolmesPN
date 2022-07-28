@@ -7,12 +7,18 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.functions.FunctionsTools;
 
-import static holmes.graphpanel.EditorResources.actXTPNcolor;
-
 /**
- * Silnik symulatora XTPN. Procedury odpowiedzialne za symulację modelu
- * opartego na XTPN.
- * @author MR
+ * Silnik symulatora XTPN. Wyobraźmy sobie sieć XTPN. Każda tranzycja ma wartości Alfa (TPN) oraz Beta (DPN), a każde
+ * miejsce ma zakres Gamma. A teraz kombinujemy. Są tranzycje, które nie mają Alfy - to tranzycje DPN. Są też w modelu
+ * tranzycje, które nie mają Bety - to czyste tranzycje TPN. Są miejsce bez wartości Gamma - miejsca klasyczna. Oraz
+ * tranzycje bez Alfa i Beta - tranzycje klasyczne. Te ostatnie moga być typu 'immediate' - natychmiastowe, uruchamiają
+ * się kiedy tylko mogą. Sieć XTPN jest symulowana po przeskokach czasu tau. Gdyby tranzycja klasyczna natychmiastowa
+ * mogła faktycznie z tau=0 się uruchamiać, sieć nie robiła by nic innego i również NIC innego by w niej nie drgnęło nawet.
+ * Wspominałem o łukach odczytu? Mogą być. Łuki hamujące? Też. A teraz czytelniku wyobraź sobie jeden model, który ma
+ * miejsca i tranzycje i łuki tutaj opisane: tranzycje klasyczne natychmiastowe lub nie, tranzycje TPN, DPN, XTPN, miejsca
+ * czasowe i klasyczne. To właśnie robi ten symulator. Chociaż nie do końca. On przeprowadza najważniejsze obliczenia,
+ * ale dycyzje zapadają w innym miejscu, np. w GraphicalSimulatorXTPN->StepLoopPerformerXTPN.actionPerformed().
+ * Z resztą nieważne. Chyba wystarczająco nakreśliłem poziom zaawansowania poniższego kodu.
  */
 public class SimulatorXTPN implements IEngine {
     private GUIManager overlord;
@@ -20,8 +26,8 @@ public class SimulatorXTPN implements IEngine {
     private SimulatorGlobals.SimNetType netSimTypeXTPN = SimulatorGlobals.SimNetType.XTPN;
     private ArrayList<TransitionXTPN> transitions;
     private ArrayList<PlaceXTPN> places;
-    private ArrayList<Integer> transitionsIndexList = null;
-    private ArrayList<TransitionXTPN> launchableTransitions = null;
+    //private ArrayList<Integer> transitionsIndexList = null;
+    //private ArrayList<TransitionXTPN> launchableTransitions = null;
     private IRandomGenerator generator;
 
     private boolean graphicalSimulation = false;
@@ -86,12 +92,12 @@ public class SimulatorXTPN implements IEngine {
         //INIT:
         initiateXTPNtransitions(transitions);
         initiateXTPNplaces(places);
-        transitionsIndexList = new ArrayList<Integer>();
-        launchableTransitions =  new ArrayList<TransitionXTPN>(); //TODO REMOVE
 
-        for(int t = 0; t<transitions.size(); t++) {
-            transitionsIndexList.add(t);
-        }
+        //transitionsIndexList = new ArrayList<Integer>();
+        //launchableTransitions =  new ArrayList<TransitionXTPN>();
+        //for(int t = 0; t<transitions.size(); t++) {
+        //    transitionsIndexList.add(t);
+        //}
     }
 
     private void initiateXTPNtransitions(ArrayList<Transition> inputT) {
@@ -179,7 +185,6 @@ public class SimulatorXTPN implements IEngine {
                             transition.setTimerAlfa_XTPN(0.0);
                             transition.setActivationStatusXTPN(true);
                         }
-                        continue;
                     } else if(transition.isBetaActiveXTPN()) { //tylko typ beta
                         double min = transition.getBetaMin_xTPN();
                         double max = transition.getBetaMax_xTPN();
@@ -188,13 +193,9 @@ public class SimulatorXTPN implements IEngine {
                         transition.setTauBeta_xTPN( rand );
                         transition.setTimerBeta_XTPN(0.0);
                         transition.setProductionStatus_xTPN(true);
-                        continue;
-                    } else { //ani alfa, ani beta
-                        //TODO: immediate or 50/50
-                        //if ((generator.nextInt(100) < 50) || transition.isImmediateXTPN()) {
-                            //classicalInputOnes.add(new NextXTPNstep(transition, -1, 3));
-                            //transition.setProductionStatus_xTPN(true);
-                        //}
+                    } else { //klasyczna wejściowa
+                        classicalInputOnes.add(new NextXTPNstep(transition, -1, 3));
+                        //transition.setProductionStatus_xTPN(true);
 
                         //technicznie typ 3: productionEnds, bo ta tranzycja niczego nie zabierze, ale (być może)
                         //uruchomi się w obliczanym stanie (P=50/50) i wyprodukuje tokeny.
@@ -225,20 +226,10 @@ public class SimulatorXTPN implements IEngine {
                                 transition.setActivationStatusXTPN(true);
                             }
                         } else if(transition.isBetaActiveXTPN()) { // nie jest alfa, to może beta?
-                            double min = transition.getBetaMin_xTPN();
-                            double max = transition.getBetaMax_xTPN();
-                            double rand = getSafeRandomValueXTPN(min, max);
-
-                            transition.setTauBeta_xTPN( rand );
-                            transition.setTimerBeta_XTPN(0.0);
-                            transition.setProductionStatus_xTPN(true);
-                        } else { //nieaktywna, nie wejściowa, może być aktywna, brak alfa i beta -> klasyczna wewnętrzna
-                            //TODO: immediate or 50/50
-                            if ((generator.nextInt(100) < 50) || transition.isImmediateXTPN()) {
-                                //transition.setActivationStatusXTPN(true);
-                            }
+                            transition.setActivationStatusXTPN(true);
                         }
-
+                        //tu jest else, którego nie ma: nieaktywna, nie wejściowa, może być aktywna, brak alfa i beta -> klasyczna wewnętrzna
+                        //będzie dodana do listy produkcji w computeNextState() tak czy owak
                         //jakikolwiek powyższy scenariusz by nie był, jest to aktywna tranzycja, więc:
                         if(graphicalSimulation) { //ustaw zielony kolor łuku
                             ArrayList<Arc> arcs = transition.getInArcs();
@@ -360,6 +351,23 @@ public class SimulatorXTPN implements IEngine {
             double timerBeta = transition.getTimerBeta_XTPN();
             double timeDifference;
 
+            //special case: pure-DPN:
+            if(!transition.isAlphaActiveXTPN() && transition.isActivated_xTPN()) {
+                //czyli w revalidateNetState() stwierdzono że: nie jest wejściowa, nie była aktywna, ale już jest (tokeny)
+                //oraz nie ma Alfy - ustawiono status Activated ale jeszcze bez timerów
+                timeDifference = 0.0; //"maximum firing mode DPN"
+                if(currentMinTime - timeDifference > 0 &&
+                        !(Math.abs(currentMinTime - timeDifference) < sg.getCalculationsAccuracy())) {
+                    placesMaturity.clear();
+                    placesAging.clear();
+                    transProdStart.clear();
+                    transProdEnd.clear();
+                    currentMinTime = timeDifference;
+                }
+                transProdStart.add(new NextXTPNstep(transition, timeDifference, 2));
+                continue;
+            }
+
             if(transition.isAlphaActiveXTPN() && transition.isActivated_xTPN()) { //tylko dla Alfa-TPN i to tych aktywnych
                 timeDifference = tauAlpha - timerAlpha;
                 assert (timeDifference >= 0);
@@ -458,15 +466,12 @@ public class SimulatorXTPN implements IEngine {
         for(TransitionXTPN transition : transitions) {
             if(transition.isAlphaActiveXTPN() && transition.isActivated_xTPN()) { //aktywna tranzycja Alfa
                 transition.updateTimerAlfa_XTPN(tau);
-
-                //transition.setActivationStatusXTPN(true);
                 continue;
             }
 
             if(transition.isBetaActiveXTPN() && transition.isProducing_xTPN()) { //produkująca tranzycja Beta
                 transition.updateTimerBeta_XTPN(tau);
                 transition.setProductionStatus_xTPN(true);
-                continue;
             }
         }
     }
@@ -546,10 +551,9 @@ public class SimulatorXTPN implements IEngine {
         // produkujące: 3, 4 oraz 5
         ArrayList<TransitionXTPN> consumingTokensTransitionsXTPN = new ArrayList<>();
         for(NextXTPNstep element : nextXTPNsteps.get(2)) {
-            //if(!((Transition)element.nodeTP).isInputTransition()) {// jeśli NIE jest to tranzycja wejściowa:
             consumingTokensTransitionsXTPN.add((TransitionXTPN) element.nodeTP);
-            //}
         }
+
         Collections.shuffle(consumingTokensTransitionsXTPN);
         return consumingTokensTransitionsXTPN;
     }
@@ -576,9 +580,11 @@ public class SimulatorXTPN implements IEngine {
         for(NextXTPNstep element : nextXTPNsteps.get(3)) {
             producingTokensTransitions.add((TransitionXTPN) element.nodeTP);
         }
-        for(NextXTPNstep element : nextXTPNsteps.get(4)) {
-            producingTokensTransitions.add((TransitionXTPN) element.nodeTP);
-        }
+        //poniższy kod już niepotrzebny, tranzycja i tak jest pod .get(5), a wektor spod .get(4) służy tylko
+        //do tego, aby wiedzieć czy to nie koniec symulacji i jest cokolwiek do uruchomienia
+        //for(NextXTPNstep element : nextXTPNsteps.get(4)) {
+        //    producingTokensTransitions.add((TransitionXTPN) element.nodeTP);
+        //}
         for(NextXTPNstep element : nextXTPNsteps.get(5)) {
             producingTokensTransitions.add((TransitionXTPN) element.nodeTP);
         }

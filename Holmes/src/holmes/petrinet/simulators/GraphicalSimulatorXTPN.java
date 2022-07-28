@@ -14,8 +14,6 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.functions.FunctionsTools;
 import holmes.windows.HolmesNotepad;
 
-import static holmes.graphpanel.EditorResources.prodXTPNcolor;
-
 /**
  * Symulator XTPN. Odpowiada na bardzo mądre pytania, na przykład w stylu: czy jak stanę na torach,
  * i chwycę się linii trakcyjnej, to pojadę jak tramwaj?
@@ -359,7 +357,7 @@ public class GraphicalSimulatorXTPN {
     }
 
     /**
-     *  @author MR
+     *  Główna podklasa symulacji. Bo tak.
      */
     private class StepLoopPerformerXTPN extends SimulationPerformer {
         private boolean loop;
@@ -413,7 +411,6 @@ public class GraphicalSimulatorXTPN {
                             "Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
-
                 //TUTAJ NASTĘPUJE UPDATE STANU O WYLICZONĄ WCZEŚNIEJ WARTOŚĆ +TAU (infoNode.timeToChange)
                 //teraz trzeba uaktualnić stan sieci (poza usunięciem tokenów starych, to na samym końcu,
                 //może coś je zje przedtem:
@@ -467,7 +464,6 @@ public class GraphicalSimulatorXTPN {
                     }
                 }
             }
-
             if(addPhase) {
                 if(repaintSteps == 0) {
                     prepareProductionPhaseGraphics();
@@ -537,11 +533,44 @@ public class GraphicalSimulatorXTPN {
                     launchedXTPN.add(transition);
                 } else {
                     transition.deactivateXTPN(true); // ???
+                    transition.setActivationStatusXTPN(false);
+                    transition.setProductionStatus_xTPN(false);
+
+                    if(producingTokensTransitionsAll.contains(transition)) {
+                        producingTokensTransitionsAll.remove(transition);
+                    }
+
                 }
             }
 
+            //mechanizm bezpieczeństwa, COŚ musi się uruchomić w tym kroku, jeżeli tutaj jesteśmy:
+            boolean mustFireSOMETHING = false;
+            int activatedXTPN = consumingTokensTransitionsXTPN.size();
+            int producedXTPN = producingTokensTransitionsAll.size() - 1;
+            //minus 1, bo ta sama tranzycja w consumingTokensTransitionsClassical na pewno jest w producingTokensTransitionsAll
+            //skoro to klasyczna (NAWET, gdy jest wejściowa)
+            double time = infoNode.timeToChange;
+
+            if(activatedXTPN == 0 && producedXTPN == 0 && time == 0.0) { //XTPN components - dead
+                mustFireSOMETHING = true;
+            }
+
+            int fireClassSoFar = 0;
             for (TransitionXTPN transition : consumingTokensTransitionsClassical) { //lista tych, które zabierają tokeny
+                if(mustFireSOMETHING && fireClassSoFar == 0) {
+                    //czyli: MUSIMY coś uruchomić i jeszcze NIC nie uruchomiliśmy:
+                    //NIC... najważniejszy, że else zostanie zignorowany, potem już możemy być uczciwi
+                } else { //tu bawimy się w bycie uczciwym (chyba, że tranzycja immediate)
+                    if ((engineXTPN.getGenerator().nextInt(100) < 50) && !transition.isImmediateXTPN()) {
+                        //non immediate classical: 50% chances to fire
+                        transition.deactivateXTPN(true);
+                    }
+                    continue;
+                }
+
+
                 if(transition.getActiveStatusXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
+                    fireClassSoFar++;
                     transition.setLaunching(true);
                     arcs = transition.getInArcs();
                     for (Arc arc : arcs) {
@@ -589,6 +618,24 @@ public class GraphicalSimulatorXTPN {
                 }
             }
         }
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         /*
         private void testDzialaniaSymulacji() { //for training purposes only, if u dont know how simulator works
@@ -691,5 +738,3 @@ public class GraphicalSimulatorXTPN {
             }
         }
         */
-    }
-}
