@@ -3,7 +3,6 @@ package holmes.adam.mct;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class MCTNode implements Comparable<MCTNode>
 {
 	private static Pattern crg = Pattern.compile("^([0-9]+)\\..*");

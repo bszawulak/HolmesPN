@@ -3,9 +3,7 @@ package holmes.adam.mct;
 import java.util.*;
 
 public class MCTSet implements Comparable <MCTSet> {
-	
 	private static int seq = 1;
-	
 	private static class CompareMCT implements Comparator<MCTSet> {
 		private final int bySize;
 		@Override
@@ -21,11 +19,11 @@ public class MCTSet implements Comparable <MCTSet> {
 		{
 			this.bySize = bySize;
 		}
-	};
+	}
 	
 	public static final Comparator<MCTSet> COMP_DEFAULT_BY_SEQ = new CompareMCT(0);
 	public static final Comparator<MCTSet> COMP_BY_SIZE_DESCENDING = new CompareMCT(-1);
-	public static final Comparator<MCTSet> COMP_BY_SIZE_ASCENDING = new CompareMCT(1);
+	//public static final Comparator<MCTSet> COMP_BY_SIZE_ASCENDING = new CompareMCT(1);
 	private static final String MCT_NAME_PREFIX = "m";
 	
 	public final int id;
@@ -62,7 +60,7 @@ public class MCTSet implements Comparable <MCTSet> {
 		sb.append("={");
 		for (MCTTransition tr : set)
 		{
-			sb.append(tr.id + ", ");
+			sb.append(tr.id).append(", ");
 		}
 		sb.deleteCharAt(sb.length() - 1);
 		sb.deleteCharAt(sb.length() - 1);
@@ -103,14 +101,10 @@ public class MCTSet implements Comparable <MCTSet> {
 	
 	public static SortedSet<MCTSet> rebuildMctOrder(SortedSet<MCTSet> mctSets, Comparator<MCTSet> comp)
 	{
-		ArrayList<MCTSet> bySize = new ArrayList<MCTSet>();
-		for (MCTSet mct : mctSets)
-		{
-			bySize.add(mct);
-		}
+		ArrayList<MCTSet> bySize = new ArrayList<MCTSet>(mctSets);
 		int seq = 1;
 		
-		Collections.sort(bySize, comp);
+		bySize.sort(comp);
 		SortedSet<MCTSet> result = new TreeSet<MCTSet>();
 		for (MCTSet mct : bySize)
 		{

@@ -60,7 +60,7 @@ public class ClusteringExtended {
 	 */
 	public ArrayList<Integer> getMCTFrequencyInCluster(int clusterIndex) {
 		ArrayList<Integer> result = new ArrayList<Integer>();
-		
+
 		for(int mctInd=0; mctInd < mctSets.size(); mctInd++) {
 			ArrayList<Integer> mctRow = mctSets.get(mctInd); //numery tranzycji MCT
 			//teraz, dla każdego inwariantu klastra należy sprawdzić, czy mctRow choć
@@ -72,12 +72,11 @@ public class ClusteringExtended {
 			for(int invInd=0; invInd < rowSize; invInd++) {
 				int invIndex = invRow.get(invInd);
 				ArrayList<Integer> transRow = csvInvariants.get(invIndex);
-				
+
 				boolean isMCTinInv = isSubset(mctRow, transRow);
 				if(isMCTinInv) {
 					mctCounterInCluster++;
 				}
-
 			}
 			result.add(mctCounterInCluster);
 		}
@@ -167,7 +166,7 @@ public class ClusteringExtended {
 		//z wyjątkiem I miejsca
 		
 		result.add("Inv. #"+invRow.get(0));
-		String mctCell = "[";
+		StringBuilder mctCell = new StringBuilder("[");
 
 		boolean alreadyCried = false;
 		
@@ -183,14 +182,14 @@ public class ClusteringExtended {
 			}
 			
 			if(mctPartsFound == mctSize) {//dany MCT występuje w inwariancie
-				mctCell += (mct+1)+",";
+				mctCell.append(mct + 1).append(",");
 				//usuwanie śladów po MCT w inwariancie:
 				for(int tr=0; tr < mctVector.size(); tr++) { //powtórka z poprzednich iteracji
 					int transToRemove = mctVector.get(tr);
 					int oldValue = invRow.get(transToRemove);
 					if(oldValue > 1) {
 						//Hmm, dziwne. A przynajmniej odkryliśmy coś, co zainteresuje Adama.
-						if(alreadyCried == false) 
+						if(!alreadyCried)
 							alreadyCried=true;
 							//GUIManager.getDefaultGUIManager().log("Logical error MCT:invariant:transition in inv "+invRow.get(0), "warning",true);
 						
@@ -199,9 +198,9 @@ public class ClusteringExtended {
 				}
 			}
 		}
-		mctCell += "]";
-		mctCell = mctCell.replace(",]", "]");
-		result.add(mctCell);
+		mctCell.append("]");
+		mctCell = new StringBuilder(mctCell.toString().replace(",]", "]"));
+		result.add(mctCell.toString());
 		
 		for(int i=1; i<invRow.size(); i++) { // po wszystkich pozostałych tranzycjach
 			if(invRow.get(i) > 0) {
@@ -292,8 +291,7 @@ public class ClusteringExtended {
 	 */
 	private ArrayList<Color> getColorsForTransitions(ArrayList<Double> clusterTransitions, double value) {
 		ArrayList<Color> colors = new ArrayList<Color>();
-		double max = value;
-		double step = max / 10;
+		double step = value / 10;
 		
 		for(int i=0; i<clusterTransitions.size(); i++) {
 			double power = clusterTransitions.get(i);
@@ -326,12 +324,10 @@ public class ClusteringExtended {
 	 * @param value double - wartość referencyjna
 	 * @return ArrayList[Color] - wektor kolorów
 	 */
-	public ArrayList<Color> getColorScale(ArrayList<Double> clusterTransitions, double value)
-	{
-		double max = value;
+	public ArrayList<Color> getColorScale(ArrayList<Double> clusterTransitions, double value) {
 		double blue = 0.0;
-		double green = 0.0;
-		double red = 0.0;
+		double green;
+		double red;
 		ArrayList<Color> colors = new ArrayList<Color>();
 		for(int i=0; i<clusterTransitions.size(); i++) {
 			double trValue = clusterTransitions.get(i);
@@ -341,7 +337,7 @@ public class ClusteringExtended {
 				continue;
 			}
 			
-			double power = trValue / max; //od 0 do 1.
+			double power = trValue / value; //od 0 do 1.
 			power = 1 - power;
 			
 			if(power >= 0 && power < 0.5) {
@@ -422,7 +418,7 @@ public class ClusteringExtended {
 	 * @return boolean - true, jeśli zbiór MCT wchodzi w skład inwariantu
 	 */
 	private boolean isSubset(ArrayList<Integer> subset, ArrayList<Integer> superset) {
-		boolean transFound = false;
+		boolean transFound;
 		//int supersetSize = superset.size();
 		for(int i=0; i<subset.size(); i++) { //dla każdej tranzycji z MCT
 			transFound = false;
@@ -440,7 +436,7 @@ public class ClusteringExtended {
 					// operującymi na setkach tysięcy liczb jest błąd. Zapewne dość niewielki...
 				}
 			}
-			if(transFound == false) { //jeśli powyższa pętla nie znalazła tranzycji z MCT w inwariancie
+			if(!transFound) { //jeśli powyższa pętla nie znalazła tranzycji z MCT w inwariancie
 				return false;
 			}
 		}

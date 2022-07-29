@@ -625,6 +625,8 @@ public class GraphicalSimulator {
 		timer.stop();
 		previousSimStatus = simulatorStatus;
 		setSimulatorStatus(SimulatorMode.STOPPED);
+
+		setSimulationActive(false);
 		
 		nsl.logSimStopped(timeCounter);
 	}

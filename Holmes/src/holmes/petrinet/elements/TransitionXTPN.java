@@ -557,7 +557,6 @@ public class TransitionXTPN extends Transition {
             ArrayList<Arc> arcs = getInArcs();
             for (Arc arc : arcs) {
                 arc.setXTPNactStatus(false);
-                //arc.setXTPNprodStatus(false);
             }
         }
     }

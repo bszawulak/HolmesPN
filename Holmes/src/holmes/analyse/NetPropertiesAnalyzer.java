@@ -14,9 +14,6 @@ import holmes.petrinet.elements.Transition;
 /**
  * Klasa odpowiedzialna za analizę właściwości sieci Petriego. Tworzona ręcznie, do działania
  * wymaga istniejących: miejsc, tranzycji oraz łuków (niepuste zbiory).
- * @author students
- * @author MR - porządek w klasie, dodanie opisów i działającego sprawdzania CN i SCN oraz cała masa
- *  niezbędnych poprawek błędów które tu były
  *
  */
 public class NetPropertiesAnalyzer {
@@ -247,8 +244,11 @@ public class NetPropertiesAnalyzer {
 		// ORD
 		boolean isOrdinary = true;
 		for (Arc a : arcs)
-			if (a.getWeight() != 1)
+			if (a.getWeight() != 1) {
 				isOrdinary = false;
+				break;
+			}
+
 		ordProp.set(1, isOrdinary);
 
 		// HOM - homogenous net
@@ -278,8 +278,10 @@ public class NetPropertiesAnalyzer {
 						valOut = a.getWeight();
 
 			}
-			if (valOut > valIn)
+			if (valOut > valIn) {
 				isNonBlockingMulti = false;
+				break;
+			}
 		}
 		nbmProp.set(1, isNonBlockingMulti);
 
@@ -294,8 +296,10 @@ public class NetPropertiesAnalyzer {
 				for (Arc a : el.getOutArcs())
 					arcOut += a.getWeight();
 			}
-			if (arcIn != arcOut)
+			if (arcIn != arcOut) {
 				isConservative = false;
+				break;
+			}
 		}
 		csvProp.set(1, isConservative);
 

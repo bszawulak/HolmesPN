@@ -32,9 +32,10 @@ import holmes.petrinet.simulators.SimulationStep;
  * @author students
  *
  */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class InvariantsSimulator {
 	private NetType simulationType;
-	private SimulatorMode mode = SimulatorMode.STOPPED;
+	private SimulatorMode mode;
 	private SimulatorMode previousMode = SimulatorMode.STOPPED;
 	private SimulatorType simType = SimulatorType.TIME;
 
@@ -49,7 +50,7 @@ public class InvariantsSimulator {
 	private boolean maximumMode = false;
 
 	public static int DEFAULT_COUNTER = 50;
-	public int stepValue = 0;
+	public int stepValue;
 
 	public JFrame timeFrame = new JFrame("Zegar");
 
@@ -99,8 +100,7 @@ public class InvariantsSimulator {
 	 * @param st int - rodzaj symulacji
 	 * @param simV int - krok
 	 */
-	public InvariantsSimulator(NetType type, PetriNet net,
-			ArrayList<ArrayList<InvariantTransition>> inv, int st, int simV) {
+	public InvariantsSimulator(NetType type, PetriNet net, ArrayList<ArrayList<InvariantTransition>> inv, int st, int simV) {
 		simulationType = type;
 		petriNet = net;
 		invariants = inv;
@@ -139,17 +139,11 @@ public class InvariantsSimulator {
 	 */
 	public void setSimulatorNetType(int type) {
 		switch (type) {
-		case (0):
-			simulationType = NetType.BASIC;
-			break;
-
-		case (1):
-			simulationType = NetType.TIME;
-			break;
+			case (0) -> simulationType = NetType.BASIC;
+			case (1) -> simulationType = NetType.TIME;
 		}
 
 	}
-
 
 	/**
 	 * Metoda rozpoczynająca symulację inwariantów.
@@ -171,25 +165,15 @@ public class InvariantsSimulator {
 		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
 		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
 		switch (getMode()) {
-		case LOOP:
-			taskPerformer = new StepPerformer(true,simType,stepValue);
-			break;
-		case SINGLE_TRANSITION_LOOP:
-			taskPerformer = new SingleTransitionPerformer(true);
-			break;
-		case SINGLE_TRANSITION:
-			taskPerformer = new SingleTransitionPerformer();
-			break;
-		case STEP:
-			taskPerformer = new StepPerformer();
-			break;
-		case ACTION_BACK:
-			taskPerformer = new StepBackPerformer();
-			break;
-		case LOOP_BACK:
-			launchingTransitions.clear();
-			taskPerformer = new StepBackPerformer(true);
-			break;
+			case LOOP -> taskPerformer = new StepPerformer(true, simType, stepValue);
+			case SINGLE_TRANSITION_LOOP -> taskPerformer = new SingleTransitionPerformer(true);
+			case SINGLE_TRANSITION -> taskPerformer = new SingleTransitionPerformer();
+			case STEP -> taskPerformer = new StepPerformer();
+			case ACTION_BACK -> taskPerformer = new StepBackPerformer();
+			case LOOP_BACK -> {
+				launchingTransitions.clear();
+				taskPerformer = new StepBackPerformer(true);
+			}
 		}
 		setTimer(new Timer(getDelay(), taskPerformer));
 		getTimer().start();
@@ -210,7 +194,6 @@ public class InvariantsSimulator {
 		return launchingTransitions;
 	}
 
-	@SuppressWarnings("unused")
 	/**
 	 * Metoda generująca zbiór tranzycji do uruchomienia.
 	 * @return ArrayList[Transition] - zbiór tranzycji
@@ -221,7 +204,7 @@ public class InvariantsSimulator {
 		ArrayList<Transition> allTransitions = petriNet.getTransitions();
 		ArrayList<Integer> indexList = new ArrayList<Integer>();
 		int i = 0;
-		for (Transition transition : allTransitions) {
+		for (Transition ignored : allTransitions) {
 			indexList.add(i);
 			i++;
 		}
@@ -292,12 +275,11 @@ public class InvariantsSimulator {
 
 	/**
 	 * 
-	 * @param t
-	 * @param list
-	 * @return ArrayList[Transition]
+	 * @param t (<b>Transition</b>)
+	 * @param list (<b>ArrayList[Transition]</b>)
+	 * @return (<b>ArrayList[Transition]</b>)
 	 */
-	public ArrayList<Transition> searchConflict(Transition t,
-			ArrayList<Transition> list) {
+	public ArrayList<Transition> searchConflict(Transition t, ArrayList<Transition> list) {
 		return null;
 	}
 
@@ -367,11 +349,10 @@ public class InvariantsSimulator {
 
 	/**
 	 * 
-	 * @param transitions
-	 * @param backtracking
+	 * @param transitions (<b>ArrayList[Transition]</b>)
+	 * @param backtracking (<b>boolean</b>)
 	 */
-	public void launchAddPhaseGraphics(ArrayList<Transition> transitions,
-			boolean backtracking) {
+	public void launchAddPhaseGraphics(ArrayList<Transition> transitions, boolean backtracking) {
 		ArrayList<Arc> arcs;
 		for (Transition tran : transitions) {
 			tran.setLaunching(true);
@@ -777,7 +758,7 @@ public class InvariantsSimulator {
 											
 											for ( int tr = 0 ; tr < invariants.get(invariant).size();tr++)
 											{
-												if(generatedInvariants.get(invariant)[tr]!=invariants.get(invariant).get(tr).getAmountOfFirings())
+												if(generatedInvariants.get(invariant)[tr] != invariants.get(invariant).get(tr).getAmountOfFirings())
 													ready = false;
 												if(generatedInvariants.get(invariant)[tr]>invariants.get(invariant).get(tr).getAmountOfFirings())
 													toomany = true;
@@ -923,13 +904,11 @@ public class InvariantsSimulator {
 		}
 	}
 	
-	public class InvariantsWriter{
+	public static class InvariantsWriter{
 		String zawartoscPliku = "";
 		public void write(ArrayList<ArrayList<InvariantTransition>> invariants, ArrayList<Integer> counterOfInvariants) {
 			try {
-				@SuppressWarnings("unused")
-				Date date = new Date();
-				
+				//Date date = new Date();
 				DateFormat df = new SimpleDateFormat("MM_dd_yyyy_HH_mm_ss");
 				Date today = Calendar.getInstance().getTime();        
 				String saveDate = df.format(today);	

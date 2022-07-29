@@ -12,7 +12,6 @@ import holmes.petrinet.elements.Transition.TransitionType;
  * @author MR
  */
 public class TimeComputations {
-
 	/**
 	 * Metoda zwraca wektor danych czasowych dla t-inwariantu.
 	 * @param invariant ArrayList[Integer] - t-inwariant

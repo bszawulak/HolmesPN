@@ -51,8 +51,6 @@ public class InvariantsCalculator implements Runnable {
     private ArrayList<ArrayList<Integer>> doubleArcs;
 
     private boolean t_InvMode;
-    private int aac = 0;
-    private int naac = 0;
 
     private int newRejected = 0;
     private int oldReplaced = 0;
@@ -141,7 +139,7 @@ public class InvariantsCalculator implements Runnable {
                 this.calculateInvariants();
             }
         } catch (Exception e) {
-            log("Invariants generation failed.", "warning", false);
+            overlord.log("InvModule: Invariants generation failed.", "warning", true);
             logInternal("Invariants generation failed.\n", true);
         }
     }
@@ -347,7 +345,7 @@ public class InvariantsCalculator implements Runnable {
                 overlord.markNetChange();
             }
         } catch (Exception e) {
-            log("Invariants generation failed.", "warning", false);
+            overlord.log("InvModule: Invariants generation failed.", "warning", true);
             logInternal("Invariants generation failed.\n", true);
         } finally {
             masterWindow.resetInvariantGenerator(); //odłącz obiekt
@@ -421,12 +419,12 @@ public class InvariantsCalculator implements Runnable {
             }
 
             if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION) {
-                tPosition = transitionsMap.get(oneArc.getStartNode());
-                pPosition = placesMap.get(oneArc.getEndNode());
+                tPosition = transitionsMap.get((Transition)oneArc.getStartNode());
+                pPosition = placesMap.get((Place)oneArc.getEndNode());
                 incidenceValue = oneArc.getWeight();
             } else { //miejsca
-                tPosition = transitionsMap.get(oneArc.getEndNode());
-                pPosition = placesMap.get(oneArc.getStartNode());
+                tPosition = transitionsMap.get((Transition)oneArc.getEndNode());
+                pPosition = placesMap.get((Place)oneArc.getStartNode());
                 incidenceValue = -1 * oneArc.getWeight();
             }
 
@@ -549,7 +547,7 @@ public class InvariantsCalculator implements Runnable {
      */
 
 
-    public void calculateSecondNetInvariants(PetriNet pn) {
+    public void calculateSecondNetInvariants() {
         // Etap I - miejsca 1-in 1-out
         ArrayList<ArrayList<Integer>> generatedRows;
         logInternal("Phase I inititated. Performing only for all 1-in/1-out columns.\n", false);
@@ -1008,7 +1006,6 @@ public class InvariantsCalculator implements Runnable {
      */
     private void rewriteIncidenceIntegrityMatrices(ArrayList<ArrayList<Integer>> newRowsMatrix, int columnIndex) {
         if (newRowsMatrix.size() == 0) {
-            naac++;
             return; //nothing to add;
         }
         //jeśli są nowe wiersze do dodania:
@@ -1060,8 +1057,6 @@ public class InvariantsCalculator implements Runnable {
                 mSize--;
             }
         }
-
-        aac++; //actively annuled columns
     }
 
     /**
@@ -1200,21 +1195,6 @@ public class InvariantsCalculator implements Runnable {
     public ArrayList<ArrayList<Integer>> getDoubleArcs() {
         this.createTPIncidenceAndIdentityMatrix(true, true);
         return doubleArcs;
-    }
-
-    /**
-     * Metoda zapisująca komunikaty w oknie logów.
-     *
-     * @param msg   String - wiadomość
-     * @param type  String - klasa wiadomości
-     * @param clean boolean - true jeśli ma być bez daty
-     */
-    private void log(String msg, String type, boolean clean) {
-        if (clean) {
-            overlord.log(msg, type, false);
-        } else {
-            overlord.log("InvModule: " + msg, type, true);
-        }
     }
 
     /**

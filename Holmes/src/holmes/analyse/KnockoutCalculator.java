@@ -47,7 +47,7 @@ public class KnockoutCalculator {
 					for(int t=0; t<transNumber; t++) { // dla każdej tranzycji
 						if(calc_invariants.get(i).get(t) > 0) {
 							Transition knockedout = calc_transitions.get(t);
-							if(resultSet.contains(knockedout) == false) {
+							if(!resultSet.contains(knockedout)) {
 								resultSet.add(knockedout);
 							}
 						}

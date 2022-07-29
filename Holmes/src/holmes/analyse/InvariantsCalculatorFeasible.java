@@ -25,8 +25,7 @@ import holmes.windows.HolmesInvariantsGenerator;
  *
  */
 public class InvariantsCalculatorFeasible {
-	private HolmesInvariantsGenerator masterWindow = null;
-	
+	private HolmesInvariantsGenerator masterWindow;
 	private String status = "";
 	private boolean success = false;
 	private ArrayList<ArrayList<Integer>> invariants;
@@ -35,7 +34,7 @@ public class InvariantsCalculatorFeasible {
 	private ArrayList<ArrayList<Integer>> f_invariantsCreated;
 	private ArrayList<Transition> transitions;
 	private ArrayList<Integer> readArcTransLocations;
-	private boolean tInv = true;
+	private boolean tInv;
 	
 	private boolean allowSelfPropelledInvariants = true;
 	private int selfPropInvariants = 0;
@@ -54,7 +53,7 @@ public class InvariantsCalculatorFeasible {
 	
 	/**
 	 * Metoda startowa szukania zbioru inwariantów wykonalnych.
-	 * @return
+	 * @return (<b>ArrayList[ArrayList[Integer]]</b>) zbiór feasible invariants.
 	 */
 	public ArrayList<ArrayList<Integer>> getMinFeasible(int mode) {
 		ArrayList<Integer> arcClassCount = Check.getArcClassCount();
@@ -64,15 +63,12 @@ public class InvariantsCalculatorFeasible {
 			return invariants;
 		}
 		
-		if(tInv == true) {
+		if(tInv) {
 			transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 			//places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 			readArcTransLocations = getReadArcTransitions();
-			
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisFeasibleSelfPropAccepted").equals("1"))
-				allowSelfPropelledInvariants = true;
-			else
-				allowSelfPropelledInvariants = false;
+
+			allowSelfPropelledInvariants = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisFeasibleSelfPropAccepted").equals("1");
 			
 			if(mode == 0)
 				searchFTInvSimple();
@@ -101,36 +97,34 @@ public class InvariantsCalculatorFeasible {
 	 */
 	private void searchFTInvSimple() {
 		partitionInvariants();
-		
-		int size = non_feasibleInv.size();
-		for(int i=0; i<size; i++) {
+
+		for (ArrayList<Integer> integers : non_feasibleInv) {
 			ArrayList<ArrayList<Integer>> invToCombine = new ArrayList<ArrayList<Integer>>(); //lista znalezionych
-			ArrayList<Integer> nonFInvariant = non_feasibleInv.get(i);
-			ArrayList<Integer> nonFInvSupport = InvariantsTools.getSupport(nonFInvariant);
-			ArrayList<Integer> trans_RA = getInfeasibleTransitions(nonFInvariant);
-			
+			ArrayList<Integer> nonFInvSupport = InvariantsTools.getSupport(integers);
+			ArrayList<Integer> trans_RA = getInfeasibleTransitions(integers);
+
 			//zidentyfikuj ile miejsc jest związanych z każdą tranzycją (może być więcej niż 1!)
 			ArrayList<Place> places_RA = getRA_Places(trans_RA);
 			//dla każdego z powyższych miejsc należy zapewnić tokeny poprzez minimalne inwarianty
-			
-			for(Place pl : places_RA) {
+
+			for (Place pl : places_RA) {
 				ArrayList<Integer> connectedTransitions = getConnectedTransitionsSet(pl);
-				
-				if(allowSelfPropelledInvariants == true) {
-					if(intersection(nonFInvSupport, connectedTransitions).size() > 0) {
+
+				if (allowSelfPropelledInvariants) {
+					if (intersection(nonFInvSupport, connectedTransitions).size() > 0) {
 						continue;
 					}
 				}
-				
+
 				ArrayList<Integer> minimalFeasibleInvariant = findMinFeasibleSimple(connectedTransitions);
-				
-				if(invToCombine.contains(minimalFeasibleInvariant) == false)
+
+				if (!invToCombine.contains(minimalFeasibleInvariant))
 					invToCombine.add(minimalFeasibleInvariant);
 			}
-			invToCombine.add(nonFInvariant);
-			
-			if(invToCombine.size() == 1) {
-				feasibleInv.add(nonFInvariant);
+			invToCombine.add(integers);
+
+			if (invToCombine.size() == 1) {
+				feasibleInv.add(integers);
 				selfPropInvariants++;
 			} else {
 				ArrayList<Integer> newFeasible = createFeasibleInvariant(invToCombine);
@@ -145,75 +139,73 @@ public class InvariantsCalculatorFeasible {
 	private void searchFTInvAdvanced() {
 		partitionInvariants();
 		f_invariantsCreated = new ArrayList<ArrayList<Integer>>();
-		
-		int nonFeasibleNumber = non_feasibleInv.size();
-		for(int i=0; i<nonFeasibleNumber; i++) {
+
+		for (ArrayList<Integer> integers : non_feasibleInv) {
 			ArrayList<ArrayList<Integer>> invToCombine = new ArrayList<ArrayList<Integer>>(); //lista znalezionych
-			ArrayList<Integer> nonFInvariant = non_feasibleInv.get(i); 
-			ArrayList<Integer> trans_RA = getInfeasibleTransitions(nonFInvariant);
-			
+			ArrayList<Integer> trans_RA = getInfeasibleTransitions(integers);
+
 			//zidentyfikuj ile miejsc jest związanych z każdą tranzycją (może być więcej niż 1!)
 			ArrayList<Place> places_RA = getRA_Places(trans_RA);
-			
+
 			//dla każdego z powyższych miejsc należy zapewnić tokeny poprzez minimalne inwarianty
 			ArrayList<ArrayList<Integer>> connectedTransitionsSet = new ArrayList<ArrayList<Integer>>();
-			for(Place pl : places_RA) {
+			for (Place pl : places_RA) {
 				ArrayList<Integer> connectedTransitions = getConnectedTransitionsSet(pl);
 				connectedTransitionsSet.add(connectedTransitions);
 			}
-			
+
 			//sam inwariant może zawiera jakieś tranzycje które zasilają inne przez łuk odczytu?
-			
+
 			int oldSize = connectedTransitionsSet.size();
-			ArrayList<ArrayList<Integer>> connectedTransitionsSetNew = checkSelfPropelledInv(nonFInvariant, connectedTransitionsSet);
+			ArrayList<ArrayList<Integer>> connectedTransitionsSetNew = checkSelfPropelledInv(integers, connectedTransitionsSet);
 			int newSize = connectedTransitionsSetNew.size();
-			
-			if(allowSelfPropelledInvariants) {
+
+			if (allowSelfPropelledInvariants) {
 				connectedTransitionsSet = connectedTransitionsSetNew;
 			}
-			
+
 			//teraz szukamy najmniejszego zbioru inwariantów pokrywającego min 1 elementent każdego zbioru w connectedTransitionsSet			
 			int setsNumber = connectedTransitionsSet.size();
 			int found = 0;
 			int upperSearchBound = setsNumber;
-			
-			while(found != setsNumber) {
+
+			while (found != setsNumber) {
 				ArrayList<Integer> foundVectors = searchCandidate(connectedTransitionsSet, upperSearchBound);
-				
-				if(foundVectors == null) {
-					upperSearchBound--; 	
+
+				if (foundVectors == null) {
+					upperSearchBound--;
 				} else {
 					found += upperSearchBound;
-					
-					if(upperSearchBound > connectedTransitionsSet.size())
+
+					if (upperSearchBound > connectedTransitionsSet.size())
 						upperSearchBound = connectedTransitionsSet.size();
 					//usuń znalezione zbiory z connectedTransitionsSet i zacznij kolejną iterację
-					if(invToCombine.contains(foundVectors) == false) {
+					if (!invToCombine.contains(foundVectors)) {
 						invToCombine.add(foundVectors);
 					}
 				}
-				
-				if(upperSearchBound == 0 || connectedTransitionsSet.size() == 0) {
+
+				if (upperSearchBound == 0 || connectedTransitionsSet.size() == 0) {
 					break;
 				}
-			}	
-			invToCombine.add(nonFInvariant);
-			
-			if(invToCombine.size() == 1) {
-				feasibleInv.add(nonFInvariant);
+			}
+			invToCombine.add(integers);
+
+			if (invToCombine.size() == 1) {
+				feasibleInv.add(integers);
 				selfPropInvariants++;
 			} else {
 				ArrayList<Integer> newFeasible = createFeasibleInvariant(invToCombine);
 				int feasibleNumber = feasibleInv.size();
-				if(oldSize != newSize) {
-					logInternal("Non-feasible invariant (pos: "+(feasibleNumber+f_invariantsCreated.size())+
-							") already contains some required transitions: "+(oldSize-newSize)+" out of "+oldSize+".\n", false);
+				if (oldSize != newSize) {
+					logInternal("Non-feasible invariant (pos: " + (feasibleNumber + f_invariantsCreated.size()) +
+							") already contains some required transitions: " + (oldSize - newSize) + " out of " + oldSize + ".\n", false);
 				}
-				
-				if(InvariantsTools.checkCanonitySingle(newFeasible) == false) {
-					logInternal("Created feasible invariant number "+(feasibleNumber+f_invariantsCreated.size())+" is not canonical.\n", false);
+
+				if (!InvariantsTools.checkCanonitySingle(newFeasible)) {
+					logInternal("Created feasible invariant number " + (feasibleNumber + f_invariantsCreated.size()) + " is not canonical.\n", false);
 				}
-				
+
 				f_invariantsCreated.add(newFeasible);
 			}
 		}
@@ -253,8 +245,8 @@ public class InvariantsCalculatorFeasible {
 	 */
 	private ArrayList<Integer> searchCandidate(ArrayList<ArrayList<Integer>> connectedTransitionsSet, int upperSearchBound) {
 		int connSetsSize = connectedTransitionsSet.size();
-		int currentFound = 0;
-		int currentNotFound = 0;
+		int currentFound;
+		int currentNotFound;
 		int fCandidatesFound = 0;
 		
 		ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
@@ -268,7 +260,7 @@ public class InvariantsCalculatorFeasible {
 			for(int cs=0; cs<connSetsSize; cs++) {
 				ArrayList<Integer> connectedSet = connectedTransitionsSet.get(cs);
 			
-				if(intersection(f_inv_support, connectedSet).isEmpty() == false) {
+				if(!intersection(f_inv_support, connectedSet).isEmpty()) {
 					currentFound++;
 					intersectionSets.add(cs);
 					
@@ -293,11 +285,10 @@ public class InvariantsCalculatorFeasible {
 
 			ArrayList<Integer> sets = forWhichConnSets.get(0);
 			ArrayList<ArrayList<Integer>> setsToRemove = new ArrayList<ArrayList<Integer>>();
-			for(int i=0; i<sets.size(); i++) {
-				int setIDToRemove = sets.get(i);
+			for (int setIDToRemove : sets) {
 				ArrayList<Integer> setToRemove = connectedTransitionsSet.get(setIDToRemove);
 				setsToRemove.add(setToRemove);
-				
+
 			}
 			for(ArrayList<Integer> set : setsToRemove)
 				connectedTransitionsSet.remove(set);
@@ -327,7 +318,7 @@ public class InvariantsCalculatorFeasible {
 					}
 				}
 				
-				if(dontBother == false) { //zbadaj na minimalność (w kontekście procedury feasibility-search)
+				if(!dontBother) { //zbadaj na minimalność (w kontekście procedury feasibility-search)
 					if(minSC < minSupportCardinality) {
 						minSupportCardinality = minSC;
 						minSupportSum = minSS;
@@ -344,8 +335,7 @@ public class InvariantsCalculatorFeasible {
 			
 			ArrayList<Integer> sets = forWhichConnSets.get(indexFound);
 			ArrayList<ArrayList<Integer>> setsToRemove = new ArrayList<ArrayList<Integer>>();
-			for(int i=0; i<sets.size(); i++) {
-				int setIDToRemove = sets.get(i);
+			for (int setIDToRemove : sets) {
 				ArrayList<Integer> setToRemove = connectedTransitionsSet.get(setIDToRemove);
 				setsToRemove.add(setToRemove);
 			}
@@ -410,7 +400,7 @@ public class InvariantsCalculatorFeasible {
 					}
 				}
 				
-				if(dontBother == false) { //zbadaj na minimalność (w kontekście procedury feasibility-search)
+				if(!dontBother) { //zbadaj na minimalność (w kontekście procedury feasibility-search)
 					if(minSC < minSupportCardinality) {
 						minSupportCardinality = minSC;
 						minSupportSum = minSS;
@@ -434,13 +424,8 @@ public class InvariantsCalculatorFeasible {
 	 * @return ArrayList[ArrayList[Integer]] - zbiór inwariantów
 	 */
 	private ArrayList<ArrayList<Integer>> makeFeasibleSet() {
-		ArrayList<ArrayList<Integer>> resultSet = new ArrayList<ArrayList<Integer>>();
-		for(ArrayList<Integer> minFeasibleInvariant : feasibleInv)
-			resultSet.add(minFeasibleInvariant);
-		
-		for(ArrayList<Integer> nonMinFeasibleInvariant : f_invariantsCreated)
-			resultSet.add(nonMinFeasibleInvariant);
-		
+		ArrayList<ArrayList<Integer>> resultSet = new ArrayList<ArrayList<Integer>>(feasibleInv);
+		resultSet.addAll(f_invariantsCreated);
 		return resultSet;
 	}
 	
@@ -482,7 +467,7 @@ public class InvariantsCalculatorFeasible {
 
 				Transition trans = (Transition) a.getStartNode();
 				int pos = transitions.indexOf(trans);
-				if(connectedTransitions.contains(pos) == false) {
+				if(!connectedTransitions.contains(pos)) {
 					connectedTransitions.add(pos);
 				} else {
 					GUIManager.getDefaultGUIManager().log("Internal error, net structure not canonical.", "error", true);
@@ -507,7 +492,7 @@ public class InvariantsCalculatorFeasible {
 				for(Arc a : el.getOutArcs()) {
 					if(a.getArcType() != TypeOfArc.READARC) { //if łuk odczytu idź dalej
 						if(a.getArcType() == TypeOfArc.NORMAL) { //jeśli normalny łuk to
-							if(InvariantsTools.isDoubleArc(a) == false) //sprawdź, czy to przypadkiem nie łuk podwójny
+							if(!InvariantsTools.isDoubleArc(a)) //sprawdź, czy to przypadkiem nie łuk podwójny
 								continue; //jeśli nie, spadamy stąd
 						} else {	
 							continue;
@@ -515,7 +500,7 @@ public class InvariantsCalculatorFeasible {
 					}
 					
 					Place p = (Place) a.getEndNode();
-					if(resultPlaces.contains(p) == false)
+					if(!resultPlaces.contains(p))
 						resultPlaces.add(p);
 					else {
 						GUIManager.getDefaultGUIManager().log("Internal error, multiple readarcs, net not canonical. Place: "+p.getName(), "error", true);
@@ -534,12 +519,10 @@ public class InvariantsCalculatorFeasible {
 	private void partitionInvariants() {
 		non_feasibleInv = new ArrayList<ArrayList<Integer>>();
 		feasibleInv = new ArrayList<ArrayList<Integer>>();
-		int invSize = invariants.size();
-		for(int i=0; i<invSize; i++) {
-			ArrayList<Integer> invariant = invariants.get(i);
+		for (ArrayList<Integer> invariant : invariants) {
 			ArrayList<Integer> support = InvariantsTools.getSupport(invariant);
-			
-			if(isNonFeasible(support) == true)
+
+			if (isNonFeasible(support))
 				non_feasibleInv.add(invariant);
 			else
 				feasibleInv.add(invariant);
@@ -563,18 +546,18 @@ public class InvariantsCalculatorFeasible {
 						continue;
 					
 					int position = transitions.indexOf((Transition)node);
-					if(raTrans.contains(position) == false)
+					if(!raTrans.contains(position))
 						raTrans.add(position);
 				}
 			} else if(a.getArcType() == TypeOfArc.NORMAL){
-				if(InvariantsTools.isDoubleArc(a) == true) {
+				if(InvariantsTools.isDoubleArc(a)) {
 					Node n = a.getEndNode();
 					if(n instanceof Place) {
 						if(((Place) n).getTokensNumber() > 0)
 							continue;
 						else {
 							int position = transitions.indexOf((Transition)a.getStartNode());
-							if(raTrans.contains(position) == false)
+							if(!raTrans.contains(position))
 								raTrans.add(position);
 						}
 					} else { //a.getEndNode(); = tranzycja
@@ -583,7 +566,7 @@ public class InvariantsCalculatorFeasible {
 							continue;
 						else {
 							int position = transitions.indexOf((Transition)a.getEndNode());
-							if(raTrans.contains(position) == false)
+							if(!raTrans.contains(position))
 								raTrans.add(position);
 						}
 					}
@@ -600,7 +583,7 @@ public class InvariantsCalculatorFeasible {
 	 */
 	private boolean isNonFeasible(ArrayList<Integer> support) {
     	for(int trans : readArcTransLocations) {
-    		if(support.contains(trans) == true)
+    		if(support.contains(trans))
     			return true;
     	}
         return false;
@@ -646,7 +629,7 @@ public class InvariantsCalculatorFeasible {
 	private void logInternal(String msg, boolean date) {
 		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		if(masterWindow != null) {
-			if(date == false) {
+			if(!date) {
 				masterWindow.accessLogFieldTinv().append(msg);
 			} else {
 				masterWindow.accessLogFieldTinv().append("["+timeStamp+"] "+msg);

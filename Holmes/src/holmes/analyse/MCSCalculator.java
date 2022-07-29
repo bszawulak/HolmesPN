@@ -18,7 +18,6 @@ import holmes.windows.HolmesMCS;
 
 /**
  * Klasa obliczająca zbiory MCS (Mimimal Cut Set) według algorytmu z artykułu:
- * 
  * "Mimal cut sets in biochemical reaction networks" 
  * Steffen Klamt, Ernst Dieter Gilles
  * Bioinformatics, 2004, 20, pp. 226-234
@@ -29,7 +28,6 @@ import holmes.windows.HolmesMCS;
 public class MCSCalculator implements Runnable {
     private ArrayList<ArrayList<Integer>> em_obR;
     private ArrayList<Integer> em_obRinvID;
-    
     private ArrayList<Integer> transitions;
     private ArrayList<Set<Integer>> mcs;
     private List<Set<Integer>> precutsets;
@@ -130,12 +128,12 @@ public class MCSCalculator implements Runnable {
      */
     private ArrayList<Integer> binaryInv(ArrayList<Integer> inv) {
     	ArrayList<Integer> binaryInvariant = new ArrayList<Integer>();
-    	for(int i=0; i<inv.size(); i++) {
-    		if(inv.get(i) > 0)
-    			binaryInvariant.add(1);
-    		else
-    			binaryInvariant.add(0);
-    	}
+		for (Integer integer : inv) {
+			if (integer > 0)
+				binaryInvariant.add(1);
+			else
+				binaryInvariant.add(0);
+		}
 		return binaryInvariant;
 	}
 
@@ -223,13 +221,12 @@ public class MCSCalculator implements Runnable {
 	
 	/**
 	 * II algorytm - under construction
-	 * @return
+	 * @return (<b>HashSet[HashSet[Integer]]</b>)
 	 */
 	public HashSet<HashSet<Integer>> findMcs2() {
 		HashSet<HashSet<Integer>> result = new HashSet<HashSet<Integer>>();
 		//int invMatrixSize = em_obR.size();
 		int invSize = transitions.size();
-		int maxSize = invSize;
 
 		for (ArrayList<Integer> integers : em_obR) {
 			for (int j = 0; j < invSize; j++) {
@@ -242,7 +239,7 @@ public class MCSCalculator implements Runnable {
 
 					//int resSize = result.size();
 					for (HashSet<Integer> test : result) {
-						if (test.size() <= maxSize) {
+						if (test.size() <= invSize) {
 							test.add(j); //duplikatów i tak nie doda
 						}
 					}

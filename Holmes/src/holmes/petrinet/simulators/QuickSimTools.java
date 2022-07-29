@@ -17,15 +17,10 @@ import holmes.utilities.Tools;
 
 /**
  * Nakładka na symulator stanów odpowiedzialna za wyświetlanie informacji statystycznych na obrazie sieci.
- * 
- * @author MR
  */
 public class QuickSimTools {
 	private GUIManager overlord;
-	@SuppressWarnings("unused")
-	private HolmesDockWindowsTable subwindow;
 	private StateSimulator quickSim;
-	
 	private boolean scanTransitions = true;
 	private boolean scanPlaces = true;
 	private boolean markArcs = true;
@@ -36,16 +31,16 @@ public class QuickSimTools {
 	 */
 	public QuickSimTools(HolmesDockWindowsTable holmesDockWindowsTable) {
 		this.overlord = GUIManager.getDefaultGUIManager();
-		this.subwindow = holmesDockWindowsTable;
 	}
-
 
 	/**
 	 * Zbiera dane symulatorem i wyświetla na sieci.
-	 * @param scanTransitions
-	 * @param scanPlaces
-	 * @param markArcs
-	 * @param quickProgressBar 
+	 * @param scanTransitions (<b>boolean</b>)
+	 * @param scanPlaces (<b>boolean</b>)
+	 * @param markArcs (<b>boolean</b>)
+	 * @param repetitions (<b>boolean</b>)
+	 * @param quickProgressBar (<b>JProgressBar</b>)
+
 	 */
 	public void acquireData(boolean scanTransitions, boolean scanPlaces, boolean markArcs, boolean repetitions, JProgressBar quickProgressBar) {
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
@@ -89,8 +84,7 @@ public class QuickSimTools {
 		}
 		if(overlord.simSettings.isMaxMode())
 			max = 1;
-		
-		
+
 		for(int t=0; t<transSize; t++) {
 			Transition trans = transitions.get(t);
 			double firing = avgFire.get(t);
@@ -102,10 +96,8 @@ public class QuickSimTools {
 			trans.setAddText(Tools.cutValueExt(firing, 8));
 			
 			double reliance = firing/max;
-			int fill = (int)((double)30 * reliance);
 
-			
-			trans.qSimFillValue = fill;
+			trans.qSimFillValue = (int)((double)30 * reliance);
 			
 			if(firing < 0.05) {
 				trans.qSimFillColor = Color.RED;
@@ -135,13 +127,11 @@ public class QuickSimTools {
 				trans.qSimArcSign = false;
 			}
 		}
-		
 		double maxT = 0;
 		for(int p=0; p<placesSize; p++) {
 			if(avgTokens.get(p) > maxT)
 				maxT = avgTokens.get(p);
 		}
-
 		
 		for(int p=0; p<placesSize; p++) {
 			Place place = places.get(p);
@@ -166,7 +156,6 @@ public class QuickSimTools {
 				place.qSimFillColor = Color.GREEN;
 			}
 			
-			
 			if(scanPlaces) {
 				place.qSimDrawed = true;
 				place.qSimDrawStats = true;
@@ -175,12 +164,8 @@ public class QuickSimTools {
 				for(ElementLocation el : place.getElementLocations()) {
 					el.qSimDrawed = true;
 				}
-				
-				if(avgT == 0) {
-					place.qSimArcSign = true;
-				} else {
-					place.qSimArcSign = false;
-				}
+
+				place.qSimArcSign = ( avgT == 0 );
 			} else {
 				place.qSimDrawed = false;
 				place.qSimDrawStats = false;
@@ -188,10 +173,8 @@ public class QuickSimTools {
 			}
 		}
 		
-		
 		ArrayList<Arc> arcs = overlord.getWorkspace().getProject().getArcs();
 		for(Arc arc : arcs) {
-			
 			if(arc.getStartNode().qSimArcSign && arc.getEndNode().qSimArcSign) {
 				arc.qSimForcedArc = true;
 				arc.qSimForcedColor = Color.RED;
@@ -199,13 +182,11 @@ public class QuickSimTools {
 				arc.qSimForcedArc = false;
 				arc.qSimForcedColor = Color.BLACK;
 			}
-			
 			if(!markArcs) {
 				arc.qSimForcedArc = false;
 				arc.qSimForcedColor = Color.BLACK;
 			}
 		}
-
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
@@ -215,6 +196,5 @@ public class QuickSimTools {
 		quickSim.setThreadDetails(6, quickProgressBar, this);
 		Thread myThread = new Thread(quickSim);
 		myThread.start();
-
 	}
 }

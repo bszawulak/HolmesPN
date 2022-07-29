@@ -536,10 +536,7 @@ public class GraphicalSimulatorXTPN {
                     transition.setActivationStatusXTPN(false);
                     transition.setProductionStatus_xTPN(false);
 
-                    if(producingTokensTransitionsAll.contains(transition)) {
-                        producingTokensTransitionsAll.remove(transition);
-                    }
-
+                    producingTokensTransitionsAll.remove(transition);
                 }
             }
 

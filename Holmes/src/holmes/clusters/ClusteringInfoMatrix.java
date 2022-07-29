@@ -1,5 +1,6 @@
 package holmes.clusters;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -12,6 +13,7 @@ import holmes.files.clusters.ClusterReader;
  *
  */
 public class ClusteringInfoMatrix implements Serializable {
+	@Serial
 	private static final long serialVersionUID = 5927650729868670543L;
 	private ArrayList<ArrayList<Clustering>> bigTable; //56 przypadków, każdy po liczbnie od 2 do x klastrowań
 	public int mainTablesNumber = 0;

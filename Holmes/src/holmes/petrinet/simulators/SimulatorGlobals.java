@@ -45,6 +45,9 @@ public class SimulatorGlobals {
 
 	//XTPN:
 	private double calculationsAccuracy = 0.000000001;
+
+	public long simSteps_XTPN = 100;
+	public double simMaxTime_XTPN = 100.0;
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.

@@ -325,7 +325,7 @@ public class HolmesNodeInfo extends JFrame {
         creationPanel.setBounds(infPanelX+60, infPanelY, 460, 60);
 
         infoPanel.add(creationPanel);
-        infPanelY += 60;
+        //infPanelY += 60;
         
 		mainInfoPanel.add(infoPanel);
 		

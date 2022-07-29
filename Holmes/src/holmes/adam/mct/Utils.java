@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class Utils {
-	
 	public static class HybridStringNumberComparator implements Comparator<String> {
 
 		@Override
@@ -95,12 +94,11 @@ public class Utils {
 	
 	/**
 	 * Do dorobienia opis formatu pliku
-	 * 
-	 * @param is
-	 * @param firstColumnTID
-	 * @param petriNet
-	 * @return
-	 * @throws IOException
+	 * @param is (<b>InputStream</b>)
+	 * @param firstColumnTID (<b>boolean</b>)
+	 * @param petriNet (<b>MCTPetriNet</b>)
+	 * @return  (<b>SortedSet[TInvariant]</b>)
+	 * @throws IOException ex
 	 */
 	public static SortedSet<TInvariant> readTInvariants(InputStream is, boolean firstColumnTID, MCTPetriNet petriNet) throws IOException
 	{
@@ -122,7 +120,7 @@ public class Utils {
 			{
 				
 				int colon = items[i].indexOf(':');
-				Integer count = 1;
+				int count = 1;
 				String tId = colon < 0 ? items[i] : items[i].substring(0, colon);
 				String tCount = colon < 0 ? "1" : items[i].substring(colon + 1);
 				try
@@ -164,10 +162,10 @@ public class Utils {
 	 * i3.; 1; 1; 1; 0; 0; 0
 	 * i4.; 0; 0; 1; 1; 0; 0
 	 * </pre>
-	 * @param is
-	 * @param petriNet
-	 * @return
-	 * @throws IOException
+	 * @param is (<b>InputStream</b>)
+	 * @param petriNet (<b>MCTPetriNet</b>)
+	 * @return (<b>SortedSet[TInvariant]</b>)
+	 * @throws IOException (<b>ex</b>)
 	 */
 	public static SortedSet<TInvariant> readFromCSV(InputStream is, MCTPetriNet petriNet) throws IOException
 	{
@@ -191,7 +189,7 @@ public class Utils {
 			TInvariant tInv = new TInvariant(items[0], petriNet);
 			for (int i = 1; i < vectorLength; i++)
 			{
-				Integer count = 0;
+				int count = 0;
 				String tCount = items[i];
 				try
 				{
@@ -284,10 +282,10 @@ public class Utils {
 	 * 2	|	36.L_arginine_lowering		:1,	|	38.citruline_increasing		:1
 	 *  
 	 *  </pre>
-	 * @param is
-	 * @param petriNet
-	 * @return
-	 * @throws IOException
+	 * @param is (<b>InputStream</b>)
+	 * @param petriNet (<b>MCTPetriNet</b>)
+	 * @return (<b>SortedSet[TInvariant]</b>)
+	 * @throws IOException (<b>ex</b>)
 	 */
 	public static SortedSet<TInvariant> readFromCharlie(InputStream is, MCTPetriNet petriNet) throws IOException {
 		SortedSet<TInvariant> result = new TreeSet<TInvariant>();
@@ -299,7 +297,7 @@ public class Utils {
 		LineReader lr = new LineReader(br);
 		while ((line = lr.readLine()) != null)
 		{
-			String items[] = line.split("\\|");
+			String[] items = line.split("\\|");
 			if (items.length != 2)
 				continue;
 			
@@ -318,7 +316,7 @@ public class Utils {
 			if (tInv != null)
 			{
 				int colon = items[1].indexOf(':');
-				Integer count = 1;
+				int count = 1;
 				String tId = (colon < 0 ? items[1] : items[1].substring(0, colon)).trim();
 				tId = tId.replaceFirst("", "");
 				String tCount = (colon < 0 ? "1" : items[1].substring(colon + 1)).trim().replaceAll(",","");
@@ -373,14 +371,14 @@ public class Utils {
 	}
 	
 	/**
-	 * Pobiera zbi�r inwariant�w, kt�re zawieraj�/nie zawieraj� podanych tranzycji
-	 * @param tinv - zbi�r t-inwariant�w
+	 * Pobiera zbiór inwariantów, które zawierają/nie zawierają podanych tranzycji
+	 * @param tinvs - zbiór t-inwariantów
 	 * @param tids - tablica id tranzycji
-	 * @param containing - je�li <code>true</code>, to zwracane s� t-inwarianty zawieraj�ce przynajmniej jedn� tranzycj�,
-	 * 	 je�li <code>false</code>, zwracane s� t-inwarianty nie zawieraj�ce �adnej z tranzycji
-	 * @return
+	 * @param containing - jeśli <code>true</code>, to zwracane są t-inwarianty zawierające przynajmniej jedną tranzycję,
+	 * 	 jeśli <code>false</code>, zwracane są t-inwarianty nie zawierające żadnej z tranzycji
+	 * @return (<b>SortedSet[TInvariantTrasitionDescriptor]</b>)
 	 */
-	public static SortedSet<TInvariantTrasitionDescriptor> getInvariantsWith(SortedSet<TInvariant> tinvs, String tids[], boolean containing)
+	public static SortedSet<TInvariantTrasitionDescriptor> getInvariantsWith(SortedSet<TInvariant> tinvs, String[] tids, boolean containing)
 	{
 		SortedSet<TInvariantTrasitionDescriptor> result = new TreeSet<TInvariantTrasitionDescriptor>();
 		for (TInvariant tinv : tinvs)
@@ -408,7 +406,7 @@ public class Utils {
 
 	public static String invariantsToString(SortedSet<TInvariant> tinv)
 	{
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (TInvariant ti : tinv)
 		{
 			sb.append(ti.toString());
@@ -445,11 +443,11 @@ public class Utils {
 	 * @param boolValues drukuj jako warto�ci boolowskie (supporty)
 	 * @param latexMode tryb latex
 	 * @param clusters opcjonalna lista klastr�w do drukowania w trybie latex (po klastrze wstawia now� lini� i na pierwszym numer klastra)
-	 * @return
+	 * @return (<b>String</b>)
 	 */
 	public static String invariantsWithMCT(SortedSet<TInvariant> tinvs,
 			SortedSet<MCTSet> mctSets, boolean includeId, boolean includeVectors, boolean boolValues, boolean latexMode, List<SortedSet<String>> clusters) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		String separator = latexMode ? "\t\t&\t\t" : ";";
 		
 		Map<String, Integer> firstInCluster = new HashMap<String, Integer>();
@@ -468,7 +466,7 @@ public class Utils {
 		{
 			if (latexMode && mctSets != null) {
 				if (firstInCluster.containsKey(tinv.id)) {
-					sb.append("$c_{" + firstInCluster.get(tinv.id) + "}$");
+					sb.append("$c_{").append(firstInCluster.get(tinv.id)).append("}$");
 				} else {
 					sb.append("\t");
 				}
@@ -504,8 +502,8 @@ public class Utils {
 	 * Metoda zczytuje nowe mapowanie nazw zbior�w MCT z pliku .properties
 	 * @param file - plik z mapowaniem nazw
 	 * @return - mapa tranzycja - nazwa (tj. je�li zbi�r MCT zawiera tak� tranzycj�, to nadana mu b�dzie taka nazwa)
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @throws FileNotFoundException ex1
+	 * @throws IOException ex2
 	 */
 	public static Map<String, String> readMCTNameMap(String file) throws FileNotFoundException, IOException {
 		Properties props = new Properties();

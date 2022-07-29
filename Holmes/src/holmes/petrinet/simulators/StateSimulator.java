@@ -18,9 +18,7 @@ import holmes.windows.managers.ssim.HolmesSim;
 
 /**
  * Klasa symulatora. Różnica między nią a symulatorem graficznym jest taka, że poniższe metody potrafią wygenerować
- * dziesiątki tysięcy stanów na sekundę (co sprawia, że oszczędzanie pamięci staje się sine qua non w jej wypadku).
- * 
- * @author MR
+ * dziesiątki tysięcy stanów na sekundę.
  */
 public class StateSimulator implements Runnable {
 	private GUIManager overlord;
@@ -38,7 +36,7 @@ public class StateSimulator implements Runnable {
 	private ArrayList<Integer> transitionsTotalFiring = null; //wektor sumy odpaleń tranzycji
 	private ArrayList<Double> transitionsAvgData = null;
 	private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
-	
+
 	private IEngine engine;
 	
 	//runtime:
@@ -733,8 +731,8 @@ public class StateSimulator implements Runnable {
 			} else {
 				break;
 			}
-			
-			
+
+
 			launchAddPhase(launchableTransitions);
 		}
 		readyToSimulate = false;
