@@ -23,6 +23,7 @@ import holmes.tables.managers.StatesPlacesTableModelXTPN;
 import holmes.tables.managers.StatesPlacesTableRenderer;
 import holmes.tables.managers.StatesPlacesTableRendererXTPN;
 import holmes.utilities.Tools;
+import holmes.windows.xtpn.managers.HolmesStatesEditorXTPN;
 
 /**
  * Klasa tworząca okno managera stanów początkowych (m0) sieci.
@@ -661,7 +662,7 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewStateButton);
 
-		HolmesRoundedButton addNewCleanStateButton = new HolmesRoundedButton("<html><center>Create clean<br>state</center></html>"
+		HolmesRoundedButton addNewCleanStateButton = new HolmesRoundedButton("<html><center>Create<br>clean state</center></html>"
 				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		addNewCleanStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewCleanStateButton.setMargin(new Insets(0, 0, 0, 0));
@@ -707,7 +708,7 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(replaceStateButton);
 
-		HolmesRoundedButton removeStateButton = new HolmesRoundedButton("<html><center>Remove stored<br>state</center></html>"
+		HolmesRoundedButton removeStateButton = new HolmesRoundedButton("<html><center>Remove<br>stored state</center></html>"
 				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));

@@ -1,4 +1,4 @@
-package holmes.petrinet.simulators;
+package holmes.petrinet.simulators.xtpn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +12,7 @@ import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.functions.FunctionsTools;
+import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.windows.HolmesNotepad;
 
 /**
@@ -74,7 +75,7 @@ public class GraphicalSimulatorXTPN {
         stepCounter = 0;
         simTotalTime = 0.0;
         nextXTPNsteps.clear();
-        engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, false, false, petriNet.getTransitions(), null, petriNet.getPlaces());
+        engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, petriNet.getTransitions(), petriNet.getPlaces());
         //engineXTPN.setGraphicalSimulation(true);
     }
 
@@ -101,7 +102,7 @@ public class GraphicalSimulatorXTPN {
 
         stepCounter = 0;
         simTotalTime = 0.0;
-        engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, false, false, transitions, null, places);
+        engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, transitions, places);
         engineXTPN.setGraphicalSimulation(true);
         //nsl.logBackupCreated(); //TODO
 
@@ -535,6 +536,12 @@ public class GraphicalSimulatorXTPN {
                     transition.deactivateXTPN(true); // ???
                     transition.setActivationStatusXTPN(false);
                     transition.setProductionStatus_xTPN(false);
+
+
+                    for(Arc arc : transition.getOutArcs()) {
+                        arc.setXTPNprodStatus(false);
+                    }
+
 
                     producingTokensTransitionsAll.remove(transition);
                 }

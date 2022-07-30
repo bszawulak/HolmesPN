@@ -7,14 +7,11 @@ import javax.swing.JOptionPane;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.MetaNode;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.windows.HolmesNodeInfo;
+import holmes.windows.xtpn.HolmesNodeInfoXTPN;
 
 /**
  * Klasa odpowiedzialna za utworzenie menu kontekstowego dla wierzchołków sieci.
@@ -39,11 +36,20 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 					
 					Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
 					if(n instanceof Place) {
-						HolmesNodeInfo ani = new HolmesNodeInfo((Place)n, GUIManager.getDefaultGUIManager().getFrame());
-						ani.setVisible(true);
+						if(n instanceof PlaceXTPN) {
+							HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((PlaceXTPN) n, GUIManager.getDefaultGUIManager().getFrame());
+							ani.setVisible(true);
+						} else {
+							HolmesNodeInfo ani = new HolmesNodeInfo((Place)n, GUIManager.getDefaultGUIManager().getFrame());
+							ani.setVisible(true);
+						}
 					} else if(n instanceof Transition) {
-						HolmesNodeInfo ani = new HolmesNodeInfo((Transition)n, GUIManager.getDefaultGUIManager().getFrame());
-						ani.setVisible(true);
+						if(n instanceof TransitionXTPN) {
+							HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((TransitionXTPN) n, GUIManager.getDefaultGUIManager().getFrame());
+						} else {
+							HolmesNodeInfo ani = new HolmesNodeInfo((Transition)n, GUIManager.getDefaultGUIManager().getFrame());
+							ani.setVisible(true);
+						}
 					} else if(n instanceof MetaNode) {
 						HolmesNodeInfo ani = new HolmesNodeInfo((MetaNode)n, GUIManager.getDefaultGUIManager().getFrame());
 						ani.setVisible(true);

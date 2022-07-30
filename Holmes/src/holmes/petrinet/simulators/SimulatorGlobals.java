@@ -148,10 +148,9 @@ public class SimulatorGlobals {
 	 * @return (<b>int</b>) numer porządkowy
 	 */
 	public int setNetType(SimNetType netType) {
-		int typeID = 0;
-		if(netType == SimNetType.BASIC)
-			typeID = 0;
-		else if(netType == SimNetType.TIME)
+		int typeID = 0; //SimNetType.BASIC as default
+
+		if(netType == SimNetType.TIME)
 			typeID = 1;
 		else if(netType == SimNetType.HYBRID)
 			typeID = 2;

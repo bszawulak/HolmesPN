@@ -125,7 +125,7 @@ public class PlaceXTPN extends Place {
      */
     public void setGammaModeXTPNstatus(boolean status) {
         gammaMode_xTPN = status;
-        setGammaRangeStatus(status);
+        setGammaRangeVisibility(status);
     }
 
     /**
@@ -140,7 +140,7 @@ public class PlaceXTPN extends Place {
      * Metoda ustawia status zakresów gamma - pokazywać czy nie.
      * @param status (<b>boolean</b>) true, jeśli zakresy gamma mają być pokazywane.
      */
-    public void setGammaRangeStatus(boolean status) {
+    public void setGammaRangeVisibility(boolean status) {
         gammaRangeVisibility_XTPN = status;
     }
 

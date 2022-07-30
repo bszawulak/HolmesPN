@@ -850,7 +850,9 @@ public class ProjectWriter {
 				String type;
 				String description;
 				int placeIndex = -1;
+				int stateProcessed = -1;
 				for (MultisetM multisetMobject : statesMatrixXTPN) {
+					stateProcessed++;
 					stateLine.setLength(0);
 					type = multisetMobject.getStateType();
 					description = multisetMobject.getDescription();
@@ -859,48 +861,39 @@ public class ProjectWriter {
 					for(ArrayList<Double> multisetK : multisetMobject.accessArrayListSOfMultiset_M()) { //zapis multizbiorów tokenów
 						placeIndex++;
 
-						boolean isXTPNplace = multisetMobject.isPlaceStoredAsGammaActive(placeIndex);
-						if(isXTPNplace) {
-							if(multisetK.size() == 0) {
-								stateLine.append("-1.0;");
-							} else {
-								int counter = 0;
-								for(Double token : multisetK) {
-									counter++;
-									if(counter == multisetK.size())  { //jeżeli to ostatni token
-										stateLine.append(token).append(";"); //separator multizbiorów
-									} else {
-										stateLine.append(token).append(":"); //separator multizbiorów
+						if(placeIndex + 1 > places.size()) {
+							GUIManager.getDefaultGUIManager().log("Error while saving multiset type-M #"+stateProcessed+". There are more " +
+									"multisets type-K than net places.", "error", true);
+							int placeError = 0;
+							for(ArrayList<Double> multisetKK : multisetMobject.accessArrayListSOfMultiset_M()) {
+								String mTxt = "";
+								for(double d : multisetKK) {
+									mTxt += d + " | ";
+								}
+								GUIManager.getDefaultGUIManager().log("p_"+placeError+":=  (" +mTxt+")", "error", true);
+							}
+							break;
+						} else {
+							boolean isXTPNplace = multisetMobject.isPlaceStoredAsGammaActive(placeIndex);
+							if(isXTPNplace) {
+								if(multisetK.size() == 0) {
+									stateLine.append("-1.0;");
+								} else {
+									int counter = 0;
+									for(Double token : multisetK) {
+										counter++;
+										if(counter == multisetK.size())  { //jeżeli to ostatni token
+											stateLine.append(token).append(";"); //separator multizbiorów
+										} else {
+											stateLine.append(token).append(":"); //separator multizbiorów
+										}
 									}
 								}
-							}
-						} else {
-							double classTokens = multisetK.get(0);
-							stateLine.append((int)classTokens).append("(C);");
-						}
-
-						/*
-						for(Double token : multisetK) {
-							if(isXTPNplace) {
-								counter++;
-								if(counter == multisetK.size())  { //jeżeli to ostatni token
-									stateLine.append(token).append(";"); //separator multizbiorów
-								} else {
-									stateLine.append(token).append(":"); //separator multizbiorów
-								}
 							} else {
-								stateLine.append(token).append("(C);");
+								double classTokens = multisetK.get(0);
+								stateLine.append((int)classTokens).append("(C);");
 							}
 						}
-						if(counter == 0 && isXTPNplace) { //brak tokenów w miejscu
-							if( ((PlaceXTPN)places.get(placeIndex)).isGammaModeActiveXTPN()) {
-								stateLine.append("-1.0;");
-							}
-							//else {
-								//stateLine.append(places.get(placeIndex).getTokensNumber()+"(C);");
-							//}
-						}
-						 */
 					}
 					stateLine = new StringBuilder(stateLine.substring(0, stateLine.length() - 1)); //usun ostatni ';'
 					bw.write(spaces(sp) + stateLine + newline);

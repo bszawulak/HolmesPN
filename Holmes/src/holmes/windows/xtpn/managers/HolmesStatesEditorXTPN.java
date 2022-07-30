@@ -1,4 +1,4 @@
-package holmes.windows.managers;
+package holmes.windows.xtpn.managers;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -25,7 +25,8 @@ import holmes.petrinet.elements.PlaceXTPN;
 import holmes.tables.RXTable;
 import holmes.tables.managers.StatesPlacesEditorTableModelXTPN;
 import holmes.utilities.Tools;
-import holmes.windows.HolmesXTPNtokens;
+import holmes.windows.managers.HolmesStatesManager;
+import holmes.windows.xtpn.HolmesXTPNtokens;
 
 public class HolmesStatesEditorXTPN extends JFrame {
     @Serial
@@ -77,6 +78,10 @@ public class HolmesStatesEditorXTPN extends JFrame {
     public void fillTable() {
         tableModel.clearModel();
         int size = multisetM.getMultiset_M_Size();
+        if(size != places.size()) {
+            GUIManager.getDefaultGUIManager().log("Error, state corrupted. State size: "+size+", places number:"+places.size(),"error", true);
+            return;
+        }
         for(int placeIndex=0; placeIndex<size; placeIndex++) {
             ArrayList<Double> multisetK = multisetM.accessMultiset_K(placeIndex);
             boolean isXTPNplace = multisetM.isPlaceStoredAsGammaActive(placeIndex);

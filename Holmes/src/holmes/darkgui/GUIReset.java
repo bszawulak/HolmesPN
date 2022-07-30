@@ -18,7 +18,7 @@ import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
-import holmes.petrinet.simulators.GraphicalSimulatorXTPN;
+import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.workspace.Workspace;
 

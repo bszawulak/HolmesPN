@@ -35,6 +35,7 @@ public abstract class Node extends PetriNetElement {
 	private int radius = 20;
 	private static final Font f_Big = new Font("TimesRoman", Font.BOLD, 14);
 	private static final Font f_BigL = new Font("TimesRoman", Font.PLAIN, 14);
+	private static final Font f_SmallL = new Font("TimesRoman", Font.BOLD, 12);
 	private static final Color darkGreen = new Color(0, 75, 0);
 
 	public Color branchColor = null;
@@ -245,23 +246,25 @@ public abstract class Node extends PetriNetElement {
 					int drawX = (nodePoint.x) + gammaPoint.x - 40;
 					int drawY =  (nodePoint.y) + gammaPoint.y - 24;
 
-					if(((PlaceXTPN)this).isGammaModeActiveXTPN() && ((PlaceXTPN)this).isGammaRangeVisible()) {
-						int franctionDigits = ((PlaceXTPN)this).getFraction_xTPN();
-						g.setColor(Color.blue);
-						g.setFont(f_Big);
-						double gamma = ((PlaceXTPN)this).getGammaMax_xTPN();
-						String gammaMaxVal = "\u221E";
-						if(gamma < Integer.MAX_VALUE-2) {
-							gammaMaxVal = Tools.cutValueExt(((PlaceXTPN)this).getGammaMax_xTPN(), franctionDigits);
-						}
-						String gammaStr = "\u03B3:" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMin_xTPN(), franctionDigits) + " / "
-								+ gammaMaxVal;
+					if(((PlaceXTPN)this).isGammaModeActiveXTPN()) {
+						if( ((PlaceXTPN)this).isGammaRangeVisible() ) {
+							int franctionDigits = ((PlaceXTPN)this).getFraction_xTPN();
+							g.setColor(Color.blue);
+							g.setFont(f_Big);
+							double gamma = ((PlaceXTPN)this).getGammaMax_xTPN();
+							String gammaMaxVal = "\u221E";
+							if(gamma < Integer.MAX_VALUE-2) {
+								gammaMaxVal = Tools.cutValueExt(((PlaceXTPN)this).getGammaMax_xTPN(), franctionDigits);
+							}
+							String gammaStr = "\u03B3:" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMin_xTPN(), franctionDigits) + " / "
+									+ gammaMaxVal;
 
-						g.drawString(gammaStr, drawX, drawY);
+							g.drawString(gammaStr, drawX, drawY);
+						}
 					} else {
-						g.setColor(Color.blue);
-						g.setFont(f_Big);
-						g.drawString("XTPN: OFF", drawX, drawY);
+						g.setColor(Color.GRAY);
+						g.setFont(f_SmallL);
+						g.drawString("(NORMAL PLACE)", drawX, drawY);
 					}
 				}
 			}
@@ -314,7 +317,7 @@ public abstract class Node extends PetriNetElement {
 						}
 					}
 
-					if(((TransitionXTPN)this).isTauTimerVisible() && ((TransitionXTPN)this).isBetaRangeVisible()) {
+					if(((TransitionXTPN)this).isTauTimerVisible() ) {
 						Point tauPoint = tauLocations.get(i).getPosition();
 						int drawX = (nodePoint.x) + tauPoint.x-5;
 						int drawY =  (nodePoint.y) + tauPoint.y-10;

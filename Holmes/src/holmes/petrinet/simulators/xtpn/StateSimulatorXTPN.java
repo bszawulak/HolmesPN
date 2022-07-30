@@ -1,8 +1,10 @@
-package holmes.petrinet.simulators;
+package holmes.petrinet.simulators.xtpn;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.functions.FunctionsTools;
+import holmes.petrinet.simulators.QuickSimTools;
+import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.windows.managers.ssim.HolmesSim;
 
 import javax.swing.*;
@@ -67,7 +69,7 @@ public class StateSimulatorXTPN {
             readyToSimulate = false;
             return readyToSimulate;
         }
-        engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, false, false, transitions, null, places);
+        engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, transitions, places);
 
 
         /*
@@ -161,7 +163,7 @@ public class StateSimulatorXTPN {
             nextXTPNsteps = engineXTPN.computeNextState();
             nextXTPNsteps.set(4, classicalInputTransitions);
             nextXTPNsteps.get(6).get(0).changeType += classicalInputTransitions.size();
-            infoNode = nextXTPNsteps.get(6).get(0); //7-ta lista, pierwszy obiekt (8 wrota...)
+            infoNode = nextXTPNsteps.get(6).get(0);
             if(infoNode.changeType == 0) {
                 terminate = true;
                 break;

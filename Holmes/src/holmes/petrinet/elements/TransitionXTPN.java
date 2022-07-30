@@ -1,5 +1,7 @@
 package holmes.petrinet.elements;
 
+import holmes.darkgui.GUIManager;
+
 import java.awt.*;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -493,7 +495,8 @@ public class TransitionXTPN extends Transition {
 
         for (Arc arc : getInArcs()) { //jeśli brak, to aktywna wejściowa
             if( !(arc.getStartNode() instanceof PlaceXTPN) ) {
-                break; //TODO! IMPOSSIBRU!!!
+                GUIManager.getDefaultGUIManager().log("Error, non-XTPN place found! Place: "+arc.getStartNode().getName(), "error", true);
+                break;
             }
 
             PlaceXTPN arcStartPlace = (PlaceXTPN) arc.getStartNode();

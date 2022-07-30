@@ -21,7 +21,7 @@ import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.simulators.GraphicalSimulator;
-import holmes.petrinet.simulators.GraphicalSimulatorXTPN;
+import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.workspace.Workspace;
 import holmes.workspace.WorkspaceSheet;

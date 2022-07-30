@@ -403,8 +403,6 @@ public class HolmesNetTablesActions {
 			note.addTextLineNL(line, "text");
 		}
 		
-		
-		
 		note.setCaretFirstLine();
 		note.setVisible(true);
 	}

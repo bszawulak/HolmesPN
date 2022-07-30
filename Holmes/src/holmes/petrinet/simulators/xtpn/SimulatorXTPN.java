@@ -1,4 +1,4 @@
-package holmes.petrinet.simulators;
+package holmes.petrinet.simulators.xtpn;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,6 +6,7 @@ import java.util.Collections;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.functions.FunctionsTools;
+import holmes.petrinet.simulators.*;
 
 /**
  * Silnik symulatora XTPN. Wyobraźmy sobie sieć XTPN. Każda tranzycja ma wartości Alfa (TPN) oraz Beta (DPN), a każde
@@ -20,7 +21,7 @@ import holmes.petrinet.functions.FunctionsTools;
  * ale dycyzje zapadają w innym miejscu, np. w GraphicalSimulatorXTPN->StepLoopPerformerXTPN.actionPerformed().
  * Z resztą nieważne. Chyba wystarczająco nakreśliłem poziom zaawansowania poniższego kodu.
  */
-public class SimulatorXTPN implements IEngine {
+public class SimulatorXTPN implements IEngineXTPN {
     private GUIManager overlord;
     private SimulatorGlobals sg;
     private SimulatorGlobals.SimNetType netSimTypeXTPN = SimulatorGlobals.SimNetType.XTPN;
@@ -71,15 +72,10 @@ public class SimulatorXTPN implements IEngine {
     /**
      * Ustawianie podstawowych parametrów silnika symulacji.
      * @param simulationType NetType - rodzaj symulowanej sieci
-     * @param maxMode boolean - tryb maximum    IGNORED
-     * @param singleMode boolean - true, jeśli tylko 1 tranzycja ma odpalić IGNORED
      * @param transitions ArrayList[Transition] - wektor wszystkich tranzycji
-     * @param time_transitions ArrayList[Transition] - wektor tranzycji czasowych   IGNORED
      * @param places ArrayList[Place] - wektor miejsc
      */
-    public void setEngine(SimulatorGlobals.SimNetType simulationType, boolean maxMode, boolean singleMode,
-                          ArrayList<Transition> transitions, ArrayList<Transition> time_transitions,
-                          ArrayList<Place> places) {
+    public void setEngine(SimulatorGlobals.SimNetType simulationType, ArrayList<Transition> transitions, ArrayList<Place> places) {
         this.netSimTypeXTPN = simulationType;
         this.sg = overlord.simSettings;
 
@@ -193,6 +189,13 @@ public class SimulatorXTPN implements IEngine {
                         transition.setTauBeta_xTPN( rand );
                         transition.setTimerBeta_XTPN(0.0);
                         transition.setProductionStatus_xTPN(true);
+
+                        if(graphicalSimulation) {
+                            for(Arc arc : transition.getOutArcs()) {
+                                arc.setXTPNprodStatus(true);
+                            }
+                        }
+
                     } else { //klasyczna wejściowa
                         classicalInputOnes.add(new NextXTPNstep(transition, -1, 3));
                         //transition.setProductionStatus_xTPN(true);
@@ -220,6 +223,12 @@ public class SimulatorXTPN implements IEngine {
                                 transition.setTauBeta_xTPN( rand );
                                 transition.setTimerBeta_XTPN(0.0);
                                 transition.setProductionStatus_xTPN(true);
+
+                                if(graphicalSimulation) {
+                                    for(Arc arc : transition.getOutArcs()) {
+                                        arc.setXTPNprodStatus(true);
+                                    }
+                                }
                             } else { //zakres alfa nie jest zerowy:
                                 transition.setTauAlpha_xTPN( rand );
                                 transition.setTimerAlfa_XTPN(0.0);
@@ -498,6 +507,12 @@ public class SimulatorXTPN implements IEngine {
                     transition.setTimerBeta_XTPN(0.0);
                     transition.setTauAlpha_xTPN(-1.0);
                     transition.setTimerAlfa_XTPN(-1.0);
+
+                    if(graphicalSimulation) {
+                        for(Arc arc : transition.getOutArcs()) {
+                            arc.setXTPNprodStatus(true);
+                        }
+                    }
                 } else { //czysty TPN
                     transition.setProductionStatus_xTPN(true);
                 }
@@ -607,27 +622,6 @@ public class SimulatorXTPN implements IEngine {
         } else {
             return generator.nextDouble(min, max);
         }
-    }
-
-    /**
-     * Metoda generuje zbiór tranzycji do uruchomienia w ramach symulatora.
-     * @param emptySteps boolean - true, jeśli może być wygenerowany krok bez odpalania tranzycji
-     * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia
-     */
-    @Override
-    public ArrayList<Transition> getTransLaunchList(boolean emptySteps) {
-        return null; //TODO: dla stateSimulatorXTPN
-    }
-
-    @Override
-    public void setMaxMode(boolean value) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setSingleMode(boolean value) {
-        // TODO Auto-generated method stub
     }
 
     /**

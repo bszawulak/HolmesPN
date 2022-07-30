@@ -5,7 +5,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.EventObject;
 import javax.swing.table.DefaultTableModel;
-import holmes.windows.managers.HolmesStatesEditorXTPN;
+import holmes.windows.xtpn.managers.HolmesStatesEditorXTPN;
 
 public class StatesPlacesEditorTableModelXTPN extends DefaultTableModel {
     @Serial

@@ -20,7 +20,7 @@ import holmes.petrinet.simulators.GraphicalSimulator;
 import com.javadocking.dock.SingleDock;
 import com.javadocking.dockable.DefaultDockable;
 import com.javadocking.dockable.Dockable;
-import holmes.petrinet.simulators.GraphicalSimulatorXTPN;
+import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 
 /**
  * Metoda odpowiedzialna za okno programu, w którym gromadzone są kolejne zakładki

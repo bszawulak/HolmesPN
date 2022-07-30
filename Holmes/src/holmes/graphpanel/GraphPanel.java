@@ -505,7 +505,6 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewPlace(Point p) {
 		if (isLegalLocation(p)) {
-
 			Place place = new Place(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
 			this.getSelectionManager().selectOneElementLocation(place.getLastLocation());
 			getNodes().add(place);
@@ -1165,8 +1164,6 @@ public class GraphPanel extends JComponent {
 							"Deletion warning?", JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					if (n == 0) {
-						//overlord.getWorkspace().getProject().restoreMarkingZero();
-						
 						getSelectionManager().deleteElementLocation(el);
 						overlord.reset.reset2ndOrderData(true);
 						overlord.markNetChange();

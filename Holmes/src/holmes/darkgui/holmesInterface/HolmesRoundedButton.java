@@ -15,6 +15,8 @@ public class HolmesRoundedButton extends JButton {
     private ImageIcon hover;
     private ImageIcon clicked;
 
+    private JLabel title;
+
     public HolmesRoundedButton(String text, String normalName, String howerName, String clickedName) {
         setLayout(new BorderLayout());
         Dimension size = getPreferredSize();
@@ -27,14 +29,19 @@ public class HolmesRoundedButton extends JButton {
         hover = Tools.getResIcon22("/buttons/"+howerName);
         clicked = Tools.getResIcon22("/buttons/"+clickedName);
 
-        JLabel title = new JLabel(text);
+        title = new JLabel(text);
         title.setHorizontalAlignment(JLabel.CENTER);
         add(title, BorderLayout.CENTER);
+    }
+
+    public void setNewText(String text) {
+        title.setText(text);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         int offset = getInsets().left;
+        offset = 0;
         g.setColor(getBackground());
         if (getModel().isArmed()) {
             setIcon(resizeIcon(clicked, getWidth()-offset, getHeight()-offset));

@@ -607,12 +607,12 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {//isGammaModeActiveXTPN
-					((PlaceXTPN)place).setGammaRangeStatus(true);
+					((PlaceXTPN)place).setGammaRangeVisibility(true);
 				} else if(line.contains("false")) {
-					((PlaceXTPN)place).setGammaRangeStatus(false);
+					((PlaceXTPN)place).setGammaRangeVisibility(false);
 				} else {
 					overlord.log("Gamma range visibility reading failed for place "+placesProcessed, "error", true);
-					((PlaceXTPN)place).setGammaRangeStatus(true);
+					((PlaceXTPN)place).setGammaRangeVisibility(true);
 				}
 				return;
 			}
@@ -1977,39 +1977,45 @@ public class ProjectReader {
 					MultisetM pVector = new MultisetM();
 					line = line.replace(" ", "");
 					String[] stateTable = line.split(";"); //separator multizbiorów
-					int placesProcessed = 0;
+					int placesRead = 0;
 					for (String multisetString : stateTable) {
-						placesProcessed++;
-						String[] multisetTab = multisetString.split(":"); //separator tokenów
-						ArrayList<Double> multisetK = new ArrayList<>();
-						int isXTPNplace = 1; //jeśli 1, to miejsce jest czasowe
-						for(String token : multisetTab) {
-							if(token.contains("(C)")) {
-								token = token.replace("(C)", "");
-								double tokenValue = Double.parseDouble(token); //musi być przeczytane jako double
-								//((Place)nodes.get(placeIndex)).setTokensNumber((int)tokenValue); //WTF?!
-								multisetK.add(tokenValue);
-								isXTPNplace = 0; //miejsce klasyczne
-								break; //technicznie, nie powinno być ŻADNYCH innych wartości w tym "multizbiorze" miejsca klasycznego!
-							} else {
-								double tokenValue = Double.parseDouble(token);
-								if(tokenValue > -1.0) {//oznaczenie braku tokenów
+						placesRead++;
+						if(placesRead > this.placesProcessed) {
+							overlord.log("Error while reading p-state #"+statesProcessed+": there are more multisets type-K stored than" +
+									" processed places ("+this.placesProcessed+").", "error", true);
+							break;
+						} else {
+							String[] multisetTab = multisetString.split(":"); //separator tokenów
+							ArrayList<Double> multisetK = new ArrayList<>();
+							int isXTPNplace = 1; //jeśli 1, to miejsce jest czasowe
+							for(String token : multisetTab) {
+								if(token.contains("(C)")) {
+									token = token.replace("(C)", "");
+									double tokenValue = Double.parseDouble(token); //musi być przeczytane jako double
+									//((Place)nodes.get(placeIndex)).setTokensNumber((int)tokenValue); //WTF?!
 									multisetK.add(tokenValue);
+									isXTPNplace = 0; //miejsce klasyczne
+									break; //technicznie, nie powinno być ŻADNYCH innych wartości w tym "multizbiorze" miejsca klasycznego!
+								} else {
+									double tokenValue = Double.parseDouble(token);
+									if(tokenValue > -1.0) {//oznaczenie braku tokenów
+										multisetK.add(tokenValue);
+									}
 								}
 							}
+							Collections.sort(multisetK);
+							Collections.reverse(multisetK);
+							pVector.addMultiset_K_toMultiset_M(multisetK, isXTPNplace);
 						}
-						Collections.sort(multisetK);
-						Collections.reverse(multisetK);
-						pVector.addMultiset_K_toMultiset_M(multisetK, isXTPNplace);
 					}
 					statesProcessed++;
 
-					if(placesProcessed < this.placesProcessed) {
-						for(int i = 0; i< this.placesProcessed -placesProcessed; i++) {
+					if(placesRead < this.placesProcessed) {
+						for(int i = 0; i< this.placesProcessed -placesRead; i++) {
 							pVector.addMultiset_K_toMultiset_M(new ArrayList<Double>(), 1);
 						}
-						overlord.log("Problems while reading XTPN state "+statesProcessed+". Too few stored places, only: "
-								+placesProcessed+" out of "+placesProcessed+". Missing multisets type-K replaced as empty.", "error", true);
+						overlord.log("Problems while reading project p-state #"+statesProcessed+". Too few multisets in file, only: "
+								+placesRead+" found out of "+placesProcessed+" total XTPN places. Missing multisets type-K replaced as empty.", "error", true);
 					}
 
 					line = buffer.readLine(); //dane dodatkowe

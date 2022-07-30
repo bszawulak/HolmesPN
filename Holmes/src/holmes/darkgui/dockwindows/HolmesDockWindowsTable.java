@@ -37,14 +37,14 @@ import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
-import holmes.petrinet.simulators.GraphicalSimulatorXTPN;
+import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 import holmes.petrinet.simulators.QuickSimTools;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesFunctionsBuilder;
 import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesNotepad;
-import holmes.windows.HolmesXTPNtokens;
+import holmes.windows.xtpn.HolmesXTPNtokens;
 import holmes.windows.managers.HolmesStatesManager;
 import holmes.windows.managers.ssim.HolmesSimSetup;
 import holmes.workspace.WorkspaceSheet;
@@ -184,6 +184,13 @@ public class HolmesDockWindowsTable extends JPanel {
     private JFormattedTextField alphaMaxTextField;
     private JFormattedTextField betaMinTextField;
     private JFormattedTextField betaMaxTextField;
+
+
+    //przyciski sumulatora XTPN używają poniższych aby globalnie zmieniać widoczność wartości czasowych rysunku sieci:
+    private boolean alphaValuesVisible = true;
+    private boolean betaValuesVisible = true;
+    private boolean gammaValuesVisible = true;
+    private boolean tauValuesVisible = true;
 
     // modes
     private static final int PLACE = 0;
@@ -631,7 +638,7 @@ public class HolmesDockWindowsTable extends JPanel {
             HolmesRoundedButton loopSimulation = new HolmesRoundedButton(""
                     , "simulator/simStart1.png", "simulator/simStart2.png", "simulator/simStart3.png");
             loopSimulation.setName("XTPNstart");
-            loopSimulation.setBounds(internalX, internalY += 20, 50, 50);
+            loopSimulation.setBounds(internalX, internalY += 20, 40, 40);
             loopSimulation.setToolTipText("Loop simulation");
             loopSimulation.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -643,7 +650,7 @@ public class HolmesDockWindowsTable extends JPanel {
             HolmesRoundedButton pauseSimulation = new HolmesRoundedButton(""
                     , "simulator/simPause1.png", "simulator/simPause2.png", "simulator/simPause3.png");
             pauseSimulation.setName("XTPNpause");
-            pauseSimulation.setBounds(internalX+40, internalY, 50, 50);
+            pauseSimulation.setBounds(internalX+40, internalY, 40, 40);
             pauseSimulation.setToolTipText("Pause simulation");
             pauseSimulation.setEnabled(false);
             pauseSimulation.addActionListener(actionEvent -> {
@@ -656,7 +663,7 @@ public class HolmesDockWindowsTable extends JPanel {
             HolmesRoundedButton stopSimulation = new HolmesRoundedButton(""
                     , "simulator/simStop1.png", "simulator/simStop2.png", "simulator/simStop2.png");
             stopSimulation.setName("XTPNstop");
-            stopSimulation.setBounds(internalX+80, internalY, 50, 50);
+            stopSimulation.setBounds(internalX+80, internalY, 40, 40);
             stopSimulation.setToolTipText("Schedule a stop for the simulation");
             stopSimulation.setEnabled(false);
             stopSimulation.addActionListener(actionEvent -> {
@@ -668,15 +675,11 @@ public class HolmesDockWindowsTable extends JPanel {
             HolmesRoundedButton resetButton = new HolmesRoundedButton("<html><center>Restore<br>p-state</center></html>"
                     , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
             resetButton.setName("resetM0button");
-            resetButton.setBounds(internalX, internalY+=40, 90, 50);
+            resetButton.setBounds(internalX, internalY+=40, 80, 40);
             resetButton.setToolTipText("Reset all tokens in places.");
             resetButton.setEnabled(true);
             resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
             components.add(resetButton);
-
-
-
-
 
             JLabel transDelayLabel = new JLabel("Firing delay:");
             transDelayLabel.setBounds(internalX, internalY+=80, 150, 20);
@@ -730,6 +733,106 @@ public class HolmesDockWindowsTable extends JPanel {
                 }
             }.yesWeCan(arcDelaySlider) );
             components.add(transDelaySlider);
+
+
+            JLabel timeValuesVisLabel = new JLabel("Time values visibility:");
+            timeValuesVisLabel.setBounds(internalX, internalY+=50, 140, 20);
+            components.add(timeValuesVisLabel);
+
+            HolmesRoundedButton showAlfaSwitchButton = new HolmesRoundedButton("<html><center>\u03B1:ON</center></html>"
+                    , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            showAlfaSwitchButton.setName("switchAlphas");
+            showAlfaSwitchButton.setBounds(internalX, internalY+=20, 80, 30);
+            showAlfaSwitchButton.setToolTipText("Switch alpha visibility.");
+            showAlfaSwitchButton.setEnabled(true);
+            showAlfaSwitchButton.addActionListener(actionEvent -> {
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
+                if(alphaValuesVisible) {
+                    alphaValuesVisible = false;
+                    button.setNewText("<html><center>\u03B1:OFF</center></html>");//u03B1
+                } else {
+                    alphaValuesVisible = true;
+                    button.setNewText("<html><center>\u03B1:ON</center></html>");
+                }
+                for(Transition trans : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
+                    ((TransitionXTPN)trans).setAlphaRangeVisibility(alphaValuesVisible);
+                }
+                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            });
+            components.add(showAlfaSwitchButton);
+
+            HolmesRoundedButton showBetaSwitchButton = new HolmesRoundedButton("<html><center>\u03B2:ON</center></html>"
+                    , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            showBetaSwitchButton.setName("switchBetas");
+            showBetaSwitchButton.setBounds(internalX+80, internalY, 80, 30);
+            showBetaSwitchButton.setToolTipText("Switch beta visibility.");
+            showBetaSwitchButton.setEnabled(true);
+            showBetaSwitchButton.addActionListener(actionEvent -> {
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
+
+                if(betaValuesVisible) {
+                    betaValuesVisible = false;
+                    button.setNewText("<html><center>\u03B2:OFF</center></html>"); //u03B2
+                } else {
+                    betaValuesVisible = true;
+                    button.setNewText("<html><center>\u03B2:ON</center></html>");
+                }
+                for(Transition trans : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
+                    ((TransitionXTPN)trans).setBetaRangeVisibility(betaValuesVisible);
+                }
+                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                //ghgf
+                //overlord.getWorkspace().getProject().restoreMarkingZero();
+            });
+            components.add(showBetaSwitchButton);
+
+            HolmesRoundedButton showGammaSwitchButton = new HolmesRoundedButton("<html><center>\u03C4:ON</center></html>"
+                    , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            showGammaSwitchButton.setName("switchGammas");
+            showGammaSwitchButton.setBounds(internalX, internalY+=30, 80, 30);
+            showGammaSwitchButton.setToolTipText("Switch gamma visibility.");
+            showGammaSwitchButton.setEnabled(true);
+            showGammaSwitchButton.addActionListener(actionEvent -> {
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
+
+                if(gammaValuesVisible) {
+                    gammaValuesVisible = false;
+                    button.setNewText("<html><center>\u03C4:OFF</center></html>"); //u03C4
+                } else {
+                    gammaValuesVisible = true;
+                    button.setNewText("<html><center>\u03C4:ON</center></html>");
+                }
+                for(Place place : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces()) {
+                    ((PlaceXTPN)place).setGammaRangeVisibility(gammaValuesVisible);
+                }
+                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            });
+            components.add(showGammaSwitchButton);
+
+            HolmesRoundedButton showTauSwitchButton = new HolmesRoundedButton("<html><center>\u03C4:ON</center></html>"
+                    , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            showTauSwitchButton.setName("switchTaus");
+            showTauSwitchButton.setBounds(internalX+80, internalY, 80, 30);
+            showTauSwitchButton.setToolTipText("Switch tau visibility.");
+            showTauSwitchButton.setEnabled(true);
+            showTauSwitchButton.addActionListener(actionEvent -> {
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
+
+                if(tauValuesVisible) {
+                    tauValuesVisible = false;
+                    button.setNewText("<html><center>\u03C4:OFF</center></html>"); //u03C4
+                } else {
+                    tauValuesVisible = true;
+                    button.setNewText("<html><center>\u03C4:ON</center></html>");
+                }
+                for(Transition trans : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
+                    ((TransitionXTPN)trans).setTauTimersVisibility(tauValuesVisible);
+                }
+                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            });
+            components.add(showTauSwitchButton);
+
+
         }
         panel.setLayout(null);
         for (JComponent component : components) {
@@ -1395,11 +1498,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
             JButton button = (JButton) e.getSource();
             if (place.isGammaRangeVisible()) {
-                ((PlaceXTPN)element).setGammaRangeStatus(false);
+                ((PlaceXTPN)element).setGammaRangeVisibility(false);
                 button.setText("<html> Gamma<br>hidden<html>");
                 button.setBackground(Color.RED);
             } else {
-                ((PlaceXTPN)element).setGammaRangeStatus(true);
+                ((PlaceXTPN)element).setGammaRangeVisibility(true);
                 button.setText("<html> Gamma<br>visible<html>");
                 button.setBackground(Color.GREEN);
             }

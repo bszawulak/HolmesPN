@@ -1,12 +1,6 @@
 package holmes.graphpanel;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
@@ -46,6 +40,7 @@ public final class ElementDraw {
 	private static final Color lightSky = new Color(0, 135, 230);
 	private static final Color lightSky2 = new Color(0, 185, 230);
 	private static final Color lightSky3 = new Color(0, 215, 230);
+	private static final Color lightGray = new Color(224, 224, 235);
 
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
@@ -754,7 +749,7 @@ public final class ElementDraw {
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
-				if(eds.crazyColors) {
+				if(eds.crazyColors && !(place instanceof PlaceXTPN)) {
 					g.setColor(getColor(place.getTokensNumber()));
 					g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					g.setColor(Color.DARK_GRAY);
@@ -775,12 +770,32 @@ public final class ElementDraw {
 				// _XTPN symbol
 				if( place instanceof PlaceXTPN ) { //miejsce XTPN
 					//klepsydra:
-					g.setColor(Color.LIGHT_GRAY);
-					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 9, nodeBounds.x + 28, nodeBounds.y + 9);
-					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 28, nodeBounds.x + 28, nodeBounds.y + 28);
-					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.x + 27, nodeBounds.y + 27);
-					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 27, nodeBounds.x + 27, nodeBounds.y + 10);
+					if( ((PlaceXTPN)place).isGammaModeActiveXTPN() ) {
+						g.setColor(lightGray);
+						int[] xpoints = {nodeBounds.x+10, nodeBounds.x+27, nodeBounds.x+19};
+						int[] ypoints = {nodeBounds.y+9, nodeBounds.y+9, nodeBounds.y+18};
+						Polygon p = new Polygon(xpoints, ypoints, 3);
+						g.fillPolygon(p);
+						int[] xpoints2 = {nodeBounds.x+10, nodeBounds.x+27, nodeBounds.x+19};
+						int[] ypoints2 = {nodeBounds.y+28, nodeBounds.y+28, nodeBounds.y+19};
+						p = new Polygon(xpoints2, ypoints2, 3);
+						g.fillPolygon(p);
+
+						g.setColor(Color.GRAY);
+						g.drawLine(nodeBounds.x + 9, nodeBounds.y + 9, nodeBounds.x + 28, nodeBounds.y + 9);
+						g.drawLine(nodeBounds.x + 9, nodeBounds.y + 28, nodeBounds.x + 28, nodeBounds.y + 28);
+						g.drawLine(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.x + 27, nodeBounds.y + 27);
+						g.drawLine(nodeBounds.x + 10, nodeBounds.y + 27, nodeBounds.x + 27, nodeBounds.y + 10);
+
+					} else {
+						g.setColor(Color.LIGHT_GRAY);
+						g.drawLine(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.x + 27, nodeBounds.y + 10);
+						g.drawLine(nodeBounds.x + 10, nodeBounds.y + 27, nodeBounds.x + 27, nodeBounds.y + 27);
+						g.drawLine(nodeBounds.x + 11, nodeBounds.y + 11, nodeBounds.x + 26, nodeBounds.y + 26);
+						g.drawLine(nodeBounds.x + 11, nodeBounds.y + 26, nodeBounds.x + 26, nodeBounds.y + 11);
+					}
 					g.setColor(Color.black);
+
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 				}
 				
@@ -830,7 +845,6 @@ public final class ElementDraw {
 				
 				if(place.getNumericalValueVisibility()) {
 					String clNumber = formatD(place.getNumericalValueDOUBLE());
-
 					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(clNumber) / 2);
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
 					Font old = g.getFont();
@@ -1040,7 +1054,7 @@ public final class ElementDraw {
 	 * @param eds (<b>ElementDrawSettings</b>) ustawienia rysowania
 	 * @return (<b>Graphics2D</b>) obiekt rysujący
 	 */
-	public static Graphics2D drawArc(Arc arc, Graphics2D g, int sheetId, int zoom, ElementDrawSettings eds) { //TODO: metoda drawArc
+	public static Graphics2D drawArc(Arc arc, Graphics2D g, int sheetId, int zoom, ElementDrawSettings eds) {
 		if (arc.getLocationSheetId() != sheetId)
 			return g;
 
@@ -1139,7 +1153,7 @@ public final class ElementDraw {
 				}
 
 				if(breaks > 0) {
-					drawBreaks(g, arc, startP, (int) xp, (int) yp, breakPoints, breaks);
+					drawBreaks(g, arc, startP, (int) xp, (int) yp, breakPoints, breaks, eds);
 				} else {
 					if(!arc.layers.isEmpty()) {
 						int move=0;
@@ -1164,6 +1178,7 @@ public final class ElementDraw {
 							} else if (prodSim) {
 								g.setColor(productionXTPNcolor);
 							} else {
+								g.setStroke(new BasicStroke(eds.arcSize));
 								g.setColor(arcNeutralXTPNcolor);
 							}
 						} else if (arc.isXTPNinhibitor()) {
@@ -1174,8 +1189,6 @@ public final class ElementDraw {
 					}
 				}
 			}
-			///TODO ZMIENIĆ LOKALIZACJE
-
 		} else {
 			if(arc.isXTPN() || arc.isXTPNinhibitor()) { //łuki XTPN mają grubszą kreskę
 				g.setStroke(new BasicStroke(2));
@@ -1184,7 +1197,7 @@ public final class ElementDraw {
 			}
 
 			if(breaks > 0) {
-				drawBreaks(g, arc, startP, (int) xp, (int) yp, breakPoints, breaks);
+				drawBreaks(g, arc, startP, (int) xp, (int) yp, breakPoints, breaks, eds);
 			} else {
 				if(!arc.layers.isEmpty()) {
 					int move=0;
@@ -1260,6 +1273,7 @@ public final class ElementDraw {
 				} else if(prodSim) {
 					g.setColor(productionXTPNcolor);
 				} else {
+					g.setStroke(new BasicStroke(eds.arcSize));
 					g.setColor(arcNeutralXTPNcolor);
 				}
 
@@ -1438,15 +1452,17 @@ public final class ElementDraw {
 
 	/**
 	 * Metoda rysuje łuk łamany.
-	 * @param g (Graphics2D) obiekt rysujący
-	 * @param arc (Arc) - łuk sieci
-	 * @param startP (Point) - punkt startowy łuku
-	 * @param endPx (int) współrzędna x elementu docelowego łuku
-	 * @param endPy (int) współrzędna y elementu docelowego łuku
+	 *
+	 * @param g            (Graphics2D) obiekt rysujący
+	 * @param arc          (Arc) - łuk sieci
+	 * @param startP       (Point) - punkt startowy łuku
+	 * @param endPx        (int) współrzędna x elementu docelowego łuku
+	 * @param endPy        (int) współrzędna y elementu docelowego łuku
 	 * @param breaksVector ArrayList[Point] - wektor punktów łąmiących
-	 * @param breaks (int) liczba punktów łamiących
+	 * @param breaks       (int) liczba punktów łamiących
+	 * @param eds
 	 */
-	private static void drawBreaks(Graphics2D g, Arc arc, Point startP, int endPx, int endPy, ArrayList<Point> breaksVector, int breaks) {
+	private static void drawBreaks(Graphics2D g, Arc arc, Point startP, int endPx, int endPy, ArrayList<Point> breaksVector, int breaks, ElementDrawSettings eds) {
 		if(arc.qSimForcedArc) {
 			g.setColor(arc.qSimForcedColor);
 			g.setStroke(new BasicStroke(4));
@@ -1463,9 +1479,13 @@ public final class ElementDraw {
 				g.setColor(productionXTPNcolor);
 				g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 			} else {
+				g.setStroke(new BasicStroke(eds.arcSize));
 				g.setColor(arcNeutralXTPNcolor);
 				g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 			}
+		} else if(arc.isXTPNinhibitor()) {
+			g.setColor(inhibitorXTPNcolor);
+			g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 		} else {
 			g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 		}
@@ -1516,9 +1536,13 @@ public final class ElementDraw {
 					g.setColor(productionXTPNcolor);
 					g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 				} else {
+					g.setStroke(new BasicStroke(eds.arcSize));
 					g.setColor(arcNeutralXTPNcolor);
 					g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 				}
+			} else if(arc.isXTPNinhibitor()) {
+				g.setColor(inhibitorXTPNcolor);
+				g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 			} else {
 				g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 			}
@@ -1565,9 +1589,13 @@ public final class ElementDraw {
 				g.setColor(productionXTPNcolor);
 				g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 			} else {
+				g.setStroke(new BasicStroke(eds.arcSize));
 				g.setColor(arcNeutralXTPNcolor);
 				g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 			}
+		} else if(arc.isXTPNinhibitor()) {
+			g.setColor(inhibitorXTPNcolor);
+			g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 		} else {
 			g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 		}
@@ -1705,10 +1733,13 @@ public final class ElementDraw {
 				g.setStroke(EditorResources.tokenDefaultStroke);
 				g.drawOval(x+2, y+1, 10, 10);
 			} else if (place.getTokensNumber() > 4) {
+				g.setColor(Color.BLUE);
+				g.setFont(new Font("TimesRoman", Font.BOLD, 18));
+
 				g.drawString(
 						Integer.toString(place.getTokensNumber()),
 						nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth(Integer.toString(place.getTokensNumber())) / 2,
-						nodeBounds.y + nodeBounds.height / 2 + 5);
+						nodeBounds.y + nodeBounds.height / 2 + 6);
 			}
 		} else {
 			if (place.getTokensNumber() == 1) {
@@ -1869,10 +1900,18 @@ public final class ElementDraw {
 			}
 			
 			g.setColor(EditorResources.tokenDefaultColor);
-			g.fillOval((int) a - 5, (int) b - 5, 10, 10);
-			g.setColor(Color.black);
-			g.setStroke(EditorResources.tokenDefaultStroke);
-			g.drawOval((int) a - 5, (int) b - 5, 10, 10);
+
+			try {
+				BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/tokenV2.png"));
+				g.drawImage(img, null, (int) a - 5, (int) b - 5);
+			} catch (Exception ex) {
+				GUIManager.getDefaultGUIManager().log("Error (371587114) | Exception:  "+ex.getMessage(), "error", false);
+			}
+
+//			g.fillOval((int) a - 5, (int) b - 5, 10, 10);
+//			g.setColor(Color.black);
+//			g.setStroke(EditorResources.tokenDefaultStroke);
+//			g.drawOval((int) a - 5, (int) b - 5, 10, 10);
 			
 			
 			String wTxt = Integer.toString(weight);
