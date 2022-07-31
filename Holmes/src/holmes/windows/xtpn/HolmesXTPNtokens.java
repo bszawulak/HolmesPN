@@ -20,7 +20,6 @@ import java.util.Collections;
 
 /**
  * Klasa okna dodawania i usuwania tokenów. Działa dla głównego okna oraz managera stanów XTPN.
- *
  * UWAGA!!! Gdy miejsce jest klasyczne (GAMMA = OFF), to jego multizbiór K jest pusty, a liczba tokenów jest
  * przechowywana w tokensNumber jak dla klasycznych miejsc. ALE JEST WYJĄTEK: dla managera stanów, jeśli
  * miejsce jest przechowywane jako klasyczne, wtedy liczba tokenów to jedyna, pierwsza wartość w multizbiorze K. Np.
@@ -67,7 +66,7 @@ public class HolmesXTPNtokens extends JFrame {
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log("Error (310108837) | Exception:  "+ex.getMessage(), "error", false);
+            GUIManager.getDefaultGUIManager().log("Error (310108837) | Exception:  "+ex.getMessage(), "error", true);
         }
 
         if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)
@@ -211,7 +210,7 @@ public class HolmesXTPNtokens extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                overlord.log("Exception: "+ex, "error", false);
+                overlord.log("Exception: "+ex, "error", true);
                 System.out.println(ex.getMessage());
             }
         });
@@ -285,10 +284,10 @@ public class HolmesXTPNtokens extends JFrame {
                             if(selected > -1 && selected < multisetK.size()) {
                                 multisetK.remove(selected);
                             } else {
-                                overlord.log("Error while removing token no. "+selected+"from state for place "+places.indexOf(place), "error", false);
+                                overlord.log("Error while removing token no. "+selected+"from state for place "+places.indexOf(place), "error", true);
                             }
                         } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
-
+                            ((HolmesNodeInfoXTPN)parentWindow).printTokenNumber();
                         }
                     }
                 } else { //miejsca klasyczne
@@ -305,10 +304,10 @@ public class HolmesXTPNtokens extends JFrame {
                                     multisetK.set(0, tokensNumber);
                                 }
                             } else {
-                                overlord.log("Error while removing token no. "+selected+"from state for place "+places.indexOf(place), "error", false);
+                                overlord.log("Error while removing token no. "+selected+"from state for place "+places.indexOf(place), "error", true);
                             }
                         } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
-
+                            ((HolmesNodeInfoXTPN)parentWindow).printTokenNumber();
                         }
                     }
                 }
@@ -345,7 +344,7 @@ public class HolmesXTPNtokens extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                overlord.log("Exception: "+ex, "error", false);
+                overlord.log("Exception: "+ex, "error", true);
                 System.out.println(ex.getMessage());
             }
         });
@@ -379,7 +378,7 @@ public class HolmesXTPNtokens extends JFrame {
                                 Collections.reverse(multisetK);
                             }
                         } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
-
+                            ((HolmesNodeInfoXTPN)parentWindow).printTokenNumber();
                         }
                     }
                     recreateComboBox();
@@ -396,7 +395,7 @@ public class HolmesXTPNtokens extends JFrame {
                             tokensNumber++;
                             multisetK.set(0, tokensNumber);
                         } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
-
+                            ((HolmesNodeInfoXTPN)parentWindow).printTokenNumber();
                         }
                     }
                     checkInterfaceConditions();
@@ -431,7 +430,7 @@ public class HolmesXTPNtokens extends JFrame {
                     if(parentWindow instanceof HolmesStatesEditorXTPN) {
                         multisetK.clear();
                     } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
-
+                        ((HolmesNodeInfoXTPN)parentWindow).printTokenNumber();
                     }
                 }
                 checkInterfaceConditions();
@@ -492,7 +491,7 @@ public class HolmesXTPNtokens extends JFrame {
             if(parentWindow == null) { //tylko dla głównego okna odwołujemy się do miejsca
                 if(tokensNo != place.getTokensNumber()) {
                     overlord.log("Error, multiset size and variable tokenNumber missmatch for place p_"+place.getID(),
-                            "error", false);
+                            "error", true);
                 }
             }
         } else { //classical place
@@ -502,7 +501,7 @@ public class HolmesXTPNtokens extends JFrame {
             if(parentWindow == null) { //tylko dla głównego okna odwołujemy się do miejsca
                 if(tokensNo != place.getTokensNumber()) {
                     overlord.log("Error, classical place tokens number in a multiset at .get(0) and variable tokenNumber missmatch for place p_"+place.getID(),
-                            "error", false);
+                            "error", true);
                 }
             }
         }

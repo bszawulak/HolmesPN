@@ -79,7 +79,7 @@ public class HolmesNetTables extends JFrame {
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			GUIManager.getDefaultGUIManager().log("Critical error, cannot create Holmes Net Tables window:", "error", true);
-			GUIManager.getDefaultGUIManager().log(msg, "error", false);
+			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 		}
 	}
 	
@@ -97,7 +97,7 @@ public class HolmesNetTables extends JFrame {
 		setTitle("Net data tables");
     	try { setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png")); } 
     	catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (475821524) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (475821524) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	
     	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

@@ -66,7 +66,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (641603807) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (641603807) | Exception:  "+ex.getMessage(), "error", true);
 
 		}
 		this.ego = this;
@@ -1171,7 +1171,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 				overlord.getWorkspace().getProject().setT_InvMatrix(invariants, false);
 				overlord.io.exportGeneratedInvariants(true);
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (453526573) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (453526573) | Exception:  "+ex.getMessage(), "error", true);
 			}
 			finally {
 				overlord.getWorkspace().getProject().setT_InvMatrix(invBackup, false);

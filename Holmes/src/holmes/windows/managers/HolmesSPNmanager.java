@@ -57,7 +57,7 @@ public class HolmesSPNmanager extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (634466444) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (634466444) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
 		PetriNet pn = overlord.getWorkspace().getProject();
@@ -399,7 +399,7 @@ public class HolmesSPNmanager extends JFrame {
 			fillDescriptionField();
 			//doNotUpdate = false;
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (502046909) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (502046909) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 	

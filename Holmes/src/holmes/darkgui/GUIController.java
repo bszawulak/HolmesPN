@@ -9,8 +9,7 @@ import holmes.petrinet.data.PetriNet;
  * niczym w kodzie Holmesa nie panuje to kalumnie i rosyjska propaganda.
  */
 public class GUIController {
-    private static final GUIController theOneRing = new GUIController();
-
+    private static final GUIController singleton = new GUIController();
     private PetriNet.GlobalNetType currentNetType = PetriNet.GlobalNetType.PN;
 
     private GUIController() { //access denied, może pan pana Singletona w d*** pocałować
@@ -20,12 +19,11 @@ public class GUIController {
 
     /**
      * Metoda dostępu do kontrolera.
-     * @return
+     * @return (<b>GUIController</b>) obiekt kontrolera.
      */
     public static GUIController access() {
-        return theOneRing;
+        return singleton;
     }
-
 
     public PetriNet.GlobalNetType getCurrentNetType() {
         return currentNetType;

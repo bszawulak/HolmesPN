@@ -91,7 +91,7 @@ public class HolmesSimSetup extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (766220006) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (766220006) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		setSize(new Dimension(620, 490));
 		

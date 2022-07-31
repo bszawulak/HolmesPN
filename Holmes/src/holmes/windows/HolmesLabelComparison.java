@@ -116,7 +116,7 @@ public class HolmesLabelComparison extends JFrame {
                 else
                     sPND = new PetriNetData(pRdr.getNodes(),pRdr.getArcs(), "Second Net");
             } catch (Exception ex) {
-                GUIManager.getDefaultGUIManager().log("Error (236840455) | Exception:  "+ex.getMessage(), "error", false);
+                GUIManager.getDefaultGUIManager().log("Error (236840455) | Exception:  "+ex.getMessage(), "error", true);
             }
         }
     }

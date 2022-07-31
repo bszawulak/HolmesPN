@@ -178,7 +178,7 @@ public class StatesPlacesTableModelXTPN extends AbstractTableModel {
 
             //boss.changeStateXTPN(row, col, newValue);
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log("Error (620968626) | Exception:  "+ex.getMessage(), "error", false);
+            GUIManager.getDefaultGUIManager().log("Error (620968626) | Exception:  "+ex.getMessage(), "error", true);
         }
     }
 
@@ -191,7 +191,7 @@ public class StatesPlacesTableModelXTPN extends AbstractTableModel {
             ArrayList<String> rowVector = dataMatrix.get(row);
             rowVector.set(col, ""+(int)newValue);
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log("Error (706019146) | Exception:  "+ex.getMessage(), "error", false);
+            GUIManager.getDefaultGUIManager().log("Error (706019146) | Exception:  "+ex.getMessage(), "error", true);
         }
     }
 }

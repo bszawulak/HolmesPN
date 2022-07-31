@@ -135,7 +135,7 @@ public class HolmesSimKnockVis extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (210930262) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (210930262) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		setSize(new Dimension(1200, 920));
 		
@@ -862,7 +862,7 @@ public class HolmesSimKnockVis extends JFrame {
             	}
         	}
     	} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (704284698) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (704284698) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	
         //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
@@ -950,7 +950,7 @@ public class HolmesSimKnockVis extends JFrame {
             	}
         	}
     	} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (656544812) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (656544812) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	
         //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
@@ -1073,7 +1073,7 @@ public class HolmesSimKnockVis extends JFrame {
             	}
         	}
     	} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (391946877) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (391946877) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	
         //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
@@ -1162,7 +1162,7 @@ public class HolmesSimKnockVis extends JFrame {
             	}
         	}
     	} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (121688445) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (121688445) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	
         //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
@@ -1888,7 +1888,7 @@ public class HolmesSimKnockVis extends JFrame {
 	  	    	window.setVisible(true);
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (905683345) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (905683345) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 	

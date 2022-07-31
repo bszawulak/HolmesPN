@@ -230,7 +230,7 @@ public class ProjectWriter {
 							pointY = gammaLoc.getPosition().y;
 							bw.write(spaces(sp) + "<Place gamma offset data sheet/x/y/elIndex:" + sheetId + ";" + pointX + ";" + pointY + ";" + e + ">" + newline); //sheetID/x/y
 						} catch (Exception exc) {
-							GUIManager.getDefaultGUIManager().log("Error: gamma location for place "+place.getName()+ " unavailable. (Portal problem?)", "error", false);
+							GUIManager.getDefaultGUIManager().log("Error: gamma location for place "+place.getName()+ " unavailable. (Portal problem?)", "error", true);
 						}
 					}
 				}
@@ -315,7 +315,7 @@ public class ProjectWriter {
 							pointY = alphaLoc.getPosition().y;
 							bw.write(spaces(sp)+"<Transition alpha offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 						} catch (Exception exc) {
-							GUIManager.getDefaultGUIManager().log("Error: alpha location for place "+trans.getName()+ " unavailable. (Portal problem?)", "error", false);
+							GUIManager.getDefaultGUIManager().log("Error: alpha location for place "+trans.getName()+ " unavailable. (Portal problem?)", "error", true);
 						}
 
 						try {
@@ -325,7 +325,7 @@ public class ProjectWriter {
 							pointY = betaLoc.getPosition().y;
 							bw.write(spaces(sp)+"<Transition beta offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 						} catch (Exception exc) {
-							GUIManager.getDefaultGUIManager().log("Error: beta location for transition "+trans.getName()+ " unavailable. (Portal problem?)", "error", false);
+							GUIManager.getDefaultGUIManager().log("Error: beta location for transition "+trans.getName()+ " unavailable. (Portal problem?)", "error", true);
 						}
 					}
 				}

@@ -51,7 +51,7 @@ public class Rprotocols implements Runnable {
 				executeCHmetricScripts();
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error: 579016465 (Rprotocols) | Exception "+ex, "error", false);
+			GUIManager.getDefaultGUIManager().log("Error: 579016465 (Rprotocols) | Exception "+ex, "error", true);
 		}
 	}
 	

@@ -279,7 +279,7 @@ public class SnoopyWriterTransition {
 		try {
 			bw.write(text+"\n");
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (116799585) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (116799585) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 	

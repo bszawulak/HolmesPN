@@ -534,7 +534,7 @@ public class TexExporter {
 							oldValue++;
 							mctRow.set(mctNumber, oldValue); //występuje
 						} catch (Exception ex) {
-							GUIManager.getDefaultGUIManager().log("Error (552019684) | Exception:  "+ex.getMessage(), "error", false);
+							GUIManager.getDefaultGUIManager().log("Error (552019684) | Exception:  "+ex.getMessage(), "error", true);
 						}
 					}
 				}
@@ -547,7 +547,7 @@ public class TexExporter {
 						oldValue++;
 						transRow.set(tranNumber, oldValue); //występuje
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (231781194) | Exception:  "+ex.getMessage(), "error", false);
+						GUIManager.getDefaultGUIManager().log("Error (231781194) | Exception:  "+ex.getMessage(), "error", true);
 					}
 				}
 			}

@@ -231,7 +231,7 @@ public class P_StateManager {
 		MultisetM multisetM = new MultisetM();
 		for(Place place : pn.getPlaces()) {
 			if( !(place instanceof PlaceXTPN) ) {
-				overlord.log("Critical error, wrong place object. ID: 54832123.", "error", false);
+				overlord.log("Critical error, wrong place object. ID: 54832123.", "error", true);
 				return;
 			}
 
@@ -268,7 +268,7 @@ public class P_StateManager {
 		ArrayList<Place> places = pn.getPlaces();
 		for(Place place : places) {
 			if( !(place instanceof PlaceXTPN) ) {
-				overlord.log("Error code: 54284123. Non-XTPN nodes detected.", "error", false);
+				overlord.log("Error code: 54284123. Non-XTPN nodes detected.", "error", true);
 				return;
 			}
 
@@ -291,7 +291,7 @@ public class P_StateManager {
 			for (int placeIndex = 0; placeIndex < places.size(); placeIndex++) {
 				Place place = places.get(placeIndex);
 				if( !(place instanceof PlaceXTPN) ) {
-					overlord.log("Critical error, wrong place object. ID: 19284133.", "error", false);
+					overlord.log("Critical error, wrong place object. ID: 19284133.", "error", true);
 					return false;
 				}
 
@@ -345,7 +345,7 @@ public class P_StateManager {
 
 		for (Place place : places) {
 			if( !(place instanceof PlaceXTPN) ) {
-				overlord.log("Critical error, wrong place object. ID: 93214125.", "error", false);
+				overlord.log("Critical error, wrong place object. ID: 93214125.", "error", true);
 				return;
 			}
 

@@ -146,7 +146,7 @@ public class HolmesNodeInfo extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (488078573) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (488078573) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
@@ -290,7 +290,7 @@ public class HolmesNodeInfo extends JFrame {
 			try {
 				field.commitEdit();
 			} catch (ParseException ex) {
-				GUIManager.getDefaultGUIManager().log("Error (611156405) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (611156405) | Exception:  "+ex.getMessage(), "error", true);
 			}
 			String newName = field.getText();
 
@@ -925,7 +925,8 @@ public class HolmesNodeInfo extends JFrame {
 			}
 		}
 		dynamicsSeriesDataSet.addSeries(series);
-		
+
+		assert dataVector != null;
 		int sum = dataVector.get(dataVector.size()-2);
 		int steps = dataVector.get(dataVector.size()-1);
 		double avgFired = sum;

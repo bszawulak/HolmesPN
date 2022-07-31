@@ -112,7 +112,6 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
                                 JOptionPane.showMessageDialog(null,
                                         "Saving net sheet into picture failed.",
                                         "Export Picture Error", JOptionPane.ERROR_MESSAGE);
-                                return;
                             }
                         }
                     }

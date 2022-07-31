@@ -828,7 +828,7 @@ public class GUIOperations {
 			String msg = "CH metric computation failed for " + c_number + " clusters.\nPath: "+dir_path;
 			JOptionPane.showMessageDialog(null, msg, "Critical error",JOptionPane.ERROR_MESSAGE);
 			overlord.log(msg, "error", true);
-			overlord.log(e.getMessage(), "error", false);
+			overlord.log(e.getMessage(), "error", true);
 			return null;
 		}
 	}
@@ -905,7 +905,7 @@ public class GUIOperations {
 			String msg = "Clustering generation failed for "+c_number+" clusters.\nPath: "+dir_path;
 			JOptionPane.showMessageDialog(null, msg, "Critical error",JOptionPane.ERROR_MESSAGE);
 			overlord.log(msg, "error", true);
-			overlord.log(e.getMessage(), "error", false);
+			overlord.log(e.getMessage(), "error", true);
 			return null;
 		}
 	}
@@ -1030,11 +1030,11 @@ public class GUIOperations {
 			}
 		} catch (Exception e) {
 			overlord.log("R function failed for parameters:", "error", true);
-			overlord.log("File name: "+csvFileName, "error", false);
-			overlord.log("Output dir: "+pathOutput, "error", false);
-			overlord.log("Algorithm: "+algorithm, "error", false);
-			overlord.log("Metric: "+metric, "error", false);
-			overlord.log("No. of clusters: "+howMany, "error", false);
+			overlord.log("File name: "+csvFileName, "error", true);
+			overlord.log("Output dir: "+pathOutput, "error", true);
+			overlord.log("Algorithm: "+algorithm, "error", true);
+			overlord.log("Metric: "+metric, "error", true);
+			overlord.log("No. of clusters: "+howMany, "error", true);
 			JOptionPane.showMessageDialog(null, "Clustering failed. Check log.", "Critical error", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
@@ -1117,7 +1117,7 @@ public class GUIOperations {
 						ghosts++;
 						int placeId = places.indexOf(p);
 						int transId = transitions.indexOf((Transition)a.getEndNode());
-						overlord.log("Invisible arc: p"+placeId+" -> t"+transId+". Removing...", "error", false);
+						overlord.log("Invisible arc: p"+placeId+" -> t"+transId+". Removing...", "error", true);
 						removeArc(a, arcs);
 					}
 				}
@@ -1135,7 +1135,7 @@ public class GUIOperations {
 						
 						int transId = transitions.indexOf(t);
 						int placeId = places.indexOf((Place)a.getEndNode());
-						overlord.log("Invisible arc: t"+transId+" -> p"+placeId+". Removing...", "error", false);
+						overlord.log("Invisible arc: t"+transId+" -> p"+placeId+". Removing...", "error", true);
 						removeArc(a, arcs);
 					}
 				}

@@ -57,7 +57,7 @@ public class HolmesStatesEditor extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (258082266) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (258082266) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
 		PetriNet pn = overlord.getWorkspace().getProject();

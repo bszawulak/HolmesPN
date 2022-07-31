@@ -79,7 +79,7 @@ public class HolmesKnockout extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (629849961) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (629849961) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		setVisible(false);
 		this.setTitle("Knockout analysis");
@@ -523,7 +523,7 @@ public class HolmesKnockout extends JFrame {
 				line = buffer.readLine();
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (526939437) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (526939437) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		GUIManager.getDefaultGUIManager().showKnockout(knockoutMatrix);
 	}
@@ -611,7 +611,7 @@ public class HolmesKnockout extends JFrame {
 				line = buffer.readLine();
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (424094127) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (424094127) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		
 		notePad.addTextLineNL("", "text");
@@ -648,7 +648,7 @@ public class HolmesKnockout extends JFrame {
 						invPercent = (float)transInInvVector.get(ident)/(float)invNumber;
 						invPercent *= 100;
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (930795539) | Exception:  "+ex.getMessage(), "error", false);
+						GUIManager.getDefaultGUIManager().log("Error (930795539) | Exception:  "+ex.getMessage(), "error", true);
 					}
 					
 					line = line.substring(line.indexOf("_")+1);
@@ -671,7 +671,7 @@ public class HolmesKnockout extends JFrame {
 					invPercent = (float)transInInvVector.get(ident)/(float)invNumber;
 					invPercent *= 100;
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (495583551) | Exception:  "+ex.getMessage(), "error", false);
+					GUIManager.getDefaultGUIManager().log("Error (495583551) | Exception:  "+ex.getMessage(), "error", true);
 				}
 						
 				line = line.substring(line.indexOf("_")+1);
@@ -731,7 +731,7 @@ public class HolmesKnockout extends JFrame {
 				}
 				
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (269968675) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (269968675) | Exception:  "+ex.getMessage(), "error", true);
 			}
 		}
 		
@@ -794,7 +794,7 @@ public class HolmesKnockout extends JFrame {
 			
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (187924584) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (187924584) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 	

@@ -162,7 +162,7 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 				dataMatrix.get(row).subType = (StochaticsType)value;
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (497476884) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (497476884) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 }

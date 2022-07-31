@@ -67,7 +67,7 @@ public class HolmesMCS extends JFrame {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 			transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (995194569) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (995194569) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		setVisible(false);
 		this.setTitle("Minimal Cutting Sets generator");
@@ -550,7 +550,7 @@ public class HolmesMCS extends JFrame {
 							int next = Integer.parseInt(s);
 							objReactions.add(next);
 						} catch (Exception ex) {
-							GUIManager.getDefaultGUIManager().log("Error (457849198) | Exception:  "+ex.getMessage(), "error", false);
+							GUIManager.getDefaultGUIManager().log("Error (457849198) | Exception:  "+ex.getMessage(), "error", true);
 						}
 					}
 				}

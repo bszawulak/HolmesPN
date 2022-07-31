@@ -2,9 +2,7 @@ package holmes.darkgui.holmesInterface;
 
 import holmes.utilities.Tools;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
@@ -38,10 +36,15 @@ public class HolmesRoundedButton extends JButton {
         title.setText(text);
     }
 
+    public void repaintBackground(String normalName, String howerName, String clickedName) {
+        normal = Tools.getResIcon22("/buttons/"+normalName);
+        hover = Tools.getResIcon22("/buttons/"+howerName);
+        clicked = Tools.getResIcon22("/buttons/"+clickedName);
+    }
     @Override
     protected void paintComponent(Graphics g) {
-        int offset = getInsets().left;
-        offset = 0;
+        //int offset = getInsets().left;
+        int offset = 0;
         g.setColor(getBackground());
         if (getModel().isArmed()) {
             setIcon(resizeIcon(clicked, getWidth()-offset, getHeight()-offset));

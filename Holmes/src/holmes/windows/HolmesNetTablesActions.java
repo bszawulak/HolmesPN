@@ -70,7 +70,7 @@ public class HolmesNetTablesActions {
 	  	    	window.setVisible(true);
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (437771981) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (437771981) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 	

@@ -1,7 +1,6 @@
 package holmes.graphpanel.popupmenu;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.Serial;
 
 import javax.swing.JOptionPane;
 
@@ -19,47 +18,50 @@ import holmes.windows.xtpn.HolmesNodeInfoXTPN;
  * @author MR - dynamiczna wersja
  */
 public class NodePopupMenu extends GraphPanelPopupMenu {
+	@Serial
 	private static final long serialVersionUID = -8988739887642243733L;
+	private ElementLocation elocation;
 
 	/**
 	 * Konstruktor obiektu klasy PetriNetElementPopupMenu.
 	 * @param graphPanel GraphPanel - obiekt panelu dla tworzonego menu
 	 */
-	public NodePopupMenu(GraphPanel graphPanel, PetriNetElementType pne, Object pneObject) {
+	public NodePopupMenu(GraphPanel graphPanel, ElementLocation eloc, PetriNetElementType pne, Object pneObject) {
 		super(graphPanel, pne);
+
+		this.elocation = eloc;
 		
 		if(pne != PetriNetElementType.ARC) {
-			this.addMenuItem("Show details...", "", new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
-						return;
-					
-					Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
-					if(n instanceof Place) {
-						if(n instanceof PlaceXTPN) {
-							HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((PlaceXTPN) n, GUIManager.getDefaultGUIManager().getFrame());
-							ani.setVisible(true);
-						} else {
-							HolmesNodeInfo ani = new HolmesNodeInfo((Place)n, GUIManager.getDefaultGUIManager().getFrame());
-							ani.setVisible(true);
-						}
-					} else if(n instanceof Transition) {
-						if(n instanceof TransitionXTPN) {
-							HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((TransitionXTPN) n, GUIManager.getDefaultGUIManager().getFrame());
-						} else {
-							HolmesNodeInfo ani = new HolmesNodeInfo((Transition)n, GUIManager.getDefaultGUIManager().getFrame());
-							ani.setVisible(true);
-						}
-					} else if(n instanceof MetaNode) {
-						HolmesNodeInfo ani = new HolmesNodeInfo((MetaNode)n, GUIManager.getDefaultGUIManager().getFrame());
+			this.addMenuItem("Show details...", "", e -> {
+				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+					return;
+
+				Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
+				if(n instanceof Place) {
+					if(n instanceof PlaceXTPN) {
+						HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((PlaceXTPN) n, elocation, GUIManager.getDefaultGUIManager().getFrame());
 						ani.setVisible(true);
-					} 
-					
-					//} else {
-					//	JOptionPane.showMessageDialog(null, "Warning: simulator active. Cannot proceed until manually stopped.",
-					//			"Net simulator working", JOptionPane.WARNING_MESSAGE);
-					//}
+					} else {
+						HolmesNodeInfo ani = new HolmesNodeInfo((Place)n, GUIManager.getDefaultGUIManager().getFrame());
+						ani.setVisible(true);
+					}
+				} else if(n instanceof Transition) {
+					if(n instanceof TransitionXTPN) {
+						HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((TransitionXTPN) n, elocation, GUIManager.getDefaultGUIManager().getFrame());
+						ani.setVisible(true);
+					} else {
+						HolmesNodeInfo ani = new HolmesNodeInfo((Transition)n, GUIManager.getDefaultGUIManager().getFrame());
+						ani.setVisible(true);
+					}
+				} else if(n instanceof MetaNode) {
+					HolmesNodeInfo ani = new HolmesNodeInfo((MetaNode)n, GUIManager.getDefaultGUIManager().getFrame());
+					ani.setVisible(true);
 				}
+
+				//} else {
+				//	JOptionPane.showMessageDialog(null, "Warning: simulator active. Cannot proceed until manually stopped.",
+				//			"Net simulator working", JOptionPane.WARNING_MESSAGE);
+				//}
 			});
 		}
 		
@@ -71,25 +73,23 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 		}
 		
 		if(pne != PetriNetElementType.META && proceed) {
-			this.addMenuItem("Delete", "cross.png", new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-							"Operation impossible when simulator is working.", "Warning") == true)
-						return;
-					if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
-							"Operation impossible when XTPN simulator is working.", "Warning") == true)
-						return;
-					
-					Object[] options = {"Delete", "Cancel",};
-					int n = JOptionPane.showOptionDialog(null,
-							"Do you want to delete selected elements?", "Deletion warning?", JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-					if (n == 0) {
-						//GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
-						getGraphPanel().getSelectionManager().deleteAllSelectedElements();
-						getGraphPanel().getSelectionManager().deselectAllElementLocations();
-						GUIManager.getDefaultGUIManager().markNetChange();
-					}
+			this.addMenuItem("Delete", "cross.png", e -> {
+				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+						"Operation impossible when simulator is working.", "Warning"))
+					return;
+				if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
+						"Operation impossible when XTPN simulator is working.", "Warning"))
+					return;
+
+				Object[] options = {"Delete", "Cancel",};
+				int n = JOptionPane.showOptionDialog(null,
+						"Do you want to delete selected elements?", "Deletion warning?", JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+				if (n == 0) {
+					//GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+					getGraphPanel().getSelectionManager().deleteAllSelectedElements();
+					getGraphPanel().getSelectionManager().deselectAllElementLocations();
+					GUIManager.getDefaultGUIManager().markNetChange();
 				}
 			});
 		}

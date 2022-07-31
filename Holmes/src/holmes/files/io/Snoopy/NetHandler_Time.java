@@ -237,7 +237,7 @@ public class NetHandler_Time extends NetHandler {
 					int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
 					resizeFactor += ((double)addF/(double)100);
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (494913094) | Exception:  "+ex.getMessage(), "error", false);
+					GUIManager.getDefaultGUIManager().log("Error (494913094) | Exception:  "+ex.getMessage(), "error", true);
 				}
 				
 				xPos *= resizeFactor;
@@ -298,7 +298,7 @@ public class NetHandler_Time extends NetHandler {
 					if(yoff_name < -8)
 						yoff_name = -55; //nad node, uwzględnia różnicę
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (479349294) | Exception:  "+ex.getMessage(), "error", false);
+					GUIManager.getDefaultGUIManager().log("Error (479349294) | Exception:  "+ex.getMessage(), "error", true);
 				}
 			}
 			graphicNamesPointsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)

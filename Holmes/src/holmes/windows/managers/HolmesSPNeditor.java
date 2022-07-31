@@ -60,7 +60,7 @@ public class HolmesSPNeditor extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (567384259) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (567384259) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
 		PetriNet pn = overlord.getWorkspace().getProject();

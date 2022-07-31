@@ -55,7 +55,7 @@ public class HolmesStatesManager extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (281108210) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (281108210) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	overlord = GUIManager.getDefaultGUIManager();
     	ego = this;
@@ -522,7 +522,7 @@ public class HolmesStatesManager extends JFrame {
 			selectedRow = statesTablePN.getSelectedRow();
 			fillDescriptionField();
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (581229108) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (581229108) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 
@@ -943,7 +943,7 @@ public class HolmesStatesManager extends JFrame {
 			selectedRow = statesTableXTPN.getSelectedRow();
 			fillDescriptionFieldXTPN();
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (164166738) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (164166738) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 

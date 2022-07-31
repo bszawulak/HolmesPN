@@ -52,7 +52,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log("Error (640125897) | Exception:  "+ex.getMessage(), "error", false);
+            GUIManager.getDefaultGUIManager().log("Error (640125897) | Exception:  "+ex.getMessage(), "error", true);
         }
         doNotListen = true;
         GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -237,7 +237,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
             new HolmesXTPNtokens( (PlaceXTPN)places.get(selectedPlace), this, multisetM.accessMultiset_K(selectedPlace)
                     , multisetM.isPlaceStoredAsGammaActive(selectedPlace));
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log("Error (860120239) | Exception:  "+ex.getMessage(), "error", false);
+            GUIManager.getDefaultGUIManager().log("Error (860120239) | Exception:  "+ex.getMessage(), "error", true);
         }
     }
 

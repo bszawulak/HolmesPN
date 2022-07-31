@@ -790,7 +790,7 @@ public class ProjectReader {
 					place.setColorTokensNumber(Integer.parseInt(tab[4]), 4);
 					place.setColorTokensNumber(Integer.parseInt(tab[5]), 5);
 				} catch (Exception ex) {
-					overlord.log("Error (806949108) | Exception: "+ex.getMessage(), "error", false);
+					overlord.log("Error (806949108) | Exception: "+ex.getMessage(), "error", true);
 				}
 			}
 		} catch (Exception e) {
@@ -1212,7 +1212,7 @@ public class ProjectReader {
 					transition.setRequiredColoredTokens(Integer.parseInt(tab[4]), 4);
 					transition.setRequiredColoredTokens(Integer.parseInt(tab[5]), 5);
 				} catch (Exception ex) {
-					overlord.log("Error (519160440) | Exception: "+ex.getMessage(), "error", false);
+					overlord.log("Error (519160440) | Exception: "+ex.getMessage(), "error", true);
 				}
 				//return;
 			}
@@ -1425,7 +1425,7 @@ public class ProjectReader {
 					}
 				}
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (552674791) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (552674791) | Exception:  "+ex.getMessage(), "error", true);
 			}
 			
 			if(placeFirst) { //pierwsze jest miejsce
@@ -1609,7 +1609,7 @@ public class ProjectReader {
 
 				newArc.addBreakPoint(new Point(x, y));
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (478781728) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (478781728) | Exception:  "+ex.getMessage(), "error", true);
 			}
 		}
 	}
@@ -1932,7 +1932,7 @@ public class ProjectReader {
 					statesMngr.accessStateMatrix().add(pVector);
 				}
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (651052447) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (651052447) | Exception:  "+ex.getMessage(), "error", true);
 			}
 			
 			if((readedLine /3) > statesMngr.accessStateMatrix().size()) {
@@ -2036,7 +2036,7 @@ public class ProjectReader {
 					statesMngr.accessStateMatrixXTPN().add(pVector);
 				}
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (248790053) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (248790053) | Exception:  "+ex.getMessage(), "error", true);
 			}
 			if((readedLine /3) > statesMngr.accessStateMatrix().size()) {
 				overlord.log("Error reading state XTPN vector number "+(readedLine), "error", true);
@@ -2199,14 +2199,14 @@ public class ProjectReader {
 				SPNtransitionData box = frVector.newContainer();
 				box.ST_function = dataVectorTable[i*7];
 				try { box.IM_priority = Integer.parseInt(dataVectorTable[(i*7)+1]); } catch(Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (186837711) | Exception:  "+ex.getMessage(), "error", false);
+					GUIManager.getDefaultGUIManager().log("Error (186837711) | Exception:  "+ex.getMessage(), "error", true);
 				}
 				try { box.DET_delay = Integer.parseInt(dataVectorTable[(i*7)+2]); } catch(Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (535627810) | Exception:  "+ex.getMessage(), "error", false);
+					GUIManager.getDefaultGUIManager().log("Error (535627810) | Exception:  "+ex.getMessage(), "error", true);
 				}
 				box.SCH_start = dataVectorTable[(i*7)+3];
 				try { box.SCH_rep = Integer.parseInt(dataVectorTable[(i*7)+4]); } catch(Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (229044942) | Exception:  "+ex.getMessage(), "error", false);
+					GUIManager.getDefaultGUIManager().log("Error (229044942) | Exception:  "+ex.getMessage(), "error", true);
 				}
 				box.SCH_end = dataVectorTable[(i*7)+5];
 
@@ -2278,7 +2278,7 @@ public class ProjectReader {
 					ssaMngr.accessSSAmatrix().add(pVector);
 				}
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (652374812) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (652374812) | Exception:  "+ex.getMessage(), "error", true);
 			}
 			
 			if((readedLine /3) > ssaMngr.accessSSAmatrix().size()) {

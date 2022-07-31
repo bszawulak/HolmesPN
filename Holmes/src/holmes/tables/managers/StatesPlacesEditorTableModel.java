@@ -153,7 +153,7 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
 				boss.changeRealValue(stateVectorIndex, row, newValue);
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (118743644) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (118743644) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -165,7 +165,7 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
 				dataMatrix.get(row).tokens = newValue;
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (179729339) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (179729339) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 }

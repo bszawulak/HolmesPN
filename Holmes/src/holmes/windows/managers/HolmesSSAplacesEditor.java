@@ -53,7 +53,7 @@ public class HolmesSSAplacesEditor extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (343775994) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (343775994) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	this.overlord = GUIManager.getDefaultGUIManager();
 		PetriNet pn = overlord.getWorkspace().getProject();

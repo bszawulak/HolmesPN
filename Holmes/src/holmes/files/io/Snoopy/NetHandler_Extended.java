@@ -170,7 +170,7 @@ public class NetHandler_Extended extends NetHandler {
 					if(yoff_name < -8)
 						yoff_name = -55; //nad node, uwzględnia różnicę
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (989048217) | Exception:  "+ex.getMessage(), "error", false);
+					GUIManager.getDefaultGUIManager().log("Error (989048217) | Exception:  "+ex.getMessage(), "error", true);
 				}
 			}
 
@@ -201,7 +201,7 @@ public class NetHandler_Extended extends NetHandler {
 					if(resizeFactor==0)
 						resizeFactor=1;
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (474849019) | Exception:  "+ex.getMessage(), "error", false);
+					GUIManager.getDefaultGUIManager().log("Error (474849019) | Exception:  "+ex.getMessage(), "error", true);
 				}
 				
 				xPos *= resizeFactor;

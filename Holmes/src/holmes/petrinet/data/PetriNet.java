@@ -965,7 +965,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			accessStatesManager().replaceNetStateWithSelectedMultiset_M(accessStatesManager().selectedStateXTPN);
 			for(Transition trans : getTransitions()) {
 				if( !(trans instanceof TransitionXTPN)) {
-					overlord.log("Critical error, wrong place object. ID: 83452836.", "error", false);
+					overlord.log("Critical error (834528336), wrong place object.", "error", true);
 					return;
 				}
 

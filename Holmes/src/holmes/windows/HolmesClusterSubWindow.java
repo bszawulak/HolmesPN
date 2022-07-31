@@ -75,7 +75,7 @@ public class HolmesClusterSubWindow extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (536032607) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (536032607) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		clusterPath = parent.getClusterPath();
 		this.clusteringMetaData = dataPackage;
@@ -240,7 +240,7 @@ public class HolmesClusterSubWindow extends JFrame {
 		    	
 		    	textPane.setCaretPosition(0);
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (604785942) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (604785942) | Exception:  "+ex.getMessage(), "error", true);
 			}
 		}
 		setLocationRelativeTo(null);

@@ -144,7 +144,7 @@ public class SnoopyWriterCoarse {
 		try {
 			bw.write(text+"\n");
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (620782847) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (620782847) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 	

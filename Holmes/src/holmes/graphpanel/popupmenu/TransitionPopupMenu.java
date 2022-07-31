@@ -1,7 +1,6 @@
 package holmes.graphpanel.popupmenu;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
@@ -22,6 +21,7 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
  *
  */
 public class TransitionPopupMenu extends NodePopupMenu {
+	@Serial
 	private static final long serialVersionUID = 1268637178521514216L;
 
 	/**
@@ -29,7 +29,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 	 * @param graphPanel GraphPanel - arkusz dla którego powstaje menu
 	 */
 	public TransitionPopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
-		super(graphPanel, pne, el.getParentNode());
+		super(graphPanel, el, pne, el.getParentNode());
 		
 		this.addMenuItem("Transition ON/OFF", "offlineSmall.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
@@ -62,10 +62,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 
 			for (Node n : listOfSelectedNodes) {
 				if (n instanceof Transition) {
-					if (n.isInvisible())
-						n.setInvisibility(false);
-					else
-						n.setInvisibility(true);
+					n.setInvisibility( !(n.isInvisible()) ); //odwrotność isInvisible, czyli switcher
 				}
 			}
 			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();

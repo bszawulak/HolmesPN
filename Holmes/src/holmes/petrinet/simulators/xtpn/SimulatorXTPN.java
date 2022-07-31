@@ -101,7 +101,7 @@ public class SimulatorXTPN implements IEngineXTPN {
         for(Transition trans : inputT) {
             if( !(trans instanceof TransitionXTPN)) {
                 transitions.clear();
-                overlord.log("Error, non-XTPN transitions found in list sent into SimulatorXTPN!", "error", false);
+                overlord.log("Error, non-XTPN transitions found in list sent into SimulatorXTPN!", "error", true);
                 return;
             }
             transitions.add( (TransitionXTPN) trans);
@@ -113,7 +113,7 @@ public class SimulatorXTPN implements IEngineXTPN {
         for(Place place : inputP) {
             if( !(place instanceof PlaceXTPN)) {
                 transitions.clear();
-                overlord.log("Error, non-XTPN places found in list sent into SimulatorXTPN!", "error", false);
+                overlord.log("Error, non-XTPN places found in list sent into SimulatorXTPN!", "error", true);
                 return;
             }
             places.add( (PlaceXTPN) place);

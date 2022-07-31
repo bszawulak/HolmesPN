@@ -53,7 +53,7 @@ public class HolmesConsole extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (316619924) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (316619924) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	setVisible(false);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

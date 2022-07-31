@@ -61,7 +61,7 @@ public class HolmesSPNtransitionEditor extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (736888893) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (736888893) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	
     	this.ego = this;
@@ -151,7 +151,7 @@ public class HolmesSPNtransitionEditor extends JFrame {
 			try {
 				myData.ST_function = field.getText();
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (222582756) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (222582756) | Exception:  "+ex.getMessage(), "error", true);
 			}
 		});
 		main.add(STfunctionValueEdit);

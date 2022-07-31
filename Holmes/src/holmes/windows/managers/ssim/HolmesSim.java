@@ -158,7 +158,7 @@ public class HolmesSim extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (418594315) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (418594315) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		setSize(new Dimension(1000, 750));
 		
@@ -989,7 +989,7 @@ public class HolmesSim extends JFrame {
 				try {
 					value += transitionsRawData.get(step+i).get(selTransID);
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (906615096) | Exception:  "+ex.getMessage(), "error", false);
+					GUIManager.getDefaultGUIManager().log("Error (906615096) | Exception:  "+ex.getMessage(), "error", true);
 				}
 			}
 			

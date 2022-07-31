@@ -295,7 +295,7 @@ public class SnoopyWriterPlace {
 		try {
 			bw.write(text+"\n");
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (198617391) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (198617391) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 	

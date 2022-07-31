@@ -67,7 +67,7 @@ public class HolmesSearch extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (375431746) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (375431746) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		
 		setLayout(new BorderLayout());
@@ -181,7 +181,7 @@ public class HolmesSearch extends JFrame {
 				if(newName.length() > 0)
 					searchForString(newName);
 			} catch (ParseException ex) {
-				GUIManager.getDefaultGUIManager().log("Error (762682665) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (762682665) | Exception:  "+ex.getMessage(), "error", true);
 			}
 		});
 		choicePanel.add(searchField);
@@ -207,7 +207,7 @@ public class HolmesSearch extends JFrame {
 				int id = Integer.parseInt(IDstr);
 				selectByID(id);
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (554893398) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (554893398) | Exception:  "+ex.getMessage(), "error", true);
 			}
 		});
 		choicePanel.add(idField);	
@@ -557,7 +557,7 @@ public class HolmesSearch extends JFrame {
 			}
 		}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (145588510) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (145588510) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 	

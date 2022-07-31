@@ -142,7 +142,7 @@ public class MultisetM implements Serializable {
         int placesNumber = places.size();
         for(int p=0; p<placesNumber; p++) {
             if( !(places.get(p) instanceof PlaceXTPN) ) {
-                GUIManager.getDefaultGUIManager().log("Error 26y30923", "error", false);
+                GUIManager.getDefaultGUIManager().log("Error 26y30923", "error", true);
                 return;
             }
 

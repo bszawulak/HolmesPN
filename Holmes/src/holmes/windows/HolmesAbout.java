@@ -37,7 +37,7 @@ public class HolmesAbout extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (801625237) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (801625237) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		setTitle("About the program.");
 		setLayout(null);
@@ -53,7 +53,7 @@ public class HolmesAbout extends JFrame {
 			BufferedImage wPic = ImageIO.read(this.getClass().getResource("/abyssHolmes2.png"));
 			((MyTextArea)textArea).setBackgroundImage(wPic);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (936370008) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (936370008) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		
 		textArea.setEditable(false);
@@ -98,7 +98,7 @@ public class HolmesAbout extends JFrame {
 			wIcon.setBounds(10, 10, 160, 160);
 			panel.add(wIcon);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (835870912) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (835870912) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		
 		JLabel nameLabel = new JLabel("Holmes v1.5.0 Alpha");

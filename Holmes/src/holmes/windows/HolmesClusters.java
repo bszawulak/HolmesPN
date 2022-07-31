@@ -84,7 +84,7 @@ public class HolmesClusters extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (390036959) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (390036959) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	this.setVisible(false);
     	
@@ -713,7 +713,7 @@ public class HolmesClusters extends JFrame {
 				try {
 					dataTableCase56.getMatrix().get(i).get(cl).evalCH = chDataCore.get(i).get(cl);
 				} catch (Exception e) {
-					GUIManager.getDefaultGUIManager().log("Filling CH metric failed for subtable "+i+" row: "+cl, "error", false);
+					GUIManager.getDefaultGUIManager().log("Filling CH metric failed for subtable "+i+" row: "+cl, "error", true);
 					dataTableCase56.getMatrix().get(i).get(cl).evalCH = 0.0;
 				}
 			}
@@ -745,7 +745,7 @@ public class HolmesClusters extends JFrame {
 			oos.close();
 			fos.close();
 		} catch(IOException ioe){
-			GUIManager.getDefaultGUIManager().log("Saving data table failed.", "error", false);
+			GUIManager.getDefaultGUIManager().log("Saving data table failed.", "error", true);
 		}
 	}
 	
@@ -1045,7 +1045,7 @@ public class HolmesClusters extends JFrame {
 		    					 }
 		    				 }	    				 
 		    			 } catch (Exception ex) {
-							 GUIManager.getDefaultGUIManager().log("Error (747155147) | Exception:  "+ex.getMessage(), "error", false);
+							 GUIManager.getDefaultGUIManager().log("Error (747155147) | Exception:  "+ex.getMessage(), "error", true);
 		    			 } 
 		    		}
 		    	}

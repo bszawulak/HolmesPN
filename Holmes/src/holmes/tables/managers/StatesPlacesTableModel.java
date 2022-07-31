@@ -177,7 +177,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 
 			boss.changeState(row, col, newValue);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (688206518) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (688206518) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -190,7 +190,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 			ArrayList<String> rowVector = dataMatrix.get(row);
 			rowVector.set(col, ""+(int)newValue);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (128622084) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (128622084) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 }

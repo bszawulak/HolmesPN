@@ -249,7 +249,7 @@ public class PlaceXTPN extends Place {
         int counter = howMany;
         if(howMany > multisetK.size()) {
             GUIManager.getDefaultGUIManager().log("Error, trying to remove more tokens ("+howMany+") than\n" +
-                    "the multiset size ("+multisetK.size()+")", "error", false);
+                    "the multiset size ("+multisetK.size()+")", "error", true);
             return -1;
         }
 

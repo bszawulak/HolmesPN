@@ -84,7 +84,7 @@ public class HolmesNetProperties extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (742898305) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (742898305) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		this.setTitle("Petri net general information and properties");
 		this.overlord = GUIManager.getDefaultGUIManager();
@@ -278,7 +278,7 @@ public class HolmesNetProperties extends JFrame {
 			try {
 				field.commitEdit();
 			} catch (ParseException ex) {
-				GUIManager.getDefaultGUIManager().log("Error (544610188) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (544610188) | Exception:  "+ex.getMessage(), "error", true);
 			}
 			String newName = field.getText();
 			overlord.getWorkspace().getProject().setName(newName);
@@ -487,7 +487,7 @@ public class HolmesNetProperties extends JFrame {
 				}
 				bw.close();
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (378650758) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (378650758) | Exception:  "+ex.getMessage(), "error", true);
 			}
 		}
 	}

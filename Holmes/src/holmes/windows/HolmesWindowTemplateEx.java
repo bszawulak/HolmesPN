@@ -32,7 +32,7 @@ public class HolmesWindowTemplateEx extends JFrame {
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log("Error (533315487) | Exception:  "+ex.getMessage(), "error", false);
+            GUIManager.getDefaultGUIManager().log("Error (533315487) | Exception:  "+ex.getMessage(), "error", true);
         }
 
         if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)

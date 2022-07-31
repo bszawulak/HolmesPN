@@ -147,7 +147,7 @@ public class FunctionalTransTableModel extends DefaultTableModel {
 				case 6 -> dataMatrix.get(row).enabled = (boolean) value;
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (267990506) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (267990506) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 }

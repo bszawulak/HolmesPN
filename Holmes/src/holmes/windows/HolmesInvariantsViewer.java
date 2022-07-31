@@ -193,7 +193,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (775450119) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (775450119) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		setLayout(new BorderLayout());
 		setSize(new Dimension(800, 650));
@@ -886,7 +886,7 @@ public class HolmesInvariantsViewer extends JFrame {
 				new HolmesNodeInfo(transitions.get(transId), this);
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (759541509) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (759541509) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 

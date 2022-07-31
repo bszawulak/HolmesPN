@@ -3,6 +3,7 @@ package holmes.graphpanel.popupmenu;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.Arc;
@@ -14,6 +15,7 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
  * @author MR - dynamiczna wersja
  */
 public class ArcPopupMenu extends NodePopupMenu {
+	@Serial
 	private static final long serialVersionUID = 6531877302888917900L;
 
 	/**
@@ -21,7 +23,7 @@ public class ArcPopupMenu extends NodePopupMenu {
 	 * @param graphPanel GraphPanel - obiekt dla którego powstaje menu
 	 */
 	public ArcPopupMenu(GraphPanel graphPanel, Arc a, PetriNetElementType pne) {
-		super(graphPanel, pne, a);
+		super(graphPanel, null, pne, a);
 		
 		this.addMenuItem("Create break point here", "", new ActionListener() {
 			Arc arc = null;

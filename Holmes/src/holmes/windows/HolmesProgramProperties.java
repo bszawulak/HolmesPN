@@ -57,7 +57,7 @@ public class HolmesProgramProperties extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (688341781) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (688341781) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		
 		try {
@@ -65,7 +65,7 @@ public class HolmesProgramProperties extends JFrame {
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			GUIManager.getDefaultGUIManager().log("Critical error, cannot create Holmes properties window:" , "error", true);
-			GUIManager.getDefaultGUIManager().log(msg, "error", false);
+			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 		}
 	}
 

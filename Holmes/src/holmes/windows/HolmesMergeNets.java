@@ -110,7 +110,7 @@ public class HolmesMergeNets extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (482301297) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (482301297) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		setLayout(new BorderLayout());
 		setSize(new Dimension(1024, 800));

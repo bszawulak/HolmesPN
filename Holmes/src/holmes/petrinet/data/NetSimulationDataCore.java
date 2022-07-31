@@ -226,7 +226,7 @@ public class NetSimulationDataCore implements Serializable {
 			fos.close();
 			return true;
 		} catch(IOException ioe){
-			GUIManager.getDefaultGUIManager().log("Saving simulation data failed.", "error", false);
+			GUIManager.getDefaultGUIManager().log("Saving simulation data failed.", "error", true);
 			return false;
 		}
 	}

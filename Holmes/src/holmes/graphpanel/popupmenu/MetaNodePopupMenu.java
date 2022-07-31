@@ -16,7 +16,7 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 	private static final long serialVersionUID = 8356818331350683029L;
 
 	public MetaNodePopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
-		super(graphPanel, pne, el.getParentNode());
+		super(graphPanel, el, pne, el.getParentNode());
 		final GUIManager gui = GUIManager.getDefaultGUIManager();
 		
 		JMenu fixMenu = new JMenu("Fix meta-arcs");

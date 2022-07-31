@@ -25,7 +25,7 @@ public class PlacePopupMenu extends NodePopupMenu {
 	 * @param graphPanel GraphPanel - panel dla którego powstaje menu
 	 */
 	public PlacePopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
-		super(graphPanel, pne, el.getParentNode());
+		super(graphPanel, el, pne, el.getParentNode());
 
 		/*
 		if(pne == PetriNetElementType.TRANSITION || pne == PetriNetElementType.PLACE) {

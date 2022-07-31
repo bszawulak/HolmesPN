@@ -16,17 +16,15 @@ import holmes.petrinet.elements.Transition;
 import holmes.utilities.Tools;
 
 /**
- * Klasa użytkowa dla HolmesNodeInfo, zawiera metody wywoływane interfejsem opisanym w ramach
- * HolmesNodeInfo.
- * @author MR
+ * Klasa użytkowa dla HolmesNodeInfo, zawiera metody wywoływane interfejsem opisanym w ramach HolmesNodeInfo.
  *
  */
 public class HolmesNodeInfoActions {
 	private JFrame parentFrame;
 	private GUIManager overlord;
 	
-	public HolmesNodeInfoActions(JFrame papa) {
-		parentFrame = papa;
+	public HolmesNodeInfoActions(JFrame parent) {
+		parentFrame = parent;
 		overlord = GUIManager.getDefaultGUIManager();
 	}
 

@@ -1,12 +1,15 @@
 package holmes.windows.xtpn;
 
 import holmes.darkgui.GUIManager;
-import holmes.graphpanel.GraphPanel;
+import holmes.darkgui.dockwindows.SharedActionsXTPN;
+import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.StateSimulator;
 import holmes.utilities.Tools;
+import holmes.windows.xtpn.managers.HolmesNodeInfoXTPNactions;
+import holmes.workspace.WorkspaceSheet;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -16,23 +19,29 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.text.DefaultFormatter;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 
 public class HolmesNodeInfoXTPN extends JFrame {
     private GUIManager overlord;
-    private Place place;
-    private Transition transition;
+    private PlaceXTPN place;
+    private ElementLocation eLocation;
+    private HolmesNodeInfoXTPNactions action = new HolmesNodeInfoXTPNactions(this);
+    private TransitionXTPN transition;
+    private boolean doNotUpdate = false;
+
+
     private JPanel mainInfoPanel;
     private JFrame parentFrame;
     public boolean mainSimulatorActive = false;
-
     private XYSeriesCollection dynamicsSeriesDataSet = null;
     private JFreeChart dynamicsChart;
     private int simSteps = 1000;
@@ -43,17 +52,33 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private int transInterval = 10;
     private JFormattedTextField avgFiredTextBox;
 
+    private HolmesRoundedButton alphaVisibilityButton;
+    private HolmesRoundedButton betaVisibilityButton;
+    private HolmesRoundedButton tauVisibilityButton;
+    private HolmesRoundedButton gammaVisibilityButton;
+    private HolmesRoundedButton tokensWindowButton; //przycisk podokna tokenó XTPN
+    private JFormattedTextField tokensTextBox; //liczba tokenów
+    private HolmesRoundedButton buttonClassXTPNmode;
+
+    private JFormattedTextField alphaMinTextField;
+    private JFormattedTextField alphaMaxTextField;
+    private JFormattedTextField betaMinTextField;
+    private JFormattedTextField betaMaxTextField;
+    private JFormattedTextField gammaMinTextField;
+    private JFormattedTextField gammaMaxTextField;
+
     /**
      * Konstruktor do tworzenia okna właściwości miejsca.
      * @param place PlaceXTPN - obiekt miejsca
-     * @param papa JFrame - okno wywołujące
+     * @param parent JFrame - okno wywołujące
      */
-    public HolmesNodeInfoXTPN(PlaceXTPN place, JFrame papa) {
+    public HolmesNodeInfoXTPN(PlaceXTPN place, ElementLocation eloc, JFrame parent) {
         overlord = GUIManager.getDefaultGUIManager();
-        parentFrame = papa;
+        parentFrame = parent;
         this.place = place;
+        this.eLocation = eloc;
         setTitle("Node: "+place.getName());
-
+        setBackground(Color.WHITE);
         initializeCommon();
 
         JPanel main = new JPanel(new BorderLayout()); //główny panel okna
@@ -76,14 +101,15 @@ public class HolmesNodeInfoXTPN extends JFrame {
     /**
      * Konstruktor do tworzenia okna właściwości tranzycji.
      * @param transition TransitionXTPN - obiekt tranzycji
-     * @param papa JFrame - okno wywołujące
+     * @param parent JFrame - okno wywołujące
      */
-    public HolmesNodeInfoXTPN(TransitionXTPN transition, JFrame papa) {
+    public HolmesNodeInfoXTPN(TransitionXTPN transition, ElementLocation eloc, JFrame parent) {
         overlord = GUIManager.getDefaultGUIManager();
-        parentFrame = papa;
+        parentFrame = parent;
         this.transition = transition;
+        this.eLocation = eloc;
         setTitle("Node: "+transition.getName());
-
+        setBackground(Color.WHITE);
         initializeCommon();
 
         JPanel main = new JPanel(new BorderLayout()); //główny panel okna
@@ -108,7 +134,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log("Error (181278513) | Exception:  "+ex.getMessage(), "error", false);
+            GUIManager.getDefaultGUIManager().log("Error (181278513) | Exception:  "+ex.getMessage(), "error", true);
         }
 
         if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)
@@ -122,7 +148,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         parentFrame.setEnabled(false);
         setResizable(false);
         setLocation(20, 20);
-        setSize(new Dimension(600, 480));
+        setSize(new Dimension(800, 600));
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -138,7 +164,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
      */
     private JPanel initializePlaceInfo() {
         mainInfoPanel = new JPanel(null);
-        mainInfoPanel.setBounds(0, 0, 600, 480);
+        mainInfoPanel.setBounds(0, 0, 800, 600);
         mainInfoPanel.setBackground(Color.WHITE);
 
         int mPanelX = 0;
@@ -146,9 +172,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         //panel informacji podstawowych
         JPanel infoPanel = new JPanel(null);
-        infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-10, 130);
+        infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-22, 150);
         infoPanel.setBackground(Color.WHITE);
-        infoPanel.setBorder(BorderFactory.createTitledBorder("Place general information:"));
+        infoPanel.setBorder(BorderFactory.createTitledBorder("Structural data:"));
 
         int infPanelX = 10;
         int infPanelY = 20;
@@ -165,108 +191,31 @@ public class HolmesNodeInfoXTPN extends JFrame {
         idTextBox.setEditable(false);
         infoPanel.add(idTextBox);
 
-        JLabel portalLabel = new JLabel("Portal:");
-        portalLabel.setBounds(infPanelX+60, infPanelY, 40, 20);
-        infoPanel.add(portalLabel);
-
-        String port = "no";
-        if(place.isPortal())
-            port = "yes";
-
-        JLabel portalLabel2 = new JLabel(port);
-        portalLabel2.setBounds(infPanelX+100, infPanelY, 30, 20);
-        infoPanel.add(portalLabel2);
-
-        JLabel tokenLabel = new JLabel("Tokens:", JLabel.LEFT);
-        tokenLabel.setBounds(infPanelX+130, infPanelY, 50, 20);
-        infoPanel.add(tokenLabel);
-
-        int tok = place.getTokensNumber();
-        boolean problem = false;
-        if(tok < 0) {
-            overlord.log("Negative number of tokens in "+place.getName(), "error", true);
-            tok = 0;
-            problem = true;
-        }
-        SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok, 0, Integer.MAX_VALUE, 1);
-        JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
-        tokenSpinner.setLocation(infPanelX+180, infPanelY);
-        tokenSpinner.setSize(60, 20);
-        tokenSpinner.setMaximumSize(new Dimension(60,20));
-        tokenSpinner.setMinimumSize(new Dimension(60,20));
-        if(mainSimulatorActive || problem) {
-            tokenSpinner.setEnabled(false);
-        }
-        tokenSpinner.addChangeListener(e -> {
-            JSpinner spinner = (JSpinner) e.getSource();
-            int tokens = (int) spinner.getValue();
-            //action.setTokens(place, tokens);
-
-            if(overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
-                ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-                overlord.getWorkspace().getProject().accessStatesManager().getStatePN(0).setTokens(places.indexOf(place), tokens);
-            }
-        });
-        infoPanel.add(tokenSpinner);
-
-
-        int inTrans = 0;
-        int outTrans = 0;
-        for (ElementLocation el : place.getElementLocations()) {
-            inTrans += el.getInArcs().size(); //tyle tranzycji kieruje tutaj łuk
-            outTrans += el.getOutArcs().size();
-        }
-
-        JLabel inTransLabel = new JLabel("IN-Trans:");
-        inTransLabel.setBounds(infPanelX+250, infPanelY, 60, 20);
-        infoPanel.add(inTransLabel);
-
-        JFormattedTextField inTransTextBox = new JFormattedTextField(inTrans);
-        inTransTextBox.setBounds(infPanelX+310, infPanelY, 30, 20);
-        inTransTextBox.setEditable(false);
-        infoPanel.add(inTransTextBox);
-
-        JLabel outTransLabel = new JLabel("OUT-Trans:");
-        outTransLabel.setBounds(infPanelX+345, infPanelY, 65, 20);
-        infoPanel.add(outTransLabel);
-
-        JFormattedTextField outTransTextBox = new JFormattedTextField(outTrans);
-        outTransTextBox.setBounds(infPanelX+420, infPanelY, 30, 20);
-        outTransTextBox.setEditable(false);
-        infoPanel.add(outTransTextBox);
-
-        infPanelY += 20;
-        //************************* NEWLINE *************************
-
         JLabel labelName = new JLabel("Name:");
-        labelName.setBounds(infPanelX, infPanelY, 40, 20);
+        labelName.setBounds(infPanelX+60, infPanelY, 40, 20);
         infoPanel.add(labelName);
 
         DefaultFormatter format = new DefaultFormatter();
         format.setOverwriteMode(false);
         JFormattedTextField nameField = new JFormattedTextField(format);
-        nameField.setLocation(infPanelX+60, infPanelY);
-        nameField.setSize(460, 20);
+        nameField.setLocation(infPanelX+100, infPanelY);
+        nameField.setSize(350, 20);
         nameField.setValue(place.getName());
         nameField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                GUIManager.getDefaultGUIManager().log("Error (611156405) | Exception:  "+ex.getMessage(), "error", false);
+                GUIManager.getDefaultGUIManager().log("Error (611156405) | Exception:  "+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
-
-            changeName(place, newName);
-            //action.parentTableUpdate(parentFrame, newName);
+            place.setName(newName);
+            action.repaintGraphPanel(place);
         });
         infoPanel.add(nameField);
 
-        infPanelY += 20;
-        //************************* NEWLINE *************************
-
-        JLabel commmentLabel = new JLabel("Comm.:", JLabel.LEFT);
-        commmentLabel.setBounds(infPanelX, infPanelY, 50, 20);
+        JLabel commmentLabel = new JLabel("Comments:", JLabel.LEFT);
+        commmentLabel.setBounds(infPanelX+460, infPanelY-22, 100, 20);
         infoPanel.add(commmentLabel);
 
         JTextArea commentField = new JTextArea(place.getComment());
@@ -278,24 +227,243 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 if(field != null)
                     newComment = field.getText();
 
-                //action.changeComment(place, newComment);
+                place.setComment(newComment);
             }
         });
-
         JPanel creationPanel = new JPanel();
         creationPanel.setLayout(new BorderLayout());
         creationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
-        creationPanel.setBounds(infPanelX+60, infPanelY, 460, 60);
-
+        creationPanel.setBounds(infPanelX+460, infPanelY, 300, 70);
         infoPanel.add(creationPanel);
-        //infPanelY += 60;
-
         mainInfoPanel.add(infoPanel);
+
+        //************************* NEWLINE *************************
+        infPanelY += 25;
+        //************************* NEWLINE *************************
+
+        JLabel portalLabel = new JLabel("Portal:");
+        portalLabel.setBounds(infPanelX, infPanelY, 40, 20);
+        infoPanel.add(portalLabel);
+
+        String port = "no";
+        if(place.isPortal())
+            port = "yes";
+
+        JLabel portalLabel2 = new JLabel(port);
+        portalLabel2.setBounds(infPanelX+40, infPanelY, 30, 20);
+        infoPanel.add(portalLabel2);
+
+        int inTrans = 0;
+        int outTrans = 0;
+        for (ElementLocation el : place.getElementLocations()) {
+            inTrans += el.getInArcs().size(); //tyle tranzycji kieruje tutaj łuk
+            outTrans += el.getOutArcs().size();
+        }
+
+        JLabel inTransLabel = new JLabel("Input transitions:");
+        inTransLabel.setBounds(infPanelX+60, infPanelY, 120, 20);
+        infoPanel.add(inTransLabel);
+
+        JFormattedTextField inTransTextBox = new JFormattedTextField(inTrans);
+        inTransTextBox.setBounds(infPanelX+160, infPanelY, 25, 20);
+        inTransTextBox.setEditable(false);
+        infoPanel.add(inTransTextBox);
+
+        JLabel outTransLabel = new JLabel("Output transitions:");
+        outTransLabel.setBounds(infPanelX+190, infPanelY, 120, 20);
+        infoPanel.add(outTransLabel);
+
+        JFormattedTextField outTransTextBox = new JFormattedTextField(outTrans);
+        outTransTextBox.setBounds(infPanelX+310, infPanelY, 30, 20);
+        outTransTextBox.setEditable(false);
+        infoPanel.add(outTransTextBox);
+
+        //************************* NEWLINE *************************
+        infPanelY += 25;
+        //************************* NEWLINE *************************
+
+        JLabel gammaModeInfoLabel = new JLabel("Time mode:");
+        gammaModeInfoLabel.setBounds(infPanelX, infPanelY, 80, 20);
+        infoPanel.add(gammaModeInfoLabel);
+
+        HolmesRoundedButton buttonGammaMode = new HolmesRoundedButton("<html>Gamma: ON</html>"
+                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        buttonGammaMode.setMargin(new Insets(0, 0, 0, 0));
+        buttonGammaMode.setName("gammaButton1");
+        buttonGammaMode.setBounds(infPanelX+80, infPanelY, 100, 20);
+        buttonGammaMode.setFocusPainted(false);
+        if(place.isGammaModeActiveXTPN()) {
+            buttonGammaMode.setNewText("<html>Gamma: ON</html>");
+            buttonGammaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+        } else {
+            buttonGammaMode.setNewText("<html>Gamma: OFF</html>");
+            buttonGammaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        }
+        buttonGammaMode.addActionListener(e -> {
+            action.buttonGammaModeSwitch(e, place, tokensWindowButton, gammaVisibilityButton);
+            action.reselectElement(eLocation);
+        });
+        infoPanel.add(buttonGammaMode);
+
+        JLabel gammaVisInfoLabel = new JLabel("Visibility:");
+        gammaVisInfoLabel.setBounds(infPanelX+190, infPanelY, 70, 20);
+        infoPanel.add(gammaVisInfoLabel);
+
+        gammaVisibilityButton = new HolmesRoundedButton("<html>\u03B3: Visible</html>"
+                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        gammaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
+        gammaVisibilityButton.setName("gammaVisButton1");
+        gammaVisibilityButton.setBounds(infPanelX+250, infPanelY, 100, 20);
+        gammaVisibilityButton.setFocusPainted(false);
+        if(place.isGammaModeActiveXTPN()) {
+            if (place.isGammaRangeVisible()) {
+                gammaVisibilityButton.setNewText("<html>\u03B3: Visible<html>");
+                gammaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            } else {
+                gammaVisibilityButton.setNewText("<html>\u03B3: Hidden<html>");
+                gammaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            }
+        } else {
+            gammaVisibilityButton.setNewText("<html>\u03B3: Hidden<html>");
+            gammaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            gammaVisibilityButton.setEnabled(false);
+        }
+        gammaVisibilityButton.addActionListener(e -> {
+            action.gammaVisButtonSwitch(e, place);
+            action.reselectElement(eLocation);
+        });
+        infoPanel.add(gammaVisibilityButton);
+
+
+        //************************* NEWLINE *************************
+        infPanelY += 25;
+        //************************* NEWLINE *************************
+
+        // XTPN-place  Zakresy gamma:
+        JLabel minMaxLabel = new JLabel("\u03B3 (min/max): ", JLabel.LEFT);
+        minMaxLabel.setBounds(infPanelX, infPanelY, 80, 20);
+        infoPanel.add(minMaxLabel);
+
+        // format danych gamma do 6 miejsc po przecinku
+        NumberFormat formatter = DecimalFormat.getInstance();
+        formatter.setMinimumFractionDigits(1);
+        formatter.setMaximumFractionDigits(place.getFraction_xTPN());
+        formatter.setRoundingMode(RoundingMode.HALF_UP);
+        Double example = 3.14;
+
+        gammaMinTextField = new JFormattedTextField(formatter);
+        gammaMinTextField.setValue(example);
+        gammaMinTextField.setValue(place.getGammaMin_xTPN());
+        gammaMinTextField.addPropertyChangeListener("value", e -> {
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+            }
+            if (doNotUpdate)
+                return;
+
+            double min = Double.parseDouble(""+field.getValue());
+
+            if( !(SharedActionsXTPN.access().setGammaMinimumTime(min, place, eLocation) ) ) {
+                doNotUpdate = true;
+                field.setValue(place.getGammaMin_xTPN());
+                doNotUpdate = false;
+                overlord.markNetChange();
+            }
+            doNotUpdate = true;
+            gammaMaxTextField.setValue(place.getGammaMax_xTPN());
+            doNotUpdate = false;
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
+        });
+
+        gammaMaxTextField = new JFormattedTextField(formatter);
+        gammaMaxTextField.setValue(example);
+        gammaMaxTextField.setValue(place.getGammaMax_xTPN());
+        gammaMaxTextField.addPropertyChangeListener("value", e -> {
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+            }
+            if (doNotUpdate)
+                return;
+
+            double max = Double.parseDouble(""+field.getValue());
+            if( !(SharedActionsXTPN.access().setMaxGammaTime(max, place, eLocation) ) ) {
+                doNotUpdate = true;
+                field.setValue(place.getGammaMax_xTPN());
+                doNotUpdate = false;
+                overlord.markNetChange();
+            }
+            doNotUpdate = true;
+            gammaMinTextField.setValue(place.getGammaMin_xTPN());
+            doNotUpdate = false;
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
+        });
+
+        if(!place.isGammaModeActiveXTPN()) {
+            gammaMinTextField.setEnabled(false);
+            gammaMaxTextField.setEnabled(false);
+        }
+
+        gammaMinTextField.setBounds(infPanelX+80, infPanelY, 90, 20);
+        infoPanel.add(gammaMinTextField);
+        JLabel slash1 = new JLabel(" / ", JLabel.LEFT);
+        slash1.setBounds(infPanelX+170, infPanelY, 15, 20);
+        infoPanel.add(slash1);
+        gammaMaxTextField.setBounds(infPanelX+190, infPanelY, 90, 20);
+        infoPanel.add(gammaMaxTextField);
+
+        //************************* NEWLINE *************************
+        infPanelY += 25;
+        //************************* NEWLINE *************************
+
+        JLabel tokenInfoLabel = new JLabel("Tokens:");
+        tokenInfoLabel.setBounds(infPanelX, infPanelY, 90, 20);
+        infoPanel.add(tokenInfoLabel);
+
+        tokensWindowButton = new HolmesRoundedButton("<html>Token window</html>"
+                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        tokensWindowButton.setMargin(new Insets(0, 0, 0, 0));
+        tokensWindowButton.setBounds(infPanelX+80, infPanelY, 100, 20);
+        if(!place.isGammaModeActiveXTPN()) {
+            tokensWindowButton.setEnabled(false);
+        }
+        tokensWindowButton.addActionListener(actionEvent -> new HolmesXTPNtokens(place, this, place.accessMultiset(), place.isGammaModeActiveXTPN()));
+        infoPanel.add(tokensWindowButton);
+
+
+        JLabel tokenNumberInfoLabel = new JLabel("Current number:");
+        tokenNumberInfoLabel.setBounds(infPanelX+190, infPanelY, 120, 20);
+        infoPanel.add(tokenNumberInfoLabel);
+
+        tokensTextBox = new JFormattedTextField("0");
+        tokensTextBox.setBounds(infPanelX+310, infPanelY, 30, 20);
+        tokensTextBox.setEditable(false);
+        infoPanel.add(tokensTextBox);
+        printTokenNumber();
+
+
+        //************************* NEWLINE *************************
+        infPanelY += 20;
+        //************************* NEWLINE *************************
+
+        //************************* NEWLINE *************************
+        infPanelY += 20;
+        //************************* NEWLINE *************************
+
+
 
         JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
         chartMainPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
         chartMainPanel.setBounds(0, infoPanel.getHeight(), mainInfoPanel.getWidth()-10, 245);
         chartMainPanel.add(createChartPanel(place), BorderLayout.CENTER);
+        chartMainPanel.setBackground(Color.WHITE);
         mainInfoPanel.add(chartMainPanel);
 
 
@@ -307,15 +475,17 @@ public class HolmesNodeInfoXTPN extends JFrame {
         return mainInfoPanel;
     }
 
+
+
+
     private JPanel initializePlaceInvPanel() {
         JPanel panel = new JPanel(null);
         panel.setBounds(0, 0, 600, 480);
+        panel.setBackground(Color.WHITE);
 
         int posX = 20;
         int posY = 20;
-
         //panel.add(progressBar);
-
         return panel;
     }
 
@@ -328,6 +498,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JPanel panelButtonsPlace(JPanel infoPanel, JPanel chartMainPanel) {
         JPanel chartButtonPanel = new JPanel(null);
         chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainInfoPanel.getWidth()-10, 50);
+        chartButtonPanel.setBackground(Color.WHITE);
 
         int chartX = 5;
         int chartY_1st = 0;
@@ -413,15 +584,18 @@ public class HolmesNodeInfoXTPN extends JFrame {
      */
     private JPanel initializeTransitionInfo() {
         mainInfoPanel = new JPanel(null);
-        mainInfoPanel.setBounds(0, 0, 600, 450);
+        mainInfoPanel.setBounds(0, 0, 800, 600);
+        mainInfoPanel.setBackground(Color.WHITE);
 
         int mPanelX = 0;
         int mPanelY = 0;
 
         //panel informacji podstawowych
         JPanel infoPanel = new JPanel(null);
-        infoPanel.setBounds(mPanelX, mPanelY, 580, 130);
-        infoPanel.setBorder(BorderFactory.createTitledBorder("Transition general information:"));
+        infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-22, 220);
+        infoPanel.setBorder(BorderFactory.createTitledBorder("Structural data:"));
+        infoPanel.setBackground(Color.WHITE);
+
 
         int infPanelX = 10;
         int infPanelY = 20;
@@ -438,84 +612,33 @@ public class HolmesNodeInfoXTPN extends JFrame {
         idTextBox.setEditable(false);
         infoPanel.add(idTextBox);
 
-        JLabel portalLabel = new JLabel("Portal:");
-        portalLabel.setBounds(infPanelX+60, infPanelY, 40, 20);
-        infoPanel.add(portalLabel);
-
-        String port = "no";
-        if(transition.isPortal())
-            port = "yes";
-
-        JLabel portalLabel2 = new JLabel(port);
-        portalLabel2.setBounds(infPanelX+100, infPanelY, 30, 20);
-        infoPanel.add(portalLabel2);
-
-        JLabel avgFiredLabel = new JLabel("Avg.f.:", JLabel.LEFT);
-        avgFiredLabel.setBounds(infPanelX+130, infPanelY, 50, 20);
-        infoPanel.add(avgFiredLabel);
-
-        avgFiredTextBox = new JFormattedTextField(id);
-        //wypełnianie niżej
-        avgFiredTextBox.setBounds(infPanelX+180, infPanelY, 50, 20);
-        avgFiredTextBox.setEditable(false);
-        infoPanel.add(avgFiredTextBox);
-
-        int preP = 0;
-        int postP = 0;
-        for (ElementLocation el : transition.getElementLocations()) {
-            preP += el.getInArcs().size(); //tyle miejsc kieruje tutaj łuk
-            postP += el.getOutArcs().size();
-        }
-
-        JLabel prePlaceLabel = new JLabel("PRE-Place:");
-        prePlaceLabel.setBounds(infPanelX+235, infPanelY, 65, 20);
-        infoPanel.add(prePlaceLabel);
-
-        JFormattedTextField prePlaceTextBox = new JFormattedTextField(preP);
-        prePlaceTextBox.setBounds(infPanelX+300, infPanelY, 30, 20);
-        prePlaceTextBox.setEditable(false);
-        infoPanel.add(prePlaceTextBox);
-
-        JLabel postPlaceLabel = new JLabel("POST-Place:");
-        postPlaceLabel.setBounds(infPanelX+335, infPanelY, 75, 20);
-        infoPanel.add(postPlaceLabel);
-
-        JFormattedTextField postPlaceTextBox = new JFormattedTextField(postP);
-        postPlaceTextBox.setBounds(infPanelX+420, infPanelY, 30, 20);
-        postPlaceTextBox.setEditable(false);
-        infoPanel.add(postPlaceTextBox);
-
-        infPanelY += 20;
-        //************************* NEWLINE *************************
-
         JLabel labelName = new JLabel("Name:");
-        labelName.setBounds(infPanelX, infPanelY, 40, 20);
+        labelName.setBounds(infPanelX+60, infPanelY, 40, 20);
         infoPanel.add(labelName);
 
         DefaultFormatter format = new DefaultFormatter();
         format.setOverwriteMode(false);
         JFormattedTextField nameField = new JFormattedTextField(format);
-        nameField.setLocation(infPanelX+60, infPanelY);
-        nameField.setSize(460, 20);
+        nameField.setLocation(infPanelX+100, infPanelY);
+        nameField.setSize(350, 20);
         nameField.setValue(transition.getName());
         nameField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
+                GUIManager.getDefaultGUIManager().log("Error (212156495) | Exception:  "+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
+            transition.setName(newName);
+            action.repaintGraphPanel(transition);
 
-            //action.changeName(transition, newName);
             //action.parentTableUpdate(parentFrame, newName);
         });
         infoPanel.add(nameField);
 
-        infPanelY += 20;
-        //************************* NEWLINE *************************
-
-        JLabel commmentLabel = new JLabel("Comm.:", JLabel.LEFT);
-        commmentLabel.setBounds(infPanelX, infPanelY, 50, 20);
+        JLabel commmentLabel = new JLabel("Comments:", JLabel.LEFT);
+        commmentLabel.setBounds(infPanelX+460, infPanelY-22, 100, 20);
         infoPanel.add(commmentLabel);
 
         JTextArea commentField = new JTextArea(transition.getComment());
@@ -527,19 +650,435 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 if(field != null)
                     newComment = field.getText();
 
-                //action.changeComment(transition, newComment);
+                transition.setComment(newComment);
             }
         });
 
         JPanel creationPanel = new JPanel();
         creationPanel.setLayout(new BorderLayout());
         creationPanel.add(new JScrollPane(commentField),BorderLayout.CENTER);
-        creationPanel.setBounds(infPanelX+60, infPanelY, 460, 60);
-
+        creationPanel.setBounds(infPanelX+460, infPanelY, 300, 70);
         infoPanel.add(creationPanel);
-        infPanelY += 60;
         mainInfoPanel.add(infoPanel);
 
+        //************************* NEWLINE *************************
+        infPanelY += 25;
+        //************************* NEWLINE *************************
+
+        JLabel portalLabel = new JLabel("Portal:");
+        portalLabel.setBounds(infPanelX, infPanelY, 40, 20);
+        infoPanel.add(portalLabel);
+
+        String port = "no";
+        if(transition.isPortal())
+            port = "yes";
+
+        JLabel portalLabel2 = new JLabel(port);
+        portalLabel2.setBounds(infPanelX+40, infPanelY, 30, 20);
+        infoPanel.add(portalLabel2);
+
+        int preP = 0;
+        int postP = 0;
+        for (ElementLocation el : transition.getElementLocations()) {
+            preP += el.getInArcs().size(); //tyle miejsc kieruje tutaj łuk
+            postP += el.getOutArcs().size();
+        }
+
+        JLabel prePlaceLabel = new JLabel("Input places:");
+        prePlaceLabel.setBounds(infPanelX+60, infPanelY, 120, 20);
+        infoPanel.add(prePlaceLabel);
+
+        JFormattedTextField prePlaceTextBox = new JFormattedTextField(preP);
+        prePlaceTextBox.setBounds(infPanelX+160, infPanelY, 25, 20);
+        prePlaceTextBox.setEditable(false);
+        infoPanel.add(prePlaceTextBox);
+
+        JLabel postPlaceLabel = new JLabel("Output places:");
+        postPlaceLabel.setBounds(infPanelX+190, infPanelY, 120, 20);
+        infoPanel.add(postPlaceLabel);
+
+        JFormattedTextField postPlaceTextBox = new JFormattedTextField(postP);
+        postPlaceTextBox.setBounds(infPanelX+310, infPanelY, 30, 20);
+        postPlaceTextBox.setEditable(false);
+        infoPanel.add(postPlaceTextBox);
+
+        //************************* NEWLINE *************************
+        infPanelY += 25;
+        //************************* NEWLINE *************************
+
+        JLabel timeModesInfoLabel = new JLabel("Time modes:");
+        timeModesInfoLabel.setBounds(infPanelX, infPanelY, 80, 20);
+        infoPanel.add(timeModesInfoLabel);
+
+        HolmesRoundedButton buttonAlphaMode = new HolmesRoundedButton("<html>Alpha: ON</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        buttonAlphaMode.setMargin(new Insets(0, 0, 0, 0));
+        buttonAlphaMode.setName("alphaButton1");
+        buttonAlphaMode.setBounds(infPanelX+80, infPanelY, 100, 20);
+        buttonAlphaMode.setFocusPainted(false);
+        if(transition.isAlphaActiveXTPN()) {
+            buttonAlphaMode.setNewText("<html>Alpha: ON</html>");
+            buttonAlphaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+        } else {
+            buttonAlphaMode.setNewText("<html>Alpha: OFF</html>");
+            buttonAlphaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        }
+        buttonAlphaMode.addActionListener(e -> {
+
+            doNotUpdate = true;
+            SharedActionsXTPN.access().buttonAlphaSwitchMode(e, transition, this, tauVisibilityButton, buttonClassXTPNmode, alphaMaxTextField, eLocation);
+            doNotUpdate = false;
+
+            action.reselectElement(eLocation);
+        });
+        infoPanel.add(buttonAlphaMode);
+
+        JLabel alphaVisInfoLabel = new JLabel("Visibility:");
+        alphaVisInfoLabel.setBounds(infPanelX+190, infPanelY, 70, 20);
+        infoPanel.add(alphaVisInfoLabel);
+
+        alphaVisibilityButton = new HolmesRoundedButton("<html>\u03B1: Visible</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        alphaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
+        alphaVisibilityButton.setName("gammaVisButton1");
+        alphaVisibilityButton.setBounds(infPanelX+250, infPanelY, 100, 20);
+        alphaVisibilityButton.setFocusPainted(false);
+        if(transition.isAlphaActiveXTPN()) {
+            if (transition.isAlphaRangeVisible()) {
+                alphaVisibilityButton.setNewText("<html>\u03B1: Visible<html>");
+                alphaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            } else {
+                alphaVisibilityButton.setNewText("<html>\u03B1: Hidden<html>");
+                alphaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            }
+        } else {
+            alphaVisibilityButton.setNewText("<html>\u03B1: Hidden<html>");
+            alphaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            alphaVisibilityButton.setEnabled(false);
+        }
+        alphaVisibilityButton.addActionListener(e -> {
+            HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
+            if (transition.isAlphaRangeVisible()) { //wyłączamy
+                transition.setAlphaRangeVisibility(false);
+                button.setNewText("<html>\u03B1: Hidden<html>");
+                button.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+
+            } else { // włączamy
+                transition.setAlphaRangeVisibility(true);
+                button.setNewText("<html>\u03B1: Visible<html>");
+                button.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            }
+            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+
+            action.reselectElement(eLocation);
+        });
+        infoPanel.add(alphaVisibilityButton);
+
+        //************************* NEWLINE *************************
+        infPanelY += 25;
+        //************************* NEWLINE *************************
+
+        HolmesRoundedButton buttonBetaMode = new HolmesRoundedButton("<html>Beta: ON</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        buttonBetaMode.setMargin(new Insets(0, 0, 0, 0));
+        buttonBetaMode.setName("alphaButton1");
+        buttonBetaMode.setBounds(infPanelX+80, infPanelY, 100, 20);
+        buttonBetaMode.setFocusPainted(false);
+        if(transition.isAlphaActiveXTPN()) {
+            buttonBetaMode.setNewText("<html>Beta: ON</html>");
+            buttonBetaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+        } else {
+            buttonBetaMode.setNewText("<html>Beta: OFF</html>");
+            buttonBetaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        }
+        buttonBetaMode.addActionListener(e -> {
+            doNotUpdate = true;
+            SharedActionsXTPN.access().buttonBetaSwitchMode(e, transition, this, tauVisibilityButton, buttonClassXTPNmode, betaMaxTextField, eLocation);
+            doNotUpdate = false;
+
+            action.reselectElement(eLocation);
+        });
+        infoPanel.add(buttonBetaMode);
+
+        JLabel betaVisInfoLabel = new JLabel("Visibility:");
+        betaVisInfoLabel.setBounds(infPanelX+190, infPanelY, 70, 20);
+        infoPanel.add(betaVisInfoLabel);
+
+        betaVisibilityButton = new HolmesRoundedButton("<html>\u03B2: Visible</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        betaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
+        betaVisibilityButton.setName("gammaVisButton1");
+        betaVisibilityButton.setBounds(infPanelX+250, infPanelY, 100, 20);
+        betaVisibilityButton.setFocusPainted(false);
+        if(transition.isBetaActiveXTPN()) {
+            if (transition.isBetaRangeVisible()) {
+                betaVisibilityButton.setNewText("<html>\u03B2: Visible<html>");
+                betaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            } else {
+                betaVisibilityButton.setNewText("<html>\u03B2: Hidden<html>");
+                betaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            }
+        } else {
+            betaVisibilityButton.setNewText("<html>\u03B2: Hidden<html>");
+            betaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            betaVisibilityButton.setEnabled(false);
+        }
+        betaVisibilityButton.addActionListener(e -> {
+            HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
+            if (transition.isBetaRangeVisible()) { //wyłączamy
+                transition.setBetaRangeVisibility(false);
+                button.setNewText("<html>\u03B2: Hidden<html>");
+                button.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+
+            } else { // włączamy
+                transition.setBetaRangeVisibility(true);
+                button.setNewText("<html>\u03B2: Visible<html>");
+                button.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            }
+            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+
+            action.reselectElement(eLocation);
+        });
+        infoPanel.add(betaVisibilityButton);
+
+
+        JLabel classXTPNInfoLabel = new JLabel("Classical/XTPN:");
+        classXTPNInfoLabel.setBounds(infPanelX+360, infPanelY, 120, 20);
+        infoPanel.add(classXTPNInfoLabel);
+
+        buttonClassXTPNmode = new HolmesRoundedButton("<html>XTPN</html>", "bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+        buttonClassXTPNmode.setMargin(new Insets(0, 0, 0, 0));
+        buttonClassXTPNmode.setName("alphaButton1");
+        buttonClassXTPNmode.setBounds(infPanelX+470, infPanelY, 100, 20);
+        buttonClassXTPNmode.setFocusPainted(false);
+        if(!transition.isAlphaActiveXTPN() && !transition.isBetaActiveXTPN()) {
+            buttonClassXTPNmode.setNewText("<html>Classical<html>");
+            buttonClassXTPNmode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        } else { //gdy jeden z trybów włączony
+            buttonClassXTPNmode.setNewText("<html>XTPN<html>");
+            buttonClassXTPNmode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+        }
+        buttonClassXTPNmode.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+
+            doNotUpdate = true;
+            SharedActionsXTPN.access().buttonTransitionToXTPN_classicSwitchMode(e, transition, this, alphaMaxTextField, betaMaxTextField, eLocation);
+            doNotUpdate = false;
+        });
+        infoPanel.add(buttonClassXTPNmode);
+
+        JLabel tauVisInfoLabel = new JLabel("Tau:");
+        tauVisInfoLabel.setBounds(infPanelX+570, infPanelY, 50, 20);
+        infoPanel.add(tauVisInfoLabel);
+
+        tauVisibilityButton = new HolmesRoundedButton("<html>\u03C4: Visible</html>"
+                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        tauVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
+        tauVisibilityButton.setName("gammaVisButton1");
+        tauVisibilityButton.setBounds(infPanelX+600, infPanelY, 100, 20);
+        tauVisibilityButton.setFocusPainted(false);
+        if(transition.isAlphaActiveXTPN() || transition.isBetaActiveXTPN()) {
+            if (transition.isTauTimerVisible()) {
+                tauVisibilityButton.setNewText("<html>\u03C4: Visible<html>");
+                tauVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            } else {
+                tauVisibilityButton.setNewText("<html>\u03C4: Hidden<html>");
+                tauVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            }
+        } else {
+            tauVisibilityButton.setEnabled(false);
+        }
+        tauVisibilityButton.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+            HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
+            if (transition.isTauTimerVisible()) { //wyłączamy
+                transition.setTauTimersVisibility(false);
+                button.setNewText("<html>\u03C4: Hidden<html>");
+                button.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+
+            } else { //włączamy
+                transition.setTauTimersVisibility(true);
+                button.setNewText("<html>\u03C4: Visible<html>");
+                button.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+
+                overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+            }
+            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+
+            action.reselectElement(eLocation);
+        });
+        infoPanel.add(tauVisibilityButton);
+
+        //************************* NEWLINE *************************
+        infPanelY += 25;
+        //************************* NEWLINE *************************
+
+
+        // XTPN-transition Zakresy alfa:
+        JLabel minMaxLabel = new JLabel("\u03B1 (min/max): ", JLabel.LEFT);
+        minMaxLabel.setBounds(infPanelX, infPanelY, 80, 20);
+        infoPanel.add(minMaxLabel);
+
+        // format danych alfa i beta: do 6 miejsc po przecinku
+        NumberFormat formatter = DecimalFormat.getInstance();
+        formatter.setMinimumFractionDigits(2);
+        formatter.setMaximumFractionDigits(6);
+        formatter.setRoundingMode(RoundingMode.HALF_UP);
+        Double example = 3.14;
+
+        // XTPN-transition alfaMin value
+        alphaMinTextField = new JFormattedTextField(formatter);
+        alphaMinTextField.setValue(example);
+        alphaMinTextField.setValue(transition.getAlphaMin_xTPN());
+        alphaMinTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+            }
+
+            double min = Double.parseDouble(""+field.getValue());
+            SharedActionsXTPN.access().setAlfaMinTime(min, transition, eLocation);
+
+            doNotUpdate = true;
+            alphaMaxTextField.setValue(transition.getAlphaMax_xTPN());
+            field.setValue(transition.getAlphaMin_xTPN());
+            doNotUpdate = false;
+            overlord.markNetChange();
+
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
+
+        });
+
+        // alfaMax value
+        alphaMaxTextField = new JFormattedTextField(formatter);
+        alphaMaxTextField.setValue(example);
+        alphaMaxTextField.setValue(transition.getAlphaMax_xTPN());
+        alphaMaxTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+            }
+
+            double max = Double.parseDouble(""+field.getValue());
+            SharedActionsXTPN.access().setAlfaMaxTime(max, transition, eLocation);
+
+            doNotUpdate = true;
+            alphaMinTextField.setValue(transition.getAlphaMin_xTPN());
+            field.setValue(transition.getAlphaMax_xTPN());
+            doNotUpdate = false;
+            overlord.markNetChange();
+
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
+        });
+
+        if(!transition.isAlphaActiveXTPN()) {
+            alphaMinTextField.setEnabled(false);
+            alphaMaxTextField.setEnabled(false);
+        }
+
+        alphaMinTextField.setBounds(infPanelX+80, infPanelY, 90, 20);
+        infoPanel.add(alphaMinTextField);
+        JLabel slash1 = new JLabel(" / ", JLabel.LEFT);
+        slash1.setBounds(infPanelX+170, infPanelY, 15, 20);
+        infoPanel.add(slash1);
+        alphaMaxTextField.setBounds(infPanelX+190, infPanelY, 90, 20);
+        infoPanel.add(alphaMaxTextField);
+
+
+        //************************* NEWLINE *************************
+        infPanelY += 25;
+        //************************* NEWLINE *************************
+
+        // XTPN-transition zakresy beta:
+        JLabel betaLabel = new JLabel("\u03B2 (min/max): ", JLabel.LEFT);
+        betaLabel.setBounds(infPanelX, infPanelY, 80, 20);
+        infoPanel.add(betaLabel);
+
+        // XTPN-transition betaMin value
+        betaMinTextField = new JFormattedTextField(formatter);
+        betaMinTextField.setValue(example);
+        betaMinTextField.setValue(transition.getBetaMin_xTPN());
+        betaMinTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+            }
+
+            double min = Double.parseDouble(""+field.getValue());
+            SharedActionsXTPN.access().setBetaMinTime(min, transition, eLocation);
+
+            doNotUpdate = true;
+            field.setValue(transition.getBetaMin_xTPN());
+            betaMaxTextField.setValue(transition.getBetaMax_xTPN());
+            doNotUpdate = false;
+            overlord.markNetChange();
+
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
+        });
+
+        // XTPN-transition betaMax value
+        betaMaxTextField = new JFormattedTextField(formatter);
+        betaMaxTextField.setValue(example);
+        betaMaxTextField.setValue(transition.getBetaMax_xTPN());
+        betaMaxTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                System.out.println(ex.getMessage());
+            }
+            double max = Double.parseDouble(""+field.getValue());
+            SharedActionsXTPN.access().setBetaMaxTime(max, transition, eLocation);
+
+            doNotUpdate = true;
+            betaMinTextField.setValue(transition.getBetaMin_xTPN());
+            field.setValue(transition.getBetaMax_xTPN());
+            doNotUpdate = false;
+            overlord.markNetChange();
+
+            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
+        });
+
+        if(!transition.isBetaActiveXTPN()) {
+            betaMinTextField.setEnabled(false);
+            betaMaxTextField.setEnabled(false);
+        }
+
+        betaMinTextField.setBounds(infPanelX+80, infPanelY, 90, 20);
+        infoPanel.add(betaMinTextField);
+        JLabel slash3 = new JLabel(" / ", JLabel.LEFT);
+        slash3.setBounds(infPanelX+170, infPanelY, 15, 20);
+        infoPanel.add(slash3);
+        betaMaxTextField.setBounds(infPanelX+190, infPanelY, 90, 20);
+        infoPanel.add(betaMaxTextField);
+
+
+
+
+
+
+
+        //************************* NEWLINE *************************
+        infPanelY += 25;
         //************************* NEWLINE *************************
 
         JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
@@ -560,6 +1099,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JPanel initializeTransInvPanel() {
         JPanel panel = new JPanel(null);
         panel.setBounds(0, 0, 600, 480);
+        panel.setBackground(Color.WHITE);
 
         int posX = 20;
         int posY = 20;
@@ -579,6 +1119,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JPanel panelButtonsTransition(JPanel infoPanel, JPanel chartMainPanel) {
         JPanel chartButtonPanel = new JPanel(null);
         chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainInfoPanel.getWidth()-10, 50);
+        chartButtonPanel.setBackground(Color.WHITE);
 
         int chartX = 5;
         int chartY_1st = 0;
@@ -886,31 +1427,19 @@ public class HolmesNodeInfoXTPN extends JFrame {
         //Font font = new Font("Dialog", Font.PLAIN, 12);
         //plot.getDomainAxis().setLabelFont(font);
         //plot.getRangeAxis().setLabelFont(font);
-
         return new ChartPanel(dynamicsChart);
     }
 
+    public void printTokenNumber() {
+        int tokens = 0;
+        if(place.isGammaModeActiveXTPN()) {
+            tokens = place.accessMultiset().size();
+        } else {
+            tokens = place.getTokensNumber();
+        }
 
-
-
-
-
-    /**
-     * Metoda zmieniająca nazwę dla miejsca sieci.
-     * @param place Place - obiekt miejsca
-     * @param newName String - nowa nazwa
-     */
-    public void changeName(Node place, String newName) {
-        place.setName(newName);
-        repaintGraphPanel(place);
+        tokensTextBox.setText(""+tokens);
     }
 
-    /**
-     * Metoda odpowiedzialna za przerysowanie grafu obrazu w arkuszu sieci.
-     */
-    private void repaintGraphPanel(Node node) {
-        int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(node.getElementLocations().get(0).getSheetID());
-        GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
-        graphPanel.repaint();
-    }
+
 }

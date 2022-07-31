@@ -77,7 +77,7 @@ public class SnoopyReader {
 				buffer.close(); 
 			}
 			catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error: 818881476 | Exception "+ex, "error", false);
+				GUIManager.getDefaultGUIManager().log("Error: 818881476 | Exception "+ex, "error", true);
 			}
 		}
 	}
@@ -331,7 +331,7 @@ public class SnoopyReader {
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									GUIManager.getDefaultGUIManager().log("Error (721736374) | Exception:  "+ex.getMessage(), "error", false);
+									GUIManager.getDefaultGUIManager().log("Error (721736374) | Exception:  "+ex.getMessage(), "error", true);
 								}
 								
 								x *= resizeFactor;
@@ -411,7 +411,7 @@ public class SnoopyReader {
 				((Transition)node).defColor = new Color(r,g,b);
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (288907374) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (288907374) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 
@@ -622,7 +622,7 @@ public class SnoopyReader {
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									GUIManager.getDefaultGUIManager().log("Error (289585336) | Exception:  "+ex.getMessage(), "error", false);
+									GUIManager.getDefaultGUIManager().log("Error (289585336) | Exception:  "+ex.getMessage(), "error", true);
 								}
 								x *= resizeFactor;
 								y *= resizeFactor;
@@ -873,7 +873,7 @@ public class SnoopyReader {
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									GUIManager.getDefaultGUIManager().log("Error (805518514) | Exception:  "+ex.getMessage(), "error", false);
+									GUIManager.getDefaultGUIManager().log("Error (805518514) | Exception:  "+ex.getMessage(), "error", true);
 								}
 								
 								x *= resizeFactor;
@@ -1092,7 +1092,7 @@ public class SnoopyReader {
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									GUIManager.getDefaultGUIManager().log("Error (979647504) | Exception:  "+ex.getMessage(), "error", false);
+									GUIManager.getDefaultGUIManager().log("Error (979647504) | Exception:  "+ex.getMessage(), "error", true);
 								}
 								
 								x *= resizeFactor;
@@ -1512,7 +1512,7 @@ public class SnoopyReader {
 			tmp = tmp.substring(0, location);
 			result = Double.parseDouble(tmp);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (251415203) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (251415203) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1532,7 +1532,7 @@ public class SnoopyReader {
 			location = tmp.indexOf("\"");
 			result = tmp.substring(0, location);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (835501362) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (835501362) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		return result;
 	}

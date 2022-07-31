@@ -96,7 +96,7 @@ public class HolmesClusterConfig extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (656756737) | Exception:  "+ex.getMessage(), "error", false);
+			GUIManager.getDefaultGUIManager().log("Error (656756737) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		commandsValidate = comm;
 		boss = parent;

@@ -192,7 +192,7 @@ public final class ElementDraw {
 						try {
 							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.black, xTPNtrans);
 						} catch (Exception ex) {
-							GUIManager.getDefaultGUIManager().log("Error (272399642) | Exception:  "+ex.getMessage(), "error", false);
+							GUIManager.getDefaultGUIManager().log("Error (272399642) | Exception:  "+ex.getMessage(), "error", true);
 						}
 					}
 				}
@@ -253,7 +253,7 @@ public final class ElementDraw {
 								g.drawLine(nodeBounds.x+13, nodeBounds.y+15, nodeBounds.x+16, nodeBounds.y+14);
 								g.drawLine(nodeBounds.x+16, nodeBounds.y+14, nodeBounds.x+14, nodeBounds.y+19);
 							} catch (Exception ex) {
-								GUIManager.getDefaultGUIManager().log("Error (762886747) | Exception:  "+ex.getMessage(), "error", false);
+								GUIManager.getDefaultGUIManager().log("Error (762886747) | Exception:  "+ex.getMessage(), "error", true);
 							}
 						}
 						g.setColor(trans.qSimOvalColor);
@@ -456,7 +456,7 @@ public final class ElementDraw {
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
 								nodeBounds.y-(trans.getRadius()+2));
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (858049410) | Exception:  "+ex.getMessage(), "error", false);
+						GUIManager.getDefaultGUIManager().log("Error (858049410) | Exception:  "+ex.getMessage(), "error", true);
 					}
 				}
 				
@@ -466,7 +466,7 @@ public final class ElementDraw {
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
 								nodeBounds.y-(trans.getRadius()+2));
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (856997329) | Exception:  "+ex.getMessage(), "error", false);
+						GUIManager.getDefaultGUIManager().log("Error (856997329) | Exception:  "+ex.getMessage(), "error", true);
 					}
 				}
 				
@@ -711,7 +711,7 @@ public final class ElementDraw {
 					try {
 						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.black, xTPNplace);
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (777866480) | Exception:  "+ex.getMessage(), "error", false);
+						GUIManager.getDefaultGUIManager().log("Error (777866480) | Exception:  "+ex.getMessage(), "error", true);
 					}
 				} else if (el.isPortalSelected()) {
 					g.setColor(EditorResources.selectionColorLevel1);
@@ -763,7 +763,7 @@ public final class ElementDraw {
 						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-4), 
 								nodeBounds.y-(place.getRadius()-3));
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (372587144) | Exception:  "+ex.getMessage(), "error", false);
+						GUIManager.getDefaultGUIManager().log("Error (372587144) | Exception:  "+ex.getMessage(), "error", true);
 					}
 				}
 
@@ -1905,7 +1905,7 @@ public final class ElementDraw {
 				BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/tokenV2.png"));
 				g.drawImage(img, null, (int) a - 5, (int) b - 5);
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (371587114) | Exception:  "+ex.getMessage(), "error", false);
+				GUIManager.getDefaultGUIManager().log("Error (371587114) | Exception:  "+ex.getMessage(), "error", true);
 			}
 
 //			g.fillOval((int) a - 5, (int) b - 5, 10, 10);
