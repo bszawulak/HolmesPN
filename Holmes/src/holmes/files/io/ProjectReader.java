@@ -592,12 +592,12 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {//isGammaModeActiveXTPN
-					((PlaceXTPN)place).setGammaModeXTPNstatus(true);
+					((PlaceXTPN)place).setGammaModeStatus(true);
 				} else if(line.contains("false")) {
-					((PlaceXTPN)place).setGammaModeXTPNstatus(false);
+					((PlaceXTPN)place).setGammaModeStatus(false);
 				} else {
 					overlord.log("Gamma mode status reading failed for place "+placesProcessed, "error", true);
-					((PlaceXTPN)place).setGammaModeXTPNstatus(true);
+					((PlaceXTPN)place).setGammaModeStatus(true);
 				}
 				return;
 			}
@@ -623,10 +623,10 @@ public class ProjectReader {
 				line = line.replace(">","");
 				try {
 					double gammaMin = Double.parseDouble(line);
-					((PlaceXTPN)place).setGammaMin_xTPN(gammaMin, true);
+					((PlaceXTPN)place).setGammaMinValue(gammaMin, true);
 				} catch (Exception exc) {
 					overlord.log("Gamma minimum reading failed for place "+placesProcessed, "error", true);
-					((PlaceXTPN)place).setGammaMin_xTPN(0, true);
+					((PlaceXTPN)place).setGammaMinValue(0, true);
 				}
 				return;
 			}
@@ -637,13 +637,13 @@ public class ProjectReader {
 				line = line.replace(">","");
 				try {
 					double gammaMax = Double.parseDouble(line);
-					((PlaceXTPN)place).setGammaMax_xTPN(gammaMax, true);
+					((PlaceXTPN)place).setGammaMaxValue(gammaMax, true);
 				} catch (Exception exc) {
 					overlord.log("Gamma maximum failed for place "+placesProcessed, "error", true);
-					if(((PlaceXTPN)place).getGammaMin_xTPN() > 0)
-						((PlaceXTPN)place).setGammaMax_xTPN(((PlaceXTPN)place).getGammaMin_xTPN(), true);
+					if(((PlaceXTPN)place).getGammaMinValue() > 0)
+						((PlaceXTPN)place).setGammaMaxValue(((PlaceXTPN)place).getGammaMinValue(), true);
 					else
-						((PlaceXTPN)place).setGammaMax_xTPN(0, true);
+						((PlaceXTPN)place).setGammaMaxValue(0, true);
 				}
 				return;
 			}
@@ -654,10 +654,10 @@ public class ProjectReader {
 				line = line.replace(">","");
 				try {
 					int fractionSize = Integer.parseInt(line);
-					((PlaceXTPN)place).setFraction_xTPN(fractionSize);
+					((PlaceXTPN)place).setFractionForPlaceXTPN(fractionSize);
 				} catch (Exception exc) {
 					overlord.log("Fraction XTPN reading failed for place "+placesProcessed, "error", true);
-					((PlaceXTPN)place).setFraction_xTPN(6);
+					((PlaceXTPN)place).setFractionForPlaceXTPN(6);
 				}
 				return;
 			}
@@ -930,12 +930,12 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {
-					((TransitionXTPN)transition).setAlphaXTPNstatus(true);
+					((TransitionXTPN)transition).setAlphaModeStatus(true);
 				} else if(line.contains("false")) {
-					((TransitionXTPN)transition).setAlphaXTPNstatus(false);
+					((TransitionXTPN)transition).setAlphaModeStatus(false);
 				} else {
 					overlord.log("Alpha mode status reading failed for transition "+transitionsProcessed, "error", true);
-					((TransitionXTPN)transition).setAlphaXTPNstatus(true);
+					((TransitionXTPN)transition).setAlphaModeStatus(true);
 				}
 				return;
 			}
@@ -961,10 +961,10 @@ public class ProjectReader {
 				line = line.replace(">","");
 				try {
 					double gammaMin = Double.parseDouble(line);
-					((TransitionXTPN)transition).setAlphaMin_xTPN(gammaMin, true);
+					((TransitionXTPN)transition).setAlphaMinValue(gammaMin, true);
 				} catch (Exception exc) {
 					overlord.log("Alpha minimum reading failed for transition "+transitionsProcessed, "error", true);
-					((TransitionXTPN)transition).setAlphaMin_xTPN(0, true);
+					((TransitionXTPN)transition).setAlphaMinValue(0, true);
 				}
 				return;
 			}
@@ -975,13 +975,13 @@ public class ProjectReader {
 				line = line.replace(">","");
 				try {
 					double gammaMax = Double.parseDouble(line);
-					((TransitionXTPN)transition).setAlphaMax_xTPN(gammaMax, true);
+					((TransitionXTPN)transition).setAlphaMaxValue(gammaMax, true);
 				} catch (Exception exc) {
 					overlord.log("Alpha maximum failed for transition "+transitionsProcessed, "error", true);
-					if(((TransitionXTPN)transition).getAlphaMin_xTPN() > 0)
-						((TransitionXTPN)transition).setAlphaMax_xTPN(((TransitionXTPN)transition).getAlphaMin_xTPN(), true);
+					if(((TransitionXTPN)transition).getAlphaMinValue() > 0)
+						((TransitionXTPN)transition).setAlphaMaxValue(((TransitionXTPN)transition).getAlphaMinValue(), true);
 					else
-						((TransitionXTPN)transition).setAlphaMax_xTPN(0, true);
+						((TransitionXTPN)transition).setAlphaMaxValue(0, true);
 				}
 				return;
 			}
@@ -991,12 +991,12 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {
-					((TransitionXTPN)transition).setBetaXTPNstatus(true);
+					((TransitionXTPN)transition).setBetaModeStatus(true);
 				} else if(line.contains("false")) {
-					((TransitionXTPN)transition).setBetaXTPNstatus(false);
+					((TransitionXTPN)transition).setBetaModeStatus(false);
 				} else {
 					overlord.log("Beta mode status reading failed for transition "+transitionsProcessed, "error", true);
-					((TransitionXTPN)transition).setBetaXTPNstatus(true);
+					((TransitionXTPN)transition).setBetaModeStatus(true);
 				}
 				return;
 			}
@@ -1022,10 +1022,10 @@ public class ProjectReader {
 				line = line.replace(">","");
 				try {
 					double gammaMin = Double.parseDouble(line);
-					((TransitionXTPN)transition).setBetaMin_xTPN(gammaMin, true);
+					((TransitionXTPN)transition).setBetaMinValue(gammaMin, true);
 				} catch (Exception exc) {
 					overlord.log("Beta minimum reading failed for transition "+transitionsProcessed, "error", true);
-					((TransitionXTPN)transition).setBetaMin_xTPN(0, true);
+					((TransitionXTPN)transition).setBetaMinValue(0, true);
 				}
 				return;
 			}
@@ -1036,13 +1036,13 @@ public class ProjectReader {
 				line = line.replace(">","");
 				try {
 					double gammaMax = Double.parseDouble(line);
-					((TransitionXTPN)transition).setBetaMax_xTPN(gammaMax, true);
+					((TransitionXTPN)transition).setBetaMaxValue(gammaMax, true);
 				} catch (Exception exc) {
 					overlord.log("Beta maximum failed for transition "+transitionsProcessed, "error", true);
-					if(((TransitionXTPN)transition).getBetaMin_xTPN() > 0)
-						((TransitionXTPN)transition).setBetaMax_xTPN(((TransitionXTPN)transition).getBetaMin_xTPN(), true);
+					if(((TransitionXTPN)transition).getBetaMinValue() > 0)
+						((TransitionXTPN)transition).setBetaMaxValue(((TransitionXTPN)transition).getBetaMinValue(), true);
 					else
-						((TransitionXTPN)transition).setBetaMax_xTPN(0, true);
+						((TransitionXTPN)transition).setBetaMaxValue(0, true);
 				}
 				return;
 			}
@@ -1096,12 +1096,12 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {
-					((TransitionXTPN)transition).setImmediateXTPN(true);
+					((TransitionXTPN)transition).setImmediateStatusXTPN(true);
 				} else if(line.contains("false")) {
-					((TransitionXTPN)transition).setImmediateXTPN(false);
+					((TransitionXTPN)transition).setImmediateStatusXTPN(false);
 				} else {
 					overlord.log("Immediate status reading failed for transition "+transitionsProcessed, "error", true);
-					((TransitionXTPN)transition).setImmediateXTPN(false);
+					((TransitionXTPN)transition).setImmediateStatusXTPN(false);
 				}
 				return;
 			}

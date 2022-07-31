@@ -63,7 +63,7 @@ public class PlaceXTPN extends Place {
      * @param value (double) czas gammaMinimum (=minimalny czas aktywacji.)
      * @param force (boolean) czy wymusić wartość bez weryfikacji
      */
-    public void setGammaMin_xTPN(double value, boolean force) {
+    public void setGammaMinValue(double value, boolean force) {
         if(force) {
             this.gammaMin_xTPN = value;
             return;
@@ -83,7 +83,7 @@ public class PlaceXTPN extends Place {
      * Metoda pozwala odczytać dolną wartość gammaMinimum dla xTPN.
      * @return (double) czas gammaMinimum, minimalny czas aktywacji.
      */
-    public double getGammaMin_xTPN() {
+    public double getGammaMinValue() {
         return this.gammaMin_xTPN;
     }
 
@@ -92,7 +92,7 @@ public class PlaceXTPN extends Place {
      * @param value (double) czas gammaMaximum (=token lifetime limit)
      * @param force (boolean) czy wymusić wartość bez weryfikacji
      */
-    public void setGammaMax_xTPN(double value, boolean force) {
+    public void setGammaMaxValue(double value, boolean force) {
         if(value > Integer.MAX_VALUE)
             value = Integer.MAX_VALUE - 1;
 
@@ -115,7 +115,7 @@ public class PlaceXTPN extends Place {
      * Metoda pozwala odczytać górną wartość gammaUpper dla xTPN.
      * @return (double) czas gammaUpper.
      */
-    public double getGammaMax_xTPN() {
+    public double getGammaMaxValue() {
         return this.gammaMax_xTPN;
     }
 
@@ -123,7 +123,7 @@ public class PlaceXTPN extends Place {
      * Ustawia miejsce XTPN na czasowe lub klasyczne.
      * @param status (boolean) true, jeśli tryb gamma ma być aktywny - czyli miejsce ma być czasowe.
      */
-    public void setGammaModeXTPNstatus(boolean status) {
+    public void setGammaModeStatus(boolean status) {
         gammaMode_xTPN = status;
         setGammaRangeVisibility(status);
     }
@@ -132,7 +132,7 @@ public class PlaceXTPN extends Place {
      * Sprawdzenie, czy miejsce jest typu XTPN (z włączonymi zakresami gamma).
      * @return (<b>boolean</b>>) - true, jeśli jest to miejsce czasowe.
      */
-    public boolean isGammaModeActiveXTPN() {
+    public boolean isGammaModeActive() {
         return gammaMode_xTPN;
     }
 
@@ -156,7 +156,7 @@ public class PlaceXTPN extends Place {
      * Metoda ustawia wyświetlaną dokładność po przecinku.
      * @param value (int) nowa wartość liczby cyfr przecinku.
      */
-    public void setFraction_xTPN(int value) {
+    public void setFractionForPlaceXTPN(int value) {
         franctionDigits = value;
     }
 
@@ -164,7 +164,7 @@ public class PlaceXTPN extends Place {
      * Metoda zwraca wyświetlaną dokładność po przecinku.
      * @return (int) aktualna wartość liczby cyfr przecinku.
      */
-    public int getFraction_xTPN() {
+    public int getFractionForPlaceXTPN() {
         return franctionDigits;
     }
 
@@ -174,7 +174,7 @@ public class PlaceXTPN extends Place {
      * @param initialTime (double) wartość początkowa
      */
     public void addTokens_XTPN(int howMany, double initialTime) {
-        if(isGammaModeActiveXTPN()) { //tylko gdy XTPN włączone
+        if(isGammaModeActive()) { //tylko gdy XTPN włączone
             for (int i = 0; i < howMany; i++) {
                 multisetK.add(initialTime);
             }
@@ -193,7 +193,7 @@ public class PlaceXTPN extends Place {
     @SuppressWarnings("UnusedReturnValue")
     public int removeOldTokens_XTPN() {
         int removed = 0;
-        if(isGammaModeActiveXTPN()) { //tylko gdy XTPN włączone
+        if(isGammaModeActive()) { //tylko gdy XTPN włączone
             for (Iterator<Double> iterator = multisetK.iterator(); iterator.hasNext();) {
                 Double kappa = iterator.next();
                 if(kappa >= gammaMax_xTPN) {
@@ -240,8 +240,8 @@ public class PlaceXTPN extends Place {
      * @return (<b>int</b>) - liczba usuniętych tokenów lub -1 gdy wystąpił błąd.
      */
     @SuppressWarnings("UnusedReturnValue")
-    public int removeTokensForProduction(int howMany, int mode, IRandomGenerator generator) {
-        if(!isGammaModeActiveXTPN()) { //gdy XTPN wyłączone, tylko usuwamy liczbę
+    public int removeTokensForProduction_XTPN(int howMany, int mode, IRandomGenerator generator) {
+        if(!isGammaModeActive()) { //gdy XTPN wyłączone, tylko usuwamy liczbę
             modifyTokensNumber(-howMany);
             return howMany;
         }
@@ -297,7 +297,7 @@ public class PlaceXTPN extends Place {
      * @param tau (double) o ile zwiększyć czas życia tokenów.
      */
     public void incTokensTime_XTPN(double tau) {
-        if(isGammaModeActiveXTPN()) {
+        if(isGammaModeActive()) {
             multisetK.replaceAll(aDouble -> aDouble + tau);
         } else {
             JOptionPane.showMessageDialog(null, "Critical error - tokens time update when XTPN status OFF" +
@@ -311,7 +311,7 @@ public class PlaceXTPN extends Place {
      * @param ID (<b>ID</b>) indeks tokenu.
      * @param value (<b>value</b>) nowa wartość tokenu.
      */
-    public void updateToken(int ID, Double value) {
+    public void updateToken_XTPN(int ID, Double value) {
         if(ID > -1 && ID < multisetK.size()) {
             multisetK.set(ID, value);
         }
@@ -323,7 +323,7 @@ public class PlaceXTPN extends Place {
      * Usuwanie tokenu po indeksie.
      * @param index (<b>int</b>) indeks tokenu.
      */
-    public void removeTokenByID(int index) {
+    public void removeTokenByID_XTPN(int index) {
         if(index > -1 && index < multisetK.size()) {
             multisetK.remove(index);
         }
@@ -352,7 +352,7 @@ public class PlaceXTPN extends Place {
      * Metoda kasuje multizbiór K, pozostawia tylko liczbę tokenów jako int.
      */
     public void transformXTPNintoPNpace() {
-        setGammaModeXTPNstatus(false);
+        setGammaModeStatus(false);
         multisetK.clear();
     }
 
@@ -360,7 +360,7 @@ public class PlaceXTPN extends Place {
      * Na podstawie liczby tokenów metoda wypełnia zerami nowy multizbiór K.
      */
     public void transformIntoXTPNplace() {
-        setGammaModeXTPNstatus(true);
+        setGammaModeStatus(true);
         for(int i=0; i<tokensNumber; i++) {
             multisetK.add(0.0);
         }

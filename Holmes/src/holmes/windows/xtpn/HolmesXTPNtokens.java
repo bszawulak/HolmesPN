@@ -197,7 +197,7 @@ public class HolmesXTPNtokens extends JFrame {
         // pole wartości tokenu
         NumberFormat formatter = DecimalFormat.getInstance();
         formatter.setMinimumFractionDigits(1);
-        formatter.setMaximumFractionDigits(place.getFraction_xTPN());
+        formatter.setMaximumFractionDigits(place.getFractionForPlaceXTPN());
         formatter.setRoundingMode(RoundingMode.HALF_UP);
 
         tokenValueTextField = new JFormattedTextField(formatter);
@@ -237,7 +237,7 @@ public class HolmesXTPNtokens extends JFrame {
                 listenerAllowed=false;
 
                 if(parentWindow == null) { //to znaczy, że modyfikujemy bezpośrednio miejsca
-                    place.updateToken(selected, val);
+                    place.updateToken_XTPN(selected, val);
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                 } else { // modyfikujemy tylko przechowywany p-stan
                     if(parentWindow instanceof HolmesStatesEditorXTPN) {
@@ -277,7 +277,7 @@ public class HolmesXTPNtokens extends JFrame {
 
                 if(isGammaPlace) {
                     if(parentWindow == null) { //to znaczy, że usuwamy bezpośrednio z miejsca
-                        place.removeTokenByID(selected); //poprzez metodę, a nie bezpośrednio z multisetK!
+                        place.removeTokenByID_XTPN(selected); //poprzez metodę, a nie bezpośrednio z multisetK!
                         GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                     } else { // usuwamy token tylko z przechowywanego p-stanu
                         if(parentWindow instanceof HolmesStatesEditorXTPN) {
@@ -516,13 +516,13 @@ public class HolmesXTPNtokens extends JFrame {
         if(parentWindow == null) {
             for(int p=0; p < place.accessMultiset().size(); p++) {
                 double token = place.accessMultiset().get(p);
-                tokensComboBox.addItem("(\u03BA"+(p)+")  " + Tools.cutValueExt(token, place.getFraction_xTPN()) );
+                tokensComboBox.addItem("(\u03BA"+(p)+")  " + Tools.cutValueExt(token, place.getFractionForPlaceXTPN()) );
             }
         } else { //dla state managera:
             if(parentWindow instanceof HolmesStatesEditorXTPN) {
                 for(int p=0; p < multisetK.size(); p++) {
                     double token = multisetK.get(p);
-                    tokensComboBox.addItem("(\u03BA"+(p)+")  " + Tools.cutValueExt(token, place.getFraction_xTPN()) );
+                    tokensComboBox.addItem("(\u03BA"+(p)+")  " + Tools.cutValueExt(token, place.getFractionForPlaceXTPN()) );
                 }
             } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
 

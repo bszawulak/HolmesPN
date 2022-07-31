@@ -47,7 +47,7 @@ public class P_StateManager {
 		}
 		if(place instanceof PlaceXTPN) {
 			for(MultisetM multisetM: statesMatrixXTPN) {
-				if( ((PlaceXTPN)place).isGammaModeActiveXTPN())
+				if( ((PlaceXTPN)place).isGammaModeActive())
 					multisetM.addMultiset_K_toMultiset_M( new ArrayList<>( ((PlaceXTPN)place).accessMultiset()), 1 );
 				else
 					multisetM.addMultiset_K_toMultiset_M( new ArrayList<>( ((PlaceXTPN)place).accessMultiset()), 0 );
@@ -235,7 +235,7 @@ public class P_StateManager {
 				return;
 			}
 
-			if( ((PlaceXTPN)place).isGammaModeActiveXTPN())
+			if( ((PlaceXTPN)place).isGammaModeActive())
 				multisetM.addMultiset_K_toMultiset_M(new ArrayList<>( ((PlaceXTPN)place).accessMultiset()), 1);
 			else {
 				int tokens = place.getTokensNumber();
@@ -272,7 +272,7 @@ public class P_StateManager {
 				return;
 			}
 
-			if( ((PlaceXTPN)place).isGammaModeActiveXTPN())
+			if( ((PlaceXTPN)place).isGammaModeActive())
 				statesMatrixXTPN.get(0).addMultiset_K_toMultiset_M( new ArrayList<>( ((PlaceXTPN)place).accessMultiset()), 1 );
 			else
 				statesMatrixXTPN.get(0).addMultiset_K_toMultiset_M( new ArrayList<>( ((PlaceXTPN)place).accessMultiset()), 0 );
@@ -296,11 +296,11 @@ public class P_StateManager {
 				}
 
 				if(multisetM.isPlaceStoredAsGammaActive(placeIndex)) { //jeśli w managerze miejsce przechowywane jest jako XTPN
-					((PlaceXTPN)place).setGammaModeXTPNstatus(true);
+					((PlaceXTPN)place).setGammaModeStatus(true);
 					((PlaceXTPN)place).replaceMultiset( new ArrayList<>(multisetM.accessMultiset_K(placeIndex)) );
 					place.setTokensNumber( multisetM.accessMultiset_K(placeIndex).size() );
 				} else { //jeśli w managerze miejsce jest przechowywane jako klasyczne
-					((PlaceXTPN)place).setGammaModeXTPNstatus(false);
+					((PlaceXTPN)place).setGammaModeStatus(false);
 					((PlaceXTPN)place).accessMultiset().clear();
 					//place.replaceMultiset( new ArrayList<>(multisetM.accessMultiset_K(placeIndex)) );
 					double tokensNo = multisetM.accessMultiset_K(placeIndex).get(0);
@@ -351,7 +351,7 @@ public class P_StateManager {
 
 			ArrayList<Double> currentPlaceMultiset = new ArrayList<>( ((PlaceXTPN)place).accessMultiset());
 			int placeTag = 1; //zakładamy, że miejsce czasowe
-			if( !((PlaceXTPN)place).isGammaModeActiveXTPN() ) { //w przypadku gdy klasyczne, jedyna liczba w multizbiorze to liczba tokenów klasycznych
+			if( !((PlaceXTPN)place).isGammaModeActive() ) { //w przypadku gdy klasyczne, jedyna liczba w multizbiorze to liczba tokenów klasycznych
 				currentPlaceMultiset.clear();
 				currentPlaceMultiset.add((double)place.getTokensNumber());
 				placeTag = 0; //jednak miejsce zwykłe

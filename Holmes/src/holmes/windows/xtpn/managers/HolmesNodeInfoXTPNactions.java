@@ -6,11 +6,9 @@ import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.PlaceXTPN;
-import holmes.petrinet.elements.TransitionXTPN;
 import holmes.workspace.WorkspaceSheet;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class HolmesNodeInfoXTPNactions {
@@ -26,7 +24,7 @@ public class HolmesNodeInfoXTPNactions {
     public void buttonGammaModeSwitch(ActionEvent e, PlaceXTPN place, HolmesRoundedButton tokensWindowButton, HolmesRoundedButton gammaVisibilityButton) {
         HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
         int tokensNum = place.getTokensNumber();
-        if (place.isGammaModeActiveXTPN()) {
+        if (place.isGammaModeActive()) {
             //zapytać czy wyłączyć, konwersja kasowanie arrayListy
             String[] options = {"Reduce to classical place", "Stay as XTPN"};
             int answer = JOptionPane.showOptionDialog(null, "Turning \u03B3-mode off will clear " +

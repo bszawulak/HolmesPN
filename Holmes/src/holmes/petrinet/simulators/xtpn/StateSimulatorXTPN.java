@@ -213,7 +213,7 @@ public class StateSimulatorXTPN {
         //oraz osobno: consumingTokensTransitionsClassical
 
         for (TransitionXTPN transition : consumingTokensTransitionsXTPN) { //lista tych, które zabierają tokeny
-            if(transition.getActiveStatusXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
+            if(transition.isActiveTransitionXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                 //transition.setLaunching(true);
                 arcs = transition.getInArcs();
                 for (Arc arc : arcs) {
@@ -227,12 +227,12 @@ public class StateSimulatorXTPN {
                         if(transition.isFunctional()) {
                             weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                         }
-                        place.removeTokensForProduction(weight, 0, engineXTPN.getGenerator());
+                        place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
                     }
                 }
                 launchedXTPN.add(transition);
             } else {
-                transition.deactivateXTPN(false);
+                transition.deactivateTransitionXTPN(false);
                 transition.setActivationStatusXTPN(false);
                 transition.setProductionStatus_xTPN(false);
                 producingTokensTransitionsAll.remove(transition);
@@ -259,13 +259,13 @@ public class StateSimulatorXTPN {
             } else { //tu bawimy się w bycie uczciwym (chyba, że tranzycja immediate)
                 if ((engineXTPN.getGenerator().nextInt(100) < 50) && !transition.isImmediateXTPN()) {
                     //non immediate classical: 50% chances to fire
-                    transition.deactivateXTPN(false);
+                    transition.deactivateTransitionXTPN(false);
                 }
                 continue;
             }
 
 
-            if(transition.getActiveStatusXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
+            if(transition.isActiveTransitionXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                 fireClassSoFar++;
                 transition.setLaunching(true);
                 arcs = transition.getInArcs();
@@ -280,12 +280,12 @@ public class StateSimulatorXTPN {
                         if(transition.isFunctional()) {
                             weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                         }
-                        place.removeTokensForProduction(weight, 0, engineXTPN.getGenerator());
+                        place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
                     }
                 }
                 launchedClassical.add(transition);
             } else {
-                transition.deactivateXTPN(false);
+                transition.deactivateTransitionXTPN(false);
             }
         }
         launchedTransitions.add(launchedXTPN);

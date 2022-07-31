@@ -180,11 +180,11 @@ public class ProjectWriter {
 
 				if(XTPNdataMode) {
 					//bw.write(spaces(sp) + "<Place XTPN status:" + ((PlaceXTPN)place).isXTPNplace() + ">" + newline); //czy to miejsce XTPN?
-					bw.write(spaces(sp) + "<Place XTPN gammaMode:" + ((PlaceXTPN)place).isGammaModeActiveXTPN() + ">" + newline); //czy gamma włączone
+					bw.write(spaces(sp) + "<Place XTPN gammaMode:" + ((PlaceXTPN)place).isGammaModeActive() + ">" + newline); //czy gamma włączone
 					bw.write(spaces(sp) + "<Place XTPN gammaVisible:" + ((PlaceXTPN)place).isGammaRangeVisible() + ">" + newline); //czy gamma widoczne
-					bw.write(spaces(sp) + "<Place XTPN gammaMin:" + ((PlaceXTPN)place).getGammaMin_xTPN() + ">" + newline); //gamma minimum
-					bw.write(spaces(sp) + "<Place XTPN gammaMax:" + ((PlaceXTPN)place).getGammaMax_xTPN() + ">" + newline); //gamma maximum
-					bw.write(spaces(sp) + "<Place XTPN fractionSize:" + ((PlaceXTPN)place).getFraction_xTPN() + ">" + newline); //dokładność po przecinku
+					bw.write(spaces(sp) + "<Place XTPN gammaMin:" + ((PlaceXTPN)place).getGammaMinValue() + ">" + newline); //gamma minimum
+					bw.write(spaces(sp) + "<Place XTPN gammaMax:" + ((PlaceXTPN)place).getGammaMaxValue() + ">" + newline); //gamma maximum
+					bw.write(spaces(sp) + "<Place XTPN fractionSize:" + ((PlaceXTPN)place).getFractionForPlaceXTPN() + ">" + newline); //dokładność po przecinku
 
 					bw.write(spaces(sp) + "<Place XTPN multiset"); //multisetK
 					for (int token = 0; token < ((PlaceXTPN)place).accessMultiset().size(); token++) {
@@ -264,14 +264,14 @@ public class ProjectWriter {
 
 				if(XTPNdataMode) {
 					//bw.write(spaces(sp)+"<Transition XTPN status:"+((TransitionXTPN)trans).isXTPNtransition()+">"+newline); //czy XTPN?
-					bw.write(spaces(sp)+"<Transition XTPN alphaMode:"+((TransitionXTPN)trans).isAlphaActiveXTPN()+">"+newline); //czy alpha włączone
+					bw.write(spaces(sp)+"<Transition XTPN alphaMode:"+((TransitionXTPN)trans).isAlphaModeActive()+">"+newline); //czy alpha włączone
 					bw.write(spaces(sp)+"<Transition XTPN alphaVisible:"+((TransitionXTPN)trans).isAlphaRangeVisible()+">"+newline); //czy alpha widoczne
-					bw.write(spaces(sp)+"<Transition XTPN alphaMin:"+((TransitionXTPN)trans).getAlphaMin_xTPN()+">"+newline); //alpha minimum
-					bw.write(spaces(sp)+"<Transition XTPN alphaMax:"+((TransitionXTPN)trans).getAlphaMax_xTPN()+">"+newline); //alpha maximum
-					bw.write(spaces(sp)+"<Transition XTPN betaMode:"+((TransitionXTPN)trans).isBetaActiveXTPN()+">"+newline); //czy beta włączone
+					bw.write(spaces(sp)+"<Transition XTPN alphaMin:"+((TransitionXTPN)trans).getAlphaMinValue()+">"+newline); //alpha minimum
+					bw.write(spaces(sp)+"<Transition XTPN alphaMax:"+((TransitionXTPN)trans).getAlphaMaxValue()+">"+newline); //alpha maximum
+					bw.write(spaces(sp)+"<Transition XTPN betaMode:"+((TransitionXTPN)trans).isBetaModeActive()+">"+newline); //czy beta włączone
 					bw.write(spaces(sp)+"<Transition XTPN betaVisible:"+((TransitionXTPN)trans).isBetaRangeVisible()+">"+newline); //czy beta widoczne
-					bw.write(spaces(sp)+"<Transition XTPN betaMin:"+((TransitionXTPN)trans).getBetaMin_xTPN()+">"+newline); //beta minimum
-					bw.write(spaces(sp)+"<Transition XTPN betaMax:"+((TransitionXTPN)trans).getBetaMax_xTPN()+">"+newline); //beta maximum
+					bw.write(spaces(sp)+"<Transition XTPN betaMin:"+((TransitionXTPN)trans).getBetaMinValue()+">"+newline); //beta minimum
+					bw.write(spaces(sp)+"<Transition XTPN betaMax:"+((TransitionXTPN)trans).getBetaMaxValue()+">"+newline); //beta maximum
 					bw.write(spaces(sp)+"<Transition XTPN tauVisible:"+((TransitionXTPN)trans).isTauTimerVisible()+">"+newline); //czy beta widoczne
 					bw.write(spaces(sp)+"<Transition XTPN massAction:"+((TransitionXTPN)trans).isMassActionKineticsActiveXTPN()+">"+newline); //mass-action
 					bw.write(spaces(sp)+"<Transition XTPN fractionSize:"+((TransitionXTPN)trans).getFraction_xTPN()+">"+newline); //dokładność po przecinku

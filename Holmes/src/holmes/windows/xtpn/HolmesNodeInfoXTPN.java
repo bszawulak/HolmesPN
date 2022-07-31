@@ -52,20 +52,28 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private int transInterval = 10;
     private JFormattedTextField avgFiredTextBox;
 
-    private HolmesRoundedButton alphaVisibilityButton;
-    private HolmesRoundedButton betaVisibilityButton;
-    private HolmesRoundedButton tauVisibilityButton;
+    //MIEJSCA:
+    private HolmesRoundedButton buttonGammaMode;
     private HolmesRoundedButton gammaVisibilityButton;
     private HolmesRoundedButton tokensWindowButton; //przycisk podokna tokenó XTPN
     private JFormattedTextField tokensTextBox; //liczba tokenów
-    private HolmesRoundedButton buttonClassXTPNmode;
+    private JFormattedTextField gammaMinTextField;
+    private JFormattedTextField gammaMaxTextField;
 
+    //TRANZYCJE:
+    private HolmesRoundedButton buttonAlphaMode;
+    private HolmesRoundedButton buttonBetaMode;
+    private HolmesRoundedButton buttonClassXTPNmode;
+    private HolmesRoundedButton alphaVisibilityButton;
+    private HolmesRoundedButton betaVisibilityButton;
+    private HolmesRoundedButton tauVisibilityButton;
     private JFormattedTextField alphaMinTextField;
     private JFormattedTextField alphaMaxTextField;
     private JFormattedTextField betaMinTextField;
     private JFormattedTextField betaMaxTextField;
-    private JFormattedTextField gammaMinTextField;
-    private JFormattedTextField gammaMaxTextField;
+
+
+
 
     /**
      * Konstruktor do tworzenia okna właściwości miejsca.
@@ -93,9 +101,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
         tabbedPane.setBackgroundAt(0, Color.WHITE);
         tabbedPane.setBackgroundAt(1, Color.WHITE);
 
-
+        setFieldStatus(true);
         main.add(tabbedPane);
-
     }
 
     /**
@@ -124,6 +131,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         tabbedPane.setBackgroundAt(0, Color.WHITE);
         tabbedPane.setBackgroundAt(1, Color.WHITE);
 
+        setFieldStatus(false);
         main.add(tabbedPane);
     }
 
@@ -286,13 +294,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
         gammaModeInfoLabel.setBounds(infPanelX, infPanelY, 80, 20);
         infoPanel.add(gammaModeInfoLabel);
 
-        HolmesRoundedButton buttonGammaMode = new HolmesRoundedButton("<html>Gamma: ON</html>"
+        buttonGammaMode = new HolmesRoundedButton("<html>Gamma: ON</html>"
                 , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         buttonGammaMode.setMargin(new Insets(0, 0, 0, 0));
         buttonGammaMode.setName("gammaButton1");
         buttonGammaMode.setBounds(infPanelX+80, infPanelY, 100, 20);
         buttonGammaMode.setFocusPainted(false);
-        if(place.isGammaModeActiveXTPN()) {
+        if(place.isGammaModeActive()) {
             buttonGammaMode.setNewText("<html>Gamma: ON</html>");
             buttonGammaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
         } else {
@@ -315,7 +323,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         gammaVisibilityButton.setName("gammaVisButton1");
         gammaVisibilityButton.setBounds(infPanelX+250, infPanelY, 100, 20);
         gammaVisibilityButton.setFocusPainted(false);
-        if(place.isGammaModeActiveXTPN()) {
+        if(place.isGammaModeActive()) {
             if (place.isGammaRangeVisible()) {
                 gammaVisibilityButton.setNewText("<html>\u03B3: Visible<html>");
                 gammaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
@@ -347,13 +355,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
         // format danych gamma do 6 miejsc po przecinku
         NumberFormat formatter = DecimalFormat.getInstance();
         formatter.setMinimumFractionDigits(1);
-        formatter.setMaximumFractionDigits(place.getFraction_xTPN());
+        formatter.setMaximumFractionDigits(place.getFractionForPlaceXTPN());
         formatter.setRoundingMode(RoundingMode.HALF_UP);
         Double example = 3.14;
 
         gammaMinTextField = new JFormattedTextField(formatter);
         gammaMinTextField.setValue(example);
-        gammaMinTextField.setValue(place.getGammaMin_xTPN());
+        gammaMinTextField.setValue(place.getGammaMinValue());
         gammaMinTextField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
@@ -366,14 +374,14 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
             double min = Double.parseDouble(""+field.getValue());
 
-            if( !(SharedActionsXTPN.access().setGammaMinimumTime(min, place, eLocation) ) ) {
+            if( !(SharedActionsXTPN.access().setGammaMinTime(min, place, eLocation) ) ) {
                 doNotUpdate = true;
-                field.setValue(place.getGammaMin_xTPN());
+                field.setValue(place.getGammaMinValue());
                 doNotUpdate = false;
                 overlord.markNetChange();
             }
             doNotUpdate = true;
-            gammaMaxTextField.setValue(place.getGammaMax_xTPN());
+            gammaMaxTextField.setValue(place.getGammaMaxValue());
             doNotUpdate = false;
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
@@ -381,7 +389,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         gammaMaxTextField = new JFormattedTextField(formatter);
         gammaMaxTextField.setValue(example);
-        gammaMaxTextField.setValue(place.getGammaMax_xTPN());
+        gammaMaxTextField.setValue(place.getGammaMaxValue());
         gammaMaxTextField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
@@ -393,20 +401,20 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 return;
 
             double max = Double.parseDouble(""+field.getValue());
-            if( !(SharedActionsXTPN.access().setMaxGammaTime(max, place, eLocation) ) ) {
+            if( !(SharedActionsXTPN.access().setGammaMaxTime(max, place, eLocation) ) ) {
                 doNotUpdate = true;
-                field.setValue(place.getGammaMax_xTPN());
+                field.setValue(place.getGammaMaxValue());
                 doNotUpdate = false;
                 overlord.markNetChange();
             }
             doNotUpdate = true;
-            gammaMinTextField.setValue(place.getGammaMin_xTPN());
+            gammaMinTextField.setValue(place.getGammaMinValue());
             doNotUpdate = false;
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
         });
 
-        if(!place.isGammaModeActiveXTPN()) {
+        if(!place.isGammaModeActive()) {
             gammaMinTextField.setEnabled(false);
             gammaMaxTextField.setEnabled(false);
         }
@@ -431,10 +439,10 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         tokensWindowButton.setMargin(new Insets(0, 0, 0, 0));
         tokensWindowButton.setBounds(infPanelX+80, infPanelY, 100, 20);
-        if(!place.isGammaModeActiveXTPN()) {
+        if(!place.isGammaModeActive()) {
             tokensWindowButton.setEnabled(false);
         }
-        tokensWindowButton.addActionListener(actionEvent -> new HolmesXTPNtokens(place, this, place.accessMultiset(), place.isGammaModeActiveXTPN()));
+        tokensWindowButton.addActionListener(actionEvent -> new HolmesXTPNtokens(place, this, place.accessMultiset(), place.isGammaModeActive()));
         infoPanel.add(tokensWindowButton);
 
 
@@ -592,7 +600,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         //panel informacji podstawowych
         JPanel infoPanel = new JPanel(null);
-        infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-22, 220);
+        infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-22, 180);
         infoPanel.setBorder(BorderFactory.createTitledBorder("Structural data:"));
         infoPanel.setBackground(Color.WHITE);
 
@@ -710,12 +718,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
         timeModesInfoLabel.setBounds(infPanelX, infPanelY, 80, 20);
         infoPanel.add(timeModesInfoLabel);
 
-        HolmesRoundedButton buttonAlphaMode = new HolmesRoundedButton("<html>Alpha: ON</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        buttonAlphaMode = new HolmesRoundedButton("<html>Alpha: ON</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         buttonAlphaMode.setMargin(new Insets(0, 0, 0, 0));
         buttonAlphaMode.setName("alphaButton1");
         buttonAlphaMode.setBounds(infPanelX+80, infPanelY, 100, 20);
         buttonAlphaMode.setFocusPainted(false);
-        if(transition.isAlphaActiveXTPN()) {
+        if(transition.isAlphaModeActive()) {
             buttonAlphaMode.setNewText("<html>Alpha: ON</html>");
             buttonAlphaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
         } else {
@@ -729,6 +737,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             doNotUpdate = false;
 
             action.reselectElement(eLocation);
+            setFieldStatus(false);
         });
         infoPanel.add(buttonAlphaMode);
 
@@ -741,7 +750,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         alphaVisibilityButton.setName("gammaVisButton1");
         alphaVisibilityButton.setBounds(infPanelX+250, infPanelY, 100, 20);
         alphaVisibilityButton.setFocusPainted(false);
-        if(transition.isAlphaActiveXTPN()) {
+        if(transition.isAlphaModeActive()) {
             if (transition.isAlphaRangeVisible()) {
                 alphaVisibilityButton.setNewText("<html>\u03B1: Visible<html>");
                 alphaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
@@ -770,6 +779,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             button.setFocusPainted(false);
 
             action.reselectElement(eLocation);
+            setFieldStatus(false);
         });
         infoPanel.add(alphaVisibilityButton);
 
@@ -777,12 +787,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infPanelY += 25;
         //************************* NEWLINE *************************
 
-        HolmesRoundedButton buttonBetaMode = new HolmesRoundedButton("<html>Beta: ON</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        buttonBetaMode = new HolmesRoundedButton("<html>Beta: ON</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         buttonBetaMode.setMargin(new Insets(0, 0, 0, 0));
         buttonBetaMode.setName("alphaButton1");
         buttonBetaMode.setBounds(infPanelX+80, infPanelY, 100, 20);
         buttonBetaMode.setFocusPainted(false);
-        if(transition.isAlphaActiveXTPN()) {
+        if(transition.isAlphaModeActive()) {
             buttonBetaMode.setNewText("<html>Beta: ON</html>");
             buttonBetaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
         } else {
@@ -795,6 +805,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             doNotUpdate = false;
 
             action.reselectElement(eLocation);
+            setFieldStatus(false);
         });
         infoPanel.add(buttonBetaMode);
 
@@ -807,7 +818,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         betaVisibilityButton.setName("gammaVisButton1");
         betaVisibilityButton.setBounds(infPanelX+250, infPanelY, 100, 20);
         betaVisibilityButton.setFocusPainted(false);
-        if(transition.isBetaActiveXTPN()) {
+        if(transition.isBetaModeActive()) {
             if (transition.isBetaRangeVisible()) {
                 betaVisibilityButton.setNewText("<html>\u03B2: Visible<html>");
                 betaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
@@ -836,6 +847,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             button.setFocusPainted(false);
 
             action.reselectElement(eLocation);
+            setFieldStatus(false);
         });
         infoPanel.add(betaVisibilityButton);
 
@@ -847,9 +859,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
         buttonClassXTPNmode = new HolmesRoundedButton("<html>XTPN</html>", "bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
         buttonClassXTPNmode.setMargin(new Insets(0, 0, 0, 0));
         buttonClassXTPNmode.setName("alphaButton1");
-        buttonClassXTPNmode.setBounds(infPanelX+470, infPanelY, 100, 20);
+        buttonClassXTPNmode.setBounds(infPanelX+460, infPanelY, 100, 20);
         buttonClassXTPNmode.setFocusPainted(false);
-        if(!transition.isAlphaActiveXTPN() && !transition.isBetaActiveXTPN()) {
+        if(!transition.isAlphaModeActive() && !transition.isBetaModeActive()) {
             buttonClassXTPNmode.setNewText("<html>Classical<html>");
             buttonClassXTPNmode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
         } else { //gdy jeden z trybów włączony
@@ -863,6 +875,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
             doNotUpdate = true;
             SharedActionsXTPN.access().buttonTransitionToXTPN_classicSwitchMode(e, transition, this, alphaMaxTextField, betaMaxTextField, eLocation);
             doNotUpdate = false;
+
+            setFieldStatus(false);
         });
         infoPanel.add(buttonClassXTPNmode);
 
@@ -876,7 +890,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         tauVisibilityButton.setName("gammaVisButton1");
         tauVisibilityButton.setBounds(infPanelX+600, infPanelY, 100, 20);
         tauVisibilityButton.setFocusPainted(false);
-        if(transition.isAlphaActiveXTPN() || transition.isBetaActiveXTPN()) {
+        if(transition.isAlphaModeActive() || transition.isBetaModeActive()) {
             if (transition.isTauTimerVisible()) {
                 tauVisibilityButton.setNewText("<html>\u03C4: Visible<html>");
                 tauVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
@@ -907,6 +921,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             button.setFocusPainted(false);
 
             action.reselectElement(eLocation);
+            setFieldStatus(false);
         });
         infoPanel.add(tauVisibilityButton);
 
@@ -930,7 +945,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         // XTPN-transition alfaMin value
         alphaMinTextField = new JFormattedTextField(formatter);
         alphaMinTextField.setValue(example);
-        alphaMinTextField.setValue(transition.getAlphaMin_xTPN());
+        alphaMinTextField.setValue(transition.getAlphaMinValue());
         alphaMinTextField.addPropertyChangeListener("value", e -> {
             if (doNotUpdate)
                 return;
@@ -945,10 +960,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
             SharedActionsXTPN.access().setAlfaMinTime(min, transition, eLocation);
 
             doNotUpdate = true;
-            alphaMaxTextField.setValue(transition.getAlphaMax_xTPN());
-            field.setValue(transition.getAlphaMin_xTPN());
+            alphaMaxTextField.setValue(transition.getAlphaMaxValue());
+            field.setValue(transition.getAlphaMinValue());
             doNotUpdate = false;
             overlord.markNetChange();
+            setFieldStatus(false);
 
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
@@ -958,7 +974,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         // alfaMax value
         alphaMaxTextField = new JFormattedTextField(formatter);
         alphaMaxTextField.setValue(example);
-        alphaMaxTextField.setValue(transition.getAlphaMax_xTPN());
+        alphaMaxTextField.setValue(transition.getAlphaMaxValue());
         alphaMaxTextField.addPropertyChangeListener("value", e -> {
             if (doNotUpdate)
                 return;
@@ -973,16 +989,17 @@ public class HolmesNodeInfoXTPN extends JFrame {
             SharedActionsXTPN.access().setAlfaMaxTime(max, transition, eLocation);
 
             doNotUpdate = true;
-            alphaMinTextField.setValue(transition.getAlphaMin_xTPN());
-            field.setValue(transition.getAlphaMax_xTPN());
+            alphaMinTextField.setValue(transition.getAlphaMinValue());
+            field.setValue(transition.getAlphaMaxValue());
             doNotUpdate = false;
             overlord.markNetChange();
+            setFieldStatus(false);
 
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
         });
 
-        if(!transition.isAlphaActiveXTPN()) {
+        if(!transition.isAlphaModeActive()) {
             alphaMinTextField.setEnabled(false);
             alphaMaxTextField.setEnabled(false);
         }
@@ -1008,7 +1025,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         // XTPN-transition betaMin value
         betaMinTextField = new JFormattedTextField(formatter);
         betaMinTextField.setValue(example);
-        betaMinTextField.setValue(transition.getBetaMin_xTPN());
+        betaMinTextField.setValue(transition.getBetaMinValue());
         betaMinTextField.addPropertyChangeListener("value", e -> {
             if (doNotUpdate)
                 return;
@@ -1023,10 +1040,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
             SharedActionsXTPN.access().setBetaMinTime(min, transition, eLocation);
 
             doNotUpdate = true;
-            field.setValue(transition.getBetaMin_xTPN());
-            betaMaxTextField.setValue(transition.getBetaMax_xTPN());
+            field.setValue(transition.getBetaMinValue());
+            betaMaxTextField.setValue(transition.getBetaMaxValue());
             doNotUpdate = false;
             overlord.markNetChange();
+            setFieldStatus(false);
 
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
@@ -1035,7 +1053,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         // XTPN-transition betaMax value
         betaMaxTextField = new JFormattedTextField(formatter);
         betaMaxTextField.setValue(example);
-        betaMaxTextField.setValue(transition.getBetaMax_xTPN());
+        betaMaxTextField.setValue(transition.getBetaMaxValue());
         betaMaxTextField.addPropertyChangeListener("value", e -> {
             if (doNotUpdate)
                 return;
@@ -1049,16 +1067,17 @@ public class HolmesNodeInfoXTPN extends JFrame {
             SharedActionsXTPN.access().setBetaMaxTime(max, transition, eLocation);
 
             doNotUpdate = true;
-            betaMinTextField.setValue(transition.getBetaMin_xTPN());
-            field.setValue(transition.getBetaMax_xTPN());
+            betaMinTextField.setValue(transition.getBetaMinValue());
+            field.setValue(transition.getBetaMaxValue());
             doNotUpdate = false;
             overlord.markNetChange();
+            setFieldStatus(false);
 
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
         });
 
-        if(!transition.isBetaActiveXTPN()) {
+        if(!transition.isBetaModeActive()) {
             betaMinTextField.setEnabled(false);
             betaMaxTextField.setEnabled(false);
         }
@@ -1070,9 +1089,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infoPanel.add(slash3);
         betaMaxTextField.setBounds(infPanelX+190, infPanelY, 90, 20);
         infoPanel.add(betaMaxTextField);
-
-
-
 
 
 
@@ -1094,6 +1110,131 @@ public class HolmesNodeInfoXTPN extends JFrame {
             fillTransitionDynamicData(avgFiredTextBox, chartMainPanel, chartButtonPanel);
         } catch (Exception e) {}
         return mainInfoPanel;
+    }
+
+    private void setFieldStatus(boolean isPlace) {
+        if(isPlace) {
+            if(place.isGammaModeActive()) {
+                buttonGammaMode.setNewText("<html>Gamma: ON</html>");
+                buttonGammaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+
+                gammaVisibilityButton.setEnabled(true);
+                gammaMinTextField.setEnabled(true);
+                gammaMaxTextField.setEnabled(true);
+
+                if(place.isGammaRangeVisible()) {
+                    gammaVisibilityButton.setNewText("<html>\u03B3: Visible<html>");
+                    gammaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                } else {
+                    gammaVisibilityButton.setNewText("<html>\u03B3: Hidden<html>");
+                    gammaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                }
+            } else { //GAMMA OFFLINE
+                buttonGammaMode.setNewText("<html>Gamma: OFF</html>");
+                buttonGammaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+
+                gammaVisibilityButton.setEnabled(false);
+
+                gammaMinTextField.setEnabled(false);
+                gammaMaxTextField.setEnabled(false);
+            }
+
+            doNotUpdate = true;
+            gammaMinTextField.setValue(place.getGammaMinValue());
+            gammaMaxTextField.setValue(place.getGammaMaxValue());
+            doNotUpdate = false;
+
+        } else { //dla tranzycji
+            if(transition.isAlphaModeActive()) {
+                buttonAlphaMode.setNewText("<html>Alpha: ON</html>");
+                buttonAlphaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+
+                buttonClassXTPNmode.setNewText("<html>XTPN<html>");
+                buttonClassXTPNmode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+
+                alphaMinTextField.setEnabled(true);
+                alphaMaxTextField.setEnabled(true);
+
+                alphaVisibilityButton.setEnabled(true);
+                tauVisibilityButton.setEnabled(true);
+
+                if(transition.isAlphaRangeVisible()) {
+                    alphaVisibilityButton.setNewText("<html>\u03B1: Visible<html>");
+                    alphaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                } else {
+                    alphaVisibilityButton.setNewText("<html>\u03B1: Hidden<html>");
+                    alphaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                }
+
+                if(transition.isTauTimerVisible()) {
+                    tauVisibilityButton.setNewText("<html>\u03C4: Visible<html>");
+                    tauVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                } else {
+                    tauVisibilityButton.setNewText("<html>\u03C4: Hidden<html>");
+                    tauVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                }
+            } else { //ALFA OFFLINE
+                buttonAlphaMode.setNewText("<html>Alpha: OFF</html>");
+                buttonAlphaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+
+                alphaMinTextField.setEnabled(false);
+                alphaMaxTextField.setEnabled(false);
+
+                alphaVisibilityButton.setEnabled(false);
+            }
+
+            if(transition.isBetaModeActive()) {
+                buttonBetaMode.setNewText("<html>Beta: ON</html>");
+                buttonBetaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+
+                buttonClassXTPNmode.setNewText("<html>XTPN<html>");
+                buttonClassXTPNmode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+
+                betaMinTextField.setEnabled(true);
+                betaMaxTextField.setEnabled(true);
+
+                betaVisibilityButton.setEnabled(true);
+                tauVisibilityButton.setEnabled(true);
+
+                if(transition.isBetaRangeVisible()) {
+                    betaVisibilityButton.setNewText("<html>\u03B2: Visible<html>");
+                    betaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                } else {
+                    betaVisibilityButton.setNewText("<html>\u03B2: Hidden<html>");
+                    betaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                }
+                if(transition.isTauTimerVisible()) {
+                    tauVisibilityButton.setNewText("<html>\u03C4: Visible<html>");
+                    tauVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                } else {
+                    tauVisibilityButton.setNewText("<html>\u03C4: Hidden<html>");
+                    tauVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                }
+            } else { //BETA OFFLINE
+                buttonBetaMode.setNewText("<html>Beta: OFF</html>");
+                buttonBetaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+
+                betaMinTextField.setEnabled(false);
+                betaMaxTextField.setEnabled(false);
+
+                betaVisibilityButton.setEnabled(false);
+            }
+
+
+            if(!transition.isAlphaModeActive() && !transition.isBetaModeActive()) { //both offline
+                buttonClassXTPNmode.setNewText("<html>Classical<html>");
+                buttonClassXTPNmode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+
+                tauVisibilityButton.setEnabled(false);
+            }
+
+            doNotUpdate = true;
+            alphaMinTextField.setValue(transition.getAlphaMinValue());
+            alphaMaxTextField.setValue(transition.getAlphaMaxValue());
+            betaMinTextField.setValue(transition.getBetaMinValue());
+            betaMaxTextField.setValue(transition.getBetaMaxValue());
+            doNotUpdate = false;
+        }
     }
 
     private JPanel initializeTransInvPanel() {
@@ -1432,7 +1573,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
     public void printTokenNumber() {
         int tokens = 0;
-        if(place.isGammaModeActiveXTPN()) {
+        if(place.isGammaModeActive()) {
             tokens = place.accessMultiset().size();
         } else {
             tokens = place.getTokensNumber();

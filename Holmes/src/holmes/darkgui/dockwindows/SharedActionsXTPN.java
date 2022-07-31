@@ -27,14 +27,12 @@ public class SharedActionsXTPN {
         return singleton;
     }
 
-
-
     public void buttonAlphaSwitchMode(ActionEvent e, TransitionXTPN transition, JFrame caller
             , JButton tauVisibilityButton, JButton buttonClassicMode, JFormattedTextField alphaMaxTextField, ElementLocation elementLocation) {
         JButton button = (JButton) e.getSource();
-        if (transition.isAlphaActiveXTPN()) {
-            if(transition.isBetaActiveXTPN() && transition.getBetaMin_xTPN() < overlord.simSettings.getCalculationsAccuracy()
-                    && transition.getBetaMax_xTPN() < overlord.simSettings.getCalculationsAccuracy() ) {
+        if (transition.isAlphaModeActive()) {
+            if(transition.isBetaModeActive() && transition.getBetaMinValue() < overlord.simSettings.getCalculationsAccuracy()
+                    && transition.getBetaMaxValue() < overlord.simSettings.getCalculationsAccuracy() ) {
                 //czyli jeśli BETA=ON, ale bety są ustawione na zero
                 if(transition.isInputTransition() || transition.isOutputTransition()) {
                     JOptionPane.showMessageDialog(null,
@@ -45,7 +43,7 @@ public class SharedActionsXTPN {
                 }
             }
 
-            transition.setAlphaXTPNstatus(false);
+            transition.setAlphaModeStatus(false);
             if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
                 ((HolmesRoundedButton)button).setNewText("<html>Alpha: OFF</html>");
                 ((HolmesRoundedButton)button).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
@@ -54,7 +52,7 @@ public class SharedActionsXTPN {
                 button.setBackground(Color.RED);
             }
 
-            if(!transition.isBetaActiveXTPN()) {
+            if(!transition.isBetaModeActive()) {
                 //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
                 if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
                     ((HolmesRoundedButton)buttonClassicMode).setNewText("<html>Classical<html>");
@@ -67,7 +65,7 @@ public class SharedActionsXTPN {
                 transition.setTauTimersVisibility(false);
             }
         } else {
-            transition.setAlphaXTPNstatus(true);
+            transition.setAlphaModeStatus(true);
             if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
                 ((HolmesRoundedButton)button).setNewText("<html>Alpha: ON</html>");
                 ((HolmesRoundedButton)button).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
@@ -76,13 +74,13 @@ public class SharedActionsXTPN {
                 button.setBackground(Color.GREEN);
             }
             //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
-            if(transition.getAlphaMin_xTPN() < overlord.simSettings.getCalculationsAccuracy()
-                    && transition.getAlphaMax_xTPN() < overlord.simSettings.getCalculationsAccuracy()) {
-                transition.setAlphaMax_xTPN(1.0, false);
+            if(transition.getAlphaMinValue() < overlord.simSettings.getCalculationsAccuracy()
+                    && transition.getAlphaMaxValue() < overlord.simSettings.getCalculationsAccuracy()) {
+                transition.setAlphaMaxValue(1.0, false);
                 alphaMaxTextField.setValue(0.0);
             }
 
-            if(!transition.isBetaActiveXTPN()) { //jeśli był tryb klasyczny
+            if(!transition.isBetaModeActive()) { //jeśli był tryb klasyczny
                 if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
                     ((HolmesRoundedButton)buttonClassicMode).setNewText("<html>XTPN<html>");
                     ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
@@ -103,10 +101,10 @@ public class SharedActionsXTPN {
     public void buttonBetaSwitchMode(ActionEvent e, TransitionXTPN transition, JFrame caller
             , JButton tauVisibilityButton, JButton buttonClassicMode, JFormattedTextField betaMaxTextField, ElementLocation elementLocation) {
         JButton button = (JButton) e.getSource();
-        if (transition.isBetaActiveXTPN()) {
+        if (transition.isBetaModeActive()) {
             double accuracy = overlord.simSettings.getCalculationsAccuracy();
-            if(transition.isAlphaActiveXTPN() && transition.getAlphaMin_xTPN() < accuracy
-                    && transition.getAlphaMax_xTPN() < accuracy ) {
+            if(transition.isAlphaModeActive() && transition.getAlphaMinValue() < accuracy
+                    && transition.getAlphaMaxValue() < accuracy ) {
                 //czyli jeśli ALFA=ON, ale alfy są ustawione na zero
                 if(transition.isInputTransition() || transition.isOutputTransition()) {
                     JOptionPane.showMessageDialog(null,
@@ -116,7 +114,7 @@ public class SharedActionsXTPN {
                     return;
                 }
             }
-            transition.setBetaXTPNstatus(false);
+            transition.setBetaModeStatus(false);
 
             if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
                 ((HolmesRoundedButton)button).setNewText("<html>Beta: OFF</html>");
@@ -126,7 +124,7 @@ public class SharedActionsXTPN {
                 button.setBackground(Color.RED);
             }
 
-            if(!transition.isAlphaActiveXTPN()) {
+            if(!transition.isAlphaModeActive()) {
                 //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
                 if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
                     ((HolmesRoundedButton)button).setNewText("<html>Classical<html>");
@@ -139,7 +137,7 @@ public class SharedActionsXTPN {
                 transition.setTauTimersVisibility(false);
             }
         } else {
-            transition.setBetaXTPNstatus(true);
+            transition.setBetaModeStatus(true);
             if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
                 ((HolmesRoundedButton)button).setNewText("<html>Beta: ON</html>");
                 ((HolmesRoundedButton)button).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
@@ -149,12 +147,12 @@ public class SharedActionsXTPN {
             }
             //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
             double accuracy = overlord.simSettings.getCalculationsAccuracy();
-            if(transition.getBetaMin_xTPN() < accuracy && transition.getBetaMax_xTPN() < accuracy) {
-                transition.setBetaMax_xTPN(1.0, false);
+            if(transition.getBetaMinValue() < accuracy && transition.getBetaMaxValue() < accuracy) {
+                transition.setBetaMaxValue(1.0, false);
                 betaMaxTextField.setValue(0.0);
             }
 
-            if(!transition.isAlphaActiveXTPN()) { //jeśli był tryb klasyczny
+            if(!transition.isAlphaModeActive()) { //jeśli był tryb klasyczny
                 if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
                     ((HolmesRoundedButton)buttonClassicMode).setNewText("<html>XTPN<html>");
                     ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
@@ -175,7 +173,7 @@ public class SharedActionsXTPN {
     public void buttonTransitionToXTPN_classicSwitchMode(ActionEvent e, TransitionXTPN transition, JFrame caller
             , JFormattedTextField alphaMaxTextField, JFormattedTextField betaMaxTextField, ElementLocation elementLocation) {
         JButton button = (JButton) e.getSource();
-        if (transition.isAlphaActiveXTPN() || transition.isBetaActiveXTPN()) {
+        if (transition.isAlphaModeActive() || transition.isBetaModeActive()) {
 
             Object[] options = {"Confirm", "Cancel",};
             int n = JOptionPane.showOptionDialog(null,
@@ -188,25 +186,25 @@ public class SharedActionsXTPN {
             }
 
             //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
-            transition.setAlphaXTPNstatus(false);
-            transition.setBetaXTPNstatus(false);
+            transition.setAlphaModeStatus(false);
+            transition.setBetaModeStatus(false);
             transition.setTauTimersVisibility(false);
             button.setBackground(Color.RED);
         } else { //wychodzimy z trybu klasycznego
-            transition.setAlphaXTPNstatus(true);
-            transition.setBetaXTPNstatus(true);
+            transition.setAlphaModeStatus(true);
+            transition.setBetaModeStatus(true);
             transition.setTauTimersVisibility(true);
             button.setBackground(Color.GREEN);
 
             //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
             double accuracy = overlord.simSettings.getCalculationsAccuracy();
-            if(transition.getAlphaMin_xTPN() < accuracy && transition.getAlphaMax_xTPN() < accuracy) {
-                transition.setAlphaMax_xTPN(1.0, false);
+            if(transition.getAlphaMinValue() < accuracy && transition.getAlphaMaxValue() < accuracy) {
+                transition.setAlphaMaxValue(1.0, false);
                 alphaMaxTextField.setValue(0.0);
             }
             //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
-            if(transition.getBetaMin_xTPN() < accuracy && transition.getBetaMax_xTPN() < accuracy) {
-                transition.setBetaMax_xTPN(1.0, false);
+            if(transition.getBetaMinValue() < accuracy && transition.getBetaMaxValue() < accuracy) {
+                transition.setBetaMaxValue(1.0, false);
                 betaMaxTextField.setValue(0.0);
             }
         }
@@ -216,9 +214,51 @@ public class SharedActionsXTPN {
         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
     }
 
+    public void buttonGammaSwitchMode(ActionEvent e, PlaceXTPN place, JFrame caller, ElementLocation elementLocation) {
+        JButton button = (JButton) e.getSource();
+        int tokensNum = place.getTokensNumber();
+        if (place.isGammaModeActive()) {
+            //zapytać czy wyłączyć, konwersja kasowanie arrayListy
+            String[] options = {"Reduce to classical place", "Stay as XTPN"};
+            int answer = JOptionPane.showOptionDialog(null, "Turning \u03B3-mode off will clear " +
+                            "all times of tokens ("+tokensNum+") and \nas a result place will have classical PN features."  +
+                            "\nTransform XTPN place into classical place?",
+                    "Transformation into classical place",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+            //cancel
+            if (answer == 0) { //redukcja do klasycznego miejsca
+                button.setText("<html>Gamma:<br>  OFF</html>");
+                button.setBackground(Color.RED);
 
+                place.transformXTPNintoPNpace();
 
+                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                button.setFocusPainted(false);
+                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            }
+        } else {
+            //zapytać czy wyłączyć, konwersja kasowanie arrayListy
+            String[] options = {"Transform into XTPN", "Stay as classical PN place"};
+            int answer = JOptionPane.showOptionDialog(null, "This will transform classical " +
+                            "PN place into XTPN.\nAll tokens ("+tokensNum+") will be assigned 0.0 time values."  +
+                            "\nTransform into XTPN place?",
+                    "Conversion into XTPN place",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+            //cancel
+            if (answer == 0) { //transformacja PN -> XTPN
+                button.setText("Gamma: ON");
+                button.setBackground(Color.GREEN);
 
+                place.transformIntoXTPNplace();
+
+                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                button.setFocusPainted(false);
+                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            }
+        }
+    }
 
 
 
@@ -230,7 +270,7 @@ public class SharedActionsXTPN {
      * @return (true) jeżeli zmiana wartości się udała.
      */
     public boolean setAlfaMinTime(double newAlphaMin, TransitionXTPN transition, ElementLocation elementLocation) {
-        double alfaMax = transition.getAlphaMax_xTPN();
+        double alfaMax = transition.getAlphaMaxValue();
         if(newAlphaMin > alfaMax) {
             //String[] options = {"Increase \u03B1(max) to \u03B1(min)", "Decrease \u03B1(min) to \u03B1(max)", "Cancel"};
             String[] options = {"\u25B2 Increase \u03B1-max to "+newAlphaMin, "\u25BC Decrease \u03B1-min to "+alfaMax, "\u274C Cancel"};
@@ -241,19 +281,19 @@ public class SharedActionsXTPN {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
             switch(answer) {
                 case 0: //powiększenie alphaMax do nowego alphaMin
-                    transition.setAlphaMax_xTPN(newAlphaMin, true);
-                    transition.setAlphaMin_xTPN(newAlphaMin, true);
+                    transition.setAlphaMaxValue(newAlphaMin, true);
+                    transition.setAlphaMinValue(newAlphaMin, true);
                     repaintGraphPanel(elementLocation);
                     return true;
                 case 1: //redukcja nowego alphaMin do aktualnego alphaMax
-                    transition.setAlphaMin_xTPN(alfaMax, true);
+                    transition.setAlphaMinValue(alfaMax, true);
                     repaintGraphPanel(elementLocation);
                     return true;
                 default: //cancel
                     return false;
             }
         }
-        transition.setAlphaMin_xTPN(newAlphaMin, false);
+        transition.setAlphaMinValue(newAlphaMin, false);
         repaintGraphPanel(elementLocation);
 
         return true;
@@ -265,13 +305,13 @@ public class SharedActionsXTPN {
      * @return (true) jeżeli zmiana wartości się udała.
      */
     public boolean setAlfaMaxTime(double newAlphaMax, TransitionXTPN transition, ElementLocation elementLocation) {
-        double alfaMin = transition.getAlphaMin_xTPN();
+        double alfaMin = transition.getAlphaMinValue();
 
         //tranzycje wejściowe i wyjściowe nie mogą być XTPN z zerami, tylko klasycznymi
         double accuracy = overlord.simSettings.getCalculationsAccuracy();
         if(alfaMin < accuracy && newAlphaMax < accuracy &&
-                ( ( transition.getBetaMin_xTPN() < accuracy && transition.getBetaMax_xTPN() < accuracy )
-                        || !transition.isBetaActiveXTPN() ) ) { //albo bety są na zera, albo w ogóle tryb beta wyłączony
+                ( ( transition.getBetaMinValue() < accuracy && transition.getBetaMaxValue() < accuracy )
+                        || !transition.isBetaModeActive() ) ) { //albo bety są na zera, albo w ogóle tryb beta wyłączony
             if(transition.isInputTransition() || transition.isOutputTransition()) {
                 JOptionPane.showMessageDialog(null,
                         "Input or output XTPN transitions cannot be immediate. Alternatively" +
@@ -283,8 +323,8 @@ public class SharedActionsXTPN {
 
         //jeśli alfaMax=alfaMin=0, to Alfa=OFF
         if(alfaMin < accuracy && newAlphaMax < accuracy) { //jeśli zero
-            transition.setAlphaMax_xTPN(0.0, false);
-            transition.setAlphaXTPNstatus(false);
+            transition.setAlphaMaxValue(0.0, false);
+            transition.setAlphaModeStatus(false);
             repaintGraphPanel(elementLocation);
             return true;
         }
@@ -299,19 +339,19 @@ public class SharedActionsXTPN {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
             switch(answer) {
                 case 0: //powiększenie nowego alphaMax do starej wartości alphaMin
-                    transition.setAlphaMax_xTPN(alfaMin, true);
+                    transition.setAlphaMaxValue(alfaMin, true);
                     repaintGraphPanel(elementLocation);
                     return true;
                 case 1: //zmniejszenie starego alphaMin do nowego alphaMax
-                    transition.setAlphaMin_xTPN(newAlphaMax, true);
-                    transition.setAlphaMax_xTPN(newAlphaMax, false);
+                    transition.setAlphaMinValue(newAlphaMax, true);
+                    transition.setAlphaMaxValue(newAlphaMax, false);
                     repaintGraphPanel(elementLocation);
                     return true;
                 default: //cancel
                     return false;
             }
         }
-        transition.setAlphaMax_xTPN(newAlphaMax, false);
+        transition.setAlphaMaxValue(newAlphaMax, false);
         repaintGraphPanel(elementLocation);
         return true;
     }
@@ -322,7 +362,7 @@ public class SharedActionsXTPN {
      * @return (true) jeżeli zmiana wartości się udała.
      */
     public boolean setBetaMinTime(double newBetaMin, TransitionXTPN transition, ElementLocation elementLocation) {
-        double betaMax = transition.getBetaMax_xTPN();
+        double betaMax = transition.getBetaMaxValue();
         if(newBetaMin > betaMax) {
             //String[] options = {"Increase \u03B2(max) to \u03B2(min)", "Decrease \u03B2(min) to \u03B2(max)", "Cancel"};
             String[] options = {"\u25B2 Increase \u03B2-max to "+newBetaMin, "\u25BC Decrease \u03B2-min to "+betaMax, "\u274C Cancel"};
@@ -333,19 +373,19 @@ public class SharedActionsXTPN {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
             switch(answer) {
                 case 0: //powiększenie betaMax do nowego betaMin
-                    transition.setBetaMax_xTPN(newBetaMin, true);
-                    transition.setBetaMin_xTPN(newBetaMin, true);
+                    transition.setBetaMaxValue(newBetaMin, true);
+                    transition.setBetaMinValue(newBetaMin, true);
                     repaintGraphPanel(elementLocation);
                     return true;
                 case 1: //redukcja nowego betaMin do aktualnego betaMax
-                    transition.setBetaMin_xTPN(betaMax, true);
+                    transition.setBetaMinValue(betaMax, true);
                     repaintGraphPanel(elementLocation);
                     return true;
                 default: //cancel
                     return false;
             }
         }
-        transition.setBetaMin_xTPN(newBetaMin, false);
+        transition.setBetaMinValue(newBetaMin, false);
         repaintGraphPanel(elementLocation);
         return true;
     }
@@ -356,12 +396,12 @@ public class SharedActionsXTPN {
      * @return (true) jeżeli zmiana wartości się udała.
      */
     public boolean setBetaMaxTime(double newBetaMax, TransitionXTPN transition, ElementLocation elementLocation) {
-        double betaMin = transition.getBetaMin_xTPN();
+        double betaMin = transition.getBetaMinValue();
 
         double accuracy = overlord.simSettings.getCalculationsAccuracy();
         if(betaMin < accuracy && newBetaMax < accuracy &&
-                ( ( transition.getAlphaMin_xTPN() < accuracy && transition.getAlphaMax_xTPN() < accuracy)
-                        || !transition.isAlphaActiveXTPN() ) ) { //albo alfy są na zero, albo cały tryb alfa jest wyłączony
+                ( ( transition.getAlphaMinValue() < accuracy && transition.getAlphaMaxValue() < accuracy)
+                        || !transition.isAlphaModeActive() ) ) { //albo alfy są na zero, albo cały tryb alfa jest wyłączony
             boolean input = transition.isInputTransition();
             boolean output = transition.isOutputTransition();
             if( input || output ) {
@@ -375,8 +415,8 @@ public class SharedActionsXTPN {
 
         //jeśli betaMax=betaMin=0, to Beta=OFF
         if(betaMin < accuracy && newBetaMax < accuracy) { //jeśli zero
-            transition.setBetaMax_xTPN(0.0, false);
-            transition.setBetaXTPNstatus(false);
+            transition.setBetaMaxValue(0.0, false);
+            transition.setBetaModeStatus(false);
             repaintGraphPanel(elementLocation);
             return true;
         }
@@ -391,26 +431,26 @@ public class SharedActionsXTPN {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
             switch(answer) {
                 case 0: //powiększenie nowego betaMax do starej wartości betaMin
-                    transition.setBetaMax_xTPN(betaMin, true);
+                    transition.setBetaMaxValue(betaMin, true);
                     repaintGraphPanel(elementLocation);
                     return true;
                 case 1: //zmniejszenie starego betaMin do nowego betaMax
-                    transition.setBetaMin_xTPN(newBetaMax, true);
-                    transition.setBetaMax_xTPN(newBetaMax, false);
+                    transition.setBetaMinValue(newBetaMax, true);
+                    transition.setBetaMaxValue(newBetaMax, false);
                     repaintGraphPanel(elementLocation);
                     return true;
                 default: //cancel
                     return false;
             }
         }
-        transition.setBetaMax_xTPN(newBetaMax, false);
+        transition.setBetaMaxValue(newBetaMax, false);
         repaintGraphPanel(elementLocation);
         return true;
     }
 
-    public boolean setGammaMinimumTime(double newGammaMin, PlaceXTPN place, ElementLocation elementLocation) {
+    public boolean setGammaMinTime(double newGammaMin, PlaceXTPN place, ElementLocation elementLocation) {
         //PlaceXTPN place = (PlaceXTPN) element;
-        double gammaMax = place.getGammaMax_xTPN();
+        double gammaMax = place.getGammaMaxValue();
         if(newGammaMin > gammaMax) {
             // String[] options = {"Increase \u03B3(max) to \u03B3(min)", "Decrease \u03B3(min) to \u03B3(max)", "Cancel"};
             String[] options = {"\u25B2 Increase \u03B3-max to "+newGammaMin, "\u25BC Decrease \u03B3-min to "+gammaMax, "\u274C Cancel"};
@@ -421,19 +461,19 @@ public class SharedActionsXTPN {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
             switch(answer) {
                 case 0: //powiększenie gMax do nowego gMin
-                    place.setGammaMax_xTPN(newGammaMin, true);
-                    place.setGammaMin_xTPN(newGammaMin, true);
+                    place.setGammaMaxValue(newGammaMin, true);
+                    place.setGammaMinValue(newGammaMin, true);
                     repaintGraphPanel(elementLocation);
                     return true;
                 case 1: //redukcja nowego gMin do aktualnego gMax
-                    place.setGammaMin_xTPN(gammaMax, true);
+                    place.setGammaMinValue(gammaMax, true);
                     repaintGraphPanel(elementLocation);
                     return true;
                 default: //cancel
                     return false;
             }
         }
-        place.setGammaMin_xTPN(newGammaMin, false);
+        place.setGammaMinValue(newGammaMin, false);
         repaintGraphPanel(elementLocation);
         return true;
     }
@@ -443,9 +483,9 @@ public class SharedActionsXTPN {
      * @param newGammaMax (double) nowa wartość gammaMaximum.
      * @return (true) jeżeli zmiana wartości się udała.
      */
-    public boolean setMaxGammaTime(double newGammaMax, PlaceXTPN place, ElementLocation elementLocation) {
+    public boolean setGammaMaxTime(double newGammaMax, PlaceXTPN place, ElementLocation elementLocation) {
         //PlaceXTPN place = (PlaceXTPN) element;
-        double gammaMin = place.getGammaMin_xTPN();
+        double gammaMin = place.getGammaMinValue();
         if(newGammaMax < gammaMin) {
             // String[] options = {"Increase \u03B3(max) to \u03B3(min)", "Decrease \u03B3(min) to \u03B3(max)", "Cancel"};
             String[] options = {"\u25B2 Increase \u03B3-max to "+gammaMin, "\u25BC Decrease \u03B3-min to "+newGammaMax, "\u274C Cancel"};
@@ -456,19 +496,19 @@ public class SharedActionsXTPN {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
             switch(answer) {
                 case 0: //powiększenie nowego gammaMax do starej wartości gammaMin
-                    place.setGammaMax_xTPN(gammaMin, true);
+                    place.setGammaMaxValue(gammaMin, true);
                     repaintGraphPanel(elementLocation);
                     return true;
                 case 1: //zmniejszenie starego gammaMin do nowego gammaMax
-                    place.setGammaMin_xTPN(newGammaMax, true);
-                    place.setGammaMax_xTPN(newGammaMax, false);
+                    place.setGammaMinValue(newGammaMax, true);
+                    place.setGammaMaxValue(newGammaMax, false);
                     repaintGraphPanel(elementLocation);
                     return true;
                 default: //cancel
                     return false;
             }
         }
-        place.setGammaMax_xTPN(newGammaMax, false);
+        place.setGammaMaxValue(newGammaMax, false);
         repaintGraphPanel(elementLocation);
 
         return true;

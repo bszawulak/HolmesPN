@@ -246,17 +246,17 @@ public abstract class Node extends PetriNetElement {
 					int drawX = (nodePoint.x) + gammaPoint.x - 40;
 					int drawY =  (nodePoint.y) + gammaPoint.y - 24;
 
-					if(((PlaceXTPN)this).isGammaModeActiveXTPN()) {
+					if(((PlaceXTPN)this).isGammaModeActive()) {
 						if( ((PlaceXTPN)this).isGammaRangeVisible() ) {
-							int franctionDigits = ((PlaceXTPN)this).getFraction_xTPN();
+							int franctionDigits = ((PlaceXTPN)this).getFractionForPlaceXTPN();
 							g.setColor(Color.blue);
 							g.setFont(f_Big);
-							double gamma = ((PlaceXTPN)this).getGammaMax_xTPN();
+							double gamma = ((PlaceXTPN)this).getGammaMaxValue();
 							String gammaMaxVal = "\u221E";
 							if(gamma < Integer.MAX_VALUE-2) {
-								gammaMaxVal = Tools.cutValueExt(((PlaceXTPN)this).getGammaMax_xTPN(), franctionDigits);
+								gammaMaxVal = Tools.cutValueExt(((PlaceXTPN)this).getGammaMaxValue(), franctionDigits);
 							}
-							String gammaStr = "\u03B3:" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMin_xTPN(), franctionDigits) + " / "
+							String gammaStr = "\u03B3:" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMinValue(), franctionDigits) + " / "
 									+ gammaMaxVal;
 
 							g.drawString(gammaStr, drawX, drawY);
@@ -282,7 +282,7 @@ public abstract class Node extends PetriNetElement {
 						continue;
 
 					Point nodePoint = nodePoints.get(i);
-					if(((TransitionXTPN)this).isAlphaActiveXTPN() && ((TransitionXTPN)this).isAlphaRangeVisible()) {
+					if(((TransitionXTPN)this).isAlphaModeActive() && ((TransitionXTPN)this).isAlphaRangeVisible()) {
 						Point alphaPoint = alphaLocations.get(i).getPosition();
 
 						int drawX = (nodePoint.x) + alphaPoint.x - 40;
@@ -290,11 +290,11 @@ public abstract class Node extends PetriNetElement {
 
 						g.setColor(Color.blue);
 						g.setFont(f_Big);
-						if(((TransitionXTPN)this).isAlphaActiveXTPN()) {
-							String alfa = "\u03B1:" + Tools.cutValueExt(((TransitionXTPN)this).getAlphaMin_xTPN(), ((TransitionXTPN)this).getFraction_xTPN()) + " / "
-									+ Tools.cutValueExt(((TransitionXTPN)this).getAlphaMax_xTPN(), ((TransitionXTPN)this).getFraction_xTPN());
+						if(((TransitionXTPN)this).isAlphaModeActive()) {
+							String alfa = "\u03B1:" + Tools.cutValueExt(((TransitionXTPN)this).getAlphaMinValue(), ((TransitionXTPN)this).getFraction_xTPN()) + " / "
+									+ Tools.cutValueExt(((TransitionXTPN)this).getAlphaMaxValue(), ((TransitionXTPN)this).getFraction_xTPN());
 
-							if(!((TransitionXTPN)this).isBetaActiveXTPN()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
+							if(!((TransitionXTPN)this).isBetaModeActive()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
 								g.drawString(alfa,drawX, drawY);
 							} else {
 								g.drawString(alfa, drawX, drawY - 16);
@@ -302,17 +302,17 @@ public abstract class Node extends PetriNetElement {
 						}
 					}
 
-					if(((TransitionXTPN)this).isBetaActiveXTPN() && ((TransitionXTPN)this).isBetaRangeVisible()) {
+					if(((TransitionXTPN)this).isBetaModeActive() && ((TransitionXTPN)this).isBetaRangeVisible()) {
 						Point betaPoint = betaLocations.get(i).getPosition();
 						int drawX = (nodePoint.x) + betaPoint.x - 40;
 						int drawY =  (nodePoint.y) + betaPoint.y - 24;
 
 						//g.setColor(Color.blue);
 						g.setFont(f_Big);
-						if(((TransitionXTPN)this).isBetaActiveXTPN()) {
+						if(((TransitionXTPN)this).isBetaModeActive()) {
 							g.setColor(darkGreen);
-							String beta = "\u03B2:" + Tools.cutValueExt(((TransitionXTPN)this).getBetaMin_xTPN(), ((TransitionXTPN)this).getFraction_xTPN()) + " / "
-									+ Tools.cutValueExt(((TransitionXTPN)this).getBetaMax_xTPN(), ((TransitionXTPN)this).getFraction_xTPN());
+							String beta = "\u03B2:" + Tools.cutValueExt(((TransitionXTPN)this).getBetaMinValue(), ((TransitionXTPN)this).getFraction_xTPN()) + " / "
+									+ Tools.cutValueExt(((TransitionXTPN)this).getBetaMaxValue(), ((TransitionXTPN)this).getFraction_xTPN());
 							g.drawString(beta, drawX, drawY);
 						}
 					}
@@ -324,10 +324,10 @@ public abstract class Node extends PetriNetElement {
 
 						g.setFont(f_BigL);
 						if(((TransitionXTPN)this).isTauTimerVisible()) {
-							double alphaTime = ((TransitionXTPN)this).getTauAlpha_xTPN();
-							double betaTime = ((TransitionXTPN)this).getTauBeta_xTPN();
-							double u_alfaTime = ((TransitionXTPN)this).getTimerAlfa_XTPN();
-							double v_betaTime = ((TransitionXTPN)this).getTimerBeta_XTPN();
+							double alphaTime = ((TransitionXTPN)this).getTauAlphaValue();
+							double betaTime = ((TransitionXTPN)this).getTauBetaValue();
+							double u_alfaTime = ((TransitionXTPN)this).getTimerAlfaValue();
+							double v_betaTime = ((TransitionXTPN)this).getTimerBetaValue();
 
 							String timerA;
 							String timerB;

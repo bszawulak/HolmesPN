@@ -770,7 +770,7 @@ public final class ElementDraw {
 				// _XTPN symbol
 				if( place instanceof PlaceXTPN ) { //miejsce XTPN
 					//klepsydra:
-					if( ((PlaceXTPN)place).isGammaModeActiveXTPN() ) {
+					if( ((PlaceXTPN)place).isGammaModeActive() ) {
 						g.setColor(lightGray);
 						int[] xpoints = {nodeBounds.x+10, nodeBounds.x+27, nodeBounds.x+19};
 						int[] ypoints = {nodeBounds.y+9, nodeBounds.y+9, nodeBounds.y+18};

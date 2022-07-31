@@ -150,7 +150,7 @@ public class MultisetM implements Serializable {
             ArrayList<Double> newMultiset = new ArrayList<>(multiset);
 
             multisetM_ArrayLists.set(p, newMultiset);
-            if(((PlaceXTPN)places.get(p)).isGammaModeActiveXTPN())
+            if(((PlaceXTPN)places.get(p)).isGammaModeActive())
                 placesGammasVector.set(p, 1);
             else
                 placesGammasVector.set(p, 1);
