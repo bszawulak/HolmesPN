@@ -44,35 +44,37 @@ public class SharedActionsXTPN {
             }
 
             transition.setAlphaModeStatus(false);
+
             if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-                ((HolmesRoundedButton)button).setNewText("<html>Alpha: OFF</html>");
-                ((HolmesRoundedButton)button).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
             } else { //jeśli z podokna Holmesa
-                button.setText("Alfa: OFF");
-                button.setBackground(Color.RED);
             }
+
+            ((HolmesRoundedButton)button).setNewText("<html>Alpha: OFF</html>");
+            ((HolmesRoundedButton)button).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 
             if(!transition.isBetaModeActive()) {
                 //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
+
                 if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-                    ((HolmesRoundedButton)buttonClassicMode).setNewText("<html>Classical<html>");
-                    ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
-                    ((HolmesRoundedButton)tauVisibilityButton).setEnabled(false);
                 } else {
-                    buttonClassicMode.setBackground(Color.GREEN);
-                    tauVisibilityButton.setEnabled(false);
                 }
+
+                ((HolmesRoundedButton)buttonClassicMode).setNewText("<html>Classical<html>");
+                ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                ((HolmesRoundedButton)tauVisibilityButton).setEnabled(false);
+
                 transition.setTauTimersVisibility(false);
             }
         } else {
             transition.setAlphaModeStatus(true);
+
             if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-                ((HolmesRoundedButton)button).setNewText("<html>Alpha: ON</html>");
-                ((HolmesRoundedButton)button).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
             } else { //jeśli z podokna Holmesa
-                button.setText("Alfa: ON");
-                button.setBackground(Color.GREEN);
             }
+
+            ((HolmesRoundedButton)button).setNewText("<html>Alpha: ON</html>");
+            ((HolmesRoundedButton)button).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+
             //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
             if(transition.getAlphaMinValue() < overlord.simSettings.getCalculationsAccuracy()
                     && transition.getAlphaMaxValue() < overlord.simSettings.getCalculationsAccuracy()) {
@@ -82,13 +84,12 @@ public class SharedActionsXTPN {
 
             if(!transition.isBetaModeActive()) { //jeśli był tryb klasyczny
                 if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-                    ((HolmesRoundedButton)buttonClassicMode).setNewText("<html>XTPN<html>");
-                    ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
-                    ((HolmesRoundedButton)tauVisibilityButton).setEnabled(true);
                 } else { //jeśli z podokna Holmesa
-                    buttonClassicMode.setBackground(Color.RED);
-                    tauVisibilityButton.setEnabled(true);
                 }
+
+                ((HolmesRoundedButton)buttonClassicMode).setNewText("<html>XTPN<html>");
+                ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                ((HolmesRoundedButton)tauVisibilityButton).setEnabled(true);
                 transition.setTauTimersVisibility(true);
             }
         }
@@ -117,34 +118,32 @@ public class SharedActionsXTPN {
             transition.setBetaModeStatus(false);
 
             if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-                ((HolmesRoundedButton)button).setNewText("<html>Beta: OFF</html>");
-                ((HolmesRoundedButton)button).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
             } else { //jeśli z podokna Holmesa
-                button.setText("Beta: OFF");
-                button.setBackground(Color.RED);
             }
+
+            ((HolmesRoundedButton)button).setNewText("<html>Beta: OFF</html>");
+            ((HolmesRoundedButton)button).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 
             if(!transition.isAlphaModeActive()) {
                 //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
                 if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-                    ((HolmesRoundedButton)button).setNewText("<html>Classical<html>");
-                    ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
-                    ((HolmesRoundedButton)tauVisibilityButton).setEnabled(false);
                 } else { //jeśli z podokna Holmesa
-                    buttonClassicMode.setBackground(Color.GREEN);
-                    tauVisibilityButton.setEnabled(false);
                 }
+
+                ((HolmesRoundedButton)button).setNewText("<html>Classical<html>");
+                ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                ((HolmesRoundedButton)tauVisibilityButton).setEnabled(false);
                 transition.setTauTimersVisibility(false);
             }
         } else {
             transition.setBetaModeStatus(true);
             if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-                ((HolmesRoundedButton)button).setNewText("<html>Beta: ON</html>");
-                ((HolmesRoundedButton)button).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
             } else { //jeśli z podokna Holmesa
-                button.setText("Beta: ON");
-                button.setBackground(Color.GREEN);
             }
+
+            ((HolmesRoundedButton)button).setNewText("<html>Beta: ON</html>");
+            ((HolmesRoundedButton)button).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+
             //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
             double accuracy = overlord.simSettings.getCalculationsAccuracy();
             if(transition.getBetaMinValue() < accuracy && transition.getBetaMaxValue() < accuracy) {
@@ -154,13 +153,12 @@ public class SharedActionsXTPN {
 
             if(!transition.isAlphaModeActive()) { //jeśli był tryb klasyczny
                 if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-                    ((HolmesRoundedButton)buttonClassicMode).setNewText("<html>XTPN<html>");
-                    ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
-                    ((HolmesRoundedButton)tauVisibilityButton).setEnabled(true);
                 } else {
-                    tauVisibilityButton.setEnabled(true);
-                    buttonClassicMode.setBackground(Color.RED);
                 }
+
+                ((HolmesRoundedButton)buttonClassicMode).setNewText("<html>XTPN<html>");
+                ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                ((HolmesRoundedButton)tauVisibilityButton).setEnabled(true);
                 transition.setTauTimersVisibility(true);
             }
         }
