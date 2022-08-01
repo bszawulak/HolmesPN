@@ -27,9 +27,20 @@ public class SharedActionsXTPN {
         return singleton;
     }
 
+    /**
+     * Metoda przełącza status trybu Alfa dla tranzycji. Używana przez okno główne oraz okno informacji o tranzycji.
+     * @param e (<b>ActionEvent</b>) obiekt zdarzenia wywołującego.
+     * @param transition (<b>TransitionXTPN</b>) obiekt tranzycji.
+     * @param caller (<b>JFrame</b>) obiekt okna wywołującego (null dla głównego okna programu).
+     * @param tauVisibilityButton (<b>HolmesRoundedButton</b>) obiekt przycisku tau.
+     * @param buttonClassicMode (<b>HolmesRoundedButton</b>) obiekt przycisku przełączania trybu klasczynego/XTPN.
+     * @param alphaMaxTextField (<b>JFormattedTextField</b>) obiekt pola tekstowego wartości alpha-minimum.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętej tranzycji.
+     */
     public void buttonAlphaSwitchMode(ActionEvent e, TransitionXTPN transition, JFrame caller
-            , JButton tauVisibilityButton, JButton buttonClassicMode, JFormattedTextField alphaMaxTextField, ElementLocation elementLocation) {
-        JButton button = (JButton) e.getSource();
+            , HolmesRoundedButton tauVisibilityButton, HolmesRoundedButton buttonClassicMode
+            , JFormattedTextField alphaMaxTextField, ElementLocation elementLocation) {
+        HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
         if (transition.isAlphaModeActive()) {
             if(transition.isBetaModeActive() && transition.getBetaMinValue() < overlord.simSettings.getCalculationsAccuracy()
                     && transition.getBetaMaxValue() < overlord.simSettings.getCalculationsAccuracy() ) {
@@ -49,8 +60,8 @@ public class SharedActionsXTPN {
             } else { //jeśli z podokna Holmesa
             }
 
-            ((HolmesRoundedButton)button).setNewText("<html>Alpha: OFF</html>");
-            ((HolmesRoundedButton)button).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            button.setNewText("<html>Alpha: OFF</html>");
+            button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
             if(!transition.isBetaModeActive()) {
                 //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
@@ -59,9 +70,9 @@ public class SharedActionsXTPN {
                 } else {
                 }
 
-                ((HolmesRoundedButton)buttonClassicMode).setNewText("<html>Classical<html>");
-                ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
-                ((HolmesRoundedButton)tauVisibilityButton).setEnabled(false);
+                buttonClassicMode.setNewText("<html>Classical<html>");
+                buttonClassicMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+                tauVisibilityButton.setEnabled(false);
 
                 transition.setTauTimersVisibility(false);
             }
@@ -72,8 +83,8 @@ public class SharedActionsXTPN {
             } else { //jeśli z podokna Holmesa
             }
 
-            ((HolmesRoundedButton)button).setNewText("<html>Alpha: ON</html>");
-            ((HolmesRoundedButton)button).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            button.setNewText("<html>Alpha: ON</html>");
+            button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
             //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
             if(transition.getAlphaMinValue() < overlord.simSettings.getCalculationsAccuracy()
@@ -87,9 +98,9 @@ public class SharedActionsXTPN {
                 } else { //jeśli z podokna Holmesa
                 }
 
-                ((HolmesRoundedButton)buttonClassicMode).setNewText("<html>XTPN<html>");
-                ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
-                ((HolmesRoundedButton)tauVisibilityButton).setEnabled(true);
+                buttonClassicMode.setNewText("<html>XTPN<html>");
+                buttonClassicMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+                tauVisibilityButton.setEnabled(true);
                 transition.setTauTimersVisibility(true);
             }
         }
@@ -99,9 +110,20 @@ public class SharedActionsXTPN {
         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
     }
 
+    /**
+     * Metoda przełącza status trybu Beta dla tranzycji. Używana przez okno główne oraz okno informacji o tranzycji.
+     * @param e (<b>ActionEvent</b>) obiekt zdarzenia wywołującego.
+     * @param transition (<b>TransitionXTPN</b>) obiekt tranzycji.
+     * @param caller (<b>JFrame</b>) obiekt okna wywołującego (null dla głównego okna programu).
+     * @param tauVisibilityButton (<b>HolmesRoundedButton</b>) obiekt przycisku tau.
+     * @param buttonClassicMode (<b>HolmesRoundedButton</b>) obiekt przycisku przełączania trybu klasczynego/XTPN.
+     * @param betaMaxTextField (<b>JFormattedTextField</b>) obiekt pola tekstowego wartości beta-maximum.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętej tranzycji.
+     */
     public void buttonBetaSwitchMode(ActionEvent e, TransitionXTPN transition, JFrame caller
-            , JButton tauVisibilityButton, JButton buttonClassicMode, JFormattedTextField betaMaxTextField, ElementLocation elementLocation) {
-        JButton button = (JButton) e.getSource();
+            , HolmesRoundedButton tauVisibilityButton, HolmesRoundedButton buttonClassicMode
+            , JFormattedTextField betaMaxTextField, ElementLocation elementLocation) {
+        HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
         if (transition.isBetaModeActive()) {
             double accuracy = overlord.simSettings.getCalculationsAccuracy();
             if(transition.isAlphaModeActive() && transition.getAlphaMinValue() < accuracy
@@ -121,8 +143,8 @@ public class SharedActionsXTPN {
             } else { //jeśli z podokna Holmesa
             }
 
-            ((HolmesRoundedButton)button).setNewText("<html>Beta: OFF</html>");
-            ((HolmesRoundedButton)button).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            button.setNewText("<html>Beta: OFF</html>");
+            button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
             if(!transition.isAlphaModeActive()) {
                 //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
@@ -130,9 +152,9 @@ public class SharedActionsXTPN {
                 } else { //jeśli z podokna Holmesa
                 }
 
-                ((HolmesRoundedButton)button).setNewText("<html>Classical<html>");
-                ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
-                ((HolmesRoundedButton)tauVisibilityButton).setEnabled(false);
+                button.setNewText("<html>Classical<html>");
+                buttonClassicMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+                tauVisibilityButton.setEnabled(false);
                 transition.setTauTimersVisibility(false);
             }
         } else {
@@ -141,8 +163,8 @@ public class SharedActionsXTPN {
             } else { //jeśli z podokna Holmesa
             }
 
-            ((HolmesRoundedButton)button).setNewText("<html>Beta: ON</html>");
-            ((HolmesRoundedButton)button).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            button.setNewText("<html>Beta: ON</html>");
+            button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
             //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
             double accuracy = overlord.simSettings.getCalculationsAccuracy();
@@ -156,9 +178,9 @@ public class SharedActionsXTPN {
                 } else {
                 }
 
-                ((HolmesRoundedButton)buttonClassicMode).setNewText("<html>XTPN<html>");
-                ((HolmesRoundedButton)buttonClassicMode).repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
-                ((HolmesRoundedButton)tauVisibilityButton).setEnabled(true);
+                buttonClassicMode.setNewText("<html>XTPN<html>");
+                buttonClassicMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+                tauVisibilityButton.setEnabled(true);
                 transition.setTauTimersVisibility(true);
             }
         }
@@ -168,9 +190,18 @@ public class SharedActionsXTPN {
         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
     }
 
+    /**
+     * Metoda przełącza status trybu klasycznego/XTPN dla tranzycji. Używana przez okno główne oraz okno informacji o tranzycji.
+     * @param e (<b>ActionEvent</b>) obiekt zdarzenia wywołującego.
+     * @param transition (<b>TransitionXTPN</b>) obiekt tranzycji.
+     * @param caller (<b>JFrame</b>) obiekt okna wywołującego (null dla głównego okna programu).
+     * @param alphaMaxTextField (<b>JFormattedTextField</b>) obiekt pola tekstowego wartości alpha-maximum.
+     * @param betaMaxTextField (<b>JFormattedTextField</b>) obiekt pola tekstowego wartości beta-maximum.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętej tranzycji.
+     */
     public void buttonTransitionToXTPN_classicSwitchMode(ActionEvent e, TransitionXTPN transition, JFrame caller
             , JFormattedTextField alphaMaxTextField, JFormattedTextField betaMaxTextField, ElementLocation elementLocation) {
-        JButton button = (JButton) e.getSource();
+        HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
         if (transition.isAlphaModeActive() || transition.isBetaModeActive()) {
 
             Object[] options = {"Confirm", "Cancel",};
@@ -187,12 +218,18 @@ public class SharedActionsXTPN {
             transition.setAlphaModeStatus(false);
             transition.setBetaModeStatus(false);
             transition.setTauTimersVisibility(false);
-            button.setBackground(Color.RED);
+
+            button.setNewText("<html>Classical<html>");
+            button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+            //button.setBackground(Color.RED);
         } else { //wychodzimy z trybu klasycznego
             transition.setAlphaModeStatus(true);
             transition.setBetaModeStatus(true);
             transition.setTauTimersVisibility(true);
-            button.setBackground(Color.GREEN);
+
+            button.setNewText("<html>XTPN<html>");
+            button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            //button.setBackground(Color.GREEN);
 
             //jeśli obie wartości są na zerze i włączamy tryb Alfa, przywróć zakres [0,1]
             double accuracy = overlord.simSettings.getCalculationsAccuracy();
@@ -212,8 +249,16 @@ public class SharedActionsXTPN {
         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
     }
 
-    public void buttonGammaSwitchMode(ActionEvent e, PlaceXTPN place, JFrame caller, ElementLocation elementLocation) {
-        JButton button = (JButton) e.getSource();
+    /**
+     * Metoda przełącza status trybu Gamma dla miejsca. Używana przez okno główne oraz okno informacji o tranzycji.
+     * @param e (<b>ActionEvent</b>) obiekt zdarzenia wywołującego.
+     * @param place (<b>PlaceXTPN</b>) obiekt miejsca.
+     * @param caller (<b>JFrame</b>) obiekt okna wywołującego (null dla głównego okna programu).
+     * @param gammaVisibilityButton (<b>HolmesRoundedButton</b>) obiekt przycisku widoczności zakresu gamma.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętego miejsca.
+     */
+    public void buttonGammaSwitchMode(ActionEvent e, PlaceXTPN place, JFrame caller, HolmesRoundedButton gammaVisibilityButton, ElementLocation elementLocation) {
+        HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
         int tokensNum = place.getTokensNumber();
         if (place.isGammaModeActive()) {
             //zapytać czy wyłączyć, konwersja kasowanie arrayListy
@@ -225,8 +270,8 @@ public class SharedActionsXTPN {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
             //cancel
             if (answer == 0) { //redukcja do klasycznego miejsca
-                button.setText("<html>Gamma:<br>  OFF</html>");
-                button.setBackground(Color.RED);
+                button.setNewText("<html><center>Gamma<br>OFF</center></html>");
+                button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
                 place.transformXTPNintoPNpace();
 
@@ -234,6 +279,8 @@ public class SharedActionsXTPN {
                 button.setFocusPainted(false);
                 WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+
+                gammaVisibilityButton.setEnabled(false);
             }
         } else {
             //zapytać czy wyłączyć, konwersja kasowanie arrayListy
@@ -245,8 +292,8 @@ public class SharedActionsXTPN {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
             //cancel
             if (answer == 0) { //transformacja PN -> XTPN
-                button.setText("Gamma: ON");
-                button.setBackground(Color.GREEN);
+                button.setNewText("<html><center>Gamma<br>ON</center></html>");
+                button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
                 place.transformIntoXTPNplace();
 
@@ -254,18 +301,117 @@ public class SharedActionsXTPN {
                 button.setFocusPainted(false);
                 WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+
+                gammaVisibilityButton.setEnabled(true);
             }
         }
     }
 
+    /**
+     * Obsługa przełącznika widoczności zakresu alfa nad tranzycją.
+     * @param e (<b>ActionEvent</b>) obiekt zdarzenia wywołującego.
+     * @param transition (<b>TransitionXTPN</b>) obiekt tranzycji XTPN.
+     * @param alphaLocChangeButton (<b>HolmesRoundedButton</b>) przycisk zmiany lokalizacji zakresów alfa.
+     * @param alphaLocChangeMode (<b>boolean</b>) jeśli true, to znaczy, że kliknięto tryb zmiany lokalizacji w oknie głównym.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętej tranzycji.
+     * @return (<b>boolean</b>) alphaLocChangeMode
+     */
+    public boolean alphaVisButtonAction(ActionEvent e, TransitionXTPN transition, HolmesRoundedButton alphaLocChangeButton
+            , boolean alphaLocChangeMode, ElementLocation elementLocation) {
+        HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
+        if (transition.isAlphaRangeVisible()) { //wyłączamy
+            transition.setAlphaRangeVisibility(false);
+            button.setNewText("<html>\u03B1:hidden<html>");
+            button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
+            alphaLocChangeButton.setEnabled(false);
+        } else { // włączamy
+            transition.setAlphaRangeVisibility(true);
+            button.setNewText("<html>\u03B1:visible<html>");
+            button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            alphaLocChangeMode = false;
+            overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+        }
+        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+        button.setFocusPainted(false);
+        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+        ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
 
+        return alphaLocChangeMode;
+    }
 
+    /**
+     * Obsługa przełącznika widoczności zakresu beta nad tranzycją.
+     * @param e (<b>ActionEvent</b>) obiekt zdarzenia wywołującego.
+     * @param transition (<b>TransitionXTPN</b>) obiekt tranzycji XTPN.
+     * @param betaLocChangeButton (<b>HolmesRoundedButton</b>) przycisk zmiany lokalizacji zakresów beta.
+     * @param betaLocChangeMode (<b>boolean</b>) jeśli true, to znaczy, że kliknięto tryb zmiany lokalizacji w oknie głównym.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętej tranzycji.
+     * @return (<b>boolean</b>) alphaLocChangeMode
+     */
+    public boolean betaVisButtonAction(ActionEvent e, TransitionXTPN transition, HolmesRoundedButton betaLocChangeButton
+            , boolean betaLocChangeMode, ElementLocation elementLocation) {
+        HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
+        if (transition.isBetaRangeVisible()) { //wyłączamy
+            transition.setBetaRangeVisibility(false);
+            button.setNewText("<html>\u03B2:hidden<html>");
+            button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+
+            betaLocChangeButton.setEnabled(false);
+        } else { //włączamy
+            transition.setBetaRangeVisibility(true);
+            button.setNewText("<html>\u03B2:visible<html>");
+            button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+
+            betaLocChangeMode = false;
+            overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+        }
+        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+        button.setFocusPainted(false);
+        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+        ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+
+        return betaLocChangeMode;
+    }
+
+    /**
+     * Obsługa przełącznika widoczności czasów tau nad tranzycją.
+     * @param e (<b>ActionEvent</b>) obiekt zdarzenia wywołującego.
+     * @param transition (<b>TransitionXTPN</b>) obiekt tranzycji XTPN.
+     * @param tauLocChangeButton (<b>HolmesRoundedButton</b>) przycisk zmiany lokalizacji czasów tau.
+     * @param tauLocChangeMode (<b>boolean</b>) jeśli true, to znaczy, że kliknięto tryb zmiany lokalizacji w oknie głównym.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętej tranzycji.
+     * @return (<b>boolean</b>) alphaLocChangeMode
+     */
+    public boolean tauVisButtonAction(ActionEvent e, TransitionXTPN transition, HolmesRoundedButton tauLocChangeButton
+            , boolean tauLocChangeMode, ElementLocation elementLocation) {
+        HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
+        if (transition.isTauTimerVisible()) { //wyłączamy
+            transition.setTauTimersVisibility(false);
+            button.setNewText("<html>\u03C4:hidden<html>");
+            button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+            tauLocChangeButton.setEnabled(false);
+        } else { //włączamy
+            transition.setTauTimersVisibility(true);
+            button.setNewText("<html>\u03C4:visible<html>");
+            button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            tauLocChangeMode = false;
+            overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+        }
+        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+        button.setFocusPainted(false);
+        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+        ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+
+        return tauLocChangeMode;
+    }
 
     /**
      * Metoda ustawia nową wartość czasu alfaMinimum dla tranzycji XTPN.
-     * @param newAlphaMin (double) nowa wartość alfaMinimum.
-     * @return (true) jeżeli zmiana wartości się udała.
+     * @param newAlphaMin (<b>double</b>>) nowa wartość alfaMinimum.
+     * @param transition (<b>TransitionXTPN</b>) obiekt tranzycji XTPN.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętego węzła tranzycji.
+     * @return (<b>boolean</b>) - true, jeżeli zmiana wartości się udała.
      */
     public boolean setAlfaMinTime(double newAlphaMin, TransitionXTPN transition, ElementLocation elementLocation) {
         double alfaMax = transition.getAlphaMaxValue();
@@ -299,8 +445,10 @@ public class SharedActionsXTPN {
 
     /**
      * Metoda ustawia nową wartość czasu alfaMaximum dla tranzycji XTPN.
-     * @param newAlphaMax (double) nowa wartość alfaMaximum.
-     * @return (true) jeżeli zmiana wartości się udała.
+     * @param newAlphaMax (<b>double</b>) nowa wartość alfaMaximum.
+     * @param transition (<b>TransitionXTPN</b>) obiekt tranzycji XTPN.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętego węzła tranzycji.
+     * @return (<b>boolean</b>) - true, jeżeli zmiana wartości się udała.
      */
     public boolean setAlfaMaxTime(double newAlphaMax, TransitionXTPN transition, ElementLocation elementLocation) {
         double alfaMin = transition.getAlphaMinValue();
@@ -356,8 +504,10 @@ public class SharedActionsXTPN {
 
     /**
      * Metoda ustawia nową wartość czasu betaMinimum dla tranzycji XTPN.
-     * @param newBetaMin (double) nowa wartość betaMinimum.
-     * @return (true) jeżeli zmiana wartości się udała.
+     * @param newBetaMin (<b>double</b>) nowa wartość betaMinimum.
+     * @param transition (<b>TransitionXTPN</b>) obiekt tranzycji XTPN.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętego węzła tranzycji.
+     * @return (<b>boolean</b>) - true, jeżeli zmiana wartości się udała.
      */
     public boolean setBetaMinTime(double newBetaMin, TransitionXTPN transition, ElementLocation elementLocation) {
         double betaMax = transition.getBetaMaxValue();
@@ -390,8 +540,10 @@ public class SharedActionsXTPN {
 
     /**
      * Metoda ustawia nową wartość czasu betaMaximum dla tranzycji XTPN.
-     * @param newBetaMax (double) nowa wartość betaMaximum.
-     * @return (true) jeżeli zmiana wartości się udała.
+     * @param newBetaMax (<b>double</b>) nowa wartość betaMaximum.
+     * @param transition (<b>TransitionXTPN</b>) obiekt tranzycji XTPN.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętego węzła tranzycji.
+     * @return (<b>boolean</b>) - true, jeżeli zmiana wartości się udała.
      */
     public boolean setBetaMaxTime(double newBetaMax, TransitionXTPN transition, ElementLocation elementLocation) {
         double betaMin = transition.getBetaMinValue();
@@ -446,6 +598,13 @@ public class SharedActionsXTPN {
         return true;
     }
 
+    /**
+     * Metoda ustawia nową wartość czasu gamma-minimum dla miejsca XTPN.
+     * @param newGammaMin (<b>double</b>) nowa wartość gammaMin.
+     * @param place (<b>PlaceXTPN</b>) obiekt miejsca XTPN.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętego węzła miejsca.
+     * @return (<b>boolean</b>) - true, jeżeli zmiana wartości się udała.
+     */
     public boolean setGammaMinTime(double newGammaMin, PlaceXTPN place, ElementLocation elementLocation) {
         //PlaceXTPN place = (PlaceXTPN) element;
         double gammaMax = place.getGammaMaxValue();
@@ -477,9 +636,11 @@ public class SharedActionsXTPN {
     }
 
     /**
-     * Metoda ustawia nową wartość czasu gammaMaximum dla miejsca XTPN.
-     * @param newGammaMax (double) nowa wartość gammaMaximum.
-     * @return (true) jeżeli zmiana wartości się udała.
+     * Metoda ustawia nową wartość czasu gamma-maximum dla miejsca XTPN.
+     * @param newGammaMax (<b>double</b>) nowa wartość gammaMax.
+     * @param place (<b>PlaceXTPN</b>) obiekt miejsca XTPN.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętego węzła miejsca.
+     * @return (<b>boolean</b>) - true, jeżeli zmiana wartości się udała.
      */
     public boolean setGammaMaxTime(double newGammaMax, PlaceXTPN place, ElementLocation elementLocation) {
         //PlaceXTPN place = (PlaceXTPN) element;
@@ -514,6 +675,7 @@ public class SharedActionsXTPN {
 
     /**
      * Metoda odpowiedzialna za przerysowanie grafu obrazu w arkuszu sieci.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja klikniętego obiektu sieci.
      */
     private void repaintGraphPanel(ElementLocation elementLocation) {
         int sheetIndex = overlord.IDtoIndex(elementLocation.getSheetID());

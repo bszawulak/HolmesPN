@@ -218,7 +218,7 @@ public class HolmesXTPNtokens extends JFrame {
 
         //potwierdzenie zmiany wartości tokenu
         changeTokenValueButton = new HolmesRoundedButton("Change value"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         changeTokenValueButton.setMargin(new Insets(0, 0, 0, 0));
         changeTokenValueButton.setBounds(comboPanelX+150, comboPanelY-5, 100, 30);
         changeTokenValueButton.setFocusPainted(false);
@@ -261,7 +261,7 @@ public class HolmesXTPNtokens extends JFrame {
 
         //usunięcie tokenu
         removeTokenValueButton = new HolmesRoundedButton("Remove"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         removeTokenValueButton.setMargin(new Insets(0, 0, 0, 0));
         removeTokenValueButton.setBounds(comboPanelX+250, comboPanelY-5, 100, 30);
         removeTokenValueButton.setFocusPainted(false);
@@ -353,7 +353,7 @@ public class HolmesXTPNtokens extends JFrame {
         //potwierdzenie dodania nowego tokenu
         //przycisk dodania tokeny z nową wartością
         HolmesRoundedButton addNewTokenButton = new HolmesRoundedButton("Add new token"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         addNewTokenButton.setBounds(comboPanelX+150, comboPanelY-5, 100, 30);
         addNewTokenButton.setMargin(new Insets(0, 0, 0, 0));
         addNewTokenButton.setFocusPainted(false);
@@ -410,7 +410,7 @@ public class HolmesXTPNtokens extends JFrame {
 
 
         clearAllButton = new HolmesRoundedButton("Clear all"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         clearAllButton.setMargin(new Insets(0, 0, 0, 0));
         clearAllButton.setBounds(comboPanelX+10, comboPanelY+25, 100, 30);
         clearAllButton.addActionListener(e -> {

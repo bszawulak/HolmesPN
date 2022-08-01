@@ -180,7 +180,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         //panel informacji podstawowych
         JPanel infoPanel = new JPanel(null);
-        infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-22, 150);
+        infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-22, 160);
         infoPanel.setBackground(Color.WHITE);
         infoPanel.setBorder(BorderFactory.createTitledBorder("Structural data:"));
 
@@ -295,17 +295,17 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infoPanel.add(gammaModeInfoLabel);
 
         buttonGammaMode = new HolmesRoundedButton("<html>Gamma: ON</html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         buttonGammaMode.setMargin(new Insets(0, 0, 0, 0));
         buttonGammaMode.setName("gammaButton1");
-        buttonGammaMode.setBounds(infPanelX+80, infPanelY, 100, 20);
+        buttonGammaMode.setBounds(infPanelX+80, infPanelY, 100, 25);
         buttonGammaMode.setFocusPainted(false);
         if(place.isGammaModeActive()) {
             buttonGammaMode.setNewText("<html>Gamma: ON</html>");
-            buttonGammaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            buttonGammaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         } else {
             buttonGammaMode.setNewText("<html>Gamma: OFF</html>");
-            buttonGammaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            buttonGammaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
         }
         buttonGammaMode.addActionListener(e -> {
             action.buttonGammaModeSwitch(e, place, tokensWindowButton, gammaVisibilityButton);
@@ -317,23 +317,23 @@ public class HolmesNodeInfoXTPN extends JFrame {
         gammaVisInfoLabel.setBounds(infPanelX+190, infPanelY, 70, 20);
         infoPanel.add(gammaVisInfoLabel);
 
-        gammaVisibilityButton = new HolmesRoundedButton("<html>\u03B3: Visible</html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        gammaVisibilityButton = new HolmesRoundedButton("<html>\u03B3:visible</html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         gammaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         gammaVisibilityButton.setName("gammaVisButton1");
-        gammaVisibilityButton.setBounds(infPanelX+250, infPanelY, 100, 20);
+        gammaVisibilityButton.setBounds(infPanelX+250, infPanelY, 100, 25);
         gammaVisibilityButton.setFocusPainted(false);
         if(place.isGammaModeActive()) {
             if (place.isGammaRangeVisible()) {
-                gammaVisibilityButton.setNewText("<html>\u03B3: Visible<html>");
-                gammaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                gammaVisibilityButton.setNewText("<html>\u03B3:visible<html>");
+                gammaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             } else {
-                gammaVisibilityButton.setNewText("<html>\u03B3: Hidden<html>");
-                gammaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                gammaVisibilityButton.setNewText("<html>\u03B3:hidden<html>");
+                gammaVisibilityButton.repaintBackground("amber_bH3_press_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
-            gammaVisibilityButton.setNewText("<html>\u03B3: Hidden<html>");
-            gammaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            //gammaVisibilityButton.setNewText("<html>\u03B3: Hidden<html>");
+            //gammaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             gammaVisibilityButton.setEnabled(false);
         }
         gammaVisibilityButton.addActionListener(e -> {
@@ -344,7 +344,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
 
         //************************* NEWLINE *************************
-        infPanelY += 25;
+        infPanelY += 30;
         //************************* NEWLINE *************************
 
         // XTPN-place  Zakresy gamma:
@@ -436,9 +436,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infoPanel.add(tokenInfoLabel);
 
         tokensWindowButton = new HolmesRoundedButton("<html>Token window</html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         tokensWindowButton.setMargin(new Insets(0, 0, 0, 0));
-        tokensWindowButton.setBounds(infPanelX+80, infPanelY, 100, 20);
+        tokensWindowButton.setBounds(infPanelX+80, infPanelY, 100, 25);
         if(!place.isGammaModeActive()) {
             tokensWindowButton.setEnabled(false);
         }
@@ -600,7 +600,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         //panel informacji podstawowych
         JPanel infoPanel = new JPanel(null);
-        infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-22, 180);
+        infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-22, 200);
         infoPanel.setBorder(BorderFactory.createTitledBorder("Structural data:"));
         infoPanel.setBackground(Color.WHITE);
 
@@ -718,17 +718,18 @@ public class HolmesNodeInfoXTPN extends JFrame {
         timeModesInfoLabel.setBounds(infPanelX, infPanelY, 80, 20);
         infoPanel.add(timeModesInfoLabel);
 
-        buttonAlphaMode = new HolmesRoundedButton("<html>Alpha: ON</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        buttonAlphaMode = new HolmesRoundedButton("<html>Alpha: ON</html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         buttonAlphaMode.setMargin(new Insets(0, 0, 0, 0));
         buttonAlphaMode.setName("alphaButton1");
-        buttonAlphaMode.setBounds(infPanelX+80, infPanelY, 100, 20);
+        buttonAlphaMode.setBounds(infPanelX+80, infPanelY, 100, 25);
         buttonAlphaMode.setFocusPainted(false);
         if(transition.isAlphaModeActive()) {
             buttonAlphaMode.setNewText("<html>Alpha: ON</html>");
-            buttonAlphaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            buttonAlphaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         } else {
             buttonAlphaMode.setNewText("<html>Alpha: OFF</html>");
-            buttonAlphaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            buttonAlphaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
         }
         buttonAlphaMode.addActionListener(e -> {
 
@@ -745,22 +746,23 @@ public class HolmesNodeInfoXTPN extends JFrame {
         alphaVisInfoLabel.setBounds(infPanelX+190, infPanelY, 70, 20);
         infoPanel.add(alphaVisInfoLabel);
 
-        alphaVisibilityButton = new HolmesRoundedButton("<html>\u03B1: Visible</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        alphaVisibilityButton = new HolmesRoundedButton("<html>\u03B1: Visible</html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         alphaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         alphaVisibilityButton.setName("gammaVisButton1");
-        alphaVisibilityButton.setBounds(infPanelX+250, infPanelY, 100, 20);
+        alphaVisibilityButton.setBounds(infPanelX+250, infPanelY, 100, 25);
         alphaVisibilityButton.setFocusPainted(false);
         if(transition.isAlphaModeActive()) {
             if (transition.isAlphaRangeVisible()) {
                 alphaVisibilityButton.setNewText("<html>\u03B1: Visible<html>");
-                alphaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                alphaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             } else {
                 alphaVisibilityButton.setNewText("<html>\u03B1: Hidden<html>");
-                alphaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                alphaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
             alphaVisibilityButton.setNewText("<html>\u03B1: Hidden<html>");
-            alphaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            alphaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             alphaVisibilityButton.setEnabled(false);
         }
         alphaVisibilityButton.addActionListener(e -> {
@@ -768,12 +770,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
             if (transition.isAlphaRangeVisible()) { //wyłączamy
                 transition.setAlphaRangeVisibility(false);
                 button.setNewText("<html>\u03B1: Hidden<html>");
-                button.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
             } else { // włączamy
                 transition.setAlphaRangeVisibility(true);
                 button.setNewText("<html>\u03B1: Visible<html>");
-                button.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
@@ -784,20 +786,21 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infoPanel.add(alphaVisibilityButton);
 
         //************************* NEWLINE *************************
-        infPanelY += 25;
+        infPanelY += 30;
         //************************* NEWLINE *************************
 
-        buttonBetaMode = new HolmesRoundedButton("<html>Beta: ON</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        buttonBetaMode = new HolmesRoundedButton("<html>Beta: ON</html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         buttonBetaMode.setMargin(new Insets(0, 0, 0, 0));
         buttonBetaMode.setName("alphaButton1");
-        buttonBetaMode.setBounds(infPanelX+80, infPanelY, 100, 20);
+        buttonBetaMode.setBounds(infPanelX+80, infPanelY, 100, 25);
         buttonBetaMode.setFocusPainted(false);
         if(transition.isAlphaModeActive()) {
             buttonBetaMode.setNewText("<html>Beta: ON</html>");
-            buttonBetaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            buttonBetaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         } else {
             buttonBetaMode.setNewText("<html>Beta: OFF</html>");
-            buttonBetaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            buttonBetaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
         }
         buttonBetaMode.addActionListener(e -> {
             doNotUpdate = true;
@@ -813,22 +816,23 @@ public class HolmesNodeInfoXTPN extends JFrame {
         betaVisInfoLabel.setBounds(infPanelX+190, infPanelY, 70, 20);
         infoPanel.add(betaVisInfoLabel);
 
-        betaVisibilityButton = new HolmesRoundedButton("<html>\u03B2: Visible</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        betaVisibilityButton = new HolmesRoundedButton("<html>\u03B2: Visible</html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         betaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         betaVisibilityButton.setName("gammaVisButton1");
-        betaVisibilityButton.setBounds(infPanelX+250, infPanelY, 100, 20);
+        betaVisibilityButton.setBounds(infPanelX+250, infPanelY, 100, 25);
         betaVisibilityButton.setFocusPainted(false);
         if(transition.isBetaModeActive()) {
             if (transition.isBetaRangeVisible()) {
                 betaVisibilityButton.setNewText("<html>\u03B2: Visible<html>");
-                betaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                betaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             } else {
                 betaVisibilityButton.setNewText("<html>\u03B2: Hidden<html>");
-                betaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                betaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
             betaVisibilityButton.setNewText("<html>\u03B2: Hidden<html>");
-            betaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            betaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             betaVisibilityButton.setEnabled(false);
         }
         betaVisibilityButton.addActionListener(e -> {
@@ -836,12 +840,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
             if (transition.isBetaRangeVisible()) { //wyłączamy
                 transition.setBetaRangeVisibility(false);
                 button.setNewText("<html>\u03B2: Hidden<html>");
-                button.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
             } else { // włączamy
                 transition.setBetaRangeVisibility(true);
                 button.setNewText("<html>\u03B2: Visible<html>");
-                button.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
@@ -856,17 +860,18 @@ public class HolmesNodeInfoXTPN extends JFrame {
         classXTPNInfoLabel.setBounds(infPanelX+360, infPanelY, 120, 20);
         infoPanel.add(classXTPNInfoLabel);
 
-        buttonClassXTPNmode = new HolmesRoundedButton("<html>XTPN</html>", "bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+        buttonClassXTPNmode = new HolmesRoundedButton("<html>XTPN</html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         buttonClassXTPNmode.setMargin(new Insets(0, 0, 0, 0));
         buttonClassXTPNmode.setName("alphaButton1");
-        buttonClassXTPNmode.setBounds(infPanelX+460, infPanelY, 100, 20);
+        buttonClassXTPNmode.setBounds(infPanelX+460, infPanelY, 100, 25);
         buttonClassXTPNmode.setFocusPainted(false);
         if(!transition.isAlphaModeActive() && !transition.isBetaModeActive()) {
             buttonClassXTPNmode.setNewText("<html>Classical<html>");
-            buttonClassXTPNmode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            buttonClassXTPNmode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
         } else { //gdy jeden z trybów włączony
             buttonClassXTPNmode.setNewText("<html>XTPN<html>");
-            buttonClassXTPNmode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            buttonClassXTPNmode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         }
         buttonClassXTPNmode.addActionListener(e -> {
             if (doNotUpdate)
@@ -885,18 +890,18 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infoPanel.add(tauVisInfoLabel);
 
         tauVisibilityButton = new HolmesRoundedButton("<html>\u03C4: Visible</html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         tauVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         tauVisibilityButton.setName("gammaVisButton1");
-        tauVisibilityButton.setBounds(infPanelX+600, infPanelY, 100, 20);
+        tauVisibilityButton.setBounds(infPanelX+600, infPanelY, 100, 25);
         tauVisibilityButton.setFocusPainted(false);
         if(transition.isAlphaModeActive() || transition.isBetaModeActive()) {
             if (transition.isTauTimerVisible()) {
                 tauVisibilityButton.setNewText("<html>\u03C4: Visible<html>");
-                tauVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                tauVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             } else {
                 tauVisibilityButton.setNewText("<html>\u03C4: Hidden<html>");
-                tauVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                tauVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
             tauVisibilityButton.setEnabled(false);
@@ -908,12 +913,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
             if (transition.isTauTimerVisible()) { //wyłączamy
                 transition.setTauTimersVisibility(false);
                 button.setNewText("<html>\u03C4: Hidden<html>");
-                button.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
             } else { //włączamy
                 transition.setTauTimersVisibility(true);
                 button.setNewText("<html>\u03C4: Visible<html>");
-                button.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
                 overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
             }
@@ -926,7 +931,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infoPanel.add(tauVisibilityButton);
 
         //************************* NEWLINE *************************
-        infPanelY += 25;
+        infPanelY += 30;
         //************************* NEWLINE *************************
 
 
@@ -1116,22 +1121,22 @@ public class HolmesNodeInfoXTPN extends JFrame {
         if(isPlace) {
             if(place.isGammaModeActive()) {
                 buttonGammaMode.setNewText("<html>Gamma: ON</html>");
-                buttonGammaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                buttonGammaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
                 gammaVisibilityButton.setEnabled(true);
                 gammaMinTextField.setEnabled(true);
                 gammaMaxTextField.setEnabled(true);
 
                 if(place.isGammaRangeVisible()) {
-                    gammaVisibilityButton.setNewText("<html>\u03B3: Visible<html>");
-                    gammaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                    gammaVisibilityButton.setNewText("<html>\u03B3:visible<html>");
+                    gammaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 } else {
-                    gammaVisibilityButton.setNewText("<html>\u03B3: Hidden<html>");
-                    gammaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    gammaVisibilityButton.setNewText("<html>\u03B3:hidden<html>");
+                    gammaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 }
             } else { //GAMMA OFFLINE
                 buttonGammaMode.setNewText("<html>Gamma: OFF</html>");
-                buttonGammaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                buttonGammaMode.repaintBackground("paerl_bH1_neutr.png", "paerl_bH2_hover.png", "paerl_bH3_press.png");
 
                 gammaVisibilityButton.setEnabled(false);
 
@@ -1147,10 +1152,10 @@ public class HolmesNodeInfoXTPN extends JFrame {
         } else { //dla tranzycji
             if(transition.isAlphaModeActive()) {
                 buttonAlphaMode.setNewText("<html>Alpha: ON</html>");
-                buttonAlphaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                buttonAlphaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
                 buttonClassXTPNmode.setNewText("<html>XTPN<html>");
-                buttonClassXTPNmode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                buttonClassXTPNmode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
                 alphaMinTextField.setEnabled(true);
                 alphaMaxTextField.setEnabled(true);
@@ -1160,22 +1165,22 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
                 if(transition.isAlphaRangeVisible()) {
                     alphaVisibilityButton.setNewText("<html>\u03B1: Visible<html>");
-                    alphaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                    alphaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 } else {
                     alphaVisibilityButton.setNewText("<html>\u03B1: Hidden<html>");
-                    alphaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    alphaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 }
 
                 if(transition.isTauTimerVisible()) {
                     tauVisibilityButton.setNewText("<html>\u03C4: Visible<html>");
-                    tauVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                    tauVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 } else {
                     tauVisibilityButton.setNewText("<html>\u03C4: Hidden<html>");
-                    tauVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    tauVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 }
             } else { //ALFA OFFLINE
                 buttonAlphaMode.setNewText("<html>Alpha: OFF</html>");
-                buttonAlphaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                buttonAlphaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
                 alphaMinTextField.setEnabled(false);
                 alphaMaxTextField.setEnabled(false);
@@ -1185,10 +1190,10 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
             if(transition.isBetaModeActive()) {
                 buttonBetaMode.setNewText("<html>Beta: ON</html>");
-                buttonBetaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                buttonBetaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
                 buttonClassXTPNmode.setNewText("<html>XTPN<html>");
-                buttonClassXTPNmode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                buttonClassXTPNmode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
                 betaMinTextField.setEnabled(true);
                 betaMaxTextField.setEnabled(true);
@@ -1198,21 +1203,21 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
                 if(transition.isBetaRangeVisible()) {
                     betaVisibilityButton.setNewText("<html>\u03B2: Visible<html>");
-                    betaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                    betaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 } else {
                     betaVisibilityButton.setNewText("<html>\u03B2: Hidden<html>");
-                    betaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    betaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 }
                 if(transition.isTauTimerVisible()) {
                     tauVisibilityButton.setNewText("<html>\u03C4: Visible<html>");
-                    tauVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                    tauVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 } else {
                     tauVisibilityButton.setNewText("<html>\u03C4: Hidden<html>");
-                    tauVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    tauVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 }
             } else { //BETA OFFLINE
                 buttonBetaMode.setNewText("<html>Beta: OFF</html>");
-                buttonBetaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                buttonBetaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
                 betaMinTextField.setEnabled(false);
                 betaMaxTextField.setEnabled(false);
@@ -1223,7 +1228,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
             if(!transition.isAlphaModeActive() && !transition.isBetaModeActive()) { //both offline
                 buttonClassXTPNmode.setNewText("<html>Classical<html>");
-                buttonClassXTPNmode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                buttonClassXTPNmode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
                 tauVisibilityButton.setEnabled(false);
             }

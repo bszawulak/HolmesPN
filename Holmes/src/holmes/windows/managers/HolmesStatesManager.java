@@ -599,7 +599,7 @@ public class HolmesStatesManager extends JFrame {
 		int posYda = 25;
 
 		HolmesRoundedButton selectStateButton = new HolmesRoundedButton("<html><center>Restore<br>selected state</center></html>"
-				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
 		selectStateButton.setBounds(posXda, posYda, 130, 40);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
@@ -639,7 +639,7 @@ public class HolmesStatesManager extends JFrame {
 		result.add(selectStateButton);
 
 		HolmesRoundedButton addNewStateButton = new HolmesRoundedButton("<html><center>Store current<br>net state</center></html>"
-				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
 		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
@@ -663,7 +663,7 @@ public class HolmesStatesManager extends JFrame {
 		result.add(addNewStateButton);
 
 		HolmesRoundedButton addNewCleanStateButton = new HolmesRoundedButton("<html><center>Create<br>clean state</center></html>"
-				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
 		addNewCleanStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewCleanStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewCleanStateButton.setFocusPainted(false);
@@ -687,7 +687,7 @@ public class HolmesStatesManager extends JFrame {
 		result.add(addNewCleanStateButton);
 
 		HolmesRoundedButton replaceStateButton = new HolmesRoundedButton("<html><center>Overwrite<br>selected state</center></html>"
-				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
 		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
@@ -709,7 +709,7 @@ public class HolmesStatesManager extends JFrame {
 		result.add(replaceStateButton);
 
 		HolmesRoundedButton removeStateButton = new HolmesRoundedButton("<html><center>Remove<br>stored state</center></html>"
-				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
 		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
@@ -731,7 +731,7 @@ public class HolmesStatesManager extends JFrame {
 		result.add(removeStateButton);
 
 		HolmesRoundedButton editStateButton = new HolmesRoundedButton("<html><center>XTPN<br>state editor</center></html>"
-				, "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
 		editStateButton.setBounds(posXda, posYda+50, 130, 40);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);

@@ -35,11 +35,12 @@ public class HolmesNodeInfoXTPNactions {
 
             if (answer == 0) { //redukcja do klasycznego miejsca
                 button.setNewText("<html>Gamma: OFF</html>");
-                button.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 place.transformXTPNintoPNpace();
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                 button.setFocusPainted(false);
                 tokensWindowButton.setEnabled(false);
+                gammaVisibilityButton.setEnabled(false);
             }
         } else {
             //zapytać czy wyłączyć, konwersja kasowanie arrayListy
@@ -52,7 +53,7 @@ public class HolmesNodeInfoXTPNactions {
             //cancel
             if (answer == 0) { //transformacja PN -> XTPN
                 button.setNewText("<html>Gamma: ON</html>");
-                button.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 place.transformIntoXTPNplace();
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                 button.setFocusPainted(false);
@@ -67,13 +68,13 @@ public class HolmesNodeInfoXTPNactions {
         if (place.isGammaRangeVisible()) {
             place.setGammaRangeVisibility(false);
             button.setNewText("<html>\u03B3: Hidden<html>");
-            button.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
         } else {
             place.setGammaRangeVisibility(true);
             button.setNewText("<html>\u03B3: Visible<html>");
-            button.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
         }

@@ -58,6 +58,7 @@ import holmes.workspace.WorkspaceSheet;
  * <b>Absolute positioning. Of absolute everything here.</b><br>
  * Nie obchodzi mnie, co o tym myślicie<br> (╯゜Д゜）╯︵ ┻━┻) . Idźcie w layout i nie wracajcie. ┌∩┐(◣_◢)┌∩┐
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class HolmesDockWindowsTable extends JPanel {
     @Serial
     private static final long serialVersionUID = 4510802239873443705L;
@@ -168,7 +169,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private HolmesRoundedButton alphaLocChangeButton;//tranzycja
     private HolmesRoundedButton betaLocChangeButton;//tranzycja
     private HolmesRoundedButton tauLocChangeButton;//tranzycja
-    private JButton buttonClassicMode;//tranzycja
+    private HolmesRoundedButton buttonClassicMode;//tranzycja
 
 
     private HolmesRoundedButton buttonGammaMode; //miejsce
@@ -674,7 +675,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(stopSimulation);
 
             HolmesRoundedButton resetButton = new HolmesRoundedButton("<html><center>Restore<br>p-state</center></html>"
-                    , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             resetButton.setName("resetM0button");
             resetButton.setBounds(internalX, internalY+=40, 80, 40);
             resetButton.setToolTipText("Reset all tokens in places.");
@@ -741,7 +742,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(timeValuesVisLabel);
 
             HolmesRoundedButton showAlfaSwitchButton = new HolmesRoundedButton("<html><center>\u03B1:ON</center></html>"
-                    , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             showAlfaSwitchButton.setName("switchAlphas");
             showAlfaSwitchButton.setBounds(internalX, internalY+=20, 80, 30);
             showAlfaSwitchButton.setToolTipText("Switch alpha visibility.");
@@ -763,7 +764,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(showAlfaSwitchButton);
 
             HolmesRoundedButton showBetaSwitchButton = new HolmesRoundedButton("<html><center>\u03B2:ON</center></html>"
-                    , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             showBetaSwitchButton.setName("switchBetas");
             showBetaSwitchButton.setBounds(internalX+80, internalY, 80, 30);
             showBetaSwitchButton.setToolTipText("Switch beta visibility.");
@@ -788,7 +789,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(showBetaSwitchButton);
 
             HolmesRoundedButton showGammaSwitchButton = new HolmesRoundedButton("<html><center>\u03B3:ON</center></html>"
-                    , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             showGammaSwitchButton.setName("switchGammas");
             showGammaSwitchButton.setBounds(internalX, internalY+=30, 80, 30);
             showGammaSwitchButton.setToolTipText("Switch gamma visibility.");
@@ -811,7 +812,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(showGammaSwitchButton);
 
             HolmesRoundedButton showTauSwitchButton = new HolmesRoundedButton("<html><center>\u03C4:ON</center></html>"
-                    , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             showTauSwitchButton.setName("switchTaus");
             showTauSwitchButton.setBounds(internalX+80, internalY, 80, 30);
             showTauSwitchButton.setToolTipText("Switch tau visibility.");
@@ -1417,44 +1418,43 @@ public class HolmesDockWindowsTable extends JPanel {
 
 
         buttonGammaMode = new HolmesRoundedButton("<html><center>Gamma<br>ON</center></html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         buttonGammaMode.setMargin(new Insets(0, 0, 0, 0));
-        buttonGammaMode.setName("gammaButton1");
+        buttonGammaMode.setName("gammaModeButton");
         buttonGammaMode.setBounds(columnB_posX, columnB_Y +=25, 65, 35);
         buttonGammaMode.setFocusPainted(false);
         if(place.isGammaModeActive()) {
             buttonGammaMode.setNewText("<html><center>Gamma<br>ON</center></html>");
-            buttonGammaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            buttonGammaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         } else {
             buttonGammaMode.setNewText("<html><center>Gamma<br>OFF</center></html>");
-            buttonGammaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            buttonGammaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
         }
         buttonGammaMode.addActionListener(e -> {
             if (doNotUpdate)
                 return;
 
-            SharedActionsXTPN.access().buttonGammaSwitchMode(e, place, null, elementLocation);
+            SharedActionsXTPN.access().buttonGammaSwitchMode(e, place, null, gammaVisibilityButton, elementLocation);
         });
         components.add(buttonGammaMode);
 
         // XTPN-place gamma values visibility
         gammaVisibilityButton = new HolmesRoundedButton("<html><center>Gamma<br>visible</center></html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
-        gammaVisibilityButton.setName("GammaVButton1");
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        gammaVisibilityButton.setName("gammaVisButton");
         gammaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         gammaVisibilityButton.setBounds(columnB_posX+65, columnB_Y, 65, 35);
         gammaVisibilityButton.setFocusPainted(false);
         if(place.isGammaModeActive()) {
             if (place.isGammaRangeVisible()) {
                 gammaVisibilityButton.setNewText("<html><center>Gamma<br>visible</center><html>");
-                gammaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                gammaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             } else {
                 gammaVisibilityButton.setNewText("<html><center>Gamma<br>hidden</center><html>");
-                gammaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                gammaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
-            gammaVisibilityButton.setNewText("<html><center>Gamma<br>hidden</center><html>");
-            gammaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            gammaVisibilityButton.setEnabled(false);
         }
         gammaVisibilityButton.addActionListener(e -> {
             if (doNotUpdate)
@@ -1464,12 +1464,12 @@ public class HolmesDockWindowsTable extends JPanel {
                 ((PlaceXTPN)element).setGammaRangeVisibility(false);
 
                 button.setNewText("<html><center>Gamma<br>hidden</center><html>");
-                button.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             } else {
                 ((PlaceXTPN)element).setGammaRangeVisibility(true);
 
                 button.setNewText("<html><center>Gamma<br>visible</center><html>");
-                button.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             }
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
@@ -1480,9 +1480,9 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // XTPN-place gamma offset
         gammaLocChangeButton = new HolmesRoundedButton("<html><center>Gamma<br>offset</center></html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         //gammaLocChangeButton = new JButton("<html>Gamma<br>offset<html>");
-        gammaLocChangeButton.setName("G-offset");
+        gammaLocChangeButton.setName("gammaOffsetButton");
         gammaLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         gammaLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
         gammaLocChangeButton.setBounds(columnB_posX+130, columnB_Y, 65, 35);
@@ -1491,10 +1491,10 @@ public class HolmesDockWindowsTable extends JPanel {
             if (gammaLocChangeMode) {
 
                 gammaLocChangeButton.setNewText("<html><center>Change<br>location</center><html>");
-                gammaLocChangeButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                gammaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             } else {
                 gammaLocChangeButton.setNewText("<html><center>Gamma<br>offset</center><html>");
-                gammaLocChangeButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                gammaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             }
         } else {
             gammaLocChangeButton.setNewText("<html><center>Change<br>location</center><html>");
@@ -1508,12 +1508,12 @@ public class HolmesDockWindowsTable extends JPanel {
             public void actionPerformed(ActionEvent actionEvent) {
                 if (!gammaLocChangeMode) { //włączamy tryb przesuwania napisu
                     gammaLocChangeButton.setNewText("<html><center>Change<br>location</center><html>");
-                    gammaLocChangeButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                    gammaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                     gammaLocChangeMode = true;
                     overlord.setNameLocationChangeMode(place_tmp, el_tmp, GUIManager.locationMoveType.GAMMA);
                 } else {
                     gammaLocChangeButton.setNewText("<html><center>Gamma<br>offset</center><html>");
-                    gammaLocChangeButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    gammaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                     gammaLocChangeMode = false;
                     overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
@@ -1613,7 +1613,7 @@ public class HolmesDockWindowsTable extends JPanel {
         //JButton tokensWindowButton = new JButton("<html>Tokens<br>window</html>");
 
         HolmesRoundedButton tokensWindowButton = new HolmesRoundedButton("<html>Tokens<br>window</html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         tokensWindowButton.setMargin(new Insets(0, 0, 0, 0));
         tokensWindowButton.setBounds(columnA_posX, columnB_Y +=40, 90, 40);
         if(!place.isGammaModeActive()) {
@@ -1624,7 +1624,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // XTPN-place przycisk dodania tokenu XTPN
         HolmesRoundedButton add0tokenButton = new HolmesRoundedButton("<html><center>Add<br>0-token</center></html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         add0tokenButton.setMargin(new Insets(0, 0, 0, 0));
         add0tokenButton.setBounds(columnB_posX, columnB_Y, 90, 40);
         if(place.isGammaModeActive()) {
@@ -1652,7 +1652,7 @@ public class HolmesDockWindowsTable extends JPanel {
         // XTPN-place przycisk usunięcia tokenu XTPN
         //JButton remove0tokenButton = new JButton("<html>Remove<br>0-token</html>");
         HolmesRoundedButton remove0tokenButton = new HolmesRoundedButton("<html><center>Remove<br>0-token</center></html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         remove0tokenButton.setMargin(new Insets(0, 0, 0, 0));
         remove0tokenButton.setBounds(columnB_posX+90, columnB_Y, 90, 40);
         if(place.isGammaModeActive()) {
@@ -3767,17 +3767,17 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // XTPN transition przycisk Alfa mode ON/OFF
         HolmesRoundedButton buttonAlfaMode = new HolmesRoundedButton("<html><center>Alpha:<br>ON</center></html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         //JButton buttonAlfaMode = new JButton("Alfa: ON");
         buttonAlfaMode.setName("alphaModeButton");
         buttonAlfaMode.setMargin(new Insets(0, 0, 0, 0));
         buttonAlfaMode.setBounds(columnB_posX, columnB_Y +=20, 65, 35);
         if(transition.isAlphaModeActive()) {
             buttonAlfaMode.setNewText("<html><center>Alpha:<br>ON</center></html>");
-            buttonAlfaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            buttonAlfaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         } else {
             buttonAlfaMode.setNewText("<html><center>Alpha:<br>OFF</center></html>");
-            buttonAlfaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            buttonAlfaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
         }
         buttonAlfaMode.addActionListener(e -> {
             if (doNotUpdate)
@@ -3791,17 +3791,17 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // XTPN transition przycisk Beta ON/OFF
         HolmesRoundedButton buttonBetaMode = new HolmesRoundedButton("<html><center>Beta:<br>ON</center></html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         //JButton buttonBetaMode = new JButton("Beta: ON");
         buttonBetaMode.setName("betaModeButton");
         buttonBetaMode.setMargin(new Insets(0, 0, 0, 0));
         buttonBetaMode.setBounds(columnB_posX+65, columnB_Y, 65, 35);
         if(transition.isBetaModeActive()) {
             buttonBetaMode.setNewText("<html><center>Beta:<br>ON</center></html>");
-            buttonBetaMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            buttonBetaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         } else {
             buttonBetaMode.setNewText("<html><center>Beta:<br>OFF</center></html>");
-            buttonBetaMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            buttonBetaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
         }
         buttonBetaMode.addActionListener(e -> {
             if (doNotUpdate)
@@ -3814,18 +3814,18 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(buttonBetaMode);
 
         // XTPN transition przycisk XTPN ON/OFF
-        HolmesRoundedButton buttonClassicMode = new HolmesRoundedButton("<html><center>XTPN</center></html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        buttonClassicMode = new HolmesRoundedButton("<html><center>XTPN</center></html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         //buttonClassicMode = new JButton("<html><center>PN<b>trans.</center></html>");
         buttonClassicMode.setName("classXTPNswitchButton");
         buttonClassicMode.setMargin(new Insets(0, 0, 0, 0));
         buttonClassicMode.setBounds(columnB_posX+130, columnB_Y, 65, 35);
         if(!transition.isAlphaModeActive() && !transition.isBetaModeActive()) {
             buttonClassicMode.setNewText("<html>Classical<html>");
-            buttonClassicMode.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            buttonClassicMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
         } else { //gdy jeden z trybów włączony
             buttonClassicMode.setNewText("<html>XTPN<html>");
-            buttonClassicMode.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+            buttonClassicMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         }
         buttonClassicMode.addActionListener(e -> {
             if (doNotUpdate)
@@ -3838,7 +3838,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(buttonClassicMode);
 
         // XTPN transition alpha values visibility
-        alfaVisibilityButton = new HolmesRoundedButton("<html>\u03B1:visible</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        alfaVisibilityButton = new HolmesRoundedButton("<html>\u03B1:visible</html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         alfaVisibilityButton.setName("alphaVisButton");
         alfaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         alfaVisibilityButton.setBounds(columnB_posX, columnB_Y+=37, 65, 35);
@@ -3846,10 +3847,10 @@ public class HolmesDockWindowsTable extends JPanel {
         if(transition.isAlphaModeActive()) {
             if(transition.isAlphaRangeVisible()) {
                 alfaVisibilityButton.setNewText("<html>\u03B1:visible<html>");
-                alfaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                alfaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             } else {
                 alfaVisibilityButton.setNewText("<html>\u03B1:hidden<html>");
-                alfaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                alfaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
             alfaVisibilityButton.setEnabled(false);
@@ -3858,29 +3859,14 @@ public class HolmesDockWindowsTable extends JPanel {
         alfaVisibilityButton.addActionListener(e -> {
             if (doNotUpdate)
                 return;
-            HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
-            if (transition.isAlphaRangeVisible()) { //wyłączamy
-                transition.setAlphaRangeVisibility(false);
-                button.setNewText("<html>\u03B1:hidden<html>");
-                button.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 
-                alphaLocChangeButton.setEnabled(false);
-            } else { // włączamy
-                transition.setAlphaRangeVisibility(true);
-                button.setNewText("<html>\u03B1:visible<html>");
-                button.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
-                alphaLocChangeMode = false;
-                overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
-            }
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-            button.setFocusPainted(false);
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
-            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            alphaLocChangeMode = SharedActionsXTPN.access().alphaVisButtonAction(e, transition, alphaLocChangeButton, alphaLocChangeMode, elementLocation);
         });
         components.add(alfaVisibilityButton);
 
         // XTPN transition beta values visibility
-        betaVisibilityButton = new HolmesRoundedButton("<html>\u03B2:visible</html>", "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+        betaVisibilityButton = new HolmesRoundedButton("<html>\u03B2:visible</html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         betaVisibilityButton.setName("betaVisButton1");
         betaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         betaVisibilityButton.setBounds(columnB_posX+65, columnB_Y, 65, 35);
@@ -3888,10 +3874,10 @@ public class HolmesDockWindowsTable extends JPanel {
         if(transition.isBetaModeActive()) {
             if (transition.isBetaRangeVisible()) {
                 betaVisibilityButton.setNewText("<html>\u03B2:visible<html>");
-                betaVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                betaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             } else {
                 betaVisibilityButton.setNewText("<html>\u03B2:hidden<html>");
-                betaVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                betaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
             betaVisibilityButton.setEnabled(false);
@@ -3899,31 +3885,14 @@ public class HolmesDockWindowsTable extends JPanel {
         betaVisibilityButton.addActionListener(e -> {
             if (doNotUpdate)
                 return;
-            HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
-            if (transition.isBetaRangeVisible()) { //wyłączamy
-                transition.setBetaRangeVisibility(false);
-                button.setNewText("<html>\u03B2:hidden<html>");
-                button.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
 
-                betaLocChangeButton.setEnabled(false);
-            } else { //włączamy
-                transition.setBetaRangeVisibility(true);
-                button.setNewText("<html>\u03B2:visible<html>");
-                button.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
-
-                betaLocChangeMode = false;
-                overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
-            }
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-            button.setFocusPainted(false);
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
-            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            betaLocChangeMode = SharedActionsXTPN.access().betaVisButtonAction(e, transition, betaLocChangeButton, betaLocChangeMode, elementLocation);
         });
         components.add(betaVisibilityButton);
 
         // XTPN-transition tau values visibility
         tauVisibilityButton = new HolmesRoundedButton("<html>\u03C4:visible</html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         tauVisibilityButton.setName("tauVisButton");
         tauVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         tauVisibilityButton.setBounds(columnB_posX+130, columnB_Y, 65, 35);
@@ -3931,10 +3900,10 @@ public class HolmesDockWindowsTable extends JPanel {
         if(transition.isAlphaModeActive() || transition.isBetaModeActive()) {
             if (transition.isTauTimerVisible()) {
                 tauVisibilityButton.setNewText("<html>\u03C4:visible<html>");
-                tauVisibilityButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                tauVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             } else {
                 tauVisibilityButton.setNewText("<html>\u03C4:hidden<html>");
-                tauVisibilityButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                tauVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
             tauVisibilityButton.setEnabled(false);
@@ -3942,29 +3911,14 @@ public class HolmesDockWindowsTable extends JPanel {
         tauVisibilityButton.addActionListener(e -> {
             if (doNotUpdate)
                 return;
-            HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
-            if (transition.isTauTimerVisible()) { //wyłączamy
-                transition.setTauTimersVisibility(false);
-                button.setNewText("<html>\u03C4:hidden<html>");
-                button.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
-                tauLocChangeButton.setEnabled(false);
-            } else { //włączamy
-                transition.setTauTimersVisibility(true);
-                button.setNewText("<html>\u03C4:visible<html>");
-                button.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
-                tauLocChangeMode = false;
-                overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
-            }
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-            button.setFocusPainted(false);
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
-            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+
+            tauLocChangeMode = SharedActionsXTPN.access().tauVisButtonAction(e, transition, tauLocChangeButton, tauLocChangeMode, elementLocation);
         });
         components.add(tauVisibilityButton);
 
         // XTPN-transition Alfa offset
         alphaLocChangeButton = new HolmesRoundedButton("<html><center>Alpha<br>offset</center><html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         alphaLocChangeButton.setName("alphaOffsetButton");
         alphaLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         alphaLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
@@ -3973,14 +3927,14 @@ public class HolmesDockWindowsTable extends JPanel {
         if(transition.isAlphaModeActive() && transition.isAlphaRangeVisible()) {
             if(alphaLocChangeMode) {
                 alphaLocChangeButton.setNewText("<html><center>Change<br>location</center><html>");
-                alphaLocChangeButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                alphaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             } else {
                 alphaLocChangeButton.setNewText("<html><center>Alpha<br>offset</center><html>");
-                alphaLocChangeButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                alphaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             }
         } else {
-            alphaLocChangeButton.setNewText("<html><center>Alpha<br>offset</center><html>");
-            alphaLocChangeButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            //alphaLocChangeButton.setNewText("<html><center>Alpha<br>offset</center><html>");
+            //alphaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             alphaLocChangeMode = false;
             alphaLocChangeButton.setEnabled(false);
         }
@@ -3991,12 +3945,12 @@ public class HolmesDockWindowsTable extends JPanel {
             public void actionPerformed(ActionEvent actionEvent) {
                 if (!alphaLocChangeMode) {
                     alphaLocChangeButton.setNewText("<html><center>Change<br>location</center><html>");
-                    alphaLocChangeButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                    alphaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                     alphaLocChangeMode = true;
                     overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.ALPHA);
                 } else {
                     alphaLocChangeButton.setNewText("<html><center>Alpha<br>offset</center><html>");
-                    alphaLocChangeButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    alphaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                     alphaLocChangeMode = false;
                     overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.ALPHA);
                 }
@@ -4011,7 +3965,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // XTPN-transition beta offset
         betaLocChangeButton = new HolmesRoundedButton("<html><center>Beta<br>offset</center><html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         betaLocChangeButton.setName("betaOffsetButton");
         betaLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         betaLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
@@ -4020,14 +3974,14 @@ public class HolmesDockWindowsTable extends JPanel {
         if(transition.isBetaModeActive() && transition.isBetaRangeVisible()) {
             if (betaLocChangeMode) {
                 betaLocChangeButton.setNewText("<html><center>Change<br>location</center><html>");
-                betaLocChangeButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                betaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             } else {
                 betaLocChangeButton.setNewText("<html><center>Beta<br>offset</center><html>");
-                betaLocChangeButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                betaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             }
         } else {
-            betaLocChangeButton.setNewText("<html><center>Beta<br>offset</center><html>");
-            betaLocChangeButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            //betaLocChangeButton.setNewText("<html><center>Beta<br>offset</center><html>");
+            //betaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             betaLocChangeMode = false;
             betaLocChangeButton.setEnabled(false);
         }
@@ -4039,12 +3993,12 @@ public class HolmesDockWindowsTable extends JPanel {
                 //JButton button_tmp = (JButton) actionEvent.getSource();
                 if (!betaLocChangeMode) {
                     betaLocChangeButton.setNewText("<html><center>Change<br>location</center><html>");
-                    betaLocChangeButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                    betaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                     betaLocChangeMode = true;
                     overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.BETA);
                 } else {
                     betaLocChangeButton.setNewText("<html><center>Beta<br>offset</center><html>");
-                    betaLocChangeButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    betaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                     betaLocChangeMode = false;
                     overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.BETA);
                 }
@@ -4059,7 +4013,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // XTPN-transition tau offset
         tauLocChangeButton = new HolmesRoundedButton("<html><center>Tau<br>offset</center><html>"
-                , "bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         tauLocChangeButton.setName("tauOffsetButton");
         tauLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         tauLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
@@ -4068,14 +4022,14 @@ public class HolmesDockWindowsTable extends JPanel {
         if(transition.isAlphaModeActive() || transition.isBetaModeActive()) {
             if (tauLocChangeMode) {
                 tauLocChangeButton.setNewText("<html><center>Change<br>location</center><html>");
-                tauLocChangeButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                tauLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             } else {
                 tauLocChangeButton.setNewText("<html><center>Tau<br>offset</center><html>");
-                tauLocChangeButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                tauLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             }
         } else {
-            tauLocChangeButton.setNewText("<html><center>Tau<br>offset</center><html>");
-            tauLocChangeButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+            //tauLocChangeButton.setNewText("<html><center>Tau<br>offset</center><html>");
+            //tauLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             tauLocChangeMode = false;
             tauLocChangeButton.setEnabled(false);
         }
@@ -4087,12 +4041,12 @@ public class HolmesDockWindowsTable extends JPanel {
                 //JButton button_tmp = (JButton) actionEvent.getSource();
                 if (!tauLocChangeMode) {
                     tauLocChangeButton.setNewText("<html><center>Change<br>location</center><html>");
-                    tauLocChangeButton.repaintBackground("bMpressed_1.png", "bMpressed_2.png", "bMpressed_3.png");
+                    tauLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                     tauLocChangeMode = true;
                     overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.TAU);
                 } else {
                     tauLocChangeButton.setNewText("<html><center>Tau<br>offset</center><html>");
-                    tauLocChangeButton.repaintBackground("bMtemp1.png", "bMtemp2.png", "bMtemp3.png");
+                    tauLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                     tauLocChangeMode = false;
                     overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.TAU);
                 }
@@ -4529,6 +4483,8 @@ public class HolmesDockWindowsTable extends JPanel {
         panel.repaint();
         add(panel);
     }
+
+
 
 
     //**************************************************************************************
@@ -5640,6 +5596,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 subHeaders[i + 1] = "Inv. #" + (subsInv.get(i) + 1) + " (size: " + invSize + ")";
             }
         }
+
+        @SuppressWarnings("MismatchedReadAndWriteOfArray")
         String[] nonsHeaders = new String[nonsInv.size() + 1];
         nonsHeaders[0] = "---";
         if (nonsInv.size() > 0) {
@@ -6202,9 +6160,16 @@ public class HolmesDockWindowsTable extends JPanel {
         showDetailsButton.setIcon(Tools.getResIcon32("/icons/menu/menu_invViewer.png"));
         showDetailsButton.setBounds(colA_posX, positionY += 30, 120, 32);
         showDetailsButton.addActionListener(actionEvent -> {
-            if (selectedP_invIndex == -1)
+            if (selectedP_invIndex == -1) {
                 return;
-            //new HolmesInvariantsViewer(selectedT_invIndex);
+            }
+            try {
+                new HolmesInvariantsViewer(selectedT_invIndex);
+            } catch (Exception ex) {
+                overlord.log("Error (468456017) : probably not implemented features for p-invariants in the t-invariants code window. " +
+                        "Exception: "+ex.getMessage(), "error", true);
+            }
+
         });
         components.add(showDetailsButton);
 
@@ -8206,22 +8171,6 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     /**
-     * Metoda zwraca okno tekstowe na bazie podanego comboBox.
-     * @param spinner JSpinner - ComboBox po ludzku
-     * @return JFormattedTextField - chyba TextBox?
-     */
-    public JFormattedTextField getTextField(JSpinner spinner) {
-        JComponent editor = spinner.getEditor();
-        if (editor instanceof JSpinner.DefaultEditor) {
-            return ((JSpinner.DefaultEditor) editor).getTextField();
-        } else {
-            System.err.println("Unexpected editor type: " + spinner.getEditor().getClass()
-                    + " isn't a descendant of DefaultEditor");
-            return null;
-        }
-    }
-
-    /**
      * Metoda odpowiedzialna za przerysowanie grafu obrazu w arkuszu sieci.
      */
     private void repaintGraphPanel() {
@@ -8354,244 +8303,6 @@ public class HolmesDockWindowsTable extends JPanel {
             repaintGraphPanel();
         }
     }
-
-
-    // XTPN zmiany alfa, beta i gamma:
-    /**
-     * Metoda ustawia nową wartość czasu alfaMinimum dla tranzycji XTPN.
-     * @param newAlphaMin (double) nowa wartość alfaMinimum.
-     * @return (true) jeżeli zmiana wartości się udała.
-     */
-    /*
-    private boolean setAlfaMinTime(double newAlphaMin) {
-        if (mode == XTPN_TRANS) {
-            TransitionXTPN transition = (TransitionXTPN) element;
-            double alfaMax = transition.getAlphaMax_xTPN();
-            if(newAlphaMin > alfaMax) {
-                //String[] options = {"Increase \u03B1(max) to \u03B1(min)", "Decrease \u03B1(min) to \u03B1(max)", "Cancel"};
-                String[] options = {"\u25B2 Increase \u03B1-max to "+newAlphaMin, "\u25BC Decrease \u03B1-min to "+alfaMax, "\u274C Cancel"};
-                int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B1-min = " +
-                                newAlphaMin + " cannot be higher than current \u03B1-max = " + alfaMax +
-                                "\nIncrease old alphaMaximum (default action) or decrease new alphaMinimum?",
-                        "Alpha range problem: \u03B1-min too high",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-                switch(answer) {
-                    case 0: //powiększenie alphaMax do nowego alphaMin
-                        transition.setAlphaMax_xTPN(newAlphaMin, true);
-                        doNotUpdate = true;
-                        alphaMaxTextField.setValue(newAlphaMin);
-                        doNotUpdate = false;
-                        transition.setAlphaMin_xTPN(newAlphaMin, true);
-                        repaintGraphPanel();
-                        return true;
-                    case 1: //redukcja nowego alphaMin do aktualnego alphaMax
-                        transition.setAlphaMin_xTPN(alfaMax, true);
-                        doNotUpdate = true;
-                        alphaMinTextField.setValue(alfaMax);
-                        doNotUpdate = false;
-                        repaintGraphPanel();
-                        return true;
-                    default: //cancel
-                        return false;
-                }
-            }
-            transition.setAlphaMin_xTPN(newAlphaMin, false);
-            repaintGraphPanel();
-        }
-        return true;
-    }
-     */
-
-    /**
-     * Metoda ustawia nową wartość czasu alfaMaximum dla tranzycji XTPN.
-     * @param newAlphaMax (double) nowa wartość alfaMaximum.
-     * @return (true) jeżeli zmiana wartości się udała.
-     */
-    /*
-    private boolean setAlfaMaxTime(double newAlphaMax) {
-        if (mode == XTPN_TRANS) {
-            TransitionXTPN transition = (TransitionXTPN) element;
-            double alfaMin = transition.getAlphaMin_xTPN();
-
-            //tranzycje wejściowe i wyjściowe nie mogą być XTPN z zerami, tylko klasycznymi
-            double accuracy = overlord.simSettings.getCalculationsAccuracy();
-            if(alfaMin < accuracy && newAlphaMax < accuracy &&
-                    ( ( transition.getBetaMin_xTPN() < accuracy && transition.getBetaMax_xTPN() < accuracy )
-                    || !transition.isBetaActiveXTPN() ) ) { //albo bety są na zera, albo w ogóle tryb beta wyłączony
-                if(transition.isInputTransition() || transition.isOutputTransition()) {
-                    JOptionPane.showMessageDialog(null,
-                                "Input or output XTPN transitions cannot be immediate. Alternatively" +
-                                        "\nturn off both Alfa and Beta modes for a classical immediate transition.",
-                            "Immediate int/out XTPN transitions problem", JOptionPane.ERROR_MESSAGE);
-                    return false;
-                }
-            }
-
-            //jeśli alfaMax=alfaMin=0, to Alfa=OFF
-            if(alfaMin < accuracy && newAlphaMax < accuracy) { //jeśli zero
-                doNotUpdate = true;
-                alphaMaxTextField.setValue(0.0);
-                doNotUpdate = false;
-                transition.setAlphaMax_xTPN(0.0, false);
-                transition.setAlphaXTPNstatus(false);
-                repaintGraphPanel();
-                return true;
-            }
-
-
-            if(newAlphaMax < alfaMin) {
-                //String[] options = {"Increase \u03B1(max) to \u03B1(min)", "Decrease \u03B1(min) to \u03B1(max)", "Cancel"};
-                String[] options = {"\u25B2 Increase \u03B1-max to "+alfaMin, "\u25BC Decrease \u03B1-min "+newAlphaMax, "\u274C Cancel"};
-                int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B1-max = " +
-                                newAlphaMax + " cannot be lower than current \u03B1-min = " + alfaMin +
-                                "\nIncrease new alphaMaximum or decrease old alphaMinimum (default action)?",
-                        "Alpha range problem: \u03B1-max too low",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                switch(answer) {
-                    case 0: //powiększenie nowego alphaMax do starej wartości alphaMin
-                        transition.setAlphaMax_xTPN(alfaMin, true);
-                        doNotUpdate = true;
-                        alphaMaxTextField.setValue(alfaMin);
-                        doNotUpdate = false;
-                        repaintGraphPanel();
-                        return true;
-                    case 1: //zmniejszenie starego alphaMin do nowego alphaMax
-                        transition.setAlphaMin_xTPN(newAlphaMax, true);
-                        doNotUpdate = true;
-                        alphaMinTextField.setValue(newAlphaMax);
-                        doNotUpdate = false;
-                        transition.setAlphaMax_xTPN(newAlphaMax, false);
-                        repaintGraphPanel();
-                        return true;
-                    default: //cancel
-                        return false;
-                }
-            }
-            transition.setAlphaMax_xTPN(newAlphaMax, false);
-            repaintGraphPanel();
-        }
-        return true;
-    }
-
-     */
-
-    /**
-     * Metoda ustawia nową wartość czasu betaMinimum dla tranzycji XTPN.
-     * @param newBetaMin (double) nowa wartość betaMinimum.
-     * @return (true) jeżeli zmiana wartości się udała.
-     */
-    /*
-    private boolean setBetaMinTime(double newBetaMin) {
-        if (mode == XTPN_TRANS) {
-            TransitionXTPN transition = (TransitionXTPN) element;
-            double betaMax = transition.getBetaMax_xTPN();
-            if(newBetaMin > betaMax) {
-                //String[] options = {"Increase \u03B2(max) to \u03B2(min)", "Decrease \u03B2(min) to \u03B2(max)", "Cancel"};
-                String[] options = {"\u25B2 Increase \u03B2-max to "+newBetaMin, "\u25BC Decrease \u03B2-min to "+betaMax, "\u274C Cancel"};
-                int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B2-min = " +
-                                newBetaMin + " cannot be higher than current \u03B2-max = " + betaMax +
-                                "\nIncrease old betaMaximum (default action) or decrease new betaMinimum?",
-                        "Beta range problem: \u03B2-min too high",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-                switch(answer) {
-                    case 0: //powiększenie betaMax do nowego betaMin
-                        transition.setBetaMax_xTPN(newBetaMin, true);
-                        doNotUpdate = true;
-                        betaMaxTextField.setValue(newBetaMin);
-                        doNotUpdate = false;
-                        transition.setBetaMin_xTPN(newBetaMin, true);
-                        repaintGraphPanel();
-                        return true;
-                    case 1: //redukcja nowego betaMin do aktualnego betaMax
-                        transition.setBetaMin_xTPN(betaMax, true);
-                        doNotUpdate = true;
-                        betaMinTextField.setValue(betaMax);
-                        doNotUpdate = false;
-                        repaintGraphPanel();
-                        return true;
-                    default: //cancel
-                        return false;
-                }
-            }
-            transition.setBetaMin_xTPN(newBetaMin, false);
-            repaintGraphPanel();
-        }
-        return true;
-    }
-
-     */
-
-    /**
-     * Metoda ustawia nową wartość czasu betaMaximum dla tranzycji XTPN.
-     * @param newBetaMax (double) nowa wartość betaMaximum.
-     * @return (true) jeżeli zmiana wartości się udała.
-     */
-    /*
-    private boolean setBetaMaxTime(double newBetaMax) {
-        if (mode == XTPN_TRANS) {
-            TransitionXTPN transition = (TransitionXTPN) element;
-            double betaMin = transition.getBetaMin_xTPN();
-
-            double accuracy = overlord.simSettings.getCalculationsAccuracy();
-            if(betaMin < accuracy && newBetaMax < accuracy &&
-                    ( ( transition.getAlphaMin_xTPN() < accuracy && transition.getAlphaMax_xTPN() < accuracy)
-                    || !transition.isAlphaActiveXTPN() ) ) { //albo alfy są na zero, albo cały tryb alfa jest wyłączony
-                boolean input = transition.isInputTransition();
-                boolean output = transition.isOutputTransition();
-                if( input || output ) {
-                    JOptionPane.showMessageDialog(null,
-                            "Input or output XTPN transitions cannot be immediate. Alternatively" +
-                                    "\nturn off both Alfa and Beta modes for a classical immediate transition.",
-                            "Immediate int/out XTPN transitions problem", JOptionPane.ERROR_MESSAGE);
-                    return false;
-                }
-            }
-
-            //jeśli betaMax=betaMin=0, to Beta=OFF
-            if(betaMin < accuracy && newBetaMax < accuracy) { //jeśli zero
-                doNotUpdate = true;
-                betaMaxTextField.setValue(0.0);
-                doNotUpdate = false;
-                transition.setBetaMax_xTPN(0.0, false);
-                transition.setBetaXTPNstatus(false);
-                repaintGraphPanel();
-                return true;
-            }
-
-            if(newBetaMax < betaMin) {
-                //String[] options = {"Increase \u03B2(max) to \u03B2(min)", "Decrease \u03B2(min) to \u03B2(max)", "Cancel"};
-                String[] options = {"\u25B2 Increase \u03B2-max to "+betaMin, "\u25BC Decrease \u03B2-min to "+newBetaMax, "\u274C Cancel"};
-                int answer = JOptionPane.showOptionDialog(null, "Proposed value \u03B2-max = " +
-                                newBetaMax + " cannot be lower than current \u03B2-min = " + betaMin +
-                                "\nIncrease new betaMax or decrease old betaMin (default action)?",
-                        "Beta range problem: \u03B2-max too low",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                switch(answer) {
-                    case 0: //powiększenie nowego betaMax do starej wartości betaMin
-                        transition.setBetaMax_xTPN(betaMin, true);
-                        doNotUpdate = true;
-                        betaMaxTextField.setValue(betaMin);
-                        doNotUpdate = false;
-                        repaintGraphPanel();
-                        return true;
-                    case 1: //zmniejszenie starego betaMin do nowego betaMax
-                        transition.setBetaMin_xTPN(newBetaMax, true);
-                        doNotUpdate = true;
-                        betaMinTextField.setValue(newBetaMax);
-                        doNotUpdate = false;
-                        transition.setBetaMax_xTPN(newBetaMax, false);
-                        repaintGraphPanel();
-                        return true;
-                    default: //cancel
-                        return false;
-                }
-            }
-            transition.setBetaMax_xTPN(newBetaMax, false);
-            repaintGraphPanel();
-        }
-        return true;
-    }
-    */
 
     /**
      * Metoda zmienia współrzędną X dla wierzchołka sieci.

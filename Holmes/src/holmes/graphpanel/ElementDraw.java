@@ -25,7 +25,6 @@ import static holmes.graphpanel.EditorResources.*;
 public final class ElementDraw {
 	private static final Font f_plain = new Font("TimesRoman", Font.PLAIN, 10);
 	private static final Font f_bold = new Font("TimesRoman", Font.BOLD, 12);
-
 	private static final Font f_Big = new Font("TimesRoman", Font.BOLD, 14);
 	private static final Font f_BigL = new Font("TimesRoman", Font.PLAIN, 14);
 	
