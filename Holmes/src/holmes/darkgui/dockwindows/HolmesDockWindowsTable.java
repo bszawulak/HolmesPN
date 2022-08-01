@@ -1841,13 +1841,13 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(nameLocationYSpinner);
 
         // XTPN-place przycisk zmiany lokalizacj napisu
-        //JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
-        JButton nameLocChangeButton = new JButton("<html><center>Name<br>offset</center><html>");
-        nameLocChangeButton.setName("LocNameChanger");
-        nameLocChangeButton.setBackground(Color.GREEN);
+
+        HolmesRoundedButton nameLocChangeButton = new HolmesRoundedButton("<html><center>Name<br>offset</center><html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        //JButton nameLocChangeButton = new JButton("<html><center>Name<br>offset</center><html>");
+        nameLocChangeButton.setName("placeLocOffsetButton");
         nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
-        //nameLocChangeButton.setBounds(columnA_posX + 90, columnA_Y += 25, 150, 40);
-        nameLocChangeButton.setBounds(columnB_posX+131, columnA_Y - 15, 65, 30);
+        nameLocChangeButton.setBounds(columnB_posX+131, columnA_Y - 15, 65, 35);
         nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         nameLocChangeButton.setFocusPainted(false);
         nameLocChangeButton.addActionListener(new ActionListener() {
@@ -1855,16 +1855,16 @@ public class HolmesDockWindowsTable extends JPanel {
             private Place place_tmp;
             private ElementLocation el_tmp;
             public void actionPerformed(ActionEvent actionEvent) {
-                JButton button_tmp = (JButton) actionEvent.getSource();
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
 
                 if (!nameLocChangeMode) {
-                    //button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
-                    button_tmp.setBackground(Color.BLUE);
+                    button.setNewText("<html><center>Change<br>location</center><html>");
+                    button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                     nameLocChangeMode = true;
                     overlord.setNameLocationChangeMode(place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
-                    //button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
-                    button_tmp.setBackground(Color.GREEN);
+                    button.setNewText("<html><center>Name<br>offset</center><html>");
+                    button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                     nameLocChangeMode = false;
                     overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
@@ -3853,6 +3853,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 alfaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
+            if(transition.isAlphaRangeVisible()) {
+                alfaVisibilityButton.setNewText("<html>\u03B1:visible<html>");
+            } else {
+                alfaVisibilityButton.setNewText("<html>\u03B1:hidden<html>");
+            }
             alfaVisibilityButton.setEnabled(false);
         }
 
@@ -3880,6 +3885,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 betaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
+            if (transition.isBetaRangeVisible()) {
+                betaVisibilityButton.setNewText("<html>\u03B2:visible<html>");
+            } else {
+                betaVisibilityButton.setNewText("<html>\u03B2:hidden<html>");
+            }
             betaVisibilityButton.setEnabled(false);
         }
         betaVisibilityButton.addActionListener(e -> {
@@ -3906,6 +3916,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 tauVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
+            if (transition.isTauTimerVisible()) {
+                tauVisibilityButton.setNewText("<html>\u03C4:visible<html>");
+            } else {
+                tauVisibilityButton.setNewText("<html>\u03C4:hidden<html>");
+            }
             tauVisibilityButton.setEnabled(false);
         }
         tauVisibilityButton.addActionListener(e -> {
@@ -4420,12 +4435,13 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(nameLocationYSpinner);
 
         // XTPN-transition zmiana lokalizacji napisu
-        JButton nameLocChangeButton = new JButton("<html><center>Name<br>offset</center><html>");
-        nameLocChangeButton.setName("LocNameChanger");
-        nameLocChangeButton.setBackground(Color.GREEN);
+
+        HolmesRoundedButton nameLocChangeButton = new HolmesRoundedButton("<html><center>Name<br>offset</center><html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        nameLocChangeButton.setName("transNameOffsetButton");
         nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
         nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
-        nameLocChangeButton.setBounds(columnB_posX+131, columnA_Y - 15, 65, 30);
+        nameLocChangeButton.setBounds(columnB_posX+131, columnA_Y - 15, 65, 35);
         nameLocChangeButton.setFocusPainted(false);
         nameLocChangeButton.addActionListener(new ActionListener() {
             // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
@@ -4433,14 +4449,16 @@ public class HolmesDockWindowsTable extends JPanel {
             private ElementLocation el_tmp;
 
             public void actionPerformed(ActionEvent actionEvent) {
-                JButton button_tmp = (JButton) actionEvent.getSource();
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
 
                 if (!nameLocChangeMode) {
-                    button_tmp.setBackground(Color.BLUE);
+                    button.setNewText("<html><center>Change<br>location</center><html>");
+                    button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                     nameLocChangeMode = true;
                     overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
-                    button_tmp.setBackground(Color.GREEN);
+                    button.setNewText("<html><center>Name<br>offset</center><html>");
+                    button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                     nameLocChangeMode = false;
                     overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }

@@ -25,17 +25,12 @@ import static holmes.graphpanel.EditorResources.*;
 public final class ElementDraw {
 	private static final Font f_plain = new Font("TimesRoman", Font.PLAIN, 10);
 	private static final Font f_bold = new Font("TimesRoman", Font.BOLD, 12);
-	private static final Font f_Big = new Font("TimesRoman", Font.BOLD, 14);
-	private static final Font f_BigL = new Font("TimesRoman", Font.PLAIN, 14);
-	
 	private static final Color cRed = Color.red;
 	private static final Color cGreen = Color.green;
 	private static final Color cBlue = Color.blue;
 	private static final Color cYellow = new Color(255,155,0) ;
 	private static final Color cGrey = Color.gray;
 	private static final Color cBlack = Color.black;
-
-	private static final Color darkGreen = new Color(0, 75, 0);
 	private static final Color lightSky = new Color(0, 135, 230);
 	private static final Color lightSky2 = new Color(0, 185, 230);
 	private static final Color lightSky3 = new Color(0, 215, 230);
@@ -50,11 +45,11 @@ public final class ElementDraw {
 
 	/**
 	 * Metoda rysuje celownik nad wskazanym elementem.
-	 * @param g Graphics2D - obiekt canvas
-	 * @param x int - poziom
-	 * @param y int - pion
-	 * @param color Color - kolor, a co?
-	 * @param xTPNelement boolean - true, jeśli XTPN
+	 * @param g (<b>Graphics2D</b>)  obiekt canvas.
+	 * @param x (<b>int</b>) poziom.
+	 * @param y (<b>int</b>) pion.
+	 * @param color (<b>Color</b>) kolor, a co?.
+	 * @param xTPNelement (<b>boolean</b>) true, jeśli XTPN.
 	 */
 	private static void drawCrossHair(Graphics2D g, int x, int y, Color color, boolean xTPNelement){
 		if(xTPNelement) {
@@ -81,12 +76,13 @@ public final class ElementDraw {
 	//TODO: znacznik tranzycji
 	/**
 	 * Główna metoda statyczna odpowiedzialna za rysowanie węzłów sieci.
-	 * @param node Node - obiekt węzła
-	 * @param g Graphics2D - obiekt rysujący
-	 * @param sheetId int - numer arkusza
-	 * @param eds ElementDrawSettings - opcje rysowania
-	 * @return Graphics2D - obiekt rysujący
+	 * @param node (<b>Node</b>) obiekt węzła.
+	 * @param g (<b>Graphics2D</b>) obiekt rysujący.
+	 * @param sheetId (<b>int</b>) numer arkusza.
+	 * @param eds (<b>ElementDrawSettings</b>) opcje rysowania.
+	 * @return (<b>Graphics2D</b>) - obiekt rysujący.
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	public static Graphics2D drawElement(Node node, Graphics2D g, int sheetId, ElementDrawSettings eds) {
 		if(node instanceof Transition) { 
 			Transition trans = (Transition)node;
@@ -232,14 +228,10 @@ public final class ElementDraw {
 				g.setColor(back);
 
 				if(trans.qSimDrawed && el.qSimDrawed) {
-					//int w = nodeBounds.width;
-					//int h = nodeBounds.height;
 					if(trans.qSimFired == 0) {
 						
 						if(trans.qSimDrawStats) {
 							try {
-								//BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/transDead.png"));
-								//g.drawImage(img, null, nodeBounds.x, nodeBounds.y+8);
 								g.setColor(new Color(96,96,96));
 								g.fillRect(nodeBounds.x+2, nodeBounds.y+10, 23, 10);
 								g.setColor(Color.BLACK);
@@ -270,7 +262,6 @@ public final class ElementDraw {
 							g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height-(trans.qSimFillValue-2));
 						}
 					}
-					//g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
 				} else {
 					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
 				}
@@ -534,34 +525,9 @@ public final class ElementDraw {
 					}
 				}
 
-				//dubel
-				/*
-				if (el.isPortalSelected() && !el.isSelected()) {
-					g.setColor(Color.BLACK);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
-					g.setColor(EditorResources.selectionColorLevel1);
-					g.setStroke(EditorResources.glowStrokeLevel1);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
-					g.setColor(EditorResources.selectionColorLevel2);
-					g.setStroke(EditorResources.glowStrokeLevel2);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.cyan, xTPNtrans);
-
-					if(eds.snoopyMode) {
-						g.setColor(portalSelColor);
-						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-					} else {
-						g.setColor(Color.BLACK);
-						g.setStroke(new BasicStroke(1.5F));
-						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
-						g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
-					}
-				}*/
-
-				/*
-				if (eds.color == true || trans.getTransType() == TransitionType.CPNbasic) {
+				if (eds.color || trans.getTransType() == TransitionType.CPNbasic) {
 					Font currentFont = g.getFont();
 					Font newFont = currentFont.deriveFont(currentFont.getSize() * 1.4F);
 					g.setFont(newFont);
@@ -584,58 +550,48 @@ public final class ElementDraw {
 					int txtW3 = g.getFontMetrics().stringWidth(txtT3);
 					int txtW4 = g.getFontMetrics().stringWidth(txtT4);
 					int txtW5 = g.getFontMetrics().stringWidth(txtT5);
-					
-					
-					
 					g.setColor(Color.black);
 					String txt = "<";
 					int posX = nodeBounds.x - (g.getFontMetrics().stringWidth(txt) / 2 ) - 15;
 					int posY = nodeBounds.y - 1;
 					g.drawString(txt, posX, posY);
 					int lastSize = g.getFontMetrics().stringWidth(txt);
-					
 					if(r0 > 0) {
 						posX += (txtW0 - 6*txtT0.length() + lastSize);
 						g.setColor(cRed);
 						g.drawString(txtT0, posX, posY);
 						lastSize = txtW0;
 					}
-					
 					if(r1 > 0) {
 						posX += (txtW1 - 6*txtT1.length()  + lastSize);
 						g.setColor(cGreen);
 						g.drawString(txtT1, posX, posY);
 						lastSize = txtW1;
 					}
-					
 					if(r2 > 0) {
 						posX += (txtW2 - 6*txtT2.length()  + lastSize);
 						g.setColor(cBlue);
 						g.drawString(txtT2, posX, posY);
 						lastSize = txtW2;
 					}
-					
 					if(r3 > 0) {
 						posX += (txtW3 - 6*txtT3.length()  + lastSize);
 						g.setColor(cYellow);
 						g.drawString(txtT3, posX, posY);
 						lastSize = txtW3;
 					}
-					
 					if(r4 > 0) {
 						posX += (txtW4 - 6*txtT4.length()  + lastSize);
 						g.setColor(cGrey);
 						g.drawString(txtT4, posX, posY);
 						lastSize = txtW4;
 					}
-					
 					if(r5 > 0) {
 						posX += (txtW5 - 6*txtT5.length()  + lastSize);
 						g.setColor(cBlack);
 						g.drawString(txtT5, posX, posY);
 						lastSize = txtW5;
 					}
-					
 					txt = ">";
 					posX += (g.getFontMetrics().stringWidth(txt) );
 					g.setColor(cBlack);
@@ -643,7 +599,7 @@ public final class ElementDraw {
 					
 					g.setFont(currentFont);
 				}
-				*/
+
 			}
 		} else if(node instanceof Place) { // MIEJSCA  //TODO: znacznik miejsc
 			Place place = (Place)node;
@@ -1046,13 +1002,14 @@ public final class ElementDraw {
 	
 	/**
 	 * Główna metoda statyczna odpowiedzialna za rysowanie łuku sieci.
-	 * @param arc (<b>Arc</b>) obiekt łuku
-	 * @param g (<b>Graphics2D</b>) obiekt rysujący
-	 * @param sheetId (<b>int</b>) numer arkusza
-	 * @param zoom (<b>int</b>) zoom
-	 * @param eds (<b>ElementDrawSettings</b>) ustawienia rysowania
-	 * @return (<b>Graphics2D</b>) obiekt rysujący
+	 * @param arc (<b>Arc</b>) obiekt łuku.
+	 * @param g (<b>Graphics2D</b>) obiekt rysujący.
+	 * @param sheetId (<b>int</b>) numer arkusza.
+	 * @param zoom (<b>int</b>) zoom.
+	 * @param eds (<b>ElementDrawSettings</b>) ustawienia rysowania.
+	 * @return (<b>Graphics2D</b>) obiekt rysujący.
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	public static Graphics2D drawArc(Arc arc, Graphics2D g, int sheetId, int zoom, ElementDrawSettings eds) {
 		if (arc.getLocationSheetId() != sheetId)
 			return g;
@@ -1451,15 +1408,14 @@ public final class ElementDraw {
 
 	/**
 	 * Metoda rysuje łuk łamany.
-	 *
-	 * @param g            (Graphics2D) obiekt rysujący
-	 * @param arc          (Arc) - łuk sieci
-	 * @param startP       (Point) - punkt startowy łuku
-	 * @param endPx        (int) współrzędna x elementu docelowego łuku
-	 * @param endPy        (int) współrzędna y elementu docelowego łuku
-	 * @param breaksVector ArrayList[Point] - wektor punktów łąmiących
-	 * @param breaks       (int) liczba punktów łamiących
-	 * @param eds
+	 * @param g (<b></b>Graphics2D) obiekt rysujący
+	 * @param arc (<b>Arc</b>) łuk sieci.
+	 * @param startP (<b>Point</b>) punkt startowy łuku.
+	 * @param endPx (<b>int</b>) współrzędna x elementu docelowego łuku.
+	 * @param endPy (<b>int</b>) współrzędna y elementu docelowego łuku.
+	 * @param breaksVector (<b>ArrayList[Point]</b>) wektor punktów łąmiących.
+	 * @param breaks (<b>int</b>) liczba punktów łamiących
+	 * @param eds (<b>ElementDrawSettings</b>)
 	 */
 	private static void drawBreaks(Graphics2D g, Arc arc, Point startP, int endPx, int endPy, ArrayList<Point> breaksVector, int breaks, ElementDrawSettings eds) {
 		if(arc.qSimForcedArc) {
@@ -1636,9 +1592,9 @@ public final class ElementDraw {
 
 	/**
 	 * Metoda rysująca tokeny w miejscu.
-	 * @param g Graphics2D - obiekt rysujący
-	 * @param place Place - obiekt miejsca
-	 * @param nodeBounds Rectangle - zakres rysowania
+	 * @param g (<b>Graphics2D</b>) obiekt rysujący.
+	 * @param place (<b>Place</b>) obiekt miejsca.
+	 * @param nodeBounds (<b>Rectangle</b>) zakres rysowania.
 	 */
 	private static void drawTokens(Graphics2D g, Place place, Rectangle nodeBounds) {
 		g.setColor(Color.black);
@@ -1900,18 +1856,20 @@ public final class ElementDraw {
 			
 			g.setColor(EditorResources.tokenDefaultColor);
 
-			try {
-				BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/tokenV2.png"));
-				g.drawImage(img, null, (int) a - 5, (int) b - 5);
-			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (371587114) | Exception:  "+ex.getMessage(), "error", true);
+			boolean trollMode = false;
+			if(trollMode) {
+				try {
+					BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/tokenV2.png"));
+					g.drawImage(img, null, (int) a - 5, (int) b - 5);
+				} catch (Exception ex) {
+					GUIManager.getDefaultGUIManager().log("Error (371587114) | Exception:  "+ex.getMessage(), "error", true);
+				}
+			} else {
+				g.fillOval((int) a - 5, (int) b - 5, 10, 10);
+				g.setColor(Color.black);
+				g.setStroke(EditorResources.tokenDefaultStroke);
+				g.drawOval((int) a - 5, (int) b - 5, 10, 10);
 			}
-
-//			g.fillOval((int) a - 5, (int) b - 5, 10, 10);
-//			g.setColor(Color.black);
-//			g.setStroke(EditorResources.tokenDefaultStroke);
-//			g.drawOval((int) a - 5, (int) b - 5, 10, 10);
-			
 			
 			String wTxt = Integer.toString(weight);
 			if(arc.getArcType() == TypeOfArc.COLOR) {
@@ -1938,16 +1896,16 @@ public final class ElementDraw {
 	
 	/**
 	 * Rysowanie tokenów po łuku łamanym. Euklides dziękuje i idzie w cholerę, bo ma dosyć.
-	 * @param g Graphics2D - obiekt rysujący
-	 * @param STEP_COUNT int - max. licznik kroków (faz rysowania)
-	 * @param step int - aktualny krok
-	 * @param breakPoints ArrayList[Point] - lista punktów łamiących łuku
-	 * @param breaks int - liczba powyższych
-	 * @param startPos Point - pozycja węzła startowego
-	 * @param endPos Point - pozycja węzła końcowego łuku
-	 * @param arcWidth int - szerokość kreski łuku
-	 * @param weight int - waga łuku
-	 * @param arc Arc - obiekt łuku
+	 * @param g (<b>Graphics2D</b>) obiekt rysujący.
+	 * @param STEP_COUNT (<b>int</b>) max. licznik kroków (faz rysowania).
+	 * @param step (<b>int</b>) aktualny krok.
+	 * @param breakPoints (<b>ArrayList[Point]</b>) lista punktów łamiących łuku.
+	 * @param breaks (<b>int</b>) liczba powyższych.
+	 * @param startPos (<b>Point</b>) pozycja węzła startowego.
+	 * @param endPos (<b>Point</b>) pozycja węzła końcowego łuku.
+	 * @param arcWidth (<b>int</b>) szerokość kreski łuku.
+	 * @param weight (<b>int</b>) waga łuku.
+	 * @param arc (<b>Arc</b>) obiekt łuku.
 	 */
 	private static void handleBrokenArc(Graphics2D g, int STEP_COUNT, int step, ArrayList<Point> breakPoints,
 			int breaks, Point startPos, Point endPos, double arcWidth, int weight, Arc arc) {

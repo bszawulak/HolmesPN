@@ -514,10 +514,8 @@ public class GraphicalSimulator {
 				else
 					place = (Place) arc.getStartNode();
 				
-				if(arc.getArcType() != TypeOfArc.NORMAL && arc.getArcType() != TypeOfArc.COLOR
-						&& arc.getArcType() != TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
-					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
-							" arc: "+arc, "error", true);
+				if(arc.getArcType() != TypeOfArc.NORMAL && arc.getArcType() != TypeOfArc.COLOR && arc.getArcType() != TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
+					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ " arc: "+arc, "warning", true);
 				}
 				
 				if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {
@@ -569,10 +567,8 @@ public class GraphicalSimulator {
 			else
 				place = (Place) arc.getStartNode();
 
-			if(arc.getArcType() != TypeOfArc.NORMAL && arc.getArcType() != TypeOfArc.COLOR
-					&& arc.getArcType() != TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
-				overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
-						" arc: "+arc, "error", true);
+			if(arc.getArcType() != TypeOfArc.NORMAL && arc.getArcType() != TypeOfArc.COLOR && arc.getArcType() != TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
+				overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ " arc: "+arc, "warning", true);
 			}
 
 			if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {

@@ -542,8 +542,7 @@ public class SimulatorXTPN implements IEngineXTPN {
 
                 PlaceXTPN place = (PlaceXTPN) arc.getEndNode();
                 if(!(arc.getArcType() == Arc.TypeOfArc.NORMAL || arc.getArcType() == Arc.TypeOfArc.READARC)) {
-                    overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+
-                            " arc: "+ arc, "error", true);
+                    overlord.log("Warning: non-standard arc used to produce tokens: "+place.getName()+ " arc: "+ arc, "warning", true);
                 }
 
                 int weight = arc.getWeight();

@@ -6,13 +6,12 @@ import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.PlaceXTPN;
 import holmes.petrinet.elements.TransitionXTPN;
-import holmes.windows.xtpn.HolmesNodeInfoXTPN;
 import holmes.workspace.WorkspaceSheet;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class SharedActionsXTPN {
     private static final SharedActionsXTPN singleton = new SharedActionsXTPN();
     private GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -55,21 +54,11 @@ public class SharedActionsXTPN {
             }
 
             transition.setAlphaModeStatus(false);
-
-            if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-            } else { //jeśli z podokna Holmesa
-            }
-
             button.setNewText("<html>Alpha: OFF</html>");
             button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
             if(!transition.isBetaModeActive()) {
                 //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
-
-                if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-                } else {
-                }
-
                 buttonClassicMode.setNewText("<html>Classical<html>");
                 buttonClassicMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 tauVisibilityButton.setEnabled(false);
@@ -78,11 +67,6 @@ public class SharedActionsXTPN {
             }
         } else {
             transition.setAlphaModeStatus(true);
-
-            if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-            } else { //jeśli z podokna Holmesa
-            }
-
             button.setNewText("<html>Alpha: ON</html>");
             button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
@@ -94,10 +78,6 @@ public class SharedActionsXTPN {
             }
 
             if(!transition.isBetaModeActive()) { //jeśli był tryb klasyczny
-                if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-                } else { //jeśli z podokna Holmesa
-                }
-
                 buttonClassicMode.setNewText("<html>XTPN<html>");
                 buttonClassicMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 tauVisibilityButton.setEnabled(true);
@@ -138,20 +118,11 @@ public class SharedActionsXTPN {
                 }
             }
             transition.setBetaModeStatus(false);
-
-            if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-            } else { //jeśli z podokna Holmesa
-            }
-
             button.setNewText("<html>Beta: OFF</html>");
             button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
             if(!transition.isAlphaModeActive()) {
                 //jeśli jesteśmy w trybie XTPN, tutaj przechodzimy na klasyczną tranzycję
-                if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-                } else { //jeśli z podokna Holmesa
-                }
-
                 button.setNewText("<html>Classical<html>");
                 buttonClassicMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 tauVisibilityButton.setEnabled(false);
@@ -159,10 +130,6 @@ public class SharedActionsXTPN {
             }
         } else {
             transition.setBetaModeStatus(true);
-            if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-            } else { //jeśli z podokna Holmesa
-            }
-
             button.setNewText("<html>Beta: ON</html>");
             button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
@@ -174,10 +141,6 @@ public class SharedActionsXTPN {
             }
 
             if(!transition.isAlphaModeActive()) { //jeśli był tryb klasyczny
-                if(caller instanceof HolmesNodeInfoXTPN) { //jeśli wywołanie przyszło w okna informacji o tranzycji
-                } else {
-                }
-
                 buttonClassicMode.setNewText("<html>XTPN<html>");
                 buttonClassicMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 tauVisibilityButton.setEnabled(true);

@@ -461,10 +461,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infPanelY += 20;
         //************************* NEWLINE *************************
 
-        //************************* NEWLINE *************************
-        infPanelY += 20;
-        //************************* NEWLINE *************************
-
 
 
         JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
@@ -491,8 +487,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
         panel.setBounds(0, 0, 600, 480);
         panel.setBackground(Color.WHITE);
 
-        int posX = 20;
-        int posY = 20;
+        //int posX = 20;
+        //int posY = 20;
         //panel.add(progressBar);
         return panel;
     }
@@ -1113,7 +1109,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         try {
             fillTransitionDynamicData(avgFiredTextBox, chartMainPanel, chartButtonPanel);
-        } catch (Exception e) {}
+        } catch (Exception ex) {
+            overlord.log("Error (576101739) | Exception: "+ex.getMessage(), "error", false);
+        }
         return mainInfoPanel;
     }
 
@@ -1247,10 +1245,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
         panel.setBounds(0, 0, 600, 480);
         panel.setBackground(Color.WHITE);
 
-        int posX = 20;
-        int posY = 20;
-
-
+        //int posX = 20;
+        //int posY = 20;
         //panel.add(progressBar);
 
         return panel;
@@ -1577,7 +1573,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
     }
 
     public void printTokenNumber() {
-        int tokens = 0;
+        int tokens;
         if(place.isGammaModeActive()) {
             tokens = place.accessMultiset().size();
         } else {

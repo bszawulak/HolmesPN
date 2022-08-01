@@ -3,6 +3,7 @@ package holmes.petrinet.simulators.xtpn;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -560,7 +561,13 @@ public class GraphicalSimulatorXTPN {
             }
 
             int fireClassSoFar = 0;
-            for (TransitionXTPN transition : consumingTokensTransitionsClassical) { //lista tych, które zabierają tokeny
+
+
+
+            //for (TransitionXTPN transition : consumingTokensTransitionsClassical) { //lista tych, które zabierają tokeny
+            for (Iterator<TransitionXTPN> iteratorTrans = consumingTokensTransitionsClassical.iterator(); iteratorTrans.hasNext(); ) {
+                TransitionXTPN transition = iteratorTrans.next();
+
                 if(mustFireSOMETHING && fireClassSoFar == 0) {
                     //czyli: MUSIMY coś uruchomić i jeszcze NIC nie uruchomiliśmy:
                     //NIC... najważniejszy, że else zostanie zignorowany, potem już możemy być uczciwi
@@ -568,10 +575,12 @@ public class GraphicalSimulatorXTPN {
                     if ((engineXTPN.getGenerator().nextInt(100) < 50) && !transition.isImmediateXTPN()) {
                         //non immediate classical: 50% chances to fire
                         transition.deactivateTransitionXTPN(true);
-                    }
-                    continue;
-                }
+                        producingTokensTransitionsAll.remove(transition);
+                        iteratorTrans.remove();
 
+                        continue;
+                    }
+                }
 
                 if(transition.isActiveTransitionXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                     fireClassSoFar++;
@@ -596,6 +605,8 @@ public class GraphicalSimulatorXTPN {
                     transition.deactivateTransitionXTPN(true);
                 }
             }
+
+
             launchedTransitions.add(launchedXTPN);
             launchedTransitions.add(launchedClassical);
             return launchedTransitions;

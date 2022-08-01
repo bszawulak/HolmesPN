@@ -5,28 +5,15 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.Serial;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
-import holmes.petrinet.simulators.IRandomGenerator;
-
-import javax.swing.*;
-
 
 /**
  * Klasa implementująca miejsce sieci Petriego. Zapewnia implementację stanu (przechowywania tokenów) oraz 
  * powiązane z tym funkcjonalności (funkcjonalność wierzchołka dziedziczy po klasie Node).
- * 
- * @author students
- * @author MR - poprawki
- *
- * [2022-06-29 MR] xTPN code incoming. Tokeny zyskują osobowość! (muszę, teraz już MUSZĘ doimplementować
- * 				króliczki zamiast czerwonych kulek. (Albo bombki. "W kszyłcie grzyba. I cygara.")
- *
  */
 public class Place extends Node {
 	@Serial

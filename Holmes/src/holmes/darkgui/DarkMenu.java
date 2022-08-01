@@ -28,11 +28,9 @@ import com.javadocking.dockable.Dockable;
 public class DarkMenu extends JMenuBar {
 	@Serial
 	private static final long serialVersionUID = -1671996309149490657L;
-
 	// GUI
 	private GUIManager guiManager;
 	private JMenu sheetsMenu;
-
 	// dockable
 	private ArrayList<Dockable> dockables;
 	private ArrayList<DockableMenuItem> sheetItems;
@@ -70,20 +68,6 @@ public class DarkMenu extends JMenuBar {
 		projectMenuItem.getAccessibleContext().setAccessibleDescription("New project");
 		projectMenuItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().reset.newProjectInitiated());
 		fileMenu.add(projectMenuItem);
-
-		/*
-		// The New Tab for File
-		JMenuItem sheetMenuItem = new JMenuItem("New Sheet", KeyEvent.VK_T);
-		sheetMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_newTab.png"));
-		sheetMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,ActionEvent.ALT_MASK));
-		sheetMenuItem.getAccessibleContext().setAccessibleDescription("Create a new sheet (tab) in workspace");
-		sheetMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				guiManager.getWorkspace().newTab(true);
-			}
-		});
-		fileMenu.add(sheetMenuItem);
-		 */
 		
 		fileMenu.addSeparator();
 		
@@ -377,6 +361,12 @@ public class DarkMenu extends JMenuBar {
 		analysisMenu.setMnemonic(KeyEvent.VK_A);
 		analysisMenu.getAccessibleContext().setAccessibleDescription("Net analysis");
 		this.add(analysisMenu);
+
+		JMenu invSubMenu = new JMenu("Invariants");
+		invSubMenu.setIcon(Tools.getResIcon32("/icons/menu/menu_InvariantsMenu.png"));
+		//invSubMenu.setMnemonic(KeyEvent.VK_P);
+		invSubMenu.getAccessibleContext().setAccessibleDescription("Invariants-based analysis");
+		analysisMenu.add(invSubMenu);
 		
 		// Invariants window
 		JMenuItem invWindowItem = new JMenuItem("Invariants generator...", KeyEvent.VK_1);
@@ -384,7 +374,7 @@ public class DarkMenu extends JMenuBar {
 		invWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK));
 		invWindowItem.getAccessibleContext().setAccessibleDescription("Invariants generator and tools");
 		invWindowItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showInvariantsWindow());
-		analysisMenu.add(invWindowItem);
+		invSubMenu.add(invWindowItem);
 		
 		// MCS window
 		JMenuItem mcsWindowItem = new JMenuItem("Minimal Cutting Sets...", KeyEvent.VK_2);
@@ -392,7 +382,7 @@ public class DarkMenu extends JMenuBar {
 		mcsWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
 		mcsWindowItem.getAccessibleContext().setAccessibleDescription("MCS generator and tools");
 		mcsWindowItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showMCSWindow());
-		analysisMenu.add(mcsWindowItem);
+		invSubMenu.add(mcsWindowItem);
 		
 		// Knockout window
 		JMenuItem knockoutWindowItem = new JMenuItem("Knockout analysis...", KeyEvent.VK_3);
@@ -403,77 +393,87 @@ public class DarkMenu extends JMenuBar {
 			GUIManager.getDefaultGUIManager().createKnockoutWindow();
 			GUIManager.getDefaultGUIManager().showKnockoutWindow();
 		});
-		analysisMenu.add(knockoutWindowItem);
+		invSubMenu.add(knockoutWindowItem);
 		
 		JMenuItem showClustersItem = new JMenuItem("Cluster analysis...", KeyEvent.VK_4);
 		showClustersItem.setIcon(Tools.getResIcon32("/icons/menu/menu_ClustersAnalysis.png"));
 		showClustersItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
 		showClustersItem.getAccessibleContext().setAccessibleDescription("Show clusters window");
 		showClustersItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showClusterWindow());
-		analysisMenu.add(showClustersItem);
+		invSubMenu.add(showClustersItem);
+
+		JMenu simulatorSubMenu = new JMenu("Simulation");
+		simulatorSubMenu.setIcon(Tools.getResIcon32("/icons/menu/menu_simulators.png"));
+		simulatorSubMenu.getAccessibleContext().setAccessibleDescription("Simulator");
+		analysisMenu.add(simulatorSubMenu);
 		
 		JMenuItem netSimItem = new JMenuItem("State Simulator...", KeyEvent.VK_5);
 		netSimItem.setIcon(Tools.getResIcon32("/icons/menu/menu_stateSim.png"));
 		netSimItem.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK));
 		netSimItem.getAccessibleContext().setAccessibleDescription("Show state simulator window");
 		netSimItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showStateSimulatorWindow());
-		analysisMenu.add(netSimItem);
+		simulatorSubMenu.add(netSimItem);
 
-		// Knockout window
+		JMenu decompSubMenu = new JMenu("Net decomposition");
+		decompSubMenu.setIcon(Tools.getResIcon32("/icons/menu/menu_decompSubmenu.png"));
+		decompSubMenu.getAccessibleContext().setAccessibleDescription("Decomposition modules for Petri nets");
+		analysisMenu.add(decompSubMenu);
+
+
 		JMenuItem decoWindowItem = new JMenuItem("Decomposition analysis...", KeyEvent.VK_6);
-		decoWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
+		decoWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_decompModule.png"));
 		decoWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
 		decoWindowItem.getAccessibleContext().setAccessibleDescription("Decomposition analysis tools");
 		decoWindowItem.addActionListener(arg0 -> {
 			GUIManager.getDefaultGUIManager().createDecompositionWindow();
 			GUIManager.getDefaultGUIManager().showDecoWindow();
 		});
-		analysisMenu.add(decoWindowItem);
+		decompSubMenu.add(decoWindowItem);
 
 		// Branch window
 		JMenuItem branchWindowItem = new JMenuItem("Branch analysis...", KeyEvent.VK_7);
-		branchWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
+		branchWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_decompBranch.png"));
 		branchWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK));
 		branchWindowItem.getAccessibleContext().setAccessibleDescription("Branch prototype");
 		branchWindowItem.addActionListener(arg0 -> {
 			GUIManager.getDefaultGUIManager().createBranchWindow();
 			GUIManager.getDefaultGUIManager().showBranchWindow();
 		});
-		analysisMenu.add(branchWindowItem);
+		decompSubMenu.add(branchWindowItem);
 
 		// Comparison window
 		JMenuItem compWindowItem = new JMenuItem("Net comparison", KeyEvent.VK_8);
-		compWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
+		compWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_decompNetComp.png"));
 		compWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK));
 		compWindowItem.getAccessibleContext().setAccessibleDescription("Comparison prototype");
 		compWindowItem.addActionListener(arg0 -> {
 			GUIManager.getDefaultGUIManager().createComparisonnWindow();
 			GUIManager.getDefaultGUIManager().showCompWindow();
 		});
-		analysisMenu.add(compWindowItem);
+		decompSubMenu.add(compWindowItem);
 
 		// Knockout window
 		JMenuItem graphletWindowItem = new JMenuItem("Graphlets", KeyEvent.VK_0);
-		graphletWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
+		graphletWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_decompGraphlets.png"));
 		graphletWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
 		graphletWindowItem.getAccessibleContext().setAccessibleDescription("Decomposition analysis tools");
 		graphletWindowItem.addActionListener(arg0 -> {
 			GUIManager.getDefaultGUIManager().createGraphletsWindow();
 			GUIManager.getDefaultGUIManager().showGraphletsWindow();
 		});
-		analysisMenu.add(graphletWindowItem);
+		decompSubMenu.add(graphletWindowItem);
 
 
 		// reduction window
 		JMenuItem reductionWindowItem = new JMenuItem("Reduction", KeyEvent.VK_0);
-		reductionWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_knockout.png"));
+		reductionWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_decompReduction.png"));
 		reductionWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
 		reductionWindowItem.getAccessibleContext().setAccessibleDescription("Decomposition analysis tools");
 		reductionWindowItem.addActionListener(arg0 -> {
 			GUIManager.getDefaultGUIManager().createReductionWindow();
 			GUIManager.getDefaultGUIManager().showReductionsWindow();
 		});
-		analysisMenu.add(reductionWindowItem);
+		decompSubMenu.add(reductionWindowItem);
 
 
 		//*********************************************************************************************

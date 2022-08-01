@@ -218,14 +218,6 @@ public class TransitionXTPN extends Transition {
     }
 
     /**
-     * Metoda modyfikuje wartość docelową zegara U - tauAlfa tranzycji.
-     * @param delta (<b>double</b>) o ile zmienić zegar tauAlpha.
-     */
-    public void updateTauAlphaValue(double delta) {
-        tauAlpha_xTPN += delta;
-    }
-
-    /**
      * Metoda zwraca wartość docelową zegara U - tauAlfa tranzycji.
      * @return (<b>double</b>) aktualny czas tauAlpha.
      */
@@ -239,14 +231,6 @@ public class TransitionXTPN extends Transition {
      */
     public void setTauBetaValue(double value) {
         tauBeta_xTPN = value;
-    }
-
-    /**
-     * Metoda modyfikuje wartość docelową zegara V - tauBeta tranzycji.
-     * @param delta (<b>double</b>) o ile zmienić zegar tauBeta.
-     */
-    public void updateTauBetaValue(double delta) {
-        tauBeta_xTPN += delta;
     }
 
     /**

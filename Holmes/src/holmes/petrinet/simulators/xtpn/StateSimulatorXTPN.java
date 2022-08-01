@@ -9,6 +9,7 @@ import holmes.windows.managers.ssim.HolmesSim;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Klasa symulatora XTPN.
@@ -252,7 +253,9 @@ public class StateSimulatorXTPN {
         }
 
         int fireClassSoFar = 0;
-        for (TransitionXTPN transition : consumingTokensTransitionsClassical) { //lista tych, które zabierają tokeny
+        for (Iterator<TransitionXTPN> iteratorTrans = consumingTokensTransitionsClassical.iterator(); iteratorTrans.hasNext(); ) {
+            TransitionXTPN transition = iteratorTrans.next();
+
             if(mustFireSOMETHING && fireClassSoFar == 0) {
                 //czyli: MUSIMY coś uruchomić i jeszcze NIC nie uruchomiliśmy:
                 //NIC... najważniejszy, że else zostanie zignorowany, potem już możemy być uczciwi
@@ -260,10 +263,11 @@ public class StateSimulatorXTPN {
                 if ((engineXTPN.getGenerator().nextInt(100) < 50) && !transition.isImmediateXTPN()) {
                     //non immediate classical: 50% chances to fire
                     transition.deactivateTransitionXTPN(false);
+                    producingTokensTransitionsAll.remove(transition);
+                    iteratorTrans.remove();
+                    continue;
                 }
-                continue;
             }
-
 
             if(transition.isActiveTransitionXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                 fireClassSoFar++;
