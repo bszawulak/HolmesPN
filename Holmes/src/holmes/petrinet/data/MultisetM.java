@@ -31,6 +31,13 @@ public class MultisetM implements Serializable {
         stateDescription = "Default description for XTPN state.";
     }
 
+    public void clearMultiset() {
+        multisetM_ArrayLists.clear();
+        placesGammasVector.clear();
+        stateType = "XTPN";
+        stateDescription = "Default description for XTPN state.";
+    }
+
     /**
      * Dodaje nowe miejsce (a raczej jego multizbiór K) z zadanym zbiorem tokenów do multizbioru M.
      * Używana także przy wczytywaniu sieci z pliku.

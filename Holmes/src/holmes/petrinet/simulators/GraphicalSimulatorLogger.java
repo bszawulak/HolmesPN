@@ -92,7 +92,7 @@ public class GraphicalSimulatorLogger {
 				if(!prePlaces.contains(p))
 					prePlaces.add(p);
 				else
-					log.addText("Warning, multi-arc detected between transition: "+transition.getName()+ " and place: "+p.getName(), "warning", false, true);
+					log.addText("Warning, multi-arc detected between transition: "+transition.getName()+ " and place: "+p.getName(), "warning", true, true);
 				
 				tokensTaken += a.getWeight();
 				prePlacesInfo.add(p.getName());
@@ -103,7 +103,7 @@ public class GraphicalSimulatorLogger {
 				if(!postPlaces.contains(p))
 					postPlaces.add(p);
 				else
-					log.addText("Warning, multi-arc detected between transition: "+transition.getName()+ " and place: "+p.getName(), "warning", false, true);
+					log.addText("Warning, multi-arc detected between transition: "+transition.getName()+ " and place: "+p.getName(), "warning", true, true);
 				
 				tokensProduced += a.getWeight();
 				postPlacesInfo.add(p.getName());

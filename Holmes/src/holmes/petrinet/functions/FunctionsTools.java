@@ -45,7 +45,7 @@ public class FunctionsTools {
 				if(fc.involvedPlaces.containsKey("p"+placeIndex)) {
 					int transIndex = transitions.indexOf(transition);
 					overlord.log("Function: \'"+fc.simpleExpression+"\' (fID: "+fc.fID+") of transition t"+transIndex+
-							" has been disabled due to removal of place p"+placeIndex, "warning", false);
+							" has been disabled due to removal of place p"+placeIndex, "warning", true);
 					
 					fc.enabled = false;
 					fc.correct = false;

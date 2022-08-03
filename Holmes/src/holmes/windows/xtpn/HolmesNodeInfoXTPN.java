@@ -1110,7 +1110,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         try {
             fillTransitionDynamicData(avgFiredTextBox, chartMainPanel, chartButtonPanel);
         } catch (Exception ex) {
-            overlord.log("Error (576101739) | Exception: "+ex.getMessage(), "error", false);
+            overlord.log("Error (576101739) | Exception: "+ex.getMessage(), "error", true);
         }
         return mainInfoPanel;
     }

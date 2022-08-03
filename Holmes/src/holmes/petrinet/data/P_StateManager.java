@@ -231,7 +231,7 @@ public class P_StateManager {
 		MultisetM multisetM = new MultisetM();
 		for(Place place : pn.getPlaces()) {
 			if( !(place instanceof PlaceXTPN) ) {
-				overlord.log("Critical error, wrong place object. ID: 54832123.", "error", true);
+				overlord.log("Critical error, wrong place object. ID: 548932123.", "error", true);
 				return;
 			}
 
@@ -307,15 +307,6 @@ public class P_StateManager {
 					place.setTokensNumber( (int)tokensNo );
 
 				}
-				/*
-				place.replaceMultiset(new ArrayList<>(multisetM.accessMultiset_K(placeIndex)));
-				if(place.isGammaModeActiveXTPN()) {
-					place.setTokensNumber(multisetM.accessMultiset_K(placeIndex).size());
-				} else {
-					place.setTokensNumber(multisetM.accessMultiset_K(placeIndex).get(0).intValue());
-					//jeśli miejsca klasyczne, to pierwsza i jedyna wartość w multizbiorze to liczba tokenów
-				}
-				 */
 			}
 			selectedStateXTPN = stateID;
 			return true;

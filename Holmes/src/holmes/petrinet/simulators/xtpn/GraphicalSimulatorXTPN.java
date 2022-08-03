@@ -39,10 +39,10 @@ public class GraphicalSimulatorXTPN {
     private double simTotalTime = 0.0;
     //private Random generator;
 
-    ArrayList<ArrayList<SimulatorXTPN.NextXTPNstep>> nextXTPNsteps;
-    SimulatorXTPN.NextXTPNstep infoNode;
+    ArrayList<ArrayList<SimulatorEngineXTPN.NextXTPNstep>> nextXTPNsteps;
+    SimulatorEngineXTPN.NextXTPNstep infoNode;
 
-    private SimulatorXTPN engineXTPN;
+    private SimulatorEngineXTPN engineXTPN;
     private GUIManager overlord;
 
     public enum SimulatorModeXTPN {
@@ -60,7 +60,7 @@ public class GraphicalSimulatorXTPN {
         consumingTokensTransitionsXTPN = new ArrayList<TransitionXTPN>();
         consumingTokensTransitionsClassical = new ArrayList<TransitionXTPN>();
         producingTokensTransitionsAll = new ArrayList<TransitionXTPN>();
-        engineXTPN = new SimulatorXTPN();
+        engineXTPN = new SimulatorEngineXTPN();
         nextXTPNsteps = new ArrayList<>();
         overlord = GUIManager.getDefaultGUIManager();
     }
@@ -76,7 +76,7 @@ public class GraphicalSimulatorXTPN {
         stepCounter = 0;
         simTotalTime = 0.0;
         nextXTPNsteps.clear();
-        engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, petriNet.getTransitions(), petriNet.getPlaces());
+        engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, convertTransitionsToXTPN(petriNet.getTransitions()), convertPlacesToXTPN(petriNet.getPlaces()) );
         //engineXTPN.setGraphicalSimulation(true);
     }
 
@@ -88,9 +88,7 @@ public class GraphicalSimulatorXTPN {
      */
     public void startSimulation(SimulatorModeXTPN simulatorMode) {
         sg = overlord.simSettings;
-        //sg.setArcDelay(80);
-        //sg.setTransDelay(80);
-        ArrayList<Transition> transitions = petriNet.getTransitions();
+
         ArrayList<Place> places = petriNet.getPlaces();
         //nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode()); //TODO
 
@@ -103,7 +101,7 @@ public class GraphicalSimulatorXTPN {
 
         stepCounter = 0;
         simTotalTime = 0.0;
-        engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, transitions, places);
+        engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, convertTransitionsToXTPN(petriNet.getTransitions()), convertPlacesToXTPN(places) );
         engineXTPN.setGraphicalSimulation(true);
         //nsl.logBackupCreated(); //TODO
 
@@ -358,6 +356,48 @@ public class GraphicalSimulatorXTPN {
         }
     }
 
+    private ArrayList<TransitionXTPN> convertTransitionsToXTPN(ArrayList<Transition> transitionsVector) {
+        ArrayList<TransitionXTPN> transitions = new ArrayList<>();
+        for(Transition trans : transitionsVector) {
+            if( !(trans instanceof TransitionXTPN)) {
+                transitions.clear();
+                overlord.log("Error, non-XTPN transitions found in list sent into SimulatorXTPN!", "error", true);
+                return transitions;
+            }
+            transitions.add( (TransitionXTPN) trans);
+        }
+        return transitions;
+    }
+
+    private ArrayList<PlaceXTPN> convertPlacesToXTPN(ArrayList<Place> placesVector) {
+        ArrayList<PlaceXTPN> places = new ArrayList<>();
+        for(Place place : placesVector) {
+            if( !(place instanceof PlaceXTPN)) {
+                places.clear();
+                overlord.log("Error, non-XTPN places found in list sent into SimulatorXTPN!", "error", true);
+                return places;
+            }
+            places.add( (PlaceXTPN) place);
+        }
+        return places;
+    }
+
+
+
+    //************************************************************************************************
+    //************************************************************************************************
+    //************************************************************************************************
+    //************************************************************************************************
+    //************************************************************************************************
+    //******************************************            ******************************************
+    //****************************************** EngineCore ******************************************
+    //******************************************            ******************************************
+    //************************************************************************************************
+    //************************************************************************************************
+    //************************************************************************************************
+    //************************************************************************************************
+    //************************************************************************************************
+
     /**
      *  Główna podklasa symulacji. Bo tak.
      */
@@ -396,7 +436,7 @@ public class GraphicalSimulatorXTPN {
                     return;
                 }
                 //najpierw aktywacja tranzycji wejściowych, jeśli są nieaktywne:
-                ArrayList<SimulatorXTPN.NextXTPNstep> classicalInputTransitions = engineXTPN.revalidateNetState();
+                ArrayList<SimulatorEngineXTPN.NextXTPNstep> classicalInputTransitions = engineXTPN.revalidateNetState();
                 //teraz obliczamy minimalną zmianę czasu w sieci:
 
                 nextXTPNsteps = engineXTPN.computeNextState();
@@ -577,7 +617,6 @@ public class GraphicalSimulatorXTPN {
                         transition.deactivateTransitionXTPN(true);
                         producingTokensTransitionsAll.remove(transition);
                         iteratorTrans.remove();
-
                         continue;
                     }
                 }
@@ -606,7 +645,6 @@ public class GraphicalSimulatorXTPN {
                 }
             }
 
-
             launchedTransitions.add(launchedXTPN);
             launchedTransitions.add(launchedClassical);
             return launchedTransitions;
@@ -633,7 +671,6 @@ public class GraphicalSimulatorXTPN {
                 }
             }
         }
-
     }
 }
 

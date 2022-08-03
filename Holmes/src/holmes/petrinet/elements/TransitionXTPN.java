@@ -531,6 +531,7 @@ public class TransitionXTPN extends Transition {
      */
     public void deactivateTransitionXTPN(boolean graphics) {
         setActivationStatusXTPN(false);
+        setProductionStatus_xTPN(false);
         if(alphaMode_xTPN) {
             setTimerAlfaValue(-1.0);
             setTauAlphaValue(-1.0);

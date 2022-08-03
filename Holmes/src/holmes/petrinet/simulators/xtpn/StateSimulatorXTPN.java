@@ -1,6 +1,7 @@
 package holmes.petrinet.simulators.xtpn;
 
 import holmes.darkgui.GUIManager;
+import holmes.petrinet.data.MultisetM;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.functions.FunctionsTools;
 import holmes.petrinet.simulators.QuickSimTools;
@@ -16,14 +17,16 @@ import java.util.Iterator;
  */
 public class StateSimulatorXTPN {
     private GUIManager overlord;
-    private SimulatorXTPN engineXTPN;
+    private SimulatorEngineXTPN engineXTPN;
     private SimulatorGlobals sg;
 
     //wewnętrzne obiekty danych symulatora:
-    private ArrayList<Transition> transitions;
-    private ArrayList<Place> places;
-    ArrayList<ArrayList<SimulatorXTPN.NextXTPNstep>> nextXTPNsteps;
-    SimulatorXTPN.NextXTPNstep infoNode;
+    private ArrayList<TransitionXTPN> transitions;
+    private ArrayList<PlaceXTPN> places;
+
+    private MultisetM backupState_MultisetM;// = new MultisetM();
+    ArrayList<ArrayList<SimulatorEngineXTPN.NextXTPNstep>> nextXTPNsteps;
+    SimulatorEngineXTPN.NextXTPNstep infoNode;
     ArrayList<TransitionXTPN> consumingTokensTransitionsXTPN = new ArrayList<>();
     ArrayList<TransitionXTPN> consumingTokensTransitionsClassical = new ArrayList<>();
     ArrayList<TransitionXTPN> producingTokensTransitionsAll = new ArrayList<>();
@@ -47,7 +50,7 @@ public class StateSimulatorXTPN {
      * Główny konstruktor obiektu klasy StateSimulator.
      */
     public StateSimulatorXTPN() {
-        engineXTPN = new SimulatorXTPN();
+        engineXTPN = new SimulatorEngineXTPN();
         overlord = GUIManager.getDefaultGUIManager();
         sg = overlord.simSettings;
     }
@@ -60,8 +63,26 @@ public class StateSimulatorXTPN {
      * @return boolean - true, jeśli wszystko się udało
      */
     public boolean initiateSim(SimulatorGlobals ownSettings) {
-        transitions = overlord.getWorkspace().getProject().getTransitions();
-        places = overlord.getWorkspace().getProject().getPlaces();
+        transitions.clear();
+        for(Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
+            if( !(trans instanceof TransitionXTPN)) {
+                transitions.clear();
+                overlord.log("Error, non-XTPN transitions found in list sent into SimulatorXTPN!", "error", true);
+                return false;
+            }
+            transitions.add( (TransitionXTPN) trans);
+        }
+
+        for(Place place : overlord.getWorkspace().getProject().getPlaces()) {
+            if( !(place instanceof PlaceXTPN)) {
+                transitions.clear();
+                overlord.log("Error, non-XTPN places found in list sent into SimulatorXTPN!", "error", true);
+                return false;
+            }
+            places.add( (PlaceXTPN) place);
+        }
+
+
         if(transitions == null || places == null) {
             readyToSimulate = false;
             return readyToSimulate;
@@ -154,13 +175,13 @@ public class StateSimulatorXTPN {
 
 
         //tutaj zapisujemy p-stan
-        prepareNetM0();
+        createBackupState();
 
         for(int i=0; i<sg.simSteps_XTPN; i++) {
             if(terminate)
                 break;
 
-            ArrayList<SimulatorXTPN.NextXTPNstep> classicalInputTransitions = engineXTPN.revalidateNetState();
+            ArrayList<SimulatorEngineXTPN.NextXTPNstep> classicalInputTransitions = engineXTPN.revalidateNetState();
             nextXTPNsteps = engineXTPN.computeNextState();
             nextXTPNsteps.set(4, classicalInputTransitions);
             nextXTPNsteps.get(6).get(0).changeType += classicalInputTransitions.size();
@@ -178,8 +199,11 @@ public class StateSimulatorXTPN {
             producingTokensTransitionsAll = engineXTPN.returnProducingTransVector(nextXTPNsteps);
 
             if(consumingTokensTransitionsXTPN.size() > 0 || consumingTokensTransitionsClassical.size() > 0) {
-                //faza zabierana tokenów, czyli uruchamianie tranzycji gdy timeAlfa = tauAlfa
+
+                //faza zabierana tokenów, czyli uruchamianie tranzycji:
                 transitionsAfterSubtracting = prepareSubtractPhase();
+
+                //wszystko co trafia poniżej dostaje status production(true), tranzycje XTPN - nowy timer beta:
                 engineXTPN.endSubtractPhase(transitionsAfterSubtracting);
             }
 
@@ -201,13 +225,20 @@ public class StateSimulatorXTPN {
         readyToSimulate = false;
 
         //restore p-state here:
-        //restoreInternalMarkingZero();
+        restoreInternalMarkingZero();
     }
 
+    /**
+     * W zasadzie jest to główna metoda ''odpalania'' tranzycji. Te które są aktywne pobierają tokeny i
+     * są umieszczane na listach launchedXTPN oraz (potem) launchedClassical. Te tranzycje dla których
+     * zabrakło tokenów są deaktywowane oraz umieszczane w trzeciej tablicy: deactivated.
+     * @return (<b>ArrayList[ArrayList[TransitionXTPN]]</b>) - trzy listy: launchedXTPN, launchedClassical oraz deactivated.
+     */
     public ArrayList<ArrayList<TransitionXTPN>> prepareSubtractPhase() {
         ArrayList<ArrayList<TransitionXTPN>> launchedTransitions = new ArrayList<>();
         ArrayList<TransitionXTPN> launchedXTPN = new ArrayList<>();
         ArrayList<TransitionXTPN> launchedClassical = new ArrayList<>();
+        ArrayList<TransitionXTPN> deactivated = new ArrayList<>();
         ArrayList<Arc> arcs;
 
         //dla : consumingTokensTransitionsXTPN
@@ -233,6 +264,8 @@ public class StateSimulatorXTPN {
                 }
                 launchedXTPN.add(transition);
             } else {
+                deactivated.add(transition);
+
                 transition.deactivateTransitionXTPN(false);
                 transition.setActivationStatusXTPN(false);
                 transition.setProductionStatus_xTPN(false);
@@ -289,32 +322,59 @@ public class StateSimulatorXTPN {
                 }
                 launchedClassical.add(transition);
             } else {
+                deactivated.add(transition);
                 transition.deactivateTransitionXTPN(false);
             }
         }
         launchedTransitions.add(launchedXTPN);
         launchedTransitions.add(launchedClassical);
+        launchedTransitions.add(deactivated);
         return launchedTransitions;
     }
 
 
     /**
-     * Metoda przygotowuje backup stanu sieci
+     * Metoda przygotowuje backup stanu sieci przed symulacją.
      */
-    public void prepareNetM0() {
-        //overlord.getWorkspace().getProject().restoreMarkingZeroFast(transitions);
-        //saveInternalMarkingZero(); //zapis aktualnego stanu jako m0
-        //clearTransitionsValues();
+    public void createBackupState() {
+        backupState_MultisetM.clearMultiset();
+        for(PlaceXTPN place : places) {
+            if( (place.isGammaModeActive()) ) {
+                backupState_MultisetM.addMultiset_K_toMultiset_M(new ArrayList<>(place.accessMultiset()), 1);
+            } else {
+                int tokens = place.getTokensNumber();
+                ArrayList<Double> fakeMultiset = new ArrayList<>();
+                fakeMultiset.add((double) tokens);
+                backupState_MultisetM.addMultiset_K_toMultiset_M(fakeMultiset, 0);
+            }
+        }
+
+        for(TransitionXTPN trans : transitions) {
+            trans.deactivateTransitionXTPN(false);
+        }
     }
 
     /**
-     * Metoda ta przywraca stan sieci przed rozpoczęciem symulacji. Liczba tokenów jest przywracana
-     * z wektora danych pamiętających ostatni backup, tranzycje są resetowane wewnętrznie.
+     * Metoda ta przywraca stan sieci przed rozpoczęciem symulacji.
      */
     public void restoreInternalMarkingZero() {
-        // state manager
+        for (int placeIndex = 0; placeIndex < places.size(); placeIndex++) {
+            PlaceXTPN place = places.get(placeIndex);
 
-        //oraz reset tranzycji
-        //clearTransitionsValues();
+            if(backupState_MultisetM.isPlaceStoredAsGammaActive(placeIndex)) {
+                place.setGammaModeStatus(true);
+                place.replaceMultiset( new ArrayList<>(backupState_MultisetM.accessMultiset_K(placeIndex)) );
+                place.setTokensNumber( backupState_MultisetM.accessMultiset_K(placeIndex).size() );
+            } else { //jeśli w managerze miejsce jest przechowywane jako klasyczne
+                place.setGammaModeStatus(false);
+                place.accessMultiset().clear();
+                double tokensNo = backupState_MultisetM.accessMultiset_K(placeIndex).get(0);
+                place.setTokensNumber( (int)tokensNo );
+            }
+        }
+
+        for(TransitionXTPN trans : transitions) {
+            trans.deactivateTransitionXTPN(false);
+        }
     }
 }

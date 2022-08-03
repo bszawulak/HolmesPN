@@ -21,18 +21,14 @@ import holmes.petrinet.simulators.*;
  * ale dycyzje zapadają w innym miejscu, np. w GraphicalSimulatorXTPN->StepLoopPerformerXTPN.actionPerformed().
  * Z resztą nieważne. Chyba wystarczająco nakreśliłem poziom zaawansowania poniższego kodu.
  */
-public class SimulatorXTPN implements IEngineXTPN {
+public class SimulatorEngineXTPN implements IEngineXTPN {
     private GUIManager overlord;
     private SimulatorGlobals sg;
     private SimulatorGlobals.SimNetType netSimTypeXTPN = SimulatorGlobals.SimNetType.XTPN;
     private ArrayList<TransitionXTPN> transitions;
     private ArrayList<PlaceXTPN> places;
-    //private ArrayList<Integer> transitionsIndexList = null;
-    //private ArrayList<TransitionXTPN> launchableTransitions = null;
     private IRandomGenerator generator;
-
     private boolean graphicalSimulation = false;
-
     public void setGraphicalSimulation(boolean status) {
         this.graphicalSimulation = status;
     }
@@ -60,7 +56,7 @@ public class SimulatorXTPN implements IEngineXTPN {
     /**
      * Konstruktor obiektu klasy SimulatorXTPN.
      */
-    public SimulatorXTPN() {
+    public SimulatorEngineXTPN() {
         this.overlord = GUIManager.getDefaultGUIManager();
         generator = new StandardRandom(System.currentTimeMillis());
         this.sg = overlord.simSettings;
@@ -70,53 +66,21 @@ public class SimulatorXTPN implements IEngineXTPN {
     }
 
     /**
-     * Ustawianie podstawowych parametrów silnika symulacji.
-     * @param simulationType NetType - rodzaj symulowanej sieci
-     * @param transitions ArrayList[Transition] - wektor wszystkich tranzycji
-     * @param places ArrayList[Place] - wektor miejsc
+     * Ustawianie podstawowych parametrów silnika symulatora XTPN.
+     * @param simulationType (<b>NetType</b>) - rodzaj symulowanej sieci (XTPN domyślnie).
+     * @param transitions (<b>ArrayList[TransitionXTPN]</b>) - wektor tranzycji XTPN.
+     * @param places (<b>ArrayList[PlaceXTPN]</b>) - wektor miejsc XTPN.
      */
-    public void setEngine(SimulatorGlobals.SimNetType simulationType, ArrayList<Transition> transitions, ArrayList<Place> places) {
+    public void setEngine(SimulatorGlobals.SimNetType simulationType, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
         this.netSimTypeXTPN = simulationType;
         this.sg = overlord.simSettings;
+        this.transitions = transitions;
+        this.places = places;
 
         if(overlord.simSettings.getGeneratorType() == 1) {
             this.generator = new HighQualityRandom(System.currentTimeMillis());
         } else {
             this.generator = new StandardRandom(System.currentTimeMillis());
-        }
-
-        //INIT:
-        initiateXTPNtransitions(transitions);
-        initiateXTPNplaces(places);
-
-        //transitionsIndexList = new ArrayList<Integer>();
-        //launchableTransitions =  new ArrayList<TransitionXTPN>();
-        //for(int t = 0; t<transitions.size(); t++) {
-        //    transitionsIndexList.add(t);
-        //}
-    }
-
-    private void initiateXTPNtransitions(ArrayList<Transition> inputT) {
-        transitions.clear();
-        for(Transition trans : inputT) {
-            if( !(trans instanceof TransitionXTPN)) {
-                transitions.clear();
-                overlord.log("Error, non-XTPN transitions found in list sent into SimulatorXTPN!", "error", true);
-                return;
-            }
-            transitions.add( (TransitionXTPN) trans);
-        }
-    }
-
-    private void initiateXTPNplaces(ArrayList<Place> inputP) {
-        places.clear();
-        for(Place place : inputP) {
-            if( !(place instanceof PlaceXTPN)) {
-                transitions.clear();
-                overlord.log("Error, non-XTPN places found in list sent into SimulatorXTPN!", "error", true);
-                return;
-            }
-            places.add( (PlaceXTPN) place);
         }
     }
 
@@ -149,8 +113,8 @@ public class SimulatorXTPN implements IEngineXTPN {
         for(PlaceXTPN place : places) {
             place.removeOldTokens_XTPN();
         }
-
         ArrayList<NextXTPNstep> classicalInputOnes = new ArrayList<>(); //klasyczne wejściowe będą uruchamiane osobno 50/50
+
         //tutaj uruchamiany tranzycje wejściowe, one są niewrażliwe na zmiany czasów w tokenach
         for(TransitionXTPN transition : transitions) {
             if(transition.isProducing_xTPN()) { //produkujące zostawiamy w spokoju
@@ -486,7 +450,8 @@ public class SimulatorXTPN implements IEngineXTPN {
     }
 
     /**
-     * Tutaj zapewne zmiana stanu niektórych tranzycji...
+     * Każda tranzycja która tu trafia zmienia status na rozpoczęcie produkcji. Tranzycje XTPN dostają nowy czasu
+     * tau-beta, wszystkie inne tylko: transition.setProductionStatus_xTPN(true);
      * @param launchedTransitions (<b>ArrayList[ArrayList[Transition]]</b>) podwójna lista tranzycji które się uruchomiły: XTPN i klasyczne
      */
     public void endSubtractPhase(ArrayList<ArrayList<TransitionXTPN>> launchedTransitions) {
@@ -525,7 +490,9 @@ public class SimulatorXTPN implements IEngineXTPN {
     }
 
     /**
-     * Metoda uruchamia fazę faktycznego dodawania tokenów do miejsc wyjściowych odpalonych tranzycji
+     * Metoda uruchamia fazę dodawania tokenów do miejsc wyjściowych odpalonych tranzycji. Następnie deaktywuje
+     * tranzycje oraz ustawia ich status produkcji na false.
+     * @param producingTokensTransitionsAll (<b>ArrayList[TransitionXTPN]</b>) lista tranzycji które mają coś wyprodukować.
      */
     public void endProductionPhase(ArrayList<TransitionXTPN> producingTokensTransitionsAll) {
         ArrayList<Arc> arcs;
