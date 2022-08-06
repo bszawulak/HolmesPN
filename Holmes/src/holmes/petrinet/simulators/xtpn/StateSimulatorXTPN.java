@@ -193,10 +193,10 @@ public class StateSimulatorXTPN {
     }
 
     /**
-     * Metoda wywoływana przez okno informacji o miejscu XTPN.
+     * Metoda wywoływana przez okno informacji o miejscu XTPN. Zwraca dwa wektory informacji o tokenach w miejscu.
      * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach,
      *                    ile kroków, ile czasu?
-     * @param place (<b>PlaceXTPN</b>) obiekt miejsca którego tokeny są liczone.
+     * @param place (<b>PlaceXTPN</b>) obiekt miejsca XTPN, którego tokeny są liczone.
      * @return (<b>ArrayList[ArrayList[Double]]</b>) - dwa wektory, pierwszy liczy tokeny w każdym kroku, drugi
      *          zawiera informację o czasie wykonania kroku.
      */
@@ -246,6 +246,71 @@ public class StateSimulatorXTPN {
             }
         }
 
+        readyToSimulate = false;
+        restoreInternalMarkingZero(); //restore p-state
+        return resultVectors;
+    }
+
+
+    /**
+     * Metoda symuluje podaną liczbę kroków sieci Petriego dla i sprawdza wybraną tranzycję.
+     * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach,
+     *                    ile kroków, ile czasu?
+     * @param transition (<b>TransitionXTPN</b>) - wybrana tranzycja do testowania.
+     * @return
+     */
+    public ArrayList<ArrayList<Double>> simulateNetSingleTransition(SimulatorGlobals ownSettings
+            , TransitionXTPN transition) {
+        ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
+        ArrayList<Double> firedVector = new ArrayList<>();
+        ArrayList<Double> timeVector = new ArrayList<>();
+        ArrayList<Double> stepVector = new ArrayList<>();
+        resultVectors.add(firedVector);
+        resultVectors.add(timeVector);
+        resultVectors.add(stepVector);
+
+        if(!readyToSimulate) {
+            JOptionPane.showMessageDialog(null,"XTPN Simulation cannot start, engine initialization failed.",
+                    "Simulation problem",JOptionPane.ERROR_MESSAGE);
+            return resultVectors;
+        }
+        createBackupState(); //zapis p-stanu
+
+        if(ownSettings.simulateTime) {
+            for(double i=0; i<ownSettings.simMaxTime_XTPN; ) {
+                if(terminate)
+                    break;
+
+                ArrayList<HashMap<TransitionXTPN, Double>> result = processSimStep(true, transition);
+                HashMap<TransitionXTPN, Double> transStatusVector = result.get(0);
+                HashMap<TransitionXTPN, Double> transTimeVector = result.get(1);
+
+                if(transStatusVector.get(transition) == 3.0) {
+                    firedVector.add(1.0);
+                    timeVector.add(simTimeCounter);
+                    stepVector.add(i);
+                }
+
+                i += simTimeCounter;
+            }
+        } else {
+            for(int i=0; i<ownSettings.simSteps_XTPN; i++) {
+                if(terminate)
+                    break;
+
+                ArrayList<HashMap<TransitionXTPN, Double>> result = processSimStep(true, transition);
+                HashMap<TransitionXTPN, Double> transStatusVector = result.get(0);
+                HashMap<TransitionXTPN, Double> transTimeVector = result.get(1);
+
+                if(transStatusVector.get(transition) == 3.0) {
+                    firedVector.add(1.0);
+                    timeVector.add(simTimeCounter);
+                    stepVector.add((double)i);
+                }
+
+                timeVector.add(simTimeCounter);
+            }
+        }
 
         readyToSimulate = false;
         restoreInternalMarkingZero(); //restore p-state
@@ -294,7 +359,6 @@ public class StateSimulatorXTPN {
                 if( !trans.equals(singleTransition )) { //jak null, to i tak nie przejdzie
                     continue;
                 }
-
                 if (trans.isActivated_xTPN()) { //jeśli aktywna:
                     transitionsStatusVector.put(trans, 1.0); //1 - activated
                     transitionsStatusTimeVector.put(trans, oldTIme);

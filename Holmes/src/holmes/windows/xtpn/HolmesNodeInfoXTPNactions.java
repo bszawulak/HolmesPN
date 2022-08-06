@@ -1,4 +1,4 @@
-package holmes.windows.xtpn.managers;
+package holmes.windows.xtpn;
 
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
@@ -95,4 +95,6 @@ public class HolmesNodeInfoXTPNactions {
         WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
     }
+
+
 }

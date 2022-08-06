@@ -9,7 +9,6 @@ import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.StateSimulator;
 import holmes.petrinet.simulators.xtpn.StateSimulatorXTPN;
 import holmes.utilities.Tools;
-import holmes.windows.xtpn.managers.HolmesNodeInfoXTPNactions;
 import holmes.workspace.WorkspaceSheet;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -30,6 +29,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HolmesNodeInfoXTPN extends JFrame {
     private GUIManager overlord;
@@ -52,12 +52,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private boolean simulateWithTimeLength = false; //czy wykres czasowy na osi X dla miejsc
     private double simTimeLength = 300.0;
     private int placeChartType = 0; //0 - kroki, 1 - czas (oś X)
+    private int transitionChartType = 0; //0 - kroki, 1 - czas (oś X)
     ArrayList<Double> stepsVectorPlaces = new ArrayList<>();
     ArrayList<ArrayList<Double>> timeVectorPlaces = new ArrayList<>();
 
+    ArrayList<ArrayList<Double>> statusVectorTransition = new ArrayList<>();
+
     private JSpinner transIntervalSpinner;
-    private boolean maximumMode = false;
-    private boolean singleMode = false;
     private int transInterval = 10;
     private JFormattedTextField avgFiredTextBox;
 
@@ -515,7 +516,10 @@ public class HolmesNodeInfoXTPN extends JFrame {
         acqDataButton.setBounds(chartX, chartY_2nd, 110, 25);
         acqDataButton.setMargin(new Insets(0, 0, 0, 0));
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
-        acqDataButton.addActionListener(actionEvent -> acquireNewPlaceData());
+        acqDataButton.addActionListener(actionEvent -> {
+            acquireNewPlaceData();
+            showPlaceChart();
+        });
         chartButtonPanel.add(acqDataButton);
 
         JLabel labelSteps = new JLabel("Sim. Steps:");
@@ -559,8 +563,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         chartButtonPanel.add(simMode);
 
-
-
         //Second row:
         chartY_2nd += 25;
 
@@ -594,6 +596,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private void fillPlaceDynamicData(JPanel chartMainPanel) {
         if(!mainSimulatorActive) {
             acquireNewPlaceData();
+            showPlaceChart();
         } else {
             chartMainPanel.setEnabled(false);
             TextTitle title = dynamicsChart.getTitle();
@@ -626,7 +629,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         timeVectorPlaces = new ArrayList<>(firstDataVectors);
         stepsVectorPlaces = new ArrayList<>(firstDataVectors.get(0));
-
 
         //timeVectorPlaces
         int problemCounter = 0;
@@ -666,9 +668,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 }
             }
         }
-        showPlaceChart();
     }
-
 
     /**
      * Metoda odpowiedzialna za pokazanie odpowiednich danych na wykresie miejsc. Zakładamy, że na początku
@@ -1305,7 +1305,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
      */
     private JPanel panelButtonsTransition(JPanel infoPanel, JPanel chartMainPanel) {
         JPanel chartButtonPanel = new JPanel(null);
-        chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight(), mainInfoPanel.getWidth()-10, 50);
+        chartButtonPanel.setBounds(0, infoPanel.getHeight()+chartMainPanel.getHeight()
+                , mainInfoPanel.getWidth()-10, 70);
         chartButtonPanel.setBackground(Color.WHITE);
 
         int chartX = 5;
@@ -1369,43 +1370,36 @@ public class HolmesNodeInfoXTPN extends JFrame {
         labelMode.setBounds(chartX+280, chartY_1st, 110, 15);
         chartButtonPanel.add(labelMode);
 
-        final JComboBox<String> simMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
-        simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+        final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Steps", "Time"});
         simMode.setBounds(chartX+280, chartY_2nd, 120, 25);
         simMode.setSelectedIndex(0);
         simMode.setMaximumRowCount(6);
         simMode.addActionListener(actionEvent -> {
-            int selected = simMode.getSelectedIndex();
-            if(selected == 0) {
-                maximumMode = false;
-                singleMode = false;
-            } else if(selected == 1) {
-                maximumMode = true;
-                singleMode = false;
-            } else {
-                singleMode = true;
-            }
+            transitionChartType = simMode.getSelectedIndex();;
+            showTransitionChart();
         });
         chartButtonPanel.add(simMode);
 
-        String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
-        final JComboBox<String> simNetMode = new JComboBox<String>(simModeName);
-        simNetMode.setBounds(chartX+400, chartY_2nd, 120, 25);
+        //Second row:
+        chartY_2nd += 25;
 
-        //if(choosenNetType == SimulatorGlobals.SimNetType.TIME)
-        //    simNetMode.setSelectedIndex(1);
-        //else
-        //    simNetMode.setSelectedIndex(0);
-
-        simNetMode.addActionListener(actionEvent -> {
-            int selectedModeIndex = simNetMode.getSelectedIndex();
-            switch (selectedModeIndex) {
-                //case 0 -> choosenNetType = SimulatorGlobals.SimNetType.BASIC;
-                //case 1 -> choosenNetType = SimulatorGlobals.SimNetType.TIME;
-                //case 2 -> choosenNetType = SimulatorGlobals.SimNetType.HYBRID;
-            }
+        JCheckBox timeSeriesCheckbox = new JCheckBox("Simulate time");
+        timeSeriesCheckbox.setBounds(chartX, chartY_2nd, 120, 25);
+        timeSeriesCheckbox.setSelected(simulateWithTimeLength);
+        timeSeriesCheckbox.addItemListener(e -> {
+            JCheckBox box = (JCheckBox) e.getSource();
+            simulateWithTimeLength = box.isSelected();
         });
-        chartButtonPanel.add(simNetMode);
+        chartButtonPanel.add(timeSeriesCheckbox);
+
+        SpinnerModel simTimeLengthSpinnerModel = new SpinnerNumberModel(simTimeLength, 0, 1000, 20);
+        JSpinner simTimeLengthSpinner = new JSpinner(simTimeLengthSpinnerModel);
+        simTimeLengthSpinner.setBounds(chartX +120, chartY_2nd, 80, 25);
+        simTimeLengthSpinner.addChangeListener(e -> {
+            JSpinner spinner = (JSpinner) e.getSource();
+            simTimeLength = (int) spinner.getValue();
+        });
+        chartButtonPanel.add(simTimeLengthSpinner);
 
         return chartButtonPanel;
     }
@@ -1419,10 +1413,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private void fillTransitionDynamicData(JFormattedTextField avgFiredTextBox, JPanel chartMainPanel,
                                            JPanel chartButtonPanel) {
         if(!mainSimulatorActive) {
-            ArrayList<Integer> dataVector = acquireNewTransitionData();
-            if(dataVector != null) {
-                int sum = dataVector.get(dataVector.size()-2);
-                int steps = dataVector.get(dataVector.size()-1);
+           acquireNewTransitionData();
+
+
+            if(statusVectorTransition != null) {
+                int sum = statusVectorTransition.get(0).size();
+                double steps = statusVectorTransition.get(2).get(statusVectorTransition.get(0).size() - 1);
                 double avgFired = sum;
                 avgFired /= steps;
                 avgFired *= 100; // * 100%
@@ -1447,50 +1443,98 @@ public class HolmesNodeInfoXTPN extends JFrame {
     /**
      * Metoda aktywuje symulator dla jednej tranzycji w ustalonym wcześniej trybie i dla wcześniej
      * ustalonej liczby kroków. Wyniki zapisuje na wykresie, zwraca też wektor danych.
-     * @return ArrayList[Integer] - wektor danych z symulatora
      */
-    private ArrayList<Integer> acquireNewTransitionData() {
-        StateSimulator ss = new StateSimulator();
+    private void acquireNewTransitionData() {
+        StateSimulatorXTPN ss = new StateSimulatorXTPN();
 
         SimulatorGlobals ownSettings = new SimulatorGlobals();
         ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
+        ownSettings.simSteps_XTPN = simSteps;
+        ownSettings.simMaxTime_XTPN = simTimeLength;
+        ownSettings.simulateTime = simulateWithTimeLength;
+        ss.initiateSim(ownSettings);
 
-        //ss.initiateSim(false, ownSettings);
+        ArrayList<ArrayList<Double>> dataVector2 = ss.simulateNetSingleTransition(ownSettings, theTransition);
+        statusVectorTransition = new ArrayList<>(dataVector2);
 
-        ArrayList<Integer> dataVector = ss.simulateNetSingleTransition(simSteps, theTransition, false);
 
+        showTransitionsChart();
+    }
+
+    /**
+     * Metoda odpowiedzialna za pokazanie odpowiednich danych na wykresie miejsc. Zakładamy, że na początku
+     * zostaną wygenerowane wektory stepsVectorPlaces oraz timeVectorPlaces, więc zależnie od ustawień,
+     * wyświetli liczbę tokenów w każdym kroku / po czasie tau symulacji.
+     */
+    private void showTransitionsChart() {
         dynamicsSeriesDataSet.removeAllSeries();
         XYSeries series = new XYSeries("Average firing");
-        if(dataVector != null) {
-            for(int step=0; step<dataVector.size()-2; step++) {
-                double value = 0; //suma odpaleń w przedziale czasu
-                int interval = transInterval;
-                if(step+interval >= dataVector.size()-2)
-                    interval = dataVector.size() - 2 - step;
 
-                for(int i=0; i<interval; i++) {
-                    try {
-                        value += dataVector.get(step+i);
-                    } catch (Exception e) {
-
-                    }
-                }
-                value /= interval;
-                value *= 100;
-                series.add(step, value);
-                step += (interval-1);
-            }
-        }
         dynamicsSeriesDataSet.addSeries(series);
 
-        int sum = dataVector.get(dataVector.size()-2);
-        int steps = dataVector.get(dataVector.size()-1);
+        if(placeChartType == 0) { //wykres po krokach
+            if(statusVectorTransition != null) {
+                for(int step=0; step<statusVectorTransition.get(0).size()-2; step++) {
+                    double value = 0; //suma odpaleń w przedziale czasu
+                    double lastStep = 0.0;
+                    int interval = transInterval;
+                    if(step+interval >= statusVectorTransition.get(0).size()-2)
+                        interval = statusVectorTransition.get(0).size() - 2 - step;
+
+                    for(int i=0; i<interval; i++) {
+                        try {
+                            value += statusVectorTransition.get(0).get(step+i);
+                            lastStep = statusVectorTransition.get(2).get(step+i);
+                        } catch (Exception e) {
+
+                        }
+                    }
+                    value /= interval;
+                    value *= 100;
+                    series.add(lastStep, value);
+                    step += (interval-1);
+                }
+            }
+
+        } else { //wykres czasowy
+            if(statusVectorTransition != null) {
+                for(int step=0; step<statusVectorTransition.get(0).size()-2; step++) {
+                    double value = 0; //suma odpaleń w przedziale czasu
+                    double lastTime = 0.0;
+                    int interval = transInterval;
+                    if(step+interval >= statusVectorTransition.get(0).size()-2)
+                        interval = statusVectorTransition.get(0).size() - 2 - step;
+
+                    for(int i=0; i<interval; i++) {
+                        try {
+                            value += statusVectorTransition.get(0).get(step+i);
+                            lastTime = statusVectorTransition.get(1).get(step+i);
+                        } catch (Exception e) {
+
+                        }
+                    }
+                    value /= interval;
+                    value *= 100;
+                    series.add(lastTime, value);
+                    step += (interval-1);
+                }
+            }
+
+        }
+
+        dynamicsSeriesDataSet.addSeries(series);
+
+
+        int sum = statusVectorTransition.get(0).size();
+        double steps = statusVectorTransition.get(2).get(statusVectorTransition.get(0).size() - 1);
         double avgFired = sum;
         avgFired /= steps;
         avgFired *= 100; // * 100%
         avgFiredTextBox.setText(Tools.cutValue(avgFired)+"%");
+    }
 
-        return dataVector;
+    private void showTransitionChart() {
+
     }
 
     //********************************************************************************************
