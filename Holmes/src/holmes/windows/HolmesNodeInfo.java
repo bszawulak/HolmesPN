@@ -819,7 +819,7 @@ public class HolmesNodeInfo extends JFrame {
 		StateSimulator ss = new StateSimulator();
 
 		SimulatorGlobals ownSettings = new SimulatorGlobals();
-		ownSettings.setNetType(choosenNetType);
+		ownSettings.setNetType(choosenNetType, false);
 		ownSettings.setMaxMode(maximumMode);
 		ownSettings.setSingleMode(singleMode);
 		ss.initiateSim(false, ownSettings);
@@ -895,7 +895,7 @@ public class HolmesNodeInfo extends JFrame {
 		StateSimulator ss = new StateSimulator();
 		
 		SimulatorGlobals ownSettings = new SimulatorGlobals();
-		ownSettings.setNetType(choosenNetType);
+		ownSettings.setNetType(choosenNetType, false);
 		ownSettings.setMaxMode(maximumMode);
 		ownSettings.setSingleMode(singleMode);
 		ss.initiateSim(false, ownSettings);

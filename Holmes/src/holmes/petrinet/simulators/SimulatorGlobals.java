@@ -46,8 +46,9 @@ public class SimulatorGlobals {
 	//XTPN:
 	private double calculationsAccuracy = 0.000000001;
 
-	public long simSteps_XTPN = 100;
-	public double simMaxTime_XTPN = 100.0;
+	public long simSteps_XTPN = 1000;
+	public double simMaxTime_XTPN = 300.0;
+	public boolean simulateTime = false; //domyślnie: true = steps
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.
@@ -145,9 +146,14 @@ public class SimulatorGlobals {
 	/**
 	 * Uswtawia typ symulacji sieci.
 	 * @param netType (<b>SimNetType</b>) BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func
+	 * @param isXTPN (<b>boolean</b>) jeśli true, olewamy sprawdzanie.
 	 * @return (<b>int</b>) numer porządkowy
 	 */
-	public int setNetType(SimNetType netType) {
+	public int setNetType(SimNetType netType, boolean isXTPN) {
+		if(isXTPN) {
+			refNetType = netType;
+			return -1;
+		}
 		int typeID = 0; //SimNetType.BASIC as default
 
 		if(netType == SimNetType.TIME)

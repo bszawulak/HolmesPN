@@ -452,9 +452,7 @@ public class Transition extends Node {
 
     /**
      * Metoda pozwala ustawić, czy tranzycja jest teraz uruchamiana.
-     *
-     * @param isLaunching boolean - true, jeśeli tranzycja jest właśnie uruchamiana;
-     *                    false w przeciwnym wypadku
+     * @param isLaunching (<b>boolean</b>) true, jeśeli tranzycja jest właśnie uruchamiana
      */
     public void setLaunching(boolean isLaunching) {
         this.isLaunching = isLaunching;

@@ -1324,15 +1324,40 @@ public class GraphPanel extends JComponent {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.INHIBITOR);
 					drawnArc.setXTPNinhibitorStatus(true);
 				}else if(arcType == DrawModes.READARC) {
-					drawnArc = new Arc(clickedLocation, TypeOfArc.READARC);
+					if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
+						JOptionPane.showMessageDialog(null, "Only XTPN normal arc and inhibitors are allowed in XTPN net mode.",
+								"Wrong arc type", JOptionPane.WARNING_MESSAGE);
+					} else {
+						drawnArc = new Arc(clickedLocation, TypeOfArc.READARC);
+					}
 				} else if(arcType == DrawModes.ARC_INHIBITOR) {
-					drawnArc = new Arc(clickedLocation, TypeOfArc.INHIBITOR);
+					if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
+						JOptionPane.showMessageDialog(null, "Only XTPN normal arc and inhibitors are allowed in XTPN net mode.",
+								"Wrong arc type", JOptionPane.WARNING_MESSAGE);
+					} else {
+						drawnArc = new Arc(clickedLocation, TypeOfArc.INHIBITOR);
+					}
 				} else if(arcType == DrawModes.ARC_RESET) {
-					drawnArc = new Arc(clickedLocation, TypeOfArc.RESET);
+					if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
+						JOptionPane.showMessageDialog(null, "Only XTPN normal arc and inhibitors are allowed in XTPN net mode.",
+								"Wrong arc type", JOptionPane.WARNING_MESSAGE);
+					} else {
+						drawnArc = new Arc(clickedLocation, TypeOfArc.RESET);
+					}
 				} else if(arcType == DrawModes.ARC_EQUAL) {
-					drawnArc = new Arc(clickedLocation, TypeOfArc.EQUAL);
+					if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
+						JOptionPane.showMessageDialog(null, "Only XTPN normal arc and inhibitors are allowed in XTPN net mode.",
+								"Wrong arc type", JOptionPane.WARNING_MESSAGE);
+					} else {
+						drawnArc = new Arc(clickedLocation, TypeOfArc.EQUAL);
+					}
 				} else if(arcType == DrawModes.CARC) {
-					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
+					if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
+						JOptionPane.showMessageDialog(null, "Only XTPN normal arc and inhibitors are allowed in XTPN net mode.",
+								"Wrong arc type", JOptionPane.WARNING_MESSAGE);
+					} else {
+						drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
+					}
 				}
 			} else {
 				if(clickedLocation.getParentNode() instanceof MetaNode) { //kończymy w meta-node

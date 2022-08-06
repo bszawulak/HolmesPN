@@ -10,6 +10,7 @@ import holmes.windows.managers.ssim.HolmesSim;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -21,10 +22,10 @@ public class StateSimulatorXTPN {
     private SimulatorGlobals sg;
 
     //wewnętrzne obiekty danych symulatora:
-    private ArrayList<TransitionXTPN> transitions;
-    private ArrayList<PlaceXTPN> places;
+    private ArrayList<TransitionXTPN> transitions = new ArrayList<>();
+    private ArrayList<PlaceXTPN> places = new ArrayList<>();
 
-    private MultisetM backupState_MultisetM;// = new MultisetM();
+    private MultisetM backupState_MultisetM = new MultisetM();
     ArrayList<ArrayList<SimulatorEngineXTPN.NextXTPNstep>> nextXTPNsteps;
     SimulatorEngineXTPN.NextXTPNstep infoNode;
     ArrayList<TransitionXTPN> consumingTokensTransitionsXTPN = new ArrayList<>();
@@ -58,9 +59,9 @@ public class StateSimulatorXTPN {
 
     /**
      * Metoda ta musi być wywołana przed każdym startem symulatora. Inicjalizuje początkowe struktury
-     * danych dla symulatora.
-     * @param ownSettings SimulatorGlobals - jeśli powyższej jest = false, to stąd są brane parametry
-     * @return boolean - true, jeśli wszystko się udało
+     * danych dla symulatora
+     * @param ownSettings (<b>SimulatorGlobals</b>) parametry symulacji.
+     * @return (<b>boolean</b>) - true, jeśli wszystko się udało.
      */
     public boolean initiateSim(SimulatorGlobals ownSettings) {
         transitions.clear();
@@ -82,7 +83,6 @@ public class StateSimulatorXTPN {
             places.add( (PlaceXTPN) place);
         }
 
-
         if(transitions == null || places == null) {
             readyToSimulate = false;
             return readyToSimulate;
@@ -91,7 +91,8 @@ public class StateSimulatorXTPN {
             readyToSimulate = false;
             return readyToSimulate;
         }
-        engineXTPN.setEngine(SimulatorGlobals.SimNetType.XTPN, transitions, places);
+
+        engineXTPN.setEngine(ownSettings.getNetType(), transitions, places);
 
 
         /*
@@ -124,13 +125,13 @@ public class StateSimulatorXTPN {
         if(simulationType == 1) { //standardowy tryb symulacji
             //this.boss = (HolmesSim)blackBox[0];
             //this.progressBar = (JProgressBar)blackBox[1];
-        } else if(simulationType == 2) { //QuickSimReps
+        } //else if(simulationType == 2) { //QuickSimReps
             //this.progressBar = (JProgressBar)blackBox[0];
             //this.quickSim = (QuickSimTools)blackBox[1];
-        } else if(simulationType == 3) { //QuickSimNoReps
+        //} else if(simulationType == 3) { //QuickSimNoReps
             //this.progressBar = (JProgressBar)blackBox[0];
             //this.quickSim = (QuickSimTools)blackBox[1];
-        }
+        //}
     }
 
     /**
@@ -141,23 +142,23 @@ public class StateSimulatorXTPN {
         if(simulationType == 1) {
             simulateNet();
             //boss.completeSimulationProcedures();
-        } else if(simulationType == 2) {
+        } //else if(simulationType == 2) {
             //quickSimGatherData();
             //quickSim.finishedStatsData(quickSimAllStats, transitions, places);
-        } else if(simulationType == 3) {
+        //} else if(simulationType == 3) {
             //quickSimGatherDataNoReps();
             //quickSim.finishedStatsData(quickSimAllStats, transitions, places);
-        }
+        //}
         this.terminate = false;
     }
 
     /**
      * Ustawia status wymuszonego kończenia symulacji.
-     * @param val boolean - true, jeśli symulator ma zakończyć działanie
+     * @param status (<b>boolean</b>) true, jeśli symulator ma zakończyć działanie.
      */
-    public void setCancelStatus(boolean val) {
-        this.terminate = val;
-        if(val)
+    public void setCancelStatus(boolean status) {
+        this.terminate = status;
+        if(status)
             readyToSimulate = false;
     }
 
@@ -173,7 +174,6 @@ public class StateSimulatorXTPN {
             return;
         }
 
-
         //tutaj zapisujemy p-stan
         createBackupState();
 
@@ -181,45 +181,9 @@ public class StateSimulatorXTPN {
             if(terminate)
                 break;
 
-            ArrayList<SimulatorEngineXTPN.NextXTPNstep> classicalInputTransitions = engineXTPN.revalidateNetState();
-            nextXTPNsteps = engineXTPN.computeNextState();
-            nextXTPNsteps.set(4, classicalInputTransitions);
-            nextXTPNsteps.get(6).get(0).changeType += classicalInputTransitions.size();
-            infoNode = nextXTPNsteps.get(6).get(0);
-            if(infoNode.changeType == 0) {
-                terminate = true;
-                break;
-            }
-            engineXTPN.updateNetTime(infoNode.timeToChange);
-            simStepsCounter++;
-            simTimeCounter += infoNode.timeToChange;
+            ArrayList<HashMap<TransitionXTPN, Double>> tStatusVectors = processSimStep(true, null);
 
-            consumingTokensTransitionsXTPN = engineXTPN.returnConsumingTransXTPNVector(nextXTPNsteps);
-            consumingTokensTransitionsClassical = engineXTPN.returnConsumingTransClassicalVector(nextXTPNsteps);
-            producingTokensTransitionsAll = engineXTPN.returnProducingTransVector(nextXTPNsteps);
-
-            if(consumingTokensTransitionsXTPN.size() > 0 || consumingTokensTransitionsClassical.size() > 0) {
-
-                //faza zabierana tokenów, czyli uruchamianie tranzycji:
-                transitionsAfterSubtracting = prepareSubtractPhase();
-
-                //wszystko co trafia poniżej dostaje status production(true), tranzycje XTPN - nowy timer beta:
-                engineXTPN.endSubtractPhase(transitionsAfterSubtracting);
-            }
-
-            if(producingTokensTransitionsAll.size() > 0) { //tylko produkcja tokenów
-                engineXTPN.endProductionPhase(producingTokensTransitionsAll);
-            }
-
-            consumingTokensTransitionsXTPN.clear();
-            consumingTokensTransitionsClassical.clear();
-            producingTokensTransitionsAll.clear();
-            nextXTPNsteps.clear();
-
-            //zbierz informacje o tokenach w miejsach:
         }
-
-
 
         overlord.log("Simulation ended. Restoring zero marking.", "text", true);
         readyToSimulate = false;
@@ -229,12 +193,178 @@ public class StateSimulatorXTPN {
     }
 
     /**
+     * Metoda wywoływana przez okno informacji o miejscu XTPN.
+     * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach,
+     *                    ile kroków, ile czasu?
+     * @param place (<b>PlaceXTPN</b>) obiekt miejsca którego tokeny są liczone.
+     * @return (<b>ArrayList[ArrayList[Double]]</b>) - dwa wektory, pierwszy liczy tokeny w każdym kroku, drugi
+     *          zawiera informację o czasie wykonania kroku.
+     */
+    public ArrayList<ArrayList<Double>> simulateNetSinglePlace(SimulatorGlobals ownSettings, PlaceXTPN place) {
+        ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
+        ArrayList<Double> tokensNumber = new ArrayList<>();
+        ArrayList<Double> timeVector = new ArrayList<>();
+        resultVectors.add(tokensNumber);
+        resultVectors.add(timeVector);
+
+        if(!readyToSimulate) {
+            JOptionPane.showMessageDialog(null,"XTPN Simulation cannot start, engine initialization failed.",
+                    "Simulation problem",JOptionPane.ERROR_MESSAGE);
+            return resultVectors;
+        }
+        createBackupState(); //zapis p-stanu
+
+        if(ownSettings.simulateTime) {
+            for(double i=0; i<ownSettings.simMaxTime_XTPN; ) {
+                if(terminate)
+                    break;
+
+                processSimStep(false, null);
+
+                if(place.isGammaModeActive()) {
+                    tokensNumber.add((double) place.accessMultiset().size());
+                } else {
+                    tokensNumber.add((double) place.getTokensNumber());
+                }
+                timeVector.add(simTimeCounter);
+
+                i += simTimeCounter;
+            }
+        } else {
+            for(int i=0; i<ownSettings.simSteps_XTPN; i++) {
+                if(terminate)
+                    break;
+
+                processSimStep(false, null);
+
+                if(place.isGammaModeActive()) {
+                    tokensNumber.add((double) place.accessMultiset().size());
+                } else {
+                    tokensNumber.add((double) place.getTokensNumber());
+                }
+                timeVector.add(simTimeCounter);
+            }
+        }
+
+
+        readyToSimulate = false;
+        restoreInternalMarkingZero(); //restore p-state
+        return resultVectors;
+    }
+
+    /**
+     * Metoda zamyka w sobie wszystkie elementy pełnego kroku symulacji. Zwraca 2 wektory: dwie HashMapy ze statusem
+     * tranzycji (0 - nieaktywna, 1 - aktywowana, 2 - produkuJĄCA, 3 - wyproduKOWAŁA), drugi wektor dla
+     * tranzycji zawiera czas w którym odnotowano status. Uwaga: dla aktywnych może być o tau (krok) mniejszy niż
+     * dla tych które zmieniły swój stan w danym kroku!
+     * @param scanTransitions (<b>boolean</b>) true, jeżeli mają być zapamiętane informacje o tranzycjach.
+     * @param singleTransition (<b>TransitionXTPN</b>) jeśli nie (<b>null</b>), to tylko ta tranzycja będzie monitorowana.
+     * @return (<b>ArrayList[HashMap[TransitionXTPN, Double]]</b>) dwa wektory ze stanem tranzycji po danym kroku.
+     */
+    private ArrayList<HashMap<TransitionXTPN, Double>> processSimStep(boolean scanTransitions
+            , TransitionXTPN singleTransition) {
+        ArrayList<SimulatorEngineXTPN.NextXTPNstep> classicalInputTransitions = engineXTPN.revalidateNetState();
+        nextXTPNsteps = engineXTPN.computeNextState();
+        nextXTPNsteps.set(4, classicalInputTransitions);
+        nextXTPNsteps.get(6).get(0).changeType += classicalInputTransitions.size();
+        infoNode = nextXTPNsteps.get(6).get(0);
+        if(infoNode.changeType == 0) {
+            terminate = true;
+        }
+
+        engineXTPN.updateNetTime(infoNode.timeToChange);
+        simStepsCounter++;
+        double oldTIme = simTimeCounter;
+        simTimeCounter += infoNode.timeToChange;
+
+        consumingTokensTransitionsXTPN = engineXTPN.returnConsumingTransXTPNVector(nextXTPNsteps);
+        consumingTokensTransitionsClassical = engineXTPN.returnConsumingTransClassicalVector(nextXTPNsteps);
+        producingTokensTransitionsAll = engineXTPN.returnProducingTransVector(nextXTPNsteps);
+
+
+        // WEKTORY STANU I CZASU DLA TRANZYCJI:
+        HashMap<TransitionXTPN, Double> transitionsStatusVector = new HashMap<>();
+        HashMap<TransitionXTPN, Double> transitionsStatusTimeVector = new HashMap<>();
+        ArrayList<HashMap<TransitionXTPN, Double>> resultVectors = new ArrayList<>();
+        resultVectors.add(transitionsStatusVector);
+        resultVectors.add(transitionsStatusTimeVector);
+
+        if(scanTransitions) {
+            for (TransitionXTPN trans : transitions) {
+                if( !trans.equals(singleTransition )) { //jak null, to i tak nie przejdzie
+                    continue;
+                }
+
+                if (trans.isActivated_xTPN()) { //jeśli aktywna:
+                    transitionsStatusVector.put(trans, 1.0); //1 - activated
+                    transitionsStatusTimeVector.put(trans, oldTIme);
+                } else if (trans.isProducing_xTPN()) { //jeśli produkująca
+                    transitionsStatusVector.put(trans, 2.0); //2 - producing
+                    transitionsStatusTimeVector.put(trans, oldTIme);
+                } else { //nieaktywna:
+                    transitionsStatusVector.put(trans, 0.0); //0 - nieaktywna
+                    transitionsStatusTimeVector.put(trans, oldTIme);
+                }
+            }
+        }
+
+        if(consumingTokensTransitionsXTPN.size() > 0 || consumingTokensTransitionsClassical.size() > 0) {
+            //faza zabierana tokenów, czyli uruchamianie tranzycji:
+            transitionsAfterSubtracting = consumeTokensSubphase();
+            //wszystko co trafia poniżej dostaje status production(true), tranzycje XTPN - nowy timer beta:
+            engineXTPN.endSubtractPhase(transitionsAfterSubtracting);
+        }
+
+        if(producingTokensTransitionsAll.size() > 0) { //tylko produkcja tokenów
+            engineXTPN.endProductionPhase(producingTokensTransitionsAll);
+        }
+
+        if(scanTransitions) {
+            //UPDATE WEKTORÓW:
+            for (TransitionXTPN trans : producingTokensTransitionsAll) {
+                if( !trans.equals(singleTransition )) { //jak null, to i tak nie przejdzie
+                    continue;
+                }
+
+                transitionsStatusVector.put(trans, 3.0); //wyprodukowały coś w tym kroku
+                transitionsStatusTimeVector.put(trans, simTimeCounter);
+            }
+            for (TransitionXTPN trans : transitionsAfterSubtracting.get(2)) { //deaktywowane
+                if( !trans.equals(singleTransition )) { //jak null, to i tak nie przejdzie
+                    continue;
+                }
+
+                transitionsStatusVector.put(trans, 0.0); //tranzycje, które w tym kroku zostały deaktywowane
+                transitionsStatusTimeVector.put(trans, simTimeCounter);
+            }
+            for (TransitionXTPN trans : transitionsAfterSubtracting.get(0)) {
+                if( !trans.equals(singleTransition )) { //jak null, to i tak nie przejdzie
+                    continue;
+                }
+
+                if (trans.isProducing_xTPN()) { //jeśli false, to znaczy, że to była klasyczna
+                    // i już zdażyła zabrać/wyprodukować i się wygasić
+                    transitionsStatusVector.put(trans, 2.0);
+                    transitionsStatusTimeVector.put(trans, simTimeCounter);
+                }
+            }
+        }
+
+        consumingTokensTransitionsXTPN.clear();
+        consumingTokensTransitionsClassical.clear();
+        producingTokensTransitionsAll.clear();
+        nextXTPNsteps.clear();
+        return resultVectors;
+    }
+
+    /**
      * W zasadzie jest to główna metoda ''odpalania'' tranzycji. Te które są aktywne pobierają tokeny i
      * są umieszczane na listach launchedXTPN oraz (potem) launchedClassical. Te tranzycje dla których
      * zabrakło tokenów są deaktywowane oraz umieszczane w trzeciej tablicy: deactivated.
-     * @return (<b>ArrayList[ArrayList[TransitionXTPN]]</b>) - trzy listy: launchedXTPN, launchedClassical oraz deactivated.
+     * @return (<b>ArrayList[ArrayList[TransitionXTPN]]</b>) - trzy listy:
+     *          <b>launchedXTPN</b> (.get(0)), <b>launchedClassical</b> (.get(1)) oraz <b>deactivated</b> (.get(2)).
      */
-    public ArrayList<ArrayList<TransitionXTPN>> prepareSubtractPhase() {
+    public ArrayList<ArrayList<TransitionXTPN>> consumeTokensSubphase() {
         ArrayList<ArrayList<TransitionXTPN>> launchedTransitions = new ArrayList<>();
         ArrayList<TransitionXTPN> launchedXTPN = new ArrayList<>();
         ArrayList<TransitionXTPN> launchedClassical = new ArrayList<>();
@@ -301,7 +431,6 @@ public class StateSimulatorXTPN {
                     continue;
                 }
             }
-
             if(transition.isActiveTransitionXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                 fireClassSoFar++;
                 transition.setLaunching(true);
@@ -324,6 +453,7 @@ public class StateSimulatorXTPN {
             } else {
                 deactivated.add(transition);
                 transition.deactivateTransitionXTPN(false);
+                producingTokensTransitionsAll.remove(transition);
             }
         }
         launchedTransitions.add(launchedXTPN);
@@ -331,7 +461,6 @@ public class StateSimulatorXTPN {
         launchedTransitions.add(deactivated);
         return launchedTransitions;
     }
-
 
     /**
      * Metoda przygotowuje backup stanu sieci przed symulacją.
@@ -348,7 +477,6 @@ public class StateSimulatorXTPN {
                 backupState_MultisetM.addMultiset_K_toMultiset_M(fakeMultiset, 0);
             }
         }
-
         for(TransitionXTPN trans : transitions) {
             trans.deactivateTransitionXTPN(false);
         }
@@ -360,7 +488,6 @@ public class StateSimulatorXTPN {
     public void restoreInternalMarkingZero() {
         for (int placeIndex = 0; placeIndex < places.size(); placeIndex++) {
             PlaceXTPN place = places.get(placeIndex);
-
             if(backupState_MultisetM.isPlaceStoredAsGammaActive(placeIndex)) {
                 place.setGammaModeStatus(true);
                 place.replaceMultiset( new ArrayList<>(backupState_MultisetM.accessMultiset_K(placeIndex)) );
@@ -372,7 +499,6 @@ public class StateSimulatorXTPN {
                 place.setTokensNumber( (int)tokensNo );
             }
         }
-
         for(TransitionXTPN trans : transitions) {
             trans.deactivateTransitionXTPN(false);
         }

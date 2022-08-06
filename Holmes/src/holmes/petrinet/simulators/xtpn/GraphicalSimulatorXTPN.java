@@ -429,7 +429,6 @@ public class GraphicalSimulatorXTPN {
 
             //TUTAJ USTALENIE JAK WYGLĄDA AKTUALNY STAN, I O ILE CZASU IDZIEMY DO PRZODU Z SYMULACJĄ
             if(newStateChangeStarts) { //nowy krok symulacji
-
                 if (scheduledStop) { // jeśli symulacja ma się zatrzymać, np. bo przycisk
                     executeScheduledStop(); // egzorcyzmuj symulator
                     setSimulationActive(false);
@@ -577,13 +576,9 @@ public class GraphicalSimulatorXTPN {
                     transition.deactivateTransitionXTPN(true); // ???
                     transition.setActivationStatusXTPN(false);
                     transition.setProductionStatus_xTPN(false);
-
-
                     for(Arc arc : transition.getOutArcs()) {
                         arc.setXTPNprodStatus(false);
                     }
-
-
                     producingTokensTransitionsAll.remove(transition);
                 }
             }
@@ -642,6 +637,7 @@ public class GraphicalSimulatorXTPN {
                     launchedClassical.add(transition);
                 } else {
                     transition.deactivateTransitionXTPN(true);
+                    producingTokensTransitionsAll.remove(transition);
                 }
             }
 

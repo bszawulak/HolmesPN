@@ -173,7 +173,7 @@ public class HolmesInvariantsViewer extends JFrame {
 			} else {
 				StateSimulator ss = new StateSimulator();
 				SimulatorGlobals ownSettings = new SimulatorGlobals();
-				ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC);
+				ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC, false);
 				ownSettings.setMaxMode(false);
 				ownSettings.setSingleMode(false);
 				ss.initiateSim(false, ownSettings);
@@ -475,7 +475,7 @@ public class HolmesInvariantsViewer extends JFrame {
 				StateSimulator ss = new StateSimulator();
 
 				SimulatorGlobals ownSettings = new SimulatorGlobals();
-				ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC);
+				ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC, false);
 				ownSettings.setMaxMode(false);
 				ownSettings.setSingleMode(false);
 				ss.initiateSim(false, ownSettings);

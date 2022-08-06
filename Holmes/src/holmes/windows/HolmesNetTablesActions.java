@@ -88,7 +88,7 @@ public class HolmesNetTablesActions {
 		StateSimulator ss = new StateSimulator();
 		
 		SimulatorGlobals ownSettings = new SimulatorGlobals();
-		ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC);
+		ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC, false);
 		ownSettings.setMaxMode(false);
 		ownSettings.setSingleMode(false);
 		ss.initiateSim(false, ownSettings);
@@ -135,7 +135,7 @@ public class HolmesNetTablesActions {
 		
 		StateSimulator ss = new StateSimulator();
 		SimulatorGlobals ownSettings = new SimulatorGlobals();
-		ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC);
+		ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC, false);
 		ownSettings.setMaxMode(false);
 		ownSettings.setSingleMode(false);
 		ss.initiateSim(false, ownSettings);
@@ -260,7 +260,7 @@ public class HolmesNetTablesActions {
 		StateSimulator ss = new StateSimulator();
 		
 		SimulatorGlobals ownSettings = new SimulatorGlobals();
-		ownSettings.setNetType(invSimNetType);
+		ownSettings.setNetType(invSimNetType, false);
 		ownSettings.setMaxMode(maximumMode);
 		ownSettings.setSingleMode(singleMode);
 		ss.initiateSim(false, ownSettings);

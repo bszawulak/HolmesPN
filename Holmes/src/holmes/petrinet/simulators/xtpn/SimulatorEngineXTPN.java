@@ -109,11 +109,12 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
      * @return (<b>ArrayList[NextXTPNstep]</b>) - lista klasycznych, wejściowych i aktywnych tranzycji.
      */
     public ArrayList<NextXTPNstep> revalidateNetState() {
+        ArrayList<NextXTPNstep> classicalInputOnes = new ArrayList<>(); //klasyczne wejściowe będą uruchamiane osobno 50/50
         //czyszczenie miejsc ze starych tokenów:
         for(PlaceXTPN place : places) {
             place.removeOldTokens_XTPN();
         }
-        ArrayList<NextXTPNstep> classicalInputOnes = new ArrayList<>(); //klasyczne wejściowe będą uruchamiane osobno 50/50
+
 
         //tutaj uruchamiany tranzycje wejściowe, one są niewrażliwe na zmiany czasów w tokenach
         for(TransitionXTPN transition : transitions) {
@@ -128,7 +129,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                         double max = transition.getAlphaMaxValue();
                         double rand = getSafeRandomValueXTPN(min, max);
 
-                        if(rand < sg.getCalculationsAccuracy()) {
+                        if(rand < sg.getCalculationsAccuracy()) { //jeśli wylosujemy coś poniżej 1e-9
                             // Może tak być, że jest typu alfa, ale ma range alfa = 0, wtedy bety muszą być
                             // niezerowe (zabezpieczenie) - ustawiamy więc ich wartości czasowe i stan tranzycji
                             // na produkujący. Jeśli alfa=OFF i beta=OFF, to tu i tak nie wejdziemy.
@@ -145,37 +146,35 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                             transition.setTimerAlfaValue(0.0);
                             transition.setActivationStatusXTPN(true);
                         }
-                    } else if(transition.isBetaModeActive()) { //tylko typ beta
+                    } else if(transition.isBetaModeActive()) { // NIE JEST typu alfa, jest typu beta
                         double min = transition.getBetaMinValue();
                         double max = transition.getBetaMaxValue();
-
                         double rand = getSafeRandomValueXTPN(min, max);
                         transition.setTauBetaValue( rand );
                         transition.setTimerBetaValue(0.0);
                         transition.setProductionStatus_xTPN(true);
 
                         if(graphicalSimulation) {
-                            for(Arc arc : transition.getOutArcs()) {
+                            for(Arc arc : transition.getOutArcs()) { //ustaw łuki w tryb produkcji
                                 arc.setXTPNprodStatus(true);
                             }
                         }
-
                     } else { //klasyczna wejściowa
                         classicalInputOnes.add(new NextXTPNstep(transition, -1, 3));
                         //transition.setProductionStatus_xTPN(true);
-
                         //technicznie typ 3: productionEnds, bo ta tranzycja niczego nie zabierze, ale (być może)
                         //uruchomi się w obliczanym stanie (P=50/50) i wyprodukuje tokeny.
                     }
                 } else { // nie jest wejściowa, jest nieaktywna:
-                    if(transition.isActiveTransitionXTPN(sg.getCalculationsAccuracy())) { //sprawdź zbiór aktywujący, czy może stać się aktywna
-                        //dla poprzedniego dużego if'a odpowiednikiem tego było sprawdzanie, czy T jest wejściowa
+                    //sprawdź zbiór aktywujący, czy może stać się aktywna
+                    if(transition.isActiveTransitionXTPN(sg.getCalculationsAccuracy())) {
+                        // (dla poprzedniego dużego if'a odpowiednikiem tego było sprawdzanie, czy T jest wejściowa)
                         if(transition.isAlphaModeActive()) { //typ alfa
                             double min = transition.getAlphaMinValue();
                             double max = transition.getAlphaMaxValue();
                             double rand = getSafeRandomValueXTPN(min, max);
 
-                            if(rand < sg.getCalculationsAccuracy()) {
+                            if(rand < sg.getCalculationsAccuracy()) { //jeśli wylosowano < 1e-9
                                 // Może tak być, że jest typu alfa, ale ma range alfa = 0, wtedy bety muszą być
                                 // niezerowe (zabezpieczenie) - ustawiamy więc ich wartości czasowe i stan tranzycji
                                 // na produkujący. Jeśli alfa=OFF i beta=OFF, to tu i tak nie wejdziemy.
@@ -183,12 +182,11 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                                 max = transition.getBetaMaxValue();
                                 rand = getSafeRandomValueXTPN(min, max);
                                 assert (rand > sg.getCalculationsAccuracy()) : "Alfy są zerami, beta też?! Jakim cudem?";
-
                                 transition.setTauBetaValue( rand );
                                 transition.setTimerBetaValue(0.0);
                                 transition.setProductionStatus_xTPN(true);
 
-                                if(graphicalSimulation) {
+                                if(graphicalSimulation) { //ustaw łuki w tryb produkcji
                                     for(Arc arc : transition.getOutArcs()) {
                                         arc.setXTPNprodStatus(true);
                                     }
@@ -201,10 +199,11 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                         } else if(transition.isBetaModeActive()) { // nie jest alfa, to może beta?
                             transition.setActivationStatusXTPN(true);
                         }
-                        //tu jest else, którego nie ma: nieaktywna, nie wejściowa, może być aktywna, brak alfa i beta -> klasyczna wewnętrzna
+                        //tu jest else, którego nie ma :) -> nieaktywna, nie wejściowa, może być aktywna,
+                        //  brak alfa i beta -> czyli tranzycja klasyczna, wewnętrzna
                         //będzie dodana do listy produkcji w computeNextState() tak czy owak
-                        //jakikolwiek powyższy scenariusz by nie był, jest to aktywna tranzycja, więc:
-                        if(graphicalSimulation) { //ustaw zielony kolor łuku
+                        //jakikolwiek powyższy scenariusz by nie był, jest to jednak aktywna tranzycja, więc:
+                        if(graphicalSimulation) { //ustaw zielony kolor łuku - tryb potrzymywania aktywacji
                             ArrayList<Arc> arcs = transition.getInArcs();
                             for (Arc arc : arcs) {
                                 arc.setXTPNactStatus(true);
@@ -341,7 +340,8 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                 continue;
             }
 
-            if(transition.isAlphaModeActive() && transition.isActivated_xTPN()) { //tylko dla Alfa-TPN i to tych aktywnych
+            //tylko dla Alfa-TPN i to tych aktywnych:
+            if(transition.isAlphaModeActive() && transition.isActivated_xTPN()) {
                 timeDifference = tauAlpha - timerAlpha;
                 assert (timeDifference >= 0);
                 if(timeDifference > currentMinTime) {
@@ -428,7 +428,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
 
     /**
      * Metoda zwiększa czas wszystkich czasowych komponentów sieci XTPN o zadaną wielkość.
-     * @param tau (<b>double</b>) wartość czasu.
+     * @param tau (<b>double</b>) wartość czasu o którą aktualizowana jest cała sieć.
      */
     public void updateNetTime(double tau) {
         for(PlaceXTPN place : places) {
@@ -497,8 +497,9 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
     public void endProductionPhase(ArrayList<TransitionXTPN> producingTokensTransitionsAll) {
         ArrayList<Arc> arcs;
         for (TransitionXTPN transition : producingTokensTransitionsAll) {
-            transition.setLaunching(false);  // skoro tutaj dotarliśmy, to znaczy że tranzycja już
-            //swoje zrobiła i jej status aktywnej się kończy w tym kroku
+            transition.setLaunching(false);
+            // skoro tutaj dotarliśmy, to znaczy że tranzycja już swoje zrobiła
+            // i jej status aktywnej się skończy w tym kroku.
             arcs = transition.getOutArcs();
 
             //dodaj odpowiednią liczbę tokenów do miejsc
@@ -520,11 +521,16 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
 
             }
             transition.deactivateTransitionXTPN(graphicalSimulation);
+            transition.setActivationStatusXTPN(false);
             transition.setProductionStatus_xTPN(false);
         }
-        //producingTokensTransitionsAll.clear();  //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)
     }
 
+    /**
+     * Metoda tworzy listę tranzycji XTPN które w tym kroku muszą pobrać tokeny.
+     * @param nextXTPNsteps (<b>ArrayList[ArrayList[NextXTPNstep]]</b>) lista potencjalnych tranzycji.
+     * @return (<b>ArrayList[NextXTPNstep]</b>) lista tranzycji XTPN konsumujących tokeny.
+     */
     public ArrayList<TransitionXTPN> returnConsumingTransXTPNVector(ArrayList<ArrayList<NextXTPNstep>> nextXTPNsteps) {
         //nextXTPNsteps : [0] places maturity [1] places aging [2] transProdStart [3] transProdEnd
         //              [4] transInputClassical [5] transOtherClassical
@@ -539,6 +545,11 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
         return consumingTokensTransitionsXTPN;
     }
 
+    /**
+     * Metoda tworzy listę tranzycji klasycznych które w tym kroku muszą pobrać tokeny.
+     * @param nextXTPNsteps (<b>ArrayList[ArrayList[NextXTPNstep]]</b>) lista potencjalnych tranzycji.
+     * @return (<b>ArrayList[NextXTPNstep]</b>) lista tranzycji klasycznych konsumujących tokeny.
+     */
     public ArrayList<TransitionXTPN> returnConsumingTransClassicalVector(ArrayList<ArrayList<NextXTPNstep>> nextXTPNsteps) {
         //nextXTPNsteps : [0] places maturity [1] places aging [2] transProdStart [3] transProdEnd
         //              [4] transInputClassical [5] transOtherClassical
@@ -552,6 +563,11 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
         return consumingTokensTransitionsClassical;
     }
 
+    /**
+     * Metoda tworzy listę tranzycji XTPN oraz klasycznych, które w tym kroku wyprodukują tokeny.
+     * @param nextXTPNsteps (<b>ArrayList[ArrayList[NextXTPNstep]]</b>) lista potencjalnych tranzycji.
+     * @return (<b>ArrayList[NextXTPNstep]</b>) lista tranzycji XTPN oraz klasycznych, które wyprodukują tokeny.
+     */
     public ArrayList<TransitionXTPN> returnProducingTransVector(ArrayList<ArrayList<NextXTPNstep>> nextXTPNsteps) {
         //nextXTPNsteps : [0] places maturity [1] places aging [2] transProdStart [3] transProdEnd
         //              [4] transInputClassical [5] transOtherClassical
