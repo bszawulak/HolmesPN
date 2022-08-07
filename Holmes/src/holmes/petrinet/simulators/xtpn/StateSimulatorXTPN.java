@@ -200,7 +200,8 @@ public class StateSimulatorXTPN {
      * @return (<b>ArrayList[ArrayList[Double]]</b>) - dwa wektory, pierwszy liczy tokeny w każdym kroku, drugi
      *          zawiera informację o czasie wykonania kroku.
      */
-    public ArrayList<ArrayList<Double>> simulateNetSinglePlace(SimulatorGlobals ownSettings, PlaceXTPN place) {
+    public ArrayList<ArrayList<Double>> simulateNetSinglePlace(SimulatorGlobals ownSettings
+            , PlaceXTPN place, JProgressBar progressBar) {
         ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
         ArrayList<Double> tokensNumber = new ArrayList<>();
         ArrayList<Double> timeVector = new ArrayList<>();
@@ -215,59 +216,63 @@ public class StateSimulatorXTPN {
         createBackupState(); //zapis p-stanu
 
         if(ownSettings.simulateTime) {
-            for(double i=0; i<ownSettings.simMaxTime_XTPN; ) {
+            progressBar.setMaximum((int)ownSettings.simMaxTime_XTPN);
+            progressBar.setValue(progressBar.getMinimum());
+            while(simTimeCounter < ownSettings.simMaxTime_XTPN) {
                 if(terminate)
                     break;
 
                 processSimStep(false, null);
-
                 if(place.isGammaModeActive()) {
                     tokensNumber.add((double) place.accessMultiset().size());
                 } else {
                     tokensNumber.add((double) place.getTokensNumber());
                 }
                 timeVector.add(simTimeCounter);
-
-                i += simTimeCounter;
+                progressBar.setValue((int)simTimeCounter);
             }
         } else {
+            progressBar.setMaximum((int)ownSettings.simSteps_XTPN);
+            progressBar.setValue(progressBar.getMinimum());
             for(int i=0; i<ownSettings.simSteps_XTPN; i++) {
                 if(terminate)
                     break;
 
                 processSimStep(false, null);
-
                 if(place.isGammaModeActive()) {
                     tokensNumber.add((double) place.accessMultiset().size());
                 } else {
                     tokensNumber.add((double) place.getTokensNumber());
                 }
                 timeVector.add(simTimeCounter);
+                progressBar.setValue(i);
             }
         }
-
         readyToSimulate = false;
         restoreInternalMarkingZero(); //restore p-state
         return resultVectors;
     }
-
 
     /**
      * Metoda symuluje podaną liczbę kroków sieci Petriego dla i sprawdza wybraną tranzycję.
      * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach,
      *                    ile kroków, ile czasu?
      * @param transition (<b>TransitionXTPN</b>) - wybrana tranzycja do testowania.
-     * @return
+     * @return (<b>ArrayList[ArrayList[Double]]</b>) - trzy wektory, pierwszy zawiera status tranzycji (0 - nieaktywna,
+     *  1 - aktywna, 2 - produkuje, 3 - WYprodukowuje tokeny (w danym momencie), drugi zawiera czas statusu, trzeci
+     *  to numer kroku dla statusu.
      */
     public ArrayList<ArrayList<Double>> simulateNetSingleTransition(SimulatorGlobals ownSettings
-            , TransitionXTPN transition) {
+            , TransitionXTPN transition, JProgressBar progressBar) {
         ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
-        ArrayList<Double> firedVector = new ArrayList<>();
+        ArrayList<Double> statusVector = new ArrayList<>();
         ArrayList<Double> timeVector = new ArrayList<>();
         ArrayList<Double> stepVector = new ArrayList<>();
-        resultVectors.add(firedVector);
+        resultVectors.add(statusVector);
         resultVectors.add(timeVector);
         resultVectors.add(stepVector);
+
+        this.progressBar = progressBar;
 
         if(!readyToSimulate) {
             JOptionPane.showMessageDialog(null,"XTPN Simulation cannot start, engine initialization failed.",
@@ -277,23 +282,27 @@ public class StateSimulatorXTPN {
         createBackupState(); //zapis p-stanu
 
         if(ownSettings.simulateTime) {
-            for(double i=0; i<ownSettings.simMaxTime_XTPN; ) {
+            progressBar.setMaximum((int)ownSettings.simMaxTime_XTPN);
+            progressBar.setValue(progressBar.getMinimum());
+            double step = 0;
+            while(simTimeCounter < ownSettings.simMaxTime_XTPN) {
                 if(terminate)
                     break;
 
+                step++;
                 ArrayList<HashMap<TransitionXTPN, Double>> result = processSimStep(true, transition);
                 HashMap<TransitionXTPN, Double> transStatusVector = result.get(0);
                 HashMap<TransitionXTPN, Double> transTimeVector = result.get(1);
 
-                if(transStatusVector.get(transition) == 3.0) {
-                    firedVector.add(1.0);
-                    timeVector.add(simTimeCounter);
-                    stepVector.add(i);
-                }
+                statusVector.add(transStatusVector.get(transition));
+                timeVector.add(transTimeVector.get(transition));
+                stepVector.add(step);
 
-                i += simTimeCounter;
+                progressBar.setValue((int)simTimeCounter);
             }
         } else {
+            progressBar.setMaximum((int)ownSettings.simSteps_XTPN);
+            progressBar.setValue(progressBar.getMinimum());
             for(int i=0; i<ownSettings.simSteps_XTPN; i++) {
                 if(terminate)
                     break;
@@ -302,13 +311,12 @@ public class StateSimulatorXTPN {
                 HashMap<TransitionXTPN, Double> transStatusVector = result.get(0);
                 HashMap<TransitionXTPN, Double> transTimeVector = result.get(1);
 
-                if(transStatusVector.get(transition) == 3.0) {
-                    firedVector.add(1.0);
-                    timeVector.add(simTimeCounter);
-                    stepVector.add((double)i);
-                }
+                statusVector.add(transStatusVector.get(transition));
+                //timeVector.add(simTimeCounter);
+                timeVector.add(transTimeVector.get(transition));
+                stepVector.add((double)i);
 
-                timeVector.add(simTimeCounter);
+                progressBar.setValue(i);
             }
         }
 

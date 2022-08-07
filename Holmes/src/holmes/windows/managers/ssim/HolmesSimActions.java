@@ -10,9 +10,6 @@ import holmes.darkgui.GUIManager;
 
 /**
  * Metoda pomocnicze klasy HolmesStateSimulator.
- * 
- * @author MR
- *
  */
 public class HolmesSimActions {
 	

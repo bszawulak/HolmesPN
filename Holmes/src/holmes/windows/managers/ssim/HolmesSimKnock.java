@@ -29,8 +29,6 @@ import holmes.windows.managers.HolmesStatesManager;
 
 /**
  * Klasa odpowiedzialna za tworzenie podstrony knockoutSim.
- * 
- * @author MR
  */
 public class HolmesSimKnock extends JPanel {
 	@Serial
