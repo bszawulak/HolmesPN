@@ -71,7 +71,8 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
      * @param transitions (<b>ArrayList[TransitionXTPN]</b>) - wektor tranzycji XTPN.
      * @param places (<b>ArrayList[PlaceXTPN]</b>) - wektor miejsc XTPN.
      */
-    public void setEngine(SimulatorGlobals.SimNetType simulationType, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
+    public void setEngine(SimulatorGlobals.SimNetType simulationType, ArrayList<TransitionXTPN> transitions
+            , ArrayList<PlaceXTPN> places) {
         this.netSimTypeXTPN = simulationType;
         this.sg = overlord.simSettings;
         this.transitions = transitions;

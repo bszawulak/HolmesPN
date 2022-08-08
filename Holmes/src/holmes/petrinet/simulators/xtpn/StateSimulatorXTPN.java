@@ -37,10 +37,8 @@ public class StateSimulatorXTPN {
     private int simulationType;	//aktywny tryb symulacji
     private boolean readyToSimulate = false;
     private boolean terminate = false;
-
     public double simStepsCounter = 0;
     public double simTimeCounter = 0;
-
 
     //okna wywołyjące i inne:
     public JProgressBar progressBar;//pasek postępu symulacji
@@ -113,6 +111,13 @@ public class StateSimulatorXTPN {
 
         readyToSimulate = true;
         return readyToSimulate;
+    }
+
+    public void clearDataMatrix() {
+        terminate = false;
+        simStepsCounter = 0;
+        simTimeCounter = 0.0;
+        readyToSimulate = true;
     }
 
     /**

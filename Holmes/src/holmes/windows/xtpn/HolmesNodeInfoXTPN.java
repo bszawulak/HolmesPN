@@ -78,6 +78,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JFormattedTextField betaMaxTextField;
 
     //STATYSTYKI SYMULACJI DLA TRANZYCJI:
+    private JLabel stepTransLabel;
     private JLabel timeTransLabel;
     private JFormattedTextField inactiveStepsTextBox;
     private JFormattedTextField activeStepsTextBox;
@@ -1320,7 +1321,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
         acqDataButton.addActionListener(actionEvent -> {
-            acquireNewTransitionData();
+            getSingleTransitionData();
             showTransitionsChart();
         });
         chartButtonPanel.add(acqDataButton);
@@ -1396,7 +1397,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         int positionX = 10;
         int positionY = 30;
 
-        JLabel stepTransLabel = new JLabel("Steps:", JLabel.LEFT);
+        stepTransLabel = new JLabel("Steps:", JLabel.LEFT);
         stepTransLabel.setBounds(positionX+80, positionY-20, 140, 20);
         resultPanel.add(stepTransLabel);
 
@@ -1425,7 +1426,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
         acqDataButton.addActionListener(actionEvent -> {
-            //acquireNewTransitionData();
+            getMultipleTransitionData();
             //showTransitionsChart();
         });
         resultPanel.add(acqDataButton);
@@ -1526,7 +1527,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         repetitionsStepsLabel.setBounds(positionX+300, positionY, 70, 20);
         resultPanel.add(repetitionsStepsLabel);
 
-        SpinnerModel simRepetitionsSpinnerModel = new SpinnerNumberModel(10, 1, 20, 1);
+        SpinnerModel simRepetitionsSpinnerModel = new SpinnerNumberModel(10, 10, 100, 1);
         JSpinner simRepetitionsSpinner = new JSpinner(simRepetitionsSpinnerModel);
         simRepetitionsSpinner.setBounds(positionX+370, positionY, 70, 20);
         simRepetitionsSpinner.addChangeListener(e -> {
@@ -1551,7 +1552,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private void fillTransitionDynamicData(JFormattedTextField avgFiredTextBox, JPanel chartMainPanel,
                                            JPanel chartButtonPanel) {
         if(!mainSimulatorActive) {
-            acquireNewTransitionData();
+            getSingleTransitionData();
             showTransitionsChart();
         } else {
             avgFiredTextBox.setEnabled(false);
@@ -1573,7 +1574,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
      * Metoda aktywuje symulator dla jednej tranzycji w ustalonym wcześniej trybie i dla wcześniej
      * ustalonej liczby kroków. Wyniki zapisuje na wykresie, zwraca też wektor danych.
      */
-    private void acquireNewTransitionData() {
+    private void getSingleTransitionData() {
         StateSimulatorXTPN ss = new StateSimulatorXTPN();
 
         SimulatorGlobals ownSettings = new SimulatorGlobals();
@@ -1587,24 +1588,43 @@ public class HolmesNodeInfoXTPN extends JFrame {
         statusVectorTransition = new ArrayList<>(dataVector2);
     }
 
-    private void acquireNewTransitionDataRepetitions() {
+    /**
+     * Metoda odpowiedzialna za pobranie dokładniejszych danych statystycznych o zachowaniu tranzycji
+     * w symulacji - symulacja powtarzana jest pewną liczbę razy a wyniki uśredniane.
+     */
+    private void getMultipleTransitionData() {
         StateSimulatorXTPN ss = new StateSimulatorXTPN();
 
         SimulatorGlobals ownSettings = new SimulatorGlobals();
         ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-        ownSettings.simSteps_XTPN = simSteps;
-        ownSettings.simMaxTime_XTPN = simTimeLength;
-        ownSettings.simulateTime = simulateWithTimeLength;
+        ownSettings.simSteps_XTPN = simTransSteps;
+        ownSettings.simMaxTime_XTPN = simTransTime;
+        ownSettings.simulateTime = !simTransBySteps;
         ss.initiateSim(ownSettings);
 
-
-        int problemCounter = 0;
-        for(int i=1; i<transSimRepetitions; i++) {
+        ArrayList<Double> statsVector = null;
+        for(int i=0; i<transSimRepetitions; i++) {
+            ss.clearDataMatrix();
             ArrayList<ArrayList<Double>> dataVectors = ss.simulateNetSingleTransition(ownSettings, theTransition);
 
+            if(i == 0) {
+                statsVector = computeTransitionSimulationData(dataVectors);
+            } else {
+                ArrayList<Double> newStats = computeTransitionSimulationData(dataVectors);
 
+                for(int j=0; j<newStats.size(); j++) { //dodaj kolejne iteracje danych
+                    //zaczynamy od indeksu [1], ponieważ [0] to liczba kroków.
+                    statsVector.set(j, statsVector.get(j) + newStats.get(j));
+                }
+            }
         }
 
+        for(int j=0; j<statsVector.size(); j++) { //uśrednij dane z iteracji
+            statsVector.set(j, statsVector.get(j) / transSimRepetitions);
+        }
+
+        fillStatsFields(statsVector.get(0), statsVector.get(1), statsVector.get(2), statsVector.get(3)
+                , statsVector.get(4), statsVector.get(5), statsVector.get(6), statsVector.get(7), statsVector.get(8));
     }
 
     /**
@@ -1775,15 +1795,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
     }
 
     /**
-     * Metoda wyświetla dane o symulacji tranzycji w dolnym panelu okna. Podaje liczbę kroków oraz
-     * czas dla każdego ze stanów tranzycji XTPN.
+     * Metoda oblicza dane statystyczne na podstawie danych uzyskanych z pełnej symulacji obserwowanej tranzycji.
      * @param dataVectors (<b>ArrayList[ArrayList[Double]]</b>) wektor danych z symulacji tranzycji.
-     * @return (<b>ArrayList[Double]</b>) wektor wynikowy: realSimulationSteps, realSimulationTime,
+     * @return (<b>ArrayList[Double]</b>) wektor wynikowy statystyk: realSimulationSteps, realSimulationTime,
      *      inactiveSteps, activeSteps, producingSteps, fireSteps, inactiveTime, activeTime, producingTime.
      */
     private ArrayList<Double> computeTransitionSimulationData(ArrayList<ArrayList<Double>> dataVectors) {
         ArrayList<Double> resultVector = new ArrayList<>();
-
         double inactiveSteps = 0;
         double activeSteps = 0;
         double producingSteps = 0;
@@ -1791,7 +1809,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
         double inactiveTime = 0.0;
         double activeTime = 0.0;
         double producingTime = 0.0;
-
         double startInactiveTime = 0.0;
         double startActiveTime = 0.0;
         double startProducingTime = 0.0;
@@ -1881,6 +1898,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             , double activeSteps, double producingSteps, double fireSteps, double inactiveTime
             , double activeTime, double producingTime) {
 
+        stepTransLabel.setText("Steps: "+Tools.cutValue(realSimulationSteps) );
         timeTransLabel.setText("Time: "+Tools.cutValue(realSimulationTime) );
 
         double tmp = (inactiveSteps / realSimulationSteps) * 100;
