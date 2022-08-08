@@ -201,7 +201,7 @@ public class StateSimulatorXTPN {
      *          zawiera informację o czasie wykonania kroku.
      */
     public ArrayList<ArrayList<Double>> simulateNetSinglePlace(SimulatorGlobals ownSettings
-            , PlaceXTPN place, JProgressBar progressBar) {
+            , PlaceXTPN place) {
         ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
         ArrayList<Double> tokensNumber = new ArrayList<>();
         ArrayList<Double> timeVector = new ArrayList<>();
@@ -216,8 +216,6 @@ public class StateSimulatorXTPN {
         createBackupState(); //zapis p-stanu
 
         if(ownSettings.simulateTime) {
-            progressBar.setMaximum((int)ownSettings.simMaxTime_XTPN);
-            progressBar.setValue(progressBar.getMinimum());
             while(simTimeCounter < ownSettings.simMaxTime_XTPN) {
                 if(terminate)
                     break;
@@ -229,11 +227,8 @@ public class StateSimulatorXTPN {
                     tokensNumber.add((double) place.getTokensNumber());
                 }
                 timeVector.add(simTimeCounter);
-                progressBar.setValue((int)simTimeCounter);
             }
         } else {
-            progressBar.setMaximum((int)ownSettings.simSteps_XTPN);
-            progressBar.setValue(progressBar.getMinimum());
             for(int i=0; i<ownSettings.simSteps_XTPN; i++) {
                 if(terminate)
                     break;
@@ -245,7 +240,6 @@ public class StateSimulatorXTPN {
                     tokensNumber.add((double) place.getTokensNumber());
                 }
                 timeVector.add(simTimeCounter);
-                progressBar.setValue(i);
             }
         }
         readyToSimulate = false;
@@ -263,7 +257,7 @@ public class StateSimulatorXTPN {
      *  to numer kroku dla statusu.
      */
     public ArrayList<ArrayList<Double>> simulateNetSingleTransition(SimulatorGlobals ownSettings
-            , TransitionXTPN transition, JProgressBar progressBar) {
+            , TransitionXTPN transition) {
         ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
         ArrayList<Double> statusVector = new ArrayList<>();
         ArrayList<Double> timeVector = new ArrayList<>();
@@ -271,8 +265,6 @@ public class StateSimulatorXTPN {
         resultVectors.add(statusVector);
         resultVectors.add(timeVector);
         resultVectors.add(stepVector);
-
-        this.progressBar = progressBar;
 
         if(!readyToSimulate) {
             JOptionPane.showMessageDialog(null,"XTPN Simulation cannot start, engine initialization failed.",
@@ -282,8 +274,6 @@ public class StateSimulatorXTPN {
         createBackupState(); //zapis p-stanu
 
         if(ownSettings.simulateTime) {
-            progressBar.setMaximum((int)ownSettings.simMaxTime_XTPN);
-            progressBar.setValue(progressBar.getMinimum());
             double step = 0;
             while(simTimeCounter < ownSettings.simMaxTime_XTPN) {
                 if(terminate)
@@ -297,12 +287,8 @@ public class StateSimulatorXTPN {
                 statusVector.add(transStatusVector.get(transition));
                 timeVector.add(transTimeVector.get(transition));
                 stepVector.add(step);
-
-                progressBar.setValue((int)simTimeCounter);
             }
         } else {
-            progressBar.setMaximum((int)ownSettings.simSteps_XTPN);
-            progressBar.setValue(progressBar.getMinimum());
             for(int i=0; i<ownSettings.simSteps_XTPN; i++) {
                 if(terminate)
                     break;
@@ -315,8 +301,6 @@ public class StateSimulatorXTPN {
                 //timeVector.add(simTimeCounter);
                 timeVector.add(transTimeVector.get(transition));
                 stepVector.add((double)i);
-
-                progressBar.setValue(i);
             }
         }
 
