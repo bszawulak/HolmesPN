@@ -415,7 +415,9 @@ public final class Tools {
 		formatter.setMaximumFractionDigits(howMany);
 		formatter.setRoundingMode(RoundingMode.HALF_UP);
 
-		return formatter.format(value);
+		//String result = formatter.format(value);
+		//result = result.replace(",", ".");
+		return formatter.format(value).replace(",", ".");
 		/*
 		String format = "#.";
 		for(int i=0; i<howMany; i++)
@@ -430,7 +432,6 @@ public final class Tools {
     	otherSymbols.setDecimalSeparator('.');
     	DecimalFormat df = new DecimalFormat(format, otherSymbols);
 		return df.format(value);
-
 		 */
 	}
 	

@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
+import holmes.darkgui.GUIController;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.data.PetriNet;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
+import holmes.petrinet.simulators.xtpn.StateSimulatorXTPN;
 import holmes.utilities.Tools;
 
 /**
@@ -20,7 +20,8 @@ import holmes.utilities.Tools;
  */
 public class QuickSimTools {
 	private GUIManager overlord;
-	private StateSimulator quickSim;
+	private StateSimulator stateSimulatorPN;
+	private StateSimulatorXTPN stateSimulatorXTPN;
 	private boolean scanTransitions = true;
 	private boolean scanPlaces = true;
 	private boolean markArcs = true;
@@ -40,30 +41,50 @@ public class QuickSimTools {
 	 * @param markArcs (<b>boolean</b>)
 	 * @param repetitions (<b>boolean</b>)
 	 * @param quickProgressBar (<b>JProgressBar</b>)
-
 	 */
 	public void acquireData(boolean scanTransitions, boolean scanPlaces, boolean markArcs, boolean repetitions, JProgressBar quickProgressBar) {
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 			JOptionPane.showMessageDialog(null, "Net simulator working. Unable to retrieve transitions statistics..", 
 					"Simulator working", JOptionPane.ERROR_MESSAGE);
 		} else {
-			this.scanTransitions = scanTransitions;
-			this.scanPlaces = scanPlaces;
-			this.markArcs = markArcs;
-			
-			if(repetitions) {
-				statsData(quickProgressBar);
+			if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
+				statsDataXTPN(quickProgressBar);
+
 			} else {
-				vectorData(quickProgressBar);
+				this.scanTransitions = scanTransitions;
+				this.scanPlaces = scanPlaces;
+				this.markArcs = markArcs;
+
+				if(repetitions) {
+					statsData(quickProgressBar);
+				} else {
+					vectorData(quickProgressBar);
+				}
 			}
 		}
 	}
 
 	private void statsData(JProgressBar quickProgressBar) {
-		quickSim = new StateSimulator();
-		quickSim.initiateSim(true, null);
-		quickSim.setThreadDetails(5, quickProgressBar, this);
-		Thread myThread = new Thread(quickSim);
+		stateSimulatorPN = new StateSimulator();
+		stateSimulatorPN.initiateSim(true, null);
+		stateSimulatorPN.setThreadDetails(5, quickProgressBar, this);
+		Thread myThread = new Thread(stateSimulatorPN);
+		myThread.start();
+	}
+
+	private void statsDataXTPN(JProgressBar quickProgressBar) {
+		stateSimulatorXTPN = new StateSimulatorXTPN();
+		stateSimulatorXTPN.initiateSim(overlord.simSettings);
+		stateSimulatorXTPN.setThreadDetails(5, quickProgressBar, this);
+		Thread myThread = new Thread(stateSimulatorXTPN);
+		myThread.start();
+	}
+
+	private void vectorData(JProgressBar quickProgressBar) {
+		stateSimulatorPN = new StateSimulator();
+		stateSimulatorPN.initiateSim(true, null);
+		stateSimulatorPN.setThreadDetails(6, quickProgressBar, this);
+		Thread myThread = new Thread(stateSimulatorPN);
 		myThread.start();
 	}
 	
@@ -189,12 +210,127 @@ public class QuickSimTools {
 		}
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 	}
-	
-	private void vectorData(JProgressBar quickProgressBar) {
-		quickSim = new StateSimulator();
-		quickSim.initiateSim(true, null);
-		quickSim.setThreadDetails(6, quickProgressBar, this);
-		Thread myThread = new Thread(quickSim);
-		myThread.start();
+
+
+
+
+	public void finishedStatsDataXTPN(StateSimulatorXTPN.QuickSimMatrix result
+			, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
+
+
+		for(int trId=0; trId < transitions.size(); trId++) {
+			ArrayList<ArrayList<Double>> statsTransMatrix = new ArrayList<>();
+			ArrayList<Double> transStatus = new ArrayList<>();
+			ArrayList<Double> transTime = new ArrayList<>();
+
+			int steps = result.transitionsMatrix.size();
+			for(int step = 0; step < steps; step++) {
+				transStatus.add( result.transitionsMatrix.get(step).get(trId).value );
+				transTime.add( result.transitionsMatrix.get(step).get(trId).time );
+			}
+			statsTransMatrix.add(transStatus);
+			statsTransMatrix.add(transTime);
+
+			ArrayList<Double> statsTransVector = computeTransitionSimulationData(statsTransMatrix);
+
+
+		}
+
+
+		overlord.getWorkspace().getProject().repaintAllGraphPanels();
+	}
+
+	private ArrayList<Double> computeTransitionSimulationData(ArrayList<ArrayList<Double>> dataVectors) {
+		ArrayList<Double> resultVector = new ArrayList<>();
+		double inactiveSteps = 0;
+		double activeSteps = 0;
+		double producingSteps = 0;
+		double fireSteps = 0;
+		double inactiveTime = 0.0;
+		double activeTime = 0.0;
+		double producingTime = 0.0;
+		double startInactiveTime = 0.0;
+		double startActiveTime = 0.0;
+		double startProducingTime = 0.0;
+
+		double lastValue = 0.0;
+
+		for(int step=0; step<dataVectors.get(0).size(); step++) {
+			double value = dataVectors.get(0).get(step);
+			double simTime = dataVectors.get(1).get(step);
+			//double simStep = statusVectorTransition.get(2).get(step);
+
+			if(value == 0.0) {
+				inactiveSteps++;
+			} else if(value == 1.0) {
+				activeSteps++;
+			} else if(value == 2.0) {
+				producingSteps++;
+			} else if(value == 3.0) {
+				fireSteps++;
+			}
+
+			if(step == dataVectors.get(0).size()-1) { //ostatni krok
+				if(lastValue == value) {
+					if(value == 0.0) { //last inactive step
+						inactiveTime += (simTime - startInactiveTime);
+					} else if(value == 1.0) { //last active step
+						activeTime += (simTime - startActiveTime);
+					} else if(value == 2.0) { //last producing step
+						producingTime += (simTime - startProducingTime);
+					}
+				}
+			}
+
+			if(lastValue != value) {
+				if(value == 0.0 && lastValue == 1.0) { //active -> inactive
+					activeTime += (simTime - startActiveTime);
+					startInactiveTime = simTime;
+				} else if(value == 0.0 && lastValue == 2.0) { //producing -> inactive
+					producingTime += (simTime - startProducingTime);
+					startInactiveTime = simTime;
+				} else if(value == 0.0 && lastValue == 3.0) { //fired -> inactive
+					startInactiveTime = simTime;
+				} else if(value == 1.0 && lastValue == 0.0) { //inactive -> active
+					inactiveTime += (simTime - startInactiveTime);
+					startActiveTime = simTime;
+				} else if(value == 1.0 && lastValue == 2.0) { //producing -> active
+					producingTime += (simTime - startProducingTime);
+					startActiveTime = simTime;
+				} else if(value == 1.0 && lastValue == 3.0) { //fired -> active
+					startActiveTime = simTime;
+				} else if(value == 2.0 && lastValue == 0.0) { //inactive -> producing
+					inactiveTime += (simTime - startInactiveTime);
+					startProducingTime = simTime;
+				} else if(value == 2.0 && lastValue == 1.0) { //active -> producing
+					activeTime += (simTime - startActiveTime);
+					startProducingTime = simTime;
+				} else if(value == 2.0 && lastValue == 3.0) { //fired -> producing
+					startProducingTime = simTime;
+				} else if(value == 3.0 && lastValue == 0.0) { //inactive -> fired
+					inactiveTime += (simTime - startInactiveTime);
+				} else if(value == 3.0 && lastValue == 1.0) { //active -> fired
+					activeTime += (simTime - startActiveTime);
+				} else if(value == 3.0 && lastValue == 2.0) { //producing -> fired
+					producingTime += (simTime - startProducingTime);
+				}
+				lastValue = value;
+			}
+		}
+
+		double realSimulationSteps = dataVectors.get(1).size();
+		double realSimulationTime = dataVectors.get(1).get((int)realSimulationSteps - 1);
+
+		resultVector.add(realSimulationSteps);
+		resultVector.add(realSimulationTime);
+		resultVector.add(inactiveSteps);
+		resultVector.add(activeSteps);
+		resultVector.add(producingSteps);
+		resultVector.add(fireSteps);
+		resultVector.add(inactiveTime);
+		resultVector.add(activeTime);
+		resultVector.add(producingTime);
+
+		return resultVector;
 	}
 }

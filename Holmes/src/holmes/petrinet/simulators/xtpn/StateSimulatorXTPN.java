@@ -9,6 +9,7 @@ import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.windows.managers.ssim.HolmesSim;
 
 import javax.swing.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,7 +17,7 @@ import java.util.Iterator;
 /**
  * Klasa symulatora XTPN.
  */
-public class StateSimulatorXTPN {
+public class StateSimulatorXTPN implements Runnable {
     private GUIManager overlord;
     private SimulatorEngineXTPN engineXTPN;
     private SimulatorGlobals sg;
@@ -45,6 +46,10 @@ public class StateSimulatorXTPN {
     private HolmesSim boss;	//okno nadrzędne symulatora
     private QuickSimTools quickSim;
 
+    //TRYBY SYMULACJI:
+    //QUICK SIM 1
+    private ArrayList<ArrayList<Double>> quickSimAllStats;
+
     /**
      * Główny konstruktor obiektu klasy StateSimulator.
      */
@@ -52,6 +57,23 @@ public class StateSimulatorXTPN {
         engineXTPN = new SimulatorEngineXTPN();
         overlord = GUIManager.getDefaultGUIManager();
         sg = overlord.simSettings;
+    }
+
+    public final class NodeSimBox {
+        public double value;
+        public double step;
+        public double time;
+
+        public NodeSimBox(double v, double s, double t) {
+            value = v;
+            step = s;
+            time = t;
+        }
+    }
+
+    public final class QuickSimMatrix {
+        public ArrayList<ArrayList<NodeSimBox>> transitionsMatrix = new ArrayList<>();
+        public ArrayList<ArrayList<NodeSimBox>> placesMatrix = new ArrayList<>();
     }
 
 
@@ -128,12 +150,10 @@ public class StateSimulatorXTPN {
     public void setThreadDetails(int simulationType, Object... blackBox) {
         this.simulationType = simulationType;
         if(simulationType == 1) { //standardowy tryb symulacji
-            //this.boss = (HolmesSim)blackBox[0];
-            //this.progressBar = (JProgressBar)blackBox[1];
-        } //else if(simulationType == 2) { //QuickSimReps
-            //this.progressBar = (JProgressBar)blackBox[0];
-            //this.quickSim = (QuickSimTools)blackBox[1];
-        //} else if(simulationType == 3) { //QuickSimNoReps
+            this.progressBar = (JProgressBar)blackBox[0];
+            this.quickSim = (QuickSimTools)blackBox[1];
+            this.sg = (SimulatorGlobals)blackBox[2];
+        } //else if(simulationType == 3) { //QuickSimNoReps
             //this.progressBar = (JProgressBar)blackBox[0];
             //this.quickSim = (QuickSimTools)blackBox[1];
         //}
@@ -145,8 +165,8 @@ public class StateSimulatorXTPN {
     public void run() {
         this.terminate = false;
         if(simulationType == 1) {
-            simulateNet();
-            //boss.completeSimulationProcedures();
+            QuickSimMatrix result = quickSimGatherData();
+            quickSim.finishedStatsDataXTPN(result, transitions, places);
         } //else if(simulationType == 2) {
             //quickSimGatherData();
             //quickSim.finishedStatsData(quickSimAllStats, transitions, places);
@@ -418,6 +438,84 @@ public class StateSimulatorXTPN {
         return resultVectors;
     }
 
+    private ArrayList<ArrayList<NodeSimBox>> processSimStep(int step) {
+        ArrayList<NodeSimBox> transitionsStatus = new ArrayList<>();
+        ArrayList<NodeSimBox> placesStatus = new ArrayList<>();
+
+        ArrayList<SimulatorEngineXTPN.NextXTPNstep> classicalInputTransitions = engineXTPN.revalidateNetState();
+        nextXTPNsteps = engineXTPN.computeNextState();
+        nextXTPNsteps.set(4, classicalInputTransitions);
+        nextXTPNsteps.get(6).get(0).changeType += classicalInputTransitions.size();
+        infoNode = nextXTPNsteps.get(6).get(0);
+        if(infoNode.changeType == 0) {
+            terminate = true;
+        }
+
+        engineXTPN.updateNetTime(infoNode.timeToChange);
+        simStepsCounter++;
+        double oldTIme = simTimeCounter;
+        simTimeCounter += infoNode.timeToChange;
+
+        consumingTokensTransitionsXTPN = engineXTPN.returnConsumingTransXTPNVector(nextXTPNsteps);
+        consumingTokensTransitionsClassical = engineXTPN.returnConsumingTransClassicalVector(nextXTPNsteps);
+        producingTokensTransitionsAll = engineXTPN.returnProducingTransVector(nextXTPNsteps);
+
+        for (TransitionXTPN trans : transitions) {
+            if (trans.isActivated_xTPN()) { //jeśli aktywna:
+                transitionsStatus.add(new NodeSimBox(1.0, step, oldTIme));
+            } else if (trans.isProducing_xTPN()) { //jeśli produkująca
+                transitionsStatus.add(new NodeSimBox(2.0, step, oldTIme));
+            } else { //nieaktywna:
+                transitionsStatus.add(new NodeSimBox(0.0, step, oldTIme));
+            }
+        }
+
+
+        if(consumingTokensTransitionsXTPN.size() > 0 || consumingTokensTransitionsClassical.size() > 0) {
+            //faza zabierana tokenów, czyli uruchamianie tranzycji:
+            transitionsAfterSubtracting = consumeTokensSubphase();
+            //wszystko co trafia poniżej dostaje status production(true), tranzycje XTPN - nowy timer beta:
+            engineXTPN.endSubtractPhase(transitionsAfterSubtracting);
+        }
+
+        if(producingTokensTransitionsAll.size() > 0) { //tylko produkcja tokenów
+            engineXTPN.endProductionPhase(producingTokensTransitionsAll);
+        }
+
+
+
+        for (TransitionXTPN trans : producingTokensTransitionsAll) {
+            transitionsStatus.set(transitions.lastIndexOf(trans), new NodeSimBox(3.0, step, simTimeCounter)); //wyprodukowały coś w tym kroku
+        }
+        for (TransitionXTPN trans : transitionsAfterSubtracting.get(2)) { //deaktywowane
+            transitionsStatus.set(transitions.lastIndexOf(trans), new NodeSimBox(0.0, step, simTimeCounter)); //tranzycje, które w tym kroku zostały deaktywowane
+        }
+        for (TransitionXTPN trans : transitionsAfterSubtracting.get(0)) {
+            if (trans.isProducing_xTPN()) { //jeśli false, to znaczy, że to była klasyczna
+                // i już zdażyła zabrać/wyprodukować i się wygasić
+                transitionsStatus.set(transitions.lastIndexOf(trans), new NodeSimBox(2.0, step, simTimeCounter));
+            }
+        }
+
+        for(PlaceXTPN place : places) {
+            if(place.isGammaModeActive()) {
+                placesStatus.add( new NodeSimBox(place.accessMultiset().size(), step, simTimeCounter) );
+            } else {
+                placesStatus.add( new NodeSimBox(place.getTokensNumber(), step, simTimeCounter) );
+            }
+        }
+
+        consumingTokensTransitionsXTPN.clear();
+        consumingTokensTransitionsClassical.clear();
+        producingTokensTransitionsAll.clear();
+        nextXTPNsteps.clear();
+
+        ArrayList<ArrayList<NodeSimBox>> resultVectors = new ArrayList<>();
+        resultVectors.add(transitionsStatus);
+        resultVectors.add(placesStatus);
+        return resultVectors;
+    }
+
     /**
      * W zasadzie jest to główna metoda ''odpalania'' tranzycji. Te które są aktywne pobierają tokeny i
      * są umieszczane na listach launchedXTPN oraz (potem) launchedClassical. Te tranzycje dla których
@@ -563,5 +661,58 @@ public class StateSimulatorXTPN {
         for(TransitionXTPN trans : transitions) {
             trans.deactivateTransitionXTPN(false);
         }
+    }
+
+
+
+    //********************************************************************************************************************************
+    //****************************************    	        **************************************************************************
+    //****************************************   quickSim   **************************************************************************
+    //****************************************              **************************************************************************
+    //********************************************************************************************************************************
+
+    /**
+     * Metoda używana przez moduł quickSim, zbiera dane o średniej liczbie uruchomień tranzycji oraz tokenach
+     * w miejscach. Powtarza symulacje maksymalnie 20 razy.
+     * @return QuickSimMatrix - macierz wektorów danych
+     */
+    public QuickSimMatrix quickSimGatherData() {
+        QuickSimMatrix resMatrix = new QuickSimMatrix();
+
+        if(!readyToSimulate) {
+            JOptionPane.showMessageDialog(null,"XTPN Simulation cannot start, engine initialization failed.",
+                    "Simulation problem",JOptionPane.ERROR_MESSAGE);
+            return resMatrix;
+        }
+        createBackupState(); //zapis p-stanu
+
+        if(sg.simulateTime) {
+            int step = 0;
+            while(simTimeCounter < sg.simMaxTime_XTPN) {
+                if(terminate)
+                    break;
+
+                ArrayList<ArrayList<NodeSimBox>> transStatusVector = processSimStep(step);
+                resMatrix.transitionsMatrix.add(transStatusVector.get(0));
+                resMatrix.placesMatrix.add(transStatusVector.get(1));
+
+                step++;
+            }
+        } else {
+            for(int i=0; i<sg.simSteps_XTPN; i++) {
+                if(terminate)
+                    break;
+
+
+                ArrayList<ArrayList<NodeSimBox>> transStatusVector = processSimStep(i);
+                resMatrix.transitionsMatrix.add(transStatusVector.get(0));
+                resMatrix.placesMatrix.add(transStatusVector.get(1));
+
+            }
+        }
+
+        readyToSimulate = false;
+        restoreInternalMarkingZero(); //restore p-state
+        return resMatrix;
     }
 }

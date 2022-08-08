@@ -7523,7 +7523,7 @@ public class HolmesDockWindowsTable extends JPanel {
     //**************************************************************************************
     //*********************************                  ***********************************
     //*********************************     quickSim     ***********************************
-    //*********************************                  ***********************************
+    //*********************************       qSim       ***********************************
     //**************************************************************************************
 
     /**
@@ -7543,7 +7543,9 @@ public class HolmesDockWindowsTable extends JPanel {
         acqDataButton.setFocusPainted(false);
         acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states");
-        acqDataButton.addActionListener(actionEvent -> quickSim.acquireData(scanTransitions, scanPlaces, markArcs, repetitions, quickProgressBar));
+        acqDataButton.addActionListener(actionEvent -> {
+            quickSim.acquireData(scanTransitions, scanPlaces, markArcs, repetitions, quickProgressBar);
+        });
         components.add(acqDataButton);
 
         JButton simSettingsButton = new JButton("SimSettings");

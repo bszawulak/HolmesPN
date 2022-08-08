@@ -88,12 +88,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JFormattedTextField activeTimeTextBox;
     private JFormattedTextField producingTimeTextBox;
 
-    private JCheckBox stepsMultiTransCheckbox;
-    private boolean simTransBySteps = true;
-    private JCheckBox timeMultiTransCheckbox;
-    private int transSimRepetitions = 10;
-    private int simTransSteps = 1000;
-    private double simTransTime = 300.0;
+    private JCheckBox simStatsStepsCheckbox;
+    private JCheckBox simStatsTimeCheckbox;
+    private boolean simStatsTransBySteps = true;
+    private int simStatsTransRepetitions = 10;
+    private int simStatsTransSteps = 1000;
+    private double simStatsTransTime = 300.0;
 
     /**
      * Konstruktor do tworzenia okna właściwości miejsca.
@@ -1447,27 +1447,27 @@ public class HolmesNodeInfoXTPN extends JFrame {
         activeTimeTextBox.setEditable(false);
         resultPanel.add(activeTimeTextBox);
 
-        stepsMultiTransCheckbox = new JCheckBox("Steps");
-        stepsMultiTransCheckbox.setBounds(positionX+300, positionY, 70, 20);
-        stepsMultiTransCheckbox.setSelected(simulateWithTimeLength);
-        stepsMultiTransCheckbox.setBackground(Color.WHITE);
-        stepsMultiTransCheckbox.addItemListener(e -> {
+        simStatsStepsCheckbox = new JCheckBox("Steps");
+        simStatsStepsCheckbox.setBounds(positionX+300, positionY, 70, 20);
+        simStatsStepsCheckbox.setSelected(simulateWithTimeLength);
+        simStatsStepsCheckbox.setBackground(Color.WHITE);
+        simStatsStepsCheckbox.addItemListener(e -> {
             if(doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
-            simTransBySteps = box.isSelected();
+            simStatsTransBySteps = box.isSelected();
             doNotUpdate = true;
-            timeMultiTransCheckbox.setSelected(!simTransBySteps);
+            simStatsTimeCheckbox.setSelected(!simStatsTransBySteps);
             doNotUpdate = false;
         });
-        resultPanel.add(stepsMultiTransCheckbox);
+        resultPanel.add(simStatsStepsCheckbox);
 
-        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simTransSteps, 0, 100000, 100);
+        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simStatsTransSteps, 0, 100000, 100);
         JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
         simStepsSpinner.setBounds(positionX+370, positionY, 70, 20);
         simStepsSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
-            simTransSteps = (int) spinner.getValue();
+            simStatsTransSteps = (int) spinner.getValue();
         });
         resultPanel.add(simStepsSpinner);
 
@@ -1487,28 +1487,28 @@ public class HolmesNodeInfoXTPN extends JFrame {
         producingTimeTextBox.setEditable(false);
         resultPanel.add(producingTimeTextBox);
 
-        timeMultiTransCheckbox = new JCheckBox("Time");
-        timeMultiTransCheckbox.setBounds(positionX+300, positionY, 70, 20);
-        timeMultiTransCheckbox.setSelected(simulateWithTimeLength);
-        timeMultiTransCheckbox.setBackground(Color.WHITE);
-        timeMultiTransCheckbox.addItemListener(e -> {
+        simStatsTimeCheckbox = new JCheckBox("Time");
+        simStatsTimeCheckbox.setBounds(positionX+300, positionY, 70, 20);
+        simStatsTimeCheckbox.setSelected(simulateWithTimeLength);
+        simStatsTimeCheckbox.setBackground(Color.WHITE);
+        simStatsTimeCheckbox.addItemListener(e -> {
             if(doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
-            simTransBySteps = !(box.isSelected());
+            simStatsTransBySteps = !(box.isSelected());
             doNotUpdate = true;
-            stepsMultiTransCheckbox.setSelected(simTransBySteps);
+            simStatsStepsCheckbox.setSelected(simStatsTransBySteps);
             doNotUpdate = false;
         });
-        resultPanel.add(timeMultiTransCheckbox);
+        resultPanel.add(simStatsTimeCheckbox);
 
-        SpinnerModel simTimeLengthSpinnerModel = new SpinnerNumberModel(simTransTime, 0, 50000, 20);
+        SpinnerModel simTimeLengthSpinnerModel = new SpinnerNumberModel(simStatsTransTime, 0, 50000, 20);
         JSpinner simTimeLengthSpinner = new JSpinner(simTimeLengthSpinnerModel);
         simTimeLengthSpinner.setBounds(positionX+370, positionY, 70, 20);
         simTimeLengthSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             double tmp = (double)spinner.getValue();
-            simTransTime = (int) tmp;
+            simStatsTransTime = (int) tmp;
         });
         resultPanel.add(simTimeLengthSpinner);
 
@@ -1532,12 +1532,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
         simRepetitionsSpinner.setBounds(positionX+370, positionY, 70, 20);
         simRepetitionsSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
-            transSimRepetitions = (int) spinner.getValue();
+            simStatsTransRepetitions = (int) spinner.getValue();
         });
         resultPanel.add(simRepetitionsSpinner);
 
         doNotUpdate = true;
-        stepsMultiTransCheckbox.setSelected(true);
+        simStatsStepsCheckbox.setSelected(true);
         doNotUpdate = false;
 
         return resultPanel;
@@ -1597,13 +1597,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         SimulatorGlobals ownSettings = new SimulatorGlobals();
         ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-        ownSettings.simSteps_XTPN = simTransSteps;
-        ownSettings.simMaxTime_XTPN = simTransTime;
-        ownSettings.simulateTime = !simTransBySteps;
+        ownSettings.simSteps_XTPN = simStatsTransSteps;
+        ownSettings.simMaxTime_XTPN = simStatsTransTime;
+        ownSettings.simulateTime = !simStatsTransBySteps;
         ss.initiateSim(ownSettings);
 
         ArrayList<Double> statsVector = null;
-        for(int i=0; i<transSimRepetitions; i++) {
+        for(int i = 0; i< simStatsTransRepetitions; i++) {
             ss.clearDataMatrix();
             ArrayList<ArrayList<Double>> dataVectors = ss.simulateNetSingleTransition(ownSettings, theTransition);
 
@@ -1620,7 +1620,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         }
 
         for(int j=0; j<statsVector.size(); j++) { //uśrednij dane z iteracji
-            statsVector.set(j, statsVector.get(j) / transSimRepetitions);
+            statsVector.set(j, statsVector.get(j) / simStatsTransRepetitions);
         }
 
         fillStatsFields(statsVector.get(0), statsVector.get(1), statsVector.get(2), statsVector.get(3)
