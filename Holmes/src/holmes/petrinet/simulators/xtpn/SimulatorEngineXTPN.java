@@ -119,6 +119,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
         //tutaj uruchamiany tranzycje wejściowe, one są niewrażliwe na zmiany czasów w tokenach
         for(TransitionXTPN transition : transitions) {
             if(transition.isProducing_xTPN()) { //produkujące zostawiamy w spokoju
+                transition.currState = 2; //produkcja
                 continue;
             }
 
@@ -141,10 +142,12 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                             transition.setTauBetaValue( rand );
                             transition.setTimerBetaValue(0.0);
                             transition.setProductionStatus_xTPN(true);
+                            transition.currState = 2; //produkcja
                         } else { //zakres alfa nie jest zerowy:
                             transition.setTauAlphaValue( rand );
                             transition.setTimerAlfaValue(0.0);
                             transition.setActivationStatusXTPN(true);
+                            transition.currState = 1; //aktywność
                         }
                     } else if(transition.isBetaModeActive()) { // NIE JEST typu alfa, jest typu beta
                         double min = transition.getBetaMinValue();
@@ -153,6 +156,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                         transition.setTauBetaValue( rand );
                         transition.setTimerBetaValue(0.0);
                         transition.setProductionStatus_xTPN(true);
+                        transition.currState = 2; //produkcja
 
                         if(graphicalSimulation) {
                             for(Arc arc : transition.getOutArcs()) { //ustaw łuki w tryb produkcji
@@ -161,6 +165,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                         }
                     } else { //klasyczna wejściowa
                         classicalInputOnes.add(new NextXTPNstep(transition, -1, 3));
+                        transition.currState = 2; //produkcja
                         //transition.setProductionStatus_xTPN(true);
                         //technicznie typ 3: productionEnds, bo ta tranzycja niczego nie zabierze, ale (być może)
                         //uruchomi się w obliczanym stanie (P=50/50) i wyprodukuje tokeny.
@@ -185,6 +190,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                                 transition.setTauBetaValue( rand );
                                 transition.setTimerBetaValue(0.0);
                                 transition.setProductionStatus_xTPN(true);
+                                transition.currState = 2; //produkcja
 
                                 if(graphicalSimulation) { //ustaw łuki w tryb produkcji
                                     for(Arc arc : transition.getOutArcs()) {
@@ -195,9 +201,11 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                                 transition.setTauAlphaValue( rand );
                                 transition.setTimerAlfaValue(0.0);
                                 transition.setActivationStatusXTPN(true);
+                                transition.currState = 1; //aktywność
                             }
                         } else if(transition.isBetaModeActive()) { // nie jest alfa, to może beta?
                             transition.setActivationStatusXTPN(true);
+                            transition.currState = 2; //produkcja
                         }
                         //tu jest else, którego nie ma :) -> nieaktywna, nie wejściowa, może być aktywna,
                         //  brak alfa i beta -> czyli tranzycja klasyczna, wewnętrzna
@@ -219,6 +227,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
 
                 if(!transition.isActiveTransitionXTPN(sg.getCalculationsAccuracy())) {
                     transition.deactivateTransitionXTPN(graphicalSimulation);
+                    transition.currState = 0; //nieaktywna
                 }
             }
         }
@@ -465,6 +474,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                 if(transition.isBetaModeActive()) {
                     //czas na przejście w stan Beta
                     transition.setProductionStatus_xTPN(true); //samo zrobi activation=false
+                    transition.currState = 2; //produkcja
                     double min = transition.getBetaMinValue();
                     double max = transition.getBetaMaxValue();
                     double rand = getSafeRandomValueXTPN(min, max);

@@ -75,7 +75,14 @@ public class QuickSimTools {
 	private void statsDataXTPN(JProgressBar quickProgressBar) {
 		stateSimulatorXTPN = new StateSimulatorXTPN();
 		stateSimulatorXTPN.initiateSim(overlord.simSettings);
-		stateSimulatorXTPN.setThreadDetails(5, quickProgressBar, this);
+
+		SimulatorGlobals ownSettings = new SimulatorGlobals();
+		ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
+		ownSettings.simSteps_XTPN = 1000;
+		ownSettings.simMaxTime_XTPN = 300.0;
+		ownSettings.simulateTime = false;
+
+		stateSimulatorXTPN.setThreadDetails(1, this, quickProgressBar, ownSettings);
 		Thread myThread = new Thread(stateSimulatorXTPN);
 		myThread.start();
 	}
@@ -221,97 +228,4 @@ public class QuickSimTools {
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 
-	private ArrayList<Double> computeTransitionSimulationData(ArrayList<ArrayList<Double>> dataVectors) {
-		ArrayList<Double> resultVector = new ArrayList<>();
-		double inactiveSteps = 0;
-		double activeSteps = 0;
-		double producingSteps = 0;
-		double fireSteps = 0;
-		double inactiveTime = 0.0;
-		double activeTime = 0.0;
-		double producingTime = 0.0;
-		double startInactiveTime = 0.0;
-		double startActiveTime = 0.0;
-		double startProducingTime = 0.0;
-
-		double lastValue = 0.0;
-
-		for(int step=0; step<dataVectors.get(0).size(); step++) {
-			double value = dataVectors.get(0).get(step);
-			double simTime = dataVectors.get(1).get(step);
-			//double simStep = statusVectorTransition.get(2).get(step);
-
-			if(value == 0.0) {
-				inactiveSteps++;
-			} else if(value == 1.0) {
-				activeSteps++;
-			} else if(value == 2.0) {
-				producingSteps++;
-			} else if(value == 3.0) {
-				fireSteps++;
-			}
-
-			if(step == dataVectors.get(0).size()-1) { //ostatni krok
-				if(lastValue == value) {
-					if(value == 0.0) { //last inactive step
-						inactiveTime += (simTime - startInactiveTime);
-					} else if(value == 1.0) { //last active step
-						activeTime += (simTime - startActiveTime);
-					} else if(value == 2.0) { //last producing step
-						producingTime += (simTime - startProducingTime);
-					}
-				}
-			}
-
-			if(lastValue != value) {
-				if(value == 0.0 && lastValue == 1.0) { //active -> inactive
-					activeTime += (simTime - startActiveTime);
-					startInactiveTime = simTime;
-				} else if(value == 0.0 && lastValue == 2.0) { //producing -> inactive
-					producingTime += (simTime - startProducingTime);
-					startInactiveTime = simTime;
-				} else if(value == 0.0 && lastValue == 3.0) { //fired -> inactive
-					startInactiveTime = simTime;
-				} else if(value == 1.0 && lastValue == 0.0) { //inactive -> active
-					inactiveTime += (simTime - startInactiveTime);
-					startActiveTime = simTime;
-				} else if(value == 1.0 && lastValue == 2.0) { //producing -> active
-					producingTime += (simTime - startProducingTime);
-					startActiveTime = simTime;
-				} else if(value == 1.0 && lastValue == 3.0) { //fired -> active
-					startActiveTime = simTime;
-				} else if(value == 2.0 && lastValue == 0.0) { //inactive -> producing
-					inactiveTime += (simTime - startInactiveTime);
-					startProducingTime = simTime;
-				} else if(value == 2.0 && lastValue == 1.0) { //active -> producing
-					activeTime += (simTime - startActiveTime);
-					startProducingTime = simTime;
-				} else if(value == 2.0 && lastValue == 3.0) { //fired -> producing
-					startProducingTime = simTime;
-				} else if(value == 3.0 && lastValue == 0.0) { //inactive -> fired
-					inactiveTime += (simTime - startInactiveTime);
-				} else if(value == 3.0 && lastValue == 1.0) { //active -> fired
-					activeTime += (simTime - startActiveTime);
-				} else if(value == 3.0 && lastValue == 2.0) { //producing -> fired
-					producingTime += (simTime - startProducingTime);
-				}
-				lastValue = value;
-			}
-		}
-
-		double realSimulationSteps = dataVectors.get(1).size();
-		double realSimulationTime = dataVectors.get(1).get((int)realSimulationSteps - 1);
-
-		resultVector.add(realSimulationSteps);
-		resultVector.add(realSimulationTime);
-		resultVector.add(inactiveSteps);
-		resultVector.add(activeSteps);
-		resultVector.add(producingSteps);
-		resultVector.add(fireSteps);
-		resultVector.add(inactiveTime);
-		resultVector.add(activeTime);
-		resultVector.add(producingTime);
-
-		return resultVector;
-	}
 }

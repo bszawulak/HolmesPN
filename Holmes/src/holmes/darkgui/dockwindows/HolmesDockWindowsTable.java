@@ -7607,6 +7607,25 @@ public class HolmesDockWindowsTable extends JPanel {
         borderPanel.add(repsBox);
 
 
+        JPanel qSimXTPMpanel = new JPanel(null);
+        qSimXTPMpanel.setBounds(posX, posY += 90, 280, 80);
+        //qSimXTPMpanel.setBackground(Color.WHITE);
+        qSimXTPMpanel.setBorder(BorderFactory.createTitledBorder("XTPN:"));
+        components.add(qSimXTPMpanel);
+
+        HolmesRoundedButton acqDataButtonXTPN = new HolmesRoundedButton("<html>Simulate</html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        acqDataButtonXTPN.setBounds(10, 20, 100, 25);
+        acqDataButtonXTPN.setMargin(new Insets(0, 0, 0, 0));
+        acqDataButtonXTPN.setFocusPainted(false);
+        acqDataButtonXTPN.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+        acqDataButtonXTPN.setToolTipText("Compute steps from zero marking through the number of states");
+        acqDataButtonXTPN.addActionListener(actionEvent -> {
+            quickSim.acquireData(scanTransitions, scanPlaces, markArcs, repetitions, quickProgressBar);
+        });
+        qSimXTPMpanel.add(acqDataButtonXTPN);
+
+
         panel.setLayout(null);
         for (JComponent component : components) panel.add(component);
         panel.setOpaque(true);

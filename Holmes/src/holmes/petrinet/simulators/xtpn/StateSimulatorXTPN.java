@@ -162,8 +162,8 @@ public class StateSimulatorXTPN implements Runnable {
     public void setThreadDetails(int simulationType, Object... blackBox) {
         this.simulationType = simulationType;
         if(simulationType == 1) { //standardowy tryb symulacji
-            this.progressBar = (JProgressBar)blackBox[0];
-            this.quickSim = (QuickSimTools)blackBox[1];
+            this.quickSim = (QuickSimTools)blackBox[0];
+            this.progressBar = (JProgressBar)blackBox[1];
             this.sg = (SimulatorGlobals)blackBox[2];
         } //else if(simulationType == 3) { //QuickSimNoReps
             //this.progressBar = (JProgressBar)blackBox[0];
@@ -422,23 +422,25 @@ public class StateSimulatorXTPN implements Runnable {
                 transitionsStatusVector.put(trans, 3.0); //wyprodukowały coś w tym kroku
                 transitionsStatusTimeVector.put(trans, simTimeCounter);
             }
-            for (TransitionXTPN trans : transitionsAfterSubtracting.get(2)) { //deaktywowane
-                if( !trans.equals(singleTransition )) { //jak null, to i tak nie przejdzie
-                    continue;
-                }
+            if(transitionsAfterSubtracting.size() == 3) {
+                for (TransitionXTPN trans : transitionsAfterSubtracting.get(2)) { //deaktywowane
+                    if( !trans.equals(singleTransition )) { //jak null, to i tak nie przejdzie
+                        continue;
+                    }
 
-                transitionsStatusVector.put(trans, 0.0); //tranzycje, które w tym kroku zostały deaktywowane
-                transitionsStatusTimeVector.put(trans, simTimeCounter);
-            }
-            for (TransitionXTPN trans : transitionsAfterSubtracting.get(0)) {
-                if( !trans.equals(singleTransition )) { //jak null, to i tak nie przejdzie
-                    continue;
-                }
-
-                if (trans.isProducing_xTPN()) { //jeśli false, to znaczy, że to była klasyczna
-                    // i już zdażyła zabrać/wyprodukować i się wygasić
-                    transitionsStatusVector.put(trans, 2.0);
+                    transitionsStatusVector.put(trans, 0.0); //tranzycje, które w tym kroku zostały deaktywowane
                     transitionsStatusTimeVector.put(trans, simTimeCounter);
+                }
+                for (TransitionXTPN trans : transitionsAfterSubtracting.get(0)) {
+                    if( !trans.equals(singleTransition )) { //jak null, to i tak nie przejdzie
+                        continue;
+                    }
+
+                    if (trans.isProducing_xTPN()) { //jeśli false, to znaczy, że to była klasyczna
+                        // i już zdażyła zabrać/wyprodukować i się wygasić
+                        transitionsStatusVector.put(trans, 2.0);
+                        transitionsStatusTimeVector.put(trans, simTimeCounter);
+                    }
                 }
             }
         }
@@ -446,6 +448,7 @@ public class StateSimulatorXTPN implements Runnable {
         consumingTokensTransitionsXTPN.clear();
         consumingTokensTransitionsClassical.clear();
         producingTokensTransitionsAll.clear();
+        transitionsAfterSubtracting.clear();
         nextXTPNsteps.clear();
         return resultVectors;
     }
@@ -486,118 +489,64 @@ public class StateSimulatorXTPN implements Runnable {
             engineXTPN.endProductionPhase(producingTokensTransitionsAll);
         }
 
+        //transitionsAfterSubtracting:
+        // launchedXTPN
+        // launchedClassical
+        // deactivated
 
         //STATYSTYKI (PAMIĘTANE W OBIEKCIE TRANZYCJI / MIEJSCA):
         ArrayList<TransitionXTPN> stateChangedTransitions = new ArrayList<>();
+
         for (TransitionXTPN trans : producingTokensTransitionsAll) {
             trans.simFiredState++; //wyprodukowały coś w tym kroku, state=3
-            if(trans.currState == 0) { //była nieaktywna
-                trans.simInactiveTime += infoNode.timeToChange;
-            } else if(trans.currState == 1) { //była aktywna
-                trans.simActiveTime += infoNode.timeToChange;
-            } else if(trans.currState == 2) { //produkowała
+            if(trans.isBetaModeActive()) { // wcześniej była w fazie produkcji (DPN/XTPN)
+                trans.simProductionState++;
                 trans.simProductionTime += infoNode.timeToChange;
-            } //brak currState == 3, bo odpalenie ma zerowy czas
-            trans.lastState = trans.currState; //ostatni stan to ten który właśnie zmieniamy:
-            trans.currState = 3; //tu jest zmiana: aktualny stan: odpalenie
+            } else if(trans.isAlphaModeActive()) { // wcześniej była w fazie aktywności (TPN)
+                trans.simActiveState++;
+                trans.simActiveTime += infoNode.timeToChange;
+            } else { // klasyczna, ale żeby odpalić musiała być przecież aktywna...
+                trans.simActiveState++;
+                trans.simActiveTime += infoNode.timeToChange;
+            }
             stateChangedTransitions.add(trans);
             //TODO: historyVector?
-            //transitionsStatus.set(transitions.lastIndexOf(trans), new NodeSimBox(3.0, step, simTimeCounter));
         }
-        for (TransitionXTPN trans : transitionsAfterSubtracting.get(2)) {
-            trans.simInactiveState++; //deaktywowane, state=0
-            if(trans.currState == 0) { //była nieaktywna
-                trans.simInactiveTime += infoNode.timeToChange;
-            } else if(trans.currState == 1) { //była aktywna
-                trans.simActiveTime += infoNode.timeToChange;
-            } else if(trans.currState == 2) { //produkowała
-                trans.simProductionTime += infoNode.timeToChange;
-            } //brak currState == 3, bo odpalenie ma zerowy czas
-            trans.lastState = trans.currState; //ostatni stan to ten który właśnie zmieniamy:
-            trans.currState = 0; //tu jest zmiana: aktualny stan: deaktywacja
-            stateChangedTransitions.add(trans);
-            //TODO: historyVector?
-            //transitionsStatus.set(transitions.lastIndexOf(trans), new NodeSimBox(0.0, step, simTimeCounter)); //tranzycje, które w tym kroku zostały deaktywowane
-        }
-        for (TransitionXTPN trans : transitionsAfterSubtracting.get(0)) {
-            //wciąż produkują (XTPN), get(1) to klasyczne i one już były przerobione dla producingTokensTransitionsAll
-            if (!trans.isProducing_xTPN()) //jeśli jest false, to znaczy, że była klasyczna
-                continue;
+        if(transitionsAfterSubtracting.size() == 3) {
+            for (TransitionXTPN trans : transitionsAfterSubtracting.get(2)) { //deaktywowane przed pobraniem tokenów
+                trans.simActiveState++; //deaktywowana, ale do tego momentu musiała być  aktywna
+                trans.simActiveTime += infoNode.timeToChange; // musiała być wcześniej aktywna
+                stateChangedTransitions.add(trans);
+                //TODO: historyVector?
+            }
+            for (TransitionXTPN trans : transitionsAfterSubtracting.get(0)) {
+                //wciąż produkują (XTPN), get(1) to klasyczne i one już były przerobione dla producingTokensTransitionsAll
+                if(producingTokensTransitionsAll.contains(trans))
+                    continue;
 
-            trans.simProductionState++; //produkcja, state=2
-            if(trans.currState == 0) { //była nieaktywna
-                trans.simInactiveTime += infoNode.timeToChange;
-            } else if(trans.currState == 1) { //była aktywna
-                trans.simActiveTime += infoNode.timeToChange;
-            } else if(trans.currState == 2) { //produkowała
-                trans.simProductionTime += infoNode.timeToChange;
-            } //brak currState == 3, bo odpalenie ma zerowy czas
-            trans.lastState = trans.currState; //ostatni stan to ten który właśnie zmieniamy:
-            trans.currState = 0; //tu jest zmiana: aktualny stan: deaktywacja
-            stateChangedTransitions.add(trans);
-            //TODO: historyVector?
-            //transitionsStatus.set(transitions.lastIndexOf(trans), new NodeSimBox(2.0, step, simTimeCounter));
+                if(trans.isBetaModeActive()) { //DPN? XTPN?
+                    trans.simActiveState++; //rozpoczęła produkcję, ale do tego momentu musiała być aktywna
+                    trans.simActiveTime += infoNode.timeToChange; // musiała być do tego momentu aktywna
+                }
+                stateChangedTransitions.add(trans);
+                //TODO: historyVector?
+            }
         }
+
 
         for (TransitionXTPN trans : transitions) {
-            if(stateChangedTransitions.contains(trans))
+            if(stateChangedTransitions.contains(trans)) //już przetworzona
                 continue;
 
-            if(trans.currState == 0) { //nieaktywna
-                trans.simInactiveTime += infoNode.timeToChange;
-            } else if(trans.currState == 1) { //aktywna
-                trans.simActiveTime += infoNode.timeToChange;
-            } else if(trans.currState == 2) { //produkcja
-                trans.simProductionTime += infoNode.timeToChange;
-            } else if(trans.currState == 3) { //odpalenie
-                trans.simProductionTime += infoNode.timeToChange;
-            }
-
             if (trans.isActivated_xTPN()) { //jeśli aktywna:
-                //transitionsStatus.add(new NodeSimBox(1.0, step, oldTIme));
                 trans.simActiveState++;
-                trans.currState = 1;
-                if(trans.lastState == 0) { //była nieaktywna
-                    trans.simInactiveTime += simLastTimeChange;
-                    trans.lastState = trans.currState;
-                } else if(trans.lastState == 1) { //była aktywna ( i wciąż jest)
-                    trans.simActiveTime += simLastTimeChange;
-                } else if(trans.lastState == 2) { //produkowała
-                    trans.simProductionTime += simLastTimeChange;
-                    trans.lastState = trans.currState;
-                } else if(trans.lastState == 3) { //odpalona
-                    trans.lastState = trans.currState;
-                }
+                trans.simActiveTime += simLastTimeChange;
             } else if (trans.isProducing_xTPN()) { //jeśli produkująca
-                //transitionsStatus.add(new NodeSimBox(2.0, step, oldTIme));
                 trans.simProductionState++;
-                trans.currState = 2;
-                if(trans.lastState == 0) { //była nieaktywna
-                    trans.simInactiveTime += simLastTimeChange;
-                    trans.lastState = trans.currState;
-                } else if(trans.lastState == 1) { //była aktywna
-                    trans.simActiveTime += simLastTimeChange;
-                    trans.lastState = trans.currState;
-                } else if(trans.lastState == 2) { //produkowała  ( i wciąż produkuje)
-                    trans.simProductionTime += simLastTimeChange;
-                } else if(trans.lastState == 3) { //odpalona
-                    trans.lastState = trans.currState;
-                }
+                trans.simProductionTime += simLastTimeChange;
             } else { //nieaktywna:
-                //transitionsStatus.add(new NodeSimBox(0.0, step, oldTIme));
-                trans.simProductionState++;
-                trans.currState = 0;
-                if(trans.lastState == 0) { //była nieaktywna ( i wciąż jest)
-                    trans.simInactiveTime += simLastTimeChange;
-                } else if(trans.lastState == 1) { //była aktywna
-                    trans.simActiveTime += simLastTimeChange;
-                    trans.lastState = trans.currState;
-                } else if(trans.lastState == 2) { //produkowała
-                    trans.simProductionTime += simLastTimeChange;
-                    trans.lastState = trans.currState;
-                } else if(trans.lastState == 3) { //odpalona
-                    trans.lastState = trans.currState;
-                }
+                trans.simInactiveState++;
+                trans.simInactiveTime += simLastTimeChange;
             }
         }
 
@@ -614,6 +563,7 @@ public class StateSimulatorXTPN implements Runnable {
         consumingTokensTransitionsXTPN.clear();
         consumingTokensTransitionsClassical.clear();
         producingTokensTransitionsAll.clear();
+        transitionsAfterSubtracting.clear();
         nextXTPNsteps.clear();
 
         simLastTimeChange = infoNode.timeToChange;
