@@ -116,7 +116,6 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
             place.removeOldTokens_XTPN();
         }
 
-
         //tutaj uruchamiany tranzycje wejściowe, one są niewrażliwe na zmiany czasów w tokenach
         for(TransitionXTPN transition : transitions) {
             if(transition.isProducing_xTPN()) { //produkujące zostawiamy w spokoju
@@ -451,7 +450,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
     }
 
     /**
-     * Każda tranzycja która tu trafia zmienia status na rozpoczęcie produkcji. Tranzycje XTPN dostają nowy czasu
+     * Każda tranzycja, która tu trafia zmienia status na rozpoczęcie produkcji. Tranzycje XTPN dostają nowy czasu
      * tau-beta, wszystkie inne tylko: transition.setProductionStatus_xTPN(true);
      * @param launchedTransitions (<b>ArrayList[ArrayList[Transition]]</b>) podwójna lista tranzycji które się uruchomiły: XTPN i klasyczne
      */
@@ -528,7 +527,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
     }
 
     /**
-     * Metoda tworzy listę tranzycji XTPN które w tym kroku muszą pobrać tokeny.
+     * Metoda tworzy listę tranzycji XTPN, które w tym kroku muszą pobrać tokeny.
      * @param nextXTPNsteps (<b>ArrayList[ArrayList[NextXTPNstep]]</b>) lista potencjalnych tranzycji.
      * @return (<b>ArrayList[NextXTPNstep]</b>) lista tranzycji XTPN konsumujących tokeny.
      */
@@ -547,7 +546,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
     }
 
     /**
-     * Metoda tworzy listę tranzycji klasycznych które w tym kroku muszą pobrać tokeny.
+     * Metoda tworzy listę tranzycji klasycznych, które w tym kroku muszą pobrać tokeny.
      * @param nextXTPNsteps (<b>ArrayList[ArrayList[NextXTPNstep]]</b>) lista potencjalnych tranzycji.
      * @return (<b>ArrayList[NextXTPNstep]</b>) lista tranzycji klasycznych konsumujących tokeny.
      */
@@ -608,7 +607,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
     }
 
     /**
-     * Zwraca aktualnie ustawiony generator liczb pseudo-losowych.
+     * Zwraca aktualnie ustawiony generator liczb pseudolosowych.
      * @return IRandomGenerator
      */
     @Override

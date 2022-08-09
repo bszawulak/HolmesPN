@@ -218,25 +218,6 @@ public class QuickSimTools {
 			, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
 
 
-		for(int trId=0; trId < transitions.size(); trId++) {
-			ArrayList<ArrayList<Double>> statsTransMatrix = new ArrayList<>();
-			ArrayList<Double> transStatus = new ArrayList<>();
-			ArrayList<Double> transTime = new ArrayList<>();
-
-			int steps = result.transitionsMatrix.size();
-			for(int step = 0; step < steps; step++) {
-				transStatus.add( result.transitionsMatrix.get(step).get(trId).value );
-				transTime.add( result.transitionsMatrix.get(step).get(trId).time );
-			}
-			statsTransMatrix.add(transStatus);
-			statsTransMatrix.add(transTime);
-
-			ArrayList<Double> statsTransVector = computeTransitionSimulationData(statsTransMatrix);
-
-
-		}
-
-
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 

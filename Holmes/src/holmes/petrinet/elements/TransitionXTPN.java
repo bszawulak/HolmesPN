@@ -43,6 +43,21 @@ public class TransitionXTPN extends Transition {
     private int fractionDigits = 2;
 
 
+    //sim:
+    public int simInactiveState = 0;
+    public int simActiveState = 0;
+    public int simProductionState = 0;
+    public int simFiredState = 0;
+
+    public int lastState = 0;
+    /**  0 - nieaktywna; 1 - aktywna; 2 - produkująca; 3 - odpalenie */
+    public int currState = 0;
+
+    public double simInactiveTime = 0.0;
+    public double simActiveTime = 0.0;
+    public double simProductionTime = 0.0;
+
+
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
      * @param transitionId     int - identyfikator tranzycji
@@ -91,6 +106,20 @@ public class TransitionXTPN extends Transition {
         timer_Vbeta_XTPN = -1.0;
         isActivated_xTPN = false;
         isProducing_xTPN = false;
+    }
+
+    public void resetSimVariables_XTPN() {
+        simInactiveState = 0;
+        simActiveState = 0;
+        simProductionState = 0;
+        simFiredState = 0;
+
+        lastState = 0;
+        currState = 0;
+
+        simInactiveTime = 0.0;
+        simActiveTime = 0.0;
+        simProductionTime = 0.0;
     }
 
     /**
