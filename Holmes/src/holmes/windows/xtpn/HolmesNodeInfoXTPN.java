@@ -1605,16 +1605,14 @@ public class HolmesNodeInfoXTPN extends JFrame {
         ArrayList<Double> statsVector = null;
         for(int i = 0; i< simStatsTransRepetitions; i++) {
             ss.clearDataMatrix();
-            ArrayList<ArrayList<Double>> dataVectors = ss.simulateNetSingleTransition(ownSettings, theTransition);
+
+            ArrayList<Double> dataVector = ss.simulateNetSingleTransitionStats(ownSettings, theTransition);
 
             if(i == 0) {
-                statsVector = computeTransitionSimulationData(dataVectors);
+                statsVector = new ArrayList<>(dataVector);
             } else {
-                ArrayList<Double> newStats = computeTransitionSimulationData(dataVectors);
-
-                for(int j=0; j<newStats.size(); j++) { //dodaj kolejne iteracje danych
-                    //zaczynamy od indeksu [1], ponieważ [0] to liczba kroków.
-                    statsVector.set(j, statsVector.get(j) + newStats.get(j));
+                for(int j=0; j<dataVector.size(); j++) { //dodaj kolejne iteracje danych
+                    statsVector.set(j, statsVector.get(j) + dataVector.get(j));
                 }
             }
         }
@@ -1908,7 +1906,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         tmp = (producingSteps / realSimulationSteps) * 100;
         producingStepsTextBox.setText((int)producingSteps + " ("+Tools.cutValue(tmp)+"%)");
         tmp = (fireSteps / realSimulationSteps) * 100;
-        producedStepsTextBox.setText((int)fireSteps + " ("+Tools.cutValue(tmp)+"%)");
+        producedStepsTextBox.setText((int)fireSteps+"");  // + " ("+Tools.cutValue(tmp)+"%)");
 
         tmp = (inactiveTime / realSimulationTime) * 100;
         inactiveTimeTextBox.setText(Tools.cutValue(inactiveTime) + " ("+Tools.cutValue(tmp)+"%)");

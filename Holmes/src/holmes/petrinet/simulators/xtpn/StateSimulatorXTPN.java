@@ -346,6 +346,54 @@ public class StateSimulatorXTPN implements Runnable {
         return resultVectors;
     }
 
+    public ArrayList<Double> simulateNetSingleTransitionStats(SimulatorGlobals ownSettings, TransitionXTPN transition) {
+        ArrayList<Double> dataVector = new ArrayList<>();
+        if(!readyToSimulate) {
+            JOptionPane.showMessageDialog(null,"XTPN Simulation cannot start, engine initialization failed.",
+                    "Simulation problem",JOptionPane.ERROR_MESSAGE);
+            return dataVector;
+        }
+        createBackupState(); //zapis p-stanu
+
+        int step = 0;
+        if(ownSettings.simulateTime) {
+            while(simTimeCounter < ownSettings.simMaxTime_XTPN) {
+                if(terminate)
+                    break;
+
+                processSimStep(step);
+                step++;
+            }
+        } else {
+            for(step=0; step<ownSettings.simSteps_XTPN; step++) {
+                if(terminate)
+                    break;
+
+                processSimStep(step);
+            }
+        }
+
+        for(TransitionXTPN trans : transitions) {
+            if(!trans.equals(transition))
+                continue;
+
+            dataVector.add((double) step);
+            dataVector.add(simTimeCounter);
+            dataVector.add((double) trans.simInactiveState);
+            dataVector.add((double) trans.simActiveState);
+            dataVector.add((double) trans.simProductionState);
+            dataVector.add((double) trans.simFiredState);
+            dataVector.add(trans.simInactiveTime);
+            dataVector.add(trans.simActiveTime);
+            dataVector.add(trans.simProductionTime);
+            break;
+        }
+
+        readyToSimulate = false;
+        restoreInternalMarkingZero(); //restore p-state
+        return dataVector;
+    }
+
     /**
      * Metoda zamyka w sobie wszystkie elementy pełnego kroku symulacji. Zwraca 2 wektory: dwie HashMapy ze statusem
      * tranzycji (0 - nieaktywna, 1 - aktywowana, 2 - produkuJĄCA, 3 - wyproduKOWAŁA), drugi wektor dla
@@ -494,6 +542,7 @@ public class StateSimulatorXTPN implements Runnable {
         // launchedClassical
         // deactivated
 
+
         //STATYSTYKI (PAMIĘTANE W OBIEKCIE TRANZYCJI / MIEJSCA):
         ArrayList<TransitionXTPN> stateChangedTransitions = new ArrayList<>();
 
@@ -540,13 +589,13 @@ public class StateSimulatorXTPN implements Runnable {
 
             if (trans.isActivated_xTPN()) { //jeśli aktywna:
                 trans.simActiveState++;
-                trans.simActiveTime += simLastTimeChange;
+                trans.simActiveTime += infoNode.timeToChange;
             } else if (trans.isProducing_xTPN()) { //jeśli produkująca
                 trans.simProductionState++;
-                trans.simProductionTime += simLastTimeChange;
+                trans.simProductionTime += infoNode.timeToChange;
             } else { //nieaktywna:
                 trans.simInactiveState++;
-                trans.simInactiveTime += simLastTimeChange;
+                trans.simInactiveTime += infoNode.timeToChange;
             }
         }
 
