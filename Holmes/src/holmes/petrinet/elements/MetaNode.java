@@ -11,9 +11,6 @@ import holmes.graphpanel.ElementDrawSettings;
 
 /**
  * Meta węzeł - typ T, typ P, typ TP
- * 
- * @author MR
- *
  */
 public class MetaNode extends Node {
 	@Serial

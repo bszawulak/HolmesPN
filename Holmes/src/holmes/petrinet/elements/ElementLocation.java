@@ -12,9 +12,6 @@ import holmes.workspace.Workspace;
  * Klasa służąca do przechowywania lokalizacji wierzchołka oraz przyłączonych do niej łuków. Jej
  * obiekty latają w programie z lewa na prawo, każdy obiekt T/P/M ma przynajmniej kilka. Każy łuk
  * ma dwa - start i end EL.
- * 
- * @author students
- * MR - meta łuki, poprawki, poprawki, poprawki
  */
 public class ElementLocation implements Serializable {
 	@Serial

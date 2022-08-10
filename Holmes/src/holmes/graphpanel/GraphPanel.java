@@ -1553,7 +1553,7 @@ public class GraphPanel extends JComponent {
 			
 			if ((getDrawMode() == DrawModes.ARC || getDrawMode() == DrawModes.READARC || getDrawMode() == DrawModes.ARC_INHIBITOR 
 					|| getDrawMode() == DrawModes.ARC_RESET || getDrawMode() == DrawModes.ARC_EQUAL
-					|| getDrawMode() == DrawModes.CARC || getDrawMode() == DrawModes.XARC || getDrawMode() == DrawModes.ARC_INHIBITOR)
+					|| getDrawMode() == DrawModes.CARC || getDrawMode() == DrawModes.XARC || getDrawMode() == DrawModes.XINHIBITOR)
 					&& drawnArc != null)
 				return;
 			if (getSelectingRect() != null) {

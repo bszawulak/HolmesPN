@@ -19,15 +19,6 @@ import holmes.petrinet.functions.FunctionsTools;
  * Klasa implementująca tranzycję w sieci Petriego. Zapewnia implementację szeregu funkcjonalności
  * powiązanych z aktywacją i odpalaniem tranzycji na potrzeby symulacji dynamiki sieci Petriego, jak
  * rezerwowanie tokenów i wykrywanie aktywacji.
- *
- * @author students - pierwsza wersja
- * @author MR - tak tu namieszałem, że autorzy swojej roboty by już nie poznali :)
- * Behold: uber-tranzycja, wszystkie do tej pory zaimplementowane rodzaje tranzycji w jednej klasie
- *
- * [2022-06-29 MR] I-am-a-genius-meme.jpg; skoro wszystko w jednej klasie, to jedziemy: xTPN też tu się znajdzie.
- *          W końcu to tylko 6 liczb opisujących cechy xTPN oraz pewnie zbiorek zmiennych rządzących
- *          stylem rysowania w Holmesie. Co może pójść nie tak... ***** inżynierię oprogramowania, alleluja i
- *          do przodu. XTPN, to brzmi dumnie. Jak science fiction. Jak "Okręt zwany Francis".
  */
 public class Transition extends Node {
     @Serial

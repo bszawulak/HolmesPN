@@ -115,13 +115,11 @@ public class Toolbar extends BorderDock {
 		ioButtonsDockables = createIObuttons();
 		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(ioButtonsDockables), new Position(0));
 		
-		netTransformDockables = createNetTransormBar();
+		netTransformDockables = createNetTransformBar();
 		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(netTransformDockables), new Position(1));
 		
 		analysisDockables = createAnalysisBar();
 		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(analysisDockables), new Position(2));
-
-		
 		
 		verticalCompositeToolBarDock.addChildDock(defaultVerticalToolBarDock, new Position(0));
 		//horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDockVaria(createSubtoolsPanel()), new Position(2));
@@ -495,7 +493,7 @@ public class Toolbar extends BorderDock {
 		return analysisDockables;
 	}
 
-	private ArrayList<ButtonDockable> createNetTransormBar() {
+	private ArrayList<ButtonDockable> createNetTransformBar() {
 		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
 		ToolbarButtonAction extendNetButton = new ToolbarButtonAction(this, "ExtNet",  "Extend the net by 10%",
 				Tools.getResIcon32("/icons/toolbar/resizeMax.png")) {

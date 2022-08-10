@@ -9,15 +9,6 @@ import java.util.ArrayList;
 public class TransitionXTPN extends Transition {
     @Serial
     private static final long serialVersionUID = 4766270474155264671L;
-
-    //private ArrayList<ElementLocation> alphaLocations = new ArrayList<>();
-    //private ArrayList<ElementLocation> betaLocations = new ArrayList<>();
-    //private ArrayList<ElementLocation> gammaLocations = new ArrayList<>();
-    //private ArrayList<ElementLocation> tauLocations = new ArrayList<>();
-
-    //private boolean isXTPN = false; //po narysowaniu w Holmesie będzie niezmienialne true
-    //co oznacza, że tej tranzycji NIE MOŻNA przekonwertować na klasyczną inaczej, niż
-    //odpowiednio ustawiając poniższe parametry. (alphaL=0; alphaU=-1; betaL=betaU=0)
     //parametry xTPN:
     private boolean alphaMode_xTPN = true;
     private boolean alphaRangeVisibility_XTPN = true;
@@ -48,15 +39,34 @@ public class TransitionXTPN extends Transition {
     public int simActiveState = 0;
     public int simProductionState = 0;
     public int simFiredState = 0;
-
-    public int lastState = 0;
-    /**  0 - nieaktywna; 1 - aktywna; 2 - produkująca; 3 - odpalenie */
-    public int currState = 0;
-
     public double simInactiveTime = 0.0;
     public double simActiveTime = 0.0;
     public double simProductionTime = 0.0;
 
+    public ArrayList<Double> statesHistory = new ArrayList<>();
+    public ArrayList<Double> statesTimeHistory = new ArrayList<>();
+
+    public QSimXTPNgraphical qSimXTPN = new QSimXTPNgraphical();
+
+    public boolean showQSimXTPN = false;
+    public class QSimXTPNgraphical {
+        public int xOff = -70;
+        public int yOff = -60;
+
+        public String text1 = "";
+        public String text2 = "";
+        public String text3 = "";
+        public String text4 = "";
+
+        public void clean() {
+            xOff = -70;
+            yOff = -60;
+            text1 = "";
+            text2 = "";
+            text3 = "";
+            text4 = "";
+        }
+    }
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
@@ -113,9 +123,6 @@ public class TransitionXTPN extends Transition {
         simActiveState = 0;
         simProductionState = 0;
         simFiredState = 0;
-
-        lastState = 0;
-        currState = 0;
 
         simInactiveTime = 0.0;
         simActiveTime = 0.0;
@@ -596,5 +603,15 @@ public class TransitionXTPN extends Transition {
             }
         }
         return false;
+    }
+
+    public void cleanHistoryVectors() {
+        statesHistory.clear();
+        statesTimeHistory.clear();
+    }
+
+    public void addHistoryMoment(double state, double time) {
+        statesHistory.add(state);
+        statesTimeHistory.add(time);
     }
 }

@@ -229,7 +229,6 @@ public final class ElementDraw {
 
 				if(trans.qSimDrawed && el.qSimDrawed) {
 					if(trans.qSimFired == 0) {
-						
 						if(trans.qSimDrawStats) {
 							try {
 								g.setColor(new Color(96,96,96));

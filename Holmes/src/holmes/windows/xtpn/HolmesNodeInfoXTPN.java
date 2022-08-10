@@ -525,7 +525,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
         acqDataButton.addActionListener(actionEvent -> {
             acquireNewPlaceData();
-            showPlaceChart();
+
         });
         chartButtonPanel.add(acqDataButton);
 
@@ -605,7 +605,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private void fillPlaceDynamicData(JPanel chartMainPanel) {
         if(!mainSimulatorActive) {
             acquireNewPlaceData();
-            showPlaceChart();
         } else {
             chartMainPanel.setEnabled(false);
             TextTitle title = dynamicsChart.getTitle();
@@ -675,6 +674,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 }
             }
         }
+
+        showPlaceChart();
     }
 
     /**
@@ -1322,7 +1323,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
         acqDataButton.addActionListener(actionEvent -> {
             getSingleTransitionData();
-            showTransitionsChart();
         });
         chartButtonPanel.add(acqDataButton);
 
@@ -1553,7 +1553,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
                                            JPanel chartButtonPanel) {
         if(!mainSimulatorActive) {
             getSingleTransitionData();
-            showTransitionsChart();
         } else {
             avgFiredTextBox.setEnabled(false);
             avgFiredTextBox.setText("n/a");
@@ -1584,8 +1583,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
         ownSettings.simulateTime = simulateWithTimeLength;
         ss.initiateSim(ownSettings);
 
-        ArrayList<ArrayList<Double>> dataVector2 = ss.simulateNetSingleTransition(ownSettings, theTransition);
-        statusVectorTransition = new ArrayList<>(dataVector2);
+        statusVectorTransition = new ArrayList<>( ss.simulateNetSingleTransition(ownSettings, theTransition) );
+
+        showTransitionsChart();
     }
 
     /**
@@ -1637,22 +1637,22 @@ public class HolmesNodeInfoXTPN extends JFrame {
             if(statusVectorTransition != null) {
                 for(int step=0; step<statusVectorTransition.get(0).size(); step++) {
                     double value = statusVectorTransition.get(0).get(step);
-                    double simStep = statusVectorTransition.get(2).get(step);
-                    series.add(simStep, value);
+                    series.add(step, value);
                 }
             }
         } else { //wykres czasowy
             if(statusVectorTransition != null) {
+                double simTime = 0.0;
                 for(int step=0; step<statusVectorTransition.get(0).size(); step++) {
                     double value = statusVectorTransition.get(0).get(step);
-                    double simTime = statusVectorTransition.get(1).get(step);
+                    simTime += statusVectorTransition.get(1).get(step);
                     series.add(simTime, value);
                 }
             }
         }
         dynamicsSeriesDataSet.addSeries(series);
 
-        ArrayList<Double> resultVector = computeTransitionSimulationData(statusVectorTransition);
+        ArrayList<Double> resultVector = statusVectorTransition.get(2);
         fillStatsFields(resultVector.get(0), resultVector.get(1), resultVector.get(2), resultVector.get(3)
                 , resultVector.get(4), resultVector.get(5), resultVector.get(6), resultVector.get(7), resultVector.get(8));
     }
@@ -1792,12 +1792,40 @@ public class HolmesNodeInfoXTPN extends JFrame {
         }
     }
 
+    private void fillStatsFields(double realSimulationSteps, double realSimulationTime, double inactiveSteps
+            , double activeSteps, double producingSteps, double fireSteps, double inactiveTime
+            , double activeTime, double producingTime) {
+
+        stepTransLabel.setText("Steps: "+Tools.cutValue(realSimulationSteps) );
+        timeTransLabel.setText("Time: "+Tools.cutValue(realSimulationTime) );
+
+        double tmp = (inactiveSteps / realSimulationSteps) * 100;
+        inactiveStepsTextBox.setText((int)inactiveSteps + " ("+Tools.cutValue(tmp)+"%)");
+        tmp = (activeSteps / realSimulationSteps) * 100;
+        activeStepsTextBox.setText((int)activeSteps + " ("+Tools.cutValue(tmp)+"%)");
+        tmp = (producingSteps / realSimulationSteps) * 100;
+        producingStepsTextBox.setText((int)producingSteps + " ("+Tools.cutValue(tmp)+"%)");
+        tmp = (fireSteps / realSimulationSteps) * 100;
+        producedStepsTextBox.setText((int)fireSteps+"");  // + " ("+Tools.cutValue(tmp)+"%)");
+
+        tmp = (inactiveTime / realSimulationTime) * 100;
+        inactiveTimeTextBox.setText(Tools.cutValue(inactiveTime) + " ("+Tools.cutValue(tmp)+"%)");
+        tmp = (activeTime / realSimulationTime) * 100;
+        activeTimeTextBox.setText(Tools.cutValue(activeTime) + " ("+Tools.cutValue(tmp)+"%)");
+        tmp = (producingTime / realSimulationTime) * 100;
+        producingTimeTextBox.setText(Tools.cutValue(producingTime) + " ("+Tools.cutValue(tmp)+"%)");
+    }
+
+
+
+
     /**
      * Metoda oblicza dane statystyczne na podstawie danych uzyskanych z pełnej symulacji obserwowanej tranzycji.
      * @param dataVectors (<b>ArrayList[ArrayList[Double]]</b>) wektor danych z symulacji tranzycji.
      * @return (<b>ArrayList[Double]</b>) wektor wynikowy statystyk: realSimulationSteps, realSimulationTime,
      *      inactiveSteps, activeSteps, producingSteps, fireSteps, inactiveTime, activeTime, producingTime.
      */
+    /*
     private ArrayList<Double> computeTransitionSimulationData(ArrayList<ArrayList<Double>> dataVectors) {
         ArrayList<Double> resultVector = new ArrayList<>();
         double inactiveSteps = 0;
@@ -1891,28 +1919,5 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         return resultVector;
     }
-
-    private void fillStatsFields(double realSimulationSteps, double realSimulationTime, double inactiveSteps
-            , double activeSteps, double producingSteps, double fireSteps, double inactiveTime
-            , double activeTime, double producingTime) {
-
-        stepTransLabel.setText("Steps: "+Tools.cutValue(realSimulationSteps) );
-        timeTransLabel.setText("Time: "+Tools.cutValue(realSimulationTime) );
-
-        double tmp = (inactiveSteps / realSimulationSteps) * 100;
-        inactiveStepsTextBox.setText((int)inactiveSteps + " ("+Tools.cutValue(tmp)+"%)");
-        tmp = (activeSteps / realSimulationSteps) * 100;
-        activeStepsTextBox.setText((int)activeSteps + " ("+Tools.cutValue(tmp)+"%)");
-        tmp = (producingSteps / realSimulationSteps) * 100;
-        producingStepsTextBox.setText((int)producingSteps + " ("+Tools.cutValue(tmp)+"%)");
-        tmp = (fireSteps / realSimulationSteps) * 100;
-        producedStepsTextBox.setText((int)fireSteps+"");  // + " ("+Tools.cutValue(tmp)+"%)");
-
-        tmp = (inactiveTime / realSimulationTime) * 100;
-        inactiveTimeTextBox.setText(Tools.cutValue(inactiveTime) + " ("+Tools.cutValue(tmp)+"%)");
-        tmp = (activeTime / realSimulationTime) * 100;
-        activeTimeTextBox.setText(Tools.cutValue(activeTime) + " ("+Tools.cutValue(tmp)+"%)");
-        tmp = (producingTime / realSimulationTime) * 100;
-        producingTimeTextBox.setText(Tools.cutValue(producingTime) + " ("+Tools.cutValue(tmp)+"%)");
-    }
+     */
 }

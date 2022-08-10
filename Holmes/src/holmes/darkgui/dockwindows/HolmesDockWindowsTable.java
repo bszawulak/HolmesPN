@@ -4299,7 +4299,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(portalBox);
 
         JLabel fractionLabel = new JLabel("Fraction:", JLabel.LEFT);
-        fractionLabel.setBounds(columnA_posX, columnA_Y += 20, 50, 20);
+        fractionLabel.setBounds(columnA_posX, columnA_Y += 20, 70, 20);
         components.add(fractionLabel);
 
         int fract = transition.getFraction_xTPN();

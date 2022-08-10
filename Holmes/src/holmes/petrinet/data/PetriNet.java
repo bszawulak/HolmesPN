@@ -1643,17 +1643,23 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda wygasza kolorowanie tranzycji, zeruje dodatkowe wyświetlanie liczb czy tekstów.
 	 */
 	private void resetTransitionGraphics() {
-		for (Node n : getNodes())
+		for (Node n : getNodes()) {
 			if (n.getType() == PetriNetElementType.TRANSITION) {
 				Transition trans = ((Transition) n);
 				trans.setColorWithNumber(false, Color.white, false, -1, false, "");
 				trans.resetOffs();
-				
+
 				trans.qSimDrawed = false;
 				trans.qSimDrawStats = false;
 				trans.qSimArcSign = false;
 				trans.qSimOvalSize = 10;
 			}
+
+			if(n instanceof TransitionXTPN) {
+				((TransitionXTPN)n).qSimXTPN.clean();
+				((TransitionXTPN)n).showQSimXTPN = false;
+			}
+		}
 	}
 	
 	/**

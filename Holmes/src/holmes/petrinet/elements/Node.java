@@ -270,99 +270,129 @@ public abstract class Node extends PetriNetElement {
 			}
 
 		} else if (this instanceof Transition) {
-			if( this instanceof TransitionXTPN ) {
+			if(this instanceof TransitionXTPN ) {
+				TransitionXTPN transXTPN = (TransitionXTPN)this;
+
 				if(alphaLocations.size() + betaLocations.size() - tauLocations.size() - namesLocations.size() != 0) {
 					//error, impossible
-					GUIManager.getDefaultGUIManager().log("Alpha, beta, tau and name arrays size do not match. "
+					GUIManager.getDefaultGUIManager().log("Error: alpha, beta, tau and name arrays size do not match. "
 							+ "Node drawName method.", "error", true);
 					return;
 				}
-				for (int i=0; i<alphaLocations.size(); i++) { // ==
+				if(transXTPN.showQSimXTPN) {
+					for (int i=0; i<alphaLocations.size(); i++) { // ==
+						if (namesLocations.get(i).getSheetID() != sheetId) //tylko dla danego arkusza
+							continue;
+
+						Point nodePoint = nodePoints.get(i);
+						int drawX = (nodePoint.x) + transXTPN.qSimXTPN.xOff - 40;
+						int drawY =  (nodePoint.y) + transXTPN.qSimXTPN.yOff;
+
+
+						g.drawString(transXTPN.qSimXTPN.text1, drawX, drawY);
+						g.drawString(transXTPN.qSimXTPN.text2, drawX, drawY+15);
+						g.drawString(transXTPN.qSimXTPN.text3, drawX, drawY+30);
+						g.drawString(transXTPN.qSimXTPN.text4, drawX, drawY+45);
+					}
+				} else { //jeśli nie qSIM, pokaż alfa/beta
+
+					for (int i=0; i<alphaLocations.size(); i++) { // ==
+						if(namesLocations.get(i).getSheetID() != sheetId) //tylko dla danego arkusza
+							continue;
+
+						Point nodePoint = nodePoints.get(i);
+						if(transXTPN.isAlphaModeActive() && transXTPN.isAlphaRangeVisible()) {
+							Point alphaPoint = alphaLocations.get(i).getPosition();
+
+							int drawX = (nodePoint.x) + alphaPoint.x - 40;
+							int drawY =  (nodePoint.y) + alphaPoint.y - 24;
+
+							g.setColor(Color.blue);
+							g.setFont(f_Big);
+							if(transXTPN.isAlphaModeActive()) {
+								String alfa = "\u03B1:" + Tools.cutValueExt(transXTPN.getAlphaMinValue(), transXTPN.getFraction_xTPN()) + " / "
+										+ Tools.cutValueExt(transXTPN.getAlphaMaxValue(), transXTPN.getFraction_xTPN());
+
+								if(!transXTPN.isBetaModeActive()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
+									g.drawString(alfa,drawX, drawY);
+								} else {
+									g.drawString(alfa, drawX, drawY - 16);
+								}
+							}
+						}
+
+						if(transXTPN.isBetaModeActive() && transXTPN.isBetaRangeVisible()) {
+							Point betaPoint = betaLocations.get(i).getPosition();
+							int drawX = (nodePoint.x) + betaPoint.x - 40;
+							int drawY =  (nodePoint.y) + betaPoint.y - 24;
+
+							//g.setColor(Color.blue);
+							g.setFont(f_Big);
+							if(transXTPN.isBetaModeActive()) {
+								g.setColor(darkGreen);
+								String beta = "\u03B2:" + Tools.cutValueExt(transXTPN.getBetaMinValue(), transXTPN.getFraction_xTPN()) + " / "
+										+ Tools.cutValueExt(transXTPN.getBetaMaxValue(), transXTPN.getFraction_xTPN());
+								g.drawString(beta, drawX, drawY);
+							}
+						}
+					}
+				}
+
+				//wartości tau niezależnie od qSIM
+				for (int i=0; i<alphaLocations.size(); i++) {
 					if(namesLocations.get(i).getSheetID() != sheetId) //tylko dla danego arkusza
 						continue;
 
 					Point nodePoint = nodePoints.get(i);
-					if(((TransitionXTPN)this).isAlphaModeActive() && ((TransitionXTPN)this).isAlphaRangeVisible()) {
-						Point alphaPoint = alphaLocations.get(i).getPosition();
 
-						int drawX = (nodePoint.x) + alphaPoint.x - 40;
-						int drawY =  (nodePoint.y) + alphaPoint.y - 24;
-
-						g.setColor(Color.blue);
-						g.setFont(f_Big);
-						if(((TransitionXTPN)this).isAlphaModeActive()) {
-							String alfa = "\u03B1:" + Tools.cutValueExt(((TransitionXTPN)this).getAlphaMinValue(), ((TransitionXTPN)this).getFraction_xTPN()) + " / "
-									+ Tools.cutValueExt(((TransitionXTPN)this).getAlphaMaxValue(), ((TransitionXTPN)this).getFraction_xTPN());
-
-							if(!((TransitionXTPN)this).isBetaModeActive()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
-								g.drawString(alfa,drawX, drawY);
-							} else {
-								g.drawString(alfa, drawX, drawY - 16);
-							}
-						}
-					}
-
-					if(((TransitionXTPN)this).isBetaModeActive() && ((TransitionXTPN)this).isBetaRangeVisible()) {
-						Point betaPoint = betaLocations.get(i).getPosition();
-						int drawX = (nodePoint.x) + betaPoint.x - 40;
-						int drawY =  (nodePoint.y) + betaPoint.y - 24;
-
-						//g.setColor(Color.blue);
-						g.setFont(f_Big);
-						if(((TransitionXTPN)this).isBetaModeActive()) {
-							g.setColor(darkGreen);
-							String beta = "\u03B2:" + Tools.cutValueExt(((TransitionXTPN)this).getBetaMinValue(), ((TransitionXTPN)this).getFraction_xTPN()) + " / "
-									+ Tools.cutValueExt(((TransitionXTPN)this).getBetaMaxValue(), ((TransitionXTPN)this).getFraction_xTPN());
-							g.drawString(beta, drawX, drawY);
-						}
-					}
-
-					if(((TransitionXTPN)this).isTauTimerVisible() ) {
+					if(transXTPN.isTauTimerVisible() ) {
 						Point tauPoint = tauLocations.get(i).getPosition();
 						int drawX = (nodePoint.x) + tauPoint.x-5;
-						int drawY =  (nodePoint.y) + tauPoint.y-10;
+						int drawY =  (nodePoint.y) + tauPoint.y-15;
 
 						g.setFont(f_BigL);
-						if(((TransitionXTPN)this).isTauTimerVisible()) {
-							double alphaTime = ((TransitionXTPN)this).getTauAlphaValue();
-							double betaTime = ((TransitionXTPN)this).getTauBetaValue();
-							double u_alfaTime = ((TransitionXTPN)this).getTimerAlfaValue();
-							double v_betaTime = ((TransitionXTPN)this).getTimerBetaValue();
+						if(transXTPN.isTauTimerVisible()) {
+							double alphaTime = transXTPN.getTauAlphaValue();
+							double betaTime = transXTPN.getTauBetaValue();
+							double u_alfaTime = transXTPN.getTimerAlfaValue();
+							double v_betaTime = transXTPN.getTimerBetaValue();
 
 							String timerA;
 							String timerB;
 							g.setColor(Color.red);
 							if(alphaTime < 0 && betaTime < 0) {
-								timerA = "u\u279F\u03C4(\u03B1): #\u279F#";
+								timerA = "\u03C4(\u03B1): #\u279F#";
 								g.drawString(timerA, drawX + 40, drawY + 12);
-								timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
+								timerB = "\u03C4(\u03B2): #\u279F#";
 								g.drawString(timerB, drawX + 40, drawY + 26);
 
 							} else if(alphaTime < 0) {
-								timerA = "u\u279F\u03C4(\u03B1): #\u279F#";
+								timerA = "\u03C4(\u03B1): #\u279F#";
 								g.drawString(timerA, drawX + 40, drawY + 12);
-								timerB = "v\u279F\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, ((TransitionXTPN)this).getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(betaTime, ((TransitionXTPN)this).getFraction_xTPN());
+								timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+										+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
 								g.drawString(timerB, drawX + 40, drawY + 26);
 
 							} else if(betaTime < 0) {
-								timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, ((TransitionXTPN)this).getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(alphaTime, ((TransitionXTPN)this).getFraction_xTPN());
+								timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+										+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
 								g.drawString(timerA, drawX + 40, drawY + 12);
-								timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
+								timerB = "\u03C4(\u03B2): #\u279F#";
 								g.drawString(timerB, drawX + 40, drawY + 26);
 							} else {
-								timerA = "u\u279F\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, ((TransitionXTPN)this).getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(alphaTime, ((TransitionXTPN)this).getFraction_xTPN());
+								timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+										+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
 								g.drawString(timerA, drawX + 40, drawY + 12);
 								//timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
-								timerB = "v\u279F\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, ((TransitionXTPN)this).getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(betaTime, ((TransitionXTPN)this).getFraction_xTPN());
+								timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+										+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
 								g.drawString(timerB, drawX + 40, drawY + 26);
 							}
 						}
 					}
 				}
+
+
 			}
 		}
 	}

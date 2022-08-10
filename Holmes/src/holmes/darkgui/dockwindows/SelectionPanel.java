@@ -10,12 +10,13 @@ import holmes.graphpanel.SelectionActionListener.SelectionActionEvent;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 
+import java.io.Serial;
+
 /**
  * Klasa implementująca panel pokazujący informacje o zaznaczonych myszą elementach sieci.
- * @author students
- *
  */
 public class SelectionPanel extends JPanel {
+	@Serial
 	private static final long serialVersionUID = -7388729615923711657L;
 	private GUIManager guiManager;
 	private DefaultListModel<String> selectedElementLocationList;
@@ -50,7 +51,6 @@ public class SelectionPanel extends JPanel {
 
 	/**
 	 * Metoda ustwiająca nowy obiekt managera interfejsu.
-	 * @return GUIManager - obiekt managera
 	 */
 	protected void setGuiManager(GUIManager guiManager) {
 		this.guiManager = guiManager;

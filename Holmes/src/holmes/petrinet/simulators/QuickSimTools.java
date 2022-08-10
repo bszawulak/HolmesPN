@@ -94,7 +94,14 @@ public class QuickSimTools {
 		Thread myThread = new Thread(stateSimulatorPN);
 		myThread.start();
 	}
-	
+
+	/**
+	 * Metoda wywoływana przez wątek symulacji qSim gdy zakończy główną symulację sieci. Przekazywane są
+	 * do niej, poza oczywiście wektorami miejsc i tranzycji, dane zebrane w symulacji, w liście quickSimAllStats.
+	 * @param quickSimAllStats (<b>ArrayList[ArrayList[Double]]</b>) wektory danych z symulacji.
+	 * @param transitions (<b>ArrayList[Transition]</b>) wektor tranzycji.
+	 * @param places (<b>ArrayList[Place]</b>) wektor miejsc.
+	 */
 	public void finishedStatsData(ArrayList<ArrayList<Double>> quickSimAllStats, ArrayList<Transition> transitions,
 			ArrayList<Place> places) {
 		ArrayList<Double> avgFire = quickSimAllStats.get(0);
@@ -218,13 +225,42 @@ public class QuickSimTools {
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 
-
-
-
+	/**
+	 * Metoda wywoływana przez wątek symulacji qSimXTPN gdy zakończy główną symulację sieci. Przekazywane są
+	 * do niej, poza oczywiście wektorami miejsc i tranzycji XTPN, dane zebrane w symulacji, w obiekcie
+	 * klasy QuickSimMatrix.
+	 * @param result (<b>StateSimulatorXTPN.QuickSimMatrix</b>) klasa kontener danych symulacju
+	 * @param transitions (<b>ArrayList[TransitionXTPN]</b>) wektor tranzycji.
+	 * @param places (<b>ArrayList[PlaceXTPN]</b>) wektor miejsc.
+	 */
 	public void finishedStatsDataXTPN(StateSimulatorXTPN.QuickSimMatrix result
 			, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
 
+		int transIndex = 0;
+		for(TransitionXTPN trans : transitions) {
+			double simSteps = result.simSteps;
+			double simTime = result.simTime;
+			double tmpSteps = result.transDataMatrix.get(transIndex).get(0); //trans.simInactiveState
+			double tmpTime = result.transDataMatrix.get(transIndex).get(4); //trans.simInactiveTime
+			trans.qSimXTPN.text1 = "Inactive (#):  "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
+					"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
 
+			tmpSteps = result.transDataMatrix.get(transIndex).get(1); //trans.simActiveState
+			tmpTime = result.transDataMatrix.get(transIndex).get(5); //trans.simActiveTime
+			trans.qSimXTPN.text2 = "Active (#):    "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
+					"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
+
+			tmpSteps = result.transDataMatrix.get(transIndex).get(2); //trans.simProductionState
+			tmpTime = result.transDataMatrix.get(transIndex).get(6); //trans.simProductionTime
+			trans.qSimXTPN.text3 = "Production (#): "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
+					"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
+
+			tmpSteps = result.transDataMatrix.get(transIndex).get(3); //trans.simFiredState
+			trans.qSimXTPN.text4 = "Fired (#): "+(int)tmpSteps ;
+
+			trans.showQSimXTPN = true;
+			transIndex++;
+		}
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 
