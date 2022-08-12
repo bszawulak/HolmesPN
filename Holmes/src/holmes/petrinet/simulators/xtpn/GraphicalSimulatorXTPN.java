@@ -19,7 +19,6 @@ import holmes.windows.HolmesNotepad;
 /**
  * Symulator XTPN. Odpowiada na bardzo mądre pytania, na przykład w stylu: czy jak stanę na torach,
  * i chwycę się linii trakcyjnej, to pojadę jak tramwaj?
- * @author MR
  */
 public class GraphicalSimulatorXTPN {
     private SimulatorGlobals.SimNetType netSimTypeXTPN;
@@ -33,12 +32,11 @@ public class GraphicalSimulatorXTPN {
     private ArrayList<TransitionXTPN> consumingTokensTransitionsXTPN;
     private ArrayList<TransitionXTPN> consumingTokensTransitionsClassical;
     private ArrayList<TransitionXTPN> producingTokensTransitionsAll;
+
     //lista tranzycji XTPN i klasycznych które rozpoczęły produkcję
     ArrayList<ArrayList<TransitionXTPN>> transitionsAfterSubtracting;
     private long stepCounter = 0;
     private double simTotalTime = 0.0;
-    //private Random generator;
-
     ArrayList<ArrayList<SimulatorEngineXTPN.NextXTPNstep>> nextXTPNsteps;
     SimulatorEngineXTPN.NextXTPNstep infoNode;
 
@@ -594,10 +592,7 @@ public class GraphicalSimulatorXTPN {
             if(activatedXTPN == 0 && producedXTPN == 0 && time == 0.0) { //XTPN components - dead
                 mustFireSOMETHING = true;
             }
-
             int fireClassSoFar = 0;
-
-
 
             //for (TransitionXTPN transition : consumingTokensTransitionsClassical) { //lista tych, które zabierają tokeny
             for (Iterator<TransitionXTPN> iteratorTrans = consumingTokensTransitionsClassical.iterator(); iteratorTrans.hasNext(); ) {

@@ -70,10 +70,12 @@ public class HolmesDockWindowsTable extends JPanel {
     private ArrayList<Place> places;
     private ArrayList<ArrayList<Transition>> mctGroups; //używane tylko w przypadku, gdy obiekt jest typu DockWindowType.MctANALYZER
     private ArrayList<ArrayList<Integer>> knockoutData;
+
     // Containers & general use
     private JPanel panel; // główny panel okna
     private boolean stopAction = false;
     public boolean doNotUpdate = false;
+
     //simulator:
     public ButtonGroup group = new ButtonGroup();
     public JComboBox<String> simMode;
@@ -84,6 +86,7 @@ public class HolmesDockWindowsTable extends JPanel {
     public JLabel stepLabelXTPN;
     private GraphicalSimulator simulator;  // obiekt symulatora
     private GraphicalSimulatorXTPN simulatorXTPN;
+
     // P/T/M/A
     private final ButtonGroup groupRadioMetaType = new ButtonGroup();  //metanode
     private boolean nameLocChangeMode = false;
@@ -95,13 +98,16 @@ public class HolmesDockWindowsTable extends JPanel {
     private JCheckBox timeTransitionCheckBox;
     private JCheckBox classicalTransitionCheckBox;
     private JCheckBox stochasticTransitionCheckBox;
+
     //MCT:
     private int selectedMCTindex = -1;
     private boolean colorMCT = false;
     private boolean allMCTselected = false;
     private JTextArea MCTnameField;
+
     //knockout:
     private JTextArea knockoutTextArea;
+
     //t-invariants:
     private JComboBox<String> chooseInvBox;
     private JComboBox<String> chooseSurInvBox;
@@ -112,6 +118,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private boolean markMCT = false;
     private boolean glowT_inv = true;
     private JTextArea t_invNameField;
+
     //t-invariants:
     private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //używane w podoknie p-inwariantów
     private int selectedP_invIndex = -1;
@@ -121,6 +128,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private JLabel avgTimeLabel;
     private JLabel maxTimeLabel;
     private JLabel structureLabel;
+
     //clusters:
     private JComboBox<String> chooseCluster;
     private JComboBox<String> chooseClusterInv;
@@ -130,11 +138,14 @@ public class HolmesDockWindowsTable extends JPanel {
     private boolean clustersMCT = false;
     private JProgressBar progressBar = null;
     private JLabel mssValueLabel;
+
     //MCS
     private JComboBox<String> mcsObjRCombo;
     private JComboBox<String> mcsMCSforObjRCombo;
+
     //sheets:
     private WorkspaceSheet currentSheet;
+
     //fixer:
     public JLabel fixInvariants;
     public JLabel fixInvariants2;
@@ -142,6 +153,7 @@ public class HolmesDockWindowsTable extends JPanel {
     public JLabel fixIOTransitions;
     public JLabel fixlinearTrans;
     private ProblemDetector detector;
+
     //quickSim:
     private QuickSimTools quickSim;
     private boolean scanTransitions = true;
@@ -149,6 +161,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private boolean markArcs = true;
     private boolean repetitions = true;
     private JProgressBar quickProgressBar;
+
     //deco
     private int choosenDeco = 0;
     private JTextArea elementsOfDecomposedStructure;
@@ -171,7 +184,6 @@ public class HolmesDockWindowsTable extends JPanel {
     private HolmesRoundedButton tauLocChangeButton;//tranzycja
     private HolmesRoundedButton buttonClassicMode;//tranzycja
 
-
     private HolmesRoundedButton buttonGammaMode; //miejsce
     private HolmesRoundedButton gammaVisibilityButton;//miejsce
     private HolmesRoundedButton gammaLocChangeButton;//miejsce
@@ -187,12 +199,27 @@ public class HolmesDockWindowsTable extends JPanel {
     private JFormattedTextField betaMinTextField;
     private JFormattedTextField betaMaxTextField;
 
-
     //przyciski sumulatora XTPN używają poniższych aby globalnie zmieniać widoczność wartości czasowych rysunku sieci:
     private boolean alphaValuesVisible = true;
     private boolean betaValuesVisible = true;
     private boolean gammaValuesVisible = true;
     private boolean tauValuesVisible = true;
+
+    //XTPN qSim:
+    JCheckBox qSimXTPNStatsStepsCheckbox;
+    JCheckBox qSimXTPNStatsTimeCheckbox;
+
+    boolean qSimXTPNSbySteps = true;
+    boolean qSimXTPNrepeateSim = false;
+    double qSimXTPNStatsTime = 500.0;
+    int qSimXTPNsimStatsSteps = 10000;
+    int qSimXTPNStatsRepetitions = 10;
+
+    private JProgressBar qSimXTPNProgressBar = null;
+
+
+
+
 
     // modes
     private static final int PLACE = 0;
@@ -833,6 +860,115 @@ public class HolmesDockWindowsTable extends JPanel {
                 GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
             });
             components.add(showTauSwitchButton);
+
+
+            quickSim = new QuickSimTools(this);
+
+            internalY += 50;
+
+            JLabel qSimLabel = new JLabel("qSim options:");
+            qSimLabel.setBounds(internalX, internalY, 140, 20);
+            components.add(qSimLabel);
+
+            internalY += 20;
+
+            HolmesRoundedButton acqDataButtonXTPN = new HolmesRoundedButton("<html>Simulate</html>"
+                    , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            acqDataButtonXTPN.setBounds(internalX, internalY, 100, 30);
+            acqDataButtonXTPN.setMargin(new Insets(0, 0, 0, 0));
+            acqDataButtonXTPN.setFocusPainted(false);
+            acqDataButtonXTPN.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+            acqDataButtonXTPN.setToolTipText("Compute steps from zero marking through the number of states");
+            acqDataButtonXTPN.addActionListener(actionEvent -> {
+                quickSim.acquireDataXTPN(qSimXTPNSbySteps, qSimXTPNsimStatsSteps, qSimXTPNStatsTime
+                        , qSimXTPNrepeateSim, qSimXTPNStatsRepetitions, qSimXTPNProgressBar);
+            });
+            components.add(acqDataButtonXTPN);
+
+            internalY += 35;
+
+            qSimXTPNProgressBar = new JProgressBar();
+            qSimXTPNProgressBar.setBounds(internalX, internalY, 140, 20);
+            qSimXTPNProgressBar.setMaximum(100);
+            qSimXTPNProgressBar.setMinimum(0);
+            qSimXTPNProgressBar.setValue(0);
+            qSimXTPNProgressBar.setStringPainted(true);
+            components.add(qSimXTPNProgressBar);
+
+            internalY += 20;
+
+            qSimXTPNStatsStepsCheckbox = new JCheckBox("Steps");
+            qSimXTPNStatsStepsCheckbox.setBounds(internalX, internalY, 70, 20);
+            qSimXTPNStatsStepsCheckbox.setSelected(qSimXTPNSbySteps);
+            qSimXTPNStatsStepsCheckbox.addItemListener(e -> {
+                if(doNotUpdate)
+                    return;
+                JCheckBox box = (JCheckBox) e.getSource();
+                qSimXTPNSbySteps = box.isSelected();
+                doNotUpdate = true;
+                qSimXTPNStatsTimeCheckbox.setSelected(!qSimXTPNSbySteps);
+                doNotUpdate = false;
+            });
+            components.add(qSimXTPNStatsStepsCheckbox);
+
+            SpinnerModel qSimStepsSpinnerModel = new SpinnerNumberModel(qSimXTPNsimStatsSteps, 0, 1000000, 1000);
+            JSpinner qsimStepsSpinner = new JSpinner(qSimStepsSpinnerModel);
+            qsimStepsSpinner.setBounds(internalX+70, internalY, 70, 20);
+            qsimStepsSpinner.addChangeListener(e -> {
+                JSpinner spinner = (JSpinner) e.getSource();
+                int tmp = (int)spinner.getValue();
+                qSimXTPNsimStatsSteps = tmp;
+            });
+            components.add(qsimStepsSpinner);
+
+            internalY += 25;
+
+            qSimXTPNStatsTimeCheckbox = new JCheckBox("Time");
+            qSimXTPNStatsTimeCheckbox.setBounds(internalX, internalY, 70, 20);
+            qSimXTPNStatsTimeCheckbox.setSelected(!qSimXTPNSbySteps);
+            qSimXTPNStatsTimeCheckbox.addItemListener(e -> {
+                if(doNotUpdate)
+                    return;
+                JCheckBox box = (JCheckBox) e.getSource();
+                qSimXTPNSbySteps = !(box.isSelected());
+                doNotUpdate = true;
+                qSimXTPNStatsStepsCheckbox.setSelected(qSimXTPNSbySteps);
+                doNotUpdate = false;
+            });
+            components.add(qSimXTPNStatsTimeCheckbox);
+
+            SpinnerModel qsimTimeLengthSpinnerModel = new SpinnerNumberModel(qSimXTPNStatsTime, 0, 10000, 100);
+            JSpinner qsimTimeSpinner = new JSpinner(qsimTimeLengthSpinnerModel);
+            qsimTimeSpinner.setBounds(internalX+70, internalY, 70, 20);
+            qsimTimeSpinner.addChangeListener(e -> {
+                JSpinner spinner = (JSpinner) e.getSource();
+                double tmp = (double)spinner.getValue();
+                qSimXTPNStatsTime = tmp;
+            });
+            components.add(qsimTimeSpinner);
+
+            internalY += 25;
+
+            JCheckBox qSimXTPNrepetitionsCheckBox = new JCheckBox("Rep.:");
+            qSimXTPNrepetitionsCheckBox.setBounds(internalX, internalY, 70, 20);
+            qSimXTPNrepetitionsCheckBox.setSelected(!qSimXTPNSbySteps);
+            qSimXTPNrepetitionsCheckBox.addItemListener(e -> {
+                JCheckBox box = (JCheckBox) e.getSource();
+                qSimXTPNrepeateSim = (box.isSelected());
+            });
+            components.add(qSimXTPNrepetitionsCheckBox);
+
+            SpinnerModel qsimRepetitionsSpinnerModel = new SpinnerNumberModel(qSimXTPNStatsRepetitions, 10, 100, 10);
+            JSpinner qsimRepetitionsSpinner = new JSpinner(qsimRepetitionsSpinnerModel);
+            qsimRepetitionsSpinner.setBounds(internalX+70, internalY, 70, 20);
+            qsimRepetitionsSpinner.addChangeListener(e -> {
+                JSpinner spinner = (JSpinner) e.getSource();
+                int tmp = (int)spinner.getValue();
+                qSimXTPNStatsRepetitions = tmp;
+            });
+            components.add(qsimRepetitionsSpinner);
+
+
 
 
         }
@@ -7605,25 +7741,6 @@ public class HolmesDockWindowsTable extends JPanel {
             repetitions = box.isSelected();
         });
         borderPanel.add(repsBox);
-
-
-        JPanel qSimXTPMpanel = new JPanel(null);
-        qSimXTPMpanel.setBounds(posX, posY += 90, 280, 80);
-        //qSimXTPMpanel.setBackground(Color.WHITE);
-        qSimXTPMpanel.setBorder(BorderFactory.createTitledBorder("XTPN:"));
-        components.add(qSimXTPMpanel);
-
-        HolmesRoundedButton acqDataButtonXTPN = new HolmesRoundedButton("<html>Simulate</html>"
-                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
-        acqDataButtonXTPN.setBounds(10, 20, 100, 25);
-        acqDataButtonXTPN.setMargin(new Insets(0, 0, 0, 0));
-        acqDataButtonXTPN.setFocusPainted(false);
-        acqDataButtonXTPN.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        acqDataButtonXTPN.setToolTipText("Compute steps from zero marking through the number of states");
-        acqDataButtonXTPN.addActionListener(actionEvent -> {
-            quickSim.acquireData(scanTransitions, scanPlaces, markArcs, repetitions, quickProgressBar);
-        });
-        qSimXTPMpanel.add(acqDataButtonXTPN);
 
 
         panel.setLayout(null);

@@ -45,6 +45,7 @@ public class TransitionXTPN extends Transition {
 
     public ArrayList<Double> statesHistory = new ArrayList<>();
     public ArrayList<Double> statesTimeHistory = new ArrayList<>();
+    public boolean storeHistory = false;
 
     public QSimXTPNgraphical qSimXTPN = new QSimXTPNgraphical();
 
@@ -606,6 +607,7 @@ public class TransitionXTPN extends Transition {
     }
 
     public void cleanHistoryVectors() {
+        storeHistory = false;
         statesHistory.clear();
         statesTimeHistory.clear();
     }

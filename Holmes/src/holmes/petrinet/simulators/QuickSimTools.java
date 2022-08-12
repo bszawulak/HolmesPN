@@ -47,20 +47,54 @@ public class QuickSimTools {
 			JOptionPane.showMessageDialog(null, "Net simulator working. Unable to retrieve transitions statistics..", 
 					"Simulator working", JOptionPane.ERROR_MESSAGE);
 		} else {
-			if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-				statsDataXTPN(quickProgressBar);
+			this.scanTransitions = scanTransitions;
+			this.scanPlaces = scanPlaces;
+			this.markArcs = markArcs;
 
+			if(repetitions) {
+				statsData(quickProgressBar);
 			} else {
-				this.scanTransitions = scanTransitions;
-				this.scanPlaces = scanPlaces;
-				this.markArcs = markArcs;
-
-				if(repetitions) {
-					statsData(quickProgressBar);
-				} else {
-					vectorData(quickProgressBar);
-				}
+				vectorData(quickProgressBar);
 			}
+		}
+	}
+
+	/**
+	 * Pobieranie danych dla szybkiej symulacji XTPN.
+	 * @param bySteps
+	 * @param steps
+	 * @param time
+	 * @param repeate
+	 * @param repetitions
+	 * @param quickProgressBar
+	 */
+	public void acquireDataXTPN(boolean bySteps, int steps, double time,  boolean repeate, int repetitions, JProgressBar quickProgressBar) {
+		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+			JOptionPane.showMessageDialog(null, "Net simulator working. Unable to retrieve transitions statistics..",
+					"Simulator working", JOptionPane.ERROR_MESSAGE);
+
+			return;
+		}
+
+		if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
+			stateSimulatorXTPN = new StateSimulatorXTPN();
+			stateSimulatorXTPN.initiateSim(overlord.simSettings);
+
+			SimulatorGlobals ownSettings = new SimulatorGlobals();
+			ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
+			ownSettings.simSteps_XTPN = steps;
+			ownSettings.simMaxTime_XTPN = time;
+			ownSettings.simulateTime = !bySteps;
+			ownSettings.simRepetitions_XTPN = repetitions;
+
+			if(repeate) {
+				stateSimulatorXTPN.setThreadDetails(2, this, quickProgressBar, ownSettings);
+			} else {
+				stateSimulatorXTPN.setThreadDetails(1, this, quickProgressBar, ownSettings);
+			}
+
+			Thread myThread = new Thread(stateSimulatorXTPN);
+			myThread.start();
 		}
 	}
 
@@ -69,21 +103,6 @@ public class QuickSimTools {
 		stateSimulatorPN.initiateSim(true, null);
 		stateSimulatorPN.setThreadDetails(5, quickProgressBar, this);
 		Thread myThread = new Thread(stateSimulatorPN);
-		myThread.start();
-	}
-
-	private void statsDataXTPN(JProgressBar quickProgressBar) {
-		stateSimulatorXTPN = new StateSimulatorXTPN();
-		stateSimulatorXTPN.initiateSim(overlord.simSettings);
-
-		SimulatorGlobals ownSettings = new SimulatorGlobals();
-		ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-		ownSettings.simSteps_XTPN = 1000;
-		ownSettings.simMaxTime_XTPN = 300.0;
-		ownSettings.simulateTime = false;
-
-		stateSimulatorXTPN.setThreadDetails(1, this, quickProgressBar, ownSettings);
-		Thread myThread = new Thread(stateSimulatorXTPN);
 		myThread.start();
 	}
 

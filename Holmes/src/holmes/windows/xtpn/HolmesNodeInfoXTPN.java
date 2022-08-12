@@ -1508,7 +1508,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         simTimeLengthSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             double tmp = (double)spinner.getValue();
-            simStatsTransTime = (int) tmp;
+            simStatsTransTime = tmp;
         });
         resultPanel.add(simTimeLengthSpinner);
 
@@ -1606,7 +1606,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         for(int i = 0; i< simStatsTransRepetitions; i++) {
             ss.clearDataMatrix();
 
-            ArrayList<Double> dataVector = ss.simulateNetSingleTransitionStats(ownSettings, theTransition);
+            ArrayList<Double> dataVector = ss.simulateNetSingleTransitionStatistics(ownSettings, theTransition);
 
             if(i == 0) {
                 statsVector = new ArrayList<>(dataVector);

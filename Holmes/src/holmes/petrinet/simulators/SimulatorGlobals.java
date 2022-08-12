@@ -48,6 +48,7 @@ public class SimulatorGlobals {
 
 	public long simSteps_XTPN = 1000;
 	public double simMaxTime_XTPN = 300.0;
+	public int simRepetitions_XTPN = 10;
 	public boolean simulateTime = false; //domyślnie: true = steps
 	
 	/**
