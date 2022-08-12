@@ -48,8 +48,6 @@ public class StateSimulatorXTPN implements Runnable {
     private QuickSimTools quickSim;
 
     //TRYBY SYMULACJI:
-    //QUICK SIM 1
-    private ArrayList<ArrayList<Double>> quickSimAllStats;
 
     /**
      * Główny konstruktor obiektu klasy StateSimulator.
@@ -58,18 +56,6 @@ public class StateSimulatorXTPN implements Runnable {
         engineXTPN = new SimulatorEngineXTPN();
         overlord = GUIManager.getDefaultGUIManager();
         sg = overlord.simSettings;
-    }
-
-    public final class NodeSimBox {
-        public double value;
-        public double step;
-        public double time;
-
-        public NodeSimBox(double v, double s, double t) {
-            value = v;
-            step = s;
-            time = t;
-        }
     }
 
     /**

@@ -17,6 +17,8 @@ public class PlaceXTPN extends Place {
     //grafika:
     private boolean showTokenSet_xTPN = false; //czy wyświetlać zbiór tokenów
 
+    public boolean showQSimXTPN = false;
+
     private boolean gammaRangeVisibility_XTPN = true;
     private int franctionDigits = 2;
 

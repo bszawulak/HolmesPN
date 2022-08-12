@@ -25,16 +25,7 @@ import static holmes.graphpanel.EditorResources.*;
 public final class ElementDraw {
 	private static final Font f_plain = new Font("TimesRoman", Font.PLAIN, 10);
 	private static final Font f_bold = new Font("TimesRoman", Font.BOLD, 12);
-	private static final Color cRed = Color.red;
-	private static final Color cGreen = Color.green;
-	private static final Color cBlue = Color.blue;
-	private static final Color cYellow = new Color(255,155,0) ;
-	private static final Color cGrey = Color.gray;
-	private static final Color cBlack = Color.black;
-	private static final Color lightSky = new Color(0, 135, 230);
-	private static final Color lightSky2 = new Color(0, 185, 230);
-	private static final Color lightSky3 = new Color(0, 215, 230);
-	private static final Color lightGray = new Color(224, 224, 235);
+
 
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
@@ -116,18 +107,32 @@ public final class ElementDraw {
 				g.setColor(Color.WHITE);
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, radius * 2, radius * 2);
 				
-				if(eds.view3d) { //nie dla XTPN
+				if(eds.view3d) {
 					Color backup = g.getColor();
-					g.setColor(Color.LIGHT_GRAY);
-					g.fillRect(nodeBounds.x+4, nodeBounds.y+4, nodeBounds.width+1, nodeBounds.height+1);
-					g.setColor(Color.GRAY);
-					g.fillRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width+1, nodeBounds.height+1);
-					g.setColor(Color.DARK_GRAY);
-					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width+1, nodeBounds.height+1);
-					g.setColor(Color.BLACK);
-					g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
-					g.setColor(Color.WHITE);
-					g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
+					if(((TransitionXTPN)trans).showQSimXTPN) {
+						g.setColor(lighterGray);
+						g.fillRect(nodeBounds.x+4, nodeBounds.y+4, nodeBounds.width+1, nodeBounds.height+1);
+						g.setColor(lighterGray);
+						g.fillRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width+1, nodeBounds.height+1);
+						g.setColor(lighterGray);
+						g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width+1, nodeBounds.height+1);
+						g.setColor(lighterGray);
+						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
+						g.setColor(lighterGray);
+						g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					} else {
+						g.setColor(Color.LIGHT_GRAY);
+						g.fillRect(nodeBounds.x+4, nodeBounds.y+4, nodeBounds.width+1, nodeBounds.height+1);
+						g.setColor(Color.GRAY);
+						g.fillRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width+1, nodeBounds.height+1);
+						g.setColor(Color.DARK_GRAY);
+						g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width+1, nodeBounds.height+1);
+						g.setColor(Color.BLACK);
+						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
+						g.setColor(Color.WHITE);
+						g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					}
 					g.setColor(backup);
 				}
 				
@@ -171,7 +176,7 @@ public final class ElementDraw {
 					}
 					
 					//NIGDY ELSE!:
-					if (el.isSelected() && !el.isPortalSelected()) {
+					if (el.isSelected() && !el.isPortalSelected()) {  //kliknięto tranzycję, ale nie portal
 						g.setColor(EditorResources.selectionColorLevel1);
 						g.setStroke(EditorResources.glowStrokeLevel1);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -220,6 +225,10 @@ public final class ElementDraw {
 					g.setColor(normalColor);
 					if( ((Transition)node).getTransType() == TransitionType.TPN) {
 						g.setColor(tpnNormalColor);
+					}
+
+					if(((TransitionXTPN)trans).showQSimXTPN) {
+						g.setColor(lighterGray);
 					}
 				}
 				Color back = g.getColor(); // te 4 linie: lekki trójwymiar, ładniejsza tranzycja
@@ -337,7 +346,6 @@ public final class ElementDraw {
 						
 						g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y - 4);
 					}
-					
 					if(trans.getDPNstatus()) {
 						String dur = String.valueOf( trans.getDPNduration() );
 						if(trans.getDPNtimer() >= 0) {
@@ -375,11 +383,16 @@ public final class ElementDraw {
 					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 22, nodeBounds.x + 21, nodeBounds.y + 8);
 					g.setColor(Color.black);
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
-				} else if(trans.getTransType() == TransitionType.XTPN) { //tranzycja XTPN
+				} else if( trans instanceof TransitionXTPN ) { // trans.getTransType() == TransitionType.XTPN) { //tranzycja XTPN
 					// _XTPN mark
 
 					//klepsydra:
-					g.setColor(Color.DARK_GRAY);
+					if(((TransitionXTPN)trans).showQSimXTPN) {
+						g.setColor(lightGray);
+					} else {
+						g.setColor(Color.DARK_GRAY);
+					}
+
 					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 7, nodeBounds.x + 22, nodeBounds.y + 7);
 					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 23, nodeBounds.x + 22, nodeBounds.y + 23);
 					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 8, nodeBounds.x + 21, nodeBounds.y + 22);
@@ -626,7 +639,7 @@ public final class ElementDraw {
 						place.getRadius() * 2, place.getRadius() * 2);
 				
 				if(eds.view3d) {
-					Color backup = g.getColor();	
+					Color backup = g.getColor();
 					g.setColor(Color.DARK_GRAY);
 					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
 					g.fillOval(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width+1, nodeBounds.height+1);

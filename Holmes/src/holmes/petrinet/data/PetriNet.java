@@ -1607,8 +1607,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		turnTransitionGlowingOff();
 		setTransitionGlowedMTC(false);
 		setGlowedSubnet(false);
-		resetTransitionGraphics();
-		resetPlaceGraphics();
+		resetSimulationGraphics_Transitions();
+		resetSimulationGraphics_Places();
 		resetArcGraphics();
 		resetNodes();
 		//reset frame
@@ -1636,13 +1636,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if (a.getType() == PetriNetElementType.ARC) {
 				a.setColor(false, Color.BLACK);
 			}
+
+			a.showQSimXTPN = false;
 		}
 	}
 
 	/**
 	 * Metoda wygasza kolorowanie tranzycji, zeruje dodatkowe wyświetlanie liczb czy tekstów.
 	 */
-	private void resetTransitionGraphics() {
+	private void resetSimulationGraphics_Transitions() {
 		for (Node n : getNodes()) {
 			if (n.getType() == PetriNetElementType.TRANSITION) {
 				Transition trans = ((Transition) n);
@@ -1665,18 +1667,23 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda wygasza kolorowanie miejsca, zeruje dodatkowe wyświetlanie liczb czy tekstów.
 	 */
-	private void resetPlaceGraphics() {
-		for (Node n : getNodes())
+	private void resetSimulationGraphics_Places() {
+		for (Node n : getNodes()) {
 			if (n.getType() == PetriNetElementType.PLACE) {
 				Place place = ((Place) n);
 				place.setColorWithNumber(false, Color.white, false, -1, false, "");
 				place.resetOffs();
-				
+
 				place.qSimDrawed = false;
 				place.qSimDrawStats = false;
 				place.qSimArcSign = false;
 				place.qSimOvalSize = 10;
 			}
+
+			if(n instanceof PlaceXTPN) {
+				((PlaceXTPN)n).showQSimXTPN = false;
+			}
+		}
 	}
 	
 	/**

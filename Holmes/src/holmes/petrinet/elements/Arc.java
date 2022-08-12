@@ -65,6 +65,8 @@ public class Arc extends PetriNetElement {
     private boolean isXTPNact = false;
     private boolean isXTPNprod = false;
 
+    public boolean showQSimXTPN = false;
+
     /**
      * NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR, XTPN
      */

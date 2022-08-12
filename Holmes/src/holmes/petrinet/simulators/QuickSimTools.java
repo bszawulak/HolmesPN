@@ -279,6 +279,8 @@ public class QuickSimTools {
 
 			trans.showQSimXTPN = true;
 			transIndex++;
+
+
 		}
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 	}

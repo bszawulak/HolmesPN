@@ -51,9 +51,27 @@ public class EditorResources {
 	public static final Color launchColorLevel2 = new Color(230, 20, 0, 50);
 	public static final Color launchColorLevel3 = new Color(230, 20, 0, 100);
 
-	//public static final Color arcNeutralXTPNcolor = new Color(51, 152, 255, 255);
+
 	public static final Color arcNeutralXTPNcolor = new Color(0, 0, 0, 255);
 	public static final Color activationXTPNcolor = new Color(0, 220, 0, 255);
 	public static final Color productionXTPNcolor = new Color(0, 51, 153, 255); //250, 80, 0, 255
 	public static final Color inhibitorXTPNcolor = new Color(250, 51, 0, 255);
+
+	public static final Color lightGray = new Color(174, 174, 174, 255);
+
+	public static final Color lighterGray = new Color(192, 192, 192, 255);
+
+
+	public static final Color lightSky = new Color(0, 135, 230);
+	public static final Color lightSky2 = new Color(0, 185, 230);
+	public static final Color lightSky3 = new Color(0, 215, 230);
+
+
+	//Color-net:
+	public static final Color cRed = Color.red;
+	public static final Color cGreen = Color.green;
+	public static final Color cBlue = Color.blue;
+	public static final Color cYellow = new Color(255,155,0) ;
+	public static final Color cGrey = Color.gray;
+	public static final Color cBlack = Color.black;
 }
