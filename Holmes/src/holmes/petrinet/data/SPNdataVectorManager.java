@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.SPNdataVector.SPNvectorSuperType;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Transition.StochaticsType;
+import holmes.petrinet.elements.TransitionSPNExtension;
 
 /**
  * Klasa zarządzająca wektorami danych SPN.
@@ -34,7 +34,7 @@ public class SPNdataVectorManager {
 	 */
 	public void addTrans() {
 		for(SPNdataVector frVector: SPNdataMatrix) {
-			frVector.addTrans(""+1.0, StochaticsType.ST);
+			frVector.addTrans(""+1.0, TransitionSPNExtension.StochaticsType.ST);
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class SPNdataVectorManager {
 	public void addCurrentFRasSPNdataVector() {
 		SPNdataVector frVector = new SPNdataVector();
 		for(Transition trans : pn.getTransitions()) {
-			frVector.addTrans(""+trans.getFiringRate(), trans.getSPNtype());
+			frVector.addTrans(""+trans.spnFunctions.getFiringRate(), trans.spnFunctions.getSPNtype());
 		}
 		SPNdataMatrix.add(frVector);
 	}
@@ -92,7 +92,7 @@ public class SPNdataVectorManager {
 		reset(false);
 		int transNo = pn.getTransitions().size();
 		for(int t=0; t<transNo; t++) {
-			SPNdataMatrix.get(0).addTrans(""+1.0, StochaticsType.ST);
+			SPNdataMatrix.get(0).addTrans(""+1.0, TransitionSPNExtension.StochaticsType.ST);
 		}
 	}
 	
@@ -105,8 +105,8 @@ public class SPNdataVectorManager {
 		SPNdataVector frVector = SPNdataMatrix.get(vectorID);
 		for(int t=0; t<transitions.size(); t++) {
 			Transition trans = transitions.get(t);
-			trans.setSPNtype(frVector.getStochasticType(t));
-			trans.setFiringRate(frVector.getFiringRate(t));
+			trans.spnFunctions.setSPNtype(frVector.getStochasticType(t));
+			trans.spnFunctions.setFiringRate(frVector.getFiringRate(t));
 		}
 		selectedVector = vectorID;
 	}
@@ -135,8 +135,8 @@ public class SPNdataVectorManager {
 		ArrayList<Transition> transitions = pn.getTransitions();
 		SPNdataVector frVector = SPNdataMatrix.get(vectorID);
 		for(int t=0; t<transitions.size(); t++) {
-			frVector.accessVector().get(t).ST_function = ""+transitions.get(t).getFiringRate();
-			frVector.accessVector().get(t).sType = transitions.get(t).getSPNtype();
+			frVector.accessVector().get(t).ST_function = ""+transitions.get(t).spnFunctions.getFiringRate();
+			frVector.accessVector().get(t).sType = transitions.get(t).spnFunctions.getSPNtype();
 		}
 	}
 	

@@ -22,7 +22,7 @@ import holmes.petrinet.data.SPNdataVector;
 import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Transition.StochaticsType;
+import holmes.petrinet.elements.TransitionSPNExtension;
 import holmes.utilities.Tools;
 
 /**
@@ -302,11 +302,11 @@ public class HolmesSPNtransitionEditor extends JFrame {
 
 		//KONIECZNIE NA KOŃCU!!!
 		main.add(spnTypeCombo);
-		if(myData.sType == StochaticsType.ST)
+		if(myData.sType == TransitionSPNExtension.StochaticsType.ST)
 			spnTypeCombo.setSelectedIndex(0);
-		else if(myData.sType == StochaticsType.IM)
+		else if(myData.sType == TransitionSPNExtension.StochaticsType.IM)
 			spnTypeCombo.setSelectedIndex(1);
-		else if(myData.sType == StochaticsType.DT)
+		else if(myData.sType == TransitionSPNExtension.StochaticsType.DT)
 			spnTypeCombo.setSelectedIndex(2);
 		else
 			spnTypeCombo.setSelectedIndex(3);
@@ -329,7 +329,6 @@ public class HolmesSPNtransitionEditor extends JFrame {
 	 * @param selectedIndex int - wybrany tryb
 	 */
 	protected void handleSubTypeSelection(int selectedIndex) {
-		// TODO Auto-generated method stub
 		if(selectedIndex == 0) {
 			STfunctionValueEdit.setEnabled(true);
 			IMpriorityValueEdit.setEnabled(false);
@@ -338,7 +337,7 @@ public class HolmesSPNtransitionEditor extends JFrame {
 			SCHrepValueEdit.setEnabled(false);
 			SCHendValueEdit.setEnabled(false);
 			
-			myData.sType = StochaticsType.ST;
+			myData.sType = TransitionSPNExtension.StochaticsType.ST;
 		} else if(selectedIndex == 1) {
 			STfunctionValueEdit.setEnabled(false);
 			IMpriorityValueEdit.setEnabled(true);
@@ -347,7 +346,7 @@ public class HolmesSPNtransitionEditor extends JFrame {
 			SCHrepValueEdit.setEnabled(false);
 			SCHendValueEdit.setEnabled(false);
 			
-			myData.sType = StochaticsType.IM;
+			myData.sType = TransitionSPNExtension.StochaticsType.IM;
 		}  else if(selectedIndex == 2) {
 			STfunctionValueEdit.setEnabled(false);
 			IMpriorityValueEdit.setEnabled(false);
@@ -356,7 +355,7 @@ public class HolmesSPNtransitionEditor extends JFrame {
 			SCHrepValueEdit.setEnabled(false);
 			SCHendValueEdit.setEnabled(false);
 			
-			myData.sType = StochaticsType.DT;
+			myData.sType = TransitionSPNExtension.StochaticsType.DT;
 		}  else {
 			STfunctionValueEdit.setEnabled(false);
 			IMpriorityValueEdit.setEnabled(false);
@@ -365,7 +364,7 @@ public class HolmesSPNtransitionEditor extends JFrame {
 			SCHrepValueEdit.setEnabled(true);
 			SCHendValueEdit.setEnabled(true);
 			
-			myData.sType = StochaticsType.SchT;
+			myData.sType = TransitionSPNExtension.StochaticsType.SchT;
 		}
 	}
 

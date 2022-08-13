@@ -12,9 +12,6 @@ import holmes.windows.managers.HolmesStatesManager;
 
 /**
  * Model tabeli stanów początkowych sieci (klasyczny).
- * 
- * @author MR
- *
  */
 public class StatesPlacesTableModel extends AbstractTableModel {
 	@Serial

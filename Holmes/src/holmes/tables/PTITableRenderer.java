@@ -10,8 +10,6 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * PTI - Places, Transitions, Invariants. Klasa-renderer dla tabel miejsc, tranzycji i inwariantów.
- * @author MR
- *
  */
 public class PTITableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();

@@ -15,7 +15,6 @@ public class TransitionColored extends Transition {
     protected int reqT4gray = 0;
     protected int reqT5black = 0;
 
-
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
      * @param transitionId     int - identyfikator tranzycji
@@ -160,6 +159,4 @@ public class TransitionColored extends Transition {
             default -> reqT0red = tokens;
         }
     }
-
-
 }

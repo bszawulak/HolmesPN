@@ -9,10 +9,9 @@ import holmes.darkgui.GUIManager;
 import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
-import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.containers.TransitionGraphicsContainer;
-import holmes.petrinet.elements.containers.TransitionsQSimContainer;
+import holmes.petrinet.elements.containers.TransitionQSimContainer;
 import holmes.petrinet.functions.FunctionContainer;
 import holmes.petrinet.functions.FunctionsTools;
 
@@ -31,38 +30,17 @@ public class Transition extends Node {
 
     //GRAPHICAL PROPERTIES:
     protected boolean isLaunching;
-    protected boolean isGlowedINV = false;
-    protected boolean isGlowedMTC = false;
-
-    public TransitionGraphicsContainer drawGraphBoxT = new TransitionGraphicsContainer();
-    public TransitionsQSimContainer qSimBoxT = new TransitionsQSimContainer();
-
     protected boolean knockoutStatus = false;        // czy wyłączona (MCS, inne)
     public boolean borderFrame = false;
 
-
-    //tranzycje czasowe:
+    public TransitionGraphicsContainer drawGraphBoxT = new TransitionGraphicsContainer();
+    public TransitionQSimContainer qSimBoxT = new TransitionQSimContainer();
     public TransitionTimeExtention timeFunctions = new TransitionTimeExtention();
+    public TransitionSPNExtension spnFunctions = new TransitionSPNExtension();
 
     //tranzycja funkcyjna:
     protected boolean isFunctional = false;
     protected ArrayList<FunctionContainer> fList;
-
-
-    //tranzycja stochastyczna:
-    /**
-     * ST, DT, IM, SchT, NONE - Stochastic Transition, Deterministic T., Immediate T., Scheduled T.
-     */
-    public enum StochaticsType {ST, DT, IM, SchT, NONE}
-    protected StochaticsType stochasticType;
-    protected double firingRate = 1.0;
-    protected SPNtransitionData SPNbox = null;
-
-    //SSA
-    protected double SPNprobTime = 0.0;
-    //inne:
-    protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
-
 
 
     /**
@@ -79,7 +57,7 @@ public class Transition extends Node {
         this.fList = new ArrayList<>();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
-        stochasticType = StochaticsType.NONE;
+        spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
     }
 
     /**
@@ -93,7 +71,7 @@ public class Transition extends Node {
         this.fList = new ArrayList<>();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
-        stochasticType = StochaticsType.NONE;
+        spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
     }
 
     /**
@@ -108,7 +86,7 @@ public class Transition extends Node {
         this.fList = new ArrayList<>();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
-        stochasticType = StochaticsType.NONE;
+        spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
     }
 
     public Transition(String error) {
@@ -117,7 +95,7 @@ public class Transition extends Node {
         this.fList = new ArrayList<>();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
-        stochasticType = StochaticsType.NONE;
+        spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
         this.setName(error);
     }
 
@@ -192,42 +170,6 @@ public class Transition extends Node {
         return requiredTokens;
     }
 
-    /**
-     * Metoda informująca, czy tranzycja jest podświetlona kolorem
-     * @return boolean - true jeśli świeci; false w przeciwnym wypadku
-     */
-    public boolean isGlowed() {
-        return isGlowedINV;
-    }
-
-    /**
-     * Metoda pozwala określić, czy tranzycja ma byc podświetlona oraz ile razy
-     * występuje ona w ramach niezmiennika.
-     * @param isGlowed             boolean - true, jeśli ma świecić
-     * @param numericalValueShowed int - liczba uruchomień tranzycji w niezmienniku
-     */
-    public void setGlowedINV(boolean isGlowed, int numericalValueShowed) {
-        this.isGlowedINV = isGlowed;
-        this.firingValueInInvariant = numericalValueShowed;
-    }
-
-    /**
-     * Metoda sprawdza, czy tranzycja świeci będąc częcią zbioru MCT.
-     * @return boolean - true jeżeli świeci jako MCT; false w przeciwnym wypadku
-     */
-    public boolean isGlowed_MTC() {
-        return isGlowedMTC;
-    }
-
-    /**
-     * Metoda ustawia stan świecenia tranzycji jako częci MCT.
-     * @param value boolean - true jeżeli ma świecić
-     */
-    public void setGlowed_MTC(boolean value) {
-        this.isGlowedMTC = value;
-    }
-
-
     public void setFrame(boolean is){
         this.borderFrame = is;
         /*
@@ -236,14 +178,6 @@ public class Transition extends Node {
         else
             this.borderFrame = true;
         */
-    }
-
-    /**
-     * Metoda zwraca liczbę wystąpień uruchomień tranzycji w ramach niezmiennika.
-     * @return int - liczba wystąpień uruchomień tranzycji w niezmienniku z pola firingNumber
-     */
-    public int getFiring_INV() {
-        return this.firingValueInInvariant;
     }
 
     /**
@@ -286,8 +220,8 @@ public class Transition extends Node {
         if (knockoutStatus)
             return false;
 
-        if (timeFunctions.DPNactive) {
-            if (timeFunctions.DPNtimer == timeFunctions.DPNduration) { //duration zawsze >= 0, dTimer(pre-start) = -1, więc ok
+        if (timeFunctions.getDPNstatus()) {
+            if (timeFunctions.getDPNtimer() == timeFunctions.getDPNduration() ) { //duration zawsze >= 0, dTimer(pre-start) = -1, więc ok
                 return true; //nie ważne co mówią pre-places, ta tranzycja musi odpalić!
             }
         }
@@ -377,7 +311,6 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca typ tranzycji jako elementu klasycznej PN.
-     *
      * @return PetriNetElementType - tranzycja klasyczna
      */
     public PetriNetElementType getType() {
@@ -401,7 +334,6 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca wagę łuku wejściowego do wskazanego miejsca.
-     *
      * @param inPlace Place - miejsce połączone do danej tranzycji
      * @return int - waga łuku łączącego
      */
@@ -451,7 +383,6 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia flagę tranzycji funkcyjnej.
-     *
      * @param value boolean - true, jeśli tranzycja ma być funkcyjna
      */
     public void setFunctional(boolean value) {
@@ -460,7 +391,6 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca flagę funkcyjności tranzycji.
-     *
      * @return boolean - true, jeśli funkcyjna
      */
     public boolean isFunctional() {
@@ -470,7 +400,6 @@ public class Transition extends Node {
     /**
      * Metoda zwraca pełen wektor funkcyjny tranzycji. Przed jej wywołaniem należy upewnić się funkcją
      * checkFunctions(...), że wektor ten jest aktualny.
-     *
      * @return ArrayList[FunctionContainer] - wektor funkcji
      */
     public ArrayList<FunctionContainer> accessFunctionsList() {
@@ -480,7 +409,6 @@ public class Transition extends Node {
     /**
      * Metoda weryfikuje wektor łuków funkcyjnych - usuwa łuki które już nie istnieją w rzeczywistych
      * połączeniach tranzycji oraz dodaje takie, których na liście funkcyjnej brakuje.
-     *
      * @param arcs ArrayList[Arc] - wektor wszystkich łuków sieci
      */
     public void checkFunctions(ArrayList<Arc> arcs, ArrayList<Place> places) {
@@ -528,7 +456,6 @@ public class Transition extends Node {
 
     /**
      * Metoda podmienia zapis funkcji w tranzycji.
-     *
      * @param fID        String - identyfikator funkcji dla danej tranzycji
      * @param expression String - nowa forma funkcji
      * @param correct    boolean - true jeśli funkcja została zweryfikowana jako prawidłowa
@@ -549,7 +476,6 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca kontener z funkcją.
-     *
      * @param fID String - identyfikator w ramach tranzycji
      * @return FunctionContainer - obiekt kontenera
      */
@@ -565,7 +491,6 @@ public class Transition extends Node {
     /**
      * /**
      * Metoda zwraca kontener z funkcją - szukanie po obiekcie łuku.
-     *
      * @param arc Arc - łuk tranzycji
      * @return FunctionContainer - obiekt kontenera
      */
@@ -576,71 +501,6 @@ public class Transition extends Node {
             }
         }
         return null;
-    }
-
-    //**************************************************************************************
-    //*********************************    STOCHASTIC    ***********************************
-    //**************************************************************************************
-
-    /**
-     * Metoda zwraca podtyp SPN tranzycji.
-     *
-     * @return StochaticsType - podtyp tranzycji stochastycznej
-     */
-    public StochaticsType getSPNtype() {
-        return this.stochasticType;
-    }
-
-    /**
-     * Metoda ustawia podtyp SPN tranzycji.
-     *
-     * @param value TransitionType -  podtyp tranzycji stochastycznej
-     */
-    public void setSPNtype(StochaticsType value) {
-        this.stochasticType = value;
-    }
-
-    /**
-     * Metoda zwraca wartość firing rate na potrzeby symulacji SPN.
-     *
-     * @return double - wartość firing rate
-     */
-    public double getFiringRate() {
-        return this.firingRate;
-    }
-
-    /**
-     * Metoda ustawia nową wartość firing rate dla tranzycji w modelu SPN.
-     *
-     * @param firingRate double - nowa wartość
-     */
-    public void setFiringRate(double firingRate) {
-        this.firingRate = firingRate;
-    }
-
-    /**
-     * Metoda zwraca kontener danych SPN tranzycji.
-     *
-     * @return SPNtransitionData - kontener danych
-     */
-    public SPNtransitionData getSPNbox() {
-        return this.SPNbox;
-    }
-
-    /**
-     * Metoda ustawia nowy kontener danych SPN tranzycji.
-     * param SPNbox SPNtransitionData - kontener danych
-     */
-    public void setSPNbox(SPNtransitionData SPNbox) {
-        this.SPNbox = SPNbox;
-    }
-
-    public void setSPNprobTime(double time) {
-        this.SPNprobTime = time;
-    }
-
-    public double getSPNprobTime() {
-        return this.SPNprobTime;
     }
 
     /**

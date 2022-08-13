@@ -3,7 +3,7 @@ package holmes.petrinet.data;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.elements.Transition.StochaticsType;
+import holmes.petrinet.elements.TransitionSPNExtension;
 
 /**
  * Klasa zarządzająca wektorem danych tranzycji SPN.
@@ -31,7 +31,7 @@ public class SPNdataVector {
 	 * @param subType StochaticsType - typ SPN tranzycji
 	 * @return SPNdataContainer - obiekt
 	 */
-	public SPNtransitionData newContainer(String frFunction, StochaticsType subType) {
+	public SPNtransitionData newContainer(String frFunction, TransitionSPNExtension.StochaticsType subType) {
 		return new SPNtransitionData(frFunction, subType);
 	}
 	
@@ -60,7 +60,7 @@ public class SPNdataVector {
 	 * @param value String - fire rate (funkcja)
 	 * @param sType StochaticsType - typ stochastyczny tranzycji
 	 */
-	public void addTrans(String value, StochaticsType sType) {
+	public void addTrans(String value, TransitionSPNExtension.StochaticsType sType) {
 		dataVector.add(new SPNtransitionData(value, sType));
 	}
 	
@@ -110,9 +110,9 @@ public class SPNdataVector {
 	 * @param index int - nr tranzycji
 	 * @return StochaticsType - podtyp
 	 */
-	public StochaticsType getStochasticType(int index) {
+	public TransitionSPNExtension.StochaticsType getStochasticType(int index) {
 		if(index >= dataVector.size())
-			return StochaticsType.ST;
+			return TransitionSPNExtension.StochaticsType.ST;
 		else
 			return dataVector.get(index).sType;
 	}

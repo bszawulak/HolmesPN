@@ -12,8 +12,6 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * Klasa obiektu rysującego tablicę stanów sieci (klasyczna).
- * @author MR
- *
  */
 public class StatesPlacesTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();

@@ -6,7 +6,6 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  * Klasa model dla tabeli miejsc.
- * @author MR
  */
 public class PlacesTableModel extends AbstractTableModel {
 	@Serial

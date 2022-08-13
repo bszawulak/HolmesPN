@@ -13,8 +13,6 @@ import holmes.windows.managers.HolmesSSAplacesEditor;
 
 /**
  * Model tablicy do edycji wartości komponentów w miejscach dla symulatora SSA.
- * 
- * @author MR
  */
 public class SSAplacesEditorTableModel extends DefaultTableModel {
 	@Serial

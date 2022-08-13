@@ -9,7 +9,6 @@ import holmes.darkgui.GUIManager;
 
 /**
  * Klasa model dla tabeli inwariantów okna HolmesNetTables.
- * @author MR
  */
 public class InvariantsSimulatorTableModel extends AbstractTableModel {
 	@Serial

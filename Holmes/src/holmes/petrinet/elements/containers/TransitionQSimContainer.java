@@ -5,7 +5,7 @@ import java.awt.*;
 /**
  * Klasa kontener dla rysowania grafiki związanej z modułem qSim.
  */
-public class TransitionsQSimContainer {
+public class TransitionQSimContainer {
     //quickSim - kolorowanie wyników symulacji
     public boolean qSimDrawed = false; // czy rysować dodatkowe oznaczenie tranzycji - okrąg
     public int qSimOvalSize = 10; //rozmiar okręgu oznaczającego

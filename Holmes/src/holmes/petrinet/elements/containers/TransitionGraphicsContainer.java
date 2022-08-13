@@ -8,18 +8,22 @@ import java.awt.*;
  * Dodatkowo jak zauważyłem, KTOŚ zaczął jej używać przy algorytmach dekompozycji.
  */
 public class TransitionGraphicsContainer {
-    public Color transColorValue = new Color(255, 255, 255);
-    public boolean isColorChanged = false;        //zmiana koloru - status
-    public boolean valueVisibilityStatus = false;
-    public double transNumericalValue = 0.0;        //dodatkowa liczba do wyświetlenia
-    public String transAdditionalText = "";
-    public boolean showTransitionAddText = false;
+    private Color transColorValue = new Color(255, 255, 255);
+    private boolean isColorChanged = false;        //zmiana koloru - status
+    private boolean valueVisibilityStatus = false;
+    private double transNumericalValue = 0.0;        //dodatkowa liczba do wyświetlenia
+    private String transAdditionalText = "";
+    private boolean showTransitionAddText = false;
 
     //inne napisy, np MCT (?)
     public int txtXoff = 0;
     public int txtYoff = 0;
     public int valueXoff = 0;
     public int valueYoff = 0;
+
+    protected boolean isGlowedINV = false;
+    protected boolean isGlowedMTC = false;
+    protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 
     /**
      * Metoda informuje, czy tramzycja ma być rysowana z innym kolorem wypełnienia
@@ -130,5 +134,48 @@ public class TransitionGraphicsContainer {
      */
     public Color getTransitionNewColor() {
         return transColorValue;
+    }
+
+    /**
+     * Metoda informująca, czy tranzycja jest podświetlona kolorem
+     * @return boolean - true jeśli świeci; false w przeciwnym wypadku
+     */
+    public boolean isGlowed() {
+        return isGlowedINV;
+    }
+
+    /**
+     * Metoda pozwala określić, czy tranzycja ma byc podświetlona oraz ile razy
+     * występuje ona w ramach niezmiennika.
+     * @param isGlowed             boolean - true, jeśli ma świecić
+     * @param numericalValueShowed int - liczba uruchomień tranzycji w niezmienniku
+     */
+    public void setGlowedINV(boolean isGlowed, int numericalValueShowed) {
+        this.isGlowedINV = isGlowed;
+        this.firingValueInInvariant = numericalValueShowed;
+    }
+
+    /**
+     * Metoda sprawdza, czy tranzycja świeci będąc częcią zbioru MCT.
+     * @return boolean - true jeżeli świeci jako MCT; false w przeciwnym wypadku
+     */
+    public boolean isGlowed_MTC() {
+        return isGlowedMTC;
+    }
+
+    /**
+     * Metoda ustawia stan świecenia tranzycji jako częci MCT.
+     * @param value boolean - true jeżeli ma świecić
+     */
+    public void setGlowed_MTC(boolean value) {
+        this.isGlowedMTC = value;
+    }
+
+    /**
+     * Metoda zwraca liczbę wystąpień uruchomień tranzycji w ramach niezmiennika.
+     * @return int - liczba wystąpień uruchomień tranzycji w niezmienniku z pola firingNumber
+     */
+    public int getFiring_INV() {
+        return this.firingValueInInvariant;
     }
 }

@@ -7,12 +7,12 @@ import java.awt.*;
  * Dodatkowo jak zauważyłem, KTOŚ zaczął jej używać przy algorytmach dekompozycji.
  */
 public class PlaceGraphicsContainer {
-    protected boolean isColorChanged;
-    protected Color placeColorValue;
-    protected boolean valueVisibilityStatus;
-    protected double placeNumericalValue;
-    protected boolean showPlaceAddText;
-    protected String placeAdditionalText;
+    private boolean isColorChanged;
+    private Color placeColorValue;
+    private boolean valueVisibilityStatus;
+    private double placeNumericalValue;
+    private boolean showPlaceAddText;
+    private String placeAdditionalText;
     public int txtXoff;
     public int txtYoff;
     public int valueXoff;

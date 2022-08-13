@@ -11,9 +11,6 @@ import java.util.EventObject;
 
 /**
  * Model tabeli stanów początkowych sieci (klasyczny).
- *
- * @author MR
- *
  */
 public class StatesPlacesTableModelXTPN extends AbstractTableModel {
     @Serial

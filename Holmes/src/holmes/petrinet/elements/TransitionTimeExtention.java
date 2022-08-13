@@ -1,14 +1,14 @@
 package holmes.petrinet.elements;
 
 public class TransitionTimeExtention {
-    protected double TPN_eft = 0; //TPN
-    protected double TPN_lft = 0; //TPN
-    protected double TPNtimerLimit = -1; //TPN
-    protected double TPNtimer = -1; //TPN
-    protected double DPNduration = 0; //DPN
-    protected double DPNtimer = -1; //DPN
-    protected boolean TPNactive = false;
-    protected boolean DPNactive = false;
+    private double TPN_eft = 0;
+    private double TPN_lft = 0;
+    private double TPNtimerLimit = -1;
+    private double TPNtimer = -1;
+    private double DPNduration = 0;
+    private double DPNtimer = -1;
+    private boolean TPNactive = false;
+    private boolean DPNactive = false;
 
     /**
      * Metoda ustala dolny limit niezerowego czasu gotowości - EFT.

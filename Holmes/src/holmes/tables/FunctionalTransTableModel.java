@@ -10,8 +10,6 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 
 /**
  * Klasa modelująca tablicę edycji funkcji dla tranzycji.
- * 
- * @author MR
  */
 public class FunctionalTransTableModel extends DefaultTableModel {
 	@Serial

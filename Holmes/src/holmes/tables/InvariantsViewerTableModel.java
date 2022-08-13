@@ -7,9 +7,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * Model tablicy danych o inwariancie na potrzeby okna podglądu inwariantów.
- * 
- * @author MR
- *
  */
 public class InvariantsViewerTableModel extends DefaultTableModel  {
 	@Serial

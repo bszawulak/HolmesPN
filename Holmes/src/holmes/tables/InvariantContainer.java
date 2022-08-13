@@ -2,8 +2,6 @@ package holmes.tables;
 
 /**
  * Klasa kontener dla danych wiersza tabeli inwariantów.
- * @author MR
- *
  */
 public class InvariantContainer {
 	public int ID = 0;

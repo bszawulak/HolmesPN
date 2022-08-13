@@ -7,7 +7,6 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  * Klasa-model dla tabeli tranzycji.
- * @author MR
  */
 public class TransitionsTableModel extends AbstractTableModel {
 	@Serial

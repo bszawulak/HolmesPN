@@ -16,7 +16,6 @@ import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
-import holmes.petrinet.elements.Transition.StochaticsType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.functions.FunctionsTools;
 import holmes.utilities.Tools;
@@ -2125,11 +2124,11 @@ public class ProjectReader {
 						
 						ArrayList<SPNtransitionData> dataVector = new ArrayList<SPNtransitionData>();
 						for(int i=0; i<dataVectorTable.length; i++) {
-							StochaticsType subType = switch (tabType[i]) {
-								case "DT" -> StochaticsType.DT;
-								case "IM" -> StochaticsType.IM;
-								case "SchT" -> StochaticsType.SchT;
-								default -> StochaticsType.ST;
+							TransitionSPNExtension.StochaticsType subType = switch (tabType[i]) {
+								case "DT" -> TransitionSPNExtension.StochaticsType.DT;
+								case "IM" -> TransitionSPNExtension.StochaticsType.IM;
+								case "SchT" -> TransitionSPNExtension.StochaticsType.SchT;
+								default -> TransitionSPNExtension.StochaticsType.ST;
 							};
 
 							//TODO: nowy konstruktor, wektor zapisu
@@ -2243,10 +2242,10 @@ public class ProjectReader {
 				box.SCH_end = dataVectorTable[(i*7)+5];
 
 				switch (dataVectorTable[(i * 7) + 6]) {
-					case "IM" -> box.sType = StochaticsType.IM;
-					case "DT" -> box.sType = StochaticsType.DT;
-					case "SchT" -> box.sType = StochaticsType.SchT;
-					default -> box.sType = StochaticsType.ST;
+					case "IM" -> box.sType = TransitionSPNExtension.StochaticsType.IM;
+					case "DT" -> box.sType = TransitionSPNExtension.StochaticsType.DT;
+					case "SchT" -> box.sType = TransitionSPNExtension.StochaticsType.SchT;
+					default -> box.sType = TransitionSPNExtension.StochaticsType.ST;
 				}
 				spnVector.add(box);
 			}

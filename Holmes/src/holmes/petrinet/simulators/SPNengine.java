@@ -11,7 +11,7 @@ import holmes.petrinet.data.SPNdataVector;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Transition.StochaticsType;
+import holmes.petrinet.elements.TransitionSPNExtension;
 
 public class SPNengine implements IEngine {
 	private GUIManager overlord;
@@ -151,15 +151,15 @@ public class SPNengine implements IEngine {
 		for (int t = 0; t < transitions.size(); t++) {
 			Transition transition = transitions.get(t);
 			//transition.setS
-			transition.setFiringRate(SPNvector.getFiringRate(t));
-			transition.setSPNbox(SPNvector.getSPNtransitionContainer(t));
-			transition.setSPNtype(SPNvector.getStochasticType(t));
+			transition.spnFunctions.setFiringRate(SPNvector.getFiringRate(t));
+			transition.spnFunctions.setSPNbox(SPNvector.getSPNtransitionContainer(t));
+			transition.spnFunctions.setSPNtype(SPNvector.getStochasticType(t));
 			
-			if(transition.getSPNtype() == StochaticsType.IM)
+			if(transition.spnFunctions.getSPNtype() == TransitionSPNExtension.StochaticsType.IM)
 				immTransitions.add(transition);
-			else if(transition.getSPNtype() == StochaticsType.DT)
+			else if(transition.spnFunctions.getSPNtype() == TransitionSPNExtension.StochaticsType.DT)
 				detTransitions.add(transition);
-			else if(transition.getSPNtype() == StochaticsType.SchT)
+			else if(transition.spnFunctions.getSPNtype() == TransitionSPNExtension.StochaticsType.SchT)
 				schTransitions.add(transition);
 			else
 				stochasticTransitions.add(transition);
@@ -173,7 +173,7 @@ public class SPNengine implements IEngine {
 				Transition trans1 = immTransitions.get(t);
 				int swapT2 = t;
 				for(int t2=t+1; t2<imSize; t2++) {
-					if(immTransitions.get(t2).getSPNbox().IM_priority > trans1.getSPNbox().IM_priority) {
+					if(immTransitions.get(t2).spnFunctions.getSPNbox().IM_priority > trans1.spnFunctions.getSPNbox().IM_priority) {
 						trans1 = immTransitions.get(t2);
 						swapT2 = t2;
 					}
@@ -238,10 +238,10 @@ public class SPNengine implements IEngine {
 		
 		if(activeReadyToFireTransitions.size() > 0) {
 			//tu wybieramy tranzycje z najnizszym czasie / najwiekszym P odpalenia
-			double compProbValue = activeReadyToFireTransitions.get(0).getSPNprobTime(); //zero?
+			double compProbValue = activeReadyToFireTransitions.get(0).spnFunctions.getSPNprobTime(); //zero?
 			ArrayList<Transition> toFire = new ArrayList<Transition>();
 			for(Transition trans : activeReadyToFireTransitions) {
-				double nextProbValue = trans.getSPNprobTime();
+				double nextProbValue = trans.spnFunctions.getSPNprobTime();
 				
 				if(compProbValue == nextProbValue) {
 					toFire.add(trans);
@@ -325,7 +325,7 @@ public class SPNengine implements IEngine {
 				
 				trans.bookRequiredTokens(); //rezerwuj tokeny
 				roulette.add(trans);
-				prioritySum += trans.getSPNbox().IM_priority;
+				prioritySum += trans.spnFunctions.getSPNbox().IM_priority;
 			}
 			if(roulette.size() == 0)
 				return null;
@@ -343,7 +343,7 @@ public class SPNengine implements IEngine {
 			int ball = (int) generator.nextLong(prioritySum);
 			int cumulativeProbability = 0;
 			for (Transition trans : roulette) {
-			    cumulativeProbability += trans.getSPNbox().IM_priority;
+			    cumulativeProbability += trans.spnFunctions.getSPNbox().IM_priority;
 			    if (ball < cumulativeProbability) {
 			        return trans;
 			    }
@@ -361,7 +361,7 @@ public class SPNengine implements IEngine {
 		for(int i=0; i<size; i++) {
 			int rangeJ = i;
 			for(int j=i+1; j<size; j++) {
-				if(immTransitions.get(i).getSPNbox().IM_priority == immTransitions.get(j).getSPNbox().IM_priority) {
+				if(immTransitions.get(i).spnFunctions.getSPNbox().IM_priority == immTransitions.get(j).spnFunctions.getSPNbox().IM_priority) {
 					rangeJ++;
 				} else 
 					continue; //ważne! szybciej.
@@ -385,8 +385,8 @@ public class SPNengine implements IEngine {
 	private Transition deterministicDelayFireSubsystem() {
 		if(detTransitionsSequence.size() > 0) { //obsługa kolejki
 			for(Transition trans : detTransitionsSequence) {
-				trans.getSPNbox().tmp_DET_counter--;
-				if(trans.getSPNbox().tmp_DET_counter==0) {
+				trans.spnFunctions.getSPNbox().tmp_DET_counter--;
+				if(trans.spnFunctions.getSPNbox().tmp_DET_counter==0) {
 					if(trans.isActive()) {
 						detTransitionsSequence.remove(trans); //uruchamiaj (w końcu)
 						return trans;
@@ -413,7 +413,7 @@ public class SPNengine implements IEngine {
 			} else {
 				detTransitionsSequence.add(trans); //każda ma delay min 1, dodaj do kolejki
 			}
-			trans.getSPNbox().tmp_DET_counter =  trans.getSPNbox().DET_delay;
+			trans.spnFunctions.getSPNbox().tmp_DET_counter =  trans.spnFunctions.getSPNbox().DET_delay;
 		}
 		
 		for(Transition trans : detTransitionsSequence) {
@@ -429,14 +429,14 @@ public class SPNengine implements IEngine {
 	 * @param lastFiredTransition Transition - ostatnio (aktualnie) odpalona tranzycja, która spowodowała zmiany
 	 */
 	private void updateSTtransitionsList(Transition lastFiredTransition) {
-		if(lastFiredTransition.getSPNtype() == StochaticsType.ST)
+		if(lastFiredTransition.spnFunctions.getSPNtype() == TransitionSPNExtension.StochaticsType.ST)
 			transitionSTtypeUpdateList.add(lastFiredTransition); //ważne dla wejściowych, gdyż one nie zostałyby tutaj
 			//dodane przez kod poniżej, więc dodajemy ręcznie tym poleceniem
 
 		ArrayList<Place> changedPlaces = involvedPlacesMap.get(lastFiredTransition);
 		for(Place place : changedPlaces) {
 			for(Transition trans : involvedTransitionsMap.get(place)) {
-				if(!transitionSTtypeUpdateList.contains(trans) && trans.getSPNtype() == StochaticsType.ST) {
+				if(!transitionSTtypeUpdateList.contains(trans) && trans.spnFunctions.getSPNtype() == TransitionSPNExtension.StochaticsType.ST) {
 					transitionSTtypeUpdateList.add(trans);
 				}
 			}
@@ -444,12 +444,12 @@ public class SPNengine implements IEngine {
 		
 		for(Transition t : transitions) {
 			if(t.getOutArcs().size() == 0) {
-				if(!transitionSTtypeUpdateList.contains(t) && t.getSPNtype() == StochaticsType.ST) {
+				if(!transitionSTtypeUpdateList.contains(t) && t.spnFunctions.getSPNtype() == TransitionSPNExtension.StochaticsType.ST) {
 					transitionSTtypeUpdateList.add(t);
 				}
 			}
 			if(t.getInArcs().size() == 0) {
-				if(!transitionSTtypeUpdateList.contains(t) && t.getSPNtype() == StochaticsType.ST) {
+				if(!transitionSTtypeUpdateList.contains(t) && t.spnFunctions.getSPNtype() == TransitionSPNExtension.StochaticsType.ST) {
 					transitionSTtypeUpdateList.add(t);
 				}
 			}
@@ -486,12 +486,12 @@ public class SPNengine implements IEngine {
                 }
 			}
 		}
-		double denominator = (massActionKineticModifier * transition.getFiringRate());
+		double denominator = (massActionKineticModifier * transition.spnFunctions.getFiringRate());
 		if(denominator == 0)
 			denominator = 1e-23;
 		
 		double probTime = -(Math.log(1 - generator.nextDouble()) / denominator );
-		transition.setSPNprobTime(probTime);
+		transition.spnFunctions.setSPNprobTime(probTime);
 	}
 
 	@Override

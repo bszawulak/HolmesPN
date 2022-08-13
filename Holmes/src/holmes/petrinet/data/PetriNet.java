@@ -1580,7 +1580,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private void setTransitionGlowedMTC(boolean isGlowedMTC) {
 		for (Node n : getNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION) {
-				((Transition) n).setGlowed_MTC(isGlowedMTC);
+				((Transition) n).drawGraphBoxT.setGlowed_MTC(isGlowedMTC);
 			}
 	}
 
@@ -1846,7 +1846,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				transition.setTransType(TransitionType.XTPN);
 				transition.timeFunctions.setTPNstatus(false);
 				transition.timeFunctions.setDPNstatus(false);
-				transition.setSPNtype(Transition.StochaticsType.NONE);
+				transition.spnFunctions.setSPNtype(TransitionSPNExtension.StochaticsType.NONE);
 			}
 		}
 	}

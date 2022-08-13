@@ -7,8 +7,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * Pomocniczy model tabeli do wyświetlania wszystkich miejsc sieci.
- * 
- * @author MR
  */
 public class FunctionalTransAuxTableModel extends DefaultTableModel {
 	@Serial

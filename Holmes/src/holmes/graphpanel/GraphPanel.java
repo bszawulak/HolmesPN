@@ -548,7 +548,7 @@ public class GraphPanel extends JComponent {
 	private void addNewStochasticTransition(Point p) {
 		if (isLegalLocation(p)) {
 			Transition trans = new Transition(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
-			trans.setSPNtype(Transition.StochaticsType.ST);
+			trans.spnFunctions.setSPNtype(TransitionSPNExtension.StochaticsType.ST);
 			trans.setTransType(TransitionType.SPN);
 			this.getSelectionManager().selectOneElementLocation(trans.getLastLocation());
 			getNodes().add(trans);

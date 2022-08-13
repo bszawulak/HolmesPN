@@ -1289,7 +1289,7 @@ public class HolmesDecomposition extends JFrame {
         //transitions
         for (Transition transition : subnet.getSubTransitions()) {
             if (!colorSubNet) {
-                transition.setGlowed_MTC(true);
+                transition.drawGraphBoxT.setGlowed_MTC(true);
 
             } else {
                 if (selectedSubNetindex == size - 1)

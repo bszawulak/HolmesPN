@@ -3055,7 +3055,7 @@ public class HolmesDockWindowsTable extends JPanel {
         frLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(frLabel);
 
-        JTextArea frField = new JTextArea("" + ((Transition) element).getFiringRate());
+        JTextArea frField = new JTextArea("" + ((Transition) element).spnFunctions.getFiringRate());
         frField.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
         frField.setLineWrap(true);
         frField.addFocusListener(new FocusAdapter() {
@@ -3070,7 +3070,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
                     SPNtransitionData xxx = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager()
                             .getCurrentSPNdataVector().accessVector().get(gID);
-                    ((Transition) element).setFiringRate(newVal);
+                    ((Transition) element).spnFunctions.setFiringRate(newVal);
                     xxx.ST_function = newFR;
                 } catch (Exception ee) {
                     System.out.println(ee.getMessage());
@@ -6043,13 +6043,13 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (markMCT) {
                     int mctNo = transMCTvector.get(t);
                     if (mctNo == -1) {
-                        trans.setGlowedINV(glowT_inv, fireValue);
+                        trans.drawGraphBoxT.setGlowedINV(glowT_inv, fireValue);
                     } else {
                         trans.drawGraphBoxT.setColorWithNumber(true, cp.getColor(mctNo), false, fireValue, true, "[MCT" + (mctNo + 1) + "]");
-                        trans.setGlowedINV(false, fireValue);
+                        trans.drawGraphBoxT.setGlowedINV(false, fireValue);
                     }
                 } else {
-                    trans.setGlowedINV(glowT_inv, fireValue);
+                    trans.drawGraphBoxT.setGlowedINV(glowT_inv, fireValue);
                 }
 
                 if (invStructure) {
@@ -6240,7 +6240,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 Transition realT = transitions_tmp.get(deadOne);
                 String t1 = Tools.setToSize("t" + deadOne, 5, false);
                 note.addTextLineNL(t1 + " | " + realT.getName(), "text");
-                realT.setGlowedINV(true, 0);
+                realT.drawGraphBoxT.setGlowedINV(true, 0);
                 counter++;
             }
         }
@@ -6657,7 +6657,7 @@ public class HolmesDockWindowsTable extends JPanel {
         ColorPalette cp = new ColorPalette();
         for (Transition transition : mct) {
             if (!colorMCT) {
-                transition.setGlowed_MTC(true);
+                transition.drawGraphBoxT.setGlowed_MTC(true);
             } else {
                 if (selectedMCTindex == size - 1)
                     transition.drawGraphBoxT.setColorWithNumber(true, cp.getColor(selectedMCTindex), false, 0, true, "[trivial]");
@@ -8110,7 +8110,7 @@ public class HolmesDockWindowsTable extends JPanel {
         //transitions
         for (Transition transition : subnet.getSubTransitions()) {
             if (!colorSubNet) {
-                transition.setGlowed_MTC(true);
+                transition.drawGraphBoxT.setGlowed_MTC(true);
 
             } else {
                 if (selectedSubNetindex == size - 1)

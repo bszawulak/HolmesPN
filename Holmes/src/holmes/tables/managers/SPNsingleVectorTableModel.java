@@ -8,13 +8,11 @@ import java.util.EventObject;
 import javax.swing.table.DefaultTableModel;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.elements.Transition.StochaticsType;
+import holmes.petrinet.elements.TransitionSPNExtension;
 import holmes.windows.managers.HolmesSPNeditor;
 
 /**
  * Model tabeli tranzycji dla jednego wektora danych SPN.
- * 
- * @author MR
  */
 public class SPNsingleVectorTableModel extends DefaultTableModel {
 	@Serial
@@ -32,7 +30,7 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 		public int ID;
 		public String name;
 		public String dataVector;
-		public StochaticsType subType;
+		public TransitionSPNExtension.StochaticsType subType;
 	}
 
 	/**
@@ -66,7 +64,7 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 	 * @param SPNtransData String - dane dla SPN
 	 * @param sType StochaticsType - podtyp w SPN
 	 */
-	public void addNew(int ID, String name, String SPNtransData, StochaticsType sType) {
+	public void addNew(int ID, String name, String SPNtransData, TransitionSPNExtension.StochaticsType sType) {
 		FRDataClass row = new FRDataClass();
 		row.ID = ID;
 		row.name = name;
@@ -159,7 +157,7 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 			if(col == 2) {
 				dataMatrix.get(row).dataVector = value.toString();
 			} else if(col == 3) {
-				dataMatrix.get(row).subType = (StochaticsType)value;
+				dataMatrix.get(row).subType = (TransitionSPNExtension.StochaticsType)value;
 			}
 		} catch (Exception ex) {
 			GUIManager.getDefaultGUIManager().log("Error (497476884) | Exception:  "+ex.getMessage(), "error", true);

@@ -10,8 +10,6 @@ import holmes.windows.managers.HolmesSPNmanager;
 
 /**
  * Klasa tablicy wszystkich wektorów tranzycji SPN.
- * 
- * @author MR
  */
 public class SPNdataVectorsTableModel extends DefaultTableModel {
 	@Serial

@@ -10,9 +10,6 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * Klasa renderująca tablicę tranzycji inwariantu w oknie podglądu inwariantów.
- * 
- * @author MR
- *
  */
 public class InvariantsTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();

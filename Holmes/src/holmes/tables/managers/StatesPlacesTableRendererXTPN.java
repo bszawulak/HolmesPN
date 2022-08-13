@@ -8,8 +8,6 @@ import java.text.DecimalFormat;
 
 /**
  * Klasa obiektu rysującego tablicę stanów sieci (XTPN).
- * @author MR
- *
  */
 public class StatesPlacesTableRendererXTPN implements TableCellRenderer {
    // @Serial

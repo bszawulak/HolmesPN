@@ -9,8 +9,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * Model tabeli węzłow dla okna łączenia sieci
- * 
- * @author MR
  */
 public class MergeNodesTableModel extends DefaultTableModel {
 	private static final long serialVersionUID = 6346267999771986379L;

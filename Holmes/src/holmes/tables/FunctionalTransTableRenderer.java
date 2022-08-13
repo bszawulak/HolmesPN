@@ -12,8 +12,6 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * Klasa renderująca tablę funkcji dla tranzycji.
- * 
- * @author MR
  */
 public class FunctionalTransTableRenderer  implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();

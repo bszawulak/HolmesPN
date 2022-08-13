@@ -1176,7 +1176,7 @@ public class SelectionManager {
 	public void removeTransitionsGlowing() {
 		for (Node n : getGraphPanelNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION ) {
-				((Transition) n).setGlowedINV(false, 0);
+				((Transition) n).drawGraphBoxT.setGlowedINV(false, 0);
 			}
 	}
 

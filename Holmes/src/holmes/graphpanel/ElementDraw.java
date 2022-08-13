@@ -123,7 +123,7 @@ public final class ElementDraw {
 				}
 				
 				if (!trans.isLaunching()) { //jeśli nieaktywna
-					if (trans.isGlowed_MTC()) { //jeśli ma się świecić jako MCT
+					if (trans.drawGraphBoxT.isGlowed_MTC()) { //jeśli ma się świecić jako MCT
 						g.setColor(EditorResources.glowMTCTransitonColorLevel1);
 						g.setStroke(EditorResources.glowStrokeLevel1);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -135,7 +135,7 @@ public final class ElementDraw {
 						g.setColor(EditorResources.glowMTCTransitonColorLevel3);
 						g.setStroke(EditorResources.glowStrokeLevel3);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					} else if (trans.isGlowed()) {
+					} else if (trans.drawGraphBoxT.isGlowed()) {
 						g.setColor(EditorResources.glowTransitonColorLevel1);
 						g.setStroke(EditorResources.glowStrokeLevel1);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -197,11 +197,11 @@ public final class ElementDraw {
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
 				
-				if (trans.isGlowed()) { //inwarianty
+				if (trans.drawGraphBoxT.isGlowed()) { //inwarianty
 					g.setColor(EditorResources.glowTransitonColorLevel3);
 					int row = 4;
 					g.fillRect(nodeBounds.x-row, nodeBounds.y-row, nodeBounds.width+(2*row), nodeBounds.height+(2*row));
-				} else if(trans.isGlowed_MTC()) { //mct
+				} else if(trans.drawGraphBoxT.isGlowed_MTC()) { //mct
 					g.setColor(EditorResources.glowMTCTransitonColorLevel3);
 				} else if(trans.drawGraphBoxT.isColorChanged()) { //klaster lub inny powód
 					g.setColor(trans.drawGraphBoxT.getTransitionNewColor());
@@ -403,11 +403,11 @@ public final class ElementDraw {
 				}
 
 				//WYŚWIETLANIE DANYCH O ODPALENIACH
-				if (trans.getFiring_INV() > 0) {
-					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth(Integer.toString(trans.getFiring_INV())) / 2;
+				if (trans.drawGraphBoxT.getFiring_INV() > 0) {
+					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth(Integer.toString(trans.drawGraphBoxT.getFiring_INV())) / 2;
 					int posY = nodeBounds.y + nodeBounds.height / 2 + 5;
 					g.setColor(Color.BLACK);
-					g.drawString(Integer.toString(trans.getFiring_INV()), posX, posY);
+					g.drawString(Integer.toString(trans.drawGraphBoxT.getFiring_INV()), posX, posY);
 				}
 				
 				//WYŚWIETLANIE DANYCH ODNOŚNIE WYSTĘPOWANIA TRANZYCJI W KLASTRZE:

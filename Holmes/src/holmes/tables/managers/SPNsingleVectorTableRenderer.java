@@ -9,11 +9,10 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-import holmes.petrinet.elements.Transition.StochaticsType;
+import holmes.petrinet.elements.TransitionSPNExtension;
 
 /**
  * Klasa rysująca tablicę tranzycji dla jednego wektora danych SPN.
- * @author MR
  */
 public class SPNsingleVectorTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
@@ -48,12 +47,12 @@ public class SPNsingleVectorTableRenderer implements TableCellRenderer {
 			
 			oLabel.setText(value.toString());
 		} else {
-			StochaticsType sType = (StochaticsType)value;
-			if(sType == StochaticsType.ST) {
+			TransitionSPNExtension.StochaticsType sType = (TransitionSPNExtension.StochaticsType)value;
+			if(sType == TransitionSPNExtension.StochaticsType.ST) {
 				oLabel.setText("Stochastic");
-			} else if(sType == StochaticsType.IM) {
+			} else if(sType == TransitionSPNExtension.StochaticsType.IM) {
 				oLabel.setText("Immediate");
-			}	else if(sType == StochaticsType.DT) {
+			}	else if(sType == TransitionSPNExtension.StochaticsType.DT) {
 				oLabel.setText("Deterministic");
 			}  else {
 				oLabel.setText("Scheduled");

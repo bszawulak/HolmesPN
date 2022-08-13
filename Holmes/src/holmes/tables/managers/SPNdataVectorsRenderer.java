@@ -12,8 +12,6 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * Renderer tablicy wyświetlania wszystkich wektorów danych SPN.
- * 
- * @author MR
  */
 public class SPNdataVectorsRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();

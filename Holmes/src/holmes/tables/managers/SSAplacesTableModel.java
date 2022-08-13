@@ -9,8 +9,6 @@ import holmes.petrinet.data.SSAplacesVector.SSAdataType;
 
 /**
  * Model tabeli do wyświetlania listy wektorów stanów miejsc w SSA.
- * 
- * @author MR
  */
 public class SSAplacesTableModel extends DefaultTableModel {
 	@Serial

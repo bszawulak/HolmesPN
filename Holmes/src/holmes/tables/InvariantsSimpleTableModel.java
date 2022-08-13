@@ -7,8 +7,6 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * Model tabeli prostego wyświetlania inwariantów - tylko ID i opis.
- * 
- * @author MR
  */
 public class InvariantsSimpleTableModel extends DefaultTableModel {
 	@Serial
