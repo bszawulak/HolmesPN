@@ -711,7 +711,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(resetButton);
 
             JLabel transDelayLabel = new JLabel("Firing delay:");
-            transDelayLabel.setBounds(internalX, internalY+=80, 150, 20);
+            transDelayLabel.setBounds(internalX, internalY+=50, 150, 20);
             components.add(transDelayLabel);
 
             final JSlider arcDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
@@ -864,9 +864,9 @@ public class HolmesDockWindowsTable extends JPanel {
 
             quickSim = new QuickSimTools(this);
 
-            internalY += 50;
+            internalY += 40;
 
-            JLabel qSimLabel = new JLabel("qSim options:");
+            JLabel qSimLabel = new JLabel("Fast simulation options:");
             qSimLabel.setBounds(internalX, internalY, 140, 20);
             components.add(qSimLabel);
 
@@ -888,14 +888,14 @@ public class HolmesDockWindowsTable extends JPanel {
             internalY += 35;
 
             qSimXTPNProgressBar = new JProgressBar();
-            qSimXTPNProgressBar.setBounds(internalX, internalY, 140, 20);
+            qSimXTPNProgressBar.setBounds(internalX, internalY, 160, 20);
             qSimXTPNProgressBar.setMaximum(100);
             qSimXTPNProgressBar.setMinimum(0);
             qSimXTPNProgressBar.setValue(0);
             qSimXTPNProgressBar.setStringPainted(true);
             components.add(qSimXTPNProgressBar);
 
-            internalY += 20;
+            internalY += 25;
 
             qSimXTPNStatsStepsCheckbox = new JCheckBox("Steps");
             qSimXTPNStatsStepsCheckbox.setBounds(internalX, internalY, 70, 20);
@@ -911,9 +911,9 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(qSimXTPNStatsStepsCheckbox);
 
-            SpinnerModel qSimStepsSpinnerModel = new SpinnerNumberModel(qSimXTPNsimStatsSteps, 0, 1000000, 1000);
+            SpinnerModel qSimStepsSpinnerModel = new SpinnerNumberModel(qSimXTPNsimStatsSteps, 0, 100000000, 1000);
             JSpinner qsimStepsSpinner = new JSpinner(qSimStepsSpinnerModel);
-            qsimStepsSpinner.setBounds(internalX+70, internalY, 70, 20);
+            qsimStepsSpinner.setBounds(internalX+70, internalY, 90, 20);
             qsimStepsSpinner.addChangeListener(e -> {
                 JSpinner spinner = (JSpinner) e.getSource();
                 int tmp = (int)spinner.getValue();
@@ -921,7 +921,7 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(qsimStepsSpinner);
 
-            internalY += 25;
+            internalY += 22;
 
             qSimXTPNStatsTimeCheckbox = new JCheckBox("Time");
             qSimXTPNStatsTimeCheckbox.setBounds(internalX, internalY, 70, 20);
@@ -937,17 +937,16 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(qSimXTPNStatsTimeCheckbox);
 
-            SpinnerModel qsimTimeLengthSpinnerModel = new SpinnerNumberModel(qSimXTPNStatsTime, 0, 10000, 100);
+            SpinnerModel qsimTimeLengthSpinnerModel = new SpinnerNumberModel(qSimXTPNStatsTime, 0, 1000000, 100);
             JSpinner qsimTimeSpinner = new JSpinner(qsimTimeLengthSpinnerModel);
-            qsimTimeSpinner.setBounds(internalX+70, internalY, 70, 20);
+            qsimTimeSpinner.setBounds(internalX+70, internalY, 90, 20);
             qsimTimeSpinner.addChangeListener(e -> {
                 JSpinner spinner = (JSpinner) e.getSource();
-                double tmp = (double)spinner.getValue();
-                qSimXTPNStatsTime = tmp;
+                qSimXTPNStatsTime = (double)spinner.getValue();
             });
             components.add(qsimTimeSpinner);
 
-            internalY += 25;
+            internalY += 22;
 
             JCheckBox qSimXTPNrepetitionsCheckBox = new JCheckBox("Rep.:");
             qSimXTPNrepetitionsCheckBox.setBounds(internalX, internalY, 70, 20);
@@ -960,11 +959,10 @@ public class HolmesDockWindowsTable extends JPanel {
 
             SpinnerModel qsimRepetitionsSpinnerModel = new SpinnerNumberModel(qSimXTPNStatsRepetitions, 10, 100, 10);
             JSpinner qsimRepetitionsSpinner = new JSpinner(qsimRepetitionsSpinnerModel);
-            qsimRepetitionsSpinner.setBounds(internalX+70, internalY, 70, 20);
+            qsimRepetitionsSpinner.setBounds(internalX+70, internalY, 90, 20);
             qsimRepetitionsSpinner.addChangeListener(e -> {
                 JSpinner spinner = (JSpinner) e.getSource();
-                int tmp = (int)spinner.getValue();
-                qSimXTPNStatsRepetitions = tmp;
+                qSimXTPNStatsRepetitions = (int)spinner.getValue();
             });
             components.add(qsimRepetitionsSpinner);
 

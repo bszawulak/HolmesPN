@@ -716,6 +716,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		ArrayList<Double> timeVector = TimeComputations.getT_InvTimeValues(invariantsMatrix.get(invNo), transitions);
 
 		try {
+			assert timeVector != null;
 			labelEFT.setText(String.format("%.2f", timeVector.get(0)+timeVector.get(3)));
 			labelAVG.setText(String.format("%.2f", timeVector.get(2)+timeVector.get(3)));
 			labelLFT.setText(String.format("%.2f", timeVector.get(1)+timeVector.get(3)));
@@ -769,6 +770,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		note.addTextLineNL("Total number of transitions: "+transNumber, "text");
 		//TIME DATA:
 		ArrayList<Double> timeVector = TimeComputations.getT_InvTimeValues(invariant, transitions);
+		assert timeVector != null;
 		note.addTextLineNL("Minimum firing time: "+String.format("%.2f", timeVector.get(0)+timeVector.get(3)), "text");
 		note.addTextLineNL("Maximum firing time: "+String.format("%.2f", timeVector.get(1)+timeVector.get(3)), "text");
 		note.addTextLineNL("Average firing time: "+String.format("%.2f", timeVector.get(2)+timeVector.get(3)), "text");

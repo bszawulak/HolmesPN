@@ -39,8 +39,7 @@ public class HolmesNotepad extends JFrame {
 	private String newline = "\r\n";
 	private StyledDocument doc; //
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
-	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel
-	
+
 	private JTextArea textArea;
 	
 	private boolean simpleMode = false;
@@ -108,7 +107,9 @@ public class HolmesNotepad extends JFrame {
 		main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
 
 		main.add(createButtonsPanel(width, height));
-		
+
+		//panel scrollbar -> editPanel
+		JScrollPane paneScrollPane;
 		if(simpleMode) {
 			textArea = new JTextArea();
 			textArea.setFont(new Font("monospaced", Font.PLAIN, 12));
@@ -193,10 +194,7 @@ public class HolmesNotepad extends JFrame {
 		filters[0] = new ExtensionFileFilter("Holmes notepad text file (.txt)",  new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", "Select text file", "");
 		
-		if(selectedFile.equals("")) {
-			return;
-			//JOptionPane.showMessageDialog(null, "Incorrect filename or location.", "Operation failed.", JOptionPane.ERROR_MESSAGE);
-		} else {
+		if(!selectedFile.equals("")) {
 			try {
 				clearContent();
 				DataInputStream dis = new DataInputStream(new FileInputStream(selectedFile));
@@ -224,9 +222,7 @@ public class HolmesNotepad extends JFrame {
 		filters[0] = new ExtensionFileFilter("Holmes notepad text file (.txt)",  new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select new filename", "");
 		
-		if(selectedFile.equals("")) {
-			return;
-		} else {
+		if(!selectedFile.equals("")) {
 			String extension = ".txt";
 			if(!selectedFile.contains(extension))
 				selectedFile += extension;
@@ -248,26 +244,21 @@ public class HolmesNotepad extends JFrame {
 
 	/**
 	 * Metoda pomocnicza konstruktora, tworzy obiekt edytora.
-	 * @return JTextPane - panel edytora
+	 * @return (<b>JTextPane</b>) - panel edytora.
 	 */
 	private JTextPane createTextPane() {
 	    JTextPane txtPane = new JTextPane();
 	    doc = txtPane.getStyledDocument();
 	    addStylesToDocument(doc);
-	    try {
-	        //doc.insertString(doc.getLength(), initString, doc.getStyle("regular"));
-	    } catch (Exception e) {
-	        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.","error", true);
-	    }
 	    return txtPane;
 	}
 	
 	/**
 	 * Metoda wpisuje nową linię do okna logów.
-	 * @param text String - text do wpisania
-	 * @param mode String - tryb pisania
-	 * @param time boolean - true, jeśli ma być wyświetlony czas wpisu
-	 * @param enter boolean - trye jeśli kończymy enterem
+	 * @param text (<b>String</b>) text do wpisania.
+	 * @param mode (<b>String</b>) tryb pisania.
+	 * @param time (<b>boolean</b>) true, jeśli ma być wyświetlony czas wpisu.
+	 * @param enter (<b>boolean</b>) true jeśli kończymy enterem.
 	 */
 	public void addText(String text, String mode, boolean time, boolean enter) {
 		if(simpleMode) {
@@ -302,8 +293,8 @@ public class HolmesNotepad extends JFrame {
 	
 	/**
 	 * Dodaj nową linię do notatnika (bez entera).
-	 * @param text String - tekst
-	 * @param mode mode - tryb wstawiania
+	 * @param text (<b>String</b>) tekst.
+	 * @param mode (<b>String</b>) tryb wstawiania.
 	 */
 	public void addTextLine(String text, String mode) {
 		if(simpleMode) {
@@ -322,8 +313,8 @@ public class HolmesNotepad extends JFrame {
 	
 	/**
 	 * Dodaj nową linię do notatnika (z enterem).
-	 * @param text String - tekst
-	 * @param mode mode - tryb wstawiania
+	 * @param text (<b>String</b>) tekst.
+	 * @param mode (<b>String</b>) tryb wstawiania.
 	 */
 	public void addTextLineNL(String text, String mode) {
 		if(simpleMode) {
@@ -342,8 +333,8 @@ public class HolmesNotepad extends JFrame {
 	
 	/**
 	 * Dodaje pojedyńczą linię tekstu.
-	 * @param text String - tekst do dodania
-	 * @param mode String - tryb pisania
+	 * @param text (<b>String</b>) tekst do dodania.
+	 * @param mode (<b>String</b>) tryb pisania.
 	 */
 	public void addLine(String text, String mode) {
 		if(simpleMode) {
@@ -372,8 +363,8 @@ public class HolmesNotepad extends JFrame {
 	
 	/**
 	 * Metoda wewnętrzna definiująca styl po jego nazwie. Zwraca numer ID stylu.
-	 * @param mode String - nazwa stylu pisania tekstu
-	 * @return int - numer stylu
+	 * @param mode (<b>String</b>) nazwa stylu pisania tekstu.
+	 * @return (<b>int</b>) - numer stylu.
 	 */
 	private int setWritingStyle(String mode) {
 		return switch (mode) {
@@ -392,40 +383,40 @@ public class HolmesNotepad extends JFrame {
 	
 	/**
 	 * Metoda pomocnicza konstruktora klasy, tworzy style dla wypisywanych komunikatów.
-	 * @param doc StyledDocument - obiekt dokumentu przechowującego style
+	 * @param styledDoc (<b>StyledDocument</b>) obiekt dokumentu przechowującego style.
 	 */
-	private void addStylesToDocument(StyledDocument doc) {
+	private void addStylesToDocument(StyledDocument styledDoc) {
         Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
         StyleConstants.setFontFamily(def, "Consolas"); //Monospaced
         StyleConstants.setFontSize(def, 14);
         
-        Style regular = doc.addStyle("regular", def); //0
+        Style regular = styledDoc.addStyle("regular", def); //0
         StyleConstants.setFontFamily(regular, "Consolas");
         StyleConstants.setFontSize(regular, 14);
 
-        Style s = doc.addStyle("italic", regular); //1
+        Style s = styledDoc.addStyle("italic", regular); //1
         StyleConstants.setItalic(s, true);
 
-        s = doc.addStyle("bold", regular); //2
+        s = styledDoc.addStyle("bold", regular); //2
         StyleConstants.setBold(s, true);
 
-        s = doc.addStyle("small", regular); //3
+        s = styledDoc.addStyle("small", regular); //3
         StyleConstants.setFontSize(s, 10);
 
-        s = doc.addStyle("large", regular); //4
+        s = styledDoc.addStyle("large", regular); //4
         StyleConstants.setFontSize(s, 18);
         
-        s = doc.addStyle("warning", regular); //5
+        s = styledDoc.addStyle("warning", regular); //5
         StyleConstants.setForeground(s, Color.orange);
         
-        s = doc.addStyle("error", regular); //6
+        s = styledDoc.addStyle("error", regular); //6
         StyleConstants.setForeground(s, Color.red);
         
-        s = doc.addStyle("time", regular); //7
+        s = styledDoc.addStyle("time", regular); //7
         StyleConstants.setForeground(s, Color.darkGray);
         StyleConstants.setBold(s, true);
         
-        s = doc.addStyle("node", regular); //8
+        s = styledDoc.addStyle("node", regular); //8
         StyleConstants.setForeground(s, Color.darkGray);
         StyleConstants.setBold(s, true);
 	}

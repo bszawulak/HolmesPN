@@ -11,6 +11,7 @@ import holmes.windows.managers.ssim.HolmesSim;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -73,6 +74,8 @@ public class StateSimulatorXTPN implements Runnable {
 
         public double simSteps = 0.0;
         public double simTime = 0.0;
+        public double simReps = 0.0;
+        public long compTime = 0;
     }
 
 
@@ -671,11 +674,11 @@ public class StateSimulatorXTPN implements Runnable {
 
 
 
-    //********************************************************************************************************************************
-    //****************************************    	        **************************************************************************
-    //****************************************   quickSim   **************************************************************************
-    //****************************************              **************************************************************************
-    //********************************************************************************************************************************
+    //***************************************************************************************************************
+    //****************************************   quickSim   *********************************************************
+    //****************************************              *********************************************************
+    //****************************************     XTPN     *********************************************************
+    //***************************************************************************************************************
 
     /**
      * Metoda używana przez moduł quickSim, zbiera dane o średniej liczbie uruchomień tranzycji oraz tokenach
@@ -684,6 +687,8 @@ public class StateSimulatorXTPN implements Runnable {
      */
     public QuickSimMatrix quickSimGatherData() {
         QuickSimMatrix resMatrix = new QuickSimMatrix();
+        Date dateStart = new Date();
+        resMatrix.simReps = 0;
 
         if(!readyToSimulate) {
             JOptionPane.showMessageDialog(null,"XTPN Simulation cannot start, engine initialization failed.",
@@ -693,32 +698,74 @@ public class StateSimulatorXTPN implements Runnable {
         createBackupState(); //zapis p-stanu
         int step = 0;
 
+        ArrayList<Double> tokensAvg = new ArrayList<>();
+        for(PlaceXTPN ignored : places) {
+            tokensAvg.add(0.0);
+        }
+
         if(sg.simulateTime) {
+            progressBar.setValue(0);
+            progressBar.setMaximum((int)sg.simMaxTime_XTPN );
+
+            int tenth = (int)(sg.simMaxTime_XTPN / 10);
+
             while(simTimeCounter < sg.simMaxTime_XTPN) {
                 if(terminate)
                     break;
 
                 ArrayList<ArrayList<Double>> placesStatusVectors = processSimStep();
-                resMatrix.placesTokensDataMatrix.add(placesStatusVectors.get(0));
-                resMatrix.placesTimeDataVector.add(placesStatusVectors.get(1).get(0)); //ten sam czas dla każdego
+                //resMatrix.placesTokensDataMatrix.add(placesStatusVectors.get(0));
+                //resMatrix.placesTimeDataVector.add(placesStatusVectors.get(1).get(0)); //ten sam czas dla każdego
+
+                for(int pID=0; pID < placesStatusVectors.get(0).size(); pID++) { //policz sumę tokenów
+                    tokensAvg.set(pID, tokensAvg.get(pID) + placesStatusVectors.get(0).get(pID));
+                }
+
+                if( (int)simTimeCounter % tenth == 0) {
+                    progressBar.setValue((int)simTimeCounter);
+                    progressBar.update(progressBar.getGraphics());
+                }
 
                 step++;
             }
+            progressBar.setValue((int)sg.simMaxTime_XTPN );
+            progressBar.update(progressBar.getGraphics());
             resMatrix.simSteps = step;
+
         } else {
-            for(int i=0; i<sg.simSteps_XTPN; i++) {
+            progressBar.setValue(0);
+            progressBar.setMaximum((int)sg.simSteps_XTPN - 1);
+
+            int tenth = (int)sg.simSteps_XTPN / 10;
+
+            for(step=0; step<sg.simSteps_XTPN; step++) {
                 if(terminate)
                     break;
 
                 ArrayList<ArrayList<Double>> placesStatusVectors = processSimStep();
-                resMatrix.placesTokensDataMatrix.add(placesStatusVectors.get(0));
-                resMatrix.placesTimeDataVector.add(placesStatusVectors.get(1).get(0)); //ten sam czas dla każdego
+                //resMatrix.placesTokensDataMatrix.add(placesStatusVectors.get(0));
+                //resMatrix.placesTimeDataVector.add(placesStatusVectors.get(1).get(0)); //ten sam czas dla każdego
+
+                for(int pID=0; pID < placesStatusVectors.get(0).size(); pID++) { //policz sumę tokenów
+                    tokensAvg.set(pID, tokensAvg.get(pID) + placesStatusVectors.get(0).get(pID));
+                }
+
+                if(step % tenth == 0) {
+                    progressBar.setValue(step);
+                    progressBar.update(progressBar.getGraphics());
+                }
             }
+            progressBar.setValue((int)sg.simSteps_XTPN - 1);
+            progressBar.update(progressBar.getGraphics());
             resMatrix.simSteps = sg.simSteps_XTPN;
         }
         resMatrix.simTime = simTimeCounter;
 
-
+        for(int pID=0; pID < tokensAvg.size(); pID++) { //uśrednij sumę tokenów po krokach symulacji
+            double avg = tokensAvg.get(pID) / step;
+            tokensAvg.set(pID, avg);
+        }
+        resMatrix.avgTokens = tokensAvg;
 
         //STATYSTYKI TRANZYCJI:
         for(TransitionXTPN trans : transitions) {
@@ -733,6 +780,8 @@ public class StateSimulatorXTPN implements Runnable {
             resMatrix.transDataMatrix.add(dataVector);
         }
 
+        Date dateEnd = new Date();
+        resMatrix.compTime = dateEnd.getTime() - dateStart.getTime();
 
         readyToSimulate = false;
         restoreInternalMarkingZero(); //restore p-state
@@ -746,6 +795,7 @@ public class StateSimulatorXTPN implements Runnable {
      */
     public QuickSimMatrix quickSimGatherDataRepetitions() {
         QuickSimMatrix resMatrix = new QuickSimMatrix();
+        Date dateStart = new Date();
 
         if(!readyToSimulate) {
             JOptionPane.showMessageDialog(null,"XTPN Simulation cannot start, engine initialization failed.",
@@ -770,10 +820,10 @@ public class StateSimulatorXTPN implements Runnable {
 
         progressBar.setValue(0);
         progressBar.setMaximum(sg.simRepetitions_XTPN - 1);
+        resMatrix.simReps = sg.simRepetitions_XTPN;
 
         for(int rep=0; rep<sg.simRepetitions_XTPN; rep++) {
             int step = 0;
-
             if(sg.simulateTime) {
                 while(simTimeCounter < sg.simMaxTime_XTPN) {
                     if(terminate)
@@ -781,7 +831,7 @@ public class StateSimulatorXTPN implements Runnable {
 
                     ArrayList<ArrayList<Double>> placesStatusVectors = processSimStep();
 
-                    for(int pID=0; pID < placesStatusVectors.get(0).size(); pID++) {
+                    for(int pID=0; pID < placesStatusVectors.get(0).size(); pID++) { //policz sumę tokenów
                         tokensAvg.set(pID, tokensAvg.get(pID) + placesStatusVectors.get(0).get(pID));
                     }
                     step++;
@@ -794,7 +844,7 @@ public class StateSimulatorXTPN implements Runnable {
 
                     ArrayList<ArrayList<Double>> placesStatusVectors = processSimStep();
 
-                    for(int pID=0; pID < placesStatusVectors.get(0).size(); pID++) {
+                    for(int pID=0; pID < placesStatusVectors.get(0).size(); pID++) { //policz sumę tokenów
                         tokensAvg.set(pID, tokensAvg.get(pID) + placesStatusVectors.get(0).get(pID));
                     }
                 }
@@ -802,7 +852,7 @@ public class StateSimulatorXTPN implements Runnable {
             }
             //koniec jednego powtórzenia:
             //uśrednianie liczby tokenów:
-            for(int pID=0; pID < tokensAvg.size(); pID++) {
+            for(int pID=0; pID < tokensAvg.size(); pID++) { //uśrednij sumę tokenów po krokach symulacji i dodaj do wektora wyników
                 double avg = tokensAvg.get(pID) / step;
                 tokensAvgFinal.set(pID, tokensAvgFinal.get(pID) + avg);
                 tokensAvg.set(pID, 0.0);
@@ -821,7 +871,7 @@ public class StateSimulatorXTPN implements Runnable {
             progressBar.update(progressBar.getGraphics());
 
             resMatrix.simTime += simTimeCounter;
-
+            simTimeCounter = 0.0;
             restoreInternalMarkingZero(); //restore p-state
         }
         resMatrix.simSteps /= sg.simRepetitions_XTPN;
@@ -842,6 +892,9 @@ public class StateSimulatorXTPN implements Runnable {
             tokensAvgFinal.set(pID, tokensAvgFinal.get(pID) / sg.simRepetitions_XTPN);
         }
         resMatrix.avgTokens = tokensAvgFinal;
+
+        Date dateEnd = new Date();
+        resMatrix.compTime = dateEnd.getTime() - dateStart.getTime();
 
         readyToSimulate = false;
         restoreInternalMarkingZero(); //restore p-state

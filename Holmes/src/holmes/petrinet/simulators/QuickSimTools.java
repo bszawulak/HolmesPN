@@ -14,6 +14,7 @@ import holmes.petrinet.elements.*;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.petrinet.simulators.xtpn.StateSimulatorXTPN;
 import holmes.utilities.Tools;
+import holmes.windows.HolmesNotepad;
 
 /**
  * Nakładka na symulator stanów odpowiedzialna za wyświetlanie informacji statystycznych na obrazie sieci.
@@ -36,11 +37,11 @@ public class QuickSimTools {
 
 	/**
 	 * Zbiera dane symulatorem i wyświetla na sieci.
-	 * @param scanTransitions (<b>boolean</b>)
-	 * @param scanPlaces (<b>boolean</b>)
-	 * @param markArcs (<b>boolean</b>)
-	 * @param repetitions (<b>boolean</b>)
-	 * @param quickProgressBar (<b>JProgressBar</b>)
+	 * @param scanTransitions (<b>boolean</b>) true, jeżeli analizujemy tranzycje.
+	 * @param scanPlaces (<b>boolean</b>) true, jeżeli analizujemy miejsca.
+	 * @param markArcs (<b>boolean</b>)  true, jeżeli zaznaczamy łuki.
+	 * @param repetitions (<b>boolean</b>) czy mają być powtórzenia.
+	 * @param quickProgressBar (<b>JProgressBar</b>) pasek postępu z okna wywołującego.
 	 */
 	public void acquireData(boolean scanTransitions, boolean scanPlaces, boolean markArcs, boolean repetitions, JProgressBar quickProgressBar) {
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
@@ -61,12 +62,12 @@ public class QuickSimTools {
 
 	/**
 	 * Pobieranie danych dla szybkiej symulacji XTPN.
-	 * @param bySteps
-	 * @param steps
-	 * @param time
-	 * @param repeate
-	 * @param repetitions
-	 * @param quickProgressBar
+	 * @param bySteps (<b>boolean</b>) czy symulacja po liczbie kroków, czy po czasie.
+	 * @param steps (<b>int</b>) liczba kroków.
+	 * @param time (<b>double</b>) maksymalny czas.
+	 * @param repeate (<b>boolean</b>) czy mają być powtórzenia
+	 * @param repetitions (<b>int</b>) liczba powtórzeń.
+	 * @param quickProgressBar (<b>JProgressBar</b>) pasek postępu z okna wywołującego.
 	 */
 	public void acquireDataXTPN(boolean bySteps, int steps, double time,  boolean repeate, int repetitions, JProgressBar quickProgressBar) {
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
@@ -255,10 +256,96 @@ public class QuickSimTools {
 	public void finishedStatsDataXTPN(StateSimulatorXTPN.QuickSimMatrix result
 			, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
 
+		HolmesNotepad note = new HolmesNotepad(800, 600);
+
+		note.addTextLineNL("Simulation data", "text");
+		note.addTextLineNL("Avg. steps:  " + result.simSteps, "text");
+		note.addTextLineNL("Avg. time:   " + result.simTime, "text");
+		note.addTextLineNL("Repetitions: " + result.simReps, "text");
+
+		long milisecond = result.compTime;
+		long seconds = milisecond /= 1000;
+		long hours = seconds / 3600;
+		String h = hours+"";
+		if(h.length() == 1)
+			h = "0" + h;
+
+		seconds = seconds - (hours * 3600);
+		long minutes = seconds / 60;
+		String m = minutes+"";
+		if(m.length() == 1)
+			m = "0" + m;
+
+		seconds = seconds - (minutes * 60);
+		String s = seconds+"";
+		if(s.length() == 1)
+			s = "0" + s;
+
+		note.addTextLine("Simulation time recorded (h:m:s) : ", "text");
+		note.addTextLineNL(h + ":" + m + ":" + s, "text");
+
 		int transIndex = 0;
+		double simSteps = result.simSteps;
+		double simTime = result.simTime;
+
+		note.addTextLineNL("", "bold");
+		note.addTextLineNL("Transitions data", "bold");
 		for(TransitionXTPN trans : transitions) {
-			double simSteps = result.simSteps;
-			double simTime = result.simTime;
+
+			double tmpSteps = result.transDataMatrix.get(transIndex).get(0); //trans.simInactiveState
+			double tmpTime = result.transDataMatrix.get(transIndex).get(4); //trans.simInactiveTime
+
+
+			note.addTextLine("Transition ", "text");
+			note.addTextLine(""+transIndex, "bold");
+			note.addTextLine(" Type: ", "text");
+			note.addTextLineNL(getTransType(trans), "bold");
+
+
+			String text = "   Inactive (#):  "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
+					"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
+			note.addTextLineNL(text, "text");
+
+			tmpSteps = result.transDataMatrix.get(transIndex).get(1); //trans.simActiveState
+			tmpTime = result.transDataMatrix.get(transIndex).get(5); //trans.simActiveTime
+			text = "   Active (#):    "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
+					"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
+			note.addTextLineNL(text, "text");
+
+			tmpSteps = result.transDataMatrix.get(transIndex).get(2); //trans.simProductionState
+			tmpTime = result.transDataMatrix.get(transIndex).get(6); //trans.simProductionTime
+			text = "   Production (#): "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
+					"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
+			note.addTextLineNL(text, "text");
+
+			tmpSteps = result.transDataMatrix.get(transIndex).get(3); //trans.simFiredState
+			text = "   Fired (#): "+(int)tmpSteps ;
+			note.addTextLineNL(text, "text");
+
+			note.addTextLineNL("", "text");
+			transIndex++;
+		}
+		note.addTextLineNL("", "bold");
+		note.addTextLineNL("Places data", "bold");
+		int placeIndex = 0;
+		for(PlaceXTPN place : places) {
+			note.addTextLine("Place ", "text");
+			note.addTextLine(""+placeIndex, "bold");
+			note.addTextLine(" Type: ", "text");
+			note.addTextLineNL(getPlaceType(place), "bold");
+
+			double avgTokens = result.avgTokens.get(placeIndex);
+			note.addTextLineNL("   Avg. tokens: "+Tools.cutValue(avgTokens), "text");
+			placeIndex++;
+		}
+
+		note.setCaretFirstLine();
+		note.setVisible(true);
+
+		/*
+
+		transIndex = 0;
+		for(TransitionXTPN trans : transitions) {
 			double tmpSteps = result.transDataMatrix.get(transIndex).get(0); //trans.simInactiveState
 			double tmpTime = result.transDataMatrix.get(transIndex).get(4); //trans.simInactiveTime
 			trans.qSimXTPN.text1 = "Inactive (#):  "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
@@ -279,10 +366,28 @@ public class QuickSimTools {
 
 			trans.showQSimXTPN = true;
 			transIndex++;
-
-
 		}
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
+		 */
 	}
 
+	private String getTransType(TransitionXTPN transition) {
+		if(transition.isAlphaModeActive() && transition.isBetaModeActive()) {
+			return "XTPN";
+		} else if(transition.isAlphaModeActive()) {
+			return "TPN";
+		} else if(transition.isBetaModeActive()) {
+			return "DPN";
+		} else {
+			return "classical PN";
+		}
+	}
+
+	private String getPlaceType(PlaceXTPN place) {
+		if(place.isGammaModeActive()) {
+			return "time-place";
+		} else {
+			return "classical place";
+		}
+	}
 }

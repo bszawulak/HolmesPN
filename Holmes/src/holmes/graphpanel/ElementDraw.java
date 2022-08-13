@@ -5,6 +5,7 @@ import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
@@ -110,29 +111,16 @@ public final class ElementDraw {
 				if(eds.view3d) {
 					Color backup = g.getColor();
 
-					if(((TransitionXTPN)trans).showQSimXTPN) {
-						g.setColor(lighterGray);
-						g.fillRect(nodeBounds.x+4, nodeBounds.y+4, nodeBounds.width+1, nodeBounds.height+1);
-						g.setColor(lighterGray);
-						g.fillRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width+1, nodeBounds.height+1);
-						g.setColor(lighterGray);
-						g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width+1, nodeBounds.height+1);
-						g.setColor(lighterGray);
-						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
-						g.setColor(lighterGray);
-						g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					} else {
-						g.setColor(Color.LIGHT_GRAY);
-						g.fillRect(nodeBounds.x+4, nodeBounds.y+4, nodeBounds.width+1, nodeBounds.height+1);
-						g.setColor(Color.GRAY);
-						g.fillRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width+1, nodeBounds.height+1);
-						g.setColor(Color.DARK_GRAY);
-						g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width+1, nodeBounds.height+1);
-						g.setColor(Color.BLACK);
-						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
-						g.setColor(Color.WHITE);
-						g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					}
+					g.setColor(Color.LIGHT_GRAY);
+					g.fillRect(nodeBounds.x+4, nodeBounds.y+4, nodeBounds.width+1, nodeBounds.height+1);
+					g.setColor(Color.GRAY);
+					g.fillRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width+1, nodeBounds.height+1);
+					g.setColor(Color.DARK_GRAY);
+					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width+1, nodeBounds.height+1);
+					g.setColor(Color.BLACK);
+					g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width+1, nodeBounds.height+1);
+					g.setColor(Color.WHITE);
+					g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					g.setColor(backup);
 				}
 				
@@ -225,10 +213,6 @@ public final class ElementDraw {
 					g.setColor(normalColor);
 					if( ((Transition)node).getTransType() == TransitionType.TPN) {
 						g.setColor(tpnNormalColor);
-					}
-
-					if(((TransitionXTPN)trans).showQSimXTPN) {
-						g.setColor(lighterGray);
 					}
 				}
 				Color back = g.getColor(); // te 4 linie: lekki trójwymiar, ładniejsza tranzycja
@@ -384,15 +368,8 @@ public final class ElementDraw {
 					g.setColor(Color.black);
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 				} else if( trans instanceof TransitionXTPN ) { // trans.getTransType() == TransitionType.XTPN) { //tranzycja XTPN
-					// _XTPN mark
-
 					//klepsydra:
-					if(((TransitionXTPN)trans).showQSimXTPN) {
-						g.setColor(lightGray);
-					} else {
-						g.setColor(Color.DARK_GRAY);
-					}
-
+					g.setColor(Color.DARK_GRAY);
 					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 7, nodeBounds.x + 22, nodeBounds.y + 7);
 					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 23, nodeBounds.x + 22, nodeBounds.y + 23);
 					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 8, nodeBounds.x + 21, nodeBounds.y + 22);
@@ -454,7 +431,7 @@ public final class ElementDraw {
 				
 				if(trans.isOffline()) {
 					try {
-						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/offlineTransition2.png"));
+						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/offlineTransition2.png")));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
 								nodeBounds.y-(trans.getRadius()+2));
 					} catch (Exception ex) {
@@ -464,7 +441,7 @@ public final class ElementDraw {
 				
 				if(trans.isInvisible()) {
 					try {
-						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
+						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility.png")));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
 								nodeBounds.y-(trans.getRadius()+2));
 					} catch (Exception ex) {
@@ -536,8 +513,6 @@ public final class ElementDraw {
 						}
 					}
 				}
-
-
 
 				if (eds.color || trans.getTransType() == TransitionType.CPNbasic) {
 					Font currentFont = g.getFont();
