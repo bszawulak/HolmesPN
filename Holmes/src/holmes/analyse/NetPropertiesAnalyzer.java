@@ -14,7 +14,6 @@ import holmes.petrinet.elements.Transition;
 /**
  * Klasa odpowiedzialna za analizę właściwości sieci Petriego. Tworzona ręcznie, do działania
  * wymaga istniejących: miejsc, tranzycji oraz łuków (niepuste zbiory).
- *
  */
 public class NetPropertiesAnalyzer {
 	private ArrayList<Arc> arcs;

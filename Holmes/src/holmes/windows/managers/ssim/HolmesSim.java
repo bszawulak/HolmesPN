@@ -72,8 +72,6 @@ import holmes.workspace.ExtensionFileFilter;
 
 /**
  * Klasa okna modułu symulatora stanów sieci.
- * 
- * @author MR
  */
 public class HolmesSim extends JFrame {
 	@Serial

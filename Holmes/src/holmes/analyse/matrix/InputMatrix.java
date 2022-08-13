@@ -8,8 +8,6 @@ import holmes.petrinet.elements.Transition;
 /**
  * Klasa tworząca macierz wejściową do obliczeń, dziedzicząca z Matrix.
  * W notacji sieci jest to macierz wartości łuków wyjściowych (in-arcs).
- * @author students
- *
  */
 public class InputMatrix extends Matrix {
 	/**

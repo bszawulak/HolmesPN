@@ -11,8 +11,6 @@ import holmes.workspace.ExtensionFileFilter;
 
 /**
  * Klasa operacji możliwych do wykonania w ramach okna ustawień programu.
- * @author MR
- *
  */
 public class HolmesProgramPropertiesActions {
 	SettingsManager sm;

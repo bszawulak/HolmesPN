@@ -16,9 +16,6 @@ import holmes.windows.HolmesNotepad;
 
 /**
  * Klasa metod zarządzania tranzycjami funkcyjnymi.
- * 
- * @author MR
- *
  */
 public class FunctionsTools {
 	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -44,7 +41,7 @@ public class FunctionsTools {
 			for(FunctionContainer fc : transition.accessFunctionsList()) {
 				if(fc.involvedPlaces.containsKey("p"+placeIndex)) {
 					int transIndex = transitions.indexOf(transition);
-					overlord.log("Function: \'"+fc.simpleExpression+"\' (fID: "+fc.fID+") of transition t"+transIndex+
+					overlord.log("Function: '"+fc.simpleExpression+"' (fID: "+fc.fID+") of transition t"+transIndex+
 							" has been disabled due to removal of place p"+placeIndex, "warning", true);
 					
 					fc.enabled = false;
@@ -123,7 +120,7 @@ public class FunctionsTools {
 					fc.enabled = false;
 					fc.correct = false;
 					if(logErrors)
-						notepad.addTextLineNL("t"+transCounter+" : "+fc.toString(), "text");
+						notepad.addTextLineNL("t"+transCounter+" : "+ fc, "text");
 				}
 				
 				try {
@@ -282,7 +279,7 @@ public class FunctionsTools {
 
 	/**
 	 * Na potrzeby symulatora XTPN, na bazie functionalExtraction.
-	 * @return
+	 * @return int
 	 */
 	public static int getFunctionalArcWeight(Transition transition, Arc arc, Place place) {
 		if(transition.isFunctional()) {
@@ -308,7 +305,7 @@ public class FunctionsTools {
 			FunctionContainer fc = transition.getFunctionContainer(arc);
 			if(fc != null) {//czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
 				
-				if(fc != null && fc.enabled == true && fc.correct == true) {
+				if(fc != null && fc.enabled && fc.correct) {
 					fc.currentValue = getFunctionValue(fc); //wartość równania, ale:
 					fc.currentValue = fc.currentValue <= 0 ? arc.getWeight() : fc.currentValue; //like a boss
 					

@@ -27,8 +27,6 @@ import holmes.utilities.Tools;
 
 /**
  * Okno ustawiania rodzaju i danych definiujących tranzycję w modelu SPN.
- * @author MR
- *
  */
 public class HolmesSPNtransitionEditor extends JFrame {
 	@Serial

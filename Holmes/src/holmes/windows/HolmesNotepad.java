@@ -30,8 +30,6 @@ import holmes.workspace.ExtensionFileFilter;
 
 /**
  * Okno wewnętrznego notatnika programu.
- * 
- * @author MR
  */
 public class HolmesNotepad extends JFrame {
 	@Serial

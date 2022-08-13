@@ -17,8 +17,6 @@ import holmes.workspace.Workspace;
 
 /**
  * Klasa odpowiedzialna za niektóre operacje graficzne związane z sieciami hierachicznymi.
- *  
- * @author MR
  */
 public class SubnetsGraphics {
 	/**
@@ -272,7 +270,7 @@ public class SubnetsGraphics {
 	public static void updateVector(ArrayList<Integer> vector, int howMany, int initValue) {
 		for(int i=0; i<howMany; i++) {
 			vector.add(initValue);
-		};
+		}
 	}
 }
 

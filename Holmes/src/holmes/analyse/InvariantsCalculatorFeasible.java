@@ -20,9 +20,6 @@ import holmes.windows.HolmesInvariantsGenerator;
  * Klasa odpowiedzialna za szukanie inwariantów wykonalnych (feasible invariants). Literatura: <br>
  * "Application of Petri net based analysis techniques to signal transduction pathways" <br>
  * Andrea Sackmann, Monika Heiner, Ina Koch; BMC Bioinformatics, 2006, 7:482
- * 
- * @author MR
- *
  */
 public class InvariantsCalculatorFeasible {
 	private HolmesInvariantsGenerator masterWindow;

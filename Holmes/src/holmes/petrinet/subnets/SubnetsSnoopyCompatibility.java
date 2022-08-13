@@ -14,8 +14,6 @@ import holmes.windows.HolmesNotepad;
 /**
  * Odjechana klasa posiadająca narzędzia do weryfikacji czy sieć jest kompatybilna z hierachicznością
  * w rozumieniu twórców Snoopiego czy nie, oraz do przywrócenia takiej kompatybilności.
- * 
- * @author MR
  */
 public class SubnetsSnoopyCompatibility {
 	GUIManager gui = null;

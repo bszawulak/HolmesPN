@@ -6,8 +6,6 @@ import holmes.petrinet.elements.Transition;
 
 /**
  * Klasa wewnętrznych, pomocniczych metod klasy PetriNet.
- * 
- * @author MR
  */
 public class PetriNetMethods {
 	PetriNet overlord;

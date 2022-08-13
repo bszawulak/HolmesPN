@@ -7,8 +7,6 @@ import holmes.petrinet.simulators.SimulatorGlobals;
 
 /**
  * Klasa kontener, do przechowywania danych o wynikach wielokrotnej symulacji sieci.
- * 
- * @author MR
  */
 public class NetSimulationData implements Serializable {
 	@Serial

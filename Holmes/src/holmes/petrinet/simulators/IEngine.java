@@ -7,9 +7,6 @@ import holmes.petrinet.elements.Transition;
 
 /**
  * Interface silnika symulatorów.
- * 
- * @author MR
- *
  */
 public interface IEngine {
 	public void setEngine(SimulatorGlobals.SimNetType simulationType, boolean maxMode, boolean singleMode,

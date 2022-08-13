@@ -9,8 +9,6 @@ import holmes.petrinet.elements.Place;
 
 /**
  * Klasa zarządzająca stanem sieci klasycznej, tj. liczbą tokenów w miejscach.
- * @author MR
- *
  */
 public class StatePlacesVector implements Serializable {
 	@Serial

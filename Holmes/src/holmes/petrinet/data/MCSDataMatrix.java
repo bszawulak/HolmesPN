@@ -10,8 +10,6 @@ import holmes.petrinet.elements.Transition;
 
 /**
  * Klasa odpowiedzialna za zarządzanie informacjami o przechowywanych zbiorach MCS.
- * @author MR
- *
  */
 public class MCSDataMatrix {
 	private ArrayList<ArrayList<ArrayList<Integer>>> mcsDataCore;
@@ -80,7 +78,7 @@ public class MCSDataMatrix {
 									"Transition already have MCS data", JOptionPane.YES_NO_OPTION,
 									JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 					if (decision == 1) {
-						return;
+
 					} else {
 						mcsDataCore.set(pos, mcsList);
 						mcsSetsInfo.set(pos,  mcsListInfo);

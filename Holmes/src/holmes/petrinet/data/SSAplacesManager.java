@@ -7,8 +7,6 @@ import holmes.petrinet.elements.Place;
 
 /**
  * Klasa zarządzająca danymi do eksperymentów SSA.
- * 
- * @author MR
  */
 public class SSAplacesManager {
 	private GUIManager overlord;

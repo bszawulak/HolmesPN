@@ -6,8 +6,6 @@ import java.awt.Stroke;
 
 /**
  * Klasa zasobów programu, ogólnie mówiac definiuje stałe związane z grafiką.
- * @author students
- *
  */
 public class EditorResources {
 	

@@ -20,8 +20,6 @@ import holmes.windows.HolmesNotepad;
 
 /**
  * Klasa metod pomocniczych klasy HolmesStateSimulatorKnockout.
- * 
- * @author MR
  */
 public class HolmesSimKnockActions {
 	HolmesSimKnock boss;

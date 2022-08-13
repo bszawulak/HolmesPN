@@ -15,9 +15,6 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 
 /**
  * Klasa odpowiedzialna za dodanie do menu kontekstowego opcji związanych z tranzycjami.
- * 
- * @author students - statyczna wersja
- * @author MR - dynamiczna wersja
  *
  */
 public class TransitionPopupMenu extends NodePopupMenu {
@@ -31,7 +28,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 	public TransitionPopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
 		super(graphPanel, el, pne, el.getParentNode());
 		
-		this.addMenuItem("Transition ON/OFF", "offlineSmall.png", e -> {
+		this.addMenuItem("Knockout ON/OFF", "offlineSmall.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
 				return;
 
@@ -50,7 +47,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 		});
 		
-		this.addMenuItem("Invisibility ON/OFF", "smallInvisibility.png", e -> {
+		this.addMenuItem("Invisibility (invariants) ON/OFF", "smallInvisibility.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
 				return;
 

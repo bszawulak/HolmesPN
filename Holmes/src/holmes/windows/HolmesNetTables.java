@@ -45,8 +45,6 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa odpowiedzialna za rysowanie i obsługę okna tabel elementów sieci.
- * 
- * @author MR
  */
 public class HolmesNetTables extends JFrame {
 	@Serial

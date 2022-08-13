@@ -8,8 +8,6 @@ import holmes.petrinet.elements.Transition.TransitionType;
 
 /**
  * Klasa odpowiedzialna za działania związane z czasem w sieci Petriego.
- * 
- * @author MR
  */
 public class TimeComputations {
 	/**

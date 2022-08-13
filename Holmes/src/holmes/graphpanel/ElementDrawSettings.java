@@ -8,8 +8,6 @@ import holmes.darkgui.settings.SettingsManager;
  * przerysowywania sieci. Aby w każdym wywołaniu nie powtarzać tych samym poleceń sprawdzających ustawienia
  * wyświetlania grafiki, są one zawarte w tej klasie, która jest tworzona raz na odświeżenie w ramach
  * metody drawPetriNet w GraphPanel, i posyłana do odpowiednich metod rysujących.
- * @author MR
- *
  */
 public class ElementDrawSettings {
 	public boolean view3d = false;

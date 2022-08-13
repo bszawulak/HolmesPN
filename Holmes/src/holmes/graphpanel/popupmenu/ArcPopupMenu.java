@@ -11,8 +11,6 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 
 /**
  * Klasa tworząca wpisy w menu kontekstowym dla łuków sieci.
- * @author students - statyczna wersja
- * @author MR - dynamiczna wersja
  */
 public class ArcPopupMenu extends NodePopupMenu {
 	@Serial

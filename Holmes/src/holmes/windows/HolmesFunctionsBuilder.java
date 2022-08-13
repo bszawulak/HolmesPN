@@ -43,8 +43,6 @@ import static java.lang.Double.valueOf;
 
 /**
  * Okno zarządzania funkcjami wskazanej tranzycji.
- * 
- * @author MR
  */
 public class HolmesFunctionsBuilder extends JFrame {
 	@Serial

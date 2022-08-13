@@ -29,8 +29,6 @@ import holmes.windows.HolmesKnockoutViewer;
 
 /**
  * Metoda odpowiedzialna za rysowanie map Mauritiusa.
- * 
- * @author MR
  */
 public class MauritiusMapPanel extends JPanel {
 	@Serial

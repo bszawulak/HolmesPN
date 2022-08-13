@@ -50,9 +50,6 @@ import holmes.utilities.Tools;
  * getInOutTransInfo - zwraca informacje o tym, ile tranzycji IN/OUT ma każdy inwariant<br>
  * transInInvariants - zwraca wektor z informacją w ilu inwariantach działa tranzycja<br>
  * isDoubleArc - zwraca informację, czy łuk jest podwójny<br>
- * 
- * <br>
- * @author MR
  */
 public final class InvariantsTools {
 	private InvariantsTools() {} // to + final = klasa statyczna w NORMALNYM języku, jak np. C#

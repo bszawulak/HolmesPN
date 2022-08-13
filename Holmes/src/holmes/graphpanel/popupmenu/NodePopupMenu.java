@@ -14,8 +14,6 @@ import holmes.windows.xtpn.HolmesNodeInfoXTPN;
 
 /**
  * Klasa odpowiedzialna za utworzenie menu kontekstowego dla wierzchołków sieci.
- * @author students - wersja statyczna
- * @author MR - dynamiczna wersja
  */
 public class NodePopupMenu extends GraphPanelPopupMenu {
 	@Serial

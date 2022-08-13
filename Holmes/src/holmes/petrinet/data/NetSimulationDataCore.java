@@ -11,8 +11,6 @@ import holmes.workspace.ExtensionFileFilter;
 
 /**
  * Klasa odpowiedzialna za zarządzanie danymi symulacji knockout.
- * 
- * @author MR
  */
 public class NetSimulationDataCore implements Serializable {
 	@Serial
@@ -121,7 +119,7 @@ public class NetSimulationDataCore implements Serializable {
 				knockSize--;
 			}
 		}
-		seriesData.remove((Long)IDseries);
+		seriesData.remove(IDseries);
 	}
 	
 	/**

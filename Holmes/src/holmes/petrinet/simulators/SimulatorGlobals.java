@@ -12,9 +12,6 @@ import holmes.petrinet.elements.Transition.TransitionType;
 
 /**
  * Globalne ustawienia symulatora.
- * 
- * @author MR
- *
  */
 public class SimulatorGlobals {
 	/** BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func */

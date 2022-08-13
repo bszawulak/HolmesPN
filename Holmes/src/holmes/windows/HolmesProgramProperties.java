@@ -32,9 +32,6 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa okna ustawień programu.
- * 
- * @author MR
- *
  */
 public class HolmesProgramProperties extends JFrame {
 	@Serial

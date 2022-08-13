@@ -3,8 +3,6 @@ package holmes.analyse.matrix;
 /**
  * Klasa abstrakcyjna definiująca podstawowe operacje na macierz t x p, gdzie
  * t to liczba tranzycji, p to liczba miejsc.
- * @author students
- *
  */
 public abstract class Matrix {
 	private int[][] matrix;

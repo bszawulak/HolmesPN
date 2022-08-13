@@ -18,9 +18,6 @@ import holmes.windows.HolmesNotepad;
 
 /**
  * Klasa zajmująca się zarządzaniem całym procesem symulacji. Kiedyś nazywała się NetSimulator
- * 
- * @author students - pierwsza wersja, klasyczne PN oraz TPN
- * @author MR - poprawki, zmiany, kolejne rodzaje trubów symulacji
  */
 public class GraphicalSimulator {
 	private SimulatorGlobals.SimNetType netSimType;

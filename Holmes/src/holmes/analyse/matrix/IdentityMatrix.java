@@ -2,8 +2,6 @@ package holmes.analyse.matrix;
 
 /**
  * Klasa pomocnicza, dziedzicząca z klasy Matrix. Definiuje macierz n x n
- * @author students
- *
  */
 public class IdentityMatrix extends Matrix {
 	/**

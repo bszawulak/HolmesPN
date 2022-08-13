@@ -24,8 +24,6 @@ import holmes.workspace.ExtensionFileFilter;
 
 /**
  * Klasa tworząca obiekty menu kontekstowego dla arkusza z rysunkiem sieci.
- *
- * @author students
  */
 public class SheetPopupMenu extends GraphPanelPopupMenu {
     @Serial

@@ -7,8 +7,6 @@ import holmes.petrinet.elements.Node;
 
 /**
  * Klasa kontener dla danych definiujących sieć Petriego - wierzchołków i łuków.
- * @author students
- *
  */
 public class PetriNetData {
 	public ArrayList<Node> nodes;

@@ -13,8 +13,6 @@ import holmes.petrinet.elements.Place;
 
 /**
  * Klasa odpowiedzialna za dodanie do menu kontekstowego opcji związanych z miejscami.
- * @author students - statyczna wersja
- * @author MR - dynamiczna wersja
  */
 public class PlacePopupMenu extends NodePopupMenu {
 	@Serial
@@ -26,29 +24,8 @@ public class PlacePopupMenu extends NodePopupMenu {
 	 */
 	public PlacePopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
 		super(graphPanel, el, pne, el.getParentNode());
-
-		/*
-		if(pne == PetriNetElementType.TRANSITION || pne == PetriNetElementType.PLACE) {
-			this.addMenuItem("Change selected Places into same Portals", "portal.png", new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
-						if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-								"Operation impossible when simulator is working."
-								, "Warning") == true)
-							return;
-						
-						//getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
-						//GUIManager.getDefaultGUIManager().markNetChange();
-					} else {
-						JOptionPane.showMessageDialog(null, "Option possible if more than one place is selected.", "Too few selections", 
-								JOptionPane.INFORMATION_MESSAGE);
-					}
-				}
-			});
-		}
-		*/
 		
-		this.addMenuItem("Invisibility ON/OFF", "smallInvisibility.png", e -> {
+		this.addMenuItem("Invisibility (invariants) ON/OFF", "smallInvisibility.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
 				return;
 

@@ -2,8 +2,6 @@ package holmes.petrinet.simulators;
 
 /**
  * Interface generatorów liczb pseudolosowych.
- * 
- * @author MR
  */
 public interface IRandomGenerator {
 	/**

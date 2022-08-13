@@ -50,8 +50,6 @@ import holmes.workspace.ExtensionFileFilter;
  * do wykonywania operacji na klastrach: generowanie, wczytywanie, eksport do plików (także
  * Excel). Wywołuje mniejsze okno informacji o klastrowaniu po kliknięciu na odpowiednią
  * komórkę tabeli.
- * @author MR
- *
  */
 public class HolmesClusters extends JFrame {
 	@Serial

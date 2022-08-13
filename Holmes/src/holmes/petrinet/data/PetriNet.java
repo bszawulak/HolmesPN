@@ -44,9 +44,6 @@ import org.simpleframework.xml.Root;
 /**
  * Klasa przechowująca listy wszystkich obiektów projektu oraz arkusze. Dodatkowo agreguje
  * metody działające na sieci - zapis, odczyt, generowanie MCT, klastrów, itd.
- * @author students - pierwsza wersja
- * @author MR - dodatkowe metody
- *
  */
 @Root
 public class PetriNet implements SelectionActionListener, Cloneable {

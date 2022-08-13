@@ -5,9 +5,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Klasa opakowująca standardowy generator liczb pseudo-losowych w Javie w interface IRandomGenerator.
- * 
- * @author MR
- *
  */
 public class StandardRandom implements IRandomGenerator  {
 	private Random generator;

@@ -29,8 +29,6 @@ import holmes.utilities.Tools;
 /**
  * Klasa ta tworzy okno konsoli programu, na którym pojawiają się informacje na temat wykonywania
  * różnych funkcji programu. Pozwala na zapis logu do pliku.
- * @author MR
- *
  */
 public class HolmesConsole extends JFrame {
 	@Serial

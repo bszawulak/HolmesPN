@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 /**
  * Klasa pomocnicza w procesie tworzenia pliku excel tabeli klastrów
- * @author AR
- *
  */
 public class ClusterRepresentation {
 	public ArrayList<Integer> nrInvariantsPerCluster = new ArrayList<Integer>();

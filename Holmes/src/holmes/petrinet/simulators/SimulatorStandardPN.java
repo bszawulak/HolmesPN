@@ -12,8 +12,6 @@ import holmes.petrinet.elements.TransitionColored;
 /**
  * Silnik symulatora programu. Innymi słowy są tutaj procedury odpowiedzialne za tworzenie
  * listy tranzycji które mają odpalić w kolejnym kroku symulacji.
- * 
- * @author MR
  */
 public class SimulatorStandardPN implements IEngine {
 	private GUIManager overlord;

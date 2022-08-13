@@ -17,7 +17,6 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa użytkowa dla HolmesNodeInfo, zawiera metody wywoływane interfejsem opisanym w ramach HolmesNodeInfo.
- *
  */
 public class HolmesNodeInfoActions {
 	private JFrame parentFrame;

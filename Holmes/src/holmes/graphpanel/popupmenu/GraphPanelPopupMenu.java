@@ -1,6 +1,5 @@
 package holmes.graphpanel.popupmenu;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -19,8 +18,6 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa odpowiedzialna za tworzenie menu kontekstowego dla sieci narysowanej na danym panelu.
- * @author students
- *
  */
 public class GraphPanelPopupMenu extends JPopupMenu {
 	@Serial
@@ -47,27 +44,22 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	public void createPredefineMenuItems() {
 		cutMenuItem = this.createMenuItem("Cut", "cut.png",
 				KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK),
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						// getGraphPanel().removeAllSelectedElementLocations();
-					}
+				e -> {
+					// getGraphPanel().removeAllSelectedElementLocations();
 				});
 
 		copyMenuItem = this.createMenuItem("Copy", "copying_and_distribution.png",
 				KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK),
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						@SuppressWarnings("unused")
-						int x = 1;
-						// getGraphPanel().removeAllSelectedElementLocations();
-					}
+				e -> {
+					@SuppressWarnings("unused")
+					int x = 1;
+					// getGraphPanel().removeAllSelectedElementLocations();
 				});
 
 		pasteMenuItem = this.createMenuItem("Paste", "paste_plain.png",
-				KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK),
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-					}
+				KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK),
+				e -> {
+					//TODO
 				});
 		
 		cutMenuItem.setEnabled(false);

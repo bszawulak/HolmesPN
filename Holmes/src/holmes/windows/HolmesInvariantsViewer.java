@@ -44,9 +44,6 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa okna podglądu struktury t-inwariantów sieci.
- * 
- * @author MR
- *
  */
 public class HolmesInvariantsViewer extends JFrame {
 	@Serial

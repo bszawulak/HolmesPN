@@ -7,8 +7,6 @@ import holmes.petrinet.elements.Transition.StochaticsType;
 
 /**
  * Klasa zarządzająca wektorem danych tranzycji SPN.
- * 
- * @author MR
  */
 public class SPNdataVector {
 	private ArrayList<SPNtransitionData> dataVector;

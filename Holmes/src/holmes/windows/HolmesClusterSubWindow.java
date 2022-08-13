@@ -36,8 +36,6 @@ import holmes.workspace.ExtensionFileFilter;
 /**
  * Klasa tworząca okno informacyjne względem tabeli klastrów. Zawiera ono informacje o
  * konkretnych wybranym klastrowaniu.
- * @author MR
- *
  */
 public class HolmesClusterSubWindow extends JFrame {
 	@Serial

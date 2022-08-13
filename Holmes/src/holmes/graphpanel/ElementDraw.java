@@ -20,8 +20,6 @@ import static holmes.graphpanel.EditorResources.*;
 
 /**
  * Klasa pomocnicza, odpowiedzialna za operacje rysowania grafiki w panelach dla sieci.
- * @author MR
- *
  */
 public final class ElementDraw {
 	private static final Font f_plain = new Font("TimesRoman", Font.PLAIN, 10);

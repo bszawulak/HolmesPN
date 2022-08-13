@@ -13,7 +13,6 @@ import java.io.*;
 
 /**
  * Storing object in clipboard as 'DarkAbyss:'+Serialized(ArrayList<ElementLocation>)+':'+Serialized(ArrayList<Arc>)
- * 
  * @author Antrov
  * 
  */

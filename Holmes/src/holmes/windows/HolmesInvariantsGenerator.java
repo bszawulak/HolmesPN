@@ -40,8 +40,6 @@ import holmes.workspace.ExtensionFileFilter;
 
 /**
  * Okno generatora inwariantów i związanych z nimi narzędzi.
- * 
- * @author MR
  */
 public class HolmesInvariantsGenerator extends JFrame {
 	@Serial

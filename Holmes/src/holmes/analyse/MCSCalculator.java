@@ -21,9 +21,6 @@ import holmes.windows.HolmesMCS;
  * "Mimal cut sets in biochemical reaction networks" 
  * Steffen Klamt, Ernst Dieter Gilles
  * Bioinformatics, 2004, 20, pp. 226-234
- * 
- * @author MR
- *
  */
 public class MCSCalculator implements Runnable {
     private ArrayList<ArrayList<Integer>> em_obR;

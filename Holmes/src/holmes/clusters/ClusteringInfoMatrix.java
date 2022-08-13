@@ -9,8 +9,6 @@ import holmes.files.clusters.ClusterReader;
 
 /**
  * Klasa zarządzająca informacjami o klastrowaniach danej sieci.
- * @author MR
- *
  */
 public class ClusteringInfoMatrix implements Serializable {
 	@Serial

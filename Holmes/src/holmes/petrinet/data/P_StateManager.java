@@ -9,8 +9,6 @@ import holmes.petrinet.elements.PlaceXTPN;
 
 /**
  * Klasa zarządzająca listą stanów sieci.
- * @author MR
- *
  */
 public class P_StateManager {
 	private final GUIManager overlord;

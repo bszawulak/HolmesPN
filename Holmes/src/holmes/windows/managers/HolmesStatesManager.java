@@ -27,8 +27,6 @@ import holmes.windows.xtpn.managers.HolmesStatesEditorXTPN;
 
 /**
  * Klasa tworząca okno managera stanów początkowych (m0) sieci.
- * 
- * @author MR
  */
 public class HolmesStatesManager extends JFrame {
 	@Serial

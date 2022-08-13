@@ -22,8 +22,6 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa tworząca okienko informacji o programie.
- * @author MR
- *
  */
 public class HolmesAbout extends JFrame {
 	@Serial

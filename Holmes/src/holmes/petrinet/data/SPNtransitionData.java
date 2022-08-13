@@ -4,7 +4,6 @@ import holmes.petrinet.elements.Transition.StochaticsType;
 
 /**
  * Klasa kontener, przechowuje dane stochastyczne tranzycji
- * @author MR
  */
 public class SPNtransitionData {
 	public String ST_function = "";

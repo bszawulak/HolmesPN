@@ -31,8 +31,6 @@ import holmes.utilities.Tools;
 
 /**
  * Okno zarządzania wektorami danych SPN dla tranzycji stochastycznych.
- * 
- * @author MR
  */
 public class HolmesSPNmanager extends JFrame {
 	@Serial

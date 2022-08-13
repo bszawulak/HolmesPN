@@ -22,8 +22,6 @@ import holmes.petrinet.functions.FunctionsTools;
  * Zadaniem klasy SelectionManager jest zarządzanie zaznaczeniem oraz obiektami które są aktualnie
  * zaznaczone na danym arkuszu. SelectionManager zawsze ma przypisanego arkusza-rodzica
  * GraphPanel, którego obiektami zarządza nie wpływając nigdy na obiekty pozostałych arkuszy.
- * @author Antrov
- * @author MR - mnóstwo dodatków i poprawek
  */
 public class SelectionManager {
 	private final GUIManager overlord;

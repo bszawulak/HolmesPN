@@ -11,9 +11,6 @@ import holmes.petrinet.elements.Transition;
  * Maximal Dependend Transition sets (MDT sets): 
  * "Understanding network behavior by structured representations of transitions invariants"
  * M. Heiner, Algorithmic Bioprocesses, Natural Computing Series, 2009, pp. 367-389
- * 
- * @author MR
- *
  */
 public class MDTSCalculator {
 	ArrayList<ArrayList<Integer>> tmpInvariantsMatrix;

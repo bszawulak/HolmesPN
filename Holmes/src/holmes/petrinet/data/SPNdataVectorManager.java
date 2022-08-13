@@ -9,8 +9,6 @@ import holmes.petrinet.elements.Transition.StochaticsType;
 
 /**
  * Klasa zarządzająca wektorami danych SPN.
- * 
- * @author MR
  */
 public class SPNdataVectorManager {
 	private GUIManager overlord;

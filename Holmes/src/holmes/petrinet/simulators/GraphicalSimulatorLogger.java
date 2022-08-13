@@ -13,8 +13,6 @@ import holmes.windows.HolmesNotepad;
 /**
  * Klasa użytkowa, odpowiedzialna za wypisywanie w odpowiednio dobrym stylu lawiny komunikatów
  * głównego symulatora sieci.
- * @author MR
- *
  */
 public class GraphicalSimulatorLogger {
 	private HolmesNotepad log; // = GUIManager.getDefaultGUIManager().getSimLog();

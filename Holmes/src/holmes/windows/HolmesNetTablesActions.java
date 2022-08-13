@@ -25,8 +25,6 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa z metodami obsługującymi okno tabel programu - klasy HolmesNetTables.
- * @author MR
- *
  */
 public class HolmesNetTablesActions {
 	private HolmesNetTables antWindow; 

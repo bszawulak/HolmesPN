@@ -7,8 +7,6 @@ import holmes.petrinet.elements.Transition;
 
 /**
  * Klasa tworząca macierz wyjściową do obliczeń, dziedzicząca z Matrix
- * @author students
- *
  */
 public class OutputMatrix extends Matrix {
 	

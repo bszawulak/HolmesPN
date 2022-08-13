@@ -13,10 +13,6 @@ import holmes.petrinet.elements.Transition;
 
 /**
  * Klasa odpowiedzialna za generowanie zbiorów MCT.
- * 
- * @author students
- * @author MR
- *
  */
 public class MCTCalculator {
 	private InputMatrix inMatrix;

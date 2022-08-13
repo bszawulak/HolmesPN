@@ -10,8 +10,6 @@ import java.util.ArrayList;
  * W klasie zdefiniowane są również metody obróbki danych. Zostały przetestowane, a autor modli się
  * żarliwie, aby okazały się prawidłowo napisane. W innym wypadku znajdywanie błędu może się okazać
  * 'interesujścymi czasami' z chińskiego przekleństwa.
- * @author MR
- *
  */
 public class ClusteringExtended {
 	public Clustering metaData; //meta dane o klastrowaniu

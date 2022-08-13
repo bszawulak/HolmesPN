@@ -47,9 +47,6 @@ import holmes.workspace.ExtensionFileFilter;
  * "Petri net modelling of gene regulation of the Duchenne muscular dystrophy"
  * Stefanie Grunwald, Astrid Speer, Jorg Ackermann, Ina Koch
  * BioSystems, 2008, 92, pp.189-205
- * 
- * @author MR
- *
  */
 public class HolmesKnockout extends JFrame {
 	@Serial

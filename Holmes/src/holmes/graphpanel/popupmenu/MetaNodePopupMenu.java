@@ -2,6 +2,7 @@ package holmes.graphpanel.popupmenu;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.JMenu;
@@ -13,6 +14,7 @@ import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 
 public class MetaNodePopupMenu extends NodePopupMenu {
+	@Serial
 	private static final long serialVersionUID = 8356818331350683029L;
 
 	public MetaNodePopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
@@ -36,8 +38,5 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 		        return this;
 		    }
 		}.yesWeCan(el) ));
-		
-		
 	}
-
 }

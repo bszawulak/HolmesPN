@@ -10,8 +10,6 @@ import holmes.petrinet.elements.Transition;
 
 /**
  * Klasa kontener - przechowuje danej o funkcji tranzycji.
- *
- * @author MR
  */
 public class FunctionContainer implements Serializable {
     //public String function = "";

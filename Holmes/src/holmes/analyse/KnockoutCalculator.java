@@ -11,8 +11,6 @@ import holmes.petrinet.elements.Transition;
  * nie będzie nigdy aktywny (z powodów różnych, aczkolwiek dla tej klasy zupełnie nieistotnych).
  * Zwraca listę elementów, które przestają funkcjonować w następnie dysfunkcji wskazanych elementów (lub ich zbioru) - na
  * bazie inwariantów.
- * @author MR
- *
  */
 public class KnockoutCalculator {
 	ArrayList<ArrayList<Integer>> calc_invariants;

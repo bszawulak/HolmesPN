@@ -32,8 +32,6 @@ import holmes.workspace.WorkspaceSheet;
  * Klasa implementująca okno wyszukiwania elementów sieci - miejsc lub tranzycji. Można
  * ręcznie wskazać odpowiedni wierzchołek na listach rozwijalnych, względnie wyszukać go
  * po nazwie lub identyfikatorze.
- * @author MR
- *
  */
 public class HolmesSearch extends JFrame {
 	@Serial

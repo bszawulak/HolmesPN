@@ -50,8 +50,6 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa odpowiedzialna za okno właściwości elementu sieci.
- * @author MR
- *
  */
 public class HolmesNodeInfo extends JFrame {
 	@Serial

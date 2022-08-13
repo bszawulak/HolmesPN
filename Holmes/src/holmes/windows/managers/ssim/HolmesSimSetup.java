@@ -31,8 +31,6 @@ import holmes.windows.managers.HolmesStatesManager;
 /**
  * Okno ustawień symulatorów programu. Pozwala ustawić parametry symulacji w globalnym obiekcie
  * SimulatorGlobals w ramach GUIManager, z którego pól korzystają symulatory.
- * 
- * @author MR
  */
 public class HolmesSimSetup extends JFrame {
 	@Serial

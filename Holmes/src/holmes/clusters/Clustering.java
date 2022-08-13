@@ -6,8 +6,6 @@ import java.util.ArrayList;
 
 /**
  * Klasa kontener do przechowywania podstawowych metadanych o konkretnym klastrowaniu.
- * @author MR
- *
  */
 public class Clustering implements Serializable {
 	@Serial

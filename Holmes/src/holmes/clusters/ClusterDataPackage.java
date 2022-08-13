@@ -5,8 +5,6 @@ import java.util.ArrayList;
 /**
  * Klasa kontener służąca do przechowywania danych przesyłanych z podokna klastrowania
  * szczegółowego do podokna programu Holmes służącego podświetlaniu elementów klastra.
- * @author MR
- *
  */
 public class ClusterDataPackage {
 	public ArrayList<ArrayList<ClusterTransition>> dataMatrix;

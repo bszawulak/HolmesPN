@@ -71,8 +71,6 @@ import holmes.windows.HolmesNotepad;
 
 /**
  * Klasa okna przeglądania danych symulacji knockout.
- * 
- * @author MR
  */
 public class HolmesSimKnockVis extends JFrame {
 	@Serial

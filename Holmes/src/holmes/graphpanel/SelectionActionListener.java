@@ -7,8 +7,6 @@ import holmes.petrinet.elements.ElementLocation;
 
 /**
  * Klasa przekazująca informacje związane ze zdarzeniem zaznaczania, wywoływanym przez SelectionManager.
- * @author students
- *
  */
 public interface SelectionActionListener {
 	public void actionPerformed(SelectionActionEvent e);

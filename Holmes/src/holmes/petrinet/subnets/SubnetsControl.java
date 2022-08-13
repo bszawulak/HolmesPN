@@ -24,8 +24,6 @@ import holmes.workspace.Workspace;
 /**
  * Klasa odpowiedzialna za metody pomagające w kontrolowaniu sieci hierarchicznych. Albo przynajmniej
  * sprytnym udawaniu że taka kontrola w ogóle istnieje.
- * 
- * @author MR
  */
 public class SubnetsControl {
 	GUIManager overlord = null;

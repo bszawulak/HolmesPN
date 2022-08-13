@@ -29,8 +29,6 @@ import holmes.petrinet.simulators.SimulationStep;
 
 /**
  * Klasa odpowiadzialna za symulację wykonywania inwariantów w sieci.
- * @author students
- *
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class InvariantsSimulator {

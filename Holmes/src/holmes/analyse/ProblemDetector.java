@@ -14,10 +14,7 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 
 /**
- * Klasa odpowiedzialna za wykrywanie potencjalnie problematycznych regionów sieci i ich
- * kolorowanie.
- * 
- * @author MR
+ * Klasa odpowiedzialna za wykrywanie potencjalnie problematycznych regionów sieci i ich kolorowanie.
  */
 public class ProblemDetector {
 	GUIManager overlord;

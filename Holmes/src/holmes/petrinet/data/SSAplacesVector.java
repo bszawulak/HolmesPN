@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 /**
  * Klasa definiująca wektor danych wejściowych SSA.
- * 
- * @author MR
  */
 public class SSAplacesVector {
 	private ArrayList<Double> ssaVector;

@@ -35,8 +35,6 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa tworząca okno narzędzi generowania i analizy zbiorów MCS.
- * @author MR
- *
  */
 public class HolmesMCS extends JFrame {
 	@Serial

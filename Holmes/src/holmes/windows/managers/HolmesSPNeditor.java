@@ -32,8 +32,6 @@ import holmes.utilities.Tools;
 
 /**
  * Okno edycji firing rate przechowywanych w danym wektorze wejściowym.
- * 
- * @author MR
  */
 public class HolmesSPNeditor extends JFrame {
 	@Serial
