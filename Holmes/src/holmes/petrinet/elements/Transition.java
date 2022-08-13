@@ -37,11 +37,7 @@ public class Transition extends Node {
     public TransitionQSimContainer qSimBoxT = new TransitionQSimContainer();
     public TransitionTimeExtention timeFunctions = new TransitionTimeExtention();
     public TransitionSPNExtension spnFunctions = new TransitionSPNExtension();
-
-    //tranzycja funkcyjna:
-    protected boolean isFunctional = false;
-    protected ArrayList<FunctionContainer> fList;
-
+    public TransitionFPNExtension fpnFunctions = new TransitionFPNExtension(this);
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
@@ -54,7 +50,7 @@ public class Transition extends Node {
         super(transitionId, elementLocations, realRadius);
         this.setName(name);
         this.setComment(comment);
-        this.fList = new ArrayList<>();
+        this.fpnFunctions.fList = new ArrayList<>();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
         spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
@@ -68,7 +64,7 @@ public class Transition extends Node {
     public Transition(int transitionId, ArrayList<ElementLocation> elementLocations) {
         super(transitionId, elementLocations, realRadius);
         this.setName("Transition" + IdGenerator.getNextTransitionId());
-        this.fList = new ArrayList<>();
+        this.fpnFunctions.fList = new ArrayList<>();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
         spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
@@ -83,7 +79,7 @@ public class Transition extends Node {
     public Transition(int transitionId, int sheetId, Point transitionPosition) {
         super(sheetId, transitionId, transitionPosition, realRadius);
         this.setName("Transition" + IdGenerator.getNextTransitionId());
-        this.fList = new ArrayList<>();
+        this.fpnFunctions.fList = new ArrayList<>();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
         spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
@@ -92,7 +88,7 @@ public class Transition extends Node {
     public Transition(String error) {
         super(99, IdGenerator.getNextTransitionId(), new Point(0,0), realRadius);
         this.setName("Transition" + IdGenerator.getNextTransitionId());
-        this.fList = new ArrayList<>();
+        this.fpnFunctions.fList = new ArrayList<>();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
         spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
@@ -237,7 +233,7 @@ public class Transition extends Node {
             } else if (arcType == TypeOfArc.EQUAL && startPlaceTokens != arc.getWeight()) { //DOKŁADNIE TYLE CO WAGA
                 return false;
             } else {
-                if (isFunctional) { //fast, no method
+                if (fpnFunctions.isFunctional()) {
                     boolean status = FunctionsTools.getFunctionDecision(startPlaceTokens, arc, arc.getWeight(), this);
                     if (!status)
                         return false; //zwróc tylko jesli false
@@ -285,8 +281,8 @@ public class Transition extends Node {
                         origin.reserveTokens(arc.getWeight());
                     }
                 } else { //normalny łuk
-                    if (isFunctional) { //fast, no method!
-                        FunctionContainer fc = getFunctionContainer(arc);
+                    if (fpnFunctions.isFunctional()) { //fast, no method!
+                        FunctionContainer fc = fpnFunctions.getFunctionContainer(arc);
                         if (fc != null) //TODO: czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
                             origin.reserveTokens((int) fc.currentValue); //nie ważne, aktywna czy nie, jeśli nie, to tu jest i tak oryginalna waga
                         else
@@ -375,132 +371,6 @@ public class Transition extends Node {
         } else {
             return "(T" + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(this) + ")";
         }
-    }
-
-    //**************************************************************************************
-    //*********************************     FUNCTIONS    ***********************************
-    //**************************************************************************************
-
-    /**
-     * Metoda ustawia flagę tranzycji funkcyjnej.
-     * @param value boolean - true, jeśli tranzycja ma być funkcyjna
-     */
-    public void setFunctional(boolean value) {
-        this.isFunctional = value;
-    }
-
-    /**
-     * Metoda zwraca flagę funkcyjności tranzycji.
-     * @return boolean - true, jeśli funkcyjna
-     */
-    public boolean isFunctional() {
-        return this.isFunctional;
-    }
-
-    /**
-     * Metoda zwraca pełen wektor funkcyjny tranzycji. Przed jej wywołaniem należy upewnić się funkcją
-     * checkFunctions(...), że wektor ten jest aktualny.
-     * @return ArrayList[FunctionContainer] - wektor funkcji
-     */
-    public ArrayList<FunctionContainer> accessFunctionsList() {
-        return this.fList;
-    }
-
-    /**
-     * Metoda weryfikuje wektor łuków funkcyjnych - usuwa łuki które już nie istnieją w rzeczywistych
-     * połączeniach tranzycji oraz dodaje takie, których na liście funkcyjnej brakuje.
-     * @param arcs ArrayList[Arc] - wektor wszystkich łuków sieci
-     */
-    public void checkFunctions(ArrayList<Arc> arcs, ArrayList<Place> places) {
-        int fSize = fList.size();
-        ArrayList<Arc> fArcs = new ArrayList<>();
-        //usuń funkcje związane z nieistniejącymi łukami
-        for (int f = 0; f < fSize; f++) {
-            FunctionContainer fc = fList.get(f);
-            if (!arcs.contains(fc.arc)) {
-                fList.remove(f);
-                f--;
-                fSize--;
-            } else {
-                fArcs.add(fc.arc); //lista łuków funkcyjnych
-            }
-        }
-
-        ArrayList<Arc> inArcs = getInArcs();
-        ArrayList<Arc> outArcs = getOutArcs();
-
-        for (Arc arc : inArcs) {
-            if (fArcs.contains(arc))
-                continue;
-
-            FunctionContainer fc = new FunctionContainer(this);
-            int placeIndex = places.indexOf((Place)arc.getStartNode());
-            fc.fID = "p" + placeIndex + "-->T";
-            fc.arc = arc;
-            fc.inTransArc = true;
-            fList.add(fc);
-        }
-
-        for (Arc arc : outArcs) {
-            if (fArcs.contains(arc))
-                continue;
-
-            FunctionContainer fc = new FunctionContainer(this);
-            int placeIndex = places.indexOf((Place)arc.getEndNode());
-            fc.fID = "T-->p" + placeIndex;
-            fc.arc = arc;
-            fc.inTransArc = false;
-            fList.add(fc);
-        }
-    }
-
-    /**
-     * Metoda podmienia zapis funkcji w tranzycji.
-     * @param fID        String - identyfikator funkcji dla danej tranzycji
-     * @param expression String - nowa forma funkcji
-     * @param correct    boolean - true jeśli funkcja została zweryfikowana jako prawidłowa
-     * @param enabled    boolean - true, jeśli funkcja ma być aktywna (np. w symulatorze)
-     * @return boolean - true, jeśli znaleziono identyfikator i podmieniono funkcję
-     */
-    public boolean updateFunctionString(String fID, String expression, boolean correct, boolean enabled) {
-        for (FunctionContainer fc : accessFunctionsList()) {
-            if (fc.fID.equals(fID)) {
-                fc.simpleExpression = expression;
-                fc.correct = correct;
-                fc.enabled = enabled;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Metoda zwraca kontener z funkcją.
-     * @param fID String - identyfikator w ramach tranzycji
-     * @return FunctionContainer - obiekt kontenera
-     */
-    public FunctionContainer getFunctionContainer(String fID) {
-        for (FunctionContainer fc : accessFunctionsList()) {
-            if (fc.fID.equals(fID)) {
-                return fc;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * /**
-     * Metoda zwraca kontener z funkcją - szukanie po obiekcie łuku.
-     * @param arc Arc - łuk tranzycji
-     * @return FunctionContainer - obiekt kontenera
-     */
-    public FunctionContainer getFunctionContainer(Arc arc) {
-        for (FunctionContainer fc : accessFunctionsList()) {
-            if (fc.arc.equals(arc)) {
-                return fc;
-            }
-        }
-        return null;
     }
 
     /**

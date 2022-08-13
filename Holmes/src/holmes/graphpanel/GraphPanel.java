@@ -623,7 +623,7 @@ public class GraphPanel extends JComponent {
 	private void addNewFunctionalTransition(Point p) {
 		if (isLegalLocation(p)) {
 			Transition trans = new Transition(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
-			trans.setFunctional(true);
+			trans.fpnFunctions.setFunctional(true);
 			this.getSelectionManager().selectOneElementLocation(trans.getLastLocation());
 			getNodes().add(trans);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();

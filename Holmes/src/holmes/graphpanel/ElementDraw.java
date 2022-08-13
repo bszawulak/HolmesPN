@@ -377,7 +377,7 @@ public final class ElementDraw {
 				}
 
 				//SYMBOL TRANZYCJI FUNKCYJNEJ
-				if(trans.isFunctional()) {
+				if(trans.fpnFunctions.isFunctional()) {
 					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth("f") / 2 - 3;
 					int posY = nodeBounds.y + nodeBounds.height / 2 + 5;
 					Font old = g.getFont();

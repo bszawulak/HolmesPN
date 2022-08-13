@@ -514,7 +514,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                 }
 
                 int weight = arc.getWeight();
-                if(transition.isFunctional()) {
+                if(transition.fpnFunctions.isFunctional()) {
                     weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                 }
                 place.addTokens_XTPN(weight, 0.0);

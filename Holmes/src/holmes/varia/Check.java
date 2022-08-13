@@ -130,7 +130,7 @@ public final class Check {
 				if (((Transition)node).getTransType() == TransitionType.TPN) {
 					tTrans++;
 				}
-				if (((Transition)node).isFunctional()) {
+				if (((Transition)node).fpnFunctions.isFunctional()) {
 					functions++;
 				}
 				if (((Transition)node).getTransType() == TransitionType.XTPN) {

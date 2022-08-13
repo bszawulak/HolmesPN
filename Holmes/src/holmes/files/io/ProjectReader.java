@@ -475,7 +475,7 @@ public class ProjectReader {
 			}
 			
 			for(Transition transition : transitions) { //aktywacja wektorów funkcji
-				transition.checkFunctions(arcs, places);
+				transition.fpnFunctions.checkFunctions(arcs, places);
 			}
 			
 			int functionsRead = 0;
@@ -537,7 +537,7 @@ public class ProjectReader {
 			if(table[4].contains("true"))
 				enabled = true;
 
-			return transition.updateFunctionString(table[1], table[2], correct, enabled);
+			return transition.fpnFunctions.updateFunctionString(table[1], table[2], correct, enabled);
 		} catch (Exception e) {
 			overlord.log("Failed to correctly parse line: "+functionLine, "warning", true);
 			return false;
@@ -919,7 +919,7 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				transition.setFunctional(line.contains("true"));
+				transition.fpnFunctions.setFunctional(line.contains("true"));
 				return;
 			}
 			
@@ -2414,7 +2414,7 @@ public class ProjectReader {
 		rise.timeFunctions.setDPNduration(transition.timeFunctions.getDPNduration());
 		rise.timeFunctions.setTPNstatus(transition.timeFunctions.getTPNstatus());
 		rise.timeFunctions.setDPNstatus(transition.timeFunctions.getDPNstatus());
-		rise.setFunctional(transition.isFunctional());
+		rise.fpnFunctions.setFunctional(transition.fpnFunctions.isFunctional());
 		rise.setPortal(transition.isPortal());
 
 		rise.getElementLocations().clear();

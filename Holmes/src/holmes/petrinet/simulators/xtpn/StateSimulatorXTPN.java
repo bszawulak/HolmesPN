@@ -566,7 +566,7 @@ public class StateSimulatorXTPN implements Runnable {
                         //arc.setTransportingTokens(false);
                     } else { //teraz określamy ile zabrać
                         int weight = arc.getWeight();
-                        if (transition.isFunctional()) {
+                        if (transition.fpnFunctions.isFunctional()) {
                             weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                         }
                         place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
@@ -623,7 +623,7 @@ public class StateSimulatorXTPN implements Runnable {
                         //arc.setTransportingTokens(false);
                     } else { //teraz określamy ile
                         int weight = arc.getWeight();
-                        if (transition.isFunctional()) {
+                        if (transition.fpnFunctions.isFunctional()) {
                             weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                         }
                         place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());

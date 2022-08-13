@@ -72,7 +72,7 @@ public class ProjectWriter {
 	 */
 	public boolean writeProject(String filepath) {
 		for(Transition trans : transitions) 
-			trans.checkFunctions(arcs, places);
+			trans.fpnFunctions.checkFunctions(arcs, places);
 		
 		try {
 			if(projectCore.getProjectType() == PetriNet.GlobalNetType.XTPN)
@@ -261,7 +261,7 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition duration:"+trans.timeFunctions.getDPNduration()+">"+newline); //DPN duration value
 				bw.write(spaces(sp)+"<Transition TPN status:"+trans.timeFunctions.getTPNstatus()+">"+newline); //is TPN active?
 				bw.write(spaces(sp)+"<Transition DPN status:"+trans.timeFunctions.getDPNstatus()+">"+newline); //is DPN active?
-				bw.write(spaces(sp)+"<Transition function flag:"+trans.isFunctional()+">"+newline); //is functional?
+				bw.write(spaces(sp)+"<Transition function flag:"+trans.fpnFunctions.isFunctional()+">"+newline); //is functional?
 
 				if(XTPNdataMode) {
 					//bw.write(spaces(sp)+"<Transition XTPN status:"+((TransitionXTPN)trans).isXTPNtransition()+">"+newline); //czy XTPN?
@@ -618,7 +618,7 @@ public class ProjectWriter {
 			sp = 4;
 			for(int t=0; t<transitions.size(); t++) {
 				Transition transition = transitions.get(t);
-				ArrayList<FunctionContainer> fVector = transition.accessFunctionsList();
+				ArrayList<FunctionContainer> fVector = transition.fpnFunctions.accessFunctionsList();
 				for(FunctionContainer fc : fVector) {
 					if(fc.simpleExpression.length() == 0)
 						continue;

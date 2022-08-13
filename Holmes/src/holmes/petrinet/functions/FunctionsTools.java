@@ -38,7 +38,7 @@ public class FunctionsTools {
 		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 	
 		for(Transition transition : transitions) {
-			for(FunctionContainer fc : transition.accessFunctionsList()) {
+			for(FunctionContainer fc : transition.fpnFunctions.accessFunctionsList()) {
 				if(fc.involvedPlaces.containsKey("p"+placeIndex)) {
 					int transIndex = transitions.indexOf(transition);
 					overlord.log("Function: '"+fc.simpleExpression+"' (fID: "+fc.fID+") of transition t"+transIndex+
@@ -107,10 +107,10 @@ public class FunctionsTools {
 		int transCounter = -1;
 		for(Transition transition : transitions) {
 			transCounter++;
-			if(!transition.isFunctional())
+			if(!transition.fpnFunctions.isFunctional())
 				continue;
 			
-			for(FunctionContainer fc : transition.accessFunctionsList()) {
+			for(FunctionContainer fc : transition.fpnFunctions.accessFunctionsList()) {
 				if(!fc.enabled)
 					continue;
 				
@@ -215,7 +215,7 @@ public class FunctionsTools {
 	public static boolean getFunctionDecision(int startPlaceTokens, Arc arc, int nonFuncWeight, Transition transition) {
 		//wartość funkcji musi być >= startPlaceTokens
 		try {
-			FunctionContainer fc = transition.getFunctionContainer(arc);
+			FunctionContainer fc = transition.fpnFunctions.getFunctionContainer(arc);
 			if(fc != null) { // jeśli znaleziono, to od razu przypisujemy oryginalną wagę
 				fc.currentValue = nonFuncWeight; //wartość początkowa: oryginalna waga
 			}
@@ -265,8 +265,8 @@ public class FunctionsTools {
 	 * @param place Place - miejsce
 	 */
 	public static void functionalExtraction(Transition transition, Arc arc, Place place) {
-		if(transition.isFunctional()) {
-			FunctionContainer fc = transition.getFunctionContainer(arc);
+		if(transition.fpnFunctions.isFunctional()) {
+			FunctionContainer fc = transition.fpnFunctions.getFunctionContainer(arc);
 			if(fc != null) //TODO: czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
 				place.modifyTokensNumber(-((int) fc.currentValue));
 				//nie ważne, aktywna czy nie, jeśli nie, to tu jest i tak oryginalna waga
@@ -282,8 +282,8 @@ public class FunctionsTools {
 	 * @return int
 	 */
 	public static int getFunctionalArcWeight(Transition transition, Arc arc, Place place) {
-		if(transition.isFunctional()) {
-			FunctionContainer fc = transition.getFunctionContainer(arc);
+		if(transition.fpnFunctions.isFunctional()) {
+			FunctionContainer fc = transition.fpnFunctions.getFunctionContainer(arc);
 			if(fc != null) //TODO: czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
 				return (int) fc.currentValue;
 				//nie ważne, aktywna czy nie, jeśli nie, to tu jest i tak oryginalna waga
@@ -301,8 +301,8 @@ public class FunctionsTools {
 	 * @param place Place - miejsce
 	 */
 	public static void functionalAddition(Transition transition, Arc arc, Place place) {
-		if(transition.isFunctional()) {
-			FunctionContainer fc = transition.getFunctionContainer(arc);
+		if(transition.fpnFunctions.isFunctional()) {
+			FunctionContainer fc = transition.fpnFunctions.getFunctionContainer(arc);
 			if(fc != null) {//czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
 				
 				if(fc != null && fc.enabled && fc.correct) {

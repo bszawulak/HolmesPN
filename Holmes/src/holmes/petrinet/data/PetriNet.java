@@ -1309,7 +1309,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			ArrayList<Arc> arcs = getArcs();
 			ArrayList<Transition> transitions = getTransitions();
 			for(Transition transition : transitions) { //aktywacja wektorów funkcji
-				transition.checkFunctions(arcs, places);
+				transition.fpnFunctions.checkFunctions(arcs, places);
 			}
 			
 			return true;

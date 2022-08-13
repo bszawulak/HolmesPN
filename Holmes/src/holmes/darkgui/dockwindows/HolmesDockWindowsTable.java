@@ -2328,13 +2328,13 @@ public class HolmesDockWindowsTable extends JPanel {
         functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(functionLabel);
 
-        JCheckBox functionalCheckBox = new JCheckBox("", transition.isFunctional());
+        JCheckBox functionalCheckBox = new JCheckBox("", transition.fpnFunctions.isFunctional());
         functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        functionalCheckBox.setSelected(((Transition) element).isFunctional());
+        functionalCheckBox.setSelected(((Transition) element).fpnFunctions.isFunctional());
 
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            ((Transition) element).setFunctional(box.isSelected());
+            ((Transition) element).fpnFunctions.setFunctional(box.isSelected());
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
@@ -3167,13 +3167,13 @@ public class HolmesDockWindowsTable extends JPanel {
         functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(functionLabel);
 
-        JCheckBox functionalCheckBox = new JCheckBox("", transition.isFunctional());
+        JCheckBox functionalCheckBox = new JCheckBox("", transition.fpnFunctions.isFunctional());
         functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        functionalCheckBox.setSelected(((Transition) element).isFunctional());
+        functionalCheckBox.setSelected(((Transition) element).fpnFunctions.isFunctional());
 
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            ((Transition) element).setFunctional(box.isSelected());
+            ((Transition) element).fpnFunctions.setFunctional(box.isSelected());
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
@@ -3677,13 +3677,13 @@ public class HolmesDockWindowsTable extends JPanel {
         functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(functionLabel);
 
-        JCheckBox functionalCheckBox = new JCheckBox("", transition.isFunctional());
+        JCheckBox functionalCheckBox = new JCheckBox("", transition.fpnFunctions.isFunctional());
         functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        functionalCheckBox.setSelected(((Transition) element).isFunctional());
+        functionalCheckBox.setSelected(((Transition) element).fpnFunctions.isFunctional());
 
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            ((Transition) element).setFunctional(box.isSelected());
+            ((Transition) element).fpnFunctions.setFunctional(box.isSelected());
 
             overlord.markNetChange();
         });
@@ -4398,12 +4398,12 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(immediateCheckBox);
 
         // XTPN-transition FUNKCYJNOŚĆ
-        JCheckBox functionalCheckBox = new JCheckBox("Functional", transition.isFunctional());
+        JCheckBox functionalCheckBox = new JCheckBox("Functional", transition.fpnFunctions.isFunctional());
         functionalCheckBox.setBounds(columnA_posX-5, columnA_Y += 20, 140, 20);
-        functionalCheckBox.setSelected(((Transition) element).isFunctional());
+        functionalCheckBox.setSelected(((Transition) element).fpnFunctions.isFunctional());
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            ((Transition) element).setFunctional(box.isSelected());
+            ((Transition) element).fpnFunctions.setFunctional(box.isSelected());
             overlord.markNetChange();
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);

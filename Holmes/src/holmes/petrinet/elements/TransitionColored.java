@@ -89,7 +89,7 @@ public class TransitionColored extends Transition {
                 } else if (arcType == Arc.TypeOfArc.EQUAL && startPlaceTokens != arc.getWeight()) { //DOKŁADNIE TYLE CO WAGA
                     return false;
                 } else {
-                    if (isFunctional) { //fast, no method
+                    if (fpnFunctions.isFunctional()) { //fast, no method
                         boolean status = FunctionsTools.getFunctionDecision(startPlaceTokens, arc, arc.getWeight(), this);
                         if (!status)
                             return false; //zwróc tylko jesli false
@@ -132,7 +132,6 @@ public class TransitionColored extends Transition {
      */
     public int getRequiredColoredTokens(int i) {
         return switch (i) {
-            case 0 -> reqT0red;
             case 1 -> reqT1green;
             case 2 -> reqT2blue;
             case 3 -> reqT3yellow;
@@ -150,7 +149,6 @@ public class TransitionColored extends Transition {
      */
     public void setRequiredColoredTokens(int tokens, int i) {
         switch (i) {
-            case 0 -> reqT0red = tokens;
             case 1 -> reqT1green = tokens;
             case 2 -> reqT2blue = tokens;
             case 3 -> reqT3yellow = tokens;
