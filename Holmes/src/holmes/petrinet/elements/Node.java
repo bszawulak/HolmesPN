@@ -40,8 +40,8 @@ public abstract class Node extends PetriNetElement {
 
 	public Color branchColor = null;
 	public ArrayList<Color> branchBorderColors = new ArrayList<>();
-	
 	public boolean qSimArcSign = false; //znacznik dła łuku - czy ma być wzmocniony pomiędzy węzłami które mają tu wartość true
+
 	protected boolean invisible = false;
 	
 	/**

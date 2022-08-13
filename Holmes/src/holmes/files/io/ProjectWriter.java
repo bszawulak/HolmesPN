@@ -256,11 +256,11 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition type:"+trans.getTransType()+">"+newline); //typ
 				bw.write(spaces(sp)+"<Transition name:"+trans.getName()+">"+newline);  //nazwa
 				bw.write(spaces(sp)+"<Transition comment:"+Tools.convertToCode(trans.getComment())+">"+newline); //komentarz
-				bw.write(spaces(sp)+"<Transition eft:"+trans.getEFT()+">"+newline); //TPN eft
-				bw.write(spaces(sp)+"<Transition lft:"+trans.getLFT()+">"+newline); //TPN lft
-				bw.write(spaces(sp)+"<Transition duration:"+trans.getDPNduration()+">"+newline); //DPN duration value
-				bw.write(spaces(sp)+"<Transition TPN status:"+trans.getTPNstatus()+">"+newline); //is TPN active?
-				bw.write(spaces(sp)+"<Transition DPN status:"+trans.getDPNstatus()+">"+newline); //is DPN active?
+				bw.write(spaces(sp)+"<Transition eft:"+trans.timeFunctions.getEFT()+">"+newline); //TPN eft
+				bw.write(spaces(sp)+"<Transition lft:"+trans.timeFunctions.getLFT()+">"+newline); //TPN lft
+				bw.write(spaces(sp)+"<Transition duration:"+trans.timeFunctions.getDPNduration()+">"+newline); //DPN duration value
+				bw.write(spaces(sp)+"<Transition TPN status:"+trans.timeFunctions.getTPNstatus()+">"+newline); //is TPN active?
+				bw.write(spaces(sp)+"<Transition DPN status:"+trans.timeFunctions.getDPNstatus()+">"+newline); //is DPN active?
 				bw.write(spaces(sp)+"<Transition function flag:"+trans.isFunctional()+">"+newline); //is functional?
 
 				if(XTPNdataMode) {

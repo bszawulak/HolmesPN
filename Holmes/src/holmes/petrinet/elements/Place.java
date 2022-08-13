@@ -1,6 +1,5 @@
 package holmes.petrinet.elements;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.Serial;
@@ -10,6 +9,8 @@ import holmes.darkgui.GUIManager;
 import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
+import holmes.petrinet.elements.containers.PlaceGraphicsContainer;
+import holmes.petrinet.elements.containers.PlaceQSimContainer;
 
 /**
  * Klasa implementująca miejsce sieci Petriego. Zapewnia implementację stanu (przechowywania tokenów) oraz 
@@ -19,57 +20,22 @@ public class Place extends Node {
 	@Serial
 	private static final long serialVersionUID = 2346995422046987174L;
 
-	/**
-	 * PN, CPN, XTPN
-	 */
+	/** PN, CPN, XTPN */
 	public enum PlaceType {PN, CPN, XTPN}
 	protected PlaceType placeType = PlaceType.PN; //default
 	protected static int realRadius = 18;
 	protected int tokensNumber = 0;
 	protected int reservedTokens = 0;
-	protected boolean isColorChanged;
-	protected Color placeColorValue;
-	protected boolean valueVisibilityStatus;
-	protected double placeNumericalValue;
-	protected boolean showPlaceAddText;
-	protected String placeAdditionalText;
-	public int txtXoff;
-	public int txtYoff;
-	public int valueXoff;
-	public int valueYoff;
-	public Color defColor = Color.WHITE;
 
+	public PlaceGraphicsContainer drawGraphBoxP = new PlaceGraphicsContainer();
+	public PlaceQSimContainer qSimBoxP = new PlaceQSimContainer();
 
-	//colored:
 	public boolean isColored = false;
-	//SSA:
-	protected double ssaValue = 0.0;
-	//quickSim
-	public boolean qSimDrawed = false; //czy rysować dodatkowe oznaczenie miejsca - okrąg
-	public int qSimOvalSize = 10; //rozmiar okręgu oznaczającego
-	public Color qSimOvalColor = Color.RED;
-	public Color qSimFillColor = Color.WHITE; //kolor oznaczenia
-	public boolean qSimDrawStats = false; //czy rysować dodatkowe dane statystyczne
-	public int qSimFillValue = 0; //poziom wypełnienia danych
-	public double qSimTokens = 0; //ile średnio tokenów w symulacji
-	//public String qSimText = ""; //dodatkowy tekst
-
 	protected boolean isXTPN = false; //czy tokeny marzą o elektrycznych tranzycjach?
 
-	/* ***********************************************************************************
-	   ********************************    xTPN    ***************************************
-	   *********************************************************************************** */
-	/*
-	private double gammaMin_xTPN = 0.0;
-	private double gammaMax_xTPN = 99;
-	private boolean gammaMode_xTPN = true;
-	//grafika:
-	private boolean showTokenSet_xTPN = false; //czy wyświetlać zbiór tokenów
-	private boolean gammaRangeVisibility_XTPN = true;
-	private int franctionDigits = 2;
-	//tokeny:
-	private ArrayList<Double> multisetK;
-*/
+	//SSA:
+	protected double ssaValue = 0.0;
+
 
 	/**
 	 * Konstruktor obiektu miejsca sieci.
@@ -81,8 +47,6 @@ public class Place extends Node {
 		super(sheetId, nodeId, placePosition, realRadius);
 		this.setName("Place" + IdGenerator.getNextPlaceId());
 		this.setType(PetriNetElementType.PLACE);
-
-		//this.multisetK = new ArrayList<>();
 	}
 
 	/**
@@ -99,8 +63,6 @@ public class Place extends Node {
 		this.setComment(comment);
 		this.setTokensNumber(tokensNumber);
 		this.setType(PetriNetElementType.PLACE);
-
-		//this.multisetK = new ArrayList<>();
 	}
 
 	/**
@@ -112,8 +74,6 @@ public class Place extends Node {
 		super(nodeId, elementLocations, realRadius);
 		this.setName("Place" + IdGenerator.getNextPlaceId());
 		this.setType(PetriNetElementType.PLACE);
-
-		//this.multisetK = new ArrayList<>();
 	}
 
 	/**
@@ -240,7 +200,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda ustawia typ miejsca.
-	 * @param (<b>value</b>) typ miejsca: PN, CPN, XTPN.
+	 * @param value (<b>PlaceType</b>) typ miejsca: PN, CPN, XTPN.
 	 */
 	public void setPlaceType(PlaceType value) {
 		this.placeType = value;
@@ -279,119 +239,4 @@ public class Place extends Node {
 	public double getSSAvalue() {
 		return this.ssaValue;
 	}
-	
-	
-	//****************************************************************************************************************************
-	//****************************************************************************************************************************
-	//****************************************************************************************************************************
-	//****************************************************************************************************************************
-	//****************************************************************************************************************************
-	
-	/**
-	 * Metoda ustawia stan zmiany koloru oraz liczbę do wyświetlenia.
-	 * @param isColorChanged boolean - true, jeśli ma rysować się w kolorze
-	 * @param placeColorValue Color - na jaki kolor
-	 * @param showNumber boolean - true, jeśli liczba ma się wyświetlać
-	 * @param placeNumericalValue double - liczba do wyświetlenia
-	 * @param showText boolean - czy pokazać dodatkowy tekst
-	 * @param text String - dodatkowy tekst do wyświetlenia
-	 * @param txtXoff int - przesunięcie X tekstu
-	 * @param txtYoff int - przesunięcie Y tekstu
-	 * @param valueXoff int - przesunięcie X liczby
-	 * @param valueYoff int - przesunięcie Y liczby
-	 */
-	public void setColorWithNumber(boolean isColorChanged, Color placeColorValue, 
-			boolean showNumber, double placeNumericalValue, boolean showText, String text,
-			int txtXoff, int txtYoff, int valueXoff, int valueYoff) {
-		this.isColorChanged = isColorChanged;
-		this.placeColorValue = placeColorValue;
-		this.valueVisibilityStatus = showNumber;
-		this.placeNumericalValue = placeNumericalValue;
-		this.showPlaceAddText = showText;
-		this.placeAdditionalText = text;
-		
-		this.txtXoff = txtXoff;
-		this.txtYoff = txtYoff;
-		this.valueXoff = valueXoff;
-		this.valueYoff = valueYoff;
-	}
-	
-	/**
-	 * Metoda ustawia stan zmiany koloru oraz liczbę do wyświetlenia.
-	 * @param isColorChanged boolean - true, jeśli ma rysować się w kolorze
-	 * @param placeColorValue Color - na jaki kolor
-	 * @param showNumber boolean - true, jeśli liczba ma się wyświetlać
-	 * @param placeNumericalValue double - liczba do wyświetlenia
-	 * @param showText boolean - czy pokazać dodatkowy tekst
-	 * @param text String - dodatkowy tekst do wyświetlenia
-	 */
-	public void setColorWithNumber(boolean isColorChanged, Color placeColorValue, 
-			boolean showNumber, double placeNumericalValue, boolean showText, String text) {
-		this.isColorChanged = isColorChanged;
-		this.placeColorValue = placeColorValue;
-		this.valueVisibilityStatus = showNumber;
-		this.placeNumericalValue = placeNumericalValue;
-		this.showPlaceAddText = showText;
-		this.placeAdditionalText = text;
-	}
-	
-	/**
-	 * Metoda informuje, czy ma się wyświetlać dodatkowa wartośc liczbowa obok rysunku miejsca.
-	 * @return boolean - true, jeśli ma się wyświetlać
-	 */
-	public boolean getNumericalValueVisibility() {
-		return valueVisibilityStatus;
-	}
-	
-	/**
-	 * Zwraca liczbę która ma się wyświetlać obok miejsca.
-	 * @return double - liczba
-	 */
-	public double getNumericalValueDOUBLE() {
-		return placeNumericalValue;
-	}
-	
-	/**
-	 * Metoda zwraca aktualnie ustawiony kolor dla miejsca
-	 * @return Color - kolor
-	 */
-	public Color getPlaceNewColor() {
-		return placeColorValue;
-	}
-	
-	/**
-	 * Metoda informuje, czy miejsce ma być rysowane z innym kolorem wypełnienia
-	 * @return boolean - true, jeśli ma mieć inny kolor niż domyślny
-	 */
-	public boolean isColorChanged() {
-		return isColorChanged;
-	}
-	
-	/**
-	 * Metoda zwraca informację, czy ma być wyświetlany dodatkowy tekst obok rysunku miejsca.
-	 * @return boolean - true, jeśli tak
-	 */
-	public boolean showAddText() {
-		return showPlaceAddText;
-	}
-	
-	/**
-	 * Metoda zwraca dodatkowy tekst do wyświetlenia.
-	 * @return String - tekst
-	 */
-	public String returnAddText() {
-		return placeAdditionalText;
-	}
-	
-	/**
-	 * Reset przesunięć.
-	 */
-	public void resetOffs() {
-		this.txtXoff = 0;
-		this.txtYoff = 0;
-		this.valueXoff = 0;
-		this.valueYoff = 0;
-	}
-
-
 }

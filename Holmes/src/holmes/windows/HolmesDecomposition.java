@@ -2,10 +2,6 @@ package holmes.windows;
 
 import holmes.analyse.SubnetCalculator;
 import holmes.analyse.comparison.DecoComparisonCalculator;
-import holmes.analyse.comparison.GraphletComparator;
-import holmes.analyse.comparison.SubnetComparator;
-import holmes.analyse.comparison.structures.GreatCommonSubnet;
-import holmes.analyse.comparison.structures.Subnet;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
@@ -22,7 +18,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
@@ -857,10 +852,10 @@ public class HolmesDecomposition extends JFrame {
                 Color cl = cp.getColor(i);
                 System.out.println("dla i równego : " + i + " - B " + cl.getBlue() + " G " + cl.getGreen() + "R" + cl.getRed());
                 for (Place place : SubnetCalculator.adtSubNets.get(i).getSubInternalPlaces()) {
-                    place.setColorWithNumber(true, cp.getColor(i), false, 0, true, "[Sub net " + (i + 1) + "]");
+                    place.drawGraphBoxP.setColorWithNumber(true, cp.getColor(i), false, 0, true, "[Sub net " + (i + 1) + "]");
                 }
                 for (Place place : SubnetCalculator.adtSubNets.get(i).getSubBorderPlaces()) {
-                    place.setColorWithNumber(true, Color.lightGray, false, 0, true, "[Sub net " + (i + 1) + "]");
+                    place.drawGraphBoxP.setColorWithNumber(true, Color.lightGray, false, 0, true, "[Sub net " + (i + 1) + "]");
                 }
             }
         }
@@ -887,7 +882,7 @@ public class HolmesDecomposition extends JFrame {
                 Color cl = cp.getColor(i);
                 System.out.println("dla i równego : " + i + " - B " + cl.getBlue() + " G " + cl.getGreen() + "R" + cl.getRed());
                 for (Transition transition : SubnetCalculator.adtSubNets.get(i).getSubTransitions()) {
-                    transition.setColorWithNumber(true, cl, false, 0, true, "[Sub net " + (i + 1) + "]");
+                    transition.drawGraphBoxT.setColorWithNumber(true, cl, false, 0, true, "[Sub net " + (i + 1) + "]");
                 }
             }
         }
@@ -1279,9 +1274,9 @@ public class HolmesDecomposition extends JFrame {
 
             } else {
                 if (selectedSubNetindex == size - 1)
-                    place.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
+                    place.drawGraphBoxP.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
                 else
-                    place.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+                    place.drawGraphBoxP.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
             }
         }
 
@@ -1298,9 +1293,9 @@ public class HolmesDecomposition extends JFrame {
 
             } else {
                 if (selectedSubNetindex == size - 1)
-                    transition.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
+                    transition.drawGraphBoxT.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
                 else
-                    transition.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+                    transition.drawGraphBoxT.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -1379,10 +1374,10 @@ public class HolmesDecomposition extends JFrame {
 
         for (Place elementTwo : secondsubnet.getSubPlaces()) {
             if (firstsubnet.getSubPlaces().contains(elementTwo)) {
-                elementTwo.setColorWithNumber(true, Color.green, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+                elementTwo.drawGraphBoxP.setColorWithNumber(true, Color.green, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
                 npcn++;
             } else {
-                elementTwo.setColorWithNumber(true, Color.blue, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+                elementTwo.drawGraphBoxP.setColorWithNumber(true, Color.blue, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
             }
             npsn++;
         }
@@ -1391,17 +1386,17 @@ public class HolmesDecomposition extends JFrame {
             if (!secondsubnet.getSubPlaces().contains(element)) {
 
             } else {
-                element.setColorWithNumber(true, Color.red, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+                element.drawGraphBoxP.setColorWithNumber(true, Color.red, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
             }
             npfn++;
         }
 
         for (Transition elementTwo : secondsubnet.getSubTransitions()) {
             if (firstsubnet.getSubTransitions().contains(elementTwo)) {
-                elementTwo.setColorWithNumber(true, Color.green, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+                elementTwo.drawGraphBoxT.setColorWithNumber(true, Color.green, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
                 ntcn++;
             } else {
-                elementTwo.setColorWithNumber(true, Color.blue, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+                elementTwo.drawGraphBoxT.setColorWithNumber(true, Color.blue, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
             }
             ntsn++;
         }
@@ -1411,7 +1406,7 @@ public class HolmesDecomposition extends JFrame {
             if (secondsubnet.getSubTransitions().contains(element)) {
 
             } else {
-                element.setColorWithNumber(true, Color.red, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+                element.drawGraphBoxT.setColorWithNumber(true, Color.red, false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
             }
             ntfn++;
         }
@@ -1500,15 +1495,15 @@ public class HolmesDecomposition extends JFrame {
                 ArrayList<Transition> transitions = subNet.getSubTransitions();
                 if (transitions.size() > 1 || trivial) {
                     for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m) + " (" + transitions.size() + ")");
+                        transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m) + " (" + transitions.size() + ")");
                     }
 
                     ArrayList<Place> places = subnets.get(m).getSubPlaces();
                     for (Place place : places) {
                         if (subNet.getSubBorderPlaces().contains(place))
-                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, calcMiddleColor(currentColor, place.drawGraphBoxP.getPlaceNewColor()), false, m, true, "");
                         else
-                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, currentColor, false, m, true, "");
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
@@ -1524,16 +1519,16 @@ public class HolmesDecomposition extends JFrame {
                 ArrayList<Place> places = subNet.getSubPlaces();
                 if (places.size() > 1 || trivial) {
                     for (Place place : places) {
-                        place.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m) + " (" + places.size() + ")");
+                        place.drawGraphBoxP.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m) + " (" + places.size() + ")");
                     }
 
                     ArrayList<Transition> transitions = subnets.get(m).getSubTransitions();
                     for (Transition transition : transitions) {
                         if (subNet.getSubBorderTransition().contains(transition)) {
-                            transition.setColorWithNumber(true, calcMiddleColor(currentColor, transition.getTransitionNewColor()), false, m, true, "");
+                            transition.drawGraphBoxT.setColorWithNumber(true, calcMiddleColor(currentColor, transition.drawGraphBoxT.getTransitionNewColor()), false, m, true, "");
                             transition.setFrame(true);
                         } else
-                            transition.setColorWithNumber(true, currentColor, false, m, true, "");
+                            transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "");
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
@@ -1549,15 +1544,15 @@ public class HolmesDecomposition extends JFrame {
                 ArrayList<Transition> transitions = subNet.getSubTransitions();
                 if (transitions.size() > 1 || trivial) {
                     for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m) + " (" + transitions.size() + ")");
+                        transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m) + " (" + transitions.size() + ")");
                     }
 
                     ArrayList<Place> places = subnets.get(m).getSubPlaces();
                     for (Place place : places) {
                         if (subNet.getSubBorderPlaces().contains(place))
-                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, calcMiddleColor(currentColor, place.drawGraphBoxP.getPlaceNewColor()), false, m, true, "");
                         else
-                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, currentColor, false, m, true, "");
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
@@ -1584,15 +1579,15 @@ public class HolmesDecomposition extends JFrame {
                 ArrayList<Transition> transitions = subNet.getSubTransitions();
                 if (transitions.size() > 1 || trivial) {
                     for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m) + " (" + transitions.size() + ")");
+                        transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m) + " (" + transitions.size() + ")");
                     }
 
                     ArrayList<Place> places = subnets.get(m).getSubPlaces();
                     for (Place place : places) {
                         if (subNet.getSubBorderPlaces().contains(place))
-                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, calcMiddleColor(currentColor, place.drawGraphBoxP.getPlaceNewColor()), false, m, true, "");
                         else
-                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, currentColor, false, m, true, "");
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
@@ -1618,9 +1613,9 @@ public class HolmesDecomposition extends JFrame {
 
             for (Node transition : transitions) {
                 if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
-                    ((Transition) transition).setColorWithNumber(true, Color.red, false, m, true, "");
+                    ((Transition) transition).drawGraphBoxT.setColorWithNumber(true, Color.red, false, m, true, "");
                 if (transition.getType() == PetriNetElement.PetriNetElementType.PLACE)
-                    ((Place) transition).setColorWithNumber(true, Color.red, false, m, true, "");
+                    ((Place) transition).drawGraphBoxP.setColorWithNumber(true, Color.red, false, m, true, "");
             }
             ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
             for (Arc arc : arcs) {

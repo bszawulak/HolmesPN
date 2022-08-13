@@ -21,7 +21,7 @@ public class SimulatorStandardPN implements IEngine {
 	private ArrayList<Integer> transitionsIndexList = null;
 	private ArrayList<Integer> timeTransitionsIndexList = null;
 	private ArrayList<Transition> launchableTransitions = null;
-	private IRandomGenerator generator = null;
+	private IRandomGenerator generator;
 	private boolean maxMode = false;
 	private boolean singleMode = false;
 	private double planckDistance = 1.0;
@@ -58,11 +58,8 @@ public class SimulatorStandardPN implements IEngine {
 		} else {
 			this.generator = new StandardRandom(System.currentTimeMillis());
 		}
-		
-		if(overlord.getSettingsManager().getValue("simTDPNrunWhenEft").equals("1"))
-			TDPNdecision1 = true;
-		else
-			TDPNdecision1 = false;
+
+		TDPNdecision1 = overlord.getSettingsManager().getValue("simTDPNrunWhenEft").equals("1");
 		
 		//INIT:
 		this.transitions = transitions;
@@ -103,7 +100,7 @@ public class SimulatorStandardPN implements IEngine {
 	public void setSingleMode(boolean value) {
 		this.singleMode = value;
 		
-		if(singleMode != false)
+		if(singleMode)
 			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
 				maxMode = true;
 			}
@@ -115,7 +112,7 @@ public class SimulatorStandardPN implements IEngine {
 	 * @return ArrayList[Transition] - zbiór tranzycji do uruchomienia
 	 */
 	public ArrayList<Transition> getTransLaunchList(boolean emptySteps) {
-		if(emptySteps == true) {
+		if(emptySteps) {
 			generateNormal();
 		} else {
 			generateWithoutEmptySteps();
@@ -141,7 +138,7 @@ public class SimulatorStandardPN implements IEngine {
 				} else {
 					safetyCounter++;
 					if(safetyCounter == 9) { // safety measure
-						if(isPossibleStep(transitions) == false) {
+						if(!isPossibleStep(transitions)) {
 							GUIManager.getDefaultGUIManager().log("Error, no active transition, yet generateValidLaunchingTransitions "
 									+ "has been activated. Please advise authors if this error show up frequently.", "error", true);
 							generated = true; 
@@ -183,9 +180,9 @@ public class SimulatorStandardPN implements IEngine {
 		if (simulationType == SimulatorGlobals.SimNetType.BASIC) {
 			Collections.shuffle(transitionsIndexList);
 
-			for (int i = 0; i < transitionsIndexList.size(); i++) {
-				Transition transition = transitions.get(transitionsIndexList.get(i));
-				if (transition.isActive() ) {
+			for (Integer integer : transitionsIndexList) {
+				Transition transition = transitions.get(integer);
+				if (transition.isActive()) {
 					if ((generator.nextInt(100) < 50) || maxMode) { // 50% 0-4 / 5-9
 						transition.bookRequiredTokens();
 						launchableTransitions.add(transition);
@@ -195,11 +192,11 @@ public class SimulatorStandardPN implements IEngine {
 		} if (simulationType == SimulatorGlobals.SimNetType.COLOR) { //ok
 			Collections.shuffle(transitionsIndexList);
 
-			for (int i = 0; i < transitionsIndexList.size(); i++) {
-				Transition transition = transitions.get(transitionsIndexList.get(i));
+			for (Integer integer : transitionsIndexList) {
+				Transition transition = transitions.get(integer);
 
-				if(transition instanceof TransitionColored) {
-					if ( ((TransitionColored)transition).isColorActive() ) {
+				if (transition instanceof TransitionColored) {
+					if (((TransitionColored) transition).isColorActive()) {
 						if ((generator.nextInt(100) < 50) || maxMode) { // 50% 0-4 / 5-9
 							transition.bookRequiredTokens(); //ok
 							launchableTransitions.add(transition);
@@ -249,9 +246,9 @@ public class SimulatorStandardPN implements IEngine {
 		
 		//podziel tranzycje: na TPN, DPN, a jesli DPN skończyła liczyć - dodaj ją do listy odpaleń
 		for(int i=0; i<time_transitions.size(); i++) {
-			if(time_transitions.get(i).getDPNstatus() == true) {
+			if(time_transitions.get(i).timeFunctions.getDPNstatus()) {
 				//sprawdź które tranzycje DPN muszą odpalić:
-				if(time_transitions.get(i).isDPNforcedToFire() == true) {
+				if(time_transitions.get(i).timeFunctions.isDPNforcedToFire()) {
 					launchableTransitions.add(time_transitions.get(i));
 					indexTTList.remove((Integer)i); // ten problem z głowy
 				} else {
@@ -265,50 +262,50 @@ public class SimulatorStandardPN implements IEngine {
 		for(int i=0; i < indexDPNList.size(); i++) { //mają DPN status skoro trafiły na tę listę
 			int index = indexDPNList.get(i);
 			Transition dpn_transition = time_transitions.get(index);
-			if(dpn_transition.getTPNstatus() == true) {
-				if(dpn_transition.isTPNforcedToFired() == true) { //TPN zakończyło liczenie
+			if(dpn_transition.timeFunctions.getTPNstatus()) {
+				if(dpn_transition.timeFunctions.isTPNforcedToFired()) { //TPN zakończyło liczenie
 					int decision = DPNdecision(dpn_transition, index, indexDPNList, indexTTList);
 					if(decision == -1) {
 						i--;
-						continue;
+						//continue;
 					} else if(decision == 0) {
-						continue;
+						//continue;
 					}
 					
 				} else { //nie-TPN
 					if(dpn_transition.isActive()) {
-						if(dpn_transition.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
-							int eft = (int) dpn_transition.getEFT();
-							int lft = (int) dpn_transition.getLFT();
+						if(dpn_transition.timeFunctions.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
+							int eft = (int) dpn_transition.timeFunctions.getEFT();
+							int lft = (int) dpn_transition.timeFunctions.getLFT();
 							if(TDPNdecision1)
-								dpn_transition.setTPNtimerLimit(eft);
+								dpn_transition.timeFunctions.setTPNtimerLimit(eft);
 							else
-								dpn_transition.setTPNtimerLimit(getRandomInt(eft, lft));
-							dpn_transition.setTPNtimer(0); //start timer
+								dpn_transition.timeFunctions.setTPNtimerLimit(getRandomInt(eft, lft));
+							dpn_transition.timeFunctions.setTPNtimer(0); //start timer
 							
 							if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
 								int decision = DPNdecision(dpn_transition, index, indexDPNList, indexTTList);
 								if(decision == -1) {
 									i--;
-									continue;
+									//continue;
 								} else if(decision == 0) {
-									continue;
+									//continue;
 								}
 							} else {
 								indexTTList.remove((Integer)index);
 							}
 						} else { //update time
-							double oldTimer = dpn_transition.getTPNtimer();
+							double oldTimer = dpn_transition.timeFunctions.getTPNtimer();
 							oldTimer += planckDistance;
-							dpn_transition.setTPNtimer(oldTimer);
+							dpn_transition.timeFunctions.setTPNtimer(oldTimer);
 							
-							if(dpn_transition.isTPNforcedToFired() == true) {
+							if(dpn_transition.timeFunctions.isTPNforcedToFired()) {
 								int decision = DPNdecision(dpn_transition, index, indexDPNList, indexTTList);
 								if(decision == -1) {
 									i--;
-									continue;
+									//continue;
 								} else if(decision == 0) {
-									continue;
+									//continue;
 								}
 							} else {
 								indexTTList.remove((Integer)index);
@@ -316,55 +313,54 @@ public class SimulatorStandardPN implements IEngine {
 						}
 					} else { //not active
 						indexTTList.remove((Integer)index);
-						dpn_transition.resetTimeVariables();
-						continue;
+						dpn_transition.timeFunctions.resetTimeVariables();
+						//continue;
 					}
 				}
 			} else { // czyli: dpn_transition.getTPNstatus() == false
 				int decision = DPNdecision(dpn_transition, index, indexDPNList, indexTTList);
 				if(decision == -1) {
 					i--;
-					continue;
+					//continue;
 				} else if(decision == 0) {
-					continue;
+					//continue;
 				}
 			}
 		}
-		
-		for(int i=0; i < indexTTList.size(); i++) { //czyste TPN, DPNy zostały obsłużone wyżej
-			int index = indexTTList.get(i);
+
+		for (int index : indexTTList) { //czyste TPN, DPNy zostały obsłużone wyżej
 			Transition ttransition = time_transitions.get(index);
-			if(ttransition.isActive()) { //jeśli aktywna
-				if(ttransition.isTPNforcedToFired() == true) { //pure DPN: eft=lft=0, dur > 0
+			if (ttransition.isActive()) { //jeśli aktywna
+				if (ttransition.timeFunctions.isTPNforcedToFired()) { //pure DPN: eft=lft=0, dur > 0
 					launchableTransitions.add(ttransition);
 					ttransition.bookRequiredTokens();
 				} else { //jest tylko aktywna
-					if(ttransition.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
-						int eft = (int) ttransition.getEFT();
-						int lft = (int) ttransition.getLFT();
-						ttransition.setTPNtimerLimit(getRandomInt(eft, lft));
-						ttransition.setTPNtimer(0);
-						
-						if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
+					if (ttransition.timeFunctions.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
+						int eft = (int) ttransition.timeFunctions.getEFT();
+						int lft = (int) ttransition.timeFunctions.getLFT();
+						ttransition.timeFunctions.setTPNtimerLimit(getRandomInt(eft, lft));
+						ttransition.timeFunctions.setTPNtimer(0);
+
+						if (lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
 							launchableTransitions.add(ttransition);
 							ttransition.bookRequiredTokens();
 							//TAK, na pewno tu, a nie w kolejne iteracji, wtedy czas wzrośnie, więc
 							//byłoby wbrew idei natychmiastowości
 						}
 					} else { //update time
-						double oldTimer = ttransition.getTPNtimer();
+						double oldTimer = ttransition.timeFunctions.getTPNtimer();
 						oldTimer += planckDistance;
-						ttransition.setTPNtimer(oldTimer);
-						
-						if(ttransition.isTPNforcedToFired() == true) {
+						ttransition.timeFunctions.setTPNtimer(oldTimer);
+
+						if (ttransition.timeFunctions.isTPNforcedToFired()) {
 							launchableTransitions.add(ttransition);
 							ttransition.bookRequiredTokens();
 						}
 					}
 				}
 			} else { //reset zegara
-				ttransition.setTPNtimerLimit(-1);
-				ttransition.setTPNtimer(-1);
+				ttransition.timeFunctions.setTPNtimerLimit(-1);
+				ttransition.timeFunctions.setTPNtimer(-1);
 			}
 		}
 	}
@@ -376,13 +372,13 @@ public class SimulatorStandardPN implements IEngine {
 	 * @param index int - jej indeks na listach indeksów
 	 * @param indexDPNList ArrayList[Integer] - wektor indeksów DPN
 	 * @param indexTTList ArrayList[Integer] - wektor indeksów TPN
-	 * @return
+	 * @return int
 	 */
 	private int DPNdecision(Transition dpn_transition, int index, ArrayList<Integer> indexDPNList,  ArrayList<Integer> indexTTList) {
-		double timer = dpn_transition.getDPNtimer();
+		double timer = dpn_transition.timeFunctions.getDPNtimer();
 		if(timer == -1 && dpn_transition.isActive()) { //może wystartować
 			//ustaw zegar na start
-			dpn_transition.setDPNtimer(0);
+			dpn_transition.timeFunctions.setDPNtimer(0);
 			//dodaj do odpalonych (tylko połknie tokeny, nie wyprodukuje)
 			launchableTransitions.add(dpn_transition); //immediate fire bo 0=0
 			dpn_transition.bookRequiredTokens(); //odpala czy nie, rezerwuje tokeny teraz
@@ -392,17 +388,17 @@ public class SimulatorStandardPN implements IEngine {
 		}
 		if(timer > -1) { //jeśli zegar to 0 lub więcej : liczenie
 			timer += planckDistance;
-			dpn_transition.setDPNtimer(timer);
+			dpn_transition.timeFunctions.setDPNtimer(timer);
 			indexDPNList.remove((Integer)index);
 			
-			if(dpn_transition.isDPNforcedToFire()) {
+			if(dpn_transition.timeFunctions.isDPNforcedToFire()) {
 				//doliczyła do końca
 				launchableTransitions.add(dpn_transition);
 			}
 			indexTTList.remove((Integer)index);
 			return -1;
 		}
-		if(dpn_transition.isActive() == false) {
+		if(!dpn_transition.isActive()) {
 			indexTTList.remove((Integer)index);
 			return 0;
 		}
@@ -439,14 +435,14 @@ public class SimulatorStandardPN implements IEngine {
 	
 	@SuppressWarnings("unused")
 	private void oldHybrid() {
-		/** 22.02.2015 : PN + TPN */
+		/* 22.02.2015 : PN + TPN */
 		Collections.shuffle(timeTransitionsIndexList); //wymieszanie T-tranzycji
 		boolean ttPriority = false;
 		
 		for (int i = 0; i < time_transitions.size(); i++) {
 			Transition timeTransition = time_transitions.get(timeTransitionsIndexList.get(i)); //losowo wybrana czasowa
 			if(timeTransition.isActive()) { //jeśli aktywna
-				if(timeTransition.isTPNforcedToFired() == true) {
+				if(timeTransition.timeFunctions.isTPNforcedToFired()) {
 					//musi zostać uruchomiona
 					if(ttPriority) {
 						launchableTransitions.add(timeTransition);
@@ -454,12 +450,12 @@ public class SimulatorStandardPN implements IEngine {
 					}
 					
 				} else { //jest tylko aktywna
-					if(timeTransition.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
-						int eft = (int) timeTransition.getEFT();
-						int lft = (int) timeTransition.getLFT();
+					if(timeTransition.timeFunctions.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
+						int eft = (int) timeTransition.timeFunctions.getEFT();
+						int lft = (int) timeTransition.timeFunctions.getLFT();
 						int randomTime = getRandomInt(eft, lft);
-						timeTransition.setTPNtimerLimit(randomTime);
-						timeTransition.setTPNtimer(0);
+						timeTransition.timeFunctions.setTPNtimerLimit(randomTime);
+						timeTransition.timeFunctions.setTPNtimer(0);
 						
 						if(ttPriority) { 
 							if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
@@ -470,15 +466,15 @@ public class SimulatorStandardPN implements IEngine {
 							}
 						}
 					} else { //update time
-						int oldTimer = (int) timeTransition.getTPNtimer();
+						int oldTimer = (int) timeTransition.timeFunctions.getTPNtimer();
 						oldTimer++;
-						timeTransition.setTPNtimer(oldTimer);
+						timeTransition.timeFunctions.setTPNtimer(oldTimer);
 						
 						//jeśli to tu zostanie, to oznacza, że TT mają pierwszeństwo nad zwykłymi
 						// alternatywnie (opcje programu) można ustawić, że będzie to razem ze zwykłymi robione
 						
 						if(ttPriority) { 
-							if(timeTransition.isTPNforcedToFired() == true) {
+							if(timeTransition.timeFunctions.isTPNforcedToFired()) {
 								launchableTransitions.add(timeTransition);
 								timeTransition.bookRequiredTokens();
 							}
@@ -486,8 +482,8 @@ public class SimulatorStandardPN implements IEngine {
 					}
 				}
 			} else { //reset zegara
-				timeTransition.setTPNtimerLimit(-1);
-				timeTransition.setTPNtimer(-1);
+				timeTransition.timeFunctions.setTPNtimerLimit(-1);
+				timeTransition.timeFunctions.setTPNtimer(-1);
 			}
 		} 
 		
@@ -502,13 +498,13 @@ public class SimulatorStandardPN implements IEngine {
 			}
 			if(transition.getTransType() == TransitionType.TPN) { //jeśli czasowa
 				if(transition.isActive()) { //i aktywna
-					if(transition.isTPNforcedToFired() == true) { //i musi się uruchomić
+					if(transition.timeFunctions.isTPNforcedToFired()) { //i musi się uruchomić
 						launchableTransitions.add(transition);
 						transition.bookRequiredTokens();
 					}
 				} else { //reset
-					transition.setTPNtimerLimit(-1);
-					transition.setTPNtimer(-1);
+					transition.timeFunctions.setTPNtimerLimit(-1);
+					transition.timeFunctions.setTPNtimer(-1);
 				}
 			} else if (transition.isActive() ) {
 				if ((generator.nextInt(100) < 50) || maxMode) { // 50% 0-4 / 5-9
@@ -519,15 +515,6 @@ public class SimulatorStandardPN implements IEngine {
 		}
 	}
 
-	/**
-	 * Ustawia nowy obiekt generator liczb pseudo-losowych.
-	 * @param generator IRandomGenerator - nowy obiekt
-	 */
-	//@Override
-	//public void setGenerator(IRandomGenerator generator) {
-	//	this.generator = generator;
-	//}
-	
 	/**
 	 * Zwraca aktualnie ustawiony generator liczb pseudo-losowych.
 	 * @return IRandomGenerator

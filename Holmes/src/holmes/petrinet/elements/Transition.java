@@ -1,6 +1,5 @@
 package holmes.petrinet.elements;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.Serial;
@@ -12,6 +11,8 @@ import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.elements.Arc.TypeOfArc;
+import holmes.petrinet.elements.containers.TransitionGraphicsContainer;
+import holmes.petrinet.elements.containers.TransitionsQSimContainer;
 import holmes.petrinet.functions.FunctionContainer;
 import holmes.petrinet.functions.FunctionsTools;
 
@@ -23,58 +24,30 @@ import holmes.petrinet.functions.FunctionsTools;
 public class Transition extends Node {
     @Serial
     private static final long serialVersionUID = -4981812911464514746L;
-    /**
-     * PN, TPN, SPN, XTPN, CPNbasic
-     */
-    public enum TransitionType {PN, TPN, SPN, XTPN, CPNbasic} //, DPN, TDPN, CPNbasic }
+    /** PN, TPN, SPN, XTPN, CPN */
+    public enum TransitionType {PN, TPN, SPN, XTPN, CPN}
     protected TransitionType transType;
     protected static final int realRadius = 15;
 
-    //podstawowe właściwości:
+    //GRAPHICAL PROPERTIES:
     protected boolean isLaunching;
     protected boolean isGlowedINV = false;
     protected boolean isGlowedMTC = false;
-    //protected boolean isGlowedSub = false;
+
+    public TransitionGraphicsContainer drawGraphBoxT = new TransitionGraphicsContainer();
+    public TransitionsQSimContainer qSimBoxT = new TransitionsQSimContainer();
+
     protected boolean knockoutStatus = false;        // czy wyłączona (MCS, inne)
-
-    //wyświetlanie dodatkowych tekstów nad ikoną:
-    protected boolean isColorChanged = false;        //zmiana koloru - status
-    protected double transNumericalValue = 0.0;        //dodatkowa liczba do wyświetlenia
-    protected String transAdditionalText = "";
-    protected boolean showTransitionAddText = false;
-    protected Color transColorValue = new Color(255, 255, 255);
-    protected boolean valueVisibilityStatus = false;
-    //inne napisy, np MCT (?)
-    public int txtXoff = 0;
-    public int txtYoff = 0;
-    public int valueXoff = 0;
-    public int valueYoff = 0;
-    public Color defColor = new Color(224, 224, 224); //Color.LIGHT_GRAY;
-
-    //quickSim - kolorowanie wyników symulacji
-    public boolean qSimDrawed = false; // czy rysować dodatkowe oznaczenie tranzycji - okrąg
-    public int qSimOvalSize = 10; //rozmiar okręgu oznaczającego
-    public Color qSimOvalColor = Color.RED;
-    public Color qSimFillColor = Color.WHITE; //domyślny kolor
-    public boolean qSimDrawStats = false; // czy rysować wypełnienie tranzycji
-    public int qSimFillValue = 0; //poziom wypełnienia
-    public double qSimFired = 0; //ile razy uruchomiona
     public boolean borderFrame = false;
 
-    //opcje czasowe:
-    protected double TPN_eft = 0; //TPN
-    protected double TPN_lft = 0; //TPN
-    protected double TPNtimerLimit = -1; //TPN
-    protected double TPNtimer = -1; //TPN
-    protected double DPNduration = 0; //DPN
-    protected double DPNtimer = -1; //DPN
-    protected boolean TPNactive = false;
-    protected boolean DPNactive = false;
 
+    //tranzycje czasowe:
+    public TransitionTimeExtention timeFunctions = new TransitionTimeExtention();
 
     //tranzycja funkcyjna:
     protected boolean isFunctional = false;
     protected ArrayList<FunctionContainer> fList;
+
 
     //tranzycja stochastyczna:
     /**
@@ -84,10 +57,13 @@ public class Transition extends Node {
     protected StochaticsType stochasticType;
     protected double firingRate = 1.0;
     protected SPNtransitionData SPNbox = null;
+
     //SSA
     protected double SPNprobTime = 0.0;
     //inne:
     protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
+
+
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
@@ -252,54 +228,6 @@ public class Transition extends Node {
     }
 
 
-    /**
-     * Metoda informuje, czy tramzycja ma być rysowana z innym kolorem wypełnienia
-     * @return boolean - true, jeśli ma mieć inny kolor niż domyślny
-     */
-    public boolean isColorChanged() {
-        return isColorChanged;
-    }
-
-    /**
-     * Metoda zwraca informację, czy ma być wyświetlany dodatkowy tekst obok rysunku tranzycji.
-     * @return boolean - true, jeśli tak
-     */
-    public boolean isShowedAddText() {
-        return showTransitionAddText;
-    }
-
-    public void setAddText(String txt) {
-        showTransitionAddText = true;
-        transAdditionalText = txt;
-    }
-
-    /**
-     * Metoda zwraca dodatkowy tekst do wyświetlenia.
-     * @return String - tekst
-     */
-    public String returnAddText() {
-        return transAdditionalText;
-    }
-
-    /**
-     * Metoda ustawia stan zmiany koloru oraz liczbę do wyświetlenia.
-     * @param isColorChanged      boolean - true, jeśli ma rysować się w kolorze
-     * @param transColorValue     Color - na jaki kolor
-     * @param showNumber          boolean - true, jeśli liczba ma się wyświetlać
-     * @param transNumericalValue double - liczba do wyświetlenia
-     * @param showText            boolean - czy pokazać dodatkowy tekst
-     * @param text                String - dodatkowy tekst do wyświetlenia
-     */
-    public void setColorWithNumber(boolean isColorChanged, Color transColorValue,
-                                   boolean showNumber, double transNumericalValue, boolean showText, String text) {
-        this.isColorChanged = isColorChanged;
-        this.transColorValue = transColorValue;
-        this.valueVisibilityStatus = showNumber;
-        this.transNumericalValue = transNumericalValue;
-        this.showTransitionAddText = showText;
-        this.transAdditionalText = text;
-    }
-
     public void setFrame(boolean is){
         this.borderFrame = is;
         /*
@@ -308,69 +236,6 @@ public class Transition extends Node {
         else
             this.borderFrame = true;
         */
-    }
-
-    /**
-     * Metoda ustawia stan zmiany koloru oraz liczbę do wyświetlenia.
-     * @param isColorChanged      boolean - true, jeśli ma rysować się w kolorze
-     * @param transColorValue     Color - na jaki kolor
-     * @param showNumber          boolean - true, jeśli liczba ma się wyświetlać
-     * @param transNumericalValue double - liczba do wyświetlenia
-     * @param showText            boolean - czy pokazać dodatkowy tekst
-     * @param text                String - dodatkowy tekst do wyświetlenia
-     * @param txtXoff             int - przesunięcie X tekstu
-     * @param txtYoff             int - przesunięcie Y tekstu
-     * @param valueXoff           int - przesunięcie X liczby
-     * @param valueYoff           int - przesunięcie Y liczby
-     */
-    public void setColorWithNumber(boolean isColorChanged, Color transColorValue,
-                                   boolean showNumber, double transNumericalValue, boolean showText, String text,
-                                   int txtXoff, int txtYoff, int valueXoff, int valueYoff) {
-        this.isColorChanged = isColorChanged;
-        this.transColorValue = transColorValue;
-        this.valueVisibilityStatus = showNumber;
-        this.transNumericalValue = transNumericalValue;
-        this.showTransitionAddText = showText;
-        this.transAdditionalText = text;
-
-        this.txtXoff = txtXoff;
-        this.txtYoff = txtYoff;
-        this.valueXoff = valueXoff;
-        this.valueYoff = valueYoff;
-    }
-
-    /**
-     * Reset przesunięć.
-     */
-    public void resetOffs() {
-        this.txtXoff = 0;
-        this.txtYoff = 0;
-        this.valueXoff = 0;
-        this.valueYoff = 0;
-    }
-
-    /**
-     * Metoda informuje, czy ma się wyświetlać dodatkowa wartośc liczbowa obok rysunku tranzycji.
-     * @return boolean - true, jeśli ma się wyświetlać
-     */
-    public boolean getNumericalValueVisibility() {
-        return valueVisibilityStatus;
-    }
-
-    /**
-     * Zwraca liczbę która ma się wyświetlać obok kwadratu tranzycji.
-     * @return double - liczba
-     */
-    public double getNumericalValueDOUBLE() {
-        return transNumericalValue;
-    }
-
-    /**
-     * Metoda zwraca aktualnie ustawiony kolor dla tranzycji
-     * @return Color - kolor
-     */
-    public Color getTransitionNewColor() {
-        return transColorValue;
     }
 
     /**
@@ -421,8 +286,8 @@ public class Transition extends Node {
         if (knockoutStatus)
             return false;
 
-        if (DPNactive) {
-            if (DPNtimer == DPNduration) { //duration zawsze >= 0, dTimer(pre-start) = -1, więc ok
+        if (timeFunctions.DPNactive) {
+            if (timeFunctions.DPNtimer == timeFunctions.DPNduration) { //duration zawsze >= 0, dTimer(pre-start) = -1, więc ok
                 return true; //nie ważne co mówią pre-places, ta tranzycja musi odpalić!
             }
         }
@@ -564,213 +429,6 @@ public class Transition extends Node {
      */
     public void setTransType(TransitionType value) {
         this.transType = value;
-    }
-
-    //**************************************************************************************
-    //*********************************      TIME        ***********************************
-    //**************************************************************************************
-
-    /**
-     * Metoda ustala dolny limit niezerowego czasu gotowości - EFT.
-     *
-     * @param value double - czas EFT
-     */
-    public void setEFT(double value) {
-        if (value < 0) {
-            this.TPN_eft = 0;
-            return;
-        }
-        if (value > TPN_lft) {
-            this.TPN_eft = TPN_lft;
-            return;
-        }
-        this.TPN_eft = value;
-    }
-
-    /**
-     * Na potrzeby wczytywania pliku projektu, bez porownania z LFT
-     * @param value - double
-     */
-    public void forceSetEFT(double value) {
-        if (value < 0) {
-            this.TPN_eft = 0;
-            return;
-        }
-        this.TPN_eft = value;
-    }
-
-    /**
-     * Metoda pozwala odczytać przypisany czas EFT tranzycji.
-     *
-     * @return double - czas EFT
-     */
-    public double getEFT() {
-        return this.TPN_eft;
-    }
-
-    /**
-     * Metoda ustala górny limit nieujemnego czasu krytycznego - LFT.
-     *
-     * @param value double - czas LFT (deadline na uruchomienie)
-     */
-    public void setLFT(double value) {
-        if (value < TPN_eft) {
-            this.TPN_lft = TPN_eft;
-            return;
-        }
-
-        this.TPN_lft = value;
-    }
-
-    /**
-     * Metoda pozwala odczytać przypisany czas LFT tranzycji.
-     *
-     * @return double - czas LFT
-     */
-    public double getLFT() {
-        return this.TPN_lft;
-    }
-
-    /**
-     * Metoda pozwala ustawic czas uruchomienia tranzycji.
-     *
-     * @param value double - czas uruchomienia tranzycji
-     */
-    public void setTPNtimerLimit(double value) {
-        TPNtimerLimit = value;
-    }
-
-    /**
-     * Metoda zwraca aktualny czas uruchomienia.
-     *
-     * @return double - czas uruchomienia - pole FireTime
-     */
-    public double getTPNtimerLimit() {
-        return TPNtimerLimit;
-    }
-
-    /**
-     * Metoda zwraca aktualny zegar uruchomienia dla tranzycji.
-     *
-     * @return double - czas uruchomienia - pole FireTime
-     */
-    public double getTPNtimer() {
-        return TPNtimer;
-    }
-
-    /**
-     * Metoda pozwala ustawic zegar uruchomienia tranzycji.
-     *
-     * @param value double - czas uruchomienia tranzycji
-     */
-    public void setTPNtimer(double value) {
-        TPNtimer = value;
-    }
-
-    /**
-     * Metoda ustawia nowy czas trwania odpalenia dla tranzycji DPN.
-     *
-     * @param value double - nowy czas
-     */
-    public void setDPNduration(double value) {
-        if (value < 0)
-            DPNduration = 0;
-        else
-            DPNduration = value;
-    }
-
-    /**
-     * Metoda zwraca ustawioną dla tranzycji DPN wartość duration.
-     *
-     * @return double - czas trwania odpalenia tranzycji
-     */
-    public double getDPNduration() {
-        return DPNduration;
-    }
-
-    /**
-     * Metoda ustawia nowy wewnętrzny timer dla czasu odpalenia dla tranzycji DPN.
-     *
-     * @param value double - nowa wartość zegara dla DPN
-     */
-    public void setDPNtimer(double value) {
-        DPNtimer = value;
-    }
-
-    /**
-     * Metoda zwraca aktualną wartość zegara odliczającego czas do odpalenia tranzycji DPN (produkcji tokenów).
-     *
-     * @return double durationTimer -
-     */
-    public double getDPNtimer() {
-        return DPNtimer;
-    }
-
-    /**
-     * Metoda pozwalająca stwierdzić, czy tranzycja DPN jest gotowa do produkcji tokenów.
-     *
-     * @return boolean - true, jeśli zegar DPN ma wartość równą ustalonemu czasowi DPN dla tranzycji
-     */
-    public boolean isDPNforcedToFire() {
-        return DPNtimer >= DPNduration;
-    }
-
-    /**
-     * Metoda informująca czy tranzycja TPN musi zostać uruchomiona.
-     *
-     * @return boolean - true, jeśli wewnętrzny zegar (!= -1) jest równy deadlinowi dla TPN
-     */
-    public boolean isTPNforcedToFired() {
-        if (TPNtimerLimit != -1) {
-            return TPNtimerLimit == TPNtimer;
-        } else {
-            return false; //nieaktywna
-        }
-    }
-
-    /**
-     * Metoda resetuje zegary tranzycji, powinna być używana przez symulatory po tym, jak wyprodukowano
-     * tokeny (faza II: AddTokens symulacji)
-     */
-    public void resetTimeVariables() {
-        TPNtimerLimit = -1;
-        TPNtimer = -1;
-        DPNtimer = -1;
-    }
-
-    /**
-     * Metoda włącza lub wyłącza tryb TPN
-     * @param status boolean - true, jeśli tryb TPN ma być aktywny
-     */
-    public void setTPNstatus(boolean status) {
-        TPNactive = status;
-    }
-
-    /**
-     * Metoda zwraca stan aktywności trybu TPN
-     *
-     * @return boolean - true, jeśli TPN aktywny
-     */
-    public boolean getTPNstatus() {
-        return TPNactive;
-    }
-
-    /**
-     * Metoda włącza lub wyłącza tryb DPN
-     *
-     * @param status boolean - true, jeśli tryb DPN ma być aktywny
-     */
-    public void setDPNstatus(boolean status) {
-        DPNactive = status;
-    }
-
-    /**
-     * Metoda zwraca stan aktywności trybu DPN
-     *
-     * @return boolean - true, jeśli DPN aktywny
-     */
-    public boolean getDPNstatus() {
-        return DPNactive;
     }
 
     /**
@@ -990,6 +648,6 @@ public class Transition extends Node {
      * @return boolean - true, jeśli colored, false jeśli nie
      */
     public boolean isColored() {
-        return transType == TransitionType.CPNbasic;
+        return transType == TransitionType.CPN;
     }
 }

@@ -778,16 +778,16 @@ public class HolmesKnockout extends JFrame {
 			
 			for(int id : dataMatrix.get(0)) { //wyłączane przez objR
 				trans_TMP= transitions.get(id);
-				trans_TMP.setColorWithNumber(true, Color.black, false, -1, false, "");
+				trans_TMP.drawGraphBoxT.setColorWithNumber(true, Color.black, false, -1, false, "");
 			}
 			for(int id : dataMatrix.get(1)) { //równorzędne do objR
 				trans_TMP= transitions.get(id);
-				trans_TMP.setColorWithNumber(true, Color.blue, false, -1, false, "");
+				trans_TMP.drawGraphBoxT.setColorWithNumber(true, Color.blue, false, -1, false, "");
 			}
 			
 			int rootID = infoMap.getRoot().transLocation;
 			trans_TMP= transitions.get(rootID);
-			trans_TMP.setColorWithNumber(true, Color.red, false, -1, false, "");
+			trans_TMP.drawGraphBoxT.setColorWithNumber(true, Color.red, false, -1, false, "");
 			
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 		} catch (Exception ex) {

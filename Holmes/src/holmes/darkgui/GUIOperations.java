@@ -30,14 +30,14 @@ import holmes.utilities.Tools;
 import holmes.varia.Check;
 import holmes.workspace.ExtensionFileFilter;
 
+import static holmes.graphpanel.EditorResources.*;
+
 /**
  * Klasa odpowiedzialna za meta-obsługę wszystkich metod wejścia-wyjścia i paru innych, dla GUIManager.
  * W ogólności, inne elementy interfejsu wywołują zawarte tutaj metody, a z nich sterowania w miarę 
  * potrzeby idzie dalej, aby zrealizować daną funkcję programu.
  * Krótko: kiedyś wszystkie metody tu zawarte były w klasie GUIManager. Ale zrobiło się tam zbyt tłoczno.
  * Wciąż z resztą jest.
- * @author MR
- *
  */
 public class GUIOperations {
 	GUIManager overlord;
@@ -1068,24 +1068,24 @@ public class GUIOperations {
 		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 		if(mode == 0) { //TPN only
 			for(Transition t : transitions) {
-				if(t.getTPNstatus()) {
-					t.setColorWithNumber(true, Color.green, false, -1, true, "TPN");
+				if(t.timeFunctions.getTPNstatus()) {
+					t.drawGraphBoxT.setColorWithNumber(true, Color.green, false, -1, true, "TPN");
 				}
 			}
 		} else if(mode == 1) { //DPN
 			for(Transition t : transitions) {
-				if(t.getDPNstatus()) {
-					t.setColorWithNumber(true, Color.green, false, -1, true, "DPN");
+				if(t.timeFunctions.getDPNstatus()) {
+					t.drawGraphBoxT.setColorWithNumber(true, Color.green, false, -1, true, "DPN");
 				}
 			}
 		} else if(mode == 2) { //TPN i TPN
 			for(Transition t : transitions) {
-				if(t.getTPNstatus() && !t.getDPNstatus()) {
-					t.setColorWithNumber(true, new Color(51,255,51), false, -1, true, "TPN");
-				} else if(!t.getTPNstatus() && t.getDPNstatus()) {
-					t.setColorWithNumber(true, new Color(0,153,76), false, -1, true, "DPN");
-				} else if(t.getTPNstatus() && t.getDPNstatus()) {
-					t.setColorWithNumber(true, new Color(0,102,0), false, -1, true, "TPN / DPN");
+				if(t.timeFunctions.getTPNstatus() && !t.timeFunctions.getDPNstatus()) {
+					t.drawGraphBoxT.setColorWithNumber(true, tpnNOTdpn, false, -1, true, "TPN");
+				} else if(!t.timeFunctions.getTPNstatus() && t.timeFunctions.getDPNstatus()) {
+					t.drawGraphBoxT.setColorWithNumber(true, dpnNOTtpn, false, -1, true, "DPN");
+				} else if(t.timeFunctions.getTPNstatus() && t.timeFunctions.getDPNstatus()) {
+					t.drawGraphBoxT.setColorWithNumber(true, tpnANDdpn, false, -1, true, "TPN / DPN");
 				}
 			}
 		}

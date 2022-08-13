@@ -2,7 +2,6 @@ package holmes.windows;
 
 import holmes.analyse.SubnetCalculator;
 import holmes.darkgui.GUIManager;
-import holmes.graphpanel.SelectionManager;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.elements.*;
 
@@ -160,9 +159,9 @@ public class HolmesReductionPrototype extends JFrame {
                     }
 
                     if (inPlace.getType().equals(PetriNetElement.PetriNetElementType.PLACE))
-                        ((Place) inPlace).setColorWithNumber(true, Color.BLUE, false, 0, true, "");
+                        ((Place) inPlace).drawGraphBoxP.setColorWithNumber(true, Color.BLUE, false, 0, true, "");
                     else
-                        ((Transition) inPlace).setColorWithNumber(true, Color.RED, false, 0, true, "");
+                        ((Transition) inPlace).drawGraphBoxT.setColorWithNumber(true, Color.RED, false, 0, true, "");
 
                 }
             }
@@ -226,7 +225,7 @@ public class HolmesReductionPrototype extends JFrame {
                                 + " out Arc: " + n.getOutArcs().size() + " in Nodes: " + n.getInNodes().size() + " out Nodes: " + n.getOutNodes().size());
                     }
 
-                    ((Place) inPlace).setColorWithNumber(true, Color.BLUE, false, 0, true, "");
+                    ((Place) inPlace).drawGraphBoxP.setColorWithNumber(true, Color.BLUE, false, 0, true, "");
                 }
             }
         }
@@ -375,7 +374,7 @@ public class HolmesReductionPrototype extends JFrame {
                     GUIManager.getDefaultGUIManager().markNetChange();
                     GUIManager.getDefaultGUIManager().repaint();
 
-                    ((Transition) inTransition).setColorWithNumber(true, Color.RED, false, 0, true, "");
+                    ((Transition) inTransition).drawGraphBoxT.setColorWithNumber(true, Color.RED, false, 0, true, "");
                 }
             }
         }
@@ -404,7 +403,7 @@ public class HolmesReductionPrototype extends JFrame {
             }
             if(parallel.size()>0) {
                 infoPane.append("Reduction C: Parallel place merge :" + p.getName() +  "==" + parallelElements + "\n");
-                p.setColorWithNumber(true, Color.GREEN, false, 0, true, "");
+                p.drawGraphBoxP.setColorWithNumber(true, Color.GREEN, false, 0, true, "");
                 toReduce.removeAll(parallel);
             }
         }
@@ -435,7 +434,7 @@ public class HolmesReductionPrototype extends JFrame {
             if(parallel.size()>0) {
                 infoPane.append("Reduction D: Parallel transition merge :" + t.getName() +  "==" + parallelElements + "\n");
                 toReduce.removeAll(parallel);
-                t.setColorWithNumber(true, Color.YELLOW, false, 0, true, "");
+                t.drawGraphBoxT.setColorWithNumber(true, Color.YELLOW, false, 0, true, "");
             }
         }
     }
@@ -491,14 +490,14 @@ public class HolmesReductionPrototype extends JFrame {
                 }
 
                 if (path.startNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE))
-                    ((Place) path.startNode).setColorWithNumber(true, Color.BLACK, false, 0, true, "");
+                    ((Place) path.startNode).drawGraphBoxP.setColorWithNumber(true, Color.BLACK, false, 0, true, "");
                 else
-                    ((Transition) path.startNode).setColorWithNumber(true, Color.BLACK, false, 0, true, "");
+                    ((Transition) path.startNode).drawGraphBoxT.setColorWithNumber(true, Color.BLACK, false, 0, true, "");
 
                 if (path.endNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE))
-                    ((Place) path.endNode).setColorWithNumber(true, Color.BLACK, false, 0, true, "");
+                    ((Place) path.endNode).drawGraphBoxP.setColorWithNumber(true, Color.BLACK, false, 0, true, "");
                 else
-                    ((Transition) path.endNode).setColorWithNumber(true, Color.BLACK, false, 0, true, "");
+                    ((Transition) path.endNode).drawGraphBoxT.setColorWithNumber(true, Color.BLACK, false, 0, true, "");
 
             }
         }

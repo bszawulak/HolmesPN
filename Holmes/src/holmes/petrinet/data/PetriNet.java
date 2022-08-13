@@ -932,7 +932,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			for(Transition trans : getTransitions()) {
 				trans.setLaunching(false);
 				if(trans.getTransType() == TransitionType.TPN) {
-					trans.resetTimeVariables();
+					trans.timeFunctions.resetTimeVariables();
 				}
 			}
 
@@ -1003,7 +1003,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			for(Transition trans : transitions) {
 				trans.setLaunching(false);
 				if(trans.getTransType() == TransitionType.TPN) {
-					trans.resetTimeVariables();
+					trans.timeFunctions.resetTimeVariables();
 				}
 				if( trans instanceof TransitionXTPN ) {
 					((TransitionXTPN)trans).resetTimeVariables_xTPN();
@@ -1062,7 +1062,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				trans.setLaunching(false);
 				
 				if(trans.getTransType() == TransitionType.TPN) {
-					trans.resetTimeVariables();
+					trans.timeFunctions.resetTimeVariables();
 				}
 			}
 
@@ -1645,13 +1645,13 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		for (Node n : getNodes()) {
 			if (n.getType() == PetriNetElementType.TRANSITION) {
 				Transition trans = ((Transition) n);
-				trans.setColorWithNumber(false, Color.white, false, -1, false, "");
-				trans.resetOffs();
+				trans.drawGraphBoxT.setColorWithNumber(false, Color.white, false, -1, false, "");
+				trans.drawGraphBoxT.resetOffs();
+				trans.qSimBoxT.qSimDrawed = false;
+				trans.qSimBoxT.qSimDrawStats = false;
+				trans.qSimBoxT.qSimOvalSize = 10;
 
-				trans.qSimDrawed = false;
-				trans.qSimDrawStats = false;
-				trans.qSimArcSign = false;
-				trans.qSimOvalSize = 10;
+				n.qSimArcSign = false;  //NODE level
 			}
 
 			if(n instanceof TransitionXTPN) {
@@ -1668,13 +1668,13 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		for (Node n : getNodes()) {
 			if (n.getType() == PetriNetElementType.PLACE) {
 				Place place = ((Place) n);
-				place.setColorWithNumber(false, Color.white, false, -1, false, "");
-				place.resetOffs();
+				place.drawGraphBoxP.setColorWithNumber(false, Color.white, false, -1, false, "");
+				place.drawGraphBoxP.resetOffs();
+				place.qSimBoxP.qSimDrawed = false;
+				place.qSimBoxP.qSimDrawStats = false;
+				place.qSimBoxP.qSimOvalSize = 10;
 
-				place.qSimDrawed = false;
-				place.qSimDrawStats = false;
-				place.qSimArcSign = false;
-				place.qSimOvalSize = 10;
+				n.qSimArcSign = false; //NODE level
 			}
 
 			if(n instanceof PlaceXTPN) {
@@ -1844,8 +1844,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				Transition transition = ((Transition) n);
 				//transition.setXTPNstatus(true);
 				transition.setTransType(TransitionType.XTPN);
-				transition.setTPNstatus(false);
-				transition.setDPNstatus(false);
+				transition.timeFunctions.setTPNstatus(false);
+				transition.timeFunctions.setDPNstatus(false);
 				transition.setSPNtype(Transition.StochaticsType.NONE);
 			}
 		}

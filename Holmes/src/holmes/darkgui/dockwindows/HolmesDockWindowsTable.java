@@ -3516,7 +3516,7 @@ public class HolmesDockWindowsTable extends JPanel {
         minMaxLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(minMaxLabel);
         JFormattedTextField minTimeField = new JFormattedTextField();
-        minTimeField.setValue(transition.getEFT());
+        minTimeField.setValue(transition.timeFunctions.getEFT());
         minTimeField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
@@ -3530,7 +3530,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
 
         JFormattedTextField maxTimeField = new JFormattedTextField();
-        maxTimeField.setValue(transition.getLFT());
+        maxTimeField.setValue(transition.timeFunctions.getLFT());
         maxTimeField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
@@ -3556,7 +3556,7 @@ public class HolmesDockWindowsTable extends JPanel {
         durationLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(durationLabel);
         JFormattedTextField durationField = new JFormattedTextField();
-        durationField.setValue(transition.getDPNduration());
+        durationField.setValue(transition.timeFunctions.getDPNduration());
         durationField.setBounds(columnA_posX + 90, columnB_Y += 20, 90, 20);
         durationField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
@@ -3572,7 +3572,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(durationField);
 
         //columnA_Y+=40;
-        JCheckBox tpnBox = new JCheckBox("TPN active", transition.getTPNstatus());
+        JCheckBox tpnBox = new JCheckBox("TPN active", transition.timeFunctions.getTPNstatus());
         tpnBox.setBounds(columnB_posX - 5, columnB_Y += 20, 100, 20);
         tpnBox.setEnabled(true);
         tpnBox.addItemListener(e -> {
@@ -3584,7 +3584,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(tpnBox);
 
         columnA_Y += 20;
-        JCheckBox dpnBox = new JCheckBox("DPN active", transition.getDPNstatus());
+        JCheckBox dpnBox = new JCheckBox("DPN active", transition.timeFunctions.getDPNstatus());
         dpnBox.setBounds(columnB_posX + 100, columnB_Y, 100, 20);
         dpnBox.setEnabled(true);
         dpnBox.addItemListener(e -> {
@@ -6034,7 +6034,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 int fireValue = invariant.get(t);
                 Transition trans = transitions.get(t);
                 if (fireValue == 0) {
-                    trans.qSimDrawed = false;
+                    trans.qSimBoxT.qSimDrawed = false;
                     trans.qSimArcSign = false;
                     continue;
                 }
@@ -6045,7 +6045,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     if (mctNo == -1) {
                         trans.setGlowedINV(glowT_inv, fireValue);
                     } else {
-                        trans.setColorWithNumber(true, cp.getColor(mctNo), false, fireValue, true, "[MCT" + (mctNo + 1) + "]");
+                        trans.drawGraphBoxT.setColorWithNumber(true, cp.getColor(mctNo), false, fireValue, true, "[MCT" + (mctNo + 1) + "]");
                         trans.setGlowedINV(false, fireValue);
                     }
                 } else {
@@ -6053,9 +6053,9 @@ public class HolmesDockWindowsTable extends JPanel {
                 }
 
                 if (invStructure) {
-                    trans.qSimDrawed = true;
+                    trans.qSimBoxT.qSimDrawed = true;
                     trans.qSimArcSign = true;
-                    trans.qSimFillColor = new Color(0, 102, 0);
+                    trans.qSimBoxT.qSimFillColor = new Color(0, 102, 0);
                     for (ElementLocation el : trans.getElementLocations()) {
                         el.qSimArcSign = true;
                         //el.qSimDrawed = true;
@@ -6068,7 +6068,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     for (ElementLocation el : place.getElementLocations()) { //dla każdej lokalizacji miejsca
                         boolean inFound = false;
                         for (Arc inArc : el.getInArcs()) { //sprawdź łuki wejściowe
-                            if (((Transition) inArc.getStartNode()).qSimDrawed) {
+                            if (((Transition) inArc.getStartNode()).qSimBoxT.qSimDrawed) {
                                 inFound = true; //to znaczy, że prowadzi tu łuk z tranzycji inwariantu
                                 break;
                             }
@@ -6078,17 +6078,17 @@ public class HolmesDockWindowsTable extends JPanel {
 
                         for (ElementLocation el2 : place.getElementLocations()) {
                             for (Arc outArc : el2.getOutArcs()) { //sprawdź łuki wyjściowe
-                                if (((Transition) outArc.getEndNode()).qSimDrawed) {
+                                if (((Transition) outArc.getEndNode()).qSimBoxT.qSimDrawed) {
                                     el2.qSimArcSign = true;    //to znaczy, że prowadzi stąd łuk do tranzycji inwariantu
                                     el2.qSimDrawed = true;
                                     el.qSimArcSign = true;
                                     el.qSimDrawed = true;
-                                    place.qSimFillColor = new Color(0, 102, 0);
-                                    place.qSimDrawed = true;
+                                    place.qSimBoxP.qSimFillColor = new Color(0, 102, 0);
+                                    place.qSimBoxP.qSimDrawed = true;
 
-                                    place.qSimTokens = 0; //jakie to płytkie :)
-                                    place.qSimOvalColor = new Color(0, 102, 0);
-                                    place.qSimOvalSize = 0;
+                                    place.qSimBoxP.qSimTokens = 0; //jakie to płytkie :)
+                                    place.qSimBoxP.qSimOvalColor = new Color(0, 102, 0);
+                                    place.qSimBoxP.qSimOvalSize = 0;
                                     break;
                                 }
                             }
@@ -6165,11 +6165,11 @@ public class HolmesDockWindowsTable extends JPanel {
                     //int[] color = getRGB(usuwane);
                     //new Color(color[0],color[1],color[2]
 
-                    realT.setColorWithNumber(true, getDiscColor(fr), true, freqVector.get(i), false, "");
+                    realT.drawGraphBoxT.setColorWithNumber(true, getDiscColor(fr), true, freqVector.get(i), false, "");
                     System.out.println(realT.getName() + " trans \t" + realT.getID() + " \t " + fr + " \t " + freqVector.get(i));
 
                 } else {
-                    realT.setColorWithNumber(true, Color.gray, true, 0, false, "");
+                    realT.drawGraphBoxT.setColorWithNumber(true, Color.gray, true, 0, false, "");
                     System.out.println(realT.getName() + " trans \t" + realT.getID() + " \t " + 0 + " \t " + 0);
                 }
             }
@@ -6395,7 +6395,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (value == 0)
                     continue;
 
-                places.get(p).setColorWithNumber(true, EditorResources.glowPlaceColorLevelBlue, false, -1, false, "");
+                places.get(p).drawGraphBoxP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelBlue, false, -1, false, "");
             }
             //name field:
             String name = overlord.getWorkspace().getProject().accessP_InvDescriptions().get(selectedP_invIndex);
@@ -6421,9 +6421,9 @@ public class HolmesDockWindowsTable extends JPanel {
             for (int i = 0; i < freqVector.size(); i++) {
                 Place realP = places_tmp.get(i);
                 if (freqVector.get(i) != 0) {
-                    realP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelBlue, true, freqVector.get(i), false, "");
+                    realP.drawGraphBoxP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelBlue, true, freqVector.get(i), false, "");
                 } else
-                    realP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelRed, true, 0, false, "");
+                    realP.drawGraphBoxP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelRed, true, 0, false, "");
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -6449,7 +6449,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 Place realP = places_tmp.get(deadOne);
                 String p1 = Tools.setToSize("p" + deadOne, 5, false);
                 note.addTextLineNL(p1 + " | " + realP.getName(), "text");
-                realP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelRed, false, -1, false, "");
+                realP.drawGraphBoxP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelRed, false, -1, false, "");
                 //realT.setGlowedINV(true, 0);
                 counter++;
             }
@@ -6660,9 +6660,9 @@ public class HolmesDockWindowsTable extends JPanel {
                 transition.setGlowed_MTC(true);
             } else {
                 if (selectedMCTindex == size - 1)
-                    transition.setColorWithNumber(true, cp.getColor(selectedMCTindex), false, 0, true, "[trivial]");
+                    transition.drawGraphBoxT.setColorWithNumber(true, cp.getColor(selectedMCTindex), false, 0, true, "[trivial]");
                 else
-                    transition.setColorWithNumber(true, cp.getColor(selectedMCTindex), false, 0, true, "[MCT" + (selectedMCTindex + 1) + "]");
+                    transition.drawGraphBoxT.setColorWithNumber(true, cp.getColor(selectedMCTindex), false, 0, true, "[MCT" + (selectedMCTindex + 1) + "]");
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -6685,9 +6685,9 @@ public class HolmesDockWindowsTable extends JPanel {
             ArrayList<Transition> mct = mctGroups.get(m);
             for (Transition transition : mct) {
                 if (overlord.getSettingsManager().getValue("mctNameShow").equals("1"))
-                    transition.setColorWithNumber(true, currentColor, false, m, true, "MCT #" + (m + 1) + " (" + mct.size() + ")");
+                    transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "MCT #" + (m + 1) + " (" + mct.size() + ")");
                 else
-                    transition.setColorWithNumber(true, currentColor, false, m, true, "");
+                    transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "");
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -7072,14 +7072,14 @@ public class HolmesDockWindowsTable extends JPanel {
 
         for (int i = 0; i < transColors.size(); i++) {
             if (transColors.get(i).transInCluster != 0) {   //equals(Color.white)) {
-                transitions.get(i).setColorWithNumber(true, Color.DARK_GRAY, false, -1, false, "");
+                transitions.get(i).drawGraphBoxT.setColorWithNumber(true, Color.DARK_GRAY, false, -1, false, "");
             }
         }
 
         for (int i = 0; i < invariant.size(); i++) {
             if (invariant.get(i) != 0) {
 
-                transitions.get(i).setColorWithNumber(true, Color.GREEN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
+                transitions.get(i).drawGraphBoxT.setColorWithNumber(true, Color.GREEN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -7197,22 +7197,22 @@ public class HolmesDockWindowsTable extends JPanel {
 
         for (int i = 0; i < transColors.size(); i++) { //ustaw kolory dla tranzycji
             if (transColors.get(i).transInCluster == 0) {   //equals(Color.white)) {
-                holyVector.get(i).setColorWithNumber(false, Color.white, false, -1, false, "");
+                holyVector.get(i).drawGraphBoxT.setColorWithNumber(false, Color.white, false, -1, false, "");
             } else {
                 if (clustersMCT) {
                     int mctNo = transMCTvector.get(i);
                     if (mctNo == -1) {
                         if (clusterColorsData.showFirings) { //pokazuj średnią liczbę odpaleń
                             if (clusterColorsData.showScale) { //pokazuj kolory skalowalne
-                                holyVector.get(i).setColorWithNumber(true, Color.CYAN, true, transColors.get(i).firedInCluster, false, "", 0, 20, 5, -3);
+                                holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, Color.CYAN, true, transColors.get(i).firedInCluster, false, "", 0, 20, 5, -3);
                             } else { //pokazuj kolory z krokiem 10%
-                                holyVector.get(i).setColorWithNumber(true, Color.CYAN, true, transColors.get(i).firedInCluster, false, "", 0, 20, 5, -3);
+                                holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, Color.CYAN, true, transColors.get(i).firedInCluster, false, "", 0, 20, 5, -3);
                             }
                         } else { //pokazuj tylko liczbę wystąpień jako część inwariantów
                             if (clusterColorsData.showScale) { //pokazuj kolory skalowalne
-                                holyVector.get(i).setColorWithNumber(true, Color.CYAN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
+                                holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, Color.CYAN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
                             } else { //pokazuj kolory z krokiem 10%
-                                holyVector.get(i).setColorWithNumber(true, Color.CYAN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
+                                holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, Color.CYAN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
                             }
                         }
                     } else {
@@ -7222,28 +7222,28 @@ public class HolmesDockWindowsTable extends JPanel {
                         } else {
                             value = transColors.get(i).transInCluster;
                         }
-                        holyVector.get(i).setColorWithNumber(true, cp.getColor(mctNo), true, value, true, "[MCT" + (mctNo + 1) + "]", -10, 15, 5, -3);
+                        holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, cp.getColor(mctNo), true, value, true, "[MCT" + (mctNo + 1) + "]", -10, 15, 5, -3);
                     }
                 } else {
                     if (clusterColorsData.showFirings) { //pokazuj średnią liczbę odpaleń
                         if (clusterColorsData.showScale) { //pokazuj kolory skalowalne
                             double tranNumber = transColors.get(i).firedInCluster;
                             Color tranColor = transColors.get(i).colorFiredScale;
-                            holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
+                            holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
                         } else { //pokazuj kolory z krokiem 10%
                             double tranNumber = transColors.get(i).firedInCluster;
                             Color tranColor = transColors.get(i).colorFiredGrade;
-                            holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
+                            holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
                         }
                     } else { //pokazuj tylko liczbę wystąpień jako część inwariantów
                         if (clusterColorsData.showScale) { //pokazuj kolory skalowalne
                             int tranNumber = transColors.get(i).transInCluster;
                             Color tranColor = transColors.get(i).colorTransScale;
-                            holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
+                            holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
                         } else { //pokazuj kolory z krokiem 10%
                             int tranNumber = transColors.get(i).transInCluster;
                             Color tranColor = transColors.get(i).colorTransGrade;
-                            holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
+                            holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
                         }
                     }
                 }
@@ -7415,11 +7415,11 @@ public class HolmesDockWindowsTable extends JPanel {
             }
 
             Transition trans_TMP = overlord.getWorkspace().getProject().getTransitions().get(objReactionID);
-            trans_TMP.setColorWithNumber(true, Color.red, false, -1, false, "");
+            trans_TMP.drawGraphBoxT.setColorWithNumber(true, Color.red, false, -1, false, "");
 
             for (int id : invIDs) {
                 trans_TMP = overlord.getWorkspace().getProject().getTransitions().get(id);
-                trans_TMP.setColorWithNumber(true, Color.black, false, -1, false, "");
+                trans_TMP.drawGraphBoxT.setColorWithNumber(true, Color.black, false, -1, false, "");
                 //double tranNumber = transColors.get(i).firedInCluster;
                 //Color tranColor = transColors.get(i).colorFiredScale;
                 //holyVector.get(i).setColorWithNumber(true, tranColor, tranNumber);
@@ -7548,11 +7548,11 @@ public class HolmesDockWindowsTable extends JPanel {
 
             for (int id : idToShow) { //wyłączane przez objR
                 trans_TMP = transitions.get(id);
-                trans_TMP.setColorWithNumber(true, Color.black, false, -1, false, "");
+                trans_TMP.drawGraphBoxT.setColorWithNumber(true, Color.black, false, -1, false, "");
             }
 
             trans_TMP = transitions.get(knockIndex);
-            trans_TMP.setColorWithNumber(true, Color.red, false, -1, false, "");
+            trans_TMP.drawGraphBoxT.setColorWithNumber(true, Color.red, false, -1, false, "");
 
             knockoutTextArea.setText("");
             knockoutTextArea.append("Knocked out:" + knockIndex + ":\n");
@@ -8095,9 +8095,9 @@ public class HolmesDockWindowsTable extends JPanel {
 
             } else {
                 if (selectedSubNetindex == size - 1)
-                    place.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
+                    place.drawGraphBoxP.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
                 else
-                    place.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+                    place.drawGraphBoxP.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
             }
         }
 
@@ -8114,9 +8114,9 @@ public class HolmesDockWindowsTable extends JPanel {
 
             } else {
                 if (selectedSubNetindex == size - 1)
-                    transition.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
+                    transition.drawGraphBoxT.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
                 else
-                    transition.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+                    transition.drawGraphBoxT.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -8143,9 +8143,9 @@ public class HolmesDockWindowsTable extends JPanel {
 
             for (Node transition : transitions) {
                 if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
-                    ((Transition) transition).setColorWithNumber(true, Color.red, false, m, true, "");
+                    ((Transition) transition).drawGraphBoxT.setColorWithNumber(true, Color.red, false, m, true, "");
                 if (transition.getType() == PetriNetElement.PetriNetElementType.PLACE)
-                    ((Place) transition).setColorWithNumber(true, Color.red, false, m, true, "");
+                    ((Place) transition).drawGraphBoxP.setColorWithNumber(true, Color.red, false, m, true, "");
             }
             ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
             for (Arc arc : arcs) {
@@ -8172,15 +8172,15 @@ public class HolmesDockWindowsTable extends JPanel {
                 ArrayList<Transition> transitions = subNet.getSubTransitions();
                 if (transitions.size() > 1 || trivial) {
                     for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                        transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
                     }
 
                     ArrayList<Place> places = subnets.get(m).getSubPlaces();
                     for (Place place : places) {
                         if (subNet.getSubBorderPlaces().contains(place))
-                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, calcMiddleColor(currentColor, place.drawGraphBoxP.getPlaceNewColor()), false, m, true, "");
                         else
-                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, currentColor, false, m, true, "");
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
@@ -8196,15 +8196,15 @@ public class HolmesDockWindowsTable extends JPanel {
                 ArrayList<Place> places = subNet.getSubPlaces();
                 if (places.size() > 1 || trivial) {
                     for (Place place : places) {
-                        place.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + places.size() + ")");
+                        place.drawGraphBoxP.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + places.size() + ")");
                     }
 
                     ArrayList<Transition> transitions = subnets.get(m).getSubTransitions();
                     for (Transition transition : transitions) {
                         if (subNet.getSubBorderTransition().contains(transition))
-                            transition.setColorWithNumber(true, calcMiddleColor(currentColor, transition.getTransitionNewColor()), false, m, true, "");
+                            transition.drawGraphBoxT.setColorWithNumber(true, calcMiddleColor(currentColor, transition.drawGraphBoxT.getTransitionNewColor()), false, m, true, "");
                         else
-                            transition.setColorWithNumber(true, currentColor, false, m, true, "");
+                            transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "");
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
@@ -8220,15 +8220,15 @@ public class HolmesDockWindowsTable extends JPanel {
                 ArrayList<Transition> transitions = subNet.getSubTransitions();
                 if (transitions.size() > 1 || trivial) {
                     for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                        transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
                     }
 
                     ArrayList<Place> places = subnets.get(m).getSubPlaces();
                     for (Place place : places) {
                         if (subNet.getSubBorderPlaces().contains(place))
-                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, calcMiddleColor(currentColor, place.drawGraphBoxP.getPlaceNewColor()), false, m, true, "");
                         else
-                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, currentColor, false, m, true, "");
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
@@ -8255,15 +8255,15 @@ public class HolmesDockWindowsTable extends JPanel {
                 ArrayList<Transition> transitions = subNet.getSubTransitions();
                 if (transitions.size() > 1 || trivial) {
                     for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                        transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
                     }
 
                     ArrayList<Place> places = subnets.get(m).getSubPlaces();
                     for (Place place : places) {
                         if (subNet.getSubBorderPlaces().contains(place))
-                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, calcMiddleColor(currentColor, place.drawGraphBoxP.getPlaceNewColor()), false, m, true, "");
                         else
-                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, currentColor, false, m, true, "");
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
@@ -8415,7 +8415,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void setMinFireTime(double x) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.setEFT(x);
+            transition.timeFunctions.setEFT(x);
             repaintGraphPanel();
         }
     }
@@ -8427,7 +8427,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void setMaxFireTime(double x) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.setLFT(x);
+            transition.timeFunctions.setLFT(x);
             repaintGraphPanel();
         }
     }
@@ -8439,7 +8439,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void setDurationTime(double x) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.setDPNduration(x);
+            transition.timeFunctions.setDPNduration(x);
             repaintGraphPanel();
         }
     }
@@ -8451,7 +8451,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void setTPNstatus(boolean status) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.setTPNstatus(status);
+            transition.timeFunctions.setTPNstatus(status);
             repaintGraphPanel();
         }
     }
@@ -8463,7 +8463,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void setDPNstatus(boolean status) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.setDPNstatus(status);
+            transition.timeFunctions.setDPNstatus(status);
             repaintGraphPanel();
         }
     }

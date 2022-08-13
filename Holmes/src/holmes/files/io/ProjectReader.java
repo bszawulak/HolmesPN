@@ -849,7 +849,7 @@ public class ProjectReader {
 					case "PN" -> transition.setTransType(TransitionType.PN);
 					case "TPN" -> transition.setTransType(TransitionType.TPN);
 					case "SPN" -> transition.setTransType(TransitionType.SPN);
-					case "CPN" -> transition.setTransType(TransitionType.CPNbasic);
+					case "CPN" -> transition.setTransType(TransitionType.CPN);
 					case "XTPN" -> transition.setTransType(TransitionType.XTPN);
 				}
 
@@ -878,7 +878,7 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				double eft = Double.parseDouble(line);
-				transition.forceSetEFT(eft);
+				transition.timeFunctions.forceSetEFT(eft);
 				return;
 			}
 			
@@ -887,7 +887,7 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				double lft = Double.parseDouble(line);
-				transition.setLFT(lft);
+				transition.timeFunctions.setLFT(lft);
 				return;
 			}
 			
@@ -896,7 +896,7 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				double duration = Double.parseDouble(line);
-				transition.setDPNduration(duration);
+				transition.timeFunctions.setDPNduration(duration);
 				return;
 			}
 			
@@ -904,7 +904,7 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				transition.setTPNstatus(line.contains("true"));
+				transition.timeFunctions.setTPNstatus(line.contains("true"));
 				return;
 			}
 			
@@ -912,7 +912,7 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				transition.setDPNstatus(line.contains("true"));
+				transition.timeFunctions.setDPNstatus(line.contains("true"));
 				return;
 			}
 			
@@ -2407,14 +2407,14 @@ public class ProjectReader {
 
 	private TransitionColored resurrectAsColoredTransition(Transition transition, int tID) {
 		TransitionColored rise = new TransitionColored(tID, 0, new Point(20,20));
-		rise.setTransType(TransitionType.CPNbasic);
+		rise.setTransType(TransitionType.CPN);
 		rise.setName(transition.getName());
 		rise.setComment(transition.getComment());
-		rise.forceSetEFT(transition.getEFT());
-		rise.setLFT(transition.getLFT());
-		rise.setDPNduration(transition.getDPNduration());
-		rise.setTPNstatus(transition.getTPNstatus());
-		rise.setDPNstatus(transition.getDPNstatus());
+		rise.timeFunctions.forceSetEFT(transition.timeFunctions.getEFT());
+		rise.timeFunctions.setLFT(transition.timeFunctions.getLFT());
+		rise.timeFunctions.setDPNduration(transition.timeFunctions.getDPNduration());
+		rise.timeFunctions.setTPNstatus(transition.timeFunctions.getTPNstatus());
+		rise.timeFunctions.setDPNstatus(transition.timeFunctions.getDPNstatus());
 		rise.setFunctional(transition.isFunctional());
 		rise.setPortal(transition.isPortal());
 

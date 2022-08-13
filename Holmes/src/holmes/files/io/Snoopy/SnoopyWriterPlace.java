@@ -10,6 +10,8 @@ import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Place;
 import holmes.varia.NetworkTransformations;
 
+import static holmes.graphpanel.EditorResources.placeDefColor;
+
 /**
  * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie jest Sparta...
  * @author MR
@@ -267,7 +269,7 @@ public class SnoopyWriterPlace {
 			GUIManager.getDefaultGUIManager().log("Critical error while writing Snoopy file. ID's don't match.", "error", true);
 		}
 		
-		Color snoopyColor = holmesPlace.defColor;
+		Color snoopyColor = placeDefColor;
 		String brushStr = "255,255,255";
 		if(!snoopyColor.equals(Color.WHITE)) {
 			brushStr = snoopyColor.getRed()+","+snoopyColor.getGreen()+","+snoopyColor.getBlue();

@@ -72,4 +72,15 @@ public class EditorResources {
 	public static final Color cYellow = new Color(255,155,0) ;
 	public static final Color cGrey = Color.gray;
 	public static final Color cBlack = Color.black;
+
+
+	//oznaczania TPN / DPN:
+
+	public static final Color tpnNOTdpn = new Color(51, 255, 51);
+	public static final Color dpnNOTtpn = new Color(0,153,76);
+	public static final Color tpnANDdpn = new Color(0,102,0);
+
+
+	public static final Color placeDefColor = new Color(255,255,255);
+	public static final Color transDefColor = new Color(224, 224, 224);
 }

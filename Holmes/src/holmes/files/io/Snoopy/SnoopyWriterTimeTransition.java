@@ -10,6 +10,8 @@ import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Transition;
 import holmes.varia.NetworkTransformations;
 
+import static holmes.graphpanel.EditorResources.transDefColor;
+
 public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 	public SnoopyWriterTimeTransition() {
 		super();
@@ -209,7 +211,7 @@ public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 		
 		//na razie tylko 1 wartość:
 		ArrayList<Integer> durations = new ArrayList<Integer>();
-		durations.add((int) holmesTransition.getDPNduration());
+		durations.add((int) holmesTransition.timeFunctions.getDPNduration());
 		//opcja, jak DPN offline, to ustaw -1 czyli "?" ?
 		currID++;
 		writeDurationData(bw, currID, locations, locationsSheetID, durations, xOff, yOff, stateForEL);
@@ -218,8 +220,8 @@ public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 		//na razie tylko 1 wektor:
 		ArrayList<ArrayList<Integer>> intervalMatrix = new ArrayList<>();
 		ArrayList<Integer> interval0 = new ArrayList<Integer>();
-		interval0.add((int) holmesTransition.getEFT());
-		interval0.add((int) holmesTransition.getLFT());
+		interval0.add((int) holmesTransition.timeFunctions.getEFT());
+		interval0.add((int) holmesTransition.timeFunctions.getLFT());
 		intervalMatrix.add(interval0);
 		currID++; 
 		writeIntervalData(bw, currID, locations, locationsSheetID, intervalMatrix, xOff, yOff, stateForEL);
@@ -239,7 +241,7 @@ public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 			GUIManager.getDefaultGUIManager().log("Critical error while writing Snoopy file. ID's don't match.", "error", true);
 		}
 		
-		Color snoopyColor = holmesTransition.defColor;
+		Color snoopyColor = transDefColor;
 		String brushStr = "255,255,255";
 		if(!snoopyColor.equals(new Color(224, 224, 224))) {
 			brushStr = snoopyColor.getRed()+","+snoopyColor.getGreen()+","+snoopyColor.getBlue();

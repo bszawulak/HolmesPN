@@ -12,8 +12,6 @@ import holmes.petrinet.elements.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -579,9 +577,9 @@ public class HolmesSubnetComparison extends JFrame {
 
         for (Node transition : sn.getSubNode()) {
             if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
-                ((Transition) transition).setColorWithNumber(true, Color.RED, false, 0, true, "");
+                ((Transition) transition).drawGraphBoxT.setColorWithNumber(true, Color.RED, false, 0, true, "");
             if (transition.getType() == PetriNetElement.PetriNetElementType.PLACE)
-                ((Place) transition).setColorWithNumber(true, Color.RED, false, 0, true, "");
+                ((Place) transition).drawGraphBoxP.setColorWithNumber(true, Color.RED, false, 0, true, "");
         }
         ArrayList<Arc> arcs = sn.getSubArcs();
         for (Arc arc : arcs) {
@@ -591,9 +589,9 @@ public class HolmesSubnetComparison extends JFrame {
         for (SubnetComparator.PartialSubnetElements pse : gcs.psel) {
             for (Node transition : pse.partialNodes) {
                 if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
-                    ((Transition) transition).setColorWithNumber(true, Color.GREEN, false, 0, true, "");
+                    ((Transition) transition).drawGraphBoxT.setColorWithNumber(true, Color.GREEN, false, 0, true, "");
                 if (transition.getType() == PetriNetElement.PetriNetElementType.PLACE)
-                    ((Place) transition).setColorWithNumber(true, Color.GREEN, false, 0, true, "");
+                    ((Place) transition).drawGraphBoxP.setColorWithNumber(true, Color.GREEN, false, 0, true, "");
             }
             for (Arc arc : pse.partialArcs) {
                 arc.setColor(true, Color.GREEN);
@@ -610,9 +608,9 @@ public class HolmesSubnetComparison extends JFrame {
 
         for (Node transition : sn.getSubNode()) {
             if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
-                ((Transition) transition).setColorWithNumber(true, Color.RED, false, 0, true, "");
+                ((Transition) transition).drawGraphBoxT.setColorWithNumber(true, Color.RED, false, 0, true, "");
             if (transition.getType() == PetriNetElement.PetriNetElementType.PLACE)
-                ((Place) transition).setColorWithNumber(true, Color.RED, false, 0, true, "");
+                ((Place) transition).drawGraphBoxP.setColorWithNumber(true, Color.RED, false, 0, true, "");
         }
         ArrayList<Arc> arcs = sn.getSubArcs();
         for (Arc arc : arcs) {
@@ -622,9 +620,9 @@ public class HolmesSubnetComparison extends JFrame {
         for (SubnetComparator.PartialSubnetElements pse : gcs.psel) {
             for (Node transition : pse.partialNodes) {
                 if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
-                    ((Transition) transition).setColorWithNumber(true, randomColor, false, 0, true, "");
+                    ((Transition) transition).drawGraphBoxT.setColorWithNumber(true, randomColor, false, 0, true, "");
                 if (transition.getType() == PetriNetElement.PetriNetElementType.PLACE)
-                    ((Place) transition).setColorWithNumber(true, randomColor, false, 0, true, "");
+                    ((Place) transition).drawGraphBoxP.setColorWithNumber(true, randomColor, false, 0, true, "");
             }
             for (Arc arc : pse.partialArcs) {
                 arc.setColor(true, randomColor);

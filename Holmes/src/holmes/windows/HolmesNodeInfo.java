@@ -111,7 +111,7 @@ public class HolmesNodeInfo extends JFrame {
 		this.transition = transition;
 		setTitle("Node: "+transition.getName());
 		
-		if(transition.getDPNstatus() || transition.getTPNstatus())
+		if(transition.timeFunctions.getDPNstatus() || transition.timeFunctions.getTPNstatus())
 			choosenNetType = SimulatorGlobals.SimNetType.TIME;
 		
 		initializeCommon();
@@ -556,7 +556,7 @@ public class HolmesNodeInfo extends JFrame {
 			JFormattedTextField field = (JFormattedTextField) e.getSource();
 			try {
 				field.commitEdit();
-			} catch (ParseException ex) {
+			} catch (ParseException ignored) {
 			}
 			String newName = field.getText();
 
@@ -607,7 +607,9 @@ public class HolmesNodeInfo extends JFrame {
 
 		try {
 			fillTransitionDynamicData(avgFiredTextBox, chartMainPanel, chartButtonPanel);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			overlord.log("Error Ex: "+e.getMessage(), "error", true);
+		}
 		return mainInfoPanel;
 	}
 	
@@ -839,7 +841,7 @@ public class HolmesNodeInfo extends JFrame {
 							+ "State simulator cannot proceed "+simSteps+ " steps. First pass had: "+ dataVector.size() +" steps.", "error", true);
 					break;
 				} else {
-					continue; 
+					//continue;
 				}
 			} else { //ok, taki sam lub dłuższy
 				rep_succeed++;
@@ -913,7 +915,7 @@ public class HolmesNodeInfo extends JFrame {
 					try {
 						value += dataVector.get(step+i);
 					} catch (Exception e) {
-						
+						overlord.log("Error Ex: "+e.getMessage(), "error", true);
 					}
 				}
 				value /= interval;

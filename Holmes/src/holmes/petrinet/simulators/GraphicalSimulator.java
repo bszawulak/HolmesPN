@@ -180,7 +180,7 @@ public class GraphicalSimulator {
 				if (transition.isActive()) {
 					return true;
 				}
-				if(transition.getDPNtimer() >= 0 && transition.getDPNduration() != 0) {
+				if(transition.timeFunctions.getDPNtimer() >= 0 && transition.timeFunctions.getDPNduration() != 0) {
 					return true;
 				}
 					
@@ -265,8 +265,8 @@ public class GraphicalSimulator {
 				}
 			}
 		} else if (netSimType == SimulatorGlobals.SimNetType.HYBRID) {
-			//TODO
-			// simulationType = NetType.HYBRID;
+			JOptionPane.showMessageDialog(null, "This mode is not yet implemented.",
+					"Invalid mode", JOptionPane.ERROR_MESSAGE);
 		}		
 	}
 
@@ -286,7 +286,7 @@ public class GraphicalSimulator {
 			else
 				arcs = transition.getOutArcs();
 			
-			if(transition.getDPNtimer() > 0) //yeah, trust me, I'm an engineer
+			if(transition.timeFunctions.getDPNtimer() > 0) //yeah, trust me, I'm an engineer
 				continue;
 			
 			// odejmij odpowiednią liczbę tokenów:
@@ -553,7 +553,7 @@ public class GraphicalSimulator {
 				}
 					
 			}
-			transition.resetTimeVariables();
+			transition.timeFunctions.resetTimeVariables();
 		}
 		transitions.clear();  //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)
 	}
@@ -932,8 +932,8 @@ public class GraphicalSimulator {
 					//usuń te tranzycje, które są w I fazie DPN
 					for(int t=0; t<launchingTransitions.size(); t++) {
 						Transition test_t = launchingTransitions.get(t);
-						if(test_t.getDPNstatus()) {
-							if(test_t.getDPNtimer() == 0 && test_t.getDPNduration() != 0) {
+						if(test_t.timeFunctions.getDPNstatus()) {
+							if(test_t.timeFunctions.getDPNtimer() == 0 && test_t.timeFunctions.getDPNduration() != 0) {
 								launchingTransitions.remove(test_t);
 								t--;
 							}
@@ -1028,8 +1028,8 @@ public class GraphicalSimulator {
 					
 					for(int t=0; t<launchingTransitions.size(); t++) {
 						Transition test_t = launchingTransitions.get(t);
-						if(test_t.getDPNstatus()) {
-							if(test_t.getDPNtimer() == 0 && test_t.getDPNduration() != 0) {
+						if(test_t.timeFunctions.getDPNstatus()) {
+							if(test_t.timeFunctions.getDPNtimer() == 0 && test_t.timeFunctions.getDPNduration() != 0) {
 								launchingTransitions.remove(test_t);
 								t--;
 							}

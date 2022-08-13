@@ -2037,9 +2037,9 @@ public class HolmesGraphletsPrototype {//extends JFrame {
         for (Node element : graphletStructure.getNodeMap().values()) {
 
             if (element.getType().equals(PetriNetElement.PetriNetElementType.PLACE)) {
-                ((Place) element).setColorWithNumber(true, Color.red, false, 0, false, "");
+                ((Place) element).drawGraphBoxP.setColorWithNumber(true, Color.red, false, 0, false, "");
             } else {
-                ((Transition) element).setColorWithNumber(true, Color.blue, false, 0, true, "");
+                ((Transition) element).drawGraphBoxT.setColorWithNumber(true, Color.blue, false, 0, true, "");
             }
         }
 

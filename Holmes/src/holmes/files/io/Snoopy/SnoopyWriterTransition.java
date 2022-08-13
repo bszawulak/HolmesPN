@@ -10,6 +10,8 @@ import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Transition;
 import holmes.varia.NetworkTransformations;
 
+import static holmes.graphpanel.EditorResources.transDefColor;
+
 
 /**
  * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie Sparta,
@@ -250,7 +252,7 @@ public class SnoopyWriterTransition {
 			GUIManager.getDefaultGUIManager().log("Critical error while writing Snoopy file. ID's don't match.", "error", true);
 		}
 		
-		Color snoopyColor = holmesTransition.defColor;
+		Color snoopyColor = transDefColor;
 		String brushStr = "255,255,255";
 		if(!snoopyColor.equals(new Color(224, 224, 224))) {
 			brushStr = snoopyColor.getRed()+","+snoopyColor.getGreen()+","+snoopyColor.getBlue();

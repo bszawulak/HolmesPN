@@ -83,8 +83,8 @@ public final class ElementDraw {
 			Color tpnNormalColor = Color.GRAY;
 			
 			if(eds.nonDefColors) {
-				normalColor = trans.defColor;
-				portalColor = trans.defColor;
+				normalColor = transDefColor;
+				portalColor = transDefColor;
 			}
 			if(eds.snoopyMode) {
 				normalColor = Color.WHITE;
@@ -94,9 +94,9 @@ public final class ElementDraw {
 					if(portalColor.equals(new Color(224, 224, 224))) {
 						portalColor = Color.LIGHT_GRAY;
 					}
-					if(!trans.defColor.equals(new Color(224, 224, 224))) {
-						normalColor = trans.defColor;
-					}
+					//if(!trans.defColor.equals(new Color(224, 224, 224))) {
+					//	normalColor = trans.defColor;
+					//}
 				}
 			}
 			
@@ -203,8 +203,8 @@ public final class ElementDraw {
 					g.fillRect(nodeBounds.x-row, nodeBounds.y-row, nodeBounds.width+(2*row), nodeBounds.height+(2*row));
 				} else if(trans.isGlowed_MTC()) { //mct
 					g.setColor(EditorResources.glowMTCTransitonColorLevel3);
-				} else if(trans.isColorChanged()) { //klaster lub inny powód
-					g.setColor(trans.getTransitionNewColor());
+				} else if(trans.drawGraphBoxT.isColorChanged()) { //klaster lub inny powód
+					g.setColor(trans.drawGraphBoxT.getTransitionNewColor());
 				} else if(el.isPortalSelected()) { //inny ELoc portalu:
 					g.setColor(EditorResources.selectionColorLevel3);
 				} else {
@@ -218,9 +218,9 @@ public final class ElementDraw {
 				g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				g.setColor(back);
 
-				if(trans.qSimDrawed && el.qSimDrawed) {
-					if(trans.qSimFired == 0) {
-						if(trans.qSimDrawStats) {
+				if(trans.qSimBoxT.qSimDrawed && el.qSimDrawed) {
+					if(trans.qSimBoxT.qSimFired == 0) {
+						if(trans.qSimBoxT.qSimDrawStats) {
 							try {
 								g.setColor(new Color(96,96,96));
 								g.fillRect(nodeBounds.x+2, nodeBounds.y+10, 23, 10);
@@ -237,26 +237,26 @@ public final class ElementDraw {
 								GUIManager.getDefaultGUIManager().log("Error (762886747) | Exception:  "+ex.getMessage(), "error", true);
 							}
 						}
-						g.setColor(trans.qSimOvalColor);
+						g.setColor(trans.qSimBoxT.qSimOvalColor);
 						g.setStroke(new BasicStroke(2.5F));
 						
-						int os = trans.qSimOvalSize;
+						int os = trans.qSimBoxT.qSimOvalSize;
 						g.drawOval(nodeBounds.x-os, nodeBounds.y-os, nodeBounds.width +(2*os), nodeBounds.height +(2*os));
 						g.drawOval(nodeBounds.x-(os+1), nodeBounds.y-(os+1), nodeBounds.width +(2*os+2), nodeBounds.height +(2*os+2));
 					} else {
-						if(trans.qSimDrawStats) {
-							g.setColor(trans.qSimFillColor);
+						if(trans.qSimBoxT.qSimDrawStats) {
+							g.setColor(trans.qSimBoxT.qSimFillColor);
 							g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 							
 							g.setColor(Color.white);
-							g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height-(trans.qSimFillValue-2));
+							g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height-(trans.qSimBoxT.qSimFillValue-2));
 						}
 					}
 				} else {
 					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
 				}
 
-				if(trans.getTransType() == TransitionType.CPNbasic) {
+				if(trans.getTransType() == TransitionType.CPN) {
 					g.setColor(Color.BLUE);
 				} else {
 					g.setColor(Color.DARK_GRAY);
@@ -297,18 +297,18 @@ public final class ElementDraw {
 				//dla tranzycji czasowych, w tym XTPN (po else)
 				if(trans.getTransType() == TransitionType.TPN) {
 					int dpnTextOffset = -5;
-					if(trans.getTPNstatus()) {
+					if(trans.timeFunctions.getTPNstatus()) {
 						dpnTextOffset = -15;
 						g.setColor(Color.black);
 						g.setFont(f_plain);
-						String eft = String.valueOf( trans.getEFT() );
+						String eft = String.valueOf( trans.timeFunctions.getEFT() );
 						g.drawString(eft, nodeBounds.x+35, nodeBounds.y + 8);
 
-						String lft = String.valueOf( trans.getLFT() );
+						String lft = String.valueOf( trans.timeFunctions.getLFT() );
 						g.drawString(lft, nodeBounds.x +35, nodeBounds.y + 28);
 
-						int intTimer = (int) trans.getTPNtimer();
-						int intFireTime = (int) trans.getTPNtimerLimit();
+						int intTimer = (int) trans.timeFunctions.getTPNtimer();
+						int intFireTime = (int) trans.timeFunctions.getTPNtimerLimit();
 						String timeInfo = ""+intTimer+"  /  "+intFireTime;
 						
 						if(!trans.isActive())
@@ -328,10 +328,10 @@ public final class ElementDraw {
 						
 						g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y - 4);
 					}
-					if(trans.getDPNstatus()) {
-						String dur = String.valueOf( trans.getDPNduration() );
-						if(trans.getDPNtimer() >= 0) {
-							dur = trans.getDPNtimer() + " / "+dur;
+					if(trans.timeFunctions.getDPNstatus()) {
+						String dur = String.valueOf( trans.timeFunctions.getDPNduration() );
+						if(trans.timeFunctions.getDPNtimer() >= 0) {
+							dur = trans.timeFunctions.getDPNtimer() + " / "+dur;
 						} else {
 							dur = " # / "+dur;
 						}
@@ -390,7 +390,7 @@ public final class ElementDraw {
 				}
 				
 				//SYMBOL TRANZYCJI KOLOROWANEJ
-				if(trans.getTransType() == TransitionType.CPNbasic) {
+				if(trans.getTransType() == TransitionType.CPN) {
 					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth("C") / 2 - 3;
 					int posY = nodeBounds.y + nodeBounds.height / 2 + 8;
 					Font old = g.getFont();
@@ -411,8 +411,8 @@ public final class ElementDraw {
 				}
 				
 				//WYŚWIETLANIE DANYCH ODNOŚNIE WYSTĘPOWANIA TRANZYCJI W KLASTRZE:
-				if(trans.isColorChanged() && trans.getNumericalValueVisibility()) {
-					String clNumber = formatD(trans.getNumericalValueDOUBLE());
+				if(trans.drawGraphBoxT.isColorChanged() && trans.drawGraphBoxT.getNumericalValueVisibility()) {
+					String clNumber = formatD(trans.drawGraphBoxT.getNumericalValueDOUBLE());
 
 					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(clNumber) / 2);
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
@@ -421,7 +421,7 @@ public final class ElementDraw {
 					
 					g.setFont(new Font("TimesRoman", Font.BOLD, 14));
 					g.setColor(Color.black);
-					g.drawString(clNumber, posX-5+trans.valueXoff, posY+trans.valueYoff);
+					g.drawString(clNumber, posX-5+trans.drawGraphBoxT.valueXoff, posY+trans.drawGraphBoxT.valueYoff);
 					
 					g.setFont(old);
 					g.setColor(oldC);
@@ -448,8 +448,8 @@ public final class ElementDraw {
 				}
 				
 				//dodatkowy tekst nad tranzycją
-				if(trans.isShowedAddText()) {
-					String txt = trans.returnAddText();
+				if(trans.drawGraphBoxT.isShowedAddText()) {
+					String txt = trans.drawGraphBoxT.returnAddText();
 					
 					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(txt) / 2);
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
@@ -458,7 +458,7 @@ public final class ElementDraw {
 					
 					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
 					g.setColor(Color.BLACK);
-					g.drawString(txt, posX+trans.txtXoff, posY+trans.txtYoff);
+					g.drawString(txt, posX+trans.drawGraphBoxT.txtXoff, posY+trans.drawGraphBoxT.txtYoff);
 					
 					g.setFont(old);
 					g.setColor(oldC);
@@ -493,7 +493,7 @@ public final class ElementDraw {
 					g.setColor(trans.branchColor);
 					g.drawRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-1, nodeBounds.height-1);
 					g.setColor(oldColor);
-					trans.setColorWithNumber(true, trans.branchColor, false, 0, true, "");
+					trans.drawGraphBoxT.setColorWithNumber(true, trans.branchColor, false, 0, true, "");
 				}
 
 				if(!trans.branchBorderColors.isEmpty()){
@@ -595,8 +595,8 @@ public final class ElementDraw {
 			Color normalColor = Color.WHITE;
 			
 			if(eds.nonDefColors) {
-				normalColor = place.defColor;
-				portalColor = place.defColor;
+				normalColor = placeDefColor;
+				portalColor = placeDefColor;
 			}
 			if(eds.snoopyMode) {
 				if(!eds.nonDefColors) {
@@ -752,22 +752,22 @@ public final class ElementDraw {
 					}
 				}
 				
-				if(place.qSimDrawed && el.qSimDrawed) {
-					if(place.qSimTokens == 0) {
-						g.setColor(place.qSimOvalColor);
+				if(place.qSimBoxP.qSimDrawed && el.qSimDrawed) {
+					if(place.qSimBoxP.qSimTokens == 0) {
+						g.setColor(place.qSimBoxP.qSimOvalColor);
 						g.setStroke(new BasicStroke(2.5F));
-						int os = place.qSimOvalSize;
+						int os = place.qSimBoxP.qSimOvalSize;
 						g.drawOval(nodeBounds.x-os, nodeBounds.y-os, nodeBounds.width +(2*os), nodeBounds.height +(2*os));
 						g.drawOval(nodeBounds.x-(os+1), nodeBounds.y-(os+1), nodeBounds.width +(2*os+2), nodeBounds.height +(2*os+2));
 					} else {
-						if(place.qSimDrawStats) {
+						if(place.qSimBoxP.qSimDrawStats) {
 							g.setStroke(new BasicStroke(1F));
 							
-							g.setColor(place.qSimFillColor);
+							g.setColor(place.qSimBoxP.qSimFillColor);
 							g.fillRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height);
 							
-							g.setColor(Color.white);
-							g.fillRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height-(place.qSimFillValue-2));
+							g.setColor(Color.WHITE);
+							g.fillRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height-(place.qSimBoxP.qSimFillValue-2));
 							
 							g.setColor(Color.BLACK);
 							g.drawRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height);
@@ -776,36 +776,36 @@ public final class ElementDraw {
 				}
 				
 				// KOLOROWANKI
-				if(place.isColorChanged() ) {
+				if(place.drawGraphBoxP.isColorChanged() ) {
 					Color oldColor = g.getColor();
-					g.setColor(place.getPlaceNewColor());
+					g.setColor(place.drawGraphBoxP.getPlaceNewColor());
 					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-1, nodeBounds.height-1);
 					g.setColor(oldColor);
 				}
 				
-				if(place.getNumericalValueVisibility()) {
-					String clNumber = formatD(place.getNumericalValueDOUBLE());
+				if(place.drawGraphBoxP.getNumericalValueVisibility()) {
+					String clNumber = formatD(place.drawGraphBoxP.getNumericalValueDOUBLE());
 					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(clNumber) / 2);
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
 					Font old = g.getFont();
 					Color oldC = g.getColor();
 					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
 					g.setColor(Color.black);
-					g.drawString(clNumber, posX-5+place.valueXoff, posY+place.valueYoff);
+					g.drawString(clNumber, posX-5+place.drawGraphBoxP.valueXoff, posY+place.drawGraphBoxP.valueYoff);
 					g.setFont(old);
 					g.setColor(oldC);
 				}
 
 				//dodatkowy tekst nad miejscem
-				if(place.showAddText()) {
-					String txt = place.returnAddText();
+				if(place.drawGraphBoxP.showAddText()) {
+					String txt = place.drawGraphBoxP.returnAddText();
 					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(txt) / 2);
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
 					Font old = g.getFont();
 					Color oldC = g.getColor();
 					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
 					g.setColor(Color.BLACK);
-					g.drawString(txt, posX+place.txtXoff, posY+place.txtYoff);
+					g.drawString(txt, posX+place.drawGraphBoxP.txtXoff, posY+place.drawGraphBoxP.txtYoff);
 					g.setFont(old);
 					g.setColor(oldC);
 				}

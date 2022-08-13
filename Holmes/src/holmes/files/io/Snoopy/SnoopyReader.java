@@ -1,6 +1,5 @@
 package holmes.files.io.Snoopy;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -405,11 +404,11 @@ public class SnoopyReader {
 			if(r == 255 && g == 255 && b == 255)
 				return; //zostaw domyślny
 					
-			if(node instanceof Place) {
-				((Place)node).defColor = new Color(r,g,b);
-			} else if(node instanceof Transition) {
-				((Transition)node).defColor = new Color(r,g,b);
-			}
+			//if(node instanceof Place) {
+			//	((Place)node).defColor = new Color(r,g,b);
+			//} else if(node instanceof Transition) {
+			//	((Transition)node).defColor = new Color(r,g,b);
+			//}
 		} catch (Exception ex) {
 			GUIManager.getDefaultGUIManager().log("Error (288907374) | Exception:  "+ex.getMessage(), "error", true);
 		}
@@ -639,7 +638,7 @@ public class SnoopyReader {
 						}
 						snoopyNodesElLocIDList.add(subIDs);
 						
-						if(transition.getDPNstatus() || transition.getTPNstatus())
+						if(transition.timeFunctions.getDPNstatus() || transition.timeFunctions.getTPNstatus())
 							transition.setTransType(TransitionType.TPN);
 					}
 				} //czytanie właściwości węzła
@@ -684,11 +683,11 @@ public class SnoopyReader {
 	private void parseDuration(Transition transition, ArrayList<Object> tableVector) {
 		// 0, 1 pierwszy wiersz (nazwy), 2 - tytuł wiersza, 3 wartość I wiersz, 4 jak 2, 5 jak 3
 		try {
-			transition.setDPNduration(Double.parseDouble((String) tableVector.get(3)));
-			transition.setDPNstatus(transition.getDPNduration() != 0);
+			transition.timeFunctions.setDPNduration(Double.parseDouble((String) tableVector.get(3)));
+			transition.timeFunctions.setDPNstatus(transition.timeFunctions.getDPNduration() != 0);
 		} catch (Exception e) {
-			transition.setDPNduration(0);
-			transition.setDPNstatus(false);
+			transition.timeFunctions.setDPNduration(0);
+			transition.timeFunctions.setDPNstatus(false);
 		}
 	}
 	
@@ -698,13 +697,13 @@ public class SnoopyReader {
 		try {
 			double eft = Double.parseDouble((String) tableVector.get(4));
 			double lft = Double.parseDouble((String) tableVector.get(5));
-			transition.setLFT(lft);
-			transition.setEFT(eft);
-			transition.setTPNstatus(true);
+			transition.timeFunctions.setLFT(lft);
+			transition.timeFunctions.setEFT(eft);
+			transition.timeFunctions.setTPNstatus(true);
 		} catch (Exception e) {
-			transition.setEFT(0);
-			transition.setLFT(0);
-			transition.setTPNstatus(true);
+			transition.timeFunctions.setEFT(0);
+			transition.timeFunctions.setLFT(0);
+			transition.timeFunctions.setTPNstatus(true);
 		}
 	}
 

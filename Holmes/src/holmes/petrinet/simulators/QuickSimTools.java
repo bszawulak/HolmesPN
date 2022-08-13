@@ -175,22 +175,21 @@ public class QuickSimTools {
 			double firing = avgFire.get(t);
 			String tmp = Tools.cutValueExt(firing, 6);
 			firing = Double.parseDouble(tmp);
-			trans.qSimFired = firing;
-			
-			//trans.
-			trans.setAddText(Tools.cutValueExt(firing, 8));
+			trans.qSimBoxT.qSimFired = firing;
+
+			trans.drawGraphBoxT.setAddText(Tools.cutValueExt(firing, 8));
 			
 			double reliance = firing/max;
 
-			trans.qSimFillValue = (int)((double)30 * reliance);
+			trans.qSimBoxT.qSimFillValue = (int)((double)30 * reliance);
 			
 			if(firing < 0.05) {
-				trans.qSimFillColor = Color.RED;
-				trans.qSimFillValue = 5;
+				trans.qSimBoxT.qSimFillColor = Color.RED;
+				trans.qSimBoxT.qSimFillValue = 5;
 			} else if(firing < 0.15) {
-				trans.qSimFillColor = Color.ORANGE;
+				trans.qSimBoxT.qSimFillColor = Color.ORANGE;
 			} else { 
-				trans.qSimFillColor = Color.GREEN;
+				trans.qSimBoxT.qSimFillColor = Color.GREEN;
 			}
 			
 			if(scanTransitions) {
@@ -198,17 +197,17 @@ public class QuickSimTools {
 					el.qSimDrawed = true;
 				}
 				
-				trans.qSimDrawed = true;
-				trans.qSimDrawStats = true;
+				trans.qSimBoxT.qSimDrawed = true;
+				trans.qSimBoxT.qSimDrawStats = true;
 				if(firing < 0.01) {
 					trans.qSimArcSign = true;
-					trans.qSimOvalColor = Color.RED;
+					trans.qSimBoxT.qSimOvalColor = Color.RED;
 				} else {
 					trans.qSimArcSign = false;
 				}
 			} else {
-				trans.qSimDrawed = false;
-				trans.qSimDrawStats = false;
+				trans.qSimBoxT.qSimDrawed = false;
+				trans.qSimBoxT.qSimDrawStats = false;
 				trans.qSimArcSign = false;
 			}
 		}
@@ -222,28 +221,28 @@ public class QuickSimTools {
 			Place place = places.get(p);
 			double avgT = avgTokens.get(p);
 			
-			place.qSimTokens = avgT;
+			place.qSimBoxP.qSimTokens = avgT;
 			if(avgT == 0) {
-				place.qSimFillColor = Color.BLACK;
-				place.qSimOvalColor = Color.RED;
+				place.qSimBoxP.qSimFillColor = Color.BLACK;
+				place.qSimBoxP.qSimOvalColor = Color.RED;
 			} else if(avgT < 1){
-				place.qSimFillColor = Color.RED;
-				place.qSimFillValue = 4;
+				place.qSimBoxP.qSimFillColor = Color.RED;
+				place.qSimBoxP.qSimFillValue = 4;
 			} else if(avgT < 5){
-				place.qSimFillColor = Color.ORANGE;
-				place.qSimFillValue = 8;
+				place.qSimBoxP.qSimFillColor = Color.ORANGE;
+				place.qSimBoxP.qSimFillValue = 8;
 			} else {
 				double reliance = avgT/maxT;
 				int fill = (int)((double)30 * reliance);
 				if(fill<8)
 					fill = 8;
-				place.qSimFillValue = fill;
-				place.qSimFillColor = Color.GREEN;
+				place.qSimBoxP.qSimFillValue = fill;
+				place.qSimBoxP.qSimFillColor = Color.GREEN;
 			}
 			
 			if(scanPlaces) {
-				place.qSimDrawed = true;
-				place.qSimDrawStats = true;
+				place.qSimBoxP.qSimDrawed = true;
+				place.qSimBoxP.qSimDrawStats = true;
 				
 				
 				for(ElementLocation el : place.getElementLocations()) {
@@ -252,8 +251,8 @@ public class QuickSimTools {
 
 				place.qSimArcSign = ( avgT == 0 );
 			} else {
-				place.qSimDrawed = false;
-				place.qSimDrawStats = false;
+				place.qSimBoxP.qSimDrawed = false;
+				place.qSimBoxP.qSimDrawStats = false;
 				place.qSimArcSign = false;
 			}
 		}

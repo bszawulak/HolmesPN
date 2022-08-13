@@ -25,7 +25,7 @@ public class TransitionColored extends Transition {
      */
     public TransitionColored(int transitionId, ArrayList<ElementLocation> elementLocations, String name, String comment) {
         super(transitionId, elementLocations, name, comment);
-        transType = TransitionType.CPNbasic;
+        transType = TransitionType.CPN;
     }
 
     /**
@@ -35,7 +35,7 @@ public class TransitionColored extends Transition {
      */
     public TransitionColored(int transitionId, ArrayList<ElementLocation> elementLocations) {
         super(transitionId, elementLocations);
-        transType = TransitionType.CPNbasic;
+        transType = TransitionType.CPN;
     }
 
     /**
@@ -46,12 +46,12 @@ public class TransitionColored extends Transition {
      */
     public TransitionColored(int transitionId, int sheetId, Point transitionPosition) {
         super(transitionId, sheetId, transitionPosition);
-        transType = TransitionType.CPNbasic;
+        transType = TransitionType.CPN;
     }
 
     public TransitionColored(String error) {
         super(error);
-        transType = TransitionType.CPNbasic;
+        transType = TransitionType.CPN;
     }
 
     /**

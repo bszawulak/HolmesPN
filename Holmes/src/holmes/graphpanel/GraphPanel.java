@@ -534,9 +534,9 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewTransition(Point p) {
 		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
-			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
-			getNodes().add(n);
+			Transition trans = new Transition(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
+			this.getSelectionManager().selectOneElementLocation(trans.getLastLocation());
+			getNodes().add(trans);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
 		}
 	}
@@ -547,11 +547,11 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewStochasticTransition(Point p) {
 		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
-			n.setSPNtype(Transition.StochaticsType.ST);
-			n.setTransType(TransitionType.SPN);
-			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
-			getNodes().add(n);
+			Transition trans = new Transition(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
+			trans.setSPNtype(Transition.StochaticsType.ST);
+			trans.setTransType(TransitionType.SPN);
+			this.getSelectionManager().selectOneElementLocation(trans.getLastLocation());
+			getNodes().add(trans);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
 		}
 	}
@@ -562,10 +562,10 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewCTransition(Point p) {
 		if (isLegalLocation(p)) {
-			TransitionColored n = new TransitionColored(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
-			n.setTransType(TransitionType.CPNbasic);
-			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
-			getNodes().add(n);
+			TransitionColored trans = new TransitionColored(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
+			trans.setTransType(TransitionType.CPN);
+			this.getSelectionManager().selectOneElementLocation(trans.getLastLocation());
+			getNodes().add(trans);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
 		}
 	}
@@ -576,11 +576,11 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewTimeTransition(Point p) {
 		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
-			n.setTransType(TransitionType.TPN);
-			n.setTPNstatus(true);
-			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
-			getNodes().add(n);
+			Transition trans = new Transition(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
+			trans.setTransType(TransitionType.TPN);
+			trans.timeFunctions.setTPNstatus(true);
+			this.getSelectionManager().selectOneElementLocation(trans.getLastLocation());
+			getNodes().add(trans);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
 		}
 	}
@@ -591,11 +591,11 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewXTPNTransition(Point p) {
 		if (isLegalLocation(p)) {
-			TransitionXTPN n = new TransitionXTPN(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
-			n.setTransType(TransitionType.XTPN);
-			//n.setXTPNstatus(true);
-			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
-			getNodes().add(n);
+			TransitionXTPN trans = new TransitionXTPN(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
+			trans.setTransType(TransitionType.XTPN);
+			//trans.setXTPNstatus(true);
+			this.getSelectionManager().selectOneElementLocation(trans.getLastLocation());
+			getNodes().add(trans);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans(); // TODO: ?????
 		}
 	}
@@ -622,10 +622,10 @@ public class GraphPanel extends JComponent {
 	@SuppressWarnings("unused")
 	private void addNewFunctionalTransition(Point p) {
 		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
-			n.setFunctional(true);
-			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
-			getNodes().add(n);
+			Transition trans = new Transition(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
+			trans.setFunctional(true);
+			this.getSelectionManager().selectOneElementLocation(trans.getLastLocation());
+			getNodes().add(trans);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
 		}
 	}

@@ -44,7 +44,7 @@ public class ProblemDetector {
 			Place place = (Place)res_places.get(p);
 			String descr = (String)res_descr.get(p);
 			
-			place.setColorWithNumber(true, Color.GREEN, false, 0.0, true, descr, 0, 0, 0, 0);
+			place.drawGraphBoxP.setColorWithNumber(true, Color.GREEN, false, 0.0, true, descr, 0, 0, 0, 0);
 		}
 		
 		pn.repaintAllGraphPanels();
@@ -64,7 +64,7 @@ public class ProblemDetector {
 			for(int p=0; p<inP; p++) {
 				Place place = inPlaces.get(p);
 				
-				place.setColorWithNumber(true, new Color(255,0,127), false, 0.0, true, "IN-place", 0, 0, 0, 0);
+				place.drawGraphBoxP.setColorWithNumber(true, new Color(255,0,127), false, 0.0, true, "IN-place", 0, 0, 0, 0);
 			}
 		}
 		
@@ -73,7 +73,7 @@ public class ProblemDetector {
 			for(int p=0; p<outP; p++) {
 				Place place = outPlaces.get(p);
 				
-				place.setColorWithNumber(true, new Color(255,153,204), false, 0.0, true, "OUT-place", 0, 0, 0, 0);
+				place.drawGraphBoxP.setColorWithNumber(true, new Color(255,153,204), false, 0.0, true, "OUT-place", 0, 0, 0, 0);
 			}
 		}
 		subwindow.fixIOPlaces.setText("Input: "+inP+" / Output: "+outP);
@@ -93,7 +93,7 @@ public class ProblemDetector {
 			inT = inTransitions.size();
 			for(int p=0; p<inT; p++) {
 				Transition trans = inTransitions.get(p);
-				trans.setColorWithNumber(true, new Color(0,153,153), false, 0.0, true, "IN-trans", 0, 0, 0, 0);
+				trans.drawGraphBoxT.setColorWithNumber(true, new Color(0,153,153), false, 0.0, true, "IN-trans", 0, 0, 0, 0);
 			}
 		}
 		
@@ -101,7 +101,7 @@ public class ProblemDetector {
 			outT = outTransitions.size();
 			for(int t=0; t<outT; t++) {
 				Transition trans = outTransitions.get(t);
-				trans.setColorWithNumber(true, new Color(153,255,255), false, 0.0, true, "OUT-trans", 0, 0, 0, 0);
+				trans.drawGraphBoxT.setColorWithNumber(true, new Color(153,255,255), false, 0.0, true, "OUT-trans", 0, 0, 0, 0);
 			}
 		}
 		subwindow.fixIOTransitions.setText("Input: "+inT+" / Output: "+outT);
@@ -122,7 +122,7 @@ public class ProblemDetector {
 			for(int p=0; p<linP; p++) {
 				Place place = linearPlaces.get(p);
 				
-				place.setColorWithNumber(true, new Color(0,102,0), false, 0.0, true, "Linear place", 0, 0, 0, 0);
+				place.drawGraphBoxP.setColorWithNumber(true, new Color(0,102,0), false, 0.0, true, "Linear place", 0, 0, 0, 0);
 			}
 		}
 		
@@ -130,7 +130,7 @@ public class ProblemDetector {
 			linT = linearTransitions.size();
 			for(int p=0; p<linT; p++) {
 				Transition trans = linearTransitions.get(p);
-				trans.setColorWithNumber(true, new Color(128,255,0), false, 0.0, true, "Linear trans", 0, 0, 0, 0);
+				trans.drawGraphBoxT.setColorWithNumber(true, new Color(128,255,0), false, 0.0, true, "Linear trans", 0, 0, 0, 0);
 			}
 		}
 		
@@ -139,25 +139,25 @@ public class ProblemDetector {
 		if(regions) {
 			//int counter = -1;
 			for(Place place : places) {
-				if(!place.isColorChanged())
+				if(!place.drawGraphBoxP.isColorChanged())
 					continue;
 				
 				for(ElementLocation el : place.getElementLocations()) {
 					for(Arc arc : el.getInArcs()) {
-						if(((Transition)arc.getStartNode()).isColorChanged()) {
-							((Transition)arc.getStartNode()).setColorWithNumber(
-								true, new Color(255,0,0), false, 0.0, true, "LINEAR REGION", 0, 0, 0, 0);
-							place.setColorWithNumber(
-									true, new Color(255,0,0), false, 0.0, true, "LINEAR REGION", 0, 0, 0, 0);
+						if(((Transition)arc.getStartNode()).drawGraphBoxT.isColorChanged()) {
+							((Transition)arc.getStartNode()).drawGraphBoxT.setColorWithNumber(
+								true, Color.RED, false, 0.0, true, "LINEAR REGION", 0, 0, 0, 0);
+							place.drawGraphBoxP.setColorWithNumber(
+									true, Color.RED, false, 0.0, true, "LINEAR REGION", 0, 0, 0, 0);
 						}
 					}
 					
 					for(Arc arc : el.getOutArcs()) {
-						if(((Transition)arc.getEndNode()).isColorChanged()) {
-							((Transition)arc.getEndNode()).setColorWithNumber(
-								true, new Color(255,0,0), false, 0.0, true, "LINEAR REGION", 0, 0, 0, 0);
-							place.setColorWithNumber(
-									true, new Color(255,0,0), false, 0.0, true, "LINEAR REGION", 0, 0, 0, 0);
+						if(((Transition)arc.getEndNode()).drawGraphBoxT.isColorChanged()) {
+							((Transition)arc.getEndNode()).drawGraphBoxT.setColorWithNumber(
+								true, Color.RED, false, 0.0, true, "LINEAR REGION", 0, 0, 0, 0);
+							place.drawGraphBoxP.setColorWithNumber(
+									true, Color.RED, false, 0.0, true, "LINEAR REGION", 0, 0, 0, 0);
 						}
 					}
 				}

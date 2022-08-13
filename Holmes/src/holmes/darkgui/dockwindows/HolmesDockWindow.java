@@ -267,7 +267,7 @@ public class HolmesDockWindow extends SingleDock {
                             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SPNTRANSITION, n, e.getElementLocation()));
                         } else if ( n instanceof TransitionXTPN ) {
                             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.XTPNTRANSITION, n, e.getElementLocation()));
-                        } else if (((Transition) n).getTransType() == TransitionType.CPNbasic) {
+                        } else if (((Transition) n).getTransType() == TransitionType.CPN) {
                             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CTRANSITION, n, e.getElementLocation()));
                         }
                     }
