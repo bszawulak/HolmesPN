@@ -1326,7 +1326,7 @@ public class HolmesDockWindowsTable extends JPanel {
             JLabel token3Label = new JLabel("T3 Yellow:", JLabel.LEFT);
             token3Label.setBounds(columnB_posX + 60, columnB_Y, colACompLength, 20);
             components.add(token3Label);
-            int tok3 = place.getColorTokensNumber(3);
+            int tok3 = ((PlaceColored)place).getColorTokensNumber(3);
 
             SpinnerModel token3SpinnerModel = new SpinnerNumberModel(tok3, 0, Integer.MAX_VALUE, 1);
             JSpinner token3Spinner = new JSpinner(token3SpinnerModel);
@@ -1342,7 +1342,7 @@ public class HolmesDockWindowsTable extends JPanel {
             JLabel token1Label = new JLabel("T1 Green:", JLabel.LEFT);
             token1Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
             components.add(token1Label);
-            int tok1 = place.getColorTokensNumber(1);
+            int tok1 = ((PlaceColored)place).getColorTokensNumber(1);
 
             SpinnerModel token1SpinnerModel = new SpinnerNumberModel(tok1, 0, Integer.MAX_VALUE, 1);
             JSpinner token1Spinner = new JSpinner(token1SpinnerModel);
@@ -1357,7 +1357,7 @@ public class HolmesDockWindowsTable extends JPanel {
             JLabel token4Label = new JLabel("T4 Grey:", JLabel.LEFT);
             token4Label.setBounds(columnB_posX + 60, columnB_Y, colACompLength, 20);
             components.add(token4Label);
-            int tok4 = place.getColorTokensNumber(4);
+            int tok4 = ((PlaceColored)place).getColorTokensNumber(4);
 
             SpinnerModel token4SpinnerModel = new SpinnerNumberModel(tok4, 0, Integer.MAX_VALUE, 1);
             JSpinner token4Spinner = new JSpinner(token4SpinnerModel);
@@ -1372,7 +1372,7 @@ public class HolmesDockWindowsTable extends JPanel {
             JLabel token2Label = new JLabel("T2 Blue:", JLabel.LEFT);
             token2Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
             components.add(token2Label);
-            int tok2 = place.getColorTokensNumber(2);
+            int tok2 = ((PlaceColored)place).getColorTokensNumber(2);
 
             SpinnerModel token2SpinnerModel = new SpinnerNumberModel(tok2, 0, Integer.MAX_VALUE, 1);
             JSpinner token2Spinner = new JSpinner(token2SpinnerModel);
@@ -1387,7 +1387,7 @@ public class HolmesDockWindowsTable extends JPanel {
             JLabel token5Label = new JLabel("T5 Black:", JLabel.LEFT);
             token5Label.setBounds(columnB_posX + 60, columnB_Y, colACompLength, 20);
             components.add(token5Label);
-            int tok5 = place.getColorTokensNumber(5);
+            int tok5 = ((PlaceColored)place).getColorTokensNumber(5);
 
             SpinnerModel token5SpinnerModel = new SpinnerNumberModel(tok5, 0, Integer.MAX_VALUE, 1);
             JSpinner token5Spinner = new JSpinner(token5SpinnerModel);
@@ -2806,7 +2806,7 @@ public class HolmesDockWindowsTable extends JPanel {
         reqT0Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(reqT0Label);
 
-        SpinnerModel weightT0SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(0), 0, Integer.MAX_VALUE, 1);
+        SpinnerModel weightT0SpinnerModel = new SpinnerNumberModel( ((TransitionColored)transition).getRequiredColoredTokens(0), 0, Integer.MAX_VALUE, 1);
         JSpinner weightT0Spinner = new JSpinner(weightT0SpinnerModel);
         weightT0Spinner.setBounds(columnB_posX - 35, columnB_Y += 20, 65, 20);
         weightT0Spinner.addChangeListener(e -> {
@@ -2819,7 +2819,7 @@ public class HolmesDockWindowsTable extends JPanel {
         reqT3Label.setBounds(columnB_posX + 40, columnB_Y, 80, 20);
         components.add(reqT3Label);
 
-        SpinnerModel weightT3SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(3), 0, Integer.MAX_VALUE, 1);
+        SpinnerModel weightT3SpinnerModel = new SpinnerNumberModel( ((TransitionColored)transition).getRequiredColoredTokens(3), 0, Integer.MAX_VALUE, 1);
         JSpinner weightT3Spinner = new JSpinner(weightT3SpinnerModel);
         weightT3Spinner.setBounds(columnB_posX + 100, columnB_Y, 65, 20);
         weightT3Spinner.addChangeListener(e -> {
@@ -2832,7 +2832,7 @@ public class HolmesDockWindowsTable extends JPanel {
         reqT1Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(reqT1Label);
 
-        SpinnerModel weightT1SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(1), 0, Integer.MAX_VALUE, 1);
+        SpinnerModel weightT1SpinnerModel = new SpinnerNumberModel( ((TransitionColored)transition).getRequiredColoredTokens(1), 0, Integer.MAX_VALUE, 1);
         JSpinner weightT1Spinner = new JSpinner(weightT1SpinnerModel);
         weightT1Spinner.setBounds(columnB_posX - 35, columnB_Y += 20, 65, 20);
         weightT1Spinner.addChangeListener(e -> {
@@ -2845,7 +2845,7 @@ public class HolmesDockWindowsTable extends JPanel {
         reqT4Label.setBounds(columnB_posX + 40, columnB_Y, 80, 20);
         components.add(reqT4Label);
 
-        SpinnerModel weightT4SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(4), 0, Integer.MAX_VALUE, 1);
+        SpinnerModel weightT4SpinnerModel = new SpinnerNumberModel( ((TransitionColored)transition).getRequiredColoredTokens(4), 0, Integer.MAX_VALUE, 1);
         JSpinner weightT4Spinner = new JSpinner(weightT4SpinnerModel);
         weightT4Spinner.setBounds(columnB_posX + 100, columnB_Y, 65, 20);
         weightT4Spinner.addChangeListener(e -> {
@@ -2858,7 +2858,7 @@ public class HolmesDockWindowsTable extends JPanel {
         reqT2Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(reqT2Label);
 
-        SpinnerModel weightT2SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(2), 0, Integer.MAX_VALUE, 1);
+        SpinnerModel weightT2SpinnerModel = new SpinnerNumberModel( ((TransitionColored)transition).getRequiredColoredTokens(2), 0, Integer.MAX_VALUE, 1);
         JSpinner weightT2Spinner = new JSpinner(weightT2SpinnerModel);
         weightT2Spinner.setBounds(columnB_posX - 35, columnB_Y += 20, 65, 20);
         weightT2Spinner.addChangeListener(e -> {
@@ -2871,7 +2871,7 @@ public class HolmesDockWindowsTable extends JPanel {
         reqT5Label.setBounds(columnB_posX + 40, columnB_Y, 80, 20);
         components.add(reqT5Label);
 
-        SpinnerModel weightT5SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(5), 0, Integer.MAX_VALUE, 1);
+        SpinnerModel weightT5SpinnerModel = new SpinnerNumberModel( ((TransitionColored)transition).getRequiredColoredTokens(5), 0, Integer.MAX_VALUE, 1);
         JSpinner weightT5Spinner = new JSpinner(weightT5SpinnerModel);
         weightT5Spinner.setBounds(columnB_posX + 100, columnB_Y, 65, 20);
         weightT5Spinner.addChangeListener(e -> {
@@ -8611,8 +8611,9 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param i      int - nr porządkowy tokenu, default 0, od 0 do 5
      */
     private void setColorTokens(int tokens, int i) {
-        Place place = (Place) element;
-        if (mode == PLACE && place.isColored) {
+        if (mode == PLACE && element instanceof PlaceColored) {
+            PlaceColored place = (PlaceColored) element;
+
             switch (i) {
                 case 0 -> place.setColorTokensNumber(tokens, 0);
                 case 1 -> place.setColorTokensNumber(tokens, 1);
@@ -8671,15 +8672,19 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param i      int - nr porządkowy koloru, default 0, od 0 do 5
      */
     private void setActivationWeight(int weight, Transition trans, int i) {
-        switch (i) {
-            case 0 -> trans.setRequiredColoredTokens(weight, 0);
-            case 1 -> trans.setRequiredColoredTokens(weight, 1);
-            case 2 -> trans.setRequiredColoredTokens(weight, 2);
-            case 3 -> trans.setRequiredColoredTokens(weight, 3);
-            case 4 -> trans.setRequiredColoredTokens(weight, 4);
-            case 5 -> trans.setRequiredColoredTokens(weight, 5);
-            default -> trans.setRequiredColoredTokens(weight, 0);
+        if (trans instanceof TransitionColored) {
+            TransitionColored transition = (TransitionColored)trans;
+            switch (i) {
+                case 0 -> transition.setRequiredColoredTokens(weight, 0);
+                case 1 -> transition.setRequiredColoredTokens(weight, 1);
+                case 2 -> transition.setRequiredColoredTokens(weight, 2);
+                case 3 -> transition.setRequiredColoredTokens(weight, 3);
+                case 4 -> transition.setRequiredColoredTokens(weight, 4);
+                case 5 -> transition.setRequiredColoredTokens(weight, 5);
+                default -> transition.setRequiredColoredTokens(weight, 0);
+            }
         }
+
     }
 
     /**

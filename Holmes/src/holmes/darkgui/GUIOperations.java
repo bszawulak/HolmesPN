@@ -142,11 +142,6 @@ public class GUIOperations {
 						"Holmes "+GUIManager.getDefaultGUIManager().getSettingsManager().getValue("holmes_version")+
 						"  "+Tools.getFileName(file));
 			}
-			try {
-				//overlord.getWorkspace().getProject().storeColors();  //TODO? WTH?
-			} catch (Exception ex) {
-				
-			}
 		}
 	}
 	

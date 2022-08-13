@@ -13,18 +13,13 @@ public class PlaceXTPN extends Place {
     private double gammaMin_xTPN = 0.0;
     private double gammaMax_xTPN = 99;
     private boolean gammaMode_xTPN = true;
-
     //grafika:
     private boolean showTokenSet_xTPN = false; //czy wyświetlać zbiór tokenów
-
     public boolean showQSimXTPN = false;
-
     private boolean gammaRangeVisibility_XTPN = true;
     private int franctionDigits = 2;
-
     //tokeny:
     private ArrayList<Double> multisetK;
-    //private ArrayList<Double> reservedMultisetK;
 
     /**
      * Konstruktor obiektu miejsca sieci.
@@ -35,6 +30,7 @@ public class PlaceXTPN extends Place {
     public PlaceXTPN(int nodeId, int sheetId, Point placePosition) {
         super(nodeId, sheetId, placePosition);
         this.multisetK = new ArrayList<>();
+        placeType = PlaceType.XTPN;
     }
 
     /**
@@ -48,6 +44,7 @@ public class PlaceXTPN extends Place {
     public PlaceXTPN(int nodeId, ArrayList<ElementLocation> elementLocations, String name, String comment, int tokensNumber) {
         super(nodeId, elementLocations, name, comment, tokensNumber);
         this.multisetK = new ArrayList<>();
+        placeType = PlaceType.XTPN;
     }
 
     /**
@@ -58,6 +55,7 @@ public class PlaceXTPN extends Place {
     public PlaceXTPN(int nodeId, ArrayList<ElementLocation> elementLocations) {
         super(nodeId, elementLocations);
         this.multisetK = new ArrayList<>();
+        placeType = PlaceType.XTPN;
     }
 
     /**

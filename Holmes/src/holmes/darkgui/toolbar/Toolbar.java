@@ -58,7 +58,6 @@ public class Toolbar extends BorderDock {
 	private CompositeLineDock horizontalCompositeToolBarDock;
 	private CompositeLineDock verticalCompositeToolBarDock;
 	private LineDock defaultVerticalToolBarDock;
-	
 	private boolean buttonsDraggable = false;
 
 	// simulator buttons
@@ -181,12 +180,12 @@ public class Toolbar extends BorderDock {
 		ArrayList<ButtonDockable> ioDockables = new ArrayList<ButtonDockable>();
 		//nowa zakładka
 		ToolbarButtonAction addButton = new ToolbarButtonAction(this, 
-				"New tab", "Add new network tab/sheet", Tools.getResIcon48("/icons/toolbar/add_panel.png")) {
+				"New project", "Clear current project", Tools.getResIcon48("/icons/toolbar/add_panel.png")) {
 					@Serial
 					private static final long serialVersionUID = -3039335266465055547L;
 
 			public void actionPerformed(ActionEvent actionEvent) {
-				//overlord.getWorkspace().newTab(true, new Point(0,0), 1, MetaType.SUBNET);
+				GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
 			}
 		};
 		ioDockables.add(createButtonDockable("ButtonDockableAdd", addButton));

@@ -1019,18 +1019,18 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda przechowuje stan kolorowany m0 sieci na życzenie.
+	 * Metoda przechowuje stan kolorowany m0 sieci.
 	 */
 	public void storeColors() {
 		colorVector = new ArrayList<>();
 		for(Place place : getPlaces()) {
 			ArrayList<Integer> tokensC = new ArrayList<>();
-			tokensC.add(place.getColorTokensNumber(0));
-			tokensC.add(place.getColorTokensNumber(1));
-			tokensC.add(place.getColorTokensNumber(2));
-			tokensC.add(place.getColorTokensNumber(3));
-			tokensC.add(place.getColorTokensNumber(4));
-			tokensC.add(place.getColorTokensNumber(5));
+			tokensC.add( ((PlaceColored)place).getColorTokensNumber(0));
+			tokensC.add( ((PlaceColored)place).getColorTokensNumber(1));
+			tokensC.add( ((PlaceColored)place).getColorTokensNumber(2));
+			tokensC.add( ((PlaceColored)place).getColorTokensNumber(3));
+			tokensC.add( ((PlaceColored)place).getColorTokensNumber(4));
+			tokensC.add( ((PlaceColored)place).getColorTokensNumber(5));
 			colorVector.add(tokensC);
 		}
 	}
@@ -1051,7 +1051,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			
 			places = getPlaces();
 			for(int p = 0; p<places.size(); p++) {
-				Place place = places.get(p);
+				PlaceColored place = (PlaceColored)places.get(p);
 				place.setColorTokensNumber(colorVector.get(p).get(0), 0);
 				place.setColorTokensNumber(colorVector.get(p).get(1), 1);
 				place.setColorTokensNumber(colorVector.get(p).get(2), 2);

@@ -18,6 +18,12 @@ import holmes.petrinet.data.IdGenerator;
 public class Place extends Node {
 	@Serial
 	private static final long serialVersionUID = 2346995422046987174L;
+
+	/**
+	 * PN, CPN, XTPN
+	 */
+	public enum PlaceType {PN, CPN, XTPN}
+	protected PlaceType placeType = PlaceType.PN; //default
 	protected static int realRadius = 18;
 	protected int tokensNumber = 0;
 	protected int reservedTokens = 0;
@@ -32,7 +38,10 @@ public class Place extends Node {
 	public int valueXoff;
 	public int valueYoff;
 	public Color defColor = Color.WHITE;
-	
+
+
+	//colored:
+	public boolean isColored = false;
 	//SSA:
 	protected double ssaValue = 0.0;
 	//quickSim
@@ -44,20 +53,6 @@ public class Place extends Node {
 	public int qSimFillValue = 0; //poziom wypełnienia danych
 	public double qSimTokens = 0; //ile średnio tokenów w symulacji
 	//public String qSimText = ""; //dodatkowy tekst
-	
-	//colors:
-	public boolean isColored = false;
-	public int token1green = 0;
-	public int token2blue = 0;
-	public int token3yellow = 0;
-	public int token4grey = 0;
-	public int token5black = 0;
-	public int reserved1green = 0;
-	public int reserved2blue = 0;
-	public int reserved3yellow = 0;
-	public int reserved4grey = 0;
-	public int reserved5black = 0;
-
 
 	protected boolean isXTPN = false; //czy tokeny marzą o elektrycznych tranzycjach?
 
@@ -175,22 +170,6 @@ public class Place extends Node {
 	public int getTokensNumber() {
 		return tokensNumber;
 	}
-	
-	/**
-	 * Metoda pozwala odczytać aktualną liczbę kolorowych tokenów z miejsca.
-	 * @param i int - nr porządkowy tokenu, default 0, od 0 do 5
-	 * @return int - liczba tokenów kolorowych
-	 */
-	public int getColorTokensNumber(int i) {
-		return switch (i) {
-			case 1 -> token1green;
-			case 2 -> token2blue;
-			case 3 -> token3yellow;
-			case 4 -> token4grey;
-			case 5 -> token5black;
-			default -> tokensNumber;
-		};
-	}
 
 	/**
 	 * Metoda pozwala ustawić wartość liczby tokenów dla miejsca.
@@ -201,22 +180,6 @@ public class Place extends Node {
 		if(tokensNumber < 0) {
 			GUIManager.getDefaultGUIManager().log("Critical simulation error. Number of tokens in place: "
 					+this.getName()+ " below zero: ("+this.getTokensNumber()+").", "error", true);
-		}
-	}
-	
-	/**
-	 * Metoda pozwala ustawić wartość liczby kolorowych tokenów dla miejsca.
-	 * @param tokensNumber int - nowa liczba tokenów
-	 * @param i int - nr porządkowy tokenu, default 0, od 0 do 1
-	 */
-	public void setColorTokensNumber(int tokensNumber, int i) {
-		switch (i) {
-			case 1 -> this.token1green = Math.max(tokensNumber, 0);
-			case 2 -> this.token2blue = Math.max(tokensNumber, 0);
-			case 3 -> this.token3yellow = Math.max(tokensNumber, 0);
-			case 4 -> this.token4grey = Math.max(tokensNumber, 0);
-			case 5 -> this.token5black = Math.max(tokensNumber, 0);
-			default -> this.tokensNumber = Math.max(tokensNumber, 0);
 		}
 	}
 
@@ -234,52 +197,6 @@ public class Place extends Node {
 		}
 
 	}
-	
-	/**
-	 * Metoda pozwala zmienić liczbę tokenów w miejscu, dodając do niej określoną wartość.
-	 * @param delta int - wartość o którą zmieni się liczba kolorowych tokenów
-	 * @param i int - nr porządkowy tokenu, default 0, od 0 do 5
-	 */
-	public void modifyColorTokensNumber(int delta, int i) {
-		switch (i) {
-			case 1 -> {
-				this.token1green += delta;
-				if (this.tokensNumber < 0) {
-					this.token1green = 0;
-				}
-			}
-			case 2 -> {
-				this.token2blue += delta;
-				if (this.tokensNumber < 0) {
-					this.token2blue = 0;
-				}
-			}
-			case 3 -> {
-				this.token3yellow += delta;
-				if (this.tokensNumber < 0) {
-					this.token3yellow = 0;
-				}
-			}
-			case 4 -> {
-				this.token4grey += delta;
-				if (this.tokensNumber < 0) {
-					this.token4grey = 0;
-				}
-			}
-			case 5 -> {
-				this.token5black += delta;
-				if (this.tokensNumber < 0) {
-					this.token5black = 0;
-				}
-			}
-			default -> {
-				this.tokensNumber += delta;
-				if (this.tokensNumber < 0) {
-					this.tokensNumber = 0;
-				}
-			}
-		}
-	}
 
 	/**
 	 * Metoda pozwala pobrać liczbę zajętych (zarezerwowanych  przez aktywowaną tranzycję) tokenów.
@@ -288,22 +205,6 @@ public class Place extends Node {
 	public int getReservedTokens() {
 		return reservedTokens;
 	}
-	
-	/**
-	 * Metoda zwraca liczbę zarezerwowanych kolorowych tokenów (0-5)
-	 * @param i (<b>int</b>) nr porządkowy tokenu, default 0, od 0 do 5
-	 * @return (<b>int</b>) - liczba zarezerwowanych tokenów
-	 */
-	public int getReservedColorTokens(int i) {
-		return switch (i) {
-			case 1 -> reserved1green;
-			case 2 -> reserved2blue;
-			case 3 -> reserved3yellow;
-			case 4 -> reserved4grey;
-			case 5 -> reserved5black;
-			default -> reservedTokens;
-		};
-	}
 
 	/**
 	 * Metoda pozwala zarezerwować określoną liczbę tokenów w miejscu.
@@ -311,53 +212,6 @@ public class Place extends Node {
 	 */
 	public void reserveTokens(int tokensTaken) {
 		this.reservedTokens += tokensTaken;
-	}
-	
-	/**
-	 * Metoda pozwala zarezerwować określoną liczbę kolorowych tokenów w miejscu.
-	 * @param tokensTaken (int) liczba zajmowanych tokenów
-	 * @param i (int) nr porządkowy kolorowanego tokeny, dafult 0, od 0 do 5
-	 */
-	public void reserveColorTokens(int tokensTaken, int i) {
-		switch (i) {
-			case 1 -> this.reserved1green += tokensTaken;
-			case 2 -> this.reserved2blue += tokensTaken;
-			case 3 -> this.reserved3yellow += tokensTaken;
-			case 4 -> this.reserved4grey += tokensTaken;
-			case 5 -> this.reserved5black += tokensTaken;
-			default -> this.reservedTokens += tokensTaken;
-		}
-		
-	}
-
-	/**
-	 * Metoda pozwala zwolnić wszystkie zarezerwowane tokeny.
-	 */
-	public void freeReservedTokens() {
-		this.reservedTokens = 0;
-		this.reserved1green = 0;
-		this.reserved2blue = 0;
-		this.reserved3yellow = 0;
-		this.reserved4grey = 0;
-		this.reserved5black = 0;
-	}
-
-	
-	/**
-	 * Metoda zwalnia wszystkie zarezerwowane kolorowe tokeny.
-	 * @param i int - nr porządkowy tokenu, default 0, od 0 do 5
-	 */
-	@SuppressWarnings("unused")
-	public void freeReservedColorTokens(int i) {
-		switch (i) {
-			case 1 -> this.reserved1green = 0;
-			case 2 -> this.reserved2blue = 0;
-			case 3 -> this.reserved3yellow = 0;
-			case 4 -> this.reserved4grey = 0;
-			case 5 -> this.reserved5black = 0;
-			default -> this.reservedTokens = 0;
-		}
-		
 	}
 
 	/**
@@ -368,23 +222,28 @@ public class Place extends Node {
 	public int getNonReservedTokensNumber() {
 		return tokensNumber - getReservedTokens();
 	}
-	
+
 	/**
-	 * Metoda pobiera zarezerwowane wolne kolorowe tokeny.
-	 * @param i int - nr porządkowy tokenu, default 0, od 0 do 5
-	 * @return int - liczba dostępnych tokenów
+	 * Metoda pozwala zwolnić wszystkie zarezerwowane tokeny.
 	 */
-	public int getNonReservedColorTokensNumber(int i) {
-		return switch (i) {
-			case 0 -> tokensNumber - getReservedColorTokens(0);
-			case 1 -> token1green - getReservedColorTokens(1);
-			case 2 -> token2blue - getReservedColorTokens(2);
-			case 3 -> token3yellow - getReservedColorTokens(3);
-			case 4 -> token4grey - getReservedColorTokens(4);
-			case 5 -> token5black - getReservedColorTokens(5);
-			default -> tokensNumber - getReservedTokens();
-		};
-		
+	public void freeReservedTokens() {
+		this.reservedTokens = 0;
+	}
+
+	/**
+	 * Metoda zwraca typ miejsca.
+	 * @return (<b>PlaceType</b>) typ miejsca: PN, CPN, XTPN.
+	 */
+	public PlaceType getPlaceType() {
+		return this.placeType;
+	}
+
+	/**
+	 * Metoda ustawia typ miejsca.
+	 * @param (<b>value</b>) typ miejsca: PN, CPN, XTPN.
+	 */
+	public void setPlaceType(PlaceType value) {
+		this.placeType = value;
 	}
 	
 	/**

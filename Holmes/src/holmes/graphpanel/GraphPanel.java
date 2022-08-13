@@ -519,7 +519,7 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewCPlace(Point p) {
 		if (isLegalLocation(p)) {
-			Place place = new Place(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
+			PlaceColored place = new PlaceColored(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
 			place.isColored = true;
 			this.getSelectionManager().selectOneElementLocation(place.getLastLocation());
 			getNodes().add(place);
@@ -562,7 +562,7 @@ public class GraphPanel extends JComponent {
 	 */
 	private void addNewCTransition(Point p) {
 		if (isLegalLocation(p)) {
-			Transition n = new Transition(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
+			TransitionColored n = new TransitionColored(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
 			n.setTransType(TransitionType.CPNbasic);
 			this.getSelectionManager().selectOneElementLocation(n.getLastLocation());
 			getNodes().add(n);

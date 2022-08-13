@@ -194,14 +194,15 @@ public class ProjectWriter {
 				}
 
 				bw.write(spaces(sp)+"<Place colored:"+place.isColored+">"+newline);
-				bw.write(spaces(sp)+"<Place colors:"
-						+place.getColorTokensNumber(0)+";"
-						+place.getColorTokensNumber(1)+";"
-						+place.getColorTokensNumber(2)+";"
-						+place.getColorTokensNumber(3)+";"
-						+place.getColorTokensNumber(4)+";"
-						+place.getColorTokensNumber(5)+">"+newline);
-				
+				if(place instanceof PlaceColored) {
+					bw.write(spaces(sp)+"<Place colors:"
+							+((PlaceColored)place).getColorTokensNumber(0)+";"
+							+((PlaceColored)place).getColorTokensNumber(1)+";"
+							+((PlaceColored)place).getColorTokensNumber(2)+";"
+							+((PlaceColored)place).getColorTokensNumber(3)+";"
+							+((PlaceColored)place).getColorTokensNumber(4)+";"
+							+((PlaceColored)place).getColorTokensNumber(5)+">"+newline);
+				}
 				bw.write(spaces(sp)+"<Location data"+">"+newline);
 				sp = 8;
 				bw.write(spaces(sp)+"<Place portal status:"+place.isPortal()+">"+newline);
@@ -280,13 +281,16 @@ public class ProjectWriter {
 
 				
 				bw.write(spaces(sp)+"<Transition colored:"+trans.isColored()+">"+newline); //is colored?
-				bw.write(spaces(sp)+"<Transition colors threshold:"
-						+trans.getRequiredColoredTokens(0)+";"
-						+trans.getRequiredColoredTokens(1)+";"
-						+trans.getRequiredColoredTokens(2)+";"
-						+trans.getRequiredColoredTokens(3)+";"
-						+trans.getRequiredColoredTokens(4)+";"
-						+trans.getRequiredColoredTokens(5)+">"+newline);
+				if(trans instanceof TransitionColored) {
+					bw.write(spaces(sp)+"<Transition colors threshold:"
+							+((TransitionColored)trans).getRequiredColoredTokens(0)+";"
+							+((TransitionColored)trans).getRequiredColoredTokens(1)+";"
+							+((TransitionColored)trans).getRequiredColoredTokens(2)+";"
+							+((TransitionColored)trans).getRequiredColoredTokens(3)+";"
+							+((TransitionColored)trans).getRequiredColoredTokens(4)+";"
+							+((TransitionColored)trans).getRequiredColoredTokens(5)+">"+newline);
+				}
+
 				
 				bw.write(spaces(sp)+"<Location data"+">"+newline);
 				sp = 8;

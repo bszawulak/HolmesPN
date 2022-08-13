@@ -37,7 +37,6 @@ public class Transition extends Node {
     //protected boolean isGlowedSub = false;
     protected boolean knockoutStatus = false;        // czy wyłączona (MCS, inne)
 
-
     //wyświetlanie dodatkowych tekstów nad ikoną:
     protected boolean isColorChanged = false;        //zmiana koloru - status
     protected double transNumericalValue = 0.0;        //dodatkowa liczba do wyświetlenia
@@ -60,7 +59,6 @@ public class Transition extends Node {
     public boolean qSimDrawStats = false; // czy rysować wypełnienie tranzycji
     public int qSimFillValue = 0; //poziom wypełnienia
     public double qSimFired = 0; //ile razy uruchomiona
-    //public String qSimText = ""; //dodatkowy tekst
     public boolean borderFrame = false;
 
     //opcje czasowe:
@@ -73,13 +71,6 @@ public class Transition extends Node {
     protected boolean TPNactive = false;
     protected boolean DPNactive = false;
 
-    //opcje kolorow (basic) ?
-    protected int reqT0red = 1;
-    protected int reqT1green = 0;
-    protected int reqT2blue = 0;
-    protected int reqT3yellow = 0;
-    protected int reqT4gray = 0;
-    protected int reqT5black = 0;
 
     //tranzycja funkcyjna:
     protected boolean isFunctional = false;
@@ -98,42 +89,8 @@ public class Transition extends Node {
     //inne:
     protected int firingValueInInvariant = 0; // ile razy uruchomiona w ramach niezmiennika
 
-
-    /*  ***********************************************************************************
-        ********************************    xTPN    ***************************************
-        ***********************************************************************************  */
-    /*
-    private boolean isXTPN = false; //po narysowaniu w Holmesie będzie niezmienialne true
-        //co oznacza, że tej tranzycji NIE MOŻNA przekonwertować na klasyczną inaczej, niż
-        //odpowiednio ustawiając poniższe parametry. (alphaL=0; alphaU=-1; betaL=betaU=0)
-    //parametry xTPN:
-    private boolean alphaMode_xTPN = true;
-    private boolean alphaRangeVisibility_XTPN = true;
-    private double alphaMin_xTPN = 0.0;
-    private double alphaMax_xTPN = 1.0;
-    private boolean betaMode_xTPN = true;
-    private double betaMin_xTPN = 0.0;
-    private double betaMax_xTPN = 1.0;
-    private boolean betaRangeVisibility_XTPN = true;
-    private double tauAlpha_xTPN = -1.0;
-    private double tauBeta_xTPN = -1.0;
-    private double timer_Ualfa_XTPN = -1.0;
-    private double timer_Vbeta_XTPN = -1.0;
-    private boolean tauTimersVisibility_XTPN = true; //czy wyświetlać timery
-
-    //jeśli miejsca wejściowe tracą szybciej tokeny ze starości niż z
-    //produkcji, zmniejszamy tau Alfa i Beta (prawdopodobieństwo).
-    private boolean massActionKinetics = false;
-    private boolean isImmediateXTPN = false;
-    private boolean isActivated_xTPN = false;
-    private boolean isProducing_xTPN = false;
-    //grafika:
-    private int fractionDigits = 2;
-*/
-
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
-     *
      * @param transitionId     int - identyfikator tranzycji
      * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji tranzycji
      * @param name             String - nazwa tranzycji
@@ -151,7 +108,6 @@ public class Transition extends Node {
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany przez procedury tworzenia portali.
-     *
      * @param transitionId     int - identyfikator tranzycji
      * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji tranzycji
      */
@@ -166,7 +122,6 @@ public class Transition extends Node {
 
     /**
      * Konstruktor obiektu tranzycji sieci.
-     *
      * @param transitionId       int - identyfikator tranzycji
      * @param sheetId            int - identyfikator arkusza
      * @param transitionPosition Point - punkt lokalizacji tranzycji
@@ -219,7 +174,6 @@ public class Transition extends Node {
 
     /**
      * Zwraca zbiór miejsc wyjściowych t*.
-     *
      * @return ArrayList[Place] - lista miejsc ze zbioru t*
      */
     public ArrayList<Place> getPostPlaces() {
@@ -251,7 +205,6 @@ public class Transition extends Node {
 
     /**
      * Metoda pozwala pobrać łączna liczbę tokenów niezbędnych do aktywacji tej tranzycji.
-     *
      * @return int - liczba tokenów potrzebnych do aktywacji z pola requiredTokens
      */
     @SuppressWarnings("unused")
@@ -265,7 +218,6 @@ public class Transition extends Node {
 
     /**
      * Metoda informująca, czy tranzycja jest podświetlona kolorem
-     *
      * @return boolean - true jeśli świeci; false w przeciwnym wypadku
      */
     public boolean isGlowed() {
@@ -275,7 +227,6 @@ public class Transition extends Node {
     /**
      * Metoda pozwala określić, czy tranzycja ma byc podświetlona oraz ile razy
      * występuje ona w ramach niezmiennika.
-     *
      * @param isGlowed             boolean - true, jeśli ma świecić
      * @param numericalValueShowed int - liczba uruchomień tranzycji w niezmienniku
      */
@@ -286,7 +237,6 @@ public class Transition extends Node {
 
     /**
      * Metoda sprawdza, czy tranzycja świeci będąc częcią zbioru MCT.
-     *
      * @return boolean - true jeżeli świeci jako MCT; false w przeciwnym wypadku
      */
     public boolean isGlowed_MTC() {
@@ -295,7 +245,6 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia stan świecenia tranzycji jako częci MCT.
-     *
      * @param value boolean - true jeżeli ma świecić
      */
     public void setGlowed_MTC(boolean value) {
@@ -305,7 +254,6 @@ public class Transition extends Node {
 
     /**
      * Metoda informuje, czy tramzycja ma być rysowana z innym kolorem wypełnienia
-     *
      * @return boolean - true, jeśli ma mieć inny kolor niż domyślny
      */
     public boolean isColorChanged() {
@@ -314,7 +262,6 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca informację, czy ma być wyświetlany dodatkowy tekst obok rysunku tranzycji.
-     *
      * @return boolean - true, jeśli tak
      */
     public boolean isShowedAddText() {
@@ -328,7 +275,6 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca dodatkowy tekst do wyświetlenia.
-     *
      * @return String - tekst
      */
     public String returnAddText() {
@@ -337,7 +283,6 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia stan zmiany koloru oraz liczbę do wyświetlenia.
-     *
      * @param isColorChanged      boolean - true, jeśli ma rysować się w kolorze
      * @param transColorValue     Color - na jaki kolor
      * @param showNumber          boolean - true, jeśli liczba ma się wyświetlać
@@ -367,7 +312,6 @@ public class Transition extends Node {
 
     /**
      * Metoda ustawia stan zmiany koloru oraz liczbę do wyświetlenia.
-     *
      * @param isColorChanged      boolean - true, jeśli ma rysować się w kolorze
      * @param transColorValue     Color - na jaki kolor
      * @param showNumber          boolean - true, jeśli liczba ma się wyświetlać
@@ -407,7 +351,6 @@ public class Transition extends Node {
 
     /**
      * Metoda informuje, czy ma się wyświetlać dodatkowa wartośc liczbowa obok rysunku tranzycji.
-     *
      * @return boolean - true, jeśli ma się wyświetlać
      */
     public boolean getNumericalValueVisibility() {
@@ -416,7 +359,6 @@ public class Transition extends Node {
 
     /**
      * Zwraca liczbę która ma się wyświetlać obok kwadratu tranzycji.
-     *
      * @return double - liczba
      */
     public double getNumericalValueDOUBLE() {
@@ -425,7 +367,6 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca aktualnie ustawiony kolor dla tranzycji
-     *
      * @return Color - kolor
      */
     public Color getTransitionNewColor() {
@@ -434,7 +375,6 @@ public class Transition extends Node {
 
     /**
      * Metoda zwraca liczbę wystąpień uruchomień tranzycji w ramach niezmiennika.
-     *
      * @return int - liczba wystąpień uruchomień tranzycji w niezmienniku z pola firingNumber
      */
     public int getFiring_INV() {
@@ -451,7 +391,6 @@ public class Transition extends Node {
 
     /**
      * Metoda pozwala sprawdzić, czy tranzycja jest w tej chwili odpalana.
-     *
      * @return boolean - true, jeśli tranzycja jest aktualnie odpalana; false w przeciwnym wypadku
      */
     public boolean isLaunching() {
@@ -513,72 +452,6 @@ public class Transition extends Node {
     }
 
     /**
-     * Metoda pozwala sprawdzić, czy tranzycja kolorowana jest aktywna i może zostać odpalona.
-     *
-     * @return boolean - true, jeśli tranzycja jest aktywna i może zostać odpalona; false w przeciwnym wypadku
-     */
-    public boolean isColorActive() {
-        if (knockoutStatus)
-            return false;
-
-        int req0red = 0;
-        int req1green = 0;
-        int req2blue = 0;
-        int req3yellow = 0;
-        int req4grey = 0;
-        int req5black = 0;
-
-        int tokens0red = 0;
-        int tokens1green = 0;
-        int tokens2blue = 0;
-        int tokens3yellow = 0;
-        int tokens4grey = 0;
-        int tokens5black = 0;
-
-        for (Arc arc : getInArcs()) {
-            Place arcStartPlace = (Place) arc.getStartNode();
-            TypeOfArc arcType = arc.getArcType();
-
-            if (arcType != TypeOfArc.COLOR) { //dla zwykłych łuków
-                int startPlaceTokens = arcStartPlace.getNonReservedTokensNumber();
-                if (arcType == TypeOfArc.INHIBITOR) {
-                    if (startPlaceTokens > arc.getWeight())
-                        return false; //nieaktywna
-                    else
-                        continue; //aktywna (nie jest w danej chwili blokowana)
-                } else if (arcType == TypeOfArc.EQUAL && startPlaceTokens != arc.getWeight()) { //DOKŁADNIE TYLE CO WAGA
-                    return false;
-                } else {
-                    if (isFunctional) { //fast, no method
-                        boolean status = FunctionsTools.getFunctionDecision(startPlaceTokens, arc, arc.getWeight(), this);
-                        if (!status)
-                            return false; //zwróc tylko jesli false
-                    } else {
-                        if (startPlaceTokens < arc.getWeight())
-                            return false;
-                    }
-                }
-            }
-
-            req0red += arc.getColorWeight(0);
-            req1green += arc.getColorWeight(1);
-            req2blue += arc.getColorWeight(2);
-            req3yellow += arc.getColorWeight(3);
-            req4grey += arc.getColorWeight(4);
-            req5black += arc.getColorWeight(5);
-
-            tokens0red += arcStartPlace.getNonReservedColorTokensNumber(0);
-            tokens1green += arcStartPlace.getNonReservedColorTokensNumber(1);
-            tokens2blue += arcStartPlace.getNonReservedColorTokensNumber(2);
-            tokens3yellow += arcStartPlace.getNonReservedColorTokensNumber(3);
-            tokens4grey += arcStartPlace.getNonReservedColorTokensNumber(4);
-            tokens5black += arcStartPlace.getNonReservedColorTokensNumber(5);
-        }
-        return req0red > tokens0red || req1green > tokens1green || req2blue > tokens2blue || req3yellow > tokens3yellow ||
-                req4grey > tokens4grey || req5black > tokens5black;
-    }
-
-    /**
      * Metoda pozwala zarezerwować we wszystkich miejscach wejściowych
      * niezbędne do uruchomienia tokeny. Inne tranzycje nie mogą ich odebrać.
      */
@@ -595,12 +468,16 @@ public class Transition extends Node {
                 int freeToken = origin.getNonReservedTokensNumber();
                 origin.reserveTokens(freeToken); //all left
             } else if (arc.getArcType() == TypeOfArc.COLOR) {
-                origin.reserveColorTokens(arc.getColorWeight(0), 0);
-                origin.reserveColorTokens(arc.getColorWeight(1), 1);
-                origin.reserveColorTokens(arc.getColorWeight(2), 2);
-                origin.reserveColorTokens(arc.getColorWeight(3), 3);
-                origin.reserveColorTokens(arc.getColorWeight(4), 4);
-                origin.reserveColorTokens(arc.getColorWeight(5), 5);
+                try {
+                    ((PlaceColored)origin).reserveColorTokens(arc.getColorWeight(0), 0);
+                    ((PlaceColored)origin).reserveColorTokens(arc.getColorWeight(1), 1);
+                    ((PlaceColored)origin).reserveColorTokens(arc.getColorWeight(2), 2);
+                    ((PlaceColored)origin).reserveColorTokens(arc.getColorWeight(3), 3);
+                    ((PlaceColored)origin).reserveColorTokens(arc.getColorWeight(4), 4);
+                    ((PlaceColored)origin).reserveColorTokens(arc.getColorWeight(5), 5);
+                } catch (Exception ex) {
+                    GUIManager.getDefaultGUIManager().log("Transition.bookRequiredTokens() error while booking colored tokens", "error", true);
+                }
             } else { //read arc / normal
                 if (arc.getArcType() == TypeOfArc.READARC) {
                     if (GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simTransReadArcTokenReserv").equals("0")) {
@@ -622,8 +499,6 @@ public class Transition extends Node {
             }
         }
     }
-
-
 
     /**
      * Metoda pozwala zwolnić wszystkie zarezerwowane tokeny we wszystkich
@@ -1102,7 +977,6 @@ public class Transition extends Node {
         this.SPNbox = SPNbox;
     }
 
-
     public void setSPNprobTime(double time) {
         this.SPNprobTime = time;
     }
@@ -1113,46 +987,9 @@ public class Transition extends Node {
 
     /**
      * Metoda informujaca, czy tranzycja jest kolorowana
-     *
      * @return boolean - true, jeśli colored, false jeśli nie
      */
     public boolean isColored() {
         return transType == TransitionType.CPNbasic;
-    }
-
-    /**
-     * Metoda zwraca liczbę potrzebnych tokenów do produkcji (z danego koloru)
-     *
-     * @param i int - nr porzadkowy koloru, default 0, od 0 do 5
-     * @return int - wymagana liczba tokenów danego koloru
-     */
-    public int getRequiredColoredTokens(int i) {
-        return switch (i) {
-            case 0 -> reqT0red;
-            case 1 -> reqT1green;
-            case 2 -> reqT2blue;
-            case 3 -> reqT3yellow;
-            case 4 -> reqT4gray;
-            case 5 -> reqT5black;
-            default -> reqT0red;
-        };
-    }
-
-    /**
-     * Metoda ustawia wymaganą liczbę tokenów danego koloru dla aktywacji tranzycji.
-     *
-     * @param tokens int - liczba tokenów
-     * @param i      int - nr porządkowy koloru, default 0, od 0 do 5
-     */
-    public void setRequiredColoredTokens(int tokens, int i) {
-        switch (i) {
-            case 0 -> reqT0red = tokens;
-            case 1 -> reqT1green = tokens;
-            case 2 -> reqT2blue = tokens;
-            case 3 -> reqT3yellow = tokens;
-            case 4 -> reqT4gray = tokens;
-            case 5 -> reqT5black = tokens;
-            default -> reqT0red = tokens;
-        }
     }
 }

@@ -7,6 +7,7 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.elements.TransitionColored;
 
 /**
  * Silnik symulatora programu. Innymi słowy są tutaj procedury odpowiedzialne za tworzenie
@@ -198,10 +199,13 @@ public class SimulatorStandardPN implements IEngine {
 
 			for (int i = 0; i < transitionsIndexList.size(); i++) {
 				Transition transition = transitions.get(transitionsIndexList.get(i));
-				if (transition.isColorActive() ) {
-					if ((generator.nextInt(100) < 50) || maxMode) { // 50% 0-4 / 5-9
-						transition.bookRequiredTokens(); //ok
-						launchableTransitions.add(transition);
+
+				if(transition instanceof TransitionColored) {
+					if ( ((TransitionColored)transition).isColorActive() ) {
+						if ((generator.nextInt(100) < 50) || maxMode) { // 50% 0-4 / 5-9
+							transition.bookRequiredTokens(); //ok
+							launchableTransitions.add(transition);
+						}
 					}
 				}
 			}

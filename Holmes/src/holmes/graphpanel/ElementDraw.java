@@ -514,17 +514,17 @@ public final class ElementDraw {
 					}
 				}
 
-				if (eds.color || trans.getTransType() == TransitionType.CPNbasic) {
+				if (eds.color || trans instanceof TransitionColored) {
 					Font currentFont = g.getFont();
 					Font newFont = currentFont.deriveFont(currentFont.getSize() * 1.4F);
 					g.setFont(newFont);
 					
-					int r0 = trans.getRequiredColoredTokens(0);
-					int r1 = trans.getRequiredColoredTokens(1);
-					int r2 = trans.getRequiredColoredTokens(2);
-					int r3 = trans.getRequiredColoredTokens(3);
-					int r4 = trans.getRequiredColoredTokens(4);
-					int r5 = trans.getRequiredColoredTokens(5);
+					int r0 = ((TransitionColored)trans).getRequiredColoredTokens(0);
+					int r1 = ((TransitionColored)trans).getRequiredColoredTokens(1);
+					int r2 = ((TransitionColored)trans).getRequiredColoredTokens(2);
+					int r3 = ((TransitionColored)trans).getRequiredColoredTokens(3);
+					int r4 = ((TransitionColored)trans).getRequiredColoredTokens(4);
+					int r5 = ((TransitionColored)trans).getRequiredColoredTokens(5);
 					String txtT0 = "" +r0;
 					String txtT1 = "" +r1;
 					String txtT2 = "" +r2;
@@ -883,17 +883,17 @@ public final class ElementDraw {
 				}
 				
 				//TODO: COLORS
-				if (eds.color || place.isColored) {
+				if (eds.color || place instanceof PlaceColored) {
 					Font currentFont = g.getFont();
 					Font newFont = currentFont.deriveFont(currentFont.getSize() * 1.4F);
 					g.setFont(newFont);
 					
-					String txtT0 = "" +place.getColorTokensNumber(0);
-					String txtT1 = "" +place.getColorTokensNumber(1);
-					String txtT2 = "" +place.getColorTokensNumber(2);
-					String txtT3 = "" +place.getColorTokensNumber(3);
-					String txtT4 = "" +place.getColorTokensNumber(4);
-					String txtT5 = "" +place.getColorTokensNumber(5);
+					String txtT0 = "" +((PlaceColored)place).getColorTokensNumber(0);
+					String txtT1 = "" +((PlaceColored)place).getColorTokensNumber(1);
+					String txtT2 = "" +((PlaceColored)place).getColorTokensNumber(2);
+					String txtT3 = "" +((PlaceColored)place).getColorTokensNumber(3);
+					String txtT4 = "" +((PlaceColored)place).getColorTokensNumber(4);
+					String txtT5 = "" +((PlaceColored)place).getColorTokensNumber(5);
 					int txtW0 = g.getFontMetrics().stringWidth(txtT0);
 					int txtW1 = g.getFontMetrics().stringWidth(txtT1);
 					int txtW2 = g.getFontMetrics().stringWidth(txtT2);

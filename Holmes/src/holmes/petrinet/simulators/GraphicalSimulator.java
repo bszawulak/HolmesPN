@@ -10,10 +10,7 @@ import javax.swing.Timer;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.functions.FunctionsTools;
@@ -171,9 +168,15 @@ public class GraphicalSimulator {
 		
 		if(netSimType == SimulatorGlobals.SimNetType.COLOR) { //kolorowane
 			for (Transition transition : transitions) {
-				if (transition.isColorActive()) { //ok
-					return true;
-				}				
+				if(transition instanceof TransitionColored) {
+					if ( ((TransitionColored)transition).isColorActive()) { //ok
+						return true;
+					}
+				} else {
+					if (transition.isActive()) {
+						return true;
+					}
+				}
 			}
 		} else {
 			for (Transition transition : transitions) {
@@ -309,12 +312,17 @@ public class GraphicalSimulator {
 					} else if(arc.getArcType() == TypeOfArc.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
 					} else if(arc.getArcType() == TypeOfArc.COLOR) {
-						place.modifyColorTokensNumber(-arc.getColorWeight(0), 0);
-						place.modifyColorTokensNumber(-arc.getColorWeight(1), 1);
-						place.modifyColorTokensNumber(-arc.getColorWeight(2), 2);
-						place.modifyColorTokensNumber(-arc.getColorWeight(3), 3);
-						place.modifyColorTokensNumber(-arc.getColorWeight(4), 4);
-						place.modifyColorTokensNumber(-arc.getColorWeight(5), 5);
+						try {
+							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(0), 0);
+							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(1), 1);
+							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(2), 2);
+							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(3), 3);
+							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(4), 4);
+							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(5), 5);
+						} catch (Exception ex) {
+							overlord.log("GraphicalSimulator.launchSubtractPhase() failed to modify tokens. Probably not-colored place.", "error", true);
+						}
+
 					} else {
 						FunctionsTools.functionalExtraction(transition, arc, place);
 					}
@@ -332,12 +340,16 @@ public class GraphicalSimulator {
 					}  else if(arc.getArcType() == TypeOfArc.EQUAL) {
 						place.modifyTokensNumber(-arc.getWeight());
 					} else if(arc.getArcType() == TypeOfArc.COLOR) {
-						place.modifyColorTokensNumber(-arc.getColorWeight(0), 0);
-						place.modifyColorTokensNumber(-arc.getColorWeight(1), 1);
-						place.modifyColorTokensNumber(-arc.getColorWeight(2), 2);
-						place.modifyColorTokensNumber(-arc.getColorWeight(3), 3);
-						place.modifyColorTokensNumber(-arc.getColorWeight(4), 4);
-						place.modifyColorTokensNumber(-arc.getColorWeight(5), 5);
+						try {
+							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(0), 0);
+							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(1), 1);
+							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(2), 2);
+							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(3), 3);
+							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(4), 4);
+							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(5), 5);
+						} catch (Exception ex) {
+							overlord.log("(2) GraphicalSimulator.launchSubtractPhase() failed to modify tokens. Probably not-colored place.", "error", true);
+						}
 					} else {
 						FunctionsTools.functionalExtraction(transition, arc, place);
 					}
@@ -389,12 +401,16 @@ public class GraphicalSimulator {
 				} else if(arc.getArcType() == TypeOfArc.EQUAL) {
 					place.modifyTokensNumber(-arc.getWeight());
 				} else if(arc.getArcType() == TypeOfArc.COLOR) {
-					place.modifyColorTokensNumber(-arc.getColorWeight(0), 0);
-					place.modifyColorTokensNumber(-arc.getColorWeight(1), 1);
-					place.modifyColorTokensNumber(-arc.getColorWeight(2), 2);
-					place.modifyColorTokensNumber(-arc.getColorWeight(3), 3);
-					place.modifyColorTokensNumber(-arc.getColorWeight(4), 4);
-					place.modifyColorTokensNumber(-arc.getColorWeight(5), 5);
+					try {
+						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(0), 0);
+						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(1), 1);
+						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(2), 2);
+						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(3), 3);
+						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(4), 4);
+						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(5), 5);
+					} catch (Exception ex) {
+						overlord.log("GraphicalSimulator.launchSingleSubtractPhase() failed to modify tokens. Probably not-colored place.", "error", true);
+					}
 				} else {
 					FunctionsTools.functionalExtraction(transition, arc, place);
 					//place.modifyTokensNumber(-arc.getWeight());
@@ -413,12 +429,16 @@ public class GraphicalSimulator {
 				} else if(arc.getArcType() == TypeOfArc.EQUAL) {
 					place.modifyTokensNumber(-arc.getWeight());
 				} else if(arc.getArcType() == TypeOfArc.COLOR) {
-					place.modifyColorTokensNumber(-arc.getColorWeight(0), 0);
-					place.modifyColorTokensNumber(-arc.getColorWeight(1), 1);
-					place.modifyColorTokensNumber(-arc.getColorWeight(2), 2);
-					place.modifyColorTokensNumber(-arc.getColorWeight(3), 3);
-					place.modifyColorTokensNumber(-arc.getColorWeight(4), 4);
-					place.modifyColorTokensNumber(-arc.getColorWeight(5), 5);
+					try {
+						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(0), 0);
+						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(1), 1);
+						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(2), 2);
+						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(3), 3);
+						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(4), 4);
+						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(5), 5);
+					} catch (Exception ex) {
+						overlord.log("(2) GraphicalSimulator.launchSingleSubtractPhase() failed to modify tokens. Probably not-colored place.", "error", true);
+					}
 				} else {
 					FunctionsTools.functionalExtraction(transition, arc, place);
 					//place.modifyTokensNumber(-arc.getWeight());
@@ -519,12 +539,16 @@ public class GraphicalSimulator {
 				}
 				
 				if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {
-					place.modifyColorTokensNumber(arc.getColorWeight(0), 0);
-					place.modifyColorTokensNumber(arc.getColorWeight(1), 1);
-					place.modifyColorTokensNumber(arc.getColorWeight(2), 2);
-					place.modifyColorTokensNumber(arc.getColorWeight(3), 3);
-					place.modifyColorTokensNumber(arc.getColorWeight(4), 4);
-					place.modifyColorTokensNumber(arc.getColorWeight(5), 5);
+					try {
+						((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(0), 0);
+						((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(1), 1);
+						((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(2), 2);
+						((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(3), 3);
+						((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(4), 4);
+						((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(5), 5);
+					} catch (Exception ex) {
+						overlord.log("GraphicalSimulator.launchAddPhase() failed to modify tokens. Probably not-colored place.", "error", true);
+					}
 				} else {
 					//tylko zwykły łuk
 					FunctionsTools.functionalAddition(transition, arc, place);
@@ -572,12 +596,16 @@ public class GraphicalSimulator {
 			}
 
 			if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {
-				place.modifyColorTokensNumber(arc.getColorWeight(0), 0);
-				place.modifyColorTokensNumber(arc.getColorWeight(1), 1);
-				place.modifyColorTokensNumber(arc.getColorWeight(2), 2);
-				place.modifyColorTokensNumber(arc.getColorWeight(3), 3);
-				place.modifyColorTokensNumber(arc.getColorWeight(4), 4);
-				place.modifyColorTokensNumber(arc.getColorWeight(5), 5);
+				try {
+					((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(0), 0);
+					((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(1), 1);
+					((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(2), 2);
+					((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(3), 3);
+					((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(4), 4);
+					((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(5), 5);
+				} catch (Exception ex) {
+					overlord.log("GraphicalSimulator.launchSingleAddPhase() failed to modify tokens. Probably not-colored place.", "error", true);
+				}
 			} else {
 				//tylko zwykły łuk
 				FunctionsTools.functionalAddition(transition, arc, place);

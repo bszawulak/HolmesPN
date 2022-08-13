@@ -60,6 +60,11 @@ public class ProjectReader {
 	private boolean pInvariants = false;
 	private boolean ssaData = false;
 
+	//obługa elementów kolorowanych:
+	private boolean isPlaceColored = false;
+	private boolean isTransitionColored = false;
+	private String[] tabPlaceTokens = null;
+	private String[] tabTransReqTokens = null;
 
 	private boolean XTPNdataMode = false; //jeśli true, to znaczy, że odczytujemy sieć XTPN
 	
@@ -326,9 +331,6 @@ public class ProjectReader {
 			while(!((buffer.readLine()).contains("ID generator"))) //przewiń do ID generator
 				;
 
-			//line = line.substring(line.indexOf("state:")+6);
-			//line = line.replace(">", "");
-
 			//PLACES:
 			line = buffer.readLine();
 			if(!line.contains("<Places: 0>")) { //są miejsca
@@ -348,7 +350,8 @@ public class ProjectReader {
 						placesProcessed++;
 						nodes.add(place);
 					} else { //tryb zwykłej sieci
-						Place place = new Place(IdGenerator.getNextId(), 0, new Point(20,20));
+						int nextID = IdGenerator.getNextId();
+						Place place = new Place(nextID, 0, new Point(20,20));
 						while(!((line = buffer.readLine()).contains("<EOP>"))) {
 							parsePlaceLine(line, place);
 						}
@@ -356,8 +359,17 @@ public class ProjectReader {
 						if(line.contains("<Places data block end>")) {
 							go = false;
 						}
+
+						if(isPlaceColored) {
+							PlaceColored impostor = resurrectAsColoredPlace(place, nextID);
+							isPlaceColored = false;
+							tabPlaceTokens = null;
+							nodes.add(impostor);
+						} else {
+							nodes.add(place);
+						}
+
 						placesProcessed++;
-						nodes.add(place);
 					}
 				}
 				//przeczytano miejsca
@@ -386,7 +398,8 @@ public class ProjectReader {
 						nodes.add(transition);
 
 					} else { //tryb zwykłej sieci
-						Transition transition = new Transition(IdGenerator.getNextId(), 0, new Point(20,20));
+						int nextID = IdGenerator.getNextId();
+						Transition transition = new Transition(nextID, 0, new Point(20,20));
 
 						while(!((line = buffer.readLine()).contains("<EOT>"))) {
 							parseTransitionLine(line, transition);
@@ -395,8 +408,17 @@ public class ProjectReader {
 						if(line.contains("<Transitions data block end>")) {
 							go = false;
 						}
+
+						if(isTransitionColored) {
+							TransitionColored impostor = resurrectAsColoredTransition(transition, nextID);
+							isTransitionColored = false;
+							tabTransReqTokens = null;
+							nodes.add(impostor);
+						} else {
+							nodes.add(transition);
+						}
+
 						transitionsProcessed++;
-						nodes.add(transition);
 					}
 
 				}
@@ -493,7 +515,7 @@ public class ProjectReader {
 		}
 		return status;
 	}
-	
+
 	/**
 	 * Metoda odpowiedzialna za odczyt linii funkcji.
 	 * @param functionLine String - przeczytana linia
@@ -772,7 +794,8 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {
-					place.isColored = true;
+					isPlaceColored = true;
+					//place.isColored = true;
 				}
 				return;
 			}
@@ -781,7 +804,9 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				String[] tab = line.split(";");
+				tabPlaceTokens = line.split(";");
+
+				/*
 				try {
 					place.setColorTokensNumber(Integer.parseInt(tab[0]), 0);
 					place.setColorTokensNumber(Integer.parseInt(tab[1]), 1);
@@ -792,6 +817,8 @@ public class ProjectReader {
 				} catch (Exception ex) {
 					overlord.log("Error (806949108) | Exception: "+ex.getMessage(), "error", true);
 				}
+
+				 */
 			}
 		} catch (Exception e) {
 			overlord.log("Reading file error in line: "+backup+" for Place "+placesProcessed, "error", true);
@@ -822,6 +849,7 @@ public class ProjectReader {
 					case "PN" -> transition.setTransType(TransitionType.PN);
 					case "TPN" -> transition.setTransType(TransitionType.TPN);
 					case "SPN" -> transition.setTransType(TransitionType.SPN);
+					case "CPN" -> transition.setTransType(TransitionType.CPNbasic);
 					case "XTPN" -> transition.setTransType(TransitionType.XTPN);
 				}
 
@@ -1194,7 +1222,8 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				if(line.contains("true")) {
-					transition.setTransType(TransitionType.CPNbasic);
+					isTransitionColored = true;
+					//transition.setTransType(TransitionType.CPNbasic);
 				}
 				return;
 			}
@@ -1203,7 +1232,8 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				String[] tab = line.split(";");
+				tabTransReqTokens = line.split(";");
+				/*
 				try {
 					transition.setRequiredColoredTokens(Integer.parseInt(tab[0]), 0);
 					transition.setRequiredColoredTokens(Integer.parseInt(tab[1]), 1);
@@ -1214,6 +1244,8 @@ public class ProjectReader {
 				} catch (Exception ex) {
 					overlord.log("Error (519160440) | Exception: "+ex.getMessage(), "error", true);
 				}
+
+				 */
 				//return;
 			}
 		} catch (Exception e) {
@@ -2328,5 +2360,96 @@ public class ProjectReader {
 
 	public ArrayList<Arc> getArcs() {
 		return arcs;
+	}
+
+
+
+	private PlaceColored resurrectAsColoredPlace(Place place, int pID) {
+		PlaceColored rise = new PlaceColored(pID, 0, new Point(20,20));
+		rise.setPlaceType(Place.PlaceType.CPN);
+		rise.setName(place.getName());
+		rise.setComment(place.getComment());
+		rise.setTokensNumber(place.getTokensNumber());
+		rise.setPortal(place.isPortal());
+
+		rise.getElementLocations().clear();
+		for(ElementLocation elementLocation : place.getElementLocations()) {
+			rise.getElementLocations().add(elementLocation);
+		}
+		rise.getTextsLocations(GUIManager.locationMoveType.NAME).clear();
+		for(ElementLocation elementLocation : place.getTextsLocations(GUIManager.locationMoveType.NAME)) {
+			rise.getTextsLocations(GUIManager.locationMoveType.NAME).add(elementLocation);
+		}
+		rise.getTextsLocations(GUIManager.locationMoveType.GAMMA).clear();
+		for(ElementLocation elementLocation : place.getTextsLocations(GUIManager.locationMoveType.GAMMA)) {
+			rise.getTextsLocations(GUIManager.locationMoveType.GAMMA).add(elementLocation);
+		}
+
+		rise.isColored = true;
+		if(tabPlaceTokens != null) {
+			rise.setColorTokensNumber(Integer.parseInt(tabPlaceTokens[0]), 0);
+			rise.setColorTokensNumber(Integer.parseInt(tabPlaceTokens[1]), 1);
+			rise.setColorTokensNumber(Integer.parseInt(tabPlaceTokens[2]), 2);
+			rise.setColorTokensNumber(Integer.parseInt(tabPlaceTokens[3]), 3);
+			rise.setColorTokensNumber(Integer.parseInt(tabPlaceTokens[4]), 4);
+			rise.setColorTokensNumber(Integer.parseInt(tabPlaceTokens[5]), 5);
+		} else {
+			rise.setColorTokensNumber(0, 0);
+			rise.setColorTokensNumber(0, 1);
+			rise.setColorTokensNumber(0, 2);
+			rise.setColorTokensNumber(0, 3);
+			rise.setColorTokensNumber(0, 4);
+			rise.setColorTokensNumber(0, 5);
+		}
+
+		return rise;
+	}
+
+	private TransitionColored resurrectAsColoredTransition(Transition transition, int tID) {
+		TransitionColored rise = new TransitionColored(tID, 0, new Point(20,20));
+		rise.setTransType(TransitionType.CPNbasic);
+		rise.setName(transition.getName());
+		rise.setComment(transition.getComment());
+		rise.forceSetEFT(transition.getEFT());
+		rise.setLFT(transition.getLFT());
+		rise.setDPNduration(transition.getDPNduration());
+		rise.setTPNstatus(transition.getTPNstatus());
+		rise.setDPNstatus(transition.getDPNstatus());
+		rise.setFunctional(transition.isFunctional());
+		rise.setPortal(transition.isPortal());
+
+		rise.getElementLocations().clear();
+		for(ElementLocation elementLocation : transition.getElementLocations()) {
+			rise.getElementLocations().add(elementLocation);
+		}
+		rise.getTextsLocations(GUIManager.locationMoveType.NAME).clear();
+		for(ElementLocation elementLocation : transition.getTextsLocations(GUIManager.locationMoveType.NAME)) {
+			rise.getTextsLocations(GUIManager.locationMoveType.NAME).add(elementLocation);
+		}
+		rise.getTextsLocations(GUIManager.locationMoveType.ALPHA).clear();
+		for(ElementLocation elementLocation : transition.getTextsLocations(GUIManager.locationMoveType.ALPHA)) {
+			rise.getTextsLocations(GUIManager.locationMoveType.ALPHA).add(elementLocation);
+		}
+		rise.getTextsLocations(GUIManager.locationMoveType.BETA).clear();
+		for(ElementLocation elementLocation : transition.getTextsLocations(GUIManager.locationMoveType.BETA)) {
+			rise.getTextsLocations(GUIManager.locationMoveType.BETA).add(elementLocation);
+		}
+
+		if(tabTransReqTokens != null) {
+			rise.setRequiredColoredTokens(Integer.parseInt(tabTransReqTokens[0]), 0);
+			rise.setRequiredColoredTokens(Integer.parseInt(tabTransReqTokens[1]), 1);
+			rise.setRequiredColoredTokens(Integer.parseInt(tabTransReqTokens[2]), 2);
+			rise.setRequiredColoredTokens(Integer.parseInt(tabTransReqTokens[3]), 3);
+			rise.setRequiredColoredTokens(Integer.parseInt(tabTransReqTokens[4]), 4);
+			rise.setRequiredColoredTokens(Integer.parseInt(tabTransReqTokens[5]), 5);
+		} else {
+			rise.setRequiredColoredTokens(1, 0);
+			rise.setRequiredColoredTokens(1, 1);
+			rise.setRequiredColoredTokens(1, 2);
+			rise.setRequiredColoredTokens(1, 3);
+			rise.setRequiredColoredTokens(1, 4);
+			rise.setRequiredColoredTokens(1, 5);
+		}
+		return rise;
 	}
 }
