@@ -259,9 +259,9 @@ public class QuickSimTools {
 		HolmesNotepad note = new HolmesNotepad(800, 600);
 
 		note.addTextLineNL("Simulation data", "text");
-		note.addTextLineNL("Avg. steps:  " + result.simSteps, "text");
-		note.addTextLineNL("Avg. time:   " + result.simTime, "text");
-		note.addTextLineNL("Repetitions: " + result.simReps, "text");
+		note.addTextLineNL("Avg. steps:  " + Tools.cutValue(result.simSteps), "text");
+		note.addTextLineNL("Avg. time:   " + Tools.cutValue(result.simTime), "text");
+		note.addTextLineNL("Repetitions: " + (int)result.simReps, "text");
 
 		long milisecond = result.compTime;
 		long seconds = milisecond /= 1000;
