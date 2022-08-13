@@ -735,7 +735,6 @@ public class StateSimulatorXTPN implements Runnable {
         } else {
             progressBar.setValue(0);
             progressBar.setMaximum((int)sg.simSteps_XTPN - 1);
-
             int tenth = (int)sg.simSteps_XTPN / 10;
 
             for(step=0; step<sg.simSteps_XTPN; step++) {
@@ -819,12 +818,15 @@ public class StateSimulatorXTPN implements Runnable {
         }
 
         progressBar.setValue(0);
-        progressBar.setMaximum(sg.simRepetitions_XTPN - 1);
+        progressBar.setMaximum(sg.simRepetitions_XTPN * 10);
+        int progress = 0;
         resMatrix.simReps = sg.simRepetitions_XTPN;
 
         for(int rep=0; rep<sg.simRepetitions_XTPN; rep++) {
             int step = 0;
             if(sg.simulateTime) {
+                int tenth = ((int)sg.simMaxTime_XTPN) / 10;
+                int counter = 1;
                 while(simTimeCounter < sg.simMaxTime_XTPN) {
                     if(terminate)
                         break;
@@ -835,9 +837,18 @@ public class StateSimulatorXTPN implements Runnable {
                         tokensAvg.set(pID, tokensAvg.get(pID) + placesStatusVectors.get(0).get(pID));
                     }
                     step++;
+
+                    if( ((int)simTimeCounter) >= counter * tenth ) {
+                        progressBar.setValue(progress++);
+                        progressBar.update(progressBar.getGraphics());
+                        counter++;
+                    }
+
                 }
                 resMatrix.simSteps += step;
             } else {
+                int tenth = (int)sg.simSteps_XTPN / 10;
+                int maxUpdate = 0;
                 for(step=0; step<sg.simSteps_XTPN; step++) {
                     if(terminate)
                         break;
@@ -846,6 +857,12 @@ public class StateSimulatorXTPN implements Runnable {
 
                     for(int pID=0; pID < placesStatusVectors.get(0).size(); pID++) { //policz sumę tokenów
                         tokensAvg.set(pID, tokensAvg.get(pID) + placesStatusVectors.get(0).get(pID));
+                    }
+
+                    if(step % tenth == 0 && maxUpdate < 10) {
+                        progressBar.setValue(progress++);
+                        progressBar.update(progressBar.getGraphics());
+                        maxUpdate++;
                     }
                 }
                 resMatrix.simSteps += sg.simSteps_XTPN;
@@ -867,8 +884,8 @@ public class StateSimulatorXTPN implements Runnable {
                 transStatsFinal.get(tID).set(5, transStatsFinal.get(tID).get(5) + transitions.get(tID).simActiveTime);
                 transStatsFinal.get(tID).set(6, transStatsFinal.get(tID).get(6) + transitions.get(tID).simProductionTime);
             }
-            progressBar.setValue(rep);
-            progressBar.update(progressBar.getGraphics());
+            //progressBar.setValue(progress++);
+            //progressBar.update(progressBar.getGraphics());
 
             resMatrix.simTime += simTimeCounter;
             simTimeCounter = 0.0;
@@ -876,6 +893,9 @@ public class StateSimulatorXTPN implements Runnable {
         }
         resMatrix.simSteps /= sg.simRepetitions_XTPN;
         resMatrix.simTime /= sg.simRepetitions_XTPN;
+
+        progressBar.setValue(sg.simRepetitions_XTPN * 10);
+        progressBar.update(progressBar.getGraphics());
 
         for(int tID=0; tID < transitions.size(); tID++) {
             transStatsFinal.get(tID).set(0, transStatsFinal.get(tID).get(0) / sg.simRepetitions_XTPN);
