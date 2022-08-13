@@ -43,7 +43,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 
 			for (Node n : listOfSelectedNodes) {
 				if (n instanceof Transition) {
-					((Transition) n).setOffline(!((Transition) n).isOffline());
+					((Transition) n).setKnockout(!((Transition) n).isKnockedOut());
 				}
 			}
 

@@ -1604,7 +1604,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         ArrayList<Double> statsVector = null;
         for(int i = 0; i< simStatsTransRepetitions; i++) {
-            ss.clearDataMatrix();
+            ss.restartEngine();
 
             ArrayList<Double> dataVector = ss.simulateNetSingleTransitionStatistics(ownSettings, theTransition);
 

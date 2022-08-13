@@ -1142,7 +1142,7 @@ public class HolmesSim extends JFrame {
  			if(val > 0)
  				notePad.addTextLineNL("  t_"+t+" "+t_name+" : Fired: "+val+" (max: "+max+")", "text");
  			else {
- 				if(trans_tmp.get(t).isOffline()) {
+ 				if(trans_tmp.get(t).isKnockedOut()) {
  					notePad.addTextLineNL("MANUALLY DISABLED: t_"+t+" "+t_name+" : "+val, "text");
  				} else {
  					notePad.addTextLineNL("OFFLINE: t_"+t+" "+t_name+" : "+val, "text");

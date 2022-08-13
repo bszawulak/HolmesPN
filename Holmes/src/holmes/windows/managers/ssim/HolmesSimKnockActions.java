@@ -75,7 +75,7 @@ public class HolmesSimKnockActions {
 		NetSimulationData currentDataPackage = new NetSimulationData();
 		
 		for(Transition trans : transitions)
-			trans.setOffline(false); //REFERENCE
+			trans.setKnockout(false); //REFERENCE
 		
 		boss.ssimKnock.setThreadDetails(2, boss.mainSimWindow, boss.refProgressBarKnockout, 
 				currentDataPackage);
@@ -261,7 +261,7 @@ public class HolmesSimKnockActions {
 		boss.mainSimWindow.setWorkInProgress(true);
 		
 		for(Transition trans : transitions) {
-			trans.setOffline(false);
+			trans.setKnockout(false);
 		}
 		
 		pingPongSimTransLimit = transitions.size();
@@ -286,7 +286,7 @@ public class HolmesSimKnockActions {
 			boss.dataProgressBarKnockout.setBorder(
 					BorderFactory.createTitledBorder("Progress: "+(pingPongSimCurrentTrans+1)+"/"+pingPongSimTransLimit));
 			
-			pn.getTransitions().get(pingPongSimCurrentTrans).setOffline(true);
+			pn.getTransitions().get(pingPongSimCurrentTrans).setKnockout(true);
 		    
 			NetSimulationData currentDataPackage = new NetSimulationData();
 			boss.ssimKnock.setThreadDetails(4, boss.mainSimWindow, boss.dataProgressBarKnockout, 
@@ -295,7 +295,7 @@ public class HolmesSimKnockActions {
 			boss.dataSimInProgress = true;
 			myThread.start();
 		} else {
-			transitions.get(pingPongSimCurrentTrans).setOffline(false); //odznacz offline status poprzednio symulowanej tranzycji
+			transitions.get(pingPongSimCurrentTrans).setKnockout(false); //odznacz offline status poprzednio symulowanej tranzycji
 
 			//dodaj nowe dane do bazy
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -321,7 +321,7 @@ public class HolmesSimKnockActions {
 				boss.updateFreshKnockoutTab();
 				return; //wszystko policzono
 			}
-			transitions.get(pingPongSimCurrentTrans).setOffline(true); //następna do analizy
+			transitions.get(pingPongSimCurrentTrans).setKnockout(true); //następna do analizy
 			
 			boss.dataProgressBarKnockout.setBorder(
 					BorderFactory.createTitledBorder("Progress: "+(pingPongSimCurrentTrans+1)+"/"+pingPongSimTransLimit));
@@ -372,7 +372,7 @@ public class HolmesSimKnockActions {
 		if(manualSelection) {
 			for(int t=0; t<transitions.size(); t++) {
 				Transition trans = transitions.get(t);
-				if(trans.isOffline()) {
+				if(trans.isKnockedOut()) {
 					currentDataPackage.disabledTransitionsIDs.add(t);
 					currentDataPackage.disabledTotals.add(t);
 				}
@@ -425,7 +425,7 @@ public class HolmesSimKnockActions {
 			}
 			
 			for(Transition trans : transitions) {
-				trans.setOffline(disableList.contains(trans));
+				trans.setKnockout(disableList.contains(trans));
 			}
 		}
 	}

@@ -67,13 +67,39 @@ public class QuickSimTools {
 	 * @param time (<b>double</b>) maksymalny czas.
 	 * @param repeate (<b>boolean</b>) czy mają być powtórzenia
 	 * @param repetitions (<b>int</b>) liczba powtórzeń.
+	 * @param knockout (<b>boolean</b>) czy symulacja knockout.
 	 * @param quickProgressBar (<b>JProgressBar</b>) pasek postępu z okna wywołującego.
 	 */
-	public void acquireDataXTPN(boolean bySteps, int steps, double time,  boolean repeate, int repetitions, JProgressBar quickProgressBar) {
+	public void acquireDataXTPN(boolean bySteps, int steps, double time,  boolean repeate, int repetitions
+			, boolean knockout, JProgressBar quickProgressBar) {
+
+
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 			JOptionPane.showMessageDialog(null, "Net simulator working. Unable to retrieve transitions statistics..",
 					"Simulator working", JOptionPane.ERROR_MESSAGE);
 
+			return;
+		}
+
+		boolean isKnockout = false;
+		if(knockout) {
+			if(!repeate) {
+				JOptionPane.showMessageDialog(null, "Knockout simulation must have repetitions turned on.", "qSim Knockout: repetitions",
+						JOptionPane.INFORMATION_MESSAGE);
+				return;
+			}
+
+			for(Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
+				if(trans.isKnockedOut()) {
+					isKnockout = true;
+					break;
+				}
+			}
+		}
+
+		if(!isKnockout) {
+			JOptionPane.showMessageDialog(null, "At least one transition must be disabled.", "qSim Knockout: no disabled transition",
+					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
 
@@ -89,7 +115,11 @@ public class QuickSimTools {
 			ownSettings.simRepetitions_XTPN = repetitions;
 
 			if(repeate) {
-				stateSimulatorXTPN.setThreadDetails(2, this, quickProgressBar, ownSettings);
+				if(knockout) {
+					stateSimulatorXTPN.setThreadDetails(3, this, quickProgressBar, ownSettings);
+				} else {
+					stateSimulatorXTPN.setThreadDetails(2, this, quickProgressBar, ownSettings);
+				}
 			} else {
 				stateSimulatorXTPN.setThreadDetails(1, this, quickProgressBar, ownSettings);
 			}
@@ -369,6 +399,187 @@ public class QuickSimTools {
 		}
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 		 */
+	}
+
+
+	/**
+	 * Metoda wywoływana przez wątek symulacji qSimXTPN gdy zakończy główną symulację sieci na potrzeby porównania
+	 * zachowania się sieci kiedy nic nie jest wyłączone (reference set) z sytuacją gdy tranzycja/e jest wyłączona
+	 * (knockout set).
+	 * @param result (<b>ArrayList[QuickSimMatrix]</b>) dwa obiekty danych: reference set i knockout set
+	 * @param transitions (<b>ArrayList[TransitionXTPN]</b>) wektor tranzycji.
+	 * @param places (<b>ArrayList[PlaceXTPN]</b>) wektor miejsc.
+	 */
+	public void finishedStatsDataXTPN_Knockout(ArrayList<StateSimulatorXTPN.QuickSimMatrix> result
+			, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
+
+		HolmesNotepad note = new HolmesNotepad(800, 600);
+
+		note.addTextLineNL("Simulation data", "text");
+		note.addTextLineNL("Repetitions: " + (int)result.get(0).simReps, "text");
+		note.addTextLineNL(" * Reference set:", "bold");
+		note.addTextLine("      Avg. steps:  ", "text");
+		note.addTextLineNL(Tools.cutValue(result.get(0).simSteps), "bold");
+		note.addTextLine("      Avg. time:   ", "text");
+		note.addTextLineNL(Tools.cutValue(result.get(0).simTime), "bold");
+		note.addTextLine("      Time:        ", "text");
+		note.addTextLineNL(getTime(result.get(0).compTime), "text");
+
+		note.addTextLineNL(" * Knockout set:", "bold");
+		note.addTextLine("      Avg. steps:  ", "text");
+		note.addTextLineNL(Tools.cutValue(result.get(1).simSteps), "bold");
+		note.addTextLine("      Avg. time:   ", "text");
+		note.addTextLineNL(Tools.cutValue(result.get(1).simTime), "bold");
+		note.addTextLine("      Time:        ", "text");
+		note.addTextLineNL(getTime(result.get(1).compTime), "text");
+
+
+
+		int transIndex = 0;
+		double simStepsRef = result.get(0).simSteps;
+		double simTimeRef = result.get(0).simTime;
+		double simStepsKnock = result.get(1).simSteps;
+		double simTimeKnock = result.get(1).simTime;
+
+		note.addTextLineNL("", "bold");
+		note.addTextLineNL("Transitions data", "bold");
+		for(TransitionXTPN trans : transitions) {
+
+			double tmpStepsRef = result.get(0).transDataMatrix.get(transIndex).get(0); //trans.simInactiveState
+			double tmpTimeRef = result.get(0).transDataMatrix.get(transIndex).get(4); //trans.simInactiveTime
+			double tmpStepsKnock = result.get(1).transDataMatrix.get(transIndex).get(0); //trans.simInactiveState
+			double tmpTimeKnock = result.get(1).transDataMatrix.get(transIndex).get(4); //trans.simInactiveTime
+
+			double tmpStepsPercentRef = (tmpStepsRef*100)/simStepsRef;
+			double tmpTimePercentRef = (tmpTimeRef * 100)/simTimeRef;
+			double tmpStepsPercentKnock = (tmpStepsKnock*100)/simStepsKnock;
+			double tmpTimePercentKnock = (tmpTimeKnock * 100)/simTimeKnock;
+
+
+			note.addTextLine("Transition ", "text");
+			note.addTextLine(""+transIndex, "bold");
+			note.addTextLine(" Type: ", "text");
+			note.addTextLineNL(getTransType(trans), "bold");
+
+
+			String text = " R Inactive (#):  "+(int)tmpStepsRef + " ("+Tools.cutValue(tmpStepsPercentRef) +
+					"%) | \u03C4: "+ Tools.cutValue(tmpTimeRef) + " ("+Tools.cutValue(tmpTimePercentRef)+"%)" ;
+			note.addTextLineNL(text, "text");
+
+			text = " K Inactive (#):  "+(int)tmpStepsKnock + " ("+Tools.cutValue(tmpStepsPercentKnock) +
+					"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
+			note.addTextLineNL(text, "text");
+
+			text = " \u0394 Inactive (#):  "+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
+					"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
+			note.addTextLineNL(text, "text");
+
+			tmpStepsRef = result.get(0).transDataMatrix.get(transIndex).get(1); //trans.simActiveState
+			tmpTimeRef = result.get(0).transDataMatrix.get(transIndex).get(5); //trans.simActiveTime
+			tmpStepsKnock = result.get(1).transDataMatrix.get(transIndex).get(1); //trans.simActiveState
+			tmpTimeKnock = result.get(1).transDataMatrix.get(transIndex).get(5); //trans.simActiveTime
+
+			tmpStepsPercentRef = (tmpStepsRef*100)/simStepsRef;
+			tmpTimePercentRef = (tmpTimeRef * 100)/simTimeRef;
+			tmpStepsPercentKnock = (tmpStepsKnock*100)/simStepsKnock;
+			tmpTimePercentKnock = (tmpTimeKnock * 100)/simTimeKnock;
+
+			text = " R Active (#):    "+(int)tmpStepsRef + " ("+Tools.cutValue(tmpStepsPercentRef) +
+					"%) | \u03C4: "+ Tools.cutValue(tmpTimeRef) + " ("+Tools.cutValue(tmpTimePercentRef)+"%)" ;
+			note.addTextLineNL(text, "text");
+
+			text = " K Active (#):    "+(int)tmpStepsKnock + " ("+Tools.cutValue(tmpStepsPercentKnock) +
+					"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
+			note.addTextLineNL(text, "text");
+
+			text = " \u0394 Active (#):    "+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
+					"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
+			note.addTextLineNL(text, "text");
+
+
+			tmpStepsRef = result.get(0).transDataMatrix.get(transIndex).get(2); //trans.simProductionState
+			tmpTimeRef = result.get(0).transDataMatrix.get(transIndex).get(6); //trans.simProductionTime
+			tmpStepsKnock = result.get(1).transDataMatrix.get(transIndex).get(2); //trans.simProductionState
+			tmpTimeKnock = result.get(1).transDataMatrix.get(transIndex).get(6); //trans.simProductionTime
+
+			tmpStepsPercentRef = (tmpStepsRef*100)/simStepsRef;
+			tmpTimePercentRef = (tmpTimeRef * 100)/simTimeRef;
+			tmpStepsPercentKnock = (tmpStepsKnock*100)/simStepsKnock;
+			tmpTimePercentKnock = (tmpTimeKnock * 100)/simTimeKnock;
+
+			text = " R Production (#): "+(int)tmpStepsRef + " ("+Tools.cutValue(tmpStepsPercentRef) +
+					"%) | \u03C4: "+ Tools.cutValue(tmpTimeRef) + " ("+Tools.cutValue(tmpTimePercentRef)+"%)" ;
+			note.addTextLineNL(text, "text");
+
+			text = " K Production (#): "+(int)tmpStepsKnock + " ("+Tools.cutValue(tmpStepsPercentKnock) +
+					"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
+			note.addTextLineNL(text, "text");
+
+			text = " \u0394 Production (#): "+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
+					"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
+			note.addTextLineNL(text, "text");
+
+
+			tmpStepsRef = result.get(0).transDataMatrix.get(transIndex).get(3);
+			tmpStepsKnock = result.get(1).transDataMatrix.get(transIndex).get(3);
+			text = " R Fired (#): "+(int)tmpStepsRef ;
+			note.addTextLineNL(text, "text");
+			text = " K Fired (#): "+(int)tmpStepsKnock ;
+			note.addTextLineNL(text, "text");
+
+			/*
+
+			tmpSteps = result.transDataMatrix.get(transIndex).get(3); //trans.simFiredState
+			text = "   Fired (#): "+(int)tmpSteps ;
+			note.addTextLineNL(text, "text");
+
+			 */
+
+			note.addTextLineNL("", "text");
+			transIndex++;
+		}
+		note.addTextLineNL("", "bold");
+		note.addTextLineNL("Places data", "bold");
+		int placeIndex = 0;
+		for(PlaceXTPN place : places) {
+			note.addTextLine("Place ", "text");
+			note.addTextLine(""+placeIndex, "bold");
+			note.addTextLine(" Type: ", "text");
+			note.addTextLineNL(getPlaceType(place), "bold");
+
+			double avgTokensRef = result.get(0).avgTokens.get(placeIndex);
+			note.addTextLine("   (Ref)   Avg. tokens:", "bold");
+			note.addTextLineNL(Tools.cutValue(avgTokensRef), "text");
+
+			double avgTokensKnock = result.get(1).avgTokens.get(placeIndex);
+			note.addTextLine("   (Knock) Avg. tokens:", "bold");
+			note.addTextLineNL(Tools.cutValue(avgTokensKnock), "text");
+			placeIndex++;
+		}
+
+		note.setCaretFirstLine();
+		note.setVisible(true);
+	}
+
+	private String getTime(long milisecond) {
+		long seconds = milisecond /= 1000;
+		long hours = seconds / 3600;
+		String h = hours+"";
+		if(h.length() == 1)
+			h = "0" + h;
+
+		seconds = seconds - (hours * 3600);
+		long minutes = seconds / 60;
+		String m = minutes+"";
+		if(m.length() == 1)
+			m = "0" + m;
+
+		seconds = seconds - (minutes * 60);
+		String s = seconds+"";
+		if(s.length() == 1)
+			s = "0" + s;
+
+		return h + ":" + m + ":" + s;
 	}
 
 	private String getTransType(TransitionXTPN transition) {

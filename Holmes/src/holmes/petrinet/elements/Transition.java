@@ -35,7 +35,7 @@ public class Transition extends Node {
     protected boolean isGlowedINV = false;
     protected boolean isGlowedMTC = false;
     //protected boolean isGlowedSub = false;
-    protected boolean offline = false;        // czy wyłączona (MCS, inne)
+    protected boolean knockoutStatus = false;        // czy wyłączona (MCS, inne)
 
 
     //wyświetlanie dodatkowych tekstów nad ikoną:
@@ -459,21 +459,19 @@ public class Transition extends Node {
     }
 
     /**
-     * Metoda ustawia status wyłączenia tranzycji w symulatorze.
-     *
-     * @param status boolean - true, jeśli ma być wyłączona
+     * Metoda ustawia status wyłączenia (knockout) tranzycji w symulatorze.
+     * @param status (<b>boolean</b>) true, jeśli ma być wyłączona (knockout).
      */
-    public void setOffline(boolean status) {
-        offline = status;
+    public void setKnockout(boolean status) {
+        knockoutStatus = status;
     }
 
     /**
-     * Metoda zwraca status aktywności tranzycji.
-     *
-     * @return boolean - true, jeśli tranzycja jest wyłączona (MCS)
+     * Metoda zwraca status aktywności (knockoutu) tranzycji.
+     * @return (<b>boolean</b>) - true, jeśli tranzycja jest wyłączona (knocked out).
      */
-    public boolean isOffline() {
-        return offline;
+    public boolean isKnockedOut() {
+        return knockoutStatus;
     }
 
     /**
@@ -481,7 +479,7 @@ public class Transition extends Node {
      * @return (<b>boolean</b>) - true, jeśli tranzycja jest aktywna i może zostać uruchomiona; false w przeciwnym wypadku.
      */
     public boolean isActive() {
-        if (offline)
+        if (knockoutStatus)
             return false;
 
         if (DPNactive) {
@@ -520,7 +518,7 @@ public class Transition extends Node {
      * @return boolean - true, jeśli tranzycja jest aktywna i może zostać odpalona; false w przeciwnym wypadku
      */
     public boolean isColorActive() {
-        if (offline)
+        if (knockoutStatus)
             return false;
 
         int req0red = 0;

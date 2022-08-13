@@ -214,6 +214,7 @@ public class HolmesDockWindowsTable extends JPanel {
     double qSimXTPNStatsTime = 500.0;
     int qSimXTPNsimStatsSteps = 10000;
     int qSimXTPNStatsRepetitions = 10;
+    boolean qSimXTPNknockoutMode = false;
 
     private JProgressBar qSimXTPNProgressBar = null;
 
@@ -881,7 +882,7 @@ public class HolmesDockWindowsTable extends JPanel {
             acqDataButtonXTPN.setToolTipText("Compute steps from zero marking through the number of states");
             acqDataButtonXTPN.addActionListener(actionEvent -> {
                 quickSim.acquireDataXTPN(qSimXTPNSbySteps, qSimXTPNsimStatsSteps, qSimXTPNStatsTime
-                        , qSimXTPNrepeateSim, qSimXTPNStatsRepetitions, qSimXTPNProgressBar);
+                        , qSimXTPNrepeateSim, qSimXTPNStatsRepetitions, qSimXTPNknockoutMode, qSimXTPNProgressBar);
             });
             components.add(acqDataButtonXTPN);
 
@@ -966,7 +967,16 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(qsimRepetitionsSpinner);
 
+            internalY += 22;
 
+            JCheckBox qSimXTPNknockoutCheckBox = new JCheckBox("Knockout simulation");
+            qSimXTPNknockoutCheckBox.setBounds(internalX, internalY, 150, 20);
+            qSimXTPNknockoutCheckBox.setSelected(qSimXTPNknockoutMode);
+            qSimXTPNknockoutCheckBox.addItemListener(e -> {
+                JCheckBox box = (JCheckBox) e.getSource();
+                qSimXTPNknockoutMode = (box.isSelected());
+            });
+            components.add(qSimXTPNknockoutCheckBox);
 
 
         }

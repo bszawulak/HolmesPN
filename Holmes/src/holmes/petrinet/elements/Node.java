@@ -794,16 +794,16 @@ public abstract class Node extends PetriNetElement {
 	}
 	
 	/**
-	 * Metoda ustawia status niewidzialności tranzycji w symulatorze.
-	 * @param status boolean - true, jeśli ma być niewidzialna
+	 * Metoda ustawia status niewidzialności tranzycji dla generatora inwariantów.
+	 * @param status (<b>boolean</b>) true, jeśli ma być niewidzialna.
 	 */
 	public void setInvisibility(boolean status) {
 		invisible = status;
 	}
 	
 	/**
-	 * Metoda zwraca status niewidzialności tranzycji.
-	 * @return boolean - true, jeśli tranzycja jest niewidzialna
+	 * Metoda zwraca status niewidzialności tranzycji dla generatora inwariantów.
+	 * @return (<b>boolean</b>) - true, jeśli tranzycja jest niewidzialna.
 	 */
 	public boolean isInvisible() {
 		return invisible;

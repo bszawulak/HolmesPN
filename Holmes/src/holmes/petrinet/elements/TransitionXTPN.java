@@ -508,7 +508,7 @@ public class TransitionXTPN extends Transition {
      * @return (<b>boolean</b>) true, jeżeli aktywna.
      */
     public boolean isActiveTransitionXTPN(double accuracy) {
-        if (offline || isProducing_xTPN()) {
+        if (knockoutStatus || isProducing_xTPN()) {
             return false;
         }
 

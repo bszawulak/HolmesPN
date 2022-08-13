@@ -429,7 +429,7 @@ public final class ElementDraw {
 					g.setColor(oldC);
 				}
 				
-				if(trans.isOffline()) {
+				if(trans.isKnockedOut()) {
 					try {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/offlineTransition2.png")));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
