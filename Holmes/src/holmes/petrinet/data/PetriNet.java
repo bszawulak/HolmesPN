@@ -933,7 +933,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			for(Transition trans : getTransitions()) {
 				trans.setLaunching(false);
 				if(trans.getTransType() == TransitionType.TPN) {
-					trans.timeFunctions.resetTimeVariables();
+					trans.timeExtension.resetTimeVariables();
 				}
 			}
 
@@ -1004,7 +1004,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			for(Transition trans : transitions) {
 				trans.setLaunching(false);
 				if(trans.getTransType() == TransitionType.TPN) {
-					trans.timeFunctions.resetTimeVariables();
+					trans.timeExtension.resetTimeVariables();
 				}
 				if( trans instanceof TransitionXTPN ) {
 					((TransitionXTPN)trans).resetTimeVariables_xTPN();
@@ -1063,7 +1063,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				trans.setLaunching(false);
 				
 				if(trans.getTransType() == TransitionType.TPN) {
-					trans.timeFunctions.resetTimeVariables();
+					trans.timeExtension.resetTimeVariables();
 				}
 			}
 
@@ -1310,7 +1310,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			ArrayList<Arc> arcs = getArcs();
 			ArrayList<Transition> transitions = getTransitions();
 			for(Transition transition : transitions) { //aktywacja wektorów funkcji
-				transition.fpnFunctions.checkFunctions(arcs, places);
+				transition.fpnExtension.checkFunctions(arcs, places);
 			}
 			
 			return true;
@@ -1845,9 +1845,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				Transition transition = ((Transition) n);
 				//transition.setXTPNstatus(true);
 				transition.setTransType(TransitionType.XTPN);
-				transition.timeFunctions.setTPNstatus(false);
-				transition.timeFunctions.setDPNstatus(false);
-				transition.spnFunctions.setSPNtype(TransitionSPNExtension.StochaticsType.NONE);
+				transition.timeExtension.setTPNstatus(false);
+				transition.timeExtension.setDPNstatus(false);
+				transition.spnExtension.setSPNtype(TransitionSPNExtension.StochaticsType.NONE);
 			}
 		}
 	}

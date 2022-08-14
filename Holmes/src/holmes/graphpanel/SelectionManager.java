@@ -613,11 +613,11 @@ public class SelectionManager {
 			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
 			Transition selTransition = (Transition)getSelectedElementLocations().get(0).getParentNode();
-			double oldEFT = selTransition.timeFunctions.getEFT();
-			double oldLFT = selTransition.timeFunctions.getLFT();
-			double oldDuration = selTransition.timeFunctions.getDPNduration();
-			boolean oldTPNstatus = selTransition.timeFunctions.isTPN();
-			boolean oldDPNstatus = selTransition.timeFunctions.isDPN();
+			double oldEFT = selTransition.timeExtension.getEFT();
+			double oldLFT = selTransition.timeExtension.getLFT();
+			double oldDuration = selTransition.timeExtension.getDPNduration();
+			boolean oldTPNstatus = selTransition.timeExtension.isTPN();
+			boolean oldDPNstatus = selTransition.timeExtension.isDPN();
 			TransitionType tt = selTransition.getTransType();
 			
 			Transition portal = new Transition(IdGenerator.getNextId(), ((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
@@ -646,11 +646,11 @@ public class SelectionManager {
 			
 			portal.setName(oldName);
 			portal.setComment(oldComment);
-			portal.timeFunctions.setEFT(oldEFT);
-			portal.timeFunctions.setLFT(oldLFT);
-			portal.timeFunctions.setDPNduration(oldDuration);
-			portal.timeFunctions.setTPNstatus(oldTPNstatus);
-			portal.timeFunctions.setDPNstatus(oldDPNstatus);
+			portal.timeExtension.setEFT(oldEFT);
+			portal.timeExtension.setLFT(oldLFT);
+			portal.timeExtension.setDPNduration(oldDuration);
+			portal.timeExtension.setTPNstatus(oldTPNstatus);
+			portal.timeExtension.setDPNstatus(oldDPNstatus);
 			getGraphPanelNodes().add(selectedNodeIndex, portal);
 		}
 		getGraphPanel().repaint();
@@ -790,11 +790,11 @@ public class SelectionManager {
 			String oldName = getSelectedElementLocations().get(0).getParentNode().getName();
 			String oldComment = getSelectedElementLocations().get(0).getParentNode().getComment();
 			Transition selTransition = (Transition)getSelectedElementLocations().get(0).getParentNode();
-			double oldEFT = selTransition.timeFunctions.getEFT();
-			double oldLFT =selTransition.timeFunctions.getLFT();
-			double oldDuration = selTransition.timeFunctions.getDPNduration();
-			boolean oldTPNstatus = selTransition.timeFunctions.isTPN();
-			boolean oldDPNstatus = selTransition.timeFunctions.isDPN();
+			double oldEFT = selTransition.timeExtension.getEFT();
+			double oldLFT =selTransition.timeExtension.getLFT();
+			double oldDuration = selTransition.timeExtension.getDPNduration();
+			boolean oldTPNstatus = selTransition.timeExtension.isTPN();
+			boolean oldDPNstatus = selTransition.timeExtension.isDPN();
 			TransitionType tt = selTransition.getTransType();
 			
 			ElementLocation clonedNode = getSelectedElementLocations().get(0);
@@ -832,11 +832,11 @@ public class SelectionManager {
 			
 			portal.setName(oldName);
 			portal.setComment(oldComment);
-			portal.timeFunctions.setEFT(oldEFT);
-			portal.timeFunctions.setLFT(oldLFT);
-			portal.timeFunctions.setDPNduration(oldDuration);
-			portal.timeFunctions.setTPNstatus(oldTPNstatus);
-			portal.timeFunctions.setDPNstatus(oldDPNstatus);
+			portal.timeExtension.setEFT(oldEFT);
+			portal.timeExtension.setLFT(oldLFT);
+			portal.timeExtension.setDPNduration(oldDuration);
+			portal.timeExtension.setTPNstatus(oldTPNstatus);
+			portal.timeExtension.setDPNstatus(oldDPNstatus);
 			getGraphPanelNodes().add(selectedNodeIndex, portal);
 		}
 		getGraphPanel().repaint();

@@ -214,6 +214,7 @@ public class HolmesDockWindowsTable extends JPanel {
     boolean qSimXTPNknockoutMode = false;
 
     private JProgressBar qSimXTPNProgressBar = null;
+    private HolmesRoundedButton acqDataButtonXTPN = null; //przycisk qSim, wygaszony gdy trwa analiza
 
 
 
@@ -240,8 +241,9 @@ public class HolmesDockWindowsTable extends JPanel {
     private static final int SPN = 99; //rzutem na taśmę
 
     public enum SubWindow {
-        SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, SPNTRANSITION, XTPNTRANSITION, XTPNPLACE, XARC, CTRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS,
-        MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM, DECOMPOSITION
+        SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, SPNTRANSITION, XTPNTRANSITION, XTPNPLACE
+        , XARC, CTRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS
+        , MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM, DECOMPOSITION
     }
 
 
@@ -255,7 +257,6 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Konstruktor główny, wybierający odpowiednią metodę do tworzenia podokna wybranego typu
-     *
      * @param subType  SubWindow - typ podokna do utworzenia
      * @param blackBox Object[...] - bliżej nieokreślona lista nieokreślonych parametrów :)
      */
@@ -297,7 +298,6 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda pomocnicza konstruktora odpowiedzialna za tworzenie podokna dla symulatora sieci.
-     *
      * @param sim NetSimulator - obiekt symulatora sieci
      */
     @SuppressWarnings("UnusedAssignment")
@@ -870,7 +870,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             internalY += 20;
 
-            HolmesRoundedButton acqDataButtonXTPN = new HolmesRoundedButton("<html>Simulate</html>"
+            acqDataButtonXTPN = new HolmesRoundedButton("<html>Simulate</html>"
                     , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             acqDataButtonXTPN.setBounds(internalX, internalY, 100, 30);
             acqDataButtonXTPN.setMargin(new Insets(0, 0, 0, 0));
@@ -879,7 +879,8 @@ public class HolmesDockWindowsTable extends JPanel {
             acqDataButtonXTPN.setToolTipText("Compute steps from zero marking through the number of states");
             acqDataButtonXTPN.addActionListener(actionEvent -> {
                 quickSim.acquireDataXTPN(qSimXTPNSbySteps, qSimXTPNsimStatsSteps, qSimXTPNStatsTime
-                        , qSimXTPNrepeateSim, qSimXTPNStatsRepetitions, qSimXTPNknockoutMode, qSimXTPNProgressBar);
+                        , qSimXTPNrepeateSim, qSimXTPNStatsRepetitions, qSimXTPNknockoutMode
+                        , qSimXTPNProgressBar, acqDataButtonXTPN);
             });
             components.add(acqDataButtonXTPN);
 
@@ -2325,13 +2326,13 @@ public class HolmesDockWindowsTable extends JPanel {
         functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(functionLabel);
 
-        JCheckBox functionalCheckBox = new JCheckBox("", transition.fpnFunctions.isFunctional());
+        JCheckBox functionalCheckBox = new JCheckBox("", transition.fpnExtension.isFunctional());
         functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        functionalCheckBox.setSelected(((Transition) element).fpnFunctions.isFunctional());
+        functionalCheckBox.setSelected(((Transition) element).fpnExtension.isFunctional());
 
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            ((Transition) element).fpnFunctions.setFunctional(box.isSelected());
+            ((Transition) element).fpnExtension.setFunctional(box.isSelected());
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
@@ -3052,7 +3053,7 @@ public class HolmesDockWindowsTable extends JPanel {
         frLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(frLabel);
 
-        JTextArea frField = new JTextArea("" + ((Transition) element).spnFunctions.getFiringRate());
+        JTextArea frField = new JTextArea("" + ((Transition) element).spnExtension.getFiringRate());
         frField.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
         frField.setLineWrap(true);
         frField.addFocusListener(new FocusAdapter() {
@@ -3067,7 +3068,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
                     SPNtransitionData xxx = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager()
                             .getCurrentSPNdataVector().accessVector().get(gID);
-                    ((Transition) element).spnFunctions.setFiringRate(newVal);
+                    ((Transition) element).spnExtension.setFiringRate(newVal);
                     xxx.ST_function = newFR;
                 } catch (Exception ee) {
                     System.out.println(ee.getMessage());
@@ -3164,13 +3165,13 @@ public class HolmesDockWindowsTable extends JPanel {
         functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(functionLabel);
 
-        JCheckBox functionalCheckBox = new JCheckBox("", transition.fpnFunctions.isFunctional());
+        JCheckBox functionalCheckBox = new JCheckBox("", transition.fpnExtension.isFunctional());
         functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        functionalCheckBox.setSelected(((Transition) element).fpnFunctions.isFunctional());
+        functionalCheckBox.setSelected(((Transition) element).fpnExtension.isFunctional());
 
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            ((Transition) element).fpnFunctions.setFunctional(box.isSelected());
+            ((Transition) element).fpnExtension.setFunctional(box.isSelected());
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
@@ -3513,7 +3514,7 @@ public class HolmesDockWindowsTable extends JPanel {
         minMaxLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(minMaxLabel);
         JFormattedTextField minTimeField = new JFormattedTextField();
-        minTimeField.setValue(transition.timeFunctions.getEFT());
+        minTimeField.setValue(transition.timeExtension.getEFT());
         minTimeField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
@@ -3527,7 +3528,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
 
         JFormattedTextField maxTimeField = new JFormattedTextField();
-        maxTimeField.setValue(transition.timeFunctions.getLFT());
+        maxTimeField.setValue(transition.timeExtension.getLFT());
         maxTimeField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
@@ -3553,7 +3554,7 @@ public class HolmesDockWindowsTable extends JPanel {
         durationLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(durationLabel);
         JFormattedTextField durationField = new JFormattedTextField();
-        durationField.setValue(transition.timeFunctions.getDPNduration());
+        durationField.setValue(transition.timeExtension.getDPNduration());
         durationField.setBounds(columnA_posX + 90, columnB_Y += 20, 90, 20);
         durationField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
@@ -3569,7 +3570,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(durationField);
 
         //columnA_Y+=40;
-        JCheckBox tpnBox = new JCheckBox("TPN active", transition.timeFunctions.isTPN());
+        JCheckBox tpnBox = new JCheckBox("TPN active", transition.timeExtension.isTPN());
         tpnBox.setBounds(columnB_posX - 5, columnB_Y += 20, 100, 20);
         tpnBox.setEnabled(true);
         tpnBox.addItemListener(e -> {
@@ -3581,7 +3582,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(tpnBox);
 
         columnA_Y += 20;
-        JCheckBox dpnBox = new JCheckBox("DPN active", transition.timeFunctions.isDPN());
+        JCheckBox dpnBox = new JCheckBox("DPN active", transition.timeExtension.isDPN());
         dpnBox.setBounds(columnB_posX + 100, columnB_Y, 100, 20);
         dpnBox.setEnabled(true);
         dpnBox.addItemListener(e -> {
@@ -3674,13 +3675,13 @@ public class HolmesDockWindowsTable extends JPanel {
         functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(functionLabel);
 
-        JCheckBox functionalCheckBox = new JCheckBox("", transition.fpnFunctions.isFunctional());
+        JCheckBox functionalCheckBox = new JCheckBox("", transition.fpnExtension.isFunctional());
         functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        functionalCheckBox.setSelected(((Transition) element).fpnFunctions.isFunctional());
+        functionalCheckBox.setSelected(((Transition) element).fpnExtension.isFunctional());
 
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            ((Transition) element).fpnFunctions.setFunctional(box.isSelected());
+            ((Transition) element).fpnExtension.setFunctional(box.isSelected());
 
             overlord.markNetChange();
         });
@@ -4395,12 +4396,12 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(immediateCheckBox);
 
         // XTPN-transition FUNKCYJNOŚĆ
-        JCheckBox functionalCheckBox = new JCheckBox("Functional", transition.fpnFunctions.isFunctional());
+        JCheckBox functionalCheckBox = new JCheckBox("Functional", transition.fpnExtension.isFunctional());
         functionalCheckBox.setBounds(columnA_posX-5, columnA_Y += 20, 140, 20);
-        functionalCheckBox.setSelected(((Transition) element).fpnFunctions.isFunctional());
+        functionalCheckBox.setSelected(((Transition) element).fpnExtension.isFunctional());
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            ((Transition) element).fpnFunctions.setFunctional(box.isSelected());
+            ((Transition) element).fpnExtension.setFunctional(box.isSelected());
             overlord.markNetChange();
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
@@ -8409,7 +8410,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void setMinFireTime(double x) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.timeFunctions.setEFT(x);
+            transition.timeExtension.setEFT(x);
             repaintGraphPanel();
         }
     }
@@ -8421,7 +8422,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void setMaxFireTime(double x) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.timeFunctions.setLFT(x);
+            transition.timeExtension.setLFT(x);
             repaintGraphPanel();
         }
     }
@@ -8433,7 +8434,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void setDurationTime(double x) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.timeFunctions.setDPNduration(x);
+            transition.timeExtension.setDPNduration(x);
             repaintGraphPanel();
         }
     }
@@ -8445,7 +8446,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void setTPNstatus(boolean status) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.timeFunctions.setTPNstatus(status);
+            transition.timeExtension.setTPNstatus(status);
             repaintGraphPanel();
         }
     }
@@ -8457,7 +8458,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void setDPNstatus(boolean status) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.timeFunctions.setDPNstatus(status);
+            transition.timeExtension.setDPNstatus(status);
             repaintGraphPanel();
         }
     }

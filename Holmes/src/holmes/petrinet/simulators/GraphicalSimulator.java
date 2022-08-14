@@ -180,7 +180,7 @@ public class GraphicalSimulator {
 				if (transition.isActive()) {
 					return true;
 				}
-				if(transition.timeFunctions.getDPNtimer() >= 0 && transition.timeFunctions.getDPNduration() != 0) {
+				if(transition.timeExtension.getDPNtimer() >= 0 && transition.timeExtension.getDPNduration() != 0) {
 					return true;
 				}
 					
@@ -286,7 +286,7 @@ public class GraphicalSimulator {
 			else
 				arcs = transition.getOutArcs();
 			
-			if(transition.timeFunctions.getDPNtimer() > 0) //yeah, trust me, I'm an engineer
+			if(transition.timeExtension.getDPNtimer() > 0) //yeah, trust me, I'm an engineer
 				continue;
 			
 			// odejmij odpowiednią liczbę tokenów:
@@ -553,7 +553,7 @@ public class GraphicalSimulator {
 				}
 					
 			}
-			transition.timeFunctions.resetTimeVariables();
+			transition.timeExtension.resetTimeVariables();
 		}
 		transitions.clear();  //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)
 	}
@@ -932,8 +932,8 @@ public class GraphicalSimulator {
 					//usuń te tranzycje, które są w I fazie DPN
 					for(int t=0; t<launchingTransitions.size(); t++) {
 						Transition test_t = launchingTransitions.get(t);
-						if(test_t.timeFunctions.isDPN()) {
-							if(test_t.timeFunctions.getDPNtimer() == 0 && test_t.timeFunctions.getDPNduration() != 0) {
+						if(test_t.timeExtension.isDPN()) {
+							if(test_t.timeExtension.getDPNtimer() == 0 && test_t.timeExtension.getDPNduration() != 0) {
 								launchingTransitions.remove(test_t);
 								t--;
 							}
@@ -1028,8 +1028,8 @@ public class GraphicalSimulator {
 					
 					for(int t=0; t<launchingTransitions.size(); t++) {
 						Transition test_t = launchingTransitions.get(t);
-						if(test_t.timeFunctions.isDPN()) {
-							if(test_t.timeFunctions.getDPNtimer() == 0 && test_t.timeFunctions.getDPNduration() != 0) {
+						if(test_t.timeExtension.isDPN()) {
+							if(test_t.timeExtension.getDPNtimer() == 0 && test_t.timeExtension.getDPNduration() != 0) {
 								launchingTransitions.remove(test_t);
 								t--;
 							}

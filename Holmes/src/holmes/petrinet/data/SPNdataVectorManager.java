@@ -80,7 +80,7 @@ public class SPNdataVectorManager {
 	public void addCurrentFRasSPNdataVector() {
 		SPNdataVector frVector = new SPNdataVector();
 		for(Transition trans : pn.getTransitions()) {
-			frVector.addTrans(""+trans.spnFunctions.getFiringRate(), trans.spnFunctions.getSPNtype());
+			frVector.addTrans(""+trans.spnExtension.getFiringRate(), trans.spnExtension.getSPNtype());
 		}
 		SPNdataMatrix.add(frVector);
 	}
@@ -105,8 +105,8 @@ public class SPNdataVectorManager {
 		SPNdataVector frVector = SPNdataMatrix.get(vectorID);
 		for(int t=0; t<transitions.size(); t++) {
 			Transition trans = transitions.get(t);
-			trans.spnFunctions.setSPNtype(frVector.getStochasticType(t));
-			trans.spnFunctions.setFiringRate(frVector.getFiringRate(t));
+			trans.spnExtension.setSPNtype(frVector.getStochasticType(t));
+			trans.spnExtension.setFiringRate(frVector.getFiringRate(t));
 		}
 		selectedVector = vectorID;
 	}
@@ -135,8 +135,8 @@ public class SPNdataVectorManager {
 		ArrayList<Transition> transitions = pn.getTransitions();
 		SPNdataVector frVector = SPNdataMatrix.get(vectorID);
 		for(int t=0; t<transitions.size(); t++) {
-			frVector.accessVector().get(t).ST_function = ""+transitions.get(t).spnFunctions.getFiringRate();
-			frVector.accessVector().get(t).sType = transitions.get(t).spnFunctions.getSPNtype();
+			frVector.accessVector().get(t).ST_function = ""+transitions.get(t).spnExtension.getFiringRate();
+			frVector.accessVector().get(t).sType = transitions.get(t).spnExtension.getSPNtype();
 		}
 	}
 	

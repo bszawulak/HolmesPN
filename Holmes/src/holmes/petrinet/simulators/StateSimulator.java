@@ -875,8 +875,8 @@ public class StateSimulator implements Runnable {
 		
 		for(int t=0; t<launchingTransitions.size(); t++) {
 			Transition test_t = launchingTransitions.get(t);
-			if(test_t.timeFunctions.isDPN()) {
-				if(test_t.timeFunctions.getDPNtimer() == 0 && test_t.timeFunctions.getDPNduration() != 0) {
+			if(test_t.timeExtension.isDPN()) {
+				if(test_t.timeExtension.getDPNtimer() == 0 && test_t.timeExtension.getDPNduration() != 0) {
 					launchingTransitions.remove(test_t);
 					t--;
 				}
@@ -894,7 +894,7 @@ public class StateSimulator implements Runnable {
 		
 		ArrayList<Arc> arcs;
 		for (Transition transition : launchingTransitions) {
-			if(transition.timeFunctions.getDPNtimer() > 0) //yeah, trust me, I'm an engineer
+			if(transition.timeExtension.getDPNtimer() > 0) //yeah, trust me, I'm an engineer
 				continue;
 			//innymi słowy: nie odejmuj tokenów, jeśli timer DPN to 1, 2 lub więcej. Odejmuj gdy = 0, a gdy jest
 			//równy -1, to w ogóle nie będzie takiej tranzycji na liście transitions tutaj.
@@ -962,7 +962,7 @@ public class StateSimulator implements Runnable {
 				FunctionsTools.functionalAddition(transition, arc, place);
 				//place.modifyTokensNumber(arc.getWeight());
 			}
-			transition.timeFunctions.resetTimeVariables();
+			transition.timeExtension.resetTimeVariables();
 		}
 		launchingTransitions.clear(); //wyczyść listę tranzycji 'do uruchomienia' (już swoje zrobiły)
 	}
@@ -1037,7 +1037,7 @@ public class StateSimulator implements Runnable {
 		for (Transition transition : transitions) {
 			transition.setLaunching(false);
 			if (transition.getTransType() == TransitionType.TPN) {
-				transition.timeFunctions.resetTimeVariables();
+				transition.timeExtension.resetTimeVariables();
 			}
 			if ( transition instanceof TransitionXTPN ) {
 				((TransitionXTPN)transition).resetTimeVariables_xTPN();

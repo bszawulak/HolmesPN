@@ -563,7 +563,7 @@ public class GraphicalSimulatorXTPN {
                             arc.setTransportingTokens(false);
                         }  else { //teraz określamy ile zabrać
                             int weight = arc.getWeight();
-                            if(transition.fpnFunctions.isFunctional()) {
+                            if(transition.fpnExtension.isFunctional()) {
                                 weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                             }
                             place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
@@ -623,7 +623,7 @@ public class GraphicalSimulatorXTPN {
                             arc.setTransportingTokens(false);
                         }  else { //teraz określamy ile
                             int weight = arc.getWeight();
-                            if(transition.fpnFunctions.isFunctional()) {
+                            if(transition.fpnExtension.isFunctional()) {
                                 weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                             }
                             place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());

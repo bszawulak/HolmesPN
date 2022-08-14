@@ -638,7 +638,7 @@ public class SnoopyReader {
 						}
 						snoopyNodesElLocIDList.add(subIDs);
 						
-						if(transition.timeFunctions.isDPN() || transition.timeFunctions.isTPN())
+						if(transition.timeExtension.isDPN() || transition.timeExtension.isTPN())
 							transition.setTransType(TransitionType.TPN);
 					}
 				} //czytanie właściwości węzła
@@ -683,11 +683,11 @@ public class SnoopyReader {
 	private void parseDuration(Transition transition, ArrayList<Object> tableVector) {
 		// 0, 1 pierwszy wiersz (nazwy), 2 - tytuł wiersza, 3 wartość I wiersz, 4 jak 2, 5 jak 3
 		try {
-			transition.timeFunctions.setDPNduration(Double.parseDouble((String) tableVector.get(3)));
-			transition.timeFunctions.setDPNstatus(transition.timeFunctions.getDPNduration() != 0);
+			transition.timeExtension.setDPNduration(Double.parseDouble((String) tableVector.get(3)));
+			transition.timeExtension.setDPNstatus(transition.timeExtension.getDPNduration() != 0);
 		} catch (Exception e) {
-			transition.timeFunctions.setDPNduration(0);
-			transition.timeFunctions.setDPNstatus(false);
+			transition.timeExtension.setDPNduration(0);
+			transition.timeExtension.setDPNstatus(false);
 		}
 	}
 	
@@ -697,13 +697,13 @@ public class SnoopyReader {
 		try {
 			double eft = Double.parseDouble((String) tableVector.get(4));
 			double lft = Double.parseDouble((String) tableVector.get(5));
-			transition.timeFunctions.setLFT(lft);
-			transition.timeFunctions.setEFT(eft);
-			transition.timeFunctions.setTPNstatus(true);
+			transition.timeExtension.setLFT(lft);
+			transition.timeExtension.setEFT(eft);
+			transition.timeExtension.setTPNstatus(true);
 		} catch (Exception e) {
-			transition.timeFunctions.setEFT(0);
-			transition.timeFunctions.setLFT(0);
-			transition.timeFunctions.setTPNstatus(true);
+			transition.timeExtension.setEFT(0);
+			transition.timeExtension.setLFT(0);
+			transition.timeExtension.setTPNstatus(true);
 		}
 	}
 

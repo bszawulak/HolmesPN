@@ -49,24 +49,24 @@ public class TimeComputations {
 				normalTrans++;
 				continue;
 			}
-			boolean tpnStatus = trans.timeFunctions.isTPN();
-			boolean dpnStatus = trans.timeFunctions.isDPN();
+			boolean tpnStatus = trans.timeExtension.isTPN();
+			boolean dpnStatus = trans.timeExtension.isDPN();
 			
 			if(tpnStatus && dpnStatus) {
 				tdpnTrans++;
 				
-				eftTotalTime += trans.timeFunctions.getEFT();
-				lftTotalTime += trans.timeFunctions.getLFT();
-				dpnTotalTime += trans.timeFunctions.getDPNduration();
+				eftTotalTime += trans.timeExtension.getEFT();
+				lftTotalTime += trans.timeExtension.getLFT();
+				dpnTotalTime += trans.timeExtension.getDPNduration();
 			} else if(tpnStatus) {
 				tpnPureTrans++;
 				
-				eftTotalTime += trans.timeFunctions.getEFT();
-				lftTotalTime += trans.timeFunctions.getLFT();
+				eftTotalTime += trans.timeExtension.getEFT();
+				lftTotalTime += trans.timeExtension.getLFT();
 			} else if(dpnStatus) {
 				dpnPureTrans++;
 				
-				dpnTotalTime += trans.timeFunctions.getDPNduration();
+				dpnTotalTime += trans.timeExtension.getDPNduration();
 			} else {
 				normalTrans++; //niby TPN, ale oba parametry wyłączone
 			}

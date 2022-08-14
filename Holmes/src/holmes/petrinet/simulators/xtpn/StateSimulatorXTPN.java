@@ -1,6 +1,7 @@
 package holmes.petrinet.simulators.xtpn;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.data.MultisetM;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.functions.FunctionsTools;
@@ -138,16 +139,16 @@ public class StateSimulatorXTPN implements Runnable {
         this.simulationType = simulationType;
         if (simulationType == 1) { //qSim
             this.quickSim = (QuickSimTools) blackBox[0];
-            this.progressBar = (JProgressBar) blackBox[1];
-            this.sg = (SimulatorGlobals) blackBox[2];
+            this.sg = (SimulatorGlobals) blackBox[1];
+            this.progressBar = (JProgressBar) blackBox[2];
         } else if (simulationType == 2) { //qSim + repetitions
             this.quickSim = (QuickSimTools) blackBox[0];
-            this.progressBar = (JProgressBar) blackBox[1];
-            this.sg = (SimulatorGlobals) blackBox[2];
+            this.sg = (SimulatorGlobals) blackBox[1];
+            this.progressBar = (JProgressBar) blackBox[2];
         } else if (simulationType == 3) { //qSim + repetitions + knockout
             this.quickSim = (QuickSimTools) blackBox[0];
-            this.progressBar = (JProgressBar) blackBox[1];
-            this.sg = (SimulatorGlobals) blackBox[2];
+            this.sg = (SimulatorGlobals) blackBox[1];
+            this.progressBar = (JProgressBar) blackBox[2];
         }
     }
 
@@ -566,7 +567,7 @@ public class StateSimulatorXTPN implements Runnable {
                         //arc.setTransportingTokens(false);
                     } else { //teraz określamy ile zabrać
                         int weight = arc.getWeight();
-                        if (transition.fpnFunctions.isFunctional()) {
+                        if (transition.fpnExtension.isFunctional()) {
                             weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                         }
                         place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
@@ -623,7 +624,7 @@ public class StateSimulatorXTPN implements Runnable {
                         //arc.setTransportingTokens(false);
                     } else { //teraz określamy ile
                         int weight = arc.getWeight();
-                        if (transition.fpnFunctions.isFunctional()) {
+                        if (transition.fpnExtension.isFunctional()) {
                             weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                         }
                         place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());

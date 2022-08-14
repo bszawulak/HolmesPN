@@ -295,18 +295,18 @@ public final class ElementDraw {
 				//dla tranzycji czasowych, w tym XTPN (po else)
 				if(trans.getTransType() == TransitionType.TPN) {
 					int dpnTextOffset = -5;
-					if(trans.timeFunctions.isTPN()) {
+					if(trans.timeExtension.isTPN()) {
 						dpnTextOffset = -15;
 						g.setColor(Color.black);
 						g.setFont(f_plain);
-						String eft = String.valueOf( trans.timeFunctions.getEFT() );
+						String eft = String.valueOf( trans.timeExtension.getEFT() );
 						g.drawString(eft, nodeBounds.x+35, nodeBounds.y + 8);
 
-						String lft = String.valueOf( trans.timeFunctions.getLFT() );
+						String lft = String.valueOf( trans.timeExtension.getLFT() );
 						g.drawString(lft, nodeBounds.x +35, nodeBounds.y + 28);
 
-						int intTimer = (int) trans.timeFunctions.getTPNtimer();
-						int intFireTime = (int) trans.timeFunctions.getTPNtimerLimit();
+						int intTimer = (int) trans.timeExtension.getTPNtimer();
+						int intFireTime = (int) trans.timeExtension.getTPNtimerLimit();
 						String timeInfo = ""+intTimer+"  /  "+intFireTime;
 						
 						if(!trans.isActive())
@@ -326,10 +326,10 @@ public final class ElementDraw {
 						
 						g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y - 4);
 					}
-					if(trans.timeFunctions.isDPN()) {
-						String dur = String.valueOf( trans.timeFunctions.getDPNduration() );
-						if(trans.timeFunctions.getDPNtimer() >= 0) {
-							dur = trans.timeFunctions.getDPNtimer() + " / "+dur;
+					if(trans.timeExtension.isDPN()) {
+						String dur = String.valueOf( trans.timeExtension.getDPNduration() );
+						if(trans.timeExtension.getDPNtimer() >= 0) {
+							dur = trans.timeExtension.getDPNtimer() + " / "+dur;
 						} else {
 							dur = " # / "+dur;
 						}
@@ -375,7 +375,7 @@ public final class ElementDraw {
 				}
 
 				//SYMBOL TRANZYCJI FUNKCYJNEJ
-				if(trans.fpnFunctions.isFunctional()) {
+				if(trans.fpnExtension.isFunctional()) {
 					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth("f") / 2 - 3;
 					int posY = nodeBounds.y + nodeBounds.height / 2 + 5;
 					Font old = g.getFont();

@@ -476,7 +476,7 @@ public class ProjectReader {
 			}
 			
 			for(Transition transition : transitions) { //aktywacja wektorów funkcji
-				transition.fpnFunctions.checkFunctions(arcs, places);
+				transition.fpnExtension.checkFunctions(arcs, places);
 			}
 			
 			int functionsRead = 0;
@@ -538,7 +538,7 @@ public class ProjectReader {
 			if(table[4].contains("true"))
 				enabled = true;
 
-			return transition.fpnFunctions.updateFunctionString(table[1], table[2], correct, enabled);
+			return transition.fpnExtension.updateFunctionString(table[1], table[2], correct, enabled);
 		} catch (Exception e) {
 			overlord.log("Failed to correctly parse line: "+functionLine, "warning", true);
 			return false;
@@ -878,7 +878,7 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				double eft = Double.parseDouble(line);
-				transition.timeFunctions.forceSetEFT(eft);
+				transition.timeExtension.forceSetEFT(eft);
 				return;
 			}
 			
@@ -887,7 +887,7 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				double lft = Double.parseDouble(line);
-				transition.timeFunctions.setLFT(lft);
+				transition.timeExtension.setLFT(lft);
 				return;
 			}
 			
@@ -896,7 +896,7 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				double duration = Double.parseDouble(line);
-				transition.timeFunctions.setDPNduration(duration);
+				transition.timeExtension.setDPNduration(duration);
 				return;
 			}
 			
@@ -904,7 +904,7 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				transition.timeFunctions.setTPNstatus(line.contains("true"));
+				transition.timeExtension.setTPNstatus(line.contains("true"));
 				return;
 			}
 			
@@ -912,7 +912,7 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				transition.timeFunctions.setDPNstatus(line.contains("true"));
+				transition.timeExtension.setDPNstatus(line.contains("true"));
 				return;
 			}
 			
@@ -920,7 +920,7 @@ public class ProjectReader {
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
-				transition.fpnFunctions.setFunctional(line.contains("true"));
+				transition.fpnExtension.setFunctional(line.contains("true"));
 				return;
 			}
 			
@@ -2410,12 +2410,12 @@ public class ProjectReader {
 		rise.setTransType(TransitionType.CPN);
 		rise.setName(transition.getName());
 		rise.setComment(transition.getComment());
-		rise.timeFunctions.forceSetEFT(transition.timeFunctions.getEFT());
-		rise.timeFunctions.setLFT(transition.timeFunctions.getLFT());
-		rise.timeFunctions.setDPNduration(transition.timeFunctions.getDPNduration());
-		rise.timeFunctions.setTPNstatus(transition.timeFunctions.isTPN());
-		rise.timeFunctions.setDPNstatus(transition.timeFunctions.isDPN());
-		rise.fpnFunctions.setFunctional(transition.fpnFunctions.isFunctional());
+		rise.timeExtension.forceSetEFT(transition.timeExtension.getEFT());
+		rise.timeExtension.setLFT(transition.timeExtension.getLFT());
+		rise.timeExtension.setDPNduration(transition.timeExtension.getDPNduration());
+		rise.timeExtension.setTPNstatus(transition.timeExtension.isTPN());
+		rise.timeExtension.setDPNstatus(transition.timeExtension.isDPN());
+		rise.fpnExtension.setFunctional(transition.fpnExtension.isFunctional());
 		rise.setPortal(transition.isPortal());
 
 		rise.getElementLocations().clear();

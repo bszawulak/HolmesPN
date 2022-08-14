@@ -483,9 +483,9 @@ public class NetHandler_Time extends NetHandler {
 					timeTrans = false;
 					//TimeTransition tmpTTran = new TimeTransition(nodeID, tmpElementLocationList, nodeName, nodeComment);
 					Transition tmpTTran = new Transition(nodeID, elementLocationsList, nodeName, nodeComment);
-					tmpTTran.timeFunctions.setEFT(nodeEFT);
-					tmpTTran.timeFunctions.setLFT(nodeLFT);
-					tmpTTran.timeFunctions.setDPNduration(duration);
+					tmpTTran.timeExtension.setEFT(nodeEFT);
+					tmpTTran.timeExtension.setLFT(nodeLFT);
+					tmpTTran.timeExtension.setDPNduration(duration);
 					tmpTTran.setTextsLocations(namesElLocations, GUIManager.locationMoveType.NAME);
 
 					//XTPN node preparation (just in case)
@@ -505,12 +505,12 @@ public class NetHandler_Time extends NetHandler {
 
 					tmpTTran.setTransType(TransitionType.TPN);
 					if(duration > 0)
-						tmpTTran.timeFunctions.setDPNstatus(true);
+						tmpTTran.timeExtension.setDPNstatus(true);
 					
 					if(nodeEFT == nodeLFT && nodeEFT == 0) 
-						tmpTTran.timeFunctions.setTPNstatus(false);
+						tmpTTran.timeExtension.setTPNstatus(false);
 					
-					tmpTTran.timeFunctions.setTPNstatus(true);
+					tmpTTran.timeExtension.setTPNstatus(true);
 					tmpTransitionList.add(tmpTTran);
 					
 					IdGenerator.getNextTransitionId();

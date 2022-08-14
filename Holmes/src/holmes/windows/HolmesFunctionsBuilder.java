@@ -204,7 +204,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 
 
 			String fID = (String) tableFunc.getValueAt(row, 0);
-			FunctionContainer container = transition.fpnFunctions.getFunctionContainer(fID);
+			FunctionContainer container = transition.fpnExtension.getFunctionContainer(fID);
 			container.simpleExpression = "";
 			container.correct = false;
 			container.enabled = false;
@@ -234,11 +234,11 @@ public class HolmesFunctionsBuilder extends JFrame {
 		
 		JCheckBox functionalActiveButton = new JCheckBox("Functional transition");
 		functionalActiveButton.setBounds(posX+650, posY+110, 150, 20);
-		functionalActiveButton.setSelected(transition.fpnFunctions.isFunctional());
+		functionalActiveButton.setSelected(transition.fpnExtension.isFunctional());
 
 		functionalActiveButton.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-			transition.fpnFunctions.setFunctional(abstractButton.getModel().isSelected());
+			transition.fpnExtension.setFunctional(abstractButton.getModel().isSelected());
 			pn.repaintAllGraphPanels();
 			overlord.markNetChange();
 		});
@@ -321,13 +321,13 @@ public class HolmesFunctionsBuilder extends JFrame {
 		currentResult.setText("");
 		String fID = (String) tableFunc.getValueAt(row, 0);
 		boolean enabled = enabledCheckBox.isSelected();
-		FunctionContainer container = transition.fpnFunctions.getFunctionContainer(fID);
+		FunctionContainer container = transition.fpnExtension.getFunctionContainer(fID);
 		boolean correct = FunctionsTools.validateFunction(container, functionField.getText(), false, commentField, places);
 		
 		if(!correct)
 			enabled = false;
 		
-		transition.fpnFunctions.updateFunctionString(fID, container.simpleExpression, correct, enabled);
+		transition.fpnExtension.updateFunctionString(fID, container.simpleExpression, correct, enabled);
 		tableFunc.getModel().setValueAt(container.simpleExpression, row, 2);
 		tableFunc.getModel().setValueAt(correct, row, 3);
 		tableFunc.getModel().setValueAt(enabled, row, 6);
@@ -429,8 +429,8 @@ public class HolmesFunctionsBuilder extends JFrame {
       	});
 		
 		
-		transition.fpnFunctions.checkFunctions(arcs, places);
-		ArrayList<FunctionContainer> fVector = transition.fpnFunctions.accessFunctionsList();
+		transition.fpnExtension.checkFunctions(arcs, places);
+		ArrayList<FunctionContainer> fVector = transition.fpnExtension.accessFunctionsList();
 		for(FunctionContainer fc : fVector) { //najpierw łuki wejściowe
 			if(!fc.inTransArc) // jeśli nie jest to łuk WEJŚCIOWY DO TRANZYCJI - ignoruj
 				continue;

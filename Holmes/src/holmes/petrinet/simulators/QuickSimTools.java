@@ -9,6 +9,7 @@ import javax.swing.JProgressBar;
 import holmes.darkgui.GUIController;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable;
+import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
@@ -26,6 +27,8 @@ public class QuickSimTools {
 	private boolean scanTransitions = true;
 	private boolean scanPlaces = true;
 	private boolean markArcs = true;
+
+	private HolmesRoundedButton startSimButton = null;
 	
 	/**
 	 * Konstruktor obiektu klasy QuickSimTools.
@@ -69,9 +72,10 @@ public class QuickSimTools {
 	 * @param repetitions (<b>int</b>) liczba powtórzeń.
 	 * @param knockout (<b>boolean</b>) czy symulacja knockout.
 	 * @param quickProgressBar (<b>JProgressBar</b>) pasek postępu z okna wywołującego.
+	 * @param button (<b>HolmesRoundedButton</b>) przycisk który wywołał metodę.
 	 */
-	public void acquireDataXTPN(boolean bySteps, int steps, double time,  boolean repeate, int repetitions
-			, boolean knockout, JProgressBar quickProgressBar) {
+	public void acquireDataXTPN(boolean bySteps, int steps, double time, boolean repeate, int repetitions
+			, boolean knockout, JProgressBar quickProgressBar, HolmesRoundedButton button) {
 
 
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
@@ -80,6 +84,8 @@ public class QuickSimTools {
 
 			return;
 		}
+
+		startSimButton = button;
 
 		boolean isKnockout = false;
 		if(knockout) {
@@ -114,14 +120,15 @@ public class QuickSimTools {
 			ownSettings.simulateTime = !bySteps;
 			ownSettings.simRepetitions_XTPN = repetitions;
 
+			startSimButton.setEnabled(false);
 			if(repeate) {
 				if(knockout) {
-					stateSimulatorXTPN.setThreadDetails(3, this, quickProgressBar, ownSettings);
+					stateSimulatorXTPN.setThreadDetails(3, this, ownSettings, quickProgressBar, button);
 				} else {
-					stateSimulatorXTPN.setThreadDetails(2, this, quickProgressBar, ownSettings);
+					stateSimulatorXTPN.setThreadDetails(2, this, ownSettings, quickProgressBar, button);
 				}
 			} else {
-				stateSimulatorXTPN.setThreadDetails(1, this, quickProgressBar, ownSettings);
+				stateSimulatorXTPN.setThreadDetails(1, this, ownSettings, quickProgressBar, button);
 			}
 
 			Thread myThread = new Thread(stateSimulatorXTPN);
@@ -155,7 +162,6 @@ public class QuickSimTools {
 	public void finishedStatsData(ArrayList<ArrayList<Double>> quickSimAllStats, ArrayList<Transition> transitions,
 			ArrayList<Place> places) {
 		ArrayList<Double> avgFire = quickSimAllStats.get(0);
-		//ArrayList<Double> stdDev = quickSimAllStats.get(1);
 		ArrayList<Double> avgTokens = quickSimAllStats.get(2);
 		
 		overlord.simSettings.quickSimToken = true;
@@ -286,7 +292,6 @@ public class QuickSimTools {
 			, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
 
 		HolmesNotepad note = new HolmesNotepad(800, 600);
-
 		note.addTextLineNL("Simulation data", "text");
 		note.addTextLineNL("Avg. steps:  " + Tools.cutValue(result.simSteps), "text");
 		note.addTextLineNL("Avg. time:   " + Tools.cutValue(result.simTime), "text");
@@ -370,7 +375,7 @@ public class QuickSimTools {
 
 		note.setCaretFirstLine();
 		note.setVisible(true);
-
+		startSimButton.setEnabled(true);
 		/*
 
 		transIndex = 0;
@@ -413,7 +418,6 @@ public class QuickSimTools {
 			, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
 
 		HolmesNotepad note = new HolmesNotepad(800, 600);
-
 		note.addTextLineNL("Simulation data", "text");
 		note.addTextLineNL("Repetitions: " + (int)result.get(0).simReps, "text");
 		note.addTextLineNL(" * Reference set:", "bold");
@@ -558,6 +562,7 @@ public class QuickSimTools {
 
 		note.setCaretFirstLine();
 		note.setVisible(true);
+		startSimButton.setEnabled(true);
 	}
 
 	private String getTime(long milisecond) {

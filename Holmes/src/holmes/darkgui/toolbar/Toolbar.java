@@ -358,24 +358,24 @@ public class Toolbar extends BorderDock {
 						lft = (int) generator2.nextLong(eft+6)+1;
 						duration = (int) generator2.nextLong(10);
 						
-						t.timeFunctions.setDPNstatus(true);
-						t.timeFunctions.setTPNstatus(true);
-						t.timeFunctions.setLFT(lft);
-						t.timeFunctions.setEFT(eft);
-						t.timeFunctions.setDPNduration(duration);
+						t.timeExtension.setDPNstatus(true);
+						t.timeExtension.setTPNstatus(true);
+						t.timeExtension.setLFT(lft);
+						t.timeExtension.setEFT(eft);
+						t.timeExtension.setDPNduration(duration);
 						
 					} else if(value > 3) {
 						duration = (int) generator2.nextLong(10);
 						
-						t.timeFunctions.setDPNstatus(true);
-						t.timeFunctions.setDPNduration(duration);
+						t.timeExtension.setDPNstatus(true);
+						t.timeExtension.setDPNduration(duration);
 					} else {
 						eft = (int) generator2.nextLong(6);
 						lft = (int) generator2.nextLong(eft+6)+1;
 						
-						t.timeFunctions.setTPNstatus(true);
-						t.timeFunctions.setLFT(lft);
-						t.timeFunctions.setEFT(eft);
+						t.timeExtension.setTPNstatus(true);
+						t.timeExtension.setLFT(lft);
+						t.timeExtension.setEFT(eft);
 					}
 					
 				}

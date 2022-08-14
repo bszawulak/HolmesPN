@@ -72,7 +72,7 @@ public class ProjectWriter {
 	 */
 	public boolean writeProject(String filepath) {
 		for(Transition trans : transitions) 
-			trans.fpnFunctions.checkFunctions(arcs, places);
+			trans.fpnExtension.checkFunctions(arcs, places);
 		
 		try {
 			if(projectCore.getProjectType() == PetriNet.GlobalNetType.XTPN)
@@ -256,12 +256,12 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition type:"+trans.getTransType()+">"+newline); //typ
 				bw.write(spaces(sp)+"<Transition name:"+trans.getName()+">"+newline);  //nazwa
 				bw.write(spaces(sp)+"<Transition comment:"+Tools.convertToCode(trans.getComment())+">"+newline); //komentarz
-				bw.write(spaces(sp)+"<Transition eft:"+trans.timeFunctions.getEFT()+">"+newline); //TPN eft
-				bw.write(spaces(sp)+"<Transition lft:"+trans.timeFunctions.getLFT()+">"+newline); //TPN lft
-				bw.write(spaces(sp)+"<Transition duration:"+trans.timeFunctions.getDPNduration()+">"+newline); //DPN duration value
-				bw.write(spaces(sp)+"<Transition TPN status:"+trans.timeFunctions.isTPN()+">"+newline); //is TPN active?
-				bw.write(spaces(sp)+"<Transition DPN status:"+trans.timeFunctions.isDPN()+">"+newline); //is DPN active?
-				bw.write(spaces(sp)+"<Transition function flag:"+trans.fpnFunctions.isFunctional()+">"+newline); //is functional?
+				bw.write(spaces(sp)+"<Transition eft:"+trans.timeExtension.getEFT()+">"+newline); //TPN eft
+				bw.write(spaces(sp)+"<Transition lft:"+trans.timeExtension.getLFT()+">"+newline); //TPN lft
+				bw.write(spaces(sp)+"<Transition duration:"+trans.timeExtension.getDPNduration()+">"+newline); //DPN duration value
+				bw.write(spaces(sp)+"<Transition TPN status:"+trans.timeExtension.isTPN()+">"+newline); //is TPN active?
+				bw.write(spaces(sp)+"<Transition DPN status:"+trans.timeExtension.isDPN()+">"+newline); //is DPN active?
+				bw.write(spaces(sp)+"<Transition function flag:"+trans.fpnExtension.isFunctional()+">"+newline); //is functional?
 
 				if(XTPNdataMode) {
 					//bw.write(spaces(sp)+"<Transition XTPN status:"+((TransitionXTPN)trans).isXTPNtransition()+">"+newline); //czy XTPN?
@@ -618,7 +618,7 @@ public class ProjectWriter {
 			sp = 4;
 			for(int t=0; t<transitions.size(); t++) {
 				Transition transition = transitions.get(t);
-				ArrayList<FunctionContainer> fVector = transition.fpnFunctions.accessFunctionsList();
+				ArrayList<FunctionContainer> fVector = transition.fpnExtension.accessFunctionsList();
 				for(FunctionContainer fc : fVector) {
 					if(fc.simpleExpression.length() == 0)
 						continue;

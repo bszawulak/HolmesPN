@@ -549,7 +549,7 @@ public class GraphPanel extends JComponent {
 	private void addNewStochasticTransition(Point p) {
 		if (isLegalLocation(p)) {
 			Transition trans = new Transition(IdGenerator.getNextId(), this.sheetId, NetworkTransformations.alignToGrid(p));
-			trans.spnFunctions.setSPNtype(TransitionSPNExtension.StochaticsType.ST);
+			trans.spnExtension.setSPNtype(TransitionSPNExtension.StochaticsType.ST);
 			trans.setTransType(TransitionType.SPN);
 			this.getSelectionManager().selectOneElementLocation(trans.getLastLocation());
 			getNodes().add(trans);
@@ -579,7 +579,7 @@ public class GraphPanel extends JComponent {
 		if (isLegalLocation(p)) {
 			Transition trans = new Transition(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
 			trans.setTransType(TransitionType.TPN);
-			trans.timeFunctions.setTPNstatus(true);
+			trans.timeExtension.setTPNstatus(true);
 			this.getSelectionManager().selectOneElementLocation(trans.getLastLocation());
 			getNodes().add(trans);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();
@@ -624,7 +624,7 @@ public class GraphPanel extends JComponent {
 	private void addNewFunctionalTransition(Point p) {
 		if (isLegalLocation(p)) {
 			Transition trans = new Transition(IdGenerator.getNextId(),this.sheetId, NetworkTransformations.alignToGrid(p));
-			trans.fpnFunctions.setFunctional(true);
+			trans.fpnExtension.setFunctional(true);
 			this.getSelectionManager().selectOneElementLocation(trans.getLastLocation());
 			getNodes().add(trans);
 			overlord.getWorkspace().getProject().accessFiringRatesManager().addTrans();

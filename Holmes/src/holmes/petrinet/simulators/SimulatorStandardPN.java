@@ -246,9 +246,9 @@ public class SimulatorStandardPN implements IEngine {
 		
 		//podziel tranzycje: na TPN, DPN, a jesli DPN skończyła liczyć - dodaj ją do listy odpaleń
 		for(int i=0; i<time_transitions.size(); i++) {
-			if(time_transitions.get(i).timeFunctions.isDPN()) {
+			if(time_transitions.get(i).timeExtension.isDPN()) {
 				//sprawdź które tranzycje DPN muszą odpalić:
-				if(time_transitions.get(i).timeFunctions.isDPNforcedToFire()) {
+				if(time_transitions.get(i).timeExtension.isDPNforcedToFire()) {
 					launchableTransitions.add(time_transitions.get(i));
 					indexTTList.remove((Integer)i); // ten problem z głowy
 				} else {
@@ -262,8 +262,8 @@ public class SimulatorStandardPN implements IEngine {
 		for(int i=0; i < indexDPNList.size(); i++) { //mają DPN status skoro trafiły na tę listę
 			int index = indexDPNList.get(i);
 			Transition dpn_transition = time_transitions.get(index);
-			if(dpn_transition.timeFunctions.isTPN()) {
-				if(dpn_transition.timeFunctions.isTPNforcedToFired()) { //TPN zakończyło liczenie
+			if(dpn_transition.timeExtension.isTPN()) {
+				if(dpn_transition.timeExtension.isTPNforcedToFired()) { //TPN zakończyło liczenie
 					int decision = DPNdecision(dpn_transition, index, indexDPNList, indexTTList);
 					if(decision == -1) {
 						i--;
@@ -274,14 +274,14 @@ public class SimulatorStandardPN implements IEngine {
 					
 				} else { //nie-TPN
 					if(dpn_transition.isActive()) {
-						if(dpn_transition.timeFunctions.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
-							int eft = (int) dpn_transition.timeFunctions.getEFT();
-							int lft = (int) dpn_transition.timeFunctions.getLFT();
+						if(dpn_transition.timeExtension.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
+							int eft = (int) dpn_transition.timeExtension.getEFT();
+							int lft = (int) dpn_transition.timeExtension.getLFT();
 							if(TDPNdecision1)
-								dpn_transition.timeFunctions.setTPNtimerLimit(eft);
+								dpn_transition.timeExtension.setTPNtimerLimit(eft);
 							else
-								dpn_transition.timeFunctions.setTPNtimerLimit(getRandomInt(eft, lft));
-							dpn_transition.timeFunctions.setTPNtimer(0); //start timer
+								dpn_transition.timeExtension.setTPNtimerLimit(getRandomInt(eft, lft));
+							dpn_transition.timeExtension.setTPNtimer(0); //start timer
 							
 							if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
 								int decision = DPNdecision(dpn_transition, index, indexDPNList, indexTTList);
@@ -295,11 +295,11 @@ public class SimulatorStandardPN implements IEngine {
 								indexTTList.remove((Integer)index);
 							}
 						} else { //update time
-							double oldTimer = dpn_transition.timeFunctions.getTPNtimer();
+							double oldTimer = dpn_transition.timeExtension.getTPNtimer();
 							oldTimer += planckDistance;
-							dpn_transition.timeFunctions.setTPNtimer(oldTimer);
+							dpn_transition.timeExtension.setTPNtimer(oldTimer);
 							
-							if(dpn_transition.timeFunctions.isTPNforcedToFired()) {
+							if(dpn_transition.timeExtension.isTPNforcedToFired()) {
 								int decision = DPNdecision(dpn_transition, index, indexDPNList, indexTTList);
 								if(decision == -1) {
 									i--;
@@ -313,7 +313,7 @@ public class SimulatorStandardPN implements IEngine {
 						}
 					} else { //not active
 						indexTTList.remove((Integer)index);
-						dpn_transition.timeFunctions.resetTimeVariables();
+						dpn_transition.timeExtension.resetTimeVariables();
 						//continue;
 					}
 				}
@@ -331,15 +331,15 @@ public class SimulatorStandardPN implements IEngine {
 		for (int index : indexTTList) { //czyste TPN, DPNy zostały obsłużone wyżej
 			Transition ttransition = time_transitions.get(index);
 			if (ttransition.isActive()) { //jeśli aktywna
-				if (ttransition.timeFunctions.isTPNforcedToFired()) { //pure DPN: eft=lft=0, dur > 0
+				if (ttransition.timeExtension.isTPNforcedToFired()) { //pure DPN: eft=lft=0, dur > 0
 					launchableTransitions.add(ttransition);
 					ttransition.bookRequiredTokens();
 				} else { //jest tylko aktywna
-					if (ttransition.timeFunctions.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
-						int eft = (int) ttransition.timeFunctions.getEFT();
-						int lft = (int) ttransition.timeFunctions.getLFT();
-						ttransition.timeFunctions.setTPNtimerLimit(getRandomInt(eft, lft));
-						ttransition.timeFunctions.setTPNtimer(0);
+					if (ttransition.timeExtension.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
+						int eft = (int) ttransition.timeExtension.getEFT();
+						int lft = (int) ttransition.timeExtension.getLFT();
+						ttransition.timeExtension.setTPNtimerLimit(getRandomInt(eft, lft));
+						ttransition.timeExtension.setTPNtimer(0);
 
 						if (lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
 							launchableTransitions.add(ttransition);
@@ -348,19 +348,19 @@ public class SimulatorStandardPN implements IEngine {
 							//byłoby wbrew idei natychmiastowości
 						}
 					} else { //update time
-						double oldTimer = ttransition.timeFunctions.getTPNtimer();
+						double oldTimer = ttransition.timeExtension.getTPNtimer();
 						oldTimer += planckDistance;
-						ttransition.timeFunctions.setTPNtimer(oldTimer);
+						ttransition.timeExtension.setTPNtimer(oldTimer);
 
-						if (ttransition.timeFunctions.isTPNforcedToFired()) {
+						if (ttransition.timeExtension.isTPNforcedToFired()) {
 							launchableTransitions.add(ttransition);
 							ttransition.bookRequiredTokens();
 						}
 					}
 				}
 			} else { //reset zegara
-				ttransition.timeFunctions.setTPNtimerLimit(-1);
-				ttransition.timeFunctions.setTPNtimer(-1);
+				ttransition.timeExtension.setTPNtimerLimit(-1);
+				ttransition.timeExtension.setTPNtimer(-1);
 			}
 		}
 	}
@@ -375,10 +375,10 @@ public class SimulatorStandardPN implements IEngine {
 	 * @return int
 	 */
 	private int DPNdecision(Transition dpn_transition, int index, ArrayList<Integer> indexDPNList,  ArrayList<Integer> indexTTList) {
-		double timer = dpn_transition.timeFunctions.getDPNtimer();
+		double timer = dpn_transition.timeExtension.getDPNtimer();
 		if(timer == -1 && dpn_transition.isActive()) { //może wystartować
 			//ustaw zegar na start
-			dpn_transition.timeFunctions.setDPNtimer(0);
+			dpn_transition.timeExtension.setDPNtimer(0);
 			//dodaj do odpalonych (tylko połknie tokeny, nie wyprodukuje)
 			launchableTransitions.add(dpn_transition); //immediate fire bo 0=0
 			dpn_transition.bookRequiredTokens(); //odpala czy nie, rezerwuje tokeny teraz
@@ -388,10 +388,10 @@ public class SimulatorStandardPN implements IEngine {
 		}
 		if(timer > -1) { //jeśli zegar to 0 lub więcej : liczenie
 			timer += planckDistance;
-			dpn_transition.timeFunctions.setDPNtimer(timer);
+			dpn_transition.timeExtension.setDPNtimer(timer);
 			indexDPNList.remove((Integer)index);
 			
-			if(dpn_transition.timeFunctions.isDPNforcedToFire()) {
+			if(dpn_transition.timeExtension.isDPNforcedToFire()) {
 				//doliczyła do końca
 				launchableTransitions.add(dpn_transition);
 			}
@@ -442,7 +442,7 @@ public class SimulatorStandardPN implements IEngine {
 		for (int i = 0; i < time_transitions.size(); i++) {
 			Transition timeTransition = time_transitions.get(timeTransitionsIndexList.get(i)); //losowo wybrana czasowa
 			if(timeTransition.isActive()) { //jeśli aktywna
-				if(timeTransition.timeFunctions.isTPNforcedToFired()) {
+				if(timeTransition.timeExtension.isTPNforcedToFired()) {
 					//musi zostać uruchomiona
 					if(ttPriority) {
 						launchableTransitions.add(timeTransition);
@@ -450,12 +450,12 @@ public class SimulatorStandardPN implements IEngine {
 					}
 					
 				} else { //jest tylko aktywna
-					if(timeTransition.timeFunctions.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
-						int eft = (int) timeTransition.timeFunctions.getEFT();
-						int lft = (int) timeTransition.timeFunctions.getLFT();
+					if(timeTransition.timeExtension.getTPNtimerLimit() == -1) { //czyli poprzednio nie była aktywna
+						int eft = (int) timeTransition.timeExtension.getEFT();
+						int lft = (int) timeTransition.timeExtension.getLFT();
 						int randomTime = getRandomInt(eft, lft);
-						timeTransition.timeFunctions.setTPNtimerLimit(randomTime);
-						timeTransition.timeFunctions.setTPNtimer(0);
+						timeTransition.timeExtension.setTPNtimerLimit(randomTime);
+						timeTransition.timeExtension.setTPNtimer(0);
 						
 						if(ttPriority) { 
 							if(lft == 0) { // eft:lft = 0:0, natychmiastowo odpalalna tranzycja
@@ -466,15 +466,15 @@ public class SimulatorStandardPN implements IEngine {
 							}
 						}
 					} else { //update time
-						int oldTimer = (int) timeTransition.timeFunctions.getTPNtimer();
+						int oldTimer = (int) timeTransition.timeExtension.getTPNtimer();
 						oldTimer++;
-						timeTransition.timeFunctions.setTPNtimer(oldTimer);
+						timeTransition.timeExtension.setTPNtimer(oldTimer);
 						
 						//jeśli to tu zostanie, to oznacza, że TT mają pierwszeństwo nad zwykłymi
 						// alternatywnie (opcje programu) można ustawić, że będzie to razem ze zwykłymi robione
 						
 						if(ttPriority) { 
-							if(timeTransition.timeFunctions.isTPNforcedToFired()) {
+							if(timeTransition.timeExtension.isTPNforcedToFired()) {
 								launchableTransitions.add(timeTransition);
 								timeTransition.bookRequiredTokens();
 							}
@@ -482,8 +482,8 @@ public class SimulatorStandardPN implements IEngine {
 					}
 				}
 			} else { //reset zegara
-				timeTransition.timeFunctions.setTPNtimerLimit(-1);
-				timeTransition.timeFunctions.setTPNtimer(-1);
+				timeTransition.timeExtension.setTPNtimerLimit(-1);
+				timeTransition.timeExtension.setTPNtimer(-1);
 			}
 		} 
 		
@@ -498,13 +498,13 @@ public class SimulatorStandardPN implements IEngine {
 			}
 			if(transition.getTransType() == TransitionType.TPN) { //jeśli czasowa
 				if(transition.isActive()) { //i aktywna
-					if(transition.timeFunctions.isTPNforcedToFired()) { //i musi się uruchomić
+					if(transition.timeExtension.isTPNforcedToFired()) { //i musi się uruchomić
 						launchableTransitions.add(transition);
 						transition.bookRequiredTokens();
 					}
 				} else { //reset
-					transition.timeFunctions.setTPNtimerLimit(-1);
-					transition.timeFunctions.setTPNtimer(-1);
+					transition.timeExtension.setTPNtimerLimit(-1);
+					transition.timeExtension.setTPNtimer(-1);
 				}
 			} else if (transition.isActive() ) {
 				if ((generator.nextInt(100) < 50) || maxMode) { // 50% 0-4 / 5-9

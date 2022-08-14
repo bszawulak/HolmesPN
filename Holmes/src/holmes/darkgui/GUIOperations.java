@@ -1068,23 +1068,23 @@ public class GUIOperations {
 		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 		if(mode == 0) { //TPN only
 			for(Transition t : transitions) {
-				if(t.timeFunctions.isTPN()) {
+				if(t.timeExtension.isTPN()) {
 					t.drawGraphBoxT.setColorWithNumber(true, Color.green, false, -1, true, "TPN");
 				}
 			}
 		} else if(mode == 1) { //DPN
 			for(Transition t : transitions) {
-				if(t.timeFunctions.isDPN()) {
+				if(t.timeExtension.isDPN()) {
 					t.drawGraphBoxT.setColorWithNumber(true, Color.green, false, -1, true, "DPN");
 				}
 			}
 		} else if(mode == 2) { //TPN i TPN
 			for(Transition t : transitions) {
-				if(t.timeFunctions.isTPN() && !t.timeFunctions.isDPN()) {
+				if(t.timeExtension.isTPN() && !t.timeExtension.isDPN()) {
 					t.drawGraphBoxT.setColorWithNumber(true, tpnNOTdpn, false, -1, true, "TPN");
-				} else if(!t.timeFunctions.isTPN() && t.timeFunctions.isDPN()) {
+				} else if(!t.timeExtension.isTPN() && t.timeExtension.isDPN()) {
 					t.drawGraphBoxT.setColorWithNumber(true, dpnNOTtpn, false, -1, true, "DPN");
-				} else if(t.timeFunctions.isTPN() && t.timeFunctions.isDPN()) {
+				} else if(t.timeExtension.isTPN() && t.timeExtension.isDPN()) {
 					t.drawGraphBoxT.setColorWithNumber(true, tpnANDdpn, false, -1, true, "TPN / DPN");
 				}
 			}

@@ -38,9 +38,9 @@ public class Transition extends Node {
 
     public TransitionGraphicsContainer drawGraphBoxT = new TransitionGraphicsContainer();
     public TransitionQSimContainer qSimBoxT = new TransitionQSimContainer();
-    public TransitionTimeExtention timeFunctions = new TransitionTimeExtention();
-    public TransitionSPNExtension spnFunctions = new TransitionSPNExtension();
-    public TransitionFPNExtension fpnFunctions = new TransitionFPNExtension(this);
+    public TransitionTimeExtention timeExtension = new TransitionTimeExtention();
+    public TransitionSPNExtension spnExtension = new TransitionSPNExtension();
+    public TransitionFPNExtension fpnExtension = new TransitionFPNExtension(this);
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
@@ -53,10 +53,10 @@ public class Transition extends Node {
         super(transitionId, elementLocations, realRadius);
         this.setName(name);
         this.setComment(comment);
-        this.fpnFunctions.createNewFunctionsVector();
+        this.fpnExtension.createNewFunctionsVector();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
-        spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
+        spnExtension.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
     }
 
     /**
@@ -67,10 +67,10 @@ public class Transition extends Node {
     public Transition(int transitionId, ArrayList<ElementLocation> elementLocations) {
         super(transitionId, elementLocations, realRadius);
         this.setName("Transition" + IdGenerator.getNextTransitionId());
-        this.fpnFunctions.createNewFunctionsVector();
+        this.fpnExtension.createNewFunctionsVector();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
-        spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
+        spnExtension.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
     }
 
     /**
@@ -82,10 +82,10 @@ public class Transition extends Node {
     public Transition(int transitionId, int sheetId, Point transitionPosition) {
         super(sheetId, transitionId, transitionPosition, realRadius);
         this.setName("Transition" + IdGenerator.getNextTransitionId());
-        this.fpnFunctions.createNewFunctionsVector();
+        this.fpnExtension.createNewFunctionsVector();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
-        spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
+        spnExtension.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
     }
 
     /**
@@ -95,10 +95,10 @@ public class Transition extends Node {
     public Transition(String error) {
         super(99, IdGenerator.getNextTransitionId(), new Point(0,0), realRadius);
         this.setName("Transition" + IdGenerator.getNextTransitionId());
-        this.fpnFunctions.createNewFunctionsVector();
+        this.fpnExtension.createNewFunctionsVector();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
-        spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
+        spnExtension.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
         this.setName(error);
     }
 
@@ -223,8 +223,8 @@ public class Transition extends Node {
         if (knockoutStatus)
             return false;
 
-        if (timeFunctions.isDPN()) {
-            if (timeFunctions.getDPNtimer() == timeFunctions.getDPNduration() ) { //duration zawsze >= 0, dTimer(pre-start) = -1, więc ok
+        if (timeExtension.isDPN()) {
+            if (timeExtension.getDPNtimer() == timeExtension.getDPNduration() ) { //duration zawsze >= 0, dTimer(pre-start) = -1, więc ok
                 return true; //nie ważne co mówią pre-places, ta tranzycja musi odpalić!
             }
         }
@@ -240,7 +240,7 @@ public class Transition extends Node {
             } else if (arcType == TypeOfArc.EQUAL && startPlaceTokens != arc.getWeight()) { //DOKŁADNIE TYLE CO WAGA
                 return false;
             } else {
-                if (fpnFunctions.isFunctional()) {
+                if (fpnExtension.isFunctional()) {
                     boolean status = FunctionsTools.getFunctionDecision(startPlaceTokens, arc, arc.getWeight(), this);
                     if (!status)
                         return false; //zwróc tylko jesli false
@@ -288,8 +288,8 @@ public class Transition extends Node {
                         origin.reserveTokens(arc.getWeight());
                     }
                 } else { //normalny łuk
-                    if (fpnFunctions.isFunctional()) { //fast, no method!
-                        FunctionContainer fc = fpnFunctions.getFunctionContainer(arc);
+                    if (fpnExtension.isFunctional()) { //fast, no method!
+                        FunctionContainer fc = fpnExtension.getFunctionContainer(arc);
                         if (fc != null) //TODO: czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
                             origin.reserveTokens((int) fc.currentValue); //nie ważne, aktywna czy nie, jeśli nie, to tu jest i tak oryginalna waga
                         else

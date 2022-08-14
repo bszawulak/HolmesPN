@@ -211,7 +211,7 @@ public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 		
 		//na razie tylko 1 wartość:
 		ArrayList<Integer> durations = new ArrayList<Integer>();
-		durations.add((int) holmesTransition.timeFunctions.getDPNduration());
+		durations.add((int) holmesTransition.timeExtension.getDPNduration());
 		//opcja, jak DPN offline, to ustaw -1 czyli "?" ?
 		currID++;
 		writeDurationData(bw, currID, locations, locationsSheetID, durations, xOff, yOff, stateForEL);
@@ -220,8 +220,8 @@ public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 		//na razie tylko 1 wektor:
 		ArrayList<ArrayList<Integer>> intervalMatrix = new ArrayList<>();
 		ArrayList<Integer> interval0 = new ArrayList<Integer>();
-		interval0.add((int) holmesTransition.timeFunctions.getEFT());
-		interval0.add((int) holmesTransition.timeFunctions.getLFT());
+		interval0.add((int) holmesTransition.timeExtension.getEFT());
+		interval0.add((int) holmesTransition.timeExtension.getLFT());
 		intervalMatrix.add(interval0);
 		currID++; 
 		writeIntervalData(bw, currID, locations, locationsSheetID, intervalMatrix, xOff, yOff, stateForEL);
