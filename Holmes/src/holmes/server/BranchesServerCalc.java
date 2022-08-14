@@ -1,14 +1,11 @@
 package holmes.server;
 
-import holmes.Main;
 import holmes.analyse.comparison.structures.BranchVertex;
-import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.PetriNetElement;
-import holmes.windows.HolmesComparisonModule;
 
 import java.io.*;
 import java.util.*;

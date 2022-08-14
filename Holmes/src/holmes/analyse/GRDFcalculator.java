@@ -2,8 +2,7 @@ package holmes.analyse;
 
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
-import holmes.windows.HolmesComparisonModule;
-import holmes.windows.HolmesInvariantsGenerator;
+import holmes.windows.decompositions.HolmesComparisonModule;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;

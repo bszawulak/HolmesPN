@@ -2,20 +2,7 @@ package holmes;
 
 import javax.swing.*;
 
-import holmes.analyse.GraphletsCalculator;
-import holmes.analyse.comparison.Benchmarker;
-import holmes.analyse.comparison.GatherData;
-import holmes.analyse.comparison.GraphletComparator;
-import holmes.analyse.comparison.experiment.NetGenerator;
 import holmes.darkgui.GUIManager;
-import holmes.files.io.IOprotocols;
-import holmes.server.BranchesServerCalc;
-import holmes.windows.HolmesComparisonModule;
-import holmes.windows.HolmesGraphletsPrototype;
-import holmes.windows.HolmesReductionPrototype;
-
-import java.io.FileOutputStream;
-import java.util.ArrayList;
 
 /**
  * Główna klasa programu. Jedna metoda, odpowiedzialna za tworzenie środowiska graficznego Holmes. I całej reszty.

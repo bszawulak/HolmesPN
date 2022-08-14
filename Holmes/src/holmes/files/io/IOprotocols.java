@@ -17,7 +17,7 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
-import holmes.windows.HolmesBranchVerticesPrototype;
+import holmes.windows.decompositions.HolmesBranchVerticesPrototype;
 
 /**
  * Klasa odpowiedzialna za protokoły komunikacyjne z programem INA, Charlie, itd. Precyzyjnie,

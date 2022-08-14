@@ -1,4 +1,4 @@
-package holmes.windows;
+package holmes.windows.decompositions;
 
 import holmes.analyse.GraphletsCalculator;
 import holmes.analyse.SubnetCalculator;

@@ -259,8 +259,8 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<Transition eft:"+trans.timeFunctions.getEFT()+">"+newline); //TPN eft
 				bw.write(spaces(sp)+"<Transition lft:"+trans.timeFunctions.getLFT()+">"+newline); //TPN lft
 				bw.write(spaces(sp)+"<Transition duration:"+trans.timeFunctions.getDPNduration()+">"+newline); //DPN duration value
-				bw.write(spaces(sp)+"<Transition TPN status:"+trans.timeFunctions.getTPNstatus()+">"+newline); //is TPN active?
-				bw.write(spaces(sp)+"<Transition DPN status:"+trans.timeFunctions.getDPNstatus()+">"+newline); //is DPN active?
+				bw.write(spaces(sp)+"<Transition TPN status:"+trans.timeFunctions.isTPN()+">"+newline); //is TPN active?
+				bw.write(spaces(sp)+"<Transition DPN status:"+trans.timeFunctions.isDPN()+">"+newline); //is DPN active?
 				bw.write(spaces(sp)+"<Transition function flag:"+trans.fpnFunctions.isFunctional()+">"+newline); //is functional?
 
 				if(XTPNdataMode) {

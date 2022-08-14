@@ -17,6 +17,8 @@ import holmes.petrinet.subnets.SubnetsControl;
 import holmes.petrinet.subnets.SubnetsGraphics;
 import holmes.utilities.Tools;
 import holmes.windows.*;
+import holmes.windows.clusters.HolmesClusters;
+import holmes.windows.decompositions.*;
 import holmes.windows.managers.ssim.HolmesSim;
 import holmes.workspace.ExtensionFileFilter;
 import holmes.workspace.Workspace;
@@ -140,7 +142,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private String logPath;
 	
 	// okna niezależne:
-	private HolmesClusters windowClusters; //okno tabeli 
+	private HolmesClusters windowClusters; //okno tabeli
 	private HolmesConsole windowConsole; //konsola logów
 	private HolmesNetProperties windowNetProperties; //okno właściwości sieci
 	private HolmesAbout windowAbout; //okno About...

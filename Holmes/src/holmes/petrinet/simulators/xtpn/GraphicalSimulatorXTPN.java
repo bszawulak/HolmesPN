@@ -571,7 +571,7 @@ public class GraphicalSimulatorXTPN {
                     }
                     launchedXTPN.add(transition);
                 } else {
-                    transition.deactivateTransitionXTPN(true); // ???
+                    transition.deactivateTransitionXTPN(true);
                     transition.setActivationStatusXTPN(false);
                     transition.setProductionStatus_xTPN(false);
                     for(Arc arc : transition.getOutArcs()) {

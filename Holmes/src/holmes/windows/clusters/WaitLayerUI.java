@@ -1,13 +1,15 @@
-package holmes.windows;
+package holmes.windows.clusters;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
+import java.io.Serial;
 
 import javax.swing.*;
 import javax.swing.plaf.LayerUI;
 
 class WaitLayerUI extends LayerUI<JPanel> implements ActionListener {
+	@Serial
 	private static final long serialVersionUID = -1075554254911219982L;
 	private boolean mIsRunning;
 	private boolean mIsFadingOut;

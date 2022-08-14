@@ -17,7 +17,7 @@ import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesInvariantsViewer;
-import holmes.windows.HolmesMergeNets;
+import holmes.windows.decompositions.HolmesMergeNets;
 import holmes.windows.managers.HolmesStatesManager;
 
 import com.javadocking.dockable.Dockable;

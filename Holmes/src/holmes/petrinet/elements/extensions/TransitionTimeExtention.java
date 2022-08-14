@@ -7,8 +7,8 @@ public class TransitionTimeExtention {
     private double TPNtimer = -1;
     private double DPNduration = 0;
     private double DPNtimer = -1;
-    private boolean TPNactive = false;
-    private boolean DPNactive = false;
+    private boolean isTPN = false;
+    private boolean isDPN = false;
 
     /**
      * Metoda ustala dolny limit niezerowego czasu gotowości - EFT.
@@ -169,15 +169,15 @@ public class TransitionTimeExtention {
      * @param status boolean - true, jeśli tryb TPN ma być aktywny
      */
     public void setTPNstatus(boolean status) {
-        TPNactive = status;
+        isTPN = status;
     }
 
     /**
      * Metoda zwraca stan aktywności trybu TPN
      * @return boolean - true, jeśli TPN aktywny
      */
-    public boolean getTPNstatus() {
-        return TPNactive;
+    public boolean isTPN() {
+        return isTPN;
     }
 
     /**
@@ -185,14 +185,14 @@ public class TransitionTimeExtention {
      * @param status boolean - true, jeśli tryb DPN ma być aktywny
      */
     public void setDPNstatus(boolean status) {
-        DPNactive = status;
+        isDPN = status;
     }
 
     /**
      * Metoda zwraca stan aktywności trybu DPN
      * @return boolean - true, jeśli DPN aktywny
      */
-    public boolean getDPNstatus() {
-        return DPNactive;
+    public boolean isDPN() {
+        return isDPN;
     }
 }

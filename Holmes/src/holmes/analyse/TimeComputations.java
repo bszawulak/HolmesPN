@@ -49,8 +49,8 @@ public class TimeComputations {
 				normalTrans++;
 				continue;
 			}
-			boolean tpnStatus = trans.timeFunctions.getTPNstatus();
-			boolean dpnStatus = trans.timeFunctions.getDPNstatus();
+			boolean tpnStatus = trans.timeFunctions.isTPN();
+			boolean dpnStatus = trans.timeFunctions.isDPN();
 			
 			if(tpnStatus && dpnStatus) {
 				tdpnTrans++;

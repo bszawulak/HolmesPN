@@ -1,4 +1,4 @@
-package holmes.windows;
+package holmes.windows.decompositions;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

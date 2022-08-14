@@ -2,7 +2,7 @@ package holmes.analyse;
 
 import holmes.analyse.comparison.SubnetComparator;
 import holmes.darkgui.GUIManager;
-import holmes.windows.HolmesComparisonModule;
+import holmes.windows.decompositions.HolmesComparisonModule;
 
 import javax.swing.*;
 import java.awt.*;

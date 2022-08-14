@@ -638,7 +638,7 @@ public class SnoopyReader {
 						}
 						snoopyNodesElLocIDList.add(subIDs);
 						
-						if(transition.timeFunctions.getDPNstatus() || transition.timeFunctions.getTPNstatus())
+						if(transition.timeFunctions.isDPN() || transition.timeFunctions.isTPN())
 							transition.setTransType(TransitionType.TPN);
 					}
 				} //czytanie właściwości węzła

@@ -25,7 +25,6 @@ public final class ElementDraw {
 	private static final Font f_plain = new Font("TimesRoman", Font.PLAIN, 10);
 	private static final Font f_bold = new Font("TimesRoman", Font.BOLD, 12);
 
-
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
 	 */
@@ -61,7 +60,6 @@ public final class ElementDraw {
 		g.fillArc(x + 5, y + 5, 20, 20, -180, -90);
 		g.fillArc(x + 35, y + 5, 20, 20, -270, -90);
 	}
-
 
 	//TODO: znacznik tranzycji
 	/**
@@ -297,7 +295,7 @@ public final class ElementDraw {
 				//dla tranzycji czasowych, w tym XTPN (po else)
 				if(trans.getTransType() == TransitionType.TPN) {
 					int dpnTextOffset = -5;
-					if(trans.timeFunctions.getTPNstatus()) {
+					if(trans.timeFunctions.isTPN()) {
 						dpnTextOffset = -15;
 						g.setColor(Color.black);
 						g.setFont(f_plain);
@@ -328,7 +326,7 @@ public final class ElementDraw {
 						
 						g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y - 4);
 					}
-					if(trans.timeFunctions.getDPNstatus()) {
+					if(trans.timeFunctions.isDPN()) {
 						String dur = String.valueOf( trans.timeFunctions.getDPNduration() );
 						if(trans.timeFunctions.getDPNtimer() >= 0) {
 							dur = trans.timeFunctions.getDPNtimer() + " / "+dur;

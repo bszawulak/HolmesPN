@@ -3569,7 +3569,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(durationField);
 
         //columnA_Y+=40;
-        JCheckBox tpnBox = new JCheckBox("TPN active", transition.timeFunctions.getTPNstatus());
+        JCheckBox tpnBox = new JCheckBox("TPN active", transition.timeFunctions.isTPN());
         tpnBox.setBounds(columnB_posX - 5, columnB_Y += 20, 100, 20);
         tpnBox.setEnabled(true);
         tpnBox.addItemListener(e -> {
@@ -3581,7 +3581,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(tpnBox);
 
         columnA_Y += 20;
-        JCheckBox dpnBox = new JCheckBox("DPN active", transition.timeFunctions.getDPNstatus());
+        JCheckBox dpnBox = new JCheckBox("DPN active", transition.timeFunctions.isDPN());
         dpnBox.setBounds(columnB_posX + 100, columnB_Y, 100, 20);
         dpnBox.setEnabled(true);
         dpnBox.addItemListener(e -> {

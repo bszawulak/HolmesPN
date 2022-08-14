@@ -2413,8 +2413,8 @@ public class ProjectReader {
 		rise.timeFunctions.forceSetEFT(transition.timeFunctions.getEFT());
 		rise.timeFunctions.setLFT(transition.timeFunctions.getLFT());
 		rise.timeFunctions.setDPNduration(transition.timeFunctions.getDPNduration());
-		rise.timeFunctions.setTPNstatus(transition.timeFunctions.getTPNstatus());
-		rise.timeFunctions.setDPNstatus(transition.timeFunctions.getDPNstatus());
+		rise.timeFunctions.setTPNstatus(transition.timeFunctions.isTPN());
+		rise.timeFunctions.setDPNstatus(transition.timeFunctions.isDPN());
 		rise.fpnFunctions.setFunctional(transition.fpnFunctions.isFunctional());
 		rise.setPortal(transition.isPortal());
 

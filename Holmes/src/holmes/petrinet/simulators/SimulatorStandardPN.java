@@ -246,7 +246,7 @@ public class SimulatorStandardPN implements IEngine {
 		
 		//podziel tranzycje: na TPN, DPN, a jesli DPN skończyła liczyć - dodaj ją do listy odpaleń
 		for(int i=0; i<time_transitions.size(); i++) {
-			if(time_transitions.get(i).timeFunctions.getDPNstatus()) {
+			if(time_transitions.get(i).timeFunctions.isDPN()) {
 				//sprawdź które tranzycje DPN muszą odpalić:
 				if(time_transitions.get(i).timeFunctions.isDPNforcedToFire()) {
 					launchableTransitions.add(time_transitions.get(i));
@@ -262,7 +262,7 @@ public class SimulatorStandardPN implements IEngine {
 		for(int i=0; i < indexDPNList.size(); i++) { //mają DPN status skoro trafiły na tę listę
 			int index = indexDPNList.get(i);
 			Transition dpn_transition = time_transitions.get(index);
-			if(dpn_transition.timeFunctions.getTPNstatus()) {
+			if(dpn_transition.timeFunctions.isTPN()) {
 				if(dpn_transition.timeFunctions.isTPNforcedToFired()) { //TPN zakończyło liczenie
 					int decision = DPNdecision(dpn_transition, index, indexDPNList, indexTTList);
 					if(decision == -1) {

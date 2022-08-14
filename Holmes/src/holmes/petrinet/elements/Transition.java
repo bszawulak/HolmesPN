@@ -223,7 +223,7 @@ public class Transition extends Node {
         if (knockoutStatus)
             return false;
 
-        if (timeFunctions.getDPNstatus()) {
+        if (timeFunctions.isDPN()) {
             if (timeFunctions.getDPNtimer() == timeFunctions.getDPNduration() ) { //duration zawsze >= 0, dTimer(pre-start) = -1, więc ok
                 return true; //nie ważne co mówią pre-places, ta tranzycja musi odpalić!
             }

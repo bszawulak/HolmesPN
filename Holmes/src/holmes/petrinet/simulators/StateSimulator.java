@@ -875,7 +875,7 @@ public class StateSimulator implements Runnable {
 		
 		for(int t=0; t<launchingTransitions.size(); t++) {
 			Transition test_t = launchingTransitions.get(t);
-			if(test_t.timeFunctions.getDPNstatus()) {
+			if(test_t.timeFunctions.isDPN()) {
 				if(test_t.timeFunctions.getDPNtimer() == 0 && test_t.timeFunctions.getDPNduration() != 0) {
 					launchingTransitions.remove(test_t);
 					t--;

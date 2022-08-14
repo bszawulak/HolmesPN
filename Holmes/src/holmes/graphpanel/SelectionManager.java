@@ -616,8 +616,8 @@ public class SelectionManager {
 			double oldEFT = selTransition.timeFunctions.getEFT();
 			double oldLFT = selTransition.timeFunctions.getLFT();
 			double oldDuration = selTransition.timeFunctions.getDPNduration();
-			boolean oldTPNstatus = selTransition.timeFunctions.getTPNstatus();
-			boolean oldDPNstatus = selTransition.timeFunctions.getDPNstatus();
+			boolean oldTPNstatus = selTransition.timeFunctions.isTPN();
+			boolean oldDPNstatus = selTransition.timeFunctions.isDPN();
 			TransitionType tt = selTransition.getTransType();
 			
 			Transition portal = new Transition(IdGenerator.getNextId(), ((ArrayList<ElementLocation>)getSelectedElementLocations().clone()) );
@@ -793,8 +793,8 @@ public class SelectionManager {
 			double oldEFT = selTransition.timeFunctions.getEFT();
 			double oldLFT =selTransition.timeFunctions.getLFT();
 			double oldDuration = selTransition.timeFunctions.getDPNduration();
-			boolean oldTPNstatus = selTransition.timeFunctions.getTPNstatus();
-			boolean oldDPNstatus = selTransition.timeFunctions.getDPNstatus();
+			boolean oldTPNstatus = selTransition.timeFunctions.isTPN();
+			boolean oldDPNstatus = selTransition.timeFunctions.isDPN();
 			TransitionType tt = selTransition.getTransType();
 			
 			ElementLocation clonedNode = getSelectedElementLocations().get(0);

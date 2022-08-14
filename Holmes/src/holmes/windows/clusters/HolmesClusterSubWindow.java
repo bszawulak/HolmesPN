@@ -1,4 +1,4 @@
-package holmes.windows;
+package holmes.windows.clusters;
 
 import java.awt.Color;
 import java.awt.Dimension;

@@ -111,7 +111,7 @@ public class HolmesNodeInfo extends JFrame {
 		this.transition = transition;
 		setTitle("Node: "+transition.getName());
 		
-		if(transition.timeFunctions.getDPNstatus() || transition.timeFunctions.getTPNstatus())
+		if(transition.timeFunctions.isDPN() || transition.timeFunctions.isTPN())
 			choosenNetType = SimulatorGlobals.SimNetType.TIME;
 		
 		initializeCommon();

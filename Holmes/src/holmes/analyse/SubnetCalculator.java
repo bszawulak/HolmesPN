@@ -3,7 +3,7 @@ package holmes.analyse;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
-import holmes.windows.HolmesBranchVerticesPrototype;
+import holmes.windows.decompositions.HolmesBranchVerticesPrototype;
 
 import javax.swing.*;
 import java.io.Serializable;

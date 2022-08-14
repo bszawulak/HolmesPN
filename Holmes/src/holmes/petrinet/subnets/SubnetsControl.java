@@ -26,7 +26,7 @@ import holmes.workspace.Workspace;
  * sprytnym udawaniu że taka kontrola w ogóle istnieje.
  */
 public class SubnetsControl {
-	GUIManager overlord = null;
+	GUIManager overlord;
 
 	/**
 	 * Konstruktor obiektu klasy SubnetsControl.
@@ -59,17 +59,12 @@ public class SubnetsControl {
 				oneOfMany = el;
 			}
 		}
+
+		boolean askStupidQuestions = !( overlord.getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1") );
 		
-		//TODO:
-		boolean askStupidQuestions = true;
-		if(overlord.getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1")) {
-			askStupidQuestions = false;
-		}
-			
-			
 		boolean hasMetaArc = checkIfInMetaArcExists(startPTLocation, metanode);
 		boolean addIdAlready = false;
-		if(hasMetaArc == false) { //jeśli nie ma meta-łuku, dodaj bez zbędnych pytań
+		if(!hasMetaArc) { //jeśli nie ma meta-łuku, dodaj bez zbędnych pytań
 			addIdAlready = true;
 		} else if(howManyExists > 0 && askStupidQuestions) { //jeśli jest, pytaj
 			Object[] options = {"Add another portal", "Don't add new arc/portal",};
@@ -145,7 +140,7 @@ public class SubnetsControl {
 		
 		boolean hasMetaArc = checkIfOutMetaExists(endPTNode, metanode);
 		boolean addIdAlready = false;
-		if(hasMetaArc == false) { //jeśli nie ma meta-łuku, dodaj bez zbędnych pytań
+		if(!hasMetaArc) { //jeśli nie ma meta-łuku, dodaj bez zbędnych pytań
 			addIdAlready = true;
 		} else if(howManyExists > 0) {
 			Object[] options = {"Add another portal", "Don't add new arc/portal",};
@@ -251,7 +246,7 @@ public class SubnetsControl {
 		}
 		
 		boolean uncompressed = overlord.getSettingsManager().getValue("editorSubnetCompressMode").equals("1");
-		if(uncompressed == true)  { //kompresja
+		if(uncompressed)  { //kompresja
 			ElementLocation nexus = SubnetsTools.getNexusEL(parent, metanode);
 			if(nexus == null) {
 				uncompressed = false;
@@ -266,7 +261,7 @@ public class SubnetsControl {
 			}
 		}
 		
-		if(uncompressed == false) {
+		if(!uncompressed) {
 			//dodaj nowy element	
 			int newX = gen.nextInt(160) - 80; //dodajemy (lewo-prawo)
 			int newY = gen.nextInt(100)+15; //odejmujemy (w górę)
@@ -356,7 +351,7 @@ public class SubnetsControl {
 		if(desiredType == MetaType.SUBNETPLACE) {
 			ArrayList<ElementLocation> elements = getSubnetElementLocations(sheetID);
 			for(ElementLocation el : elements) {
-				if(el.getParentNode().isPortal() == false)
+				if(!el.getParentNode().isPortal())
 					continue;
 				
 				if(el.getParentNode() instanceof Transition) //t-portale w Subnet type-P są dozwolone (i tylko one)
@@ -377,7 +372,7 @@ public class SubnetsControl {
 		} else if(desiredType == MetaType.SUBNETTRANS) {
 			ArrayList<ElementLocation> elements = getSubnetElementLocations(sheetID);
 			for(ElementLocation el : elements) {
-				if(el.getParentNode().isPortal() == false)
+				if(!el.getParentNode().isPortal())
 					continue;
 				
 				if(el.getParentNode() instanceof Place) //p-portale w Subnet type-T są dozwolone (i tylko one)
@@ -529,10 +524,8 @@ public class SubnetsControl {
 	 * @param doNotRemove boolean - jeśli true, działa tylko w trybie dodawania łuków
 	 */
 	public void validateMetaArcs(ArrayList<Integer> sheetModified, boolean forceFix, boolean doNotRemove) {
-		boolean compressMetaArcs = false;
-		if(overlord.getSettingsManager().getValue("editorSubnetCompressMode").equals("1")) 
-			compressMetaArcs = true;
-		
+		boolean compressMetaArcs = overlord.getSettingsManager().getValue("editorSubnetCompressMode").equals("1");
+
 		ArrayList<MetaNode> metanodes = overlord.getWorkspace().getProject().getMetaNodes();
 		ArrayList<Arc> arcs = overlord.getWorkspace().getProject().getArcs();
 		for(int sheetID : sheetModified) {
