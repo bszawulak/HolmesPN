@@ -6,8 +6,6 @@ import java.util.Random;
 
 /**
  * Klasa użytkowa, zapewniająca dużo kolorów
- * @author MR
- *
  */
 public class ColorPalette {
 	private int currentColor = 0;

@@ -12,10 +12,10 @@ import holmes.petrinet.simulators.SimulatorGlobals;
  *
  */
 public interface IEngineXTPN {
-    public void setEngine(SimulatorGlobals.SimNetType simulationType, ArrayList<TransitionXTPN> transitions,
+    void setEngine(SimulatorGlobals.SimNetType simulationType, ArrayList<TransitionXTPN> transitions,
                           ArrayList<PlaceXTPN> places);
 
-    public void setNetSimType(SimulatorGlobals.SimNetType simulationType);
+    void setNetSimType(SimulatorGlobals.SimNetType simulationType);
 
-    public IRandomGenerator getGenerator();
+    IRandomGenerator getGenerator();
 }

@@ -1920,11 +1920,7 @@ public class IOprotocols {
 
             System.out.println("Object has been deserialized ");
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return sn;

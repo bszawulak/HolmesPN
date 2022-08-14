@@ -466,23 +466,17 @@ public class SPNengine implements IEngine {
 		if(settings.isSSAMassAction()) {
 			ArrayList<Place> prePlaces = prePlacesMap.get(transition);
 			
-			if(prePlaces.size() == 0) {
-				massActionKineticModifier = 1;
-			} else {
+			if(prePlaces.size() != 0) {
 				massActionKineticModifier = Long.MAX_VALUE;
-				if(prePlaces.isEmpty()) {
-					//int x=1;
-				}
 				for (Place prePlace : prePlaces) {
 					int placeLoc = placesMap.get(prePlace);
 					int transLoc = transitionsMap.get(transition);
 					int arc = tpIncidenceMatrix.get(transLoc).get(placeLoc);
 					if(arc==0) {
-						arc = 1; //readarc
 						arc = prePlace.getTokensNumber();
 					}
                     long firingNumber = prePlace.getTokensNumber() / arc;
-                    massActionKineticModifier = massActionKineticModifier < firingNumber ? massActionKineticModifier : firingNumber;
+                    massActionKineticModifier = Math.min(massActionKineticModifier, firingNumber);
                 }
 			}
 		}

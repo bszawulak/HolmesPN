@@ -1,6 +1,7 @@
 package holmes.darkgui.dockable;
 
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -16,6 +17,7 @@ import holmes.darkgui.GUIManager;
  * @author students
  */
 public class DeleteAction extends AbstractAction {
+	@Serial
 	private static final long serialVersionUID = 1577108502403600290L;
 	private GUIManager guiManager;
 	private Dockable dockable;

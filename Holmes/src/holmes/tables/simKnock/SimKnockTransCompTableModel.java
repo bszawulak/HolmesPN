@@ -10,16 +10,13 @@ import holmes.petrinet.elements.Transition;
 
 /**
  * Model tabeli danych statystycznych dla tranzycji (symulacja knockout) - porównanie.
- * 
- * @author MR
- *
  */
 public class SimKnockTransCompTableModel extends AbstractTableModel {
 	@Serial
 	private static final long serialVersionUID = -2454782753413053173L;
 	public int tableType = 0;
 	
-	public class TransCompContainer {
+	public static class TransCompContainer {
     	public int ID;
     	public String name;
     	

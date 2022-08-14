@@ -9,10 +9,13 @@ import com.javadocking.drag.StaticDraggerFactory;
 import com.javadocking.drag.painter.CompositeDockableDragPainter;
 import com.javadocking.drag.painter.DockableDragPainter;
 
+import java.io.Serial;
+
 /**
  * A check box menu item to enable a dragger.
  */
 public class DraggingMenuItem extends JRadioButtonMenuItem {
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	public DraggingMenuItem(String title, DockableDragPainter basicDockableDragPainter,

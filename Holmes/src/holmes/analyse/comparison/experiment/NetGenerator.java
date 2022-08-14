@@ -1986,7 +1986,7 @@ public class NetGenerator {
 
                 double[] ss = new double[d[orb].length];
                 for (int k = 1; k < d[orb].length; k++) {
-                    double dd = (double) d[orb][k];
+                    double dd = d[orb][k];
                     ss[k] = dd / (double) k;
 
                     s[orb] = ss;

@@ -602,17 +602,17 @@ public class HolmesGraphletsPrototype {//extends JFrame {
                     e.printStackTrace();
                 }
                 BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
-                String wczytanaLinia = null;
+                String readedLine = null;
 
                 try {
-                    if (!((wczytanaLinia = buffer.readLine()) != null))
+                    if (!((readedLine = buffer.readLine()) != null))
                         break;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
 
-                if (wczytanaLinia.contains(",")) {
-                    String[] line = wczytanaLinia.split(",");
+                if (readedLine.contains(",")) {
+                    String[] line = readedLine.split(",");
                     int[] count = new int[line.length];
                     for (int i = 0; i < line.length; i++) {
                         count[i] = Integer.valueOf(line[i]);
@@ -1912,21 +1912,13 @@ public class HolmesGraphletsPrototype {//extends JFrame {
             toWrite.add(resultForGDDA[k]);
         }
 
-
         double redAvarage = reduced.stream().mapToDouble(f -> f.doubleValue()).sum() / reduced.size();
-
         result += "min\t" + min + "\t net: " + minID + "\n";
-
         result += "max\t" + max + "\t net: " + maxID + "\n";
-
         result += "avarage\t" + avarage + "\n";
-
         result += "reduced avarage\t" + redAvarage + "\n";
-
         result += "tab\n";
-
         result += toWrite + "\n";
-
         return result;
     }
 

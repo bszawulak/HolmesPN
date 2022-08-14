@@ -1,10 +1,7 @@
 package holmes.windows.decompositions;
 
-import holmes.analyse.SubnetCalculator;
-import holmes.analyse.comparison.DecoComparisonCalculator;
 import holmes.analyse.comparison.structures.GreatCommonSubnet;
 import holmes.darkgui.GUIManager;
-import holmes.utilities.Tools;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -35,7 +32,7 @@ public class HolmesPrototypeComparison extends JFrame {
         setSize(1800, 700);
 
         ListModel lm = new AbstractListModel() {
-            String headers[] = {"a", "b", "c", "d", "e", "f", "g", "h", "i"};
+            String[] headers = {"a", "b", "c", "d", "e", "f", "g", "h", "i"};
 
             public int getSize() {
                 return headers.length;
@@ -91,7 +88,7 @@ public class HolmesPrototypeComparison extends JFrame {
         }
 
         ListModel lm = new AbstractListModel() {
-            String headers[] = netLabels;
+            String[] headers = netLabels;
 
             public int getSize() {
                 return headers.length;

@@ -19,9 +19,6 @@ import holmes.varia.Check;
 /**
  * Klasa odpowiedzialna za zapis projektu do pliku. Zapisuje między innymi: dane sieci (miejsca, tranzycje
  * oraz łuki), inwarianty, zbiory MCT i inne.
- * 
- * @author MR
- *
  */
 public class ProjectWriter {
 	private final PetriNet projectCore;

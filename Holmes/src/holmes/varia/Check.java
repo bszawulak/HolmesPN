@@ -253,13 +253,7 @@ public final class Check {
 			case PN -> GlobalFileNetType.SPPED;
 			case PN_extArcs -> GlobalFileNetType.SPEPT;
 			case TPN -> GlobalFileNetType.SPTPT;
-			case TPN_extArcs -> GlobalFileNetType.HOLMESPROJECT;
-			case FPN -> GlobalFileNetType.HOLMESPROJECT;
-			case timeFPN -> GlobalFileNetType.HOLMESPROJECT;
-			case FPN_extArcs -> GlobalFileNetType.HOLMESPROJECT;
-			case timeFPN_extArcs -> GlobalFileNetType.HOLMESPROJECT;
-			case SPN -> GlobalFileNetType.HOLMESPROJECT;
-			case functionalSPN -> GlobalFileNetType.HOLMESPROJECT;
+			case TPN_extArcs, FPN, timeFPN, FPN_extArcs, timeFPN_extArcs, SPN, functionalSPN -> GlobalFileNetType.HOLMESPROJECT;
 			default -> null;
 		};
 	}

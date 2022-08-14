@@ -10,8 +10,6 @@ import holmes.darkgui.GUIManager;
  *
  * [2022-06-21] Wrócilem. MR.
  * [2022-07-01] Jak sie nazywa szersza langusta? wangusta!
- *
- * @author students
  * <p>
  * "Czy położyłby się Pan pod kroplówką obsługiwaną przez ten algorytm? -A co by w niej było? -Denaturat." A.D. circa 2001
  *
@@ -21,19 +19,16 @@ public class Main {
 
     /**
      * Tej metody chyba nie trzeba przedstawiać.
-     *
-     * @param args String[] - argumenty. Dla zasady, bo i tak nie będzie żadnych
+     * @param args (<b>String[]</b>) argumenty. Dla zasady, bo i tak nie będzie żadnych.
      */
     public static void main(String[] args) {
-        Runnable fiatLux = new Runnable() {
-            public void run() {
-                try {
-                    //belkotSzavislava();
-                    guiManager = new GUIManager(new JFrame("Holmes 2.0")); //and pray
+        Runnable fiatLux = () -> {
+            try {
+                //SzavislavMamboJambo();
 
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+                guiManager = new GUIManager(new JFrame("Holmes 2.0")); //and pray
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
         };
         SwingUtilities.invokeLater(fiatLux);
@@ -42,7 +37,7 @@ public class Main {
     /**
      * Idź mi z tym z maina.
      */
-    public static void belkotSzavislava() {
+    public static void SzavislavMamboJambo() {
         //server module
 
         //new NetGenerator(40,41,40,41,0,100,600);
@@ -83,11 +78,7 @@ public class Main {
 
         //Benchmarker br = new Benchmarker();
 
-
-
         //guiManager = new GUIManager(new JFrame("Holmes 2.0")); //and pray
-
-
 
         //IOprotocols io = new IOprotocols();
 

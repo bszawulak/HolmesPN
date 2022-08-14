@@ -17,12 +17,7 @@ import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 
 /**
- * Klasa odpowiedzialna za odczyt plików projektu.<br><br>
- *
- * Poprawiono:<br>
- * wczytywanie pliku - uaktualnianie zmiennych ID generatora
- * @author students
- * @author MR
+ * Klasa odpowiedzialna za odczyt plików projektu.
  */
 public class AbyssReader {
 	private ArrayList<Node> nodeArray = new ArrayList<Node>();

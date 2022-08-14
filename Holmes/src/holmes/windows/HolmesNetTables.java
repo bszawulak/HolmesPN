@@ -633,10 +633,8 @@ public class HolmesNetTables extends JFrame {
 	/**
 	 * Klasa wewnętrzna, służy do wyświetlania komentarz gdy kursor znajduje się nad nazwą kolumny
 	 * danej tabeli danych.
-	 * @author MR
-	 *
 	 */
-	class ColumnHeaderToolTips extends MouseMotionAdapter {
+	static class ColumnHeaderToolTips extends MouseMotionAdapter {
 		TableColumn curCol;
 		Map<TableColumn, String> tips = new HashMap<TableColumn, String>();
 		public void setToolTip(TableColumn col, String tooltip) {

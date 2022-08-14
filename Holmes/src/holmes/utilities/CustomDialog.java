@@ -35,12 +35,9 @@ public class CustomDialog extends JDialog {
 		area.setEditable(false);
 		area.setText(message);
 
-		
 		//messagePane.add(new JLabel(message));
 		
 		getContentPane().add(messagePane);
-		
-		 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack(); 
 		setVisible(true);

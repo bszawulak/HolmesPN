@@ -14,10 +14,8 @@ public class TransitionsTableModel extends AbstractTableModel {
 
 	/**
 	 * Wewnętrzna klasa kontener dla danych wiersza tabeli tranzycji.
-	 * @author MR
-	 *
 	 */
-	public class TransitionContainer {
+	public static class TransitionContainer {
     	public int ID;
     	public String name;
     	public int preP;

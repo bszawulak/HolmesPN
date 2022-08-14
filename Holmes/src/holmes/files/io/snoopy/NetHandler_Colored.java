@@ -1,4 +1,4 @@
-package holmes.files.io.Snoopy;
+package holmes.files.io.snoopy;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

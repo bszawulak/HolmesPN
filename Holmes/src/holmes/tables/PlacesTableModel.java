@@ -15,7 +15,7 @@ public class PlacesTableModel extends AbstractTableModel {
 	 * @author MR
 	 *
 	 */
-	public class PlaceContainer {
+	public static class PlaceContainer {
     	public int ID;
     	public String name;
     	public int token;

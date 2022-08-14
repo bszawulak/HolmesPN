@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class KnockoutInvariantComparison {
     private GUIManager overlord;
@@ -598,7 +597,7 @@ public class KnockoutInvariantComparison {
 
         for (int k = 0; k < invariantsList1.size(); k++) {
             ArrayList<Integer> inv_net_1 = invariantsList1.get(k);
-            if (TMPinvariantsList2.size() <= 0) {
+            if (TMPinvariantsList2.size() == 0) {
                 break;
             }
 
@@ -735,7 +734,7 @@ public class KnockoutInvariantComparison {
 
         for (int k = 0; k < invariantsList1.size(); k++) {
             ArrayList<Integer> inv_net_1 = invariantsList1.get(k);
-            if (TMPinvariantsList2.size() <= 0) {
+            if (TMPinvariantsList2.size() == 0) {
                 break;
             }
 

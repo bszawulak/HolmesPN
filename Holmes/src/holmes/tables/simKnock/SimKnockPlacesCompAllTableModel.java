@@ -7,9 +7,6 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  * Model tabeli danych statystycznych dla miejsc
- * 
- * @author MR
- *
  */
 public class SimKnockPlacesCompAllTableModel extends AbstractTableModel {
 	@Serial
@@ -19,7 +16,7 @@ public class SimKnockPlacesCompAllTableModel extends AbstractTableModel {
 	private int dataSize;
 	public ArrayList<ArrayList<DetailsPlace>> pTableData;
 	
-	public class DetailsPlace {
+	public static class DetailsPlace {
 		public DetailsPlace() {}
 		
 		public double refAvgTokens;

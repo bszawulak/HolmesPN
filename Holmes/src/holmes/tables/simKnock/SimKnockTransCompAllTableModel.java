@@ -6,10 +6,7 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Model tabeli danych statystycznych dla tranzycji (wszystkich)
- * 
- * @author MR
- *
+ * Model tabeli danych statystycznych dla tranzycji (wszystkich).
  */
 public class SimKnockTransCompAllTableModel extends AbstractTableModel {
 	@Serial
@@ -19,9 +16,8 @@ public class SimKnockTransCompAllTableModel extends AbstractTableModel {
 	private int dataSize;
 	public ArrayList<ArrayList<DetailsTrans>> tTableData;
 	
-	public class DetailsTrans {
+	public static class DetailsTrans {
 		public DetailsTrans() {}
-		
 		public double refAvgFiring;
 		public double knockAvgFiring;
 		public int knockDisabled;

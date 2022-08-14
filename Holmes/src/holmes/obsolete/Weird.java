@@ -34,12 +34,10 @@ public class Weird {
 			}
 			return r;
 			//pool.
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
+		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-        return false;
+		return false;
 		
 		//Process p1 = Runtime.getRuntime().exec(ns.stop());
 		
@@ -67,7 +65,7 @@ public class Weird {
 */
 	}
 	
-	public class SimStop implements Callable<Boolean> {
+	public static class SimStop implements Callable<Boolean> {
 		GraphicalSimulator ns;
 		public SimStop(GraphicalSimulator ns) {
 			this.ns = ns;
@@ -79,7 +77,7 @@ public class Weird {
         }
     }
 	
-	public class SimWait implements Callable<Boolean> {
+	public static class SimWait implements Callable<Boolean> {
 		GraphicalSimulator ns;
 		public SimWait(GraphicalSimulator ns) {
 			this.ns = ns;

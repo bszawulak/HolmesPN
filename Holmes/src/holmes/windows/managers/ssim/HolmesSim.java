@@ -856,8 +856,8 @@ public class HolmesSim extends JFrame {
         CategoryPlot plotPlaces = new CategoryPlot(dataset, xAxisPlaces, yAxisPlaces, rendererPlaces);
 
         //TODO
-        rendererPlaces.setToolTipGenerator(new CustomToolTipPlacesGenerator( 
-        		overlord.getWorkspace().getProject().getPlaces(), placesAvgData, max));
+        rendererPlaces.setToolTipGenerator(new CustomToolTipPlacesGenerator(
+				overlord.getWorkspace().getProject().getPlaces(), placesAvgData, max));
 	    
 	    placesChart = new JFreeChart("Places average tokens data", new Font("Helvetica", Font.BOLD, 24), plotPlaces, true);
 		CategoryPlot plot = (CategoryPlot) placesChart.getPlot();
@@ -1069,8 +1069,8 @@ public class HolmesSim extends JFrame {
         CategoryPlot plotTrans = new CategoryPlot(dataset, xAxisTrans, yAxisPlaces, rendererTrans);
         
         //TODO
-        rendererTrans.setToolTipGenerator(new CustomToolTipTransGenerator( 
-        		overlord.getWorkspace().getProject().getTransitions(), transitionsCompactData, max));
+        rendererTrans.setToolTipGenerator(new CustomToolTipTransGenerator(
+				overlord.getWorkspace().getProject().getTransitions(), transitionsCompactData, max));
 	    
 	    transitionsChart = new JFreeChart("Transitions statistical data", new Font("Helvetica", Font.BOLD, 14), plotTrans, true);
 	    
@@ -1513,7 +1513,7 @@ public class HolmesSim extends JFrame {
 	//*************************************************************************************************************
 	//*************************************************************************************************************
 	
-	private class ChartProperties {
+	private static class ChartProperties {
 		public float p_StrokeWidth = 1.0f;
 		public float t_StrokeWidth = 1.0f;
 		
@@ -1526,7 +1526,7 @@ public class HolmesSim extends JFrame {
 	//*************************************************************************************************************
 	//*************************************************************************************************************	
 	
-	public class CustomToolTipTransGenerator implements CategoryToolTipGenerator  {
+	public static class CustomToolTipTransGenerator implements CategoryToolTipGenerator  {
 		ArrayList<Transition> transitions;
 		ArrayList<Integer> dataVector;
 		double max;
@@ -1549,7 +1549,7 @@ public class HolmesSim extends JFrame {
 	    }
 	}
 	
-	public class CustomToolTipPlacesGenerator implements CategoryToolTipGenerator  {
+	public static class CustomToolTipPlacesGenerator implements CategoryToolTipGenerator  {
 		ArrayList<Place> places;
 		ArrayList<Double> dataVector;
 		double max;

@@ -11,16 +11,13 @@ import holmes.petrinet.elements.Transition;
 
 /**
  * Model tabeli danych statystycznych dla tranzycji (symulacja knockout).
- * 
- * @author MR
- *
  */
 public class SimKnockTransTableModel extends AbstractTableModel {
 	@Serial
 	private static final long serialVersionUID = -5809682023062187908L;
 	private static final DecimalFormat formatter3 = new DecimalFormat( "#.#####" );
 	
-	public class TransContainer {
+	public static class TransContainer {
     	public int ID;
     	public String name;
     	public double firingAvg;

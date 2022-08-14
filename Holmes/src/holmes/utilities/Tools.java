@@ -23,10 +23,7 @@ import javax.swing.filechooser.FileFilter;
 import holmes.darkgui.GUIManager;
 
 /**
- * Klasa narzędziowa, odpowiednik klasy statycznej w <b>NORMALNYM</b> języku programowania
- * jak np. C#.
- * @author MR
- *
+ * Klasa narzędziowa, odpowiednik klasy statycznej w <b>NORMALNYM</b> języku programowania.
  */
 public final class Tools {
 	public static String lastExtension = "";

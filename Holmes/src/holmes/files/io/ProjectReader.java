@@ -24,8 +24,6 @@ import holmes.windows.HolmesNotepad;
 
 /**
  * Metoda czytająca plik danych projektu.
- * 
- * @author MR
  */
 public class ProjectReader {
 	private final GUIManager overlord;

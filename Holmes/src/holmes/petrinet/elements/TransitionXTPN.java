@@ -29,12 +29,10 @@ public class TransitionXTPN extends Transition {
     private boolean isActivated_xTPN = false;
     private boolean isProducing_xTPN = false;
 
-
     //grafika:
     private int fractionDigits = 2;
     public TransitionXTPNhistoryContainer simHistoryXTPN = new TransitionXTPNhistoryContainer();
     public TransitionXTPNqSimGraphics qSimXTPN = new TransitionXTPNqSimGraphics();
-
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy

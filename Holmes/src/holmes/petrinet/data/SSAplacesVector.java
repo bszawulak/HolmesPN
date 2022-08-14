@@ -11,7 +11,7 @@ public class SSAplacesVector {
 	private SSAdataType type;
 	private double experimentVolume;
 	
-	public enum SSAdataType { MOLECULES, CONCENTRATION };
+	public enum SSAdataType { MOLECULES, CONCENTRATION }
 	
 	/**
 	 * Konstruktor obiektu klasy SSAplacesVector.

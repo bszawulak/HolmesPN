@@ -834,9 +834,9 @@ public class HolmesInvariantsGenerator extends JFrame {
 		}
 		//wypełnianie macierzy incydencji
 		for (Arc oneArc : arcs) {
-			int tPosition = 0;
-			int pPosition = 0;
-			int incidenceValue = 0;
+			int tPosition;
+			int pPosition;
+			int incidenceValue;
 			
 			if(oneArc.getArcType() != TypeOfArc.NORMAL) {
 				continue;

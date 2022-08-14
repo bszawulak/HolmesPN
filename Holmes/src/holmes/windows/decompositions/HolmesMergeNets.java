@@ -29,7 +29,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import holmes.darkgui.GUIManager;
-import holmes.files.io.Snoopy.SnoopyReader;
+import holmes.files.io.snoopy.SnoopyReader;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;

@@ -1,12 +1,6 @@
 package holmes.analyse.comparison;
 
-import java.util.*;
-
-
 import java.util.Arrays;
-
-import java.util.Scanner;
-
 
 public class Hungarian {
 

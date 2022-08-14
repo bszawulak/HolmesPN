@@ -114,7 +114,7 @@ public class GUIOperations {
 		if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			String extension = fc.getFileFilter().getDescription();
-			if(fc.getSelectedFile().equals(""))
+			if(fc.getSelectedFile().toString().equals(""))
 				return;
 			if(!file.exists()) 
 				return;
@@ -847,7 +847,7 @@ public class GUIOperations {
 		String dir_path = "";
 		int c_number = howMany;
 		try{
-			int invNumber = 0;
+			int invNumber;
 			if(overlord.getWorkspace().getProject().getT_InvMatrix() == null) {
 				overlord.log("Warning: unable to check if a given number of clusters ("+howMany+") exceeds invariants "
 						+ "number. If so, the procedure may fail.", "warning", true);
@@ -991,7 +991,7 @@ public class GUIOperations {
 
 		String msg = "CSV invariants file: "+filePath+" located. Starting single clustering procedure." ;
 		overlord.log(msg, "text", true);
-		String resultFilePath_MCT = "";
+		String resultFilePath_MCT;
 		String resultFilePath_clusterCSV = filePath;
 		try {
 			overlord.log("Starting MCT generator for file: "+filePath, "text", true);
@@ -1013,7 +1013,7 @@ public class GUIOperations {
 		String csvFileName = csvFile.getName();
 		String absolutePath = csvFile.getAbsolutePath();
 		String pathOutput = absolutePath.substring(0,absolutePath.lastIndexOf(File.separator)) + "//";
-		String resultFilePath_r = "";
+		String resultFilePath_r;
 		pathOutput = pathOutput.replace("\\", "/");
 		try {
 			if(metric.equals("pearson") || metric.equals("correlation")) {

@@ -585,7 +585,6 @@ public class SubnetCalculator implements Serializable {
                                     {
                      */
 
-
                     if (!newADTset.isEmpty()) {
                         adtSubNets.add(new SubNet(SubNetType.ADTcomp, GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions(), null, null, newADTset, null));
                         listOfusedTransitions.addAll(listOfusedTransitions);

@@ -18,7 +18,7 @@ public class FunctionalTransTableModel extends DefaultTableModel {
 	/**
 	 * Klasa pojemnik
 	 */
-	public class FContainer {
+	public static class FContainer {
     	public String pID;
     	public String name;
     	public String function;

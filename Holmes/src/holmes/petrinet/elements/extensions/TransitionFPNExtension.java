@@ -8,19 +8,21 @@ import holmes.petrinet.functions.FunctionContainer;
 import java.util.ArrayList;
 
 public class TransitionFPNExtension {
-    //tranzycja funkcyjna:
     private boolean isFunctional = false;
     protected ArrayList<FunctionContainer> fList;
-
     private Transition masterTransition;
 
+    /**
+     * Ustawia połączenie rozszerzenia z tranzycją.
+     * @param trans (<b>Transition</b>) obiekt tranzycji.
+     */
     public TransitionFPNExtension(Transition trans) {
         masterTransition = trans;
     }
 
     /**
      * Metoda ustawia flagę tranzycji funkcyjnej.
-     * @param value boolean - true, jeśli tranzycja ma być funkcyjna
+     * @param value (<b>boolean</b>) true, jeśli tranzycja ma być funkcyjna.
      */
     public void setFunctional(boolean value) {
         this.isFunctional = value;
@@ -28,7 +30,7 @@ public class TransitionFPNExtension {
 
     /**
      * Metoda zwraca flagę funkcyjności tranzycji.
-     * @return boolean - true, jeśli funkcyjna
+     * @return (<b>boolean</b>) - true, jeśli funkcyjna.
      */
     public boolean isFunctional() {
         return this.isFunctional;
@@ -37,7 +39,7 @@ public class TransitionFPNExtension {
     /**
      * Metoda zwraca pełen wektor funkcyjny tranzycji. Przed jej wywołaniem należy upewnić się funkcją
      * checkFunctions(...), że wektor ten jest aktualny.
-     * @return ArrayList[FunctionContainer] - wektor funkcji
+     * @return (<b>ArrayList[FunctionContainer]</b>) - wektor funkcji.
      */
     public ArrayList<FunctionContainer> accessFunctionsList() {
         return this.fList;
@@ -53,7 +55,7 @@ public class TransitionFPNExtension {
     /**
      * Metoda weryfikuje wektor łuków funkcyjnych - usuwa łuki które już nie istnieją w rzeczywistych
      * połączeniach tranzycji oraz dodaje takie, których na liście funkcyjnej brakuje.
-     * @param arcs ArrayList[Arc] - wektor wszystkich łuków sieci
+     * @param arcs (<b>ArrayList[Arc]</b>) wektor wszystkich łuków sieci.
      */
     public void checkFunctions(ArrayList<Arc> arcs, ArrayList<Place> places) {
         int fSize = fList.size();
@@ -100,11 +102,11 @@ public class TransitionFPNExtension {
 
     /**
      * Metoda podmienia zapis funkcji w tranzycji.
-     * @param fID        String - identyfikator funkcji dla danej tranzycji
-     * @param expression String - nowa forma funkcji
-     * @param correct    boolean - true jeśli funkcja została zweryfikowana jako prawidłowa
-     * @param enabled    boolean - true, jeśli funkcja ma być aktywna (np. w symulatorze)
-     * @return boolean - true, jeśli znaleziono identyfikator i podmieniono funkcję
+     * @param fID (<b>String</b>) identyfikator funkcji dla danej tranzycji.
+     * @param expression (<b>String</b>) nowa forma funkcji.
+     * @param correct (<b>boolean</b>) true jeśli funkcja została zweryfikowana jako prawidłowa.
+     * @param enabled (<b>boolean</b>) true, jeśli funkcja ma być aktywna (np. w symulatorze).
+     * @return (<b>boolean</b>) - true, jeśli znaleziono identyfikator i podmieniono funkcję.
      */
     public boolean updateFunctionString(String fID, String expression, boolean correct, boolean enabled) {
         for (FunctionContainer fc : accessFunctionsList()) {
@@ -120,8 +122,8 @@ public class TransitionFPNExtension {
 
     /**
      * Metoda zwraca kontener z funkcją.
-     * @param fID String - identyfikator w ramach tranzycji
-     * @return FunctionContainer - obiekt kontenera
+     * @param fID (<b>String</b>) identyfikator w ramach tranzycji.
+     * @return (<b>FunctionContainer</b>) - obiekt kontenera funkcji.
      */
     public FunctionContainer getFunctionContainer(String fID) {
         for (FunctionContainer fc : accessFunctionsList()) {
@@ -135,8 +137,8 @@ public class TransitionFPNExtension {
     /**
      * /**
      * Metoda zwraca kontener z funkcją - szukanie po obiekcie łuku.
-     * @param arc Arc - łuk tranzycji
-     * @return FunctionContainer - obiekt kontenera
+     * @param arc (<b>Arc</b>) łuk tranzycji.
+     * @return (<b>FunctionContainer</b>) - obiekt kontenera funkcji.
      */
     public FunctionContainer getFunctionContainer(Arc arc) {
         for (FunctionContainer fc : accessFunctionsList()) {

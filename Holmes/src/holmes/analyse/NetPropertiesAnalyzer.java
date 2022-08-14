@@ -339,7 +339,7 @@ public class NetPropertiesAnalyzer {
 							for (ElementLocation el2 : t2.getElementLocations())
 								for (Arc a2 : el2.getInArcs())
 									if (a1.getStartNode().getID() == a2.getStartNode().getID()) {
-										;
+										//nothing
 									}
 		isStaticConFree = false;
 		scfProp.set(1, isStaticConFree);

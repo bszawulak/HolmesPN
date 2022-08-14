@@ -67,7 +67,7 @@ public class StateSimulatorXTPN implements Runnable {
      * nieaktywności, aktywności, produkcji.
      * Dla miejsc: placesTokensDataMatrix zawiera stan wszystkich miejsc w każdym kroku symulacji.
      */
-    public final class QuickSimMatrix {
+    public static final class QuickSimMatrix {
         public ArrayList<ArrayList<Double>> transDataMatrix = new ArrayList<>();
         public ArrayList<ArrayList<Double>> placesTokensDataMatrix = new ArrayList<>();
         public ArrayList<Double> placesTimeDataVector = new ArrayList<>();

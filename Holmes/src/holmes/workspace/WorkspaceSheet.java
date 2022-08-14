@@ -3,6 +3,7 @@ package holmes.workspace;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.Serial;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -14,10 +15,9 @@ import holmes.graphpanel.GraphPanel;
 /**
  * Klasa konkretnego obszaru roboczego. Jej obiekty są trzymane w tablicy, znajdującej
  * się w klasie Workspace.
- * @author students
- *
  */
 public class WorkspaceSheet extends JScrollPane {
+	@Serial
 	private static final long serialVersionUID = -3216362854094205041L;
 	private final int id; // aktualne id sheeta w workspace
 	private GraphPanel graphPanel;
@@ -38,8 +38,8 @@ public class WorkspaceSheet extends JScrollPane {
 		panel = new SheetPanel(this);
 		panel.setLayout(null);
 		setGraphPanel(workspace.getProject().createAndAddGraphPanel(ID));
-		getGraphPanel().setBounds(0, 0, (int) Toolkit.getDefaultToolkit().getScreenSize().width,
-				(int) Toolkit.getDefaultToolkit().getScreenSize().height);
+		getGraphPanel().setBounds(0, 0, Toolkit.getDefaultToolkit().getScreenSize().width,
+				Toolkit.getDefaultToolkit().getScreenSize().height);
 		panel.add(getGraphPanel());
 		panel.setOpaque(true);
 		getViewport().add(panel);
@@ -73,7 +73,6 @@ public class WorkspaceSheet extends JScrollPane {
 
 	/**
 	 * Metoda ustawiająca nowy obiekt GraphPanel.
-	 * @return GraphPanel - obiekt
 	 */
 	private void setGraphPanel(GraphPanel graphPanel) {
 		this.graphPanel = graphPanel;
@@ -103,11 +102,10 @@ public class WorkspaceSheet extends JScrollPane {
 
 	/**
 	 * Klasa narzędziowa wewnątrz WorkspaceSheet. To po prostu panel zawierający jednek dodatkową informację - 
-	 * pole sheet klasy WorkspaceSheet mówiące, który obiekt jest jego właścicielem
-	 * @author students
-	 *
+	 * pole sheet klasy WorkspaceSheet mówiące, który obiekt jest jego właścicielem.
 	 */
-	public class SheetPanel extends JPanel {
+	public static class SheetPanel extends JPanel {
+		@Serial
 		private static final long serialVersionUID = -1440470091168792811L;
 		private WorkspaceSheet sheet;
 

@@ -7,6 +7,8 @@ import javax.swing.JCheckBoxMenuItem;
 
 import com.javadocking.dockable.Dockable;
 
+import java.io.Serial;
+
 /**
  * Klasa odpowiedzialna za dodawanie nowych pozycji w menu programu, precyzyjniej
  * w podmenu odpowiedzialnym za wyświetlanie statusu widoczność podokien programu.
@@ -15,6 +17,7 @@ import com.javadocking.dockable.Dockable;
  */
 public class DockableMenuItem extends JCheckBoxMenuItem {
 	// BACKUP: -690559183213842322L;
+	@Serial
 	private static final long serialVersionUID = -690559183213842322L;
 
 	/**

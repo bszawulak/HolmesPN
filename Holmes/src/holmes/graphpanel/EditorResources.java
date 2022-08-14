@@ -86,5 +86,5 @@ public class EditorResources {
 	public static final Color alphaColor = new Color(51, 102, 255);
 	public static final Color betaColor = new Color(0, 153, 0);
 	public static final Color gammaColor = new Color(60, 60, 60);
-	public static final Color tauaColor = new Color(255, 51, 0);
+	public static final Color tauColor = new Color(255, 51, 0);
 }

@@ -64,7 +64,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Konstruktor obiektu klasy InvariantsCalculator. Zapewnia dostęp do miejsc, tranzycji i łuków sieci.
-     *
      * @param transCal boolean - true, jeśli liczymy T-inwarianty, false dla P-inwariantów
      */
     public InvariantsCalculator(boolean transCal) {
@@ -97,23 +96,22 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Konstruktor do testów
-     * @param pl ArrayList
-     * @param tr ArrayList
-     * @param ar ArrayList
+     * @param places ArrayList[Place]
+     * @param transitions ArrayList[Transition]
+     * @param arcs ArrayList[Arc]
      * @param transCal boolean
      */
-    public InvariantsCalculator(ArrayList<Place> pl, ArrayList<Transition> tr, ArrayList<Arc> ar, boolean transCal) {
+    public InvariantsCalculator(ArrayList<Place> places, ArrayList<Transition> transitions, ArrayList<Arc> arcs, boolean transCal) {
         overlord = GUIManager.getDefaultGUIManager();
         //masterWindow = overlord.accessInvariantsWindow();
 
         t_InvMode = transCal;
-        places = pl;
-        transitions = tr;
-        arcs = ar;
+        this.places = places;
+        this.transitions = transitions;
+        this.arcs = arcs;
 
         zeroColumnVector = new ArrayList<>();
         nonZeroColumnVector = new ArrayList<>();
-
     }
 
     /**
@@ -150,7 +148,6 @@ public class InvariantsCalculator implements Runnable {
     public void run() {
         try {
             logInternal("Invariant calculations started.\n", true);
-
             if (t_InvMode) {
                 PetriNet project = overlord.getWorkspace().getProject();
                 if (showInvSetsDifference) {
@@ -261,7 +258,6 @@ public class InvariantsCalculator implements Runnable {
                                     masterWindow.accessLogField(t_InvMode).append("*");
                                 }
                             }
-
                             for (int i = 0; i < invBackupMatrix.size(); i++) {
                                 if (InvariantsTools.areSameInvariants(invariant, invBackupMatrix.get(i))) {
                                     invBackupMatrix.remove(i);
@@ -270,7 +266,6 @@ public class InvariantsCalculator implements Runnable {
                                 }
                             }
                         }
-
                         HolmesNotepad notePad = new HolmesNotepad(900, 600);
                         notePad.setVisible(true);
                         notePad.addTextLineNL("Difference set size: " + invBackupMatrix.size(), "text");
@@ -279,8 +274,6 @@ public class InvariantsCalculator implements Runnable {
                         notePad.addTextLineNL("CSV set:", "text");
                         notePad.addTextLineNL("", "text");
                         for (int i = 0; i < invBackupMatrix.size(); i++) {
-
-
                             StringBuilder csvVector = new StringBuilder(i + ";");
                             for (int supp : invBackupMatrix.get(i)) {
                                 csvVector.append(supp).append(";");
@@ -290,7 +283,6 @@ public class InvariantsCalculator implements Runnable {
                         }
                     }
                 }
-
             } else { //P-invariants
                 this.createTPIncidenceAndIdentityMatrix(false, t_InvMode); //t_InvMode == false
                 this.calculateInvariants();
@@ -306,7 +298,6 @@ public class InvariantsCalculator implements Runnable {
                         logInternal((getInvariants(false).size() - cleanInv.size()) + " non-canonical p-invariants has been removed: "
                                 + cleanInv.size() + " remained from " + getInvariants(false).size() + "\n", false);
                     }
-
                     p_invariantsList = cleanInv;
                 }
 
@@ -341,7 +332,6 @@ public class InvariantsCalculator implements Runnable {
                 logInternal("Non-p-invariants (Cx <=> 0): " + results.get(0).get(3) + "\n", false);
                 logInternal("=====================================================================\n", false);
 
-
                 overlord.markNetChange();
             }
         } catch (Exception e) {
@@ -354,7 +344,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Metoda zwracająca macierz incydencji sieci, tranzycje to wiersze, kolumny to miejsca
-     *
      * @return ArrayList[ArrayList[Integer]] - macierz incydencji
      */
     public ArrayList<ArrayList<Integer>> getCMatrix() {
@@ -365,7 +354,6 @@ public class InvariantsCalculator implements Runnable {
     /**
      * Metoda tworząca macierze: incydencji i jednostkową dla modelu szukania T-inwariantów
      * (TP-macierz z literatury) - tranzycje to wiersze, kolumny do miejsca
-     *
      * @param silence  boolean - true, jeśli nie ma wypisywać komunikatów
      * @param tInvMode boolean - true: obliczania t-inwariantów, każdy wektor macierzy ma liczność miejsc, wektorów
      *                 jest tyle co tranzycji, kolumny to miejsca; <br> false: obliczenia p-inwariantów, każdy wektor ma
@@ -375,7 +363,6 @@ public class InvariantsCalculator implements Runnable {
         // incidenceValue = -1 * oneArc.getWeight();  // CO TO K**** JEST ?! JAKIE -1 ?!
         // 	(14.03.2015) ja go chyba zamorduję...
         //   https://www.youtube.com/watch?v=oxiJrcFo724
-        //
 
         //hashmapy do ustalania lokalizacji miejsca/tranzycji. Równie dobrze
         //działałoby (niżej, gdy są używane): np. places.indexOf(...)
@@ -444,7 +431,6 @@ public class InvariantsCalculator implements Runnable {
         if (!silence)
             logInternal("\nTP-class incidence matrix created for " + transitions.size() + " transitions and " + places.size() + " places.\n", false);
 
-
         if (tInvMode) {
             for (int t = 0; t < transitions.size(); t++) {
                 ArrayList<Integer> identRow = new ArrayList<>();
@@ -483,7 +469,6 @@ public class InvariantsCalculator implements Runnable {
             for (int i = 0; i < INC_MATRIX_ROW_SIZE; i++)
                 GLOBAL_INC_VECTOR.add(0);
         }
-
         if (!silence)
             logInternal("Identity matrix created for " + transitions.size() + " transitions.\n", false);
     }
@@ -535,18 +520,14 @@ public class InvariantsCalculator implements Runnable {
             zeroColumnVector.add(cand);
 
             int newSize = globalIncidenceMatrix.size();
-
             logInternal("\nNew rows number: " + newSize + " | rejected: " + newRejected + " replaced: " + oldReplaced + " not canonical: " + notCanonical + "\n", false);
         }
-
         setInvariants(globalIdentityMatrix);
     }
 
     /**
      * find Invariants For second net
      */
-
-
     public void calculateSecondNetInvariants() {
         // Etap I - miejsca 1-in 1-out
         ArrayList<ArrayList<Integer>> generatedRows;
@@ -597,7 +578,6 @@ public class InvariantsCalculator implements Runnable {
      * Metoda pomocnicza I fazy obliczeń: sprawdza, czy dana miejsce ma tylko 1 tranzycję wejściową
      * i tylko 1 wyjściową w danej kolumnie (albo czy w ogóle ma) - dla obliczenia t-inv.<br>
      * Z kolei dla obliczeń p-inv, kolumny to tranzycje, tak więc sprawdza kombinacje po miejsach (wierszach)
-     *
      * @param incidenceMatrix ArrayList[ArrayList[Integer]] - macierz incydencji
      * @param column          int - indeks kolumny
      * @return boolean - true, jeśli dana kolumna ma tylko 1 wiersz '+' i 1 wiersz '-' - tj. nawzajem się znoszą
@@ -631,7 +611,6 @@ public class InvariantsCalculator implements Runnable {
      * pracy algorytmu. Podaje pierszy indeks kolumny z najmniejszą wartością [1] - tj. kolumnę dla której przekształcenia
      * liniowe dodadzą najmniej nowych wierszy do macierzy przekształceń.<br>
      * Poprawka: jeśli natrafi na pierwszą kolumnę, która zmniejszy liczbę wierszy, od razu ją wybiera (cite[1])
-     *
      * @return int[] - tablica int[4], gdzie [0] to nr kolumny z najmniejsza liczbą nowych wierszy które będą utworzone
      * po utworzeniu kombinacji liniowych [1]; [2] to liczba wierszy z wartością >0 w wybranej kolumnie,
      * [3] to liczba wierszy z wartością <0 w wybranej kolumnie
@@ -693,7 +672,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Metoda ta zwraca macierz z informacjami o przekształceniach par wektorów miejsc.
-     *
      * @param columnIndex int - dla t-inv jest to numer miejsca do przetworzenia dla wszystkich tranzycji, dla
      *                    p-inv jest to numer tranzycji (kolumny) do przetworzenia po wszystkich miejsach (wierszach)
      * @return ArrayList[ArrayList[Integer]] - macierz przekształceń liniowych par wektorów
@@ -742,7 +720,6 @@ public class InvariantsCalculator implements Runnable {
     /**
      * Metoda dodaje nowo wygenerowany wiersz do macierzy. Sprawdza jednak przed dodaniem, czy nowy
      * wiersz jest minimalnym inwariantem.
-     *
      * @param newRowData ArrayList[Integer] - dane dla przekształcenia liniowego
      */
     private void addNewRowsToMatrix(ArrayList<Integer> newRowData) {
@@ -771,7 +748,6 @@ public class InvariantsCalculator implements Runnable {
      * Metoda odpowiedzialna za decyzję, czy inwariant dodajemy do tablicy czy nie. Uruchamia dwa testy -
      * szybki bazujący na analizie macierzy incydencji (oryginalnej) oraz dokładny - zawieranie wsparć
      * wektorów w tablicy roboczej.
-     *
      * @param incMatrixNewRow ArrayList[Integer] - nowy wektor dla roboczej macierzy którą zerujemy
      * @param invCandidate    ArrayList[Integer] - inwariant-wanna-be
      * @param t1              int - pierwsza składowa inwariantu
@@ -840,7 +816,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Metoda sprawdza czy inwariant jest minimalny.
-     *
      * @param invCandidate ArrayList[Integer] - inwariant z kombinacji liniowej
      * @param invSupport   ArrayList[Integer] - wsparcie inwariantu
      * @param t1           int - wektor 1 składowy
@@ -912,7 +887,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Metoda sprawdza relację pomiędzy dwoma inwariantami.
-     *
      * @param refInv       ArrayList[Integer] - inwariant referencyjny z macierzy przekształceń
      * @param refSupport   ArrayList[Integer] - wsparcie inwariantu referencyjnego
      * @param candidateInv ArrayList[Integer] - inwariant utworzony z kombinacji liniowej
@@ -1000,7 +974,6 @@ public class InvariantsCalculator implements Runnable {
     /**
      * Metoda odpowiedzialna za dodawanie i usuwanie wierszy w wyniku wykonywania wygenerowanych przekształceń
      * liniowych wektorów zawartych w newRowsMatrix.
-     *
      * @param newRowsMatrix ArrayList[ArrayList[Integer]] - macierz informacji o przekształceniach
      * @param columnIndex   int - nr kolumny zerowanej, jest to miejsce dla t-inv lub tranzycja dla p-inv
      */
@@ -1061,7 +1034,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Szybki test minimalności.
-     *
      * @param invCandidate ArrayList[Integer] - wektor-inwariant
      * @param supports     ArrayList[Integer] - wektor wsparcia
      * @return boolean - true, jeśli przeszedł test
@@ -1086,11 +1058,9 @@ public class InvariantsCalculator implements Runnable {
         }
     }
 
-
     /**
      * Metoda odpowiedzialna za doprowadzenie wektora do postaci kanonicznej poprzez podzielenie jego elementów
      * przez ich największy wspólny dzielnik przy akompaniamencie psalmów i chórów dzięczynnych ku czci Pana.
-     *
      * @param invCandidate ArrayList[Integer] - inwariant lub inny wektor
      * @param nwd          int - największy wspólny dzielnik
      */
@@ -1103,7 +1073,6 @@ public class InvariantsCalculator implements Runnable {
     /**
      * Metoda zwraca największy wspólny dzielnik elementów wsparcia wektora wejściowego. Jeśli >1, to znaczy
      * że wektor nie jest kanoniczny.
-     *
      * @param invCandidate ArrayList[Integer] - wektor danych
      * @param supports     ArrayList[Integer] - wsparcie wektora (niezerowe elementy)
      * @return int - jeśli != 1, wektor nie jest kanoniczny
@@ -1121,7 +1090,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Metoda zwraca największy wspólny dzielnik dwóch liczb naturalnych dodatnich.
-     *
      * @param x int - I liczba
      * @param y int - II liczba
      * @return int - największy wspólny dzielnik
@@ -1138,7 +1106,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Zwraca wartość bezwzględną liczby podanej jako argument.
-     *
      * @param i int - liczba
      * @return int - |i|
      */
@@ -1151,7 +1118,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Metoda oblicza silnię. Z bliżej nieznanych powodów.
-     *
      * @param i int - liczba wyjściowa
      * @return int - wynik: i!
      */
@@ -1164,7 +1130,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Metoda zwraca macierz inwariantów.
-     *
      * @param tinv boolean - true jeśli zwracać ma t-inwarianty, false dla p-inwariantów
      * @return ArrayList[ArrayList[Integer]] - macierz inwariantów (wiersze)
      */
@@ -1177,7 +1142,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Metoda ustala nową macierz inwariantów.
-     *
      * @param invMatrix ArrayList[ArrayList[Integer]] - nowa macierz inwariantów
      */
     public void setInvariants(ArrayList<ArrayList<Integer>> invMatrix) {
@@ -1189,7 +1153,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Macierz łuków podwójnych. Każdy wiersz to 2-elementowy wektor, [0] to id miejsca, [1] to id tranzycji
-     *
      * @return ArrayList[ArrayList[Integer]] - macierz łuków podwójnych
      */
     public ArrayList<ArrayList<Integer>> getDoubleArcs() {
@@ -1200,7 +1163,6 @@ public class InvariantsCalculator implements Runnable {
     /**
      * Ustawia wartość flagi odpowiadającej za to, czy zostanie pokazany zbiór-różnica pomiędzy właśnie stworzonymi inwariantami
      * a starym zbiorem.
-     *
      * @param value boolean - nowa wartość
      */
     public void setShowInvDiff(boolean value) {
@@ -1209,7 +1171,6 @@ public class InvariantsCalculator implements Runnable {
 
     /**
      * Metoda wysyłająca komunikaty do podokna logów generatora.
-     *
      * @param msg  String - tekst do logów
      * @param date boolean - true, jeśli ma być podany czas komunikatu
      */

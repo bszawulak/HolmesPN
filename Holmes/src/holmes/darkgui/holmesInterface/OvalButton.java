@@ -12,7 +12,6 @@ import java.awt.image.BufferedImage;
  * an acton if it is clicked within the oval shape drawn on it.
  * The button can be also of circular shape (if width=height), or capsule shape (either
  * horizontal or vertical capsule).
- *
  * @author Luka Kralj
  * @version 23 December 2018
  */

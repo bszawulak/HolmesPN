@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -25,6 +26,7 @@ import javax.swing.border.Border;
  * </p>
  */
 public class ToolbarButton extends JLabel {
+	@Serial
 	private static final long serialVersionUID = 3034370365062643549L;
 	/** The button will always have this size. */
 	private static final Dimension DEFAULT_SIZE = new Dimension(48, 48);

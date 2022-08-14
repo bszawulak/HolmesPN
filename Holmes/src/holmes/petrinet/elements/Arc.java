@@ -328,22 +328,22 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala sprawdzić, czy łuk byłby poprawny dla danej lokalizacji wierzchołka wyjściowego.
-     * @param e (<b>ElementLocation</b>) lokalizacja wierzchołka wyjściowego.
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja wierzchołka wyjściowego.
      * @return (<b>boolean</b>) - true, jeśli łuk byłby poprawny; false w przeciwnym wypadku.
      */
-    public boolean checkIsCorect(ElementLocation e) {
-        this.isCorrect = e != null
-                && e.getParentNode().getType() != this.getStartLocation().getParentNode().getType()
-                && e != this.getStartLocation();
+    public boolean checkIsCorect(ElementLocation elementLocation) {
+        this.isCorrect = elementLocation != null
+                && elementLocation.getParentNode().getType() != this.getStartLocation().getParentNode().getType()
+                && elementLocation != this.getStartLocation();
         return this.isCorrect;
     }
 
     /**
      * Metoda pozwala ustawić punkt lokacji wierzchołka wyjściowego łuku.
-     * @param p (<b>Point</b>) punkt lokalizacji wierzchołka wyjściowego.
+     * @param point (<b>Point</b>) punkt lokalizacji wierzchołka wyjściowego.
      */
-    public void setEndPoint(Point p) {
-        this.tempEndPoint = p;
+    public void setEndPoint(Point point) {
+        this.tempEndPoint = point;
     }
 
     public Point getTempEndPoint() {
@@ -490,7 +490,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala sprawdzić, czy łuk aktualnie transportuje tokeny.
-     * @return boolean - true, jeśli łuk transportuje tokeny; false w przeciwnym wypadku
+     * @return (<b>boolean</b>) - true, jeśli łuk transportuje tokeny; false w przeciwnym wypadku.
      */
     public boolean isTransportingTokens() {
         return isTransportingTokens;

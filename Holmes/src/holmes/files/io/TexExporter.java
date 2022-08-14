@@ -17,7 +17,7 @@ import holmes.adam.mct.Runner;
 import holmes.analyse.MCTCalculator;
 import holmes.clusters.ClusteringExtended;
 import holmes.darkgui.GUIManager;
-import holmes.files.io.Snoopy.SnoopyWriter;
+import holmes.files.io.snoopy.SnoopyWriter;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.utilities.Tools;
@@ -26,8 +26,6 @@ import holmes.workspace.ExtensionFileFilter;
 /**
  * Klasa odpowiedzialna za export danych o sieci do tabeli texa. Jej obiekt jest aktywowany
  * w GUIManager przy starcie programu.
- * @author MR
- *
  */
 public class TexExporter {
 	String newline = "\n";
@@ -189,7 +187,9 @@ public class TexExporter {
 				//parsowanie linii
 				ArrayList<String> invTableRow = new ArrayList<String>();
 				line = line.replace(" ", "");
-				String[] cells = line.split(";|\\t"); // tnij po średnikach i tab
+
+				//String[] cells = line.split(";|\\t"); // tnij po średnikach i tab
+				String[] cells = line.split("[;\\t]"); // tnij po średnikach i tab
 				invTableRow.add("$x_{"+cells[0].replace(".", "")+"}$");
 				if(cells[1].length() > 2) { //jeśli coś więcej niż [ ]
 					String[] mctSet = cells[1].replace("]", "").replace("[", "").split(",");

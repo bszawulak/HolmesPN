@@ -1,4 +1,4 @@
-package holmes.files.io.Snoopy;
+package holmes.files.io.snoopy;
 
 import java.awt.Point;
 import java.io.BufferedWriter;
@@ -1657,7 +1657,7 @@ public class SnoopyWriterArc {
 		}
 	}
 	
-	class PathPackage {
+	static class PathPackage {
 		int subnet = -1;
 		public ElementLocation source = null;
 		public ElementLocation target = null;

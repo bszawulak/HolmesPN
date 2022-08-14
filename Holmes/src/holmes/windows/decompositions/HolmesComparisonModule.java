@@ -6,7 +6,7 @@ import holmes.analyse.comparison.structures.BranchVertex;
 import holmes.analyse.comparison.structures.GreatCommonSubnet;
 import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
-import holmes.files.io.Snoopy.SnoopyReader;
+import holmes.files.io.snoopy.SnoopyReader;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 import holmes.server.BranchesServerCalc;

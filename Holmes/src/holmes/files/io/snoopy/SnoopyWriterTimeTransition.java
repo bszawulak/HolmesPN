@@ -1,4 +1,4 @@
-package holmes.files.io.Snoopy;
+package holmes.files.io.snoopy;
 
 import java.awt.Color;
 import java.awt.Point;

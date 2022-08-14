@@ -30,7 +30,6 @@ import holmes.petrinet.simulators.SimulationStep;
 /**
  * Klasa odpowiadzialna za symulację wykonywania inwariantów w sieci.
  */
-@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class InvariantsSimulator {
 	private NetType simulationType;
 	private SimulatorMode mode;
@@ -695,7 +694,7 @@ public class InvariantsSimulator {
 			long t = date.getTime();
 			
 			if(simulatorType == SimulatorType.TIME)
-				time = t + (value * 60000);
+				time = t + (value * 60000L);
 			if(simulatorType == SimulatorType.CYCLE)
 				cycle = value;
 			if(simulatorType == SimulatorType.STEP)

@@ -1,13 +1,10 @@
 package holmes.analyse.comparison;
 
-import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.PetriNetData;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.stream.Collectors;
 
 public class LabelNetComparator {
@@ -208,7 +205,7 @@ public class LabelNetComparator {
         }
     }
 
-    public class MatchedArc {
+    public static class MatchedArc {
         Arc firstNetArc = null;
         Arc secondNetArc = null;
         Boolean isWehightEqual = true;

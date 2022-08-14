@@ -11,8 +11,6 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 /**
  * Klasa odpowiedzialna za zapis struktury sieci do pliku natywnego programu.
  * Wymaga XStream 1.4.7
- * @author students
- *
  */
 public class AbyssWriter {
 	/**

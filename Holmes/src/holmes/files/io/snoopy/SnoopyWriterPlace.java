@@ -1,4 +1,4 @@
-package holmes.files.io.Snoopy;
+package holmes.files.io.snoopy;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -14,8 +14,6 @@ import static holmes.graphpanel.EditorResources.placeDefColor;
 
 /**
  * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie jest Sparta...
- * @author MR
- *
  */
 public class SnoopyWriterPlace {
 	private Place holmesPlace;

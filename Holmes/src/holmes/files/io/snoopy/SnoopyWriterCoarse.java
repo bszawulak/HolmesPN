@@ -1,4 +1,4 @@
-package holmes.files.io.Snoopy;
+package holmes.files.io.snoopy;
 
 import java.awt.Point;
 import java.io.BufferedWriter;
@@ -14,8 +14,6 @@ import holmes.varia.NetworkTransformations;
  * Klasa symuluje PRAWDZIWE szaleństwo zapisu podsieci (coarse T/P shit) w programie Snoopy. 
  * Niemiec płakał, jak projektował...
  * Cthulhu fhtagn!
- * @author MR
- *
  */
 public class SnoopyWriterCoarse {
 	private MetaNode coarseNode;

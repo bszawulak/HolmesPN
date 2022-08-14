@@ -30,10 +30,6 @@ import com.javadocking.dockable.DockingMode;
  * tablice *ŚCIŚLE POWIĄZANYCH ZE SOBĄ* obiektów? Czemu nie 40? Acha, 2 z nich są osobnymi tablicami w DarkMenu, 
  * które należy aktualizować przy każdej zmianie liczby zakładek. Rozum nie jest w stanie tego ogarnąć, jak
  * powiedział król Desmond zaglądając po skończonej potrzebie do nocnika.
- * 
- * @author students
- * @author MR
- *
  */
 public class Workspace implements SelectionActionListener {
 	private DockFactory dockFactory;

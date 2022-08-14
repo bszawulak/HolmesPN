@@ -1,4 +1,4 @@
-package holmes.files.io.Snoopy;
+package holmes.files.io.snoopy;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -14,10 +14,7 @@ import static holmes.graphpanel.EditorResources.transDefColor;
 
 
 /**
- * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie Sparta,
- * tylko o wiele gorzej...
- * @author MR
- *
+ * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie Sparta, tylko o wiele gorzej...
  */
 public class SnoopyWriterTransition {
 	protected Transition holmesTransition;

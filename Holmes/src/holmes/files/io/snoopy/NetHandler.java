@@ -1,4 +1,4 @@
-package holmes.files.io.Snoopy;
+package holmes.files.io.snoopy;
 
 import java.util.ArrayList;
 
@@ -9,9 +9,7 @@ import holmes.petrinet.elements.Node;
 
 /**
  * Klasa dziedzicząca po org.xml.sax.helpers.DefaultHandler.
- * Dziedziczą po niej parsery formatów zapisu programu Snoopy. 
- * @author students
- *
+ * Dziedziczą po niej parsery formatów zapisu programu Snoopy.
  */
 public class NetHandler extends DefaultHandler {
 	protected ArrayList<Arc> arcList = new ArrayList<Arc>();

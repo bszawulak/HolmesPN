@@ -375,7 +375,7 @@ public class HolmesNotepad extends JFrame {
 			case "error" -> 6;
 			case "time" -> 7;
 			case "nodeName" -> 8;
-			default -> 1;
+			default -> 0;
 		};
 	}
 	

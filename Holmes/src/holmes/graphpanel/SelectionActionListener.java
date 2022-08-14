@@ -9,9 +9,9 @@ import holmes.petrinet.elements.ElementLocation;
  * Klasa przekazująca informacje związane ze zdarzeniem zaznaczania, wywoływanym przez SelectionManager.
  */
 public interface SelectionActionListener {
-	public void actionPerformed(SelectionActionEvent e);
+	void actionPerformed(SelectionActionEvent e);
 
-	public class SelectionActionEvent {
+	class SelectionActionEvent {
 
 		public enum SelectionActionType { SELECTED_ONE, SELECTED_GROUP, SELECTED_SHEET }
 		private ArrayList<Arc> arcGroup = new ArrayList<Arc>();

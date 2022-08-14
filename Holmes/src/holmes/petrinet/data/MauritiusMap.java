@@ -395,10 +395,8 @@ public class MauritiusMap {
 	
 	/**
 	 * Klasa wewnętrzna - węzeł drzewa BT
-	 * @author MR
-	 *
 	 */
-	public class BTNode {
+	public static class BTNode {
 		public NodeType type = NodeType.VERTEX;
 		public String transName;
 		public int transLocation = -1;

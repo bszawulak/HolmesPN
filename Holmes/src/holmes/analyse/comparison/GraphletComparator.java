@@ -2,7 +2,6 @@ package holmes.analyse.comparison;
 
 import holmes.analyse.GraphletsCalculator;
 import holmes.analyse.SubnetCalculator;
-import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Node;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
-import java.util.stream.Stream;
 
 public class GraphletComparator {
 

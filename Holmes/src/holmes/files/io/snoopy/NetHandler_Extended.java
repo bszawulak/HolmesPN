@@ -1,4 +1,4 @@
-package holmes.files.io.Snoopy;
+package holmes.files.io.snoopy;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+//import org.xml.sax.helpers.DefaultHandler;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
@@ -19,11 +20,9 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 
 /**
- * Klasa zajmująca się wczytaniem standardowej sieci Petriego z formatu .spped.
- * @author students
- *
+ * Parser sieci rozszerzonych (Snoopy)
  */
-public class NetHandler_Classic extends NetHandler {
+public class NetHandler_Extended extends NetHandler {
 	public boolean Snoopy = false;
 	public boolean node = false;
 	public boolean atribute = false;
@@ -51,16 +50,17 @@ public class NetHandler_Classic extends NetHandler {
 	public int arcSource;
 	public int arcTarget;
 	public boolean variableMultiplicity = false;
+	public String arcType = "";
 	// Node
 	public boolean variableName = false;
 	public boolean variableMarking = false;
 	public boolean variableLogic = false;
 	public boolean variableComent = false;
-	// public Node tmpNode;
+	//public Node tmpNode;
 	public String nodeType;
 	public String nodeName;
 	public int nodeID;
-	// public int nodeSID;
+	//public int nodeSID;
 	public int nodeMarking;
 	public int nodeLogic;
 	public String nodeComment;
@@ -77,27 +77,9 @@ public class NetHandler_Classic extends NetHandler {
 	 * @param qName - nazwa elementu
 	 * @param attributes - atrybut elementu
 	 */
-	@SuppressWarnings("unused")
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {	
-		boolean _Snoopy = Snoopy;
-		boolean _node = node;
-		boolean _atribute = atribute;
-		boolean _graphics = graphics;
-		boolean _graphic = graphic;
-		boolean _points = points;
-		boolean _point = point;
-		boolean _edgeclass = edgeclass;
-		boolean _edge = edge;
-		boolean _metadata = metadata;
-		boolean _endAtribute = endAtribute;
-		boolean _variableName = variableName;
-		boolean _variableMarking = variableMarking;
-		boolean _variableLogic = variableLogic;
-		boolean _variableComent = variableComent;
-		
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {		
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			Snoopy = true;
-			//nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 		}
 
 		// Ustawianie typu wierzchołka
@@ -115,11 +97,6 @@ public class NetHandler_Classic extends NetHandler {
 				coarseCatcher = true;
 				nodeType = "Transition";
 			}
-		}
-		
-		if(coarseCatcher) {
-			int xx=1;
-			
 		}
 		
 		if (qName.equalsIgnoreCase("node")) {
@@ -190,7 +167,7 @@ public class NetHandler_Classic extends NetHandler {
 					if(yoff_name < -8)
 						yoff_name = -55; //nad node, uwzględnia różnicę
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (932506083) | Exception:  "+ex.getMessage(), "error", true);
+					GUIManager.getDefaultGUIManager().log("Error (989048217) | Exception:  "+ex.getMessage(), "error", true);
 				}
 			}
 
@@ -221,7 +198,7 @@ public class NetHandler_Classic extends NetHandler {
 					if(resizeFactor==0)
 						resizeFactor=1;
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (928863304) | Exception:  "+ex.getMessage(), "error", true);
+					GUIManager.getDefaultGUIManager().log("Error (474849019) | Exception:  "+ex.getMessage(), "error", true);
 				}
 				
 				xPos *= resizeFactor;
@@ -230,6 +207,7 @@ public class NetHandler_Classic extends NetHandler {
 				int p1 = (int) xPos;
 				int p2 = (int) yPos;
 				graphicPointsXYLocationsList.add(new Point(p1, p2));
+				//graphicPointsSnoopyIDList.add(snoopyID);
 				graphicPointsNetNumbers.add(netNumber);
 				
 				if(coarseCatcher) {
@@ -249,13 +227,13 @@ public class NetHandler_Classic extends NetHandler {
 
 		if (qName.equalsIgnoreCase("edgeclass")) {
 			edgeclass = true;
+			arcType= attributes.getValue(1);
 		}
 		if (qName.equalsIgnoreCase("edge")) {
 			edge = true;
 		}
 
 		// Zapis do zmiennej globalnej ID sorce i target Arca
-
 		if ((endAtribute) && (!atribute) && (graphics)
 				&& (graphic) && (!metadata)
 				&& (edgeclass) && (!point) && (!points)
@@ -335,7 +313,6 @@ public class NetHandler_Classic extends NetHandler {
 				}
 			}
 			if (edge && atribute) {
-
 				if (variableMultiplicity) {
 					if (readString.equals("")) {
 						arcMultiplicity = 0;
@@ -358,22 +335,17 @@ public class NetHandler_Classic extends NetHandler {
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			int wid = Toolkit.getDefaultToolkit().getScreenSize().width - 20;
 			int hei = Toolkit.getDefaultToolkit().getScreenSize().height - 20;
-			//int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);
-			
+
 			int sheetsNumber = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size();
 			for(int s = sheetsNumber; s<globalNetsCounted; s++) {
 				GUIManager.getDefaultGUIManager().getWorkspace().newTab(false, new Point(0,0), 1, MetaType.SUBNET);
 			}
-			
 			for(int net=0; net<sheetsNumber; net++) {
 				int tmpX = 0;
 				int tmpY = 0;
 				boolean xFound = false;
 				boolean yFound = false;
-				
 				GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(net).getGraphPanel();
-				graphPanel.setSize(new Dimension(200,200));
-				
 				for (int l = 0; l < globalElementLocationList.size(); l++) {
 					if(globalElementLocationList.get(l).getSheetID() != net)
 						continue;
@@ -390,19 +362,18 @@ public class NetHandler_Classic extends NetHandler {
 					}
 				}
 				if (xFound && !yFound) {
-					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 150, hei));
+					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 90, graphPanel.getSize().height));
 				}
-				if (!xFound && yFound) {
-					//graphPanel.setSize(new Dimension(graphPanel.getSize().width, globalElementLocationList.get(tmpY).getPosition().y + 150));
-					graphPanel.setSize(new Dimension(wid, globalElementLocationList.get(tmpY).getPosition().y + 150));
+				if (yFound && !xFound) {
+					graphPanel.setSize(new Dimension(graphPanel.getSize().width, globalElementLocationList.get(tmpY).getPosition().y + 90));
 				}
 				if (xFound && yFound) { //z każdym nowym punktem dostosowujemy rozmiar sieci
-					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 150, 
-							globalElementLocationList.get(tmpY).getPosition().y + 150));
+					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 90, 
+							globalElementLocationList.get(tmpY).getPosition().y + 90));
 				}
+
 			}
 			
-
 			// Tablice łuków dla ElementLocation
 			nodesList.addAll(tmpTransitionList);
 		}
@@ -416,7 +387,7 @@ public class NetHandler_Classic extends NetHandler {
 			ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
 			ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
 			ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
-			
+
 			if(!coarseCatcher) {
 				if(graphicPointsXYLocationsList.size() != graphicNamesXYLocationsList.size()) {
 					GUIManager.getDefaultGUIManager().log("Warning: wrong number of names / nodes locations for "+nodeName+
@@ -479,9 +450,6 @@ public class NetHandler_Classic extends NetHandler {
 					tmpTransitionList.add(tmpTran);
 					IdGenerator.getNextTransitionId();
 				}
-			} else {
-				@SuppressWarnings("unused")
-				int x=1;
 			}
 			// zerowanie zmiennych
 			nodeName = "";
@@ -503,6 +471,7 @@ public class NetHandler_Classic extends NetHandler {
 			int tmpTarget = 0;
 			
 			boolean cancel = ( coarseProhibitedIDList.contains(arcSource) || coarseProhibitedIDList.contains(arcTarget) );
+
 			if(!cancel) {
 				for (int j = 0; j < graphicPointsSnoopyIDList.size(); j++) {
 					if (graphicPointsSnoopyIDList.get(j) == arcSource) {
@@ -512,25 +481,32 @@ public class NetHandler_Classic extends NetHandler {
 						tmpTarget = j;
 					}
 				}
-				try {
-					Arc nArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypeOfArc.NORMAL);
-					arcList.add(nArc);
-				} catch (Exception e) {
-					GUIManager.getDefaultGUIManager().log("Error: unable to add arc.", "error", true);
+				//arcComment += arcType;
+				Arc newArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypeOfArc.NORMAL);
+				arcList.add(newArc);
+
+				switch (arcType) {
+					case "Read Edge" -> {
+						Arc nArc2 = new Arc(globalElementLocationList.get(tmpTarget), globalElementLocationList.get(tmpSource), arcComment, arcMultiplicity, TypeOfArc.READARC);
+						arcList.add(nArc2);
+					}
+					case "Inhibitor Edge" -> newArc.setArcType(TypeOfArc.INHIBITOR);
+					case "Reset Edge" -> newArc.setArcType(TypeOfArc.RESET);
+					case "Equal Edge" -> newArc.setArcType(TypeOfArc.EQUAL);
 				}
 			}
+
 			edge = false;
 			arcComment = "";
 			arcMultiplicity = 0;
-			
 		}
 	}
 
 	/**
 	 * Metoda odczytująca zawartość elementu.
-	 * @param ch (char[]) tablica wczytanych znaków.
-	 * @param start (int) indeks początkowy.
-	 * @param length (int) ilość wczytanych znaków.
+	 * @param ch - tablica wczytanych znaków
+	 * @param start - indeks początkowy
+	 * @param length - ilość wczytanych znaków
 	 */
 	public void characters(char[] ch, int start, int length) throws SAXException {
 		// Wyłuskiwanie zawartosci <![CDATA[]]>
@@ -550,9 +526,9 @@ public class NetHandler_Classic extends NetHandler {
 
 	/**
 	 * Metoda służąca do wyłapywania i ignorowania pustych przestrzeni.
-	 * @param ch (char[]) tablica wczytanych znaków.
-	 * @param start (int) indeks początkowy.
-	 * @param length (int) wielkość pustej przestrzeni.
+	 * @param ch - tablica wczytanych znaków
+	 * @param start - indeks początkowy
+	 * @param length - wielkość pustej przestrzeni
 	 */
 	public void ignorableWhitespace(char[] ch, int start, int length)
 		throws SAXException { }

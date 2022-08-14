@@ -1892,10 +1892,8 @@ public class HolmesSimKnockVis extends JFrame {
 	
 	/**
 	 * Klasa odpowiedzialna za informacje o wskazanym pasku wykresu.
-	 * 
-	 * @author MR
 	 */
-	public class CustomToolTipGenerator implements CategoryToolTipGenerator  {
+	public static class CustomToolTipGenerator implements CategoryToolTipGenerator  {
 		boolean isPlaces;
 		boolean compareMode;
 		ArrayList<Place> places;

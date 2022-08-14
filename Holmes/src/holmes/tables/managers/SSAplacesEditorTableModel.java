@@ -26,7 +26,7 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
 	
 	private SSAdataType dataType;
 	
-	public class SSAdataClass {
+	public static class SSAdataClass {
 		public int ID;
 		public String name;
 		public Double ssaValue;

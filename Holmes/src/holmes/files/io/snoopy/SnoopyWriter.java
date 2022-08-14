@@ -1,4 +1,4 @@
-package holmes.files.io.Snoopy;
+package holmes.files.io.snoopy;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -27,9 +27,6 @@ import holmes.varia.Check;
  * osi oX, a powinny oY jak dla miejsc. Poza tym parser pluje danymi jak karabin maszynowy,
  * z czego 60% tych danych jest redundantnych, a kilka zupełnie ignorowanych przez Snoopiego
  * wczytującego tenże plik (np. punkty startu i końca dla łuków).
- * 
- * @author MR
- *
  */
 public class SnoopyWriter {
 	private ArrayList<Place> places;

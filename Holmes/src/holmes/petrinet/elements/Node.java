@@ -250,7 +250,7 @@ public abstract class Node extends PetriNetElement {
 
 					Point nodePoint = nodePoints.get(i);
 					Point gammaPoint = gammaLocations.get(i).getPosition();
-					int drawX = (nodePoint.x) + gammaPoint.x - 40;
+					int drawX = (nodePoint.x) + gammaPoint.x - 50;
 					int drawY =  (nodePoint.y) + gammaPoint.y - 24;
 
 					if(((PlaceXTPN)this).isGammaModeActive()) {
@@ -306,7 +306,6 @@ public abstract class Node extends PetriNetElement {
 						int drawX = (nodePoint.x) + transXTPN.qSimXTPN.xOff - 40;
 						int drawY =  (nodePoint.y) + transXTPN.qSimXTPN.yOff;
 
-
 						g.drawString(transXTPN.qSimXTPN.text1, drawX, drawY);
 						g.drawString(transXTPN.qSimXTPN.text2, drawX, drawY+15);
 						g.drawString(transXTPN.qSimXTPN.text3, drawX, drawY+30);
@@ -345,7 +344,6 @@ public abstract class Node extends PetriNetElement {
 								g.setFont(f_Big);
 								alphaStr = "]";
 								g.drawString(alphaStr, drawX+width+width2, drawY+moveDown);
-
 								 */
 
 								//String alfa = "\u03B1:" + Tools.cutValueExt(transXTPN.getAlphaMinValue(), transXTPN.getFraction_xTPN()) + " / "
@@ -357,8 +355,6 @@ public abstract class Node extends PetriNetElement {
 								} else {
 									g.drawString(alfa, drawX, drawY - 16);
 								}
-
-
 							}
 						}
 
@@ -366,10 +362,7 @@ public abstract class Node extends PetriNetElement {
 							Point betaPoint = betaLocations.get(i).getPosition();
 							int drawX = (nodePoint.x) + betaPoint.x - 40;
 							int drawY =  (nodePoint.y) + betaPoint.y - 28;
-
-
 							if(transXTPN.isBetaModeActive()) {
-
 								g.setFont(f_BigL);
 								g.setColor(betaColor);
 								/*
@@ -384,9 +377,7 @@ public abstract class Node extends PetriNetElement {
 								g.setFont(f_Big);
 								betaStr = "]";
 								g.drawString(betaStr, drawX+width+width2, drawY);
-
 								 */
-
 								//String beta = "\u03B2:" + Tools.cutValueExt(transXTPN.getBetaMinValue(), transXTPN.getFraction_xTPN()) + " / "
 								//		+ Tools.cutValueExt(transXTPN.getBetaMaxValue(), transXTPN.getFraction_xTPN());
 								String beta = "\u03B2: [" + Tools.cutValueExt(transXTPN.getBetaMinValue(), transXTPN.getFraction_xTPN()) + ", "
@@ -397,7 +388,6 @@ public abstract class Node extends PetriNetElement {
 						}
 					}
 				}
-
 				//wartości tau niezależnie od qSIM
 				for (int i=0; i<alphaLocations.size(); i++) {
 					if(namesLocations.get(i).getSheetID() != sheetId) //tylko dla danego arkusza
@@ -419,7 +409,7 @@ public abstract class Node extends PetriNetElement {
 
 							String timerA;
 							String timerB;
-							g.setColor(Color.red);
+							g.setColor(tauColor);
 							if(alphaTime < 0 && betaTime < 0) {
 								timerA = "\u03C4(\u03B1): #\u279F#";
 								g.drawString(timerA, drawX + 40, drawY + 12);

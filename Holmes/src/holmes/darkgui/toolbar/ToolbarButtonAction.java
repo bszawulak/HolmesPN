@@ -2,6 +2,7 @@ package holmes.darkgui.toolbar;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.io.Serial;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -12,6 +13,7 @@ import javax.swing.JOptionPane;
  * Klasa pomocnicza do tworzenia przycisków paska zadań.
  */
 public class ToolbarButtonAction extends AbstractAction {
+	@Serial
 	private static final long serialVersionUID = -7314939115369528810L;
 	private Component parentComponent;
 	private String message = "";

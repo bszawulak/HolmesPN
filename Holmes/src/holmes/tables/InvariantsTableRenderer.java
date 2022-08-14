@@ -21,7 +21,6 @@ public class InvariantsTableRenderer implements TableCellRenderer {
 	public InvariantsTableRenderer(JTable table) {
 		this.table = table;
 	}
-
 	
 	/**
 	 * Przeciążona metoda odpowiedzialna za zwrócenie komórki tabeli w zależności od ustawionego
@@ -58,10 +57,7 @@ public class InvariantsTableRenderer implements TableCellRenderer {
 				val = val.substring(1);
 			}
 		}
-    	
-    	
     	oLabel.setText(val);
         return oLabel;
-
 	}
 }

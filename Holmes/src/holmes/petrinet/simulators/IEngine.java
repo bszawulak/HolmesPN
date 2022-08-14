@@ -9,14 +9,14 @@ import holmes.petrinet.elements.Transition;
  * Interface silnika symulatorów.
  */
 public interface IEngine {
-	public void setEngine(SimulatorGlobals.SimNetType simulationType, boolean maxMode, boolean singleMode,
+	void setEngine(SimulatorGlobals.SimNetType simulationType, boolean maxMode, boolean singleMode,
 						  ArrayList<Transition> transitions, ArrayList<Transition> time_transitions,
 						  ArrayList<Place> places);
 	
-	public void setNetSimType(SimulatorGlobals.SimNetType simulationType);
-	public void setMaxMode(boolean value);
-	public void setSingleMode(boolean value);
-	public ArrayList<Transition> getTransLaunchList(boolean emptySteps);
+	void setNetSimType(SimulatorGlobals.SimNetType simulationType);
+	void setMaxMode(boolean value);
+	void setSingleMode(boolean value);
+	ArrayList<Transition> getTransLaunchList(boolean emptySteps);
 	//public void setGenerator(IRandomGenerator generator);
-	public IRandomGenerator getGenerator();
+	IRandomGenerator getGenerator();
 }

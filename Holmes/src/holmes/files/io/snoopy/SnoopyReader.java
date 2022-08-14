@@ -1,4 +1,4 @@
-package holmes.files.io.Snoopy;
+package holmes.files.io.snoopy;
 
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -23,9 +23,6 @@ import holmes.petrinet.elements.Transition.TransitionType;
 /**
  * Klasa odpowiedzialna za wczytywanie tego całego syfu, jaki w pliki ładuje niemiecki geszeft 
  * (baczność!) Snoopy (spocznij!).
- * 
- * @author MR
- *
  */
 public class SnoopyReader {
 	//private boolean classPN = false;

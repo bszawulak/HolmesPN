@@ -20,7 +20,7 @@ public class SPNdataVectorsTableModel extends DefaultTableModel {
 	public boolean changes = false;
 	private HolmesSPNmanager boss;
 	
-	public class SPNvectorTableClass {
+	public static class SPNvectorTableClass {
 		public String selected;
 		public int ID;
 		public String frName;

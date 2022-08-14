@@ -17,7 +17,7 @@ public class SSAplacesTableModel extends DefaultTableModel {
 	private ArrayList<SSAtableContainer> dataMatrix;
 	private int dataSize;
 	
-	public class SSAtableContainer {
+	public static class SSAtableContainer {
 		public String selected;
 		public int ID;
 		public String description;
@@ -117,10 +117,8 @@ public class SSAplacesTableModel extends DefaultTableModel {
             return Object.class;
         }
 		return switch (columnIndex) {
-			case 0 -> String.class;
+			case 0, 2, 3 -> String.class;
 			case 1 -> Integer.class;
-			case 2 -> String.class;
-			case 3 -> String.class;
 			case 4 -> Double.class;
 			default -> Object.class;
 		};

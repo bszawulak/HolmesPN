@@ -26,7 +26,7 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 	private int frVectorIndex;
 	public boolean changes = false;
 	
-	public class FRDataClass {
+	public static class FRDataClass {
 		public int ID;
 		public String name;
 		public String dataVector;

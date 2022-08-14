@@ -3,7 +3,6 @@ package holmes.petrinet.elements.extensions;
 import holmes.petrinet.data.SPNtransitionData;
 
 public class TransitionSPNExtension {
-    //tranzycja stochastyczna:
     /** ST, DT, IM, SchT, NONE - Stochastic Transition, Deterministic T., Immediate T., Scheduled T. */
     public enum StochaticsType {ST, DT, IM, SchT, NONE}
     public StochaticsType stochasticType;
@@ -14,7 +13,7 @@ public class TransitionSPNExtension {
 
     /**
      * Metoda zwraca podtyp SPN tranzycji.
-     * @return StochaticsType - podtyp tranzycji stochastycznej
+     * @return (<b>StochaticsType</b>) - podtyp tranzycji stochastycznej.
      */
     public StochaticsType getSPNtype() {
         return this.stochasticType;
@@ -22,7 +21,7 @@ public class TransitionSPNExtension {
 
     /**
      * Metoda ustawia podtyp SPN tranzycji.
-     * @param value TransitionType -  podtyp tranzycji stochastycznej
+     * @param value (<b>TransitionType</b>) podtyp tranzycji stochastycznej.
      */
     public void setSPNtype(StochaticsType value) {
         this.stochasticType = value;
@@ -30,7 +29,7 @@ public class TransitionSPNExtension {
 
     /**
      * Metoda zwraca wartość firing rate na potrzeby symulacji SPN.
-     * @return double - wartość firing rate
+     * @return (<b>double</b>) - wartość firing rate.
      */
     public double getFiringRate() {
         return this.firingRate;
@@ -38,7 +37,7 @@ public class TransitionSPNExtension {
 
     /**
      * Metoda ustawia nową wartość firing rate dla tranzycji w modelu SPN.
-     * @param firingRate double - nowa wartość
+     * @param firingRate (<b>double</b>) nowa wartość firing rate.
      */
     public void setFiringRate(double firingRate) {
         this.firingRate = firingRate;
@@ -46,7 +45,7 @@ public class TransitionSPNExtension {
 
     /**
      * Metoda zwraca kontener danych SPN tranzycji.
-     * @return SPNtransitionData - kontener danych
+     * @return (<b>SPNtransitionData</b>) kontener danych.
      */
     public SPNtransitionData getSPNbox() {
         return this.SPNbox;
@@ -54,16 +53,24 @@ public class TransitionSPNExtension {
 
     /**
      * Metoda ustawia nowy kontener danych SPN tranzycji.
-     * param SPNbox SPNtransitionData - kontener danych
+     * @param SPNbox (<b>SPNtransitionData</b>) kontener danych.
      */
     public void setSPNbox(SPNtransitionData SPNbox) {
         this.SPNbox = SPNbox;
     }
 
+    /**
+     * Ustawia czas probabilistyczny.
+     * @param time (<b>double</b>) nowy czas.
+     */
     public void setSPNprobTime(double time) {
         this.SPNprobTime = time;
     }
 
+    /**
+     * Zwraca czas probabilistyczny.
+     * @return (<b>double</b>) - czas.
+     */
     public double getSPNprobTime() {
         return this.SPNprobTime;
     }

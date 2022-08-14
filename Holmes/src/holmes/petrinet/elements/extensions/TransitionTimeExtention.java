@@ -12,7 +12,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda ustala dolny limit niezerowego czasu gotowości - EFT.
-     * @param value double - czas EFT
+     * @param value (<b>double</b>) czas EFT.
      */
     public void setEFT(double value) {
         if (value < 0) {
@@ -28,7 +28,7 @@ public class TransitionTimeExtention {
 
     /**
      * Na potrzeby wczytywania pliku projektu, bez porownania z LFT
-     * @param value - double
+     * @param value (<b>double</b>) nowa wartość EFT.
      */
     public void forceSetEFT(double value) {
         if (value < 0) {
@@ -40,7 +40,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda pozwala odczytać przypisany czas EFT tranzycji.
-     * @return double - czas EFT
+     * @return (<b>double</b>) - czas EFT.
      */
     public double getEFT() {
         return this.TPN_eft;
@@ -48,7 +48,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda ustala górny limit nieujemnego czasu krytycznego - LFT.
-     * @param value double - czas LFT (deadline na uruchomienie)
+     * @param value (<b>double</b>) czas LFT (deadline na uruchomienie).
      */
     public void setLFT(double value) {
         if (value < TPN_eft) {
@@ -61,7 +61,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda pozwala odczytać przypisany czas LFT tranzycji.
-     * @return double - czas LFT
+     * @return (<b>double</b>) - czas LFT.
      */
     public double getLFT() {
         return this.TPN_lft;
@@ -69,7 +69,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda pozwala ustawic czas uruchomienia tranzycji.
-     * @param value double - czas uruchomienia tranzycji
+     * @param value (<b>double</b>) czas uruchomienia tranzycji.
      */
     public void setTPNtimerLimit(double value) {
         TPNtimerLimit = value;
@@ -77,7 +77,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda zwraca aktualny czas uruchomienia.
-     * @return double - czas uruchomienia - pole FireTime
+     * @return (<b>double</b>) - czas uruchomienia - pole FireTime.
      */
     public double getTPNtimerLimit() {
         return TPNtimerLimit;
@@ -85,7 +85,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda zwraca aktualny zegar uruchomienia dla tranzycji.
-     * @return double - czas uruchomienia - pole FireTime
+     * @return (<b>double</b>) - czas uruchomienia - pole FireTime.
      */
     public double getTPNtimer() {
         return TPNtimer;
@@ -93,7 +93,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda pozwala ustawic zegar uruchomienia tranzycji.
-     * @param value double - czas uruchomienia tranzycji
+     * @param value (<b>double</b>) czas uruchomienia tranzycji.
      */
     public void setTPNtimer(double value) {
         TPNtimer = value;
@@ -101,7 +101,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda ustawia nowy czas trwania odpalenia dla tranzycji DPN.
-     * @param value double - nowy czas
+     * @param value (<b>double</b>) nowy czas DPN.
      */
     public void setDPNduration(double value) {
         if (value < 0)
@@ -112,7 +112,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda zwraca ustawioną dla tranzycji DPN wartość duration.
-     * @return double - czas trwania odpalenia tranzycji
+     * @return (<b>double</b>) - czas trwania odpalenia tranzycji.
      */
     public double getDPNduration() {
         return DPNduration;
@@ -120,7 +120,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda ustawia nowy wewnętrzny timer dla czasu odpalenia dla tranzycji DPN.
-     * @param value double - nowa wartość zegara dla DPN
+     * @param value (<b>double</b>) nowa wartość zegara dla DPN.
      */
     public void setDPNtimer(double value) {
         DPNtimer = value;
@@ -128,7 +128,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda zwraca aktualną wartość zegara odliczającego czas do odpalenia tranzycji DPN (produkcji tokenów).
-     * @return double durationTimer -
+     * @return (<b>double</b>) - licznik DPNtimer.
      */
     public double getDPNtimer() {
         return DPNtimer;
@@ -136,7 +136,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda pozwalająca stwierdzić, czy tranzycja DPN jest gotowa do produkcji tokenów.
-     * @return boolean - true, jeśli zegar DPN ma wartość równą ustalonemu czasowi DPN dla tranzycji
+     * @return (<b>boolean</b>) - true, jeśli zegar DPN ma wartość równą ustalonemu czasowi DPN dla tranzycji.
      */
     public boolean isDPNforcedToFire() {
         return DPNtimer >= DPNduration;
@@ -144,7 +144,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda informująca czy tranzycja TPN musi zostać uruchomiona.
-     * @return boolean - true, jeśli wewnętrzny zegar (!= -1) jest równy deadlinowi dla TPN
+     * @return (<b>boolean</b> - true, jeśli wewnętrzny zegar (!= -1) jest równy deadlinowi dla TPN.
      */
     public boolean isTPNforcedToFired() {
         if (TPNtimerLimit != -1) {
@@ -166,7 +166,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda włącza lub wyłącza tryb TPN
-     * @param status boolean - true, jeśli tryb TPN ma być aktywny
+     * @param status (<b>boolean</b> true, jeśli tryb TPN ma być aktywny.
      */
     public void setTPNstatus(boolean status) {
         isTPN = status;
@@ -174,7 +174,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda zwraca stan aktywności trybu TPN
-     * @return boolean - true, jeśli TPN aktywny
+     * @return (<b>boolean</b> true, jeśli TPN aktywny.
      */
     public boolean isTPN() {
         return isTPN;
@@ -182,7 +182,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda włącza lub wyłącza tryb DPN
-     * @param status boolean - true, jeśli tryb DPN ma być aktywny
+     * @param status (<b>boolean</b> true, jeśli tryb DPN ma być aktywny.
      */
     public void setDPNstatus(boolean status) {
         isDPN = status;
@@ -190,7 +190,7 @@ public class TransitionTimeExtention {
 
     /**
      * Metoda zwraca stan aktywności trybu DPN
-     * @return boolean - true, jeśli DPN aktywny
+     * @return (<b>boolean</b> true, jeśli DPN aktywny.
      */
     public boolean isDPN() {
         return isDPN;

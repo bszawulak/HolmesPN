@@ -10,16 +10,13 @@ import holmes.petrinet.elements.Place;
 
 /**
  * Model tabeli danych statystycznych dla miejsca (symulacja knockout).
- * 
- * @author MR
- *
  */
 public class SimKnockPlacesTableModel extends AbstractTableModel {
 	@Serial
 	private static final long serialVersionUID = 7417629500439797992L;
 	//private static final DecimalFormat formatter = new DecimalFormat( "#.###" );
 	
-	public class PlaceContainer {
+	public static class PlaceContainer {
     	public int ID;
     	public String name;
     	public double tokenAvg;

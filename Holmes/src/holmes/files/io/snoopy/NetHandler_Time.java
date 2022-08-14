@@ -1,4 +1,4 @@
-package holmes.files.io.Snoopy;
+package holmes.files.io.snoopy;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -21,9 +21,6 @@ import holmes.petrinet.elements.Transition.TransitionType;
 
 /**
  * Parser sieci czasowych (Snoopy)
- * 
- * @author MR (na bazie NetHandler_Classic)
- *
  */
 public class NetHandler_Time extends NetHandler {
 	// Zmienne boolowskie parsera
