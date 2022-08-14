@@ -489,8 +489,7 @@ public class InvariantsSimulator {
 
 	public void setSimulationActive(boolean simulationActive) {
 		this.simulationActive = simulationActive;
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-				.setSimulationActive(isSimulationActive());
+		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setSimulationActive(isSimulationActive());
 	}
 
 	public int getNodesAmount() {

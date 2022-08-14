@@ -121,6 +121,7 @@ public class QuickSimTools {
 			ownSettings.simRepetitions_XTPN = repetitions;
 
 			startSimButton.setEnabled(false);
+			overlord.getWorkspace().getProject().setSimulationActive(true);
 			if(repeate) {
 				if(knockout) {
 					stateSimulatorXTPN.setThreadDetails(3, this, ownSettings, quickProgressBar, button);
@@ -376,6 +377,7 @@ public class QuickSimTools {
 		note.setCaretFirstLine();
 		note.setVisible(true);
 		startSimButton.setEnabled(true);
+		overlord.getWorkspace().getProject().setSimulationActive(false);
 		/*
 
 		transIndex = 0;
@@ -473,9 +475,23 @@ public class QuickSimTools {
 					"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
 			note.addTextLineNL(text, "text");
 
-			text = " \u0394 Inactive (#):  "+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
-					"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
-			note.addTextLineNL(text, "text");
+			double diffSteps = tmpStepsRef - tmpStepsKnock;
+			String signS = "+";
+			if(diffSteps > 0)
+				signS = "-";
+
+			double diffTime = tmpTimeRef - tmpTimeKnock;
+			String signT = "+";
+			if(diffTime > 0)
+				signT = "-";
+
+			String textDeltaInactive = "   \u0394Inact.:  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+signS+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
+					"%) | \u0394\u03C4: "+signT+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+signT+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
+			//note.addTextLineNL(text, "text");
+
+			//text = " \u0394 Inactive (#):  "+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
+			//		"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
+			//note.addTextLineNL(text, "text");
 
 			tmpStepsRef = result.get(0).transDataMatrix.get(transIndex).get(1); //trans.simActiveState
 			tmpTimeRef = result.get(0).transDataMatrix.get(transIndex).get(5); //trans.simActiveTime
@@ -495,9 +511,22 @@ public class QuickSimTools {
 					"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
 			note.addTextLineNL(text, "text");
 
-			text = " \u0394 Active (#):    "+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
-					"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
-			note.addTextLineNL(text, "text");
+			diffSteps = tmpStepsRef - tmpStepsKnock;
+			signS = "+";
+			if(diffSteps > 0)
+				signS = "-";
+
+			diffTime = tmpTimeRef - tmpTimeKnock;
+			signT = "+";
+			if(diffTime > 0)
+				signT = "-";
+
+			String textDeltaActive = "   \u0394Act.  :  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+signS+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
+					"%) | \u0394\u03C4: "+signT+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+signT+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
+
+			//text = " \u0394 Active (#):    "+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
+			//		"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
+			//note.addTextLineNL(text, "text");
 
 
 			tmpStepsRef = result.get(0).transDataMatrix.get(transIndex).get(2); //trans.simProductionState
@@ -518,24 +547,47 @@ public class QuickSimTools {
 					"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
 			note.addTextLineNL(text, "text");
 
-			text = " \u0394 Production (#): "+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
-					"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
-			note.addTextLineNL(text, "text");
+			diffSteps = tmpStepsRef - tmpStepsKnock;
+			signS = "+";
+			if(diffSteps > 0)
+				signS = "-";
+
+			diffTime = tmpTimeRef - tmpTimeKnock;
+			signT = "+";
+			if(diffTime > 0)
+				signT = "-";
+
+			String textDeltaProduction = "   \u0394Prod. :  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+signS+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
+					"%) | \u0394\u03C4: "+signT+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+signT+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
+
+			//text = " \u0394 Production (#): "+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
+			//		"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
+			//note.addTextLineNL(text, "text");
 
 
 			tmpStepsRef = result.get(0).transDataMatrix.get(transIndex).get(3);
 			tmpStepsKnock = result.get(1).transDataMatrix.get(transIndex).get(3);
-			text = " R Fired (#): "+(int)tmpStepsRef ;
+			text = " R Fired (#): "+(int)tmpStepsRef + "  |  " + " K Fired (#): "+(int)tmpStepsKnock;
 			note.addTextLineNL(text, "text");
-			text = " K Fired (#): "+(int)tmpStepsKnock ;
-			note.addTextLineNL(text, "text");
+			//text = " K Fired (#): "+(int)tmpStepsKnock;
+			//note.addTextLineNL(text, "text");
+
+			diffSteps = tmpStepsRef - tmpStepsKnock;
+			signS = "+";
+			if(diffSteps > 0)
+				signS = "-";
+
+			String textDeltaFire = "   \u0394Fired :  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock));
+
+			note.addTextLineNL(textDeltaInactive, "text");
+			note.addTextLineNL(textDeltaActive, "text");
+			note.addTextLineNL(textDeltaProduction, "text");
+			note.addTextLineNL(textDeltaFire, "text");
 
 			/*
-
 			tmpSteps = result.transDataMatrix.get(transIndex).get(3); //trans.simFiredState
 			text = "   Fired (#): "+(int)tmpSteps ;
 			note.addTextLineNL(text, "text");
-
 			 */
 
 			note.addTextLineNL("", "text");
@@ -563,6 +615,7 @@ public class QuickSimTools {
 		note.setCaretFirstLine();
 		note.setVisible(true);
 		startSimButton.setEnabled(true);
+		overlord.getWorkspace().getProject().setSimulationActive(false);
 	}
 
 	private String getTime(long milisecond) {

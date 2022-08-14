@@ -167,8 +167,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)
             mainSimulatorActive = true;
-        //zakomentowane aby pamiętać: poniższe nie uwzględni np. pauzy! więc tylko powyższy warunek naprawdę działa
-        //if(overlord.getWorkspace().getProject().isSimulationActive()) {mainSimulatorActive = true;}
+        if(overlord.getWorkspace().getProject().isSimulationActive()) {
+            mainSimulatorActive = true;
+        }
 
         parentFrame.setEnabled(false);
         setResizable(false);
@@ -524,8 +525,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
         acqDataButton.setMargin(new Insets(0, 0, 0, 0));
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
         acqDataButton.addActionListener(actionEvent -> {
-            acquireNewPlaceData();
-
+            if(overlord.getWorkspace().getProject().isSimulationActive()) {
+                JOptionPane.showMessageDialog(null, "Simulator already running. It must be stopped\nto run this simalation.", "Simulator active",
+                        JOptionPane.WARNING_MESSAGE);
+            } else {
+                acquireNewPlaceData();
+            }
         });
         chartButtonPanel.add(acqDataButton);
 
@@ -1322,7 +1327,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
         acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
         acqDataButton.addActionListener(actionEvent -> {
-            getSingleTransitionData();
+            if(overlord.getWorkspace().getProject().isSimulationActive()) {
+                JOptionPane.showMessageDialog(null, "Simulator already running. It must be stopped\nto run this simalation.", "Simulator active",
+                        JOptionPane.WARNING_MESSAGE);
+            } else {
+                getSingleTransitionData();
+            }
         });
         chartButtonPanel.add(acqDataButton);
 
@@ -1426,8 +1436,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
         acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
         acqDataButton.addActionListener(actionEvent -> {
-            getMultipleTransitionData();
-            //showTransitionsChart();
+            if(overlord.getWorkspace().getProject().isSimulationActive()) {
+                JOptionPane.showMessageDialog(null, "Simulator already running. It must be stopped\nto run this simalation.", "Simulator active",
+                        JOptionPane.WARNING_MESSAGE);
+            } else {
+                getMultipleTransitionData();
+            }
         });
         resultPanel.add(acqDataButton);
 

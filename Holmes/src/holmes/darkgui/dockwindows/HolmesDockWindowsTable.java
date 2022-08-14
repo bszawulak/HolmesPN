@@ -51,7 +51,6 @@ import holmes.workspace.WorkspaceSheet;
 
 /**
  * Klasa zawierająca szczegóły interfejsu podokien dokowalnych programu.
- * <br>
  * <b>Absolute positioning. Of absolute everything here.</b><br>
  * Nie obchodzi mnie, co o tym myślicie<br> (╯゜Д゜）╯︵ ┻━┻) . Idźcie w layout i nie wracajcie. ┌∩┐(◣_◢)┌∩┐
  */
@@ -642,42 +641,56 @@ public class HolmesDockWindowsTable extends JPanel {
             //NA RAZIE tak ma być
             timeStepLabelValue = new JLabel("0");
 
+            internalY += 20;
+
             JLabel stepLabelText = new JLabel("Step:");
-            stepLabelText.setBounds(internalX, internalY += 20, 90, 20);
+            stepLabelText.setBounds(internalX, internalY, 90, 20);
             components.add(stepLabelText);
 
             stepLabelXTPN = new JLabel("0");
             stepLabelXTPN.setBounds(internalX+60, internalY , 90, 20);
             components.add(stepLabelXTPN);
 
+            internalY += 20;
+
             JLabel timeLabelText = new JLabel("Time:");
-            timeLabelText.setBounds(internalX, internalY += 20, 90, 20);
+            timeLabelText.setBounds(internalX, internalY, 90, 20);
             components.add(timeLabelText);
 
             timeLabelXTPN = new JLabel("0.0");
             timeLabelXTPN.setBounds(internalX+60, internalY , 90, 20);
             components.add(timeLabelXTPN);
 
+            internalY += 20;
+
             JLabel optionsLavel = new JLabel("Simulation buttons:");
-            optionsLavel.setBounds(internalX, internalY += 20, 120, 20);
+            optionsLavel.setBounds(internalX, internalY, 120, 20);
             components.add(optionsLavel);
+
+            internalY += 20;
 
             HolmesRoundedButton loopSimulation = new HolmesRoundedButton(""
                     , "simulator/simStart1.png", "simulator/simStart2.png", "simulator/simStart3.png");
             loopSimulation.setName("XTPNstart");
-            loopSimulation.setBounds(internalX, internalY += 20, 40, 40);
+            loopSimulation.setBounds(internalX, internalY, 40, 35);
             loopSimulation.setToolTipText("Loop simulation");
             loopSimulation.addActionListener(actionEvent -> {
-                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-                simulatorXTPN.startSimulation(GraphicalSimulatorXTPN.SimulatorModeXTPN.XTPNLOOP);
-                mode = SIMULATOR;
+                if(overlord.getWorkspace().getProject().isSimulationActive()) {
+                    JOptionPane.showMessageDialog(null, "Simulator already running. It must be stopped\nto run this simalation.", "Simulator active",
+                            JOptionPane.WARNING_MESSAGE);
+                } else {
+                    overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                    simulatorXTPN.startSimulation(GraphicalSimulatorXTPN.SimulatorModeXTPN.XTPNLOOP);
+                    mode = SIMULATOR;
+                }
+
             });
             components.add(loopSimulation);
 
             HolmesRoundedButton pauseSimulation = new HolmesRoundedButton(""
                     , "simulator/simPause1.png", "simulator/simPause2.png", "simulator/simPause3.png");
             pauseSimulation.setName("XTPNpause");
-            pauseSimulation.setBounds(internalX+40, internalY, 40, 40);
+            pauseSimulation.setBounds(internalX+40, internalY, 40, 35);
             pauseSimulation.setToolTipText("Pause simulation");
             pauseSimulation.setEnabled(false);
             pauseSimulation.addActionListener(actionEvent -> {
@@ -690,7 +703,7 @@ public class HolmesDockWindowsTable extends JPanel {
             HolmesRoundedButton stopSimulation = new HolmesRoundedButton(""
                     , "simulator/simStop1.png", "simulator/simStop2.png", "simulator/simStop2.png");
             stopSimulation.setName("XTPNstop");
-            stopSimulation.setBounds(internalX+80, internalY, 40, 40);
+            stopSimulation.setBounds(internalX+80, internalY, 40, 35);
             stopSimulation.setToolTipText("Schedule a stop for the simulation");
             stopSimulation.setEnabled(false);
             stopSimulation.addActionListener(actionEvent -> {
@@ -699,21 +712,27 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(stopSimulation);
 
+            internalY+=40;
+
             HolmesRoundedButton resetButton = new HolmesRoundedButton("<html><center>Restore<br>p-state</center></html>"
                     , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             resetButton.setName("resetM0button");
-            resetButton.setBounds(internalX, internalY+=40, 80, 40);
+            resetButton.setBounds(internalX, internalY, 80, 35);
             resetButton.setToolTipText("Reset all tokens in places.");
             resetButton.setEnabled(true);
             resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
             components.add(resetButton);
 
+            internalY += 50;
+
             JLabel transDelayLabel = new JLabel("Firing delay:");
-            transDelayLabel.setBounds(internalX, internalY+=50, 150, 20);
+            transDelayLabel.setBounds(internalX, internalY, 150, 20);
             components.add(transDelayLabel);
 
+            internalY += 20;
+
             final JSlider arcDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
-            arcDelaySlider.setBounds(internalX, internalY+=20, 150, 50);
+            arcDelaySlider.setBounds(internalX, internalY, 150, 50);
             arcDelaySlider.setMinorTickSpacing(5);
             arcDelaySlider.setMajorTickSpacing(20);
             arcDelaySlider.setPaintTicks(true);
@@ -732,12 +751,16 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(arcDelaySlider);
 
+            internalY += 50;
+
             JLabel arcDelayLabel = new JLabel("Tokens delay:");
-            arcDelayLabel.setBounds(internalX, internalY+=50, 120, 20);
+            arcDelayLabel.setBounds(internalX, internalY, 120, 20);
             components.add(arcDelayLabel);
 
+            internalY += 20;
+
             final JSlider transDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
-            transDelaySlider.setBounds(internalX, internalY+=20, 150, 50);
+            transDelaySlider.setBounds(internalX, internalY, 150, 50);
             transDelaySlider.setMinorTickSpacing(5);
             transDelaySlider.setMajorTickSpacing(20);
             transDelaySlider.setPaintTicks(true);
@@ -761,15 +784,18 @@ public class HolmesDockWindowsTable extends JPanel {
             }.yesWeCan(arcDelaySlider) );
             components.add(transDelaySlider);
 
+            internalY += 50;
 
             JLabel timeValuesVisLabel = new JLabel("Time values visibility:");
-            timeValuesVisLabel.setBounds(internalX, internalY+=50, 140, 20);
+            timeValuesVisLabel.setBounds(internalX, internalY, 140, 20);
             components.add(timeValuesVisLabel);
+
+            internalY += 20;
 
             HolmesRoundedButton showAlfaSwitchButton = new HolmesRoundedButton("<html><center>\u03B1:ON</center></html>"
                     , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             showAlfaSwitchButton.setName("switchAlphas");
-            showAlfaSwitchButton.setBounds(internalX, internalY+=20, 80, 30);
+            showAlfaSwitchButton.setBounds(internalX, internalY, 80, 30);
             showAlfaSwitchButton.setToolTipText("Switch alpha visibility.");
             showAlfaSwitchButton.setEnabled(true);
             showAlfaSwitchButton.addActionListener(actionEvent -> {
@@ -813,10 +839,12 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(showBetaSwitchButton);
 
+            internalY += 30;
+
             HolmesRoundedButton showGammaSwitchButton = new HolmesRoundedButton("<html><center>\u03B3:ON</center></html>"
                     , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             showGammaSwitchButton.setName("switchGammas");
-            showGammaSwitchButton.setBounds(internalX, internalY+=30, 80, 30);
+            showGammaSwitchButton.setBounds(internalX, internalY, 80, 30);
             showGammaSwitchButton.setToolTipText("Switch gamma visibility.");
             showGammaSwitchButton.setEnabled(true);
             showGammaSwitchButton.addActionListener(actionEvent -> {
@@ -878,9 +906,14 @@ public class HolmesDockWindowsTable extends JPanel {
             acqDataButtonXTPN.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
             acqDataButtonXTPN.setToolTipText("Compute steps from zero marking through the number of states");
             acqDataButtonXTPN.addActionListener(actionEvent -> {
-                quickSim.acquireDataXTPN(qSimXTPNSbySteps, qSimXTPNsimStatsSteps, qSimXTPNStatsTime
-                        , qSimXTPNrepeateSim, qSimXTPNStatsRepetitions, qSimXTPNknockoutMode
-                        , qSimXTPNProgressBar, acqDataButtonXTPN);
+                if(overlord.getWorkspace().getProject().isSimulationActive()) {
+                    JOptionPane.showMessageDialog(null, "Simulator already running. It must be stopped\nto run this simalation.", "Simulator active",
+                            JOptionPane.WARNING_MESSAGE);
+                } else {
+                    quickSim.acquireDataXTPN(qSimXTPNSbySteps, qSimXTPNsimStatsSteps, qSimXTPNStatsTime
+                            , qSimXTPNrepeateSim, qSimXTPNStatsRepetitions, qSimXTPNknockoutMode
+                            , qSimXTPNProgressBar, acqDataButtonXTPN);
+                }
             });
             components.add(acqDataButtonXTPN);
 

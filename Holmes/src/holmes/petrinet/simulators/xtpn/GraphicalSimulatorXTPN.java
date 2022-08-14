@@ -44,13 +44,13 @@ public class GraphicalSimulatorXTPN {
     private GUIManager overlord;
 
     public enum SimulatorModeXTPN {
-        XTPNLOOP, SINGLE_STEP,LOOP, STOPPED, PAUSED,
+        XTPNLOOP, SINGLE_STEP, STOPPED, PAUSED,
     }
 
     /**
      * Konstruktor obiektu symulatora sieci.
-     * @param type NetType - typ sieci
-     * @param net PetriNet - sieć do symulacji
+     * @param type (<b>NetType</b>) typ sieci.
+     * @param net (<b>PetriNet</b>) sieć do symulacji.
      */
     public GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType type, PetriNet net) {
         netSimTypeXTPN = type;
@@ -64,11 +64,28 @@ public class GraphicalSimulatorXTPN {
     }
 
     /**
+     * Metoda pozwala sprawdzić, czy symulacja jest w tym momencie aktywna.
+     * @return (<b>boolean</b>) - true, jeśli symulacja jest aktywna; false w przeciwnym wypadku
+     */
+    public boolean isSimulationActive() {
+        return simulationActive;
+    }
+
+    /**
+     * Metoda pozwala ustawić, czy symulacja jest w tym momencie aktywna.
+     * @param simulationActive (<b>boolean</b>) wartość aktywności symulacji.
+     */
+    public void setSimulationActive(boolean simulationActive) {
+        this.simulationActive = simulationActive;
+        overlord.getWorkspace().getProject().setSimulationActive(simulationActive);
+    }
+
+    /**
      * Reset do ustawień domyślnych symulatora XTPN.
      */
     public void resetSimulator() {
         setSimulatorStatus(SimulatorModeXTPN.STOPPED);
-        setSimulationActive(true);
+        setSimulationActive(false);
         previousSimStatusXTPN = SimulatorModeXTPN.STOPPED;
 
         stepCounter = 0;
@@ -133,11 +150,12 @@ public class GraphicalSimulatorXTPN {
         }
         setTimer(new Timer(getDelay(), taskPerformer));
         getTimer().start();
+
     }
 
     /**
-     * Zwraca rodzaj ustawionej sieci do symulacji (BASIC, TIMED, HYBRID).
-     * @return NetType - j.w.
+     * Zwraca rodzaj ustawionej sieci do symulacji.
+     * @return (<b>NetType</b>) BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func
      */
     public SimulatorGlobals.SimNetType getSimNetType() {
         return netSimTypeXTPN;
@@ -218,23 +236,6 @@ public class GraphicalSimulatorXTPN {
         }
 
        // nsl.logSimPause(false);
-    }
-
-    /**
-     * Metoda pozwala sprawdzić, czy symulacja jest w tym momencie aktywna.
-     * @return boolean - true, jeśli symulacja jest aktywna; false w przeciwnym wypadku
-     */
-    public boolean isSimulationActive() {
-        return simulationActive;
-    }
-
-    /**
-     * Metoda pozwala ustawić, czy symulacja jest w tym momencie aktywna.
-     * @param simulationActive boolean - wartość aktywności symulacji
-     */
-    public void setSimulationActive(boolean simulationActive) {
-        this.simulationActive = simulationActive;
-        overlord.getWorkspace().getProject().setSimulationActive(isSimulationActive());
     }
 
     /**
@@ -517,6 +518,8 @@ public class GraphicalSimulatorXTPN {
                     endThisSimulationStep();
                 }
             }
+
+
         }
 
         /**

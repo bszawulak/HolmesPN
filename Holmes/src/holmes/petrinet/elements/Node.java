@@ -14,6 +14,8 @@ import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.utilities.Tools;
 
+import static holmes.graphpanel.EditorResources.*;
+
 /**
  * Klasa implementująca wierzchołek sieci Petriego. Dziedziczą po niej klasy
  * reprezentujące miejsca (Place) oraz tranzycje (Transition). Zapewnia
@@ -198,6 +200,9 @@ public abstract class Node extends PetriNetElement {
 				if(((Transition)this).getTransType() == TransitionType.PN) {
 					int x = transitions.indexOf(this);
 					name = "t"+x;
+				} else if(this instanceof TransitionXTPN) {
+					int x = transitions.indexOf(this);
+					name = "t"+x;
 				} else {
 					int x = timeTransitions.indexOf(this);
 					name = "tt"+x;
@@ -251,16 +256,27 @@ public abstract class Node extends PetriNetElement {
 					if(((PlaceXTPN)this).isGammaModeActive()) {
 						if( ((PlaceXTPN)this).isGammaRangeVisible() ) {
 							int franctionDigits = ((PlaceXTPN)this).getFractionForPlaceXTPN();
-							g.setColor(Color.blue);
-							g.setFont(f_Big);
+							g.setColor(gammaColor);
+							g.setFont(f_BigL);
 							double gamma = ((PlaceXTPN)this).getGammaMaxValue();
 							String gammaMaxVal = "\u221E";
 							if(gamma < Integer.MAX_VALUE-2) {
 								gammaMaxVal = Tools.cutValueExt(((PlaceXTPN)this).getGammaMaxValue(), franctionDigits);
 							}
-							String gammaStr = "\u03B3:" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMinValue(), franctionDigits) + " / "
-									+ gammaMaxVal;
-
+							/*
+							String gammaStr = "\u03B3: [";
+							g.drawString(gammaStr, drawX, drawY);
+							int width = g.getFontMetrics().stringWidth(gammaStr);
+							g.setFont(f_BigL);
+							gammaStr = Tools.cutValueExt(((PlaceXTPN)this).getGammaMinValue(), franctionDigits)+", " + gammaMaxVal;
+							int width2 = g.getFontMetrics().stringWidth(gammaStr);
+							g.drawString(gammaStr, drawX+width, drawY);
+							g.setFont(f_Big);
+							gammaStr = "]";
+							g.drawString(gammaStr, drawX+width+width2, drawY);
+							 */
+							//String gammaStr = "\u03B3:" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMinValue(), franctionDigits) + " / " + gammaMaxVal;
+							String gammaStr = "\u03B3: [" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMinValue(), franctionDigits) + ", " + gammaMaxVal+"]";
 							g.drawString(gammaStr, drawX, drawY);
 						}
 					} else {
@@ -307,34 +323,76 @@ public abstract class Node extends PetriNetElement {
 							Point alphaPoint = alphaLocations.get(i).getPosition();
 
 							int drawX = (nodePoint.x) + alphaPoint.x - 40;
-							int drawY =  (nodePoint.y) + alphaPoint.y - 24;
+							int drawY =  (nodePoint.y) + alphaPoint.y - 28;
 
-							g.setColor(Color.blue);
-							g.setFont(f_Big);
 							if(transXTPN.isAlphaModeActive()) {
-								String alfa = "\u03B1:" + Tools.cutValueExt(transXTPN.getAlphaMinValue(), transXTPN.getFraction_xTPN()) + " / "
-										+ Tools.cutValueExt(transXTPN.getAlphaMaxValue(), transXTPN.getFraction_xTPN());
+								g.setColor(alphaColor);
+								g.setFont(f_BigL);
 
+								/*
+								int moveDown = 0;
+								if(transXTPN.isBetaModeActive()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
+									moveDown = -16;
+								}
+								String alphaStr = "\u03B1: [";
+								g.drawString(alphaStr, drawX, drawY+moveDown);
+								int width = g.getFontMetrics().stringWidth(alphaStr);
+								g.setFont(f_BigL);
+								alphaStr = Tools.cutValueExt(transXTPN.getAlphaMinValue(), transXTPN.getFraction_xTPN()) + ", "
+										+ Tools.cutValueExt(transXTPN.getAlphaMaxValue(), transXTPN.getFraction_xTPN());
+								int width2 = g.getFontMetrics().stringWidth(alphaStr);
+								g.drawString(alphaStr, drawX+width, drawY+moveDown);
+								g.setFont(f_Big);
+								alphaStr = "]";
+								g.drawString(alphaStr, drawX+width+width2, drawY+moveDown);
+
+								 */
+
+								//String alfa = "\u03B1:" + Tools.cutValueExt(transXTPN.getAlphaMinValue(), transXTPN.getFraction_xTPN()) + " / "
+								//		+ Tools.cutValueExt(transXTPN.getAlphaMaxValue(), transXTPN.getFraction_xTPN());
+								String alfa = "\u03B1: [" + Tools.cutValueExt(transXTPN.getAlphaMinValue(), transXTPN.getFraction_xTPN()) + ", "
+										+ Tools.cutValueExt(transXTPN.getAlphaMaxValue(), transXTPN.getFraction_xTPN())+"]";
 								if(!transXTPN.isBetaModeActive()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
 									g.drawString(alfa,drawX, drawY);
 								} else {
 									g.drawString(alfa, drawX, drawY - 16);
 								}
+
+
 							}
 						}
 
 						if(transXTPN.isBetaModeActive() && transXTPN.isBetaRangeVisible()) {
 							Point betaPoint = betaLocations.get(i).getPosition();
 							int drawX = (nodePoint.x) + betaPoint.x - 40;
-							int drawY =  (nodePoint.y) + betaPoint.y - 24;
+							int drawY =  (nodePoint.y) + betaPoint.y - 28;
 
-							//g.setColor(Color.blue);
-							g.setFont(f_Big);
+
 							if(transXTPN.isBetaModeActive()) {
-								g.setColor(darkGreen);
-								String beta = "\u03B2:" + Tools.cutValueExt(transXTPN.getBetaMinValue(), transXTPN.getFraction_xTPN()) + " / "
+
+								g.setFont(f_BigL);
+								g.setColor(betaColor);
+								/*
+								String betaStr = "\u03B2: [";
+								g.drawString(betaStr, drawX, drawY);
+								int width = g.getFontMetrics().stringWidth(betaStr);
+								g.setFont(f_BigL);
+								betaStr = Tools.cutValueExt(transXTPN.getBetaMinValue(), transXTPN.getFraction_xTPN()) + ", "
 										+ Tools.cutValueExt(transXTPN.getBetaMaxValue(), transXTPN.getFraction_xTPN());
+								int width2 = g.getFontMetrics().stringWidth(betaStr);
+								g.drawString(betaStr, drawX+width, drawY);
+								g.setFont(f_Big);
+								betaStr = "]";
+								g.drawString(betaStr, drawX+width+width2, drawY);
+
+								 */
+
+								//String beta = "\u03B2:" + Tools.cutValueExt(transXTPN.getBetaMinValue(), transXTPN.getFraction_xTPN()) + " / "
+								//		+ Tools.cutValueExt(transXTPN.getBetaMaxValue(), transXTPN.getFraction_xTPN());
+								String beta = "\u03B2: [" + Tools.cutValueExt(transXTPN.getBetaMinValue(), transXTPN.getFraction_xTPN()) + ", "
+										+ Tools.cutValueExt(transXTPN.getBetaMaxValue(), transXTPN.getFraction_xTPN())+"]";
 								g.drawString(beta, drawX, drawY);
+
 							}
 						}
 					}

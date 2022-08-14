@@ -8,7 +8,6 @@ import java.awt.Stroke;
  * Klasa zasobów programu, ogólnie mówiac definiuje stałe związane z grafiką.
  */
 public class EditorResources {
-	
 	public static final Color selectionColorLevel1 = new Color(30, 144, 255, 20);
 	public static final Color selectionColorLevel2 = new Color(30, 144, 255, 50);
 	public static final Color selectionColorLevel3 = new Color(30, 144, 255, 100);
@@ -75,7 +74,6 @@ public class EditorResources {
 
 
 	//oznaczania TPN / DPN:
-
 	public static final Color tpnNOTdpn = new Color(51, 255, 51);
 	public static final Color dpnNOTtpn = new Color(0,153,76);
 	public static final Color tpnANDdpn = new Color(0,102,0);
@@ -83,4 +81,10 @@ public class EditorResources {
 
 	public static final Color placeDefColor = new Color(255,255,255);
 	public static final Color transDefColor = new Color(224, 224, 224);
+
+	//XTPN:
+	public static final Color alphaColor = new Color(51, 102, 255);
+	public static final Color betaColor = new Color(0, 153, 0);
+	public static final Color gammaColor = new Color(60, 60, 60);
+	public static final Color tauaColor = new Color(255, 51, 0);
 }

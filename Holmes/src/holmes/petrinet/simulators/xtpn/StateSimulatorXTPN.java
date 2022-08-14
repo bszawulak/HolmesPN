@@ -60,6 +60,8 @@ public class StateSimulatorXTPN implements Runnable {
         sg = overlord.simSettings;
     }
 
+
+
     /**
      * Klasa kontener dla danych z szybkiej symulacji. Macierz tranzycji zawiera tyle list ile kroków symulacji,
      * a każdy wpis to krotka: liczba kroków w fazach: nieaktywna, aktywna, produkująca, uruchomion; czas w fazach:

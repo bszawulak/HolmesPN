@@ -19,7 +19,6 @@ public class SimulatorGlobals {
 		BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func
 	}
 	private GUIManager overlord;
-	
 	private int ARC_STEP_DELAY = 25;
 	private int TRANS_FIRING_DELAY = 25;
 	
@@ -27,12 +26,12 @@ public class SimulatorGlobals {
 	private boolean singleMode = false;
 	private SimNetType refNetType = SimNetType.BASIC;
 	private boolean emptySteps = false; // 0 - bez pustych kroków, 1 - z pustymi krokami
-	private int simSteps = 1000;			//liczba kroków dla zbioru referencyjnego
+	private int simSteps = 1000; //liczba kroków dla zbioru referencyjnego
 	private int simReps = 100;
 
 	public long currentStep = 0;
 	public double currentTime = 0;
-	private int simulatorType = 0; // 0 -standard, 1 - SSPN, 2 - Gillespie SSA
+	private int simulatorType = 0; // 0 - standard, 1 - SSPN, 2 - Gillespie SSA
 	private int generatorType = 0; // 0 - Random (Java), 1 - HighQualityRandomGenerator
 	
 	private int SPNimmediateMode = 2;
@@ -42,7 +41,6 @@ public class SimulatorGlobals {
 
 	//XTPN:
 	private double calculationsAccuracy = 0.000000001;
-
 	public long simSteps_XTPN = 1000;
 	public double simMaxTime_XTPN = 300.0;
 	public int simRepetitions_XTPN = 10;

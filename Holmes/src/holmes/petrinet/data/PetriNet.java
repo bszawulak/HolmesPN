@@ -827,7 +827,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda zwraca obiekt przechowujący zbiory MCS;
-	 * @return MinCutSetData - obiekt MCS
+	 * @return (<b>MCSDataMatrix</b>) - obiekt MCS
 	 */
 	public MCSDataMatrix getMCSdataCore() {
 		return mcsData;
@@ -835,7 +835,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda ustawia nowy obiekt danych zbiorów MCS.
-	 * @param newMCS MCSDataMatrix - nowy obiekt
+	 * @param newMCS (<b>MCSDataMatrix</b>) nowy obiekt MCS.
 	 */
 	public void setMCSdataCore(MCSDataMatrix newMCS) {
 		mcsData = newMCS;
@@ -843,7 +843,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Dostęp do obiektu danych symulacji knockout.
-	 * @return NetSimulationDataCore - obiekt
+	 * @return (<b>NetSimulationDataCore</b>) - obiekt danych.
 	 */
 	public NetSimulationDataCore accessSimKnockoutData() {
 		return this.simData;
@@ -851,7 +851,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Ustawia nowy obiekt danych symulacji.
-	 * @param data NetSimulationDataCore - dane
+	 * @param data (<b>NetSimulationDataCore</b>) dane.
 	 */
 	public void setNewKnockoutData(NetSimulationDataCore data) {
 		this.simData = data;
@@ -875,7 +875,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Umożliwia dostęp do managera wektorów SSA sieci.
-	 * @return SSAplacesManager - obiekt managera
+	 * @return (<b>SSAplacesManager</b>) - obiekt managera.
 	 */
 	public SSAplacesManager accessSSAmanager() {
 		return this.ssaManager;
@@ -887,7 +887,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Umożliwia dostęp do managera odpaleń tranzycji SPN sieci.
-	 * @return FiringRatesManager - obiekt managera fr
+	 * @return (<b>FiringRatesManager</b>) - obiekt managera fr.
 	 */
 	public SPNdataVectorManager accessFiringRatesManager() {
 		return this.firingRatesManager;
@@ -1097,9 +1097,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda powoduje usunięcie arkusza GraphPanel o identyfikatorze podanym w
 	 * parametrze. Nie powoduje to jednak usunięcia zawartych na nim wierzchołków
 	 * oraz łuków.
-	 * @param sheetID int - identyfikator który ma zostać usunięty
-	 * @return boolean - true w sytuacji powodzenia operacji usunięcia, gdy GraphPanel o podanym identyfikatorze istniał;
-	 *		false w przypadku przeciwnym
+	 * @param sheetID (<b>int</b>) identyfikator który ma zostać usunięty.
+	 * @return (<b>boolean</b>) - true w sytuacji powodzenia operacji usunięcia, gdy GraphPanel o podanym identyfikatorze istniał.
 	 */
 	public boolean removeGraphPanel(int sheetID) {
 		System.out.println("Before deletion:");
@@ -1143,8 +1142,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda sprawdza potencjalne konflikty w nazwach wierzchołków.
-	 * @param name - nazwa wierzchołka
-	 * @return boolean - true jeżeli nazwa już istnieje; false w przeciwnym wypadku
+	 * @param name (<b>String</b>) nazwa wierzchołka.
+	 * @return (<b>boolean</b>) - true jeżeli nazwa już istnieje; false w przeciwnym wypadku.
 	 */
 	public boolean checkNameConflict(String name) {
 		for (Node n : this.getNodes())
@@ -1169,8 +1168,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda pozwala na zapis całej sieci z projektu do pliku PNT
-	 * @param filePath String - ścieżka do pliku zapisu
-	 * @return boolean - status operacji: true jeśli nie było problemów
+	 * @param filePath (<b>String</b>) - ścieżka do pliku zapisu.
+	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było problemów.
 	 */
 	public boolean saveAsPNT(String filePath) {
 		return communicationProtocol.writePNT(filePath, getPlaces(), getTransitions(), getArcs());
@@ -1178,8 +1177,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda pozwala na zapis całej sieci do pliku projektu.
-	 * @param filePath String - ścieżka do pliku zapisu
-	 * @return boolean - status operacji: true jeśli nie było problemów
+	 * @param filePath (<b>String</b>) ścieżka do pliku zapisu.
+	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było problemów.
 	 */
 	public boolean saveAsAbyss(String filePath) {
 		AbyssWriter ABYSSSwriter = new AbyssWriter();
@@ -1188,8 +1187,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda pozwala zapisać sieć do formatu SPPED programu Snoopy.
-	 * @param filePath String - ścieżka docelowa pliku
-	 * @return boolean - status operacji: true jeśli nie było błędów
+	 * @param filePath (<b>String</b>) ścieżka docelowa pliku.
+	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było błędów.
 	 */
 	public boolean saveAsSPPED(String filePath) {
 		SnoopyWriter sWr = new SnoopyWriter();
@@ -1198,8 +1197,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda pozwala zapisać sieć do formatu SPEPT (Extended) programu Snoopy.
-	 * @param filePath String - ścieżka docelowa pliku
-	 * @return boolean - status operacji: true jeśli nie było problemów
+	 * @param filePath (<b>String</b>) ścieżka docelowa pliku.
+	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było problemów.
 	 */
 	public boolean saveAsSPEPT(String filePath) {
 		SnoopyWriter sWr = new SnoopyWriter();
@@ -1208,8 +1207,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda pozwala zapisać sieć do formatu SPTPT (czasowe) programu Snoopy.
-	 * @param filePath String - ścieżka docelowa pliku
-	 * @return boolean - status operacji: true jeśli nie było problemów
+	 * @param filePath (<b>String</b>) ścieżka docelowa pliku.
+	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było problemów.
 	 */
 	public boolean saveAsSPTPT(String filePath) {
 		SnoopyWriter sWr = new SnoopyWriter();
@@ -1218,7 +1217,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda pozwala na odczyt całej sieci z pliku podanego w parametrze metody.
-	 * @param path String - ścieżka do pliku odczytu
+	 * @param path (<b>String</b>) ścieżka do pliku odczytu.
 	 */
 	public boolean loadFromFile(String path) {
 		boolean status = overlord.reset.newProjectInitiated();
@@ -1322,10 +1321,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda zapisująca inwarianty do pliku w formacie CSV.
-	 * @param path String - ścieżka do pliku zapisu
-	 * @param silence boolean - true, jeśli mają być komunikaty
-	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
-	 * @return int - 0 jeśli operacja się udała, -1 w przeciwnym wypadku
+	 * @param path (<b>String</b>) ścieżka do pliku zapisu.
+	 * @param silence (<b>boolean</b>) true, jeśli mają być komunikaty.
+	 * @param t_inv (<b>boolean</b>) true, jeśli chodzi o t-inwarianty.
+	 * @return (<b>int</b>) - 0 jeśli operacja się udała, -1 w przeciwnym wypadku.
 	 */
 	public int saveInvariantsToCSV(String path, boolean silence, boolean t_inv) {
 		int result = -1;
@@ -1368,9 +1367,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda zapisująca inwarianty do pliku w formacie INA.
-	 * @param path String - ścieżka do pliku zapisu
-	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
-	 * @return int - 0 jeśli operacja się udała, -1 w przeciwnym wypadku
+	 * @param path (<b>String</b>) ścieżka do pliku zapisu.
+	 * @param t_inv (<b>boolean</b>) true, jeśli chodzi o t-inwarianty.
+	 * @return (<b>int</b>) - 0 jeśli operacja się udała, -1 w przeciwnym wypadku.
 	 */
 	public int saveInvariantsToInaFormat(String path, boolean t_inv) {
 		int result = -1;
@@ -1412,9 +1411,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda zapisująca inwarianty do pliku w formacie CSV.
-	 * @param path String - ścieżka do pliku zapisu
-	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
-	 * @return int - 0 jeśli operacja się udała, -1 w przeciwnym wypadku
+	 * @param path (<b>String</b>) ścieżka do pliku zapisu.
+	 * @param t_inv (<b>boolean</b>) true, jeśli chodzi o t-inwarianty.
+	 * @return (<b>int</b>) - 0 jeśli operacja się udała, -1 w przeciwnym wypadku.
 	 */
 	public int saveInvariantsToCharlie(String path, boolean t_inv) {
 		int result = -1;
@@ -1457,9 +1456,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda wczytująca plik inwariantów z pliku .inv (format INA) i zastępująca aktualnie
 	 * wynegerowane w programie inwarianty jego zawartością (o ile został poprawnie wczytany).
-	 * @param path String - ścieżka do pliku INA
-	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
-	 * @return boolean - true, jeśli operacja się powiodła
+	 * @param path (<b>String</b>) - ścieżka do pliku INA.
+	 * @param t_inv (<b>boolean</b>) true, jeśli chodzi o t-inwarianty.
+	 * @return (<b>boolean</b>) - true, jeśli operacja się powiodła.
 	 */
 	public boolean loadTPinvariantsFromFile(String path, boolean t_inv) {
 		try {
@@ -1513,8 +1512,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda pozwala na pobranie stanu symulacji. W sytuacji gdy jest ona aktywna
 	 * (isSimulationActive = true) wszelka interakcja z arkuszami oraz obiektami
 	 * znajdującymi się na nich jest zablokowana.
-	 * @return boolean - true w sytuacji gdy symulacja jest aktualnie aktywna;
-	 * 		false w przypadku przeciwnym
+	 * @return (<b>boolean</b>) - true w sytuacji gdy symulacja jest aktualnie aktywna
 	 */
 	public boolean isSimulationActive() {
 		return isSimulationActive;
@@ -1524,12 +1522,13 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda pozwala na ustawienie stanu symulacji. W sytuacji gdy jest ona aktywna
 	 * (isSimulationActive = true) wszelka interakcja z arkuszami oraz obiektami
 	 * znajdującymi się na nich jest zablokowana.
-	 * @param isSimulationActive boolean - nowy stan symulacji
+	 * @param isSimulationActive (<b>boolean</b>) nowy stan symulacji.
 	 */
 	public void setSimulationActive(boolean isSimulationActive) {
 		this.isSimulationActive = isSimulationActive;
-		for (GraphPanel g : this.getGraphPanels())
+		for (GraphPanel g : this.getGraphPanels()) {
 			g.setSimulationActive(isSimulationActive);
+		}
 	}
 
 	/**
@@ -1576,7 +1575,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda ustawia podświetlanie zbiorów MCT.
-	 * @param isGlowedMTC boolean - true jeśli MCT ma być podświetlony
+	 * @param isGlowedMTC (<b>boolean</b>) true jeśli MCT ma być podświetlony.
 	 */
 	private void setTransitionGlowedMTC(boolean isGlowedMTC) {
 		for (Node n : getNodes())
@@ -1587,7 +1586,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda ustawia podświetlanie podsieci.
-	 * @param isGlowedSubnet boolean - true jeśli MCT ma być podświetlony
+	 * @param isGlowedSubnet (<b>boolean</b>) true jeśli MCT ma być podświetlony.
 	 */
 	private void setGlowedSubnet(boolean isGlowedSubnet) {
 		for (Node n : getNodes()){
@@ -1686,7 +1685,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda sprawdza czy istnieje już rysowana wcześniej sieć.
-	 * @return boolean - false, jeśli nie należy kontynuować
+	 * @return (<b>boolean</b>) - false, jeśli nie należy kontynuować.
 	 */
 	@SuppressWarnings("unused")
 	private boolean checkIfEmpty() {
