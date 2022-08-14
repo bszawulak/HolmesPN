@@ -1656,7 +1656,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 			if(n instanceof TransitionXTPN) {
 				((TransitionXTPN)n).qSimXTPN.clean();
-				((TransitionXTPN)n).showQSimXTPN = false;
+				((TransitionXTPN)n).qSimXTPN.showQSimXTPN = false;
 			}
 		}
 	}

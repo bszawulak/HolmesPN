@@ -297,7 +297,7 @@ public abstract class Node extends PetriNetElement {
 							+ "Node drawName method.", "error", true);
 					return;
 				}
-				if(transXTPN.showQSimXTPN) {
+				if(transXTPN.qSimXTPN.showQSimXTPN) {
 					for (int i=0; i<alphaLocations.size(); i++) { // ==
 						if (namesLocations.get(i).getSheetID() != sheetId) //tylko dla danego arkusza
 							continue;

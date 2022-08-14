@@ -1,6 +1,8 @@
 package holmes.petrinet.elements;
 
 import holmes.darkgui.GUIManager;
+import holmes.petrinet.elements.containers.TransitionXTPNhistoryContainer;
+import holmes.petrinet.elements.containers.TransitionXTPNqSimGraphics;
 
 import java.awt.*;
 import java.io.Serial;
@@ -9,7 +11,6 @@ import java.util.ArrayList;
 public class TransitionXTPN extends Transition {
     @Serial
     private static final long serialVersionUID = 4766270474155264671L;
-    //parametry xTPN:
     private boolean alphaMode_xTPN = true;
     private boolean alphaRangeVisibility_XTPN = true;
     private double alphaMin_xTPN = 0.0;
@@ -22,52 +23,18 @@ public class TransitionXTPN extends Transition {
     private double tauBeta_xTPN = -1.0;
     private double timer_Ualfa_XTPN = -1.0;
     private double timer_Vbeta_XTPN = -1.0;
-    private boolean tauTimersVisibility_XTPN = true; //czy wyświetlać timery
-
-    //jeśli miejsca wejściowe tracą szybciej tokeny ze starości niż z
-    //produkcji, zmniejszamy tau Alfa i Beta (prawdopodobieństwo).
+    private boolean tauTimersVisibility_XTPN = true;
     private boolean massActionKinetics = false;
     private boolean isImmediateXTPN = false;
     private boolean isActivated_xTPN = false;
     private boolean isProducing_xTPN = false;
+
+
     //grafika:
     private int fractionDigits = 2;
+    public TransitionXTPNhistoryContainer simHistoryXTPN = new TransitionXTPNhistoryContainer();
+    public TransitionXTPNqSimGraphics qSimXTPN = new TransitionXTPNqSimGraphics();
 
-
-    //sim:
-    public int simInactiveState = 0;
-    public int simActiveState = 0;
-    public int simProductionState = 0;
-    public int simFiredState = 0;
-    public double simInactiveTime = 0.0;
-    public double simActiveTime = 0.0;
-    public double simProductionTime = 0.0;
-
-    public ArrayList<Double> statesHistory = new ArrayList<>();
-    public ArrayList<Double> statesTimeHistory = new ArrayList<>();
-    public boolean storeHistory = false;
-
-    public QSimXTPNgraphical qSimXTPN = new QSimXTPNgraphical();
-
-    public boolean showQSimXTPN = false;
-    public static class QSimXTPNgraphical {
-        public int xOff = -70;
-        public int yOff = -60;
-
-        public String text1 = "";
-        public String text2 = "";
-        public String text3 = "";
-        public String text4 = "";
-
-        public void clean() {
-            xOff = -70;
-            yOff = -60;
-            text1 = "";
-            text2 = "";
-            text3 = "";
-            text4 = "";
-        }
-    }
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
@@ -121,17 +88,6 @@ public class TransitionXTPN extends Transition {
         timer_Vbeta_XTPN = -1.0;
         isActivated_xTPN = false;
         isProducing_xTPN = false;
-    }
-
-    public void resetSimVariables_XTPN() {
-        simInactiveState = 0;
-        simActiveState = 0;
-        simProductionState = 0;
-        simFiredState = 0;
-
-        simInactiveTime = 0.0;
-        simActiveTime = 0.0;
-        simProductionTime = 0.0;
     }
 
     /**
@@ -608,16 +564,5 @@ public class TransitionXTPN extends Transition {
             }
         }
         return false;
-    }
-
-    public void cleanHistoryVectors() {
-        storeHistory = false;
-        statesHistory.clear();
-        statesTimeHistory.clear();
-    }
-
-    public void addHistoryMoment(double state, double time) {
-        statesHistory.add(state);
-        statesTimeHistory.add(time);
     }
 }

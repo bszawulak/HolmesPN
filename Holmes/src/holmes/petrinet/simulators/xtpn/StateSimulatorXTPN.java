@@ -1,7 +1,6 @@
 package holmes.petrinet.simulators.xtpn;
 
 import holmes.darkgui.GUIManager;
-import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.data.MultisetM;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.functions.FunctionsTools;
@@ -233,7 +232,7 @@ public class StateSimulatorXTPN implements Runnable {
         createBackupState(); //zapis p-stanu
 
         for (TransitionXTPN trans : transitions) {
-            trans.storeHistory = false;
+            trans.simHistoryXTPN.storeHistory = false;
         }
 
         if (ownSettings.simulateTime) {
@@ -291,7 +290,7 @@ public class StateSimulatorXTPN implements Runnable {
         createBackupState(); //zapis p-stanu
 
         for (TransitionXTPN trans : transitions) {
-            trans.storeHistory = true;
+            trans.simHistoryXTPN.storeHistory = true;
         }
 
         if (ownSettings.simulateTime) {
@@ -317,22 +316,22 @@ public class StateSimulatorXTPN implements Runnable {
 
         for (TransitionXTPN trans : transitions) {
             if (trans.equals(transition)) { //zachowaj historię, zanim skasujemy:
-                statusVector = new ArrayList<>(trans.statesHistory);
-                timeVector = new ArrayList<>(trans.statesTimeHistory);
+                statusVector = new ArrayList<>(trans.simHistoryXTPN.statesHistory);
+                timeVector = new ArrayList<>(trans.simHistoryXTPN.statesTimeHistory);
 
-                statsVector.add((double) trans.simInactiveState);
-                statsVector.add((double) trans.simActiveState);
-                statsVector.add((double) trans.simProductionState);
-                statsVector.add((double) trans.simFiredState);
-                statsVector.add(trans.simInactiveTime);
-                statsVector.add(trans.simActiveTime);
-                statsVector.add(trans.simProductionTime);
+                statsVector.add((double) trans.simHistoryXTPN.simInactiveState);
+                statsVector.add((double) trans.simHistoryXTPN.simActiveState);
+                statsVector.add((double) trans.simHistoryXTPN.simProductionState);
+                statsVector.add((double) trans.simHistoryXTPN.simFiredState);
+                statsVector.add(trans.simHistoryXTPN.simInactiveTime);
+                statsVector.add(trans.simHistoryXTPN.simActiveTime);
+                statsVector.add(trans.simHistoryXTPN.simProductionTime);
 
                 resultVectors.add(statusVector);
                 resultVectors.add(timeVector);
                 resultVectors.add(statsVector);
             }
-            trans.cleanHistoryVectors();
+            trans.simHistoryXTPN.cleanHistoryVectors();
         }
 
         readyToSimulate = false;
@@ -357,7 +356,7 @@ public class StateSimulatorXTPN implements Runnable {
         createBackupState(); //zapis p-stanu
 
         for (TransitionXTPN trans : transitions) {
-            trans.storeHistory = false;
+            trans.simHistoryXTPN.storeHistory = false;
         }
 
         int step = 0;
@@ -382,13 +381,13 @@ public class StateSimulatorXTPN implements Runnable {
 
             dataVector.add((double) step);
             dataVector.add(simTimeCounter);
-            dataVector.add((double) trans.simInactiveState);
-            dataVector.add((double) trans.simActiveState);
-            dataVector.add((double) trans.simProductionState);
-            dataVector.add((double) trans.simFiredState);
-            dataVector.add(trans.simInactiveTime);
-            dataVector.add(trans.simActiveTime);
-            dataVector.add(trans.simProductionTime);
+            dataVector.add((double) trans.simHistoryXTPN.simInactiveState);
+            dataVector.add((double) trans.simHistoryXTPN.simActiveState);
+            dataVector.add((double) trans.simHistoryXTPN.simProductionState);
+            dataVector.add((double) trans.simHistoryXTPN.simFiredState);
+            dataVector.add(trans.simHistoryXTPN.simInactiveTime);
+            dataVector.add(trans.simHistoryXTPN.simActiveTime);
+            dataVector.add(trans.simHistoryXTPN.simProductionTime);
             break;
         }
 
@@ -442,39 +441,39 @@ public class StateSimulatorXTPN implements Runnable {
         ArrayList<TransitionXTPN> stateChangedTransitions = new ArrayList<>();
 
         for (TransitionXTPN trans : producingTokensTransitionsAll) {
-            trans.simFiredState++; //wyprodukowały coś w tym kroku, state=3
+            trans.simHistoryXTPN.simFiredState++; //wyprodukowały coś w tym kroku, state=3
             if (trans.isBetaModeActive()) { // wcześniej była w fazie produkcji (DPN/XTPN)
-                trans.simProductionState++;
-                trans.simProductionTime += infoNode.timeToChange;
+                trans.simHistoryXTPN.simProductionState++;
+                trans.simHistoryXTPN.simProductionTime += infoNode.timeToChange;
 
-                if (trans.storeHistory)
-                    trans.addHistoryMoment(2.0, infoNode.timeToChange);
+                if (trans.simHistoryXTPN.storeHistory)
+                    trans.simHistoryXTPN.addHistoryMoment(2.0, infoNode.timeToChange);
             } else if (trans.isAlphaModeActive()) { // wcześniej była w fazie aktywności (TPN)
-                trans.simActiveState++;
-                trans.simActiveTime += infoNode.timeToChange;
+                trans.simHistoryXTPN.simActiveState++;
+                trans.simHistoryXTPN.simActiveTime += infoNode.timeToChange;
 
-                if (trans.storeHistory)
-                    trans.addHistoryMoment(1.0, infoNode.timeToChange);
+                if (trans.simHistoryXTPN.storeHistory)
+                    trans.simHistoryXTPN.addHistoryMoment(1.0, infoNode.timeToChange);
             } else { // klasyczna, ale żeby odpalić musiała być przecież aktywna...
-                trans.simActiveState++;
-                trans.simActiveTime += infoNode.timeToChange;
+                trans.simHistoryXTPN.simActiveState++;
+                trans.simHistoryXTPN.simActiveTime += infoNode.timeToChange;
 
-                if (trans.storeHistory)
-                    trans.addHistoryMoment(1.0, infoNode.timeToChange);
+                if (trans.simHistoryXTPN.storeHistory)
+                    trans.simHistoryXTPN.addHistoryMoment(1.0, infoNode.timeToChange);
             }
-            if (trans.storeHistory)
-                trans.addHistoryMoment(3.0, infoNode.timeToChange);
+            if (trans.simHistoryXTPN.storeHistory)
+                trans.simHistoryXTPN.addHistoryMoment(3.0, infoNode.timeToChange);
             stateChangedTransitions.add(trans);
         }
         if (transitionsAfterSubtracting.size() == 3) {
             for (TransitionXTPN trans : transitionsAfterSubtracting.get(2)) { //deaktywowane przed pobraniem tokenów
-                trans.simActiveState++; //deaktywowana, ale do tego momentu musiała być  aktywna
-                trans.simActiveTime += infoNode.timeToChange; // musiała być wcześniej aktywna
+                trans.simHistoryXTPN.simActiveState++; //deaktywowana, ale do tego momentu musiała być  aktywna
+                trans.simHistoryXTPN.simActiveTime += infoNode.timeToChange; // musiała być wcześniej aktywna
 
                 stateChangedTransitions.add(trans);
 
-                if (trans.storeHistory)
-                    trans.addHistoryMoment(1.0, infoNode.timeToChange);
+                if (trans.simHistoryXTPN.storeHistory)
+                    trans.simHistoryXTPN.addHistoryMoment(1.0, infoNode.timeToChange);
             }
             for (TransitionXTPN trans : transitionsAfterSubtracting.get(0)) {
                 //wciąż produkują (XTPN), get(1) to klasyczne i one już były przerobione dla producingTokensTransitionsAll
@@ -482,11 +481,11 @@ public class StateSimulatorXTPN implements Runnable {
                     continue;
 
                 if (trans.isBetaModeActive()) { //DPN? XTPN?
-                    trans.simActiveState++; //rozpoczęła produkcję, ale do tego momentu musiała być aktywna
-                    trans.simActiveTime += infoNode.timeToChange; // musiała być do tego momentu aktywna
+                    trans.simHistoryXTPN.simActiveState++; //rozpoczęła produkcję, ale do tego momentu musiała być aktywna
+                    trans.simHistoryXTPN.simActiveTime += infoNode.timeToChange; // musiała być do tego momentu aktywna
 
-                    if (trans.storeHistory)
-                        trans.addHistoryMoment(1.0, infoNode.timeToChange);
+                    if (trans.simHistoryXTPN.storeHistory)
+                        trans.simHistoryXTPN.addHistoryMoment(1.0, infoNode.timeToChange);
                 }
                 stateChangedTransitions.add(trans);
             }
@@ -498,23 +497,23 @@ public class StateSimulatorXTPN implements Runnable {
                 continue;
 
             if (trans.isActivated_xTPN()) { //jeśli aktywna:
-                trans.simActiveState++;
-                trans.simActiveTime += infoNode.timeToChange;
+                trans.simHistoryXTPN.simActiveState++;
+                trans.simHistoryXTPN.simActiveTime += infoNode.timeToChange;
 
-                if (trans.storeHistory)
-                    trans.addHistoryMoment(1.0, infoNode.timeToChange);
+                if (trans.simHistoryXTPN.storeHistory)
+                    trans.simHistoryXTPN.addHistoryMoment(1.0, infoNode.timeToChange);
             } else if (trans.isProducing_xTPN()) { //jeśli produkująca
-                trans.simProductionState++;
-                trans.simProductionTime += infoNode.timeToChange;
+                trans.simHistoryXTPN.simProductionState++;
+                trans.simHistoryXTPN.simProductionTime += infoNode.timeToChange;
 
-                if (trans.storeHistory)
-                    trans.addHistoryMoment(2.0, infoNode.timeToChange);
+                if (trans.simHistoryXTPN.storeHistory)
+                    trans.simHistoryXTPN.addHistoryMoment(2.0, infoNode.timeToChange);
             } else { //nieaktywna:
-                trans.simInactiveState++;
-                trans.simInactiveTime += infoNode.timeToChange;
+                trans.simHistoryXTPN.simInactiveState++;
+                trans.simHistoryXTPN.simInactiveTime += infoNode.timeToChange;
 
-                if (trans.storeHistory)
-                    trans.addHistoryMoment(0.0, infoNode.timeToChange);
+                if (trans.simHistoryXTPN.storeHistory)
+                    trans.simHistoryXTPN.addHistoryMoment(0.0, infoNode.timeToChange);
             }
         }
 
@@ -662,7 +661,7 @@ public class StateSimulatorXTPN implements Runnable {
         }
         for (TransitionXTPN trans : transitions) {
             trans.deactivateTransitionXTPN(false);
-            trans.cleanHistoryVectors();
+            trans.simHistoryXTPN.cleanHistoryVectors();
         }
     }
 
@@ -685,7 +684,7 @@ public class StateSimulatorXTPN implements Runnable {
         }
         for (TransitionXTPN trans : transitions) {
             trans.deactivateTransitionXTPN(false);
-            trans.resetSimVariables_XTPN();
+            trans.simHistoryXTPN.resetSimVariables_XTPN();
         }
     }
 
@@ -786,13 +785,13 @@ public class StateSimulatorXTPN implements Runnable {
         //STATYSTYKI TRANZYCJI:
         for (TransitionXTPN trans : transitions) {
             ArrayList<Double> dataVector = new ArrayList<>();
-            dataVector.add((double) trans.simInactiveState);
-            dataVector.add((double) trans.simActiveState);
-            dataVector.add((double) trans.simProductionState);
-            dataVector.add((double) trans.simFiredState);
-            dataVector.add(trans.simInactiveTime);
-            dataVector.add(trans.simActiveTime);
-            dataVector.add(trans.simProductionTime);
+            dataVector.add((double) trans.simHistoryXTPN.simInactiveState);
+            dataVector.add((double) trans.simHistoryXTPN.simActiveState);
+            dataVector.add((double) trans.simHistoryXTPN.simProductionState);
+            dataVector.add((double) trans.simHistoryXTPN.simFiredState);
+            dataVector.add(trans.simHistoryXTPN.simInactiveTime);
+            dataVector.add(trans.simHistoryXTPN.simActiveTime);
+            dataVector.add(trans.simHistoryXTPN.simProductionTime);
             resMatrix.transDataMatrix.add(dataVector);
         }
 
@@ -897,13 +896,13 @@ public class StateSimulatorXTPN implements Runnable {
             }
 
             for (int tID = 0; tID < transitions.size(); tID++) {
-                transStatsFinal.get(tID).set(0, transStatsFinal.get(tID).get(0) + transitions.get(tID).simInactiveState);
-                transStatsFinal.get(tID).set(1, transStatsFinal.get(tID).get(1) + transitions.get(tID).simActiveState);
-                transStatsFinal.get(tID).set(2, transStatsFinal.get(tID).get(2) + transitions.get(tID).simProductionState);
-                transStatsFinal.get(tID).set(3, transStatsFinal.get(tID).get(3) + transitions.get(tID).simFiredState);
-                transStatsFinal.get(tID).set(4, transStatsFinal.get(tID).get(4) + transitions.get(tID).simInactiveTime);
-                transStatsFinal.get(tID).set(5, transStatsFinal.get(tID).get(5) + transitions.get(tID).simActiveTime);
-                transStatsFinal.get(tID).set(6, transStatsFinal.get(tID).get(6) + transitions.get(tID).simProductionTime);
+                transStatsFinal.get(tID).set(0, transStatsFinal.get(tID).get(0) + transitions.get(tID).simHistoryXTPN.simInactiveState);
+                transStatsFinal.get(tID).set(1, transStatsFinal.get(tID).get(1) + transitions.get(tID).simHistoryXTPN.simActiveState);
+                transStatsFinal.get(tID).set(2, transStatsFinal.get(tID).get(2) + transitions.get(tID).simHistoryXTPN.simProductionState);
+                transStatsFinal.get(tID).set(3, transStatsFinal.get(tID).get(3) + transitions.get(tID).simHistoryXTPN.simFiredState);
+                transStatsFinal.get(tID).set(4, transStatsFinal.get(tID).get(4) + transitions.get(tID).simHistoryXTPN.simInactiveTime);
+                transStatsFinal.get(tID).set(5, transStatsFinal.get(tID).get(5) + transitions.get(tID).simHistoryXTPN.simActiveTime);
+                transStatsFinal.get(tID).set(6, transStatsFinal.get(tID).get(6) + transitions.get(tID).simHistoryXTPN.simProductionTime);
             }
 
             resMatrix.simTime += simTimeCounter;
