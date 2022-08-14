@@ -676,7 +676,7 @@ public class HolmesDockWindowsTable extends JPanel {
             loopSimulation.setToolTipText("Loop simulation");
             loopSimulation.addActionListener(actionEvent -> {
                 if(overlord.getWorkspace().getProject().isSimulationActive()) {
-                    JOptionPane.showMessageDialog(null, "Simulator already running. It must be stopped\nto run this simalation.", "Simulator active",
+                    JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
                             JOptionPane.WARNING_MESSAGE);
                 } else {
                     overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -907,7 +907,7 @@ public class HolmesDockWindowsTable extends JPanel {
             acqDataButtonXTPN.setToolTipText("Compute steps from zero marking through the number of states");
             acqDataButtonXTPN.addActionListener(actionEvent -> {
                 if(overlord.getWorkspace().getProject().isSimulationActive()) {
-                    JOptionPane.showMessageDialog(null, "Simulator already running. It must be stopped\nto run this simalation.", "Simulator active",
+                    JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
                             JOptionPane.WARNING_MESSAGE);
                 } else {
                     quickSim.acquireDataXTPN(qSimXTPNSbySteps, qSimXTPNsimStatsSteps, qSimXTPNStatsTime

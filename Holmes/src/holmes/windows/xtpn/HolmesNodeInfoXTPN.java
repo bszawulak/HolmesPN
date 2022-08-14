@@ -526,7 +526,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
         acqDataButton.addActionListener(actionEvent -> {
             if(overlord.getWorkspace().getProject().isSimulationActive()) {
-                JOptionPane.showMessageDialog(null, "Simulator already running. It must be stopped\nto run this simalation.", "Simulator active",
+                JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
                         JOptionPane.WARNING_MESSAGE);
             } else {
                 acquireNewPlaceData();
@@ -1328,7 +1328,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
         acqDataButton.addActionListener(actionEvent -> {
             if(overlord.getWorkspace().getProject().isSimulationActive()) {
-                JOptionPane.showMessageDialog(null, "Simulator already running. It must be stopped\nto run this simalation.", "Simulator active",
+                JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
                         JOptionPane.WARNING_MESSAGE);
             } else {
                 getSingleTransitionData();
@@ -1437,7 +1437,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
         acqDataButton.addActionListener(actionEvent -> {
             if(overlord.getWorkspace().getProject().isSimulationActive()) {
-                JOptionPane.showMessageDialog(null, "Simulator already running. It must be stopped\nto run this simalation.", "Simulator active",
+                JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
                         JOptionPane.WARNING_MESSAGE);
             } else {
                 getMultipleTransitionData();
