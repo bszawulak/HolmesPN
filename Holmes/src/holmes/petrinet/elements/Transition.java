@@ -12,6 +12,9 @@ import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.containers.TransitionGraphicsContainer;
 import holmes.petrinet.elements.containers.TransitionQSimContainer;
+import holmes.petrinet.elements.extensions.TransitionFPNExtension;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
+import holmes.petrinet.elements.extensions.TransitionTimeExtention;
 import holmes.petrinet.functions.FunctionContainer;
 import holmes.petrinet.functions.FunctionsTools;
 
@@ -41,16 +44,16 @@ public class Transition extends Node {
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
-     * @param transitionId     int - identyfikator tranzycji
-     * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji tranzycji
-     * @param name             String - nazwa tranzycji
-     * @param comment          String - komentarz tranzycji
+     * @param transitionId (<b>int</b>) identyfikator tranzycji.
+     * @param elementLocations (<b>ArrayList[ElementLocation]</b>) lista lokalizacji tranzycji.
+     * @param name (<b>String</b>) nazwa tranzycji.
+     * @param comment (<b>String</b>) komentarz tranzycji.
      */
     public Transition(int transitionId, ArrayList<ElementLocation> elementLocations, String name, String comment) {
         super(transitionId, elementLocations, realRadius);
         this.setName(name);
         this.setComment(comment);
-        this.fpnFunctions.fList = new ArrayList<>();
+        this.fpnFunctions.createNewFunctionsVector();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
         spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
@@ -58,13 +61,13 @@ public class Transition extends Node {
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany przez procedury tworzenia portali.
-     * @param transitionId     int - identyfikator tranzycji
-     * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji tranzycji
+     * @param transitionId (<b>int</b>) identyfikator tranzycji.
+     * @param elementLocations (<b>ArrayList[ElementLocation]</b>) lista lokalizacji tranzycji.
      */
     public Transition(int transitionId, ArrayList<ElementLocation> elementLocations) {
         super(transitionId, elementLocations, realRadius);
         this.setName("Transition" + IdGenerator.getNextTransitionId());
-        this.fpnFunctions.fList = new ArrayList<>();
+        this.fpnFunctions.createNewFunctionsVector();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
         spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
@@ -72,23 +75,27 @@ public class Transition extends Node {
 
     /**
      * Konstruktor obiektu tranzycji sieci.
-     * @param transitionId       int - identyfikator tranzycji
-     * @param sheetId            int - identyfikator arkusza
-     * @param transitionPosition Point - punkt lokalizacji tranzycji
+     * @param transitionId (<b>int</b>) identyfikator tranzycji.
+     * @param sheetId (<b>int</b>) identyfikator arkusza.
+     * @param transitionPosition (<b>Point</b>) punkt lokalizacji tranzycji.
      */
     public Transition(int transitionId, int sheetId, Point transitionPosition) {
         super(sheetId, transitionId, transitionPosition, realRadius);
         this.setName("Transition" + IdGenerator.getNextTransitionId());
-        this.fpnFunctions.fList = new ArrayList<>();
+        this.fpnFunctions.createNewFunctionsVector();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
         spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;
     }
 
+    /**
+     * Diabli wiedzą co.
+     * @param error (<b>String</b>) parametr, a co?
+     */
     public Transition(String error) {
         super(99, IdGenerator.getNextTransitionId(), new Point(0,0), realRadius);
         this.setName("Transition" + IdGenerator.getNextTransitionId());
-        this.fpnFunctions.fList = new ArrayList<>();
+        this.fpnFunctions.createNewFunctionsVector();
         this.setType(PetriNetElementType.TRANSITION);
         transType = TransitionType.PN;
         spnFunctions.stochasticType = TransitionSPNExtension.StochaticsType.NONE;

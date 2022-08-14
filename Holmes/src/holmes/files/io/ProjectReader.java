@@ -17,6 +17,7 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 import holmes.petrinet.functions.FunctionsTools;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNotepad;
@@ -1470,9 +1471,9 @@ public class ProjectReader {
 					ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 					Arc newArc = new Arc(pEL, tEL, "", weight, arcType);
 					if(XTPNarc)
-						newArc.setXTPNstatus(true);
+						newArc.arcXTPNbox.setXTPNstatus(true);
 					if(XTPNinh)
-						newArc.setXTPNinhibitorStatus(true);
+						newArc.arcXTPNbox.setXTPNinhibitorStatus(true);
 					
 					newArc.clearBreakPoints();
 					if(tab.length > 3)
@@ -1491,9 +1492,9 @@ public class ProjectReader {
 					ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
 					Arc newArc = new Arc(pEL, mEL, "", weight, arcType);
 					if(XTPNarc)
-						newArc.setXTPNstatus(true);
+						newArc.arcXTPNbox.setXTPNstatus(true);
 					if(XTPNinh)
-						newArc.setXTPNinhibitorStatus(true);
+						newArc.arcXTPNbox.setXTPNinhibitorStatus(true);
 					
 					newArc.clearBreakPoints();
 					if(tab.length > 3)
@@ -1513,9 +1514,9 @@ public class ProjectReader {
 						ElementLocation tEL = transitions.get(transIndex).getElementLocations().get(transElLoc);
 						Arc newArc = new Arc(mEL, tEL, "", weight, arcType);
 						if(XTPNarc)
-							newArc.setXTPNstatus(true);
+							newArc.arcXTPNbox.setXTPNstatus(true);
 						if(XTPNinh)
-							newArc.setXTPNinhibitorStatus(true);
+							newArc.arcXTPNbox.setXTPNinhibitorStatus(true);
 						
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
@@ -1532,9 +1533,9 @@ public class ProjectReader {
 						ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
 						Arc newArc = new Arc(mEL, pEL, "", weight, arcType);
 						if(XTPNarc)
-							newArc.setXTPNstatus(true);
+							newArc.arcXTPNbox.setXTPNstatus(true);
 						if(XTPNinh)
-							newArc.setXTPNinhibitorStatus(true);
+							newArc.arcXTPNbox.setXTPNinhibitorStatus(true);
 						
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
@@ -1555,9 +1556,9 @@ public class ProjectReader {
 						ElementLocation mEL = metanodes.get(metaIndex).getElementLocations().get(metaElLoc);
 						Arc newArc = new Arc(tEL, mEL, "", weight, arcType);
 						if(XTPNarc)
-							newArc.setXTPNstatus(true);
+							newArc.arcXTPNbox.setXTPNstatus(true);
 						if(XTPNinh)
-							newArc.setXTPNinhibitorStatus(true);
+							newArc.arcXTPNbox.setXTPNinhibitorStatus(true);
 						
 						newArc.clearBreakPoints();
 						if(tab.length > 3)
@@ -1576,9 +1577,9 @@ public class ProjectReader {
 						ElementLocation pEL = places.get(placeIndex).getElementLocations().get(placeElLoc);
 						Arc newArc = new Arc(tEL, pEL, "", weight, arcType);
 						if(XTPNarc)
-							newArc.setXTPNstatus(true);
+							newArc.arcXTPNbox.setXTPNstatus(true);
 						if(XTPNinh)
-							newArc.setXTPNinhibitorStatus(true);
+							newArc.arcXTPNbox.setXTPNinhibitorStatus(true);
 						
 						newArc.clearBreakPoints();
 						if(tab.length > 3)

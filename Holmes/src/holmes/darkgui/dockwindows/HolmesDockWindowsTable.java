@@ -51,9 +51,6 @@ import holmes.workspace.WorkspaceSheet;
 
 /**
  * Klasa zawierająca szczegóły interfejsu podokien dokowalnych programu.
- *
- * @author students<br>
- * @author MR<br>
  * <br>
  * <b>Absolute positioning. Of absolute everything here.</b><br>
  * Nie obchodzi mnie, co o tym myślicie<br> (╯゜Д゜）╯︵ ┻━┻) . Idźcie w layout i nie wracajcie. ┌∩┐(◣_◢)┌∩┐
@@ -5058,7 +5055,7 @@ public class HolmesDockWindowsTable extends JPanel {
         initiateContainers();
         // set mode
         mode = ARC;
-        if(arc.isXTPN())
+        if(arc.arcXTPNbox.isXTPN())
             mode = XARC;
 
         element = arc;
@@ -6094,14 +6091,12 @@ public class HolmesDockWindowsTable extends JPanel {
                             }
                         }
                     }
-
-
                 }
 
                 for (Arc arc : pn.getArcs()) {
                     if (arc.getStartLocation().qSimArcSign && arc.getEndLocation().qSimArcSign) {
-                        arc.qSimForcedArc = true;
-                        arc.qSimForcedColor = new Color(0, 102, 0);
+                        arc.arcQSimBox.qSimForcedArc = true;
+                        arc.arcQSimBox.qSimForcedColor = new Color(0, 102, 0);
                     }
                 }
             }
@@ -8149,7 +8144,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
             ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
             for (Arc arc : arcs) {
-                arc.setColor(true, Color.red);
+                arc.arcDecoBox.setColor(true, Color.red);
             }
         }
 
@@ -8184,7 +8179,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
+                        arc.arcDecoBox.setColor(true, currentColor);
                     }
                 }
             }
@@ -8208,7 +8203,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
+                        arc.arcDecoBox.setColor(true, currentColor);
                     }
                 }
             }
@@ -8232,7 +8227,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
+                        arc.arcDecoBox.setColor(true, currentColor);
                     }
                 }
             }
@@ -8267,10 +8262,9 @@ public class HolmesDockWindowsTable extends JPanel {
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
+                        arc.arcDecoBox.setColor(true, currentColor);
                     }
                 }
-
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();

@@ -1,6 +1,6 @@
 package holmes.petrinet.data;
 
-import holmes.petrinet.elements.TransitionSPNExtension;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 /**
  * Klasa kontener, przechowuje dane stochastyczne tranzycji

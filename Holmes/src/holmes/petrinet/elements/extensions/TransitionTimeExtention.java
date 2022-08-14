@@ -1,4 +1,4 @@
-package holmes.petrinet.elements;
+package holmes.petrinet.elements.extensions;
 
 public class TransitionTimeExtention {
     private double TPN_eft = 0;

@@ -87,7 +87,7 @@ public final class Check {
 				equal++;
 			else if(a.getArcType() == TypeOfArc.META_ARC)
 				meta++;
-			else if(a.isXTPN())
+			else if(a.arcXTPNbox.isXTPN())
 				xtpnArc++;
 		}
 		result.add(normal);
@@ -245,77 +245,52 @@ public final class Check {
     
     /**
      * Metoda dla wykrytego typu sieci zwraca sugerowany typ zapisu.
-     * @param netType GlobalNetType - typ sieci
-     * @return GlobalFileNetType - sugerowany format zapisu
+     * @param netType (<b>GlobalNetType</b>) typ sieci.
+     * @return (<b>GlobalNetType</b>) - sugerowany format zapisu.
      */
     public static GlobalFileNetType suggestesFileFormat(GlobalNetType netType) {
-    	switch (netType) {
-    		case PN:
-    			return GlobalFileNetType.SPPED;
-    		case PN_extArcs:
-    			return GlobalFileNetType.SPEPT;
-    		case TPN:
-    			return GlobalFileNetType.SPTPT;
-    		case TPN_extArcs:
-    			return GlobalFileNetType.HOLMESPROJECT;
-    		case FPN:
-    			return GlobalFileNetType.HOLMESPROJECT;
-    		case timeFPN:
-    			return GlobalFileNetType.HOLMESPROJECT;
-    		case FPN_extArcs:
-    			return GlobalFileNetType.HOLMESPROJECT;
-    		case timeFPN_extArcs:
-    			return GlobalFileNetType.HOLMESPROJECT;	
-    		case SPN:
-    			return GlobalFileNetType.HOLMESPROJECT;	
-    		case functionalSPN:
-    			return GlobalFileNetType.HOLMESPROJECT;	
-    	}
-		return null;
-    }
+		return switch (netType) {
+			case PN -> GlobalFileNetType.SPPED;
+			case PN_extArcs -> GlobalFileNetType.SPEPT;
+			case TPN -> GlobalFileNetType.SPTPT;
+			case TPN_extArcs -> GlobalFileNetType.HOLMESPROJECT;
+			case FPN -> GlobalFileNetType.HOLMESPROJECT;
+			case timeFPN -> GlobalFileNetType.HOLMESPROJECT;
+			case FPN_extArcs -> GlobalFileNetType.HOLMESPROJECT;
+			case timeFPN_extArcs -> GlobalFileNetType.HOLMESPROJECT;
+			case SPN -> GlobalFileNetType.HOLMESPROJECT;
+			case functionalSPN -> GlobalFileNetType.HOLMESPROJECT;
+			default -> null;
+		};
+	}
     
     public static String getNetName(GlobalNetType netType) {
-    	switch (netType) {
-		case PN:
-			return "Classical Petri Net";
-		case PN_extArcs:
-			return "Extended Petri Net";
-		case TPN:
-			return "Time(d) Petri Net";
-		case TPN_extArcs:
-			return "Extended Time(d) Petri Net (hybrid)";
-		case FPN:
-			return "Functional Petri Net";
-		case timeFPN:
-			return "Time(d) Functional Petri Net (hybrid)";
-		case FPN_extArcs:
-			return "Extended Functional Petri Net";
-		case timeFPN_extArcs:
-			return "Extended Time(d) Functional Petri Net (VERY hybrid)";
-		case SPN:
-			return "Stochastic Petri Net";
-		case functionalSPN:
-			return "Stochastic Functional Petri Net (VERY hybrid)";
+		return switch (netType) {
+			case PN -> "Classical Petri Net";
+			case PN_extArcs -> "Extended Petri Net";
+			case TPN -> "Time(d) Petri Net";
+			case TPN_extArcs -> "Extended Time(d) Petri Net (hybrid)";
+			case FPN -> "Functional Petri Net";
+			case timeFPN -> "Time(d) Functional Petri Net (hybrid)";
+			case FPN_extArcs -> "Extended Functional Petri Net";
+			case timeFPN_extArcs -> "Extended Time(d) Functional Petri Net (VERY hybrid)";
+			case SPN -> "Stochastic Petri Net";
+			case functionalSPN -> "Stochastic Functional Petri Net (VERY hybrid)";
+			default -> null;
+		};
 	}
-	return null;
-}
     
     /**
      * Metoda zwraca rozszerzenie na bazie typu formatu sieci.
-     * @param netFileFormat GlobalFileNetType - wykryty format sieci
-     * @return String - rozszerzenie do zapisu
+     * @param netFileFormat (<b>GlobalFileNetType</b>) wykryty format sieci.
+     * @return (<b>String</b>) - rozszerzenie do zapisu.
      */
     public static String getExtension(GlobalFileNetType netFileFormat) {
-    	switch(netFileFormat) {
-    		case SPEPT:
-    			return "SPEPT";
-    		case SPPED:
-    			return "SPPED";
-    		case SPTPT:
-    			return "SPTPT";
-    		case HOLMESPROJECT:
-    			return "project";
-    	}
-    	return "HOLMESPROJECT";
-    }
+		return switch (netFileFormat) {
+			case SPEPT -> "SPEPT";
+			case SPPED -> "SPPED";
+			case SPTPT -> "SPTPT";
+			case HOLMESPROJECT -> "project";
+		};
+	}
 }

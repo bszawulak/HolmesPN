@@ -50,7 +50,7 @@ public class TransitionXTPN extends Transition {
     public QSimXTPNgraphical qSimXTPN = new QSimXTPNgraphical();
 
     public boolean showQSimXTPN = false;
-    public class QSimXTPNgraphical {
+    public static class QSimXTPNgraphical {
         public int xOff = -70;
         public int yOff = -60;
 
@@ -71,10 +71,10 @@ public class TransitionXTPN extends Transition {
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
-     * @param transitionId     int - identyfikator tranzycji
-     * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji tranzycji
-     * @param name             String - nazwa tranzycji
-     * @param comment          String - komentarz tranzycji
+     * @param transitionId (<b>int</b>) identyfikator tranzycji.
+     * @param elementLocations (<b>ArrayList[ElementLocation]</b>) lista lokalizacji tranzycji.
+     * @param name (<b>String</b>) nazwa tranzycji.
+     * @param comment (<b>String</b>) komentarz tranzycji.
      */
     public TransitionXTPN(int transitionId, ArrayList<ElementLocation> elementLocations, String name, String comment) {
         super(transitionId, elementLocations, name, comment);
@@ -83,8 +83,8 @@ public class TransitionXTPN extends Transition {
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany przez procedury tworzenia portali.
-     * @param transitionId     int - identyfikator tranzycji
-     * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji tranzycji
+     * @param transitionId (<b>int</b>) identyfikator tranzycji.
+     * @param elementLocations (<b>ArrayList[ElementLocation]</b>) lista lokalizacji tranzycji.
      */
     public TransitionXTPN(int transitionId, ArrayList<ElementLocation> elementLocations) {
         super(transitionId, elementLocations);
@@ -93,15 +93,19 @@ public class TransitionXTPN extends Transition {
 
     /**
      * Konstruktor obiektu tranzycji sieci.
-     * @param transitionId       int - identyfikator tranzycji
-     * @param sheetId            int - identyfikator arkusza
-     * @param transitionPosition Point - punkt lokalizacji tranzycji
+     * @param transitionId (<b>int</b>) identyfikator tranzycji.
+     * @param sheetId (<b>int</b>) identyfikator arkusza.
+     * @param transitionPosition (<b>Point</b>) punkt lokalizacji tranzycji.
      */
     public TransitionXTPN(int transitionId, int sheetId, Point transitionPosition) {
         super(transitionId, sheetId, transitionPosition);
         transType = TransitionType.XTPN;
     }
 
+    /**
+     * Diabli wiedzą co.
+     * @param error (<b>String</b>) parametr, a co?
+     */
     public TransitionXTPN(String error) {
         super(error);
         transType = TransitionType.XTPN;
@@ -581,7 +585,7 @@ public class TransitionXTPN extends Transition {
         if(graphics) {
             ArrayList<Arc> arcs = getInArcs();
             for (Arc arc : arcs) {
-                arc.setXTPNactStatus(false);
+                arc.arcXTPNbox.setXTPNactStatus(false);
             }
         }
     }

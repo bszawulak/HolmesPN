@@ -22,7 +22,7 @@ import holmes.petrinet.data.SPNdataVector;
 import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.TransitionSPNExtension;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 import holmes.utilities.Tools;
 
 /**

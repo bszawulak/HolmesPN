@@ -4,6 +4,9 @@ package holmes.petrinet.elements;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * Czysty idiotyzm a nie sieć kolorowana. No, ale mogło być gorzej. RIP Kasia W.
+ */
 public class PlaceColored extends Place {
     //colors:
     public int token1green = 0;
@@ -32,7 +35,7 @@ public class PlaceColored extends Place {
     /**
      * Konstruktor obiektu miejsca sieci - wczytywanie sieci zewnętrznej, np. ze Snoopy.
      * @param nodeId (<b>int</b>) identyfikator wierzchołka.
-     * @param elementLocations (<b>ArrayList[ElementLocation]</b>) lista lokalizacji .
+     * @param elementLocations (<b>ArrayList[ElementLocation]</b>) lista lokalizacji.
      * @param name (<b>String</b>) nazwa miejsca.
      * @param comment (<b>String</b>) komentarz miejsca.
      * @param tokensNumber (<b>int</b>) liczba tokenów.

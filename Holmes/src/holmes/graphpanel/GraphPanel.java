@@ -22,6 +22,7 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.subnets.SubnetsTools;
 import holmes.utilities.Tools;
@@ -1319,10 +1320,10 @@ public class GraphPanel extends JComponent {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
 				} else if(arcType == DrawModes.XARC) {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
-					drawnArc.setXTPNstatus(true);
+					drawnArc.arcXTPNbox.setXTPNstatus(true);
 				} else if(arcType == DrawModes.XINHIBITOR) {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.INHIBITOR);
-					drawnArc.setXTPNinhibitorStatus(true);
+					drawnArc.arcXTPNbox.setXTPNinhibitorStatus(true);
 				}else if(arcType == DrawModes.READARC) {
 					if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
 						JOptionPane.showMessageDialog(null, "Only XTPN normal arc and inhibitors are allowed in XTPN net mode.",
@@ -1472,11 +1473,11 @@ public class GraphPanel extends JComponent {
 								getArcs().add(arc);
 							} else if(arcType == DrawModes.XARC) {
 								arc.setArcType(TypeOfArc.NORMAL);
-								arc.setXTPNstatus(true);
+								arc.arcXTPNbox.setXTPNstatus(true);
 								getArcs().add(arc);
 							} else if(arcType == DrawModes.XINHIBITOR) {
 								arc.setArcType(TypeOfArc.INHIBITOR);
-								arc.setXTPNinhibitorStatus(true);
+								arc.arcXTPNbox.setXTPNinhibitorStatus(true);
 								getArcs().add(arc);
 							} else if(arcType == DrawModes.READARC) {
 								//arc.setArcType(TypesOfArcs.INHIBITOR);

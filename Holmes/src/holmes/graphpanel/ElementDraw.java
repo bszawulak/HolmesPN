@@ -999,8 +999,8 @@ public final class ElementDraw {
 		if (arc.getLocationSheetId() != sheetId)
 			return g;
 
-		boolean prodSim = arc.getXTPNprodStatus();
-		boolean actSim = arc.getXTPNactStatus();
+		boolean prodSim = arc.arcXTPNbox.getXTPNprodStatus();
+		boolean actSim = arc.arcXTPNbox.getXTPNactStatus();
 
 		Stroke sizeStroke = g.getStroke();
 		ArrayList<Point> breakPoints = arc.accessBreaks();
@@ -1025,7 +1025,7 @@ public final class ElementDraw {
 
 		int incFactorM = 0;
 		int incFactorRadius = 0;
-		if(arc.qSimForcedArc) {
+		if(arc.arcQSimBox.qSimForcedArc) {
 			incFactorM = 6;
 			incFactorRadius = 15;
 		}
@@ -1087,7 +1087,7 @@ public final class ElementDraw {
 				g.setStroke(backup);
 			} else {
 				//int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
-				if(arc.isXTPN() || arc.isXTPNinhibitor()) {
+				if(arc.arcXTPNbox.isXTPN() || arc.arcXTPNbox.isXTPNinhibitor()) {
 					g.setStroke(new BasicStroke(2));
 				} else {
 					g.setStroke(new BasicStroke(eds.arcSize));
@@ -1096,9 +1096,9 @@ public final class ElementDraw {
 				if(breaks > 0) {
 					drawBreaks(g, arc, startP, (int) xp, (int) yp, breakPoints, breaks, eds);
 				} else {
-					if(!arc.layers.isEmpty()) {
+					if(!arc.arcDecoBox.layers.isEmpty()) {
 						int move=0;
-						for (Color color : arc.layers) {
+						for (Color color : arc.arcDecoBox.layers) {
 							g.setColor(Color.black);
 							Stroke backup = g.getStroke();
 							g.setStroke(new BasicStroke(3));
@@ -1113,7 +1113,7 @@ public final class ElementDraw {
 						}
 						//arc.layers.clear();
 					} else {
-						if(arc.isXTPN()) {
+						if(arc.arcXTPNbox.isXTPN()) {
 							if (actSim) {
 								g.setColor(activationXTPNcolor);
 							} else if (prodSim) {
@@ -1122,7 +1122,7 @@ public final class ElementDraw {
 								g.setStroke(new BasicStroke(eds.arcSize));
 								g.setColor(arcNeutralXTPNcolor);
 							}
-						} else if (arc.isXTPNinhibitor()) {
+						} else if (arc.arcXTPNbox.isXTPNinhibitor()) {
 							g.setColor(inhibitorXTPNcolor);
 						}
 
@@ -1131,7 +1131,7 @@ public final class ElementDraw {
 				}
 			}
 		} else {
-			if(arc.isXTPN() || arc.isXTPNinhibitor()) { //łuki XTPN mają grubszą kreskę
+			if(arc.arcXTPNbox.isXTPN() || arc.arcXTPNbox.isXTPNinhibitor()) { //łuki XTPN mają grubszą kreskę
 				g.setStroke(new BasicStroke(2));
 			} else {
 				g.setStroke(new BasicStroke(eds.arcSize));
@@ -1140,9 +1140,9 @@ public final class ElementDraw {
 			if(breaks > 0) {
 				drawBreaks(g, arc, startP, (int) xp, (int) yp, breakPoints, breaks, eds);
 			} else {
-				if(!arc.layers.isEmpty()) {
+				if(!arc.arcDecoBox.layers.isEmpty()) {
 					int move=0;
-					for (Color color : arc.layers) {
+					for (Color color : arc.arcDecoBox.layers) {
 						g.setColor(Color.black);
 						Stroke backup = g.getStroke();
 						g.setStroke(new BasicStroke(3));
@@ -1157,13 +1157,13 @@ public final class ElementDraw {
 					}
 					//arc.layers.clear();
 				} else {
-					if(arc.isXTPN()) {
+					if(arc.arcXTPNbox.isXTPN()) {
 						if(actSim) { //jeśli łuk jest z miejsca, które podtrzymuje aktywność tranzycji:
 							g.setColor(activationXTPNcolor);
 						} else if(prodSim) { //jeśli łuk jest z tranzycji, która po nim coś wyprodukuje
 							g.setColor(productionXTPNcolor);
 						}
-					} else if(arc.isXTPNinhibitor()) {
+					} else if(arc.arcXTPNbox.isXTPNinhibitor()) {
 						g.setColor(inhibitorXTPNcolor);
 					}
 
@@ -1172,9 +1172,9 @@ public final class ElementDraw {
 			}
 		}
 
-		if(arc.isColorChanged() && breaks == 0) {
+		if(arc.arcDecoBox.isColorChanged() && breaks == 0) {
 			Color oldColor = g.getColor();
-			g.setColor(arc.getArcNewColor());
+			g.setColor(arc.arcDecoBox.getArcNewColor());
 			g.setStroke(EditorResources.glowStrokeArc);
 			g.drawLine(startP.x, startP.y, endP.x, endP.y);
 			g.drawPolygon(new int[] { (int) xp, (int) xl, (int) xk },
@@ -1182,8 +1182,8 @@ public final class ElementDraw {
 			g.setColor(oldColor);
 		}
 
-		if(arc.qSimForcedArc && breaks == 0) {
-			g.setColor(arc.qSimForcedColor);
+		if(arc.arcQSimBox.qSimForcedArc && breaks == 0) {
+			g.setColor(arc.arcQSimBox.qSimForcedColor);
 			g.setStroke(new BasicStroke(4));
 			g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
 			
@@ -1207,7 +1207,7 @@ public final class ElementDraw {
 		g.setStroke(sizeStroke);
 		
 		if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.READARC ) {
-			if(arc.isXTPN()) {
+			if(arc.arcXTPNbox.isXTPN()) {
 				M += 2;
 				if(actSim) {
 					g.setColor(activationXTPNcolor);
@@ -1233,7 +1233,7 @@ public final class ElementDraw {
 			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
 		} else if (arc.getArcType() == TypeOfArc.INHIBITOR) {
-			if(arc.isXTPNinhibitor()) {
+			if(arc.arcXTPNbox.isXTPNinhibitor()) {
 				g.setColor(inhibitorXTPNcolor);
 				g.setStroke(new BasicStroke(2));
 			}
@@ -1243,8 +1243,8 @@ public final class ElementDraw {
 	    	int xT = (int) ((xPos - xp)/3.14);
 	    	int yT = (int) ((yPos - yp)/3.14);
 	    	
-	    	if(arc.qSimForcedArc) {
-				g.setColor(arc.qSimForcedColor);
+	    	if(arc.arcQSimBox.qSimForcedArc) {
+				g.setColor(arc.arcQSimBox.qSimForcedColor);
 				g.setStroke(new BasicStroke(4));
 				g.drawOval(xPos-6-xT, yPos-6-yT, 12, 12);
 	    	} else {
@@ -1403,15 +1403,15 @@ public final class ElementDraw {
 	 * @param eds (<b>ElementDrawSettings</b>)
 	 */
 	private static void drawBreaks(Graphics2D g, Arc arc, Point startP, int endPx, int endPy, ArrayList<Point> breaksVector, int breaks, ElementDrawSettings eds) {
-		if(arc.qSimForcedArc) {
-			g.setColor(arc.qSimForcedColor);
+		if(arc.arcQSimBox.qSimForcedArc) {
+			g.setColor(arc.arcQSimBox.qSimForcedColor);
 			g.setStroke(new BasicStroke(4));
 		}
 
-		boolean prodSim = arc.getXTPNprodStatus();
-		boolean actSim = arc.getXTPNactStatus();
+		boolean prodSim = arc.arcXTPNbox.getXTPNprodStatus();
+		boolean actSim = arc.arcXTPNbox.getXTPNactStatus();
 
-		if(arc.isXTPN()) {
+		if(arc.arcXTPNbox.isXTPN()) {
 			if(actSim) {
 				g.setColor(activationXTPNcolor);
 				g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
@@ -1423,7 +1423,7 @@ public final class ElementDraw {
 				g.setColor(arcNeutralXTPNcolor);
 				g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 			}
-		} else if(arc.isXTPNinhibitor()) {
+		} else if(arc.arcXTPNbox.isXTPNinhibitor()) {
 			g.setColor(inhibitorXTPNcolor);
 			g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 		} else {
@@ -1432,9 +1432,9 @@ public final class ElementDraw {
 		
 		//g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 
-		if(arc.isColorChanged()) {
+		if(arc.arcDecoBox.isColorChanged()) {
 			Color oldColor = g.getColor();
-			g.setColor(arc.getArcNewColor());
+			g.setColor(arc.arcDecoBox.getArcNewColor());
 			g.setStroke(EditorResources.glowStrokeArc);
 			g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 			g.setColor(oldColor);
@@ -1448,9 +1448,9 @@ public final class ElementDraw {
 			g.setColor(oldColor);
 		}
 
-		if(!arc.layers.isEmpty()) {
+		if(!arc.arcDecoBox.layers.isEmpty()) {
 			int move = 0;
-			for (Color color : arc.layers) {
+			for (Color color : arc.arcDecoBox.layers) {
 				g.setColor(Color.black);
 				Stroke backup = g.getStroke();
 				g.setStroke(new BasicStroke(3));
@@ -1468,7 +1468,7 @@ public final class ElementDraw {
 		for(int b=1; b<breaks; b++) {
 			Point breakPoint = breaksVector.get(b-1);
 
-			if(arc.isXTPN()) {
+			if(arc.arcXTPNbox.isXTPN()) {
 				if(actSim) {
 					g.setColor(activationXTPNcolor);
 					g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
@@ -1480,7 +1480,7 @@ public final class ElementDraw {
 					g.setColor(arcNeutralXTPNcolor);
 					g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 				}
-			} else if(arc.isXTPNinhibitor()) {
+			} else if(arc.arcXTPNbox.isXTPNinhibitor()) {
 				g.setColor(inhibitorXTPNcolor);
 				g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 			} else {
@@ -1489,9 +1489,9 @@ public final class ElementDraw {
 			//g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 			g.fillOval(breakPoint.x-3, breakPoint.y-3, 6, 6);
 
-			if(arc.isColorChanged() ) {
+			if(arc.arcDecoBox.isColorChanged() ) {
 				Color oldColor = g.getColor();
-				g.setColor(arc.getArcNewColor());
+				g.setColor(arc.arcDecoBox.getArcNewColor());
 				g.setStroke(EditorResources.glowStrokeArc);
 				g.drawLine(breakPoint.x, breakPoint.y, breaksVector.get(b).x, breaksVector.get(b).y);
 				g.setColor(oldColor);
@@ -1505,7 +1505,7 @@ public final class ElementDraw {
 			}
 
 			int move=0;
-			for (Color color : arc.layers) {
+			for (Color color : arc.arcDecoBox.layers) {
 				g.setColor(Color.black);
 				Stroke backup = g.getStroke();
 				g.setStroke(new BasicStroke(3));
@@ -1521,7 +1521,7 @@ public final class ElementDraw {
 		}
 		Point lastPoint = breaksVector.get(breaks-1);
 
-		if(arc.isXTPN()) {
+		if(arc.arcXTPNbox.isXTPN()) {
 			if(actSim) {
 				g.setColor(activationXTPNcolor);
 				g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
@@ -1533,7 +1533,7 @@ public final class ElementDraw {
 				g.setColor(arcNeutralXTPNcolor);
 				g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 			}
-		} else if(arc.isXTPNinhibitor()) {
+		} else if(arc.arcXTPNbox.isXTPNinhibitor()) {
 			g.setColor(inhibitorXTPNcolor);
 			g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 		} else {
@@ -1542,9 +1542,9 @@ public final class ElementDraw {
 
 		//g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 		g.fillOval(lastPoint.x-3, lastPoint.y-3, 6, 6);
-		if(arc.isColorChanged()) {
+		if(arc.arcDecoBox.isColorChanged()) {
 			Color oldColor = g.getColor();
-			g.setColor(arc.getArcNewColor());
+			g.setColor(arc.arcDecoBox.getArcNewColor());
 			g.setStroke(EditorResources.glowStrokeArc);
 			g.drawLine(lastPoint.x, lastPoint.y, endPx, endPy);
 			g.setColor(oldColor);
@@ -1557,9 +1557,9 @@ public final class ElementDraw {
 			g.setColor(oldColor);
 		}
 
-		if(!arc.layers.isEmpty()) {
+		if(!arc.arcDecoBox.layers.isEmpty()) {
 			int move = 0;
-			for (Color color : arc.layers) {
+			for (Color color : arc.arcDecoBox.layers) {
 				g.setColor(Color.black);
 				Stroke backup = g.getStroke();
 				g.setStroke(new BasicStroke(3));

@@ -1,4 +1,4 @@
-package holmes.petrinet.elements;
+package holmes.petrinet.elements.extensions;
 
 import holmes.petrinet.data.SPNtransitionData;
 
@@ -6,7 +6,7 @@ public class TransitionSPNExtension {
     //tranzycja stochastyczna:
     /** ST, DT, IM, SchT, NONE - Stochastic Transition, Deterministic T., Immediate T., Scheduled T. */
     public enum StochaticsType {ST, DT, IM, SchT, NONE}
-    protected StochaticsType stochasticType;
+    public StochaticsType stochasticType;
     protected double firingRate = 1.0;
     protected SPNtransitionData SPNbox = null;
     //SSA

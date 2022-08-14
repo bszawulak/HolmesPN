@@ -19,7 +19,6 @@ import holmes.petrinet.elements.containers.PlaceQSimContainer;
 public class Place extends Node {
 	@Serial
 	private static final long serialVersionUID = 2346995422046987174L;
-
 	/** PN, CPN, XTPN */
 	public enum PlaceType {PN, CPN, XTPN}
 	protected PlaceType placeType = PlaceType.PN; //default
@@ -33,9 +32,9 @@ public class Place extends Node {
 	public boolean isColored = false;
 	protected boolean isXTPN = false; //czy tokeny marzą o elektrycznych tranzycjach?
 
+
 	//SSA:
 	protected double ssaValue = 0.0;
-
 
 	/**
 	 * Konstruktor obiektu miejsca sieci.
@@ -78,20 +77,18 @@ public class Place extends Node {
 
 	/**
 	 * Metoda rysująca miejsce na danym arkuszu.
-	 * @param g Graphics2D - grafika 2D 
-	 * @param sheetId int - identyfikator arkusza
-	 * @param eds ElementDrawSettings - opcje rysowania
+	 * @param g (<b>Graphics2D</b>) obiekt grafiki.
+	 * @param sheetId (<b>int</b>) identyfikator arkusza.
+	 * @param eds (<b>ElementDrawSettings</b>) opcje rysowania.
 	 */
 	public void draw(Graphics2D g, int sheetId, ElementDrawSettings eds)
 	{
 		ElementDraw.drawElement(this, g, sheetId, eds);
-		//g = ElementDraw.drawElement(this, g, sheetId, eds);
-		//super.draw(g, sheetId);
 	}
 	
 	/**
 	 * Zwraca zbiór tranzycji wejściowych *p.
-	 * @return ArrayList[Transition] - lista tranzycji ze zbioru *p
+	 * @return (<b>ArrayList[Transition]</b>) - lista tranzycji ze zbioru *p.
 	 */
 	public ArrayList<Transition> getPreTransitions() {
 		ArrayList<Transition> preTransitions = new ArrayList<Transition>();
@@ -108,7 +105,7 @@ public class Place extends Node {
 	
 	/**
 	 * Zwraca zbiór tranzycji wyjściowych p*.
-	 * @return ArrayList[Transition] - lista tranzycji ze zbioru p*
+	 * @return (<b>ArrayList[Transition]</b>) - lista tranzycji ze zbioru p*.
 	 */
 	public ArrayList<Transition> getPostTransitions() {
 		ArrayList<Transition> postTransitions = new ArrayList<>();
@@ -125,7 +122,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda pozwala odczytać aktualną liczbę tokenów z miejsca.
-	 * @return int - liczba tokenów
+	 * @return (<b>int</b>) - liczba tokenów.
 	 */
 	public int getTokensNumber() {
 		return tokensNumber;
@@ -133,7 +130,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda pozwala ustawić wartość liczby tokenów dla miejsca.
-	 * @param tokensNumber int - nowa liczba tokenów
+	 * @param tokensNumber (<b>int</b>) nowa liczba tokenów.
 	 */
 	public void setTokensNumber(int tokensNumber) {
 		this.tokensNumber = tokensNumber;
@@ -145,7 +142,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda pozwala zmienić liczbę tokenów w miejscu, dodając ich określoną wartość.
-	 * @param delta (<b>int</b>) wartość, o którą zmieni się liczba tokenów
+	 * @param delta (<b>int</b>) wartość, o którą zmieni się liczba tokenów.
 	 */
 	public void modifyTokensNumber(int delta) {
 		if((tokensNumber + delta) < 0) {
@@ -160,7 +157,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda pozwala pobrać liczbę zajętych (zarezerwowanych  przez aktywowaną tranzycję) tokenów.
-	 * @return (<b>int</b>) - liczba zarezerwowanych tokenów
+	 * @return (<b>int</b>) - liczba zarezerwowanych tokenów.
 	 */
 	public int getReservedTokens() {
 		return reservedTokens;
@@ -168,7 +165,7 @@ public class Place extends Node {
 
 	/**
 	 * Metoda pozwala zarezerwować określoną liczbę tokenów w miejscu.
-	 * @param tokensTaken (int) liczba zajmowanych tokenów
+	 * @param tokensTaken (<b>int</b>) liczba zajmowanych tokenów.
 	 */
 	public void reserveTokens(int tokensTaken) {
 		this.reservedTokens += tokensTaken;
@@ -177,7 +174,7 @@ public class Place extends Node {
 	/**
 	 * Metoda pozwala pobrać liczbę wolnych (dostępnych, nie 
 	 * zarezerwowanych przez żadną tranzycję) tokenów.
-	 * @return int - liczba dostępnych tokenów
+	 * @return (<b>int</b>) - liczba dostępnych tokenów.
 	 */
 	public int getNonReservedTokensNumber() {
 		return tokensNumber - getReservedTokens();
@@ -226,7 +223,7 @@ public class Place extends Node {
 	
 	/**
 	 * Ustawia nową wartość cząstek dla miejsca w symulacji SSA.
-	 * @param value double - nowa wartość
+	 * @param value (<b>double</b>) nowa wartość.
 	 */
 	public void setSSAvalue(double value) {
 		this.ssaValue = value;
@@ -234,7 +231,7 @@ public class Place extends Node {
 	
 	/**
 	 * Zwraca aktualną wartość cząstek dla miejsca w symulacji SSA.
-	 * @return double - liczba cząstek
+	 * @return (<b>double</b>) - liczba cząstek
 	 */
 	public double getSSAvalue() {
 		return this.ssaValue;

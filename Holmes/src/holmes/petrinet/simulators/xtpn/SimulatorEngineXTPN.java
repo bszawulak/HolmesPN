@@ -156,7 +156,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
 
                         if(graphicalSimulation) {
                             for(Arc arc : transition.getOutArcs()) { //ustaw łuki w tryb produkcji
-                                arc.setXTPNprodStatus(true);
+                                arc.arcXTPNbox.setXTPNprodStatus(true);
                             }
                         }
                     } else { //klasyczna wejściowa
@@ -188,7 +188,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
 
                                 if(graphicalSimulation) { //ustaw łuki w tryb produkcji
                                     for(Arc arc : transition.getOutArcs()) {
-                                        arc.setXTPNprodStatus(true);
+                                        arc.arcXTPNbox.setXTPNprodStatus(true);
                                     }
                                 }
                             } else { //zakres alfa nie jest zerowy:
@@ -206,7 +206,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                         if(graphicalSimulation) { //ustaw zielony kolor łuku - tryb potrzymywania aktywacji
                             ArrayList<Arc> arcs = transition.getInArcs();
                             for (Arc arc : arcs) {
-                                arc.setXTPNactStatus(true);
+                                arc.arcXTPNbox.setXTPNactStatus(true);
                             }
                         }
                     } //else nie ma: nie jest wejściowa i nie może być aktywna, bo brakuje tokenów. "niech spierdala".
@@ -475,7 +475,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
 
                     if(graphicalSimulation) {
                         for(Arc arc : transition.getOutArcs()) {
-                            arc.setXTPNprodStatus(true);
+                            arc.arcXTPNbox.setXTPNprodStatus(true);
                         }
                     }
                 } else { //czysty TPN
@@ -505,7 +505,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
             //dodaj odpowiednią liczbę tokenów do miejsc
             for (Arc arc : arcs) {
                 if(graphicalSimulation) { //koniec zaznaczania łuku jako produkcyjnego
-                    arc.setXTPNprodStatus(false);
+                    arc.arcXTPNbox.setXTPNprodStatus(false);
                 }
 
                 PlaceXTPN place = (PlaceXTPN) arc.getEndNode();

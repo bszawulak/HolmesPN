@@ -19,15 +19,14 @@ public class MetaNode extends Node {
 	/** SUBNETTRANS, SUBNETPLACE, SUBNET, UNKNOWN */
 	public enum MetaType { SUBNETTRANS, SUBNETPLACE, SUBNET, UNKNOWN }
 	private MetaType metaType;
-	
 	private int metaSheetID;
-	
+
 	/**
 	 * Główny konstruktor meta węzła sieci.
-	 * @param sheetId int - nr okna podsieci
-	 * @param nodeId int - wewnętrzny identyfikator w systemie
-	 * @param nodePosition Point - współrzędne XY
-	 * @param mt MetaType - typ meta-węzła
+	 * @param sheetId (<b>int</b>) identyfikator arkusza.
+	 * @param nodeId (<b>int</b>) identyfikator elementu sieci Petriego.
+	 * @param nodePosition (<b>Point</b> punkt, w którym znajduje się lokalizacja tego wierzchołka na odpowiednim arkuszu.
+	 * @param mt (<b>MetaType</b>) typ meta-węzła .
 	 */
 	public MetaNode(int sheetId, int nodeId, Point nodePosition, MetaType mt) {
 		super(sheetId, nodeId, nodePosition, 15);
@@ -37,7 +36,7 @@ public class MetaNode extends Node {
 	
 	/**
 	 * Metoda ustawia podtyp meta-węzła.
-	 * @param mt MetaType - podtyp
+	 * @param mt (<b>MetaType</b>) typ meta-węzła .
 	 */
 	public void setMetaType(MetaType mt) {
 		this.metaType = mt;
@@ -45,7 +44,7 @@ public class MetaNode extends Node {
 	
 	/**
 	 * Metoda zwraca podtyp meta-węzła.
-	 * @return MetaType - podtyp
+	 * @return (<b>MetaType</b>) - podtyp meta-węzła.
 	 */
 	public MetaType getMetaType() {
 		return this.metaType;
@@ -158,7 +157,6 @@ public class MetaNode extends Node {
 			//text = "(Meta)" + getName();
 			text += "(M" + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes().indexOf(this)+")";
 		}
-		
 		
 		return text;
 	}

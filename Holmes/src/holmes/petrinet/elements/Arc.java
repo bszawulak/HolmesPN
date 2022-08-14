@@ -1,6 +1,5 @@
 package holmes.petrinet.elements;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Line2D;
@@ -12,6 +11,10 @@ import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
+import holmes.petrinet.elements.containers.ArcColoredContainer;
+import holmes.petrinet.elements.containers.ArcDecompContainer;
+import holmes.petrinet.elements.containers.ArcQSimContainer;
+import holmes.petrinet.elements.containers.ArcXTPNContainer;
 import holmes.varia.NetworkTransformations;
 
 /**
@@ -23,59 +26,35 @@ import holmes.varia.NetworkTransformations;
 public class Arc extends PetriNetElement {
     @Serial
     private static final long serialVersionUID = 5365625190238686098L;
+    private TypeOfArc arcType;
     private ElementLocation locationStart;
     private ElementLocation locationEnd = null;
     private Point tempEndPoint = null;
+    private ArrayList<Point> breakPoints;
     private boolean selected = false;
     private boolean isCorrect = false;
     private int weight = 1;
     public boolean isTransportingTokens = false;
     private int graphicalSimulationSteps = 0;
     private boolean simulationForwardDirection = true;
-
-    private ArrayList<Point> breakPoints;
-
-    //colors:
-    private int weight1green = 0;
-    private int weight2blue = 0;
-    private int weight3yellow = 0;
-    private int weight4grey = 0;
-    private int weight5black = 0;
-
-    private boolean isColorChanged;
-    private Color arcColorValue;
-
     //read-arc parameters:
     private Arc pairedArc;
     private boolean isMainArcOfPair = false;
-    private TypeOfArc arcType;
-    public ArrayList<Color> layers = new ArrayList<>();
-
-    public boolean qSimForcedArc = false; //czy łuk ma być wzmocniony
-    public Color qSimForcedColor = Color.BLACK; //kolor wzmocnienia
-
-    private int memoryOfArcWeight = -1;
-    //comparison:
-    private boolean isBranchEnd = false;
 
 
-    //XTPN:
-    private boolean isXTPN = false;
-    private boolean isXTPNinhibitor = false;
-    private boolean isXTPNact = false;
-    private boolean isXTPNprod = false;
+    /** Dekompozycja do wora, wór do jeziora. */
+    public ArcDecompContainer arcDecoBox = new ArcDecompContainer();
+    public ArcXTPNContainer arcXTPNbox = new ArcXTPNContainer();
+    private ArcColoredContainer arcColoredBox = new ArcColoredContainer();
+    public ArcQSimContainer arcQSimBox = new ArcQSimContainer();
 
-    public boolean showQSimXTPN = false;
-
-    /**
-     * NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR, XTPN
-     */
+    /** NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR, XTPN */
     public enum TypeOfArc {NORMAL, READARC, INHIBITOR, RESET, EQUAL, META_ARC, COLOR}
 
     /**
      * Konstruktor obiektu klasy Arc - chwilowo nieużywany.
-     * @param startPosition ElementLocation - lokalicja żródła łuku
-     * @param endPosition   ElementLocation - lokalicja celu łuku
+     * @param startPosition (<b>ElementLocation</b>) lokalicja żródła łuku.
+     * @param endPosition (<b>ElementLocation</b>) lokalicja celu łuku.
      */
     public Arc(ElementLocation startPosition, ElementLocation endPosition, TypeOfArc type) {
         this(startPosition, type);
@@ -88,9 +67,9 @@ public class Arc extends PetriNetElement {
     /**
      * Konstruktor obiektu klasy Arc - mousePressed(MouseEvent) - używany w momencie wybrania prawidłowego (!)
      * wierzchołka docelowego dla łuku.
-     * @param arcId         int - identyfikator łuku
-     * @param startPosition ElementLocation - lokacja źródła łuku
-     * @param endPosition   ElementLocation - lokacja celu łuku
+     * @param arcId (<b>int</b>) identyfikator łuku.
+     * @param startPosition (<b>ElementLocation</b>) lokacja źródła łuku.
+     * @param endPosition (<b>ElementLocation</b>) lokacja celu łuku.
      */
     public Arc(int arcId, ElementLocation startPosition, ElementLocation endPosition, TypeOfArc type) {
         this(startPosition, type);
@@ -101,11 +80,11 @@ public class Arc extends PetriNetElement {
     }
 
     /**
-     * Konstruktor obiektu klasy Arc - odczyt sieci z pliku
-     * @param startPosition ElementLocation - lokacja źródła łuku
-     * @param endPosition   ElementLocation - lokacja celu łuku
-     * @param comment       String - komentarz
-     * @param weight        int - waga łuku
+     * Konstruktor obiektu klasy Arc - odczyt sieci z pliku.
+     * @param startPosition (<b>ElementLocation</b>) lokacja źródła łuku.
+     * @param endPosition (<b>ElementLocation</b>) lokacja celu łuku.
+     * @param comment (<b>String</b>) komentarz.
+     * @param weight (<b>int</b>) waga łuku.
      */
     public Arc(ElementLocation startPosition, ElementLocation endPosition, String comment, int weight, TypeOfArc type) {
         this(startPosition, type);
@@ -121,7 +100,7 @@ public class Arc extends PetriNetElement {
     /**
      * Konstruktor obiektu klasy Arc - bez ID, TYLKO na potrzeby rysowania konturu w momencie rozpoczęcia
      * rysowania (prowadzenia) łuku do miejsca docelowego.
-     * @param startPosition ElementLocation - lokalizacja źródła łuku
+     * @param startPosition (<b>ElementLocation</b>) lokalizacja źródła łuku.
      */
     public Arc(ElementLocation startPosition, TypeOfArc type) {
         this.arcType = type;
@@ -133,8 +112,7 @@ public class Arc extends PetriNetElement {
     }
 
     /**
-     * Metoda sprawdza, czy aktualny łuk jest łukiem odczytu (read-arc).
-     * Jeśli tak, ustala wartość obiektu łuku
+     * Metoda sprawdza, czy aktualny łuk jest łukiem odczytu (read-arc). Jeśli tak, ustala wartość obiektu łuku
      */
     private void lookForArcPair() {
         if (this.getArcType() == TypeOfArc.META_ARC)
@@ -176,7 +154,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Rozsuwa łuki (łamiąc je) względem siebie.
-     * @param arc Arc - inny łuk niż normal idący w drugą stronę
+     * @param arc (<b>Arc</b>) inny łuk niż normal idący w drugą stronę.
      */
     private void handleComplexArcGraphics(Arc arc) {
         if (this.breakPoints.size() == 0) {
@@ -201,7 +179,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda zwracająca wagę łuku.
-     * @return int - waga łuku
+     * @return (<b>int</b>) waga łuku.
      */
     public int getWeight() {
         return weight;
@@ -209,7 +187,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwalająca ustawić wagę łuku.
-     * @param weight int - waga łuku
+     * @param weight (<b>int</b>) waga łuku.
      */
     public void setWeight(int weight) {
         this.weight = weight;
@@ -219,52 +197,39 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda zwracająca wagę łuku kolorowego.
-     * @param i int - nr porządkowy koloru, default 0, od 0 do 5
-     * @return int - waga dla koloru
+     * @param i (<b>int</b>) nr porządkowy koloru, default 0, od 0 do 5.
+     * @return (<b>int</b>) - waga dla koloru.
      */
     public int getColorWeight(int i) {
         return switch (i) {
-            case 1 -> weight1green;
-            case 2 -> weight2blue;
-            case 3 -> weight3yellow;
-            case 4 -> weight4grey;
-            case 5 -> weight5black;
+            case 1 -> arcColoredBox.weight1green;
+            case 2 -> arcColoredBox.weight2blue;
+            case 3 -> arcColoredBox.weight3yellow;
+            case 4 -> arcColoredBox.weight4grey;
+            case 5 -> arcColoredBox.weight5black;
             default -> weight;
         };
     }
 
     /**
      * Metoda pozwalająca ustawić wagę kolorowego łuku.
-     * @param w int - waga łuku
-     * @param i int - nr porządkowy koloru, default 0, od 0 do 5
+     * @param w (<b>int</b>) waga łuku.
+     * @param i (<b>int</b>) nr porządkowy koloru, default 0, od 0 do 5.
      */
     public void setColorWeight(int w, int i) {
         switch (i) {
-            case 1 -> this.weight1green = w;
-            case 2 -> this.weight2blue = w;
-            case 3 -> this.weight3yellow = w;
-            case 4 -> this.weight4grey = w;
-            case 5 -> this.weight5black = w;
+            case 1 -> this.arcColoredBox.weight1green = w;
+            case 2 -> this.arcColoredBox.weight2blue = w;
+            case 3 -> this.arcColoredBox.weight3yellow = w;
+            case 4 -> this.arcColoredBox.weight4grey = w;
+            case 5 -> this.arcColoredBox.weight5black = w;
             default -> this.weight = w;
         }
     }
-
-    public void setColor(boolean isColorChanged, Color arcColorValue) {
-        this.isColorChanged = isColorChanged;
-        this.arcColorValue = arcColorValue;
-    }
-
-    public boolean isColorChanged() {
-        return isColorChanged;
-    }
-
-    public Color getArcNewColor() {
-        return arcColorValue;
-    }
-
+    
     /**
      * Metoda zwraca komentarz związany z łukiem.
-     * @return comment String - komentarz do łuku
+     * @return comment (<b>String</b>String) komentarz do łuku.
      */
     public String getComment() {
         return comment;
@@ -272,17 +237,17 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda ustawiająca komentarz dla łuku.
-     * @param com String - komentarz do łuku
+     * @param comm (<b>String</b>) komentarz do łuku.
      */
-    public void setComment(String com) {
-        comment = com;
+    public void setComment(String comm) {
+        comment = comm;
         if (pairedArc != null && isMainArcOfPair)
-            pairedArc.setComment(com);
+            pairedArc.setComment(comm);
     }
 
     /**
      * Metoda pozwala pobrać wierzchołek początkowy łuku.
-     * @return Node - wierzchołek wejściowy łuku
+     * @return (<b>Node</b>) - wierzchołek wejściowy łuku.
      */
     public Node getStartNode() {
         return this.locationStart.getParentNode();
@@ -290,7 +255,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala pobrać wierzchołek końcowy łuku.
-     * @return Node - wierzchołek wyjściowy łuku
+     * @return (<b>Node</b>) - wierzchołek wyjściowy łuku.
      */
     public Node getEndNode() {
         if (this.locationEnd != null)
@@ -300,7 +265,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala pobrać identyfikator arkusza, na którym znajduje się łuk.
-     * @return int - identyfikator arkusza
+     * @return (<b>int</b>) - identyfikator arkusza.
      */
     public int getLocationSheetId() {
         return this.locationStart.getSheetID();
@@ -308,7 +273,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala obliczyć długość łuku na arkuszu w pikselach.
-     * @return double - długość łuku
+     * @return (<b>double</b>) - długość łuku.
      */
     public double getWidth() {
         Point A = this.getStartLocation().getPosition();
@@ -318,8 +283,8 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala narysować token na łuku w czasie symulacji.
-     * @param g       Graphics2D - grafika 2D
-     * @param sheetId int - identyfikator arkusza
+     * @param g (<b>Graphics2D</b>) grafika 2D.
+     * @param sheetId (<b>int</b>) identyfikator arkusza.
      */
     public void drawSimulationMovingToken(Graphics2D g, int sheetId) {
         ElementDraw.drawMovingToken(g, sheetId, this);
@@ -344,10 +309,10 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda rysująca łuk na danym arkuszu przy zmienionych rozmiarach arkusza.
-     * @param g       Graphics2D - grafika 2D
-     * @param sheetId int - identyfikator arkusza
-     * @param zoom    int - zoom, unused
-     * @param eds     ElementDrawSettings - ustawienia rysowania
+     * @param g (<b>Graphics2D</b>) obiekt grafiki.
+     * @param sheetId (<b>int</b>) identyfikator arkusza.
+     * @param zoom (<b>int</b>) zoom, unused.
+     * @param eds (<b>ElementDrawSettings</b>) ustawienia rysowania.
      */
     public void draw(Graphics2D g, int sheetId, int zoom, ElementDrawSettings eds) {
         ElementDraw.drawArc(this, g, sheetId, zoom, eds);
@@ -355,7 +320,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala sprawdzić, czy łuk jest poprawny.
-     * @return boolean - true, jeśli łuk jest poprawny; false w przeciwnym wypadku
+     * @return (<b>boolean</b>) - true, jeśli łuk jest poprawny; false w przeciwnym wypadku
      */
     public boolean getIsCorect() {
         return this.isCorrect;
@@ -363,8 +328,8 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala sprawdzić, czy łuk byłby poprawny dla danej lokalizacji wierzchołka wyjściowego.
-     * @param e ElementLocation - lokalizacja wierzchołka wyjściowego
-     * @return boolean - true, jeśli łuk byłby poprawny; false w przeciwnym wypadku
+     * @param e (<b>ElementLocation</b>) lokalizacja wierzchołka wyjściowego.
+     * @return (<b>boolean</b>) - true, jeśli łuk byłby poprawny; false w przeciwnym wypadku.
      */
     public boolean checkIsCorect(ElementLocation e) {
         this.isCorrect = e != null
@@ -375,7 +340,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala ustawić punkt lokacji wierzchołka wyjściowego łuku.
-     * @param p Point - punkt lokalizacji wierzchołka wyjściowego
+     * @param p (<b>Point</b>) punkt lokalizacji wierzchołka wyjściowego.
      */
     public void setEndPoint(Point p) {
         this.tempEndPoint = p;
@@ -387,7 +352,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala pobrać stan zaznaczenia łuku.
-     * @return boolean - true, jeśli łuk jest zaznaczony; false w przeciwnym wypadku
+     * @return (<b>boolean</b>) - true, jeśli łuk jest zaznaczony; false w przeciwnym wypadku.
      */
     public boolean getSelected() {
         return selected;
@@ -395,7 +360,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala sprawdzić czy łuk zostanie zaznaczony.
-     * @return true, jeśli łuk zostanie zaznaczony; false w przeciwnym wypadku
+     * @return (<b>boolean</b>) true, jeśli łuk zostanie zaznaczony; false w przeciwnym wypadku.
      */
     public boolean checkSelection() {
         if (this.locationEnd == null || this.locationStart == null)
@@ -406,7 +371,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala ustawić zaznaczenie łuku.
-     * @param select boolean - wartość zaznaczenia łuku
+     * @param select (<b>boolean</b>) wartość zaznaczenia łuku.
      */
     public void setSelected(boolean select) {
         this.selected = select;
@@ -414,8 +379,8 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala sprawdzić, czy punkt jest częcią łuku.
-     * @param P Point - punkt (x,y)
-     * @return boolean - true, jeśli łuk jest częcią łuku; false w przeciwnym wypadku
+     * @param P (<b>Point</b>) punkt (x,y).
+     * @return (<b>boolean</b>) - true, jeśli łuk jest częcią łuku; false w przeciwnym wypadku.
      */
     public boolean checkIntersection(Point P) {
         int breaks = breakPoints.size();
@@ -443,7 +408,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala pobrać lokację wierzchołka wejściowego łuku.
-     * @return startLocation ElementLocation - lokalizacja wierzchołka wejściowego łuku
+     * @return startLocation (<b>ElementLocation</b>) - lokalizacja wierzchołka wejściowego łuku.
      */
     public ElementLocation getStartLocation() {
         return locationStart;
@@ -451,7 +416,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala ustawić lokalizację wierzchołka wejściowego łuku.
-     * @param startLocation ElementLocation - lokalizacja wierzchołka wejściowego
+     * @param startLocation (<b>ElementLocation</b>) lokalizacja wierzchołka wejściowego.
      */
     private void setStartLocation(ElementLocation startLocation) {
         this.locationStart = startLocation;
@@ -465,7 +430,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Jak setStartLocation, z tym, że nie dodaje łuku do listy łuków obiektu locationStart.
-     * @param startLocation ElementLocation - nowy element location. Okrętu się pan spodziewałeś?
+     * @param startLocation (<b>ElementLocation</b>) nowy element location. Okrętu się pan spodziewałeś?
      */
     public void modifyStartLocation(ElementLocation startLocation) {
         this.locationStart = startLocation;
@@ -473,7 +438,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala ustawić lokację wierzchołka wyjściowego łuku.
-     * @param elementLocation ElementLocation - lokalizacja wierzchołka wyjściowego
+     * @param elementLocation (<b>ElementLocation</b>) lokalizacja wierzchołka wyjściowego.
      */
     private void setEndLocation(ElementLocation elementLocation) {
         if (elementLocation == null)
@@ -492,7 +457,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Działa jak setEndLocation, ale nie dodaje łuku do listy łuków obiektu locationEnd.
-     * @param elementLocation ElementLocation - nowy element location. Okrętu się pan spodziewałeś?
+     * @param elementLocation (<b>ElementLocation</b>) nowy element location. Okrętu się pan spodziewałeś?
      */
     public void modifyEndLocation(ElementLocation elementLocation) {
         this.locationEnd = elementLocation;
@@ -500,15 +465,14 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala pobrać lokalizację wierzchołka wyjściowego łuku.
-     * @return ElementLocation - lokalizacja wierzchołka wyjściowego łuku
+     * @return (<b>ElementLocation</b>) - lokalizacja wierzchołka wyjściowego łuku.
      */
     public ElementLocation getEndLocation() {
         return locationEnd;
     }
 
     /**
-     * Usuwa łuk z referencji lokacji obu wierzchołków (wejściowego i
-     * wyjściowego) łuku (odłącza łuk od wierzchołków).
+     * Usuwa łuk z referencji lokacji obu wierzchołków (wejściowego i wyjściowego) łuku (odłącza łuk od wierzchołków).
      */
     public void unlinkElementLocations() {
         if (arcType == TypeOfArc.META_ARC) {
@@ -534,7 +498,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala ustawić, czy łuk aktualnie transportuje tokeny.
-     * @param isTransportingTokens boolean - wartość określająca, czy łuk transportuje aktualnie tokeny
+     * @param isTransportingTokens (<b>boolean</b>) wartość określająca, czy łuk transportuje aktualnie tokeny.
      */
     public void setTransportingTokens(boolean isTransportingTokens) {
         this.isTransportingTokens = isTransportingTokens;
@@ -568,8 +532,8 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala sprawdzić, czy symulacja zachodzi zgodnie zeskierowaniem łuku (do przodu).
-     * @return boolean - true, jeśli symulacja zachodzi zgodnie ze skierowaniem łuku (do przodu);
-     * false  w przeciwnym wypadku
+     * @return (<b>boolean</b>) - true, jeśli symulacja zachodzi zgodnie ze skierowaniem łuku (do przodu);
+     * false  w przeciwnym wypadku.
      */
     public boolean isSimulationForwardDirection() {
         return simulationForwardDirection;
@@ -577,8 +541,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala ustawić kierunek wizualizacji symulacji na łuku.
-     * @param simulationForwardDirection boolean - true dla symulacji 'do przodu';
-     *                                   false w przeciwnym wypadku
+     * @param simulationForwardDirection (<b>boolean</b>) true dla symulacji 'do przodu'; false w przeciwnym wypadku.
      */
     public void setSimulationForwardDirection(boolean simulationForwardDirection) {
         this.simulationForwardDirection = simulationForwardDirection;
@@ -586,7 +549,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda zwracająca łuk odczytu dla danego łuku.
-     * @return Arc - łuk odczytu
+     * @return (<b>Arc</b>) łuk odczytu.
      */
     public Arc getPairedArc() {
         return pairedArc;
@@ -594,7 +557,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda ustawia wartość pairedArc jeśli łuk jest łukiem odczytu.
-     * @param pairedArc Arc - łuk odczytu
+     * @param pairedArc (<b>Arc</b>) łuk odczytu.
      */
     private void setPairedArc(Arc pairedArc) {
         if (this.getArcType() == TypeOfArc.META_ARC)
@@ -606,7 +569,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda informuje, czy łuk jest głównym łukiem z pary (read-arc)
-     * @return boolean - true jeżeli łuk jest głównym z pary; false w przeciwnym wypadku
+     * @return (<b>boolean</b>) - true jeżeli łuk jest głównym z pary; false w przeciwnym wypadku.
      */
     public boolean isMainArcOfPair() {
         return isMainArcOfPair;
@@ -614,7 +577,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda pozwala ustalić wartość flagi, czy łuk jest głównym w parze (read-arc)
-     * @param isMainArcOfPair boolean - true jeśli jest; false w przeciwnym wypadku
+     * @param isMainArcOfPair (<b>boolean</b>) true jeśli jest; false w przeciwnym wypadku.
      */
     private void setMainArcOfPair(boolean isMainArcOfPair) {
         this.isMainArcOfPair = isMainArcOfPair;
@@ -622,7 +585,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Metoda zwraca typ łuku.
-     * @return TypesOfArcs
+     * @return (<b>TypesOfArcs</b>) typ łuku.
      */
     public TypeOfArc getArcType() {
         return arcType;
@@ -630,7 +593,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Tylko do użytku wczytywania danych: ustawia typ łuku.
-     * @param type TypesOfArcs - typ łuku
+     * @param type (<b>TypesOfArcs</b>) typ łuku.
      */
     public void setArcType(TypeOfArc type) {
         arcType = type;
@@ -642,7 +605,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Uzyskanie dostępu do tablicy punktów łamiących.
-     * @return ArrayList[Point] - wektor punktów
+     * @return (<b>ArrayList[Point]</b>) - wektor punktów.
      */
     public ArrayList<Point> accessBreaks() {
         return this.breakPoints;
@@ -650,7 +613,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Dodaje punkt łamiący dla łuku.
-     * @param breakP Point - obiekt współrzędnych
+     * @param breakP (<b>Point</b>) obiekt współrzędnych.
      */
     public void addBreakPoint(Point breakP) {
         this.breakPoints.add(breakP);
@@ -692,8 +655,8 @@ public class Arc extends PetriNetElement {
 
     /**
      * Zwraca punkt łamiący łuk, o ile kliknięto w jego pobliżu
-     * @param mousePt Point - tu kliknięto myszą
-     * @return Point - punkt łamiący łuku (jeśli istnieje w pobliżu mousePt)
+     * @param mousePt (<b>Point</b>) tu kliknięto myszą.
+     * @return (<b>Point</b>) - punkt łamiący łuku (jeśli istnieje w pobliżu mousePt).
      */
     public Point checkBreakIntersection(Point mousePt) {
         for (Point breakP : breakPoints) {
@@ -706,7 +669,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Dodaje nowy punkt łamiący łuku, najpierw sprawdza który odcinek łuku podzielić.
-     * @param breakP Point - punkt kliknięty NA łuku (zapewnione przed wywołaniem tej metody!)
+     * @param breakP (<b>Point</b>) punkt kliknięty NA łuku (zapewnione przed wywołaniem tej metody!).
      */
     public void createNewBreakPoint(Point breakP) {
         Point start = this.getStartLocation().getPosition();
@@ -735,7 +698,7 @@ public class Arc extends PetriNetElement {
 
     /**
      * Usuwa podany punkt łamiący łuku, tj. najbliższy do breakP.
-     * @param breakP Point - tu kliknięto myszą, najpierw metoda sprawdzi, czy blisko tego jest break point
+     * @param breakP (<b>Point</b>) tu kliknięto myszą, najpierw metoda sprawdzi, czy blisko tego jest break point.
      */
     public void removeBreakPoint(Point breakP) {
         Point toRemove = checkBreakIntersection(breakP);
@@ -744,45 +707,13 @@ public class Arc extends PetriNetElement {
         }
     }
 
-    public boolean isXTPN() {
-        return isXTPN;
-    }
-
-    public void setXTPNstatus(boolean status) {
-        isXTPN = status;
-    }
-
-    public boolean isXTPNinhibitor() {
-        return isXTPNinhibitor;
-    }
-
-    public void setXTPNinhibitorStatus(boolean status) {
-        isXTPNinhibitor = status;
-    }
-
-    public void setXTPNactStatus(boolean value) {
-        isXTPNact = value;
-    }
-
-    public boolean getXTPNactStatus() {
-        return isXTPNact;
-    }
-
-    public void setXTPNprodStatus(boolean value) {
-        isXTPNprod = value;
-    }
-
-    public boolean getXTPNprodStatus() {
-        return isXTPNprod;
-    }
-
     //********************************************************************************************************
     //********************************************************************************************************
     //********************************************************************************************************
 
     /**
      * Metoda zwracająca dane o łuku w formie łańcucha znaków.
-     * @return String - łańcuch znaków informacji o łuku sieci
+     * @return (<>String</>) - łańcuch znaków informacji o łuku sieci.
      */
     public String toString() {
         PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
@@ -832,23 +763,5 @@ public class Arc extends PetriNetElement {
         return " ArcType: " + arcType.toString()
                 + " " + startNode + startNodeLoc + "(" + startELLoc + ") [gID:" + startNodeID + "]  ==>  "
                 + " " + endNode + endNodeLoc + "(" + endELLoc + ") [gID:" + endNodeID + "]";
-    }
-
-
-    @SuppressWarnings("unused")
-    public int getMemoryOfArcWeight() {
-        return memoryOfArcWeight;
-    }
-
-    public void setMemoryOfArcWeight(int memoryOfArcWeight) {
-        this.memoryOfArcWeight = memoryOfArcWeight;
-    }
-
-    public boolean isBranchEnd() {
-        return isBranchEnd;
-    }
-
-    public void setBranchEnd(boolean branchEnd) {
-        isBranchEnd = branchEnd;
     }
 }

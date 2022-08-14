@@ -1,5 +1,8 @@
-package holmes.petrinet.elements;
+package holmes.petrinet.elements.extensions;
 
+import holmes.petrinet.elements.Arc;
+import holmes.petrinet.elements.Place;
+import holmes.petrinet.elements.Transition;
 import holmes.petrinet.functions.FunctionContainer;
 
 import java.util.ArrayList;
@@ -38,6 +41,13 @@ public class TransitionFPNExtension {
      */
     public ArrayList<FunctionContainer> accessFunctionsList() {
         return this.fList;
+    }
+
+    /**
+     * Tworzy nową tablicę funkcji.
+     */
+    public void createNewFunctionsVector() {
+        this.fList = new ArrayList<>();
     }
 
     /**

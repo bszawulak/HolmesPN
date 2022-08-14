@@ -4,17 +4,13 @@ import holmes.analyse.GraphletsCalculator;
 import holmes.analyse.SubnetCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
-import holmes.graphpanel.popupmenu.SheetPopupMenu;
 import holmes.petrinet.elements.*;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
 
 import javax.swing.*;
 import java.awt.*;
-import java.beans.XMLEncoder;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -601,7 +597,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
             }
 
             for (Arc a : calculateInternalArcs(bs.paths)) {
-                a.layers.clear();
+                a.arcDecoBox.layers.clear();
             }
 
         }
@@ -658,7 +654,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
 
     private void clearColors() {
         for (Arc a : overlord.getWorkspace().getProject().getArcs()) {
-            a.layers.clear();
+            a.arcDecoBox.layers.clear();
         }
 
         for (Node n : overlord.getWorkspace().getProject().getNodes()) {
@@ -749,12 +745,12 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                     for (Arc a : p.path.get(i).getOutArcs()
                     ) {
                         if (a.getEndNode().getID() == p.path.get(i + 1).getID()) {
-                            a.layers.add(branchColor);
+                            a.arcDecoBox.layers.add(branchColor);
                         }
                     }
                     for (Arc a : p.path.get(i).getInArcs()) {
                         if (a.getStartNode().getID() == p.path.get(i + 1).getID()) {
-                            a.layers.add(branchColor);
+                            a.arcDecoBox.layers.add(branchColor);
                         }
                     }
                 }

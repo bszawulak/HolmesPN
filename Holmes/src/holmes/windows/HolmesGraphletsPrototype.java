@@ -2047,7 +2047,7 @@ public class HolmesGraphletsPrototype {//extends JFrame {
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
 
         for (Arc element : graphletStructure.getArcMap().values()) {
-            element.setColor(true, Color.green);
+            element.arcDecoBox.setColor(true, Color.green);
         }
     }
 

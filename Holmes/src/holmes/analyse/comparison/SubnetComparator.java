@@ -1413,7 +1413,7 @@ public class SubnetComparator {
             }
             System.out.println("--");
             for (Arc a : b.branchArcs)
-                System.out.println("Arc " + a.getStartNode().getName() + " -> " + a.getEndNode().getName() + " is " + a.isBranchEnd());
+                System.out.println("Arc " + a.getStartNode().getName() + " -> " + a.getEndNode().getName() + " is " + a.arcDecoBox.isBranchEnd());
         }
 
 
@@ -1446,10 +1446,10 @@ public class SubnetComparator {
                 if (arcWeight != 0) {
 
                     if (firstQuestion) {
-                        firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i).setMemoryOfArcWeight(arcWeight);
+                        firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                         if ((i == firstNetBranch.branchArcs.size() - 1 && i != secondNetBranch.branchArcs.size() - 1) || (i != firstNetBranch.branchArcs.size() - 1 && i == secondNetBranch.branchArcs.size() - 1)) {
                             //firstNetBranch.branchArcs.get(i).setBranchEnd(true);
-                            firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i).setBranchEnd(true);
+                            firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i).arcDecoBox.setBranchEnd(true);
                         } else {
                             commonArcsIn.add(firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i));
                             am.put(firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i), secondNetBranch.branchArcs.get(secondNetBranch.branchArcs.size() - 1 - i));
@@ -1464,10 +1464,10 @@ public class SubnetComparator {
                             }
                         }
                     } else {
-                        firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i).setMemoryOfArcWeight(arcWeight);
+                        firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                         if ((i == firstNetBranch.branchArcs.size() - 1 && i != secondNetBranch.branchArcs.size() - 1) || (i != firstNetBranch.branchArcs.size() - 1 && i == secondNetBranch.branchArcs.size() - 1)) {
                             //firstNetBranch.branchArcs.get(i).setBranchEnd(true);
-                            firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i).setBranchEnd(true);
+                            firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i).arcDecoBox.setBranchEnd(true);
                         }
                         commonArcsIn.add(firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i));
                         am.put(firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i), secondNetBranch.branchArcs.get(secondNetBranch.branchArcs.size() - 1 - i));
@@ -1487,7 +1487,7 @@ public class SubnetComparator {
                 if (firstQuestion) {
                     if ((i == firstNetBranch.branchArcs.size() - 1 && i != secondNetBranch.branchArcs.size() - 1) || (i != firstNetBranch.branchArcs.size() - 1 && i == secondNetBranch.branchArcs.size() - 1)) {
                         //firstNetBranch.branchArcs.get(i).setBranchEnd(true);
-                        firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i).setBranchEnd(true);
+                        firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i).arcDecoBox.setBranchEnd(true);
                     } else {
                         commonArcsIn.add(firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i));
                         am.put(firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i), secondNetBranch.branchArcs.get(secondNetBranch.branchArcs.size() - 1 - i));
@@ -1503,7 +1503,7 @@ public class SubnetComparator {
                     }
                 } else {
                     if ((i == firstNetBranch.branchArcs.size() - 1 && i != secondNetBranch.branchArcs.size() - 1) || (i != firstNetBranch.branchArcs.size() - 1 && i == secondNetBranch.branchArcs.size() - 1))
-                        firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i).setBranchEnd(true);
+                        firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i).arcDecoBox.setBranchEnd(true);
                     //firstNetBranch.branchArcs.get(i).setBranchEnd(true);
 
                     commonArcsIn.add(firstNetBranch.branchArcs.get(firstNetBranch.branchArcs.size() - 1 - i));
@@ -1536,10 +1536,10 @@ public class SubnetComparator {
             if (firstNetBranch.branchArcs.get(i).getWeight() != secondNetBranch.branchArcs.get(i).getWeight()) {
                 int arcWeight = Math.min(firstNetBranch.branchArcs.get(i).getWeight(), secondNetBranch.branchArcs.get(i).getWeight());
                 if (arcWeight != 0) {
-                    firstNetBranch.branchArcs.get(i).setMemoryOfArcWeight(arcWeight);
+                    firstNetBranch.branchArcs.get(i).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                     if (firstQuestion) {
                         if ((i == firstNetBranch.branchArcs.size() - 1 && i != secondNetBranch.branchArcs.size() - 1) || (i != firstNetBranch.branchArcs.size() - 1 && i == secondNetBranch.branchArcs.size() - 1)) {
-                            firstNetBranch.branchArcs.get(i).setBranchEnd(true);
+                            firstNetBranch.branchArcs.get(i).arcDecoBox.setBranchEnd(true);
                         } else {
                             //TODO czy to nie błąd
                             commonArcsIn.add(firstNetBranch.branchArcs.get(i));
@@ -1556,7 +1556,7 @@ public class SubnetComparator {
                         }
                     } else {
                         if ((i == firstNetBranch.branchArcs.size() - 1 && i != secondNetBranch.branchArcs.size() - 1) || (i != firstNetBranch.branchArcs.size() - 1 && i == secondNetBranch.branchArcs.size() - 1))
-                            firstNetBranch.branchArcs.get(i).setBranchEnd(true);
+                            firstNetBranch.branchArcs.get(i).arcDecoBox.setBranchEnd(true);
 
                         commonArcsIn.add(firstNetBranch.branchArcs.get(i));
                         am.put(firstNetBranch.branchArcs.get(i), secondNetBranch.branchArcs.get(i));
@@ -1576,7 +1576,7 @@ public class SubnetComparator {
                 if (firstQuestion) {
 
                     if ((i == firstNetBranch.branchArcs.size() - 1 && i != secondNetBranch.branchArcs.size() - 1) || (i != firstNetBranch.branchArcs.size() - 1 && i == secondNetBranch.branchArcs.size() - 1)) {
-                        firstNetBranch.branchArcs.get(i).setBranchEnd(true);
+                        firstNetBranch.branchArcs.get(i).arcDecoBox.setBranchEnd(true);
                     } else {
                         commonArcsIn.add(firstNetBranch.branchArcs.get(i));
                         am.put(firstNetBranch.branchArcs.get(i), secondNetBranch.branchArcs.get(i));
@@ -1592,7 +1592,7 @@ public class SubnetComparator {
                     }
                 } else {
                     if ((i == firstNetBranch.branchArcs.size() - 1 && i != secondNetBranch.branchArcs.size() - 1) || (i != firstNetBranch.branchArcs.size() - 1 && i == secondNetBranch.branchArcs.size() - 1))
-                        firstNetBranch.branchArcs.get(i).setBranchEnd(true);
+                        firstNetBranch.branchArcs.get(i).arcDecoBox.setBranchEnd(true);
 
                     commonArcsIn.add(firstNetBranch.branchArcs.get(i));
                     am.put(firstNetBranch.branchArcs.get(i), secondNetBranch.branchArcs.get(i));
@@ -1621,10 +1621,10 @@ public class SubnetComparator {
             if (firstNetBranch.branchArcs.get(i).getWeight() != secondNetBranch.branchArcs.get(i).getWeight()) {
                 int arcWeight = Math.min(firstNetBranch.branchArcs.get(i).getWeight(), secondNetBranch.branchArcs.get(i).getWeight());
                 if (arcWeight != 0) {
-                    firstNetBranch.branchArcs.get(i).setMemoryOfArcWeight(arcWeight);
+                    firstNetBranch.branchArcs.get(i).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                     am.put(firstNetBranch.branchArcs.get(i), secondNetBranch.branchArcs.get(i));
                     if ((i == firstNetBranch.branchArcs.size() - 1 && i != secondNetBranch.branchArcs.size() - 1) || (i != firstNetBranch.branchArcs.size() - 1 && i == secondNetBranch.branchArcs.size() - 1)) {
-                        firstNetBranch.branchArcs.get(i).setBranchEnd(true);
+                        firstNetBranch.branchArcs.get(i).arcDecoBox.setBranchEnd(true);
                     }
                     commonArcsIn.add(firstNetBranch.branchArcs.get(i));
                 }
@@ -2374,7 +2374,7 @@ public class SubnetComparator {
     }
 
     private PartialSubnetElements removeBrancheEndElements(PartialSubnetElements pse) {
-        ArrayList<Arc> toReduce = pse.partialArcs.stream().filter(x -> x.isBranchEnd()).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Arc> toReduce = pse.partialArcs.stream().filter(x -> x.arcDecoBox.isBranchEnd()).collect(Collectors.toCollection(ArrayList::new));
 
         for (Arc a : toReduce) {
             int k = pse.partialArcs.stream().filter(x -> x.getStartNode().equals(a.getStartNode())).collect(Collectors.toCollection(ArrayList::new)).size();
@@ -2439,14 +2439,14 @@ public class SubnetComparator {
 
     private void cleanArcs(PartialSubnetElements pse) {
         for (Arc a : pse.partialArcs) {
-            a.setBranchEnd(false);
+            a.arcDecoBox.setBranchEnd(false);
         }
     }
 
     private void cleanArcs(ArrayList<PartialSubnetElements> psel) {
         for (PartialSubnetElements pse : psel) {
             for (Arc a : pse.partialArcs) {
-                a.setBranchEnd(false);
+                a.arcDecoBox.setBranchEnd(false);
             }
         }
     }
@@ -2807,7 +2807,7 @@ public class SubnetComparator {
                 }
 
                 if (arcWeight != 0) {
-                    arcFrom1.get(0).setMemoryOfArcWeight(arcWeight);
+                    arcFrom1.get(0).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                     if (!commonN.contains(path1.path.get(j))) {
                         commonN.add(path1.path.get(j));
                         nm.put(path1.path.get(j), path2.path.get(j));
@@ -2855,7 +2855,7 @@ public class SubnetComparator {
                 }
 
                 if (arcWeight != 0) {
-                    arcFrom1.get(0).setMemoryOfArcWeight(arcWeight);
+                    arcFrom1.get(0).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                     if (!commonN.contains(shortPath1.get(j))) {
                         commonN.add(shortPath1.get(j));
                         nm.put(shortPath1.get(j), path2.path.get(j));
@@ -2908,7 +2908,7 @@ public class SubnetComparator {
                 }
 
                 if (arcWeight != 0) {
-                    arcFrom1.get(0).setMemoryOfArcWeight(arcWeight);
+                    arcFrom1.get(0).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                     if (!commonN.contains(path1.path.get(j))) {
                         commonN.add(path1.path.get(j));
                         nm.put(path1.path.get(j), shortPath2.get(j));
@@ -2964,7 +2964,7 @@ public class SubnetComparator {
                     arcWeight = Math.min(arcFrom1.get(0).getWeight(), arcFrom2.get(0).getWeight());
 
                     if (arcWeight != 0) {
-                        arcFrom1.get(0).setMemoryOfArcWeight(arcWeight);
+                        arcFrom1.get(0).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                         if (!commonN.contains(path1.path.get(j + firstMove))) {
                             commonN.add(path1.path.get(j + firstMove));
                             nm.put(path1.path.get(j + firstMove), path2.path.get(j + secondMobe));
@@ -3021,7 +3021,7 @@ public class SubnetComparator {
                     arcWeight = Math.min(arcFrom1.get(0).getWeight(), arcFrom2.get(0).getWeight());
 
                     if (arcWeight != 0) {
-                        arcFrom1.get(0).setMemoryOfArcWeight(arcWeight);
+                        arcFrom1.get(0).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                         if (!commonN.contains(shortPath1.get(j + firstMove))) {
                             commonN.add(shortPath1.get(j + firstMove));
                             nm.put(shortPath1.get(j + firstMove), path2.path.get(j + secondMobe));
@@ -3078,7 +3078,7 @@ public class SubnetComparator {
                     arcWeight = Math.min(arcFrom1.get(0).getWeight(), arcFrom2.get(0).getWeight());
 
                     if (arcWeight != 0) {
-                        arcFrom1.get(0).setMemoryOfArcWeight(arcWeight);
+                        arcFrom1.get(0).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                         if (!commonN.contains(path1.path.get(j + firstMove))) {
                             commonN.add(path1.path.get(j + firstMove));
                             nm.put(path1.path.get(j + firstMove), shortPath2.get(j + secondMobe));
@@ -3272,7 +3272,7 @@ public class SubnetComparator {
                 }
 
                 if (arcWeight != 0) {
-                    arcFrom1.get(0).setMemoryOfArcWeight(arcWeight);
+                    arcFrom1.get(0).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                     System.out.println("Arc : " + arcFrom1.get(0).getStartNode().getType() + " " + arcFrom1.get(0).getStartNode().getName() + " - > " + arcFrom1.get(0).getEndNode().getType() + " " + arcFrom1.get(0).getEndNode().getName());
 
                     if (!commonNodes.contains(inf.branchArcs.get(j).getStartNode()) && !usedFromsecond.contains(ins.branchArcs.get(j).getStartNode())) {
@@ -3399,7 +3399,7 @@ public class SubnetComparator {
                         snlc = true;
                     }
 
-                    arcFrom1.get(0).setMemoryOfArcWeight(arcWeight);
+                    arcFrom1.get(0).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                     //update warunku
                     // a co gdy jest pętlą w arc2....
 
@@ -3580,7 +3580,7 @@ public class SubnetComparator {
                 }
 
                 if (arcWeight != 0) {
-                    arcFrom1.get(0).setMemoryOfArcWeight(arcWeight);
+                    arcFrom1.get(0).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                     System.out.println("Arc : " + arcFrom1.get(0).getStartNode().getType() + " " + arcFrom1.get(0).getStartNode().getName() + " - > " + arcFrom1.get(0).getEndNode().getType() + " " + arcFrom1.get(0).getEndNode().getName());
 
                     if (!commonNodes.contains(incomingBranches1.get(i).branchElements.get(j + firstMove)) && !usedFromsecond.contains(incomingBranches2.get(i).branchElements.get(j + secondMobe))) {
@@ -3634,7 +3634,7 @@ public class SubnetComparator {
                         usedFromsecond.add(outgoingBranches2.get(i).branchElements.get(j + 1));
 
                     }
-                    arcFrom1.get(0).setMemoryOfArcWeight(arcWeight);
+                    arcFrom1.get(0).arcDecoBox.setMemoryOfArcWeight(arcWeight);
                     //update warunku
                     if (!commonArcs.contains(arcFrom1.get(0)) && commonNodes.contains(arcFrom1.get(0).getStartNode()) && commonNodes.contains(arcFrom1.get(0).getEndNode())) {
                         System.out.println("out Arc : " + arcFrom1.get(0).getStartNode().getType() + " " + arcFrom1.get(0).getStartNode().getName() + " - > " + arcFrom1.get(0).getEndNode().getType() + " " + arcFrom1.get(0).getEndNode().getName());

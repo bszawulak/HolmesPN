@@ -260,15 +260,15 @@ public class QuickSimTools {
 		ArrayList<Arc> arcs = overlord.getWorkspace().getProject().getArcs();
 		for(Arc arc : arcs) {
 			if(arc.getStartNode().qSimArcSign && arc.getEndNode().qSimArcSign) {
-				arc.qSimForcedArc = true;
-				arc.qSimForcedColor = Color.RED;
+				arc.arcQSimBox.qSimForcedArc = true;
+				arc.arcQSimBox.qSimForcedColor = Color.RED;
 			} else {
-				arc.qSimForcedArc = false;
-				arc.qSimForcedColor = Color.BLACK;
+				arc.arcQSimBox.qSimForcedArc = false;
+				arc.arcQSimBox.qSimForcedColor = Color.BLACK;
 			}
 			if(!markArcs) {
-				arc.qSimForcedArc = false;
-				arc.qSimForcedColor = Color.BLACK;
+				arc.arcQSimBox.qSimForcedArc = false;
+				arc.arcQSimBox.qSimForcedColor = Color.BLACK;
 			}
 		}
 		overlord.getWorkspace().getProject().repaintAllGraphPanels();

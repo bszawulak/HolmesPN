@@ -1414,10 +1414,10 @@ public class HolmesDecomposition extends JFrame {
 
         for (Arc elementTwo : secondsubnet.getSubArcs()) {
             if (firstsubnet.getSubArcs().contains(elementTwo)) {
-                elementTwo.setColor(true, Color.green);
+                elementTwo.arcDecoBox.setColor(true, Color.green);
                 nacn++;
             } else {
-                elementTwo.setColor(true, Color.blue);
+                elementTwo.arcDecoBox.setColor(true, Color.blue);
             }
             nasn++;
         }
@@ -1425,7 +1425,7 @@ public class HolmesDecomposition extends JFrame {
         for (Arc element : firstsubnet.getSubArcs()) {
             if (secondsubnet.getSubArcs().contains(element)) {
             } else {
-                element.setColor(true, Color.red);
+                element.arcDecoBox.setColor(true, Color.red);
             }
             nafn++;
         }
@@ -1507,7 +1507,7 @@ public class HolmesDecomposition extends JFrame {
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
+                        arc.arcDecoBox.setColor(true, currentColor);
                     }
                 }
             }
@@ -1532,7 +1532,7 @@ public class HolmesDecomposition extends JFrame {
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
+                        arc.arcDecoBox.setColor(true, currentColor);
                     }
                 }
             }
@@ -1556,7 +1556,7 @@ public class HolmesDecomposition extends JFrame {
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
+                        arc.arcDecoBox.setColor(true, currentColor);
                     }
                 }
             }
@@ -1591,7 +1591,7 @@ public class HolmesDecomposition extends JFrame {
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
+                        arc.arcDecoBox.setColor(true, currentColor);
                     }
                 }
 
@@ -1619,7 +1619,7 @@ public class HolmesDecomposition extends JFrame {
             }
             ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
             for (Arc arc : arcs) {
-                arc.setColor(true, Color.red);
+                arc.arcDecoBox.setColor(true, Color.red);
             }
         }
 

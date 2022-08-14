@@ -6,8 +6,10 @@ import holmes.petrinet.functions.FunctionsTools;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * Nic tu nie ma, proszę się rozejść. Nazwanie tego eksperymentalnym prototypem (2017, 2022) to niedopowiedzenie.
+ */
 public class TransitionColored extends Transition {
-    //opcje kolorow (basic) ?
     protected int reqT0red = 1;
     protected int reqT1green = 0;
     protected int reqT2blue = 0;
@@ -17,10 +19,10 @@ public class TransitionColored extends Transition {
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
-     * @param transitionId     int - identyfikator tranzycji
-     * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji tranzycji
-     * @param name             String - nazwa tranzycji
-     * @param comment          String - komentarz tranzycji
+     * @param transitionId (<b>int</b>) identyfikator tranzycji.
+     * @param elementLocations (<b>ArrayList[ElementLocation]</b>) lista lokalizacji tranzycji.
+     * @param name (<b>String</b>) nazwa tranzycji.
+     * @param comment (<b>String</b>) komentarz tranzycji.
      */
     public TransitionColored(int transitionId, ArrayList<ElementLocation> elementLocations, String name, String comment) {
         super(transitionId, elementLocations, name, comment);
@@ -29,8 +31,8 @@ public class TransitionColored extends Transition {
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany przez procedury tworzenia portali.
-     * @param transitionId     int - identyfikator tranzycji
-     * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji tranzycji
+     * @param transitionId (<b>int</b>) identyfikator tranzycji.
+     * @param elementLocations (<b>ArrayList[ElementLocation]</b>) lista lokalizacji tranzycji.
      */
     public TransitionColored(int transitionId, ArrayList<ElementLocation> elementLocations) {
         super(transitionId, elementLocations);
@@ -39,15 +41,19 @@ public class TransitionColored extends Transition {
 
     /**
      * Konstruktor obiektu tranzycji sieci.
-     * @param transitionId       int - identyfikator tranzycji
-     * @param sheetId            int - identyfikator arkusza
-     * @param transitionPosition Point - punkt lokalizacji tranzycji
+     * @param transitionId (<b>int</b>) identyfikator tranzycji.
+     * @param sheetId (<b>int</b>) identyfikator arkusza.
+     * @param transitionPosition (<b>Point</b>) punkt lokalizacji tranzycji.
      */
     public TransitionColored(int transitionId, int sheetId, Point transitionPosition) {
         super(transitionId, sheetId, transitionPosition);
         transType = TransitionType.CPN;
     }
 
+    /**
+     * Diabli wiedzą co.
+     * @param error (<b>String</b>) parametr, a co?
+     */
     public TransitionColored(String error) {
         super(error);
         transType = TransitionType.CPN;

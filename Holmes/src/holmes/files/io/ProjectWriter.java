@@ -397,9 +397,9 @@ public class ProjectWriter {
 					//int arcsNumber = tmp_outgoingArcs.size();
 					for (Arc arc : tmp_outgoingArcs) { //wszystkie łuki wyjściowe
 						String arcType = "" + arc.getArcType();
-						if(arc.isXTPN())
+						if(arc.arcXTPNbox.isXTPN())
 							arcType = "XTPN";
-						if(arc.isXTPNinhibitor())
+						if(arc.arcXTPNbox.isXTPNinhibitor())
 							arcType = "XINH";
 
 						Node endNode = arc.getEndNode();
@@ -479,7 +479,7 @@ public class ProjectWriter {
 					//int arcsNumber = tmp_outgoingArcs.size();
 					for (Arc arc : tmp_outgoingArcs) { //wszystkie łuki wyjściowe
 						String arcType = "" + arc.getArcType();
-						if(arc.isXTPN())
+						if(arc.arcXTPNbox.isXTPN())
 							arcType = "XTPN";
 
 						Node endNode = arc.getEndNode();

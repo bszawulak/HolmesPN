@@ -583,7 +583,7 @@ public class HolmesSubnetComparison extends JFrame {
         }
         ArrayList<Arc> arcs = sn.getSubArcs();
         for (Arc arc : arcs) {
-            arc.setColor(true, Color.red);
+            arc.arcDecoBox.setColor(true, Color.red);
         }
 
         for (SubnetComparator.PartialSubnetElements pse : gcs.psel) {
@@ -594,7 +594,7 @@ public class HolmesSubnetComparison extends JFrame {
                     ((Place) transition).drawGraphBoxP.setColorWithNumber(true, Color.GREEN, false, 0, true, "");
             }
             for (Arc arc : pse.partialArcs) {
-                arc.setColor(true, Color.GREEN);
+                arc.arcDecoBox.setColor(true, Color.GREEN);
             }
         }
 
@@ -614,7 +614,7 @@ public class HolmesSubnetComparison extends JFrame {
         }
         ArrayList<Arc> arcs = sn.getSubArcs();
         for (Arc arc : arcs) {
-            arc.setColor(true, Color.red);
+            arc.arcDecoBox.setColor(true, Color.red);
         }
 
         for (SubnetComparator.PartialSubnetElements pse : gcs.psel) {
@@ -625,7 +625,7 @@ public class HolmesSubnetComparison extends JFrame {
                     ((Place) transition).drawGraphBoxP.setColorWithNumber(true, randomColor, false, 0, true, "");
             }
             for (Arc arc : pse.partialArcs) {
-                arc.setColor(true, randomColor);
+                arc.arcDecoBox.setColor(true, randomColor);
             }
         }
 

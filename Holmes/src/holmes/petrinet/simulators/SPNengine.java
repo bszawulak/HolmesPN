@@ -11,7 +11,7 @@ import holmes.petrinet.data.SPNdataVector;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.TransitionSPNExtension;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 public class SPNengine implements IEngine {
 	private GUIManager overlord;

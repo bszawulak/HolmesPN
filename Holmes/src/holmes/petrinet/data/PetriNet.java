@@ -20,6 +20,7 @@ import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 import holmes.petrinet.simulators.SimulatorGlobals;
@@ -1629,12 +1630,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	private void resetArcGraphics() {
 		for(Arc a : getArcs()) {
-			a.qSimForcedArc = false;
+			a.arcQSimBox.qSimForcedArc = false;
 			if (a.getType() == PetriNetElementType.ARC) {
-				a.setColor(false, Color.BLACK);
+				a.arcDecoBox.setColor(false, Color.BLACK);
 			}
 
-			a.showQSimXTPN = false;
+			a.arcXTPNbox.showQSimXTPN = false;
 		}
 	}
 

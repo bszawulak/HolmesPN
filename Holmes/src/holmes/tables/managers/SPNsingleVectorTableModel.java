@@ -8,7 +8,7 @@ import java.util.EventObject;
 import javax.swing.table.DefaultTableModel;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.elements.TransitionSPNExtension;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 import holmes.windows.managers.HolmesSPNeditor;
 
 /**

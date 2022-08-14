@@ -9,7 +9,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-import holmes.petrinet.elements.TransitionSPNExtension;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 /**
  * Klasa rysująca tablicę tranzycji dla jednego wektora danych SPN.

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.SPNdataVector.SPNvectorSuperType;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.TransitionSPNExtension;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 /**
  * Klasa zarządzająca wektorami danych SPN.

@@ -32,24 +32,26 @@ public abstract class Node extends PetriNetElement {
 	private ArrayList<ElementLocation> gammaLocations = new ArrayList<>();
 	private ArrayList<ElementLocation> tauLocations = new ArrayList<>();
 	private boolean isPortal = false;
+	protected boolean invisible = false;
 	private int radius = 20;
+
+
+	public boolean qSimArcSign = false; //znacznik dła łuku - czy ma być wzmocniony pomiędzy węzłami które mają tu wartość true
+
+
+	public Color branchColor = null;
+	public ArrayList<Color> branchBorderColors = new ArrayList<>();
 	private static final Font f_Big = new Font("TimesRoman", Font.BOLD, 14);
 	private static final Font f_BigL = new Font("TimesRoman", Font.PLAIN, 14);
 	private static final Font f_SmallL = new Font("TimesRoman", Font.BOLD, 12);
 	private static final Color darkGreen = new Color(0, 75, 0);
-
-	public Color branchColor = null;
-	public ArrayList<Color> branchBorderColors = new ArrayList<>();
-	public boolean qSimArcSign = false; //znacznik dła łuku - czy ma być wzmocniony pomiędzy węzłami które mają tu wartość true
-
-	protected boolean invisible = false;
 	
 	/**
 	 * Konstruktor obiektu klasy Node. Ustawia też początkowe wartości przesunięcia nazwy wierzchołka.
-	 * @param sheetId int - identyfikator arkusza
-	 * @param nodeId int - identyfikator elementu sieci Petriego
-	 * @param nodePosition Point - punkt, w którym znajduje się lokalizacja tego wierzchołka na odpowiednim arkuszu
-	 * @param radius int - promień okręgu, na którym opisana jest figura geometryczna reprezentująca obiekt w edytorze graficznym
+	 * @param sheetId (<b>int</b>) identyfikator arkusza.
+	 * @param nodeId (<b>int</b>) identyfikator elementu sieci Petriego.
+	 * @param nodePosition (<b>Point</b> punkt, w którym znajduje się lokalizacja tego wierzchołka na odpowiednim arkuszu.
+	 * @param radius (<b>int</b>) promień okręgu, na którym opisana jest figura geometryczna reprezentująca obiekt w edytorze graficznym.
 	 */
 	public Node(int sheetId, int nodeId, Point nodePosition, int radius) {
 		this.setRadius(radius);
@@ -66,10 +68,10 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Konstruktor obiektu klasy Node. Jest wywoływany między innymi w czasie tworzenia portalu,
-	 * tj. wtedy, kiedy jeden węzeł sieci ma 2 lub więcej lokalizacji
-	 * @param nodeId int - identyfikator elementu sieci Petriego
-	 * @param elementLocations ArrayList[ElementLocation] - lista lokalizacji elementu sieci Petriego
-	 * @param radius int - promień okręgu, na którym opisana jest figura geometryczna reprezentująca obiekt w edytorze graficznym
+	 * tj. wtedy, kiedy jeden węzeł sieci ma 2 lub więcej lokalizacji.
+	 * @param nodeId (<b>int</b>) identyfikator elementu sieci Petriego.
+	 * @param elementLocations (<b>ArrayList[ElementLocation]</b>) lista lokalizacji elementu sieci Petriego.
+	 * @param radius (<b>int</b>) promień okręgu, na którym opisana jest figura geometryczna reprezentująca obiekt w edytorze graficznym.
 	 */
 	public Node(int nodeId, ArrayList<ElementLocation> elementLocations, int radius) {
 		this.setRadius(radius);
@@ -96,9 +98,9 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Konstruktor obiektu klasy Node. Ustawia też początkowe wartości przesunięcia nazwy wierzchołka.
-	 * @param nodeId int - identyfikator elementu sieci Petriego
-	 * @param elementLocation ElementLocation - lokalizacja elementu sieci Petriego
-	 * @param radius int - promień okręgu, na którym opisana jest figura geometryczna reprezentująca obiekt w edytorze graficznym
+	 * @param nodeId (<b>int</b>) identyfikator elementu sieci Petriego
+	 * @param elementLocation (<b>ElementLocation</b>) lokalizacja elementu sieci Petriego
+	 * @param radius (<b>int</b>) promień okręgu, na którym opisana jest figura geometryczna reprezentująca obiekt w edytorze graficznym
 	 */
 	public Node(int nodeId, ElementLocation elementLocation, int radius) {
 		this.setRadius(radius);
@@ -111,8 +113,8 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala pobrać listę wszystkich punktów lokalizacji wierzchołka na arkuszu o określonym identyfikatorze.
-	 * @param sheetId int - identyfikator arkusza
-	 * @return ArrayList[Point] - lista punktów lokalizacji wierzchołka na wybranym arkuszu
+	 * @param sheetId (<b>int</b>) identyfikator arkusza.
+	 * @return (<b>ArrayList[Point]</b>) lista punktów lokalizacji wierzchołka na wybranym arkuszu.
 	 */
 	public ArrayList<Point> getNodePositions(int sheetId) {
 		ArrayList<Point> returnPoints = new ArrayList<>();
@@ -124,9 +126,9 @@ public abstract class Node extends PetriNetElement {
 	
 	/**
 	 * Metoda pozwala pobrać listę wszystkich punktów lokalizacji nazwy wierzchołka na arkuszu o określonym identyfikatorze.
-	 * @param sheetId int - identyfikator arkusza
-	 * @return ArrayList[Point] - lista punktów lokalizacji nazwy wierzchołka na wybranym arkuszu
+	 * @param sheetId (<b>int</b>) identyfikator arkusza
 	 * @param nameType  (GUIManager.locationMoveType) - ALPHA, BETA, GAMMA, DELTA
+	 * @return (<b>ArrayList[Point]</b>) - lista punktów lokalizacji nazwy wierzchołka na wybranym arkuszu
 	 */
 	public ArrayList<Point> getNodeNamePositions(int sheetId, GUIManager.locationMoveType nameType) {
 		ArrayList<Point> returnPoints = new ArrayList<>();
@@ -138,8 +140,8 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala pobrać listę wszystkich lokacji wierzchołka na arkuszu o określonym identyfikatorze
-	 * @param sheetId int - identyfikator arkusza
-	 * @return ArrayList[ElementLocation] - lista lokalizacji wierzchołka na wybranym arkuszu
+	 * @param sheetId (<b>int</b>) identyfikator arkusza.
+	 * @return (<b>ArrayList[ElementLocation]</b>) - lista lokalizacji wierzchołka na wybranym arkuszu.
 	 */
 	public ArrayList<ElementLocation> getNodeLocations(int sheetId) {
 		ArrayList<ElementLocation> returnPoints = new ArrayList<>();
@@ -151,7 +153,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala pobrać ostatnią pośród dodanych dla tego wierzchołka lokację.
-	 * @return ElementLocation - ostatnia dodana lokalizacja
+	 * @return (<b>ElementLocation</b>) - ostatnia dodana lokalizacja.
 	 */
 	public ElementLocation getLastLocation() {
 		if (this.getNodeLocations().size() == 0)
@@ -161,9 +163,9 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala narysować NAZWĘ wierzchołka sieci Petriego na odpowiednim arkuszu.
-	 * @param g Graphics2D - grafika 2D
-	 * @param sheetId int - identyfikator arkusza
-	 * @param eds ElementDrawSettings - opcje rysowania
+	 * @param g (<b>Graphics2D</b> obiekt grafiki.
+	 * @param sheetId (<b>int</b>) identyfikator arkusza.
+	 * @param eds (<b>ElementDrawSettings</b>) opcje rysowania.
 	 */
 	public void draw(Graphics2D g, int sheetId, ElementDrawSettings eds) {
 		g.setColor(Color.black);
@@ -400,10 +402,10 @@ public abstract class Node extends PetriNetElement {
 	/**
 	 * Metoda pozwala sprawdzić, czy dany punkt na danym arkuszu zawiera się
 	 * w obszarze rysowania tego wierzchołka sieci Petriego.
-	 * @param point Point - sprawdzany punkt
-	 * @param sheetId int - identyfikator arkusza
-	 * @return boolean - true, jeśli lokalizacja faktycznie zawiera się w obszarze 
-	 * 	rysowania tego wierzchołka sieci Petriego; false w przeciwnym wypadku
+	 * @param point (<b>Point</b>) sprawdzany punkt.
+	 * @param sheetId (<b>int</b>) identyfikator arkusza.
+	 * @return (<b>boolean</b>) - true, jeśli lokalizacja faktycznie zawiera się w obszarze
+	 * 	rysowania tego wierzchołka sieci Petriego; false w przeciwnym wypadku.
 	 */
 	public boolean contains(Point point, int sheetId) {
 		for (Point p : this.getNodePositions(sheetId))
@@ -435,10 +437,10 @@ public abstract class Node extends PetriNetElement {
 	/**
 	 * Metoda pozwala pobrać listę lokacji, które zawierają się w danym
 	 * prostokątnym obszarze na danym arkuszu.
-	 * @param rectangle Rectangle - prostokątny obszar
-	 * @param sheetId int - identyfikator arkusza
-	 * @return ArrayList[ElementLocation] - lista lokalizacji, które
-	 * 			zawierają się w wybranym prostokątnym obszarze na wybranym arkuszu
+	 * @param rectangle (<b>Rectangle</b>) prostokątny obszar.
+	 * @param sheetId (<b>int</b>) identyfikator arkusza.
+	 * @return (<b>ArrayList[ElementLocation]</b>) - lista lokalizacji, które
+	 * 			zawierają się w wybranym prostokątnym obszarze na wybranym arkuszu.
 	 */
 	public ArrayList<ElementLocation> getLocationsWhichAreContained(Rectangle rectangle, int sheetId) {
 		ArrayList<ElementLocation> returnElementLocations = new ArrayList<>();
@@ -449,8 +451,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Wykonanie tej metody oznacza wszystkie lokacje tego wierzchołka
-	 * sieci Petriego jako wybrane.
+	 * Wykonanie tej metody oznacza wszystkie lokacje tego wierzchołka sieci Petriego jako wybrane.
 	 */
 	public void selectAllPortals() {
 		if (!isPortal())
@@ -461,8 +462,7 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Wykonanie tej metody oznacza wszystkie lokacje tego wierzchołka
-	 * sieci Petriego jako nie wybrane.
+	 * Wykonanie tej metody oznacza wszystkie lokacje tego wierzchołka sieci Petriego jako nie wybrane.
 	 */
 	public void deselectAllPortals() {
 		if (!isPortal())
@@ -482,9 +482,8 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda pozwala sprawdzić, czy wszystkie lokacje tego wierzchołka 
-	 * sieci Petriego są oznaczone jako wybrane.
-	 * @return boolean - true jeśli wierzchołek jest portalem; false w przeciwnym wypadku
+	 * Metoda pozwala sprawdzić, czy wszystkie lokacje tego wierzchołka sieci Petriego są oznaczone jako wybrane.
+	 * @return (<b>boolean</b>) - true jeśli wierzchołek jest portalem; false w przeciwnym wypadku.
 	 */
 	public boolean checkAllPortalsSelection() {
 		if (!isPortal())
@@ -496,18 +495,16 @@ public abstract class Node extends PetriNetElement {
 	}
 
 	/**
-	 * Metoda sprawdza, czy wierzchołek sieci Petriego jest portalem 
-	 * (czy ma więcej niż jedną lokację).
-	 * @return boolean - true, jeśli wierzchołek jest portalem; false w przeciwnym wypadku
+	 * Metoda sprawdza, czy wierzchołek sieci Petriego jest portalem (czy ma więcej niż jedną lokację).
+	 * @return (<b>boolean</b>) - true, jeśli wierzchołek jest portalem; false w przeciwnym wypadku.
 	 */
 	public boolean isPortal() {
 		return isPortal;
 	}
 
 	/**
-	 * Metoda pozwala oznaczyć, czy wierzchołek jest portalem (czy ma 
-	 * więcej niż jedną lokację).
-	 * @param isPortal boolean - wartość określająca, czy wierzchołek ma być portalem
+	 * Metoda pozwala oznaczyć, czy wierzchołek jest portalem (czy ma więcej niż jedną lokację).
+	 * @param isPortal (<b>boolean</b>) - wartość określająca, czy wierzchołek ma być portalem.
 	 */
 	public void setPortal(boolean isPortal) {
 		this.isPortal = isPortal;
@@ -516,7 +513,7 @@ public abstract class Node extends PetriNetElement {
 	/**
 	 * Metoda pozwala pobrać promień okręgu, na którym opisana jest figura
 	 * geometryczna reprezentująca obiekt w edytorze graficznym. 
-	 * @return int - promień okręgu, na którym opisana jest figura 
+	 * @return (<b>int</b>) - promień okręgu, na którym opisana jest figura
 	 * 		geometryczna reprezentująca obiekt w edytorze graficznym
 	 */
 	public int getRadius() {
@@ -526,7 +523,7 @@ public abstract class Node extends PetriNetElement {
 	/**
 	 * Metoda pozwala ustawić promień okręgu, na którym opisana jest figura
 	 * geometryczna reprezentująca obiekt w edytorze graficznym. 
-	 * @param radius int - promien okręgu 
+	 * @param radius (<b>int</b>) promień okręgu.
 	 */
 	public void setRadius(int radius) {
 		this.radius = radius;
@@ -534,7 +531,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala pobrać listę wszystkich lokacji wierzchołka.
-	 * @return ArrayList[ElementLocation] - lista wszystkich lokalizacji wierzchołka
+	 * @return (<b>ArrayList[ElementLocation]</b>) - lista wszystkich lokalizacji wierzchołka.
 	 */
 	public ArrayList<ElementLocation> getNodeLocations() {
 		return getElementLocations();
@@ -542,8 +539,8 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala usunąć lokalizację z listy wszystkich lokalizacji wierzchołka.
-	 * @param el ElementLocation - lokalizacja do usunięcia 
-	 * @return boolean - false, jeśli usunięto jedyną (czyli ostatnią) lokalizację wierzchołka, 
+	 * @param el (<b>ElementLocation</b>) lokalizacja do usunięcia.
+	 * @return (<b>boolean</b>) - false, jeśli usunięto jedyną (czyli ostatnią) lokalizację wierzchołka,
 	 * 		true, jeżeli wierzchołek ma jeszcze inne lokalizacje
 	 */
 	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -620,6 +617,10 @@ public abstract class Node extends PetriNetElement {
 		return totalOutNodes;
 	}
 
+	/**
+	 * Metoda pozwala pobrać listę wszystkich sąsiadujących wierzchołków..
+	 * @return (<b>ArrayList[Node]</b>) - lista wierzchołków sąsiadujących.
+	 */
 	public ArrayList<Node> getOutInNodes() {
 		ArrayList<Node> totalNodes = new ArrayList<>();
 		for (Arc arc : getOutArcs()) {
@@ -633,7 +634,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Zwraca wartość identyfikatora węzła.
-	 * @return String - łańcuch znaków ID
+	 * @return (<b>String</b>) - łańcuch znaków ID
 	 */
 	public String toString() {
 		String type;
@@ -650,7 +651,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda zwraca wektor lokalizacji wierzchołka.
-	 * @return ArrayList[ElementLocation] - tablica lokalizacji
+	 * @return (<b>ArrayList[ElementLocation]</b>) - tablica lokalizacji
 	 */
 	public ArrayList<ElementLocation> getElementLocations() {
 		return elementLocations;
@@ -658,7 +659,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala ustawić listę wszystkich lokalizacji wierzchołka.
-	 * @param elementLocations ArrayList[ElementLocation] - wektor lokalizacji wierzchołka
+	 * @param elementLocations (<b>ArrayList[ElementLocation]</b>) wektor lokalizacji wierzchołka
 	 */
 	public void setElementLocations(ArrayList<ElementLocation> elementLocations) {
 		this.elementLocations = elementLocations;
@@ -666,8 +667,8 @@ public abstract class Node extends PetriNetElement {
 	
 	/**
 	 * Metoda zwraca wektor lokalizacji nazwy wierzchołka.
-	 * @param dataType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
-	 * @return ArrayList[ElementLocation] - odpowiedni wektor lokalizacji nazw.
+	 * @param dataType (<b>GUIManager.locationMoveType</b>) NAME, ALPHA, BETA, GAMMA, TAU
+	 * @return (<b>ArrayList[ElementLocation]</b>) - odpowiedni wektor lokalizacji nazw.
 	 */
 	public ArrayList<ElementLocation> getTextsLocations(GUIManager.locationMoveType dataType) {
 		return switch (dataType) {
@@ -681,8 +682,8 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda ustawia nowy wektor lokalizacji nazw odpowiedniego typu.
-	 * @param namesLocations (ArrayList[ElementLocation]) wektor lokalizacji nazw.
-	 * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
+	 * @param namesLocations (<b>ArrayList[ElementLocation]</b>) wektor lokalizacji nazw.
+	 * @param nameType (<b>GUIManager.locationMoveType</b>) NAME, ALPHA, BETA, GAMMA, TAU
 	 */
 	public void setTextsLocations(ArrayList<ElementLocation> namesLocations, GUIManager.locationMoveType nameType) {
 		switch(nameType) {
@@ -696,9 +697,9 @@ public abstract class Node extends PetriNetElement {
 	
 	/**
 	 * Metoda zwraca pozycję X nazwy wierzchołka o pozycji danej jako argument.
-	 * @param index (int) indeks w wektorze ElementLocations.
-	 * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
-	 * @return (int) pozycja X napisu.
+	 * @param index (<b>int</b>) indeks w wektorze ElementLocations.
+	 * @param nameType (<b>GUIManager.locationMoveType</b>) NAME, ALPHA, BETA, GAMMA, TAU.
+	 * @return (<b>int</b>) - pozycja X napisu.
 	 */
 	public int getTextLocation_X(int index, GUIManager.locationMoveType nameType) {
 		switch (nameType) {
@@ -749,9 +750,9 @@ public abstract class Node extends PetriNetElement {
 	
 	/**
 	 * Metoda zwraca pozycję Y nazwy wierzchołka o pozycji danej jako argument.
-	 * @param index (int) indeks w wektorze ElementLocations.
-	 * @param nameType (GUIManager.locationMoveType) NAME, ALPHA, BETA, GAMMA, TAU
-	 * @return (int) pozycja Y napisu.
+	 * @param index (<b>int</b>) indeks w wektorze ElementLocations.
+	 * @param nameType (<b>GUIManager.locationMoveType</b>) NAME, ALPHA, BETA, GAMMA, TAU.
+	 * @return (<b>int</b>) - pozycja Y napisu..
 	 */
 	public int getTextLocation_Y(int index, GUIManager.locationMoveType nameType) {
 		switch (nameType) {

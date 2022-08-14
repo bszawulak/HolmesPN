@@ -105,8 +105,8 @@ public class GraphicalSimulatorXTPN {
 
         ArrayList<Arc> arcs = petriNet.getArcs();
         for(Arc arc : arcs) {
-            arc.setXTPNactStatus(false);
-            arc.setXTPNprodStatus(false);
+            arc.arcXTPNbox.setXTPNactStatus(false);
+            arc.arcXTPNbox.setXTPNprodStatus(false);
         }
 
         previousSimStatusXTPN = getXTPNsimulatorStatus();
@@ -188,8 +188,8 @@ public class GraphicalSimulatorXTPN {
 
         ArrayList<Arc> arcs = petriNet.getArcs();
         for(Arc arc : arcs) {
-            arc.setXTPNactStatus(false);
-            arc.setXTPNprodStatus(false);
+            arc.arcXTPNbox.setXTPNactStatus(false);
+            arc.arcXTPNbox.setXTPNprodStatus(false);
         }
     }
 
@@ -575,7 +575,7 @@ public class GraphicalSimulatorXTPN {
                     transition.setActivationStatusXTPN(false);
                     transition.setProductionStatus_xTPN(false);
                     for(Arc arc : transition.getOutArcs()) {
-                        arc.setXTPNprodStatus(false);
+                        arc.arcXTPNbox.setXTPNprodStatus(false);
                     }
                     producingTokensTransitionsAll.remove(transition);
                 }
@@ -658,7 +658,7 @@ public class GraphicalSimulatorXTPN {
                     arc.setSimulationForwardDirection(true);
                     arc.setTransportingTokens(true);
 
-                    arc.setXTPNprodStatus(true); //ustaw produkcję tokenów na łuku (kolor)
+                    arc.arcXTPNbox.setXTPNprodStatus(true); //ustaw produkcję tokenów na łuku (kolor)
                 }
             }
         }

@@ -3,7 +3,7 @@ package holmes.petrinet.data;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.elements.TransitionSPNExtension;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 /**
  * Klasa zarządzająca wektorem danych tranzycji SPN.
