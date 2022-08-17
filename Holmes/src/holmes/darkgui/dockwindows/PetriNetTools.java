@@ -23,20 +23,16 @@ import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.utilities.Tools;
 
-import com.javadocking.dock.SingleDock;
-import com.javadocking.dockable.DefaultDockable;
-import com.javadocking.dockable.Dockable;
-
 /**
  * Klasa odpowiedzialna za tworzenie okna narzędziowego, w którym składowane
  * są komponenty możliwe do dodania w różnych rodzajach sieci Petriego.
  * @author students
  * @author MR - wszystkie dodatkowe elementy sieci poza typowymi Place/Transition/Arc
  */
-public class PetriNetTools extends SingleDock implements TreeSelectionListener {
+public class PetriNetTools implements TreeSelectionListener {
 	@Serial
 	private static final long serialVersionUID = 5385847227073467035L;
-	private Dockable dockable;
+	//private Dockable dockable;
 	private JPanel panel;
 	private Point position;
 	private GUIManager guiManager;
@@ -54,8 +50,8 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		label.setVisible(true);
 		panel.add(label);
 
-		setDockable(new DefaultDockable("Tools", panel, "Tools"));
-		setDockable(GUIManager.externalWithListener(getDockable(),guiManager.getDockingListener()));
+		//setDockable(new DefaultDockable("Tools", panel, "Tools"));
+		//setDockable(GUIManager.externalWithListener(getDockable(),guiManager.getDockingListener()));
 
 		DefaultMutableTreeNode miscNode = new DefaultMutableTreeNode("Misc");
 		pointerNode = new DefaultMutableTreeNode("Pointer");
@@ -129,7 +125,7 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 		panel.add(new JScrollPane(toolTree), BorderLayout.CENTER);
 
 		position = new Point(0, 0);
-		this.addDockable(getDockable(), position, position);
+		//this.addDockable(getDockable(), position, position);
 
 	}
 
@@ -137,16 +133,16 @@ public class PetriNetTools extends SingleDock implements TreeSelectionListener {
 	 * Metoda zwracająca podokno dokowalne narzędzi intefejsu programu.
 	 * @return Dockable - obiekt dokowalny
 	 */
-	public Dockable getDockable() {
-		return dockable;
-	}
+	//public Dockable getDockable() {
+	//	return dockable;
+	//}
 
 	/**
 	 * Metoda ustawiająca podokno dokowalne narzędzi intefejsu programu.
 	 */
-	private void setDockable(Dockable dockable) {
-		this.dockable = dockable;
-	}
+	//private void setDockable(Dockable dockable) {
+	//	this.dockable = dockable;
+	//}
 	
 	/**
 	 * Metoda ustawiająca i podświetlająca wybór wskaźnika typu POINTER

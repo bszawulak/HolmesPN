@@ -23,10 +23,7 @@ import holmes.windows.managers.ssim.HolmesSim;
 import holmes.workspace.ExtensionFileFilter;
 import holmes.workspace.Workspace;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.KeyboardFocusManager;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
@@ -39,27 +36,6 @@ import java.util.Random;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
-import com.javadocking.DockingManager;
-import com.javadocking.component.DefaultSwComponentFactory;
-import com.javadocking.dock.CompositeDock;
-import com.javadocking.dock.CompositeTabDock;
-import com.javadocking.dock.Dock;
-import com.javadocking.dock.FloatDock;
-import com.javadocking.dock.Position;
-import com.javadocking.dock.SplitDock;
-import com.javadocking.dock.factory.LeafDockFactory;
-import com.javadocking.dockable.ActionDockable;
-import com.javadocking.dockable.Dockable;
-import com.javadocking.dockable.DockableState;
-import com.javadocking.dockable.StateActionDockable;
-import com.javadocking.dockable.action.DefaultDockableStateActionFactory;
-import com.javadocking.dockable.action.DefaultPopupMenuFactory;
-import com.javadocking.event.DockingListener;
-import com.javadocking.model.DefaultDockingPath;
-import com.javadocking.model.FloatDockModel;
-import com.javadocking.visualizer.FloatExternalizer;
-import com.javadocking.visualizer.LineMinimizer;
-import com.javadocking.visualizer.SingleMaximizer;
 
 /**
  * Główna klasa programu odpowiedzialna za właściwie wszystko. Zaczyna od utworzenia elementów
@@ -85,26 +61,26 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private Dimension screenSize; 		// praca w maksymalizacji
 	@SuppressWarnings("unused")
 	private Dimension smallScreenSize;	// praca poza maksymalizowanym oknem
-	private FloatDockModel dockModel;
+	//private FloatDockModel dockModel;
 	
 	// settings
 	private final SettingsManager settingsManager;
 	
 	// visualizers
-	private LineMinimizer minimizer;
-	private SingleMaximizer maximizer;
-	private FloatExternalizer externalizer;
+	//private LineMinimizer minimizer;
+	//private SingleMaximizer maximizer;
+	//private FloatExternalizer externalizer;
 	
 	// main Docks
 	private Workspace workspace;
-	private CompositeTabDock leftTabDock;
+	//private CompositeTabDock leftTabDock;
 	//private CompositeTabDock bottomLeftTabDock;
-	private CompositeTabDock topRightTabDock;
-	private CompositeTabDock bottomRightTabDock;
+	//private CompositeTabDock topRightTabDock;
+	//private CompositeTabDock bottomRightTabDock;
 	// SplitDocks
-	private SplitDock leftSplitDock;
-	private SplitDock rightSplitDock;
-	private SplitDock totalSplitDock;
+	//private SplitDock leftSplitDock;
+	//private SplitDock rightSplitDock;
+	//private SplitDock totalSplitDock;
 	
 	private PetriNetTools toolBox;
 	
@@ -173,8 +149,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private locationMoveType nameLocChangeMode = locationMoveType.NONE;
 	private Node nameSelectedNode = null;
 	private ElementLocation nameNodeEL = null;
-	
-	public ArrayList<Dockable> globalSheetsList = new ArrayList<>();
+
+	//TODO tabs
+	//public ArrayList<Dockable> globalSheetsList = new ArrayList<>();
 	
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
@@ -218,9 +195,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 			System.out.println(e.getMessage());
 		}
 		
-		frame.getContentPane().add(this);
+		//frame.getContentPane().add(this);
 		frame.addComponentListener(this);
-		getFrame().getContentPane().add(this);
+		//getFrame().getContentPane().add(this);
 		getFrame().addComponentListener(this);
 		
 		createHiddenConsole(); // okno konsoli logowania zdarzeń
@@ -252,28 +229,28 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		
 		// Create the dock model for the docks.
-		setDockModel(new FloatDockModel());
-		getDockModel().addOwner("frame0", getFrame());
+		//setDockModel(new FloatDockModel());
+		//getDockModel().addOwner("frame0", getFrame());
 
-		FloatDock floatDock = getDockModel().getFloatDock(getFrame());
-		floatDock.setChildDockFactory(new LeafDockFactory(false));
+		//FloatDock floatDock = getDockModel().getFloatDock(getFrame());
+		//floatDock.setChildDockFactory(new LeafDockFactory(false));
 
 		// setfactories
-		DefaultPopupMenuFactory popupMenuFactory = new DefaultPopupMenuFactory();
-		popupMenuFactory.setPopupActions(DefaultPopupMenuFactory.DOCKABLE_ACTIONS
-				| DefaultPopupMenuFactory.CLOSE_ALL_ACTION
-				| DefaultPopupMenuFactory.CLOSE_OTHERS_ACTION);
-		DefaultSwComponentFactory componentFactory = new DefaultSwComponentFactory();
-		componentFactory.setPopupMenuFactory(popupMenuFactory);
-		DockingManager.setComponentFactory(componentFactory);
+		//DefaultPopupMenuFactory popupMenuFactory = new DefaultPopupMenuFactory();
+		//popupMenuFactory.setPopupActions(DefaultPopupMenuFactory.DOCKABLE_ACTIONS
+		//		| DefaultPopupMenuFactory.CLOSE_ALL_ACTION
+		//		| DefaultPopupMenuFactory.CLOSE_OTHERS_ACTION);
+		//DefaultSwComponentFactory componentFactory = new DefaultSwComponentFactory();
+		//componentFactory.setPopupMenuFactory(popupMenuFactory);
+		//DockingManager.setComponentFactory(componentFactory);
 
 		// Give the dock model to the docking manager.
-		DockingManager.setDockModel(getDockModel());
+		//DockingManager.setDockModel(getDockModel());
 
 		// Create the composite tab docks.
-		leftTabDock = new CompositeTabDock(); // default Toolbox dock
-		topRightTabDock = new CompositeTabDock(); // default Properties dock
-		bottomRightTabDock = new CompositeTabDock(); // default Simulator dock
+		//leftTabDock = new CompositeTabDock(); // default Toolbox dock
+		//topRightTabDock = new CompositeTabDock(); // default Properties dock
+		//bottomRightTabDock = new CompositeTabDock(); // default Simulator dock
 
 		// set docking listener
 		setDockingListener(new DarkDockingListener());
@@ -298,26 +275,31 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createSimLogWindow(); // okno logów symulatora
 
 		setWorkspace(new Workspace(this)); // default workspace dock
-		getDockingListener().setWorkspace(workspace);
-		
+		//getDockingListener().setWorkspace(workspace);
+		JPanel mainpanel = new JPanel();
+		mainpanel.add(GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet());
+		mainpanel.setLayout(new FlowLayout());
+		getFrame().add(mainpanel);
+		getFrame().setLayout(new FlowLayout());
+
 		setFixBox(new HolmesDockWindow(DockWindowType.FIXNET));
 
 		//leftTabDock.setHeaderPosition(Position.BOTTOM);
-		leftTabDock.addChildDock(getToolBox(), new Position(0));
-		leftTabDock.addChildDock(getSimulatorBox(), new Position(1));
-		leftTabDock.setSelectedDock(getToolBox());
+		//leftTabDock.addChildDock(getToolBox(), new Position(0));
+		//leftTabDock.addChildDock(getSimulatorBox(), new Position(1));
+		//leftTabDock.setSelectedDock(getToolBox());
 
-		topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
-		topRightTabDock.setSelectedDock(getPropertiesBox());
+		//topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
+		//topRightTabDock.setSelectedDock(getPropertiesBox());
 		
-		bottomRightTabDock.addChildDock(getT_invBox(), new Position(1));
-		bottomRightTabDock.addChildDock(getP_invBox(), new Position(2));
-		bottomRightTabDock.addChildDock(getMctBox(), new Position(3));
-		bottomRightTabDock.addChildDock(getMCSBox(), new Position(4));
-		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(5));
-		bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
-		bottomRightTabDock.addChildDock(getQuickSimBox(), new Position(7));
-		bottomRightTabDock.addChildDock(getFixBox(), new Position(8));
+		//bottomRightTabDock.addChildDock(getT_invBox(), new Position(1));
+		//bottomRightTabDock.addChildDock(getP_invBox(), new Position(2));
+		//bottomRightTabDock.addChildDock(getMctBox(), new Position(3));
+		//bottomRightTabDock.addChildDock(getMCSBox(), new Position(4));
+		//bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(5));
+		//bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
+		//bottomRightTabDock.addChildDock(getQuickSimBox(), new Position(7));
+		//bottomRightTabDock.addChildDock(getFixBox(), new Position(8));
 		//bottomRightTabDock.addChildDock(getDecompositionBox(), new Position(9));
 
 		// create the split docks
@@ -325,62 +307,63 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
 		//leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
 				
-		leftSplitDock = new SplitDock();
-		leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
+		//leftSplitDock = new SplitDock();
+		//leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
 		
-		SplitDock workspaceSplit = new SplitDock();
-		workspaceSplit.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
-		if(debug) {
-			workspaceSplit.addChildDock(getSelectionBox(), new Position(Position.BOTTOM));
-		} else {
-			topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
-			topRightTabDock.setSelectedDock(getPropertiesBox());
-		}
-		workspaceSplit.setDividerLocation((int) (screenSize.getHeight() * 7 / 10));
-		leftSplitDock.addChildDock(workspaceSplit, new Position(Position.CENTER));
-		leftSplitDock.setDividerLocation(180);
+		//SplitDock workspaceSplit = new SplitDock();
+		//workspaceSplit.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
+		//if(debug) {
+		//	workspaceSplit.addChildDock(getSelectionBox(), new Position(Position.BOTTOM));
+		//} else {
+		//	topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
+		//	topRightTabDock.setSelectedDock(getPropertiesBox());
+		//}
+		//workspaceSplit.setDividerLocation((int) (screenSize.getHeight() * 7 / 10));
+		//leftSplitDock.addChildDock(workspaceSplit, new Position(Position.CENTER));
+		//leftSplitDock.setDividerLocation(180);
 		
-		rightSplitDock = new SplitDock();
-		rightSplitDock.addChildDock(topRightTabDock, new Position(Position.TOP));
-		rightSplitDock.addChildDock(bottomRightTabDock, new Position(Position.BOTTOM));
-		rightSplitDock.setDividerLocation((int) (screenSize.getHeight() * 2 / 5));
+		//rightSplitDock = new SplitDock();
+		//rightSplitDock.addChildDock(topRightTabDock, new Position(Position.TOP));
+		//rightSplitDock.addChildDock(bottomRightTabDock, new Position(Position.BOTTOM));
+		//rightSplitDock.setDividerLocation((int) (screenSize.getHeight() * 2 / 5));
 
-		totalSplitDock = new SplitDock();
-		totalSplitDock.addChildDock(leftSplitDock, new Position(Position.LEFT));
-		totalSplitDock.addChildDock(rightSplitDock,new Position(Position.RIGHT));
+		//totalSplitDock = new SplitDock();
+		//totalSplitDock.addChildDock(leftSplitDock, new Position(Position.LEFT));
+		//totalSplitDock.addChildDock(rightSplitDock,new Position(Position.RIGHT));
 		//totalSplitDock.setDividerLocation(400);
-		totalSplitDock.setDividerLocation((int) screenSize.getWidth() - (int) screenSize.getWidth() / 6);
+		//totalSplitDock.setDividerLocation((int) screenSize.getWidth() - (int) screenSize.getWidth() / 6);
 		
 		// // Add root dock
-		getDockModel().addRootDock("totalSplitDock", totalSplitDock, getFrame());
-		add(totalSplitDock, BorderLayout.CENTER);
+		//getDockModel().addRootDock("totalSplitDock", totalSplitDock, getFrame());
+		//add(totalSplitDock, BorderLayout.CENTER);
 
 		// save docking paths
-		DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getToolBox().getDockable()));
-		DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getPropertiesBox().getDockable()));
+		//DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getToolBox().getDockable()));
+		//DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getPropertiesBox().getDockable()));
 
 		// Create an externalizer.
-		setExternalizer(new FloatExternalizer(getFrame()));
-		dockModel.addVisualizer("externalizer", getExternalizer(), getFrame());
+		//setExternalizer(new FloatExternalizer(getFrame()));
+		//dockModel.addVisualizer("externalizer", getExternalizer(), getFrame());
 
 		// Create a minimizer.
-		setMinimizer(new LineMinimizer(totalSplitDock));
-		dockModel.addVisualizer("minimizer", getMinimizer(), getFrame());
+		//setMinimizer(new LineMinimizer(totalSplitDock));
+		//dockModel.addVisualizer("minimizer", getMinimizer(), getFrame());
 
 		// Create a maximizer.
-		setMaximizer(new SingleMaximizer(getMinimizer()));
-		dockModel.addVisualizer("maximizer", getMaximizer(), getFrame());
-		this.add(getMaximizer(), BorderLayout.CENTER);
+		//setMaximizer(new SingleMaximizer(getMinimizer()));
+		//dockModel.addVisualizer("maximizer", getMaximizer(), getFrame());
+		//this.add(getMaximizer(), BorderLayout.CENTER);
 
 		// default screen size unmaximized
 		smallScreenSize = new Dimension((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
 		setShortcutsBar(new Toolbar());
+		getFrame().add(shortcutsBar);
 
 		// Add the shortcuts bar also as root dock to the dock model.
-		dockModel.addRootDock("toolBarBorderDock", getShortcutsBar().getToolBarBorderDock(), frame);
+		//dockModel.addRootDock("toolBarBorderDock", getShortcutsBar().getToolBarBorderDock(), frame);
 
 		// Add the shortcuts bar to this panel.
-		this.add(getShortcutsBar().getToolBarBorderDock(), BorderLayout.CENTER);
+		//this.add(getShortcutsBar().getToolBarBorderDock(), BorderLayout.CENTER);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new KeyManager(this));
 
@@ -429,6 +412,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 			lastPath = path;	
 
 		getSimulatorBox().createSimulatorProperties(false);
+		getFrame().repaint();
 	}
 
 	/**
@@ -593,18 +577,18 @@ public class GUIManager extends JPanel implements ComponentListener {
 		if (getFrame().getExtendedState() == JFrame.MAXIMIZED_BOTH) {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			//leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 10);
-			leftSplitDock.setDividerLocation(180);
+			//leftSplitDock.setDividerLocation(180);
 			//
 			//int width = this.getWidth();
 			//totalSplitDock.setDividerLocation(600);
 			//totalSplitDock.setDividerLocation((int) (screenSize.getWidth() * 5.6 / 7));
-			totalSplitDock.setDividerLocation((int) (screenSize.getWidth() - 350));
+			//totalSplitDock.setDividerLocation((int) (screenSize.getWidth() - 350));
 		} else {
 			smallScreenSize = getFrame().getSize();
 			//leftSplitDock.setDividerLocation((int) smallScreenSize.getWidth() / 8);
-			leftSplitDock.setDividerLocation(180);
+			//leftSplitDock.setDividerLocation(180);
 			//totalSplitDock.setDividerLocation((int) (smallScreenSize.getWidth() * 5.6 / 7));
-			totalSplitDock.setDividerLocation((int) (screenSize.getWidth() - 350));
+			//totalSplitDock.setDividerLocation((int) (screenSize.getWidth() - 350));
 		}
 	}
 
@@ -614,6 +598,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * @param deletable - true, jeśli dodajemy ikonę usuwania (główne podokno arkuszy sieci)
 	 * @return Dockable - nowe okno po dodaniu elementów
 	 */
+	/*
 	public Dockable decorateDockableWithActions(Dockable dockable, boolean deletable) {
 		Dockable wrapper = new StateActionDockable(dockable, new DefaultDockableStateActionFactory(), new int[0]);
 		int[] states = { DockableState.NORMAL, DockableState.MINIMIZED, DockableState.MAXIMIZED, DockableState.EXTERNALIZED, DockableState.CLOSED };
@@ -630,6 +615,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		return wrapper;
 	}
+	*/
 	
 	/**
 	 * Metoda zwraca ścieżki do ostatio używanego katalagu.
@@ -873,17 +859,17 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Opis: I have no idea...
 	 * @return FloatDockModel
 	 */
-	public FloatDockModel getDockModel() {
-		return dockModel;
-	}
+	//public FloatDockModel getDockModel() {
+	//	return dockModel;
+	//}
 
 	/**
 	 * Opis: I have no idea...
 	 * @param dockModel FloatDockModel
 	 */
-	private void setDockModel(FloatDockModel dockModel) {
-		this.dockModel = dockModel;
-	}
+	//private void setDockModel(FloatDockModel dockModel) {
+	//	this.dockModel = dockModel;
+	//}
 
 	/**
 	 * Metoda zwraca obiekt - referencji swojej klasy.
@@ -906,45 +892,45 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Zwraca obiekt przycisku powiększającego okno do rozmiarów ekranu.
 	 * @return SingleMaximizer
 	 */
-	public SingleMaximizer getMaximizer() {
-		return maximizer;
-	}
+	//public SingleMaximizer getMaximizer() {
+	//	return maximizer;
+	//}
 
 	/**
 	 * Ustawia obiekt przycisku powiększającego okno do rozmiarów ekranu.
 	 * @param maximizer SingleMaximizer
 	 */
-	private void setMaximizer(SingleMaximizer maximizer) {
-		this.maximizer = maximizer;
-	}
+	//private void setMaximizer(SingleMaximizer maximizer) {
+	//	this.maximizer = maximizer;
+	//}
 
 	/**
 	 * Zwraca obiekt przycisku pomniejszającego okno do paska zadań.
 	 * @return LineMinimizer
 	 */
-	public LineMinimizer getMinimizer() {
-		return minimizer;
-	}
+	//public LineMinimizer getMinimizer() {
+	//	return minimizer;
+	//}
 
 	/**
 	 * Ustawia obiekt przycisku pomniejszającego okno do paska zadań.
 	 * @param minimizer LineMinimizer
 	 */
-	private void setMinimizer(LineMinimizer minimizer) {
-		this.minimizer = minimizer;
-	}
+	//private void setMinimizer(LineMinimizer minimizer) {
+	//	this.minimizer = minimizer;
+	//}
 
-	public FloatExternalizer getExternalizer() {
-		return externalizer;
-	}
+	//public FloatExternalizer getExternalizer() {
+	//	return externalizer;
+	//}
 
 	/**
 	 * Opis: I have no idea...
 	 * @param externalizer FloatExternalizer
 	 */
-	private void setExternalizer(FloatExternalizer externalizer) {
-		this.externalizer = externalizer;
-	}
+	//private void setExternalizer(FloatExternalizer externalizer) {
+	//	this.externalizer = externalizer;
+	//}
 	
 	/**
 	 * Metoda zwraca obiekt ramki.
@@ -1017,11 +1003,13 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * @param listener DockingListener
 	 * @return Dockable - obiekt podokna zaboxowany w obiekcie dokowalnym
 	 */
+	/*
 	public static Dockable externalWithListener(Dockable dockable, DockingListener listener) {
 		Dockable wrapper = guiManager.decorateDockableWithActions(dockable, false);
 		wrapper.addDockingListener(listener);
 		return wrapper;
 	}
+	*/
 
 	/**
 	 * Metoda zwracająca obiekt nasłuchujący zdarzenia dokowania podokna.
@@ -1620,15 +1608,17 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda sprawdza do jakiego komponentu nadrzędnego należy przesłany w parametrze i go stamtąd usuwa.
 	 * @param x Dockable - komponent
 	 */
+	/*
 	public void cleanLostOne(Dockable x) {
 		Dock xxx = x.getDock();
 		CompositeDock yyy = xxx.getParentDock();
 		yyy.emptyChild(xxx);
 	}
-	
+	*/
 	/**
 	 * Metoda usuwa wszystkie panele podsieci nie będące zadokowanymi w oknie worksheet.
 	 */
+	/*
 	public void cleanDockables() {
 		ArrayList<Dockable> activeSheets = getWorkspace().getDockables();
 		
@@ -1637,4 +1627,5 @@ public class GUIManager extends JPanel implements ComponentListener {
 				cleanLostOne(d);
 		}
 	}
+	*/
 }

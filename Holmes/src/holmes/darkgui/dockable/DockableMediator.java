@@ -7,18 +7,13 @@ import java.awt.event.ItemListener;
 import javax.swing.Action;
 import javax.swing.JMenuItem;
 
-import com.javadocking.dockable.Dockable;
-import com.javadocking.dockable.DockableState;
-import com.javadocking.dockable.action.DefaultDockableStateAction;
-import com.javadocking.event.DockingEvent;
-import com.javadocking.event.DockingListener;
 
 /**
  * A listener that listens when menu items with dockables are selected and
  * deselected. It also listens when dockables are closed or docked.
  */
-public class DockableMediator implements ItemListener, DockingListener {
-
+public class DockableMediator {//implements ItemListener{//}, DockingListener {
+/*
 	private Dockable dockable;
 	private Action closeAction;
 	private Action restoreAction;
@@ -59,4 +54,6 @@ public class DockableMediator implements ItemListener, DockingListener {
 	public void dockingWillChange(DockingEvent dockingEvent) {
 		
 	}
+
+ */
 }

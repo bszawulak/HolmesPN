@@ -7547,8 +7547,8 @@ public class HolmesDockWindowsTable extends JPanel {
                         knockoutTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
                 BorderLayout.CENTER);
 
-        int w = overlord.getMctBox().getWidth();
-        int h = overlord.getMctBox().getHeight();
+        int w = 0;//overlord.getMctBox().getWidth();
+        int h = 0;//overlord.getMctBox().getHeight();
         textAreaPanel.setBounds(colA_posX, positionY, w - 30, h - 60);
         components.add(textAreaPanel);
 

@@ -2,11 +2,6 @@ package holmes.darkgui;
 
 import java.awt.Point;
 
-import com.javadocking.dock.Position;
-import com.javadocking.dockable.DefaultDockable;
-import com.javadocking.dockable.DockingMode;
-import com.javadocking.event.DockingEvent;
-import com.javadocking.event.DockingListener;
 
 import holmes.workspace.Workspace;
 import holmes.workspace.WorkspaceFiller;
@@ -18,9 +13,10 @@ import holmes.workspace.WorkspaceFiller;
  * @author students
  *
  */
-public class DarkDockingListener implements DockingListener {
+public class DarkDockingListener{
 	private Workspace workspace;
 
+	/*
 	@Override
 	public void dockingChanged(DockingEvent e) {
 		if (e.getDestinationDock() == workspace.getWorkspaceDock())
@@ -39,6 +35,7 @@ public class DarkDockingListener implements DockingListener {
 			workspace.getWorkspaceDock().addChildDock(workspace.getFillerDock(), new Position(0));
 		}
 	}
+	*/
 
 	/**
 	 * Metoda zwraca obiekt obszaru roboczego.

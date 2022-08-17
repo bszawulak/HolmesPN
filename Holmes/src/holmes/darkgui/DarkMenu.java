@@ -20,7 +20,6 @@ import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.decompositions.HolmesMergeNets;
 import holmes.windows.managers.HolmesStatesManager;
 
-import com.javadocking.dockable.Dockable;
 
 /**
  * Klasa implementująca metody tworzenia i obsługi głównego menu programu.
@@ -32,7 +31,7 @@ public class DarkMenu extends JMenuBar {
 	private GUIManager guiManager;
 	private JMenu sheetsMenu;
 	// dockable
-	private ArrayList<Dockable> dockables;
+	//private ArrayList<Dockable> dockables;
 	private ArrayList<DockableMenuItem> sheetItems;
 
 	/**
@@ -41,7 +40,7 @@ public class DarkMenu extends JMenuBar {
 	public DarkMenu() {
 		guiManager = GUIManager.getDefaultGUIManager();
 		sheetItems = new ArrayList<DockableMenuItem>();
-		dockables = new ArrayList<Dockable>();
+		//dockables = new ArrayList<Dockable>();
 		
 		JMenu xMenu = new JMenu(" ");
 		xMenu.setEnabled(false);
@@ -231,7 +230,9 @@ public class DarkMenu extends JMenuBar {
 		windowMenu.add(sheetsMenu);
 
 		windowMenu.addSeparator();
-		
+
+		//TODO przyciski
+		/*
 		windowMenu.add(new DockableMenuItem(guiManager.getToolBox().getDockable(),
 				Tools.getResIcon32("/icons/menu/menu_WindowTools.png")));
 		windowMenu.add(new DockableMenuItem(guiManager.getPropertiesBox().getDockable(),
@@ -242,6 +243,7 @@ public class DarkMenu extends JMenuBar {
 				Tools.getResIcon32("/icons/menu/menu_WindowsAnalysis.png")));
 		windowMenu.add(new DockableMenuItem(guiManager.getMctBox().getDockable(),
 				Tools.getResIcon32("/icons/menu/menu_WindowMCT.png")));
+		*/
 		
 		windowMenu.addSeparator();
 		
@@ -602,17 +604,20 @@ public class DarkMenu extends JMenuBar {
 	 * Metoda odpowiedzialna za dodanie do menu zakładek w Windows->Project... nazwy nowo utworzonego arkusza.
 	 * @param dockableItem Dockable - obiekt menu do osadzenia.
 	 */
+	/*
 	public void addSheetItem(Dockable dockableItem) {
 		dockables.add(dockableItem);
 		DockableMenuItem menuItem = new DockableMenuItem(dockableItem, null);
 		sheetItems.add(menuItem);
 		sheetsMenu.add(menuItem);
 	}
+	*/
 
 	/**
 	 * Metoda odpowiedzialna za usuwanie z menu Windows->Project wpisu o arkuszu.
 	 * @param dockableItem Dockable - obiekt menu do usunięcia
 	 */
+	/*
 	public void deleteSheetItem(Dockable dockableItem) {
 		int index = dockables.indexOf(dockableItem);
 		if(index == -1)
@@ -623,4 +628,5 @@ public class DarkMenu extends JMenuBar {
 		if (index > 0)
 			sheetsMenu.remove(index);
 	}
+	*/
 }

@@ -1286,7 +1286,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					accessSSAmanager().createCleanSSAvector();
 					overlord.subnetsGraphics.addRequiredSheets();
 					overlord.subnetsGraphics.resizePanels();
-					overlord.getWorkspace().setSelectedDock(0);
+					//overlord.getWorkspace().setSelectedDock(0);
 				}
 				
 				int nodeSID = overlord.getWorkspace().getSheets().size() - 1;

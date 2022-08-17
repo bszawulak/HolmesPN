@@ -220,7 +220,7 @@ public class ProjectReader {
 			}
 			
 			overlord.subnetsGraphics.addRequiredSheets();
-			overlord.getWorkspace().setSelectedDock(0);
+			//overlord.getWorkspace().setSelectedDock(0);
 			buffer.close();
 			return true;
 		} catch (Exception e) {

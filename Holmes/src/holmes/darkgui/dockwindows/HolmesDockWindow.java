@@ -17,9 +17,6 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.simulators.GraphicalSimulator;
 
-import com.javadocking.dock.SingleDock;
-import com.javadocking.dockable.DefaultDockable;
-import com.javadocking.dockable.Dockable;
 import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 
 /**
@@ -30,10 +27,10 @@ import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
  *
  * @author students
  */
-public class HolmesDockWindow extends SingleDock {
+public class HolmesDockWindow {//extends SingleDock {
     @Serial
     private static final long serialVersionUID = -1966643269924197502L;
-    private Dockable dockable;
+    //private Dockable dockable;
     private GUIManager guiManager;
     private HolmesDockWindowsTable dockWindowPanel;
     private SelectionPanel selectionPanel;
@@ -60,6 +57,7 @@ public class HolmesDockWindow extends SingleDock {
         scrollPane = new JScrollPane();
         guiManager = GUIManager.getDefaultGUIManager();
 
+        /*
         switch (type) {
             case EDITOR -> setDockable(GUIManager.externalWithListener(new DefaultDockable("NetElement", scrollPane,
                     "Net Element"), GUIManager.getDefaultGUIManager().getDockingListener()));
@@ -94,9 +92,10 @@ public class HolmesDockWindow extends SingleDock {
                     setDockable(GUIManager.externalWithListener(new DefaultDockable("Decomposition", scrollPane,
                             "DECOMPOSITION"), GUIManager.getDefaultGUIManager().getDockingListener()));
         }
+        */
 
         Point position = new Point(0, 0);
-        this.addDockable(getDockable(), position, position);
+        //this.addDockable(getDockable(), position, position);
 
         //immediate creation:
         switch (type) {
@@ -124,16 +123,16 @@ public class HolmesDockWindow extends SingleDock {
      *
      * @return Dockable - obiekt dokowalny
      */
-    public Dockable getDockable() {
-        return dockable;
-    }
+    //public Dockable getDockable() {
+    //    return dockable;
+    //}
 
     /**
      * Metoda ustawiająca podokno dokowalne intefejsu programu.
      */
-    private void setDockable(Dockable dockable) {
-        this.dockable = dockable;
-    }
+    //private void setDockable(Dockable dockable) {
+    //    this.dockable = dockable;
+    //}
 
     /**
      * Metoda odpowiedzialna za wypełnienie sekcji symulatora sieci.
