@@ -1214,6 +1214,23 @@ public class ProjectReader {
 				transition.getTextsLocations(GUIManager.locationMoveType.BETA).get(eLocIndex).setNotSnappedPosition(newP);
 				return;
 			}
+
+			query = "Transition tau offset data sheet/x/y/elIndex:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				String[] tab = line.split(";");
+				int sheetID = Integer.parseInt(tab[0]);
+				int pointX = Integer.parseInt(tab[1]);
+				int pointY = Integer.parseInt(tab[2]);
+				int eLocIndex = Integer.parseInt(tab[3]);
+
+				transition.getTextsLocations(GUIManager.locationMoveType.TAU).get(eLocIndex).setSheetID(sheetID);
+				Point newP = new Point(pointX, pointY);
+				transition.getTextsLocations(GUIManager.locationMoveType.TAU).get(eLocIndex).forceSetPosition(newP);
+				transition.getTextsLocations(GUIManager.locationMoveType.TAU).get(eLocIndex).setNotSnappedPosition(newP);
+				return;
+			}
 			
 			query = "Transition colored:";
 			if(line.contains(query)) {
@@ -1395,6 +1412,8 @@ public class ProjectReader {
 			} else if(typeLine.contains("XINH")) {
 				arcType = TypeOfArc.INHIBITOR;
 				XTPNinh = true;
+			} else if(XTPNdataMode && typeLine.contains("NORMAL")) {
+				XTPNarc = true;
 			}
 			
 			tab[2] = tab[2].replace(">", "");
