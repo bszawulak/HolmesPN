@@ -41,8 +41,8 @@ public class SimulatorGlobals {
 
 	//XTPN:
 	private double calculationsAccuracy = 0.000000001;
-	public long simSteps_XTPN = 10000;
-	public double simMaxTime_XTPN = 3000.0;
+	public long simSteps_XTPN = 30000;
+	public double simMaxTime_XTPN = 5000.0;
 	public int simRepetitions_XTPN = 10;
 	public boolean simulateTime = false; //domyślnie: true = steps
 	

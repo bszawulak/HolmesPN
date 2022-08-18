@@ -287,7 +287,7 @@ public class DarkMenu extends JMenuBar {
 		
 		JMenuItem netTablesItem = new JMenuItem("Net data tables...", KeyEvent.VK_4);
 		netTablesItem.setIcon(Tools.getResIcon32("/icons/menu/menu_netTables.png"));
-		netTablesItem.setAccelerator(KeyStroke.getKeyStroke('X', InputEvent.CTRL_DOWN_MASK));
+		netTablesItem.setAccelerator(KeyStroke.getKeyStroke('A', InputEvent.CTRL_DOWN_MASK));
 		netTablesItem.getAccessibleContext().setAccessibleDescription("Show net data tables window");
 		netTablesItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showNetTablesWindow());
 		netMenu.add(netTablesItem);
@@ -413,6 +413,13 @@ public class DarkMenu extends JMenuBar {
 		netSimItem.getAccessibleContext().setAccessibleDescription("Show state simulator window");
 		netSimItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showStateSimulatorWindow());
 		simulatorSubMenu.add(netSimItem);
+
+		JMenuItem netSimXTPNItem = new JMenuItem("XTPN Simulator...", KeyEvent.VK_5);
+		netSimXTPNItem.setIcon(Tools.getResIcon32("/icons/menu/menu_XTPNsimulator.png"));
+		netSimXTPNItem.setAccelerator(KeyStroke.getKeyStroke('X', InputEvent.CTRL_DOWN_MASK));
+		netSimXTPNItem.getAccessibleContext().setAccessibleDescription("Show state simulator window");
+		netSimXTPNItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showStateSimulatorWindowXTPN());
+		simulatorSubMenu.add(netSimXTPNItem);
 
 		JMenu decompSubMenu = new JMenu("Net decomposition");
 		decompSubMenu.setIcon(Tools.getResIcon32("/icons/menu/menu_decompSubmenu.png"));

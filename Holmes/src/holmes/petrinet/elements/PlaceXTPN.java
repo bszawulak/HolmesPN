@@ -125,7 +125,8 @@ public class PlaceXTPN extends Place {
      */
     public void setGammaModeStatus(boolean status) {
         gammaMode_xTPN = status;
-        setGammaRangeVisibility(status);
+        if(status == false)
+            setGammaRangeVisibility(status);
     }
 
     /**
