@@ -19,7 +19,8 @@ import holmes.utilities.Tools;
 import holmes.windows.*;
 import holmes.windows.clusters.HolmesClusters;
 import holmes.windows.decompositions.*;
-import holmes.windows.managers.ssim.HolmesSim;
+import holmes.windows.ssim.HolmesSim;
+import holmes.windows.xtpn.HolmesSimXTPN;
 import holmes.workspace.ExtensionFileFilter;
 import holmes.workspace.Workspace;
 
@@ -149,6 +150,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesSearch windowSearch; //okno wyszukiwania elementów sieci
 	private HolmesProgramProperties windowProperties; //okno właściwości sieci
 	private HolmesSim windowStateSim; //okno symulatora stanów
+	private HolmesSimXTPN windowStateSimXTPN; //okno symulatora stanów
 	private HolmesNetTables windowNetTables; //okno tabel sieci
 	private HolmesNotepad windowSimulationLog; //okno logów symulatora
 	private HolmesInvariantsGenerator windowInvariants; //okno generatora inwariantów
@@ -421,6 +423,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//na samym końcu, gdy już wszystko 'działa'
 		//createPropertiesWindow();
 		createStateSimulatorWindow();
+		createStateSimulatorXTPNWindow();
 		createMCSWindow(); // okno generatora MCS
 		
 		String path = settingsManager.getValue("lastOpenedPath");
@@ -1240,7 +1243,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda zwraca obiekt okna symulatora.
-	 * @return HolmesStateSimulator - obiekt
+	 * @return HolmesStateSimulator - obiekt okna symulatora.
 	 */
 	public HolmesSim accessStateSimulatorWindow() {
 		return windowStateSim;
@@ -1253,6 +1256,30 @@ public class GUIManager extends JPanel implements ComponentListener {
 		if(windowStateSim != null) {
 			windowStateSim.setVisible(true);
 			//this.getFrame().setEnabled(false);
+		}
+	}
+
+	/**
+	 * Metoda tworzy nowe okno symulatora stanów XTPN programu.
+	 */
+	private void createStateSimulatorXTPNWindow() {
+		windowStateSimXTPN = new HolmesSimXTPN(this);
+	}
+
+	/**
+	 * Metoda zwraca obiekt okna symulatora XTPN.
+	 * @return HolmesStateSimulatorXTPN - obiekt symulatora XTPN.
+	 */
+	public HolmesSimXTPN accessStateSimulatorXTPNWindow() {
+		return windowStateSimXTPN;
+	}
+
+	/**
+	 * Metoda pokazuje okno symulatora stanów XTPN programu.
+	 */
+	public void showStateSimulatorWindowXTPN() {
+		if(windowStateSimXTPN != null) {
+			windowStateSimXTPN.setVisible(true);
 		}
 	}
 	

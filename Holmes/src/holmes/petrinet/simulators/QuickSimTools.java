@@ -84,45 +84,47 @@ public class QuickSimTools {
 		startSimButton = button;
 		boolean isKnockout = false;
 		if(knockout) {
-			if(!repeate) {
+			if(repeate) {
+				for(Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
+					if(trans.isKnockedOut()) {
+						isKnockout = true;
+						break;
+					}
+				}
+
+				if(!isKnockout) {
+					JOptionPane.showMessageDialog(null, "At least one transition must be disabled.", "qSim Knockout: no disabled transition",
+							JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+			} else {
 				JOptionPane.showMessageDialog(null, "Knockout simulation must have repetitions turned on.", "qSim Knockout: repetitions",
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-			for(Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
-				if(trans.isKnockedOut()) {
-					isKnockout = true;
-					break;
-				}
-			}
+
 		}
 
-		if(!isKnockout) {
-			JOptionPane.showMessageDialog(null, "At least one transition must be disabled.", "qSim Knockout: no disabled transition",
-					JOptionPane.INFORMATION_MESSAGE);
-			return;
-		}
 		if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
 			stateSimulatorXTPN = new StateSimulatorXTPN();
 			stateSimulatorXTPN.initiateSim(overlord.simSettings);
 
-			SimulatorGlobals ownSettings = new SimulatorGlobals();
-			ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-			ownSettings.simSteps_XTPN = steps;
-			ownSettings.simMaxTime_XTPN = time;
-			ownSettings.simulateTime = !bySteps;
-			ownSettings.simRepetitions_XTPN = repetitions;
+			overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
+			overlord.simSettings.simSteps_XTPN = steps;
+			overlord.simSettings.simMaxTime_XTPN = time;
+			overlord.simSettings.simulateTime = !bySteps;
+			overlord.simSettings.simRepetitions_XTPN = repetitions;
 
 			startSimButton.setEnabled(false);
 			overlord.getWorkspace().getProject().setSimulationActive(true);
 			if(repeate) {
 				if(knockout) {
-					stateSimulatorXTPN.setThreadDetails(3, this, ownSettings, quickProgressBar, button);
+					stateSimulatorXTPN.setThreadDetails(3, this, overlord.simSettings, quickProgressBar, button);
 				} else {
-					stateSimulatorXTPN.setThreadDetails(2, this, ownSettings, quickProgressBar, button);
+					stateSimulatorXTPN.setThreadDetails(2, this, overlord.simSettings, quickProgressBar, button);
 				}
 			} else {
-				stateSimulatorXTPN.setThreadDetails(1, this, ownSettings, quickProgressBar, button);
+				stateSimulatorXTPN.setThreadDetails(1, this, overlord.simSettings, quickProgressBar, button);
 			}
 
 			Thread myThread = new Thread(stateSimulatorXTPN);
@@ -323,6 +325,7 @@ public class QuickSimTools {
 
 			note.addTextLine("Transition ", "text");
 			note.addTextLine(""+transIndex, "bold");
+			note.addTextLine( " ("+trans.getName()+")", "bold");
 			note.addTextLine(" Type: ", "text");
 			note.addTextLineNL(getTransType(trans), "bold");
 
@@ -356,6 +359,7 @@ public class QuickSimTools {
 		for(PlaceXTPN place : places) {
 			note.addTextLine("Place ", "text");
 			note.addTextLine(""+placeIndex, "bold");
+			note.addTextLine( " ("+place.getName()+")", "bold");
 			note.addTextLine(" Type: ", "text");
 			note.addTextLineNL(getPlaceType(place), "bold");
 
@@ -450,6 +454,7 @@ public class QuickSimTools {
 
 			note.addTextLine("Transition ", "text");
 			note.addTextLine(""+transIndex, "bold");
+			note.addTextLine( " ("+trans.getName()+")", "bold");
 			note.addTextLine(" Type: ", "text");
 			note.addTextLineNL(getTransType(trans), "bold");
 
@@ -583,6 +588,7 @@ public class QuickSimTools {
 		for(PlaceXTPN place : places) {
 			note.addTextLine("Place ", "text");
 			note.addTextLine(""+placeIndex, "bold");
+			note.addTextLine( " ("+place.getName()+")", "bold");
 			note.addTextLine(" Type: ", "text");
 			note.addTextLineNL(getPlaceType(place), "bold");
 

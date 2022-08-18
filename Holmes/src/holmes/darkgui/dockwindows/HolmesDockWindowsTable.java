@@ -46,7 +46,7 @@ import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesNotepad;
 import holmes.windows.xtpn.HolmesXTPNtokens;
 import holmes.windows.managers.HolmesStatesManager;
-import holmes.windows.managers.ssim.HolmesSimSetup;
+import holmes.windows.ssim.HolmesSimSetup;
 import holmes.workspace.WorkspaceSheet;
 
 /**
@@ -297,7 +297,9 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda pomocnicza konstruktora odpowiedzialna za tworzenie podokna dla symulatora sieci.
-     * @param sim NetSimulator - obiekt symulatora sieci
+     * @param sim GraphicalSimulator - obiekt symulatora sieci
+     * @param simXTPN GraphicalSimulatorXTPN
+     * @param XTPNmode boolean
      */
     @SuppressWarnings("UnusedAssignment")
     private void createSimulatorSubWindow(GraphicalSimulator sim, GraphicalSimulatorXTPN simXTPN, boolean XTPNmode) {
@@ -332,7 +334,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                if(simulatorXTPN.getXTPNsimulatorStatus() != GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
+                if(simulatorXTPN.getsimulatorStatusXTPN() != GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
                     JOptionPane.showMessageDialog(null, "XTPN simulator must be stopped first.",
                             "Simulator working", JOptionPane.WARNING_MESSAGE);
                     return;
@@ -1009,6 +1011,24 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(qSimXTPNknockoutCheckBox);
 
+            internalY += 30;
+
+            HolmesRoundedButton sSimAlpha = new HolmesRoundedButton("<html>Simulate</html>"
+                    , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            sSimAlpha.setBounds(internalX, internalY, 100, 30);
+            sSimAlpha.setMargin(new Insets(0, 0, 0, 0));
+            sSimAlpha.setFocusPainted(false);
+            sSimAlpha.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+            sSimAlpha.setToolTipText("Compute steps from zero marking through the number of states");
+            sSimAlpha.addActionListener(actionEvent -> {
+                if(overlord.getWorkspace().getProject().isSimulationActive()) {
+                    JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
+                            JOptionPane.WARNING_MESSAGE);
+                } else {
+                    overlord.showStateSimulatorWindowXTPN();
+                }
+            });
+            components.add(sSimAlpha);
 
         }
         panel.setLayout(null);
@@ -8717,8 +8737,8 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia nowy obiekt symulatora sieci.
-     * @param netSim (<b>NetSimulator</b>) simulator zwykły.
-     * @param netSimXTPN (<b>NetSimulatorXTPN</b>) simulator XTPN.
+     * @param netSim (<b>GraphicalSimulator</b>) simulator zwykły.
+     * @param netSimXTPN (<b>GraphicalSimulatorXTPN</b>) simulator XTPN.
      */
     public void setSimulator(GraphicalSimulator netSim, GraphicalSimulatorXTPN netSimXTPN) {
         simulator = netSim;
@@ -8727,7 +8747,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda zwraca obiekt aktywnego zwykłego symulatora z podokna symulacji.
-     * @return (<b>NetSimulator</b>) obiekt symulatora sieci zwykłej.
+     * @return (<b>GraphicalSimulator</b>) obiekt symulatora sieci zwykłej.
      */
     public GraphicalSimulator getSimulator() {
         return simulator;
@@ -8735,7 +8755,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda zwraca obiekt aktywnego symulatora XTPN z podokna symulacji.
-     * @return (<b>NetSimulatorXTPN</b>) obiekt symulatora XTPN.
+     * @return (<b>GraphicalSimulatorXTPN</b>) obiekt symulatora XTPN.
      */
     public GraphicalSimulatorXTPN getSimulatorXTPN() {
         return simulatorXTPN;

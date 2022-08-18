@@ -406,37 +406,52 @@ public abstract class Node extends PetriNetElement {
 							double betaTime = transXTPN.getTauBetaValue();
 							double u_alfaTime = transXTPN.getTimerAlfaValue();
 							double v_betaTime = transXTPN.getTimerBetaValue();
+							boolean isAlpha = transXTPN.isAlphaModeActive();
+							boolean isBeta = transXTPN.isBetaModeActive();
 
 							String timerA;
 							String timerB;
 							g.setColor(tauColor);
 							if(alphaTime < 0 && betaTime < 0) {
-								timerA = "\u03C4(\u03B1): #\u279F#";
-								g.drawString(timerA, drawX + 40, drawY + 12);
-								timerB = "\u03C4(\u03B2): #\u279F#";
-								g.drawString(timerB, drawX + 40, drawY + 26);
-
+								if(isAlpha) {
+									timerA = "\u03C4(\u03B1): #\u279F#";
+									g.drawString(timerA, drawX + 40, drawY + 12);
+								}
+								if(isBeta) {
+									timerB = "\u03C4(\u03B2): #\u279F#";
+									g.drawString(timerB, drawX + 40, drawY + 26);
+								}
 							} else if(alphaTime < 0) {
-								timerA = "\u03C4(\u03B1): #\u279F#";
-								g.drawString(timerA, drawX + 40, drawY + 12);
-								timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
-								g.drawString(timerB, drawX + 40, drawY + 26);
-
+								if(isAlpha) {
+									timerA = "\u03C4(\u03B1): #\u279F#";
+									g.drawString(timerA, drawX + 40, drawY + 12);
+								}
+								if(isBeta) {
+									timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+											+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
+									g.drawString(timerB, drawX + 40, drawY + 26);
+								}
 							} else if(betaTime < 0) {
-								timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
-								g.drawString(timerA, drawX + 40, drawY + 12);
-								timerB = "\u03C4(\u03B2): #\u279F#";
-								g.drawString(timerB, drawX + 40, drawY + 26);
+								if(isAlpha) {
+									timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+											+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
+									g.drawString(timerA, drawX + 40, drawY + 12);
+								}
+								if(isBeta) {
+									timerB = "\u03C4(\u03B2): #\u279F#";
+									g.drawString(timerB, drawX + 40, drawY + 26);
+								}
 							} else {
-								timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
-								g.drawString(timerA, drawX + 40, drawY + 12);
-								//timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
-								timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
-								g.drawString(timerB, drawX + 40, drawY + 26);
+								if(isAlpha) {
+									timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+											+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
+									g.drawString(timerA, drawX + 40, drawY + 12);
+								}
+								if(isBeta) {
+									timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+											+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
+									g.drawString(timerB, drawX + 40, drawY + 26);
+								}
 							}
 						}
 					}

@@ -11,7 +11,7 @@ import holmes.petrinet.simulators.*;
 /**
  * Silnik symulatora XTPN. Wyobraźmy sobie sieć XTPN. Każda tranzycja ma wartości Alfa (TPN) oraz Beta (DPN), a każde
  * miejsce ma zakres Gamma. A teraz kombinujemy. Są tranzycje, które nie mają Alfy - to tranzycje DPN. Są też w modelu
- * tranzycje, które nie mają Bety - to czyste tranzycje TPN. Są miejsce bez wartości Gamma - miejsca klasyczna. Oraz
+ * tranzycje, które nie mają Bety - to czyste tranzycje TPN. Są miejsca bez wartości Gamma - miejsca klasyczne. Oraz
  * tranzycje bez Alfa i Beta - tranzycje klasyczne. Te ostatnie moga być typu 'immediate' - natychmiastowe, uruchamiają
  * się kiedy tylko mogą. Sieć XTPN jest symulowana po przeskokach czasu tau. Gdyby tranzycja klasyczna natychmiastowa
  * mogła faktycznie z tau=0 się uruchamiać, sieć nie robiła by nic innego i również NIC innego by w niej nie drgnęło nawet.
@@ -197,6 +197,18 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                                 transition.setActivationStatusXTPN(true);
                             }
                         } else if(transition.isBetaModeActive()) { // nie jest alfa, to może beta?
+                            double min = transition.getBetaMinValue();
+                            double max = transition.getBetaMaxValue();
+                            double rand = getSafeRandomValueXTPN(min, max);
+                            transition.setTauBetaValue( rand );
+                            transition.setTimerBetaValue(0.0);
+
+                            if(graphicalSimulation) {
+                                for(Arc arc : transition.getOutArcs()) { //ustaw łuki w tryb produkcji
+                                    arc.arcXTPNbox.setXTPNprodStatus(true);
+                                }
+                            }
+
                             transition.setActivationStatusXTPN(true);
                         }
                         //tu jest else, którego nie ma :) -> nieaktywna, nie wejściowa, może być aktywna,
@@ -327,7 +339,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
             if(!transition.isAlphaModeActive() && transition.isActivated_xTPN()) {
                 //czyli w revalidateNetState() stwierdzono że: nie jest wejściowa, nie była aktywna, ale już jest (tokeny)
                 //oraz nie ma Alfy - ustawiono status Activated ale jeszcze bez timerów
-                timeDifference = 0.0; //"maximum firing mode DPN"
+                timeDifference = tauBeta - timerBeta; //"maximum firing mode DPN"
                 if(currentMinTime - timeDifference > 0 &&
                         !(Math.abs(currentMinTime - timeDifference) < sg.getCalculationsAccuracy())) {
                     placesMaturity.clear();
@@ -437,15 +449,23 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
             }
         }
         for(TransitionXTPN transition : transitions) {
+            if(transition.getTimerAlfaValue() >= 0) {
+                transition.updateTimerAlfaValue(tau);
+            }
+            if(transition.getTimerBetaValue() >= 0) {
+                transition.updateTimerBetaValue(tau);
+            }
+
+            /*
             if(transition.isAlphaModeActive() && transition.isActivated_xTPN()) { //aktywna tranzycja Alfa
                 transition.updateTimerAlfaValue(tau);
                 continue;
             }
-
             if(transition.isBetaModeActive() && transition.isProducing_xTPN()) { //produkująca tranzycja Beta
                 transition.updateTimerBetaValue(tau);
                 transition.setProductionStatus_xTPN(true);
             }
+            */
         }
     }
 
@@ -463,16 +483,21 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
             if(Math.abs(transition.getTauAlphaValue() - transition.getTimerAlfaValue()) < sg.getCalculationsAccuracy()) {
                 //jeśli timerAlfa = tauAlfa
                 if(transition.isBetaModeActive()) {
-                    //czas na przejście w stan Beta
-                    transition.setProductionStatus_xTPN(true); //samo zrobi activation=false
-                    double min = transition.getBetaMinValue();
-                    double max = transition.getBetaMaxValue();
-                    double rand = getSafeRandomValueXTPN(min, max);
-                    transition.setTauBetaValue( rand );
-                    transition.setTimerBetaValue(0.0);
-                    transition.setTauAlphaValue(-1.0);
-                    transition.setTimerAlfaValue(-1.0);
-
+                    if(transition.getTimerBetaValue() >= 0) {
+                        transition.setProductionStatus_xTPN(true); //samo zrobi activation=false
+                        transition.setTauAlphaValue(-1.0);
+                        transition.setTimerAlfaValue(-1.0);
+                    } else {
+                        //czas na przejście w stan Beta
+                        transition.setProductionStatus_xTPN(true); //samo zrobi activation=false
+                        double min = transition.getBetaMinValue();
+                        double max = transition.getBetaMaxValue();
+                        double rand = getSafeRandomValueXTPN(min, max);
+                        transition.setTauBetaValue(rand);
+                        transition.setTimerBetaValue(0.0);
+                        transition.setTauAlphaValue(-1.0);
+                        transition.setTimerAlfaValue(-1.0);
+                    }
                     if(graphicalSimulation) {
                         for(Arc arc : transition.getOutArcs()) {
                             arc.arcXTPNbox.setXTPNprodStatus(true);
@@ -585,6 +610,15 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
         for(NextXTPNstep element : nextXTPNsteps.get(5)) {
             producingTokensTransitions.add((TransitionXTPN) element.nodeTP);
         }
+
+        for(NextXTPNstep element : nextXTPNsteps.get(2)) { //dla czystych DPN które są w .get(2) czyli zabierają tokeny
+            if( !((TransitionXTPN)element.nodeTP).isAlphaModeActive() && ((TransitionXTPN)element.nodeTP).isBetaModeActive() ) {
+                if(((TransitionXTPN)element.nodeTP).getTimerBetaValue() == ((TransitionXTPN)element.nodeTP).getTauBetaValue()) {
+                    producingTokensTransitions.add((TransitionXTPN) element.nodeTP);
+                }
+            }
+        }
+
         return producingTokensTransitions;
         //Collections.shuffle(producingTokensTransitionsAll); //bez sensu, przy produkcji kolejność dowolna
     }

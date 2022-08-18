@@ -44,11 +44,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JFreeChart dynamicsChart;
 
     //simulation variables:
-    private int simSteps = 1000; //ile kroków symulacji
+    private int simSteps = 30000; //ile kroków symulacji
     private int repeated = 1; //ile powtórzeń (dla kroków)
     private int rep_succeed = 1;
     private boolean simulateWithTimeLength = false; //czy wykres czasowy na osi X dla miejsc
-    private double simTimeLength = 300.0;
+    private double simTimeLength = 5000.0;
     private int placeChartType = 0; //0 - kroki, 1 - czas (oś X)
     private int transitionChartType = 0; //0 - kroki, 1 - czas (oś X)
     ArrayList<Double> stepsVectorPlaces = new ArrayList<>();
@@ -83,7 +83,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JFormattedTextField inactiveStepsTextBox;
     private JFormattedTextField activeStepsTextBox;
     private JFormattedTextField producingStepsTextBox;
-    private JFormattedTextField producedStepsTextBox;
+    private JFormattedTextField firedStepsTextBox;
     private JFormattedTextField inactiveTimeTextBox;
     private JFormattedTextField activeTimeTextBox;
     private JFormattedTextField producingTimeTextBox;
@@ -175,11 +175,10 @@ public class HolmesNodeInfoXTPN extends JFrame {
         setResizable(false);
         setLocation(20, 20);
         if(node instanceof PlaceXTPN) {
-            setSize(new Dimension(800, 580));
+            setSize(new Dimension(800, 600));
         } else { //tranzycja
-            setSize(new Dimension(800, 660));
+            setSize(new Dimension(800, 750));
         }
-
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {parentFrame.setEnabled(true);
@@ -628,15 +627,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
      */
     private void acquireNewPlaceData() {
         StateSimulatorXTPN ss = new StateSimulatorXTPN();
+        overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
+        overlord.simSettings.simSteps_XTPN = simSteps;
+        overlord.simSettings.simMaxTime_XTPN = simTimeLength;
+        overlord.simSettings.simulateTime = simulateWithTimeLength;
+        ss.initiateSim(overlord.simSettings);
 
-        SimulatorGlobals ownSettings = new SimulatorGlobals();
-        ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-        ownSettings.simSteps_XTPN = simSteps;
-        ownSettings.simMaxTime_XTPN = simTimeLength;
-        ownSettings.simulateTime = simulateWithTimeLength;
-        ss.initiateSim(ownSettings);
-
-        ArrayList<ArrayList<Double>> firstDataVectors = ss.simulateNetSinglePlace(ownSettings, thePlace);
+        ArrayList<ArrayList<Double>> firstDataVectors = ss.simulateNetSinglePlace(overlord.simSettings, thePlace);
         ArrayList<ArrayList<Double>> tmpDataMatrix = new ArrayList<>();
         tmpDataMatrix.add(firstDataVectors.get(0));
 
@@ -647,7 +644,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         int problemCounter = 0;
         for(int i=1; i<repeated; i++) {
             //ss.clearData();
-            ArrayList<ArrayList<Double>> newData = ss.simulateNetSinglePlace(ownSettings, thePlace);
+            ArrayList<ArrayList<Double>> newData = ss.simulateNetSinglePlace(overlord.simSettings, thePlace);
             if(newData.get(0).size() < tmpDataMatrix.get(0).size()) { //powtórz test, zły rozmiar danych
                 problemCounter++;
                 i--;
@@ -689,6 +686,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
      * wyświetli liczbę tokenów w każdym kroku / po czasie tau symulacji.
      */
     private void showPlaceChart() {
+
+        //TODO: wykres miejsc
+
         dynamicsSeriesDataSet.removeAllSeries();
         XYSeries series = new XYSeries("Number of tokens");
 
@@ -701,9 +701,18 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 }
             } else {
                 if(stepsVectorPlaces != null) {
+                    double sumTokens = 0.0;
+                    int interval = 0;
                     for(int step=0; step<stepsVectorPlaces.size(); step++) {
                         double value = stepsVectorPlaces.get(step);
-                        series.add(step, (int)value);
+                        sumTokens += value;
+                        if(interval++ == 50) {
+                            sumTokens /= 50;
+                            series.add(step, (int)sumTokens);
+                            sumTokens = 0;
+                            interval = 0;
+                        }
+                        //series.add(step, (int)value);
                     }
                 }
             }
@@ -732,7 +741,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         if(node instanceof Transition)
             yAxisLabel = "Firings chance %";
 
-        boolean showLegend = false;
+        boolean showLegend = true;
         boolean createTooltip = true;
         boolean createURL = false;
 
@@ -1286,7 +1295,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
         chartMainPanel.setBorder(BorderFactory.createTitledBorder("Transition chart"));
-        chartMainPanel.setBounds(0, infoPanel.getHeight(), mainInfoPanel.getWidth()-18, 220);
+        chartMainPanel.setBounds(0, infoPanel.getHeight(), mainInfoPanel.getWidth()-18, 280);
         chartMainPanel.add(createChartPanel(theTransition), BorderLayout.CENTER);
         chartMainPanel.setBackground(Color.WHITE);
         mainInfoPanel.add(chartMainPanel);
@@ -1298,7 +1307,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         mainInfoPanel.add(simStatsPanel);
 
         try {
-            fillTransitionDynamicData(producedStepsTextBox, chartMainPanel, chartButtonPanel);
+            fillTransitionDynamicData(firedStepsTextBox, chartMainPanel, chartButtonPanel);
         } catch (Exception ex) {
             overlord.log("Error (576101739) | Exception: "+ex.getMessage(), "error", true);
         }
@@ -1532,10 +1541,10 @@ public class HolmesNodeInfoXTPN extends JFrame {
         producedStepsLabel.setBounds(positionX, positionY, 70, 20);
         resultPanel.add(producedStepsLabel);
 
-        producedStepsTextBox = new JFormattedTextField("n/a");
-        producedStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
-        producedStepsTextBox.setEditable(false);
-        resultPanel.add(producedStepsTextBox);
+        firedStepsTextBox = new JFormattedTextField("n/a");
+        firedStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
+        firedStepsTextBox.setEditable(false);
+        resultPanel.add(firedStepsTextBox);
 
         JLabel repetitionsStepsLabel = new JLabel("Repetitions:", JLabel.LEFT);
         repetitionsStepsLabel.setBounds(positionX+300, positionY, 70, 20);
@@ -1589,16 +1598,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
      */
     private void getSingleTransitionData() {
         StateSimulatorXTPN ss = new StateSimulatorXTPN();
+        overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
+        overlord.simSettings.simSteps_XTPN = simSteps;
+        overlord.simSettings.simMaxTime_XTPN = simTimeLength;
+        overlord.simSettings.simulateTime = simulateWithTimeLength;
+        ss.initiateSim(overlord.simSettings);
 
-        SimulatorGlobals ownSettings = new SimulatorGlobals();
-        ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-        ownSettings.simSteps_XTPN = simSteps;
-        ownSettings.simMaxTime_XTPN = simTimeLength;
-        ownSettings.simulateTime = simulateWithTimeLength;
-        ss.initiateSim(ownSettings);
-
-        statusVectorTransition = new ArrayList<>( ss.simulateNetSingleTransition(ownSettings, theTransition) );
-
+        statusVectorTransition = new ArrayList<>( ss.simulateNetSingleTransition(overlord.simSettings, theTransition) );
         showTransitionsChart();
     }
 
@@ -1608,19 +1614,17 @@ public class HolmesNodeInfoXTPN extends JFrame {
      */
     private void getMultipleTransitionData() {
         StateSimulatorXTPN ss = new StateSimulatorXTPN();
-
-        SimulatorGlobals ownSettings = new SimulatorGlobals();
-        ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-        ownSettings.simSteps_XTPN = simStatsTransSteps;
-        ownSettings.simMaxTime_XTPN = simStatsTransTime;
-        ownSettings.simulateTime = !simStatsTransBySteps;
-        ss.initiateSim(ownSettings);
+        overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
+        overlord.simSettings.simSteps_XTPN = simStatsTransSteps;
+        overlord.simSettings.simMaxTime_XTPN = simStatsTransTime;
+        overlord.simSettings.simulateTime = !simStatsTransBySteps;
+        ss.initiateSim(overlord.simSettings);
 
         ArrayList<Double> statsVector = null;
         for(int i = 0; i< simStatsTransRepetitions; i++) {
             ss.restartEngine();
 
-            ArrayList<Double> dataVector = ss.simulateNetSingleTransitionStatistics(ownSettings, theTransition);
+            ArrayList<Double> dataVector = ss.simulateNetSingleTransitionStatistics(overlord.simSettings, theTransition);
 
             if(i == 0) {
                 statsVector = new ArrayList<>(dataVector);
@@ -1644,14 +1648,46 @@ public class HolmesNodeInfoXTPN extends JFrame {
      * zostaną wygenerowane wektory zawarte w statusVectorTransition.
      */
     private void showTransitionsChart() {
+        //TODO
         dynamicsSeriesDataSet.removeAllSeries();
-        XYSeries series = new XYSeries("Average firing");
+        XYSeries series0 = new XYSeries("Avg. inactive");
+        XYSeries series1 = new XYSeries("Avg. active");
+        XYSeries series2 = new XYSeries("Avg. producing");
+        XYSeries series3 = new XYSeries("Avg. firing");
 
         if(transitionChartType == 0) { //wykres po krokach
             if(statusVectorTransition != null) {
+                double inactive = 0.0;
+                double active = 0.0;
+                double producing = 0.0;
+                double firing = 0.0;
+                int interval = 0;
                 for(int step=0; step<statusVectorTransition.get(0).size(); step++) {
                     double value = statusVectorTransition.get(0).get(step);
-                    series.add(step, value);
+                    if(value == 0.0) {
+                        inactive++;
+                    } else if(value == 1.0) {
+                        active++;
+                    } else if(value == 2.0) {
+                        producing++;
+                    } else {
+                        firing++;
+                    }
+
+                    if(interval++ == 100) {
+                        inactive /= 100;
+                        series0.add(step, inactive);
+                        active /= 100;
+                        series1.add(step, active);
+                        producing /= 100;
+                        series2.add(step, producing);
+                        firing /= 100;
+                        series3.add(step, firing);
+
+                        inactive = active = producing = firing = 0.0;
+                        interval = 0;
+                    }
+                    //series.add(step, value);
                 }
             }
         } else { //wykres czasowy
@@ -1660,11 +1696,14 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 for(int step=0; step<statusVectorTransition.get(0).size(); step++) {
                     double value = statusVectorTransition.get(0).get(step);
                     simTime += statusVectorTransition.get(1).get(step);
-                    series.add(simTime, value);
+                    series1.add(simTime, value);
                 }
             }
         }
-        dynamicsSeriesDataSet.addSeries(series);
+        dynamicsSeriesDataSet.addSeries(series0);
+        dynamicsSeriesDataSet.addSeries(series1);
+        dynamicsSeriesDataSet.addSeries(series2);
+        dynamicsSeriesDataSet.addSeries(series3);
 
         ArrayList<Double> resultVector = statusVectorTransition.get(2);
         fillStatsFields(resultVector.get(0), resultVector.get(1), resultVector.get(2), resultVector.get(3)
@@ -1820,7 +1859,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         tmp = (producingSteps / realSimulationSteps) * 100;
         producingStepsTextBox.setText((int)producingSteps + " ("+Tools.cutValue(tmp)+"%)");
         tmp = (fireSteps / realSimulationSteps) * 100;
-        producedStepsTextBox.setText((int)fireSteps+"");  // + " ("+Tools.cutValue(tmp)+"%)");
+        firedStepsTextBox.setText((int)fireSteps+" "+ " ("+Tools.cutValue(tmp)+"%)");
 
         tmp = (inactiveTime / realSimulationTime) * 100;
         inactiveTimeTextBox.setText(Tools.cutValue(inactiveTime) + " ("+Tools.cutValue(tmp)+"%)");

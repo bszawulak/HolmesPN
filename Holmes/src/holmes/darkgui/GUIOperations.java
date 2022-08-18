@@ -1048,11 +1048,12 @@ public class GUIOperations {
 	 * @param stepsValue (<b>long</b>) liczba kroków symulacji (aktualna).
 	 * @param timeValue (<b>double</b>) aktualny czas od startu symulacji (XTPN).
 	 */
-	public void updateTimeStep(boolean XTPN, long stepsValue, double timeValue) {
+	public void updateTimeStep(boolean XTPN, long stepsValue, double timeValue, double tau) {
 		try {
 			if (XTPN) {
 				overlord.getSimulatorBox().getCurrentDockWindow().stepLabelXTPN.setText("" + stepsValue);
-				overlord.getSimulatorBox().getCurrentDockWindow().timeLabelXTPN.setText(Tools.cutValueExt(timeValue, 6));
+				overlord.getSimulatorBox().getCurrentDockWindow().timeLabelXTPN.setText(Tools.cutValueExt(timeValue, 2)
+						+ " (" + Tools.cutValueExt(tau, 2) + ")");
 			} else {
 				overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("" + stepsValue);
 			}

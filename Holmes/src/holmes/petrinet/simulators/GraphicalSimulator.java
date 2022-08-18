@@ -773,7 +773,7 @@ public class GraphicalSimulator {
 	
 	/**
 	 * Metoda zwraca obiekt zapisujący informacje o symulacji.
-	 * @return NetSimulatorLogger - obiekt komunikatora
+	 * @return GraphicalSimulatorLogger - obiekt komunikatora
 	 */
 	public GraphicalSimulatorLogger getSimLogger() {
 		return nsl;
@@ -825,9 +825,7 @@ public class GraphicalSimulator {
 	/**
 	 * Po tej klasie dziedziczy szereg klas implementujących konkretne tryby pracy symulatora.
 	 * Metoda actionPerformed() jest wykonywana w każdym kroku symulacji przez timer obiektu
-	 * NetSimulator. 
-	 * @author students
-	 *
+	 * GraphicalSimulator.
 	 */
 	private class SimulationPerformer implements ActionListener {
 		protected int transitionDelay = overlord.simSettings.getTransitionGraphicDelay(); // licznik kroków graficznych
@@ -913,7 +911,7 @@ public class GraphicalSimulator {
 				} else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
 					if (remainingTransitionsAmount == 0) {
 						timeCounter++;
-						overlord.io.updateTimeStep(false, timeCounter, 0);
+						overlord.io.updateTimeStep(false, timeCounter, 0, 0);
 						overlord.simSettings.currentStep = timeCounter;
 						
 						launchingTransitions = engine.getTransLaunchList(emptySteps);
@@ -924,7 +922,7 @@ public class GraphicalSimulator {
 					if(isHistoryMode()) {
 						actionStack.push(new SimulationStep(SimulatorMode.STEP, cloneTransitionArray(launchingTransitions)));
 						if (actionStack.peek().getPendingTransitions() == null) {
-							overlord.log("Unknown problem in actionPerformed(ActionEvent event) in NetSimulator class.", "error", true);
+							overlord.log("Unknown problem in actionPerformed(ActionEvent event) in GraphicalSimulator class.", "error", true);
 						}
 					}
 				
@@ -1012,7 +1010,7 @@ public class GraphicalSimulator {
 				} else if (isPossibleStep()) { // sprawdzanie, czy są aktywne tranzycje
 					if (remainingTransitionsAmount == 0) {
 						timeCounter++;
-						overlord.io.updateTimeStep(false, timeCounter, 0);
+						overlord.io.updateTimeStep(false, timeCounter, 0, 0);
 						overlord.simSettings.currentStep = timeCounter;
 						
 						launchingTransitions = engine.getTransLaunchList(emptySteps);
@@ -1112,7 +1110,7 @@ public class GraphicalSimulator {
 					executeScheduledStop();
 				} else if (!actionStack.empty()) { // if steps remaining
 					timeCounter--;
-					overlord.io.updateTimeStep(false,timeCounter, 0);
+					overlord.io.updateTimeStep(false,timeCounter, 0, 0);
 					overlord.simSettings.currentStep = timeCounter;
 					
 					//tutaj zdejmowany jest ostatni wykonany krok w symulacji:
