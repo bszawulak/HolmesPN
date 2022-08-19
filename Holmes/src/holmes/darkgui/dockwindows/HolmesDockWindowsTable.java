@@ -901,7 +901,7 @@ public class HolmesDockWindowsTable extends JPanel {
             internalY += 20;
 
             acqDataButtonXTPN = new HolmesRoundedButton("<html>Simulate</html>"
-                    , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             acqDataButtonXTPN.setBounds(internalX, internalY, 100, 30);
             acqDataButtonXTPN.setMargin(new Insets(0, 0, 0, 0));
             acqDataButtonXTPN.setFocusPainted(false);
@@ -1013,9 +1013,9 @@ public class HolmesDockWindowsTable extends JPanel {
 
             internalY += 30;
 
-            HolmesRoundedButton sSimAlpha = new HolmesRoundedButton("<html>Simulate</html>"
-                    , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
-            sSimAlpha.setBounds(internalX, internalY, 100, 30);
+            HolmesRoundedButton sSimAlpha = new HolmesRoundedButton("<html><center>XTPN net<br>simulator</center></html>"
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+            sSimAlpha.setBounds(internalX, internalY, 100, 35);
             sSimAlpha.setMargin(new Insets(0, 0, 0, 0));
             sSimAlpha.setFocusPainted(false);
             sSimAlpha.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));

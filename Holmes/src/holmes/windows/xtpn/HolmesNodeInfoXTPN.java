@@ -630,7 +630,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
         overlord.simSettings.simSteps_XTPN = simSteps;
         overlord.simSettings.simMaxTime_XTPN = simTimeLength;
-        overlord.simSettings.simulateTime = simulateWithTimeLength;
+        overlord.simSettings.setSimulateTime( simulateWithTimeLength );
         ss.initiateSim(overlord.simSettings);
 
         ArrayList<ArrayList<Double>> firstDataVectors = ss.simulateNetSinglePlace(overlord.simSettings, thePlace);
@@ -1601,7 +1601,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
         overlord.simSettings.simSteps_XTPN = simSteps;
         overlord.simSettings.simMaxTime_XTPN = simTimeLength;
-        overlord.simSettings.simulateTime = simulateWithTimeLength;
+        overlord.simSettings.setSimulateTime( simulateWithTimeLength );
         ss.initiateSim(overlord.simSettings);
 
         statusVectorTransition = new ArrayList<>( ss.simulateNetSingleTransition(overlord.simSettings, theTransition) );
@@ -1617,7 +1617,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
         overlord.simSettings.simSteps_XTPN = simStatsTransSteps;
         overlord.simSettings.simMaxTime_XTPN = simStatsTransTime;
-        overlord.simSettings.simulateTime = !simStatsTransBySteps;
+        overlord.simSettings.setSimulateTime( !simStatsTransBySteps );
         ss.initiateSim(overlord.simSettings);
 
         ArrayList<Double> statsVector = null;

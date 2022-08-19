@@ -13,6 +13,7 @@ import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
+import holmes.petrinet.simulators.xtpn.StateSimDataContainer;
 import holmes.petrinet.simulators.xtpn.StateSimulatorXTPN;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesNotepad;
@@ -112,7 +113,7 @@ public class QuickSimTools {
 			overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
 			overlord.simSettings.simSteps_XTPN = steps;
 			overlord.simSettings.simMaxTime_XTPN = time;
-			overlord.simSettings.simulateTime = !bySteps;
+			overlord.simSettings.setSimulateTime( !bySteps );
 			overlord.simSettings.simRepetitions_XTPN = repetitions;
 
 			startSimButton.setEnabled(false);
@@ -281,7 +282,7 @@ public class QuickSimTools {
 	 * @param transitions (<b>ArrayList[TransitionXTPN]</b>) wektor tranzycji.
 	 * @param places (<b>ArrayList[PlaceXTPN]</b>) wektor miejsc.
 	 */
-	public void finishedStatsDataXTPN(StateSimulatorXTPN.QuickSimMatrix result
+	public void finishedStatsDataXTPN(StateSimDataContainer result
 			, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
 
 		HolmesNotepad note = new HolmesNotepad(800, 600);
@@ -410,7 +411,7 @@ public class QuickSimTools {
 	 * @param transitions (<b>ArrayList[TransitionXTPN]</b>) wektor tranzycji.
 	 * @param places (<b>ArrayList[PlaceXTPN]</b>) wektor miejsc.
 	 */
-	public void finishedStatsDataXTPN_Knockout(ArrayList<StateSimulatorXTPN.QuickSimMatrix> result
+	public void finishedStatsDataXTPN_Knockout(ArrayList<StateSimDataContainer> result
 			, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
 
 		HolmesNotepad note = new HolmesNotepad(800, 600);

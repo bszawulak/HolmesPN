@@ -44,7 +44,7 @@ public class SimulatorGlobals {
 	public long simSteps_XTPN = 30000;
 	public double simMaxTime_XTPN = 5000.0;
 	public int simRepetitions_XTPN = 10;
-	public boolean simulateTime = false; //domyślnie: true = steps
+	private boolean simulateTime = false; //domyślnie: true = steps
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.
@@ -394,5 +394,13 @@ public class SimulatorGlobals {
 	 */
 	public void setCalculationsAccuracy(double calculationsAccuracy) {
 		this.calculationsAccuracy = calculationsAccuracy;
+	}
+
+	public void setSimulateTime(boolean value) {
+		simulateTime = value;
+	}
+
+	public boolean getSimulateTime() {
+		return simulateTime;
 	}
 }
