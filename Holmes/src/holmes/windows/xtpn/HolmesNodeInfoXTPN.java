@@ -537,7 +537,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         labelSteps.setBounds(chartX+120, chartY_1st, 70, 15);
         chartButtonPanel.add(labelSteps);
 
-        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 500000, 100);
+        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 100000000, 10000);
         JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
         simStepsSpinner.setBounds(chartX +120, chartY_2nd, 80, 25);
         simStepsSpinner.addChangeListener(e -> {
@@ -587,7 +587,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         chartButtonPanel.add(timeSeriesCheckbox);
 
-        SpinnerModel simTimeLengthSpinnerModel = new SpinnerNumberModel(simTimeLength, 0, 50000, 20);
+        SpinnerModel simTimeLengthSpinnerModel = new SpinnerNumberModel(simTimeLength, 0, 1000000, 5000);
         JSpinner simTimeLengthSpinner = new JSpinner(simTimeLengthSpinnerModel);
         simTimeLengthSpinner.setBounds(chartX +520, chartY_2nd, 80, 25);
         simTimeLengthSpinner.addChangeListener(e -> {
@@ -628,8 +628,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private void acquireNewPlaceData() {
         StateSimulatorXTPN ss = new StateSimulatorXTPN();
         overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-        overlord.simSettings.simSteps_XTPN = simSteps;
-        overlord.simSettings.simMaxTime_XTPN = simTimeLength;
+        overlord.simSettings.setSimSteps_XTPN( simSteps );
+        overlord.simSettings.setSimMaxTime_XTPN( simTimeLength );
         overlord.simSettings.setSimulateTime( simulateWithTimeLength );
         ss.initiateSim(overlord.simSettings);
 
@@ -1349,7 +1349,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         labelSteps.setBounds(chartX+120, chartY_1st, 70, 15);
         chartButtonPanel.add(labelSteps);
 
-        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 200000, 100);
+        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 100000000, 10000);
         JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
         simStepsSpinner.setBounds(chartX+120, chartY_2nd, 80, 25);
         simStepsSpinner.addChangeListener(e -> {
@@ -1389,7 +1389,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         timeMaxLabel.setBounds(chartX+450, chartY_1st, 120, 15);
         chartButtonPanel.add(timeMaxLabel);
 
-        SpinnerModel simTimeLengthSpinnerModel = new SpinnerNumberModel(simTimeLength, 0, 50000, 20);
+        SpinnerModel simTimeLengthSpinnerModel = new SpinnerNumberModel(simTimeLength, 0, 1000000, 5000);
         JSpinner simTimeLengthSpinner = new JSpinner(simTimeLengthSpinnerModel);
         simTimeLengthSpinner.setBounds(chartX+450, chartY_2nd, 80, 25);
         simTimeLengthSpinner.addChangeListener(e -> {
@@ -1599,8 +1599,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private void getSingleTransitionData() {
         StateSimulatorXTPN ss = new StateSimulatorXTPN();
         overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-        overlord.simSettings.simSteps_XTPN = simSteps;
-        overlord.simSettings.simMaxTime_XTPN = simTimeLength;
+        overlord.simSettings.setSimSteps_XTPN( simSteps );
+        overlord.simSettings.setSimMaxTime_XTPN( simTimeLength );
         overlord.simSettings.setSimulateTime( simulateWithTimeLength );
         ss.initiateSim(overlord.simSettings);
 
@@ -1615,8 +1615,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private void getMultipleTransitionData() {
         StateSimulatorXTPN ss = new StateSimulatorXTPN();
         overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-        overlord.simSettings.simSteps_XTPN = simStatsTransSteps;
-        overlord.simSettings.simMaxTime_XTPN = simStatsTransTime;
+        overlord.simSettings.setSimSteps_XTPN( simStatsTransSteps );
+        overlord.simSettings.setSimMaxTime_XTPN( simStatsTransTime );
         overlord.simSettings.setSimulateTime( !simStatsTransBySteps );
         ss.initiateSim(overlord.simSettings);
 

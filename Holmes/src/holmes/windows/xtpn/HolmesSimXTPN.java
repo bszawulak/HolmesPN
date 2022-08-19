@@ -95,6 +95,7 @@ public class HolmesSimXTPN extends JFrame {
 
     private JLabel placeSimSteps = null;
     private JLabel placeSimTime = null;
+    private JLabel placeSimCompTime = null;
 
     /**
      * Konstruktor domyślny obiektu klasy StateSimulator (podokna Holmes)
@@ -276,14 +277,14 @@ public class HolmesSimXTPN extends JFrame {
         labelSteps.setBounds(internalX, internalY, 40, 20);
         XTPNoptionsPanel.add(labelSteps);
 
-        long stepValue = overlord.simSettings.simSteps_XTPN;
+        long stepValue = overlord.simSettings.getSimSteps_XTPN();
         SpinnerModel placeStepsSpinnerModel = new SpinnerNumberModel((int)stepValue, 0, 100000000, 10000);
         JSpinner placesStepsSpinner = new JSpinner(placeStepsSpinnerModel);
         placesStepsSpinner.setBounds(internalX+45, internalY, 90, 20);
         placesStepsSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             int tmp = (int) spinner.getValue();
-            overlord.simSettings.simSteps_XTPN = (long) tmp;
+            overlord.simSettings.setSimSteps_XTPN(tmp);
         });
         XTPNoptionsPanel.add(placesStepsSpinner);
 
@@ -291,8 +292,8 @@ public class HolmesSimXTPN extends JFrame {
         labelPInterval.setBounds(internalX+140, internalY, 50, 20);
         XTPNoptionsPanel.add(labelPInterval);
 
-        int placeStepsInterval = overlord.simSettings.getSimSteps()/10;
-        SpinnerModel intervalPlaceStepsSpinnerModel = new SpinnerNumberModel(placesStepsInterval, 0, placeStepsInterval, 10);
+        int placeStepsInterval = (int)overlord.simSettings.getSimSteps_XTPN ()/10;
+        SpinnerModel intervalPlaceStepsSpinnerModel = new SpinnerNumberModel(placesStepsInterval, 0, placeStepsInterval, 100);
         placesStepsIntervalSpinner = new JSpinner(intervalPlaceStepsSpinnerModel);
         placesStepsIntervalSpinner.setBounds(internalX+190, internalY, 60, 20);
         placesStepsIntervalSpinner.addChangeListener(e -> {
@@ -327,14 +328,14 @@ public class HolmesSimXTPN extends JFrame {
         labelTime.setBounds(internalX, internalY, 40, 20);
         XTPNoptionsPanel.add(labelTime);
 
-        double timeValue = overlord.simSettings.simMaxTime_XTPN;
-        SpinnerModel placeTimeSpinnerModel = new SpinnerNumberModel((int)timeValue, 0, 100000000, 10000);
+        double timeValue = overlord.simSettings.getSimMaxTime_XTPN();
+        SpinnerModel placeTimeSpinnerModel = new SpinnerNumberModel((int)timeValue, 0, 1000000, 5000);
         JSpinner placesTimeSpinner = new JSpinner(placeTimeSpinnerModel);
         placesTimeSpinner.setBounds(internalX+45, internalY, 90, 20);
         placesTimeSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             int tmp = (int) spinner.getValue();
-            overlord.simSettings.simMaxTime_XTPN = tmp;
+            overlord.simSettings.setSimMaxTime_XTPN( tmp );
         });
         XTPNoptionsPanel.add(placesTimeSpinner);
 
@@ -342,7 +343,7 @@ public class HolmesSimXTPN extends JFrame {
         labelPTimeInterval.setBounds(internalX+140, internalY, 50, 20);
         XTPNoptionsPanel.add(labelPTimeInterval);
 
-        double placeTimeMaxInterval = overlord.simSettings.simMaxTime_XTPN/100;
+        int placeTimeMaxInterval = (int)overlord.simSettings.getSimMaxTime_XTPN() / 100;
         SpinnerModel intervalPlaceTimeSpinnerModel = new SpinnerNumberModel(placesTimeInterval, 0, placeTimeMaxInterval, 10);
         placesTimeIntervalSpinner = new JSpinner(intervalPlaceTimeSpinnerModel);
         placesTimeIntervalSpinner.setBounds(internalX+190, internalY, 60, 20);
@@ -529,10 +530,13 @@ public class HolmesSimXTPN extends JFrame {
         placeSimSteps.setBounds(posXchart+620, posYchart-60, 200, 20);
         placesChartOptionsPanel.add(placeSimSteps);
 
-
-        placeSimTime = new JLabel("Place simulation time:  0");
+        placeSimTime = new JLabel("Place simulation time: 0");
         placeSimTime.setBounds(posXchart+620, posYchart-40, 200, 20);
         placesChartOptionsPanel.add(placeSimTime);
+
+        placeSimCompTime = new JLabel("Simulation computing time: 0");
+        placeSimCompTime.setBounds(posXchart+620, posYchart-20, 200, 20);
+        placesChartOptionsPanel.add(placeSimCompTime);
 
         //************************************************************************************************************
         //************************************************************************************************************
@@ -1496,6 +1500,8 @@ public class HolmesSimXTPN extends JFrame {
 
         placeSimSteps.setText("Place simulation steps: " + simDataBox.avtTimeForStep.size());
         placeSimTime.setText("Place simulation time:  " + Tools.cutValue( simDataBox.avtTimeForStep.get( simDataBox.avtTimeForStep.size() -  1)));
+        placeSimCompTime.setText("Simulation computing time: " + Tools.getTime( simDataBox.compTime ) );
+
 
         fillPlacesAndTransitionsData();
         setSimWindowComponentsStatus(true);

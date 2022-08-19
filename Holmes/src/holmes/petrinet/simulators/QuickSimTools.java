@@ -111,8 +111,8 @@ public class QuickSimTools {
 			stateSimulatorXTPN.initiateSim(overlord.simSettings);
 
 			overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-			overlord.simSettings.simSteps_XTPN = steps;
-			overlord.simSettings.simMaxTime_XTPN = time;
+			overlord.simSettings.setSimSteps_XTPN( steps );
+			overlord.simSettings.setSimMaxTime_XTPN( time );
 			overlord.simSettings.setSimulateTime( !bySteps );
 			overlord.simSettings.simRepetitions_XTPN = repetitions;
 
@@ -423,7 +423,7 @@ public class QuickSimTools {
 		note.addTextLine("      Avg. time:   ", "text");
 		note.addTextLineNL(Tools.cutValue(result.get(0).simTime), "bold");
 		note.addTextLine("      Time:        ", "text");
-		note.addTextLineNL(getTime(result.get(0).compTime), "text");
+		note.addTextLineNL(Tools.getTime(result.get(0).compTime), "text");
 
 		note.addTextLineNL(" * Knockout set:", "bold");
 		note.addTextLine("      Avg. steps:  ", "text");
@@ -431,7 +431,7 @@ public class QuickSimTools {
 		note.addTextLine("      Avg. time:   ", "text");
 		note.addTextLineNL(Tools.cutValue(result.get(1).simTime), "bold");
 		note.addTextLine("      Time:        ", "text");
-		note.addTextLineNL(getTime(result.get(1).compTime), "text");
+		note.addTextLineNL(Tools.getTime(result.get(1).compTime), "text");
 
 		int transIndex = 0;
 		double simStepsRef = result.get(0).simSteps;
@@ -607,27 +607,6 @@ public class QuickSimTools {
 		note.setVisible(true);
 		startSimButton.setEnabled(true);
 		overlord.getWorkspace().getProject().setSimulationActive(false);
-	}
-
-	private String getTime(long milisecond) {
-		long seconds = milisecond /= 1000;
-		long hours = seconds / 3600;
-		String h = hours+"";
-		if(h.length() == 1)
-			h = "0" + h;
-
-		seconds = seconds - (hours * 3600);
-		long minutes = seconds / 60;
-		String m = minutes+"";
-		if(m.length() == 1)
-			m = "0" + m;
-
-		seconds = seconds - (minutes * 60);
-		String s = seconds+"";
-		if(s.length() == 1)
-			s = "0" + s;
-
-		return h + ":" + m + ":" + s;
 	}
 
 	private String getTransType(TransitionXTPN transition) {

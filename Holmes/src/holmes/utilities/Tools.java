@@ -498,4 +498,30 @@ public final class Tools {
             b=b*m/i;
         return b;
     }
+
+	/**
+	 * Zwraca czas w formie łańcucha znaków HH:MM:SS dla wartości w milisekundach.
+	 * @param milisecond (<b>long</b>) czas w milisekundach.
+	 * @return (<b>String</b>) czas w formacie HH:MM:SS
+	 */
+	public static String getTime(long milisecond) {
+		long seconds = milisecond /= 1000;
+		long hours = seconds / 3600;
+		String h = hours+"";
+		if(h.length() == 1)
+			h = "0" + h;
+
+		seconds = seconds - (hours * 3600);
+		long minutes = seconds / 60;
+		String m = minutes+"";
+		if(m.length() == 1)
+			m = "0" + m;
+
+		seconds = seconds - (minutes * 60);
+		String s = seconds+"";
+		if(s.length() == 1)
+			s = "0" + s;
+
+		return h + ":" + m + ":" + s;
+	}
 }
