@@ -1563,7 +1563,7 @@ public class HolmesSimXTPN extends JFrame {
 
         transInChart = new ArrayList<Integer>();
         transInChartStr  = new ArrayList<String>();
-        for(int i=0; i<GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size(); i++) {
+        for(int i=0; i<GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size(); i++) {
             transInChart.add(-1);
             transInChartStr.add("");
         }
@@ -1571,7 +1571,6 @@ public class HolmesSimXTPN extends JFrame {
         placeSimSteps.setText("Place simulation steps: " + simDataBox.avgTimeForStep.size());
         placeSimTime.setText("Place simulation time:  " + Tools.cutValue( simDataBox.avgTimeForStep.get( simDataBox.avgTimeForStep.size() -  1)));
         placeSimCompTime.setText("Simulation computing time: " + Tools.getTime( simDataBox.compTime ) );
-
 
         fillPlacesAndTransitionsData();
         setSimWindowComponentsStatus(true);
