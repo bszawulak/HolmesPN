@@ -12,7 +12,7 @@ public class StateSimDataContainer {
     public ArrayList<ArrayList<Double>> transDataMatrix = new ArrayList<>();
 
     /** Każdy rekord to box z informacją, ile razy (przy powtórzeniach) tranzycja była w danym kroku nieaktywna, aktywna, produkująca, odpalająca */
-    public ArrayList<StateSimulatorXTPN.TransitionStepStats> transitionsSimHistory = new ArrayList<>();
+    public ArrayList<ArrayList<StateSimulatorXTPN.TransitionStepStats>> transitionsSimHistory = new ArrayList<>();
 
 
     public ArrayList<ArrayList<Double>> placesTokensHistory = new ArrayList<>();

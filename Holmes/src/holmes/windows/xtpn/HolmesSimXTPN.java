@@ -62,6 +62,8 @@ public class HolmesSimXTPN extends JFrame {
 
     private ArrayList<Integer> placesInChart;
     private ArrayList<String> placesInChartStr;
+    private ArrayList<Integer> transInChart;
+    private ArrayList<String> transInChartStr;
 
     private XYSeriesCollection placesSeriesDataSet = null;
     private XYSeriesCollection transitionsSeriesDataSet = null;
@@ -90,9 +92,7 @@ public class HolmesSimXTPN extends JFrame {
 
     //XTPN:
     StateSimDataContainer simDataBox = new StateSimDataContainer();
-
-    private boolean timeSimulationPerformed = false;
-
+    private boolean isTimeSimulationXTPN = false;
     private JLabel placeSimSteps = null;
     private JLabel placeSimTime = null;
     private JLabel placeSimCompTime = null;
@@ -107,6 +107,9 @@ public class HolmesSimXTPN extends JFrame {
         chartDetails = new ChartPropertiesXTPN();
         placesInChart = new ArrayList<Integer>();
         placesInChartStr = new ArrayList<String>();
+
+        transInChart = new ArrayList<Integer>();
+        transInChartStr = new ArrayList<String>();
 
         initializeComponents();
         initiateListeners();
@@ -246,11 +249,10 @@ public class HolmesSimXTPN extends JFrame {
         dataAcquisitionPanel.add(progressBar);
 
 
-
         JPanel XTPNoptionsPanel = new JPanel(null);
         XTPNoptionsPanel.setBackground(Color.WHITE);
         XTPNoptionsPanel.setBorder(BorderFactory.createTitledBorder("XTPN sim options"));
-        XTPNoptionsPanel.setBounds(posXda+670, posYda-20, 280, 110);
+        XTPNoptionsPanel.setBounds(posXda+670, posYda-20, 380, 110);
         dataAcquisitionPanel.add(XTPNoptionsPanel);
 
         int internalX = 10;
@@ -270,6 +272,43 @@ public class HolmesSimXTPN extends JFrame {
             overlord.simSettings.simRepetitions_XTPN = tmp;
         });
         XTPNoptionsPanel.add(placesRepsSpinner);
+
+        JCheckBox qSimXTPNRecordStepsCheckbox = new JCheckBox("Sel. steps");
+        qSimXTPNRecordStepsCheckbox.setBackground(Color.WHITE);
+        qSimXTPNRecordStepsCheckbox.setBounds(internalX+130, internalY, 90, 20);
+        qSimXTPNRecordStepsCheckbox.setSelected(overlord.simSettings.getSimulateTime());
+        qSimXTPNRecordStepsCheckbox.addItemListener(e -> {
+            if(doNotUpdate)
+                return;
+
+            JCheckBox box = (JCheckBox) e.getSource();
+            overlord.simSettings.setRecordSomeSteps(box.isSelected() );
+        });
+        XTPNoptionsPanel.add(qSimXTPNRecordStepsCheckbox);
+
+        SpinnerModel selStepsSpinnerModel = new SpinnerNumberModel(10, 2, 100, 10);
+        JSpinner selStepsSpinner = new JSpinner(selStepsSpinnerModel);
+        selStepsSpinner.setBounds(internalX+220, internalY, 50, 20);
+        selStepsSpinner.addChangeListener(e -> {
+            JSpinner spinner = (JSpinner) e.getSource();
+            int tmp = (int) spinner.getValue();
+            overlord.simSettings.setRecordedSteps( tmp );
+        });
+        XTPNoptionsPanel.add(selStepsSpinner);
+
+
+        JCheckBox qSimXTPNCompStatsCheckbox = new JCheckBox("Comp. stats");
+        qSimXTPNCompStatsCheckbox.setBackground(Color.WHITE);
+        qSimXTPNCompStatsCheckbox.setBounds(internalX+130, internalY, 90, 20);
+        qSimXTPNCompStatsCheckbox.setSelected(overlord.simSettings.getSimulateTime());
+        qSimXTPNCompStatsCheckbox.addItemListener(e -> {
+            if(doNotUpdate)
+                return;
+
+            JCheckBox box = (JCheckBox) e.getSource();
+            overlord.simSettings.setRecordStatictis(box.isSelected() );
+        });
+        XTPNoptionsPanel.add(qSimXTPNCompStatsCheckbox);
 
         internalY += 20;
 
@@ -535,7 +574,7 @@ public class HolmesSimXTPN extends JFrame {
         placesChartOptionsPanel.add(placeSimTime);
 
         placeSimCompTime = new JLabel("Simulation computing time: 0");
-        placeSimCompTime.setBounds(posXchart+620, posYchart-20, 200, 20);
+        placeSimCompTime.setBounds(posXchart+620, posYchart-20, 230, 20);
         placesChartOptionsPanel.add(placeSimCompTime);
 
         //************************************************************************************************************
@@ -649,8 +688,8 @@ public class HolmesSimXTPN extends JFrame {
         label1.setBounds(posXchart+280, posYchart+2, 70, 20);
         transChartOptionsPanel.add(label1);
 
-        int mValue = overlord.simSettings.getSimSteps()/10;
-        SpinnerModel intervSpinnerModel = new SpinnerNumberModel(transInterval, 0, mValue, 10);
+        int mValue = (int)overlord.simSettings.getSimSteps_XTPN () / 10;
+        SpinnerModel intervSpinnerModel = new SpinnerNumberModel(transInterval, 1, mValue, 10);
         transIntervalSpinner = new JSpinner(intervSpinnerModel);
         transIntervalSpinner.setBounds(posXchart+330, posYchart+3, 60, 20);
         transIntervalSpinner.addChangeListener(e -> {
@@ -702,11 +741,14 @@ public class HolmesSimXTPN extends JFrame {
                 int sel = action.getRealNodeID(name);
                 if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
                 name = trimNodeName(name);
+
+                transInChart.set(sel, 1);
+                transInChartStr.set(sel, name);
+
                 addNewTransitionSeries(sel, name);
+                updatePlacesGraphicChart("transitions");
             }
         });
-
-        addTransitionButton.setEnabled(false);
         transChartOptionsPanel.add(addTransitionButton);
 
         JButton removeTransitionButton = new HolmesRoundedButton("<html><center>Remove</center></html>"
@@ -723,7 +765,13 @@ public class HolmesSimXTPN extends JFrame {
             int selected = transitionsCombo.getSelectedIndex();
             if(selected>0) {
                 String name = transitionsCombo.getSelectedItem().toString();
+                int sel = action.getRealNodeID(name);
+                if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
                 name = trimNodeName(name);
+
+                transInChart.set(sel, -1);
+                transInChartStr.set(sel, "");
+
                 removeTransitionSeries(name);
             }
         });
@@ -885,10 +933,9 @@ public class HolmesSimXTPN extends JFrame {
         XYSeries series = new XYSeries(name);
         //ArrayList<Integer> test = new ArrayList<Integer>();
 
-        if(timeSimulationPerformed) {
+        if(isTimeSimulationXTPN) {
             int step = 0;
             int intervalIteration = 1;
-
 
             while(step < simDataBox.placesTokensHistory.size()) {
 
@@ -934,9 +981,6 @@ public class HolmesSimXTPN extends JFrame {
                 }
             }
         }
-
-
-
         placesSeriesDataSet.addSeries(series);
     }
 
@@ -1055,7 +1099,6 @@ public class HolmesSimXTPN extends JFrame {
         placesJPanel.add(sPane, BorderLayout.CENTER);
         placesJPanel.revalidate();
         placesJPanel.repaint();
-
          */
     }
 
@@ -1084,7 +1127,6 @@ public class HolmesSimXTPN extends JFrame {
         }
         */
     }
-
 
 
     //**************************************************************************************
@@ -1118,18 +1160,15 @@ public class HolmesSimXTPN extends JFrame {
      * @param name String - nazwa tranzycji
      */
     private void addNewTransitionSeries(int selTransID, String name) {
-        /*
         if(transChartType == 0) { //replace chart
             transitionsJPanel.removeAll();
             transitionsJPanel.add(createTransChartPanel(), BorderLayout.CENTER);
             transitionsJPanel.revalidate();
             transitionsJPanel.repaint();
             transChartType = 1;
-
             transitionsSeriesDataSet.removeAllSeries(); // ??
         }
 
-        @SuppressWarnings("unchecked")
         java.util.List<XYSeries> x = transitionsSeriesDataSet.getSeries();
         for(XYSeries xys : x) {
             if(xys.getKey().equals(name))
@@ -1137,33 +1176,24 @@ public class HolmesSimXTPN extends JFrame {
         }
 
         XYSeries series = new XYSeries(name);
-        //ArrayList<Integer> test = new ArrayList<Integer>();
-        //int counter = 0;
-        for(int step=0; step<transitionsRawData.size(); step++) {
-            if(transInterval > (transitionsRawData.size()/10)) {
-                transInterval = transitionsRawData.size()/10;
+
+
+        for(int step=0; step<simDataBox.transitionsSimHistory.get(selTransID).size(); step++) {
+            if(transInterval > (simDataBox.transitionsSimHistory.get(selTransID).size()/10)) {
+                transInterval = simDataBox.transitionsSimHistory.get(selTransID).size()/10;
 
             }
-            int value = 0; //suma odpaleń w przedziale czasu
+            double value = 0; //suma odpaleń w przedziale czasu
             for(int i=0; i<transInterval; i++) {
-                try {
-                    value += transitionsRawData.get(step+i).get(selTransID);
-                } catch (Exception ex) {
-                    GUIManager.getDefaultGUIManager().log("Error (906615096) | Exception:  "+ex.getMessage(), "error", true);
-                }
+                value += simDataBox.transitionsSimHistory.get(selTransID).get(step+i).fired;
             }
-
-            //test.add(value);
             series.add(step, value);
             step += transInterval;
 
             if(transInterval>1)
                 step--;
-            //counter++;
         }
         transitionsSeriesDataSet.addSeries(series);
-
-         */
     }
 
     /**
@@ -1186,6 +1216,13 @@ public class HolmesSimXTPN extends JFrame {
      */
     private void clearTransitionsChart() {
         transitionsSeriesDataSet.removeAllSeries();
+
+        transInChart = new ArrayList<Integer>();
+        transInChartStr  = new ArrayList<String>();
+        for(int i=0; i<GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size(); i++) {
+            transInChart.add(-1);
+            transInChartStr.add("");
+        }
 
         //if(transitionsSeriesDataSet.getSeriesCount() > 0)
         //	transitionsSeriesDataSet.removeAllSeries();
@@ -1421,8 +1458,6 @@ public class HolmesSimXTPN extends JFrame {
                 sortedByValues = crunchifySortMapXTPN(map); // dark magic happens here
                 for (Map.Entry<Integer, Double> entry : sortedByValues.entrySet()) {
                     transitionsCombo.addItem("t"+(entry.getKey())+"."+transitions.get(entry.getKey()).getName() + " "+formatD(entry.getValue()));
-
-
                 }
             }
         } else {
@@ -1489,13 +1524,20 @@ public class HolmesSimXTPN extends JFrame {
     public void completeSimulationProcedures_Mk1(StateSimDataContainer result) {
         simDataBox = result;
 
-        timeSimulationPerformed = overlord.simSettings.getSimulateTime(); //czy symulacja była po krokach czy po czasie
+        isTimeSimulationXTPN = overlord.simSettings.getSimulateTime(); //czy symulacja była po krokach czy po czasie
 
         placesInChart = new ArrayList<Integer>();
         placesInChartStr  = new ArrayList<String>();
         for(int i=0; i<GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size(); i++) {
             placesInChart.add(-1);
             placesInChartStr.add("");
+        }
+
+        transInChart = new ArrayList<Integer>();
+        transInChartStr  = new ArrayList<String>();
+        for(int i=0; i<GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size(); i++) {
+            transInChart.add(-1);
+            transInChartStr.add("");
         }
 
         placeSimSteps.setText("Place simulation steps: " + simDataBox.avtTimeForStep.size());
@@ -1518,6 +1560,8 @@ public class HolmesSimXTPN extends JFrame {
         placesInChart.clear();
         placesInChartStr.clear();
 
+        transInChart.clear();
+        transInChartStr.clear();
     }
 
     /**

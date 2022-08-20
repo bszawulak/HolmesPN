@@ -45,6 +45,14 @@ public class SimulatorGlobals {
 	private double simMaxTime_XTPN = 5000.0;
 	public int simRepetitions_XTPN = 10;
 	private boolean simulateTime = false; //domyślnie: true = steps
+
+	/** Zmienna określa, czy mają być zapamiętywane dane dla wszystkich kroków symulacji, czy tylko niektóre (patrz: recordedSteps) */
+	private boolean recordSomeSteps = false; //domyślnie: true = steps
+	/** Co ile kroków symulacji zapamiętywane są dane */
+	private int recordedSteps = 10;
+
+	private boolean recordStatictis = false;
+
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.
@@ -417,5 +425,29 @@ public class SimulatorGlobals {
 
 	public double getSimMaxTime_XTPN() {
 		return simMaxTime_XTPN;
+	}
+
+	public void setRecordSomeSteps(boolean value) {
+		recordSomeSteps = value;
+	}
+
+	public boolean getRecordSomeSteps() {
+		return recordSomeSteps;
+	}
+
+	public void setRecordedSteps(int value) {
+		recordedSteps = value;
+	}
+
+	public int getRecordedSteps() {
+		return recordedSteps;
+	}
+	//recordStatictis
+	public void setRecordStatictis(boolean value) {
+		recordStatictis = value;
+	}
+
+	public boolean getRecordStatictis() {
+		return recordStatictis;
 	}
 }
