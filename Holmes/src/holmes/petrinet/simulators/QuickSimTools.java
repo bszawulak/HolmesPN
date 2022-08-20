@@ -112,9 +112,9 @@ public class QuickSimTools {
 
 			overlord.simSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
 			overlord.simSettings.setSimSteps_XTPN( steps );
-			overlord.simSettings.setSimMaxTime_XTPN( time );
-			overlord.simSettings.setSimulateTime( !bySteps );
-			overlord.simSettings.simRepetitions_XTPN = repetitions;
+			overlord.simSettings.setSimTime_XTPN( time );
+			overlord.simSettings.setTimeSimulationStatus_XTPN( !bySteps );
+			overlord.simSettings.setSimRepetitions_XTPN(repetitions);
 
 			startSimButton.setEnabled(false);
 			overlord.getWorkspace().getProject().setSimulationActive(true);
@@ -320,8 +320,8 @@ public class QuickSimTools {
 		note.addTextLineNL("Transitions data", "bold");
 		for(TransitionXTPN trans : transitions) {
 
-			double tmpSteps = result.transDataMatrix.get(transIndex).get(0); //trans.simInactiveState
-			double tmpTime = result.transDataMatrix.get(transIndex).get(4); //trans.simInactiveTime
+			double tmpSteps = result.transitionsStatistics.get(transIndex).get(0); //trans.simInactiveState
+			double tmpTime = result.transitionsStatistics.get(transIndex).get(4); //trans.simInactiveTime
 
 
 			note.addTextLine("Transition ", "text");
@@ -335,19 +335,19 @@ public class QuickSimTools {
 					"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
 			note.addTextLineNL(text, "text");
 
-			tmpSteps = result.transDataMatrix.get(transIndex).get(1); //trans.simActiveState
-			tmpTime = result.transDataMatrix.get(transIndex).get(5); //trans.simActiveTime
+			tmpSteps = result.transitionsStatistics.get(transIndex).get(1); //trans.simActiveState
+			tmpTime = result.transitionsStatistics.get(transIndex).get(5); //trans.simActiveTime
 			text = "   Active (#):    "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
 					"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
 			note.addTextLineNL(text, "text");
 
-			tmpSteps = result.transDataMatrix.get(transIndex).get(2); //trans.simProductionState
-			tmpTime = result.transDataMatrix.get(transIndex).get(6); //trans.simProductionTime
+			tmpSteps = result.transitionsStatistics.get(transIndex).get(2); //trans.simProductionState
+			tmpTime = result.transitionsStatistics.get(transIndex).get(6); //trans.simProductionTime
 			text = "   Production (#): "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
 					"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
 			note.addTextLineNL(text, "text");
 
-			tmpSteps = result.transDataMatrix.get(transIndex).get(3); //trans.simFiredState
+			tmpSteps = result.transitionsStatistics.get(transIndex).get(3); //trans.simFiredState
 			text = "   Fired (#): "+(int)tmpSteps ;
 			note.addTextLineNL(text, "text");
 
@@ -443,10 +443,10 @@ public class QuickSimTools {
 		note.addTextLineNL("Transitions data", "bold");
 		for(TransitionXTPN trans : transitions) {
 
-			double tmpStepsRef = result.get(0).transDataMatrix.get(transIndex).get(0); //trans.simInactiveState
-			double tmpTimeRef = result.get(0).transDataMatrix.get(transIndex).get(4); //trans.simInactiveTime
-			double tmpStepsKnock = result.get(1).transDataMatrix.get(transIndex).get(0); //trans.simInactiveState
-			double tmpTimeKnock = result.get(1).transDataMatrix.get(transIndex).get(4); //trans.simInactiveTime
+			double tmpStepsRef = result.get(0).transitionsStatistics.get(transIndex).get(0); //trans.simInactiveState
+			double tmpTimeRef = result.get(0).transitionsStatistics.get(transIndex).get(4); //trans.simInactiveTime
+			double tmpStepsKnock = result.get(1).transitionsStatistics.get(transIndex).get(0); //trans.simInactiveState
+			double tmpTimeKnock = result.get(1).transitionsStatistics.get(transIndex).get(4); //trans.simInactiveTime
 
 			double tmpStepsPercentRef = (tmpStepsRef*100)/simStepsRef;
 			double tmpTimePercentRef = (tmpTimeRef * 100)/simTimeRef;
@@ -485,10 +485,10 @@ public class QuickSimTools {
 			//		"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
 			//note.addTextLineNL(text, "text");
 
-			tmpStepsRef = result.get(0).transDataMatrix.get(transIndex).get(1); //trans.simActiveState
-			tmpTimeRef = result.get(0).transDataMatrix.get(transIndex).get(5); //trans.simActiveTime
-			tmpStepsKnock = result.get(1).transDataMatrix.get(transIndex).get(1); //trans.simActiveState
-			tmpTimeKnock = result.get(1).transDataMatrix.get(transIndex).get(5); //trans.simActiveTime
+			tmpStepsRef = result.get(0).transitionsStatistics.get(transIndex).get(1); //trans.simActiveState
+			tmpTimeRef = result.get(0).transitionsStatistics.get(transIndex).get(5); //trans.simActiveTime
+			tmpStepsKnock = result.get(1).transitionsStatistics.get(transIndex).get(1); //trans.simActiveState
+			tmpTimeKnock = result.get(1).transitionsStatistics.get(transIndex).get(5); //trans.simActiveTime
 
 			tmpStepsPercentRef = (tmpStepsRef*100)/simStepsRef;
 			tmpTimePercentRef = (tmpTimeRef * 100)/simTimeRef;
@@ -520,10 +520,10 @@ public class QuickSimTools {
 			//		"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
 			//note.addTextLineNL(text, "text");
 
-			tmpStepsRef = result.get(0).transDataMatrix.get(transIndex).get(2); //trans.simProductionState
-			tmpTimeRef = result.get(0).transDataMatrix.get(transIndex).get(6); //trans.simProductionTime
-			tmpStepsKnock = result.get(1).transDataMatrix.get(transIndex).get(2); //trans.simProductionState
-			tmpTimeKnock = result.get(1).transDataMatrix.get(transIndex).get(6); //trans.simProductionTime
+			tmpStepsRef = result.get(0).transitionsStatistics.get(transIndex).get(2); //trans.simProductionState
+			tmpTimeRef = result.get(0).transitionsStatistics.get(transIndex).get(6); //trans.simProductionTime
+			tmpStepsKnock = result.get(1).transitionsStatistics.get(transIndex).get(2); //trans.simProductionState
+			tmpTimeKnock = result.get(1).transitionsStatistics.get(transIndex).get(6); //trans.simProductionTime
 
 			tmpStepsPercentRef = (tmpStepsRef*100)/simStepsRef;
 			tmpTimePercentRef = (tmpTimeRef * 100)/simTimeRef;
@@ -555,8 +555,8 @@ public class QuickSimTools {
 			//		"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
 			//note.addTextLineNL(text, "text");
 
-			tmpStepsRef = result.get(0).transDataMatrix.get(transIndex).get(3);
-			tmpStepsKnock = result.get(1).transDataMatrix.get(transIndex).get(3);
+			tmpStepsRef = result.get(0).transitionsStatistics.get(transIndex).get(3);
+			tmpStepsKnock = result.get(1).transitionsStatistics.get(transIndex).get(3);
 			text = " R Fired (#): "+(int)tmpStepsRef + "  |  " + " K Fired (#): "+(int)tmpStepsKnock;
 			note.addTextLineNL(text, "text");
 			//text = " K Fired (#): "+(int)tmpStepsKnock;

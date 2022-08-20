@@ -77,6 +77,17 @@ public class HolmesSimXTPN extends JFrame {
     private JSpinner transIntervalSpinner;
     private JSpinner placesStepsIntervalSpinner;
     private JSpinner placesTimeIntervalSpinner;
+
+    private SpinnerModel placeRepsSpinnerModel = null;  //reps
+    private JCheckBox qSimXTPNRecordStepsCheckbox = null;  //simSettings.setRecordSomeSteps
+    private SpinnerModel selStepsSpinnerModel = null; //simSettings.setRecordedSteps
+    private JCheckBox qSimXTPNCompStatsCheckbox = null; //simSettings.setRecordStatictis
+    private SpinnerModel placeStepsSpinnerModel = null; //steps
+    private SpinnerModel intervalPlaceStepsSpinnerModel = null; //placesStepsInterval
+    private JCheckBox qSimXTPNStatsTimeCheckbox = null; //simSettings.setSimulateTime
+    private SpinnerModel placeTimeSpinnerModel = null; //simSettings.setSimMaxTime_XTPN
+
+
     private JComboBox<String> placesCombo = null;
     private JComboBox<String> transitionsCombo = null;
     private ChartPropertiesXTPN chartDetails;
@@ -177,9 +188,7 @@ public class HolmesSimXTPN extends JFrame {
         acqDataButton.setFocusPainted(false);
         acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
-        acqDataButton.addActionListener(actionEvent -> {
-            acquireDataFromSimulation();
-        });
+        acqDataButton.addActionListener(actionEvent -> acquireDataFromSimulation());
         dataAcquisitionPanel.add(acqDataButton);
 
         HolmesRoundedButton cancelButton = new HolmesRoundedButton("<html><center>Cancel</center></html>"
@@ -263,50 +272,55 @@ public class HolmesSimXTPN extends JFrame {
         XTPNoptionsPanel.add(labelReps);
 
         //int repValue = overlord.simSettings.simRepetitions_XTPN;
-        SpinnerModel placeRepsSpinnerModel = new SpinnerNumberModel(1, 1, 100, 10);
+        placeRepsSpinnerModel = new SpinnerNumberModel(1, 1, 100, 10);
         JSpinner placesRepsSpinner = new JSpinner(placeRepsSpinnerModel);
         placesRepsSpinner.setBounds(internalX+70, internalY, 50, 20);
         placesRepsSpinner.addChangeListener(e -> {
+            if(doNotUpdate)
+                return;
+
             JSpinner spinner = (JSpinner) e.getSource();
             int tmp = (int) spinner.getValue();
-            overlord.simSettings.simRepetitions_XTPN = tmp;
+            overlord.simSettings.setSimRepetitions_XTPN(tmp);
         });
         XTPNoptionsPanel.add(placesRepsSpinner);
 
-        JCheckBox qSimXTPNRecordStepsCheckbox = new JCheckBox("Sel. steps");
+        qSimXTPNRecordStepsCheckbox = new JCheckBox("Sel. steps");
         qSimXTPNRecordStepsCheckbox.setBackground(Color.WHITE);
         qSimXTPNRecordStepsCheckbox.setBounds(internalX+130, internalY, 90, 20);
-        qSimXTPNRecordStepsCheckbox.setSelected(overlord.simSettings.getSimulateTime());
+        qSimXTPNRecordStepsCheckbox.setSelected(overlord.simSettings.isTimeSimulation_XTPN());
         qSimXTPNRecordStepsCheckbox.addItemListener(e -> {
             if(doNotUpdate)
                 return;
 
             JCheckBox box = (JCheckBox) e.getSource();
-            overlord.simSettings.setRecordSomeSteps(box.isSelected() );
+            overlord.simSettings.setPartialRecordingStetsStatus(box.isSelected() );
         });
         XTPNoptionsPanel.add(qSimXTPNRecordStepsCheckbox);
 
-        SpinnerModel selStepsSpinnerModel = new SpinnerNumberModel(10, 2, 100, 10);
+        selStepsSpinnerModel = new SpinnerNumberModel(10, 2, 100, 10);
         JSpinner selStepsSpinner = new JSpinner(selStepsSpinnerModel);
         selStepsSpinner.setBounds(internalX+220, internalY, 50, 20);
         selStepsSpinner.addChangeListener(e -> {
+            if(doNotUpdate)
+                return;
+
             JSpinner spinner = (JSpinner) e.getSource();
             int tmp = (int) spinner.getValue();
             overlord.simSettings.setRecordedSteps( tmp );
         });
         XTPNoptionsPanel.add(selStepsSpinner);
 
-
-        JCheckBox qSimXTPNCompStatsCheckbox = new JCheckBox("Comp. stats");
+        qSimXTPNCompStatsCheckbox = new JCheckBox("Comp. stats");
         qSimXTPNCompStatsCheckbox.setBackground(Color.WHITE);
         qSimXTPNCompStatsCheckbox.setBounds(internalX+130, internalY, 90, 20);
-        qSimXTPNCompStatsCheckbox.setSelected(overlord.simSettings.getSimulateTime());
+        qSimXTPNCompStatsCheckbox.setSelected(overlord.simSettings.isTimeSimulation_XTPN());
         qSimXTPNCompStatsCheckbox.addItemListener(e -> {
             if(doNotUpdate)
                 return;
 
             JCheckBox box = (JCheckBox) e.getSource();
-            overlord.simSettings.setRecordStatictis(box.isSelected() );
+            overlord.simSettings.setStatsRecordingStatus(box.isSelected() );
         });
         XTPNoptionsPanel.add(qSimXTPNCompStatsCheckbox);
 
@@ -317,7 +331,7 @@ public class HolmesSimXTPN extends JFrame {
         XTPNoptionsPanel.add(labelSteps);
 
         long stepValue = overlord.simSettings.getSimSteps_XTPN();
-        SpinnerModel placeStepsSpinnerModel = new SpinnerNumberModel((int)stepValue, 0, 100000000, 10000);
+        placeStepsSpinnerModel = new SpinnerNumberModel((int)stepValue, 0, 100000000, 10000);
         JSpinner placesStepsSpinner = new JSpinner(placeStepsSpinnerModel);
         placesStepsSpinner.setBounds(internalX+45, internalY, 90, 20);
         placesStepsSpinner.addChangeListener(e -> {
@@ -332,7 +346,7 @@ public class HolmesSimXTPN extends JFrame {
         XTPNoptionsPanel.add(labelPInterval);
 
         int placeStepsInterval = (int)overlord.simSettings.getSimSteps_XTPN ()/10;
-        SpinnerModel intervalPlaceStepsSpinnerModel = new SpinnerNumberModel(placesStepsInterval, 0, placeStepsInterval, 100);
+        intervalPlaceStepsSpinnerModel = new SpinnerNumberModel(placesStepsInterval, 0, placeStepsInterval, 100);
         placesStepsIntervalSpinner = new JSpinner(intervalPlaceStepsSpinnerModel);
         placesStepsIntervalSpinner.setBounds(internalX+190, internalY, 60, 20);
         placesStepsIntervalSpinner.addChangeListener(e -> {
@@ -348,16 +362,16 @@ public class HolmesSimXTPN extends JFrame {
 
         internalY += 20;
 
-        JCheckBox qSimXTPNStatsTimeCheckbox = new JCheckBox("Time simulation");
+        qSimXTPNStatsTimeCheckbox = new JCheckBox("Time simulation");
         qSimXTPNStatsTimeCheckbox.setBackground(Color.WHITE);
         qSimXTPNStatsTimeCheckbox.setBounds(internalX, internalY, 120, 20);
-        qSimXTPNStatsTimeCheckbox.setSelected(overlord.simSettings.getSimulateTime());
+        qSimXTPNStatsTimeCheckbox.setSelected(overlord.simSettings.isTimeSimulation_XTPN());
         qSimXTPNStatsTimeCheckbox.addItemListener(e -> {
             if(doNotUpdate)
                 return;
 
             JCheckBox box = (JCheckBox) e.getSource();
-            overlord.simSettings.setSimulateTime(box.isSelected() );
+            overlord.simSettings.setTimeSimulationStatus_XTPN(box.isSelected() );
         });
         XTPNoptionsPanel.add(qSimXTPNStatsTimeCheckbox);
 
@@ -367,14 +381,14 @@ public class HolmesSimXTPN extends JFrame {
         labelTime.setBounds(internalX, internalY, 40, 20);
         XTPNoptionsPanel.add(labelTime);
 
-        double timeValue = overlord.simSettings.getSimMaxTime_XTPN();
-        SpinnerModel placeTimeSpinnerModel = new SpinnerNumberModel((int)timeValue, 0, 1000000, 5000);
+        double timeValue = overlord.simSettings.getSimTime_XTPN();
+        placeTimeSpinnerModel = new SpinnerNumberModel((int)timeValue, 0, 1000000, 5000);
         JSpinner placesTimeSpinner = new JSpinner(placeTimeSpinnerModel);
         placesTimeSpinner.setBounds(internalX+45, internalY, 90, 20);
         placesTimeSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             int tmp = (int) spinner.getValue();
-            overlord.simSettings.setSimMaxTime_XTPN( tmp );
+            overlord.simSettings.setSimTime_XTPN( tmp );
         });
         XTPNoptionsPanel.add(placesTimeSpinner);
 
@@ -382,7 +396,7 @@ public class HolmesSimXTPN extends JFrame {
         labelPTimeInterval.setBounds(internalX+140, internalY, 50, 20);
         XTPNoptionsPanel.add(labelPTimeInterval);
 
-        int placeTimeMaxInterval = (int)overlord.simSettings.getSimMaxTime_XTPN() / 100;
+        int placeTimeMaxInterval = (int)overlord.simSettings.getSimTime_XTPN() / 100;
         SpinnerModel intervalPlaceTimeSpinnerModel = new SpinnerNumberModel(placesTimeInterval, 0, placeTimeMaxInterval, 10);
         placesTimeIntervalSpinner = new JSpinner(intervalPlaceTimeSpinnerModel);
         placesTimeIntervalSpinner.setBounds(internalX+190, internalY, 60, 20);
@@ -448,7 +462,6 @@ public class HolmesSimXTPN extends JFrame {
         sortedCheckBox.addActionListener(actionEvent -> {
             AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
             sortedP = abstractButton.getModel().isSelected();
-
             fillPlacesAndTransitionsData();
         });
         placesChartOptionsPanel.add(sortedCheckBox);
@@ -937,22 +950,22 @@ public class HolmesSimXTPN extends JFrame {
             int step = 0;
             int intervalIteration = 1;
 
-            while(step < simDataBox.placesTokensHistory.size()) {
+            while(step < simDataBox.fullTokensHistory.size()) {
 
-                if(simDataBox.avtTimeForStep.get(step) < intervalIteration * placesTimeInterval) {
+                if(simDataBox.avgTimeForStep.get(step) < intervalIteration * placesTimeInterval) {
                     double value = 0.0;
                     int getIndex = 0;
-                    while(simDataBox.avtTimeForStep.get(step) < intervalIteration * placesTimeInterval) {
-                        value += simDataBox.placesTokensHistory.get(step).get(selPlaceID);
+                    while(simDataBox.avgTimeForStep.get(step) < intervalIteration * placesTimeInterval) {
+                        value += simDataBox.fullTokensHistory.get(step).get(selPlaceID);
                         step++;
                         getIndex = step;
 
-                        if(step >= simDataBox.avtTimeForStep.size()) {
-                            getIndex = simDataBox.avtTimeForStep.size()-1;
+                        if(step >= simDataBox.avgTimeForStep.size()) {
+                            getIndex = simDataBox.avgTimeForStep.size()-1;
                             break;
                         }
                     }
-                    series.add((Number)simDataBox.avtTimeForStep.get(getIndex), value);
+                    series.add((Number)simDataBox.avgTimeForStep.get(getIndex), value);
                 } else {
                     intervalIteration++;
                 }
@@ -960,14 +973,14 @@ public class HolmesSimXTPN extends JFrame {
             }
         } else {
             int interval = placesStepsInterval;
-            int maxStep =  simDataBox.placesTokensHistory.size()-interval-1;
+            int maxStep =  simDataBox.fullTokensHistory.size()-interval-1;
 
-            if(simDataBox.placesTokensHistory.size() > 10*interval) {
+            if(simDataBox.fullTokensHistory.size() > 10*interval) {
                 for(int step=0; step<maxStep; step+=interval) {
 
                     double value = 0;
                     for(int j=0; j<interval; j++) {
-                        value += simDataBox.placesTokensHistory.get(step+j).get(selPlaceID);
+                        value += simDataBox.fullTokensHistory.get(step+j).get(selPlaceID);
                     }
                     value = value / interval;
 
@@ -975,8 +988,8 @@ public class HolmesSimXTPN extends JFrame {
                     series.add(step, value);
                 }
             } else {
-                for(int step=0; step<simDataBox.placesTokensHistory.size(); step++) {
-                    double value = simDataBox.placesTokensHistory.get(step).get(selPlaceID);
+                for(int step = 0; step<simDataBox.fullTokensHistory.size(); step++) {
+                    double value = simDataBox.fullTokensHistory.get(step).get(selPlaceID);
                     series.add(step, value);
                 }
             }
@@ -1393,6 +1406,19 @@ public class HolmesSimXTPN extends JFrame {
      * Metoda wypełnia komponenty rozwijalne danymi o miejscach i tranzycjach.
      */
     private void fillPlacesAndTransitionsData() {
+        doNotUpdate = true;
+
+        placeRepsSpinnerModel.setValue(overlord.simSettings.getRepetitions());  //reps
+        qSimXTPNRecordStepsCheckbox.setSelected(overlord.simSettings.isPartialRecordingSteps());  //simSettings.setRecordSomeSteps
+        selStepsSpinnerModel.setValue(overlord.simSettings.getRecordedSteps()); //simSettings.setRecordedSteps
+        qSimXTPNCompStatsCheckbox.setSelected(overlord.simSettings.isStatsRecorded()); //simSettings.setRecordStatictis
+
+        placeStepsSpinnerModel.setValue((int)overlord.simSettings.getSimSteps_XTPN()); //steps
+        qSimXTPNStatsTimeCheckbox.setSelected(overlord.simSettings.isTimeSimulation_XTPN() );
+        placeTimeSpinnerModel.setValue((int)overlord.simSettings.getSimTime_XTPN()); //simSettings.setSimMaxTime_XTPN
+
+        doNotUpdate = false;
+
         if(simDataBox == null)
             simDataBox = new StateSimDataContainer();
 
@@ -1417,7 +1443,7 @@ public class HolmesSimXTPN extends JFrame {
                     placesCombo.addItem("p"+(p)+"."+places.get(p).getName() + " "+formatD(simDataBox.avgTokens.get(p)));
                 }
             } else {
-                //sortowanie po odpaleniach:
+                //sortowanie po tokenach:
                 Map<Integer, Double> map = new HashMap<Integer, Double>();
                 for(int j=0; j<simDataBox.avgTokens.size(); j++) {
                     map.put(j, simDataBox.avgTokens.get(j));
@@ -1442,16 +1468,16 @@ public class HolmesSimXTPN extends JFrame {
         transitionsCombo.removeAllItems();
         transitionsCombo.addItem("---");
 
-        if(simDataBox.avgFires.size() == transitions.size()) {
+        if(simDataBox.avgFired.size() == transitions.size()) {
             if(!sortedT) {
                 for(int t=0; t < transitions.size(); t++) {
-                    transitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName() + " "+formatD(simDataBox.avgFires.get(t)));
+                    transitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName() + " "+formatD(simDataBox.avgFired.get(t)));
                 }
             } else {
                 //sortowanie po odpaleniach:
                 Map<Integer, Double> map = new HashMap<Integer, Double>();
-                for(int j=0; j<simDataBox.avgFires.size(); j++) {
-                    map.put(j, simDataBox.avgFires.get(j));
+                for(int j = 0; j<simDataBox.avgFired.size(); j++) {
+                    map.put(j, simDataBox.avgFired.get(j));
                 }
                 //sortuj po value (frequency)
                 Map<Integer, Double> sortedByValues;
@@ -1511,6 +1537,7 @@ public class HolmesSimXTPN extends JFrame {
 
     /**
      * Blokuje komponenty na czas symulacji.
+     * @param value (<b>boolean</b>) true, jeżeli mają być aktywne.
      */
     private void setSimWindowComponentsStatus(boolean value) {
         acqDataButton.setEnabled(value);
@@ -1520,11 +1547,12 @@ public class HolmesSimXTPN extends JFrame {
 
     /**
      * Metoda wywoływana zdalnie, kiedy wątek symulacji głównej (Simple) zakończy obliczenia
+     * @param result (<b>StateSimDataContainer</b>) obiekt danych symulacji.
      */
     public void completeSimulationProcedures_Mk1(StateSimDataContainer result) {
         simDataBox = result;
 
-        isTimeSimulationXTPN = overlord.simSettings.getSimulateTime(); //czy symulacja była po krokach czy po czasie
+        isTimeSimulationXTPN = overlord.simSettings.isTimeSimulation_XTPN(); //czy symulacja była po krokach czy po czasie
 
         placesInChart = new ArrayList<Integer>();
         placesInChartStr  = new ArrayList<String>();
@@ -1540,8 +1568,8 @@ public class HolmesSimXTPN extends JFrame {
             transInChartStr.add("");
         }
 
-        placeSimSteps.setText("Place simulation steps: " + simDataBox.avtTimeForStep.size());
-        placeSimTime.setText("Place simulation time:  " + Tools.cutValue( simDataBox.avtTimeForStep.get( simDataBox.avtTimeForStep.size() -  1)));
+        placeSimSteps.setText("Place simulation steps: " + simDataBox.avgTimeForStep.size());
+        placeSimTime.setText("Place simulation time:  " + Tools.cutValue( simDataBox.avgTimeForStep.get( simDataBox.avgTimeForStep.size() -  1)));
         placeSimCompTime.setText("Simulation computing time: " + Tools.getTime( simDataBox.compTime ) );
 
 
@@ -1627,14 +1655,6 @@ public class HolmesSimXTPN extends JFrame {
         //plot.setRenderer(renderer);
         //plot.setBackgroundPaint(Color.DARK_GRAY);
         //plot.setRenderer(renderer);
-    }
-
-    /**
-     * Umożliwia dostęp do symulatora.
-     * @return StateSimulatorXTPN - obiekt symulatora
-     */
-    public StateSimulatorXTPN accessSim() {
-        return ssim;
     }
 
     /**
