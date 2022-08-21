@@ -68,7 +68,7 @@ public class StateSimulatorXTPN implements Runnable {
      * Metoda ta musi być wywołana przed każdym startem symulatora. Inicjalizuje początkowe struktury
      * danych dla symulatora
      * @param ownSettings (<b>SimulatorGlobals</b>) parametry symulacji.
-     * @return (< b > boolean < / b >) - true, jeśli wszystko się udało.
+     * @return (<b>boolean</b>) - true, jeśli wszystko się udało.
      */
     public boolean initiateSim(SimulatorGlobals ownSettings) {
         transitions.clear();
@@ -170,7 +170,7 @@ public class StateSimulatorXTPN implements Runnable {
 
     /**
      * Główna metoda przetwarzająca krok symulacji oraz zapisująca historię stanów tranzycji.
-     * @return (< b > ArrayList[ArrayList[Double]] < / b >) - dwa wektory: placesTokensVector oraz placesTimeVector.
+     * @return (<b>ArrayList[ArrayList[Double]]</b>) - dwa wektory: placesTokensVector oraz placesTimeVector.
      */
     private ArrayList<ArrayList<Double>> processSimStep() {
         ArrayList<Double> placesTokensVector = new ArrayList<>();
@@ -313,7 +313,7 @@ public class StateSimulatorXTPN implements Runnable {
      * W zasadzie jest to główna metoda ''odpalania'' tranzycji. Te które są aktywne pobierają tokeny i
      * są umieszczane na listach launchedXTPN oraz (potem) launchedClassical. Te tranzycje dla których
      * zabrakło tokenów są deaktywowane oraz umieszczane w trzeciej tablicy: deactivated.
-     * @return (< b > ArrayList[ArrayList[TransitionXTPN]] < / b >) - trzy listy:
+     * @return (<b>ArrayList[ArrayList[TransitionXTPN]]</b>) - trzy listy:
      * <b>launchedXTPN</b> (.get(0)), <b>launchedClassical</b> (.get(1)) oraz <b>deactivated</b> (.get(2)).
      */
     public ArrayList<ArrayList<TransitionXTPN>> consumeTokensSubphase() {
@@ -463,20 +463,20 @@ public class StateSimulatorXTPN implements Runnable {
      * Metoda wywoływana przez okno informacji o miejscu XTPN. Zwraca dwa wektory informacji o tokenach w miejscu.
      * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach, ile kroków, ile czasu?
      * @param place (<b>PlaceXTPN</b>) obiekt miejsca XTPN, którego tokeny są liczone.
-     * @return (< b > ArrayList[ArrayList[Double]] < / b >) - dwa wektory, pierwszy liczy tokeny w każdym kroku, drugi
+     * @param repetitions (<b>int</b>) liczba powtórzeń.
+     * @return (<b>ArrayList[ArrayList[Double]]</b>) - dwa wektory, pierwszy liczy tokeny w każdym kroku, drugi
      * zawiera informację o czasie wykonania kroku.
      */
-    public ArrayList<ArrayList<Double>> simulateNetSinglePlace(SimulatorGlobals ownSettings, PlaceXTPN place) {
-        ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
+    public ArrayList<ArrayList<Double>> simulateNetSinglePlace(SimulatorGlobals ownSettings, PlaceXTPN place
+            , int repetitions) {
+
         ArrayList<Double> tokensNumber = new ArrayList<>();
         ArrayList<Double> timeVector = new ArrayList<>();
-        resultVectors.add(tokensNumber);
-        resultVectors.add(timeVector);
 
         if (!readyToSimulate) {
             JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
                     "Simulation problem", JOptionPane.ERROR_MESSAGE);
-            return resultVectors;
+            return null;
         }
         createBackupState(); //zapis p-stanu
 
@@ -484,43 +484,45 @@ public class StateSimulatorXTPN implements Runnable {
             trans.simHistoryXTPN.storeHistory = false;
         }
 
-        if (ownSettings.isTimeSimulation_XTPN()) {
-            while (simTimeCounter < ownSettings.getSimTime_XTPN()) {
-                if (terminate)
-                    break;
-
-                processSimStep();
-                if (place.isGammaModeActive()) {
-                    tokensNumber.add((double) place.accessMultiset().size());
-                } else {
-                    tokensNumber.add((double) place.getTokensNumber());
-                }
-                timeVector.add(simTimeCounter);
-            }
-        } else {
+        for(int rep=0; rep<repetitions; rep++) {
             for (int i = 0; i < ownSettings.getSimSteps_XTPN(); i++) {
                 if (terminate)
                     break;
 
                 processSimStep();
-                if (place.isGammaModeActive()) {
-                    tokensNumber.add((double) place.accessMultiset().size());
+                if(rep == 0) {
+                    if (place.isGammaModeActive()) {
+                        tokensNumber.add((double) place.accessMultiset().size() / repetitions);
+                    } else {
+                        tokensNumber.add((double) place.getTokensNumber() / repetitions);
+                    }
+                    timeVector.add(simTimeCounter / repetitions);
                 } else {
-                    tokensNumber.add((double) place.getTokensNumber());
+                    if (place.isGammaModeActive()) {
+                        tokensNumber.set(i,  tokensNumber.get(i) + (place.accessMultiset().size() / repetitions) );
+                    } else {
+                        tokensNumber.set(i,  tokensNumber.get(i) + (place.getTokensNumber() / repetitions) );
+                    }
+                    timeVector.set(i,  timeVector.get(i) + (simTimeCounter / repetitions) );
                 }
-                timeVector.add(simTimeCounter);
             }
+            restoreInternalMarkingZero(); //restore p-state
+            restartEngine();
         }
+
+        ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
+        resultVectors.add(tokensNumber);
+        resultVectors.add(timeVector);
+
         readyToSimulate = false;
-        restoreInternalMarkingZero(); //restore p-state
         return resultVectors;
     }
 
     /**
      * Metoda symuluje podaną liczbę kroków sieci Petriego dla i sprawdza wybraną tranzycję.
      * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach, ile kroków, ile czasu?
-     * @param transition  (<b>TransitionXTPN</b>) - wybrana tranzycja do testowania.
-     * @return (< b > ArrayList[ArrayList[Double]] < / b >) - trzy wektory, pierwszy zawiera status tranzycji (0 - nieaktywna,
+     * @param transition  (<b>TransitionXTPN</b>) wybrana tranzycja do testowania.
+     * @return (<b>ArrayList[ArrayList[Double]]</b>) - trzy wektory, pierwszy zawiera status tranzycji (0 - nieaktywna,
      * 1 - aktywna, 2 - produkuje, 3 - WYprodukowuje tokeny (w danym momencie), drugi zawiera czas statusu, trzeci
      * to numer kroku dla statusu.
      */
@@ -590,8 +592,8 @@ public class StateSimulatorXTPN implements Runnable {
     /**
      * Metoda symuluje podaną liczbę kroków sieci Petriego dla i zwraca statystyki dla wybranej tranzycji.
      * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach, ile kroków, ile czasu?
-     * @param transition  (<b>TransitionXTPN</b>) - wybrana tranzycja do testowania.
-     * @return (< b > ArrayList[Double] < / b >) - wektor danych zebranych w symulacji
+     * @param transition  (<b>TransitionXTPN</b>) wybrana tranzycja do testowania.
+     * @return (<b>ArrayList[Double] </b>) - wektor danych zebranych w symulacji
      */
     public ArrayList<Double> simulateNetSingleTransitionStatistics(SimulatorGlobals ownSettings, TransitionXTPN transition) {
         ArrayList<Double> dataVector = new ArrayList<>();
