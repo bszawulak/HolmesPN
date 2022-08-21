@@ -39,7 +39,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
     private ArrayList<Place> places;
     private P_StateManager statesManager;
 
-    private boolean doNotListen;
+    public boolean doNotUpdate;
 
     /**
      * Główny konstruktor okna edycji stanu sieci.
@@ -54,7 +54,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
         } catch (Exception ex) {
             GUIManager.getDefaultGUIManager().log("Error (640125897) | Exception:  "+ex.getMessage(), "error", true);
         }
-        doNotListen = true;
+        doNotUpdate = true;
         GUIManager overlord = GUIManager.getDefaultGUIManager();
         PetriNet pn = overlord.getWorkspace().getProject();
         this.parentWindow = parent;
@@ -69,7 +69,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
         setVisible(true);
         //multisetsTable.setRowSelectionInterval(0, 0);
         parentWindow.setEnabled(false);
-        doNotListen = false;
+        doNotUpdate = false;
     }
 
     /**
@@ -202,8 +202,10 @@ public class HolmesStatesEditorXTPN extends JFrame {
         multisetsTable.setDefaultRenderer(String.class, tableRenderer);
 
         multisetsTable.getSelectionModel().addListSelectionListener(event -> {
-            if(!doNotListen)
-                cellClickAction();
+            if(doNotUpdate)
+                return;
+
+            cellClickAction();
         });
         //z nieznanych mi powodów powyższy kod działa, a poniższy za cholerę. Tj. gorzej: działa, ale dopiero od
         //drugiego kliknięcia w tabelę. Za pierszym tabela na kliknięcie i na selectedRow() zawsze zwraca -1...
@@ -234,7 +236,8 @@ public class HolmesStatesEditorXTPN extends JFrame {
     protected void cellClickAction() {
         try {
             int selectedPlace = multisetsTable.getSelectedRow();
-            new HolmesXTPNtokens( (PlaceXTPN)places.get(selectedPlace), this, multisetM.accessMultiset_K(selectedPlace)
+            new HolmesXTPNtokens( (PlaceXTPN)places.get(selectedPlace)
+                    , this, multisetM.accessMultiset_K(selectedPlace)
                     , multisetM.isPlaceStoredAsGammaActive(selectedPlace));
         } catch (Exception ex) {
             GUIManager.getDefaultGUIManager().log("Error (860120239) | Exception:  "+ex.getMessage(), "error", true);
