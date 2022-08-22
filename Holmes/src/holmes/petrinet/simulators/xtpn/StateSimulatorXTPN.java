@@ -521,13 +521,15 @@ public class StateSimulatorXTPN implements Runnable {
     /**
      * Metoda symuluje podaną liczbę kroków sieci Petriego dla i sprawdza wybraną tranzycję.
      * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach, ile kroków, ile czasu?
-     * @param transition  (<b>TransitionXTPN</b>) wybrana tranzycja do testowania.
+     * @param transition (<b>TransitionXTPN</b>) wybrana tranzycja do testowania.
+     * @param reps (<b>int</b>) liczba powtórzeń.
      * @return (<b>ArrayList[ArrayList[Double]]</b>) - trzy wektory, pierwszy zawiera status tranzycji (0 - nieaktywna,
      * 1 - aktywna, 2 - produkuje, 3 - WYprodukowuje tokeny (w danym momencie), drugi zawiera czas statusu, trzeci
      * to numer kroku dla statusu.
      */
-    public ArrayList<ArrayList<Double>> simulateNetSingleTransition(SimulatorGlobals ownSettings, TransitionXTPN transition) {
-        ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
+    public ArrayList<ArrayList<Double>> simulateNetSingleTransition(SimulatorGlobals ownSettings
+            , TransitionXTPN transition, int reps) {
+
         ArrayList<Double> statusVector;
         ArrayList<Double> timeVector;
         ArrayList<Double> statsVector = new ArrayList<>();
@@ -535,7 +537,7 @@ public class StateSimulatorXTPN implements Runnable {
         if (!readyToSimulate) {
             JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
                     "Simulation problem", JOptionPane.ERROR_MESSAGE);
-            return resultVectors;
+            return null;
         }
         createBackupState(); //zapis p-stanu
 
@@ -563,6 +565,8 @@ public class StateSimulatorXTPN implements Runnable {
             statsVector.add((double) ownSettings.getSimSteps_XTPN());
         }
         statsVector.add(simTimeCounter);
+
+        ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
 
         for (TransitionXTPN trans : transitions) {
             if (trans.equals(transition)) { //zachowaj historię, zanim skasujemy:
