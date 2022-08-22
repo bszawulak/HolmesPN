@@ -204,7 +204,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         if(node instanceof PlaceXTPN) {
             setSize(new Dimension(800, 580));
         } else { //tranzycja
-            setSize(new Dimension(800, 750));
+            setSize(new Dimension(800, 720));
         }
 
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -1320,9 +1320,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
         int positionX = 5;
         int positionY = 30;
 
-        HolmesRoundedButton acqDataButton = new HolmesRoundedButton("<html>Simulate</html>"
+        acqDataButton = new HolmesRoundedButton("<html>Simulate</html>"
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
-        acqDataButton.setBounds(positionX, positionY-5, 110, 35);
+        acqDataButton.setBounds(positionX, positionY-10, 110, 35);
         acqDataButton.setMargin(new Insets(0, 0, 0, 0));
         acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
@@ -1333,7 +1333,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
             } else {
                 acqDataButton.setEnabled(false);
                 getTransSimpleChartData(simTransNumberOfReps);
-
             }
         });
         chartButtonPanel.add(acqDataButton);
@@ -1388,7 +1387,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         chartButtonPanel.add(simTransStepsRepeatedSpinner);
 
-
         JLabel simTransIntervalLabel = new JLabel("Interval:");
         simTransIntervalLabel.setBounds(positionX+380, positionY-15, 80, 15);
         chartButtonPanel.add(simTransIntervalLabel);
@@ -1399,11 +1397,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
         simTransIntervalSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             simTransInterval = (int) spinner.getValue();
-            showPlaceChart();
+            showTransitionsChart();
         });
         chartButtonPanel.add(simTransIntervalSpinner);
-
-
 
         return chartButtonPanel;
     }
@@ -1444,13 +1440,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
         transStatsInactiveTimeTextBox.setEditable(false);
         resultPanel.add(transStatsInactiveTimeTextBox);
 
-        HolmesRoundedButton acqDataButton = new HolmesRoundedButton("<html>Simulate</html>"
+        HolmesRoundedButton acqTransSimDataButton = new HolmesRoundedButton("<html>Simulate</html>"
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
-        acqDataButton.setBounds(positionX+300, positionY, 110, 20);
-        acqDataButton.setMargin(new Insets(0, 0, 0, 0));
-        acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
-        acqDataButton.addActionListener(actionEvent -> {
+        acqTransSimDataButton.setBounds(positionX+300, positionY, 110, 20);
+        acqTransSimDataButton.setMargin(new Insets(0, 0, 0, 0));
+        acqTransSimDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+        acqTransSimDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
+        acqTransSimDataButton.addActionListener(actionEvent -> {
             if(overlord.getWorkspace().getProject().isSimulationActive()) {
                 JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
                         JOptionPane.WARNING_MESSAGE);
@@ -1458,7 +1454,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 getMultipleTransitionData();
             }
         });
-        resultPanel.add(acqDataButton);
+        resultPanel.add(acqTransSimDataButton);
 
         positionY+=23;
 
@@ -1563,10 +1559,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
             transStatsReps = box.isSelected();
         });
         resultPanel.add(transRepsCheckbox);
-
-        //JLabel repetitionsStepsLabel = new JLabel("Repetitions:", JLabel.LEFT);
-        //repetitionsStepsLabel.setBounds(positionX+300, positionY, 70, 20);
-        //resultPanel.add(repetitionsStepsLabel);
 
         SpinnerModel simRepetitionsSpinnerModel = new SpinnerNumberModel(10, 10, 100, 1);
         JSpinner simRepetitionsSpinner = new JSpinner(simRepetitionsSpinnerModel);
@@ -1681,51 +1673,57 @@ public class HolmesNodeInfoXTPN extends JFrame {
         XYSeries series2 = new XYSeries("Avg. producing");
         XYSeries series3 = new XYSeries("Avg. firing");
 
-        if(transitionChartType == 0) { //wykres po krokach
-            if(statusVectorTransition != null) {
-                double inactive = 0.0;
-                double active = 0.0;
-                double producing = 0.0;
-                double firing = 0.0;
-                int interval = 0;
-                for(int step=0; step<statusVectorTransition.get(0).size(); step++) {
-                    double value = statusVectorTransition.get(0).get(step);
-                    if(value == 0.0) {
-                        inactive++;
-                    } else if(value == 1.0) {
-                        active++;
-                    } else if(value == 2.0) {
-                        producing++;
-                    } else {
-                        firing++;
-                    }
+        int maxInterval = simTransInterval;
+        if(10*simTransInterval > statusVectorTransition.get(0).size()) {
+            maxInterval = 1;
+            overlord.log("Warning: transition node window interval too big, reduced to 1.", "warning", true);
+        }
 
-                    if(interval++ == 100) {
-                        inactive /= 100;
-                        series0.add(step, inactive);
-                        active /= 100;
-                        series1.add(step, active);
-                        producing /= 100;
-                        series2.add(step, producing);
-                        firing /= 100;
-                        series3.add(step, firing);
+        if(statusVectorTransition != null) {
+            double inactive = 0.0;
+            double active = 0.0;
+            double producing = 0.0;
+            double firing = 0.0;
+            int interval = 0;
+            for(int step=0; step<statusVectorTransition.get(0).size(); step++) {
 
-                        inactive = active = producing = firing = 0.0;
-                        interval = 0;
-                    }
-                    //series.add(step, value);
+                double value = statusVectorTransition.get(0).get(step);
+                if(value == 0.0) {
+                    inactive++;
+                } else if(value == 1.0) {
+                    active++;
+                } else if(value == 2.0) {
+                    producing++;
+                } else {
+                    firing++;
                 }
-            }
-        } else { //wykres czasowy
-            if(statusVectorTransition != null) {
-                double simTime = 0.0;
-                for(int step=0; step<statusVectorTransition.get(0).size(); step++) {
-                    double value = statusVectorTransition.get(0).get(step);
-                    simTime += statusVectorTransition.get(1).get(step);
-                    series1.add(simTime, value);
+
+                if(interval++ == maxInterval) {
+                    inactive /= maxInterval;
+                    active /= maxInterval;
+                    producing /= maxInterval;
+                    firing /= maxInterval;
+
+                    if(transitionChartType == 0) {
+                        series0.add(step, inactive);
+                        series1.add(step, active);
+                        series2.add(step, producing);
+                        series3.add(step, firing);
+                    } else {
+                        double time = statusVectorTransition.get(1).get(step);
+
+                        series0.add(time, inactive);
+                        series1.add(time, active);
+                        series2.add(time, producing);
+                        series3.add(time, firing);
+                    }
+
+                    inactive = active = producing = firing = 0.0;
+                    interval = 0;
                 }
             }
         }
+
         dynamicsSeriesDataSet.addSeries(series0);
         dynamicsSeriesDataSet.addSeries(series1);
         dynamicsSeriesDataSet.addSeries(series2);

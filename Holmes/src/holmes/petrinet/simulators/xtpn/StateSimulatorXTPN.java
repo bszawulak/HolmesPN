@@ -522,17 +522,19 @@ public class StateSimulatorXTPN implements Runnable {
      * Metoda symuluje podaną liczbę kroków sieci Petriego dla i sprawdza wybraną tranzycję.
      * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach, ile kroków, ile czasu?
      * @param transition (<b>TransitionXTPN</b>) wybrana tranzycja do testowania.
-     * @param reps (<b>int</b>) liczba powtórzeń.
+     * @param repetitions (<b>int</b>) liczba powtórzeń.
      * @return (<b>ArrayList[ArrayList[Double]]</b>) - trzy wektory, pierwszy zawiera status tranzycji (0 - nieaktywna,
      * 1 - aktywna, 2 - produkuje, 3 - WYprodukowuje tokeny (w danym momencie), drugi zawiera czas statusu, trzeci
      * to numer kroku dla statusu.
      */
     public ArrayList<ArrayList<Double>> simulateNetSingleTransition(SimulatorGlobals ownSettings
-            , TransitionXTPN transition, int reps) {
+            , TransitionXTPN transition, int repetitions) {
 
-        ArrayList<Double> statusVector;
-        ArrayList<Double> timeVector;
+        ArrayList<Double> statusVector = new ArrayList<>();
+        ArrayList<Double> timeVector = new ArrayList<>();
         ArrayList<Double> statsVector = new ArrayList<>();
+
+        statsVector.addAll(Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
 
         if (!readyToSimulate) {
             JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
@@ -541,55 +543,55 @@ public class StateSimulatorXTPN implements Runnable {
         }
         createBackupState(); //zapis p-stanu
 
-        for (TransitionXTPN trans : transitions) {
-            trans.simHistoryXTPN.storeHistory = true;
-        }
+        transition.simHistoryXTPN.storeHistory = true;
 
-        if (ownSettings.isTimeSimulation_XTPN()) {
-            int step = 0;
-            while (simTimeCounter < ownSettings.getSimTime_XTPN()) {
-                if (terminate)
-                    break;
-
-                processSimStep();
-                step++;
-            }
-            statsVector.add((double) step);
-        } else {
+        for(int rep=0; rep<repetitions; rep++) {
             for (int step = 0; step < ownSettings.getSimSteps_XTPN(); step++) {
                 if (terminate)
                     break;
 
                 processSimStep();
+
+                if(rep == 0) {
+                    statusVector.add(transition.simHistoryXTPN.statesHistory.get(step) / repetitions);
+                    timeVector.add(simTimeCounter / repetitions);
+
+                    statsVector.set(0, (double) ownSettings.getSimSteps_XTPN() / (double) repetitions );
+                    statsVector.set(1, simTimeCounter / (double) repetitions );
+                    statsVector.set(2, (double) transition.simHistoryXTPN.simInactiveState / (double) repetitions );
+                    statsVector.set(3, (double) transition.simHistoryXTPN.simActiveState / (double) repetitions );
+                    statsVector.set(4, (double) transition.simHistoryXTPN.simProductionState / (double) repetitions );
+                    statsVector.set(5, (double) transition.simHistoryXTPN.simFiredState / (double) repetitions );
+                    statsVector.set(6, transition.simHistoryXTPN.simInactiveTime / (double) repetitions );
+                    statsVector.set(7, transition.simHistoryXTPN.simActiveTime / (double) repetitions );
+                    statsVector.set(8, transition.simHistoryXTPN.simProductionTime / (double) repetitions );
+                } else {
+                    statusVector.set(step, statusVector.get(step) + transition.simHistoryXTPN.statesHistory.get(step) / repetitions);
+                    timeVector.set(step, timeVector.get(step) + simTimeCounter / repetitions);
+
+                    statsVector.set(0, statsVector.get(0) + (double) ownSettings.getSimSteps_XTPN() / (double) repetitions );
+                    statsVector.set(1, statsVector.get(1) + simTimeCounter / (double) repetitions );
+                    statsVector.set(2, statsVector.get(2) + (double) transition.simHistoryXTPN.simInactiveState / (double) repetitions );
+                    statsVector.set(3, statsVector.get(3) + (double) transition.simHistoryXTPN.simActiveState / (double) repetitions );
+                    statsVector.set(4, statsVector.get(4) + (double) transition.simHistoryXTPN.simProductionState / (double) repetitions );
+                    statsVector.set(5, statsVector.get(5) + (double) transition.simHistoryXTPN.simFiredState / (double) repetitions );
+                    statsVector.set(6, statsVector.get(6) + transition.simHistoryXTPN.simInactiveTime / (double) repetitions );
+                    statsVector.set(7, statsVector.get(7) + transition.simHistoryXTPN.simActiveTime / (double) repetitions );
+                    statsVector.set(8, statsVector.get(8) + transition.simHistoryXTPN.simProductionTime / (double) repetitions );
+                }
             }
-            statsVector.add((double) ownSettings.getSimSteps_XTPN());
+
+            restoreInternalMarkingZero(); //restore p-state
+            restartEngine();
+            transition.simHistoryXTPN.storeHistory = true;
         }
-        statsVector.add(simTimeCounter);
 
         ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
-
-        for (TransitionXTPN trans : transitions) {
-            if (trans.equals(transition)) { //zachowaj historię, zanim skasujemy:
-                statusVector = new ArrayList<>(trans.simHistoryXTPN.statesHistory);
-                timeVector = new ArrayList<>(trans.simHistoryXTPN.statesTimeHistory);
-
-                statsVector.add((double) trans.simHistoryXTPN.simInactiveState);
-                statsVector.add((double) trans.simHistoryXTPN.simActiveState);
-                statsVector.add((double) trans.simHistoryXTPN.simProductionState);
-                statsVector.add((double) trans.simHistoryXTPN.simFiredState);
-                statsVector.add(trans.simHistoryXTPN.simInactiveTime);
-                statsVector.add(trans.simHistoryXTPN.simActiveTime);
-                statsVector.add(trans.simHistoryXTPN.simProductionTime);
-
-                resultVectors.add(statusVector);
-                resultVectors.add(timeVector);
-                resultVectors.add(statsVector);
-            }
-            trans.simHistoryXTPN.cleanHistoryVectors();
-        }
+        resultVectors.add(statusVector);
+        resultVectors.add(timeVector);
+        resultVectors.add(statsVector);
 
         readyToSimulate = false;
-        restoreInternalMarkingZero(); //restore p-state
         return resultVectors;
     }
 
