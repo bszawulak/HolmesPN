@@ -271,18 +271,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setMenu(new DarkMenu());
 		getFrame().setJMenuBar(getMenu());
 
-		// create workspace
-		createSimLogWindow(); // okno logów symulatora
 
-		setWorkspace(new Workspace(this)); // default workspace dock
-		//getDockingListener().setWorkspace(workspace);
-		JPanel mainpanel = new JPanel();
-		mainpanel.add(GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet());
-		mainpanel.setLayout(new FlowLayout());
-		getFrame().add(mainpanel);
-		getFrame().setLayout(new FlowLayout());
 
-		setFixBox(new HolmesDockWindow(DockWindowType.FIXNET));
+		//??
+		//setFixBox(new HolmesDockWindow(DockWindowType.FIXNET));
 
 		//leftTabDock.setHeaderPosition(Position.BOTTOM);
 		//leftTabDock.addChildDock(getToolBox(), new Position(0));
@@ -359,6 +351,24 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setShortcutsBar(new Toolbar());
 		getFrame().add(shortcutsBar);
 
+
+		// create tools
+		getFrame().add(getToolBox().getTree());
+
+		// create workspace
+		createSimLogWindow(); // okno logów symulatora
+
+		setWorkspace(new Workspace(this)); // default workspace dock
+		//getDockingListener().setWorkspace(workspace);
+		JPanel mainpanel = new JPanel();
+		mainpanel.add(GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet());
+		mainpanel.setLayout(new FlowLayout());
+		mainpanel.setSize(400,400);
+		getFrame().add(mainpanel);
+		getFrame().setLayout(new FlowLayout());
+
+
+
 		// Add the shortcuts bar also as root dock to the dock model.
 		//dockModel.addRootDock("toolBarBorderDock", getShortcutsBar().getToolBarBorderDock(), frame);
 
@@ -405,7 +415,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//createPropertiesWindow();
 		createStateSimulatorWindow();
 		createMCSWindow(); // okno generatora MCS
-		
+
 		String path = settingsManager.getValue("lastOpenedPath");
 		File f = new File(path);
 		if(f.exists())

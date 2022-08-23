@@ -186,43 +186,43 @@ public class Toolbar extends JPanel {
 			}
 		};
 		*/
-        JButton addButton = new JButton("New project", Tools.getResIcon48("/icons/toolbar/add_panel.png"));
+        JButton addButton = new JButton("", Tools.getResIcon48("/icons/toolbar/add_panel.png"));
         addButton.addActionListener(arg0 ->  GUIManager.getDefaultGUIManager().reset.newProjectInitiated());
         this.add(addButton);
 
-        JButton openButton = new JButton("Open project...", Tools.getResIcon48("/icons/toolbar/open.png"));
+        JButton openButton = new JButton("", Tools.getResIcon48("/icons/toolbar/open.png"));
         openButton.addActionListener(arg0 -> overlord.io.selectAndOpenHolmesProject());
         this.add(openButton);
 
         //import projektu ze snoopiego
-        JButton importButton = new JButton("Import project...", Tools.getResIcon48("/icons/toolbar/import_net.png"));
+        JButton importButton = new JButton("", Tools.getResIcon48("/icons/toolbar/import_net.png"));
         importButton.addActionListener(arg0 -> overlord.io.importNetwork());
         this.add(importButton);
 
         //zapis jako projekt
         JButton saveProjectButton = new JButton(
-                "Save project", Tools.getResIcon48("/icons/toolbar/holmesSave.png")) ;
+                "", Tools.getResIcon48("/icons/toolbar/holmesSave.png")) ;
         saveProjectButton.addActionListener(arg0 -> overlord.io.saveAsAbyssFile());
         this.add(saveProjectButton);
 
         //export projektu do snoopiego
-        JButton exportButton = new JButton("Export net", Tools.getResIcon48("/icons/toolbar/snoopyExport.png"));
+        JButton exportButton = new JButton("", Tools.getResIcon48("/icons/toolbar/snoopyExport.png"));
         exportButton.addActionListener(arg0 -> overlord.io.saveAsGlobal());
         this.add(exportButton);
 
         //zapis obrazu sieci do pliku
         JButton pictureButton = new JButton(
-                "Save picture...", Tools.getResIcon48("/icons/toolbar/save_picture.png"));
+                "", Tools.getResIcon48("/icons/toolbar/save_picture.png"));
         pictureButton.addActionListener(arg0 -> overlord.io.exportProjectToImage());
         this.add(pictureButton);
 
         JButton refreshButton = new JButton(
-                "Refresh", Tools.getResIcon48("/icons/toolbar/refresh.png"));
+                "", Tools.getResIcon48("/icons/toolbar/refresh.png"));
         refreshButton.addActionListener(arg0 -> overlord.getWorkspace().getProject().repaintAllGraphPanels());
         this.add(refreshButton);
 
         JButton clearProject = new JButton(
-                "Clear project", Tools.getResIcon48("/icons/toolbar/clear_project.png")) ;
+                "", Tools.getResIcon48("/icons/toolbar/clear_project.png")) ;
         clearProject.addActionListener(arg0 -> overlord.reset.newProjectInitiated());
         this.add(clearProject);
 
