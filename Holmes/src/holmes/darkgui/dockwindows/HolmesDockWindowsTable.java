@@ -245,14 +245,12 @@ public class HolmesDockWindowsTable extends JPanel {
         , MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM, DECOMPOSITION
     }
 
-
     public JPanel getPanel() {
         return panel;
     }
     public void setPanel(JPanel panel) {
         this.panel = panel;
     }
-
 
     /**
      * Konstruktor główny, wybierający odpowiednią metodę do tworzenia podokna wybranego typu

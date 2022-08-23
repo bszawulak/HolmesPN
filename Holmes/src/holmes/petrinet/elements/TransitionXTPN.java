@@ -3,10 +3,13 @@ package holmes.petrinet.elements;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.containers.TransitionXTPNhistoryContainer;
 import holmes.petrinet.elements.containers.TransitionXTPNqSimGraphics;
+import holmes.petrinet.functions.FunctionsTools;
 
 import java.awt.*;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TransitionXTPN extends Transition {
     @Serial
@@ -562,5 +565,52 @@ public class TransitionXTPN extends Transition {
             }
         }
         return false;
+    }
+
+
+
+
+
+
+    private Map<PlaceXTPN, Integer> preparePrePlaces() {
+        Map<PlaceXTPN, Integer> prePlaces = new HashMap<>();
+        for (ElementLocation el : getElementLocations()) {
+            for (Arc arc : el.getInArcs()) {
+                Node n = arc.getStartNode();
+                if (!prePlaces.containsKey((PlaceXTPN)n)) {
+                    int weight = FunctionsTools.getFunctionalArcWeight(this, arc, (PlaceXTPN)n );
+                    prePlaces.put((PlaceXTPN) n, weight);
+                }
+            }
+        }
+        return prePlaces;
+    }
+
+    public double maxFiresPossible() {
+        long massActionKineticModifier = 1;
+        Map<PlaceXTPN, Integer> prePlaces = preparePrePlaces();
+
+        if(prePlaces.size() != 0) {
+            massActionKineticModifier = Long.MAX_VALUE;
+            for (PlaceXTPN prePlace : prePlaces.keySet()) {
+                int weigth = prePlaces.get(prePlace);
+
+                long firingNumber = prePlace.getTokensNumber() / weigth;
+
+                if(prePlace.isGammaModeActive()) {
+                    firingNumber = 0;
+                    double gammaMin = prePlace.getGammaMinValue();
+                    for(double token : prePlace.accessMultiset()) {
+                        if(token >= gammaMin) {
+                            firingNumber++;
+                        }
+                    }
+                    firingNumber /= weigth;
+                }
+                massActionKineticModifier = Math.min(massActionKineticModifier, firingNumber);
+            }
+        }
+        return massActionKineticModifier;
+        //double denominator = (massActionKineticModifier * transition.spnExtension.getFiringRate());
     }
 }

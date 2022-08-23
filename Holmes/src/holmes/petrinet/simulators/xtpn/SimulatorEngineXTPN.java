@@ -127,7 +127,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                     if(transition.isAlphaModeActive()) { //typ alfa, ustaw zegar
                         double min = transition.getAlphaMinValue();
                         double max = transition.getAlphaMaxValue();
-                        double rand = getSafeRandomValueXTPN(min, max);
+                        double rand = getSafeRandomValueXTPN(transition, min, max);
 
                         if(rand < sg.getCalculationsAccuracy()) { //jeśli wylosujemy coś poniżej 1e-9
                             // Może tak być, że jest typu alfa, ale ma range alfa = 0, wtedy bety muszą być
@@ -135,7 +135,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                             // na produkujący. Jeśli alfa=OFF i beta=OFF, to tu i tak nie wejdziemy.
                             min = transition.getBetaMinValue();
                             max = transition.getBetaMaxValue();
-                            rand = getSafeRandomValueXTPN(min, max);
+                            rand = getSafeRandomValueXTPN(transition, min, max);
                             assert (rand > sg.getCalculationsAccuracy()) : "Alfy są zerami, beta też?! Jakim cudem?";
 
                             transition.setTauBetaValue( rand );
@@ -149,7 +149,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                     } else if(transition.isBetaModeActive()) { // NIE JEST typu alfa, jest typu beta
                         double min = transition.getBetaMinValue();
                         double max = transition.getBetaMaxValue();
-                        double rand = getSafeRandomValueXTPN(min, max);
+                        double rand = getSafeRandomValueXTPN(transition, min, max);
                         transition.setTauBetaValue( rand );
                         transition.setTimerBetaValue(0.0);
                         transition.setProductionStatus_xTPN(true);
@@ -172,7 +172,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                         if(transition.isAlphaModeActive()) { //typ alfa
                             double min = transition.getAlphaMinValue();
                             double max = transition.getAlphaMaxValue();
-                            double rand = getSafeRandomValueXTPN(min, max);
+                            double rand = getSafeRandomValueXTPN(transition, min, max);
 
                             if(rand < sg.getCalculationsAccuracy()) { //jeśli wylosowano < 1e-9
                                 // Może tak być, że jest typu alfa, ale ma range alfa = 0, wtedy bety muszą być
@@ -180,7 +180,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                                 // na produkujący. Jeśli alfa=OFF i beta=OFF, to tu i tak nie wejdziemy.
                                 min = transition.getBetaMinValue();
                                 max = transition.getBetaMaxValue();
-                                rand = getSafeRandomValueXTPN(min, max);
+                                rand = getSafeRandomValueXTPN(transition, min, max);
                                 assert (rand > sg.getCalculationsAccuracy()) : "Alfy są zerami, beta też?! Jakim cudem?";
                                 transition.setTauBetaValue( rand );
                                 transition.setTimerBetaValue(0.0);
@@ -199,7 +199,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                         } else if(transition.isBetaModeActive()) { // nie jest alfa, to może beta?
                             double min = transition.getBetaMinValue();
                             double max = transition.getBetaMaxValue();
-                            double rand = getSafeRandomValueXTPN(min, max);
+                            double rand = getSafeRandomValueXTPN(transition, min, max);
                             transition.setTauBetaValue( rand );
                             transition.setTimerBetaValue(0.0);
 
@@ -492,7 +492,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                         transition.setProductionStatus_xTPN(true); //samo zrobi activation=false
                         double min = transition.getBetaMinValue();
                         double max = transition.getBetaMaxValue();
-                        double rand = getSafeRandomValueXTPN(min, max);
+                        double rand = getSafeRandomValueXTPN(transition, min, max);
                         transition.setTauBetaValue(rand);
                         transition.setTimerBetaValue(0.0);
                         transition.setTauAlphaValue(-1.0);
@@ -627,16 +627,21 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
      * Zwraca wartość losową pomiędzy min a max, jeśli są takie same, wtedy zwraca min. Chodzi o to, że
      * zgadywanie czasu dla double jest problematyczne, i NIE CHCEMY uruchamiać .nextDouble gdy np.
      * min i max są równe.
+     * @param transition (<b>TransitionXTPN</b>) obiekt tranzycji.
      * @param min (<b>double</b>) minimalna wartość.
      * @param max (<b>double</b>) maksymalna wartość.
      * @return (<b>double</b>) - wartość losowa [min, max) lub min jeśli są równe.
      */
-    private double getSafeRandomValueXTPN(double min, double max) {
+    private double getSafeRandomValueXTPN(TransitionXTPN transition, double min, double max) {
         double range =  max - min;
         if(range < sg.getCalculationsAccuracy()) { //alfaMin=Max lub zero
             return min;
         } else {
-            return generator.nextDouble(min, max);
+            if(transition.isMassActionKineticsActiveXTPN()) {
+                double denominator = transition.maxFiresPossible();
+                return generator.nextDouble(min, max) / denominator;
+            } else
+                return generator.nextDouble(min, max);
         }
     }
 

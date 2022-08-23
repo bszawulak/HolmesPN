@@ -4,6 +4,7 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.MultisetM;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.functions.FunctionsTools;
+import holmes.petrinet.simulators.IRandomGenerator;
 import holmes.petrinet.simulators.QuickSimTools;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.windows.xtpn.HolmesSimXTPN;
@@ -109,6 +110,10 @@ public class StateSimulatorXTPN implements Runnable {
         simTimeCounter = 0.0;
         simLastTimeChange = 0.0;
         readyToSimulate = true;
+    }
+
+    public IRandomGenerator getRandomGenerator() {
+        return engineXTPN.getGenerator();
     }
 
     /**

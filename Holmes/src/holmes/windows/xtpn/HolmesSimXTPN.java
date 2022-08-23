@@ -5,10 +5,12 @@ import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.GraphicalSimulator;
+import holmes.petrinet.simulators.IRandomGenerator;
 import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 import holmes.petrinet.simulators.xtpn.StateSimDataContainer;
 import holmes.petrinet.simulators.xtpn.StateSimulatorXTPN;
 import holmes.utilities.Tools;
+import holmes.windows.HolmesNotepad;
 import holmes.windows.managers.HolmesStatesManager;
 import holmes.workspace.ExtensionFileFilter;
 import org.jfree.chart.ChartFactory;
@@ -1115,10 +1117,65 @@ public class HolmesSimXTPN extends JFrame {
          */
     }
 
+
+
+
+
+
+
+
+
+    public static double calculateSD(Double numArray[]) {
+        double sum = 0.0;
+        double standardDeviation = 0.0;
+        int length = numArray.length;
+
+        for (double num : numArray) {
+            sum += num;
+        }
+        double mean = sum / length;
+        for (double num : numArray) {
+            standardDeviation += Math.pow(num - mean, 2);
+        }
+        return Math.sqrt(standardDeviation/length);
+    }
+
+
     /**
      * Pokazuje wyniki dla wszystkich miejsc w notatniku.
      */
     private void showPlacesAllInNotepad() {
+
+        IRandomGenerator generator = ssim.getRandomGenerator();
+
+        HolmesNotepad notePad = new HolmesNotepad(900,600);
+        notePad.setVisible(true);
+
+
+        int reps = 1000;
+        notePad.addTextLineNL("Denominator = 1.0", "text");
+        double probTime = 0.0;
+        ArrayList<Double> values = new ArrayList<>();
+        for(int i=0; i<reps; i++) {
+            double val = -(Math.log(1 - generator.nextDouble())  );
+            values.add(val);
+            probTime += val;
+        }
+        probTime /= reps;
+        Double[] array = new Double[values.size()];
+        values.toArray(array); // fill the array
+        double sd = calculateSD(array);
+        notePad.addTextLineNL("Mean: "+Tools.cutValueExt(probTime,6), "text");
+        notePad.addTextLineNL("Std. dev.:"+Tools.cutValueExt(sd,6), "text");
+
+        notePad.addTextLineNL("********************************************", "text");
+        for(int i=0; i<30; i++) {
+            double val = -(Math.log(1 - generator.nextDouble())  );
+            notePad.addTextLineNL("P: "+Tools.cutValueExt(val,6), "text");
+        }
+
+        notePad.addTextLineNL("********************************************", "text");
+
         /*
         if(placesAvgData.size() == 0)
             return;

@@ -103,7 +103,6 @@ public class QuickSimTools {
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
-
 		}
 
 		if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
@@ -127,7 +126,6 @@ public class QuickSimTools {
 			} else {
 				stateSimulatorXTPN.setThreadDetails(1, this, overlord.simSettings, quickProgressBar, button);
 			}
-
 			Thread myThread = new Thread(stateSimulatorXTPN);
 			myThread.start();
 		}
@@ -605,6 +603,7 @@ public class QuickSimTools {
 
 		note.setCaretFirstLine();
 		note.setVisible(true);
+
 		startSimButton.setEnabled(true);
 		overlord.getWorkspace().getProject().setSimulationActive(false);
 	}
