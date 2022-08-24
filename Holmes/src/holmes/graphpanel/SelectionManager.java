@@ -17,6 +17,7 @@ import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.functions.FunctionsTools;
+import holmes.windows.xtpn.HolmesNodeInfoXTPN;
 
 /**
  * Zadaniem klasy SelectionManager jest zarządzanie zaznaczeniem oraz obiektami które są aktualnie
@@ -854,9 +855,8 @@ public class SelectionManager {
 				Place place = (Place) el.getParentNode();
 
 				if(place instanceof PlaceXTPN) {
-					JOptionPane.showMessageDialog(null, "Cannot fast-increase tokens in XTPN place.",
-							"Operation unavailable", JOptionPane.WARNING_MESSAGE);
-					return;
+					HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((PlaceXTPN) place, el, GUIManager.getDefaultGUIManager().getFrame());
+					ani.setVisible(true);
 				}
 
 				place.modifyTokensNumber(1);
@@ -864,6 +864,14 @@ public class SelectionManager {
 					int tokens = place.getTokensNumber();
 					ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 					overlord.getWorkspace().getProject().accessStatesManager().getStatePN(0).setTokens(places.indexOf(place), tokens);
+				}
+
+			} else if (el.getParentNode().getType() == PetriNetElementType.TRANSITION && !safetyNodesList.contains(el.getParentNode())) {
+				safetyNodesList.add(el.getParentNode());
+				Transition trans = (Transition) el.getParentNode();
+				if(trans instanceof TransitionXTPN) {
+					HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((TransitionXTPN) trans, el, GUIManager.getDefaultGUIManager().getFrame());
+					ani.setVisible(true);
 				}
 
 			} else if(el.getParentNode().getType() == PetriNetElementType.META && !safetyNodesList.contains(el.getParentNode())) {
@@ -897,8 +905,8 @@ public class SelectionManager {
 		for (ElementLocation el : getSelectedElementLocations()) {
 			if (el.getParentNode().getType() == PetriNetElementType.PLACE && !safetyNodesList.contains(el.getParentNode())) {
 				if( el.getParentNode() instanceof PlaceXTPN) {
-					JOptionPane.showMessageDialog(null, "Cannot fast-decrease tokens in XTPN place.",
-							"Operation unavailable", JOptionPane.WARNING_MESSAGE);
+					//JOptionPane.showMessageDialog(null, "Cannot fast-decrease tokens in XTPN place.",
+					//		"Operation unavailable", JOptionPane.WARNING_MESSAGE);
 				} else {
 					safetyNodesList.add(el.getParentNode());
 					int tokens = ((Place) el.getParentNode()).getTokensNumber();
@@ -912,8 +920,6 @@ public class SelectionManager {
 						}
 					}
 				}
-
-
 			}
 		}
 		//invokeActionListener();

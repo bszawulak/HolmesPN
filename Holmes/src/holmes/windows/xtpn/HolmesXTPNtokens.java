@@ -55,9 +55,7 @@ public class HolmesXTPNtokens extends JFrame {
         parentWindow = parent;
         places = overlord.getWorkspace().getProject().getPlaces();
         place = placeObj;
-
         multisetK = multK;
-
         this.isGammaPlace = isGammaPlace;
 
 
@@ -437,6 +435,62 @@ public class HolmesXTPNtokens extends JFrame {
             }
         });
         comboPanel.add(clearAllButton);
+
+
+
+        HolmesRoundedButton addMultipleTokensButton = new HolmesRoundedButton("Add #[New] tokens"
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+        addMultipleTokensButton.setBounds(comboPanelX+150, comboPanelY+25, 120, 30);
+        addMultipleTokensButton.setMargin(new Insets(0, 0, 0, 0));
+        addMultipleTokensButton.setFocusPainted(false);
+        addMultipleTokensButton.addActionListener(e -> {
+            if (!doNotUpdate)
+                return;
+            try {
+                String text = addNewTextField.getValue().toString();
+                double val = Double.parseDouble(text);
+                if(val < 1.0)
+                    val = 1.0;
+
+                if(isGammaPlace) {
+                    if(parentWindow == null) { //to znaczy, że dodajemy bezpośrednio do miejsca
+                        place.addTokens_XTPN((int)val, 0.0);
+                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                    } else { // dodajemy token tylko do przechowywanego p-stanu
+                        if(parentWindow instanceof HolmesStatesEditorXTPN) {
+                            for(int i=0; i<val; i++) {
+                                multisetK.add(0.0);
+                            }
+                        } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
+                            ((HolmesNodeInfoXTPN)parentWindow).printTokenNumber();
+                        }
+                    }
+                    recreateComboBox();
+                    writeTokensNumberInLabel();
+                    checkInterfaceConditions();
+                    tokensComboBox.setSelectedIndex(0);
+                } else { //miejsce klasyczne
+                    if(parentWindow == null) { //to znaczy, że dodajemy bezpośrednio do miejsca
+                        place.addTokens_XTPN((int)val, 0.0);
+                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                    } else { // dodajemy token tylko do przechowywanego p-stanu
+                        if(parentWindow instanceof HolmesStatesEditorXTPN) {
+                            double tokensNumber = multisetK.get(0);
+                            tokensNumber += val;
+                            multisetK.set(0, tokensNumber);
+                        } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
+                            ((HolmesNodeInfoXTPN)parentWindow).printTokenNumber();
+                        }
+                    }
+                    checkInterfaceConditions();
+                    writeTokensNumberInLabel();
+                }
+            } catch (Exception exc) {
+                JOptionPane.showMessageDialog(null, "Cannot convert "+tokenValueTextField.getValue()+ " into Double",
+                        "Conversion eror", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        comboPanel.add(addMultipleTokensButton);
 
         doNotUpdate = true;
 

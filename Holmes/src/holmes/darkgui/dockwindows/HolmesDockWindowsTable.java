@@ -4418,8 +4418,6 @@ public class HolmesDockWindowsTable extends JPanel {
         betaMaxTextField.setBounds(columnB_posX+100, columnB_Y,80,20);
         components.add(betaMaxTextField);
 
-
-
         //mass-action for XTPN transition
         JCheckBox makCheckBox = new JCheckBox("Mass-Action kinetics");
         makCheckBox.setBounds(columnA_posX-5, columnA_Y += 25, 150, 20);
@@ -4429,9 +4427,6 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
 
             transition.setMassActionKineticsXTPNstatus(makCheckBox.isSelected());
-
-            //AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-            //transition.setMassActionKineticsXTPNstatus(abstractButton.getModel().isSelected());
         });
         components.add(makCheckBox);
 
@@ -4457,7 +4452,6 @@ public class HolmesDockWindowsTable extends JPanel {
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
-        functionalCheckBox.setEnabled(false);
         components.add(functionalCheckBox);
 
         JButton functionsEditorButton = new JButton(Tools.getResIcon32("/icons/functionsWindow/functionsIcon.png"));
@@ -4466,7 +4460,6 @@ public class HolmesDockWindowsTable extends JPanel {
         functionsEditorButton.setMargin(new Insets(0, 0, 0, 0));
         functionsEditorButton.setBounds(columnB_posX + 65, columnB_Y+45, 110, 32);
         functionsEditorButton.addActionListener(actionEvent -> new HolmesFunctionsBuilder((Transition) element));
-        functionsEditorButton.setEnabled(false);
         components.add(functionsEditorButton);
 
         // XTPN portal status

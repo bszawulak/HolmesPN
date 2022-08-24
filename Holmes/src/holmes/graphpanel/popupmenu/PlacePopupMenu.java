@@ -20,7 +20,7 @@ public class PlacePopupMenu extends NodePopupMenu {
 
 	/**
 	 * Konstruktor obiektu klasy PlacePopupMenu.
-	 * @param graphPanel GraphPanel - panel dla którego powstaje menu
+	 * @param graphPanel (<b>GraphPanel</b>) panel, dla którego powstaje menu.
 	 */
 	public PlacePopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
 		super(graphPanel, el, pne, el.getParentNode());

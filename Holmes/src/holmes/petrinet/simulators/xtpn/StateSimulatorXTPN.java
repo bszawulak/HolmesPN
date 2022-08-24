@@ -119,7 +119,7 @@ public class StateSimulatorXTPN implements Runnable {
     /**
      * Metoda ustawiająca obiekty dla symulacji w osobnym wątku.
      * @param simulationType int - typ symulacji: 1 - Node info window 2-qSim 3 - ...
-     * @param blackBox       Object... - zależy od trybu powyżej
+     * @param blackBox Object... - zależy od trybu powyżej
      */
     public void setThreadDetails(int simulationType, Object... blackBox) {
         this.simulationType = simulationType;
