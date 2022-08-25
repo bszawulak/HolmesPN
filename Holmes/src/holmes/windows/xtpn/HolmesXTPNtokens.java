@@ -58,8 +58,7 @@ public class HolmesXTPNtokens extends JFrame {
         multisetK = multK;
         this.isGammaPlace = isGammaPlace;
 
-
-        setTitle("XPTN tokens window");
+        setTitle("XPTN-place tokens options");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
@@ -72,17 +71,17 @@ public class HolmesXTPNtokens extends JFrame {
         //odblokowuje okno wywoławcze
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                if(parentWindow == null) {
-                    overlord.getFrame().setEnabled(true);
-                } else {
-                    if(parentWindow instanceof HolmesStatesEditorXTPN) {
-                        ((HolmesStatesEditorXTPN) parentWindow).fillTable();
-                        parentWindow.setEnabled(true);
-                        ((HolmesStatesEditorXTPN) parentWindow).doNotUpdate = false;
-                    } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
-                        parentWindow.setEnabled(true);
-                    }
+            if(parentWindow == null) {
+                overlord.getFrame().setEnabled(true);
+            } else {
+                if(parentWindow instanceof HolmesStatesEditorXTPN) {
+                    ((HolmesStatesEditorXTPN) parentWindow).fillTable();
+                    parentWindow.setEnabled(true);
+                    ((HolmesStatesEditorXTPN) parentWindow).doNotUpdate = false;
+                } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
+                    parentWindow.setEnabled(true);
                 }
+            }
             }
         });
 
@@ -92,7 +91,6 @@ public class HolmesXTPNtokens extends JFrame {
                     "Error: simulation in progress", JOptionPane.ERROR_MESSAGE);
             this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         } else {
-
             if(parentWindow == null) {
                 overlord.getFrame().setEnabled(false);
             } else {
@@ -103,7 +101,6 @@ public class HolmesXTPNtokens extends JFrame {
                     parentWindow.setEnabled(false);
                 }
             }
-
             setResizable(false);
             initializeComponents();
             if(parent != null) {
@@ -136,15 +133,17 @@ public class HolmesXTPNtokens extends JFrame {
         mainPanel.setBounds(0, 0, 380, 180);
         mainPanel.setLocation(0, 0);
         mainPanel.add(createMainPanel());
+        mainPanel.setBackground(Color.WHITE);
         add(mainPanel, BorderLayout.CENTER);
     }
 
     private JPanel createMainPanel() {
         JPanel comboPanel = new JPanel();
         comboPanel.setLayout(null);
-        comboPanel.setBounds(0, 0, 360, 140);
-        comboPanel.setLocation(0, 0);
-        comboPanel.setBorder(BorderFactory.createTitledBorder("XTPN tokens options"));
+        comboPanel.setBounds(2, 0, 364, 143);
+        //comboPanel.setLocation(0, 0);
+        comboPanel.setBorder(BorderFactory.createTitledBorder("Tokens:"));
+        comboPanel.setBackground(Color.WHITE);
 
         doNotUpdate = false;
         int comboPanelX = 0;
@@ -156,6 +155,7 @@ public class HolmesXTPNtokens extends JFrame {
         tokensComboBox.setSize(180, 20);
         tokensComboBox.setSelectedIndex(0);
         tokensComboBox.setMaximumRowCount(10);
+        tokensComboBox.setBackground(Color.WHITE);
         tokensComboBox.addActionListener(actionEvent -> {
             if(!doNotUpdate)
                 return;
@@ -199,7 +199,7 @@ public class HolmesXTPNtokens extends JFrame {
 
         tokenValueTextField = new JFormattedTextField(formatter);
         tokenValueTextField.setValue(0.0);
-        tokenValueTextField.setBounds(comboPanelX+40, comboPanelY, 110, 20);
+        tokenValueTextField.setBounds(comboPanelX+50, comboPanelY, 100, 20);
         tokenValueTextField.addPropertyChangeListener("value", e -> {
             if (!doNotUpdate)
                 return;
@@ -332,7 +332,7 @@ public class HolmesXTPNtokens extends JFrame {
         // pole dodawania nowego tokenu
         addNewTextField = new JFormattedTextField(formatter);
         addNewTextField.setValue(0.0);
-        addNewTextField.setBounds(comboPanelX+40, comboPanelY, 110, 20);
+        addNewTextField.setBounds(comboPanelX+50, comboPanelY, 100, 20);
         addNewTextField.addPropertyChangeListener("value", e -> {
             if (!doNotUpdate)
                 return;
@@ -408,7 +408,7 @@ public class HolmesXTPNtokens extends JFrame {
         clearAllButton = new HolmesRoundedButton("Clear all"
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         clearAllButton.setMargin(new Insets(0, 0, 0, 0));
-        clearAllButton.setBounds(comboPanelX+10, comboPanelY+25, 100, 30);
+        clearAllButton.setBounds(comboPanelX+10, comboPanelY+25, 120, 30);
         clearAllButton.addActionListener(e -> {
             if (!doNotUpdate)
                 return;
@@ -436,11 +436,9 @@ public class HolmesXTPNtokens extends JFrame {
         });
         comboPanel.add(clearAllButton);
 
-
-
         HolmesRoundedButton addMultipleTokensButton = new HolmesRoundedButton("Add #[New] tokens"
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
-        addMultipleTokensButton.setBounds(comboPanelX+150, comboPanelY+25, 120, 30);
+        addMultipleTokensButton.setBounds(comboPanelX+130, comboPanelY+25, 120, 30);
         addMultipleTokensButton.setMargin(new Insets(0, 0, 0, 0));
         addMultipleTokensButton.setFocusPainted(false);
         addMultipleTokensButton.addActionListener(e -> {

@@ -857,6 +857,7 @@ public class SelectionManager {
 				if(place instanceof PlaceXTPN) {
 					HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((PlaceXTPN) place, el, GUIManager.getDefaultGUIManager().getFrame());
 					ani.setVisible(true);
+					return;
 				}
 
 				place.modifyTokensNumber(1);
@@ -872,6 +873,7 @@ public class SelectionManager {
 				if(trans instanceof TransitionXTPN) {
 					HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((TransitionXTPN) trans, el, GUIManager.getDefaultGUIManager().getFrame());
 					ani.setVisible(true);
+					return;
 				}
 
 			} else if(el.getParentNode().getType() == PetriNetElementType.META && !safetyNodesList.contains(el.getParentNode())) {

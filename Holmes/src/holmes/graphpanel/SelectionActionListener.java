@@ -12,7 +12,6 @@ public interface SelectionActionListener {
 	void actionPerformed(SelectionActionEvent e);
 
 	class SelectionActionEvent {
-
 		public enum SelectionActionType { SELECTED_ONE, SELECTED_GROUP, SELECTED_SHEET }
 		private ArrayList<Arc> arcGroup = new ArrayList<Arc>();
 		private ArrayList<ElementLocation> elementLocationGroup = new ArrayList<ElementLocation>();
@@ -24,12 +23,12 @@ public interface SelectionActionListener {
 		 */
 		public SelectionActionEvent() {
 		}
-		
-		@SuppressWarnings("static-access")
+
 		/**
 		 * Konstruktor obiektu klasy SelectionActionEvent.
 		 * @param sheetId int - numer arkusza
 		 */
+		@SuppressWarnings("static-access")
 		public SelectionActionEvent(int sheetId)
 		{
 			this.setActionType(getActionType().SELECTED_SHEET);
