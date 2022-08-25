@@ -155,7 +155,7 @@ public class PlaceXTPN extends Place {
 
     /**
      * Metoda ustawia wyświetlaną dokładność po przecinku.
-     * @param value (int) nowa wartość liczby cyfr przecinku.
+     * @param value (<b>int</b>) nowa wartość liczby cyfr przecinku.
      */
     public void setFractionForPlaceXTPN(int value) {
         franctionDigits = value;
@@ -163,7 +163,7 @@ public class PlaceXTPN extends Place {
 
     /**
      * Metoda zwraca wyświetlaną dokładność po przecinku.
-     * @return (int) aktualna wartość liczby cyfr przecinku.
+     * @return (<b>int</b>) - aktualna wartość liczby cyfr przecinku.
      */
     public int getFractionForPlaceXTPN() {
         return franctionDigits;
@@ -171,8 +171,8 @@ public class PlaceXTPN extends Place {
 
     /**
      * Dodawanie nowych tokenów do multizbioru K. Jeśli tranzycja nieczasowa - tylko modyfikuje sumę.
-     * @param howMany (int) ile tokenów dodać
-     * @param initialTime (double) wartość początkowa
+     * @param howMany (<b>int</b>) ile tokenów dodać.
+     * @param initialTime (<b>double</b>) wartość początkowa.
      */
     public void addTokens_XTPN(int howMany, double initialTime) {
         if(isGammaModeActive()) { //tylko gdy XTPN włączone

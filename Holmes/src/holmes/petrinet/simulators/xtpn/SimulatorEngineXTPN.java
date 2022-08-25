@@ -1,5 +1,6 @@
 package holmes.petrinet.simulators.xtpn;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -543,8 +544,26 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                     weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                 }
                 place.addTokens_XTPN(weight, 0.0);
-
             }
+
+            double tau = transition.getTauBetaValue();
+            if(sg.isXTPNreadArcActive()) {
+                for(TransitionXTPN.TokensBack box : transition.readArcReturnVector) {
+                    for(int i=0; i<box.multisetBack.size(); i++) {
+                        double gammaMax = box.placeBack.getGammaMaxValue();
+                        ArrayList<Double> returnedTokens = new ArrayList<>();
+
+                        if(box.multisetBack.get(i) + tau <= gammaMax)
+                            returnedTokens.add(box.multisetBack.get(i) + tau);
+
+                        box.placeBack.accessMultiset().addAll(returnedTokens);
+                        Collections.sort(box.placeBack.accessMultiset());
+                        Collections.reverse(box.placeBack.accessMultiset());
+                    }
+                }
+            }
+
+
             transition.deactivateTransitionXTPN(graphicalSimulation);
             transition.setActivationStatusXTPN(false);
             transition.setProductionStatus_xTPN(false);

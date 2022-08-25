@@ -346,7 +346,11 @@ public class StateSimulatorXTPN implements Runnable {
                         if (transition.fpnExtension.isFunctional()) {
                             weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                         }
-                        place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
+                        ArrayList<Double> removedTokens = place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
+
+                        if(arc.getArcType() == Arc.TypeOfArc.READARC) {
+                            transition.readArcReturnVector.add(new TransitionXTPN.TokensBack(place, weight, removedTokens));
+                        }
                     }
                 }
                 launchedXTPN.add(transition);
