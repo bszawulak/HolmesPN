@@ -104,6 +104,8 @@ public class GraphicalSimulatorXTPN {
     public void startSimulation(SimulatorModeXTPN simulatorMode) {
         sg = overlord.simSettings;
 
+        sg.setXTPNreadArcActive(true);
+
         ArrayList<Place> places = petriNet.getPlaces();
         //nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode()); //TODO
 

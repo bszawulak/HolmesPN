@@ -397,19 +397,19 @@ public class GUIManager extends JPanel implements ComponentListener {
 									"Project has been modified", JOptionPane.YES_NO_OPTION,
 									JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 					//cancel
-					if (n == 2) return;
-					else if (n == 1) { //try to save
+					if (n == 0) {
+						log("Exiting program","text",true);
+						windowConsole.saveLogToFile(null);
+						System.exit(0);
+					} else if (n == 1) { //try to save
 						boolean savingStatus = io.saveAsGlobal();
-						if(!savingStatus) return;
-						else {
+						if(!savingStatus) {
+							return;
+						} else {
 							log("Exiting program","text",true);
 			            	windowConsole.saveLogToFile(null);
 			            	System.exit(0);
 						}
-					} else { // n == 0
-						log("Exiting program","text",true);
-		            	windowConsole.saveLogToFile(null);
-		            	System.exit(0);
 					}
 				} else if (JOptionPane.showConfirmDialog(frame, "Are you sure you want to close the program?", "Exit?", 
 		            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {

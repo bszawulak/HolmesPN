@@ -539,6 +539,11 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                     overlord.log("Warning: non-standard arc used to produce tokens: "+place.getName()+ " arc: "+ arc, "warning", true);
                 }
 
+                if(arc.getArcType() == Arc.TypeOfArc.READARC && sg.isXTPNreadArcActive()) {
+                    continue;
+                    //jeśli sg.isXTPNreadArcActive() == true i readarc, to zwrotem zajmie się pętla niżej
+                }
+
                 int weight = arc.getWeight();
                 if(transition.fpnExtension.isFunctional()) {
                     weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
@@ -549,24 +554,25 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
             double tau = transition.getTauBetaValue();
             if(sg.isXTPNreadArcActive()) {
                 for(TransitionXTPN.TokensBack box : transition.readArcReturnVector) {
+                    ArrayList<Double> returnedTokens = new ArrayList<>();
+                    double gammaMax = box.placeBack.getGammaMaxValue();
                     for(int i=0; i<box.multisetBack.size(); i++) {
-                        double gammaMax = box.placeBack.getGammaMaxValue();
-                        ArrayList<Double> returnedTokens = new ArrayList<>();
-
-                        if(box.multisetBack.get(i) + tau <= gammaMax)
+                        if(box.multisetBack.get(i) + tau <= gammaMax) {
                             returnedTokens.add(box.multisetBack.get(i) + tau);
-
-                        box.placeBack.accessMultiset().addAll(returnedTokens);
-                        Collections.sort(box.placeBack.accessMultiset());
-                        Collections.reverse(box.placeBack.accessMultiset());
+                        }
                     }
+                    box.placeBack.accessMultiset().addAll(returnedTokens);
+                    Collections.sort(box.placeBack.accessMultiset());
+                    Collections.reverse(box.placeBack.accessMultiset());
+
+                    box.placeBack.modifyTokensNumber(returnedTokens.size());
+                    box.Clear();
                 }
             }
-
-
             transition.deactivateTransitionXTPN(graphicalSimulation);
             transition.setActivationStatusXTPN(false);
             transition.setProductionStatus_xTPN(false);
+            transition.readArcReturnVector.clear();
         }
     }
 

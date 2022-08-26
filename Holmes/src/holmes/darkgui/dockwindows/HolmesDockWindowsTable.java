@@ -295,9 +295,9 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda pomocnicza konstruktora odpowiedzialna za tworzenie podokna dla symulatora sieci.
-     * @param sim GraphicalSimulator - obiekt symulatora sieci
-     * @param simXTPN GraphicalSimulatorXTPN
-     * @param XTPNmode boolean
+     * @param sim (<b>GraphicalSimulator</b>) obiekt symulatora sieci PN.
+     * @param simXTPN (<b>GraphicalSimulatorXTPN</b>) obiekt symulatora sieci XTPN.
+     * @param XTPNmode (<b>boolean</b>) jeżeli true, to znaczy że tworzymy symulator XTPN.
      */
     @SuppressWarnings("UnusedAssignment")
     private void createSimulatorSubWindow(GraphicalSimulator sim, GraphicalSimulatorXTPN simXTPN, boolean XTPNmode) {
@@ -714,14 +714,36 @@ public class HolmesDockWindowsTable extends JPanel {
 
             internalY+=40;
 
-            HolmesRoundedButton resetButton = new HolmesRoundedButton("<html><center>Restore<br>p-state</center></html>"
+            HolmesRoundedButton resetButton = new HolmesRoundedButton("<html><center>Reset<br>p-state</center></html>"
                     , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             resetButton.setName("resetM0button");
-            resetButton.setBounds(internalX, internalY, 80, 35);
+            resetButton.setBounds(internalX, internalY, 75, 40);
             resetButton.setToolTipText("Reset all tokens in places.");
             resetButton.setEnabled(true);
             resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
             components.add(resetButton);
+
+            HolmesRoundedButton storeButton = new HolmesRoundedButton("<html><center>Store<br>p-state</center></html>"
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+            storeButton.setName("storeM0button");
+            storeButton.setBounds(internalX+75, internalY, 75, 40);
+            storeButton.setToolTipText("Reset all tokens in places.");
+            storeButton.setEnabled(true);
+            storeButton.addActionListener(actionEvent -> {
+                int selected = 0;
+                Object[] options = {"Replace XTPN state", "Cancel",};
+                int n = JOptionPane.showOptionDialog(null,
+                        "Replace first p-state vector with the current net state?",
+                        "Replace XTPN state", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+                if (n == 1) {
+                    return;
+                }
+
+                overlord.getWorkspace().getProject().accessStatesManager().replaceStoredMultiset_M_withCurrentNetState(selected);
+                overlord.markNetChange();
+            });
+            components.add(storeButton);
 
             internalY += 50;
 

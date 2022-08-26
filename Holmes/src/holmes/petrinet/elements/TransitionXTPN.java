@@ -50,6 +50,12 @@ public class TransitionXTPN extends Transition {
             tokensBack = tokens;
             multisetBack = multiRem;
         }
+
+        public void Clear() {
+            placeBack = null;
+            tokensBack = 0;
+            multisetBack.clear();
+        }
     }
 
     public ArrayList<TokensBack> readArcReturnVector;

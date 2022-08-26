@@ -940,11 +940,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
 			getSimulator().resetSimulator();
 
-			//getSimulatorXTPN().resetSimulator();
-
-			//setSimulator(new GraphicalSimulator(nt, this));
-			//setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
-			//overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN()); //ustawia nowe instancje symulatorów
 			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep(); //-1, jak wyżej
 			overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("" + getSimulator().getSimulatorTimeStep());
 			repaintAllGraphPanels();
@@ -972,12 +967,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 
 			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
-			//getSimulator().resetSimulator();
 			getSimulatorXTPN().resetSimulator();
 
-			//setSimulator(new GraphicalSimulator(nt, this));
-			//setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
-			//overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN()); //ustawia nowe instancje symulatorów
 			overlord.io.updateTimeStep(true, getSimulatorXTPN().getStepsCounterXTPN(), getSimulatorXTPN().getTimeCounterXTPN(), 0); //-1 po resecie symulatorów
 			overlord.simSettings.currentStep = getSimulatorXTPN().getStepsCounterXTPN(); //-1, jak wyżej
 			overlord.simSettings.currentTime = getSimulatorXTPN().getTimeCounterXTPN();
