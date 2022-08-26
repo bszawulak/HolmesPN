@@ -282,7 +282,6 @@ public class PlaceXTPN extends Place {
 
                 assert (oldOne <= kappa);
                 oldOne = kappa;
-
                 if(counter == 0) {
                     break;
                 }
@@ -336,7 +335,6 @@ public class PlaceXTPN extends Place {
         }
         modifyTokensNumber(-1);
     }
-
 
     /**
      * Metoda umożliwia dostęp do multizbioru K tokenów.

@@ -509,7 +509,6 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                 }
             }
         }
-
         for(TransitionXTPN transition : launchedClassical) {
             transition.setProductionStatus_xTPN(true); //samo ustawi false na activationStatus
         }
