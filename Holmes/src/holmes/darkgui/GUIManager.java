@@ -4,6 +4,7 @@ import holmes.analyse.MCTCalculator;
 import holmes.clusters.ClusterDataPackage;
 import holmes.darkgui.dockable.DeleteAction;
 import holmes.darkgui.dockwindows.HolmesDockWindow;
+import holmes.darkgui.dockwindows.HolmesDockWindowsTable;
 import holmes.darkgui.dockwindows.PetriNetTools;
 import holmes.darkgui.dockwindows.HolmesDockWindow.DockWindowType;
 import holmes.darkgui.settings.SettingsManager;
@@ -12,7 +13,9 @@ import holmes.files.io.TexExporter;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Transition;
+import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.petrinet.simulators.SimulatorGlobals;
+import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 import holmes.petrinet.subnets.SubnetsControl;
 import holmes.petrinet.subnets.SubnetsGraphics;
 import holmes.utilities.Tools;
@@ -363,11 +366,19 @@ public class GUIManager extends JPanel implements ComponentListener {
 		JPanel mainpanel = new JPanel();
 		mainpanel.add(GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet());
 		mainpanel.setLayout(new FlowLayout());
-		mainpanel.setSize(400,400);
+		mainpanel.setSize(200,200);
 		getFrame().add(mainpanel);
 		getFrame().setLayout(new FlowLayout());
 
-
+		// create sim
+		GraphicalSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
+		GraphicalSimulatorXTPN netSimXTPN = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
+		JPanel simPanel = new JPanel();
+		simPanel.add(new HolmesDockWindowsTable(HolmesDockWindowsTable.SubWindow.SIMULATOR,netSim,netSimXTPN,false).getPanel());
+		simPanel.setSize(100,100);
+		simPanel.setLayout(new FlowLayout());
+		getFrame().add(simPanel);
+		getFrame().setLayout(new FlowLayout());
 
 		// Add the shortcuts bar also as root dock to the dock model.
 		//dockModel.addRootDock("toolBarBorderDock", getShortcutsBar().getToolBarBorderDock(), frame);

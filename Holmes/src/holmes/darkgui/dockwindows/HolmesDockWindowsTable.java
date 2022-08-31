@@ -1020,6 +1020,7 @@ public class HolmesDockWindowsTable extends JPanel {
         panel.repaint();
         panel.setVisible(true);
         add(panel);
+        setPanel(panel);
     }
 
     //**************************************************************************************
