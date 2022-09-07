@@ -213,7 +213,6 @@ public class StateSimulatorXTPN implements Runnable {
             engineXTPN.endProductionPhase(producingTokensTransitionsAll);
         }
 
-
         //STATYSTYKI (PAMIĘTANE W OBIEKCIE TRANZYCJI / MIEJSCA):
         ArrayList<TransitionXTPN> stateChangedTransitions = new ArrayList<>();
 
@@ -308,7 +307,6 @@ public class StateSimulatorXTPN implements Runnable {
         producingTokensTransitionsAll.clear();
         transitionsAfterSubtracting.clear();
         nextXTPNsteps.clear();
-
         simLastTimeChange = infoNode.timeToChange;
 
         return placesResultVectors;
@@ -982,13 +980,6 @@ public class StateSimulatorXTPN implements Runnable {
                 }
 
                 ArrayList<ArrayList<Double>> placesStatusVectors = processSimStep();
-                //dwa wektory: placesTokensVector (.get(0) ) oraz placesTimeVector (.get(1) )
-
-                //for (int placeID = 0; placeID < placesStatusVectors.get(0).size(); placeID++) { //policz sumę tokenów
-                    //tokensAvg.set(placeID, tokensAvg.get(placeID) + placesStatusVectors.get(0).get(placeID));
-                //}
-
-
                 if(rep == 0) {
                     //dokładna liczba tokenów w każdym kroku:
                     tokensInSteps.add(placesStatusVectors.get(0));
@@ -1199,9 +1190,6 @@ public class StateSimulatorXTPN implements Runnable {
                     break;
 
                 ArrayList<ArrayList<Double>> placesStatusVectors = processSimStep();
-                //resMatrix.placesTokensDataMatrix.add(placesStatusVectors.get(0));
-                //resMatrix.placesTimeDataVector.add(placesStatusVectors.get(1).get(0)); //ten sam czas dla każdego
-
                 for (int pID = 0; pID < placesStatusVectors.get(0).size(); pID++) { //policz sumę tokenów
                     tokensAvg.set(pID, tokensAvg.get(pID) + placesStatusVectors.get(0).get(pID));
                 }

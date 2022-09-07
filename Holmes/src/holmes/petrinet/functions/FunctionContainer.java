@@ -12,14 +12,12 @@ import holmes.petrinet.elements.Transition;
  * Klasa kontener - przechowuje danej o funkcji tranzycji.
  */
 public class FunctionContainer implements Serializable {
-    //public String function = "";
     public String fID = "";
     public Arc arc = null;
     public boolean enabled = false;
     public boolean correct = false;
     public boolean inTransArc = false;
     public Map<String, Place> involvedPlaces;
-    //public Expression equation = null;
     public String simpleExpression = "";
     public double currentValue = -1;
 
