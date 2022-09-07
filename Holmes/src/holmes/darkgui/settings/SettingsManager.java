@@ -148,7 +148,7 @@ public class SettingsManager {
         try {
             String tmp = getValue("editorGraphFontSize");
             int test = Integer.parseInt(tmp);
-            if (test < 8 || test > 15)
+            if (test < 7 || test > 25)
                 throw new Exception();
             checkAndFix(settingsNew, "editorGraphFontSize", "11");
         } catch (Exception e) {
