@@ -192,13 +192,13 @@ public abstract class Node extends PetriNetElement {
 		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
 
 		String name = getName();
-		int xtpnID = -1;
+		String xtpnID = "";
 		int add_transY = 0;
 		if(sm.getValue("editorShowShortNames").equals("1")) {
 			if(this instanceof Place) {
 				int x = places.indexOf(this);
 				if(this instanceof PlaceXTPN) {
-					xtpnID = x;
+					xtpnID = x+"";
 					name = "p";
 				} else {
 					name = "p"+x;
@@ -209,7 +209,7 @@ public abstract class Node extends PetriNetElement {
 					name = "t"+x;
 				} else if(this instanceof TransitionXTPN) {
 					int x = transitions.indexOf(this);
-					xtpnID = x;
+					xtpnID = x+"";
 					name = "t";
 				} else {
 					int x = timeTransitions.indexOf(this);
@@ -259,14 +259,13 @@ public abstract class Node extends PetriNetElement {
 					//g.setFont(new Font("Tahoma", Font.BOLD, size));
 					g.drawString(name, drawX, drawY+add_transY);
 					g.setFont(new Font("Tahoma", Font.BOLD, size - 2));
-					g.drawString(xtpnID+"", drawX+8+offset, drawY+add_transY+5);
+					g.drawString(xtpnID, drawX+8+offset, drawY+add_transY+5);
 
 				} else if(this instanceof PlaceXTPN) { //inaczej dla XTPN
 					//g.setFont(new Font("Tahoma", Font.BOLD, size ));
 					g.drawString(name, drawX, drawY+add_transY);
 					g.setFont(new Font("Tahoma", Font.BOLD, size - 2));
-					g.drawString(xtpnID+"", drawX+10+offset, drawY+add_transY+5);
-
+					g.drawString(xtpnID, drawX+10+offset, drawY+add_transY+5);
 				}
 			} else {
 				g.drawString(name, drawX, drawY+add_transY);
