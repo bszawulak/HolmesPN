@@ -94,18 +94,30 @@ public class GraphletComparator {
                     PetriNet pn1 = compareSpecificType(i,j,p,path,"BASE");
                     PetriNet pn2 = compareSpecificType(i,j,p,path,"P3OVARIANT");
 
+                    //TODO compare base with P3OVARIANT
+
                 }
             }
         }
     }
 
     public void complexNDcompare(String path) {
+        // create 3 result matrixes
         for (int i = 0; i < 41; i = i + 5) {
             for (int j = 0; j < 41; j = j+5) {
+                //Create Matrix
                 for (int p = 0; p < 100; p++) {
                     PetriNet pn1 = compareSpecificType(i,j,p,path,"BASE");
                     PetriNet pn2 = compareSpecificType(i,j,p,path,"P3OVARIANT");
                 }
+
+                //get min
+
+                //get max
+
+                //get avg
+
+
             }
         }
     }

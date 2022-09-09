@@ -18,18 +18,38 @@ public class GDDAcalculator implements Runnable {
     public void run() {
         GraphletsCalculator.GraphletsCalculator();
         masterWindow.infoPaneGDDA.append("First net count... \n");
-        int[][] firstSingleDGDV = masterWindow.calcDGDD(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), true);
+        int[][] firstSingleDGDD = masterWindow.calcDGDD(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), true);
         masterWindow.infoPaneGDDA.append("\nSecond net count... \n");
-        int[][] secondSingleDGDV = masterWindow.calcDGDD(masterWindow.secondNet, false);
+        int[][] secondSingleDGDD = masterWindow.calcDGDD(masterWindow.secondNet, false);
 
         //long firstSum =  Arrays.stream(firstSingleDGDDA).sum();
         //long secondSum =  Arrays.stream(secondSingleDGDDA).sum();
+        /*
+        System.out.println("---------------------GDD");
+        for(int i = 0 ; i < firstSingleDGDD.length ; i++)
+        {
+            for(int j = 0 ; j < firstSingleDGDD[i].length ; j++)
+            {
+                System.out.print(firstSingleDGDD[i][j] + ",");
+            }
+            System.out.println();
+        }
+        System.out.println("---------------------");
+        for(int i = 0 ; i < secondSingleDGDD.length ; i++)
+        {
+            for(int j = 0 ; j < secondSingleDGDD[i].length ; j++)
+            {
+                System.out.print(secondSingleDGDD[i][j] + ",");
+            }
+            System.out.println();
+        }
+        */
 
         long[] distanceDGDD = new long[GraphletsCalculator.globalOrbitMap.size()];
         double result = 0;
 
         masterWindow.infoPaneGDDA.append("\nCalculate GDDA...\n");
-        double DGDDA = masterWindow.calcDGDDA(firstSingleDGDV, secondSingleDGDV, masterWindow.getOrbitsNumber());
+        double DGDDA = masterWindow.calcDGDDA(firstSingleDGDD, secondSingleDGDD, masterWindow.getOrbitsNumber());
 
         /*
         for(int i = 0 ; i < GraphletsCalculator.globalOrbitMap.size() ; i++)
@@ -62,9 +82,9 @@ public class GDDAcalculator implements Runnable {
         }
         */
 
-        if (firstSingleDGDV.length != 0) {
-            String[] colNames = new String[firstSingleDGDV[0].length + 1];
-            for (int i = 1; i < firstSingleDGDV[0].length + 1; i++) {
+        if (firstSingleDGDD.length != 0) {
+            String[] colNames = new String[firstSingleDGDD[0].length + 1];
+            for (int i = 1; i < firstSingleDGDD[0].length + 1; i++) {
                 colNames[i] = String.valueOf(i);
             }
 

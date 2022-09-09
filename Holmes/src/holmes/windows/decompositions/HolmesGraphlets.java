@@ -98,12 +98,21 @@ public class HolmesGraphlets extends JFrame {
 
             if (!comboBox.getModel().getSelectedItem().equals("Choose node")) {
                 Node n = overlord.getWorkspace().getProject().getNodes().get(selectedGraphlet);
-                int[] orbits = GraphletsCalculator.vectorOrbit(n, false);
+                int[] orbits = GraphletsCalculator.vectorOrbit(n, true);
+
+                /*
+                for(int i = 0 ; i < orbits.length ; i++)
+                {
+                    System.out.println(orbits[i]+",");
+                }
+                */
 
                 orbitResultsArea.setText("");
+                //System.out.println(n.getName() + "--" + n.getType());
                 for (int i = 0; i < orbits.length; i++) {
                     if (orbits[i] > 0) {
                         orbitResultsArea.append("Orbit-" + i + " : " + orbits[i] + "\n");
+                        //System.out.println("Orbit-" + i + " : " + orbits[i] + "\n");
                     }
                 }
             }

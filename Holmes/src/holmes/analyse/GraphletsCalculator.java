@@ -6,6 +6,7 @@ import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 
+import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -471,18 +472,26 @@ public class GraphletsCalculator {
     private static int fromWhichGrahlet(Node n) {
         int index = -1;
         int wiel = 0;
-        for (SubnetCalculator.SubNet subNet : graphetsList) {
-            if (subNet.getSubNode().stream().anyMatch(x -> x.getID() == n.getID()))
-            //if (graphetsList.get(i).getSubNode().contains(n))
+        //for (SubnetCalculator.SubNet subNet : graphetsList) {
+        for(int i = 0 ; i < graphetsList.size() ; i++) {
+            //if (subNet.getSubNode().stream().anyMatch(x -> x.getID() == n.getID()))
+            //if (subNet.getSubNode().stream().anyMatch(x -> x.getID() == n.getID() && x.getType().equals(n.getType())))
+            if (graphetsList.get(i).getSubNode().contains(n)){
+
             {
-                index = subNet.getSubNetID();
-                //index = i;
+                //System.out.println("graphetsList " + graphetsList.size() + "  index " + i);
+                //index = subNet.getSubNetID();
+                index = i;
                 wiel++;
             }
         }
-        if (wiel > 1) {
-            System.out.println("Cos SPierdolono!!!");
         }
+        //if (wiel > 1) {
+       //     System.out.println("Cos SPierdolono!!!");
+        //}
+
+        System.out.println("FromWhichGraphlet " + index);
+
         return index;
     }
 
@@ -497,14 +506,43 @@ public class GraphletsCalculator {
         //if (test) {
         //    ov[59] = getOrbitValue(n, globalOrbitMap.get(59));
         //} else {
+
+
+
+
+        //wyciecie
             for (Entry<Integer, Node> map : globalOrbitMap.entrySet()) {
-                Node m = map.getValue();
-                int result = getOrbitValue(n, m);
-                ov[iterac] = result;
-                //System.out.println("Orbita " + iterac + " = " + result);
-                text.append(result).append(", ");
-                iterac++;
-            }
+
+                //if(map.getKey()==320) {
+                    int result = -1;
+                    Node m = map.getValue();
+                    System.out.println("------" + iterac);
+
+                    if (n.getType().equals(m.getType())) {
+                        result = getOrbitValue(n, m, -1);
+                        ov[iterac] = result;
+                        if (map.getKey() == 320 && result < 1) {
+                            System.out.println("Wychwyciłem brak ");
+                        /*
+                        for(int kk = 0 ; kk < 100 ; kk++) {
+                            int szukacz = -1;
+
+                            szukacz = getOrbitValue(n, m, -1);
+                            if(szukacz==-1)
+                            {
+                                System.out.println("RAMADAN!!!!!!!!!!");
+                            }
+
+                        }
+                        */
+                        }
+                    } else {
+                        ov[iterac] = -1;
+                    }
+                    text.append(result).append(", ");
+                    iterac++;
+                }
+                        
         //}
 
         //JOptionPane.showMessageDialog(null,text);
@@ -520,7 +558,7 @@ public class GraphletsCalculator {
 
             for (Node n : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes()) {
                 if (n.getType() == entry.getValue().getType()) {
-                    ArrayList<Struct> foundGraphletsApp = findGraphlet(entry.getValue(), n);
+                    ArrayList<Struct> foundGraphletsApp = findGraphlet(entry.getValue(), n,-1);
                     fromThisOrbit.add(foundGraphletsApp);
                 } else {
                     fromThisOrbit.add(new ArrayList<>());
@@ -548,7 +586,7 @@ public class GraphletsCalculator {
 
             for (Node n : pn.getNodes()) {
                 if (n.getType() == entry.getValue().getType()) {
-                    ArrayList<Struct> foundGraphletsApp = findGraphlet(entry.getValue(), n);
+                    ArrayList<Struct> foundGraphletsApp = findGraphlet(entry.getValue(), n,-1);
                     fromThisOrbit.add(foundGraphletsApp);
                 } else {
                     fromThisOrbit.add(new ArrayList<>());
@@ -608,7 +646,7 @@ public class GraphletsCalculator {
 
             for (Node n : pn.getNodes()) {
                 if (n.getType() == entry.getValue().getType()) {
-                    ArrayList<Struct> foundGraphletsApp = findGraphlet(entry.getValue(), n);
+                    ArrayList<Struct> foundGraphletsApp = findGraphlet(entry.getValue(), n,-1);
                     fromThisOrbit.add(foundGraphletsApp);
                 } else {
                     fromThisOrbit.add(new ArrayList<>());
@@ -636,10 +674,18 @@ public class GraphletsCalculator {
         //return resultList;
     }
 
-    private static int getOrbitValue(Node n, Node m) {
+    private static int getOrbitValue(Node n, Node m, int id) {
         if (n.getType() == m.getType()) {
+            //System.out.println( "N"+n.getID() +"-" + n.getName() + " M"+m.getID() +"-" + m.getName());
             ArrayList<Struct> foundGraphletsApp;
-            foundGraphletsApp = findGraphlet(m, n);
+            foundGraphletsApp = findGraphlet(m, n,-1);
+
+            /*
+            if(id!=-1)
+            {
+                foundGraphletsApp = findGraphlet(m, n,id);
+            }
+            */
 
             //catch multiple arcs
             if (multipleArcCheck) {
@@ -669,11 +715,16 @@ public class GraphletsCalculator {
         }
     }
 
-    private static ArrayList<Struct> findGraphlet(Node orbita, Node node) {
+    private static ArrayList<Struct> findGraphlet(Node orbita, Node node, int gi) {
 
         ArrayList<Struct> listOfProperGraphlets = new ArrayList<>();
         ArrayList<Struct> listOfPosibleGraphlets = new ArrayList<>();
-        int graphletID = fromWhichGrahlet(orbita);
+        int graphletID = -1;
+        if(gi==-1)
+            graphletID = fromWhichGrahlet(orbita);
+        else
+            graphletID = gi;
+
         ArrayList<Node> nodesFromGraohlet = new ArrayList<>(graphetsList.get(graphletID).getSubNode());
         ArrayList<Arc> arcsFromGraohlet = new ArrayList<>(graphetsList.get(graphletID).getSubArcs());
 
@@ -707,7 +758,7 @@ public class GraphletsCalculator {
                         if (properNodeList.contains(a.getEndNode()) && properNodeList.contains(a.getStartNode())) {
                             if (!properArcList.contains(a)) {
                                 properGraphlet = false;
-                                //System.out.println("-> nieprawidlowy graphlet");
+                                System.out.println("-> nieprawidlowy graphlet");
                             }
                         }
                     }
@@ -759,11 +810,36 @@ public class GraphletsCalculator {
                         }
                     }
                 }
+                else
+                {
+                    System.out.println("ups");
+                }
             }
         }
 
-
+/*
+        System.out.println("listOfProperGraphlets " + listOfProperGraphlets.size());
         //tylko unikalne
+        ArrayList<Struct> uniqeListOfProperGraphlets = getStructsUniqe(listOfProperGraphlets);
+        System.out.println("uniqeListOfProperGraphlets " + uniqeListOfProperGraphlets.size());
+        ArrayList<Struct> ProperlyMapGraphlets = getStructsProperlyMapGraphlets(uniqeListOfProperGraphlets);
+        System.out.println("ProperlyMapGraphlets " + ProperlyMapGraphlets.size());
+*/
+
+        System.out.println("listOfProperGraphlets " + listOfProperGraphlets.size());
+        //tylko unikalne
+        ArrayList<Struct> ProperlyMapGraphlets = getStructsProperlyMapGraphlets(listOfProperGraphlets);
+        System.out.println("ProperlyMapGraphlets " + ProperlyMapGraphlets.size());
+        ArrayList<Struct> uniqeListOfProperGraphlets = getStructsUniqe(ProperlyMapGraphlets);
+        System.out.println("uniqeListOfProperGraphlets " + uniqeListOfProperGraphlets.size());
+
+
+
+
+        return uniqeListOfProperGraphlets;
+    }
+
+    private static ArrayList<Struct> getStructsUniqe(ArrayList<Struct> listOfProperGraphlets) {
         ArrayList<Struct> uniqeListOfProperGraphlets = new ArrayList<>();
 
         for (int i = 0; i < listOfProperGraphlets.size(); i++) {
@@ -772,13 +848,23 @@ public class GraphletsCalculator {
             for (int j = i; j < listOfProperGraphlets.size(); j++) {
                 Struct struct2 = listOfProperGraphlets.get(j);
 
-                if (struct.mapa.values().containsAll(struct2.mapa.values()) && struct.mapaArcow.values().containsAll(struct2.mapaArcow.values()) && struct.mapa.keySet().equals(struct2.mapa.keySet()) && struct.mapaArcow.keySet().equals(struct2.mapaArcow.keySet()))
+                if (struct.mapa.values().containsAll(struct2.mapa.values()) &&
+                        struct2.mapa.values().containsAll(struct.mapa.values()) &&
+                        struct.mapaArcow.values().containsAll(struct2.mapaArcow.values()) &&
+                        struct2.mapaArcow.values().containsAll(struct.mapaArcow.values()) &&
+                        struct.mapa.keySet().equals(struct2.mapa.keySet()) &&
+                        struct.mapaArcow.keySet().equals(struct2.mapaArcow.keySet())
+                )
                     counter++;
             }
             if (counter == 1) {
                 uniqeListOfProperGraphlets.add(listOfProperGraphlets.get(i));
             }
         }
+        return uniqeListOfProperGraphlets;
+    }
+
+    private static ArrayList<Struct> getStructsProperlyMapGraphlets(ArrayList<Struct> uniqeListOfProperGraphlets) {
         ArrayList<Struct> ProperlyMapGraphlets = new ArrayList<>();
         for (Struct st : uniqeListOfProperGraphlets) {
             SubnetCalculator.SubNet graphlet = graphetsList.get(st.graphletID);
@@ -825,7 +911,6 @@ public class GraphletsCalculator {
             if (!bubel)
                 ProperlyMapGraphlets.add(st);
         }
-
         return ProperlyMapGraphlets;
     }
 
@@ -887,12 +972,21 @@ public class GraphletsCalculator {
         Arc result = null;
 
         for (Entry<Node, Node> entry : toExtend.mapa.entrySet()) {
-            ArrayList<Arc> connectedToRoot = entry.getKey().getOutInArcs();
+            ArrayList<Arc> connectedToRoot = entry.getKey().getInArcs();
             connectedToRoot.removeAll(toExtend.mapaArcow.keySet());
             if (connectedToRoot.size() > 0) {
                 result = connectedToRoot.get(0);
                 break;
             }
+
+            connectedToRoot = entry.getKey().getOutArcs();
+            connectedToRoot.removeAll(toExtend.mapaArcow.keySet());
+            if (connectedToRoot.size() > 0) {
+                result = connectedToRoot.get(0);
+                break;
+            }
+
+
         }
         return result;
     }

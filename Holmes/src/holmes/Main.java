@@ -3,6 +3,7 @@ package holmes;
 import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
+import holmes.windows.decompositions.HolmesGraphletsPrototype;
 
 /**
  * Główna klasa programu. Jedna metoda, odpowiedzialna za tworzenie środowiska graficznego Holmes. I całej reszty.
@@ -24,8 +25,6 @@ public class Main {
     public static void main(String[] args) {
         Runnable fiatLux = () -> {
             try {
-                //SzavislavMamboJambo();
-
                 guiManager = new GUIManager(new JFrame("Holmes 2.0")); //and pray
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -39,6 +38,12 @@ public class Main {
      */
     public static void SzavislavMamboJambo() {
         //server module
+
+
+        //SzavislavMamboJambo();
+
+        HolmesGraphletsPrototype hgp = new HolmesGraphletsPrototype();
+        hgp.compareGDDAforSingleF();
 
         //new NetGenerator(40,41,40,41,0,100,600);
         //Integer.parseInt(args[0])

@@ -2098,9 +2098,48 @@ public class HolmesGraphletsPrototype {//extends JFrame {
         saveToCsv(resultB, "B");
     }
 
+
+    public void compareGDDAforSingleF() {
+        GraphletsCalculator.GraphletsCalculator();
+        GraphletComparator gc600 = new GraphletComparator(600);
+
+        Double[][] resultMin = new Double[10][10];
+        Double[][] resultMax = new Double[10][10];
+        Double[][] resultAvg = new Double[10][10];
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                System.out.println("i " + i + " j " + j+" ");
+                Double[] vecor = new Double[100];
+                double min = 999999999;
+                double max = 0.0;
+                double avg = 0.0;
+                for (int p = 0; p < 100; p++) {
+                    int iI = i*5;
+                    int jI = j *5;
+                    vecor[p] = gc600.calcDGDDA("/home/bszawulak/Dokumenty/Eksperyment/Wyniki/i"+iI+"j"+jI+"/i"+iI+"j"+jI+"p"+p+"/i"+iI+"j"+jI+"p"+p+"-BASE-DGDDA.txt", "/home/bszawulak/Dokumenty/Eksperyment/Wyniki/i"+iI+"j"+jI+"/i"+iI+"j"+jI+"p"+p+"/i"+iI+"j"+jI+"p"+p+"-P3OVARIANT-DGDDA.txt");
+                    if(vecor[p]>max)
+                        max = vecor[p];
+                    if(vecor[p]<min)
+                        min = vecor[p];
+                    avg += vecor[p];
+
+                }
+                resultMin[i][j] = min;
+                resultMax[i][j] = max;
+                resultAvg[i][j] = avg/100;
+            }
+        }
+
+        saveToCsv(resultMin, "resultMin");
+        saveToCsv(resultMax, "resultMax");
+        saveToCsv(resultAvg, "resultAvg");
+    }
+
+
     private void saveToCsv(Double[][] resultA, String name) {
         try {
-            FileWriter writer = new FileWriter("/home/Szavislav/Eksperyment/Distortion/" + name + ".csv");
+            FileWriter writer = new FileWriter("/home/bszawulak/Dokumenty/Eksperyment/" + name + ".csv");
 
             for (int i = 0; i < resultA.length; i++) {
                 for (int j = 0; j < resultA[i].length; j++) {
