@@ -190,19 +190,27 @@ public abstract class Node extends PetriNetElement {
 	public void drawName(Graphics2D g, int sheetId, ArrayList<Node> places, ArrayList<Node> transitions, ArrayList<Node> timeTransitions,
 			 ArrayList<Node> metanodes) {
 		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
+
 		String name = getName();
+		String xtpnID = "";
 		int add_transY = 0;
 		if(sm.getValue("editorShowShortNames").equals("1")) {
 			if(this instanceof Place) {
 				int x = places.indexOf(this);
-				name = "p"+x;
+				if(this instanceof PlaceXTPN) {
+					xtpnID = x+"";
+					name = "p";
+				} else {
+					name = "p"+x;
+				}
 			} else if (this instanceof Transition) {
 				if(((Transition)this).getTransType() == TransitionType.PN) {
 					int x = transitions.indexOf(this);
 					name = "t"+x;
 				} else if(this instanceof TransitionXTPN) {
 					int x = transitions.indexOf(this);
-					name = "t"+x;
+					xtpnID = x+"";
+					name = "t";
 				} else {
 					int x = timeTransitions.indexOf(this);
 					name = "tt"+x;
@@ -238,7 +246,32 @@ public abstract class Node extends PetriNetElement {
 				drawX = (nodePoint.x - name_width / 2); //oryginalny kod
 			if(drawY < 0 )
 				drawY = nodePoint.y + getRadius() + 15; //oryginalny kod
-			g.drawString(name, drawX, drawY+add_transY);
+
+			if(this instanceof TransitionXTPN || this instanceof PlaceXTPN) {
+				int size = Integer.parseInt(sm.getValue("editorGraphFontSize"));
+				int offset = 0;
+				if(size > 16)
+					offset += 2;
+				if(size > 19)
+					offset += 2;
+
+				if(this instanceof TransitionXTPN) { //inaczej dla XTPN
+					//g.setFont(new Font("Tahoma", Font.BOLD, size));
+					g.drawString(name, drawX, drawY+add_transY);
+					g.setFont(new Font("Tahoma", Font.BOLD, size - 2));
+					g.drawString(xtpnID, drawX+8+offset, drawY+add_transY+5);
+
+				} else if(this instanceof PlaceXTPN) { //inaczej dla XTPN
+					//g.setFont(new Font("Tahoma", Font.BOLD, size ));
+					g.drawString(name, drawX, drawY+add_transY);
+					g.setFont(new Font("Tahoma", Font.BOLD, size - 2));
+					g.drawString(xtpnID, drawX+10+offset, drawY+add_transY+5);
+				}
+			} else {
+				g.drawString(name, drawX, drawY+add_transY);
+			}
+
+
 		}
 
 		if(this instanceof Place) {
@@ -406,37 +439,52 @@ public abstract class Node extends PetriNetElement {
 							double betaTime = transXTPN.getTauBetaValue();
 							double u_alfaTime = transXTPN.getTimerAlfaValue();
 							double v_betaTime = transXTPN.getTimerBetaValue();
+							boolean isAlpha = transXTPN.isAlphaModeActive();
+							boolean isBeta = transXTPN.isBetaModeActive();
 
 							String timerA;
 							String timerB;
 							g.setColor(tauColor);
 							if(alphaTime < 0 && betaTime < 0) {
-								timerA = "\u03C4(\u03B1): #\u279F#";
-								g.drawString(timerA, drawX + 40, drawY + 12);
-								timerB = "\u03C4(\u03B2): #\u279F#";
-								g.drawString(timerB, drawX + 40, drawY + 26);
-
+								if(isAlpha) {
+									timerA = "\u03C4(\u03B1): #\u279F#";
+									g.drawString(timerA, drawX + 40, drawY + 12);
+								}
+								if(isBeta) {
+									timerB = "\u03C4(\u03B2): #\u279F#";
+									g.drawString(timerB, drawX + 40, drawY + 26);
+								}
 							} else if(alphaTime < 0) {
-								timerA = "\u03C4(\u03B1): #\u279F#";
-								g.drawString(timerA, drawX + 40, drawY + 12);
-								timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
-								g.drawString(timerB, drawX + 40, drawY + 26);
-
+								if(isAlpha) {
+									timerA = "\u03C4(\u03B1): #\u279F#";
+									g.drawString(timerA, drawX + 40, drawY + 12);
+								}
+								if(isBeta) {
+									timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+											+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
+									g.drawString(timerB, drawX + 40, drawY + 26);
+								}
 							} else if(betaTime < 0) {
-								timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
-								g.drawString(timerA, drawX + 40, drawY + 12);
-								timerB = "\u03C4(\u03B2): #\u279F#";
-								g.drawString(timerB, drawX + 40, drawY + 26);
+								if(isAlpha) {
+									timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+											+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
+									g.drawString(timerA, drawX + 40, drawY + 12);
+								}
+								if(isBeta) {
+									timerB = "\u03C4(\u03B2): #\u279F#";
+									g.drawString(timerB, drawX + 40, drawY + 26);
+								}
 							} else {
-								timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
-								g.drawString(timerA, drawX + 40, drawY + 12);
-								//timerB = "v\u279F\u03C4(\u03B2): #\u279F#";
-								timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
-										+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
-								g.drawString(timerB, drawX + 40, drawY + 26);
+								if(isAlpha) {
+									timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+											+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
+									g.drawString(timerA, drawX + 40, drawY + 12);
+								}
+								if(isBeta) {
+									timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+											+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
+									g.drawString(timerB, drawX + 40, drawY + 26);
+								}
 							}
 						}
 					}

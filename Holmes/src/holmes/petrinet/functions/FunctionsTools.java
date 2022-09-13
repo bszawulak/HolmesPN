@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JTextArea;
 
+import holmes.petrinet.elements.PlaceXTPN;
 import org.nfunk.jep.JEP;
 
 import holmes.darkgui.GUIManager;
@@ -237,8 +238,8 @@ public class FunctionsTools {
 
 	/**
 	 * Metoda obliczająca wartość równania funkcji, na bazie tokenów w miejsach użytych w równaniu.
-	 * @param fc FunctionContainer - kontener funkcji
-	 * @return double - wartość funkcji lub -1 jeśli coś nie wyszło
+	 * @param fc (<b>FunctionContainer</b>) kontener funkcji.
+	 * @return (<b>double</b>) - wartość funkcji lub -1 jeśli coś nie wyszło.
 	 */
 	private static double getFunctionValue(FunctionContainer fc) {
 		try {
@@ -246,11 +247,19 @@ public class FunctionsTools {
 			myParser.addStandardFunctions();
 			for(String key : fc.involvedPlaces.keySet()) {
 				Place place = fc.involvedPlaces.get(key);
-				myParser.addVariable(key, place.getTokensNumber());
+
+				if(place instanceof PlaceXTPN) {
+					if( ((PlaceXTPN)place).isGammaModeActive() ) {
+						myParser.addVariable(key, ((PlaceXTPN)place).accessMultiset().size() );
+					} else {
+						myParser.addVariable(key, place.getTokensNumber());
+					}
+				} else {
+					myParser.addVariable(key, place.getTokensNumber());
+				}
 			}
 			myParser.parseExpression(fc.simpleExpression);
 			double result = myParser.getValue();
-			
 			return result;
 		} catch (Exception e) {
 			GUIManager.getDefaultGUIManager().log("Parsing equation failed for "+fc.simpleExpression, "error", true);
@@ -268,10 +277,14 @@ public class FunctionsTools {
 		if(transition.fpnExtension.isFunctional()) {
 			FunctionContainer fc = transition.fpnExtension.getFunctionContainer(arc);
 			if(fc != null) //TODO: czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
+			{
+				fc.currentValue = getFunctionValue(fc); //wartość równania, ale:
+				fc.currentValue = fc.currentValue <= 0 ? arc.getWeight() : fc.currentValue; //like a boss
 				place.modifyTokensNumber(-((int) fc.currentValue));
 				//nie ważne, aktywna czy nie, jeśli nie, to tu jest i tak oryginalna waga
-			else
+			} else {
 				place.modifyTokensNumber(-arc.getWeight());
+			}
 		} else {
 			place.modifyTokensNumber(-arc.getWeight());
 		}
@@ -284,11 +297,14 @@ public class FunctionsTools {
 	public static int getFunctionalArcWeight(Transition transition, Arc arc, Place place) {
 		if(transition.fpnExtension.isFunctional()) {
 			FunctionContainer fc = transition.fpnExtension.getFunctionContainer(arc);
-			if(fc != null) //TODO: czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
+
+			if(fc != null && fc.enabled && fc.correct) {
+				fc.currentValue = getFunctionValue(fc); //wartość równania, ale:
+				fc.currentValue = fc.currentValue <= 0 ? arc.getWeight() : fc.currentValue; //like a boss
 				return (int) fc.currentValue;
-				//nie ważne, aktywna czy nie, jeśli nie, to tu jest i tak oryginalna waga
-			else
+			} else {
 				return arc.getWeight();
+			}
 		} else {
 			return arc.getWeight();
 		}
@@ -304,7 +320,6 @@ public class FunctionsTools {
 		if(transition.fpnExtension.isFunctional()) {
 			FunctionContainer fc = transition.fpnExtension.getFunctionContainer(arc);
 			if(fc != null) {//czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
-				
 				if(fc != null && fc.enabled && fc.correct) {
 					fc.currentValue = getFunctionValue(fc); //wartość równania, ale:
 					fc.currentValue = fc.currentValue <= 0 ? arc.getWeight() : fc.currentValue; //like a boss

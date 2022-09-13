@@ -125,7 +125,8 @@ public class PlaceXTPN extends Place {
      */
     public void setGammaModeStatus(boolean status) {
         gammaMode_xTPN = status;
-        setGammaRangeVisibility(status);
+        if(!status)
+            setGammaRangeVisibility(status);
     }
 
     /**
@@ -154,7 +155,7 @@ public class PlaceXTPN extends Place {
 
     /**
      * Metoda ustawia wyświetlaną dokładność po przecinku.
-     * @param value (int) nowa wartość liczby cyfr przecinku.
+     * @param value (<b>int</b>) nowa wartość liczby cyfr przecinku.
      */
     public void setFractionForPlaceXTPN(int value) {
         franctionDigits = value;
@@ -162,7 +163,7 @@ public class PlaceXTPN extends Place {
 
     /**
      * Metoda zwraca wyświetlaną dokładność po przecinku.
-     * @return (int) aktualna wartość liczby cyfr przecinku.
+     * @return (<b>int</b>) - aktualna wartość liczby cyfr przecinku.
      */
     public int getFractionForPlaceXTPN() {
         return franctionDigits;
@@ -170,8 +171,8 @@ public class PlaceXTPN extends Place {
 
     /**
      * Dodawanie nowych tokenów do multizbioru K. Jeśli tranzycja nieczasowa - tylko modyfikuje sumę.
-     * @param howMany (int) ile tokenów dodać
-     * @param initialTime (double) wartość początkowa
+     * @param howMany (<b>int</b>) ile tokenów dodać.
+     * @param initialTime (<b>double</b>) wartość początkowa.
      */
     public void addTokens_XTPN(int howMany, double initialTime) {
         if(isGammaModeActive()) { //tylko gdy XTPN włączone
@@ -237,26 +238,30 @@ public class PlaceXTPN extends Place {
      * @param howMany (<b>int</b>) ile usunąć.
      * @param mode (<b>int</b>) tryb: 0 - najstarsze, 1 - najmłodsze, 2 - losowe.
      * @param generator (<b>Random</b>) generator dla mode=2.
-     * @return (<b>int</b>) - liczba usuniętych tokenów lub -1 gdy wystąpił błąd.
+     * @return (<b>ArrayList[Double]</b>) - zbiór usuniętych tokenów.
      */
-    @SuppressWarnings("UnusedReturnValue")
-    public int removeTokensForProduction_XTPN(int howMany, int mode, IRandomGenerator generator) {
+    public ArrayList<Double> removeTokensForProduction_XTPN(int howMany, int mode, IRandomGenerator generator) {
+        ArrayList<Double> removedTokens = new ArrayList<>();
+
         if(!isGammaModeActive()) { //gdy XTPN wyłączone, tylko usuwamy liczbę
             modifyTokensNumber(-howMany);
-            return howMany;
+            return removedTokens;
         }
 
         int counter = howMany;
         if(howMany > multisetK.size()) {
             GUIManager.getDefaultGUIManager().log("Error, trying to remove more tokens ("+howMany+") than\n" +
                     "the multiset size ("+multisetK.size()+")", "error", true);
-            return -1;
+            removedTokens.addAll(multisetK);
+            multisetK.clear();
+            return removedTokens;
         }
 
         if(mode == 0) { //najstarsze
             double oldOne = Double.MAX_VALUE;
             for (Iterator<Double> iterator = multisetK.iterator(); iterator.hasNext();) {  //zakładamy, że posortowany od największych
                 Double kappa = iterator.next();
+                removedTokens.add(kappa);
                 iterator.remove();
                 counter--;
 
@@ -271,12 +276,12 @@ public class PlaceXTPN extends Place {
             double oldOne = -1.0;
             for (Iterator<Double> iterator = multisetK.iterator(); iterator.hasNext();) {  //zakładamy, że posortowany od największych
                 Double kappa = iterator.next();
+                removedTokens.add(kappa);
                 iterator.remove();
                 counter--;
 
                 assert (oldOne <= kappa);
                 oldOne = kappa;
-
                 if(counter == 0) {
                     break;
                 }
@@ -285,11 +290,12 @@ public class PlaceXTPN extends Place {
         } else { //losowo
             for(int i=0; i<howMany; i++) {
                 int index = generator.nextInt(multisetK.size());
+                removedTokens.add(multisetK.get(index));
                 multisetK.remove(index);
             }
         }
         modifyTokensNumber(-howMany);
-        return howMany;
+        return removedTokens;
     }
 
     /**
@@ -329,7 +335,6 @@ public class PlaceXTPN extends Place {
         }
         modifyTokensNumber(-1);
     }
-
 
     /**
      * Metoda umożliwia dostęp do multizbioru K tokenów.

@@ -167,8 +167,8 @@ public class GUIOperations {
 	
 	/**
 	 * Metoda odpowiedzialna za zapis wygenerowanych inwariantów do pliku programu INA.
-	 * @param t_inv boolean - true, jeśli zapisujemy t-inwarianty
-	 * @return boolean - true, jeśli operacja przebiegła bez problemów
+	 * @param t_inv (<b>boolean</b>) true, jeśli zapisujemy t-inwarianty.
+	 * @return (<b>boolean</b>) - true, jeśli operacja przebiegła bez problemów.
 	 */
 	public boolean exportGeneratedInvariants(boolean t_inv) {
 		String lastPath = overlord.getLastPath();
@@ -283,7 +283,7 @@ public class GUIOperations {
 
 	/**
 	 * Metoda odpowiedzialna za zapis projektu sieci do pliku natywnego aplikacji..
-	 * @return boolean - status operacji: true jeśli nie było problemów
+	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było problemów.
 	 */
 	public boolean saveAsAbyssFile() {
 		boolean status = false;
@@ -348,7 +348,7 @@ public class GUIOperations {
 	
 	/**
 	 * Metoda ogólnego zapisu, pozwala wybrać format wyjściowy. Domyślnie SPPED.
-	 * @return boolean - status operacji: true jeśli nie było problemów
+	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było problemów.
 	 */
 	public boolean saveAsGlobal() {
 		String lastPath = overlord.getLastPath();
@@ -435,7 +435,6 @@ public class GUIOperations {
 	 * @param extension String - wybrany format pliku
 	 * @return String - format, który będzie użyty
 	 */
-	//TODO
 	private String checkFileFormatCorrectness(String extension) {
 		if(overlord.getSettingsManager().getValue("editorExportCheckAndWarning").equals("0"))
 			return extension; //stop whining mode ON
@@ -498,8 +497,8 @@ public class GUIOperations {
 	
 	/**
 	 * Metoda odpowiedzialna za wczytywanie inwariantów z pliku.
-	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
-	 * @return boolean - true, jeśli operacja się powiodła
+	 * @param t_inv (<b>boolean</b>) true, jeśli chodzi o t-inwarianty.
+	 * @return (<b>boolean</b>) - true, jeśli operacja się powiodła.
 	 */
 	public boolean loadExternalAnalysis(boolean t_inv) {
 		String lastPath = overlord.getLastPath();
@@ -539,7 +538,7 @@ public class GUIOperations {
 	 * nie zaglądanie jak i co ona robi (metoda, nie INA), gdyż może to doprawadziź
 	 * do słabszych duchem programistów do rozstroju nerwowego, szczególnie w kontekscie
 	 * operacji na plikach.
-	 * @param t_inv boolean - true, jeśli mają być liczone t-inwarianty, false: p-inwarianty
+	 * @param t_inv (<b>boolean</b>) true, jeśli mają być liczone t-inwarianty, false: p-inwarianty.
 	 */
 	@SuppressWarnings("all")
 	public void generateINAinvariants(boolean t_inv) {
@@ -1048,11 +1047,12 @@ public class GUIOperations {
 	 * @param stepsValue (<b>long</b>) liczba kroków symulacji (aktualna).
 	 * @param timeValue (<b>double</b>) aktualny czas od startu symulacji (XTPN).
 	 */
-	public void updateTimeStep(boolean XTPN, long stepsValue, double timeValue) {
+	public void updateTimeStep(boolean XTPN, long stepsValue, double timeValue, double tau) {
 		try {
 			if (XTPN) {
 				overlord.getSimulatorBox().getCurrentDockWindow().stepLabelXTPN.setText("" + stepsValue);
-				overlord.getSimulatorBox().getCurrentDockWindow().timeLabelXTPN.setText(Tools.cutValueExt(timeValue, 6));
+				overlord.getSimulatorBox().getCurrentDockWindow().timeLabelXTPN.setText(Tools.cutValueExt(timeValue, 2)
+						+ " (" + Tools.cutValueExt(tau, 2) + ")");
 			} else {
 				overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("" + stepsValue);
 			}

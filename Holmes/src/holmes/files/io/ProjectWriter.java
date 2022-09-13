@@ -328,6 +328,16 @@ public class ProjectWriter {
 						} catch (Exception exc) {
 							GUIManager.getDefaultGUIManager().log("Error: beta location for transition "+trans.getName()+ " unavailable. (Portal problem?)", "error", true);
 						}
+
+						try {
+							ElementLocation betaLoc = trans.getTextsLocations(GUIManager.locationMoveType.TAU).get(e);
+							sheetId = betaLoc.getSheetID();
+							pointX = betaLoc.getPosition().x;
+							pointY = betaLoc.getPosition().y;
+							bw.write(spaces(sp)+"<Transition tau offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
+						} catch (Exception exc) {
+							GUIManager.getDefaultGUIManager().log("Error: tau location for transition "+trans.getName()+ " unavailable. (Portal problem?)", "error", true);
+						}
 					}
 				}
 				sp = 6;
@@ -605,8 +615,10 @@ public class ProjectWriter {
 			
 			ArrayList<Integer> arcClasses = Check.getArcClassCount();
 			int readArcs = arcClasses.get(1) / 2;
+			int doubleArc = arcClasses.get(5) / 2;
 			//readArcs = 0;
-			int totalArcs = arcs.size()-readArcs;
+			//int totalArcs = arcs.size()-readArcs-doubleArc;
+			int totalArcs = arcs.size();
 			if(savedArcs != totalArcs) {
 				GUIManager.getDefaultGUIManager().log("Error: saved "+savedArcs+" out of total "+totalArcs+" arcs.", "error", true);
 			}

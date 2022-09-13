@@ -18,7 +18,7 @@ public class GraphicalSimulatorLogger {
 	private HolmesNotepad log; // = GUIManager.getDefaultGUIManager().getSimLog();
 
 	/**
-	 * Konstruktor domyślny obiektu klasy NetSimulatorLogger.
+	 * Konstruktor domyślny obiektu klasy GraphicalSimulatorLogger.
 	 */
 	public GraphicalSimulatorLogger() {
 		log = GUIManager.getDefaultGUIManager().getSimLog();

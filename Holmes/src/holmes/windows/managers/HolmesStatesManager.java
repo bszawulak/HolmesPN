@@ -617,7 +617,7 @@ public class HolmesStatesManager extends JFrame {
 
 			Object[] options = {"Set new state", "Keep current state",};
 			int n = JOptionPane.showOptionDialog(null,
-					"Set all places of the net according to the selected (table row: "+(selected+1)+") state?",
+					"Set all places of the net according to the selected (table row: "+(selected+1)+") p-state?",
 					"Setting new state", JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
@@ -649,7 +649,7 @@ public class HolmesStatesManager extends JFrame {
 			}
 			Object[] options = {"Add new XTPN state", "Cancel",};
 			int n = JOptionPane.showOptionDialog(null,
-					"Add current XTPN net state to states table?",
+					"Remember current XTPN p-state?",
 					"New state", JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
@@ -720,7 +720,7 @@ public class HolmesStatesManager extends JFrame {
 
 			int selected = statesTableXTPN.getSelectedRow();
 			if(selected == -1) {
-				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+				JOptionPane.showMessageDialog(null, "Please select p-state from the table.", "Selection problem",
 						JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				removeStateActionXTPN();
@@ -743,8 +743,8 @@ public class HolmesStatesManager extends JFrame {
 			if(selected > -1)
 				new HolmesStatesEditorXTPN((HolmesStatesManager)ego, statesManager.getMultiset_M(selected), selected);
 			else {
-				JOptionPane.showMessageDialog(ego, "Please click on any XTPN state row.",
-						"No XTPN state selected", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(ego, "Please click on any XTPN p-state row.",
+						"No XTPN p-state selected", JOptionPane.WARNING_MESSAGE);
 			}
 		});
 		result.add(editStateButton);

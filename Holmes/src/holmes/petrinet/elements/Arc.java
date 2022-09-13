@@ -131,7 +131,6 @@ public class Arc extends PetriNetElement {
                     }
                 }
             }
-
             handleComplexArcGraphics(null);
             return;
         }

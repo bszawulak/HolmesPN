@@ -1,4 +1,4 @@
-package holmes.windows.managers.ssim;
+package holmes.windows.ssim;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

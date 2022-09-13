@@ -43,9 +43,7 @@ public class SPNengine implements IEngine {
 	private ArrayList<Transition> detPrioritySequence;
 	/** Tranzycje z tej listy komplikują algorytm jak jasna cholera */
 	private ArrayList<Transition> schTransitions;
-	
 	private ArrayList<Transition> stochasticTransitions;
-	
 	private SimulatorGlobals settings;
 	private int settingImmediateMode = 2;
 	private boolean settingDetRemoval;
@@ -85,9 +83,9 @@ public class SPNengine implements IEngine {
 		} else {
 			this.generator = new StandardRandom(System.currentTimeMillis());
 		}
-		
-		for(Transition trans : transitions)
-			transitionSTtypeUpdateList.add(trans); //na początku: wszystkie
+
+		//na początku: wszystkie
+		transitionSTtypeUpdateList.addAll(transitions);
 		
 		prepareTransitionsSystem();
 
@@ -100,7 +98,7 @@ public class SPNengine implements IEngine {
 			prePlacesMap.put(transition, prePlacesVector);
 			
 			for(Node node : transition.getOutNodes()) {
-				if(!placesVector.contains(node))
+				if(!placesVector.contains((Place)node))
 					placesVector.add((Place)node);
 			}
 			involvedPlacesMap.put(transition, placesVector);
@@ -113,8 +111,8 @@ public class SPNengine implements IEngine {
 			//}
 			//TODO: tylko tranzycje wyjściowe, wejściowe DO miejsca nie mają znaczenia dla funkcji P(t)
 			for(Node node : place.getOutNodes()) {
-				if(!transitionsVector.contains(node))
-					transitionsVector.add((Transition)node);
+				if(!transitionsVector.contains((Transition) node))
+					transitionsVector.add((Transition) node);
 			}
 			involvedTransitionsMap.put(place, transitionsVector);
 		}
@@ -261,10 +259,7 @@ public class SPNengine implements IEngine {
 			updateSTtransitionsList(lastFired);
 			launchableTransitions.clear();
 			launchableTransitions.add(lastFired);
-			if(launchableTransitions.size() > 1) {
-				@SuppressWarnings("unused")
-				int wtf = 1;
-			}
+
 			return launchableTransitions; 
 		} else {
 			return null;
@@ -366,7 +361,6 @@ public class SPNengine implements IEngine {
 				} else 
 					continue; //ważne! szybciej.
 			}
-			
 			if(rangeJ != i) {//w tym zakresie mieszamy
 				int diff = rangeJ - i;
 				
@@ -471,11 +465,11 @@ public class SPNengine implements IEngine {
 				for (Place prePlace : prePlaces) {
 					int placeLoc = placesMap.get(prePlace);
 					int transLoc = transitionsMap.get(transition);
-					int arc = tpIncidenceMatrix.get(transLoc).get(placeLoc);
-					if(arc==0) {
-						arc = prePlace.getTokensNumber();
+					int weight = tpIncidenceMatrix.get(transLoc).get(placeLoc);
+					if(weight==0) {
+						weight = prePlace.getTokensNumber();
 					}
-                    long firingNumber = prePlace.getTokensNumber() / arc;
+                    long firingNumber = prePlace.getTokensNumber() / weight;
                     massActionKineticModifier = Math.min(massActionKineticModifier, firingNumber);
                 }
 			}
@@ -491,19 +485,16 @@ public class SPNengine implements IEngine {
 	@Override
 	public void setNetSimType(SimulatorGlobals.SimNetType simulationType) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void setMaxMode(boolean value) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void setSingleMode(boolean value) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	/**

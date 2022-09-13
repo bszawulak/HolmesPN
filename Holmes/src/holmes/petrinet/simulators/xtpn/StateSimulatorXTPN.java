@@ -4,9 +4,10 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.MultisetM;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.functions.FunctionsTools;
+import holmes.petrinet.simulators.IRandomGenerator;
 import holmes.petrinet.simulators.QuickSimTools;
 import holmes.petrinet.simulators.SimulatorGlobals;
-import holmes.windows.managers.ssim.HolmesSim;
+import holmes.windows.xtpn.HolmesSimXTPN;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -45,10 +46,8 @@ public class StateSimulatorXTPN implements Runnable {
 
     //okna wywołyjące i inne:
     public JProgressBar progressBar;//pasek postępu symulacji
-    private HolmesSim boss;    //okno nadrzędne symulatora
+    private HolmesSimXTPN boss;    //okno nadrzędne symulatora
     private QuickSimTools quickSim;
-
-    //TRYBY SYMULACJI:
 
     /**
      * Główny konstruktor obiektu klasy StateSimulator.
@@ -59,34 +58,18 @@ public class StateSimulatorXTPN implements Runnable {
         sg = overlord.simSettings;
     }
 
-
-
-    /**
-     * Klasa kontener dla danych z szybkiej symulacji. Macierz tranzycji zawiera tyle list ile kroków symulacji,
-     * a każdy wpis to krotka: liczba kroków w fazach: nieaktywna, aktywna, produkująca, uruchomion; czas w fazach:
-     * nieaktywności, aktywności, produkcji.
-     * Dla miejsc: placesTokensDataMatrix zawiera stan wszystkich miejsc w każdym kroku symulacji.
-     */
-    public static final class QuickSimMatrix {
-        public ArrayList<ArrayList<Double>> transDataMatrix = new ArrayList<>();
-        public ArrayList<ArrayList<Double>> placesTokensDataMatrix = new ArrayList<>();
-        public ArrayList<Double> placesTimeDataVector = new ArrayList<>();
-
-        public ArrayList<Double> avgTokens = new ArrayList<>();
-
-        public double simSteps = 0.0;
-        public double simTime = 0.0;
-        public double simReps = 0.0;
-        public long compTime = 0;
+    public static final class TransitionStepStats {
+        public double inactive = 0;
+        public double active = 0;
+        public double producing = 0;
+        public double fired = 0;
     }
-
 
     /**
      * Metoda ta musi być wywołana przed każdym startem symulatora. Inicjalizuje początkowe struktury
      * danych dla symulatora
-     *
      * @param ownSettings (<b>SimulatorGlobals</b>) parametry symulacji.
-     * @return (< b > boolean < / b >) - true, jeśli wszystko się udało.
+     * @return (<b>boolean</b>) - true, jeśli wszystko się udało.
      */
     public boolean initiateSim(SimulatorGlobals ownSettings) {
         transitions.clear();
@@ -98,7 +81,6 @@ public class StateSimulatorXTPN implements Runnable {
             }
             transitions.add((TransitionXTPN) trans);
         }
-
         for (Place place : overlord.getWorkspace().getProject().getPlaces()) {
             if (!(place instanceof PlaceXTPN)) {
                 transitions.clear();
@@ -118,7 +100,6 @@ public class StateSimulatorXTPN implements Runnable {
         }
 
         engineXTPN.setEngine(ownSettings.getNetType(), transitions, places);
-
         readyToSimulate = true;
         return readyToSimulate;
     }
@@ -131,10 +112,14 @@ public class StateSimulatorXTPN implements Runnable {
         readyToSimulate = true;
     }
 
+    public IRandomGenerator getRandomGenerator() {
+        return engineXTPN.getGenerator();
+    }
+
     /**
      * Metoda ustawiająca obiekty dla symulacji w osobnym wątku.
      * @param simulationType int - typ symulacji: 1 - Node info window 2-qSim 3 - ...
-     * @param blackBox       Object... - zależy od trybu powyżej
+     * @param blackBox Object... - zależy od trybu powyżej
      */
     public void setThreadDetails(int simulationType, Object... blackBox) {
         this.simulationType = simulationType;
@@ -150,6 +135,10 @@ public class StateSimulatorXTPN implements Runnable {
             this.quickSim = (QuickSimTools) blackBox[0];
             this.sg = (SimulatorGlobals) blackBox[1];
             this.progressBar = (JProgressBar) blackBox[2];
+        } else if (simulationType == 4) { //qSim + repetitions + knockout
+            this.boss = (HolmesSimXTPN) blackBox[0];
+            this.sg = (SimulatorGlobals) blackBox[1];
+            this.progressBar = (JProgressBar) blackBox[2];
         }
     }
 
@@ -159,21 +148,23 @@ public class StateSimulatorXTPN implements Runnable {
     public void run() {
         this.terminate = false;
         if (simulationType == 1) { //qSim
-            QuickSimMatrix result = quickSimGatherData();
+            StateSimDataContainer result = quickSimGatherData();
             quickSim.finishedStatsDataXTPN(result, transitions, places);
         } else if (simulationType == 2) { //qSim + repetitions
-            QuickSimMatrix result = quickSimGatherDataRepetitions(false, 0);
+            StateSimDataContainer result = quickSimGatherDataRepetitions(false, 0);
             quickSim.finishedStatsDataXTPN(result, transitions, places);
         } else if (simulationType == 3) { //qSim + repetitions + knockout
-            ArrayList<QuickSimMatrix> result = quickSimKnockout();
+            ArrayList<StateSimDataContainer> result = quickSimKnockout();
             quickSim.finishedStatsDataXTPN_Knockout(result, transitions, places);
+        } else if (simulationType == 4) { //state simulator XTPN
+            StateSimDataContainer result = simulateNet();
+            boss.completeSimulationProcedures_Mk1(result);
         }
         this.terminate = false;
     }
 
     /**
      * Ustawia status wymuszonego kończenia symulacji.
-     *
      * @param status (<b>boolean</b>) true, jeśli symulator ma zakończyć działanie.
      */
     public void setCancelStatus(boolean status) {
@@ -182,224 +173,9 @@ public class StateSimulatorXTPN implements Runnable {
             readyToSimulate = false;
     }
 
-
-    /**
-     * Metoda pracująca w wątku. Metoda symuluje podaną liczbę kroków sieci Petriego dla wybranego wcześniej trybu, tj.
-     * jeśli maximumMode = true, wtedy każda aktywna tranzycja musi się uruchomić.
-     */
-    public void simulateNet() {
-        if (!readyToSimulate) {
-            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
-                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        //tutaj zapisujemy p-stan
-        createBackupState();
-
-        for (int i = 0; i < sg.simSteps_XTPN; i++) {
-            if (terminate)
-                break;
-
-            break;
-        }
-
-        overlord.log("Simulation ended. Restoring zero marking.", "text", true);
-        readyToSimulate = false;
-        restoreInternalMarkingZero();
-    }
-
-    /**
-     * Metoda wywoływana przez okno informacji o miejscu XTPN. Zwraca dwa wektory informacji o tokenach w miejscu.
-     *
-     * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach, ile kroków, ile czasu?
-     * @param place       (<b>PlaceXTPN</b>) obiekt miejsca XTPN, którego tokeny są liczone.
-     * @return (< b > ArrayList[ArrayList[Double]] < / b >) - dwa wektory, pierwszy liczy tokeny w każdym kroku, drugi
-     * zawiera informację o czasie wykonania kroku.
-     */
-    public ArrayList<ArrayList<Double>> simulateNetSinglePlace(SimulatorGlobals ownSettings, PlaceXTPN place) {
-        ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
-        ArrayList<Double> tokensNumber = new ArrayList<>();
-        ArrayList<Double> timeVector = new ArrayList<>();
-        resultVectors.add(tokensNumber);
-        resultVectors.add(timeVector);
-
-        if (!readyToSimulate) {
-            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
-                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
-            return resultVectors;
-        }
-        createBackupState(); //zapis p-stanu
-
-        for (TransitionXTPN trans : transitions) {
-            trans.simHistoryXTPN.storeHistory = false;
-        }
-
-        if (ownSettings.simulateTime) {
-            while (simTimeCounter < ownSettings.simMaxTime_XTPN) {
-                if (terminate)
-                    break;
-
-                processSimStep();
-                if (place.isGammaModeActive()) {
-                    tokensNumber.add((double) place.accessMultiset().size());
-                } else {
-                    tokensNumber.add((double) place.getTokensNumber());
-                }
-                timeVector.add(simTimeCounter);
-            }
-        } else {
-            for (int i = 0; i < ownSettings.simSteps_XTPN; i++) {
-                if (terminate)
-                    break;
-
-                processSimStep();
-                if (place.isGammaModeActive()) {
-                    tokensNumber.add((double) place.accessMultiset().size());
-                } else {
-                    tokensNumber.add((double) place.getTokensNumber());
-                }
-                timeVector.add(simTimeCounter);
-            }
-        }
-        readyToSimulate = false;
-        restoreInternalMarkingZero(); //restore p-state
-        return resultVectors;
-    }
-
-    /**
-     * Metoda symuluje podaną liczbę kroków sieci Petriego dla i sprawdza wybraną tranzycję.
-     *
-     * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach, ile kroków, ile czasu?
-     * @param transition  (<b>TransitionXTPN</b>) - wybrana tranzycja do testowania.
-     * @return (< b > ArrayList[ArrayList[Double]] < / b >) - trzy wektory, pierwszy zawiera status tranzycji (0 - nieaktywna,
-     * 1 - aktywna, 2 - produkuje, 3 - WYprodukowuje tokeny (w danym momencie), drugi zawiera czas statusu, trzeci
-     * to numer kroku dla statusu.
-     */
-    public ArrayList<ArrayList<Double>> simulateNetSingleTransition(SimulatorGlobals ownSettings, TransitionXTPN transition) {
-        ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
-        ArrayList<Double> statusVector;
-        ArrayList<Double> timeVector;
-        ArrayList<Double> statsVector = new ArrayList<>();
-
-        if (!readyToSimulate) {
-            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
-                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
-            return resultVectors;
-        }
-        createBackupState(); //zapis p-stanu
-
-        for (TransitionXTPN trans : transitions) {
-            trans.simHistoryXTPN.storeHistory = true;
-        }
-
-        if (ownSettings.simulateTime) {
-            int step = 0;
-            while (simTimeCounter < ownSettings.simMaxTime_XTPN) {
-                if (terminate)
-                    break;
-
-                processSimStep();
-                step++;
-            }
-            statsVector.add((double) step);
-        } else {
-            for (int step = 0; step < ownSettings.simSteps_XTPN; step++) {
-                if (terminate)
-                    break;
-
-                processSimStep();
-            }
-            statsVector.add((double) ownSettings.simSteps_XTPN);
-        }
-        statsVector.add(simTimeCounter);
-
-        for (TransitionXTPN trans : transitions) {
-            if (trans.equals(transition)) { //zachowaj historię, zanim skasujemy:
-                statusVector = new ArrayList<>(trans.simHistoryXTPN.statesHistory);
-                timeVector = new ArrayList<>(trans.simHistoryXTPN.statesTimeHistory);
-
-                statsVector.add((double) trans.simHistoryXTPN.simInactiveState);
-                statsVector.add((double) trans.simHistoryXTPN.simActiveState);
-                statsVector.add((double) trans.simHistoryXTPN.simProductionState);
-                statsVector.add((double) trans.simHistoryXTPN.simFiredState);
-                statsVector.add(trans.simHistoryXTPN.simInactiveTime);
-                statsVector.add(trans.simHistoryXTPN.simActiveTime);
-                statsVector.add(trans.simHistoryXTPN.simProductionTime);
-
-                resultVectors.add(statusVector);
-                resultVectors.add(timeVector);
-                resultVectors.add(statsVector);
-            }
-            trans.simHistoryXTPN.cleanHistoryVectors();
-        }
-
-        readyToSimulate = false;
-        restoreInternalMarkingZero(); //restore p-state
-        return resultVectors;
-    }
-
-    /**
-     * Metoda symuluje podaną liczbę kroków sieci Petriego dla i zwraca statystyki dla wybranej tranzycji.
-     *
-     * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach, ile kroków, ile czasu?
-     * @param transition  (<b>TransitionXTPN</b>) - wybrana tranzycja do testowania.
-     * @return (< b > ArrayList[Double] < / b >) - wektor danych zebranych w symulacji
-     */
-    public ArrayList<Double> simulateNetSingleTransitionStatistics(SimulatorGlobals ownSettings, TransitionXTPN transition) {
-        ArrayList<Double> dataVector = new ArrayList<>();
-        if (!readyToSimulate) {
-            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
-                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
-            return dataVector;
-        }
-        createBackupState(); //zapis p-stanu
-
-        for (TransitionXTPN trans : transitions) {
-            trans.simHistoryXTPN.storeHistory = false;
-        }
-
-        int step = 0;
-        if (ownSettings.simulateTime) {
-            while (simTimeCounter < ownSettings.simMaxTime_XTPN) {
-                if (terminate)
-                    break;
-                processSimStep();
-                step++;
-            }
-        } else {
-            for (step = 0; step < ownSettings.simSteps_XTPN; step++) {
-                if (terminate)
-                    break;
-                processSimStep();
-            }
-        }
-
-        for (TransitionXTPN trans : transitions) {
-            if (!trans.equals(transition))
-                continue;
-
-            dataVector.add((double) step);
-            dataVector.add(simTimeCounter);
-            dataVector.add((double) trans.simHistoryXTPN.simInactiveState);
-            dataVector.add((double) trans.simHistoryXTPN.simActiveState);
-            dataVector.add((double) trans.simHistoryXTPN.simProductionState);
-            dataVector.add((double) trans.simHistoryXTPN.simFiredState);
-            dataVector.add(trans.simHistoryXTPN.simInactiveTime);
-            dataVector.add(trans.simHistoryXTPN.simActiveTime);
-            dataVector.add(trans.simHistoryXTPN.simProductionTime);
-            break;
-        }
-
-        readyToSimulate = false;
-        restoreInternalMarkingZero(); //restore p-state
-        return dataVector;
-    }
-
     /**
      * Główna metoda przetwarzająca krok symulacji oraz zapisująca historię stanów tranzycji.
-     *
-     * @return (< b > ArrayList[ArrayList[Double]] < / b >) - dwa wektory: placesTokensVector oraz placesTimeVector.
+     * @return (<b>ArrayList[ArrayList[Double]]</b>) - dwa wektory: placesTokensVector oraz placesTimeVector.
      */
     private ArrayList<ArrayList<Double>> processSimStep() {
         ArrayList<Double> placesTokensVector = new ArrayList<>();
@@ -491,7 +267,6 @@ public class StateSimulatorXTPN implements Runnable {
             }
         }
 
-
         for (TransitionXTPN trans : transitions) {
             if (stateChangedTransitions.contains(trans)) //już przetworzona
                 continue;
@@ -532,7 +307,6 @@ public class StateSimulatorXTPN implements Runnable {
         producingTokensTransitionsAll.clear();
         transitionsAfterSubtracting.clear();
         nextXTPNsteps.clear();
-
         simLastTimeChange = infoNode.timeToChange;
 
         return placesResultVectors;
@@ -542,8 +316,7 @@ public class StateSimulatorXTPN implements Runnable {
      * W zasadzie jest to główna metoda ''odpalania'' tranzycji. Te które są aktywne pobierają tokeny i
      * są umieszczane na listach launchedXTPN oraz (potem) launchedClassical. Te tranzycje dla których
      * zabrakło tokenów są deaktywowane oraz umieszczane w trzeciej tablicy: deactivated.
-     *
-     * @return (< b > ArrayList[ArrayList[TransitionXTPN]] < / b >) - trzy listy:
+     * @return (<b>ArrayList[ArrayList[TransitionXTPN]]</b>) - trzy listy:
      * <b>launchedXTPN</b> (.get(0)), <b>launchedClassical</b> (.get(1)) oraz <b>deactivated</b> (.get(2)).
      */
     public ArrayList<ArrayList<TransitionXTPN>> consumeTokensSubphase() {
@@ -571,7 +344,11 @@ public class StateSimulatorXTPN implements Runnable {
                         if (transition.fpnExtension.isFunctional()) {
                             weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                         }
-                        place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
+                        ArrayList<Double> removedTokens = place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
+
+                        if(arc.getArcType() == Arc.TypeOfArc.READARC) {
+                            transition.readArcReturnVector.add(new TransitionXTPN.TokensBack(place, weight, removedTokens));
+                        }
                     }
                 }
                 launchedXTPN.add(transition);
@@ -685,9 +462,693 @@ public class StateSimulatorXTPN implements Runnable {
         for (TransitionXTPN trans : transitions) {
             trans.deactivateTransitionXTPN(false);
             trans.simHistoryXTPN.resetSimVariables_XTPN();
+            trans.simHistoryXTPN.cleanHistoryVectors(); //TODO
         }
     }
 
+    /**
+     * Metoda wywoływana przez okno informacji o miejscu XTPN. Zwraca dwa wektory informacji o tokenach w miejscu.
+     * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach, ile kroków, ile czasu?
+     * @param place (<b>PlaceXTPN</b>) obiekt miejsca XTPN, którego tokeny są liczone.
+     * @param repetitions (<b>int</b>) liczba powtórzeń.
+     * @return (<b>ArrayList[ArrayList[Double]]</b>) - dwa wektory, pierwszy liczy tokeny w każdym kroku, drugi
+     * zawiera informację o czasie wykonania kroku.
+     */
+    public ArrayList<ArrayList<Double>> simulateNetSinglePlace(SimulatorGlobals ownSettings, PlaceXTPN place
+            , int repetitions) {
+
+        ArrayList<Double> tokensNumber = new ArrayList<>();
+        ArrayList<Double> timeVector = new ArrayList<>();
+
+        if (!readyToSimulate) {
+            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
+                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        createBackupState(); //zapis p-stanu
+
+        for (TransitionXTPN trans : transitions) {
+            trans.simHistoryXTPN.storeHistory = false;
+        }
+
+        for(int rep=0; rep<repetitions; rep++) {
+            for (int i = 0; i < ownSettings.getSimSteps_XTPN(); i++) {
+                if (terminate)
+                    break;
+
+                processSimStep();
+                if(rep == 0) {
+                    if (place.isGammaModeActive()) {
+                        tokensNumber.add((double) place.accessMultiset().size() / repetitions);
+                    } else {
+                        tokensNumber.add((double) place.getTokensNumber() / repetitions);
+                    }
+                    timeVector.add(simTimeCounter / repetitions);
+                } else {
+                    if (place.isGammaModeActive()) {
+                        tokensNumber.set(i,  tokensNumber.get(i) + (place.accessMultiset().size() / repetitions) );
+                    } else {
+                        tokensNumber.set(i,  tokensNumber.get(i) + (place.getTokensNumber() / repetitions) );
+                    }
+                    timeVector.set(i,  timeVector.get(i) + (simTimeCounter / repetitions) );
+                }
+            }
+            restoreInternalMarkingZero(); //restore p-state
+            restartEngine();
+        }
+
+        ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
+        resultVectors.add(tokensNumber);
+        resultVectors.add(timeVector);
+
+        readyToSimulate = false;
+        return resultVectors;
+    }
+
+    /**
+     * Metoda symuluje podaną liczbę kroków sieci Petriego dla i sprawdza wybraną tranzycję.
+     * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach, ile kroków, ile czasu?
+     * @param transition (<b>TransitionXTPN</b>) wybrana tranzycja do testowania.
+     * @param repetitions (<b>int</b>) liczba powtórzeń.
+     * @return (<b>ArrayList[ArrayList[Double]]</b>) - trzy wektory, pierwszy zawiera status tranzycji (0 - nieaktywna,
+     * 1 - aktywna, 2 - produkuje, 3 - WYprodukowuje tokeny (w danym momencie), drugi zawiera czas statusu, trzeci
+     * to numer kroku dla statusu.
+     */
+    public ArrayList<ArrayList<Double>> simulateNetSingleTransition(SimulatorGlobals ownSettings
+            , TransitionXTPN transition, int repetitions) {
+
+        ArrayList<Double> statusVector = new ArrayList<>();
+        ArrayList<Double> timeVector = new ArrayList<>();
+        ArrayList<Double> statsVector = new ArrayList<>();
+
+        statsVector.addAll(Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+
+        if (!readyToSimulate) {
+            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
+                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        createBackupState(); //zapis p-stanu
+
+        transition.simHistoryXTPN.storeHistory = true;
+
+        for(int rep=0; rep<repetitions; rep++) {
+            for (int step = 0; step < ownSettings.getSimSteps_XTPN(); step++) {
+                if (terminate)
+                    break;
+
+                processSimStep();
+
+                if(rep == 0) {
+                    statusVector.add(transition.simHistoryXTPN.statesHistory.get(step) / repetitions);
+                    timeVector.add(simTimeCounter / repetitions);
+
+                    statsVector.set(0, (double) ownSettings.getSimSteps_XTPN() / (double) repetitions );
+                    statsVector.set(1, simTimeCounter / (double) repetitions );
+                    statsVector.set(2, (double) transition.simHistoryXTPN.simInactiveState / (double) repetitions );
+                    statsVector.set(3, (double) transition.simHistoryXTPN.simActiveState / (double) repetitions );
+                    statsVector.set(4, (double) transition.simHistoryXTPN.simProductionState / (double) repetitions );
+                    statsVector.set(5, (double) transition.simHistoryXTPN.simFiredState / (double) repetitions );
+                    statsVector.set(6, transition.simHistoryXTPN.simInactiveTime / (double) repetitions );
+                    statsVector.set(7, transition.simHistoryXTPN.simActiveTime / (double) repetitions );
+                    statsVector.set(8, transition.simHistoryXTPN.simProductionTime / (double) repetitions );
+                } else {
+                    statusVector.set(step, statusVector.get(step) + transition.simHistoryXTPN.statesHistory.get(step) / repetitions);
+                    timeVector.set(step, timeVector.get(step) + simTimeCounter / repetitions);
+
+                    statsVector.set(0, statsVector.get(0) + (double) ownSettings.getSimSteps_XTPN() / (double) repetitions );
+                    statsVector.set(1, statsVector.get(1) + simTimeCounter / (double) repetitions );
+                    statsVector.set(2, statsVector.get(2) + (double) transition.simHistoryXTPN.simInactiveState / (double) repetitions );
+                    statsVector.set(3, statsVector.get(3) + (double) transition.simHistoryXTPN.simActiveState / (double) repetitions );
+                    statsVector.set(4, statsVector.get(4) + (double) transition.simHistoryXTPN.simProductionState / (double) repetitions );
+                    statsVector.set(5, statsVector.get(5) + (double) transition.simHistoryXTPN.simFiredState / (double) repetitions );
+                    statsVector.set(6, statsVector.get(6) + transition.simHistoryXTPN.simInactiveTime / (double) repetitions );
+                    statsVector.set(7, statsVector.get(7) + transition.simHistoryXTPN.simActiveTime / (double) repetitions );
+                    statsVector.set(8, statsVector.get(8) + transition.simHistoryXTPN.simProductionTime / (double) repetitions );
+                }
+            }
+
+            restoreInternalMarkingZero(); //restore p-state
+            restartEngine();
+            transition.simHistoryXTPN.storeHistory = true;
+        }
+
+        ArrayList<ArrayList<Double>> resultVectors = new ArrayList<>();
+        resultVectors.add(statusVector);
+        resultVectors.add(timeVector);
+        resultVectors.add(statsVector);
+
+        readyToSimulate = false;
+        return resultVectors;
+    }
+
+    /**
+     * Metoda symuluje podaną liczbę kroków sieci Petriego dla i zwraca statystyki dla wybranej tranzycji.
+     * @param ownSettings (<b>SimulatorGlobals</b>) ważne informacje: czy symulacja po czasie czy po krokach, ile kroków, ile czasu?
+     * @param transition  (<b>TransitionXTPN</b>) wybrana tranzycja do testowania.
+     * @return (<b>ArrayList[Double] </b>) - wektor danych zebranych w symulacji
+     */
+    public ArrayList<Double> simulateNetSingleTransitionStatistics(SimulatorGlobals ownSettings, TransitionXTPN transition) {
+        ArrayList<Double> dataVector = new ArrayList<>();
+        if (!readyToSimulate) {
+            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
+                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
+            return dataVector;
+        }
+        createBackupState(); //zapis p-stanu
+
+        for (TransitionXTPN trans : transitions) {
+            trans.simHistoryXTPN.storeHistory = false;
+        }
+
+        int step = 0;
+        if (ownSettings.isTimeSimulation_XTPN()) {
+            while (simTimeCounter < ownSettings.getSimTime_XTPN()) {
+                if (terminate)
+                    break;
+                processSimStep();
+                step++;
+            }
+        } else {
+            for (step = 0; step < ownSettings.getSimSteps_XTPN(); step++) {
+                if (terminate)
+                    break;
+                processSimStep();
+            }
+        }
+
+        for (TransitionXTPN trans : transitions) {
+            if (!trans.equals(transition))
+                continue;
+
+            dataVector.add((double) step);
+            dataVector.add(simTimeCounter);
+            dataVector.add((double) trans.simHistoryXTPN.simInactiveState);
+            dataVector.add((double) trans.simHistoryXTPN.simActiveState);
+            dataVector.add((double) trans.simHistoryXTPN.simProductionState);
+            dataVector.add((double) trans.simHistoryXTPN.simFiredState);
+            dataVector.add(trans.simHistoryXTPN.simInactiveTime);
+            dataVector.add(trans.simHistoryXTPN.simActiveTime);
+            dataVector.add(trans.simHistoryXTPN.simProductionTime);
+            break;
+        }
+
+        readyToSimulate = false;
+        restoreInternalMarkingZero(); //restore p-state
+        return dataVector;
+    }
+
+
+    /**
+     * Główny symulator programu dla wykresów. Rozdziela zadanie sumulacji na jedną z dwóch metod, zależnie czy
+     * symulacja ma być po liczbie kroków, czy po czasie.
+     * @return (<b>QuickSimMatrix</b>) obiekt danych z wynikami.
+     */
+    public StateSimDataContainer simulateNet() {
+        StateSimDataContainer resMatrix = new StateSimDataContainer();
+        if (!readyToSimulate) {
+            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
+                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
+            return resMatrix;
+        }
+
+        createBackupState(); //zapis p-stanu
+
+        if(sg.isTimeSimulation_XTPN()) {
+            resMatrix = simulateNetTime();
+        } else {
+            resMatrix = simulateNetSteps();
+        }
+
+        SimulatorGlobals ssg = overlord.simSettings;
+
+        readyToSimulate = false;
+        restoreInternalMarkingZero(); //restore p-state
+        return resMatrix;
+    }
+
+    /**
+     * Metoda symulacji po liczbie kroków.
+     * @return (<b>QuickSimMatrix</b>) obiekt danych z wynikami.
+     */
+    public StateSimDataContainer simulateNetSteps() {
+        StateSimDataContainer resMatrix = new StateSimDataContainer();
+        ArrayList<Double> averageTransFire = new ArrayList<>();
+        ArrayList<ArrayList<Double>> tokensInSteps = new ArrayList<>();
+        ArrayList<Double> avgTimeForStep = new ArrayList<>();
+        Date dateStart = new Date();
+
+        //powtórzenia symulacji:
+        int repetitionsValue = sg.getSimRepetitions_XTPN();
+
+        //czy zapisywać tylko wybrane kroki?
+        boolean onlySelected = sg.isPartialRecordingSteps();
+        int selSteps = 0;
+        if (onlySelected)
+            selSteps = sg.getRecordedSteps();
+
+        //czy obliczać statystyki tranzycji?
+        boolean recordStats = sg.isStatsRecorded();
+
+        //inicjalizacja wektora tokenów miejsc
+        ArrayList<Double> averageTokens = new ArrayList<>();
+        ArrayList<ArrayList<Double>> transStatsFinal = new ArrayList<>();
+
+        for(PlaceXTPN ignored : places) {
+            averageTokens.add(0.0);
+        }
+
+        for (TransitionXTPN trans : transitions) {
+            trans.simHistoryXTPN.storeHistory = true;
+            averageTransFire.add(0.0);
+
+            //stwórz tyle wektorów ile jest tranzycji:
+            transStatsFinal.add(new ArrayList<>(Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)));
+            resMatrix.transitionsSimHistory.add(new ArrayList<>());
+        }
+
+        progressBar.setValue(0);
+        progressBar.setMaximum(repetitionsValue * 10);
+
+        int progress = 0;
+        resMatrix.simReps = repetitionsValue;
+
+        for (int rep = 0; rep < sg.getSimRepetitions_XTPN(); rep++) {
+            int tenth = (int) sg.getSimSteps_XTPN() / 10;
+            int maxUpdate = 0;
+            int realStep = 0; //bo pradziwy step może podlegać ignorowaniu bo "onlySelected = true"
+            for (int step = 0; step < sg.getSimSteps_XTPN(); step++) {
+                if (terminate)
+                    break;
+
+                ArrayList<ArrayList<Double>> placesStatusVectors = processSimStep();
+
+                if(step > 0 && onlySelected) {
+                    if( !(step % selSteps == 0) ) {
+                        if (step % tenth == 0 && maxUpdate < 10) {
+                            progressBar.setValue(progress++);
+                            progressBar.update(progressBar.getGraphics());
+                            maxUpdate++;
+                        }
+                        continue;
+                    }
+                }
+
+                if(rep == 0) { //pierwsza iteracja powtórzeń symulacji
+                    //dokładna liczba tokenów w każdym kroku:
+                    tokensInSteps.add(placesStatusVectors.get(0));
+
+                    //zapis średniej liczby tokenów w krokach:
+                    for (int placeID = 0; placeID < placesStatusVectors.get(0).size(); placeID++) {
+                        averageTokens.set(placeID, averageTokens.get(placeID) + placesStatusVectors.get(0).get(placeID) );
+                    }
+
+                    //średni czas wykonania kroku:
+                    avgTimeForStep.add(placesStatusVectors.get(1).get(0)) ; //i tak jest tylko jedna wartość po kroku
+
+                    //dane tranzycji dla każdego kroku:
+                    for (int tID = 0; tID < transitions.size(); tID++) {
+                        TransitionXTPN trans = transitions.get(tID);
+                        TransitionStepStats stepHist = new TransitionStepStats();
+                        double state = trans.simHistoryXTPN.statesHistory.get( trans.simHistoryXTPN.statesHistory.size() - 1 );
+                        if(state == 0) {
+                            //stepHist.inactive++;
+                            stepHist.inactive += (1.0 / repetitionsValue);
+                        } else if(state == 1) {
+                            //stepHist.active++;
+                            stepHist.active += (1.0 / repetitionsValue);
+                        } else if(state == 2) {
+                            //stepHist.producing++;
+                            stepHist.producing += (1.0 / repetitionsValue);
+                        } else if(state == 3) {
+                            //stepHist.fired++;
+                            stepHist.fired += (1.0 / repetitionsValue);
+                            averageTransFire.set(tID, averageTransFire.get(tID) + 1); //tyle razy została uruchomiana w krokach symulacji tego powtórzenia
+                        }
+                        resMatrix.transitionsSimHistory.get(tID).add(stepHist);
+                    }
+                } else if (rep < repetitionsValue - 1) { //od drugiego do przedostatniego powtórzenia:
+                    for (int placeID = 0; placeID < placesStatusVectors.get(0).size(); placeID++) {
+                        double tokens = placesStatusVectors.get(0).get(placeID);
+                        //dokładna liczba tokenów w każdym kroku (dodaj aktualną)
+                        tokensInSteps.get(realStep).set(placeID, tokensInSteps.get(realStep).get(placeID) + tokens );
+                        //zapis tokenów w krokach:
+                        averageTokens.set(placeID, averageTokens.get(placeID) + tokens );
+                    }
+
+                    //średni czas wykonania kroku step:
+                    avgTimeForStep.set(realStep, avgTimeForStep.get(realStep) + placesStatusVectors.get(1).get(0) );
+
+                    //dane tranzycji dla każdego kroku:
+                    for (int tID = 0; tID < transitions.size(); tID++) {
+                        TransitionXTPN trans = transitions.get(tID);
+                        TransitionStepStats stepHist = new TransitionStepStats();
+                        double state = trans.simHistoryXTPN.statesHistory.get(trans.simHistoryXTPN.statesHistory.size() - 1);
+
+                        if(state == 0) {
+                            //resMatrix.transitionsSimHistory.get(realStep).inactive++;
+                            resMatrix.transitionsSimHistory.get(tID).get(realStep).inactive += (1.0 / repetitionsValue);
+                        } else if(state == 1) {
+                            //resMatrix.transitionsSimHistory.get(realStep).active++;
+                            resMatrix.transitionsSimHistory.get(tID).get(realStep).active += (1.0 / repetitionsValue);
+                        } else if(state == 2) {
+                            //resMatrix.transitionsSimHistory.get(realStep).producing++;
+                            resMatrix.transitionsSimHistory.get(tID).get(realStep).producing += (1.0 / repetitionsValue);
+                        } else if(state == 3) {
+                            //resMatrix.transitionsSimHistory.get(realStep).fired++;
+                            resMatrix.transitionsSimHistory.get(tID).get(realStep).fired += (1.0 / repetitionsValue);
+                            averageTransFire.set(tID, averageTransFire.get(tID) + 1); //tyle razy została uruchomiana w krokach symulacji tego powtórzenia
+                        }
+                    }
+
+                    realStep++;
+                } else { //ostatnie powtórzenie:
+                    for (int placeID = 0; placeID < placesStatusVectors.get(0).size(); placeID++) {
+                        double tokens = placesStatusVectors.get(0).get(placeID);
+                        //dokładna liczba tokenów w każdym kroku (dodaj aktualną)
+                        tokensInSteps.get(realStep).set(placeID, tokensInSteps.get(realStep).get(placeID) + tokens );
+                        tokensInSteps.get(realStep).set(placeID, tokensInSteps.get(realStep).get(placeID) / repetitionsValue );
+                        //zapis tokenów w krokach:
+                        averageTokens.set(placeID, averageTokens.get(placeID) + tokens );
+                        //tokensAvgFinal.set(placeID, tokensAvgFinal.get(placeID) / sg.getSimSteps_XTPN() );
+                    }
+
+                    //średni czas wykonania kroku step:
+                    avgTimeForStep.set(realStep, avgTimeForStep.get(realStep) + placesStatusVectors.get(1).get(0) );
+                    avgTimeForStep.set(realStep, avgTimeForStep.get(realStep) / repetitionsValue );
+
+                    //dane tranzycji dla każdego kroku:
+                    for (int tID = 0; tID < transitions.size(); tID++) {
+                        TransitionXTPN trans = transitions.get(tID);
+                        TransitionStepStats stepHist = new TransitionStepStats();
+                        double state = trans.simHistoryXTPN.statesHistory.get(trans.simHistoryXTPN.statesHistory.size() - 1);
+
+                        if(state == 0) {
+                            //resMatrix.transitionsSimHistory.get(realStep).inactive++;
+                            resMatrix.transitionsSimHistory.get(tID).get(realStep).inactive += (1.0 / repetitionsValue);
+                        } else if(state == 1) {
+                            //resMatrix.transitionsSimHistory.get(realStep).active++;
+                            resMatrix.transitionsSimHistory.get(tID).get(realStep).active += (1.0 / repetitionsValue);
+                        } else if(state == 2) {
+                            //resMatrix.transitionsSimHistory.get(realStep).producing++;
+                            resMatrix.transitionsSimHistory.get(tID).get(realStep).producing += (1.0 / repetitionsValue);
+                        } else if(state == 3) {
+                            //resMatrix.transitionsSimHistory.get(realStep).fired++;
+                            resMatrix.transitionsSimHistory.get(tID).get(realStep).fired += (1.0 / repetitionsValue);
+                            averageTransFire.set(tID, averageTransFire.get(tID) + 1); //tyle razy została uruchomiana w krokach symulacji tego powtórzenia
+                        }
+                    }
+                    realStep++;
+                }
+
+                if (step % tenth == 0 && maxUpdate < 10) {
+                    progressBar.setValue(progress++);
+                    progressBar.update(progressBar.getGraphics());
+                    maxUpdate++;
+                }
+            }
+            resMatrix.simSteps += sg.getSimSteps_XTPN();
+
+            for (int transID = 0; transID < transitions.size(); transID++) {
+                transStatsFinal.get(transID).set(0, transStatsFinal.get(transID).get(0) + transitions.get(transID).simHistoryXTPN.simInactiveState);
+                transStatsFinal.get(transID).set(1, transStatsFinal.get(transID).get(1) + transitions.get(transID).simHistoryXTPN.simActiveState);
+                transStatsFinal.get(transID).set(2, transStatsFinal.get(transID).get(2) + transitions.get(transID).simHistoryXTPN.simProductionState);
+                transStatsFinal.get(transID).set(3, transStatsFinal.get(transID).get(3) + transitions.get(transID).simHistoryXTPN.simFiredState);
+                transStatsFinal.get(transID).set(4, transStatsFinal.get(transID).get(4) + transitions.get(transID).simHistoryXTPN.simInactiveTime);
+                transStatsFinal.get(transID).set(5, transStatsFinal.get(transID).get(5) + transitions.get(transID).simHistoryXTPN.simActiveTime);
+                transStatsFinal.get(transID).set(6, transStatsFinal.get(transID).get(6) + transitions.get(transID).simHistoryXTPN.simProductionTime);
+            }
+
+            resMatrix.simTime += simTimeCounter;
+            simTimeCounter = 0.0;
+            restoreInternalMarkingZero(); //restore p-state
+
+            for (TransitionXTPN trans : transitions) {
+                trans.simHistoryXTPN.storeHistory = true;
+            }
+        }
+        progressBar.setValue(repetitionsValue * 10);
+        progressBar.update(progressBar.getGraphics());
+
+        //podsumowanie całości, zebranie danych:
+        int realSimulatedSteps = tokensInSteps.size();
+        for (int transID = 0; transID < transitions.size(); transID++) {
+            transStatsFinal.get(transID).set(0, transStatsFinal.get(transID).get(0) / repetitionsValue);
+            transStatsFinal.get(transID).set(1, transStatsFinal.get(transID).get(1) / repetitionsValue);
+            transStatsFinal.get(transID).set(2, transStatsFinal.get(transID).get(2) / repetitionsValue);
+            transStatsFinal.get(transID).set(3, transStatsFinal.get(transID).get(3) / repetitionsValue);
+            transStatsFinal.get(transID).set(4, transStatsFinal.get(transID).get(4) / repetitionsValue);
+            transStatsFinal.get(transID).set(5, transStatsFinal.get(transID).get(5) / repetitionsValue);
+            transStatsFinal.get(transID).set(6, transStatsFinal.get(transID).get(6) / repetitionsValue);
+
+            averageTransFire.set(transID, averageTransFire.get(transID) / (repetitionsValue * realSimulatedSteps) ); //tyle razy została uruchomiana w krokach symulacji tego powtórzenia
+            transitions.get(transID).simHistoryXTPN.cleanHistoryVectors();
+        }
+        for (int pID = 0; pID < places.size(); pID++) {
+            //wcześniej pod kożdą pozycja była SUMA średnich po krokach symulacji, teraz dzielimy przez liczbę powtórzeń symulacji
+            averageTokens.set(pID, averageTokens.get(pID) / ( repetitionsValue * realSimulatedSteps) );
+        }
+
+        resMatrix.simSteps /= repetitionsValue;  // ile kroków na powtórzenie
+        resMatrix.simTime /= repetitionsValue; // ile czasu na powtórzenie
+        resMatrix.avgTokens = averageTokens; //średnia liczba tokenów
+        resMatrix.avgFired = averageTransFire; //średnia liczba uruchomień tranzycji po wszystkich krokach i powtórzeniach
+        resMatrix.avgTimeForStep = avgTimeForStep; //średni czas wykonania się danego kroku
+        resMatrix.fullTokensHistory = tokensInSteps;
+        //resMatrix.transitionsSimHistory - wypełnione w procesie symulacji kroków powyżej
+        resMatrix.transitionsStatistics = transStatsFinal; //główne statystyki symulacji
+        Date dateEnd = new Date();
+        resMatrix.compTime = dateEnd.getTime() - dateStart.getTime(); //czas trwania oblicze
+
+        return resMatrix;
+    }
+
+    /**
+     * Metoda symulacji po czasie. Działa w ramach powtórzeń tak, że piersze powtórzenie wyznacza maks. liczbę kroków symulacji.
+     * @return (<b>QuickSimMatrix</b>) obiekt danych z wynikami.
+     */
+    public StateSimDataContainer simulateNetTime() {
+        StateSimDataContainer resMatrix = new StateSimDataContainer();
+        ArrayList<Double> averageTransFire = new ArrayList<>();
+        ArrayList<ArrayList<Double>> tokensInSteps = new ArrayList<>();
+        Date dateStart = new Date();
+
+        //powtórzenia symulacji
+        int repetitionsValue = sg.getSimRepetitions_XTPN();
+        //średni czas w którym nastepował dany krok symulacji
+        ArrayList<Double> avgTimeForStep = new ArrayList<>();
+        //tutaj są statystyki tranzycji zbiorcze:
+        ArrayList<ArrayList<Double>> transStatsFinal = new ArrayList<>();
+
+        for (TransitionXTPN trans : transitions) {
+            trans.simHistoryXTPN.storeHistory = true;
+            averageTransFire.add(0.0);
+            transStatsFinal.add(new ArrayList<>(Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)));
+            resMatrix.transitionsSimHistory.add(new ArrayList<>());
+        }
+
+        //inicjalizacja wektora tokenów miejsc
+        //ArrayList<Double> tokensAvg = new ArrayList<>();
+        ArrayList<Double> averageTokens = new ArrayList<>();
+        for (PlaceXTPN ignored : places) {
+            //tokensAvg.add(0.0);
+            averageTokens.add(0.0);
+        }
+
+        progressBar.setValue(0);
+        progressBar.setMaximum(repetitionsValue * 10);
+        int progress = 0;
+        resMatrix.simReps = repetitionsValue;
+
+        for (int rep = 0; rep < repetitionsValue; rep++) {
+            int tenth = (int) sg.getSimTime_XTPN() / 10;
+            int maxUpdate = 0;
+            int step = 0;
+            int realStep = 0; //bo pradziwy step może podlegać ignorowaniu bo "onlySelected = true"
+            boolean rep2forceContinue = false;
+            if(rep > 0)
+                rep2forceContinue = true; //do skutku, tj. do osiągnięcia poprzedniej liczby kroków
+
+            while(simTimeCounter < sg.getSimTime_XTPN() || rep2forceContinue) {
+                if (terminate)
+                    break;
+
+                if(rep > 0) { //nie więcej niż liczba kroków pierwszego powtórzenia
+                    if(step >= avgTimeForStep.size() ) {
+                        break;
+                    }
+                }
+
+                ArrayList<ArrayList<Double>> placesStatusVectors = processSimStep();
+                if(rep == 0) {
+                    //dokładna liczba tokenów w każdym kroku:
+                    tokensInSteps.add(placesStatusVectors.get(0));
+
+                    //zapis średniej liczby tokenów w krokach:
+                    for (int placeID = 0; placeID < placesStatusVectors.get(0).size(); placeID++) {
+                        averageTokens.set(placeID, averageTokens.get(placeID) + placesStatusVectors.get(0).get(placeID) );
+                    }
+
+                    //średni czas wykonania kroku:
+                    avgTimeForStep.add(placesStatusVectors.get(1).get(0)) ; //i tak jest tylko jedna wartość po kroku
+
+                    //dane tranzycji dla każdego kroku:
+                    for (int tID = 0; tID < transitions.size(); tID++) {
+                        TransitionXTPN trans = transitions.get(tID);
+                        TransitionStepStats stepHist = new TransitionStepStats();
+                        double state = trans.simHistoryXTPN.statesHistory.get( trans.simHistoryXTPN.statesHistory.size() - 1 );
+                        if(state == 0) {
+                            //stepHist.inactive++;
+                            stepHist.inactive += (1.0 / repetitionsValue);
+                        } else if(state == 1) {
+                            //stepHist.active++;
+                            stepHist.active += (1.0 / repetitionsValue);
+                        } else if(state == 2) {
+                            //stepHist.producing++;
+                            stepHist.producing += (1.0 / repetitionsValue);
+                        } else if(state == 3) {
+                            //stepHist.fired++;
+                            stepHist.fired += (1.0 / repetitionsValue);
+                            averageTransFire.set(tID, averageTransFire.get(tID) + 1); //tyle razy została uruchomiana w krokach symulacji tego powtórzenia
+                        }
+                        resMatrix.transitionsSimHistory.get(tID).add(stepHist);
+                    }
+                } else if (rep < repetitionsValue - 1){
+                    for (int placeID = 0; placeID < placesStatusVectors.get(0).size(); placeID++) {
+                        double tokens = placesStatusVectors.get(0).get(placeID);
+                        //dokładna liczba tokenów w każdym kroku (dodaj aktualną)
+                        tokensInSteps.get(realStep).set(placeID, tokensInSteps.get(realStep).get(placeID) + tokens );
+                        //zapis tokenów w krokach:
+                        averageTokens.set(placeID, averageTokens.get(placeID) + tokens );
+                    }
+
+                    //średni czas wykonania kroku step:
+                    avgTimeForStep.set(realStep, avgTimeForStep.get(realStep) + placesStatusVectors.get(1).get(0) );
+
+                    //dane tranzycji dla każdego kroku:
+                    for (int tID = 0; tID < transitions.size(); tID++) {
+                        TransitionXTPN trans = transitions.get(tID);
+                        TransitionStepStats stepHist = new TransitionStepStats();
+                        double state = trans.simHistoryXTPN.statesHistory.get(trans.simHistoryXTPN.statesHistory.size() - 1);
+
+                        if(state == 0) {
+                            //resMatrix.transitionsSimHistory.get(realStep).inactive++;
+                            resMatrix.transitionsSimHistory.get(tID).get(realStep).inactive += (1.0 / repetitionsValue);
+                        } else if(state == 1) {
+                            //resMatrix.transitionsSimHistory.get(realStep).active++;
+                            resMatrix.transitionsSimHistory.get(tID).get(realStep).active += (1.0 / repetitionsValue);
+                        } else if(state == 2) {
+                            //resMatrix.transitionsSimHistory.get(realStep).producing++;
+                            resMatrix.transitionsSimHistory.get(tID).get(realStep).producing += (1.0 / repetitionsValue);
+                        } else if(state == 3) {
+                            //resMatrix.transitionsSimHistory.get(realStep).fired++;
+                            resMatrix.transitionsSimHistory.get(tID).get(realStep).fired += (1.0 / repetitionsValue);
+                            averageTransFire.set(tID, averageTransFire.get(tID) + 1); //tyle razy została uruchomiana w krokach symulacji tego powtórzenia
+                        }
+                    }
+
+                    realStep++;
+                } else { //ostatnie powtórzenie:
+                    for (int placeID = 0; placeID < placesStatusVectors.get(0).size(); placeID++) {
+                        double tokens = placesStatusVectors.get(0).get(placeID);
+                        //dokładna liczba tokenów w każdym kroku (dodaj aktualną)
+                        tokensInSteps.get(realStep).set(placeID, tokensInSteps.get(realStep).get(placeID) + tokens );
+                        tokensInSteps.get(realStep).set(placeID, tokensInSteps.get(realStep).get(placeID) / repetitionsValue);
+                        //zapis tokenów w krokach:
+                        averageTokens.set(placeID, averageTokens.get(placeID) + tokens );
+                        averageTokens.set(placeID, averageTokens.get(placeID) / sg.getSimSteps_XTPN() );
+                    }
+
+                    //średni czas wykonania kroku step:
+                    avgTimeForStep.set(realStep, avgTimeForStep.get(realStep) + placesStatusVectors.get(1).get(0) );
+                    avgTimeForStep.set(realStep, avgTimeForStep.get(realStep) / repetitionsValue);
+
+                    //dane tranzycji dla każdego kroku:
+                    for (int tID = 0; tID < transitions.size(); tID++) {
+                        TransitionXTPN trans = transitions.get(tID);
+                        TransitionStepStats stepHist = new TransitionStepStats();
+                        double state = trans.simHistoryXTPN.statesHistory.get(trans.simHistoryXTPN.statesHistory.size() - 1);
+
+                        if(state == 0) {
+                            //resMatrix.transitionsSimHistory.get(realStep).inactive++;
+                            resMatrix.transitionsSimHistory.get(realStep).get(tID).inactive += (1.0 / repetitionsValue);
+                        } else if(state == 1) {
+                            //resMatrix.transitionsSimHistory.get(realStep).active++;
+                            resMatrix.transitionsSimHistory.get(realStep).get(tID).active += (1.0 / repetitionsValue);
+                        } else if(state == 2) {
+                            //resMatrix.transitionsSimHistory.get(realStep).producing++;
+                            resMatrix.transitionsSimHistory.get(realStep).get(tID).producing += (1.0 / repetitionsValue);
+                        } else if(state == 3) {
+                            //resMatrix.transitionsSimHistory.get(realStep).fired++;
+                            resMatrix.transitionsSimHistory.get(realStep).get(tID).fired += (1.0 / repetitionsValue);
+                            averageTransFire.set(tID, averageTransFire.get(tID) + 1); //tyle razy została uruchomiana w krokach symulacji tego powtórzenia
+                        }
+                    }
+                    realStep++;
+                }
+
+                if (step % tenth == 0 && maxUpdate < 10) {
+                    progressBar.setValue(progress++);
+                    progressBar.update(progressBar.getGraphics());
+                    maxUpdate++;
+                }
+                step++;
+            }
+            resMatrix.simSteps += sg.getSimSteps_XTPN();
+
+            for (int transID = 0; transID < transitions.size(); transID++) {
+                transStatsFinal.get(transID).set(0, transStatsFinal.get(transID).get(0) + transitions.get(transID).simHistoryXTPN.simInactiveState);
+                transStatsFinal.get(transID).set(1, transStatsFinal.get(transID).get(1) + transitions.get(transID).simHistoryXTPN.simActiveState);
+                transStatsFinal.get(transID).set(2, transStatsFinal.get(transID).get(2) + transitions.get(transID).simHistoryXTPN.simProductionState);
+                transStatsFinal.get(transID).set(3, transStatsFinal.get(transID).get(3) + transitions.get(transID).simHistoryXTPN.simFiredState);
+                transStatsFinal.get(transID).set(4, transStatsFinal.get(transID).get(4) + transitions.get(transID).simHistoryXTPN.simInactiveTime);
+                transStatsFinal.get(transID).set(5, transStatsFinal.get(transID).get(5) + transitions.get(transID).simHistoryXTPN.simActiveTime);
+                transStatsFinal.get(transID).set(6, transStatsFinal.get(transID).get(6) + transitions.get(transID).simHistoryXTPN.simProductionTime);
+            }
+
+            resMatrix.simTime += simTimeCounter;
+            simTimeCounter = 0.0;
+            restoreInternalMarkingZero(); //restore p-state
+
+            for (TransitionXTPN trans : transitions) {
+                trans.simHistoryXTPN.storeHistory = true;
+            }
+        }
+        progressBar.setValue(repetitionsValue * 10);
+        progressBar.update(progressBar.getGraphics());
+
+        //podsumowanie całości, zebranie danych:
+        int realSimulatedSteps = tokensInSteps.size();
+        for (int tID = 0; tID < transitions.size(); tID++) {
+            transStatsFinal.get(tID).set(0, transStatsFinal.get(tID).get(0) / repetitionsValue);
+            transStatsFinal.get(tID).set(1, transStatsFinal.get(tID).get(1) / repetitionsValue);
+            transStatsFinal.get(tID).set(2, transStatsFinal.get(tID).get(2) / repetitionsValue);
+            transStatsFinal.get(tID).set(3, transStatsFinal.get(tID).get(3) / repetitionsValue);
+            transStatsFinal.get(tID).set(4, transStatsFinal.get(tID).get(4) / repetitionsValue);
+            transStatsFinal.get(tID).set(5, transStatsFinal.get(tID).get(5) / repetitionsValue);
+            transStatsFinal.get(tID).set(6, transStatsFinal.get(tID).get(6) / repetitionsValue);
+
+            averageTransFire.set(tID, averageTransFire.get(tID) / (repetitionsValue * realSimulatedSteps) ); //tyle razy została uruchomiana w krokach symulacji tego powtórzenia
+            transitions.get(tID).simHistoryXTPN.cleanHistoryVectors();
+        }
+        for (int pID = 0; pID < places.size(); pID++) {
+            //wcześniej pod kożdą pozycja była SUMA średnich po krokach symulacji, teraz dzielimy przez liczbę powtórzeń symulacji
+            averageTokens.set(pID, averageTokens.get(pID) / (repetitionsValue * realSimulatedSteps) );
+        }
+
+        resMatrix.simSteps /= repetitionsValue;  // ile kroków na powtórzenie
+        resMatrix.simTime /= repetitionsValue; // ile czasu na powtórzenie
+        resMatrix.avgTokens = averageTokens; //średnia liczba tokenów
+        resMatrix.avgFired = averageTransFire; //średnia liczba uruchomień tranzycji po wszystkich krokach i powtórzeniach
+        resMatrix.avgTimeForStep = avgTimeForStep; //średni czas wykonania się danego kroku
+        resMatrix.fullTokensHistory = tokensInSteps;
+        //resMatrix.transitionsSimHistory - wypełnione w procesie symulacji kroków powyżej
+        resMatrix.transitionsStatistics = transStatsFinal; //główne statystyki symulacji
+        Date dateEnd = new Date();
+        resMatrix.compTime = dateEnd.getTime() - dateStart.getTime(); //czas trwania obliczeń
+
+        return resMatrix;
+    }
 
     //***************************************************************************************************************
     //****************************************   quickSim   *********************************************************
@@ -698,11 +1159,10 @@ public class StateSimulatorXTPN implements Runnable {
     /**
      * Metoda używana przez moduł quickSim, zbiera dane o średniej liczbie uruchomień tranzycji oraz tokenach
      * w miejscach. Powtarza symulacje maksymalnie 20 razy.
-     *
      * @return QuickSimMatrix - macierz wektorów danych
      */
-    public QuickSimMatrix quickSimGatherData() {
-        QuickSimMatrix resMatrix = new QuickSimMatrix();
+    public StateSimDataContainer quickSimGatherData() {
+        StateSimDataContainer resMatrix = new StateSimDataContainer();
         Date dateStart = new Date();
         resMatrix.simReps = 0;
 
@@ -719,20 +1179,17 @@ public class StateSimulatorXTPN implements Runnable {
             tokensAvg.add(0.0);
         }
 
-        if (sg.simulateTime) {
+        if (sg.isTimeSimulation_XTPN()) {
             progressBar.setValue(0);
-            progressBar.setMaximum((int) sg.simMaxTime_XTPN);
+            progressBar.setMaximum((int) sg.getSimTime_XTPN());
 
-            int tenth = (int) (sg.simMaxTime_XTPN / 10);
+            int tenth = (int) (sg.getSimTime_XTPN() / 10);
 
-            while (simTimeCounter < sg.simMaxTime_XTPN) {
+            while (simTimeCounter < sg.getSimTime_XTPN()) {
                 if (terminate)
                     break;
 
                 ArrayList<ArrayList<Double>> placesStatusVectors = processSimStep();
-                //resMatrix.placesTokensDataMatrix.add(placesStatusVectors.get(0));
-                //resMatrix.placesTimeDataVector.add(placesStatusVectors.get(1).get(0)); //ten sam czas dla każdego
-
                 for (int pID = 0; pID < placesStatusVectors.get(0).size(); pID++) { //policz sumę tokenów
                     tokensAvg.set(pID, tokensAvg.get(pID) + placesStatusVectors.get(0).get(pID));
                 }
@@ -744,16 +1201,16 @@ public class StateSimulatorXTPN implements Runnable {
 
                 step++;
             }
-            progressBar.setValue((int) sg.simMaxTime_XTPN);
+            progressBar.setValue((int) sg.getSimTime_XTPN());
             progressBar.update(progressBar.getGraphics());
             resMatrix.simSteps = step;
 
         } else {
             progressBar.setValue(0);
-            progressBar.setMaximum((int) sg.simSteps_XTPN - 1);
-            int tenth = (int) sg.simSteps_XTPN / 10;
+            progressBar.setMaximum((int) sg.getSimSteps_XTPN() - 1);
+            int tenth = (int) sg.getSimSteps_XTPN() / 10;
 
-            for (step = 0; step < sg.simSteps_XTPN; step++) {
+            for (step = 0; step < sg.getSimSteps_XTPN(); step++) {
                 if (terminate)
                     break;
 
@@ -770,9 +1227,9 @@ public class StateSimulatorXTPN implements Runnable {
                     progressBar.update(progressBar.getGraphics());
                 }
             }
-            progressBar.setValue((int) sg.simSteps_XTPN - 1);
+            progressBar.setValue((int) sg.getSimSteps_XTPN() - 1);
             progressBar.update(progressBar.getGraphics());
-            resMatrix.simSteps = sg.simSteps_XTPN;
+            resMatrix.simSteps = sg.getSimSteps_XTPN();
         }
         resMatrix.simTime = simTimeCounter;
 
@@ -792,7 +1249,7 @@ public class StateSimulatorXTPN implements Runnable {
             dataVector.add(trans.simHistoryXTPN.simInactiveTime);
             dataVector.add(trans.simHistoryXTPN.simActiveTime);
             dataVector.add(trans.simHistoryXTPN.simProductionTime);
-            resMatrix.transDataMatrix.add(dataVector);
+            resMatrix.transitionsStatistics.add(dataVector);
         }
 
         Date dateEnd = new Date();
@@ -806,11 +1263,10 @@ public class StateSimulatorXTPN implements Runnable {
     /**
      * Metoda używana przez moduł quickSim, zbiera dane o średniej liczbie uruchomień tranzycji oraz tokenach
      * w miejscach. Powtarza symulacje maksymalnie 20 razy.
-     *
      * @return QuickSimMatrix - macierz wektorów danych
      */
-    public QuickSimMatrix quickSimGatherDataRepetitions(boolean knockoutSubSim, int startingProgress) {
-        QuickSimMatrix resMatrix = new QuickSimMatrix();
+    public StateSimDataContainer quickSimGatherDataRepetitions(boolean knockoutSubSim, int startingProgress) {
+        StateSimDataContainer resMatrix = new StateSimDataContainer();
         Date dateStart = new Date();
 
         if (!readyToSimulate) {
@@ -820,6 +1276,8 @@ public class StateSimulatorXTPN implements Runnable {
         }
         createBackupState(); //zapis p-stanu
 
+        //liczba powtórzeń symulacji:
+        int repetitionsValue = sg.getSimRepetitions_XTPN();
 
         //inicjalizacja wektora tokenów miejsc
         ArrayList<Double> tokensAvg = new ArrayList<>();
@@ -836,18 +1294,18 @@ public class StateSimulatorXTPN implements Runnable {
 
         if(!knockoutSubSim) { //jeśli to symulacja dla obliczenia ref/knockout set, zignoruj inicjalizację progressBar
             progressBar.setValue(0);
-            progressBar.setMaximum(sg.simRepetitions_XTPN * 10);
+            progressBar.setMaximum(repetitionsValue * 10);
         }
 
         int progress = startingProgress;
-        resMatrix.simReps = sg.simRepetitions_XTPN;
+        resMatrix.simReps = repetitionsValue;
 
-        for (int rep = 0; rep < sg.simRepetitions_XTPN; rep++) {
+        for (int rep = 0; rep < repetitionsValue; rep++) {
             int step = 0;
-            if (sg.simulateTime) {
-                int tenth = ((int) sg.simMaxTime_XTPN) / 10;
+            if (sg.isTimeSimulation_XTPN()) {
+                int tenth = ((int) sg.getSimTime_XTPN()) / 10;
                 int counter = 1;
-                while (simTimeCounter < sg.simMaxTime_XTPN) {
+                while (simTimeCounter < sg.getSimTime_XTPN()) {
                     if (terminate)
                         break;
 
@@ -867,9 +1325,9 @@ public class StateSimulatorXTPN implements Runnable {
                 }
                 resMatrix.simSteps += step;
             } else {
-                int tenth = (int) sg.simSteps_XTPN / 10;
+                int tenth = (int) sg.getSimSteps_XTPN() / 10;
                 int maxUpdate = 0;
-                for (step = 0; step < sg.simSteps_XTPN; step++) {
+                for (step = 0; step < sg.getSimSteps_XTPN(); step++) {
                     if (terminate)
                         break;
 
@@ -885,7 +1343,7 @@ public class StateSimulatorXTPN implements Runnable {
                         maxUpdate++;
                     }
                 }
-                resMatrix.simSteps += sg.simSteps_XTPN;
+                resMatrix.simSteps += sg.getSimSteps_XTPN();
             }
             //koniec jednego powtórzenia:
             //uśrednianie liczby tokenów:
@@ -909,28 +1367,27 @@ public class StateSimulatorXTPN implements Runnable {
             simTimeCounter = 0.0;
             restoreInternalMarkingZero(); //restore p-state
         }
-        resMatrix.simSteps /= sg.simRepetitions_XTPN;
-        resMatrix.simTime /= sg.simRepetitions_XTPN;
+        resMatrix.simSteps /= repetitionsValue;
+        resMatrix.simTime /= repetitionsValue;
 
         if(!knockoutSubSim) { //jeśli to symulacja dla obliczenia ref/knockout set, zignoruj inicjalizację progressBar
-            progressBar.setValue(sg.simRepetitions_XTPN * 10);
+            progressBar.setValue(repetitionsValue * 10);
             progressBar.update(progressBar.getGraphics());
         }
 
-
         for (int tID = 0; tID < transitions.size(); tID++) {
-            transStatsFinal.get(tID).set(0, transStatsFinal.get(tID).get(0) / sg.simRepetitions_XTPN);
-            transStatsFinal.get(tID).set(1, transStatsFinal.get(tID).get(1) / sg.simRepetitions_XTPN);
-            transStatsFinal.get(tID).set(2, transStatsFinal.get(tID).get(2) / sg.simRepetitions_XTPN);
-            transStatsFinal.get(tID).set(3, transStatsFinal.get(tID).get(3) / sg.simRepetitions_XTPN);
-            transStatsFinal.get(tID).set(4, transStatsFinal.get(tID).get(4) / sg.simRepetitions_XTPN);
-            transStatsFinal.get(tID).set(5, transStatsFinal.get(tID).get(5) / sg.simRepetitions_XTPN);
-            transStatsFinal.get(tID).set(6, transStatsFinal.get(tID).get(6) / sg.simRepetitions_XTPN);
+            transStatsFinal.get(tID).set(0, transStatsFinal.get(tID).get(0) / repetitionsValue);
+            transStatsFinal.get(tID).set(1, transStatsFinal.get(tID).get(1) / repetitionsValue);
+            transStatsFinal.get(tID).set(2, transStatsFinal.get(tID).get(2) / repetitionsValue);
+            transStatsFinal.get(tID).set(3, transStatsFinal.get(tID).get(3) / repetitionsValue);
+            transStatsFinal.get(tID).set(4, transStatsFinal.get(tID).get(4) / repetitionsValue);
+            transStatsFinal.get(tID).set(5, transStatsFinal.get(tID).get(5) / repetitionsValue);
+            transStatsFinal.get(tID).set(6, transStatsFinal.get(tID).get(6) / repetitionsValue);
         }
-        resMatrix.transDataMatrix = transStatsFinal;
+        resMatrix.transitionsStatistics = transStatsFinal;
 
         for (int pID = 0; pID < places.size(); pID++) {
-            tokensAvgFinal.set(pID, tokensAvgFinal.get(pID) / sg.simRepetitions_XTPN);
+            tokensAvgFinal.set(pID, tokensAvgFinal.get(pID) / repetitionsValue);
         }
         resMatrix.avgTokens = tokensAvgFinal;
 
@@ -943,13 +1400,16 @@ public class StateSimulatorXTPN implements Runnable {
     }
 
 
-    public ArrayList<QuickSimMatrix> quickSimKnockout() {
-        ArrayList<QuickSimMatrix> resultSets = new ArrayList<>();
+    public ArrayList<StateSimDataContainer> quickSimKnockout() {
+        ArrayList<StateSimDataContainer> resultSets = new ArrayList<>();
+
+        //liczba powtórzeń symulacji:
+        int repetitionsValue = sg.getSimRepetitions_XTPN();
 
         progressBar.setValue(0);
-        progressBar.setMaximum(sg.simRepetitions_XTPN * 10 * 2);
+        progressBar.setMaximum(repetitionsValue * 10 * 2);
 
-        QuickSimMatrix knockoutSet = quickSimGatherDataRepetitions(true, 0);
+        StateSimDataContainer knockoutSet = quickSimGatherDataRepetitions(true, 0);
 
         restartEngine();
         ArrayList<Boolean> disabledVector = new ArrayList<>();
@@ -958,13 +1418,13 @@ public class StateSimulatorXTPN implements Runnable {
             trans.setKnockout(false);
         }
 
-        QuickSimMatrix referenceSet = quickSimGatherDataRepetitions(true, sg.simRepetitions_XTPN * 10);
+        StateSimDataContainer referenceSet = quickSimGatherDataRepetitions(true, repetitionsValue * 10);
 
         for(int tID=0; tID < disabledVector.size(); tID++) { //przywróć poprzedni status tranzycji
             transitions.get(tID).setKnockout( disabledVector.get(tID) );
         }
 
-        progressBar.setValue(sg.simRepetitions_XTPN * 10 * 2);
+        progressBar.setValue(repetitionsValue * 10 * 2);
         progressBar.update(progressBar.getGraphics());
 
         resultSets.add(referenceSet);

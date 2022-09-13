@@ -26,7 +26,6 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 	 */
 	public NodePopupMenu(GraphPanel graphPanel, ElementLocation eloc, PetriNetElementType pne, Object pneObject) {
 		super(graphPanel, pne);
-
 		this.elocation = eloc;
 		
 		if(pne != PetriNetElementType.ARC) {

@@ -125,6 +125,7 @@ public class GUIReset {
 		overlord.simSettings.currentStep = 0;
 		overlord.simSettings.currentTime = 0;
 		overlord.accessStateSimulatorWindow().resetSimWindow();
+		overlord.accessStateSimulatorXTPNWindow().resetSimWindow();
 		overlord.accessClusterWindow().resetWindow();
 		overlord.getSimulatorBox().createSimulatorProperties(false);
 		overlord.resetModuls();
@@ -172,6 +173,7 @@ public class GUIReset {
 			overlord.simSettings.currentStep = 0;
 			overlord.simSettings.currentTime = 0;
 			overlord.accessStateSimulatorWindow().resetSimWindow();
+			overlord.accessStateSimulatorXTPNWindow().resetSimWindow();
 			overlord.accessClusterWindow().resetWindow();
 		}
 	
@@ -335,7 +337,7 @@ public class GUIReset {
 	public boolean isXTPNSimulatorActiveWarning(String msg, String msgTitle) {
 		GraphicalSimulatorXTPN obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulatorXTPN();
 		if(obj instanceof GraphicalSimulatorXTPN) {
-			if(obj.getXTPNsimulatorStatus() == GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
+			if(obj.getsimulatorStatusXTPN() == GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
 				return false;
 			} else {
 				JOptionPane.showMessageDialog(null, msg, msgTitle, JOptionPane.WARNING_MESSAGE);

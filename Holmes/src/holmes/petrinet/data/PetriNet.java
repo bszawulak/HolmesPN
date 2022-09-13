@@ -430,15 +430,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda pozwala na pobrania aktualnego obiektu symulatora dla bieżącego projektu.
-	 * @return (<b>NetSimulator</b>) - symulator sieci klasycznych.
+	 * @return (<b>GraphicalSimulator</b>) - symulator sieci klasycznych.
 	 */
 	public GraphicalSimulator getSimulator() {
 		return simulator;
 	}
 	
 	/**
-	 * Metoda pozwala na ustawienie symulatora NetSimulator dla bieżącego projektu
-	 * @param simulator (<b>NetSimulator</b>) nowy symulator klasy NetSimulator (zwykły)
+	 * Metoda pozwala na ustawienie symulatora GraphicalSimulator dla bieżącego projektu
+	 * @param simulator (<b>GraphicalSimulator</b>) nowy symulator klasy GraphicalSimulator (zwykły)
 	 */
 	public void setSimulator(GraphicalSimulator simulator) {
 		this.simulator = simulator;
@@ -446,7 +446,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda pozwala na pobrania aktualnego obiektu symulatora XTPN.
-	 * @return (<b>NetSimulatorXTPN</b>) - symulator sieci XTPN.
+	 * @return (<b>GraphicalSimulatorXTPN</b>) - symulator sieci XTPN.
 	 */
 	public GraphicalSimulatorXTPN getSimulatorXTPN() {
 		return simulatorXTPN;
@@ -454,7 +454,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda pozwala na ustawienie symulatora XTPN dla bieżącego projektu
-	 * @param simulator (<b>NetSimulatorXTPN</b>) nowy symulator klasy NetSimulatorXTPN (XTPN)
+	 * @param simulator (<b>GraphicalSimulatorXTPN</b>) nowy symulator klasy GraphicalSimulatorXTPN (XTPN)
 	 */
 	public void setSimulatorXTPN(GraphicalSimulatorXTPN simulator) {
 		this.simulatorXTPN = simulator;
@@ -940,11 +940,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
 			getSimulator().resetSimulator();
 
-			//getSimulatorXTPN().resetSimulator();
-
-			//setSimulator(new GraphicalSimulator(nt, this));
-			//setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
-			//overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN()); //ustawia nowe instancje symulatorów
 			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep(); //-1, jak wyżej
 			overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("" + getSimulator().getSimulatorTimeStep());
 			repaintAllGraphPanels();
@@ -972,13 +967,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 
 			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
-			//getSimulator().resetSimulator();
 			getSimulatorXTPN().resetSimulator();
 
-			//setSimulator(new GraphicalSimulator(nt, this));
-			//setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
-			//overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN()); //ustawia nowe instancje symulatorów
-			overlord.io.updateTimeStep(true, getSimulatorXTPN().getStepsCounterXTPN(), getSimulatorXTPN().getTimeCounterXTPN()); //-1 po resecie symulatorów
+			overlord.io.updateTimeStep(true, getSimulatorXTPN().getStepsCounterXTPN(), getSimulatorXTPN().getTimeCounterXTPN(), 0); //-1 po resecie symulatorów
 			overlord.simSettings.currentStep = getSimulatorXTPN().getStepsCounterXTPN(); //-1, jak wyżej
 			overlord.simSettings.currentTime = getSimulatorXTPN().getTimeCounterXTPN();
 
@@ -1073,7 +1064,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			//setSimulator(new GraphicalSimulator(nt, this));
 			//setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
 			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN());
-			overlord.io.updateTimeStep(false, getSimulator().getSimulatorTimeStep(), 0);
+			overlord.io.updateTimeStep(false, getSimulator().getSimulatorTimeStep(), 0, 0);
 			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep();
 			
 			repaintAllGraphPanels();
@@ -1495,7 +1486,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda pozwala na zwiększenie kroku symulacji o 1. Jest ona wywoływana przez
-	 * NetSimulator danego projektu, co powoduje wywołanie metody incrementSimulationStep() 
+	 * GraphicalSimulator danego projektu, co powoduje wywołanie metody incrementSimulationStep()
 	 * dla każdego łuku zawartego w projekcie, odpowiedzialnego za wyświetlanie animacji 
 	 * tokenów przemieszczających się w trakcie symulacji.
 	 */

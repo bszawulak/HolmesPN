@@ -14,7 +14,7 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.elements.TransitionXTPN;
 import holmes.petrinet.functions.FunctionsTools;
-import holmes.windows.managers.ssim.HolmesSim;
+import holmes.windows.ssim.HolmesSim;
 
 /**
  * Klasa symulatora. Różnica między nią a symulatorem graficznym jest taka, że poniższe metody potrafią wygenerować

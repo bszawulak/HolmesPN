@@ -46,7 +46,7 @@ import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesNotepad;
 import holmes.windows.xtpn.HolmesXTPNtokens;
 import holmes.windows.managers.HolmesStatesManager;
-import holmes.windows.managers.ssim.HolmesSimSetup;
+import holmes.windows.ssim.HolmesSimSetup;
 import holmes.workspace.WorkspaceSheet;
 
 /**
@@ -245,14 +245,12 @@ public class HolmesDockWindowsTable extends JPanel {
         , MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM, DECOMPOSITION
     }
 
-
     public JPanel getPanel() {
         return panel;
     }
     public void setPanel(JPanel panel) {
         this.panel = panel;
     }
-
 
     /**
      * Konstruktor główny, wybierający odpowiednią metodę do tworzenia podokna wybranego typu
@@ -297,7 +295,9 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda pomocnicza konstruktora odpowiedzialna za tworzenie podokna dla symulatora sieci.
-     * @param sim NetSimulator - obiekt symulatora sieci
+     * @param sim (<b>GraphicalSimulator</b>) obiekt symulatora sieci PN.
+     * @param simXTPN (<b>GraphicalSimulatorXTPN</b>) obiekt symulatora sieci XTPN.
+     * @param XTPNmode (<b>boolean</b>) jeżeli true, to znaczy że tworzymy symulator XTPN.
      */
     @SuppressWarnings("UnusedAssignment")
     private void createSimulatorSubWindow(GraphicalSimulator sim, GraphicalSimulatorXTPN simXTPN, boolean XTPNmode) {
@@ -332,7 +332,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (doNotUpdate)
                     return;
 
-                if(simulatorXTPN.getXTPNsimulatorStatus() != GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
+                if(simulatorXTPN.getsimulatorStatusXTPN() != GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
                     JOptionPane.showMessageDialog(null, "XTPN simulator must be stopped first.",
                             "Simulator working", JOptionPane.WARNING_MESSAGE);
                     return;
@@ -714,14 +714,36 @@ public class HolmesDockWindowsTable extends JPanel {
 
             internalY+=40;
 
-            HolmesRoundedButton resetButton = new HolmesRoundedButton("<html><center>Restore<br>p-state</center></html>"
+            HolmesRoundedButton resetButton = new HolmesRoundedButton("<html><center>Reset<br>p-state</center></html>"
                     , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             resetButton.setName("resetM0button");
-            resetButton.setBounds(internalX, internalY, 80, 35);
+            resetButton.setBounds(internalX, internalY, 75, 40);
             resetButton.setToolTipText("Reset all tokens in places.");
             resetButton.setEnabled(true);
             resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
             components.add(resetButton);
+
+            HolmesRoundedButton storeButton = new HolmesRoundedButton("<html><center>Store<br>p-state</center></html>"
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+            storeButton.setName("storeM0button");
+            storeButton.setBounds(internalX+75, internalY, 75, 40);
+            storeButton.setToolTipText("Reset all tokens in places.");
+            storeButton.setEnabled(true);
+            storeButton.addActionListener(actionEvent -> {
+                int selected = 0;
+                Object[] options = {"Replace XTPN state", "Cancel",};
+                int n = JOptionPane.showOptionDialog(null,
+                        "Replace first p-state vector with the current net state?",
+                        "Replace XTPN state", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+                if (n == 1) {
+                    return;
+                }
+
+                overlord.getWorkspace().getProject().accessStatesManager().replaceStoredMultiset_M_withCurrentNetState(selected);
+                overlord.markNetChange();
+            });
+            components.add(storeButton);
 
             internalY += 50;
 
@@ -899,7 +921,7 @@ public class HolmesDockWindowsTable extends JPanel {
             internalY += 20;
 
             acqDataButtonXTPN = new HolmesRoundedButton("<html>Simulate</html>"
-                    , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             acqDataButtonXTPN.setBounds(internalX, internalY, 100, 30);
             acqDataButtonXTPN.setMargin(new Insets(0, 0, 0, 0));
             acqDataButtonXTPN.setFocusPainted(false);
@@ -1009,6 +1031,24 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(qSimXTPNknockoutCheckBox);
 
+            internalY += 30;
+
+            HolmesRoundedButton sSimAlpha = new HolmesRoundedButton("<html><center>XTPN net<br>simulator</center></html>"
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+            sSimAlpha.setBounds(internalX, internalY, 100, 35);
+            sSimAlpha.setMargin(new Insets(0, 0, 0, 0));
+            sSimAlpha.setFocusPainted(false);
+            sSimAlpha.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+            sSimAlpha.setToolTipText("Compute steps from zero marking through the number of states");
+            sSimAlpha.addActionListener(actionEvent -> {
+                if(overlord.getWorkspace().getProject().isSimulationActive()) {
+                    JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
+                            JOptionPane.WARNING_MESSAGE);
+                } else {
+                    overlord.showStateSimulatorWindowXTPN();
+                }
+            });
+            components.add(sSimAlpha);
 
         }
         panel.setLayout(null);
@@ -1784,13 +1824,62 @@ public class HolmesDockWindowsTable extends JPanel {
         tokensXTPNLabel2.setBounds(columnA_posX, columnA_Y+=20, 140, 20);
         components.add(tokensXTPNLabel2);
 
+        JLabel fractionLabel = new JLabel("Fraction:", JLabel.LEFT);
+        fractionLabel.setBounds(columnA_posX, columnA_Y += 22, 70, 20);
+        components.add(fractionLabel);
+
+        int fract = place.getFractionForPlaceXTPN();
+        SpinnerModel fractionSpinnerModel = new SpinnerNumberModel(fract, 0, 6, 1);
+        JSpinner fractionSpinner = new JSpinner(fractionSpinnerModel);
+        fractionSpinner.setBounds(columnB_posX, columnB_Y += 42, 40, 20);
+        fractionSpinner.addChangeListener(e -> {
+            int fraction = (int) ((JSpinner) e.getSource()).getValue();
+            place.setFractionForPlaceXTPN(fraction);
+        });
+        components.add(fractionSpinner);
+
+        HolmesRoundedButton nameLocChangeButton = new HolmesRoundedButton("<html><center>Name<br>offset</center><html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        //JButton nameLocChangeButton = new JButton("<html><center>Name<br>offset</center><html>");
+        nameLocChangeButton.setName("placeLocOffsetButton");
+        nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+        nameLocChangeButton.setBounds(columnB_posX+131, columnB_Y-12, 65, 35);
+        nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
+        nameLocChangeButton.setFocusPainted(false);
+        nameLocChangeButton.addActionListener(new ActionListener() {
+            // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+            private Place place_tmp;
+            private ElementLocation el_tmp;
+            public void actionPerformed(ActionEvent actionEvent) {
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
+
+                if (!nameLocChangeMode) {
+                    button.setNewText("<html><center>Change<br>location</center><html>");
+                    button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+                    nameLocChangeMode = true;
+                    overlord.setNameLocationChangeMode(place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                } else {
+                    button.setNewText("<html><center>Name<br>offset</center><html>");
+                    button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+                    nameLocChangeMode = false;
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+                }
+            }
+            private ActionListener yesWeCan(Place inPlace, ElementLocation inLoc) {
+                place_tmp = inPlace;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(place, location));
+        components.add(nameLocChangeButton);
+
         // XTPN-place przycisk okna tokenów
         //JButton tokensWindowButton = new JButton("<html>Tokens<br>window</html>");
 
         HolmesRoundedButton tokensWindowButton = new HolmesRoundedButton("<html>Tokens<br>window</html>"
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         tokensWindowButton.setMargin(new Insets(0, 0, 0, 0));
-        tokensWindowButton.setBounds(columnA_posX, columnB_Y +=40, 90, 40);
+        tokensWindowButton.setBounds(columnA_posX, columnA_Y +=30, 90, 40);
         if(!place.isGammaModeActive()) {
             tokensWindowButton.setEnabled(false);
         }
@@ -1801,7 +1890,7 @@ public class HolmesDockWindowsTable extends JPanel {
         HolmesRoundedButton add0tokenButton = new HolmesRoundedButton("<html><center>Add<br>0-token</center></html>"
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         add0tokenButton.setMargin(new Insets(0, 0, 0, 0));
-        add0tokenButton.setBounds(columnB_posX, columnB_Y, 90, 40);
+        add0tokenButton.setBounds(columnB_posX, columnA_Y, 90, 40);
         if(place.isGammaModeActive()) {
             add0tokenButton.setText("<html>Add<br>0-token</html>");
             add0tokenButton.setBackground(Color.GREEN);
@@ -1829,7 +1918,7 @@ public class HolmesDockWindowsTable extends JPanel {
         HolmesRoundedButton remove0tokenButton = new HolmesRoundedButton("<html><center>Remove<br>0-token</center></html>"
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         remove0tokenButton.setMargin(new Insets(0, 0, 0, 0));
-        remove0tokenButton.setBounds(columnB_posX+90, columnB_Y, 90, 40);
+        remove0tokenButton.setBounds(columnB_posX+90, columnA_Y, 90, 40);
         if(place.isGammaModeActive()) {
             remove0tokenButton.setText("<html>Remove<br>0-token</html>");
         } else {
@@ -1875,19 +1964,19 @@ public class HolmesDockWindowsTable extends JPanel {
         height = (int) (((double) 100 / (double) zoom) * height);
 
         JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
-        sheetLabel.setBounds(columnA_posX, columnA_Y += 60, colACompLength, 20);
+        sheetLabel.setBounds(columnA_posX, columnA_Y += 40, colACompLength, 20);
         components.add(sheetLabel);
         JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
-        sheetIdLabel.setBounds(columnB_posX, columnB_Y += 40, colBCompLength, 20);
+        sheetIdLabel.setBounds(columnB_posX, columnA_Y, colBCompLength, 20);
         sheetIdLabel.setFont(normalFont);
         components.add(sheetIdLabel);
 
         // XTPN-place ZOOM:
         JLabel zoomLabel = new JLabel("Zoom:");
-        zoomLabel.setBounds(columnB_posX + 30, columnB_Y, 50, 20);
+        zoomLabel.setBounds(columnB_posX + 30, columnA_Y, 50, 20);
         components.add(zoomLabel);
         JLabel zoomLabel2 = new JLabel("" + zoom);
-        zoomLabel2.setBounds(columnB_posX + 70, columnB_Y, colBCompLength, 20);
+        zoomLabel2.setBounds(columnB_posX + 70, columnA_Y, colBCompLength, 20);
         zoomLabel2.setFont(normalFont);
         if (zoom != 100)
             zoomLabel2.setForeground(Color.red);
@@ -1895,10 +1984,10 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // XTPN-place  PORTAL
         JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
-        portalLabel.setBounds(columnB_posX + 110, columnB_Y, colACompLength, 20);
+        portalLabel.setBounds(columnB_posX + 110, columnA_Y, colACompLength, 20);
         components.add(portalLabel);
         JCheckBox portalBox = new JCheckBox("", place.isPortal());
-        portalBox.setBounds(columnB_posX + 180, columnB_Y, colACompLength, 20);
+        portalBox.setBounds(columnB_posX + 180, columnA_Y, colACompLength, 20);
         portalBox.setSelected(((Place) element).isPortal());
         portalBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
@@ -1925,15 +2014,15 @@ public class HolmesDockWindowsTable extends JPanel {
 
         SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
         JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
-        locationXSpinner.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
+        locationXSpinner.setBounds(columnB_posX,columnA_Y, 60, 20);
         locationXSpinner.addChangeListener(e -> setX((int) ((JSpinner) e.getSource()).getValue()));
 
         JLabel labelCom = new JLabel(" , ");
-        labelCom.setBounds(columnB_posX+60, columnB_Y, 10, 20);
+        labelCom.setBounds(columnB_posX+60, columnA_Y, 10, 20);
 
         SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
         JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
-        locationYSpinner.setBounds(columnB_posX+70, columnB_Y, 60, 20);
+        locationYSpinner.setBounds(columnB_posX+70, columnA_Y, 60, 20);
         locationYSpinner.addChangeListener(e -> setY((int) ((JSpinner) e.getSource()).getValue()));
         if (zoom != 100) {
             locationXSpinner.setEnabled(false);
@@ -2017,40 +2106,6 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // XTPN-place przycisk zmiany lokalizacj napisu
 
-        HolmesRoundedButton nameLocChangeButton = new HolmesRoundedButton("<html><center>Name<br>offset</center><html>"
-                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
-        //JButton nameLocChangeButton = new JButton("<html><center>Name<br>offset</center><html>");
-        nameLocChangeButton.setName("placeLocOffsetButton");
-        nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
-        nameLocChangeButton.setBounds(columnB_posX+131, columnA_Y - 15, 65, 35);
-        nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
-        nameLocChangeButton.setFocusPainted(false);
-        nameLocChangeButton.addActionListener(new ActionListener() {
-            // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
-            private Place place_tmp;
-            private ElementLocation el_tmp;
-            public void actionPerformed(ActionEvent actionEvent) {
-                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
-
-                if (!nameLocChangeMode) {
-                    button.setNewText("<html><center>Change<br>location</center><html>");
-                    button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
-                    nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
-                } else {
-                    button.setNewText("<html><center>Name<br>offset</center><html>");
-                    button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
-                    nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
-                }
-            }
-            private ActionListener yesWeCan(Place inPlace, ElementLocation inLoc) {
-                place_tmp = inPlace;
-                el_tmp = inLoc;
-                return this;
-            }
-        }.yesWeCan(place, location));
-        components.add(nameLocChangeButton);
 
         /*
         JLabel debugModeLabel1 = new JLabel("Debug1:", JLabel.LEFT);
@@ -4400,8 +4455,6 @@ public class HolmesDockWindowsTable extends JPanel {
         betaMaxTextField.setBounds(columnB_posX+100, columnB_Y,80,20);
         components.add(betaMaxTextField);
 
-
-
         //mass-action for XTPN transition
         JCheckBox makCheckBox = new JCheckBox("Mass-Action kinetics");
         makCheckBox.setBounds(columnA_posX-5, columnA_Y += 25, 150, 20);
@@ -4411,9 +4464,6 @@ public class HolmesDockWindowsTable extends JPanel {
                 return;
 
             transition.setMassActionKineticsXTPNstatus(makCheckBox.isSelected());
-
-            //AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-            //transition.setMassActionKineticsXTPNstatus(abstractButton.getModel().isSelected());
         });
         components.add(makCheckBox);
 
@@ -4439,7 +4489,6 @@ public class HolmesDockWindowsTable extends JPanel {
             WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
-        functionalCheckBox.setEnabled(false);
         components.add(functionalCheckBox);
 
         JButton functionsEditorButton = new JButton(Tools.getResIcon32("/icons/functionsWindow/functionsIcon.png"));
@@ -4448,7 +4497,6 @@ public class HolmesDockWindowsTable extends JPanel {
         functionsEditorButton.setMargin(new Insets(0, 0, 0, 0));
         functionsEditorButton.setBounds(columnB_posX + 65, columnB_Y+45, 110, 32);
         functionsEditorButton.addActionListener(actionEvent -> new HolmesFunctionsBuilder((Transition) element));
-        functionsEditorButton.setEnabled(false);
         components.add(functionsEditorButton);
 
         // XTPN portal status
@@ -4478,7 +4526,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(fractionLabel);
 
         int fract = transition.getFraction_xTPN();
-        SpinnerModel fractionSpinnerModel = new SpinnerNumberModel(fract, 1, 6, 1);
+        SpinnerModel fractionSpinnerModel = new SpinnerNumberModel(fract, 0, 6, 1);
         JSpinner fractionSpinner = new JSpinner(fractionSpinnerModel);
         fractionSpinner.setBounds(columnB_posX, columnB_Y += 82, 40, 20);
         fractionSpinner.addChangeListener(e -> {
@@ -8717,8 +8765,8 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia nowy obiekt symulatora sieci.
-     * @param netSim (<b>NetSimulator</b>) simulator zwykły.
-     * @param netSimXTPN (<b>NetSimulatorXTPN</b>) simulator XTPN.
+     * @param netSim (<b>GraphicalSimulator</b>) simulator zwykły.
+     * @param netSimXTPN (<b>GraphicalSimulatorXTPN</b>) simulator XTPN.
      */
     public void setSimulator(GraphicalSimulator netSim, GraphicalSimulatorXTPN netSimXTPN) {
         simulator = netSim;
@@ -8727,7 +8775,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda zwraca obiekt aktywnego zwykłego symulatora z podokna symulacji.
-     * @return (<b>NetSimulator</b>) obiekt symulatora sieci zwykłej.
+     * @return (<b>GraphicalSimulator</b>) obiekt symulatora sieci zwykłej.
      */
     public GraphicalSimulator getSimulator() {
         return simulator;
@@ -8735,7 +8783,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda zwraca obiekt aktywnego symulatora XTPN z podokna symulacji.
-     * @return (<b>NetSimulatorXTPN</b>) obiekt symulatora XTPN.
+     * @return (<b>GraphicalSimulatorXTPN</b>) obiekt symulatora XTPN.
      */
     public GraphicalSimulatorXTPN getSimulatorXTPN() {
         return simulatorXTPN;

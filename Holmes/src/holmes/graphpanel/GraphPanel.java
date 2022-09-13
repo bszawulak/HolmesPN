@@ -823,15 +823,15 @@ public class GraphPanel extends JComponent {
 	}
 		
 	/**
-	 * 
-	 * @return boolean
+	 * WTH?
+	 * @return (<b>boolean</b>)
 	 */
 	public boolean isDrawMesh() {
 		return drawMesh;
 	}
 
 	/**
-	 * 
+	 * WTH?
 	 * @param drawMesh something?
 	 */
 	@SuppressWarnings("unused")
@@ -846,8 +846,8 @@ public class GraphPanel extends JComponent {
 	 * podczas przeciągania obiektu poza jego prawy bądź dolny brzeg. Jeśli przyjmuje
 	 * wartość true, to podczas przeciągania obiektów poza obszar arkusza, zostanie on
 	 * automatycznie zwiększony.
-	 * @return boolean - true jeśli automatyczna zmiana arkusza jest aktywna; 
-	 * 		false w przypadku przeciwnym
+	 * @return (<b>boolean</b>) - true jeśli automatyczna zmiana arkusza jest aktywna;
+	 * 		false w przypadku przeciwnym.
 	 */
 	public boolean isAutoDragScroll() {
 		return autoDragScroll;
@@ -857,7 +857,7 @@ public class GraphPanel extends JComponent {
 	 * Metoda pozwala na ustawienie stanu automatycznego zwiększania rozmiaru arkusza podczas
 	 * przeciągania obiektu poza jego prawy bądź dolny brzeg. Jeśli przyjmuje wartość true, to
 	 * podczas przeciągania obiektów poza obszar arkusza, zostanie on automatycznie zwiększony.
-	 * @param autoDragScroll boolean - nowy stan automatycznego zwiększania rozmiaru arkusza
+	 * @param autoDragScroll (<b>boolean</b>) nowy stan automatycznego zwiększania rozmiaru arkusza.
 	 */
 	public void setAutoDragScroll(boolean autoDragScroll) {
 		this.autoDragScroll = autoDragScroll;
@@ -865,7 +865,7 @@ public class GraphPanel extends JComponent {
 	
 	/**
 	 * Nastarsi górole nie pamietajo, co to robi.
-	 * @return boolean - jakaś wartość logiczna, byle dobra bo się softłyr wywoli
+	 * @return (<b>boolean</b>) - jakaś wartość logiczna, byle dobra bo się softłyr wywoli.
 	 */
 	public boolean isSnapToMesh() {
 		return snapToMesh;
@@ -873,7 +873,7 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Patrz komentorz wyżyj. Ło Jezusicku, ale tu dziwnie.
-	 * @param snapToMesh boolean - wartość logiczna, to chyba logiczne
+	 * @param snapToMesh (<b>boolean</b>) wartość logiczna, to chyba logiczne.
 	 */
 	public void setSnapToMesh(boolean snapToMesh) {
 		this.snapToMesh = snapToMesh;
@@ -881,7 +881,7 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Metoda zwracająca liczbową wartość powiększenia.
-	 * @return int - zoom
+	 * @return (<b>int</b>) zoom.
 	 */
 	public int getZoom() {
 		return zoom;
@@ -912,8 +912,6 @@ public class GraphPanel extends JComponent {
 	/**
 	 * Prywatna klasa wewnątrz GraphPanel, zajmująca się skrótami klawiatury,
 	 * obsługiwanymi przez obiekt klasy GraphPanel.
-	 * @author students
-	 *
 	 */
 	private static class KeyboardHandler implements KeyListener {
 		@Override
@@ -934,9 +932,7 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Prywatna klasa wewnątrz GraphPanel, zajmująca się realizacją funkcji programu
-	 * wywoływanych za pomocą myszy. 
-	 * @author students
-	 * @author MR
+	 * wywoływanych za pomocą myszy.
 	 */
 	private class MouseHandler extends MouseAdapter {
 		/**
@@ -959,7 +955,7 @@ public class GraphPanel extends JComponent {
 
 		/**
 		 * Metoda aktywowana przez podwójne kliknięcie przycisku myszy.
-		 * @param e MouseEvent - obiekt przekazywany w efekcie podwójnego kliknięcia
+		 * @param e (<b>MouseEvent</b>) obiekt przekazywany w efekcie podwójnego kliknięcia.
 		 */
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 2) {
@@ -983,7 +979,7 @@ public class GraphPanel extends JComponent {
 		 * zależności od wyniku tego sprawdzenia oraz trybu rysowania i modyfikatorów kliknięcia
 		 * (prawy i lewy przycisk myszy, klawisz Ctrl, Alt, Shift podejmowane są odpowiednie
 		 * akcje, w dużej mierze przy wykorzystaniu obiektu SelectionManager.
-		 * @param e MouseEvent - obiekt klasy przekazywany w efekcie kliknięcia myszą
+		 * @param e (<b>MouseEvent</b>) obiekt klasy przekazywany w efekcie kliknięcia myszą.
 		 */
 		public void mousePressed(MouseEvent e) {
 			//reset trybu przesuwania napisu:
@@ -1190,7 +1186,7 @@ public class GraphPanel extends JComponent {
 						getMetaNodePopupMenu(el, PetriNetElementType.META).show(e);
 					}
 				}
-			} else if (a != null) { // kliknięto w łuk, więc zostanie on zaznaczony
+			} else { // kliknięto w łuk, więc zostanie on zaznaczony //było: if (a != null) {
 				if (getDrawMode() == DrawModes.ERASER) {
 					if(overlord.reset.isSimulatorActiveWarning(
 							"Operation impossible when simulator is working.", "Warning"))
@@ -1290,10 +1286,9 @@ public class GraphPanel extends JComponent {
 
 		/**
 		 * Metoda odpowiedzialna za rysowanie łuków między wierzchołkami sieci.
-		 * @param clickedLocation ElementLocation - gdzie kliknięto
-		 * @param arcType DrawModes - tryb rysowania, tj. rodzaj rysowanego łuku
+		 * @param clickedLocation (<b>ElementLocation</b>) gdzie kliknięto.
+		 * @param arcType (<b>DrawModes</b>) tryb rysowania, tj. rodzaj rysowanego łuku.
 		 */
-		//TODO
 		private void handleArcsDrawing(ElementLocation clickedLocation, DrawModes arcType) {
 			getSelectionManager().deselectAllElements();
 			
@@ -1520,9 +1515,6 @@ public class GraphPanel extends JComponent {
 	/**
 	 * Prywatna klasa wewnątrz GraphPanel, realizująca interakcje ze strony
 	 * myszy związane z jej poruszaniem się po arkuszu.
-	 * @author students
-	 * @author MR
-	 *
 	 */
 	private class MouseMotionHandler extends MouseMotionAdapter {
 		Point delta = new Point();
@@ -1539,7 +1531,7 @@ public class GraphPanel extends JComponent {
 		 * warunków oraz gdy aktualnym narzędziem rysowania jest wskaźnik, rysowany jest
 		 * prostokąt zaznaczenia, połączony ze sprawdzaniem na bieżąco, które elementy
 		 * zawierają się w obszarze zaznaczenia.
-		 * @param e MouseEvent - obiekt klasy przekazywany w efekcie przeciągnięcia myszą
+		 * @param e (<b>MouseEvent</b>) obiekt klasy przekazywany w efekcie przeciągnięcia myszą.
 		 */
 		public void mouseDragged(MouseEvent e) {
 			Point dragPoint = e.getPoint();
@@ -1587,7 +1579,6 @@ public class GraphPanel extends JComponent {
 		 * znajdzie się nad panelem rysowania. Nie trzeba mówić, że przerysowywanie sieci w każdej
 		 * takiej chwili nie jest najlepszym pomysłem. A to tu było zanim przyszedłem. Cud, że program
 		 * się uruchamiał w ogóle...
-		 * MR
 		 */
 		@Override
 		public void mouseMoved(MouseEvent e) { 
@@ -1618,9 +1609,6 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Wewnątrzna klasa odpowiedzialna za obługę rolki myszy.
-	 * @author students
-	 * @author MR
-	 *
 	 */
 	public class MouseWheelHandler implements MouseWheelListener {
 		/**
@@ -1681,7 +1669,7 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Zadaniem tej metody jest wycentrowanie ekranu na klikniętych współrzędnych.
-	 * @param mousePt Point - współrzędne centrowania
+	 * @param mousePt (<b>Point</b>) współrzędne centrowania.
 	 */
 	public void centerOnPoint(Point mousePt) {
 		//CompositeTabDock xxx = overlord.getWorkspace().getWorkspaceDock();
@@ -1757,9 +1745,9 @@ public class GraphPanel extends JComponent {
 	/**
 	 * Metoda sprawdza, czy z wierzchołka DO którego prowadzimy łuk nie wychodzi już inny łuk skierowany tam,
 	 * skąd właśnie wychodzi łuk aktualnie rysowany - wtedy zwraca true jako sygnał, że nie można dodawać.
-	 * @param startLocation ElementLocation - lokalizacja wierzchołka startowego
-	 * @param endLocation ElementLocation - lokalizacja wierzchołka docelowego
-	 * @return boolean - true, jeśli nie można dodać z uwagi na obecność nieprawidłowego typu łuku skierowanego z 
+	 * @param startLocation (<b>ElementLocation</b>) lokalizacja wierzchołka startowego.
+	 * @param endLocation (<b>ElementLocation</b>) lokalizacja wierzchołka docelowego.
+	 * @return (<b>boolean</b>) - true, jeśli nie można dodać z uwagi na obecność nieprawidłowego typu łuku skierowanego z
 	 * 		wierzchołka docelowego do wierzchołka startowego z którego prowadzony jest właśnie nowy łuk.
 	 */
 	public boolean isReverseArcPresent(ElementLocation startLocation, ElementLocation endLocation) {
@@ -1779,10 +1767,10 @@ public class GraphPanel extends JComponent {
 	
 	/**
 	 * Metoda sprawdza, czy testLoc należy do zbioru lokalizacji wierzchołka, do którego na pewno należy obiekt 'location'
-	 * @param location ElementLocation - sprawdzamy cały zbiór do którego on należy
-	 * @param testLoc ElementLocation - element testowany
-	 * @return boolean - true, jeśli testLoc należy do zbioru lokalizacji wierzchołka który na pewno zawiera lokalizację 
-	 * 		przesłaną jako 'location'
+	 * @param location (<b>ElementLocation</b>) sprawdzamy cały zbiór do którego on należy.
+	 * @param testLoc (<b>ElementLocation</b>) - element testowany.
+	 * @return (<b>boolean</b>) - true, jeśli testLoc należy do zbioru lokalizacji wierzchołka który na pewno zawiera lokalizację
+	 * 		przesłaną jako 'location'.
 	 */
 	private boolean locationFamily(ElementLocation location, ElementLocation testLoc ) {
 		Node node = location.getParentNode();

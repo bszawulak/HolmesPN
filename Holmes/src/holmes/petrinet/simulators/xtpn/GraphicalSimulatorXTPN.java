@@ -104,6 +104,8 @@ public class GraphicalSimulatorXTPN {
     public void startSimulation(SimulatorModeXTPN simulatorMode) {
         sg = overlord.simSettings;
 
+        sg.setXTPNreadArcActive(true);
+
         ArrayList<Place> places = petriNet.getPlaces();
         //nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode()); //TODO
 
@@ -126,7 +128,7 @@ public class GraphicalSimulatorXTPN {
             arc.arcXTPNbox.setXTPNprodStatus(false);
         }
 
-        previousSimStatusXTPN = getXTPNsimulatorStatus();
+        previousSimStatusXTPN = getsimulatorStatusXTPN();
         setSimulatorStatus(simulatorMode);
         setSimulationActive(true);
         ActionListener taskPerformer = new SimulationPerformer();
@@ -134,7 +136,7 @@ public class GraphicalSimulatorXTPN {
         //ustawiania stanu przycisków symulacji:
         overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtonsXTPN();
 
-        switch (getXTPNsimulatorStatus()) {
+        switch (getsimulatorStatusXTPN()) {
             case XTPNLOOP:
                 taskPerformer = new StepLoopPerformerXTPN(true); //główny tryb
                 break;
@@ -176,11 +178,11 @@ public class GraphicalSimulatorXTPN {
      * którym została przerwana.
      */
     public void pause() {
-        if ((getXTPNsimulatorStatus() != SimulatorModeXTPN.PAUSED) && (getXTPNsimulatorStatus() != SimulatorModeXTPN.STOPPED)) {
+        if ((getsimulatorStatusXTPN() != SimulatorModeXTPN.PAUSED) && (getsimulatorStatusXTPN() != SimulatorModeXTPN.STOPPED)) {
             pauseSimulation();
-        } else if (getXTPNsimulatorStatus() == SimulatorModeXTPN.PAUSED) {
+        } else if (getsimulatorStatusXTPN() == SimulatorModeXTPN.PAUSED) {
             unpauseSimulation();
-        } else if (getXTPNsimulatorStatus() == SimulatorModeXTPN.STOPPED) {
+        } else if (getsimulatorStatusXTPN() == SimulatorModeXTPN.STOPPED) {
             JOptionPane.showMessageDialog(null,
                     "Can't pause a stopped simulation!", "XTPN simulator is already stopped!", JOptionPane.ERROR_MESSAGE);
         }
@@ -199,7 +201,7 @@ public class GraphicalSimulatorXTPN {
         stepCounter = 0;
         simTotalTime = 0.0;
 
-        overlord.io.updateTimeStep(true,stepCounter, simTotalTime);
+        overlord.io.updateTimeStep(true,stepCounter, simTotalTime, 0);
         overlord.simSettings.currentStep = stepCounter;
         overlord.simSettings.currentTime = simTotalTime;
         //nsl.logSimStopped(timeCounter);
@@ -276,7 +278,7 @@ public class GraphicalSimulatorXTPN {
      * Metoda pozwala pobrać aktualny tryb pracy symulatora XTPN.
      * @return (<b>SimulatorModeXTPN</b>) tryb pracy symulatora XTPN.
      */
-    public SimulatorModeXTPN getXTPNsimulatorStatus() {
+    public SimulatorModeXTPN getsimulatorStatusXTPN() {
         return simulatorStatusXTPN;
     }
 
@@ -307,9 +309,7 @@ public class GraphicalSimulatorXTPN {
     /**
      * Po tej klasie dziedziczy szereg klas implementujących konkretne tryby pracy symulatora.
      * Metoda actionPerformed() jest wykonywana w każdym kroku symulacji przez timer obiektu
-     * NetSimulator.
-     * @author students
-     *
+     * GraphicalSimulator.
      */
     private class SimulationPerformer implements ActionListener {
         protected int repaintSteps = overlord.simSettings.getTransitionGraphicDelay(); // licznik kroków graficznych
@@ -459,7 +459,7 @@ public class GraphicalSimulatorXTPN {
                 //aktualizacja czasu i kroku symulacji, wyświetlanie w oknie symulatora:
                 stepCounter++;
                 simTotalTime += infoNode.timeToChange;
-                overlord.io.updateTimeStep(true,stepCounter, simTotalTime);
+                overlord.io.updateTimeStep(true, stepCounter, simTotalTime, infoNode.timeToChange);
                 overlord.simSettings.currentStep = stepCounter;
                 overlord.simSettings.currentTime = simTotalTime;
 
@@ -518,8 +518,6 @@ public class GraphicalSimulatorXTPN {
                     endThisSimulationStep();
                 }
             }
-
-
         }
 
         /**
@@ -569,7 +567,11 @@ public class GraphicalSimulatorXTPN {
                             if(transition.fpnExtension.isFunctional()) {
                                 weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                             }
-                            place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
+                            ArrayList<Double> removedTokens = place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
+
+                            if(arc.getArcType() == TypeOfArc.READARC) {
+                                transition.readArcReturnVector.add(new TransitionXTPN.TokensBack(place, weight, removedTokens));
+                            }
                         }
                     }
                     launchedXTPN.add(transition);

@@ -41,10 +41,18 @@ public class SimulatorGlobals {
 
 	//XTPN:
 	private double calculationsAccuracy = 0.000000001;
-	public long simSteps_XTPN = 1000;
-	public double simMaxTime_XTPN = 300.0;
-	public int simRepetitions_XTPN = 10;
-	public boolean simulateTime = false; //domyślnie: true = steps
+	private long simSteps_XTPN = 30000;
+	private double simMaxTime_XTPN = 5000.0;
+	private int simRepetitions_XTPN = 10;
+	private boolean simulateTime = false; //domyślnie: true = steps
+	/** Zmienna określa, czy mają być zapamiętywane dane dla wszystkich kroków symulacji, czy tylko niektóre (patrz: recordedSteps) */
+	private boolean recordSomeSteps = false; //domyślnie: true = steps
+	/** Co ile kroków symulacji zapamiętywane są dane */
+	private int recordedSteps = 10;
+	private boolean recordStatictis = false;
+
+	private boolean readArcXTPNactive = false;
+
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.
@@ -380,6 +388,14 @@ public class SimulatorGlobals {
 		return this.ssaMassActionKineticsEnabled;
 	}
 
+
+
+	// ****************************************************************************************
+	// ****************************************************************************************
+	// ****************************************************************************************
+	// ****************************************************************************************
+	// ****************************************************************************************
+
 	/**
 	 * Zwraca dokładność obliczeń dla XTPN, domyślnie 0.000000001
 	 * @return (<b>double</b>) - dokładność obliczeń.
@@ -394,5 +410,133 @@ public class SimulatorGlobals {
 	 */
 	public void setCalculationsAccuracy(double calculationsAccuracy) {
 		this.calculationsAccuracy = calculationsAccuracy;
+	}
+
+	/**
+	 * Ustawia status symulacji czasowej.
+	 * @param value (<b>boolean</b>) true, jeżeli symulacja po czasie, false, jeżeli do maksymalnej liczby kroków.
+	 */
+	public void setTimeSimulationStatus_XTPN(boolean value) {
+		simulateTime = value;
+	}
+
+	/**
+	 * Zwraca status symulacji czasowej.
+	 * @return (<b>boolean</b>) - true, jeżeli symulacja po czasie, false, jeżeli do maksymalnej liczby kroków.
+	 */
+	public boolean isTimeSimulation_XTPN() {
+		return simulateTime;
+	}
+
+	/**
+	 * Ustawia maksymalną liczbę kroków symulacji dla sieci XTPN.
+	 * @param value (<b>double</b>) nowa maksymalna liczba kroków.
+	 */
+	public void setSimSteps_XTPN(long value) {
+		simSteps_XTPN = value;
+	}
+
+	/**
+	 * Zwraca maksymalną liczbę kroków symulacji dla sieci XTPN.
+	 * @return (<b>double</b>) - maksymalna liczba kroków.
+	 */
+	public long getSimSteps_XTPN() {
+		return simSteps_XTPN;
+	}
+
+	/**
+	 * Ustawia maksymalny czas symulacji dla sieci XTPN.
+	 * @param value (<b>double</b>) nowy maksymalny czas.
+	 */
+	public void setSimTime_XTPN(double value) {
+		simMaxTime_XTPN = value;
+	}
+
+	/**
+	 * Zwraca maksymalny czas symulacji dla sieci XTPN.
+	 * @return (<b>double</b>) - maksymalny czas symulacji.
+	 */
+	public double getSimTime_XTPN() {
+		return simMaxTime_XTPN;
+	}
+
+	/**
+	 * Ustawia maksymalną liczbę powtórzeń symulacji.
+	 * @param value (<b>double</b>) nowa maksymalna liczba powtórzeń.
+	 */
+	public void setSimRepetitions_XTPN(int value) {
+		simRepetitions_XTPN = value;
+	}
+
+	/**
+	 * Zwraca maksymalną liczbę powtórzeń symulacji.
+	 * @return (<b>int</b>) - maksymalna liczba powtórzeń.
+	 */
+	public int getSimRepetitions_XTPN() {
+		return simRepetitions_XTPN;
+	}
+
+	/**
+	 * Ustawia status częściowego rejestrowania kroków.
+	 * @param (<b>boolean</b>) true, jeżeli tylko niektóre (co getRecordedSteps() ) kroki mają być rejestrowane
+	 */
+	public void setPartialRecordingStetsStatus(boolean value) {
+		recordSomeSteps = value;
+	}
+
+	/**
+	 * Zwraca status częściowego rejestrowania kroków.
+	 * @return (<b>boolean</b>) - true, jeżeli tylko niektóre (co getRecordedSteps() ) kroki mają być rejestrowane
+	 */
+	public boolean isPartialRecordingSteps() {
+		return recordSomeSteps;
+	}
+
+	/**
+	 * Jeżeli włączono częściowe rejestrowanie kroków ( isPartialRecordingSteps() ), to metoda ustawia co ile kroków.
+	 * @param value (<b>int</b>) co ile kroków ma być rejestrowany stan symulacji.
+	 */
+	public void setRecordedSteps(int value) {
+		recordedSteps = value;
+	}
+
+	/**
+	 * Jeżeli włączono częściowe rejestrowanie kroków ( isPartialRecordingSteps() ), to metoda zwraca co ile kroków.
+	 * @return (<b>int</b>) co ile kroków ma być rejestrowany stan symulacji.
+	 */
+	public int getRecordedSteps() {
+		return recordedSteps;
+	}
+
+	/**
+	 * Ustawia status rejestrowania statystyk.
+	 * @param value (<b>boolean</b>) true, jeżeli statystyki mają być liczone.
+	 */
+	public void setStatsRecordingStatus(boolean value) {
+		recordStatictis = value;
+	}
+
+	/**
+	 * Zwraca status rejestrowania statystyk.
+	 * @param (<b>boolean</b>) - true, jeżeli statystyki mają być liczone.
+	 */
+	public boolean isStatsRecorded() {
+		return recordStatictis;
+	}
+
+	/**
+	 * Ustawia status czasowego łuku odczytu.
+	 * @param value (<b>boolean</b>) true, jeżeli łuk odczytu ma zachowywać czas tokenu.
+	 */
+	public void setXTPNreadArcActive(boolean value) {
+		readArcXTPNactive = value;
+	}
+
+	/**
+	 * Zwraca status czasowego łuku odczytu.
+	 * @param (<b>boolean</b>) - true, jeżeli łuk odczytu zachowywuje czas tokenu.
+	 */
+	public boolean isXTPNreadArcActive() {
+		return readArcXTPNactive;
 	}
 }

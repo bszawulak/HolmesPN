@@ -3,10 +3,13 @@ package holmes.petrinet.elements;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.containers.TransitionXTPNhistoryContainer;
 import holmes.petrinet.elements.containers.TransitionXTPNqSimGraphics;
+import holmes.petrinet.functions.FunctionsTools;
 
 import java.awt.*;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TransitionXTPN extends Transition {
     @Serial
@@ -29,10 +32,34 @@ public class TransitionXTPN extends Transition {
     private boolean isActivated_xTPN = false;
     private boolean isProducing_xTPN = false;
 
+
+
     //grafika:
     private int fractionDigits = 2;
     public TransitionXTPNhistoryContainer simHistoryXTPN = new TransitionXTPNhistoryContainer();
     public TransitionXTPNqSimGraphics qSimXTPN = new TransitionXTPNqSimGraphics();
+
+    //READ ARC, ZWROT ŁUKÓW
+    public static final class TokensBack {
+        public PlaceXTPN placeBack = null;
+        public int tokensBack = 0;
+        public ArrayList<Double> multisetBack = new ArrayList<>();
+
+        public TokensBack(PlaceXTPN place, int tokens, ArrayList<Double> multiRem) {
+            placeBack = place;
+            tokensBack = tokens;
+            multisetBack = multiRem;
+        }
+
+        public void Clear() {
+            placeBack = null;
+            tokensBack = 0;
+            multisetBack.clear();
+        }
+    }
+
+    public ArrayList<TokensBack> readArcReturnVector;
+
 
     /**
      * Konstruktor obiektu tranzycji sieci. Używany do wczytywania sieci zewnętrznej, np. ze Snoopy
@@ -44,6 +71,7 @@ public class TransitionXTPN extends Transition {
     public TransitionXTPN(int transitionId, ArrayList<ElementLocation> elementLocations, String name, String comment) {
         super(transitionId, elementLocations, name, comment);
         transType = TransitionType.XTPN;
+        readArcReturnVector = new ArrayList<>();
     }
 
     /**
@@ -54,6 +82,7 @@ public class TransitionXTPN extends Transition {
     public TransitionXTPN(int transitionId, ArrayList<ElementLocation> elementLocations) {
         super(transitionId, elementLocations);
         transType = TransitionType.XTPN;
+        readArcReturnVector = new ArrayList<>();
     }
 
     /**
@@ -65,6 +94,7 @@ public class TransitionXTPN extends Transition {
     public TransitionXTPN(int transitionId, int sheetId, Point transitionPosition) {
         super(transitionId, sheetId, transitionPosition);
         transType = TransitionType.XTPN;
+        readArcReturnVector = new ArrayList<>();
     }
 
     /**
@@ -74,6 +104,7 @@ public class TransitionXTPN extends Transition {
     public TransitionXTPN(String error) {
         super(error);
         transType = TransitionType.XTPN;
+        readArcReturnVector = new ArrayList<>();
     }
 
     /**
@@ -86,6 +117,8 @@ public class TransitionXTPN extends Transition {
         timer_Vbeta_XTPN = -1.0;
         isActivated_xTPN = false;
         isProducing_xTPN = false;
+
+        readArcReturnVector.clear();
     }
 
     /**
@@ -562,5 +595,52 @@ public class TransitionXTPN extends Transition {
             }
         }
         return false;
+    }
+
+
+
+
+
+
+    private Map<PlaceXTPN, Integer> preparePrePlaces() {
+        Map<PlaceXTPN, Integer> prePlaces = new HashMap<>();
+        for (ElementLocation el : getElementLocations()) {
+            for (Arc arc : el.getInArcs()) {
+                Node n = arc.getStartNode();
+                if (!prePlaces.containsKey((PlaceXTPN)n)) {
+                    int weight = FunctionsTools.getFunctionalArcWeight(this, arc, (PlaceXTPN)n );
+                    prePlaces.put((PlaceXTPN) n, weight);
+                }
+            }
+        }
+        return prePlaces;
+    }
+
+    public double maxFiresPossible() {
+        long massActionKineticModifier = 1;
+        Map<PlaceXTPN, Integer> prePlaces = preparePrePlaces();
+
+        if(prePlaces.size() != 0) {
+            massActionKineticModifier = Long.MAX_VALUE;
+            for (PlaceXTPN prePlace : prePlaces.keySet()) {
+                int weigth = prePlaces.get(prePlace);
+
+                long firingNumber = prePlace.getTokensNumber() / weigth;
+
+                if(prePlace.isGammaModeActive()) {
+                    firingNumber = 0;
+                    double gammaMin = prePlace.getGammaMinValue();
+                    for(double token : prePlace.accessMultiset()) {
+                        if(token >= gammaMin) {
+                            firingNumber++;
+                        }
+                    }
+                    firingNumber /= weigth;
+                }
+                massActionKineticModifier = Math.min(massActionKineticModifier, firingNumber);
+            }
+        }
+        return massActionKineticModifier;
+        //double denominator = (massActionKineticModifier * transition.spnExtension.getFiringRate());
     }
 }

@@ -87,8 +87,8 @@ public final class Check {
 				equal++;
 			else if(a.getArcType() == TypeOfArc.META_ARC)
 				meta++;
-			else if(a.arcXTPNbox.isXTPN())
-				xtpnArc++;
+			//else if(a.arcXTPNbox.isXTPN())
+			//	xtpnArc++;
 		}
 		result.add(normal);
 		result.add(readArc);

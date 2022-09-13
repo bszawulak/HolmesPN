@@ -44,17 +44,15 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JFreeChart dynamicsChart;
 
     //simulation variables:
-    private int simSteps = 1000; //ile kroków symulacji
-    private int repeated = 1; //ile powtórzeń (dla kroków)
-    private int rep_succeed = 1;
-    private boolean simulateWithTimeLength = false; //czy wykres czasowy na osi X dla miejsc
-    private double simTimeLength = 300.0;
+    private int simSteps = 30000; //ile kroków symulacji
+    private int repeated = 10; //ile powtórzeń (dla kroków)
+    private boolean simulateTime = false; //czy wykres czasowy na osi X dla miejsc
+    private double simTimeLength = 5000.0;
     private int placeChartType = 0; //0 - kroki, 1 - czas (oś X)
     private int transitionChartType = 0; //0 - kroki, 1 - czas (oś X)
     ArrayList<Double> stepsVectorPlaces = new ArrayList<>();
-    ArrayList<ArrayList<Double>> timeVectorPlaces = new ArrayList<>();
+    ArrayList<Double> timeVectorPlaces = new ArrayList<>();
     ArrayList<ArrayList<Double>> statusVectorTransition = new ArrayList<>();
-
 
 
     //MIEJSCA:
@@ -64,6 +62,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JFormattedTextField tokensTextBox; //liczba tokenów
     private JFormattedTextField gammaMinTextField;
     private JFormattedTextField gammaMaxTextField;
+
+    //SYMULACJE MIEJSCA:
+    private HolmesRoundedButton acqDataButton;
+    private boolean simPlaceReps = false;
+    private int simPlaceNumberOfReps = 5;
+    private int simPlaceInterval = 100;
 
     //TRANZYCJE:
     private HolmesRoundedButton buttonAlphaMode;
@@ -77,23 +81,32 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JFormattedTextField betaMinTextField;
     private JFormattedTextField betaMaxTextField;
 
-    //STATYSTYKI SYMULACJI DLA TRANZYCJI:
-    private JLabel stepTransLabel;
-    private JLabel timeTransLabel;
-    private JFormattedTextField inactiveStepsTextBox;
-    private JFormattedTextField activeStepsTextBox;
-    private JFormattedTextField producingStepsTextBox;
-    private JFormattedTextField producedStepsTextBox;
-    private JFormattedTextField inactiveTimeTextBox;
-    private JFormattedTextField activeTimeTextBox;
-    private JFormattedTextField producingTimeTextBox;
+    //SYMULACJE TRANZYCJI:
+    private JLabel transStatsStepLabel;
+    private JLabel transStatsTimeLabel;
+    private JFormattedTextField transStatsInactiveStepsTextBox;
+    private JFormattedTextField transStatsActiveStepsTextBox;
+    private JFormattedTextField transStatsProductionStepsTextBox;
+    private JFormattedTextField transStatsFiringStepsTextBox;
+    private JFormattedTextField transStatsInactiveTimeTextBox;
+    private JFormattedTextField transStatsActiveTimeTextBox;
+    private JFormattedTextField transStatsProductionTimeTextBox;
 
-    private JCheckBox simStatsStepsCheckbox;
-    private JCheckBox simStatsTimeCheckbox;
-    private boolean simStatsTransBySteps = true;
-    private int simStatsTransRepetitions = 10;
-    private int simStatsTransSteps = 1000;
-    private double simStatsTransTime = 300.0;
+    //Simulation:
+    private boolean simTransReps = false;
+    private int simTransNumberOfReps = 5;
+    private int simTransInterval = 100;
+
+    //Trans statistics:
+    private JCheckBox transStatsStepsCheckbox;
+    private JCheckBox transStatsTimeCheckbox;
+    private boolean transStatsSimulateWithSteps = true;
+    private int transStatsRepetitions = 10;
+    private int transStatsNumberOfSteps = 10000;
+    private double transStatsMaxTime = 5000.0;
+    private boolean transStatsReps = false;
+
+    SimulatorGlobals ownSettings = new SimulatorGlobals();
 
     /**
      * Konstruktor do tworzenia okna właściwości miejsca.
@@ -107,6 +120,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         this.eLocation = eloc;
         setTitle("Node: "+place.getName());
         setBackground(Color.WHITE);
+        initiateSimGlobals();
         initializeCommon(place);
 
         JPanel main = new JPanel(new BorderLayout()); //główny panel okna
@@ -137,6 +151,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         this.eLocation = eloc;
         setTitle("Node: "+transition.getName());
         setBackground(Color.WHITE);
+        initiateSimGlobals();
         initializeCommon(transition);
 
         JPanel main = new JPanel(new BorderLayout()); //główny panel okna
@@ -153,6 +168,18 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         setFieldStatus(false);
         main.add(tabbedPane);
+    }
+
+    private void initiateSimGlobals() {
+        simSteps = 10000; //ile kroków symulacji
+        repeated = 1; //ile powtórzeń (dla kroków)
+        simulateTime = false; //czy wykres czasowy na osi X dla miejsc
+        simTimeLength = 5000.0;
+
+        ownSettings.setSimSteps_XTPN(simSteps);
+        ownSettings.setSimTime_XTPN(simTimeLength);
+        ownSettings.setSimRepetitions_XTPN(repeated);
+        ownSettings.setTimeSimulationStatus_XTPN(simulateTime);
     }
 
     /**
@@ -177,9 +204,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
         if(node instanceof PlaceXTPN) {
             setSize(new Dimension(800, 580));
         } else { //tranzycja
-            setSize(new Dimension(800, 660));
+            setSize(new Dimension(800, 720));
         }
-
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {parentFrame.setEnabled(true);
@@ -194,7 +220,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
      */
     private JPanel initializePlaceInfo() {
         mainInfoPanel = new JPanel(null);
-        mainInfoPanel.setBounds(0, 0, 800, 600);
+        mainInfoPanel.setBounds(0, 0, 800, 590);
         mainInfoPanel.setBackground(Color.WHITE);
 
         int mPanelX = 0;
@@ -487,7 +513,16 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         JPanel chartButtonPanel = panelButtonsPlace(infoPanel.getHeight() + chartMainPanel.getHeight()); //dolny panel przycisków
         mainInfoPanel.add(chartButtonPanel);
-        fillPlaceDynamicData(chartMainPanel);
+
+        try {
+            if(overlord.getWorkspace().getProject().getTransitions().size() > 0
+                    && overlord.getWorkspace().getProject().getPlaces().size() > 0) {
+
+                fillPlaceDynamicData(chartMainPanel);
+            }
+        } catch (Exception ex) {
+            overlord.log("Error while trying to simulate and compute place data.", "error", true);
+        }
         return mainInfoPanel;
     }
 
@@ -513,15 +548,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
         chartButtonPanel.setBorder(BorderFactory.createTitledBorder("Simulation options:"));
         chartButtonPanel.setBackground(Color.WHITE);
 
-        int chartX = 5;
-        int chartY_1st = 10;
-        int chartY_2nd = 25;
+        int positionX = 5;
+        int positionY = 30;
 
-        //First row:
-
-        HolmesRoundedButton acqDataButton = new HolmesRoundedButton("<html>Simulate</html>"
+        acqDataButton = new HolmesRoundedButton("<html>Simulate</html>"
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
-        acqDataButton.setBounds(chartX, chartY_2nd, 110, 25);
+        acqDataButton.setBounds(positionX, positionY-10, 110, 35);
         acqDataButton.setMargin(new Insets(0, 0, 0, 0));
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
         acqDataButton.addActionListener(actionEvent -> {
@@ -529,44 +561,33 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
                         JOptionPane.WARNING_MESSAGE);
             } else {
-                acquireNewPlaceData();
+                acqDataButton.setEnabled(false);
+                getPlaceSimpleChartData(simPlaceNumberOfReps);
             }
         });
         chartButtonPanel.add(acqDataButton);
 
-        JLabel labelSteps = new JLabel("Sim. Steps:");
-        labelSteps.setBounds(chartX+120, chartY_1st, 70, 15);
-        chartButtonPanel.add(labelSteps);
+        //chartY_2nd += 20;
 
-        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 500000, 100);
+        JLabel simPlaceStepLabel = new JLabel("Steps:");
+        simPlaceStepLabel.setBounds(positionX+120, positionY-15, 60, 15);
+        chartButtonPanel.add(simPlaceStepLabel);
+
+        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 100000000, 10000);
         JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
-        simStepsSpinner.setBounds(chartX +120, chartY_2nd, 80, 25);
+        simStepsSpinner.setBounds(positionX +120, positionY, 80, 25);
         simStepsSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             simSteps = (int) spinner.getValue();
         });
         chartButtonPanel.add(simStepsSpinner);
 
-        JLabel labelRep = new JLabel("Repeated:");
-        labelRep.setBounds(chartX+210, chartY_1st, 70, 15);
-        chartButtonPanel.add(labelRep);
-
-        SpinnerModel simStepsRepeatedSpinnerModel = new SpinnerNumberModel(repeated, 1, 50, 1);
-        JSpinner simStepsRepeatedSpinner = new JSpinner(simStepsRepeatedSpinnerModel);
-        simStepsRepeatedSpinner.setBounds(chartX +210, chartY_2nd, 60, 25);
-        simStepsRepeatedSpinner.addChangeListener(e -> {
-            JSpinner spinner = (JSpinner) e.getSource();
-            repeated = (int) spinner.getValue();
-        });
-        chartButtonPanel.add(simStepsRepeatedSpinner);
-
-
-        JLabel label1 = new JLabel("Mode:");
-        label1.setBounds(chartX+280, chartY_1st, 50, 15);
+        JLabel label1 = new JLabel("Show:");
+        label1.setBounds(positionX+210, positionY-15, 50, 15);
         chartButtonPanel.add(label1);
 
         final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Steps", "Time"});
-        simMode.setBounds(chartX+280, chartY_2nd, 120, 25);
+        simMode.setBounds(positionX+210, positionY, 80, 25);
         simMode.setSelectedIndex(0);
         simMode.setMaximumRowCount(6);
         simMode.addActionListener(actionEvent -> {
@@ -575,28 +596,41 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         chartButtonPanel.add(simMode);
 
-        //Second row:
-        //chartY_2nd += 25;
-
-        JCheckBox timeSeriesCheckbox = new JCheckBox("Simulate time");
-        timeSeriesCheckbox.setBounds(chartX+400, chartY_2nd, 120, 25);
-        timeSeriesCheckbox.setSelected(simulateWithTimeLength);
-        timeSeriesCheckbox.setBackground(Color.WHITE);
-        timeSeriesCheckbox.addItemListener(e -> {
+        JCheckBox simPlaceRepsCheckbox = new JCheckBox("Reps:");
+        simPlaceRepsCheckbox.setBounds(positionX+295, positionY-15, 70, 15);
+        simPlaceRepsCheckbox.setSelected(simulateTime);
+        simPlaceRepsCheckbox.setBackground(Color.WHITE);
+        simPlaceRepsCheckbox.addItemListener(e -> {
+            if(doNotUpdate)
+                return;
             JCheckBox box = (JCheckBox) e.getSource();
-            simulateWithTimeLength = box.isSelected();
+            simPlaceReps = box.isSelected();
         });
-        chartButtonPanel.add(timeSeriesCheckbox);
+        chartButtonPanel.add(simPlaceRepsCheckbox);
 
-        SpinnerModel simTimeLengthSpinnerModel = new SpinnerNumberModel(simTimeLength, 0, 50000, 20);
-        JSpinner simTimeLengthSpinner = new JSpinner(simTimeLengthSpinnerModel);
-        simTimeLengthSpinner.setBounds(chartX +520, chartY_2nd, 80, 25);
-        simTimeLengthSpinner.addChangeListener(e -> {
+        SpinnerModel simStepsRepeatedSpinnerModel = new SpinnerNumberModel(simPlaceNumberOfReps, 1, 100, 10);
+        JSpinner simStepsRepeatedSpinner = new JSpinner(simStepsRepeatedSpinnerModel);
+        simStepsRepeatedSpinner.setBounds(positionX+300, positionY, 70, 25);
+        simStepsRepeatedSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
-            double tmp = (double)spinner.getValue();
-            simTimeLength = (int) tmp;
+            simPlaceNumberOfReps = (int) spinner.getValue();
         });
-        chartButtonPanel.add(simTimeLengthSpinner);
+        chartButtonPanel.add(simStepsRepeatedSpinner);
+
+
+        JLabel simPlaceIntervalLabel = new JLabel("Interval:");
+        simPlaceIntervalLabel.setBounds(positionX+380, positionY-15, 80, 15);
+        chartButtonPanel.add(simPlaceIntervalLabel);
+
+        SpinnerModel simIntervalSpinnerModel = new SpinnerNumberModel(simPlaceInterval, 1, 1000, 10);
+        JSpinner simIntervalSpinner = new JSpinner(simIntervalSpinnerModel);
+        simIntervalSpinner.setBounds(positionX+380, positionY, 60, 25);
+        simIntervalSpinner.addChangeListener(e -> {
+            JSpinner spinner = (JSpinner) e.getSource();
+            simPlaceInterval = (int) spinner.getValue();
+            showPlaceChart();
+        });
+        chartButtonPanel.add(simIntervalSpinner);
 
         return chartButtonPanel;
     }
@@ -609,7 +643,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
      */
     private void fillPlaceDynamicData(JPanel chartMainPanel) {
         if(!mainSimulatorActive) {
-            acquireNewPlaceData();
+            getPlaceSimpleChartData(1);
         } else {
             chartMainPanel.setEnabled(false);
             TextTitle title = dynamicsChart.getTitle();
@@ -625,61 +659,25 @@ public class HolmesNodeInfoXTPN extends JFrame {
     /**
      * Metoda aktywuje symulator dla jednej tranzycji w ustalonym wcześniej trybie i dla wcześniej
      * ustalonej liczby kroków. Testy są powtarzane ustaloną liczbę razy. Wyniki zapisuje na wykresie.
+     * @param reps (<b>int</b>) liczba powtórzeń.
      */
-    private void acquireNewPlaceData() {
+    private void getPlaceSimpleChartData(int reps) {
         StateSimulatorXTPN ss = new StateSimulatorXTPN();
 
-        SimulatorGlobals ownSettings = new SimulatorGlobals();
         ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-        ownSettings.simSteps_XTPN = simSteps;
-        ownSettings.simMaxTime_XTPN = simTimeLength;
-        ownSettings.simulateTime = simulateWithTimeLength;
+        ownSettings.setSimSteps_XTPN( simSteps );
+        ownSettings.setTimeSimulationStatus_XTPN(false);
         ss.initiateSim(ownSettings);
 
-        ArrayList<ArrayList<Double>> firstDataVectors = ss.simulateNetSinglePlace(ownSettings, thePlace);
-        ArrayList<ArrayList<Double>> tmpDataMatrix = new ArrayList<>();
-        tmpDataMatrix.add(firstDataVectors.get(0));
+        if(!simPlaceReps) {
+            reps = 1; //override if simPlaceReps = false
+        }
 
-        timeVectorPlaces = new ArrayList<>(firstDataVectors);
+        ArrayList<ArrayList<Double>> firstDataVectors = ss.simulateNetSinglePlace(ownSettings, thePlace, reps);
         stepsVectorPlaces = new ArrayList<>(firstDataVectors.get(0));
+        timeVectorPlaces = new ArrayList<>(firstDataVectors.get(1));
 
-        //timeVectorPlaces
-        int problemCounter = 0;
-        for(int i=1; i<repeated; i++) {
-            //ss.clearData();
-            ArrayList<ArrayList<Double>> newData = ss.simulateNetSinglePlace(ownSettings, thePlace);
-            if(newData.get(0).size() < tmpDataMatrix.get(0).size()) { //powtórz test, zły rozmiar danych
-                problemCounter++;
-                i--;
-                if(problemCounter == 10) {
-                    overlord.log("Unable to gather "+repeated+" data vectors (places) of same size. "
-                            + "State simulator cannot proceed "+simSteps+ " steps. First pass had: "
-                            + tmpDataMatrix.get(0).size() +" steps.", "error", true);
-                    break;
-                }
-            } else { //ok, taki sam lub dłuższy
-                rep_succeed++;
-                tmpDataMatrix.add(newData.get(0));
-            }
-        }
-
-        //dodaj do siebie
-        if(repeated > 1) {
-            stepsVectorPlaces.clear();
-            //ArrayList<Double> dataDVector = new ArrayList<Double>();
-            for(int i=0; i<repeated; i++) {
-                if(i==0) {
-                    stepsVectorPlaces.addAll(tmpDataMatrix.get(0));
-                } else {
-                    for(int j=0; j<tmpDataMatrix.get(i).size(); j++) {
-                        double oldval = stepsVectorPlaces.get(j);
-                        oldval += tmpDataMatrix.get(i).get(j);
-                        stepsVectorPlaces.set(j, oldval);
-                    }
-                }
-            }
-        }
-
+        acqDataButton.setEnabled(true);
         showPlaceChart();
     }
 
@@ -692,32 +690,32 @@ public class HolmesNodeInfoXTPN extends JFrame {
         dynamicsSeriesDataSet.removeAllSeries();
         XYSeries series = new XYSeries("Number of tokens");
 
-        if(placeChartType == 0) {
-            if(repeated != 1) {
-                for(int step=0; step<stepsVectorPlaces.size(); step++) {
-                    double value = stepsVectorPlaces.get(step);
-                    value /= rep_succeed;
-                    series.add(step, value);
-                }
-            } else {
-                if(stepsVectorPlaces != null) {
-                    for(int step=0; step<stepsVectorPlaces.size(); step++) {
-                        double value = stepsVectorPlaces.get(step);
-                        series.add(step, (int)value);
-                    }
-                }
-            }
-            dynamicsSeriesDataSet.addSeries(series);
-        } else { //wykres czasowy
-            if(timeVectorPlaces != null) {
-                for(int step=0; step<timeVectorPlaces.get(0).size(); step++) {
-                    double value = timeVectorPlaces.get(0).get(step);
-                    double time = timeVectorPlaces.get(1).get(step);
-                    series.add(time, value);
-                }
-            }
-            dynamicsSeriesDataSet.addSeries(series);
+        int maxInterval = simPlaceInterval;
+        if(10*simPlaceInterval > stepsVectorPlaces.size()) {
+            maxInterval = 1;
+            overlord.log("Warning: place node window interval too big, reduced to 1.", "warning", true);
         }
+
+        if(stepsVectorPlaces != null) {
+            double sumTokens = 0.0;
+            int interval = 0;
+            for(int step=0; step<stepsVectorPlaces.size(); step++) {
+                double value = stepsVectorPlaces.get(step);
+                sumTokens += value;
+                if(interval++ == maxInterval) {
+                    sumTokens /= maxInterval;
+                    if(placeChartType == 0) {
+                        series.add(step, (int) sumTokens);
+                    } else { //wykres czasowy
+                        double time = timeVectorPlaces.get(step);
+                        series.add(time, (int) sumTokens);
+                    }
+                    sumTokens = 0;
+                    interval = 0;
+                }
+            }
+        }
+        dynamicsSeriesDataSet.addSeries(series);
     }
 
     /**
@@ -732,7 +730,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         if(node instanceof Transition)
             yAxisLabel = "Firings chance %";
 
-        boolean showLegend = false;
+        boolean showLegend = true;
         boolean createTooltip = true;
         boolean createURL = false;
 
@@ -1286,7 +1284,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
         chartMainPanel.setBorder(BorderFactory.createTitledBorder("Transition chart"));
-        chartMainPanel.setBounds(0, infoPanel.getHeight(), mainInfoPanel.getWidth()-18, 220);
+        chartMainPanel.setBounds(0, infoPanel.getHeight(), mainInfoPanel.getWidth()-18, 280);
         chartMainPanel.add(createChartPanel(theTransition), BorderLayout.CENTER);
         chartMainPanel.setBackground(Color.WHITE);
         mainInfoPanel.add(chartMainPanel);
@@ -1298,9 +1296,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
         mainInfoPanel.add(simStatsPanel);
 
         try {
-            fillTransitionDynamicData(producedStepsTextBox, chartMainPanel, chartButtonPanel);
+            if(overlord.getWorkspace().getProject().getTransitions().size() > 0
+                    && overlord.getWorkspace().getProject().getPlaces().size() > 0) {
+                fillTransitionDynamicData(transStatsFiringStepsTextBox, chartMainPanel, chartButtonPanel);
+            }
         } catch (Exception ex) {
-            overlord.log("Error (576101739) | Exception: "+ex.getMessage(), "error", true);
+            overlord.log("Error while trying to simulate and compute transition data.", "error", true);
         }
         return mainInfoPanel;
     }
@@ -1316,13 +1317,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
         chartButtonPanel.setBorder(BorderFactory.createTitledBorder("Simulation options:"));
         chartButtonPanel.setBackground(Color.WHITE);
 
-        int chartX = 5;
-        int chartY_1st = 10;
-        int chartY_2nd = 25;
+        int positionX = 5;
+        int positionY = 30;
 
-        HolmesRoundedButton acqDataButton = new HolmesRoundedButton("<html>Simulate</html>"
+        acqDataButton = new HolmesRoundedButton("<html>Simulate</html>"
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
-        acqDataButton.setBounds(chartX, chartY_2nd, 110, 25);
+        acqDataButton.setBounds(positionX, positionY-10, 110, 35);
         acqDataButton.setMargin(new Insets(0, 0, 0, 0));
         acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
         acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
@@ -1331,64 +1331,75 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
                         JOptionPane.WARNING_MESSAGE);
             } else {
-                getSingleTransitionData();
+                acqDataButton.setEnabled(false);
+                getTransSimpleChartData(simTransNumberOfReps);
             }
         });
         chartButtonPanel.add(acqDataButton);
 
-        JLabel labelSteps = new JLabel("Sim. Steps:");
-        labelSteps.setBounds(chartX+120, chartY_1st, 70, 15);
+        JLabel labelSteps = new JLabel("Steps:");
+        labelSteps.setBounds(positionX+120, positionY-15, 70, 15);
         chartButtonPanel.add(labelSteps);
 
-        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 200000, 100);
+        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 100000000, 10000);
         JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
-        simStepsSpinner.setBounds(chartX+120, chartY_2nd, 80, 25);
+        simStepsSpinner.setBounds(positionX+120, positionY, 80, 25);
         simStepsSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             simSteps = (int) spinner.getValue();
         });
         chartButtonPanel.add(simStepsSpinner);
 
-        JLabel labelMode = new JLabel("Simulation mode:");
-        labelMode.setBounds(chartX+210, chartY_1st, 110, 15);
+        JLabel labelMode = new JLabel("Show:");
+        labelMode.setBounds(positionX+210, positionY-15, 80, 15);
         chartButtonPanel.add(labelMode);
 
         final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Steps", "Time"});
-        simMode.setBounds(chartX+210, chartY_2nd, 120, 25);
+        simMode.setBounds(positionX+210, positionY, 80, 25);
         simMode.setSelectedIndex(0);
         simMode.setMaximumRowCount(6);
         simMode.addActionListener(actionEvent -> {
             transitionChartType = simMode.getSelectedIndex();
-            showTransitionsChart();
+            if(statusVectorTransition.size() == 3) {
+                showTransitionsChart();
+            }
         });
         chartButtonPanel.add(simMode);
 
-        //Second row:
-        //chartY_2nd += 25;
-
-        JCheckBox timeSeriesCheckbox = new JCheckBox("Simulate time");
-        timeSeriesCheckbox.setBounds(chartX+330, chartY_2nd, 120, 25);
-        timeSeriesCheckbox.setSelected(simulateWithTimeLength);
-        timeSeriesCheckbox.setBackground(Color.WHITE);
-        timeSeriesCheckbox.addItemListener(e -> {
+        JCheckBox simTransRepsCheckbox = new JCheckBox("Reps:");
+        simTransRepsCheckbox.setBounds(positionX+295, positionY-15, 70, 15);
+        simTransRepsCheckbox.setSelected(simulateTime);
+        simTransRepsCheckbox.setBackground(Color.WHITE);
+        simTransRepsCheckbox.addItemListener(e -> {
+            if(doNotUpdate)
+                return;
             JCheckBox box = (JCheckBox) e.getSource();
-            simulateWithTimeLength = box.isSelected();
+            simTransReps = box.isSelected();
         });
-        chartButtonPanel.add(timeSeriesCheckbox);
+        chartButtonPanel.add(simTransRepsCheckbox);
 
-        JLabel timeMaxLabel = new JLabel("Sim. max time:");
-        timeMaxLabel.setBounds(chartX+450, chartY_1st, 120, 15);
-        chartButtonPanel.add(timeMaxLabel);
-
-        SpinnerModel simTimeLengthSpinnerModel = new SpinnerNumberModel(simTimeLength, 0, 50000, 20);
-        JSpinner simTimeLengthSpinner = new JSpinner(simTimeLengthSpinnerModel);
-        simTimeLengthSpinner.setBounds(chartX+450, chartY_2nd, 80, 25);
-        simTimeLengthSpinner.addChangeListener(e -> {
+        SpinnerModel simTransStepsRepeatedSpinnerModel = new SpinnerNumberModel(simPlaceNumberOfReps, 1, 100, 10);
+        JSpinner simTransStepsRepeatedSpinner = new JSpinner(simTransStepsRepeatedSpinnerModel);
+        simTransStepsRepeatedSpinner.setBounds(positionX+300, positionY, 70, 25);
+        simTransStepsRepeatedSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
-            double tmp = (double)spinner.getValue();
-            simTimeLength = (int) tmp;
+            simTransNumberOfReps = (int) spinner.getValue();
         });
-        chartButtonPanel.add(simTimeLengthSpinner);
+        chartButtonPanel.add(simTransStepsRepeatedSpinner);
+
+        JLabel simTransIntervalLabel = new JLabel("Interval:");
+        simTransIntervalLabel.setBounds(positionX+380, positionY-15, 80, 15);
+        chartButtonPanel.add(simTransIntervalLabel);
+
+        SpinnerModel simTransIntervalSpinnerModel = new SpinnerNumberModel(simPlaceInterval, 1, 1000, 10);
+        JSpinner simTransIntervalSpinner = new JSpinner(simTransIntervalSpinnerModel);
+        simTransIntervalSpinner.setBounds(positionX+380, positionY, 60, 25);
+        simTransIntervalSpinner.addChangeListener(e -> {
+            JSpinner spinner = (JSpinner) e.getSource();
+            simTransInterval = (int) spinner.getValue();
+            showTransitionsChart();
+        });
+        chartButtonPanel.add(simTransIntervalSpinner);
 
         return chartButtonPanel;
     }
@@ -1407,35 +1418,35 @@ public class HolmesNodeInfoXTPN extends JFrame {
         int positionX = 10;
         int positionY = 30;
 
-        stepTransLabel = new JLabel("Steps:", JLabel.LEFT);
-        stepTransLabel.setBounds(positionX+80, positionY-20, 140, 20);
-        resultPanel.add(stepTransLabel);
+        transStatsStepLabel = new JLabel("Steps:", JLabel.LEFT);
+        transStatsStepLabel.setBounds(positionX+80, positionY-20, 140, 20);
+        resultPanel.add(transStatsStepLabel);
 
-        timeTransLabel = new JLabel("Time:", JLabel.LEFT);
-        timeTransLabel.setBounds(positionX+185, positionY-20, 140, 20);
-        resultPanel.add(timeTransLabel);
+        transStatsTimeLabel = new JLabel("Time:", JLabel.LEFT);
+        transStatsTimeLabel.setBounds(positionX+185, positionY-20, 140, 20);
+        resultPanel.add(transStatsTimeLabel);
 
         JLabel inactiveStepsLabel = new JLabel("Inactive:", JLabel.LEFT);
         inactiveStepsLabel.setBounds(positionX, positionY, 70, 20);
         resultPanel.add(inactiveStepsLabel);
 
-        inactiveStepsTextBox = new JFormattedTextField("n/a");
-        inactiveStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
-        inactiveStepsTextBox.setEditable(false);
-        resultPanel.add(inactiveStepsTextBox);
+        transStatsInactiveStepsTextBox = new JFormattedTextField("n/a");
+        transStatsInactiveStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
+        transStatsInactiveStepsTextBox.setEditable(false);
+        resultPanel.add(transStatsInactiveStepsTextBox);
 
-        inactiveTimeTextBox = new JFormattedTextField("n/a");
-        inactiveTimeTextBox.setBounds(positionX+185, positionY, 110, 20);
-        inactiveTimeTextBox.setEditable(false);
-        resultPanel.add(inactiveTimeTextBox);
+        transStatsInactiveTimeTextBox = new JFormattedTextField("n/a");
+        transStatsInactiveTimeTextBox.setBounds(positionX+185, positionY, 110, 20);
+        transStatsInactiveTimeTextBox.setEditable(false);
+        resultPanel.add(transStatsInactiveTimeTextBox);
 
-        HolmesRoundedButton acqDataButton = new HolmesRoundedButton("<html>Simulate</html>"
+        HolmesRoundedButton acqTransSimDataButton = new HolmesRoundedButton("<html>Simulate</html>"
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
-        acqDataButton.setBounds(positionX+300, positionY, 110, 20);
-        acqDataButton.setMargin(new Insets(0, 0, 0, 0));
-        acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
-        acqDataButton.addActionListener(actionEvent -> {
+        acqTransSimDataButton.setBounds(positionX+300, positionY, 110, 20);
+        acqTransSimDataButton.setMargin(new Insets(0, 0, 0, 0));
+        acqTransSimDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+        acqTransSimDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
+        acqTransSimDataButton.addActionListener(actionEvent -> {
             if(overlord.getWorkspace().getProject().isSimulationActive()) {
                 JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
                         JOptionPane.WARNING_MESSAGE);
@@ -1443,7 +1454,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 getMultipleTransitionData();
             }
         });
-        resultPanel.add(acqDataButton);
+        resultPanel.add(acqTransSimDataButton);
 
         positionY+=23;
 
@@ -1451,37 +1462,37 @@ public class HolmesNodeInfoXTPN extends JFrame {
         activeStepsLabel.setBounds(positionX, positionY, 70, 20);
         resultPanel.add(activeStepsLabel);
 
-        activeStepsTextBox = new JFormattedTextField("n/a");
-        activeStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
-        activeStepsTextBox.setEditable(false);
-        resultPanel.add(activeStepsTextBox);
+        transStatsActiveStepsTextBox = new JFormattedTextField("n/a");
+        transStatsActiveStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
+        transStatsActiveStepsTextBox.setEditable(false);
+        resultPanel.add(transStatsActiveStepsTextBox);
 
-        activeTimeTextBox = new JFormattedTextField("n/a");
-        activeTimeTextBox.setBounds(positionX+185, positionY, 110, 20);
-        activeTimeTextBox.setEditable(false);
-        resultPanel.add(activeTimeTextBox);
+        transStatsActiveTimeTextBox = new JFormattedTextField("n/a");
+        transStatsActiveTimeTextBox.setBounds(positionX+185, positionY, 110, 20);
+        transStatsActiveTimeTextBox.setEditable(false);
+        resultPanel.add(transStatsActiveTimeTextBox);
 
-        simStatsStepsCheckbox = new JCheckBox("Steps");
-        simStatsStepsCheckbox.setBounds(positionX+300, positionY, 70, 20);
-        simStatsStepsCheckbox.setSelected(simulateWithTimeLength);
-        simStatsStepsCheckbox.setBackground(Color.WHITE);
-        simStatsStepsCheckbox.addItemListener(e -> {
+        transStatsStepsCheckbox = new JCheckBox("Steps");
+        transStatsStepsCheckbox.setBounds(positionX+300, positionY, 70, 20);
+        transStatsStepsCheckbox.setSelected(simulateTime);
+        transStatsStepsCheckbox.setBackground(Color.WHITE);
+        transStatsStepsCheckbox.addItemListener(e -> {
             if(doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
-            simStatsTransBySteps = box.isSelected();
+            transStatsSimulateWithSteps = box.isSelected();
             doNotUpdate = true;
-            simStatsTimeCheckbox.setSelected(!simStatsTransBySteps);
+            transStatsTimeCheckbox.setSelected(!transStatsSimulateWithSteps);
             doNotUpdate = false;
         });
-        resultPanel.add(simStatsStepsCheckbox);
+        resultPanel.add(transStatsStepsCheckbox);
 
-        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simStatsTransSteps, 0, 100000, 100);
+        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(transStatsNumberOfSteps, 0, 1000000, 5000);
         JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
-        simStepsSpinner.setBounds(positionX+370, positionY, 70, 20);
+        simStepsSpinner.setBounds(positionX+400, positionY, 70, 20);
         simStepsSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
-            simStatsTransSteps = (int) spinner.getValue();
+            transStatsNumberOfSteps = (int) spinner.getValue();
         });
         resultPanel.add(simStepsSpinner);
 
@@ -1491,38 +1502,37 @@ public class HolmesNodeInfoXTPN extends JFrame {
         producingStepsLabel.setBounds(positionX, positionY, 70, 20);
         resultPanel.add(producingStepsLabel);
 
-        producingStepsTextBox = new JFormattedTextField("n/a");
-        producingStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
-        producingStepsTextBox.setEditable(false);
-        resultPanel.add(producingStepsTextBox);
+        transStatsProductionStepsTextBox = new JFormattedTextField("n/a");
+        transStatsProductionStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
+        transStatsProductionStepsTextBox.setEditable(false);
+        resultPanel.add(transStatsProductionStepsTextBox);
 
-        producingTimeTextBox = new JFormattedTextField("n/a");
-        producingTimeTextBox.setBounds(positionX+185, positionY, 110, 20);
-        producingTimeTextBox.setEditable(false);
-        resultPanel.add(producingTimeTextBox);
+        transStatsProductionTimeTextBox = new JFormattedTextField("n/a");
+        transStatsProductionTimeTextBox.setBounds(positionX+185, positionY, 110, 20);
+        transStatsProductionTimeTextBox.setEditable(false);
+        resultPanel.add(transStatsProductionTimeTextBox);
 
-        simStatsTimeCheckbox = new JCheckBox("Time");
-        simStatsTimeCheckbox.setBounds(positionX+300, positionY, 70, 20);
-        simStatsTimeCheckbox.setSelected(simulateWithTimeLength);
-        simStatsTimeCheckbox.setBackground(Color.WHITE);
-        simStatsTimeCheckbox.addItemListener(e -> {
+        transStatsTimeCheckbox = new JCheckBox("Time");
+        transStatsTimeCheckbox.setBounds(positionX+300, positionY, 70, 20);
+        transStatsTimeCheckbox.setSelected(simulateTime);
+        transStatsTimeCheckbox.setBackground(Color.WHITE);
+        transStatsTimeCheckbox.addItemListener(e -> {
             if(doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
-            simStatsTransBySteps = !(box.isSelected());
+            transStatsSimulateWithSteps = !(box.isSelected());
             doNotUpdate = true;
-            simStatsStepsCheckbox.setSelected(simStatsTransBySteps);
+            transStatsStepsCheckbox.setSelected(transStatsSimulateWithSteps);
             doNotUpdate = false;
         });
-        resultPanel.add(simStatsTimeCheckbox);
+        resultPanel.add(transStatsTimeCheckbox);
 
-        SpinnerModel simTimeLengthSpinnerModel = new SpinnerNumberModel(simStatsTransTime, 0, 50000, 20);
+        SpinnerModel simTimeLengthSpinnerModel = new SpinnerNumberModel(transStatsMaxTime, 0, 50000, 1000);
         JSpinner simTimeLengthSpinner = new JSpinner(simTimeLengthSpinnerModel);
-        simTimeLengthSpinner.setBounds(positionX+370, positionY, 70, 20);
+        simTimeLengthSpinner.setBounds(positionX+400, positionY, 70, 20);
         simTimeLengthSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
-            double tmp = (double)spinner.getValue();
-            simStatsTransTime = tmp;
+            transStatsMaxTime = (double)spinner.getValue();
         });
         resultPanel.add(simTimeLengthSpinner);
 
@@ -1532,26 +1542,35 @@ public class HolmesNodeInfoXTPN extends JFrame {
         producedStepsLabel.setBounds(positionX, positionY, 70, 20);
         resultPanel.add(producedStepsLabel);
 
-        producedStepsTextBox = new JFormattedTextField("n/a");
-        producedStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
-        producedStepsTextBox.setEditable(false);
-        resultPanel.add(producedStepsTextBox);
+        transStatsFiringStepsTextBox = new JFormattedTextField("n/a");
+        transStatsFiringStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
+        transStatsFiringStepsTextBox.setEditable(false);
+        resultPanel.add(transStatsFiringStepsTextBox);
 
-        JLabel repetitionsStepsLabel = new JLabel("Repetitions:", JLabel.LEFT);
-        repetitionsStepsLabel.setBounds(positionX+300, positionY, 70, 20);
-        resultPanel.add(repetitionsStepsLabel);
+        JCheckBox transRepsCheckbox = new JCheckBox("Repetitions:");
+        transRepsCheckbox.setBounds(positionX+300, positionY, 100, 20);
+        transRepsCheckbox.setSelected(transStatsReps);
+        transRepsCheckbox.setBackground(Color.WHITE);
+        transRepsCheckbox.addItemListener(e -> {
+            if(doNotUpdate)
+                return;
+
+            JCheckBox box = (JCheckBox) e.getSource();
+            transStatsReps = box.isSelected();
+        });
+        resultPanel.add(transRepsCheckbox);
 
         SpinnerModel simRepetitionsSpinnerModel = new SpinnerNumberModel(10, 10, 100, 1);
         JSpinner simRepetitionsSpinner = new JSpinner(simRepetitionsSpinnerModel);
-        simRepetitionsSpinner.setBounds(positionX+370, positionY, 70, 20);
+        simRepetitionsSpinner.setBounds(positionX+400, positionY, 70, 20);
         simRepetitionsSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
-            simStatsTransRepetitions = (int) spinner.getValue();
+            transStatsRepetitions = (int) spinner.getValue();
         });
         resultPanel.add(simRepetitionsSpinner);
 
         doNotUpdate = true;
-        simStatsStepsCheckbox.setSelected(true);
+        transStatsStepsCheckbox.setSelected(true);
         doNotUpdate = false;
 
         return resultPanel;
@@ -1566,7 +1585,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private void fillTransitionDynamicData(JFormattedTextField avgFiredTextBox, JPanel chartMainPanel,
                                            JPanel chartButtonPanel) {
         if(!mainSimulatorActive) {
-            getSingleTransitionData();
+            getTransSimpleChartData(1);
         } else {
             avgFiredTextBox.setEnabled(false);
             avgFiredTextBox.setText("n/a");
@@ -1587,19 +1606,25 @@ public class HolmesNodeInfoXTPN extends JFrame {
      * Metoda aktywuje symulator dla jednej tranzycji w ustalonym wcześniej trybie i dla wcześniej
      * ustalonej liczby kroków. Wyniki zapisuje na wykresie, zwraca też wektor danych.
      */
-    private void getSingleTransitionData() {
+    private void getTransSimpleChartData(int reps) {
         StateSimulatorXTPN ss = new StateSimulatorXTPN();
 
-        SimulatorGlobals ownSettings = new SimulatorGlobals();
         ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-        ownSettings.simSteps_XTPN = simSteps;
-        ownSettings.simMaxTime_XTPN = simTimeLength;
-        ownSettings.simulateTime = simulateWithTimeLength;
+        ownSettings.setSimSteps_XTPN( simSteps );
+        ownSettings.setSimTime_XTPN( simTimeLength );
+        ownSettings.setTimeSimulationStatus_XTPN(simulateTime);
         ss.initiateSim(ownSettings);
 
-        statusVectorTransition = new ArrayList<>( ss.simulateNetSingleTransition(ownSettings, theTransition) );
+        if(!simTransReps) {
+            reps = 1; //override if simPlaceReps = false
+        }
 
-        showTransitionsChart();
+        statusVectorTransition = new ArrayList<>( ss.simulateNetSingleTransition(ownSettings, theTransition, reps) );
+
+        acqDataButton.setEnabled(true);
+        if(statusVectorTransition.size() == 3) {
+            showTransitionsChart();
+        }
     }
 
     /**
@@ -1608,16 +1633,14 @@ public class HolmesNodeInfoXTPN extends JFrame {
      */
     private void getMultipleTransitionData() {
         StateSimulatorXTPN ss = new StateSimulatorXTPN();
-
-        SimulatorGlobals ownSettings = new SimulatorGlobals();
         ownSettings.setNetType(SimulatorGlobals.SimNetType.XTPN, true);
-        ownSettings.simSteps_XTPN = simStatsTransSteps;
-        ownSettings.simMaxTime_XTPN = simStatsTransTime;
-        ownSettings.simulateTime = !simStatsTransBySteps;
+        ownSettings.setSimSteps_XTPN(transStatsNumberOfSteps);
+        ownSettings.setSimTime_XTPN(transStatsMaxTime);
+        ownSettings.setTimeSimulationStatus_XTPN( !transStatsSimulateWithSteps);
         ss.initiateSim(ownSettings);
 
         ArrayList<Double> statsVector = null;
-        for(int i = 0; i< simStatsTransRepetitions; i++) {
+        for(int i = 0; i< transStatsRepetitions; i++) {
             ss.restartEngine();
 
             ArrayList<Double> dataVector = ss.simulateNetSingleTransitionStatistics(ownSettings, theTransition);
@@ -1632,7 +1655,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         }
 
         for(int j=0; j<statsVector.size(); j++) { //uśrednij dane z iteracji
-            statsVector.set(j, statsVector.get(j) / simStatsTransRepetitions);
+            statsVector.set(j, statsVector.get(j) / transStatsRepetitions);
         }
 
         fillStatsFields(statsVector.get(0), statsVector.get(1), statsVector.get(2), statsVector.get(3)
@@ -1645,26 +1668,66 @@ public class HolmesNodeInfoXTPN extends JFrame {
      */
     private void showTransitionsChart() {
         dynamicsSeriesDataSet.removeAllSeries();
-        XYSeries series = new XYSeries("Average firing");
+        XYSeries series0 = new XYSeries("Avg. inactive");
+        XYSeries series1 = new XYSeries("Avg. active");
+        XYSeries series2 = new XYSeries("Avg. producing");
+        XYSeries series3 = new XYSeries("Avg. firing");
 
-        if(transitionChartType == 0) { //wykres po krokach
-            if(statusVectorTransition != null) {
-                for(int step=0; step<statusVectorTransition.get(0).size(); step++) {
-                    double value = statusVectorTransition.get(0).get(step);
-                    series.add(step, value);
+        int maxInterval = simTransInterval;
+        if(10*simTransInterval > statusVectorTransition.get(0).size()) {
+            maxInterval = 1;
+            overlord.log("Warning: transition node window interval too big, reduced to 1.", "warning", true);
+        }
+
+        if(statusVectorTransition != null) {
+            double inactive = 0.0;
+            double active = 0.0;
+            double producing = 0.0;
+            double firing = 0.0;
+            int interval = 0;
+            for(int step=0; step<statusVectorTransition.get(0).size(); step++) {
+
+                double value = statusVectorTransition.get(0).get(step);
+                if(value == 0.0) {
+                    inactive++;
+                } else if(value == 1.0) {
+                    active++;
+                } else if(value == 2.0) {
+                    producing++;
+                } else {
+                    firing++;
                 }
-            }
-        } else { //wykres czasowy
-            if(statusVectorTransition != null) {
-                double simTime = 0.0;
-                for(int step=0; step<statusVectorTransition.get(0).size(); step++) {
-                    double value = statusVectorTransition.get(0).get(step);
-                    simTime += statusVectorTransition.get(1).get(step);
-                    series.add(simTime, value);
+
+                if(interval++ == maxInterval) {
+                    inactive /= maxInterval;
+                    active /= maxInterval;
+                    producing /= maxInterval;
+                    firing /= maxInterval;
+
+                    if(transitionChartType == 0) {
+                        series0.add(step, inactive);
+                        series1.add(step, active);
+                        series2.add(step, producing);
+                        series3.add(step, firing);
+                    } else {
+                        double time = statusVectorTransition.get(1).get(step);
+
+                        series0.add(time, inactive);
+                        series1.add(time, active);
+                        series2.add(time, producing);
+                        series3.add(time, firing);
+                    }
+
+                    inactive = active = producing = firing = 0.0;
+                    interval = 0;
                 }
             }
         }
-        dynamicsSeriesDataSet.addSeries(series);
+
+        dynamicsSeriesDataSet.addSeries(series0);
+        dynamicsSeriesDataSet.addSeries(series1);
+        dynamicsSeriesDataSet.addSeries(series2);
+        dynamicsSeriesDataSet.addSeries(series3);
 
         ArrayList<Double> resultVector = statusVectorTransition.get(2);
         fillStatsFields(resultVector.get(0), resultVector.get(1), resultVector.get(2), resultVector.get(3)
@@ -1810,128 +1873,23 @@ public class HolmesNodeInfoXTPN extends JFrame {
             , double activeSteps, double producingSteps, double fireSteps, double inactiveTime
             , double activeTime, double producingTime) {
 
-        stepTransLabel.setText("Steps: "+Tools.cutValue(realSimulationSteps) );
-        timeTransLabel.setText("Time: "+Tools.cutValue(realSimulationTime) );
+        transStatsStepLabel.setText("Steps: "+Tools.cutValue(realSimulationSteps) );
+        transStatsTimeLabel.setText("Time: "+Tools.cutValue(realSimulationTime) );
 
         double tmp = (inactiveSteps / realSimulationSteps) * 100;
-        inactiveStepsTextBox.setText((int)inactiveSteps + " ("+Tools.cutValue(tmp)+"%)");
+        transStatsInactiveStepsTextBox.setText((int)inactiveSteps + " ("+Tools.cutValue(tmp)+"%)");
         tmp = (activeSteps / realSimulationSteps) * 100;
-        activeStepsTextBox.setText((int)activeSteps + " ("+Tools.cutValue(tmp)+"%)");
+        transStatsActiveStepsTextBox.setText((int)activeSteps + " ("+Tools.cutValue(tmp)+"%)");
         tmp = (producingSteps / realSimulationSteps) * 100;
-        producingStepsTextBox.setText((int)producingSteps + " ("+Tools.cutValue(tmp)+"%)");
+        transStatsProductionStepsTextBox.setText((int)producingSteps + " ("+Tools.cutValue(tmp)+"%)");
         tmp = (fireSteps / realSimulationSteps) * 100;
-        producedStepsTextBox.setText((int)fireSteps+"");  // + " ("+Tools.cutValue(tmp)+"%)");
+        transStatsFiringStepsTextBox.setText((int)fireSteps+" "+ " ("+Tools.cutValue(tmp)+"%)");
 
         tmp = (inactiveTime / realSimulationTime) * 100;
-        inactiveTimeTextBox.setText(Tools.cutValue(inactiveTime) + " ("+Tools.cutValue(tmp)+"%)");
+        transStatsInactiveTimeTextBox.setText(Tools.cutValue(inactiveTime) + " ("+Tools.cutValue(tmp)+"%)");
         tmp = (activeTime / realSimulationTime) * 100;
-        activeTimeTextBox.setText(Tools.cutValue(activeTime) + " ("+Tools.cutValue(tmp)+"%)");
+        transStatsActiveTimeTextBox.setText(Tools.cutValue(activeTime) + " ("+Tools.cutValue(tmp)+"%)");
         tmp = (producingTime / realSimulationTime) * 100;
-        producingTimeTextBox.setText(Tools.cutValue(producingTime) + " ("+Tools.cutValue(tmp)+"%)");
+        transStatsProductionTimeTextBox.setText(Tools.cutValue(producingTime) + " ("+Tools.cutValue(tmp)+"%)");
     }
-
-
-
-
-    /**
-     * Metoda oblicza dane statystyczne na podstawie danych uzyskanych z pełnej symulacji obserwowanej tranzycji.
-     * @param dataVectors (<b>ArrayList[ArrayList[Double]]</b>) wektor danych z symulacji tranzycji.
-     * @return (<b>ArrayList[Double]</b>) wektor wynikowy statystyk: realSimulationSteps, realSimulationTime,
-     *      inactiveSteps, activeSteps, producingSteps, fireSteps, inactiveTime, activeTime, producingTime.
-     */
-    /*
-    private ArrayList<Double> computeTransitionSimulationData(ArrayList<ArrayList<Double>> dataVectors) {
-        ArrayList<Double> resultVector = new ArrayList<>();
-        double inactiveSteps = 0;
-        double activeSteps = 0;
-        double producingSteps = 0;
-        double fireSteps = 0;
-        double inactiveTime = 0.0;
-        double activeTime = 0.0;
-        double producingTime = 0.0;
-        double startInactiveTime = 0.0;
-        double startActiveTime = 0.0;
-        double startProducingTime = 0.0;
-
-        double lastValue = 0.0;
-
-        for(int step=0; step<dataVectors.get(0).size(); step++) {
-            double value = dataVectors.get(0).get(step);
-            double simTime = dataVectors.get(1).get(step);
-            //double simStep = statusVectorTransition.get(2).get(step);
-
-            if(value == 0.0) {
-                inactiveSteps++;
-            } else if(value == 1.0) {
-                activeSteps++;
-            } else if(value == 2.0) {
-                producingSteps++;
-            } else if(value == 3.0) {
-                fireSteps++;
-            }
-
-            if(step == dataVectors.get(0).size()-1) { //ostatni krok
-                if(lastValue == value) {
-                    if(value == 0.0) { //last inactive step
-                        inactiveTime += (simTime - startInactiveTime);
-                    } else if(value == 1.0) { //last active step
-                        activeTime += (simTime - startActiveTime);
-                    } else if(value == 2.0) { //last producing step
-                        producingTime += (simTime - startProducingTime);
-                    }
-                }
-            }
-
-            if(lastValue != value) {
-                if(value == 0.0 && lastValue == 1.0) { //active -> inactive
-                    activeTime += (simTime - startActiveTime);
-                    startInactiveTime = simTime;
-                } else if(value == 0.0 && lastValue == 2.0) { //producing -> inactive
-                    producingTime += (simTime - startProducingTime);
-                    startInactiveTime = simTime;
-                } else if(value == 0.0 && lastValue == 3.0) { //fired -> inactive
-                    startInactiveTime = simTime;
-                } else if(value == 1.0 && lastValue == 0.0) { //inactive -> active
-                    inactiveTime += (simTime - startInactiveTime);
-                    startActiveTime = simTime;
-                } else if(value == 1.0 && lastValue == 2.0) { //producing -> active
-                    producingTime += (simTime - startProducingTime);
-                    startActiveTime = simTime;
-                } else if(value == 1.0 && lastValue == 3.0) { //fired -> active
-                    startActiveTime = simTime;
-                } else if(value == 2.0 && lastValue == 0.0) { //inactive -> producing
-                    inactiveTime += (simTime - startInactiveTime);
-                    startProducingTime = simTime;
-                } else if(value == 2.0 && lastValue == 1.0) { //active -> producing
-                    activeTime += (simTime - startActiveTime);
-                    startProducingTime = simTime;
-                } else if(value == 2.0 && lastValue == 3.0) { //fired -> producing
-                    startProducingTime = simTime;
-                } else if(value == 3.0 && lastValue == 0.0) { //inactive -> fired
-                    inactiveTime += (simTime - startInactiveTime);
-                } else if(value == 3.0 && lastValue == 1.0) { //active -> fired
-                    activeTime += (simTime - startActiveTime);
-                } else if(value == 3.0 && lastValue == 2.0) { //producing -> fired
-                    producingTime += (simTime - startProducingTime);
-                }
-                lastValue = value;
-            }
-        }
-
-        double realSimulationSteps = dataVectors.get(1).size();
-        double realSimulationTime = dataVectors.get(1).get((int)realSimulationSteps - 1);
-
-        resultVector.add(realSimulationSteps);
-        resultVector.add(realSimulationTime);
-        resultVector.add(inactiveSteps);
-        resultVector.add(activeSteps);
-        resultVector.add(producingSteps);
-        resultVector.add(fireSteps);
-        resultVector.add(inactiveTime);
-        resultVector.add(activeTime);
-        resultVector.add(producingTime);
-
-        return resultVector;
-    }
-     */
 }
