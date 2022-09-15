@@ -1670,8 +1670,81 @@ public final class ElementDraw {
 				g.setColor(Color.black);
 				g.setStroke(EditorResources.tokenDefaultStroke);
 				g.drawOval(x+2, y+1, 10, 10);
-			} else if (place.getTokensNumber() > 4) {
-				g.setColor(Color.BLUE);
+			} else if (place.getTokensNumber() == 5) {
+				int x = nodeBounds.x + nodeBounds.width / 2;
+				int y = nodeBounds.y + nodeBounds.height / 2;
+
+				g.setColor(EditorResources.tokenDefaultColor); //górny
+				g.fillOval(x-5, y-16, 10, 10);
+				g.setColor(Color.black);
+				g.setStroke(EditorResources.tokenDefaultStroke);
+				g.drawOval(x-5, y-16, 10, 10);
+
+				g.setColor(EditorResources.tokenDefaultColor); //lewy
+				g.fillOval(x-16, y-5, 10, 10);
+				g.setColor(Color.black);
+				g.setStroke(EditorResources.tokenDefaultStroke);
+				g.drawOval(x-16, y-5, 10, 10);
+
+				g.setColor(EditorResources.tokenDefaultColor); //środkowy
+				g.fillOval(x-5, y-5, 10, 10);
+				g.setColor(Color.black);
+				g.setStroke(EditorResources.tokenDefaultStroke);
+				g.drawOval(x-5, y-5, 10, 10);
+
+				g.setColor(EditorResources.tokenDefaultColor); //prawy
+				g.fillOval(x+6, y-5, 10, 10);
+				g.setColor(Color.black);
+				g.setStroke(EditorResources.tokenDefaultStroke);
+				g.drawOval(x+6, y-5, 10, 10);
+
+				g.setColor(EditorResources.tokenDefaultColor); //dolny
+				g.fillOval(x-5, y+6, 10, 10);
+				g.setColor(Color.black);
+				g.setStroke(EditorResources.tokenDefaultStroke);
+				g.drawOval(x-5, y+6, 10, 10);
+			} else if (place.getTokensNumber() == 6) {
+				int x = nodeBounds.x + nodeBounds.width / 2;
+				int y = nodeBounds.y + nodeBounds.height / 2;
+
+				g.setColor(EditorResources.tokenDefaultColor); //górny
+				g.fillOval(x-5, y-16, 10, 10);
+				g.setColor(Color.black);
+				g.setStroke(EditorResources.tokenDefaultStroke);
+				g.drawOval(x-5, y-16, 10, 10);
+
+				g.setColor(EditorResources.tokenDefaultColor); //lewy górny
+				g.fillOval(x-16, y-7, 10, 10);
+				g.setColor(Color.black);
+				g.setStroke(EditorResources.tokenDefaultStroke);
+				g.drawOval(x-16, y-7, 10, 10);
+
+				g.setColor(EditorResources.tokenDefaultColor); //środkowy
+				g.fillOval(x-5, y-5, 10, 10);
+				g.setColor(Color.black);
+				g.setStroke(EditorResources.tokenDefaultStroke);
+				g.drawOval(x-5, y-5, 10, 10);
+
+				g.setColor(EditorResources.tokenDefaultColor); //prawy górny
+				g.fillOval(x+6, y-7, 10, 10);
+				g.setColor(Color.black);
+				g.setStroke(EditorResources.tokenDefaultStroke);
+				g.drawOval(x+6, y-7, 10, 10);
+
+				g.setColor(EditorResources.tokenDefaultColor); //dolny lewy
+				g.fillOval(x-11, y+4, 10, 10);
+				g.setColor(Color.black);
+				g.setStroke(EditorResources.tokenDefaultStroke);
+				g.drawOval(x-11, y+4, 10, 10);
+
+				g.setColor(EditorResources.tokenDefaultColor); //dolny prawy
+				g.fillOval(x+2, y+4, 10, 10);
+				g.setColor(Color.black);
+				g.setStroke(EditorResources.tokenDefaultStroke);
+				g.drawOval(x+2, y+4, 10, 10);
+			}
+			else if (place.getTokensNumber() > 6) {
+				g.setColor(Color.RED);
 				g.setFont(new Font("TimesRoman", Font.BOLD, 18));
 
 				g.drawString(
