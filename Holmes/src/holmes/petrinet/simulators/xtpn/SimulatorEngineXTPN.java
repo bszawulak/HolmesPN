@@ -661,7 +661,8 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
         if(range < sg.getCalculationsAccuracy()) { //alfaMin=Max lub zero
             return min;
         } else {
-            if(transition.isMassActionKineticsActiveXTPN()) {
+            if(transition.isMassActionKineticsActiveXTPN()
+                || GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simXTPNmassAction").equals("1")) {
                 double denominator = transition.maxFiresPossible();
                 return generator.nextDouble(min, max) / denominator;
             } else

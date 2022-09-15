@@ -19,6 +19,8 @@ import holmes.files.io.IOprotocols;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
+import holmes.petrinet.elements.Place;
+import holmes.petrinet.elements.Transition;
 import holmes.utilities.HolmesFileView;
 import holmes.workspace.ExtensionFileFilter;
 
@@ -57,63 +59,63 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         this.addMenuItem("Clear colors", "clearColors.png", e -> GUIManager.getDefaultGUIManager().reset.clearGraphColors());
 
         this.addMenuItem("Save to image file", "picture_save.png",
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        exportToPicture();
-                    }
+            new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    exportToPicture();
+                }
 
-                    private void exportToPicture() {
-                        //String lastPath = getGraphPanel().getPetriNet().getWorkspace().getGUI().getLastPath();
-                        String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-                        JFileChooser fc;
-                        if (lastPath == null)
-                            fc = new JFileChooser();
-                        else
-                            fc = new JFileChooser(lastPath);
+                private void exportToPicture() {
+                    //String lastPath = getGraphPanel().getPetriNet().getWorkspace().getGUI().getLastPath();
+                    String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+                    JFileChooser fc;
+                    if (lastPath == null)
+                        fc = new JFileChooser();
+                    else
+                        fc = new JFileChooser(lastPath);
 
-                        fc.setFileView(new HolmesFileView());
-                        FileFilter pngFilter = new ExtensionFileFilter(".png - Portable Network Graphics", new String[]{"png"});
-                        FileFilter bmpFilter = new ExtensionFileFilter(".bmp -  Bitmap Image File", new String[]{"bmp"});
-                        FileFilter jpegFilter = new ExtensionFileFilter(".jpeg - JPEG Image File", new String[]{"jpeg"});
-                        FileFilter jpgFilter = new ExtensionFileFilter(".jpg - JPEG Image File", new String[]{"jpg"});
-                        fc.setFileFilter(pngFilter);
-                        fc.addChoosableFileFilter(pngFilter);
-                        fc.addChoosableFileFilter(bmpFilter);
-                        fc.addChoosableFileFilter(jpegFilter);
-                        fc.addChoosableFileFilter(jpgFilter);
-                        fc.setAcceptAllFileFilterUsed(false);
-                        if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                            File file = fc.getSelectedFile();
-                            String ext = "";
-                            String extension = fc.getFileFilter().getDescription();
-                            if (extension.contains(".png")) ext = ".png";
-                            if (extension.contains(".bmp")) ext = ".bmp";
-                            if (extension.contains(".jpeg") || extension.contains(".jpg")) ext = ".jpeg";
+                    fc.setFileView(new HolmesFileView());
+                    FileFilter pngFilter = new ExtensionFileFilter(".png - Portable Network Graphics", new String[]{"png"});
+                    FileFilter bmpFilter = new ExtensionFileFilter(".bmp -  Bitmap Image File", new String[]{"bmp"});
+                    FileFilter jpegFilter = new ExtensionFileFilter(".jpeg - JPEG Image File", new String[]{"jpeg"});
+                    FileFilter jpgFilter = new ExtensionFileFilter(".jpg - JPEG Image File", new String[]{"jpg"});
+                    fc.setFileFilter(pngFilter);
+                    fc.addChoosableFileFilter(pngFilter);
+                    fc.addChoosableFileFilter(bmpFilter);
+                    fc.addChoosableFileFilter(jpegFilter);
+                    fc.addChoosableFileFilter(jpgFilter);
+                    fc.setAcceptAllFileFilterUsed(false);
+                    if (fc.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                        File file = fc.getSelectedFile();
+                        String ext = "";
+                        String extension = fc.getFileFilter().getDescription();
+                        if (extension.contains(".png")) ext = ".png";
+                        if (extension.contains(".bmp")) ext = ".bmp";
+                        if (extension.contains(".jpeg") || extension.contains(".jpg")) ext = ".jpeg";
 
-                            BufferedImage image = getGraphPanel().createImageFromSheet();
-                            try {
-                                String ext2 = "";
-                                String path = file.getPath();
-                                if (ext.equals(".png") && !(path.contains(".png"))) ext2 = ".png";
-                                if (ext.equals(".bmp") && !file.getPath().contains(".bmp")) ext2 = ".bmp";
-                                if (ext.equals(".jpeg") && !file.getPath().contains(".jpeg")) ext2 = ".jpeg";
-                                if (ext.equals(".jpeg") && !file.getPath().contains(".jpg")) ext2 = ".jpg";
+                        BufferedImage image = getGraphPanel().createImageFromSheet();
+                        try {
+                            String ext2 = "";
+                            String path = file.getPath();
+                            if (ext.equals(".png") && !(path.contains(".png"))) ext2 = ".png";
+                            if (ext.equals(".bmp") && !file.getPath().contains(".bmp")) ext2 = ".bmp";
+                            if (ext.equals(".jpeg") && !file.getPath().contains(".jpeg")) ext2 = ".jpeg";
+                            if (ext.equals(".jpeg") && !file.getPath().contains(".jpg")) ext2 = ".jpg";
 
-                                ImageIO.write(image, ext.substring(1), new File(file.getPath() + ext2));
+                            ImageIO.write(image, ext.substring(1), new File(file.getPath() + ext2));
 
-                                GUIManager.getDefaultGUIManager().setLastPath(file.getParentFile().getPath());
+                            GUIManager.getDefaultGUIManager().setLastPath(file.getParentFile().getPath());
 
-                                //getGraphPanel().getPetriNet().getWorkspace().getGUI().setLastPath(
-                                //		file.getParentFile().getPath()); //  ╯°□°）╯ ︵  ┻━━━┻
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                                JOptionPane.showMessageDialog(null,
-                                        "Saving net sheet into picture failed.",
-                                        "Export Picture Error", JOptionPane.ERROR_MESSAGE);
-                            }
+                            //getGraphPanel().getPetriNet().getWorkspace().getGUI().setLastPath(
+                            //		file.getParentFile().getPath()); //  ╯°□°）╯ ︵  ┻━━━┻
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(null,
+                                    "Saving net sheet into picture failed.",
+                                    "Export Picture Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
-                });
+                }
+            });
 
         this.addSeparator();
 
@@ -132,6 +134,33 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         zoomMenu.add(createMenuItem("30%", "", null, arg0 -> getGraphPanel().setZoom(30, getGraphPanel().getZoom())));
 
         this.addSeparator();
+
+        this.addMenuItem("All Invisibility: OFF", "smallInvisibility.png", e -> {
+            if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+                return;
+
+            for(Transition trans : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
+                trans.setInvisibility(false);
+            }
+            for(Place place : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces()) {
+                place.setInvisibility(false);
+            }
+            GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+        });
+
+        this.addMenuItem("All knockout: OFF", "offlineSmall.png", e -> {
+            if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+                return;
+
+            for(Transition trans : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
+                trans.setKnockout(false);
+            }
+
+            GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+        });
+
+        this.addSeparator();
+
         JMenu analMenu = new JMenu("Network Analysis"); // (⌐■_■)
         this.add(analMenu);
         analMenu.add(createMenuItem("Import t-invariants from file", "invImportPopup.png", null, arg0 -> GUIManager.getDefaultGUIManager().io.loadExternalAnalysis(true)));

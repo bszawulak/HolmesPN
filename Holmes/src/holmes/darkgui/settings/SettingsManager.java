@@ -15,9 +15,6 @@ import holmes.darkgui.GUIManager;
 
 /**
  * Klasa zarządzająca plikiem konfiguracyjnym programu.
- *
- * @author students - pierwsza podstawowa wersja która nic nie robiła :)
- * @author MR - w tej chwili większość kodu tutaj
  */
 public class SettingsManager {
     private ArrayList<Setting> settings;
@@ -173,6 +170,9 @@ public class SettingsManager {
         checkAndFix(settingsNew, "simPlacesColors", "1");
         checkAndFix(settingsNew, "simSingleMode", "1");
         checkAndFix(settingsNew, "simTDPNrunWhenEft", "0");
+
+        checkAndFix(settingsNew, "simXTPNmassAction", "0");
+        checkAndFix(settingsNew, "simXTPNreadArcTokens", "0");
 
         settings = new ArrayList<Setting>(settingsNew);
         writeSettingsFile();

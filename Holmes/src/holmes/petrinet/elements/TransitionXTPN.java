@@ -32,8 +32,6 @@ public class TransitionXTPN extends Transition {
     private boolean isActivated_xTPN = false;
     private boolean isProducing_xTPN = false;
 
-
-
     //grafika:
     private int fractionDigits = 2;
     public TransitionXTPNhistoryContainer simHistoryXTPN = new TransitionXTPNhistoryContainer();

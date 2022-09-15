@@ -104,7 +104,8 @@ public class GraphicalSimulatorXTPN {
     public void startSimulation(SimulatorModeXTPN simulatorMode) {
         sg = overlord.simSettings;
 
-        sg.setXTPNreadArcActive(true);
+        boolean readArcPreserveTime = overlord.getSettingsManager().getValue("simXTPNreadArcTokens").equals("1");
+        sg.setXTPNreadArcActive(readArcPreserveTime);
 
         ArrayList<Place> places = petriNet.getPlaces();
         //nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode()); //TODO

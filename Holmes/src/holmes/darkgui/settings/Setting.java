@@ -2,8 +2,6 @@ package holmes.darkgui.settings;
 
 /**
  * Klasa słownikowa, służy do przechowywania właściwości programu w formie par ID/wartość.
- * @author students
- *
  */
 public class Setting {
 	private String ID;

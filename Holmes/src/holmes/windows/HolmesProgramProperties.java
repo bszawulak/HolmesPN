@@ -122,12 +122,10 @@ public class HolmesProgramProperties extends JFrame {
 
 		//Panel wczytywania sieci
 		panel.add(createSnoopyReadSystemPanel(0, 90, 590, 150));
-		
-		
+
 		//Panel wczytywania sieci
 		panel.add(createOtherOptionsPanel(0, 240, 590, 200));
-		
-		
+
 		panel.repaint();
 		return panel;
 	}
@@ -272,9 +270,7 @@ public class HolmesProgramProperties extends JFrame {
 		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard("Debug mode", posX, posY, 240, 20, 
 				"programDebugMode", true);
 		ioPanel.add(alignGridWhenSavedCheckBox);
-		
-		
-		
+
 		noAction = false;
 		return ioPanel;
 	}
@@ -481,7 +477,7 @@ public class HolmesProgramProperties extends JFrame {
 		noAction = true;
 		
 		JCheckBox snoopyCompatibilityCheckBox = new JCheckBox("(Snoopy/Holmes) Allow only Snoopy-compatible options", true);
-		snoopyCompatibilityCheckBox.setBounds(posX, posY, 350, 20);
+		snoopyCompatibilityCheckBox.setBounds(posX, posY, 400, 20);
 		snoopyCompatibilityCheckBox.addActionListener(actionEvent -> {
 			if(noAction) return;
 
@@ -552,13 +548,19 @@ public class HolmesProgramProperties extends JFrame {
 		JCheckBox simTDPNrunTimeCheckBox = checkboxWizard("TDPN transition acts like DPN when TPN internal clock = EFT", 
 				posX, posY+=20, 380, 20, "simTDPNrunWhenEft", true);
 		panel.add(simTDPNrunTimeCheckBox);
-		
-		
-		
+
 		JCheckBox placesColorsCheckBox = checkboxWizard("Places change colors during simulation", 
-				posX, posY+60, 360, 20, "simPlacesColors", true);
+				posX, posY+=20, 360, 20, "simPlacesColors", true);
 		panel.add(placesColorsCheckBox);
-		
+
+		JCheckBox XTPNsimMassActionCheckBox = checkboxWizard("(XTPN) Globally use mass-action kinetics law for simulation",
+				posX, posY+=20, 400, 20, "simXTPNmassAction", true);
+		panel.add(XTPNsimMassActionCheckBox);
+
+		JCheckBox XTPNsimReadArcTokenCheckBox = checkboxWizard("(XTPN) Read arcs preserve tokens lifetime",
+				posX, posY+=20, 360, 20, "simXTPNreadArcTokens", true);
+		panel.add(XTPNsimReadArcTokenCheckBox);
+
 		noAction = false;
 		return panel;
 	}
@@ -585,11 +587,11 @@ public class HolmesProgramProperties extends JFrame {
 		panel.add(transDelayLabel);
 		
 		JLabel arcDelayLabel = new JLabel("Arc token delay:");
-		arcDelayLabel.setBounds(io_x+230, io_y, 200, 20);
+		arcDelayLabel.setBounds(io_x+280, io_y, 200, 20);
 		panel.add(arcDelayLabel);
 		
-		final JSlider arcDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 55, 25);
-		arcDelaySlider.setBounds(io_x+230, io_y+=20, 200, 50);
+		final JSlider arcDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
+		arcDelaySlider.setBounds(io_x+280, io_y+=20, 250, 50);
 		arcDelaySlider.setMinorTickSpacing(2);
 		arcDelaySlider.setMajorTickSpacing(10);
 		arcDelaySlider.setPaintTicks(true);
@@ -608,8 +610,8 @@ public class HolmesProgramProperties extends JFrame {
 		});
 	    panel.add(arcDelaySlider);
 	    
-		final JSlider transDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 55, 25);
-		transDelaySlider.setBounds(io_x, io_y, 200, 50);
+		final JSlider transDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
+		transDelaySlider.setBounds(io_x, io_y, 250, 50);
 	    transDelaySlider.setMinorTickSpacing(2);
 	    transDelaySlider.setMajorTickSpacing(10);
 	    transDelaySlider.setPaintTicks(true);
@@ -630,7 +632,7 @@ public class HolmesProgramProperties extends JFrame {
             	anotherSlider = slider;
 		        return this;
 		    }
-		}.yesWeCan(arcDelaySlider) ); 
+		}.yesWeCan(arcDelaySlider) );
 	    panel.add(transDelaySlider);
 
 		
@@ -651,9 +653,9 @@ public class HolmesProgramProperties extends JFrame {
 		JPanel panel = new JPanel(null);
 		panel.setBounds(0, 0, 600, 500);
 		
-		panel.add(createInvariantsPanel(0, 0, 590, 90));
-		panel.add(createClusteringPanel(0, 90, 590, 90));
-		panel.add(createMCSPanel(0, 180, 590, 90));
+		panel.add(createClustersOptionsPanel(0, 0, 590, 60));
+		//panel.add(createClusteringPanel(0, 90, 590, 90));
+		panel.add(createMCSPanel(0, 60, 590, 60));
 		panel.repaint();
 		return panel;
 		
@@ -668,7 +670,7 @@ public class HolmesProgramProperties extends JFrame {
 	 * @return JPanel - panel
 	 */
 	@SuppressWarnings("SameParameterValue")
-	private JPanel createInvariantsPanel(int x, int y, int w, int h) {
+	private JPanel createClustersOptionsPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
 		panel.setBorder(BorderFactory.createTitledBorder("Clusters options"));
 		panel.setBounds(x, y, w, h);
