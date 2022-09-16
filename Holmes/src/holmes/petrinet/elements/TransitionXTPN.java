@@ -26,7 +26,7 @@ public class TransitionXTPN extends Transition {
     private double tauBeta_xTPN = -1.0;
     private double timer_Ualfa_XTPN = -1.0;
     private double timer_Vbeta_XTPN = -1.0;
-    private boolean tauTimersVisibility_XTPN = true;
+    private boolean tauTimersVisibility_XTPN = false;
     private boolean massActionKinetics = false;
     private boolean isImmediateXTPN = false;
     private boolean isActivated_xTPN = false;

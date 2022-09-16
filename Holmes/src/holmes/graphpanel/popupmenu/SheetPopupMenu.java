@@ -125,6 +125,8 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 
         this.add(zoomMenu);
 
+        zoomMenu.add(createMenuItem("200%", "", null, arg0 -> getGraphPanel().setZoom(200, getGraphPanel().getZoom())));
+
         zoomMenu.add(createMenuItem("100%", "", null, arg0 -> getGraphPanel().setZoom(100, getGraphPanel().getZoom())));
 
         zoomMenu.add(createMenuItem("80%", "", null, arg0 -> getGraphPanel().setZoom(80, getGraphPanel().getZoom())));
