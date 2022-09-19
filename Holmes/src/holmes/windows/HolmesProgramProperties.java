@@ -337,10 +337,10 @@ public class HolmesProgramProperties extends JFrame {
 		panel.setBounds(0, 0, 600, 500);
 		
 		//Panel opcji graficznych edytora
-		panel.add(createGraphicalEditorPanel(0, 0, 590, 120));
+		panel.add(createGraphicalEditorPanel(0, 0, 590, 150));
 
 		//Panel opcji ogólnych edytora
-		panel.add(createGeneralEditorPanel(0, 120, 590, 150));
+		panel.add(createGeneralEditorPanel(0, 150, 590, 150));
 		
 		panel.repaint();
 		return panel;
@@ -441,6 +441,10 @@ public class HolmesProgramProperties extends JFrame {
 		JCheckBox useShortNamesCheckBox = checkboxWizard("(Editor) Show short default names only", posX, posY+=20, 260, 20, 
 				"editorShowShortNames", true);
 		panel.add(useShortNamesCheckBox);
+
+		JCheckBox useShortNamesLowerIndexCheckBox = checkboxWizard("(Editor) Show short names with lower index", posX, posY+=20, 300, 20,
+				"editorShortNameLowerIndex", true);
+		panel.add(useShortNamesLowerIndexCheckBox);
 	
 		JCheckBox view3dCheckBox = checkboxWizard("(Editor) Petri net elements 3d view", posX, posY+=20, 260, 20, 
 				"editor3Dview", true);

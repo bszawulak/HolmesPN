@@ -191,30 +191,37 @@ public abstract class Node extends PetriNetElement {
 			 ArrayList<Node> metanodes) {
 		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
 
+		boolean lowerIndexID = sm.getValue("editorShortNameLowerIndex").equals("1");
+
 		String name = getName();
 		String xtpnID = "";
 		int add_transY = 0;
 		if(sm.getValue("editorShowShortNames").equals("1")) {
 			if(this instanceof Place) {
 				int x = places.indexOf(this);
-				if(this instanceof PlaceXTPN) {
+				if(lowerIndexID) {
 					xtpnID = x+"";
 					name = "p";
 				} else {
 					name = "p"+x;
 				}
 			} else if (this instanceof Transition) {
-				if(((Transition)this).getTransType() == TransitionType.PN) {
-					int x = transitions.indexOf(this);
-					name = "t"+x;
-				} else if(this instanceof TransitionXTPN) {
-					int x = transitions.indexOf(this);
+				int x = transitions.indexOf(this);
+				if(lowerIndexID) {
 					xtpnID = x+"";
 					name = "t";
 				} else {
-					int x = timeTransitions.indexOf(this);
-					name = "tt"+x;
+					name = "t"+x;
 				}
+
+				/*
+				if(((Transition)this).getTransType() == TransitionType.PN) {
+					name = "t"+x;
+				} else if(this instanceof TransitionXTPN) {
+					xtpnID = x+"";
+					name = "t";
+				}
+				 */
 			} else {
 				int x = metanodes.indexOf(this);
 				name = "M"+x;
@@ -247,7 +254,7 @@ public abstract class Node extends PetriNetElement {
 			if(drawY < 0 )
 				drawY = nodePoint.y + getRadius() + 15; //oryginalny kod
 
-			if(this instanceof TransitionXTPN || this instanceof PlaceXTPN) {
+			if(lowerIndexID) {
 				int size = Integer.parseInt(sm.getValue("editorGraphFontSize"));
 				int offset = 0;
 				if(size > 16)
@@ -255,14 +262,12 @@ public abstract class Node extends PetriNetElement {
 				if(size > 19)
 					offset += 2;
 
-				if(this instanceof TransitionXTPN) { //inaczej dla XTPN
-					//g.setFont(new Font("Tahoma", Font.BOLD, size));
+				if(this instanceof Transition) { //inaczej dla tranzycji
 					g.drawString(name, drawX, drawY+add_transY);
 					g.setFont(new Font("Tahoma", Font.BOLD, size - 2));
 					g.drawString(xtpnID, drawX+8+offset, drawY+add_transY+5);
 
-				} else if(this instanceof PlaceXTPN) { //inaczej dla XTPN
-					//g.setFont(new Font("Tahoma", Font.BOLD, size ));
+				} else if(this instanceof Place) { //inaczej dla miejsc
 					g.drawString(name, drawX, drawY+add_transY);
 					g.setFont(new Font("Tahoma", Font.BOLD, size - 2));
 					g.drawString(xtpnID, drawX+10+offset, drawY+add_transY+5);
@@ -270,8 +275,6 @@ public abstract class Node extends PetriNetElement {
 			} else {
 				g.drawString(name, drawX, drawY+add_transY);
 			}
-
-
 		}
 
 		if(this instanceof Place) {

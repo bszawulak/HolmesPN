@@ -173,6 +173,7 @@ public class SettingsManager {
 
         checkAndFix(settingsNew, "simXTPNmassAction", "0");
         checkAndFix(settingsNew, "simXTPNreadArcTokens", "0");
+        checkAndFix(settingsNew, "editorShortNameLowerIndex", "0");
 
         settings = new ArrayList<Setting>(settingsNew);
         writeSettingsFile();

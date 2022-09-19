@@ -443,8 +443,6 @@ public class HolmesSimXTPN extends JFrame {
         showAllButton.setIcon(Tools.getResIcon16("/icons/stateSim/showAll.png"));
         showAllButton.setToolTipText("Show average numbers of token in places through simulation steps.");
         showAllButton.addActionListener(actionEvent -> showAllPlacesData());
-
-        showAllButton.setEnabled(false);
         placesChartOptionsPanel.add(showAllButton);
 
         JButton showNotepadButton = new HolmesRoundedButton("<html><center>Show notepad</center></html>"
@@ -1145,12 +1143,12 @@ public class HolmesSimXTPN extends JFrame {
      * Pokazuje wyniki dla wszystkich miejsc w notatniku.
      */
     private void showPlacesAllInNotepad() {
+/*
+        //mass action kinetics tests
 
         IRandomGenerator generator = ssim.getRandomGenerator();
-
         HolmesNotepad notePad = new HolmesNotepad(900,600);
         notePad.setVisible(true);
-
 
         int reps = 1000;
         notePad.addTextLineNL("Denominator = 1.0", "text");
@@ -1175,27 +1173,14 @@ public class HolmesSimXTPN extends JFrame {
         }
 
         notePad.addTextLineNL("********************************************", "text");
-
-        /*
-        if(placesAvgData.size() == 0)
-            return;
-
+*/
+        
         HolmesNotepad notePad = new HolmesNotepad(900,600);
         notePad.setVisible(true);
+
         ArrayList<Place> places_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-        notePad.addTextLineNL("", "text");
-        notePad.addTextLineNL("Places: ", "text");
-        notePad.addTextLineNL("", "text");
-        for(int p=0; p<placesAvgData.size(); p++) {
-            String p_name = places_tmp.get(p).getName();
-            double val = placesAvgData.get(p);
-            long total = placesTotalData.get(p);
-            if(val > 0)
-                notePad.addTextLineNL("  p_"+p+" "+p_name+" : Avg. tokens: "+val+" Total: "+total, "text");
-            else
-                notePad.addTextLineNL("NO_TOKENS: p_"+p+" "+p_name+" : "+val, "text");
-        }
-        */
+
+
     }
 
 

@@ -30,6 +30,8 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
     private ArrayList<PlaceXTPN> places;
     private IRandomGenerator generator;
     private boolean graphicalSimulation = false;
+
+    private boolean globalMAK = false; //mass action kinetics
     public void setGraphicalSimulation(boolean status) {
         this.graphicalSimulation = status;
     }
@@ -61,6 +63,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
         this.overlord = GUIManager.getDefaultGUIManager();
         generator = new StandardRandom(System.currentTimeMillis());
         this.sg = overlord.simSettings;
+        globalMAK = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simXTPNmassAction").equals("1");
 
         transitions = new ArrayList<>();
         places = new ArrayList<>();
@@ -78,6 +81,8 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
         this.sg = overlord.simSettings;
         this.transitions = transitions;
         this.places = places;
+
+        globalMAK = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simXTPNmassAction").equals("1");
 
         if(overlord.simSettings.getGeneratorType() == 1) {
             this.generator = new HighQualityRandom(System.currentTimeMillis());
@@ -661,8 +666,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
         if(range < sg.getCalculationsAccuracy()) { //alfaMin=Max lub zero
             return min;
         } else {
-            if(transition.isMassActionKineticsActiveXTPN()
-                || GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simXTPNmassAction").equals("1")) {
+            if(transition.isMassActionKineticsActiveXTPN() || globalMAK) {
                 double denominator = transition.maxFiresPossible();
                 return generator.nextDouble(min, max) / denominator;
             } else
