@@ -39,9 +39,9 @@ public class TransitionXTPN extends Transition {
 
     //READ ARC, ZWROT ŁUKÓW
     public static final class TokensBack {
-        public PlaceXTPN placeBack = null;
-        public int tokensBack = 0;
-        public ArrayList<Double> multisetBack = new ArrayList<>();
+        public PlaceXTPN placeBack;
+        public int tokensBack;
+        public ArrayList<Double> multisetBack;
 
         public TokensBack(PlaceXTPN place, int tokens, ArrayList<Double> multiRem) {
             placeBack = place;

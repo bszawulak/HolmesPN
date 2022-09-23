@@ -421,7 +421,7 @@ public class HolmesDockWindowsTable extends JPanel {
             columnB_Y += 20;
 
 
-            JButton loopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_loop.png"));
+            JButton loopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_start.png"));
             loopSimulation.setName("simB5");
             loopSimulation.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
             loopSimulation.setToolTipText("Loop simulation");
@@ -432,7 +432,7 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(loopSimulation);
 
-            JButton singleTransitionLoopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_1transLoop.png"));
+            JButton singleTransitionLoopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_startSingle.png"));
             singleTransitionLoopSimulation.setName("simB6");
             singleTransitionLoopSimulation.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 30);
             singleTransitionLoopSimulation.setToolTipText("Loop single transition simulation");
@@ -443,7 +443,7 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(singleTransitionLoopSimulation);
 
-            JButton pauseSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_pause.png"));
+            JButton pauseSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_pause.png"));
             pauseSimulation.setName("pause");
             pauseSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
             pauseSimulation.setToolTipText("Pause simulation");
@@ -455,7 +455,7 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(pauseSimulation);
 
-            JButton stopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_stop.png"));
+            JButton stopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_stop.png"));
             stopSimulation.setName("stop");
             stopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
             stopSimulation.setToolTipText("Schedule a stop for the simulation");
@@ -514,7 +514,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(oneActionBack);
 
             JButton oneTransitionForward = new JButton(
-                    Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
+                    Tools.getResIcon22("/icons/simulation/simPN_1transForw.png"));
             oneTransitionForward.setName("simB2");
             oneTransitionForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
             oneTransitionForward.setToolTipText("One transition forward");
@@ -537,7 +537,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(loopBack);
 
             JButton oneStepForward = new JButton(
-                    Tools.getResIcon22("/icons/simulation/control_sim_fwdLoop.png"));
+                    Tools.getResIcon22("/icons/simulation/simPN_1stepForw.png"));
             oneStepForward.setName("simB4");
             oneStepForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
             oneStepForward.setToolTipText("One step forward");
