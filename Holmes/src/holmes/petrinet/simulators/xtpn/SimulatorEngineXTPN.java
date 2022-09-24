@@ -555,8 +555,12 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                 place.addTokens_XTPN(weight, 0.0);
             }
 
+            //Zwrot tokenów dla XTPN-read arc
             double tau = transition.getTauBetaValue();
-            if(sg.isXTPNreadArcActive()) {
+            if(sg.isXTPNreadArcActive()) { //jeśli tryb włączony
+                if(tau < 0)
+                    tau = 0.0;
+
                 for(TransitionXTPN.TokensBack box : transition.readArcReturnVector) {
                     ArrayList<Double> returnedTokens = new ArrayList<>();
                     double gammaMax = box.placeBack.getGammaMaxValue();
