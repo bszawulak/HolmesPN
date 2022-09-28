@@ -380,7 +380,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		GraphicalSimulatorXTPN netSimXTPN = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
 		JPanel simPanel = new JPanel();
 		JFrame newWindow = new JFrame();
-		newWindow.add(new HolmesDockWindowsTable(HolmesDockWindowsTable.SubWindow.SIMULATOR,netSim,netSimXTPN,false).getPanel());
+		newWindow.add(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getPanel());
 		//simPanel.add();
 		newWindow.setVisible(true);
 		newWindow.setSize(200,200);
