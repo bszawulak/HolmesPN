@@ -258,6 +258,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// set docking listener
 		setDockingListener(new DarkDockingListener());
 		setToolBox(new PetriNetTools());
+
+		// create workspace
+		createSimLogWindow(); // okno logów symulatora
+
+		setWorkspace(new Workspace(this));
+
 		setPropertiesBox(new HolmesDockWindow(DockWindowType.EDITOR));
 		setSimulatorBox(new HolmesDockWindow(DockWindowType.SIMULATOR));
 		setSelectionBox(new HolmesDockWindow(DockWindowType.SELECTOR));
@@ -358,27 +364,34 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// create tools
 		getFrame().add(getToolBox().getTree());
 
-		// create workspace
-		createSimLogWindow(); // okno logów symulatora
 
-		setWorkspace(new Workspace(this)); // default workspace dock
+
+// default workspace dock
 		//getDockingListener().setWorkspace(workspace);
 		JPanel mainpanel = new JPanel();
-		mainpanel.add(GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet());
+		mainpanel.add(getWorkspace().getSelectedSheet());
 		mainpanel.setLayout(new FlowLayout());
 		mainpanel.setSize(200,200);
-		getFrame().add(mainpanel);
-		getFrame().setLayout(new FlowLayout());
+		getFrame().add(getWorkspace().getSelectedSheet());
+		getFrame().setLayout(new GridLayout());
 
 		// create sim
 		GraphicalSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
 		GraphicalSimulatorXTPN netSimXTPN = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
 		JPanel simPanel = new JPanel();
-		simPanel.add(new HolmesDockWindowsTable(HolmesDockWindowsTable.SubWindow.SIMULATOR,netSim,netSimXTPN,false).getPanel());
-		simPanel.setSize(100,100);
-		simPanel.setLayout(new FlowLayout());
-		getFrame().add(simPanel);
-		getFrame().setLayout(new FlowLayout());
+		JFrame newWindow = new JFrame();
+		newWindow.add(new HolmesDockWindowsTable(HolmesDockWindowsTable.SubWindow.SIMULATOR,netSim,netSimXTPN,false).getPanel());
+		//simPanel.add();
+		newWindow.setVisible(true);
+		newWindow.setSize(200,200);
+		simPanel.setSize(200,200);
+		simPanel.setVisible(true);
+		//getFrame().add(new HolmesDockWindowsTable(HolmesDockWindowsTable.SubWindow.SIMULATOR,netSim,netSimXTPN,false).getPanel());
+		//simPanel.add(new HolmesDockWindowsTable(HolmesDockWindowsTable.SubWindow.SIMULATOR,netSim,netSimXTPN,false).getPanel());
+		//simPanel.setSize(100,100);
+		//simPanel.setLayout(new FlowLayout());
+		//getFrame().add(simPanel);
+		//getFrame().setLayout(new FlowLayout());
 
 		// Add the shortcuts bar also as root dock to the dock model.
 		//dockModel.addRootDock("toolBarBorderDock", getShortcutsBar().getToolBarBorderDock(), frame);
@@ -425,6 +438,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//na samym końcu, gdy już wszystko 'działa'
 		//createPropertiesWindow();
 		createStateSimulatorWindow();
+
 		createMCSWindow(); // okno generatora MCS
 
 		String path = settingsManager.getValue("lastOpenedPath");
@@ -432,7 +446,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		if(f.exists())
 			lastPath = path;	
 
-		getSimulatorBox().createSimulatorProperties(false);
+		//getSimulatorBox().createSimulatorProperties(false);
 		getFrame().repaint();
 	}
 

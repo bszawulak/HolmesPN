@@ -99,6 +99,12 @@ public class HolmesDockWindow {//extends SingleDock {
 
         //immediate creation:
         switch (type) {
+            case SIMULATOR -> {
+                GraphicalSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
+                GraphicalSimulatorXTPN netSimXTPN = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SIMULATOR, netSim, netSimXTPN, false));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
             case SELECTOR -> {
                 setSelectionPanel(new SelectionPanel());
                 scrollPane.getViewport().add(getSelectionPanel());

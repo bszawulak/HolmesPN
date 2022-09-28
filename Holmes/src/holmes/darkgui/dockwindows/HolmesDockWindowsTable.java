@@ -1016,11 +1016,13 @@ public class HolmesDockWindowsTable extends JPanel {
             panel.add(component);
         }
 
+        panel.setBackground(Color.green);
         panel.setOpaque(true);
         panel.repaint();
         panel.setVisible(true);
         add(panel);
         setPanel(panel);
+
     }
 
     //**************************************************************************************
@@ -8749,6 +8751,9 @@ public class HolmesDockWindowsTable extends JPanel {
     public void allowOnlySimulationDisruptButtons() {
         setEnabledSimulationInitiateButtons(false);
         setEnabledSimulationDisruptButtons(true);
+
+        overlord.getSimulatorBox().getCurrentDockWindow().getPanel().revalidate();
+        overlord.getSimulatorBox().getCurrentDockWindow().getPanel().repaint();
     }
 
     /**
@@ -8757,6 +8762,9 @@ public class HolmesDockWindowsTable extends JPanel {
     public void allowOnlySimulationInitiateButtons() {
         setEnabledSimulationInitiateButtons(true);
         setEnabledSimulationDisruptButtons(false);
+
+        overlord.getSimulatorBox().getCurrentDockWindow().getPanel().revalidate();
+        overlord.getSimulatorBox().getCurrentDockWindow().getPanel().repaint();
     }
 
     /**

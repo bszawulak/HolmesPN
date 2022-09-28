@@ -319,7 +319,7 @@ public class GUIReset {
 	 * @return (<b>boolean</b>) - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
-		GraphicalSimulator obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
+		GraphicalSimulator obj = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();// GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
 		if(obj instanceof GraphicalSimulator) {
 			if(obj.getSimulatorStatus() == SimulatorMode.STOPPED) {
 				return false;
@@ -332,7 +332,7 @@ public class GUIReset {
 	}
 
 	public boolean isXTPNSimulatorActiveWarning(String msg, String msgTitle) {
-		GraphicalSimulatorXTPN obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulatorXTPN();
+		GraphicalSimulatorXTPN obj = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();//GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulatorXTPN();
 		if(obj instanceof GraphicalSimulatorXTPN) {
 			if(obj.getXTPNsimulatorStatus() == GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
 				return false;
