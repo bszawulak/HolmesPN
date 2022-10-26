@@ -310,7 +310,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 				notePad.addTextLineNL("T-invariants - Kaja Style:", "text");
 				for (int i = 0; i < t_invariants.size(); i++) {
 					ArrayList<Integer> inv = t_invariants.get(i);
-					StringBuilder vector = new StringBuilder("x" + i + " - ");
+					//StringBuilder vector = new StringBuilder("x" + i + " - ");
+					StringBuilder vector = new StringBuilder("x" + i + ";");
 					for (int j = 0 ; j < inv.size();j++) {
 						int value = inv.get(j);
 						if(value!=0) {
@@ -332,7 +333,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 				notePad.addTextLineNL("P-invariants - Kaja Style:", "text");
 				for (int i = 0; i < p_invariants.size(); i++) {
 					ArrayList<Integer> inv = p_invariants.get(i);
-					StringBuilder vector = new StringBuilder("x" + i + " - ");
+					//StringBuilder vector = new StringBuilder("x" + i + " - ");
+					StringBuilder vector = new StringBuilder("x" + i + ";");
 					for (int j = 0 ; j < inv.size();j++) {
 						int value = inv.get(j);
 						if(value!=0) {

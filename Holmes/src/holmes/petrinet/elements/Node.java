@@ -646,10 +646,13 @@ public abstract class Node extends PetriNetElement {
 	public boolean removeElementLocation(ElementLocation el) {
 		int nodeElLocIndex = this.getNodeLocations().indexOf(el);
 		this.getTextsLocations(GUIManager.locationMoveType.NAME).remove(nodeElLocIndex);
-		this.getTextsLocations(GUIManager.locationMoveType.ALPHA).remove(nodeElLocIndex); //XTPN lokalizacja
-		this.getTextsLocations(GUIManager.locationMoveType.BETA).remove(nodeElLocIndex); //XTPN lokalizacja
-		this.getTextsLocations(GUIManager.locationMoveType.GAMMA).remove(nodeElLocIndex); //XTPN lokalizacja
-		this.getTextsLocations(GUIManager.locationMoveType.TAU).remove(nodeElLocIndex); //XTPN lokalizacja
+
+		if(el.getParentNode() instanceof PlaceXTPN || el.getParentNode() instanceof TransitionXTPN) {
+			this.getTextsLocations(GUIManager.locationMoveType.ALPHA).remove(nodeElLocIndex); //XTPN lokalizacja
+			this.getTextsLocations(GUIManager.locationMoveType.BETA).remove(nodeElLocIndex); //XTPN lokalizacja
+			this.getTextsLocations(GUIManager.locationMoveType.GAMMA).remove(nodeElLocIndex); //XTPN lokalizacja
+			this.getTextsLocations(GUIManager.locationMoveType.TAU).remove(nodeElLocIndex); //XTPN lokalizacja
+		}
 		this.getNodeLocations().remove(el);
 		
 		int subNet = el.getSheetID();
