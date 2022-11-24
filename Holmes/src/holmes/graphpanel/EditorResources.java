@@ -50,8 +50,8 @@ public class EditorResources {
 
 
 	public static final Color arcNeutralXTPNcolor = new Color(0, 0, 0, 255);
-	public static final Color activationXTPNcolor = new Color(0, 220, 0, 255);
-	public static final Color productionXTPNcolor = new Color(0, 51, 153, 255); //250, 80, 0, 255
+	public static final Color activationXTPNcolor = new Color(0, 51, 153, 255); //kolor łuku dla aktywacji
+	public static final Color productionXTPNcolor = new Color(0, 200, 0, 255); //kolor łuku dla produkcji
 	public static final Color inhibitorXTPNcolor = new Color(250, 51, 0, 255);
 
 	public static final Color lightGray = new Color(174, 174, 174, 255);
