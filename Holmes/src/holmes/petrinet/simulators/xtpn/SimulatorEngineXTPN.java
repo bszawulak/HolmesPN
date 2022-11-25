@@ -122,6 +122,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
             place.removeOldTokens_XTPN();
         }
 
+
         //tutaj uruchamiany tranzycje wejściowe, one są niewrażliwe na zmiany czasów w tokenach
         for(TransitionXTPN transition : transitions) {
             if(transition.isProducing_xTPN()) { //produkujące zostawiamy w spokoju

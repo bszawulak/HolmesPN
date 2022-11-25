@@ -113,6 +113,7 @@ public class SPNengine implements IEngine {
 			for(Node node : place.getOutNodes()) {
 				if(!transitionsVector.contains((Transition) node))
 					transitionsVector.add((Transition) node);
+
 			}
 			involvedTransitionsMap.put(place, transitionsVector);
 		}

@@ -171,7 +171,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
     }
 
     private void initiateSimGlobals() {
-        simSteps = 10000; //ile kroków symulacji
+        simSteps = 30000; //ile kroków symulacji
         repeated = 1; //ile powtórzeń (dla kroków)
         simulateTime = false; //czy wykres czasowy na osi X dla miejsc
         simTimeLength = 5000.0;
@@ -573,7 +573,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         simPlaceStepLabel.setBounds(positionX+120, positionY-15, 60, 15);
         chartButtonPanel.add(simPlaceStepLabel);
 
-        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 100000000, 10000);
+        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 100000000, 30000);
         JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
         simStepsSpinner.setBounds(positionX +120, positionY, 80, 25);
         simStepsSpinner.addChangeListener(e -> {
@@ -1341,7 +1341,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         labelSteps.setBounds(positionX+120, positionY-15, 70, 15);
         chartButtonPanel.add(labelSteps);
 
-        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 100000000, 10000);
+        SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simSteps, 0, 100000000, 30000);
         JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
         simStepsSpinner.setBounds(positionX+120, positionY, 80, 25);
         simStepsSpinner.addChangeListener(e -> {
