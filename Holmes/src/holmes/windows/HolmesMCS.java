@@ -57,6 +57,7 @@ public class HolmesMCS extends JFrame {
 	private JTextArea logField;
 	private JTextArea reactionSetsTextField;
 
+	private HolmesMCSanalysis newWindow;
 	/**
 	 * Konstruktor obiektu klasy HolmesMCS.
 	 */
@@ -92,6 +93,8 @@ public class HolmesMCS extends JFrame {
   	  	    	fillComboBoxData();
   	  	    }  
     	});
+
+		newWindow = new HolmesMCSanalysis();
 	}
 
 	/**
@@ -452,8 +455,17 @@ public class HolmesMCS extends JFrame {
 		});
 		calculateFragilityButton.setFocusPainted(false);
 		panel.add(calculateFragilityButton);
-		
-		
+
+		JButton doSmthButtonMk1 = new JButton();
+		doSmthButtonMk1.setText("New Window");
+		doSmthButtonMk1.setBounds(posX+400, posY+25, 110, 32);
+		doSmthButtonMk1.setMargin(new Insets(0, 0, 0, 0));
+		doSmthButtonMk1.setIcon(Tools.getResIcon22("/icons/mcsWindow/computeData.png"));
+		doSmthButtonMk1.addActionListener(actionEvent -> {
+			newWindow.setVisible(true);
+		});
+		doSmthButtonMk1.setFocusPainted(false);
+		panel.add(doSmthButtonMk1);
 		
 		return panel;
 	}
