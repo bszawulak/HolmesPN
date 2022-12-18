@@ -1,6 +1,7 @@
 package holmes.windows;
 
 import holmes.analyse.InvariantsCalculator;
+import holmes.analyse.InvariantsTools;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.elements.Place;
@@ -183,7 +184,7 @@ public class HolmesMCSanalysis extends JFrame {
         panel.add(button3);
 
         JButton buttonData = new JButton("Button 4");
-        buttonData.setText("Button 4");
+        buttonData.setText("Button TEST");
         buttonData.setBounds(posX + 600, posY, 120, 60);
         buttonData.setMargin(new Insets(0, 0, 0, 0));
         buttonData.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
@@ -196,6 +197,36 @@ public class HolmesMCSanalysis extends JFrame {
             logField1stTab.append("Tranzycji: "+transitions.size()+"\n");
             logField1stTab.append("Miejsc: "+places.size()+"\n");
             logField1stTab.append("********************************\n");
+
+            if(places.size() == 0 || transitions.size() == 0)
+                return;
+
+            //przykład pobrania danych o jednym inwariancie, tym pierwszym z indeksu [0] jeśli jakieś istnieją
+            ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+            if(invariants.size() > 0) {
+                ArrayList<Integer> inv0 = invariants.get(0);
+                for(int element : inv0) {
+                    logField1stTab.append(element + " ");
+                }
+                logField1stTab.append("\n");
+
+                logField1stTab.append("Wsparcie niezmiennika: \n");
+                ArrayList<Integer> support0 = InvariantsTools.getSupport(inv0);
+                for(int element : support0) {
+                    logField1stTab.append(element + " ");
+                }
+                logField1stTab.append("\n");
+
+            }
+
+            //pobranie listy miejsc wyjściowych i wejściowych danej tranzycji:
+            Transition trans0 = transitions.get(0);
+            ArrayList<Place> outputPlaces =  trans0.getPostPlaces();
+            ArrayList<Place> intputPlaces =  trans0.getPrePlaces();
+            //i teraz, gdybyśmy chcieli, to np. dla każdego elementu obu list można sprawdzić ile mają tranzycji,
+            //jakich, itd.
+
+
             ; //doAnything
         });
         buttonData.setFocusPainted(false);
