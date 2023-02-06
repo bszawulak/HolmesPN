@@ -553,7 +553,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                     overlord.log("Warning: non-standard arc used to produce tokens: "+place.getName()+ " arc: "+ arc, "warning", true);
                 }
 
-                if(arc.getArcType() == Arc.TypeOfArc.READARC && sg.isXTPNreadArcActive()) {
+                if(arc.getArcType() == Arc.TypeOfArc.READARC && sg.isXTPNreadArcActive() && place.isGammaModeActive()) {
                     continue;
                     //jeśli sg.isXTPNreadArcActive() == true i readarc, to zwrotem zajmie się pętla niżej
                 }
