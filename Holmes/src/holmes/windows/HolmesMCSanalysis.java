@@ -204,7 +204,7 @@ public class HolmesMCSanalysis extends JFrame {
             //przykład pobrania danych o jednym inwariancie, tym pierwszym z indeksu [0] jeśli jakieś istnieją
             ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
             if(invariants.size() > 0) {
-                ArrayList<Integer> inv0 = invariants.get(0);
+                ArrayList<Integer> inv0 = invariants.get(9);
                 for(int element : inv0) {
                     logField1stTab.append(element + " ");
                 }

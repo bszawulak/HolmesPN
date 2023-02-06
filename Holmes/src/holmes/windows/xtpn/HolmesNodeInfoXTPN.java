@@ -1764,7 +1764,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 }
             } else { //GAMMA OFFLINE
                 buttonGammaMode.setNewText("<html>Gamma: OFF</html>");
-                buttonGammaMode.repaintBackground("paerl_bH1_neutr.png", "paerl_bH2_hover.png", "paerl_bH3_press.png");
+                buttonGammaMode.repaintBackground("pearl_bH1_neutr.png", "paerl_bH2_hover.png", "paerl_bH3_press.png");
 
                 gammaVisibilityButton.setEnabled(false);
 

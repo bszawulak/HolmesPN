@@ -402,9 +402,11 @@ public final class ElementDraw {
 
 				//WYŚWIETLANIE DANYCH O ODPALENIACH
 				if (trans.drawGraphBoxT.getFiring_INV() > 0) {
-					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth(Integer.toString(trans.drawGraphBoxT.getFiring_INV())) / 2;
-					int posY = nodeBounds.y + nodeBounds.height / 2 + 5;
+					int posX = nodeBounds.x + nodeBounds.width + 6 - g.getFontMetrics().stringWidth(Integer.toString(trans.drawGraphBoxT.getFiring_INV())) / 2;
+					//int posY = nodeBounds.y + nodeBounds.height / 2  + 5;
+					int posY = nodeBounds.y;
 					g.setColor(Color.BLACK);
+					g.setFont(new Font("Garamond", Font.BOLD, 16));
 					g.drawString(Integer.toString(trans.drawGraphBoxT.getFiring_INV()), posX, posY);
 				}
 				

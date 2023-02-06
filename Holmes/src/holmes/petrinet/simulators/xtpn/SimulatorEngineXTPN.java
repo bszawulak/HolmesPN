@@ -84,6 +84,9 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
 
         globalMAK = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simXTPNmassAction").equals("1");
 
+        boolean readArcPreserveTime = overlord.getSettingsManager().getValue("simXTPNreadArcTokens").equals("1");
+        sg.setXTPNreadArcActive(readArcPreserveTime);
+
         if(overlord.simSettings.getGeneratorType() == 1) {
             this.generator = new HighQualityRandom(System.currentTimeMillis());
         } else {
@@ -540,6 +543,12 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                 }
 
                 PlaceXTPN place = (PlaceXTPN) arc.getEndNode();
+
+                if(place.getName().equals("DangerousPathogen")) {
+                    int x=1;
+                    x=2;
+                }
+
                 if(!(arc.getArcType() == Arc.TypeOfArc.NORMAL || arc.getArcType() == Arc.TypeOfArc.READARC)) {
                     overlord.log("Warning: non-standard arc used to produce tokens: "+place.getName()+ " arc: "+ arc, "warning", true);
                 }

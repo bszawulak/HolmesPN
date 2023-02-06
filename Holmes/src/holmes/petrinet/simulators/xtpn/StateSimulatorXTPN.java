@@ -100,6 +100,7 @@ public class StateSimulatorXTPN implements Runnable {
         }
 
         engineXTPN.setEngine(ownSettings.getNetType(), transitions, places);
+
         readyToSimulate = true;
         return readyToSimulate;
     }
