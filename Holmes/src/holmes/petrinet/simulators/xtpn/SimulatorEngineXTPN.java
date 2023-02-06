@@ -544,7 +544,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
 
                 PlaceXTPN place = (PlaceXTPN) arc.getEndNode();
 
-                if(place.getName().equals("DangerousPathogen")) {
+                if(place.getName().equals("IgG_proteins")) {
                     int x=1;
                     x=2;
                 }

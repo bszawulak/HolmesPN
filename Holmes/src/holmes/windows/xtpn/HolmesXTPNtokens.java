@@ -106,10 +106,10 @@ public class HolmesXTPNtokens extends JFrame {
             if(parent != null) {
                 setLocationRelativeTo(parent);
             } else {
-                int x = place.getElementLocations().get(0).getPosition().x;
-                int y = place.getElementLocations().get(0).getPosition().y;
-                x += 250;
-                setLocation(x,y);
+                //int x = place.getElementLocations().get(0).getPosition().x;
+                //int y = place.getElementLocations().get(0).getPosition().y;
+                //x += 250;
+                setLocation(480,220);
             }
             setVisible(true);
         }
