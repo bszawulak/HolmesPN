@@ -725,6 +725,9 @@ public class ProjectReader {
 					for(int e=0; e<elLocSize-1; e++) {
 						place.getElementLocations().add(new ElementLocation(0, new Point(20,20), place));
 						place.getTextsLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(0, new Point(0,0), place));
+						if(place.getPlaceType() == Place.PlaceType.XTPN) {
+							place.getTextsLocations(GUIManager.locationMoveType.GAMMA).add(new ElementLocation(0, new Point(0,0), place));
+						}
 					}
 				} catch (Exception exc) {
 					overlord.log("CRITICAL ERROR while reading places location - failed for place "+placesProcessed, "error", true);
@@ -1140,6 +1143,11 @@ public class ProjectReader {
 				for(int e=0; e<elLocSize-1; e++) {
 					transition.getElementLocations().add(new ElementLocation(0, new Point(20,20), transition));
 					transition.getTextsLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(0, new Point(0,0), transition));
+					if(transition.getTransType() == TransitionType.XTPN) {
+						transition.getTextsLocations(GUIManager.locationMoveType.ALPHA).add(new ElementLocation(0, new Point(0,0), transition));
+						transition.getTextsLocations(GUIManager.locationMoveType.BETA).add(new ElementLocation(0, new Point(0,0), transition));
+						transition.getTextsLocations(GUIManager.locationMoveType.TAU).add(new ElementLocation(0, new Point(0,0), transition));
+					}
 				}
 				return;
 			}
