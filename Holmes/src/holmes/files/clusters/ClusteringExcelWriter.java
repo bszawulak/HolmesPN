@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
-import holmes.clusters.ClusteringExtended;
+import holmes.varia.clusters.ClusteringExtended;
 import jxl.CellView;
 import jxl.Workbook;
 import jxl.WorkbookSettings;

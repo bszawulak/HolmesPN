@@ -15,7 +15,7 @@ import javax.swing.filechooser.FileFilter;
 
 import holmes.adam.mct.Runner;
 import holmes.analyse.MCTCalculator;
-import holmes.clusters.ClusteringExtended;
+import holmes.varia.clusters.ClusteringExtended;
 import holmes.darkgui.GUIManager;
 import holmes.files.io.snoopy.SnoopyWriter;
 import holmes.petrinet.elements.Place;

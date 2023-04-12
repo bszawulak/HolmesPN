@@ -20,8 +20,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
 
 import holmes.analyse.*;
-import holmes.clusters.ClusterDataPackage;
-import holmes.clusters.ClusterTransition;
+import holmes.varia.clusters.ClusterDataPackage;
+import holmes.varia.clusters.ClusterTransition;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.darkgui.GUIController;

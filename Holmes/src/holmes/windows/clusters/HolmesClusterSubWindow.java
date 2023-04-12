@@ -24,9 +24,9 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
-import holmes.clusters.ClusterDataPackage;
-import holmes.clusters.Clustering;
-import holmes.clusters.ClusteringExtended;
+import holmes.varia.clusters.ClusterDataPackage;
+import holmes.varia.clusters.Clustering;
+import holmes.varia.clusters.ClusteringExtended;
 import holmes.darkgui.GUIManager;
 import holmes.files.clusters.ClusterReader;
 import holmes.files.clusters.ClusteringExcelWriter;

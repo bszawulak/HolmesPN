@@ -1,4 +1,4 @@
-package holmes.clusters;
+package holmes.varia.clusters;
 
 import java.util.ArrayList;
 

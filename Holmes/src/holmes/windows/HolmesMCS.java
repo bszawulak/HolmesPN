@@ -457,7 +457,7 @@ public class HolmesMCS extends JFrame {
 		panel.add(calculateFragilityButton);
 
 		JButton doSmthButtonMk1 = new JButton();
-		doSmthButtonMk1.setText("New Window");
+		doSmthButtonMk1.setText("O_o");
 		doSmthButtonMk1.setBounds(posX+400, posY+25, 110, 32);
 		doSmthButtonMk1.setMargin(new Insets(0, 0, 0, 0));
 		doSmthButtonMk1.setIcon(Tools.getResIcon22("/icons/mcsWindow/computeData.png"));

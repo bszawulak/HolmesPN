@@ -8,8 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import holmes.clusters.Clustering;
-import holmes.clusters.ClusteringExtended;
+import holmes.varia.clusters.Clustering;
+import holmes.varia.clusters.ClusteringExtended;
 import holmes.darkgui.GUIManager;
 import holmes.utilities.Tools;
 

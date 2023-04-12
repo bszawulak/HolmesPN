@@ -21,7 +21,7 @@ import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-import holmes.clusters.ClusterRepresentation;
+import holmes.varia.clusters.ClusterRepresentation;
 import holmes.utilities.ByExt;
 
 /**

@@ -1,7 +1,7 @@
 package holmes.darkgui;
 
 import holmes.analyse.MCTCalculator;
-import holmes.clusters.ClusterDataPackage;
+import holmes.varia.clusters.ClusterDataPackage;
 import holmes.darkgui.dockable.DeleteAction;
 import holmes.darkgui.dockwindows.HolmesDockWindow;
 import holmes.darkgui.dockwindows.PetriNetTools;

@@ -8,7 +8,7 @@ import com.javadocking.dock.CompositeDock;
 import com.javadocking.dockable.Dockable;
 
 import holmes.analyse.MCTCalculator;
-import holmes.clusters.ClusterDataPackage;
+import holmes.varia.clusters.ClusterDataPackage;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable.SubWindow;
 import holmes.graphpanel.GraphPanel;

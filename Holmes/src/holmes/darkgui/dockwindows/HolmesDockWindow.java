@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import javax.swing.JScrollPane;
 
-import holmes.clusters.ClusterDataPackage;
+import holmes.varia.clusters.ClusterDataPackage;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable.SubWindow;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent;

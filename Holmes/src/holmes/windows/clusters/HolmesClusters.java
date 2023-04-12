@@ -36,8 +36,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
-import holmes.clusters.Clustering;
-import holmes.clusters.ClusteringInfoMatrix;
+import holmes.varia.clusters.Clustering;
+import holmes.varia.clusters.ClusteringInfoMatrix;
 import holmes.darkgui.GUIManager;
 import holmes.files.clusters.CHmetricReader;
 import holmes.files.clusters.ClusterReader;
