@@ -117,7 +117,7 @@ public class HolmesMCSanalysis extends JFrame {
         notePad.addTextLine("MCS#"+mcsIndex+"[\n", "text");
         for (int el : MCS) {
             if(ImportantTrans.contains(el)){
-                notePad.addTextLine("\t(DENIED)_", "error");
+                notePad.addTextLine("\t(DENIED)_", "warning");
             }else{
                 notePad.addTextLine("\t", "text");
             }
@@ -514,7 +514,7 @@ public class HolmesMCSanalysis extends JFrame {
                 counter++;
                 }
                 MCSrank.put(rankmsg.toString(), Tx.size());
-                MCSsets.put(rankmsg.toString(), Tx);
+                MCSsets.put(rankmsg.toString(), new HashSet<Integer>(Tx));
 
                 A.clear();
                 B.clear();
@@ -553,14 +553,13 @@ public class HolmesMCSanalysis extends JFrame {
                 String[] mcs = mapElement.getKey().split("\\[");
                 int percentage = mapElement.getValue()  * 100 / transitions.size();
                 String percent = "%";
-                logField1stTab.append(String.format("%-8s %-20s%s%d, %d%s)", mcs[0],"["+mcs[1],"(Tx:", mapElement.getValue(), percentage,percent));
-
                 for(Integer trans: ImportantTrans){
                     if(MCSsets.get(mapElement.getKey()).contains(trans)){
-                        logField1stTab.append(" -!- Zawiera zabronione tranzycje -!-");
+                        logField1stTab.append("(DENIED)_");
                         break;
                     }
                 }
+                logField1stTab.append(String.format("%-8s %-20s%s%d, %d%s)", mcs[0],"["+mcs[1],"(Tx:", mapElement.getValue(), percentage,percent));
                 logField1stTab.append("\n");
             }
             lhm.clear();
