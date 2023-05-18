@@ -1,9 +1,10 @@
 package holmes.petrinet.elements.containers;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ArcDecompContainer {
+public class ArcDecompContainer implements Serializable {
     private boolean isColorChanged;
     private Color arcColorValue;
     public ArrayList<Color> layers = new ArrayList<>();

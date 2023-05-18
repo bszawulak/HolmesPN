@@ -1,13 +1,14 @@
 package holmes.petrinet.elements.containers;
 
 import java.awt.*;
+import java.io.Serializable;
 
 /**
  * Klasa używana do rysowania informacji i grafiki związanej z klastrami. Oraz inwariantami. I MCT. No dobra,
  * mnóstwo algorytmów zaznaczających coś na rysunku sieci wykorzystuje ten kontener. Knockout / Mauritius map też.
  * Dodatkowo jak zauważyłem, KTOŚ zaczął jej używać przy algorytmach dekompozycji.
  */
-public class TransitionGraphicsContainer {
+public class TransitionGraphicsContainer implements Serializable {
     private Color transColorValue = new Color(255, 255, 255);
     private boolean isColorChanged = false;        //zmiana koloru - status
     private boolean valueVisibilityStatus = false;

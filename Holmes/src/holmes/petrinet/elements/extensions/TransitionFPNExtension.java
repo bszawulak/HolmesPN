@@ -5,9 +5,10 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.functions.FunctionContainer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TransitionFPNExtension {
+public class TransitionFPNExtension implements Serializable {
     private boolean isFunctional = false;
     protected ArrayList<FunctionContainer> fList;
     private Transition masterTransition;

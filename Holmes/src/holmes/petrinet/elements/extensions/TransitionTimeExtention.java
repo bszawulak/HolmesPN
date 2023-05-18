@@ -1,6 +1,8 @@
 package holmes.petrinet.elements.extensions;
 
-public class TransitionTimeExtention {
+import java.io.Serializable;
+
+public class TransitionTimeExtention implements Serializable {
     private double TPN_eft = 0;
     private double TPN_lft = 0;
     private double TPNtimerLimit = -1;

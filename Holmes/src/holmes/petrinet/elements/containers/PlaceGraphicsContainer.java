@@ -1,12 +1,13 @@
 package holmes.petrinet.elements.containers;
 
 import java.awt.*;
+import java.io.Serializable;
 
 /**
  * Klasa używana do rysowania informacji i grafiki związanej z miejscami. Odpowiednik TransitionGraphicsContainer.
  * Dodatkowo jak zauważyłem, KTOŚ zaczął jej używać przy algorytmach dekompozycji.
  */
-public class PlaceGraphicsContainer {
+public class PlaceGraphicsContainer implements Serializable {
     private boolean isColorChanged;
     private Color placeColorValue;
     private boolean valueVisibilityStatus;

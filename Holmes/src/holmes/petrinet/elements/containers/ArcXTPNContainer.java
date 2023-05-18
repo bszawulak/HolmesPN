@@ -1,6 +1,8 @@
 package holmes.petrinet.elements.containers;
 
-public class ArcXTPNContainer {
+import java.io.Serializable;
+
+public class ArcXTPNContainer implements Serializable {
     private boolean isXTPN = false;
     private boolean isXTPNinhibitor = false;
     private boolean isXTPNact = false;
