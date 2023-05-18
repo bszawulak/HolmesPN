@@ -266,6 +266,7 @@ public class HolmesSubnetComparison extends JFrame {
 
         JPanel leftPanel = new JPanel();
         tabbedPane = new JTabbedPane();
+        //tabbedPane.removeAll();
         tabbedPane.setSize(200,500);
 
         this.setSize(950, 800);
@@ -273,6 +274,8 @@ public class HolmesSubnetComparison extends JFrame {
         sc.firstQuestion = firstQuestionB;
         sc.secondQuestion = secondQuestionB;
         sc.thirdQuestion = thirdQuestionB;
+
+
 
         infoPane.append("Compare first net to second net.\n");
         JComponent panelFF = createPartResultTable(sc.compareFirstSecond(),false);//,gscl.size(),gscl.get(0).size());
