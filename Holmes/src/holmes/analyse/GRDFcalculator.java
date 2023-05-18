@@ -3,19 +3,21 @@ package holmes.analyse;
 import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.windows.decompositions.HolmesComparisonModule;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
-import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.axis.*;
+import org.jfree.chart.plot.DefaultDrawingSupplier;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYBarPainter;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.xy.XYSeries;
 
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class GRDFcalculator implements Runnable {
 
     private HolmesComparisonModule masterWindow = null;
-
 
     public GRDFcalculator() {
         masterWindow = GUIManager.getDefaultGUIManager().accessComparisonWindow();
@@ -39,8 +41,16 @@ public class GRDFcalculator implements Runnable {
 
         for (int i = 0; i < chiisenGraohletSize; i++) {
             distanceDRGF[i] = Math.abs(firstSingleDRGF[i] - secondSingleDRGF[i]);
-            result += Math.abs(((double) firstSingleDRGF[i] / (double) firstSum) - ((double) secondSingleDRGF[i] / (double) secondSum));
+
+            double f1 = -Math.log((double) firstSingleDRGF[i] / (double) firstSum);
+            double f2 = -Math.log((double) secondSingleDRGF[i] / (double) secondSum);
+            if(firstSingleDRGF[i]==0)
+                f1=0;
+            if(secondSingleDRGF[i]==0)
+                f2=0;
+            result += Math.abs(f1 - f2);
         }
+
         int nodeN = masterWindow.graphletSize.getSelectedIndex() + 1;
         masterWindow.infoPaneDRGF.append("\nGRDF (" + nodeN + "-node) : " + result);
 
@@ -67,18 +77,44 @@ public class GRDFcalculator implements Runnable {
         masterWindow.grdfSeriesDataSet.removeAllSeries();
         masterWindow.grdfSeriesDataSet.addSeries(series1);
         masterWindow.grdfSeriesDataSet.addSeries(series2);
+
+        XYPlot xyplot = (XYPlot) masterWindow.grdfChart.getPlot();
+        xyplot.setForegroundAlpha(0.85F);
+        XYBarRenderer xybarrenderer = (XYBarRenderer) xyplot.getRenderer();
+        xybarrenderer.setBarPainter(new StandardXYBarPainter());
+
+        Paint[] paintArray = {              //code related to translucent colors begin here
+                new Color(0x80ff0000, true),
+                new Color(0x800000ff, true)
+        };
+        String[] axisX = new String[151];
+        for (int i=0 ; i< 151 ; i++)
+            axisX[i]=String.valueOf(i+1);
+        SymbolAxis rangeAxis = new SymbolAxis("Graphlets", axisX);
+        rangeAxis.setVerticalTickLabels(true);
+        xyplot.setDomainAxis(rangeAxis);
+
+        NumberAxis yAxis = (NumberAxis) xyplot.getRangeAxis();
+        DecimalFormat format = new DecimalFormat("0");
+        yAxis.setNumberFormatOverride(format);
+
+        double max = series1.getMaxY();
+        if(max<series2.getMaxY())
+            max=series2.getMaxY();
+
+        int tick = (int)max/10;
+
+        yAxis.setTickUnit(new NumberTickUnit(tick));
+
+        xyplot.setDrawingSupplier(new DefaultDrawingSupplier(
+                paintArray,
+                DefaultDrawingSupplier.DEFAULT_FILL_PAINT_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_OUTLINE_PAINT_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_STROKE_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_OUTLINE_STROKE_SEQUENCE,
+                DefaultDrawingSupplier.DEFAULT_SHAPE_SEQUENCE));
+
         masterWindow.grdfChartPanel.setVisible(true);
-
-        CategoryPlot chartPlot = masterWindow.grdfChart.getCategoryPlot();
-        ValueAxis yAxis = chartPlot.getRangeAxis();
-        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
-        CategoryAxis xAxis = chartPlot.getDomainAxis();
-
-        //masterWindow.chooserGRDF.setEnabled(true);
-        //masterWindow.generateDrgf.setEnabled(true);
-        //masterWindow.graphletSize.setEnabled(true);
-        //masterWindow.enableGRDFbuttons(true);
         masterWindow.drgfTable.revalidate();
         masterWindow.infoPaneDRGF.append("\nComparison process ended.\n");
     }

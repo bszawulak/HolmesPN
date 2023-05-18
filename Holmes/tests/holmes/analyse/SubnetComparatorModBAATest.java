@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SubnetComparatorModBAATest {
-    //TODO TESTS
-
     @Test
     void compare0_00() {
         SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet0(),true,false,false);
@@ -124,9 +122,6 @@ public class SubnetComparatorModBAATest {
         GreatCommonSubnet gcs = sc.compareTest();
         assertEquals(0, gcs.gcsValue);
         assertEquals(0, gcs.psel.size());
-        //assertEquals(2, gcs.gcsValue);
-        //assertEquals(2, gcs.psel.get(0).partialNodes.size());
-        //assertEquals(1, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
@@ -158,7 +153,6 @@ public class SubnetComparatorModBAATest {
 
     @Test
     void compare0_16() {
-        //saveSubnet(creatSubnet16());
         SubnetComparator sc = new SubnetComparator(creatSubnet0(), creatSubnet16(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
         assertEquals(2, gcs.gcsValue);
@@ -190,9 +184,8 @@ public class SubnetComparatorModBAATest {
     void compare1_00() {
         SubnetComparator sc = new SubnetComparator(creatSubnet1(), creatSubnet0(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        assertEquals(1, gcs.gcsValue);
-        assertEquals(1, gcs.psel.get(0).partialNodes.size());
-        assertEquals(0, gcs.psel.get(0).partialArcs.size());
+        assertEquals(0, gcs.gcsValue);
+        assertEquals(0, gcs.psel.size());
     }
 
     @Test
@@ -297,9 +290,6 @@ public class SubnetComparatorModBAATest {
         GreatCommonSubnet gcs = sc.compareTest();
         assertEquals(0, gcs.gcsValue);
         assertEquals(0, gcs.psel.size());
-        //assertEquals(2, gcs.gcsValue);
-        //assertEquals(2, gcs.psel.get(0).partialNodes.size());
-        //assertEquals(1, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
@@ -469,9 +459,6 @@ public class SubnetComparatorModBAATest {
         GreatCommonSubnet gcs = sc.compareTest();
         assertEquals(0, gcs.gcsValue);
         assertEquals(0, gcs.psel.size());
-        //assertEquals(4, gcs.gcsValue);
-        //assertEquals(4, gcs.psel.get(0).partialNodes.size());
-        //assertEquals(3, gcs.psel.get(0).partialArcs.size());
     }
 
     @Test
@@ -1002,7 +989,6 @@ public class SubnetComparatorModBAATest {
     void compare5_16() {
         SubnetComparator sc = new SubnetComparator(creatSubnet5(), creatSubnet16(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(7, gcs.gcsValue);
         assertEquals(7, gcs.psel.get(0).partialNodes.size());
         assertEquals(6, gcs.psel.get(0).partialArcs.size());
@@ -1491,7 +1477,6 @@ public class SubnetComparatorModBAATest {
         SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet10(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
         printElements(gcs);
-        //saveSubnet(gcs);
         assertEquals(5, gcs.gcsValue);
         assertEquals(5, gcs.psel.get(0).partialNodes.size());
         assertEquals(4, gcs.psel.get(0).partialArcs.size());
@@ -1554,7 +1539,6 @@ public class SubnetComparatorModBAATest {
     void compare8_17() {
         SubnetComparator sc = new SubnetComparator(creatSubnet8(), creatSubnet17(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(9, gcs.gcsValue);
         assertEquals(9, gcs.psel.get(0).partialNodes.size());
         assertEquals(8, gcs.psel.get(0).partialArcs.size());
@@ -1658,7 +1642,6 @@ public class SubnetComparatorModBAATest {
     void compare9_09() {
         SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet9(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(14, gcs.gcsValue);
         assertEquals(14, gcs.psel.get(0).partialNodes.size());
         assertEquals(14, gcs.psel.get(0).partialArcs.size());
@@ -1694,7 +1677,6 @@ public class SubnetComparatorModBAATest {
     void compare9_13() {
         SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet13(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(7, gcs.gcsValue);
         assertEquals(7, gcs.psel.get(0).partialNodes.size());
         assertEquals(6, gcs.psel.get(0).partialArcs.size());
@@ -1704,7 +1686,6 @@ public class SubnetComparatorModBAATest {
     void compare9_14() {
         SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet14(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(7, gcs.gcsValue);
         assertEquals(7, gcs.psel.get(0).partialNodes.size());
         assertEquals(6, gcs.psel.get(0).partialArcs.size());
@@ -1723,7 +1704,6 @@ public class SubnetComparatorModBAATest {
     void compare9_16() {
         SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet16(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //Subnet(gcs);
         assertEquals(7, gcs.gcsValue);
         assertEquals(7, gcs.psel.get(0).partialNodes.size());
         assertEquals(6, gcs.psel.get(0).partialArcs.size());
@@ -1742,7 +1722,6 @@ public class SubnetComparatorModBAATest {
     void compare9_18() {
         SubnetComparator sc = new SubnetComparator(creatSubnet9(), creatSubnet18(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(7, gcs.gcsValue);
         assertEquals(7, gcs.psel.get(0).partialNodes.size());
         assertEquals(6, gcs.psel.get(0).partialArcs.size());
@@ -1799,7 +1778,6 @@ public class SubnetComparatorModBAATest {
     void compare10_05() {
         SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet5(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(3, gcs.gcsValue);
         assertEquals(3, gcs.psel.get(0).partialNodes.size());
         assertEquals(2, gcs.psel.get(0).partialArcs.size());
@@ -1827,7 +1805,6 @@ public class SubnetComparatorModBAATest {
     void compare10_08() {
         SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet8(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(5, gcs.gcsValue);
         assertEquals(5, gcs.psel.get(0).partialNodes.size());
         assertEquals(4, gcs.psel.get(0).partialArcs.size());
@@ -1846,7 +1823,6 @@ public class SubnetComparatorModBAATest {
     void compare10_10() {
         SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet10(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(10, gcs.gcsValue);
         assertEquals(10, gcs.psel.get(0).partialNodes.size());
         assertEquals(10, gcs.psel.get(0).partialArcs.size());
@@ -1873,7 +1849,6 @@ public class SubnetComparatorModBAATest {
     void compare10_13() {
         SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet13(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(5, gcs.gcsValue);
         assertEquals(5, gcs.psel.get(0).partialNodes.size());
         assertEquals(4, gcs.psel.get(0).partialArcs.size());
@@ -1910,7 +1885,6 @@ public class SubnetComparatorModBAATest {
     void compare10_17() {
         SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet17(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(5, gcs.gcsValue);
         assertEquals(5, gcs.psel.get(0).partialNodes.size());
         assertEquals(5, gcs.psel.get(0).partialArcs.size());
@@ -1920,7 +1894,6 @@ public class SubnetComparatorModBAATest {
     void compare10_18() {
         SubnetComparator sc = new SubnetComparator(creatSubnet10(), creatSubnet18(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(8, gcs.gcsValue);
         assertEquals(8, gcs.psel.get(0).partialNodes.size());
         assertEquals(7, gcs.psel.get(0).partialArcs.size());
@@ -2355,7 +2328,6 @@ public class SubnetComparatorModBAATest {
     void compare13_10() {
         SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet10(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(5, gcs.gcsValue);
         assertEquals(5, gcs.psel.get(0).partialNodes.size());
         assertEquals(4, gcs.psel.get(0).partialArcs.size());
@@ -2382,7 +2354,6 @@ public class SubnetComparatorModBAATest {
     void compare13_13() {
         SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet13(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(8, gcs.gcsValue);
         assertEquals(8, gcs.psel.get(0).partialNodes.size());
         assertEquals(8, gcs.psel.get(0).partialArcs.size());
@@ -2410,7 +2381,6 @@ public class SubnetComparatorModBAATest {
     void compare13_16() {
         SubnetComparator sc = new SubnetComparator(creatSubnet13(), creatSubnet16(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(6, gcs.gcsValue);
         assertEquals(6, gcs.psel.get(0).partialNodes.size());
         assertEquals(5, gcs.psel.get(0).partialArcs.size());
@@ -2567,7 +2537,6 @@ public class SubnetComparatorModBAATest {
     void compare14_14() {
         SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet14(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(19, gcs.gcsValue);
         assertEquals(19, gcs.psel.get(0).partialNodes.size());
         assertEquals(18, gcs.psel.get(0).partialArcs.size());
@@ -2588,7 +2557,6 @@ public class SubnetComparatorModBAATest {
     void compare14_16() {
         SubnetComparator sc = new SubnetComparator(creatSubnet14(), creatSubnet16(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(10, gcs.gcsValue);
         assertEquals(10, gcs.psel.get(0).partialNodes.size());
         assertEquals(9, gcs.psel.get(0).partialArcs.size());
@@ -2772,7 +2740,6 @@ public class SubnetComparatorModBAATest {
     void compare15_17() {
         SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet17(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(6, gcs.gcsValue);
         assertEquals(6, gcs.psel.get(0).partialNodes.size());
         assertEquals(5, gcs.psel.get(0).partialArcs.size());
@@ -2782,7 +2749,6 @@ public class SubnetComparatorModBAATest {
     void compare15_18() {
         SubnetComparator sc = new SubnetComparator(creatSubnet15(), creatSubnet18(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(6, gcs.gcsValue);
         assertEquals(6, gcs.psel.get(0).partialNodes.size());
         assertEquals(5, gcs.psel.get(0).partialArcs.size());
@@ -2912,7 +2878,6 @@ public class SubnetComparatorModBAATest {
     void compare16_13() {
         SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet13(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(6, gcs.gcsValue);
         assertEquals(6, gcs.psel.get(0).partialNodes.size());
         assertEquals(5, gcs.psel.get(0).partialArcs.size());
@@ -2940,7 +2905,6 @@ public class SubnetComparatorModBAATest {
     void compare16_16() {
         SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet16(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //     saveSubnet(gcs);
         assertEquals(16, gcs.gcsValue);
         assertEquals(16, gcs.psel.get(0).partialNodes.size());
         assertEquals(18, gcs.psel.get(0).partialArcs.size());
@@ -2950,18 +2914,11 @@ public class SubnetComparatorModBAATest {
     void compare16_17() {
         SubnetComparator sc = new SubnetComparator(creatSubnet16(), creatSubnet17(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
-
-
         System.out.println("---------------");
-
         for(Arc a : gcs.psel.get(0).partialArcs)
         {
             System.out.println(" Arc: " + a.getStartNode().getName() + " - > " + a.getEndNode().getName());
         }
-        System.out.println("RRRRRRRRRRRRRRRRRRRRrr");
-
-        //saveSubnet(gcs);
         assertEquals(8, gcs.gcsValue);
         assertEquals(8, gcs.psel.get(0).partialNodes.size());
         assertEquals(7, gcs.psel.get(0).partialArcs.size());
@@ -3120,7 +3077,6 @@ public class SubnetComparatorModBAATest {
     void compare17_15() {
         SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet15(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(6, gcs.gcsValue);
         assertEquals(6, gcs.psel.get(0).partialNodes.size());
         assertEquals(5, gcs.psel.get(0).partialArcs.size());
@@ -3130,7 +3086,6 @@ public class SubnetComparatorModBAATest {
     void compare17_16() {
         SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet16(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(8, gcs.gcsValue);
         assertEquals(8, gcs.psel.get(0).partialNodes.size());
         assertEquals(7, gcs.psel.get(0).partialArcs.size());
@@ -3140,7 +3095,6 @@ public class SubnetComparatorModBAATest {
     void compare17_17() {
         SubnetComparator sc = new SubnetComparator(creatSubnet17(), creatSubnet17(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(18, gcs.gcsValue);
         assertEquals(18, gcs.psel.get(0).partialNodes.size());
         assertEquals(18, gcs.psel.get(0).partialArcs.size());
@@ -3253,7 +3207,6 @@ public class SubnetComparatorModBAATest {
     void compare18_10() {
         SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet10(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(8, gcs.gcsValue);
         assertEquals(8, gcs.psel.get(0).partialNodes.size());
         assertEquals(7, gcs.psel.get(0).partialArcs.size());
@@ -3298,7 +3251,6 @@ public class SubnetComparatorModBAATest {
     void compare18_15() {
         SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet15(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(6, gcs.gcsValue);
         assertEquals(6, gcs.psel.get(0).partialNodes.size());
         assertEquals(5, gcs.psel.get(0).partialArcs.size());
@@ -3308,7 +3260,6 @@ public class SubnetComparatorModBAATest {
     void compare18_16() {
         SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet16(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(5, gcs.gcsValue);
         assertEquals(5, gcs.psel.get(0).partialNodes.size());
         assertEquals(4, gcs.psel.get(0).partialArcs.size());
@@ -3327,7 +3278,6 @@ public class SubnetComparatorModBAATest {
     void compare18_18() {
         SubnetComparator sc = new SubnetComparator(creatSubnet18(), creatSubnet18(),true,false,false);
         GreatCommonSubnet gcs = sc.compareTest();
-        //saveSubnet(gcs);
         assertEquals(19, gcs.gcsValue);
         assertEquals(19, gcs.psel.get(0).partialNodes.size());
         assertEquals(18, gcs.psel.get(0).partialArcs.size());

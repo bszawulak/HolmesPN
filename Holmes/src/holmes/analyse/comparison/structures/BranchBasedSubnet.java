@@ -28,14 +28,12 @@ public class BranchBasedSubnet {
         this.transitions = sn.getSubTransitions();
 
         for (Transition t : sn.getSubTransitions()) {
+            //if ((t.getInNodes().size() > 1 || t.getOutNodes().size() > 1) || (t.getInNodes().size() == 0 && t.getOutNodes().size() == 1) || (t.getInNodes().size() == 1 && t.getOutNodes().size() ==0)) {//|| (t.getOutInNodes().size() == 1)) {
             if ((t.getInNodes().size() > 1 || t.getOutNodes().size() > 1)) {//|| (t.getOutInNodes().size() == 1)) {
                 branchVertices.add(new BranchVertex(t, this));
             }
         }
-
-        //if(branchVertices.size()==0){
         paths = calculatePaths(nodes);
-        //}
 
         this.pairs = generatePaits();
         this.branchDirMatrix = generateMatrix();
@@ -56,7 +54,6 @@ public class BranchBasedSubnet {
                 if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && !transitions.contains(n)) {
                     this.transitions.add((Transition) n);
                 }
-
             }
         }
 
@@ -73,12 +70,10 @@ public class BranchBasedSubnet {
                 if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && !transitions.contains(n)) {
                     this.transitions.add((Transition) n);
                 }
-
             }
         }
 
         paths = calculatePaths(nodes);
-        //}
 
         this.pairs = generatePaits();
         this.branchDirMatrix = generateMatrix();
@@ -156,7 +151,6 @@ public class BranchBasedSubnet {
             }
         }
 
-
         listOfPaths.removeAll(listToRemove);
         return listOfPaths;
     }
@@ -180,8 +174,6 @@ public class BranchBasedSubnet {
         ArrayList<Branch> bp = new ArrayList<>();
         for (BranchVertex bv : branchVertices) {
             for (Branch bt : bv.tbranch) {
-
-                //if(!bp.containsAll(bt))
                 if (bp.stream().noneMatch(x -> x.branchElements.containsAll(bt.branchElements)))
                     bp.add(bt);
             }
@@ -190,6 +182,8 @@ public class BranchBasedSubnet {
     }
 
     private int[][] generateMatrix() {
+        //TODO
+        //Duplikaty do usunięcia
         int[][] bdm = new int[pairs.size()][transitions.size()];
         for (int b = 0; b < pairs.size(); b++) {
             for (int t = 0; t < transitions.size(); t++) {
@@ -303,10 +297,6 @@ public class BranchBasedSubnet {
             }
             internalBranchElements = intEr;
 
-            if (branchElements.size() == 1) {
-                System.out.println("Zła branch");
-            }
-
             if(startNode.getID()==endNode.getID())
                 isCycle=true;
         }
@@ -331,9 +321,6 @@ public class BranchBasedSubnet {
             }
             internalBranchElements = intEr;
 
-            if (branchElements.size() == 1) {
-                System.out.println("Zła branch");
-            }
             if(startNode.getID()==endNode.getID())
                 isCycle=true;
         }
@@ -390,7 +377,6 @@ public class BranchBasedSubnet {
                     }
 
                     if (newOrdering.size() > 1 && newOrdering.get(newOrdering.size() - 1).equals(end)) {
-                        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA1");
                         break;
                     }
                 }
@@ -463,9 +449,6 @@ public class BranchBasedSubnet {
                 startNode = tmp;
             }
 
-            if (branchElements.size() == 1) {
-                System.out.println("Zła branch");
-            }
             if(startNode.getID()==endNode.getID())
                 isCycle=true;
         }

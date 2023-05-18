@@ -7,6 +7,7 @@ import holmes.analyse.comparison.structures.GreatCommonSubnet;
 import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
 import holmes.files.io.snoopy.SnoopyReader;
+import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 import holmes.server.BranchesServerCalc;
@@ -132,6 +133,7 @@ public class HolmesComparisonModule extends JFrame {
     private String lastChoosenPath = "";
 
     public HolmesComparisonModule() {
+
         setTitle("Comparison module");
         setSize(1250, 800);
 
@@ -146,7 +148,7 @@ public class HolmesComparisonModule extends JFrame {
         tabbedPane.addTab("Graphlets (GDDA) comparison", null, GDDAPanel, "");
 
         JComponent panel4 = makeNetdivPanel();
-        //tabbedPane.addTab("Graphlets (Netdiv) comparison", null, panel4,"");
+        tabbedPane.addTab("Graphlets (netDis) comparison", null, panel4,"");
 
         DecoPanel = makeDecoPanel();
         tabbedPane.addTab("Decomposition based comparison", null, DecoPanel, "");
@@ -715,7 +717,7 @@ public class HolmesComparisonModule extends JFrame {
         boolean createURL = false;
 
         grdfSeriesDataSet = new XYSeriesCollection();
-        grdfChart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, grdfSeriesDataSet,
+        grdfChart = ChartFactory.createHistogram(chartTitle, xAxisLabel, yAxisLabel, grdfSeriesDataSet,
                 PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
 
         grdfChart.getTitle().setFont(new Font("Dialog", Font.PLAIN, 14));
@@ -1378,8 +1380,15 @@ public class HolmesComparisonModule extends JFrame {
             Preferences prefs = Preferences.userRoot().node(getClass().getName());
             JFileChooser jfc = new JFileChooser(prefs.get(LAST_USED_FOLDER,
                     new File(".").getAbsolutePath()));
+
+            javax.swing.filechooser.FileFilter[] filters = new FileFilter[2];
+            filters[0] = new ExtensionFileFilter("Snoopy Petri Net file (.spped), (.pn)", new String[]{"SPPED", "PN"});
+            filters[1] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[]{"PNT"});
+
+            jfc.addChoosableFileFilter(filters[0]);
+            jfc.addChoosableFileFilter(filters[1]);
             int returnVal = jfc.showOpenDialog(HolmesComparisonModule.this);
-            jfc.setFileFilter(new ExtensionFileFilter("INA PNT format (.pnt)", new String[]{"PNT"}));
+
             infoPaneNetdiv.append("Choosen file: " + jfc.getSelectedFile().getName() + "\n");
             chooseSecondNet(jfc.getSelectedFile().getAbsolutePath());
             if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -1394,7 +1403,14 @@ public class HolmesComparisonModule extends JFrame {
         generateNetdiv.setVisible(true);
         generateNetdiv.addActionListener(e -> {
             GraphletComparator gc = new GraphletComparator(592);
-            infoPaneNetdiv.append(gc.compareNetdiv(getNDKsize(), getRadius(), GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet));
+            //infoPaneNetdiv.append(gc.compareNetdiv(getNDKsize(), getRadius(), GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet));
+            for(int n = 3 ; n < 6; n++)
+            {
+                for(int k = 3 ; k < 9; k++)
+                {
+                    infoPaneNetdiv.append(gc.compareNetdiv(n, k, GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet));
+                }
+            }
         });
 
         buttonPanel.add(generateNetdiv);
@@ -1456,6 +1472,7 @@ public class HolmesComparisonModule extends JFrame {
         JPanel csop = createStartOptionsPanel();
         panel.add(csop, BorderLayout.NORTH);
 
+        tabbedDecoPane=new JTabbedPane();
         decoResult = new JPanel();
 
         JScrollPane jsp = new JScrollPane(infoPaneDec);
@@ -1595,10 +1612,6 @@ public class HolmesComparisonModule extends JFrame {
         if (GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix() == null || GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix().isEmpty()) {
             infoPaneDec.append("Generate inwariants for net in workspace.\n");
         }
-        //if (SubnetCalculator.adtSubNets == null || SubnetCalculator.adtSubNets.isEmpty()) {
-        //    infoPaneDec.append("Generate ADT subnets for net in workspace.\n");
-        //}
-
 
         JPanel secondQuestion = new JPanel(new GridLayout(0, 1));
 
@@ -1720,47 +1733,15 @@ public class HolmesComparisonModule extends JFrame {
             decoResult.add(result, BorderLayout.WEST);
             this.revalidate();
         }
-
-        /*
-        if (SubnetCalculator.functionalSubNets == null || SubnetCalculator.functionalSubNets.isEmpty()) {
-            JOptionPane jpo = new JOptionPane("No Functional sets!");
-            GUIManager.getDefaultGUIManager().showDecoWindow();
-        } else {
-            listOfTablesDec.clear();
-            //InvariantsCalculator ic = new InvariantsCalculator(secondNet);
-            //ic.generateInvariantsForTest(secondNet);
-
-            //infoPaneDec.append("Second net: Invariants generated.\n");
-
-            //secondNet.setT_InvMatrix(ic.getInvariants(true), false);
-            seconNetList = SubnetCalculator.generateFunctionalFromSecondNet(secondNet);
-
-            infoPaneDec.append("Second net: Functional subnets generated.\n");
-
-            sc = new SubnetComparator(SubnetCalculator.functionalSubNets, seconNetList);
-            //rrayList<ArrayList<GreatCommonSubnet>> listofComparedSubnets = sc.compare();
-
-            infoPaneDec.append("Start comparison...\n");
-            JComponent result = createResultsPanel();//stofComparedSubnets);//createPartResultTable(listofComparedSubnets);// createResultsPanel(listofComparedSubnets);
-            decoResult.add(result, BorderLayout.WEST);
-            this.revalidate();
-        }
-        */
-
-
     }
 
 
     public JPanel createResultsPanel() {//ArrayList<ArrayList<GreatCommonSubnet>> gscl) {
         JPanel jp = new JPanel();
-        //
-
         JPanel leftPanel = new JPanel();
 
-        tabbedDecoPane = new JTabbedPane();
+        tabbedDecoPane.removeAll();
         tabbedDecoPane.setSize(200, 500);
-
-        //this.setSize(1250, 800);
 
         sc.firstQuestion = firstQuestionDec;
         sc.secondQuestion = secondQuestionDec;
@@ -1797,15 +1778,11 @@ public class HolmesComparisonModule extends JFrame {
             tabbedDecoPane.addTab("Internal similarity of Second net", null, panelSF, "Does nothing at all");
         }
 
-
         infoPaneDec.append("Comparison finished.\n");
 
         leftPanel.add(tabbedDecoPane);
 
         jp.add(leftPanel, BorderLayout.PAGE_END);
-        // jp.add(new JSeparator(JSeparator.VERTICAL), BorderLayout.LINE_START);
-
-        //
 
         JPanel rightPanel = new JPanel(new GridLayout(0, 1));
 
@@ -1821,12 +1798,6 @@ public class HolmesComparisonModule extends JFrame {
             }
         });
         hungarianButton.setActionCommand(resultFlag);
-        //hungarianButton.setActionCommand(birdString);
-
-        //JRadioButton maxButton = new JRadioButton("Max method");
-        //maxButton.setMnemonic(KeyEvent.VK_C);
-        //maxButton.setActionCommand(resultFlag);
-        //maxButton.setActionCommand(catString);
 
         JRadioButton singleHandButton = new JRadioButton("Color single matching");
         singleHandButton.setMnemonic(KeyEvent.VK_D);
@@ -1836,7 +1807,6 @@ public class HolmesComparisonModule extends JFrame {
                 coloringMode = 0;
             }
         });
-        //dogButton.setActionCommand(dogString);
 
         JRadioButton handButton = new JRadioButton("Color choosen matching");
         handButton.setMnemonic(KeyEvent.VK_D);
@@ -1845,7 +1815,6 @@ public class HolmesComparisonModule extends JFrame {
                 coloringMode = 1;
             }
         });
-        //dogButton.setActionCommand(dogString);
 
         //Group the radio buttons.
         ButtonGroup group = new ButtonGroup();
@@ -1858,8 +1827,6 @@ public class HolmesComparisonModule extends JFrame {
         rightPanel.add(hungarianButton);
 
         TitledBorder title = BorderFactory.createTitledBorder("");
-        //rightPanel.setBorder(title);
-        //jp.add(rightPanel);
 
         JButton saveButton = new JButton("Save to .csv");
         saveButton.addActionListener(e -> {
@@ -1877,21 +1844,24 @@ public class HolmesComparisonModule extends JFrame {
 
         rightPanel.add(saveButton);
 
-        //jp.add(rightPanel, BorderLayout.EAST);
-
         return jp;
     }
 
     public JComponent createPartResultTable(ArrayList<ArrayList<GreatCommonSubnet>> gcls, boolean isInternal) {//, int x_size, int y_size) {
+
+        GraphPanel gp2 = new GraphPanel(0,secondNet,secondNet.getNodes(),secondNet.getArcs());
+
+        JFrame workTMP = new JFrame();
+        workTMP.add(gp2);
+        workTMP.setVisible(true);
+
         listOfTableContent.add(gcls);
         JPanel jp = new JPanel();
         jp.setPreferredSize(new Dimension(800, 300));
 
-        //ArrayList<ArrayList<GreatCommonSubnet>> subNetArrayList = gcls;
         String[] netLabelsFirst = new String[gcls.size()];
         String[] netLabelsSecond = new String[gcls.get(0).size()];
 
-        //do poszerzenia dla 2 sieci
         for (int i = 0; i < gcls.size(); i++) {
             netLabelsFirst[i] = "SubF :" + i;
             System.out.println(netLabelsFirst[i]);
@@ -1947,7 +1917,6 @@ public class HolmesComparisonModule extends JFrame {
                     }
                 }
 
-
                 //pod przycisk
                 //colorAllHungarianCel(row,col,comp,hungarianCels,gcls);
 
@@ -1975,8 +1944,6 @@ public class HolmesComparisonModule extends JFrame {
                 if (row >= 0 && col >= 0 && coloringMode == 0) {
                     colorHungarianCel(row, col, gcls,isInternal);
                     TableCellEditor tce = comparisonTable.getCellEditor(row, col);
-                    //tce.getTableCellEditorComponent(comparisonTable,)
-                    //comparisonTable.getRowgetCellEditor(row,col);;
                 }
             }
         });
@@ -1995,30 +1962,6 @@ public class HolmesComparisonModule extends JFrame {
         if (row < hungarianCels.length)
             if (hungarianCels[row] == col) {
                 comp.setBackground(Color.green);
-
-                /*
-                if(isInternal && row<=col)
-                    isInternal=false;
-                switch (decoType.getSelectedIndex()) {
-                    case 0:
-                        System.out.println("Wrong type of decomposed set to color");
-                        break;
-                    case 1:
-                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.adtSubNets.get(row),isInternal);
-                        break;
-                    case 2:
-                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.functionalSubNets.get(row),isInternal);
-                        break;
-                    case 3:
-                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.tnetSubNets.get(row),isInternal);
-                        break;
-                    case 4:
-                        colorSubnet(gcls.get(row).get(col), SubnetCalculator.tinvSubNets.get(row),isInternal);
-                        break;
-                }
-
-                 */
-
             } else {
                 comp.setBackground(Color.white);
             }
@@ -2039,6 +1982,7 @@ public class HolmesComparisonModule extends JFrame {
                 break;
             case 3:
                 colorSubnet(gcls.get(row).get(col), SubnetCalculator.tnetSubNets.get(row),isInternal);
+                colorSubnet(gcls.get(row).get(col), seconNetList.get(col),true);
                 break;
             case 4:
                 colorSubnet(gcls.get(row).get(col), SubnetCalculator.tinvSubNets.get(row),isInternal);
@@ -2052,8 +1996,6 @@ public class HolmesComparisonModule extends JFrame {
             for (int j = 0; j < gcls.get(i).size(); j++) {
                 if (i < hungarianCels.length)
                     if (hungarianCels[i] == j) {
-                        //comp.setBackground(Color.green);
-
                         switch (decoType.getSelectedIndex()) {
                             case 0:
                                 System.out.println("Wrong type of decomposed set to color");
@@ -2127,8 +2069,6 @@ public class HolmesComparisonModule extends JFrame {
         for (int i = 0; i < result.length; i++) {
             //ArrayList<Integer> row = subNetArrayList.get(i).get(result[i]).gcsValue;
             //create and add gcs
-
-
         }
         return result;
     }
@@ -2191,16 +2131,18 @@ public class HolmesComparisonModule extends JFrame {
             //for (SubnetComparator.PartialSubnetElements pse : gcs.psel) {
             SubnetComparator.PartialSubnetElements pse = gcs.psel.get(choosenDeco);
             for (Node transition : pse.partialNodes) {
-                System.out.println("Pered map :" + transition.getName());
 
-                if (map)//!sn.getSubNode().contains(transition))
-                    transition = pse.nodesMap.get(transition);
+                    System.out.println("Pered map :" + transition.getName());
 
-                System.out.println("Post map :" + transition.getName());
-                if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
-                    ((Transition) transition).drawGraphBoxT.setColorWithNumber(true, Color.GREEN, false, 0, true, "");
-                if (transition.getType() == PetriNetElement.PetriNetElementType.PLACE)
-                    ((Place) transition).drawGraphBoxP.setColorWithNumber(true, Color.GREEN, false, 0, true, "");
+                    if (map)//!sn.getSubNode().contains(transition))
+                        transition = pse.nodesMap.get(transition);
+
+                    System.out.println("Post map :" + transition.getName());
+                    if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
+                        ((Transition) transition).drawGraphBoxT.setColorWithNumber(true, Color.GREEN, false, 0, true, "");
+                    if (transition.getType() == PetriNetElement.PetriNetElementType.PLACE)
+                        ((Place) transition).drawGraphBoxP.setColorWithNumber(true, Color.GREEN, false, 0, true, "");
+
             }
             for (Arc arc : pse.partialArcs) {
                 if (map)
@@ -2208,23 +2150,6 @@ public class HolmesComparisonModule extends JFrame {
                 arc.arcDecoBox.setColor(true, Color.GREEN);
             }
         }
-
-        /*
-        for (SubnetComparator.PartialSubnetElements pse : gcs.psel) {
-            for (Node transition : pse.partialNodes) {
-                Node mapded = pse.nodesMap.get(transition);
-
-                if (mapded.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
-                    ((Transition) mapded).setColorWithNumber(true, Color.GREEN, false, 0, true, "");
-                if (mapded.getType() == PetriNetElement.PetriNetElementType.PLACE)
-                    ((Place) mapded).setColorWithNumber(true, Color.GREEN, false, 0, true, "");
-            }
-            for (Arc arc : pse.partialArcs) {
-                arc.setColor(true, Color.GREEN);
-            }
-        }
-        */
-
 
         GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
     }
@@ -2262,16 +2187,7 @@ public class HolmesComparisonModule extends JFrame {
     public static boolean exportToCSV(int[][] data,
                                       String pathToExportTo) {
         try {
-
-            //TableModel model = tableToExport.getModel();
             FileWriter csv = new FileWriter(pathToExportTo);
-
-            //for (int i = 0; i < model.getColumnCount(); i++) {
-            //    csv.write(model.getColumnName(i) + ",");
-            //}
-
-            //csv.write("\n");
-
             for (int[] datum : data) {
                 for (int i : datum) {
                     csv.write(i + ",");
@@ -2298,33 +2214,20 @@ public class HolmesComparisonModule extends JFrame {
         JPanel textPanel = createBranchTextArea();
         south.add(textPanel, BorderLayout.EAST);
 
-        //panel.add(south);
-
-        //branchChartPanel = createBranchChartPanel();
-        //branchChartPanel.setVisible(false);
-        //panel.add(branchChartPanel, BorderLayout.SOUTH);
-        JPanel resultPanel = new JPanel();
         branchTabs = new JPanel();
         branchTabs.setVisible(true);
-        //panel.add(branchTabs, BorderLayout.SOUTH);
-
-
-        //resultPanel.add(branchTabs, BorderLayout.WEST);
         south.add(branchTabs, BorderLayout.WEST);
         panel.add(south);
 
         listBranchView = new JPanel();
         listBranchView.setVisible(true);
-        //resultPanel.add(listBranchView, BorderLayout.EAST);
         panel.add(listBranchView, BorderLayout.SOUTH);
-        //panel.add(south);
 
         return panel;
     }
 
     private JPanel createBramchOptionPanel() {
         JPanel panel = new JPanel();
-
 
         JPanel buttonPanel = new JPanel(new GridLayout(1, 4));
 
@@ -2369,7 +2272,6 @@ public class HolmesComparisonModule extends JFrame {
 
         branchingVariant = new JComboBox();
         branchingVariant.setModel(new DefaultComboBoxModel(new String[]{"Matching variant", "Type I", "Type II", "Type III", "Type IV", "Type V"}));
-        //buttonPanel.add(branchingVariant);
 
         JButton singleAnalysis = new JButton("Single net branching analysis");
         singleAnalysis.setVisible(true);
@@ -2468,8 +2370,6 @@ public class HolmesComparisonModule extends JFrame {
         branchTabs.removeAll();
         branchTabs.add(tabRes, BorderLayout.WEST);
         branchTabs.revalidate();
-
-        //this.setSize(750, 900);
     }
 
 
@@ -2506,7 +2406,6 @@ public class HolmesComparisonModule extends JFrame {
                 if (noIso) {
                     bp.add(new branchingPairs(br1.get(br1.size() - 1), null));
                 }
-
             }
         }
 
@@ -2528,9 +2427,6 @@ public class HolmesComparisonModule extends JFrame {
                 }
             }
         }
-
-        //listBranchView = createBranchingList(bp);
-
     }
 
     private JPanel createBranchingList(ArrayList<branchingPairs> bp) {
@@ -2545,14 +2441,9 @@ public class HolmesComparisonModule extends JFrame {
         JComboBox brList = new JComboBox(branchingString);
         brList.setSelectedIndex(0);
         brList.addActionListener(e -> {
-            //BranchesServerCalc bsc = new BranchesServerCalc();
-            //BranchesServerCalc.ParsedBranchData result = bsc.compare(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), secondNet, branchingVariant.getSelectedIndex());
-            //parsBranchingData(result);
-            //infoPaneBranch.append("");
             branchingPairs pair = currentBranchingRelations.get(brList.getSelectedIndex());
             ArrayList<branchingPairs> larger = pair.larger;
             ArrayList<branchingPairs> smaller = pair.smaller;
-
 
             DefaultListModel<String> centerNodel = createListInterior(brList, pair);
             centerBranchList.setModel(centerNodel);
@@ -2583,15 +2474,6 @@ public class HolmesComparisonModule extends JFrame {
             rightBranchList.setBounds(200, 200, 75, 75);
         });
         jp.add(brList);
-
-        //DefaultListModel<String> l1 = new DefaultListModel<>();
-        //l1.addElement("Item1");
-        //l1.addElement("Item2");
-        //l1.addElement("Item3");
-        //l1.addElement("Item4");
-        //JList<String> list = new JList<>(l1);
-        //list.setBounds(100,100, 75,75);
-        //jp.add(list);
 
         DefaultListModel centerNodel = new DefaultListModel();
         DefaultListModel leftModel = new DefaultListModel();
@@ -2726,28 +2608,6 @@ public class HolmesComparisonModule extends JFrame {
         panel.add(jsp);
         return panel;
     }
-/*
-    JPanel createBranchChartPanel() {
-        String chartTitle = "Branching vertices measure";
-        String xAxisLabel = "Branching vertices";
-        String yAxisLabel = "Count";
-
-        boolean showLegend = true;
-        boolean createTooltip = true;
-        boolean createURL = false;
-
-        branchSeriesDataSet = new XYSeriesCollection();
-        //branchChart = ChartFactory.createHistogram(chartTitle, xAxisLabel, yAxisLabel, branchSeriesDataSet, PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
-        branchChart = ChartFactory.createHistogram(chartTitle, xAxisLabel, yAxisLabel, branchSeriesDataSet,
-                PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
-    //createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, branchSeriesDataSet,PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
-
-        branchChart.getTitle().setFont(new Font("Dialog", Font.PLAIN, 14));
-
-        ChartPanel placesChartPanel = new ChartPanel(branchChart);
-        return placesChartPanel;
-    }
-    */
 
     private JPanel createBranchDiagramsPanel(BranchesServerCalc.ParsedBranchData result) {
         JPanel jp = new JPanel();
@@ -2873,8 +2733,8 @@ public class HolmesComparisonModule extends JFrame {
             xybarrenderer.setBarPainter(new StandardXYBarPainter());
 
             Paint[] paintArray = {              //code related to translucent colors begin here
-                    new Color(0x80FC026A, true),
-                    new Color(0x8017EE07, true)
+                    new Color(0x80ff0000, true),
+                    new Color(0x800000ff, true)
             };
             SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices", axisX);
             rangeAxis.setVerticalTickLabels(true);
@@ -2897,8 +2757,8 @@ public class HolmesComparisonModule extends JFrame {
         }
         if (mod == 1) {
 
-            String chartTitle = "Branching vertices measure";
-            String xAxisLabel = "Branching vertices";
+            String chartTitle = "Branching transitions measure";
+            String xAxisLabel = "Branching transitions";
             String yAxisLabel = "Count";
 
             boolean showLegend = true;
@@ -2926,12 +2786,10 @@ public class HolmesComparisonModule extends JFrame {
             xybarrenderer.setBarPainter(new StandardXYBarPainter());
 
             Paint[] paintArray = {              //code related to translucent colors begin here
-                    //new Color(0x80ff0000, true),
-                    //new Color(0x800000ff, true)
-                    new Color(0x80FC026A, true),
-                    new Color(0x8017EE07, true)
+                    new Color(0x80ff0000, true),
+                    new Color(0x800000ff, true)
             };
-            SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices", axisX);
+            SymbolAxis rangeAxis = new SymbolAxis("Branching Transitions", axisX);
             rangeAxis.setVerticalTickLabels(true);
             xyplot.setDomainAxis(rangeAxis);
 
@@ -2954,8 +2812,8 @@ public class HolmesComparisonModule extends JFrame {
         }
         if (mod == 2) {
 
-            String chartTitle = "Branching vertices measure";
-            String xAxisLabel = "Branching vertices";
+            String chartTitle = "Branching places measure";
+            String xAxisLabel = "Branching places";
             String yAxisLabel = "Count";
 
             boolean showLegend = true;
@@ -2984,12 +2842,10 @@ public class HolmesComparisonModule extends JFrame {
             xybarrenderer.setBarPainter(new StandardXYBarPainter());
 
             Paint[] paintArray = {              //code related to translucent colors begin here
-                    //new Color(0x80ff0000, true),
-                    //new Color(0x800000ff, true)
-                    new Color(0x80FC026A, true),
-                    new Color(0x8017EE07, true)
+                    new Color(0x80ff0000, true),
+                    new Color(0x800000ff, true)
             };
-            SymbolAxis rangeAxis = new SymbolAxis("Branching Vertices", axisX);
+            SymbolAxis rangeAxis = new SymbolAxis("Branching Places", axisX);
             rangeAxis.setVerticalTickLabels(true);
             xyplot.setDomainAxis(rangeAxis);
 

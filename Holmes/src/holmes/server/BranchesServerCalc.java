@@ -1678,7 +1678,7 @@ public class BranchesServerCalc {
     private ArrayList<Node> calcInEndpoints(Node n) {
         ArrayList<Node> endpoints = new ArrayList<>();
         for (Arc a : n.getInArcs()) {
-            endpoints.add(findInEndpoint(a.getEndNode()));
+            endpoints.add(findInEndpoint(a.getStartNode()));
         }
         return endpoints;
     }
