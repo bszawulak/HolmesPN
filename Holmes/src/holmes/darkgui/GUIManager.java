@@ -25,6 +25,7 @@ import holmes.windows.decompositions.*;
 import holmes.windows.managers.ssim.HolmesSim;
 import holmes.workspace.ExtensionFileFilter;
 import holmes.workspace.Workspace;
+import holmes.workspace.WorkspaceSheet;
 
 import java.awt.*;
 import java.awt.event.ComponentEvent;
@@ -38,6 +39,7 @@ import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.SplitPaneUI;
 
 
 /**
@@ -76,6 +78,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	// main Docks
 	private Workspace workspace;
+	JTabbedPane tabbedWorkspace = new JTabbedPane();
 	//private CompositeTabDock leftTabDock;
 	//private CompositeTabDock bottomLeftTabDock;
 	//private CompositeTabDock topRightTabDock;
@@ -145,6 +148,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	private boolean inaReady = true;
 
+	static private boolean simMode = false;
+
 	/**
 	 * NONE, NAME, ALPHA, BETA, GAMMA, TAU
 	 */
@@ -155,6 +160,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	//TODO tabs
 	//public ArrayList<Dockable> globalSheetsList = new ArrayList<>();
+
+	public JPanel propericeTMPBox;
 	
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
@@ -358,34 +365,50 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// default screen size unmaximized
 		smallScreenSize = new Dimension((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
 		setShortcutsBar(new Toolbar());
-		getFrame().add(shortcutsBar);
+		getFrame().add(shortcutsBar,BorderLayout.PAGE_START);
+
+		JPanel mainpanel = new JPanel();
+		mainpanel.add(getWorkspace().getSelectedSheet());
+		mainpanel.setLayout(new BorderLayout());
+		mainpanel.setSize(200,200);
+		getFrame().add(getWorkspace().getSelectedSheet(),BorderLayout.CENTER);
 
 
 		// create tools
-		getFrame().add(getToolBox().getTree());
+		//getFrame().add(getToolBox().getTree(),BorderLayout.LINE_START);
+		//getFrame().add(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getPanel());
+		propericeTMPBox = GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow();
+		propericeTMPBox.setPreferredSize(new Dimension(200, 100));
 
+		//getFrame().add(propericeTMPBox,BorderLayout.LINE_END);
 
+		for (WorkspaceSheet ws : getWorkspace().getSheets()) {
+			tabbedWorkspace.add("Sheet 0",ws);
+		}
+		tabbedWorkspace.setPreferredSize(new Dimension(1300,400));
 
+		JTabbedPane leftCentralPanel = new JTabbedPane();
+		leftCentralPanel.add(getToolBox().getTree());
+		leftCentralPanel.setTabComponentAt(0, new JLabel("Toolbox"));
+		leftCentralPanel.add(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getPanel());
+		leftCentralPanel.setTabComponentAt(1, new JLabel("Simulator"));
+		leftCentralPanel.setPreferredSize(new Dimension(200,400));
+
+		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftCentralPanel , tabbedWorkspace);
+		JSplitPane sp2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, propericeTMPBox);
+		getFrame().add(sp2,BorderLayout.CENTER);
+
+		//getFrame().add(GUIManager.getDefaultGUIManager().getSelectionBox().getSelectionPanel());
+
+		//GroupLayout layout = new GroupLayout(getFrame().getContentPane());
+		//getFrame().getContentPane().setLayout(layout);
 // default workspace dock
 		//getDockingListener().setWorkspace(workspace);
-		JPanel mainpanel = new JPanel();
-		mainpanel.add(getWorkspace().getSelectedSheet());
-		mainpanel.setLayout(new FlowLayout());
-		mainpanel.setSize(200,200);
-		getFrame().add(getWorkspace().getSelectedSheet());
-		getFrame().setLayout(new GridLayout());
+
+		//getFrame().setLayout(new BorderLayout());
 
 		// create sim
-		GraphicalSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
-		GraphicalSimulatorXTPN netSimXTPN = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
-		JPanel simPanel = new JPanel();
-		JFrame newWindow = new JFrame();
-		newWindow.add(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getPanel());
-		//simPanel.add();
-		newWindow.setVisible(true);
-		newWindow.setSize(200,200);
-		simPanel.setSize(200,200);
-		simPanel.setVisible(true);
+
 		//getFrame().add(new HolmesDockWindowsTable(HolmesDockWindowsTable.SubWindow.SIMULATOR,netSim,netSimXTPN,false).getPanel());
 		//simPanel.add(new HolmesDockWindowsTable(HolmesDockWindowsTable.SubWindow.SIMULATOR,netSim,netSimXTPN,false).getPanel());
 		//simPanel.setSize(100,100);
@@ -870,7 +893,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ustawia nowy obiekt podokna do wyświetlania właściwości klikniętego elementu sieci.
 	 * @param propertiesBox HolmesDockWindow - podokno właściwości
 	 */
-	private void setPropertiesBox(HolmesDockWindow propertiesBox) {
+	public void setPropertiesBox(HolmesDockWindow propertiesBox) {
 		this.selElementBox = propertiesBox;
 	}
 
@@ -1638,7 +1661,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public boolean getNetChangeStatus() {
 		return getWorkspace().getProject().anythingChanged;
 	}
-	
+
+	public static boolean isSimMode() {
+		return simMode;
+	}
+
+	public static void setSimMode(boolean simMode) {
+		GUIManager.simMode = simMode;
+	}
+
 	/**
 	 * Metoda sprawdza do jakiego komponentu nadrzędnego należy przesłany w parametrze i go stamtąd usuwa.
 	 * @param x Dockable - komponent

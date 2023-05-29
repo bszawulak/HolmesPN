@@ -1,11 +1,9 @@
 package holmes.workspace;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Point;
+import java.awt.*;
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.SelectionActionListener;
@@ -28,10 +26,12 @@ public class Workspace implements SelectionActionListener {
 	
 	/** Zawiera obiekty Dockable, czyli opakowanie w którym jest WorkspaceSheet. W tym miejscu kończy się ludzka logika.  */
 	//private ArrayList<Dockable> dockables;
-	
+
 	/**  Zawiera elementy typu Dock, zawierające obiekty typu Dockable. One z kolei zawierają WorkspaceSheet, które zawiera SheetPanel, który
 	 * zawiera GraphPanel. Ku chwale ojczyzny. */
 	//private ArrayList<Dock> docks;
+
+	private JTabbedPane tp = new JTabbedPane();
 	
 	/** Tablica zawierająca obiekty WorkspaceSheet, które z kolei zawierają SheetPanel (JPanel) który zawiera GraphPanel. By żyło się lepiej. */
 	private ArrayList<WorkspaceSheet> sheets;
@@ -67,7 +67,8 @@ public class Workspace implements SelectionActionListener {
 		setProject(new PetriNet(this, "default"));
 
 		this.getProject().addActionListener(this);
-		newTab(false, new Point(0,0), 1, MetaType.SUBNET);	
+		newTab(false, new Point(0,0), 1, MetaType.SUBNET);
+		//tp.setPreferredSize(new Dimension(1300,400));
 	}
 	
 	@SuppressWarnings("unused")
@@ -111,8 +112,11 @@ public class Workspace implements SelectionActionListener {
 			id = getMaximumSubnetID() + 1;
 		Point position = new Point(0, 0);
 		sheetsIDtable.add(id);
-		
-		sheets.add(new WorkspaceSheet("I am sheet " + id, id, this));
+
+		WorkspaceSheet ws = new WorkspaceSheet("I am sheet " + id, id, this);
+		sheets.add(ws);
+		//tp.add("Sheetsssssssssssssssss " + sheets.size()+1,ws);
+
 		//Dockable tempDockable = new DefaultDockable("Sheet "+ id, sheets.get(index), "Sheet "+ id);
 		//dockables.add(index, withListener(tempDockable));
 		
@@ -424,5 +428,13 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	 */
+	public JTabbedPane getTablePane() {
+		return tp;
+	}
+
+	public void setTablePane(JTabbedPane tp) {
+		this.tp = tp;
+	}
+
 
 }

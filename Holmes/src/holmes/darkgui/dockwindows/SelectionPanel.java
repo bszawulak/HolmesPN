@@ -1,9 +1,6 @@
 package holmes.darkgui.dockwindows;
 
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent;
@@ -27,7 +24,7 @@ public class SelectionPanel extends JPanel {
 	 */
 	public SelectionPanel() {
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		//add(new JLabel("No elements selected."));
+		add(new JLabel("No elements selected."));
 		this.setGuiManager(GUIManager.getDefaultGUIManager());
 		this.setSelectedElementLocationList(new DefaultListModel<String>());
 		this.setSelectedArcList(new DefaultListModel<String>());

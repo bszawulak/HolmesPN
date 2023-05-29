@@ -242,7 +242,7 @@ public class HolmesDockWindowsTable extends JPanel {
     public enum SubWindow {
         SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, SPNTRANSITION, XTPNTRANSITION, XTPNPLACE
         , XARC, CTRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS
-        , MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM, DECOMPOSITION
+        , MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM, DECOMPOSITION, EMPTY
     }
 
 
@@ -262,8 +262,9 @@ public class HolmesDockWindowsTable extends JPanel {
     @SuppressWarnings("unchecked")
     public HolmesDockWindowsTable(SubWindow subType, Object... blackBox) {
         overlord = GUIManager.getDefaultGUIManager();
+        System.out.println("Why are you crating");
         switch (subType) {
-            case SIMULATOR -> createSimulatorSubWindow((GraphicalSimulator) blackBox[0], (GraphicalSimulatorXTPN) blackBox[1], (boolean) blackBox[2]);
+            case SIMULATOR -> createSimulatorSubWindow((GraphicalSimulator) blackBox[0], (GraphicalSimulatorXTPN) blackBox[1]);
             case PLACE -> createPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
             case TRANSITION -> createTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
             case TIMETRANSITION ->
@@ -286,7 +287,18 @@ public class HolmesDockWindowsTable extends JPanel {
             case QUICKSIM -> createQuickSimSubWindow();
             case KNOCKOUT -> createKnockoutData((ArrayList<ArrayList<Integer>>) blackBox[0]);
             case DECOMPOSITION -> createDecompositionData();
+            case EMPTY -> createEmpty();
         }
+    }
+
+    private void createEmpty() {
+        // wiem że tworzy nowe okno w evencie, ale czy dodaje gdzie trzeba? Test z zwenetrznym oknem?
+
+        initiateContainers();
+        //mode = PLACE;
+        //panel=new JPanel();
+        add(panel);
+        setPanel(panel);
     }
 
     //**************************************************************************************
@@ -300,7 +312,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param sim NetSimulator - obiekt symulatora sieci
      */
     @SuppressWarnings("UnusedAssignment")
-    private void createSimulatorSubWindow(GraphicalSimulator sim, GraphicalSimulatorXTPN simXTPN, boolean XTPNmode) {
+    private void createSimulatorSubWindow(GraphicalSimulator sim, GraphicalSimulatorXTPN simXTPN) {
         int columnA_posX = 10;
         int columnB_posX = 80;
         int columnA_Y = 0;
@@ -309,15 +321,34 @@ public class HolmesDockWindowsTable extends JPanel {
         int colBCompLength = 70;
 
         initiateContainers();
-
+        //boolean XTPNmode = GUIManager.isSimMode();
         mode = SIMULATOR;
         setSimulator(sim, simXTPN);
-        if(XTPNmode)
+        if(GUIManager.isSimMode())
             simulatorType = 1; //XTPN
         else
             simulatorType = 0;
 
-        if (XTPNmode) { // inny comboBox
+        System.out.println("Start okna " + GUIManager.isSimMode());
+
+
+        extracted(columnA_posX, columnB_posX, columnA_Y, columnB_Y, colACompLength, colBCompLength);
+
+        panel.setLayout(null);
+
+
+        //panel.setBackground(Color.green);
+        panel.setOpaque(true);
+        panel.repaint();
+        panel.setVisible(true);
+        add(panel);
+        setPanel(panel);
+
+    }
+
+    private void extracted(int columnA_posX, int columnB_posX, int columnA_Y, int columnB_Y, int colACompLength, int colBCompLength) {
+
+        if (GUIManager.isSimMode()) { // inny comboBox
             // SIMULATION MODE
             JLabel netTypeLabel = new JLabel("Mode:");
             netTypeLabel.setBounds(columnA_posX-5, columnA_Y += 10, colACompLength, 20);
@@ -340,8 +371,18 @@ public class HolmesDockWindowsTable extends JPanel {
 
                 int selectedModeIndex = simMode.getSelectedIndex();
                 if(selectedModeIndex == 1) { //restore others
+                    GUIManager.setSimMode(false);
+                    System.out.println("XTPNmode1 " + GUIManager.isSimMode());
                     overlord.getSimulatorBox().createSimulatorProperties(false);
+                    components.clear();
+                    panel.removeAll();
+                    extracted(columnA_posX, columnB_posX, 0, 0, colACompLength, colBCompLength);
+                    this.getPanel().validate();
+                    this.getPanel().repaint();
                     return;
+                }else{
+                    GUIManager.setSimMode(true);
+                    System.out.println("XTPNmode2 " + GUIManager.isSimMode());
                 }
                 doNotUpdate = false;
             });
@@ -369,8 +410,14 @@ public class HolmesDockWindowsTable extends JPanel {
 
                 int selectedModeIndex = simMode.getSelectedIndex();
                 if(selectedModeIndex == 4) { //XTPN
-                    overlord.getSimulatorBox().createSimulatorProperties(true);
+                    //overlord.getSimulatorBox().createSimulatorProperties(true);
                     //doNotUpdate = false;
+                    GUIManager.setSimMode(true);
+                    System.out.println("XTPNmode3 " + GUIManager.isSimMode());
+                    //this.getPanel().removeAll();
+                    components.clear();
+                    panel.removeAll();
+                    extracted(columnA_posX, columnB_posX, 0, 0, colACompLength, colBCompLength);
                     return;
                 } else {
                     int change = simulator.setGraphicalSimulatorNetType(selectedModeIndex);
@@ -390,6 +437,12 @@ public class HolmesDockWindowsTable extends JPanel {
                     } else {
                         overlord.log("Error while changing graphical simulator mode.", "error", true);
                     }
+                    GUIManager.setSimMode(false);
+                    System.out.println("XTPNmode4 " +  GUIManager.isSimMode());
+                    //this.getPanel().removeAll();
+                    components.clear();
+                    panel.removeAll();
+                    extracted(columnA_posX, columnB_posX, 0, 0, colACompLength, colBCompLength);
                 }
 
                 doNotUpdate = false;
@@ -397,7 +450,8 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(simMode);
         }
 
-        if(!XTPNmode) { //normalny symulator
+        if(!GUIManager.isSimMode()) { //normalny symulator
+            System.out.println("tworzymy sym");
             //i tyle, jakby kto pytał, to są obiekty, można im zmienić tekst, ale się nie wyświetla
             //NA RAZIE tak ma być:
             stepLabelXTPN = new JLabel("0");
@@ -628,8 +682,12 @@ public class HolmesDockWindowsTable extends JPanel {
                 }
             });
             components.add(singleModeCheckBox);
+            //this.repaint();
+            //this.repaintGraphPanel();
+            panel.setBackground(Color.red);
 
         } else { // nienormalny symulator: XTPN
+            System.out.println("tworzymy XTPN sym");
             int internalX = 5;
             int internalY = 10;
 
@@ -1008,21 +1066,14 @@ public class HolmesDockWindowsTable extends JPanel {
                 qSimXTPNknockoutMode = (box.isSelected());
             });
             components.add(qSimXTPNknockoutCheckBox);
-
-
+            System.out.println("Tu zielony");
+            panel.setBackground(Color.green);
         }
-        panel.setLayout(null);
         for (JComponent component : components) {
             panel.add(component);
         }
-
-        panel.setBackground(Color.green);
-        panel.setOpaque(true);
+        panel.revalidate();
         panel.repaint();
-        panel.setVisible(true);
-        add(panel);
-        setPanel(panel);
-
     }
 
     //**************************************************************************************
