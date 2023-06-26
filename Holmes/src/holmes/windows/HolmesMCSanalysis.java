@@ -1,9 +1,7 @@
 package holmes.windows;
 
-import holmes.analyse.InvariantsCalculator;
 import holmes.analyse.InvariantsTools;
 import holmes.darkgui.GUIManager;
-import holmes.graphpanel.popupmenu.TransitionPopupMenu;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
@@ -14,6 +12,8 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.*;
 
 
@@ -24,7 +24,7 @@ public class HolmesMCSanalysis extends JFrame {
     private JTextArea logField1stTab;
     private JTextArea logField2ndTab;
 
-    int windowWidth = 1024;
+    int windowWidth = 1280;
     int windowHeight = 800;
 
 
@@ -42,6 +42,13 @@ public class HolmesMCSanalysis extends JFrame {
 
     MCSDataMatrix mcsd = null;
 
+    ArrayList<Integer> angio_trans = new ArrayList<Integer>(Arrays.asList(33,40,50,29,69,27));
+    ArrayList<Integer> hyper_trans = new ArrayList<Integer>(Arrays.asList(2,42,44,48,49,60));
+    ArrayList<Integer> il_trans = new ArrayList<Integer>(Arrays.asList(18,28,66));
+    ArrayList<Integer> athero_trans = new ArrayList<Integer>(Arrays.asList(11,24,41,87,101,109));
+
+    int num_of_results = 100;
+
     public HolmesMCSanalysis() {
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
@@ -51,7 +58,7 @@ public class HolmesMCSanalysis extends JFrame {
         }
         this.ego = this;
         setVisible(false);
-        this.setTitle("MCS Analysis'n'stuff ");
+        this.setTitle("Analiza MCS");
         this.overlord = GUIManager.getDefaultGUIManager();
         //ego = this;
 
@@ -63,6 +70,9 @@ public class HolmesMCSanalysis extends JFrame {
 
 
         JPanel mainPanel = createMainPanel();
+
+        initiateListeners();
+        fillTComboBox();
         add(mainPanel, BorderLayout.CENTER);
 
 
@@ -92,6 +102,25 @@ public class HolmesMCSanalysis extends JFrame {
         return output.toString();
     }
 
+    public void fillTComboBox(){
+        transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+        mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+        mcsBox.removeAllItems();
+        mcsBox.addItem("---");
+        mcsBox.setSelectedIndex(0);
+        transBox.removeAllItems();
+        transBox.addItem("---");
+        transBox.setSelectedIndex(0);
+        if(mcsd.getSize() == 0) {
+            return;
+        }
+        transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+        if(transitions != null && transitions.size()>0) {
+            for(int t=0; t < transitions.size(); t++) {
+                transBox.addItem("t"+(t)+"."+transitions.get(t).getName());
+            }
+        }
+    }
     private void showMCS(Integer transitionIndex, Integer mcsIndex){
         places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
         transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -170,14 +199,14 @@ public class HolmesMCSanalysis extends JFrame {
     }
 
 
-
-
     private void jeden(){
 
 
         places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
         transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
         mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+
+        //for(int transitionIndex : il_trans){
         for(int transitionIndex = 0; transitionIndex<mcsd.getSize(); transitionIndex++) {
             ArrayList<ArrayList<Integer>> dataVector = mcsd.getMCSlist(transitionIndex);
 
@@ -186,6 +215,25 @@ public class HolmesMCSanalysis extends JFrame {
                 continue;
             }
             logField1stTab.append(" *** Zbiory MCS dla tranzycji o numerze: " + transitionIndex + ": ***\n");
+//            logField1stTab.append("\\begin{longtable}{cccclll}\n" +
+//                    "\\caption{Wynik działania algorytmu bazującego na przepływie tokenów dla tranzycji "+transitionIndex+".}\\\\\n" +
+//                    "\\hline\n" +
+//                    "MCS\\# &\n" +
+//                    "  \\begin{tabular}[c]{@{}c@{}}Tranzycje wchodzące w\\\\ skład MCS\\end{tabular} &\n" +
+//                    "  \\begin{tabular}[c]{@{}c@{}}Wyłączone tranzycje\\\\ ($T_{off}$)\\end{tabular} &\n" +
+//                    "  \\begin{tabular}[c]{@{}c@{}}Wyłączone miejsca\\\\ ($T_{off}$)\\end{tabular} &\n" +
+//                    "   &\n" +
+//                    "   &\n" +
+//                    "   \\\\ \\hline\n" +
+//                    "\\endfirsthead\n" +
+//                    "%\n" +
+//                    "\\endhead\n" +
+//                    "%\n" +
+//                    "\\hline\n" +
+//                    "\\endfoot\n" +
+//                    "%\n" +
+//                    "\\endlastfoot\n" +
+//                    "%\n");
 
             Map<String, ArrayList<Integer>> MCSsets = new HashMap<String, ArrayList<Integer>>();
             Map<String, ArrayList<Integer>> MCSsetsindexes = new HashMap<String, ArrayList<Integer>>();
@@ -267,7 +315,6 @@ public class HolmesMCSanalysis extends JFrame {
                 for (Map.Entry<String, ArrayList<Integer>> entry : MCSsetscp.entrySet()) {
                     int other = 0;
                     if(TorP.getSelectedIndex()!=1){other=1;}
-
                     if(entry.getValue().get(TorP.getSelectedIndex())<min){
                         rem=entry.getKey();
                         min = entry.getValue().get(TorP.getSelectedIndex());
@@ -296,7 +343,7 @@ public class HolmesMCSanalysis extends JFrame {
                     ImportantTrans.add(Integer.parseInt(importantTrans.getText()));
                 }
             }
-            logField1stTab.append("\t=== Ranking zbiorów MCS ===\n");
+            //logField1stTab.append("\t=== Ranking zbiorów MCS ===\n");
             if(!description.isSelected() && !ID.isSelected())// zwykłe wypisanie MCS#x [t1,t3] (Toff: 3, Poff 5)
                 for (Map.Entry<String, Integer> mapElement : lhm.entrySet()) {
                     String[] mcs = mapElement.getKey().split("\\[");
@@ -305,52 +352,87 @@ public class HolmesMCSanalysis extends JFrame {
                             logField1stTab.append("(DENIED)_");
                         }
                     }
-                    logField1stTab.append(String.format("%-8s %-20s (Toff: %d, Poff %d)", mcs[0],"["+mcs[1], MCSsets.get(mapElement.getKey()).get(0),MCSsets.get(mapElement.getKey()).get(1)));
+                    String deniedMCStrans = mcs[1];
+                    for (int impTrans : ImportantTrans){
+                        if(mcs[1].contains(Integer.toString(impTrans))){
+                            deniedMCStrans = deniedMCStrans.replace("t"+Integer.toString(impTrans),"(DENIED)_t"+Integer.toString(impTrans));
+                        }
+                    }
+                    logField1stTab.append(String.format("%-8s %-20s (Toff: %d, Poff %d)", mcs[0],"["+deniedMCStrans, MCSsets.get(mapElement.getKey()).get(0),MCSsets.get(mapElement.getKey()).get(1)));
                     //logField1stTab.append(mapElement.getKey()+"(Toff: " +MCSsets.get(mapElement.getKey()).get(0)+", Poff: "+MCSsets.get(mapElement.getKey()).get(1)+")");
 
                     logField1stTab.append("\n");
                 }
-            else if ((!description.isSelected() && ID.isSelected())) {//  wypisanie z id MCS#x [t1,t3] (Toff: [t2, t54 ,t65], Poff: [p5])
+            else if ((!description.isSelected() && ID.isSelected())) {//  wypisanie z id; MCS#x [t1,t3] (Toff: [t2, t54 ,t65], Poff: [p5])
+                int liczba_wynikow = 20;
                 for (Map.Entry<String, Integer> mapElement : lhm.entrySet()) {
+                    //if(liczba_wynikow==0){break;}
                     String[] mcs = mapElement.getKey().split("\\[");
-                    logField1stTab.append(String.format("%-8s %-20s (Toff: [",mcs[0],"["+mcs[1]));
-                    if(MCSsets.get(mapElement.getKey()).get(0)>0){
+                    String deniedMCStrans = mcs[1];
+                    for (int impTrans : ImportantTrans){
+                        if(mcs[1].contains(Integer.toString(impTrans))){
+                            deniedMCStrans = deniedMCStrans.replace("t"+Integer.toString(impTrans),"(DENIED)_t"+Integer.toString(impTrans));
+                        }
+                    }
+                    logField1stTab.append(String.format("%-8s %-20s (Toff: [",mcs[0],"["+deniedMCStrans));
+
+                    //String lowerMCSindexes = mcs[1].replace("t", "$t_{").replace(",","}$,").replace("]","}$");
+//                    for (int impTrans : ImportantTrans){
+//                        if(lowerMCSindexes.contains(Integer.toString(impTrans)));{
+//                            lowerMCSindexes = lowerMCSindexes.replace("$t_{"+Integer.toString(impTrans),"(DENIED)_t_{"+Integer.toString(impTrans));
+//                        }
+//                    }
+                    //logField1stTab.append(mcs[0].split("#")[1]+" & "+lowerMCSindexes+" & ");
+                    if(MCSsets.get(mapElement.getKey()).get(0)>0){//jeśli wyłączonych tranzycji jest wiecej niz 0
                         for(int i= 0; i<MCSsets.get(mapElement.getKey()).get(0); i++){
                             if(ImportantTrans.contains(MCSsetsindexes.get(mapElement.getKey()).get(i))){
                                 logField1stTab.append("(DENIED)_");
                             }
                             logField1stTab.append("t"+toSubscript(Integer.toString(MCSsetsindexes.get(mapElement.getKey()).get(i))));
+                            //logField1stTab.append("$t_{"+MCSsetsindexes.get(mapElement.getKey()).get(i)+"}$");
 
                             if(i!= MCSsets.get(mapElement.getKey()).get(0)-1){
                                 logField1stTab.append(", ");
                             }else{
                                 logField1stTab.append("], Poff: [");
+                                //logField1stTab.append(" & ");
                             }
                         }
                     }else{
                         logField1stTab.append("], Poff: [");
+                        //logField1stTab.append(" - & ");
                     }
                     if(MCSsets.get(mapElement.getKey()).get(1)>0){
                         for(int i= MCSsets.get(mapElement.getKey()).get(0); i<MCSsets.get(mapElement.getKey()).get(0)+MCSsets.get(mapElement.getKey()).get(1); i++){
                             logField1stTab.append("p"+toSubscript(Integer.toString(MCSsetsindexes.get(mapElement.getKey()).get(i))));
+                            //logField1stTab.append("$p_{"+MCSsetsindexes.get(mapElement.getKey()).get(i)+"}$");
                             if(i!= MCSsets.get(mapElement.getKey()).get(0)+MCSsets.get(mapElement.getKey()).get(1)-1){
                                 logField1stTab.append(", ");
                             }else{
                                 logField1stTab.append("])");
+                                //logField1stTab.append(" & & & \\\\");
                             }
                         }
                     }
                     else{
                         logField1stTab.append("])");
+                        //logField1stTab.append(" - & & & \\\\");
                     }
                     logField1stTab.append("\n");
+                    liczba_wynikow--;
                 }
+                logField1stTab.append("\n");
             } else if ((description.isSelected() && !ID.isSelected())) {// to juz zbyt skomplikowane na demo
                 for (Map.Entry<String, Integer> mapElement : lhm.entrySet()) {
                     String MCSname = mapElement.getKey().split(" \\[")[0];
                     logField1stTab.append(MCSname+"[ \n");
                     for(Integer trans : MCStrans.get(mapElement.getKey())){
-                        logField1stTab.append("\t"+transitions.get(trans).getName()+";\n");
+                        if(ImportantTrans.contains(trans)){
+                            logField1stTab.append("\t(DENIED)_"+transitions.get(trans).getName()+";\n");
+                        }
+                        else {
+                            logField1stTab.append("\t" + transitions.get(trans).getName() + ";\n");
+                        }
                     }
                     logField1stTab.append("]\n");
 
@@ -392,8 +474,14 @@ public class HolmesMCSanalysis extends JFrame {
                     String MCSname = mapElement.getKey().split(" \\[")[0];
                     logField1stTab.append(MCSname+"[ \n");
                     for(Integer trans : MCStrans.get(mapElement.getKey())){
+                        if(ImportantTrans.contains(trans)){
+                            logField1stTab.append("\t(DENIED)_t"+toSubscript(trans.toString())+"_"+transitions.get(trans).getName()+";\n");
+                        }
+                        else{
                         logField1stTab.append("\tt"+toSubscript(trans.toString())+"_"+transitions.get(trans).getName()+";\n");
+                        }
                     }
+
                     logField1stTab.append("]\n");
 
                     logField1stTab.append("(Toff: [\n");
@@ -435,34 +523,18 @@ public class HolmesMCSanalysis extends JFrame {
             MCSsetscp.clear();
             MCSsetsindexes.clear();
             lhm.clear();
+//            logField1stTab.append("\\hline\n" +
+//                    "\\end{longtable}\n\n");
         }
     }
-//Ranking w oparciu o t-inwarianty:
-//    -Identyfikujemy te t-inwarianty, których wsparcie zawiera choć jedną tranzycję z danego zbioru MCS.
-//      Niech to będzie zbiór A. Niech zbiór X to zbiór wszystkich t-inwariantów. Zbiór B więc to te t-inwarianty,
-//      które pozostały, bo nie zawierają we wsparciach ani jednej tranzycji z danego MCS. Czyli podsumowując X = A + B.
-//
-//    -Dla zbioru t-inwariantów ze zbioru B (czyli tego, którego t-inwarianty nie mają we wsparciach niczego z danego MCSa)
-//      sprawdzamy ile one zawierają tranzycji i jakie to tranzycje. Albo jeszcze innymi słowy: z pełnego zbioru T tranzycji sieci tworzymy podzbiór takich tranzycji,
-//      które wciąż są w (tych aktywnych) t-inwariantach ze zbioru B. Niech zbiór tych tranzycji to Tb. Tak więc: T = Tb  Tx. Zbiór Tb to zbiór wszystkich tranzycji,
-//      które są we wsparciach inwariantów ze zbioru B (czyli wciąż tego, który reprezentuje inwarianty które nie zostały wyłączone przez tranzycje z MCS).
-//      Tak więc ten drugi podzbiór nazwany Tx to zbiór tych wszystkich tranzycji, które zostały wyłączone, bo zniknęły t-inwarianty (te z podzbioru A wspomnianego wcześniej),
-//      które zawierały we wsparciach jakieś tranzycje z MCS.
-//    -Ranking tutaj polega na tym, że im mniejszy rozmiar zbioru Tx, tym lepiej, czyli prezentacja wyników może być w stylu:
-//        o	MCS17[t7, t20]  (Tx:  3)
-//        o	MCS8[t7, t20]  (Tx:  4)   , itd.
-//    -Dodatkowe kryterium oceny:
-//        o	Niech będzie można określi pewne tranzycje, których nie chcemy wyłączać. Czyli takie, których nie chcemy widzieć w zbiorze Tx zdefiniowanym powyżej. A
-//        nalizę przeprowadzamy co do przecinka jak wyżej, ale dodatkowo w wynikach które algorytm poda będzie napisane (np. na czerwono),
-//        że dany MCS zawiera tranzycje zakazane (te które wskazaliśmy i których nie chcemy wyłączać MCSem). Można np. zrobić drugi oddzielny podranking,
-//        gdzie będą tylko takie MCS, które wyłączyły coś, czego nie miały.
 
     private void dwa(){
         mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
         transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
         X = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
 
-        for(int transitionIndex = 0; transitionIndex<mcsd.getSize(); transitionIndex++) {
+        //for(int transitionIndex : il_trans){
+       for(int transitionIndex = 0; transitionIndex<mcsd.getSize(); transitionIndex++) {
 
             ArrayList<ArrayList<Integer>> dataVector = mcsd.getMCSlist(transitionIndex);
             if (dataVector == null || dataVector.size() == 0 ) {
@@ -473,7 +545,26 @@ public class HolmesMCSanalysis extends JFrame {
                 logField1stTab.append(" *** Brak T-invariantów ***\n");
             }
 
-            logField1stTab.append(" *** Zbiory MCS dla tranzycji o numerze: " + transitionIndex + ": ***\n");
+            logField1stTab.append(" *** Zbiory MCS dla tranzycji o numerze: " + transitionIndex + " ***\n");
+//            logField1stTab.append("\\begin{longtable}{@{}cccclll@{}}\n" +
+//                    "\\caption{Wynik działania algorytmu bazującego na t-inwariantach dla tranzycji "+transitionIndex+".}\\\\\n" +
+//                    "\\toprule\n" +
+//                    "MCS\\# &\n" +
+//                    "  \\begin{tabular}[c]{@{}c@{}}Tranzycje wchodzące w\\\\ skład MCS\\end{tabular} &\n" +
+//                    "  \\begin{tabular}[c]{@{}c@{}}Liczba wyłączonych tranzycji\\\\ w sieci ($T_{x}$)\\end{tabular} &\n" +
+//                    "  \\begin{tabular}[c]{@{}c@{}}Procent wyłączonych \\\\ tranzycji (\\%)\\end{tabular} &\n" +
+//                    "   &\n" +
+//                    "   &\n" +
+//                    "   \\\\* \\midrule\n" +
+//                    "\\endfirsthead\n" +
+//                    "%\n" +
+//                    "\\endhead\n" +
+//                    "%\n" +
+//                    "\\bottomrule\n" +
+//                    "\\endfoot\n" +
+//                    "%\n" +
+//                    "\\endlastfoot\n" +
+//                    "%\n");
 
             Map<Integer,ArrayList<Integer>> B  =  new  HashMap<Integer,ArrayList<Integer>>();//t-inwarianty,które pozostały, bo nie zawierają we wsparciach ani jednej tranzycji z danego MCS
             Map<Integer,ArrayList<Integer>> A  =  new  HashMap<Integer,ArrayList<Integer>>();//t-inwarianty, których wsparcie zawiera choć jedną tranzycję z danego zbioru MCS
@@ -513,20 +604,30 @@ public class HolmesMCSanalysis extends JFrame {
                     }
                 counter++;
                 }
+                //logField1stTab.append(rankmsg.toString()+" :   "+Tx.size());
                 MCSrank.put(rankmsg.toString(), Tx.size());
                 MCSsets.put(rankmsg.toString(), new HashSet<Integer>(Tx));
 
+
+
+//                logField1stTab.append("Wylaczone tranzycje:"+Tx.size()+" Zostawione tranzycje:"+Tb.size()+"\n");
+//                for(Integer tebe: Tb){
+//                    if (Tx.contains(tebe)){
+//                        logField1stTab.append(tebe.toString()+",");
+//                    }
+//                }
+//                logField1stTab.append("\n");
                 A.clear();
                 B.clear();
                 Tx.clear();
                 Tb.clear();
                 MCScounter++;
             }
-            logField1stTab.append(" === Liczba wyłączonych tranzycji przez każdy MCS ===\n");
+            //logField1stTab.append(" === Liczba wyłączonych tranzycji przez każdy MCS ===\n");
             LinkedHashMap<String, Integer> lhm = new LinkedHashMap<String, Integer>();
             int lim = MCSrank.size();
             for (int i = 0; i <lim; i++) {
-                Integer min = transitions.size();
+                Integer min = transitions.size()+1;
                 String rem = "";
                 for (Map.Entry<String, Integer> entry : MCSrank.entrySet()) {
                     if(entry.getValue()<min){
@@ -549,7 +650,9 @@ public class HolmesMCSanalysis extends JFrame {
                     ImportantTrans.add(Integer.parseInt(importantTrans.getText()));
                 }
             }
+            int liczba_wynikow = 20;
             for (Map.Entry<String, Integer> mapElement : lhm.entrySet()) {
+                //if(liczba_wynikow==0){break;}
                 String[] mcs = mapElement.getKey().split("\\[");
                 int percentage = mapElement.getValue()  * 100 / transitions.size();
                 String percent = "%";
@@ -559,13 +662,227 @@ public class HolmesMCSanalysis extends JFrame {
                         break;
                     }
                 }
+                //String lowerMCSindexes = mcs[1].replace("t", "$t_{").replace(",","}$,").replace("]","}$");
+                //logField1stTab.append(mcs[0].split("#")[1]+" & "+lowerMCSindexes+" & "+mapElement.getValue()+"  & "+percentage+"    &  &  &  \\\\");
+//                String deniedMCStrans = mcs[1];
+//                for (int impTrans : ImportantTrans){
+//                    if(mcs[1].contains(Integer.toString(impTrans))){
+//                        deniedMCStrans = deniedMCStrans.replace("t"+Integer.toString(impTrans),"(DENIED)_t"+Integer.toString(impTrans));
+//                    }
+//                }
                 logField1stTab.append(String.format("%-8s %-20s%s%d, %d%s)", mcs[0],"["+mcs[1],"(Tx:", mapElement.getValue(), percentage,percent));
+                //logField1stTab.append(String.format("%-8s %-20s%s%d, %d%s)", mcs[0],"["+mapElement.getKey(),"(Tx:", mapElement.getValue(), percentage,percent));
                 logField1stTab.append("\n");
+                liczba_wynikow--;
             }
             lhm.clear();
             MCSrank.clear();
             MCSsets.clear();
+//            logField1stTab.append("* \\bottomrule\n" +
+//                    "\\end{longtable}\n\n");
         }
+
+    }
+
+    void trzy(){
+        places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+        transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+        mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+
+
+//        logField1stTab.append("\\begin{table}[htbp]\n" +
+//                "\\caption{Najlepsze zbiory MCS dla każdej z wybranych tranzycji.}\n" +
+//                "\\begin{tabular}{@{}ccccclll@{}}\n" +
+//                "\\toprule\n" +
+//                "ID tranzycji &\n" +
+//                "  MCS\\# &\n" +
+//                "  \\begin{tabular}[c]{@{}c@{}}Tranzycje wchodzące w\\\\ skład MCS\\end{tabular} &\n" +
+//                "  \\begin{tabular}[c]{@{}c@{}}Liczba wyłączonych \\\\węzłów sieci\\end{tabular} &\n" +
+//                "  \\begin{tabular}[c]{@{}c@{}}Procent wyłączonych \\\\ węzłów sieci (\\%)\\end{tabular} &\n" +
+//                "   &\n" +
+//                "   &\n" +
+//                "   \\\\ \\midrule\n");
+
+        //for(int transitionIndex : il_trans){
+        for(int transitionIndex = 0; transitionIndex<mcsd.getSize(); transitionIndex++) {
+            ArrayList<ArrayList<Integer>> dataVector = mcsd.getMCSlist(transitionIndex);
+
+            if (dataVector == null || dataVector.size() == 0 ) {
+                //logField1stTab.append(" *** Brak zbiorów MCS dla tranzycji o numerze: " + transitionIndex + "\n");
+                continue;
+            }
+            logField1stTab.append(" *** Najlepszy MCS dla tranzycji o numerze: " + transitionIndex + " ***\n");
+            Map<String, Integer> MCSsets = new HashMap<String, Integer>();
+            Map<String, ArrayList<Integer>> indexes = new HashMap<>();
+
+            int counter = 0;
+            for(ArrayList<Integer>MCS : dataVector){
+
+                StringBuilder rankmsg = new StringBuilder("MCS#");
+                StringBuilder msg;
+                //logField1stTab.append("MCS#" + counter + " ");
+                rankmsg.append(counter).append(" ").append("[");
+                msg = new StringBuilder("[");
+                for (int el : MCS) {
+                    //toSubscript(Integer.toString(el))
+                    msg.append("t").append(el).append(", ");
+                    rankmsg.append("t").append(el).append(", ");
+                }
+                msg.append("] : ");
+                rankmsg.append("] ");
+                msg = new StringBuilder(msg.toString().replace(", ]", "]"));
+                rankmsg = new StringBuilder(rankmsg.toString().replace(", ]", "]"));
+
+                //Dla każdego MCS sprawdzamy, do ilu bezpośrednio miejsc prowadzą łuki z jego tranzycji. Niech to będzie zbiór Px, czyli podzbiór zbioru P miejsc sieci.
+                //---
+                HashSet<Place> Px = new HashSet<Place>();
+                for(Integer MCStransition : MCS){
+                    Transition transition = transitions.get(MCStransition);
+                    Px.addAll(transition.getPostPlaces());
+                }
+                //---
+                //Teraz sprawdzamy, ile miejsc z Px nie posiada żadnych innych łuków wejściowych, tj. innych niż te wychodzące z tranzycji ze zbioru MCS.
+                //Niech to będzie podzbiór Poff, czyli podzbiór zbioru Px.
+                //---
+                HashSet<Place> Poff = new HashSet<Place>();
+                for(Place place : Px){
+                    boolean flag = true;
+                    for(Transition transition : place.getPreTransitions()){
+                        if(!MCS.contains(transition.getID()- places.size())){
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if(flag){
+                        Poff.add(place);
+                    }
+                }
+                //---
+                //Następnie idziemy poziom dalej. Sprawdzamy wszystkie tranzycje, które mają jako swoje miejsce wejściowe przynajmniej jedno miejsce ze zbioru Poff.
+                HashSet<Transition> Toff = new HashSet<Transition>();
+                for(Place place : Poff){
+                    Toff.addAll(place.getPostTransitions());
+                }
+                ArrayList<Integer> ids = new ArrayList<>();
+                for(Transition trans : Toff){
+                    ids.add(trans.getID()-places.size());
+                }
+                if(!MCS.contains(transitionIndex)){
+                    indexes.put(rankmsg.toString(),new ArrayList<Integer>(ids));
+                    MCSsets.put(rankmsg.toString(),Poff.size()+Toff.size());
+                }else if(dataVector.size() == 1){
+                    indexes.put(rankmsg.toString(),new ArrayList<Integer>(ids));
+                    MCSsets.put(rankmsg.toString(),Poff.size()+Toff.size());
+                }
+
+                //logField1stTab.append(msg+"(Toff: "+Toff.size()+", Poff: "+Poff.size()+")\n");
+
+                counter++;
+                ids.clear();
+                Px.clear();
+                Poff.clear();
+                Toff.clear();
+            }
+            ArrayList<Integer> ImportantTrans = new ArrayList<>();
+            if(importantTrans.getText().length()>0) {
+                if(importantTrans.getText().contains(",")){
+                    String[] parseImportantTrans = importantTrans.getText().split(",");
+                    for (String elem : parseImportantTrans) {
+                        ImportantTrans.add(Integer.parseInt(elem));
+                    }
+                }
+                else{
+                    ImportantTrans.add(Integer.parseInt(importantTrans.getText()));
+                }
+            }
+            int lim = MCSsets.size();
+            int min = transitions.size();
+            int min_allowed = transitions.size();
+            String rem_allowed = null;
+            String rem = null;
+            int num_of_mcs_trans = 4;
+            int num_of_mcs_trans_allowed = 4;
+            for (Map.Entry<String, Integer> entry : MCSsets.entrySet()) {
+                int mcsSetSize = Arrays.asList(entry.getKey().split("#")[1].split(",")).size();
+                if(entry.getValue()<min){
+                    rem = entry.getKey();
+                    min = entry.getValue();
+                    num_of_mcs_trans = mcsSetSize;
+                } else if (entry.getValue().equals(min) && num_of_mcs_trans>mcsSetSize ) {
+                    rem = entry.getKey();
+                    min = entry.getValue();
+                    num_of_mcs_trans = mcsSetSize;
+                }
+                boolean contains_denied = false;
+                for (Integer trans : indexes.get(entry.getKey())){
+                    if(ImportantTrans.contains(trans)){
+                        contains_denied = true;
+                        break;
+                    }
+                }
+                if(!contains_denied && entry.getValue()<min_allowed){
+                    rem_allowed = entry.getKey();
+                    min_allowed = entry.getValue();
+                    num_of_mcs_trans_allowed = mcsSetSize;
+                } else if (!contains_denied && entry.getValue()<min_allowed && num_of_mcs_trans_allowed>mcsSetSize ) {
+                    rem_allowed = entry.getKey();
+                    min_allowed = entry.getValue();
+                    num_of_mcs_trans = mcsSetSize;
+                }
+            }
+
+            double percentage= (double)min/(transitions.size()+places.size())*100;
+            String result = String.format("%.2f", percentage);
+            double percentage_allowed = (double)min_allowed/(transitions.size()+places.size())*100;
+            String result_allowed = String.format("%.2f", percentage_allowed);
+            boolean flag = true;
+//            String deniedMCStrans = rem;
+//            String deniedMCStrans_allowed = rem_allowed;
+
+
+//            for (int impTrans : ImportantTrans){
+//                if(rem.contains(Integer.toString(impTrans))){
+//                    deniedMCStrans = deniedMCStrans.replace("t"+Integer.toString(impTrans),"(DENIED)_t"+Integer.toString(impTrans));
+//                }
+//                if(rem_allowed.contains(Integer.toString(impTrans))){
+//                    deniedMCStrans_allowed = deniedMCStrans_allowed.replace("t"+Integer.toString(impTrans),"(DENIED)_t"+Integer.toString(impTrans));
+//                }
+//            }
+            for (Integer trans : indexes.get(rem)){
+                if(ImportantTrans.contains(trans)){
+                    if(Objects.equals(rem_allowed, null)){
+                        logField1stTab.append("Ważne tranzycje uniemożliwiają pokazanie najlepszego MCS\n");
+                    }
+                    else{
+                        //MCS#21 [t30, t31] : 0/137, 0,00%
+                        logField1stTab.append("(DENIED)_"+rem+": "+min+"/"+(transitions.size()+places.size())+", "+result+"% || "
+                            +rem_allowed+": "+min_allowed+"/"+(transitions.size()+places.size())+", "+result_allowed+"%\n");
+                        //String lowerMCSindexes = rem_allowed.split("#")[1].replace("t", "$t_{").replace(",","}$,").replace("]","}$");
+                        //logField1stTab.append("(DENIED)\\_"+transitionIndex+" & "+lowerMCSindexes+" & "+min_allowed+"/"+(transitions.size()+places.size())+" & "+ result_allowed+" &&& \\\\");
+                        //rem_allowed.split("#")[1]
+                        flag = false;
+                        break;
+                    }
+                }
+            }
+            if (flag)
+            {
+                if(!Objects.equals(rem_allowed, null)){
+
+                    logField1stTab.append(rem + ": " + min + "/" + (transitions.size() + places.size()) + ", " + result + "%\n");
+                    //rem.split("#")[1].split("\\[")[1].split("]")[0]
+//                    String lowerMCSindexes = rem.split("#")[1].split("\\[")[1].replace("t", "$t_{").replace(",","}$,").replace("]","}$");
+//                    logField1stTab.append(transitionIndex+" & "+rem.split("\\[")[0].split("#")[1]+" & "+lowerMCSindexes+" & "+min+"/"+(transitions.size()+places.size())+" & "+ result +" &&& \\\\");
+                }
+            }
+            logField1stTab.append("\n");
+            MCSsets.clear();
+            indexes.clear();
+
+        }
+//        logField1stTab.append("\\bottomrule\n" +
+//                "\\end{tabular}\n" +
+//                "\\end{table}\n\n");
     }
     private JPanel createMainPanel() {
         JPanel main = new JPanel(new BorderLayout());
@@ -581,21 +898,21 @@ public class HolmesMCSanalysis extends JFrame {
         mainPanel1stTab.add(logMainPanelT);
         mainPanel1stTab.repaint();
 
-        tabbedPane.addTab("1st Tab", Tools.getResIcon22("/icons/invWindow/tInvIcon.png"), mainPanel1stTab, "T-invariants");
+        tabbedPane.addTab("MCS", Tools.getResIcon22("/icons/invWindow/tInvIcon.png"), mainPanel1stTab, "T-invariants");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-        JPanel mainPanel2ndTab = new JPanel();
-        mainPanel2ndTab.setLayout(null); //  ╯°□°）╯︵  ┻━┻
-        JPanel buttonPanelP = createUpperButtonPanel2ndTab(0, 0, windowWidth, 90);
-        JPanel logMainPanelP = createLogMainPanel2ndTab(0, 90, windowWidth, windowHeight-120);
-
-        mainPanel2ndTab.add(buttonPanelP);
-        mainPanel2ndTab.add(logMainPanelP);
-        mainPanel2ndTab.repaint();
-
-
-        tabbedPane.addTab("2nd Tab", Tools.getResIcon22("/icons/invWindow/pInvIcon.png"), mainPanel2ndTab, "P-invariants");
-        tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+//        JPanel mainPanel2ndTab = new JPanel();
+//        mainPanel2ndTab.setLayout(null); //  ╯°□°）╯︵  ┻━┻
+//        JPanel buttonPanelP = createUpperButtonPanel2ndTab(0, 0, windowWidth, 90);
+//        JPanel logMainPanelP = createLogMainPanel2ndTab(0, 90, windowWidth, windowHeight-120);
+//
+//        mainPanel2ndTab.add(buttonPanelP);
+//        mainPanel2ndTab.add(logMainPanelP);
+//        mainPanel2ndTab.repaint();
+//
+//
+//        tabbedPane.addTab("2nd Tab", Tools.getResIcon22("/icons/invWindow/pInvIcon.png"), mainPanel2ndTab, "P-invariants");
+//        tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
         main.add(tabbedPane, BorderLayout.CENTER);
 
@@ -612,10 +929,10 @@ public class HolmesMCSanalysis extends JFrame {
         int posY = 10;
 
         JButton button1 = new JButton("Jenson");
-        button1.setText("MCS ranking");
+        button1.setText("Token rank");
         button1.setBounds(posX, posY, 150, 40);
         button1.setMargin(new Insets(0, 0, 0, 0));
-        button1.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+        button1.setIcon(Tools.getResIcon32("/icons/invWindow/showInvariants.png"));
         button1.addActionListener(actionEvent -> {
             places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
             transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -658,7 +975,7 @@ public class HolmesMCSanalysis extends JFrame {
         importantTrans.setBounds(posX+230, posY+20, 100, 20);
         panel.add(importantTrans);
 
-        JButton transRank = new JButton("Inv rank");
+        JButton transRank = new JButton("T-inv rank");
         transRank.setText("Inv rank");
         transRank.setBounds(posX + 480, posY, 130, 70);
         transRank.setMargin(new Insets(0, 0, 0, 0));
@@ -684,7 +1001,7 @@ public class HolmesMCSanalysis extends JFrame {
 
         String[] dataT = { "---" };//combobox z tranzycjami
         transBox = new JComboBox<String>(dataT);
-        transBox.setBounds(posX+620, posY, 320, 20);
+        transBox.setBounds(posX+620, posY, 350, 20);
         transBox.setSelectedIndex(0);
         transBox.setMaximumRowCount(6);
         transBox.removeAllItems();
@@ -694,7 +1011,7 @@ public class HolmesMCSanalysis extends JFrame {
             mcsBox.addItem("---");
             mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
             if(mcsd.getSize() == 0) {
-                logField1stTab.append(" *** BRAK DANYCH MCS! \n");
+//                logField1stTab.append(" *** BRAK DANYCH MCS! \n");
                 return;
             }
             int selected = transBox.getSelectedIndex();
@@ -728,7 +1045,7 @@ public class HolmesMCSanalysis extends JFrame {
         panel.add(mcsBox);
 
         JButton showMCS = new JButton("Button 888");
-        showMCS.setText("Show MCS");
+        showMCS.setText("Pokaz MCS");
         showMCS.setBounds(posX + 840, posY+30, 130, 40);
         showMCS.setMargin(new Insets(0, 0, 0, 0));
         showMCS.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
@@ -746,34 +1063,18 @@ public class HolmesMCSanalysis extends JFrame {
         showMCS.setFocusPainted(false);
         panel.add(showMCS);
 
-        JButton loadTrans = new JButton("Jenson");
-        loadTrans.setText("");
-        loadTrans.setBounds(posX+940, posY, 30, 30);
-        loadTrans.setMargin(new Insets(0, 0, 0, 0));
-        loadTrans.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        loadTrans.addActionListener(actionEvent -> {
-            transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-            mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-            mcsBox.removeAllItems();
-            mcsBox.addItem("---");
-            mcsBox.setSelectedIndex(0);
-            transBox.removeAllItems();
-            transBox.addItem("---");
-            transBox.setSelectedIndex(0);
-            if(mcsd.getSize() == 0) {
-                logField1stTab.append(" *** BRAK DANYCH MCS! \n");
-                return;
-            }
-            transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-            if(transitions != null && transitions.size()>0) {
-                for(int t=0; t < transitions.size(); t++) {
-                    transBox.addItem("t"+(t)+"."+transitions.get(t).getName());
-                }
-            }
 
+
+        JButton mcsOffRank = new JButton("Off Rank");
+        mcsOffRank.setText("Off Rank");
+        mcsOffRank.setBounds(posX + 1000, posY, 180, 70);
+        mcsOffRank.setMargin(new Insets(0, 0, 0, 0));
+        mcsOffRank.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
+        mcsOffRank.addActionListener(actionEvent -> {
+            trzy();
         });
-        loadTrans.setFocusPainted(false);
-        panel.add(loadTrans);
+        mcsOffRank.setFocusPainted(false);
+        panel.add(mcsOffRank);
 
         return panel;
     }
@@ -781,7 +1082,7 @@ public class HolmesMCSanalysis extends JFrame {
     private JPanel createLogMainPanel1stTab(int x, int y, int width, int height) {
         JPanel panel = new JPanel();
         panel.setLayout(null);
-        panel.setBorder(BorderFactory.createTitledBorder("1st tab log window"));
+        panel.setBorder(BorderFactory.createTitledBorder("Log window"));
         panel.setBounds(x, y, width-20, height-50);
 
         logField1stTab = new JTextArea();
@@ -800,60 +1101,67 @@ public class HolmesMCSanalysis extends JFrame {
 
         return panel;
     }
-
-
-    private JPanel createUpperButtonPanel2ndTab(int x, int y, int width, int height) {
-        JPanel panel = new JPanel();
-        panel.setLayout(null);
-        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        panel.setBounds(x, y, width, height);
-
-        int posX = 10;
-        int posY = 10;
-
-        JButton buttonX = new JButton("<html>Button<br>X</html>");
-        buttonX.setBounds(posX, posY, 110, 60);
-        buttonX.setMargin(new Insets(0, 0, 0, 0));
-        buttonX.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        buttonX.addActionListener(actionEvent -> {
-            ;
+    private void initiateListeners() { //HAIL SITHIS
+        addWindowListener(new WindowAdapter() {
+            public void windowActivated(WindowEvent e) {
+                fillTComboBox();
+            }
         });
-        buttonX.setFocusPainted(false);
-        panel.add(buttonX);
-
-        JButton buttonY = new JButton("<html>Button<br>Y</html>");
-        buttonY.setBounds(posX+120, posY, 110, 60);
-        buttonY.setMargin(new Insets(0, 0, 0, 0));
-        buttonY.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        buttonY.addActionListener(actionEvent -> {
-
-        });
-        buttonY.setFocusPainted(false);
-        panel.add(buttonY);
-
-
-
-        return panel;
     }
 
-    private JPanel createLogMainPanel2ndTab(int x, int y, int width, int height) {
-        JPanel panel = new JPanel();
-        panel.setLayout(null);
-        panel.setBorder(BorderFactory.createTitledBorder("Log window 2nd tab"));
-        panel.setBounds(x, y, width-20, height-50);
 
-        logField2ndTab = new JTextArea();
-        logField2ndTab.setLineWrap(true);
-        //logField2ndTab.setEditable(false);
-        DefaultCaret caret = (DefaultCaret)logField2ndTab.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-
-        JPanel logFieldPanel = new JPanel();
-        logFieldPanel.setLayout(new BorderLayout());
-        logFieldPanel.add(new JScrollPane(logField2ndTab), BorderLayout.CENTER);
-        logFieldPanel.setBounds(10, 20, width-35, height-75);
-        panel.add(logFieldPanel);
-
-        return panel;
-    }
+//    private JPanel createUpperButtonPanel2ndTab(int x, int y, int width, int height) {
+//        JPanel panel = new JPanel();
+//        panel.setLayout(null);
+//        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+//        panel.setBounds(x, y, width, height);
+//
+//        int posX = 10;
+//        int posY = 10;
+//
+//        JButton buttonX = new JButton("<html>Button<br>X</html>");
+//        buttonX.setBounds(posX, posY, 110, 60);
+//        buttonX.setMargin(new Insets(0, 0, 0, 0));
+//        buttonX.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+//        buttonX.addActionListener(actionEvent -> {
+//            ;
+//        });
+//        buttonX.setFocusPainted(false);
+//        panel.add(buttonX);
+//
+//        JButton buttonY = new JButton("<html>Button<br>Y</html>");
+//        buttonY.setBounds(posX+120, posY, 110, 60);
+//        buttonY.setMargin(new Insets(0, 0, 0, 0));
+//        buttonY.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+//        buttonY.addActionListener(actionEvent -> {
+//
+//        });
+//        buttonY.setFocusPainted(false);
+//        panel.add(buttonY);
+//
+//
+//
+//        return panel;
+//    }
+//
+//    private JPanel createLogMainPanel2ndTab(int x, int y, int width, int height) {
+//        JPanel panel = new JPanel();
+//        panel.setLayout(null);
+//        panel.setBorder(BorderFactory.createTitledBorder("Log window 2nd tab"));
+//        panel.setBounds(x, y, width-20, height-50);
+//
+//        logField2ndTab = new JTextArea();
+//        logField2ndTab.setLineWrap(true);
+//        //logField2ndTab.setEditable(false);
+//        DefaultCaret caret = (DefaultCaret)logField2ndTab.getCaret();
+//        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+//
+//        JPanel logFieldPanel = new JPanel();
+//        logFieldPanel.setLayout(new BorderLayout());
+//        logFieldPanel.add(new JScrollPane(logField2ndTab), BorderLayout.CENTER);
+//        logFieldPanel.setBounds(10, 20, width-35, height-75);
+//        panel.add(logFieldPanel);
+//
+//        return panel;
+//    }
 }
