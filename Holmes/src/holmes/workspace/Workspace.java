@@ -66,8 +66,9 @@ public class Workspace implements SelectionActionListener {
 
 		setProject(new PetriNet(this, "default"));
 
+		setTablePane(new JTabbedPane());
 		this.getProject().addActionListener(this);
-		newTab(false, new Point(0,0), 1, MetaType.SUBNET);
+		//newTab(false, new Point(0,0), 1, MetaType.SUBNET);
 		//tp.setPreferredSize(new Dimension(1300,400));
 	}
 	
@@ -115,6 +116,15 @@ public class Workspace implements SelectionActionListener {
 
 		WorkspaceSheet ws = new WorkspaceSheet("I am sheet " + id, id, this);
 		sheets.add(ws);
+
+
+
+		//int index2 = GUIManager.getDefaultGUIManager().getTabbedWorkspace().getTabCount();
+		//.getTabbedWorkspace().add("Subnet-P: "+index,new WorkspaceSheet("Subnet P",index,GUIManager.getDefaultGUIManager().getWorkspace()));
+
+		GUIManager.getDefaultGUIManager().getTabbedWorkspace().add("I am sheet " + id,ws.getGraphPanel());
+
+
 		//tp.add("Sheetsssssssssssssssss " + sheets.size()+1,ws);
 
 		//Dockable tempDockable = new DefaultDockable("Sheet "+ id, sheets.get(index), "Sheet "+ id);

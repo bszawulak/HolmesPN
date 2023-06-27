@@ -27,6 +27,7 @@ import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.subnets.SubnetsTools;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;
+import holmes.workspace.Workspace;
 import holmes.workspace.WorkspaceSheet;
 
 /**

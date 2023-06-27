@@ -125,6 +125,30 @@ public class HolmesDockWindow {//extends SingleDock {
                 setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.DECOMPOSITION));
                 scrollPane.getViewport().add(getCurrentDockWindow());
             }
+            case T_INVARIANTS -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix()));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
+            case P_INVARIANTS -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix()));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
+            case MctANALYZER -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCT, GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTMatrix()));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
+            case MCSselector -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCS));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
+            case ClusterSELECTOR -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CLUSTERS, new ClusterDataPackage()));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
+            case Knockout -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.KNOCKOUT, new ArrayList<ArrayList<Integer>>()));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
         }
     }
 

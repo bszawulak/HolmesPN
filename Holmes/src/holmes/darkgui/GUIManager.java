@@ -2,20 +2,17 @@ package holmes.darkgui;
 
 import holmes.analyse.MCTCalculator;
 import holmes.clusters.ClusterDataPackage;
-import holmes.darkgui.dockable.DeleteAction;
 import holmes.darkgui.dockwindows.HolmesDockWindow;
-import holmes.darkgui.dockwindows.HolmesDockWindowsTable;
 import holmes.darkgui.dockwindows.PetriNetTools;
 import holmes.darkgui.dockwindows.HolmesDockWindow.DockWindowType;
 import holmes.darkgui.settings.SettingsManager;
 import holmes.darkgui.toolbar.Toolbar;
 import holmes.files.io.TexExporter;
 import holmes.petrinet.elements.ElementLocation;
+import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.petrinet.simulators.SimulatorGlobals;
-import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 import holmes.petrinet.subnets.SubnetsControl;
 import holmes.petrinet.subnets.SubnetsGraphics;
 import holmes.utilities.Tools;
@@ -39,7 +36,6 @@ import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.plaf.SplitPaneUI;
 
 
 /**
@@ -78,7 +74,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	// main Docks
 	private Workspace workspace;
-	JTabbedPane tabbedWorkspace = new JTabbedPane();
+	private JTabbedPane tabbedWorkspace = new JTabbedPane();
 	//private CompositeTabDock leftTabDock;
 	//private CompositeTabDock bottomLeftTabDock;
 	//private CompositeTabDock topRightTabDock;
@@ -162,6 +158,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	//public ArrayList<Dockable> globalSheetsList = new ArrayList<>();
 
 	public JPanel propericeTMPBox;
+	public JTabbedPane analysisTabs;
 	
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
@@ -270,6 +267,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createSimLogWindow(); // okno logów symulatora
 
 		setWorkspace(new Workspace(this));
+		getWorkspace().newTab(false, new Point(0,0), 1, MetaNode.MetaType.SUBNET);
+		getTabbedWorkspace().setPreferredSize(new Dimension(1300,400));
 
 		setPropertiesBox(new HolmesDockWindow(DockWindowType.EDITOR));
 		setSimulatorBox(new HolmesDockWindow(DockWindowType.SIMULATOR));
@@ -281,6 +280,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setMCSBox(new HolmesDockWindow(DockWindowType.MCSselector));
 		setKnockoutBox(new HolmesDockWindow(DockWindowType.Knockout));
 		setQuickSimBox(new HolmesDockWindow(DockWindowType.QuickSim));
+		setFixBox(new HolmesDockWindow(DockWindowType.FIXNET));
 		//setDecompositionBox(new HolmesDockWindow(DockWindowType.DECOMPOSITION));
 
 		// create menu
@@ -378,14 +378,13 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//getFrame().add(getToolBox().getTree(),BorderLayout.LINE_START);
 		//getFrame().add(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getPanel());
 		propericeTMPBox = GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow();
-		propericeTMPBox.setPreferredSize(new Dimension(200, 100));
+		propericeTMPBox.setPreferredSize(new Dimension(200, 400));
+
+
 
 		//getFrame().add(propericeTMPBox,BorderLayout.LINE_END);
 
-		for (WorkspaceSheet ws : getWorkspace().getSheets()) {
-			tabbedWorkspace.add("Sheet 0",ws);
-		}
-		tabbedWorkspace.setPreferredSize(new Dimension(1300,400));
+
 
 		JTabbedPane leftCentralPanel = new JTabbedPane();
 		leftCentralPanel.add(getToolBox().getTree());
@@ -394,8 +393,29 @@ public class GUIManager extends JPanel implements ComponentListener {
 		leftCentralPanel.setTabComponentAt(1, new JLabel("Simulator"));
 		leftCentralPanel.setPreferredSize(new Dimension(200,400));
 
-		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftCentralPanel , tabbedWorkspace);
-		JSplitPane sp2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, propericeTMPBox);
+		analysisTabs = new JTabbedPane();
+		analysisTabs.add(GUIManager.getDefaultGUIManager().getQuickSimBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(0, new JLabel("Quick Simulation"));
+		analysisTabs.add(GUIManager.getDefaultGUIManager().getT_invBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(1, new JLabel("T-invariant"));
+		analysisTabs.add(GUIManager.getDefaultGUIManager().getP_invBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(2, new JLabel("P-invariant"));
+		analysisTabs.add(GUIManager.getDefaultGUIManager().getMctBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(3, new JLabel("MCT"));
+		analysisTabs.add(GUIManager.getDefaultGUIManager().getMCSBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(4, new JLabel("MCS"));
+		analysisTabs.add(GUIManager.getDefaultGUIManager().getKnockoutBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(5, new JLabel("Knockout"));
+		analysisTabs.add(GUIManager.getDefaultGUIManager().getFixBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(6, new JLabel("Network Fixes"));
+		analysisTabs.setPreferredSize(new Dimension(200,200));
+		//analysisTabs.add("T-invariants",t_invariantsBox.getCurrentDockWindow().getPanel());
+		//analysisTabs.setTabComponentAt(0, new JLabel("Toolbox"));
+		//analysisTabs.setPreferredSize(new Dimension(200,400));
+
+		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftCentralPanel , getTabbedWorkspace());
+		JSplitPane sp3 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propericeTMPBox, analysisTabs);
+		JSplitPane sp2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, sp3);
 		getFrame().add(sp2,BorderLayout.CENTER);
 
 		//getFrame().add(GUIManager.getDefaultGUIManager().getSelectionBox().getSelectionPanel());
@@ -743,7 +763,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt podokna wyświetlania zbiorów MCS.
 	 * @return HolmesDockWindow - okno wyboru MCS
 	 */
-	private HolmesDockWindow getMCSBox() {
+	public HolmesDockWindow getMCSBox() {
 		return mcsBox;
 	}
 	/**
@@ -758,7 +778,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt podokna naprawy sieci.
 	 * @return HolmesDockWindow - okno naprawcze
 	 */
-	private HolmesDockWindow getFixBox() {
+	public HolmesDockWindow getFixBox() {
 		return this.fixBox;
 	}
 	/**
@@ -781,7 +801,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt podokna wyświetlania zbiorów knockout.
 	 * @return HolmesDockWindow - okno wyboru knockoutBox
 	 */
-	private HolmesDockWindow getKnockoutBox() {
+	public HolmesDockWindow getKnockoutBox() {
 		return knockoutBox;
 	}
 	
@@ -1694,4 +1714,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}
 	}
 	*/
+
+
+	public JTabbedPane getTabbedWorkspace() {
+		//return tabbedWorkspace;
+		return GUIManager.getDefaultGUIManager().getWorkspace().getTablePane();
+	}
+
+	public void setTabbedWorkspace(JTabbedPane tabbedWorkspace) {
+		this.tabbedWorkspace = tabbedWorkspace;
+	}
 }
