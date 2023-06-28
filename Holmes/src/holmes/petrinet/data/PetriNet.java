@@ -907,9 +907,13 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	public void selectProperSimulatorBox(boolean XTPN) {
 		int simulatorType = overlord.getSimulatorBox().getCurrentDockWindow().simulatorType;
 		if(XTPN) {
-			if(simulatorType == 0) { //jeśli wybrane są klasyczne, przełącz na XTPN
-				overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(4);
-			}
+			//TODO: fix iy
+			try {
+				if(simulatorType == 0) { //jeśli wybrane są klasyczne, przełącz na XTPN
+					overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(4);
+				}
+			} catch (Exception e) {}
+
 		} else {
 			if(simulatorType == 1) { //wybrany jest XTPN, przełaczamy na normalne
 				overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);

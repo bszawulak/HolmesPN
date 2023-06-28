@@ -2162,7 +2162,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // XTPN-place przycisk zmiany lokalizacj napisu
 
-        HolmesRoundedButton nameLocChangeButton = new HolmesRoundedButton("<html><center>Name<br>offset</center><html>"
+        nameLocChangeButton = new HolmesRoundedButton("<html><center>Name<br>offset</center><html>"
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         //JButton nameLocChangeButton = new JButton("<html><center>Name<br>offset</center><html>");
         nameLocChangeButton.setName("placeLocOffsetButton");
