@@ -307,9 +307,9 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda pomocnicza konstruktora odpowiedzialna za tworzenie podokna dla symulatora sieci.
      * @param sim (<b>GraphicalSimulator</b>) obiekt symulatora sieci PN.
      * @param simXTPN (<b>GraphicalSimulatorXTPN</b>) obiekt symulatora sieci XTPN.
-     * @param XTPNmode (<b>boolean</b>) jeżeli true, to znaczy że tworzymy symulator XTPN.
+     * //@param XTPNmode (<b>boolean</b>) jeżeli true, to znaczy że tworzymy symulator XTPN.
      */
-    @SuppressWarnings("UnusedAssignment")
+    //@SuppressWarnings("UnusedAssignment")
     private void createSimulatorSubWindow(GraphicalSimulator sim, GraphicalSimulatorXTPN simXTPN) {
         int columnA_posX = 10;
         int columnB_posX = 80;
