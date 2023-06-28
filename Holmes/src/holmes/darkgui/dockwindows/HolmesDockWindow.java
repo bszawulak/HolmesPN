@@ -1,10 +1,10 @@
 package holmes.darkgui.dockwindows;
 
-import java.awt.Point;
+import java.awt.*;
 import java.io.Serial;
 import java.util.ArrayList;
 
-import javax.swing.JScrollPane;
+import javax.swing.*;
 
 import holmes.clusters.ClusterDataPackage;
 import holmes.darkgui.GUIManager;
@@ -17,9 +17,6 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.simulators.GraphicalSimulator;
 
-import com.javadocking.dock.SingleDock;
-import com.javadocking.dockable.DefaultDockable;
-import com.javadocking.dockable.Dockable;
 import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 
 /**
@@ -30,10 +27,10 @@ import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
  *
  * @author students
  */
-public class HolmesDockWindow extends SingleDock {
+public class HolmesDockWindow {//extends SingleDock {
     @Serial
     private static final long serialVersionUID = -1966643269924197502L;
-    private Dockable dockable;
+    //private Dockable dockable;
     private GUIManager guiManager;
     private HolmesDockWindowsTable dockWindowPanel;
     private SelectionPanel selectionPanel;
@@ -60,6 +57,7 @@ public class HolmesDockWindow extends SingleDock {
         scrollPane = new JScrollPane();
         guiManager = GUIManager.getDefaultGUIManager();
 
+        /*
         switch (type) {
             case EDITOR -> setDockable(GUIManager.externalWithListener(new DefaultDockable("NetElement", scrollPane,
                     "Net Element"), GUIManager.getDefaultGUIManager().getDockingListener()));
@@ -94,12 +92,23 @@ public class HolmesDockWindow extends SingleDock {
                     setDockable(GUIManager.externalWithListener(new DefaultDockable("Decomposition", scrollPane,
                             "DECOMPOSITION"), GUIManager.getDefaultGUIManager().getDockingListener()));
         }
+        */
 
         Point position = new Point(0, 0);
-        this.addDockable(getDockable(), position, position);
+        //this.addDockable(getDockable(), position, position);
 
         //immediate creation:
         switch (type) {
+            case SIMULATOR -> {
+                GraphicalSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
+                GraphicalSimulatorXTPN netSimXTPN = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SIMULATOR, netSim, netSimXTPN));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
+            case EDITOR -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.EMPTY));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
             case SELECTOR -> {
                 setSelectionPanel(new SelectionPanel());
                 scrollPane.getViewport().add(getSelectionPanel());
@@ -116,6 +125,30 @@ public class HolmesDockWindow extends SingleDock {
                 setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.DECOMPOSITION));
                 scrollPane.getViewport().add(getCurrentDockWindow());
             }
+            case T_INVARIANTS -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix()));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
+            case P_INVARIANTS -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix()));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
+            case MctANALYZER -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCT, GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTMatrix()));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
+            case MCSselector -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCS));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
+            case ClusterSELECTOR -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CLUSTERS, new ClusterDataPackage()));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
+            case Knockout -> {
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.KNOCKOUT, new ArrayList<ArrayList<Integer>>()));
+                scrollPane.getViewport().add(getCurrentDockWindow());
+            }
         }
     }
 
@@ -124,16 +157,16 @@ public class HolmesDockWindow extends SingleDock {
      *
      * @return Dockable - obiekt dokowalny
      */
-    public Dockable getDockable() {
-        return dockable;
-    }
+    //public Dockable getDockable() {
+    //    return dockable;
+    //}
 
     /**
      * Metoda ustawiająca podokno dokowalne intefejsu programu.
      */
-    private void setDockable(Dockable dockable) {
-        this.dockable = dockable;
-    }
+    //private void setDockable(Dockable dockable) {
+    //    this.dockable = dockable;
+    //}
 
     /**
      * Metoda odpowiedzialna za wypełnienie sekcji symulatora sieci.
@@ -246,14 +279,27 @@ public class HolmesDockWindow extends SingleDock {
      * @param e SelectionActionEvent - zdarzenie wyboru elementów
      */
     public void selectElement(SelectionActionEvent e) {
+        //dockWindowPanel.setBackground(Color.BLUE);
         if (e.getActionType() == SelectionActionType.SELECTED_ONE) {
+
             if (e.getElementLocationGroup().size() > 0) {
                 Node n = e.getElementLocation().getParentNode();
                 if (n.getType() == PetriNetElementType.PLACE) {
                     if( n instanceof PlaceXTPN ) {
                         setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.XTPNPLACE, n, e.getElementLocation()));
+                        //GUIManager.getDefaultGUIManager().setPropertiesBox(this);
                     } else {
                         setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.PLACE, n, e.getElementLocation()));
+                        //GUIManager.getDefaultGUIManager().getPropertiesBox().dockWindowPanel.setBackground(Color.BLUE);
+                        //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().setPanel(dockWindowPanel.getPanel());
+                        //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().getPanel().setBackground(Color.BLUE);
+                        //GUIManager.getDefaultGUIManager().setPropertiesBox(this);
+                        //GUIManager.getDefaultGUIManager().getPropertiesBox().dockWindowPanel.revalidate();
+                        //GUIManager.getDefaultGUIManager().getPropertiesBox().dockWindowPanel.repaint();
+                        //GUIManager.getDefaultGUIManager().getPropertiesBox().dockWindowPanel.getPanel().revalidate();
+                        //GUIManager.getDefaultGUIManager().getPropertiesBox().dockWindowPanel.getPanel().repaint();
+                        //.getPanel().revalidate();
+                        //GUIManager.getDefaultGUIManager().getPropertiesBox().dockWindowPanel.getPanel().repaint();
                     }
                 } else if (n.getType() == PetriNetElementType.META) {
                     setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.META, n, e.getElementLocation()));
@@ -270,6 +316,11 @@ public class HolmesDockWindow extends SingleDock {
                         } else if (((Transition) n).getTransType() == TransitionType.CPN) {
                             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CTRANSITION, n, e.getElementLocation()));
                         }
+
+                        GUIManager.getDefaultGUIManager().propericeTMPBox.removeAll();
+                        GUIManager.getDefaultGUIManager().propericeTMPBox.add(dockWindowPanel.getPanel());
+                        GUIManager.getDefaultGUIManager().getFrame().revalidate();
+                        GUIManager.getDefaultGUIManager().getFrame().repaint();
                     }
                 }
                 scrollPane.getViewport().add(getCurrentDockWindow());
@@ -277,11 +328,38 @@ public class HolmesDockWindow extends SingleDock {
                 setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.ARC, e.getArc()));
                 scrollPane.getViewport().add(getCurrentDockWindow());
             }
+            //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().getPanel().removeAll();
+            //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().setPanel(dockWindowPanel.getPanel());
+            //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().revalidate();
+            //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().repaint();
+            /*JFrame nowe = new JFrame();
+            nowe.add(dockWindowPanel.getPanel());
+            nowe.setSize(300,300);
+            nowe.setVisible(true);*/
+            GUIManager.getDefaultGUIManager().propericeTMPBox.removeAll();
+            GUIManager.getDefaultGUIManager().propericeTMPBox.add(dockWindowPanel.getPanel());
+            GUIManager.getDefaultGUIManager().getFrame().revalidate();
+            GUIManager.getDefaultGUIManager().getFrame().repaint();
+
         } else if (e.getActionType() == SelectionActionType.SELECTED_SHEET) {
-            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SHEET,
+            GUIManager.getDefaultGUIManager().getPropertiesBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SHEET,
                     guiManager.getWorkspace().getSheets().get(guiManager.getWorkspace().getIndexOfId(e.getSheetId()))));
             scrollPane.getViewport().add(getCurrentDockWindow());
+
+
+
+            //GUIManager.getDefaultGUIManager().getPropertiesBox().setCurrentDockWindow(dockWindowPanel.getPanel());
+            //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().getPanel().revalidate();
+            //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().getPanel().repaint();
+            GUIManager.getDefaultGUIManager().propericeTMPBox.removeAll();
+            GUIManager.getDefaultGUIManager().propericeTMPBox.add(dockWindowPanel.getPanel());
+            GUIManager.getDefaultGUIManager().getFrame().revalidate();
+            GUIManager.getDefaultGUIManager().getFrame().repaint();
+            dockWindowPanel.setBackground(Color.BLUE);
         }
+        //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().getPanel().setBackground(Color.GREEN);
+
+
     }
 
     /**

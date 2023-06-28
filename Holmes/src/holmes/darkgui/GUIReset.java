@@ -4,9 +4,6 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
-import com.javadocking.dock.CompositeDock;
-import com.javadocking.dockable.Dockable;
-
 import holmes.analyse.MCTCalculator;
 import holmes.clusters.ClusterDataPackage;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable;
@@ -132,7 +129,8 @@ public class GUIReset {
 		pNet.repaintAllGraphPanels();
 		
 		Workspace workspace = overlord.getWorkspace();
-		int dockableSize = workspace.getDockables().size();
+		//int dockableSize = workspace.getDockables().size();
+		/*
 		CompositeDock parentOfFirst = workspace.getDockables().get(0).getDock().getParentDock();
 		for(int d=0; d<dockableSize; d++) {
 			Dockable dockable = workspace.getDockables().get(d);
@@ -147,6 +145,7 @@ public class GUIReset {
 			if(dockable.getDock().getParentDock().equals(parentOfFirst))
 				overlord.globalSheetsList.remove(dockable);
 		}
+		*/
 		
 		reset2ndOrderData(false);
 		IdGenerator.resetIDgenerator();
@@ -154,7 +153,7 @@ public class GUIReset {
 		GUIManager.getDefaultGUIManager().getFrame().setTitle(
 				"Holmes "+GUIManager.getDefaultGUIManager().getSettingsManager().getValue("holmes_version"));
 		
-		overlord.cleanDockables();
+		//overlord.cleanDockables();
 		overlord.markNetSaved();
 	}
 	
@@ -189,8 +188,8 @@ public class GUIReset {
 				overlord.getT_invBox().getCurrentDockWindow().removeAll();
 			}
 			overlord.getT_invBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, pNet.getT_InvMatrix()));	
-			overlord.getT_invBox().validate();
-			overlord.getT_invBox().repaint();
+			//overlord.getT_invBox().validate();
+			//overlord.getT_invBox().repaint();
 
 			t_invGenerated = false;
 			overlord.log("T-invariants data removed from memory.", "text", true);
@@ -205,8 +204,8 @@ public class GUIReset {
 				overlord.getP_invBox().getCurrentDockWindow().removeAll();
 			}
 			overlord.getP_invBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, pNet.getP_InvMatrix()));	
-			overlord.getP_invBox().validate();
-			overlord.getP_invBox().repaint();
+			//overlord.getP_invBox().validate();
+			//overlord.getP_invBox().repaint();
 			
 			p_invGenerated = false;
 			overlord.log("P-invariants data removed from memory.", "text", true);
@@ -219,8 +218,8 @@ public class GUIReset {
 			}
 			overlord.getMctBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCT,
 					new ArrayList<ArrayList<Transition>>()));
-			overlord.getMctBox().validate();
-			overlord.getMctBox().repaint();
+			//overlord.getMctBox().validate();
+			//overlord.getMctBox().repaint();
 			
 			pNet.setMCTMatrix(null, false);
 			pNet.accessMCTnames().clear();
@@ -235,8 +234,8 @@ public class GUIReset {
 				overlord.getClusterSelectionBox().getCurrentDockWindow().resetClusters();
 			}
 			overlord.getClusterSelectionBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CLUSTERS, new ClusterDataPackage()));
-			overlord.getClusterSelectionBox().validate();
-			overlord.getClusterSelectionBox().repaint();
+			//overlord.getClusterSelectionBox().validate();
+			//overlord.getClusterSelectionBox().repaint();
 			
 			clustersGenerated = false;
 			overlord.log("Clustering data removed from memory.", "text", true);
@@ -322,7 +321,7 @@ public class GUIReset {
 	 * @return (<b>boolean</b>) - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
-		GraphicalSimulator obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
+		GraphicalSimulator obj = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();// GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
 		if(obj instanceof GraphicalSimulator) {
 			if(obj.getSimulatorStatus() == SimulatorMode.STOPPED) {
 				return false;
@@ -335,7 +334,7 @@ public class GUIReset {
 	}
 
 	public boolean isXTPNSimulatorActiveWarning(String msg, String msgTitle) {
-		GraphicalSimulatorXTPN obj = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulatorXTPN();
+		GraphicalSimulatorXTPN obj = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();//GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulatorXTPN();
 		if(obj instanceof GraphicalSimulatorXTPN) {
 			if(obj.getsimulatorStatusXTPN() == GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
 				return false;

@@ -882,7 +882,7 @@ public class SelectionManager {
 					safetyNodesList.add(node);
 					int sheetID = node.getRepresentedSheetID();
 					int sheetIndex = overlord.getWorkspace().getIndexOfId(sheetID);
-					overlord.getWorkspace().setSelectedDock(sheetIndex);
+					//overlord.getWorkspace().setSelectedDock(sheetIndex);
 					invokeActionListener();
 					break;
 				} catch (Exception e) {

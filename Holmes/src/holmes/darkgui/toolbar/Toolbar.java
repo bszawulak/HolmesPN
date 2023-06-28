@@ -1,15 +1,13 @@
 package holmes.darkgui.toolbar;
 
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Set;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTree;
+import javax.swing.*;
 
 import holmes.analyse.GraphletsCalculator;
 import holmes.petrinet.elements.Node;
@@ -27,61 +25,51 @@ import holmes.varia.NetworkTransformations;
 import holmes.windows.HolmesNotepad;
 import holmes.windows.managers.HolmesSPNmanager;
 
-import com.javadocking.DockingManager;
-import com.javadocking.dock.BorderDock;
-import com.javadocking.dock.CompositeLineDock;
-import com.javadocking.dock.LineDock;
-import com.javadocking.dock.Position;
-import com.javadocking.dock.docker.BorderDocker;
-import com.javadocking.dock.factory.CompositeToolBarDockFactory;
-import com.javadocking.dock.factory.ToolBarDockFactory;
-import com.javadocking.dockable.ButtonDockable;
-import com.javadocking.dockable.DefaultDockable;
-import com.javadocking.dockable.Dockable;
-import com.javadocking.dockable.DockingMode;
-import com.javadocking.drag.DragListener;
-import com.javadocking.visualizer.SingleMaximizer;
-
 /**
  * Klasa odpowiedzialna za tworzenie paska narzędzi zaraz poniżej paska menu programu.
+ *
  * @author students
  * @author MR
- *
  */
 @SuppressWarnings("unused")
-public class Toolbar extends BorderDock {
-	@Serial
-	private static final long serialVersionUID = 640320332920131092L;
-	private GUIManager overlord;
-	private SingleMaximizer maximizePanel;
-	private BorderDock toolBarBorderDock;
-	private CompositeLineDock horizontalCompositeToolBarDock;
-	private CompositeLineDock verticalCompositeToolBarDock;
-	private LineDock defaultVerticalToolBarDock;
-	private boolean buttonsDraggable = false;
+public class Toolbar extends JPanel {
+    @Serial
+    private static final long serialVersionUID = 640320332920131092L;
+    private GUIManager overlord;
+    //private SingleMaximizer maximizePanel;
+    //private BorderDock toolBarBorderDock;
+    //private CompositeLineDock horizontalCompositeToolBarDock;
+    //private CompositeLineDock verticalCompositeToolBarDock;
+    //private LineDock defaultVerticalToolBarDock;
+    private boolean buttonsDraggable = false;
 
-	// simulator buttons
-	ToolbarButtonAction reverseLoopButton, reverseStepButton, loopSimButton,
-			singleTransitionLoopSimButton, pauseSimButton, stopSimButton,
-			smallStepFwdSimButton, stepFwdSimButton, resetSimButton;
+    // simulator buttons
+    ToolbarButtonAction reverseLoopButton, reverseStepButton, loopSimButton,
+            singleTransitionLoopSimButton, pauseSimButton, stopSimButton,
+            smallStepFwdSimButton, stepFwdSimButton, resetSimButton;
 
-	// arrays
-	ArrayList<ButtonDockable> ioButtonsDockables;
-	ArrayList<ButtonDockable> analysisDockables;
-	ArrayList<ButtonDockable> netTransformDockables;
-	
-	ArrayList<ButtonDockable> simulationDockables;
+    // arrays
+    //ArrayList<ButtonDockable> ioButtonsDockables;
+    //ArrayList<ButtonDockable> analysisDockables;
+    //ArrayList<ButtonDockable> netTransformDockables;
 
-	/**
-	 * Konstruktor domyślny obiektu klasy Toolbar.
-	 */
-	public Toolbar() {
-		overlord = GUIManager.getDefaultGUIManager();
-		maximizePanel = overlord.getMaximizer();
-		ioButtonsDockables = new ArrayList<ButtonDockable>();
+    //ArrayList<ButtonDockable> simulationDockables;
 
-		createIObuttons();
+    /**
+     * Konstruktor domyślny obiektu klasy Toolbar.
+     */
+    public Toolbar() {
+        overlord = GUIManager.getDefaultGUIManager();
+        //maximizePanel = overlord.getMaximizer();
+        //ioButtonsDockables = new ArrayList<ButtonDockable>();
+        this.setLayout(new FlowLayout(FlowLayout.LEFT));
+        //this.setLayout(new GridLayout(1,25));
 
+        createIObuttons();
+        createAnalysisBar();
+        createNetTransformBar();
+
+		/*
 		BorderDock minimizerBorderDock = new BorderDock(new ToolBarDockFactory());
 		minimizerBorderDock.setMode(BorderDock.MODE_MINIMIZE_BAR);
 		minimizerBorderDock.setCenterComponent(maximizePanel);
@@ -96,40 +84,41 @@ public class Toolbar extends BorderDock {
 			new ToolBarDockFactory(), DockingMode.HORIZONTAL_TOOLBAR,DockingMode.VERTICAL_TOOLBAR);
 		getToolBarBorderDock().setDock(horizontalCompositeToolBarDock,Position.TOP);
 		getToolBarBorderDock().setDock(verticalCompositeToolBarDock,Position.LEFT);
+		*/
 
-		// The line docks for the buttons
-		//defaultHorizontalToolBarDock = new LineDock(LineDock.ORIENTATION_HORIZONTAL, false,
-		//	DockingMode.HORIZONTAL_TOOLBAR, DockingMode.VERTICAL_TOOLBAR);
-		
-		defaultVerticalToolBarDock = new LineDock(LineDock.ORIENTATION_VERTICAL, false,
-			DockingMode.HORIZONTAL_TOOLBAR, DockingMode.VERTICAL_TOOLBAR);
+        // The line docks for the buttons
+        //defaultHorizontalToolBarDock = new LineDock(LineDock.ORIENTATION_HORIZONTAL, false,
+        //	DockingMode.HORIZONTAL_TOOLBAR, DockingMode.VERTICAL_TOOLBAR);
 
-		//addAllButtonDockablesHorizontally(buttonDockables, defaultHorizontalToolBarDock);
-		//horizontalCompositeToolBarDock.addChildDock(defaultHorizontalToolBarDock, new Position(0));
-		
-		//simulationDockables = createSimulationBar();
-		//allowOnlySimulationInitiateButtons(); //na początku aktywne tylko przyciski startu symulacji
-		//horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(simulationDockables), new Position(1));
-		
-		ioButtonsDockables = createIObuttons();
-		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(ioButtonsDockables), new Position(0));
-		
-		netTransformDockables = createNetTransformBar();
-		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(netTransformDockables), new Position(1));
-		
-		analysisDockables = createAnalysisBar();
-		horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(analysisDockables), new Position(2));
-		
-		verticalCompositeToolBarDock.addChildDock(defaultVerticalToolBarDock, new Position(0));
-		//horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDockVaria(createSubtoolsPanel()), new Position(2));
-	}
+        //defaultVerticalToolBarDock = new LineDock(LineDock.ORIENTATION_VERTICAL, false,
+        //	DockingMode.HORIZONTAL_TOOLBAR, DockingMode.VERTICAL_TOOLBAR);
 
-	/**
-	 * Metoda odpowiedzialna za dodawanie nowych przycisków w poziomie do podanego kontenera.
-	 * @param buttons ArrayList[ButtonDockable] - tablica przycisków do dodania
-	 * @param horizontalToolBarDock LineDock - obiekt kontenera przycisków
-	 */
-	public void addAllButtonDockablesHorizontally(ArrayList<ButtonDockable> buttons, LineDock horizontalToolBarDock) {
+        //addAllButtonDockablesHorizontally(buttonDockables, defaultHorizontalToolBarDock);
+        //horizontalCompositeToolBarDock.addChildDock(defaultHorizontalToolBarDock, new Position(0));
+
+        //simulationDockables = createSimulationBar();
+        //allowOnlySimulationInitiateButtons(); //na początku aktywne tylko przyciski startu symulacji
+        //horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(simulationDockables), new Position(1));
+
+        //ioButtonsDockables = createIObuttons();
+        //horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(ioButtonsDockables), new Position(0));
+
+        //netTransformDockables = createNetTransformBar();
+        //horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(netTransformDockables), new Position(1));
+
+        //analysisDockables = createAnalysisBar();
+        //horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDock(analysisDockables), new Position(2));
+
+        //verticalCompositeToolBarDock.addChildDock(defaultVerticalToolBarDock, new Position(0));
+        //horizontalCompositeToolBarDock.addChildDock(createHorizontalBarDockVaria(createSubtoolsPanel()), new Position(2));
+    }
+
+    /**
+     * Metoda odpowiedzialna za dodawanie nowych przycisków w poziomie do podanego kontenera.
+     * @param buttons ArrayList[ButtonDockable] - tablica przycisków do dodania
+     * @param horizontalToolBarDock LineDock - obiekt kontenera przycisków
+     */
+	/*public void addAllButtonDockablesHorizontally(ArrayList<ButtonDockable> buttons, LineDock horizontalToolBarDock) {
 		int i = 0;
 		for (ButtonDockable button : buttons) {
 			horizontalToolBarDock.addDockable(button, new Position(i));
@@ -137,11 +126,13 @@ public class Toolbar extends BorderDock {
 		}
 	}
 
-	/**
-	 * Metoda odpowiedzialna za dodawanie nowych przycisków w pionie.
-	 * @param buttons ArrayList[ButtonDockable] - tablica przycisków do dodania
 	 */
-	public void addAllButtonDockablesVertically(ArrayList<ButtonDockable> buttons) {
+
+    /**
+     * Metoda odpowiedzialna za dodawanie nowych przycisków w pionie.
+     * @param buttons ArrayList[ButtonDockable] - tablica przycisków do dodania
+     */
+	/*public void addAllButtonDockablesVertically(ArrayList<ButtonDockable> buttons) {
 		int i = 0;
 		for (ButtonDockable button : buttons) {
 			defaultVerticalToolBarDock.addDockable(button, new Position(i));
@@ -149,12 +140,14 @@ public class Toolbar extends BorderDock {
 		}
 	}
 
-	/**
-	 * Metoda dodająca przyciski w poziomie do domyślnego kontenera przycisków.
-	 * @param buttons ArrayList[ButtonDockable] - tablica przycisków
-	 * @return LineDock - obiekt kontera przycisków
 	 */
-	public LineDock createHorizontalBarDock(ArrayList<ButtonDockable> buttons) {
+
+    /**
+     * Metoda dodająca przyciski w poziomie do domyślnego kontenera przycisków.
+     * @param buttons ArrayList[ButtonDockable] - tablica przycisków
+     * @return LineDock - obiekt kontera przycisków
+     */
+	/*public LineDock createHorizontalBarDock(ArrayList<ButtonDockable> buttons) {
 		LineDock horizontalToolBarDock = new LineDock();
 		int i = 0;
 		for (ButtonDockable button : buttons) {
@@ -164,6 +157,8 @@ public class Toolbar extends BorderDock {
 		}
 		return horizontalToolBarDock;
 	}
+
+
 	
 	public LineDock createHorizontalBarDockVaria(JPanel panel) {
 		LineDock horizontalToolBarDock = new LineDock();
@@ -173,13 +168,17 @@ public class Toolbar extends BorderDock {
 		return horizontalToolBarDock;
 	}
 
-	/**
-	 * Metoda odpowiedzialna za tworzenie konkretnych instancji przycisków głównych.
 	 */
-	private ArrayList<ButtonDockable> createIObuttons() {
-		ArrayList<ButtonDockable> ioDockables = new ArrayList<ButtonDockable>();
-		//nowa zakładka
-		ToolbarButtonAction addButton = new ToolbarButtonAction(this, 
+
+    /**
+     * Metoda odpowiedzialna za tworzenie konkretnych instancji przycisków głównych.
+     */
+    //TODO przyciski
+    private void createIObuttons() {
+        //ArrayList<ButtonDockable> ioDockables = new ArrayList<ButtonDockable>();
+        //nowa zakładka
+		/*
+		ToolbarButtonAction addButton = new ToolbarButtonAction(this,
 				"New project", "Clear current project", Tools.getResIcon48("/icons/toolbar/add_panel.png")) {
 					@Serial
 					private static final long serialVersionUID = -3039335266465055547L;
@@ -188,97 +187,91 @@ public class Toolbar extends BorderDock {
 				GUIManager.getDefaultGUIManager().reset.newProjectInitiated();
 			}
 		};
-		ioDockables.add(createButtonDockable("ButtonDockableAdd", addButton));
-		
-		ToolbarButtonAction openButton = new ToolbarButtonAction(this,
-				"Open project...", "Open Abyss project file (.abyss)", Tools.getResIcon48("/icons/toolbar/open.png")) {
-					@Serial
-					private static final long serialVersionUID = -8017306615290773915L;
+		*/
+        JButton addButton = new JButton("", Tools.getResIcon48("/icons/toolbar/add_panel.png"));
+        addButton.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().reset.newProjectInitiated());
+        addButton.setBorderPainted(false);
+        addButton.setContentAreaFilled(false);
+        addButton.setFocusPainted(false);
+        addButton.setOpaque(false);
+        this.add(addButton);
 
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.io.selectAndOpenHolmesProject();
-			}
-		};
-		ioDockables.add(createButtonDockable("ButtonDockableOpen", openButton));
-		
-		//import projektu ze snoopiego
-		ToolbarButtonAction importButton = new ToolbarButtonAction(this,
-				"Import project...", "Import Petri net saved in other file formats", Tools.getResIcon48("/icons/toolbar/import_net.png")) {
-					@Serial
-					private static final long serialVersionUID = 5723070117312880726L;
+        JButton openButton = new JButton("", Tools.getResIcon48("/icons/toolbar/open.png"));
+        openButton.addActionListener(arg0 -> overlord.io.selectAndOpenHolmesProject());
+        openButton.setBorderPainted(false);
+        openButton.setContentAreaFilled(false);
+        openButton.setFocusPainted(false);
+        openButton.setOpaque(false);
+        this.add(openButton);
 
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.io.importNetwork();
-			}
-		};
-		ioDockables.add(createButtonDockable("ButtonDockableImport", importButton));
+        //import projektu ze snoopiego
+        JButton importButton = new JButton("", Tools.getResIcon48("/icons/toolbar/import_net.png"));
+        importButton.addActionListener(arg0 -> overlord.io.importNetwork());
+        importButton.setBorderPainted(false);
+        importButton.setContentAreaFilled(false);
+        importButton.setFocusPainted(false);
+        importButton.setOpaque(false);
+        this.add(importButton);
 
-		//zapis jako projekt
-		ToolbarButtonAction saveProjectButton = new ToolbarButtonAction(this,
-				"Save project", "Save Petri net as Holmes project file (always right option)", Tools.getResIcon48("/icons/toolbar/holmesSave.png")) {
-					@Serial
-					private static final long serialVersionUID = 5723070117312880726L;
+        //zapis jako projekt
+        JButton saveProjectButton = new JButton(
+                "", Tools.getResIcon48("/icons/toolbar/holmesSave.png"));
+        saveProjectButton.addActionListener(arg0 -> overlord.io.saveAsAbyssFile());
+        saveProjectButton.setBorderPainted(false);
+        saveProjectButton.setContentAreaFilled(false);
+        saveProjectButton.setFocusPainted(false);
+        saveProjectButton.setOpaque(false);
+        this.add(saveProjectButton);
 
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.io.saveAsAbyssFile();
-			}
-		};
-		ioDockables.add(createButtonDockable("ButtonDockableImport", saveProjectButton));
-				
-		//export projektu do snoopiego
-		ToolbarButtonAction exportButton = new ToolbarButtonAction(this,
-				"Export net", "Export Petri net to other file formats", Tools.getResIcon48("/icons/toolbar/snoopyExport.png")) {
-					@Serial
-					private static final long serialVersionUID = 5723070117312880726L;
+        //export projektu do snoopiego
+        JButton exportButton = new JButton("", Tools.getResIcon48("/icons/toolbar/snoopyExport.png"));
+        exportButton.addActionListener(arg0 -> overlord.io.saveAsGlobal());
+        exportButton.setBorderPainted(false);
+        exportButton.setContentAreaFilled(false);
+        exportButton.setFocusPainted(false);
+        exportButton.setOpaque(false);
+        this.add(exportButton);
 
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.io.saveAsGlobal();
-			}
-		};
-		ioDockables.add(createButtonDockable("ButtonDockableImport", exportButton));
-		
-		//zapis obrazu sieci do pliku
-		ToolbarButtonAction pictureButton = new ToolbarButtonAction(this,
-				"Save picture...", "Save the network as picture", Tools.getResIcon48("/icons/toolbar/save_picture.png")) {
-					@Serial
-					private static final long serialVersionUID = 932011484445458070L;
+        //zapis obrazu sieci do pliku
+        JButton pictureButton = new JButton(
+                "", Tools.getResIcon48("/icons/toolbar/save_picture.png"));
+        pictureButton.addActionListener(arg0 -> overlord.io.exportProjectToImage());
+        pictureButton.setBorderPainted(false);
+        pictureButton.setContentAreaFilled(false);
+        pictureButton.setFocusPainted(false);
+        pictureButton.setOpaque(false);
+        this.add(pictureButton);
 
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.io.exportProjectToImage();
-			}
-		};
-		ioDockables.add(createButtonDockable("ButtonDockableImport", pictureButton));
-		ToolbarButtonAction refreshButton = new ToolbarButtonAction(this,
-				"Refresh", "Refresh all graph panels with net structures", Tools.getResIcon48("/icons/toolbar/refresh.png")) {
-					@Serial
-					private static final long serialVersionUID = -5107926050446252487L;
+        JButton refreshButton = new JButton(
+                "", Tools.getResIcon48("/icons/toolbar/refresh.png"));
+        refreshButton.addActionListener(arg0 -> overlord.getWorkspace().getProject().repaintAllGraphPanels());
+        refreshButton.setBorderPainted(false);
+        refreshButton.setContentAreaFilled(false);
+        refreshButton.setFocusPainted(false);
+        refreshButton.setOpaque(false);
+        this.add(refreshButton);
 
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.getWorkspace().getProject().repaintAllGraphPanels();
-			}
-		};
-		ioDockables.add(createButtonDockable("ButtonDockableRefresh", refreshButton));
+        JButton clearProject = new JButton(
+                "", Tools.getResIcon48("/icons/toolbar/clear_project.png"));
+        clearProject.addActionListener(arg0 -> overlord.reset.newProjectInitiated());
+        clearProject.setBorderPainted(false);
+        clearProject.setContentAreaFilled(false);
+        clearProject.setFocusPainted(false);
+        clearProject.setOpaque(false);
+        this.add(clearProject);
 
-		ToolbarButtonAction clearProject = new ToolbarButtonAction(this,
-				"Clear project", "Clears all data of the project", Tools.getResIcon48("/icons/toolbar/clear_project.png")) {
-					@Serial
-					private static final long serialVersionUID = 2969893062492924300L;
+        //return ioDockables;
+        //this.add(new JSeparator());
+    }
 
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.reset.newProjectInitiated();
-			}
-		};
-		ioDockables.add(createButtonDockable("ButtonDockableRefresh", clearProject));
-		
-		return ioDockables;
-	}
 
-	/**
-	 * Metoda odpowiedzialna za tworzenie tablicy przycisków analizatora.
-	 * @return ArrayList[ButtonDockable] - tablica zawierająca obiekty przycisków
-	 */
-	private ArrayList<ButtonDockable> createAnalysisBar() {
-		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
+    /**
+     * Metoda odpowiedzialna za tworzenie tablicy przycisków analizatora.
+     *
+     * @return ArrayList[ButtonDockable] - tablica zawierająca obiekty przycisków
+     *///TODO przyciski
+    private void createAnalysisBar() {
+        //ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
 		/*
 		ToolbarButtonAction generateINAinvariants = new ToolbarButtonAction(this, "GenerateINA", "Generate invariants using INA", 
 				Tools.getResIcon48("/icons/toolbar/terminal.png")) {
@@ -288,98 +281,146 @@ public class Toolbar extends BorderDock {
 		};
 		analysisDockables.add(createButtonDockable("GenerateINAinv",generateINAinvariants));
 		*/
-		
-		ToolbarButtonAction clusterButton = new ToolbarButtonAction(this, "ClusterAnalysis", "Cluster creation and analysis", 
-				Tools.getResIcon48("/icons/toolbar/clusters.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.showClusterWindow(); 
-			}
-		};
-		analysisDockables.add(createButtonDockable("Clusters", clusterButton));
-		
-		ToolbarButtonAction netTablesButton = new ToolbarButtonAction(this, "NetDataTables", "Show net data as tables", 
-				Tools.getResIcon48("/icons/toolbar/netTables.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.showNetTablesWindow(); 
-			}
-		};
-		analysisDockables.add(createButtonDockable("NetTables", netTablesButton));
-		
-		ToolbarButtonAction netSimLogButton = new ToolbarButtonAction(this, "NetSimLog", "Network simulation log", 
-				Tools.getResIcon32("/icons/toolbar/simLog.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.showSimLogWindow();
-			}
-		};
-		netSimLogButton.setEnabled(false);
-		analysisDockables.add(createButtonDockable("SimLog", netSimLogButton));
 
-		ToolbarButtonAction consoleButton = new ToolbarButtonAction(this, "ShowConsole", "Show program log console", 
-				Tools.getResIcon48("/icons/toolbar/terminal2.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.showConsole(true); 
+        /*
+        ToolbarButtonAction clusterButton = new ToolbarButtonAction(this, "ClusterAnalysis", "Cluster creation and analysis",
+                Tools.getResIcon48("/icons/toolbar/clusters.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.showClusterWindow();
+            }
+        };*/
+        //analysisDockables.add(createButtonDockable("Clusters", clusterButton));
+        JButton clusterButton = new JButton("", Tools.getResIcon48("/icons/toolbar/clusters.png"));
+        clusterButton.addActionListener(arg0 -> overlord.showClusterWindow());
+        clusterButton.setBorderPainted(false);
+        clusterButton.setContentAreaFilled(false);
+        clusterButton.setFocusPainted(false);
+        clusterButton.setOpaque(false);
+        this.add(clusterButton);
 
-			}
-		};
-		analysisDockables.add(createButtonDockable("ShowConsole", consoleButton));
-		
-		ToolbarButtonAction cleanButton = new ToolbarButtonAction(this, "ClearColors", "Restore net default colors", 
-				Tools.getResIcon48("/icons/toolbar/cleanGraphColors.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.reset.clearGraphColors();
-			}
-		};
-		analysisDockables.add(createButtonDockable("CleanColor", cleanButton));
-		
-		ToolbarButtonAction fireRatesButton = new ToolbarButtonAction(this, "FiringRates", "Show Firing rates manager window", 
-				Tools.getResIcon48("/icons/toolbar/firingRates.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				new HolmesSPNmanager(GUIManager.getDefaultGUIManager().getFrame());
-				//overlord.reset.clearGraphColors();
-			}
-		};
-		analysisDockables.add(createButtonDockable("FiringRates", fireRatesButton));
-		
-		//TODO:
-		ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", Tools.getResIcon48("/icons/toolbar/aaa.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {	
+        /*
+        ToolbarButtonAction netTablesButton = new ToolbarButtonAction(this, "NetDataTables", "Show net data as tables",
+                Tools.getResIcon48("/icons/toolbar/netTables.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.showNetTablesWindow();
+            }
+        };*/
+        //analysisDockables.add(createButtonDockable("NetTables", netTablesButton));
+        JButton netTablesButton = new JButton("", Tools.getResIcon48("/icons/toolbar/netTables.png"));
+        netTablesButton.addActionListener(arg0 -> overlord.showNetTablesWindow());
+        netTablesButton.setBorderPainted(false);
+        netTablesButton.setContentAreaFilled(false);
+        netTablesButton.setFocusPainted(false);
+        netTablesButton.setOpaque(false);
+        this.add(netTablesButton);
 
-				IRandomGenerator generator2 = new StandardRandom();
-				
-				for(Transition t : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
-					t.setTransType(TransitionType.TPN);
-					int value = (int) generator2.nextLong(10);
-					int eft;
-					int lft;
-					int duration;
-					
-					if(value > 7) {
-						eft = (int) generator2.nextLong(6);
-						lft = (int) generator2.nextLong(eft+6)+1;
-						duration = (int) generator2.nextLong(10);
-						
-						t.timeExtension.setDPNstatus(true);
-						t.timeExtension.setTPNstatus(true);
-						t.timeExtension.setLFT(lft);
-						t.timeExtension.setEFT(eft);
-						t.timeExtension.setDPNduration(duration);
-						
-					} else if(value > 3) {
-						duration = (int) generator2.nextLong(10);
-						
-						t.timeExtension.setDPNstatus(true);
-						t.timeExtension.setDPNduration(duration);
-					} else {
-						eft = (int) generator2.nextLong(6);
-						lft = (int) generator2.nextLong(eft+6)+1;
-						
-						t.timeExtension.setTPNstatus(true);
-						t.timeExtension.setLFT(lft);
-						t.timeExtension.setEFT(eft);
-					}
-					
-				}
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+        /*
+        ToolbarButtonAction netSimLogButton = new ToolbarButtonAction(this, "NetSimLog", "Network simulation log",
+                Tools.getResIcon32("/icons/toolbar/simLog.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.showSimLogWindow();
+            }
+        };
+        netSimLogButton.setEnabled(false);*/
+        //analysisDockables.add(createButtonDockable("SimLog", netSimLogButton));
+        JButton netSimLogButton = new JButton("", Tools.getResIcon48("/icons/toolbar/simLog.png"));
+        netSimLogButton.addActionListener(arg0 -> overlord.showSimLogWindow());
+        netSimLogButton.setBorderPainted(false);
+        netSimLogButton.setContentAreaFilled(false);
+        netSimLogButton.setFocusPainted(false);
+        netSimLogButton.setOpaque(false);
+        this.add(netSimLogButton);
+
+        /*
+        ToolbarButtonAction consoleButton = new ToolbarButtonAction(this, "ShowConsole", "Show program log console",
+                Tools.getResIcon48("/icons/toolbar/terminal2.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.showConsole(true);
+
+            }
+        };*/
+        //analysisDockables.add(createButtonDockable("ShowConsole", consoleButton));
+        JButton consoleButton = new JButton("", Tools.getResIcon48("/icons/toolbar/terminal2.png"));
+        consoleButton.addActionListener(arg0 -> overlord.showConsole(true));
+        consoleButton.setBorderPainted(false);
+        consoleButton.setContentAreaFilled(false);
+        consoleButton.setFocusPainted(false);
+        consoleButton.setOpaque(false);
+        this.add(consoleButton);
+
+        /*
+        ToolbarButtonAction cleanButton = new ToolbarButtonAction(this, "ClearColors", "Restore net default colors",
+                Tools.getResIcon48("/icons/toolbar/cleanGraphColors.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.reset.clearGraphColors();
+            }
+        };*/
+        //analysisDockables.add(createButtonDockable("CleanColor", cleanButton));
+        JButton cleanButton = new JButton("", Tools.getResIcon48("/icons/toolbar/cleanGraphColors.png"));
+        cleanButton.addActionListener(arg0 -> overlord.reset.clearGraphColors());
+        cleanButton.setBorderPainted(false);
+        cleanButton.setContentAreaFilled(false);
+        cleanButton.setFocusPainted(false);
+        cleanButton.setOpaque(false);
+        this.add(cleanButton);
+
+        /*
+        ToolbarButtonAction fireRatesButton = new ToolbarButtonAction(this, "FiringRates", "Show Firing rates manager window",
+                Tools.getResIcon48("/icons/toolbar/firingRates.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                new HolmesSPNmanager(GUIManager.getDefaultGUIManager().getFrame());
+                //overlord.reset.clearGraphColors();
+            }
+        };*/
+        //analysisDockables.add(createButtonDockable("FiringRates", fireRatesButton));
+        JButton fireRatesButton = new JButton("", Tools.getResIcon48("/icons/toolbar/firingRates.png"));
+        fireRatesButton.addActionListener(arg0 -> new HolmesSPNmanager(GUIManager.getDefaultGUIManager().getFrame()));
+        fireRatesButton.setBorderPainted(false);
+        fireRatesButton.setContentAreaFilled(false);
+        fireRatesButton.setFocusPainted(false);
+        fireRatesButton.setOpaque(false);
+        this.add(fireRatesButton);
+
+        //TODO:
+        ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", Tools.getResIcon48("/icons/toolbar/aaa.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+
+                IRandomGenerator generator2 = new StandardRandom();
+
+                for (Transition t : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
+                    t.setTransType(TransitionType.TPN);
+                    int value = (int) generator2.nextLong(10);
+                    int eft;
+                    int lft;
+                    int duration;
+
+                    if (value > 7) {
+                        eft = (int) generator2.nextLong(6);
+                        lft = (int) generator2.nextLong(eft + 6) + 1;
+                        duration = (int) generator2.nextLong(10);
+
+                        t.timeExtension.setDPNstatus(true);
+                        t.timeExtension.setTPNstatus(true);
+                        t.timeExtension.setLFT(lft);
+                        t.timeExtension.setEFT(eft);
+                        t.timeExtension.setDPNduration(duration);
+
+                    } else if (value > 3) {
+                        duration = (int) generator2.nextLong(10);
+
+                        t.timeExtension.setDPNstatus(true);
+                        t.timeExtension.setDPNduration(duration);
+                    } else {
+                        eft = (int) generator2.nextLong(6);
+                        lft = (int) generator2.nextLong(eft + 6) + 1;
+
+                        t.timeExtension.setTPNstatus(true);
+                        t.timeExtension.setLFT(lft);
+                        t.timeExtension.setEFT(eft);
+                    }
+
+                }
+                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 
 				/*
 				HolmesNotepad aa = new HolmesNotepad(600, 480);
@@ -405,146 +446,201 @@ public class Toolbar extends BorderDock {
 				aa.addTextLineNL(expressionString+" = "+result, "text");
 				*/
 
-			}
-		};
-		//testButton.setEnabled(false);
-		//analysisDockables.add(createButtonDockable("Testing", testButton));
-		
-		//TODO:
-		
-		ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", "Debug2", Tools.getResIcon48("/icons/toolbar/a.png")) {
-			//@SuppressWarnings("unused")
-			public void actionPerformed(ActionEvent actionEvent) 
-			{ 
-				JTree test = overlord.getToolBox().getTree();
-				overlord.getToolBox().selectPointer();
-				//test.setSelectionPath(new TreePath());
-				int x = 1;
-				
-				MDTSCalculator mdts = new MDTSCalculator();
-				ArrayList<Set<Integer>> results = mdts.calculateMDTS();
-				
-				HolmesNotepad notePad = new HolmesNotepad(900,600);
-				notePad.setVisible(true);
-				
-				notePad.addTextLineNL("", "text");
-				notePad.addTextLineNL("Maximal Dependend Transition sets:", "text");
-				StringBuilder text;
-				int setNo = 0;
-				for(Set<Integer> set : results) {
-					text = new StringBuilder();
-					setNo++;
-					text.append("Set #").append(setNo).append(": [");
-					for(int i : set) {
-						text.append("t").append(i).append(", ");
-					}
-					text.append("]");
-					text = new StringBuilder(text.toString().replace(", ]", "]"));
-					notePad.addTextLineNL(text.toString(), "text");
-				}
-				
-				
-			}
-		};
-		//analysisDockables.add(createButtonDockable("Testing2", testButton2));
-		
-		//Test Graphley Button
+            }
+        };
+        //testButton.setEnabled(false);
+        //analysisDockables.add(createButtonDockable("Testing", testButton));
 
-		ToolbarButtonAction testGraphletButton = new ToolbarButtonAction(this, "Debug1", "Debug", Tools.getResIcon48("/icons/toolbar/aaa.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				GraphletsCalculator.generateGraphlets();
-				ArrayList<int[]> GDV = new ArrayList<>();
+        //TODO:
+
+        ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", "Debug2", Tools.getResIcon48("/icons/toolbar/a.png")) {
+            //@SuppressWarnings("unused")
+            public void actionPerformed(ActionEvent actionEvent) {
+                JTree test = overlord.getToolBox().getTree();
+                overlord.getToolBox().selectPointer();
+                //test.setSelectionPath(new TreePath());
+                int x = 1;
+
+                MDTSCalculator mdts = new MDTSCalculator();
+                ArrayList<Set<Integer>> results = mdts.calculateMDTS();
+
+                HolmesNotepad notePad = new HolmesNotepad(900, 600);
+                notePad.setVisible(true);
+
+                notePad.addTextLineNL("", "text");
+                notePad.addTextLineNL("Maximal Dependend Transition sets:", "text");
+                StringBuilder text;
+                int setNo = 0;
+                for (Set<Integer> set : results) {
+                    text = new StringBuilder();
+                    setNo++;
+                    text.append("Set #").append(setNo).append(": [");
+                    for (int i : set) {
+                        text.append("t").append(i).append(", ");
+                    }
+                    text.append("]");
+                    text = new StringBuilder(text.toString().replace(", ]", "]"));
+                    notePad.addTextLineNL(text.toString(), "text");
+                }
 
 
-				boolean test = false;
+            }
+        };
+        //analysisDockables.add(createButtonDockable("Testing2", testButton2));
 
-				if(test) {
-					System.out.println(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(1));
-					int[] vectorOrbit = GraphletsCalculator.vectorOrbit(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(1),test);
-				}
-				else {
+        //Test Graphley Button
 
-					for (Node startNode : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes()) {
-						int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode,test);
-						GDV.add(vectorOrbit);
-					}
+        ToolbarButtonAction testGraphletButton = new ToolbarButtonAction(this, "Debug1", "Debug", Tools.getResIcon48("/icons/toolbar/aaa.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                GraphletsCalculator.generateGraphlets();
+                ArrayList<int[]> GDV = new ArrayList<>();
 
 
-					for (int j = 0; j < GDV.size(); j++) {
-						System.out.print(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(j).getName() + " - ");
-						int[] vector = GDV.get(j);
-						for (int i = 0; i < vector.length; i++) {
-							if (vector[i] < 0) {
-								System.out.print("X, \t");
-							} else {
-								System.out.print(vector[i] + "\t ");
-							}
-						}
-						System.out.println();
-					}
+                boolean test = false;
 
-				}
+                if (test) {
+                    System.out.println(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(1));
+                    int[] vectorOrbit = GraphletsCalculator.vectorOrbit(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(1), test);
+                } else {
 
-			}
-		};
-		//testGraphletButton.setEnabled(true);
-		//analysisDockables.add(createButtonDockable("Testing graphlets", testGraphletButton));
-		return analysisDockables;
-	}
+                    for (Node startNode : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes()) {
+                        int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, test);
+                        GDV.add(vectorOrbit);
+                    }
 
-	private ArrayList<ButtonDockable> createNetTransformBar() {
-		ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
-		ToolbarButtonAction extendNetButton = new ToolbarButtonAction(this, "ExtNet",  "Extend the net by 10%",
-				Tools.getResIcon32("/icons/toolbar/resizeMax.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				NetworkTransformations nt = new NetworkTransformations();
-				nt.extendNetwork(true);
-			}
-		};
-		analysisDockables.add(createButtonDockable("EXTnetButton", extendNetButton));
-		
-		ToolbarButtonAction shrinkNetButton = new ToolbarButtonAction(this, "ShrNet", "Shrink the net by 10%", 
-				Tools.getResIcon32("/icons/toolbar/resizeMin.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				NetworkTransformations nt = new NetworkTransformations();
-				nt.extendNetwork(false);
-			}
-		};
-		analysisDockables.add(createButtonDockable("SHRButton", shrinkNetButton));
-		
-		ToolbarButtonAction gridButton = new ToolbarButtonAction(this, "ShowGrid", "Show grid line", 
-				Tools.getResIcon32("/icons/toolbar/grid.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(overlord.getSettingsManager().getValue("editorGridLines").equals("1"))
-					overlord.getSettingsManager().setValue("editorGridLines", "0", true);
-				else
-					overlord.getSettingsManager().setValue("editorGridLines", "1", true);
-				
-				overlord.getWorkspace().getProject().repaintAllGraphPanels();
-			}
-		};
-		analysisDockables.add(createButtonDockable("GridButton", gridButton));
 
-		ToolbarButtonAction gridAlignButton = new ToolbarButtonAction(this, "GridAlign", "Align net to grid line", 
-				Tools.getResIcon32("/icons/toolbar/gridAlign.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				NetworkTransformations nt = new NetworkTransformations();
-				nt.alignNetToGrid();
-				overlord.getWorkspace().getProject().repaintAllGraphPanels();
-			}
-		};
-		analysisDockables.add(createButtonDockable("GridAlignButton", gridAlignButton));
-		
-		
-		return analysisDockables;
-	}
-	
-	/**
-	 * Tworzy dokowalny (lub nie) przycisk. 
-	 * @param id String - identyfikator obiektu dokowalnego
-	 * @param action ToolbarButtonAction - obiekt przycisku
-	 * @return ButtonDockable - otoczka na przycisk umożliwiająca dokowanie
-	 */
+                    for (int j = 0; j < GDV.size(); j++) {
+                        System.out.print(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(j).getName() + " - ");
+                        int[] vector = GDV.get(j);
+                        for (int i = 0; i < vector.length; i++) {
+                            if (vector[i] < 0) {
+                                System.out.print("X, \t");
+                            } else {
+                                System.out.print(vector[i] + "\t ");
+                            }
+                        }
+                        System.out.println();
+                    }
+
+                }
+
+            }
+        };
+        //testGraphletButton.setEnabled(true);
+        //analysisDockables.add(createButtonDockable("Testing graphlets", testGraphletButton));
+        //return analysisDockables;
+
+        //JSeparator sep = new JSeparator();
+        //sep.setPreferredSize(new Dimension(5,5));
+        //sep.setOrientation(SwingConstants.VERTICAL);
+        //this.add(sep);
+    }
+
+    //TODO przyciski
+    private void createNetTransformBar() {
+        //ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
+        /*
+        ToolbarButtonAction extendNetButton = new ToolbarButtonAction(this, "ExtNet", "Extend the net by 10%",
+                Tools.getResIcon32("/icons/toolbar/resizeMax.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                NetworkTransformations nt = new NetworkTransformations();
+                nt.extendNetwork(true);
+            }
+        };*/
+        //analysisDockables.add(createButtonDockable("EXTnetButton", extendNetButton));
+        JButton extendNetButton = new JButton("", Tools.getResIcon48("/icons/toolbar/resizeMax.png"));
+        extendNetButton.addActionListener(actionEvent -> {
+                NetworkTransformations nt = new NetworkTransformations();
+                nt.extendNetwork(true);
+        });
+        extendNetButton.setBorderPainted(false);
+        extendNetButton.setContentAreaFilled(false);
+        extendNetButton.setFocusPainted(false);
+        extendNetButton.setOpaque(false);
+        this.add(extendNetButton);
+
+
+        /*
+        ToolbarButtonAction shrinkNetButton = new ToolbarButtonAction(this, "ShrNet", "Shrink the net by 10%",
+                Tools.getResIcon32("/icons/toolbar/resizeMin.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                NetworkTransformations nt = new NetworkTransformations();
+                nt.extendNetwork(false);
+            }
+        };*/
+        //analysisDockables.add(createButtonDockable("SHRButton", shrinkNetButton));
+        JButton shrinkNetButton = new JButton("", Tools.getResIcon48("/icons/toolbar/resizeMin.png"));
+        shrinkNetButton.addActionListener(actionEvent -> {
+            NetworkTransformations nt = new NetworkTransformations();
+            nt.extendNetwork(false);
+        });
+        shrinkNetButton.setBorderPainted(false);
+        shrinkNetButton.setContentAreaFilled(false);
+        shrinkNetButton.setFocusPainted(false);
+        shrinkNetButton.setOpaque(false);
+        this.add(shrinkNetButton);
+
+        /*
+        ToolbarButtonAction gridButton = new ToolbarButtonAction(this, "ShowGrid", "Show grid line",
+                Tools.getResIcon32("/icons/toolbar/grid.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (overlord.getSettingsManager().getValue("editorGridLines").equals("1"))
+                    overlord.getSettingsManager().setValue("editorGridLines", "0", true);
+                else
+                    overlord.getSettingsManager().setValue("editorGridLines", "1", true);
+
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+            }
+        };*/
+        //analysisDockables.add(createButtonDockable("GridButton", gridButton));
+        JButton gridButton = new JButton("", Tools.getResIcon48("/icons/toolbar/grid.png"));
+        gridButton.addActionListener(actionEvent -> {
+            if (overlord.getSettingsManager().getValue("editorGridLines").equals("1"))
+                overlord.getSettingsManager().setValue("editorGridLines", "0", true);
+            else
+                overlord.getSettingsManager().setValue("editorGridLines", "1", true);
+
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
+        });
+        gridButton.setBorderPainted(false);
+        gridButton.setContentAreaFilled(false);
+        gridButton.setFocusPainted(false);
+        gridButton.setOpaque(false);
+        this.add(gridButton);
+
+        /*
+        ToolbarButtonAction gridAlignButton = new ToolbarButtonAction(this, "GridAlign", "Align net to grid line",
+                Tools.getResIcon32("/icons/toolbar/gridAlign.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                NetworkTransformations nt = new NetworkTransformations();
+                nt.alignNetToGrid();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+            }
+        };*/
+        JButton gridAlignButton = new JButton("", Tools.getResIcon48("/icons/toolbar/gridAlign.png"));
+        gridAlignButton.addActionListener(actionEvent -> {
+            NetworkTransformations nt = new NetworkTransformations();
+            nt.alignNetToGrid();
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
+        });
+        gridAlignButton.setBorderPainted(false);
+        gridAlignButton.setContentAreaFilled(false);
+        gridAlignButton.setFocusPainted(false);
+        gridAlignButton.setOpaque(false);
+        this.add(gridAlignButton);
+        //analysisDockables.add(createButtonDockable("GridAlignButton", gridAlignButton));
+
+
+        //return analysisDockables;
+    }
+
+    /**
+     * Tworzy dokowalny (lub nie) przycisk.
+     * @param id String - identyfikator obiektu dokowalnego
+     * @param action ToolbarButtonAction - obiekt przycisku
+     * @return ButtonDockable - otoczka na przycisk umożliwiająca dokowanie
+     */
+	/*
 	private ButtonDockable createButtonDockable(String id, ToolbarButtonAction action) {
 		ToolbarButton button = new ToolbarButton(action);
 		ButtonDockable buttonDockable = new ButtonDockable(id, button);
@@ -553,191 +649,195 @@ public class Toolbar extends BorderDock {
 		
 		return buttonDockable;
 	}
-
-	/**
-	 * Metoda ustawia obiekt nasłuchujący, który monitoruje zdarzenia przeciągnięcia obiektu.
-	 * grupy przycisków lub jednego z jednej lokalizacji w inną.
-	 * @param dockable Dockable - obiekt monitorowany
 	 */
-	private void createDockableDragger(Dockable dockable) {
-		DragListener dragListener = DockingManager.getDockableDragListenerFactory().createDragListener(dockable);
-		dockable.getContent().addMouseListener(dragListener);
-		dockable.getContent().addMouseMotionListener(dragListener);
-	}
 
-	/**
-	 * Metoda zwraca obiekt dokowalny kontenera przycisków.
-	 * @return BorderDock - obiekt
-	 */
-	public BorderDock getToolBarBorderDock() {
-		return toolBarBorderDock;
-	}
+    /**
+     * Metoda ustawia obiekt nasłuchujący, który monitoruje zdarzenia przeciągnięcia obiektu.
+     * grupy przycisków lub jednego z jednej lokalizacji w inną.
+     * @param dockable Dockable - obiekt monitorowany
+     */
+    //private void createDockableDragger(Dockable dockable) {
+    //	DragListener dragListener = DockingManager.getDockableDragListenerFactory().createDragListener(dockable);
+    //	dockable.getContent().addMouseListener(dragListener);
+    //	dockable.getContent().addMouseMotionListener(dragListener);
+    //}
 
-	/**
-	 * Metoda ustawia nowy obiekt dokowalny kontenera przycisków.
-	 * @param toolBarBorderDock BorderDock - obiekt
-	 */
-	private void setToolBarBorderDock(BorderDock toolBarBorderDock) {
-		this.toolBarBorderDock = toolBarBorderDock;
-	}
+    /**
+     * Metoda zwraca obiekt dokowalny kontenera przycisków.
+     * @return BorderDock - obiekt
+     */
+    //public BorderDock getToolBarBorderDock() {
+    //	return toolBarBorderDock;
+    //}
 
-	//***************************************************************************************************
-	//***************************************************************************************************
-	//***************************************************************************************************
-	//***************************************************************************************************
-	//***************************************************************************************************
-	
-	/**
-	 * Metoda ta ustawia stan wszystkich przycisków symulatora poza dwoma: pauzą
-	 * i przyciskiem zatrzymania symulacji.
-	 * @param enabled boolean - true, jeśli mają być aktywne
-	 */
-	public void setEnabledSimulationInitiateButtons(boolean enabled) {
-		for (int i = 0; i < simulationDockables.size(); i++) {
-			if (i != 4 && i != 5) //4 i 5 to pauza i stop
-				simulationDockables.get(i).getContent().setEnabled(enabled);
-		}
-	}
+    /**
+     * Metoda ustawia nowy obiekt dokowalny kontenera przycisków.
+     * @param toolBarBorderDock BorderDock - obiekt
+     */
+    //private void setToolBarBorderDock(BorderDock toolBarBorderDock) {
+    //	this.toolBarBorderDock = toolBarBorderDock;
+    //}
 
-	/**
-	 * Metoda ta uaktywnia przyciski Pauza i Stop dla symulacji.
-	 * @param enabled boolean - true jeśli Pauza i Stop mają być aktywne
-	 */
-	public void setEnabledSimulationDisruptButtons(boolean enabled) {
-		simulationDockables.get(4).getContent().setEnabled(enabled);
-		simulationDockables.get(5).getContent().setEnabled(enabled);
-	}
+    //***************************************************************************************************
+    //***************************************************************************************************
+    //***************************************************************************************************
+    //***************************************************************************************************
+    //***************************************************************************************************
 
-	/**
-	 * Metoda odpowiedzialna za to, że aktywne są wszystkie przyciski 
-	 * poza dwoma: Pauza i Stop dla symulatora
-	 */
-	public void allowOnlySimulationInitiateButtons() {
-		setEnabledSimulationInitiateButtons(true);
-		setEnabledSimulationDisruptButtons(false);
-	}
+    /**
+     * Metoda ta ustawia stan wszystkich przycisków symulatora poza dwoma: pauzą
+     * i przyciskiem zatrzymania symulacji.
+     *
+     * @param enabled boolean - true, jeśli mają być aktywne
+     */
+    public void setEnabledSimulationInitiateButtons(boolean enabled) {
+        //for (int i = 0; i < simulationDockables.size(); i++) {
+        //	if (i != 4 && i != 5) //4 i 5 to pauza i stop
+        //simulationDockables.get(i).getContent().setEnabled(enabled);
+        //}
+    }
 
-	/**
-	 * Metoda ta uaktywnia tylko przyciski Pauzy i Stopu, reszta nieaktywna - gdy działa symulacja.
-	 */
-	public void allowOnlySimulationDisruptButtons() {
-		setEnabledSimulationInitiateButtons(false);
-		setEnabledSimulationDisruptButtons(true);
-	}
+    /**
+     * Metoda ta uaktywnia przyciski Pauza i Stop dla symulacji.
+     *
+     * @param enabled boolean - true jeśli Pauza i Stop mają być aktywne
+     */
+    public void setEnabledSimulationDisruptButtons(boolean enabled) {
+        //simulationDockables.get(4).getContent().setEnabled(enabled);
+        //simulationDockables.get(5).getContent().setEnabled(enabled);
+    }
 
-	/**
-	 * Metoda ustawia na aktywny tylko przycisk przerwania trwającej pauzy.
-	 */
-	public void allowOnlyUnpauseButton() {
-		allowOnlySimulationDisruptButtons();
-		simulationDockables.get(5).getContent().setEnabled(false);
-	}
+    /**
+     * Metoda odpowiedzialna za to, że aktywne są wszystkie przyciski
+     * poza dwoma: Pauza i Stop dla symulatora
+     */
+    public void allowOnlySimulationInitiateButtons() {
+        setEnabledSimulationInitiateButtons(true);
+        setEnabledSimulationDisruptButtons(false);
+    }
 
-	/**
-	 * Metoda odpowiedzialna za tworzenie tablicy przycisków symulatora.
-	 * @return ArrayList[ButtonDockable] - tablica zawierająca obiekty przycisków
-	 */
-	private ArrayList<ButtonDockable> createSimulationBar() {
-		ArrayList<ButtonDockable> simulationDockables = new ArrayList<ButtonDockable>();
-		reverseLoopButton = new ToolbarButtonAction(this, "LoopBack", "Loop back to oldest action saved",
-				Tools.getResIcon48("/icons/toolbar/sim_back.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-				overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.LOOP_BACK);
-			}
-		};
-		simulationDockables.add(createButtonDockable("ButtonDockableStepBack",reverseLoopButton));
-		
-		reverseStepButton = new ToolbarButtonAction(this, "StepBack", "Single action back simulation",
-				Tools.getResIcon48("/icons/toolbar/sim_back_step.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-				overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
-			}
-		};
-		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepBack", reverseStepButton));
-		
-		loopSimButton = new ToolbarButtonAction(this, "Loop", "Loop simulation",
-				Tools.getResIcon48("/icons/toolbar/sim_start.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-				overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.LOOP);
-			}
-		};
-		simulationDockables.add(createButtonDockable("ButtonDockableLoopSim",loopSimButton));
-		
-		singleTransitionLoopSimButton = new ToolbarButtonAction(this, "LoopSingleTrans", "Loop single transition simulation", 
-				Tools.getResIcon48("/icons/toolbar/sim_start_single.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-				overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
-			}
-		};
-		simulationDockables.add(createButtonDockable("ButtonDockableLoopSingleTransitionSim",
-				singleTransitionLoopSimButton));
-		
-		pauseSimButton = new ToolbarButtonAction(this, "Pause", "Pause simulation",
-				Tools.getResIcon48("/icons/toolbar/sim_pause.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-				overlord.getWorkspace().getProject().getSimulator().pause();
-			}
-		};
-		simulationDockables.add(createButtonDockable("ButtonDockablePauseSim",pauseSimButton));
-		
-		stopSimButton = new ToolbarButtonAction(this, "Stop", "Schedule a stop for the simulation",
-				Tools.getResIcon48("/icons/toolbar/sim_stop.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.getWorkspace().getProject().getSimulator().stop();
-			}
-		};
-		simulationDockables.add(createButtonDockable("ButtonDockableStopSim",stopSimButton));
-		
-		smallStepFwdSimButton = new ToolbarButtonAction(this, "SingleForward", "Single transition forward simulation",
-				Tools.getResIcon48("/icons/toolbar/sim_forward_step.png")) {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-				overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION);
-			}
-		};
-		simulationDockables.add(createButtonDockable("ButtonDockableSmallStepFwdSim", smallStepFwdSimButton));
-		
-		stepFwdSimButton = new ToolbarButtonAction(this, "StepForward", "Step forward simulation",
-				Tools.getResIcon48("/icons/toolbar/sim_forward.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-				overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.STEP);
-			}
-		};
-		simulationDockables.add(createButtonDockable("ButtonDockableStepFwdSim", stepFwdSimButton));
-		
-		resetSimButton = new ToolbarButtonAction(this, "Reset", "Reset simulator",
-				Tools.getResIcon48("/icons/toolbar/sim_reset.png")) {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.getWorkspace().getProject().restoreMarkingZero();
-			}
-		};
-		simulationDockables.add(createButtonDockable("ButtonDockableResetSim", resetSimButton));
-		
-		return simulationDockables;
-	}
+    /**
+     * Metoda ta uaktywnia tylko przyciski Pauzy i Stopu, reszta nieaktywna - gdy działa symulacja.
+     */
+    public void allowOnlySimulationDisruptButtons() {
+        setEnabledSimulationInitiateButtons(false);
+        setEnabledSimulationDisruptButtons(true);
+    }
 
-	private JPanel createSubtoolsPanel() {
-		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-		panel.setPreferredSize(new Dimension(200, 60));
-		panel.setMaximumSize(new Dimension(200, 60));
-		
-		JButton button1 = new JButton("Ext.Net");
-		button1.setName("extNet");
-		button1.setPreferredSize(new Dimension(60,40));
-		//button1.setBounds(0, 0, 60, 60);
-		button1.setToolTipText("Extend net elements");
-		button1.addActionListener(actionEvent -> {
+    /**
+     * Metoda ustawia na aktywny tylko przycisk przerwania trwającej pauzy.
+     */
+    public void allowOnlyUnpauseButton() {
+        allowOnlySimulationDisruptButtons();
+        //simulationDockables.get(5).getContent().setEnabled(false);
+    }
 
-		});
-		panel.add(button1);
-		
-		return panel;
-	}
+    /**
+     * Metoda odpowiedzialna za tworzenie tablicy przycisków symulatora.
+     *
+     * @return ArrayList[ButtonDockable] - tablica zawierająca obiekty przycisków
+     *///TODO przyciski
+    private void createSimulationBar() {
+        //ArrayList<ButtonDockable> simulationDockables = new ArrayList<ButtonDockable>();
+        reverseLoopButton = new ToolbarButtonAction(this, "LoopBack", "Loop back to oldest action saved",
+                Tools.getResIcon48("/icons/toolbar/sim_back.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.LOOP_BACK);
+            }
+        };
+        //simulationDockables.add(createButtonDockable("ButtonDockableStepBack",reverseLoopButton));
+
+        reverseStepButton = new ToolbarButtonAction(this, "StepBack", "Single action back simulation",
+                Tools.getResIcon48("/icons/toolbar/sim_back_step.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.ACTION_BACK);
+            }
+        };
+        //simulationDockables.add(createButtonDockable("ButtonDockableSmallStepBack", reverseStepButton));
+
+        loopSimButton = new ToolbarButtonAction(this, "Loop", "Loop simulation",
+                Tools.getResIcon48("/icons/toolbar/sim_start.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.LOOP);
+            }
+        };
+        //simulationDockables.add(createButtonDockable("ButtonDockableLoopSim",loopSimButton));
+
+        singleTransitionLoopSimButton = new ToolbarButtonAction(this, "LoopSingleTrans", "Loop single transition simulation",
+                Tools.getResIcon48("/icons/toolbar/sim_start_single.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
+            }
+        };
+        //simulationDockables.add(createButtonDockable("ButtonDockableLoopSingleTransitionSim",
+        //		singleTransitionLoopSimButton));
+
+        pauseSimButton = new ToolbarButtonAction(this, "Pause", "Pause simulation",
+                Tools.getResIcon48("/icons/toolbar/sim_pause.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                overlord.getWorkspace().getProject().getSimulator().pause();
+            }
+        };
+        //simulationDockables.add(createButtonDockable("ButtonDockablePauseSim",pauseSimButton));
+
+        stopSimButton = new ToolbarButtonAction(this, "Stop", "Schedule a stop for the simulation",
+                Tools.getResIcon48("/icons/toolbar/sim_stop.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.getWorkspace().getProject().getSimulator().stop();
+            }
+        };
+        //simulationDockables.add(createButtonDockable("ButtonDockableStopSim",stopSimButton));
+
+        smallStepFwdSimButton = new ToolbarButtonAction(this, "SingleForward", "Single transition forward simulation",
+                Tools.getResIcon48("/icons/toolbar/sim_forward_step.png")) {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.SINGLE_TRANSITION);
+            }
+        };
+        //simulationDockables.add(createButtonDockable("ButtonDockableSmallStepFwdSim", smallStepFwdSimButton));
+
+        stepFwdSimButton = new ToolbarButtonAction(this, "StepForward", "Step forward simulation",
+                Tools.getResIcon48("/icons/toolbar/sim_forward.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                overlord.getWorkspace().getProject().getSimulator().startSimulation(SimulatorMode.STEP);
+            }
+        };
+        //simulationDockables.add(createButtonDockable("ButtonDockableStepFwdSim", stepFwdSimButton));
+
+        resetSimButton = new ToolbarButtonAction(this, "Reset", "Reset simulator",
+                Tools.getResIcon48("/icons/toolbar/sim_reset.png")) {
+            public void actionPerformed(ActionEvent actionEvent) {
+                overlord.getWorkspace().getProject().restoreMarkingZero();
+            }
+        };
+        //simulationDockables.add(createButtonDockable("ButtonDockableResetSim", resetSimButton));
+
+        //return simulationDockables;
+    }
+
+    private JPanel createSubtoolsPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        panel.setPreferredSize(new Dimension(200, 60));
+        panel.setMaximumSize(new Dimension(200, 60));
+
+        JButton button1 = new JButton("Ext.Net");
+        button1.setName("extNet");
+        button1.setPreferredSize(new Dimension(60, 40));
+        //button1.setBounds(0, 0, 60, 60);
+        button1.setToolTipText("Extend net elements");
+        button1.addActionListener(actionEvent -> {
+
+        });
+        panel.add(button1);
+
+        return panel;
+    }
 }

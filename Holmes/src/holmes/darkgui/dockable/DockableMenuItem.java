@@ -4,9 +4,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 
 
-
-import com.javadocking.dockable.Dockable;
-
 import java.io.Serial;
 
 /**
@@ -25,6 +22,7 @@ public class DockableMenuItem extends JCheckBoxMenuItem {
 	 * @param dockable Dockable - obiekt do dodania
 	 * @param icon ImageIcon - ikonka
 	 */
+	/*
 	public DockableMenuItem(Dockable dockable, ImageIcon icon) {
 		super(dockable.getTitle(), dockable.getIcon());
 		
@@ -37,4 +35,5 @@ public class DockableMenuItem extends JCheckBoxMenuItem {
 		//dockable.set
 		addItemListener(dockableMediator);
 	}
+	*/
 }

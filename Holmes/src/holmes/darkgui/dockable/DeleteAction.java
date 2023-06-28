@@ -7,7 +7,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 
-import com.javadocking.dockable.Dockable;
 
 import holmes.darkgui.GUIManager;
 
@@ -20,7 +19,7 @@ public class DeleteAction extends AbstractAction {
 	@Serial
 	private static final long serialVersionUID = 1577108502403600290L;
 	private GUIManager guiManager;
-	private Dockable dockable;
+	//private Dockable dockable;
 	
 	public DeleteAction(GUIManager gui, String name, Icon icon) {
 		super(null, icon);
@@ -30,15 +29,15 @@ public class DeleteAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		guiManager.getWorkspace().deleteTab(dockable, false);
+		//guiManager.getWorkspace().deleteTab(dockable, false);
 	}
 
-	public Dockable getDockable() {
-		return dockable;
-	}
+	//public Dockable getDockable() {
+	//	return dockable;
+	//}
 
-	public void setDockable(Dockable dockable) {
-		this.dockable = dockable;
-	}
+	//public void setDockable(Dockable dockable) {
+	//	this.dockable = dockable;
+	//}
 
 }

@@ -4,9 +4,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.util.ArrayList;
 
-import com.javadocking.dock.CompositeDock;
-import com.javadocking.dockable.Dockable;
-
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
@@ -165,7 +162,8 @@ public class SubnetsGraphics {
 		//pray...
 		workspace.getProject().repaintAllGraphPanels();
 		
-		int dockableSize = workspace.getDockables().size();
+		//int dockableSize = workspace.getDockables().size();
+		/*
 		CompositeDock parentOfFirst = workspace.getDockables().get(0).getDock().getParentDock();
 		for(int d=dockableSize-1; d>=leaveAlone; d--) {
 			ArrayList<Dockable> dockables = workspace.getDockables();
@@ -181,6 +179,7 @@ public class SubnetsGraphics {
 			if(dockable.getDock().getParentDock().equals(parentOfFirst))
 				GUIManager.getDefaultGUIManager().globalSheetsList.remove(dockable);
 		}
+		 */
 	}
 	
 	/**
