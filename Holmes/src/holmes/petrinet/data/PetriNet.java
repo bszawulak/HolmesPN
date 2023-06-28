@@ -35,7 +35,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -910,7 +910,13 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			//TODO: fix iy
 			try {
 				if(simulatorType == 0) { //jeśli wybrane są klasyczne, przełącz na XTPN
-					overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(4);
+					JComboBox<String> comboSim = overlord.getSimulatorBox().getCurrentDockWindow().simMode;
+					String firstName = comboSim.getItemAt(0);
+					if(!firstName.contains("XTPN")) {
+						if(firstName.equals("Petri Net") && comboSim.getItemCount() >= 5) {
+							overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(4);
+						}
+					}
 				}
 			} catch (Exception e) {}
 
