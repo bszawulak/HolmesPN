@@ -421,6 +421,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		simAndworkspacePanel.setDividerLocation(180);
 		JSplitPane rightPanelSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propericeTMPBox, analysisTabs);
 		JSplitPane uberMainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, simAndworkspacePanel, rightPanelSplit);
+		uberMainPanel.setDividerLocation(this.screenSize.width-400);
 		getFrame().add(uberMainPanel,BorderLayout.CENTER);
 
 		//getFrame().add(GUIManager.getDefaultGUIManager().getSelectionBox().getSelectionPanel());
