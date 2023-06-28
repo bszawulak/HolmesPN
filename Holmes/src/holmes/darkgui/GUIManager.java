@@ -415,10 +415,13 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//analysisTabs.setTabComponentAt(0, new JLabel("Toolbox"));
 		//analysisTabs.setPreferredSize(new Dimension(200,400));
 
-		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftCentralPanel , getTabbedWorkspace());
-		JSplitPane sp3 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propericeTMPBox, analysisTabs);
-		JSplitPane sp2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sp, sp3);
-		getFrame().add(sp2,BorderLayout.CENTER);
+		JSplitPane simAndworkspacePanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftCentralPanel , getTabbedWorkspace());
+		leftCentralPanel.setPreferredSize(new Dimension(200, 200));
+		simAndworkspacePanel.setPreferredSize(new Dimension(1200,200));
+		simAndworkspacePanel.setDividerLocation(180);
+		JSplitPane rightPanelSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propericeTMPBox, analysisTabs);
+		JSplitPane uberMainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, simAndworkspacePanel, rightPanelSplit);
+		getFrame().add(uberMainPanel,BorderLayout.CENTER);
 
 		//getFrame().add(GUIManager.getDefaultGUIManager().getSelectionBox().getSelectionPanel());
 

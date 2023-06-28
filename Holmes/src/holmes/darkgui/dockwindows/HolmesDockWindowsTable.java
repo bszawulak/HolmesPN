@@ -332,6 +332,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         extracted(columnA_posX, columnB_posX, columnA_Y, columnB_Y, colACompLength, colBCompLength);
 
+
         panel.setLayout(null);
 
 
@@ -339,6 +340,8 @@ public class HolmesDockWindowsTable extends JPanel {
         panel.setOpaque(true);
         panel.repaint();
         panel.setVisible(true);
+
+        panel.setPreferredSize(new Dimension(200, 200));
         add(panel);
         setPanel(panel);
 
