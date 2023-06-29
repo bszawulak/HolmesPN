@@ -66,8 +66,9 @@ public class Toolbar extends JPanel {
         //this.setLayout(new GridLayout(1,25));
 
         createIObuttons();
-        createAnalysisBar();
         createNetTransformBar();
+        createAnalysisBar();
+
 
 		/*
 		BorderDock minimizerBorderDock = new BorderDock(new ToolBarDockFactory());
@@ -173,7 +174,6 @@ public class Toolbar extends JPanel {
     /**
      * Metoda odpowiedzialna za tworzenie konkretnych instancji przycisków głównych.
      */
-    //TODO przyciski
     private void createIObuttons() {
         //ArrayList<ButtonDockable> ioDockables = new ArrayList<ButtonDockable>();
         //nowa zakładka
@@ -189,6 +189,7 @@ public class Toolbar extends JPanel {
 		};
 		*/
         JButton addButton = new JButton("", Tools.getResIcon48("/icons/toolbar/add_panel.png"));
+        addButton.setPreferredSize(new Dimension(50,50));
         addButton.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().reset.newProjectInitiated());
         addButton.setBorderPainted(false);
         addButton.setContentAreaFilled(false);
@@ -197,6 +198,7 @@ public class Toolbar extends JPanel {
         this.add(addButton);
 
         JButton openButton = new JButton("", Tools.getResIcon48("/icons/toolbar/open.png"));
+        openButton.setPreferredSize(new Dimension(50,50));
         openButton.addActionListener(arg0 -> overlord.io.selectAndOpenHolmesProject());
         openButton.setBorderPainted(false);
         openButton.setContentAreaFilled(false);
@@ -206,6 +208,7 @@ public class Toolbar extends JPanel {
 
         //import projektu ze snoopiego
         JButton importButton = new JButton("", Tools.getResIcon48("/icons/toolbar/import_net.png"));
+        importButton.setPreferredSize(new Dimension(50,50));
         importButton.addActionListener(arg0 -> overlord.io.importNetwork());
         importButton.setBorderPainted(false);
         importButton.setContentAreaFilled(false);
@@ -214,8 +217,8 @@ public class Toolbar extends JPanel {
         this.add(importButton);
 
         //zapis jako projekt
-        JButton saveProjectButton = new JButton(
-                "", Tools.getResIcon48("/icons/toolbar/holmesSave.png"));
+        JButton saveProjectButton = new JButton("", Tools.getResIcon48("/icons/toolbar/holmesSave.png"));
+        saveProjectButton.setPreferredSize(new Dimension(50,50));
         saveProjectButton.addActionListener(arg0 -> overlord.io.saveAsAbyssFile());
         saveProjectButton.setBorderPainted(false);
         saveProjectButton.setContentAreaFilled(false);
@@ -225,6 +228,7 @@ public class Toolbar extends JPanel {
 
         //export projektu do snoopiego
         JButton exportButton = new JButton("", Tools.getResIcon48("/icons/toolbar/snoopyExport.png"));
+        exportButton.setPreferredSize(new Dimension(50,50));
         exportButton.addActionListener(arg0 -> overlord.io.saveAsGlobal());
         exportButton.setBorderPainted(false);
         exportButton.setContentAreaFilled(false);
@@ -233,8 +237,8 @@ public class Toolbar extends JPanel {
         this.add(exportButton);
 
         //zapis obrazu sieci do pliku
-        JButton pictureButton = new JButton(
-                "", Tools.getResIcon48("/icons/toolbar/save_picture.png"));
+        JButton pictureButton = new JButton("", Tools.getResIcon48("/icons/toolbar/save_picture.png"));
+        pictureButton.setPreferredSize(new Dimension(50,50));
         pictureButton.addActionListener(arg0 -> overlord.io.exportProjectToImage());
         pictureButton.setBorderPainted(false);
         pictureButton.setContentAreaFilled(false);
@@ -242,8 +246,8 @@ public class Toolbar extends JPanel {
         pictureButton.setOpaque(false);
         this.add(pictureButton);
 
-        JButton refreshButton = new JButton(
-                "", Tools.getResIcon48("/icons/toolbar/refresh.png"));
+        JButton refreshButton = new JButton("", Tools.getResIcon48("/icons/toolbar/refresh.png"));
+        refreshButton.setPreferredSize(new Dimension(50,50));
         refreshButton.addActionListener(arg0 -> overlord.getWorkspace().getProject().repaintAllGraphPanels());
         refreshButton.setBorderPainted(false);
         refreshButton.setContentAreaFilled(false);
@@ -251,8 +255,8 @@ public class Toolbar extends JPanel {
         refreshButton.setOpaque(false);
         this.add(refreshButton);
 
-        JButton clearProject = new JButton(
-                "", Tools.getResIcon48("/icons/toolbar/clear_project.png"));
+        JButton clearProject = new JButton("", Tools.getResIcon48("/icons/toolbar/clear_project.png"));
+        clearProject.setPreferredSize(new Dimension(50,50));
         clearProject.addActionListener(arg0 -> overlord.reset.newProjectInitiated());
         clearProject.setBorderPainted(false);
         clearProject.setContentAreaFilled(false);
@@ -267,9 +271,8 @@ public class Toolbar extends JPanel {
 
     /**
      * Metoda odpowiedzialna za tworzenie tablicy przycisków analizatora.
-     *
      * @return ArrayList[ButtonDockable] - tablica zawierająca obiekty przycisków
-     *///TODO przyciski
+     */
     private void createAnalysisBar() {
         //ArrayList<ButtonDockable> analysisDockables = new ArrayList<ButtonDockable>();
 		/*
@@ -291,6 +294,7 @@ public class Toolbar extends JPanel {
         };*/
         //analysisDockables.add(createButtonDockable("Clusters", clusterButton));
         JButton clusterButton = new JButton("", Tools.getResIcon48("/icons/toolbar/clusters.png"));
+        clusterButton.setPreferredSize(new Dimension(50,50));
         clusterButton.addActionListener(arg0 -> overlord.showClusterWindow());
         clusterButton.setBorderPainted(false);
         clusterButton.setContentAreaFilled(false);
@@ -307,6 +311,7 @@ public class Toolbar extends JPanel {
         };*/
         //analysisDockables.add(createButtonDockable("NetTables", netTablesButton));
         JButton netTablesButton = new JButton("", Tools.getResIcon48("/icons/toolbar/netTables.png"));
+        netTablesButton.setPreferredSize(new Dimension(50,50));
         netTablesButton.addActionListener(arg0 -> overlord.showNetTablesWindow());
         netTablesButton.setBorderPainted(false);
         netTablesButton.setContentAreaFilled(false);
@@ -324,6 +329,7 @@ public class Toolbar extends JPanel {
         netSimLogButton.setEnabled(false);*/
         //analysisDockables.add(createButtonDockable("SimLog", netSimLogButton));
         JButton netSimLogButton = new JButton("", Tools.getResIcon48("/icons/toolbar/simLog.png"));
+        netSimLogButton.setPreferredSize(new Dimension(50,50));
         netSimLogButton.addActionListener(arg0 -> overlord.showSimLogWindow());
         netSimLogButton.setBorderPainted(false);
         netSimLogButton.setContentAreaFilled(false);
@@ -341,6 +347,7 @@ public class Toolbar extends JPanel {
         };*/
         //analysisDockables.add(createButtonDockable("ShowConsole", consoleButton));
         JButton consoleButton = new JButton("", Tools.getResIcon48("/icons/toolbar/terminal2.png"));
+        consoleButton.setPreferredSize(new Dimension(50,50));
         consoleButton.addActionListener(arg0 -> overlord.showConsole(true));
         consoleButton.setBorderPainted(false);
         consoleButton.setContentAreaFilled(false);
@@ -357,6 +364,7 @@ public class Toolbar extends JPanel {
         };*/
         //analysisDockables.add(createButtonDockable("CleanColor", cleanButton));
         JButton cleanButton = new JButton("", Tools.getResIcon48("/icons/toolbar/cleanGraphColors.png"));
+        cleanButton.setPreferredSize(new Dimension(50,50));
         cleanButton.addActionListener(arg0 -> overlord.reset.clearGraphColors());
         cleanButton.setBorderPainted(false);
         cleanButton.setContentAreaFilled(false);
@@ -374,6 +382,7 @@ public class Toolbar extends JPanel {
         };*/
         //analysisDockables.add(createButtonDockable("FiringRates", fireRatesButton));
         JButton fireRatesButton = new JButton("", Tools.getResIcon48("/icons/toolbar/firingRates.png"));
+        fireRatesButton.setPreferredSize(new Dimension(50,50));
         fireRatesButton.addActionListener(arg0 -> new HolmesSPNmanager(GUIManager.getDefaultGUIManager().getFrame()));
         fireRatesButton.setBorderPainted(false);
         fireRatesButton.setContentAreaFilled(false);
@@ -549,6 +558,7 @@ public class Toolbar extends JPanel {
         };*/
         //analysisDockables.add(createButtonDockable("EXTnetButton", extendNetButton));
         JButton extendNetButton = new JButton("", Tools.getResIcon48("/icons/toolbar/resizeMax.png"));
+        extendNetButton.setPreferredSize(new Dimension(50,50));
         extendNetButton.addActionListener(actionEvent -> {
                 NetworkTransformations nt = new NetworkTransformations();
                 nt.extendNetwork(true);
@@ -570,6 +580,7 @@ public class Toolbar extends JPanel {
         };*/
         //analysisDockables.add(createButtonDockable("SHRButton", shrinkNetButton));
         JButton shrinkNetButton = new JButton("", Tools.getResIcon48("/icons/toolbar/resizeMin.png"));
+        shrinkNetButton.setPreferredSize(new Dimension(50,50));
         shrinkNetButton.addActionListener(actionEvent -> {
             NetworkTransformations nt = new NetworkTransformations();
             nt.extendNetwork(false);
@@ -594,6 +605,7 @@ public class Toolbar extends JPanel {
         };*/
         //analysisDockables.add(createButtonDockable("GridButton", gridButton));
         JButton gridButton = new JButton("", Tools.getResIcon48("/icons/toolbar/grid.png"));
+        gridButton.setPreferredSize(new Dimension(50,50));
         gridButton.addActionListener(actionEvent -> {
             if (overlord.getSettingsManager().getValue("editorGridLines").equals("1"))
                 overlord.getSettingsManager().setValue("editorGridLines", "0", true);
@@ -618,6 +630,7 @@ public class Toolbar extends JPanel {
             }
         };*/
         JButton gridAlignButton = new JButton("", Tools.getResIcon48("/icons/toolbar/gridAlign.png"));
+        gridAlignButton.setPreferredSize(new Dimension(50,50));
         gridAlignButton.addActionListener(actionEvent -> {
             NetworkTransformations nt = new NetworkTransformations();
             nt.alignNetToGrid();

@@ -23,7 +23,6 @@ import holmes.windows.ssim.HolmesSim;
 import holmes.windows.xtpn.HolmesSimXTPN;
 import holmes.workspace.ExtensionFileFilter;
 import holmes.workspace.Workspace;
-import holmes.workspace.WorkspaceSheet;
 
 import java.awt.*;
 import java.awt.event.ComponentEvent;
@@ -146,7 +145,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	private boolean inaReady = true;
 
-	static private boolean simMode = false;
+	static private boolean isXTPNmode = false;
 
 	/**
 	 * NONE, NAME, ALPHA, BETA, GAMMA, TAU
@@ -421,7 +420,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		simAndworkspacePanel.setDividerLocation(180);
 		JSplitPane rightPanelSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propericeTMPBox, analysisTabs);
 		JSplitPane uberMainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, simAndworkspacePanel, rightPanelSplit);
-		uberMainPanel.setDividerLocation(this.screenSize.width-400);
+		uberMainPanel.setDividerLocation(this.screenSize.width-330);
 		getFrame().add(uberMainPanel,BorderLayout.CENTER);
 
 		//getFrame().add(GUIManager.getDefaultGUIManager().getSelectionBox().getSelectionPanel());
@@ -676,7 +675,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		}
 	}
 
-	/**
+	/*
 	 * Metoda odpowiedzialna za dodawanie nowych ikonek w prawy górnym roku każdego podokna programu.
 	 * @param dockable - okno do przystrojenia dodatkowymi okienkami
 	 * @param deletable - true, jeśli dodajemy ikonę usuwania (główne podokno arkuszy sieci)
@@ -819,7 +818,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		this.quickSimBox = quickSimBox;
 	}
 
-	/**
+	/*
 	 * Metoda ustawia nowe podokno dekompozycji.
 	 * @param deompositionBox HolmesDockWindow - nowe okno dekompozycji
 	 */
@@ -827,7 +826,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//this.decompositionBox = deompositionBox;
 	//}
 
-	/**
+	/*
 	 * Metoda zwraca obiekt podokna dekompozycji.
 	 * @return HolmesDockWindow - okno dekompozycji
 	 */
@@ -939,7 +938,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		this.menu = menu;
 	}
 
-	/**
+	/*
 	 * Opis: I have no idea...
 	 * @return FloatDockModel
 	 */
@@ -947,7 +946,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	//	return dockModel;
 	//}
 
-	/**
+	/*
 	 * Opis: I have no idea...
 	 * @param dockModel FloatDockModel
 	 */
@@ -972,7 +971,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		return workspace.getIndexOfId(id);
 	}
 
-	/**
+	/*
 	 * Zwraca obiekt przycisku powiększającego okno do rozmiarów ekranu.
 	 * @return SingleMaximizer
 	 */
@@ -980,7 +979,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	//	return maximizer;
 	//}
 
-	/**
+	/*
 	 * Ustawia obiekt przycisku powiększającego okno do rozmiarów ekranu.
 	 * @param maximizer SingleMaximizer
 	 */
@@ -988,7 +987,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	//	this.maximizer = maximizer;
 	//}
 
-	/**
+	/*
 	 * Zwraca obiekt przycisku pomniejszającego okno do paska zadań.
 	 * @return LineMinimizer
 	 */
@@ -996,7 +995,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	//	return minimizer;
 	//}
 
-	/**
+	/*
 	 * Ustawia obiekt przycisku pomniejszającego okno do paska zadań.
 	 * @param minimizer LineMinimizer
 	 */
@@ -1008,7 +1007,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	//	return externalizer;
 	//}
 
-	/**
+	/*
 	 * Opis: I have no idea...
 	 * @param externalizer FloatExternalizer
 	 */
@@ -1080,7 +1079,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		this.shortcutsBar = shortcutsBar;
 	}
 	
-	/**
+	/*
 	 * Metoda pomocnicza wywoływana w trakcie tworzenia podokien Holmes (inwarianty, mct, inne, także 
 	 * narzedzia do rysowania).
 	 * @param dockable Dockable
@@ -1712,15 +1711,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 		return getWorkspace().getProject().anythingChanged;
 	}
 
-	public static boolean isSimMode() {
-		return simMode;
+	public static boolean isXTPN_simMode() {  //jeżeli true - XTPN
+		return isXTPNmode;
 	}
 
-	public static void setSimMode(boolean simMode) {
-		GUIManager.simMode = simMode;
+	public static void setXTPN_simMode(boolean simMode) { //jeżeli false = PN, true = XTPN
+		GUIManager.isXTPNmode = simMode;
 	}
 
-	/**
+	/*
 	 * Metoda sprawdza do jakiego komponentu nadrzędnego należy przesłany w parametrze i go stamtąd usuwa.
 	 * @param x Dockable - komponent
 	 */

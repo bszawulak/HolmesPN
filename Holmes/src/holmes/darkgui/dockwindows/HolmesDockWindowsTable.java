@@ -61,6 +61,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private final GUIManager overlord;
     private ArrayList<JComponent> components;
     private int mode;
+
     public int simulatorType = 0; //normalne symulatory
     private ArrayList<Transition> transitions; // j.w.
     private ArrayList<Place> places;
@@ -259,7 +260,7 @@ public class HolmesDockWindowsTable extends JPanel {
     @SuppressWarnings("unchecked")
     public HolmesDockWindowsTable(SubWindow subType, Object... blackBox) {
         overlord = GUIManager.getDefaultGUIManager();
-        System.out.println("Why are you crating");
+        System.out.println("HolmesDockWindowsTable constructor called by: "+subType);  //Why are you crating
         switch (subType) {
             case SIMULATOR -> createSimulatorSubWindow((GraphicalSimulator) blackBox[0], (GraphicalSimulatorXTPN) blackBox[1]);
             case PLACE -> createPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
@@ -322,19 +323,18 @@ public class HolmesDockWindowsTable extends JPanel {
         //boolean XTPNmode = GUIManager.isSimMode();
         mode = SIMULATOR;
         setSimulator(sim, simXTPN);
-        if (GUIManager.isSimMode())
+        if (GUIManager.isXTPN_simMode())
             simulatorType = 1; //XTPN
         else
             simulatorType = 0;
 
-        System.out.println("Start okna " + GUIManager.isSimMode());
-
+        System.out.println("Window activated: " + GUIManager.isXTPN_simMode());
+            //'start okna' ? Szanujmy się, to poteżny i profesjonalny soft, który rozmawia tylko
+            //w języku władców świata!
 
         extracted(columnA_posX, columnB_posX, columnA_Y, columnB_Y, colACompLength, colBCompLength);
 
-
         panel.setLayout(null);
-
 
         //panel.setBackground(Color.green);
         panel.setOpaque(true);
@@ -348,8 +348,7 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     private void extracted(int columnA_posX, int columnB_posX, int columnA_Y, int columnB_Y, int colACompLength, int colBCompLength) {
-
-        if (GUIManager.isSimMode()) { // inny comboBox
+        if (GUIManager.isXTPN_simMode()) { // inny comboBox
             // SIMULATION MODE
             JLabel netTypeLabel = new JLabel("Mode:");
             netTypeLabel.setBounds(columnA_posX - 5, columnA_Y += 10, colACompLength, 20);
@@ -357,6 +356,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             String[] simModeName = {"XTPN simulator", "Other simulators"};
             simMode = new JComboBox<>(simModeName);
+            simMode.setName("XTPNcombo");
             simMode.setLocation(columnB_posX - 40, columnB_Y += 10);
             simMode.setSize(colBCompLength + 50, 20);
             simMode.setSelectedIndex(0);
@@ -372,8 +372,8 @@ public class HolmesDockWindowsTable extends JPanel {
 
                 int selectedModeIndex = simMode.getSelectedIndex();
                 if (selectedModeIndex == 1) { //restore others
-                    GUIManager.setSimMode(false);
-                    System.out.println("XTPNmode1 " + GUIManager.isSimMode());
+                    GUIManager.setXTPN_simMode(false);
+                    System.out.println("XTPNmode1 " + GUIManager.isXTPN_simMode());
                     overlord.getSimulatorBox().createSimulatorProperties(false);
                     components.clear();
                     panel.removeAll();
@@ -382,8 +382,8 @@ public class HolmesDockWindowsTable extends JPanel {
                     this.getPanel().repaint();
                     return;
                 } else {
-                    GUIManager.setSimMode(true);
-                    System.out.println("XTPNmode2 " + GUIManager.isSimMode());
+                    GUIManager.setXTPN_simMode(true);
+                    System.out.println("XTPNmode2 " + GUIManager.isXTPN_simMode());
                 }
                 doNotUpdate = false;
             });
@@ -396,6 +396,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode", "Color", "XTPN"};
             simMode = new JComboBox<>(simModeName);
+            simMode.setName("Classical");
             simMode.setLocation(columnB_posX - 25, columnB_Y += 10);
             simMode.setSize(colBCompLength + 30, 20);
             simMode.setSelectedIndex(0);
@@ -413,8 +414,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (selectedModeIndex == 4) { //XTPN
                     //overlord.getSimulatorBox().createSimulatorProperties(true);
                     //doNotUpdate = false;
-                    GUIManager.setSimMode(true);
-                    System.out.println("XTPNmode3 " + GUIManager.isSimMode());
+                    GUIManager.setXTPN_simMode(true);
+                    System.out.println("XTPNmode3 " + GUIManager.isXTPN_simMode());
                     //this.getPanel().removeAll();
                     components.clear();
                     panel.removeAll();
@@ -438,8 +439,8 @@ public class HolmesDockWindowsTable extends JPanel {
                     } else {
                         overlord.log("Error while changing graphical simulator mode.", "error", true);
                     }
-                    GUIManager.setSimMode(false);
-                    System.out.println("XTPNmode4 " + GUIManager.isSimMode());
+                    GUIManager.setXTPN_simMode(false);
+                    System.out.println("XTPNmode4 " + GUIManager.isXTPN_simMode());
                     //this.getPanel().removeAll();
                     components.clear();
                     panel.removeAll();
@@ -451,8 +452,8 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(simMode);
         }
 
-        if (!GUIManager.isSimMode()) { //normalny symulator
-            System.out.println("tworzymy sym");
+        if (!GUIManager.isXTPN_simMode()) { //normalny symulator (klasyczny)
+            System.out.println("Standard simulator created.");
             //i tyle, jakby kto pytał, to są obiekty, można im zmienić tekst, ale się nie wyświetla
             //NA RAZIE tak ma być:
             stepLabelXTPN = new JLabel("0");
