@@ -117,12 +117,12 @@ public class Workspace implements SelectionActionListener {
 		WorkspaceSheet ws = new WorkspaceSheet("I am sheet " + id, id, this);
 		sheets.add(ws);
 
-
+		JScrollPane scroll = new JScrollPane(ws.getContainerPanel());
 
 		//int index2 = GUIManager.getDefaultGUIManager().getTabbedWorkspace().getTabCount();
 		//.getTabbedWorkspace().add("Subnet-P: "+index,new WorkspaceSheet("Subnet P",index,GUIManager.getDefaultGUIManager().getWorkspace()));
 
-		GUIManager.getDefaultGUIManager().getTabbedWorkspace().add("I am sheet " + id,ws.getGraphPanel());
+		GUIManager.getDefaultGUIManager().getTabbedWorkspace().add("I am sheet " + id,scroll);
 
 
 		//tp.add("Sheetsssssssssssssssss " + sheets.size()+1,ws);
