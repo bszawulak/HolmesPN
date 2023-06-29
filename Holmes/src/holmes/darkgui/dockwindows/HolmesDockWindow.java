@@ -175,7 +175,12 @@ public class HolmesDockWindow {//extends SingleDock {
         if (type == DockWindowType.SIMULATOR) {
             GraphicalSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
             GraphicalSimulatorXTPN netSimXTPN = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
-            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SIMULATOR, netSim, netSimXTPN, XTPN));
+            //TODO: 29062023 Shavi, zjebałes, wywołanie tej metody powoduje problemy z panelami symulatoró (obu!)
+            //a kiedy działała, odpowiadzalna jest za reset paneli symulatorów. Tylko ze jak je teraz zresetujemy
+            //to np. nie działa już wygaszanie i właćzanie przycisków stop/pause simulator, zarówno dla
+            //clasic jak i XTPN. Zakomentowanie jej to hotfix, który powoduje pewne problemy, ale jest mniejszym
+            // złem. Będę naprawiać w weekend.
+            //setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SIMULATOR, netSim, netSimXTPN, XTPN));
             scrollPane.getViewport().add(getCurrentDockWindow());
         }
     }

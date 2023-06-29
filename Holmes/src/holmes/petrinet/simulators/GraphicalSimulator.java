@@ -27,7 +27,7 @@ public class GraphicalSimulator {
 	private int delay = 30;	//opóźnienie
 	private boolean simulationActive = false;
 	private Timer timer;
-	private ArrayList<Transition> launchingTransitions;
+	private ArrayList<Transition> launchingTransitions = new ArrayList<Transition>();
 	private Stack<SimulationStep> actionStack;
 	
 	private boolean maxMode = false;
@@ -1019,8 +1019,7 @@ public class GraphicalSimulator {
 					
 					//tutaj dodawany jest nowy krok w symulacji:
 					if(isHistoryMode()) {
-						actionStack.push(new SimulationStep(SimulatorMode.SINGLE_TRANSITION, launchingTransitions.get(0),
-							cloneTransitionArray(launchingTransitions)));
+						actionStack.push(new SimulationStep(SimulatorMode.SINGLE_TRANSITION, launchingTransitions.get(0), cloneTransitionArray(launchingTransitions)));
 					}
 					launchSingleSubtractPhase(launchingTransitions, false, null);
 					

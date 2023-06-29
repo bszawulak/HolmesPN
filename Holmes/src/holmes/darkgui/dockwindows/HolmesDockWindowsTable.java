@@ -341,7 +341,7 @@ public class HolmesDockWindowsTable extends JPanel {
         panel.repaint();
         panel.setVisible(true);
 
-        panel.setPreferredSize(new Dimension(200, 200));
+        //panel.setPreferredSize(new Dimension(200, 200));
         add(panel);
         setPanel(panel);
 
@@ -478,7 +478,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
 
             JButton loopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_start.png"));
-            loopSimulation.setName("simB5");
+            loopSimulation.setName("simPNstart");
             loopSimulation.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
             loopSimulation.setToolTipText("Loop simulation");
             loopSimulation.addActionListener(actionEvent -> {
@@ -489,7 +489,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(loopSimulation);
 
             JButton singleTransitionLoopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_startSingle.png"));
-            singleTransitionLoopSimulation.setName("simB6");
+            singleTransitionLoopSimulation.setName("simPNstartSingle");
             singleTransitionLoopSimulation.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 30);
             singleTransitionLoopSimulation.setToolTipText("Loop single transition simulation");
             singleTransitionLoopSimulation.addActionListener(actionEvent -> {
@@ -500,7 +500,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(singleTransitionLoopSimulation);
 
             JButton pauseSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_pause.png"));
-            pauseSimulation.setName("pause");
+            pauseSimulation.setName("simPNpause");
             pauseSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
             pauseSimulation.setToolTipText("Pause simulation");
             pauseSimulation.setEnabled(false);
@@ -512,7 +512,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(pauseSimulation);
 
             JButton stopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_stop.png"));
-            stopSimulation.setName("stop");
+            stopSimulation.setName("simPNstop");
             stopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
             stopSimulation.setToolTipText("Schedule a stop for the simulation");
             stopSimulation.setEnabled(false);
@@ -523,7 +523,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(stopSimulation);
 
             JButton resetButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_reset.png"));
-            resetButton.setName("reset");
+            resetButton.setName("simPNreset");
             resetButton.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
             resetButton.setToolTipText("Reset all tokens in places.");
             resetButton.setEnabled(false);
@@ -559,7 +559,7 @@ public class HolmesDockWindowsTable extends JPanel {
             columnB_Y += 20;
 
             JButton oneActionBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
-            oneActionBack.setName("simB1");
+            oneActionBack.setName("simPNoneBack");
             oneActionBack.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
             oneActionBack.setToolTipText("One action back");
             oneActionBack.addActionListener(actionEvent -> {
@@ -571,7 +571,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             JButton oneTransitionForward = new JButton(
                     Tools.getResIcon22("/icons/simulation/simPN_1transForw.png"));
-            oneTransitionForward.setName("simB2");
+            oneTransitionForward.setName("simPNoneForward");
             oneTransitionForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
             oneTransitionForward.setToolTipText("One transition forward");
             oneTransitionForward.addActionListener(actionEvent -> {
@@ -8947,8 +8947,8 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda uaktywnia tylko przyciski stop i pauza dla symulatora. Cała reszta - nieaktywna.
      */
     public void allowOnlySimulationDisruptButtons() {
-        setEnabledSimulationInitiateButtons(false);
-        setEnabledSimulationDisruptButtons(true);
+        setStartSimulationButtonsStatus(false);
+        setPauseAndStopSimulationButtonsStatus(true);
 
         overlord.getSimulatorBox().getCurrentDockWindow().getPanel().revalidate();
         overlord.getSimulatorBox().getCurrentDockWindow().getPanel().repaint();
@@ -8958,8 +8958,8 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda uaktywnia tylko przycisku startu dla symulatora, blokuje stop i pauzę.
      */
     public void allowOnlySimulationInitiateButtons() {
-        setEnabledSimulationInitiateButtons(true);
-        setEnabledSimulationDisruptButtons(false);
+        setStartSimulationButtonsStatus(true);
+        setPauseAndStopSimulationButtonsStatus(false);
 
         overlord.getSimulatorBox().getCurrentDockWindow().getPanel().revalidate();
         overlord.getSimulatorBox().getCurrentDockWindow().getPanel().repaint();
@@ -8971,13 +8971,13 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param enabled boolean - true, jeśli mają być aktywne
      */
-    private void setEnabledSimulationInitiateButtons(boolean enabled) {
+    private void setStartSimulationButtonsStatus(boolean enabled) {
         for (JComponent comp : components) {
             if (comp instanceof JButton && comp.getName() != null) {
-                if (comp.getName().equals("simB1") || comp.getName().equals("simB2")
-                        || comp.getName().equals("simB3") || comp.getName().equals("simB4")
-                        || comp.getName().equals("simB5") || comp.getName().equals("simB6")
-                        || comp.getName().equals("reset")) {
+                if (comp.getName().equals("simPNoneBack") || comp.getName().equals("simPNoneForward")
+                        || comp.getName().equals("simPNoneForward") || comp.getName().equals("simB4")
+                        || comp.getName().equals("simPNstart") || comp.getName().equals("simPNstartSingle")
+                        || comp.getName().equals("simPNreset")) {
                     comp.setEnabled(enabled);
                 }
             }
@@ -8989,10 +8989,10 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param enabled boolean - true, jeśli mają być aktywne
      */
-    private void setEnabledSimulationDisruptButtons(boolean enabled) {
+    private void setPauseAndStopSimulationButtonsStatus(boolean enabled) {
         for (JComponent comp : components) {
             if (comp instanceof JButton && comp.getName() != null) {
-                if (comp.getName().equals("stop") || comp.getName().equals("pause")) {
+                if (comp.getName().equals("simPNpause") || comp.getName().equals("simPNstop")) {
                     comp.setEnabled(enabled);
                 }
             }
@@ -9004,10 +9004,11 @@ public class HolmesDockWindowsTable extends JPanel {
      */
     public void allowOnlyUnpauseButton() {
         allowOnlySimulationDisruptButtons();
+
         //values.get(4).setEnabled(false);
         for (JComponent comp : components) {
             if (comp instanceof JButton && comp.getName() != null) {
-                if (comp.getName().equals("pause")) {
+                if (comp.getName().equals("simPNpause")) {
                     comp.setEnabled(true);
                     break;
                 }
