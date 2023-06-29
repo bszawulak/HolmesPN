@@ -40,8 +40,8 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
     public SheetPopupMenu(GraphPanel graphPanel, PetriNetElementType pne) {
         super(graphPanel, pne);
 
-        x = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet().getMousePosition().x;
-        y = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet().getMousePosition().y;
+        //x = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet().getMousePosition().x;
+        //y = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet().getMousePosition().y;
 
         this.addMenuItem("Select All", "", e -> getGraphPanel().getSelectionManager().selectAllElementLocations());
 
@@ -222,7 +222,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
                 File file = fc.getSelectedFile();
 
                 IOprotocols io = new IOprotocols();
-                io.importSubnetFromFile(file.getAbsolutePath(), x, y);
+                //io.importSubnetFromFile(file.getAbsolutePath(), x, y);
 
                 for (ElementLocation el : getGraphPanel().getSelectionManager().getSelectedElementLocations()) {
                     el.setSelected(false);
