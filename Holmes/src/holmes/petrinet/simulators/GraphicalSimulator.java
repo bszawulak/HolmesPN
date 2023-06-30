@@ -36,7 +36,6 @@ public class GraphicalSimulator {
 	private boolean writeHistory = true;
 	private long timeCounter = -1;
 	private GraphicalSimulatorLogger nsl = new GraphicalSimulatorLogger();
-	//private Random generator;
 	
 	private SimulatorStandardPN engine;
 	private boolean emptySteps = false; 

@@ -308,19 +308,10 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda pomocnicza konstruktora odpowiedzialna za tworzenie podokna dla symulatora sieci.
      * @param sim (<b>GraphicalSimulator</b>) obiekt symulatora sieci PN.
      * @param simXTPN (<b>GraphicalSimulatorXTPN</b>) obiekt symulatora sieci XTPN.
-     * //@param XTPNmode (<b>boolean</b>) jeżeli true, to znaczy że tworzymy symulator XTPN.
      */
     //@SuppressWarnings("UnusedAssignment")
     private void createSimulatorSubWindow(GraphicalSimulator sim, GraphicalSimulatorXTPN simXTPN) {
-        int columnA_posX = 10;
-        int columnB_posX = 80;
-        int columnA_Y = 0;
-        int columnB_Y = 0;
-        int colACompLength = 70;
-        int colBCompLength = 70;
-
         initiateContainers();
-        //boolean XTPNmode = GUIManager.isSimMode();
         mode = SIMULATOR;
         setSimulator(sim, simXTPN);
         if (GUIManager.isXTPN_simMode())
@@ -332,7 +323,7 @@ public class HolmesDockWindowsTable extends JPanel {
             //'start okna' ? Szanujmy się, to poteżny i profesjonalny soft, który rozmawia tylko
             //w języku władców świata!
 
-        extracted(columnA_posX, columnB_posX, columnA_Y, columnB_Y, colACompLength, colBCompLength);
+        repopulateSimulatorPanel();
 
         panel.setLayout(null);
 
@@ -340,25 +331,30 @@ public class HolmesDockWindowsTable extends JPanel {
         panel.setOpaque(true);
         panel.repaint();
         panel.setVisible(true);
-
-        //panel.setPreferredSize(new Dimension(200, 200));
         add(panel);
         setPanel(panel);
 
     }
 
-    private void extracted(int columnA_posX, int columnB_posX, int columnA_Y, int columnB_Y, int colACompLength, int colBCompLength) {
-        if (GUIManager.isXTPN_simMode()) { // inny comboBox
-            // SIMULATION MODE
+    /**
+     * Metoda odpowiedzialna za stworzenie komponentów panelu symulacji standardowej lub XTPN (po prawej
+     * stronie głównego okna). Jest wywoływana przez actionListener comboBoxa, gdy zmieniamy
+     * rodzaj symulatora.
+     */
+    private void repopulateSimulatorPanel() {
+        int internalX = 5;
+        int internalY = 10;
+
+        if (GUIManager.isXTPN_simMode()) { // comboBox dla symulatora XPTN
             JLabel netTypeLabel = new JLabel("Mode:");
-            netTypeLabel.setBounds(columnA_posX - 5, columnA_Y += 10, colACompLength, 20);
+            netTypeLabel.setBounds(internalX, internalY, 70, 20);
             components.add(netTypeLabel);
 
             String[] simModeName = {"XTPN simulator", "Other simulators"};
             simMode = new JComboBox<>(simModeName);
             simMode.setName("XTPNcombo");
-            simMode.setLocation(columnB_posX - 40, columnB_Y += 10);
-            simMode.setSize(colBCompLength + 50, 20);
+            simMode.setLocation(internalX+35, internalY);
+            simMode.setSize(120, 20);
             simMode.setSelectedIndex(0);
             simMode.addActionListener(actionEvent -> {
                 if (doNotUpdate)
@@ -373,11 +369,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 int selectedModeIndex = simMode.getSelectedIndex();
                 if (selectedModeIndex == 1) { //restore others
                     GUIManager.setXTPN_simMode(false);
-                    System.out.println("XTPNmode1 " + GUIManager.isXTPN_simMode());
+                    System.out.println("isXTPNsim? : " + GUIManager.isXTPN_simMode());
                     overlord.getSimulatorBox().createSimulatorProperties(false);
                     components.clear();
                     panel.removeAll();
-                    extracted(columnA_posX, columnB_posX, 0, 0, colACompLength, colBCompLength);
+                    repopulateSimulatorPanel();
                     this.getPanel().validate();
                     this.getPanel().repaint();
                     return;
@@ -391,14 +387,14 @@ public class HolmesDockWindowsTable extends JPanel {
         } else { //XTPNmode == false
             // SIMULATION MODE
             JLabel netTypeLabel = new JLabel("Mode:");
-            netTypeLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+            netTypeLabel.setBounds(internalX, internalY, 70, 20);
             components.add(netTypeLabel);
 
             String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode", "Color", "XTPN"};
             simMode = new JComboBox<>(simModeName);
             simMode.setName("Classical");
-            simMode.setLocation(columnB_posX - 25, columnB_Y += 10);
-            simMode.setSize(colBCompLength + 30, 20);
+            simMode.setLocation(internalX+50, internalY);
+            simMode.setSize(100, 20);
             simMode.setSelectedIndex(0);
             simMode.addActionListener(actionEvent -> {
                 if (doNotUpdate)
@@ -415,11 +411,10 @@ public class HolmesDockWindowsTable extends JPanel {
                     //overlord.getSimulatorBox().createSimulatorProperties(true);
                     //doNotUpdate = false;
                     GUIManager.setXTPN_simMode(true);
-                    System.out.println("XTPNmode3 " + GUIManager.isXTPN_simMode());
-                    //this.getPanel().removeAll();
+                    System.out.println("isXTPNsim? : " + GUIManager.isXTPN_simMode());
                     components.clear();
                     panel.removeAll();
-                    extracted(columnA_posX, columnB_posX, 0, 0, colACompLength, colBCompLength);
+                    repopulateSimulatorPanel();
                     return;
                 } else {
                     int change = simulator.setGraphicalSimulatorNetType(selectedModeIndex);
@@ -440,11 +435,11 @@ public class HolmesDockWindowsTable extends JPanel {
                         overlord.log("Error while changing graphical simulator mode.", "error", true);
                     }
                     GUIManager.setXTPN_simMode(false);
-                    System.out.println("XTPNmode4 " + GUIManager.isXTPN_simMode());
+                    System.out.println("isXTPNsim? :  " + GUIManager.isXTPN_simMode());
                     //this.getPanel().removeAll();
                     components.clear();
                     panel.removeAll();
-                    extracted(columnA_posX, columnB_posX, 0, 0, colACompLength, colBCompLength);
+                    repopulateSimulatorPanel();
                 }
 
                 doNotUpdate = false;
@@ -453,33 +448,36 @@ public class HolmesDockWindowsTable extends JPanel {
         }
 
         if (!GUIManager.isXTPN_simMode()) { //normalny symulator (klasyczny)
-            System.out.println("Standard simulator created.");
-            //i tyle, jakby kto pytał, to są obiekty, można im zmienić tekst, ale się nie wyświetla
-            //NA RAZIE tak ma być:
+            //System.out.println("Standard simulator creation started");
+            //i tyle, jakby kto pytał, to są obiekty, można im zmienić tekst, ale się nie wyświetla /NA RAZIE tak ma być:
             stepLabelXTPN = new JLabel("0");
             timeLabelXTPN = new JLabel("0.0");
 
+            internalX = 5;
+            internalY = 30;
 
             JLabel timeStepLabel = new JLabel("Time/step:");
-            timeStepLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+            timeStepLabel.setBounds(internalX, internalY, 70, 20);
             components.add(timeStepLabel);
 
             timeStepLabelValue = new JLabel("0");
-            timeStepLabelValue.setBounds(columnA_posX + 70, columnB_Y += 20, colACompLength, 20);
+            timeStepLabelValue.setBounds(internalX + 70, internalY, 70, 20);
             components.add(timeStepLabelValue);
+
+            internalY += 20;
 
             // SIMULATOR CONTROLS
             // metoda startSimulation obiektu simulator troszczy się o wygaszanie
             // i aktywowanie odpowiednich przycisków
             JLabel controlsLabel = new JLabel("Simulation options:");
-            controlsLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength * 2, 20);
+            controlsLabel.setBounds(internalX, internalY, 120, 20);
             components.add(controlsLabel);
-            columnB_Y += 20;
 
+            internalY += 20;
 
             JButton loopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_start.png"));
             loopSimulation.setName("simPNstart");
-            loopSimulation.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
+            loopSimulation.setBounds(internalX, internalY, 80, 30);
             loopSimulation.setToolTipText("Loop simulation");
             loopSimulation.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -490,7 +488,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             JButton singleTransitionLoopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_startSingle.png"));
             singleTransitionLoopSimulation.setName("simPNstartSingle");
-            singleTransitionLoopSimulation.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 30);
+            singleTransitionLoopSimulation.setBounds(internalX+80, internalY, 80, 30);
             singleTransitionLoopSimulation.setToolTipText("Loop single transition simulation");
             singleTransitionLoopSimulation.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -499,9 +497,11 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(singleTransitionLoopSimulation);
 
+            internalY += 30;
+
             JButton pauseSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_pause.png"));
             pauseSimulation.setName("simPNpause");
-            pauseSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
+            pauseSimulation.setBounds(internalX, internalY, 80, 30);
             pauseSimulation.setToolTipText("Pause simulation");
             pauseSimulation.setEnabled(false);
             pauseSimulation.addActionListener(actionEvent -> {
@@ -513,7 +513,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             JButton stopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_stop.png"));
             stopSimulation.setName("simPNstop");
-            stopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
+            stopSimulation.setBounds(internalX+80, internalY, 80, 30);
             stopSimulation.setToolTipText("Schedule a stop for the simulation");
             stopSimulation.setEnabled(false);
             stopSimulation.addActionListener(actionEvent -> {
@@ -522,9 +522,11 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(stopSimulation);
 
+            internalY += 30;
+
             JButton resetButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_reset.png"));
             resetButton.setName("simPNreset");
-            resetButton.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
+            resetButton.setBounds(internalX, internalY, 80, 30);
             resetButton.setToolTipText("Reset all tokens in places.");
             resetButton.setEnabled(false);
             resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
@@ -532,7 +534,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             JButton saveButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_save_m0.png"));
             saveButton.setName("Save m0");
-            saveButton.setBounds(columnB_posX, columnA_Y += 30, colBCompLength, 30);
+            saveButton.setBounds(internalX+80, internalY, 80, 30);
             saveButton.setToolTipText("Save m0 state.");
             saveButton.addActionListener(actionEvent -> {
                 if (overlord.reset.isSimulatorActiveWarning(
@@ -553,14 +555,17 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(saveButton);
 
+            internalY += 30;
+
             JLabel otherControlsLabel = new JLabel("Other modes:");
-            otherControlsLabel.setBounds(columnA_posX, columnA_Y += 30, colACompLength * 2, 20);
+            otherControlsLabel.setBounds(internalX, internalY, 140, 20);
             components.add(otherControlsLabel);
-            columnB_Y += 20;
+
+            internalY += 20;
 
             JButton oneActionBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
             oneActionBack.setName("simPNoneBack");
-            oneActionBack.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
+            oneActionBack.setBounds(internalX, internalY, 70, 30);
             oneActionBack.setToolTipText("One action back");
             oneActionBack.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -572,7 +577,7 @@ public class HolmesDockWindowsTable extends JPanel {
             JButton oneTransitionForward = new JButton(
                     Tools.getResIcon22("/icons/simulation/simPN_1transForw.png"));
             oneTransitionForward.setName("simPNoneForward");
-            oneTransitionForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
+            oneTransitionForward.setBounds(internalX+70, internalY, 70, 30);
             oneTransitionForward.setToolTipText("One transition forward");
             oneTransitionForward.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -581,9 +586,11 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(oneTransitionForward);
 
+            internalY += 30;
+
             JButton loopBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_backLoop.png"));
             loopBack.setName("simB3");
-            loopBack.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
+            loopBack.setBounds(internalX, internalY, 70, 30);
             loopBack.setToolTipText("Loop back to oldest saved action");
             loopBack.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -595,7 +602,7 @@ public class HolmesDockWindowsTable extends JPanel {
             JButton oneStepForward = new JButton(
                     Tools.getResIcon22("/icons/simulation/simPN_1stepForw.png"));
             oneStepForward.setName("simB4");
-            oneStepForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
+            oneStepForward.setBounds(internalX+70, internalY, 70, 30);
             oneStepForward.setToolTipText("One step forward");
             oneStepForward.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -604,9 +611,11 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(oneStepForward);
 
+            internalY += 30;
+
             c1Button = new JButton("<html><center>Store<br>colors</center></html>");
             c1Button.setName("resetColor");
-            c1Button.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
+            c1Button.setBounds(internalX, internalY, 70, 30);
             c1Button.setToolTipText("Reset all color tokens in places.");
             c1Button.setEnabled(false);
             c1Button.addActionListener(actionEvent -> {
@@ -618,19 +627,21 @@ public class HolmesDockWindowsTable extends JPanel {
 
             c2Button = new JButton("<html><center>Restore<br>colors</center></html>");
             c2Button.setName("SaveM0Color");
-            c2Button.setBounds(columnB_posX, columnA_Y += 30, colBCompLength, 30);
+            c2Button.setBounds(internalX+70, internalY, 70, 30);
             c2Button.setToolTipText("Reset all color tokens in places.");
             c2Button.setEnabled(false);
             c2Button.addActionListener(actionEvent -> {
-                //JOptionPane.showMessageDialog(null, "Color PN (experimental) simulator currently unavailable.",
-                //        "Module unavailable", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Color PN (experimental) simulator - highly unstable.",
+                        "Module under construction", JOptionPane.INFORMATION_MESSAGE);
                 overlord.getWorkspace().getProject().restoreColors();
             });
             components.add(c2Button);
 
+            internalY += 35;
+
             JButton statesButton = new JButton("State manager");
             statesButton.setName("State manager");
-            statesButton.setBounds(columnA_posX, columnB_Y += 35, colACompLength * 2, 30);
+            statesButton.setBounds(internalX, internalY, 140, 30);
             statesButton.setToolTipText("Open states manager window.");
             statesButton.setEnabled(true);
             statesButton.addActionListener(actionEvent -> {
@@ -643,11 +654,11 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(statesButton);
 
-            columnB_Y += 35;
-            columnA_Y += 35;
+            internalY += 35;
+
             //doNotUpdate = false;
             maximumModeCheckBox = new JCheckBox("Maximum mode");
-            maximumModeCheckBox.setBounds(columnA_posX, columnA_Y += 30, 200, 20);
+            maximumModeCheckBox.setBounds(internalX, internalY, 200, 20);
             maximumModeCheckBox.addActionListener(actionEvent -> {
                 if (doNotUpdate)
                     return;
@@ -665,8 +676,10 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(maximumModeCheckBox);
 
+            internalY += 20;
+
             singleModeCheckBox = new JCheckBox("Single mode");
-            singleModeCheckBox.setBounds(columnA_posX, columnA_Y += 20, 200, 20);
+            singleModeCheckBox.setBounds(internalX, internalY, 200, 20);
             singleModeCheckBox.addActionListener(actionEvent -> {
                 AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
                 if (abstractButton.getModel().isSelected()) {
@@ -689,19 +702,12 @@ public class HolmesDockWindowsTable extends JPanel {
             //panel.setBackground(Color.red);
 
         } else { // nienormalny symulator: XTPN
-            System.out.println("tworzymy XTPN sym");
-            int internalX = 5;
-            int internalY = 10;
+            //System.out.println("tworzymy XTPN sym");
+            internalX = 5;
+            internalY = 30;
 
-            //JLabel xtmIntro = new JLabel("XTPN simulator:");
-            //xtmIntro.setBounds(internalX, internalY += 20, 90, 20);
-            //xtmpSimPanel.add(xtmIntro);
-
-            //i tyle, jakby kto pytał, to jest obiekt, można mu zmienić tekst, ale się nie wyświetla
-            //NA RAZIE tak ma być
+            //i tyle, jakby kto pytał, to jest obiekt, można mu zmienić tekst, ale się nie wyświetla NA RAZIE tak ma być
             timeStepLabelValue = new JLabel("0");
-
-            internalY += 20;
 
             JLabel stepLabelText = new JLabel("Step:");
             stepLabelText.setBounds(internalX, internalY, 90, 20);
