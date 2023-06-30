@@ -181,6 +181,10 @@ public class HolmesDockWindow {//extends SingleDock {
             //clasic jak i XTPN. Zakomentowanie jej to hotfix, który powoduje pewne problemy, ale jest mniejszym
             // złem. Będę naprawiać w weekend.
             //setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SIMULATOR, netSim, netSimXTPN, XTPN));
+
+            //hotfix2 30062023: to powinno ustabilizować sytuację:
+            dockWindowPanel.setSimulator(netSim, netSimXTPN);
+
             scrollPane.getViewport().add(getCurrentDockWindow());
         }
     }
