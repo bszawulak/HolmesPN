@@ -13,7 +13,7 @@ import javax.swing.JScrollPane;
 import holmes.graphpanel.GraphPanel;
 
 /**
- * Klasa konkretnego obszaru roboczego. Jej obiekty są trzymane w tablicy, znajdującej
+ * Klasa konkretnego obszaru roboczego. Jej obiekty są trzymane w tablicy znajdującej
  * się w klasie Workspace.
  */
 public class WorkspaceSheet extends JScrollPane {
@@ -21,8 +21,11 @@ public class WorkspaceSheet extends JScrollPane {
 	private static final long serialVersionUID = -3216362854094205041L;
 	private final int id; // aktualne id sheeta w workspace
 	private GraphPanel graphPanel;
-	private Workspace workspace;
-	private SheetPanel panel;
+	private Workspace workspace; //referencja na rodzica
+	private SheetPanel sheetPanel;
+	//private JPanel sheetPanel;
+
+	public JScrollPane scrollPane;
 
 	/**
 	 * Konstruktor obiektu klasy WorkspaceSheet
@@ -32,19 +35,35 @@ public class WorkspaceSheet extends JScrollPane {
 	 */
 	public WorkspaceSheet(String text, int ID, Workspace work) {
 		workspace = work;
-		setMinimumSize(new Dimension(100, 100));
-		setBackground(Color.white);
-		setBorder(BorderFactory.createLineBorder(Color.lightGray));
-		panel = new SheetPanel(this);
-		panel.setLayout(null);
+
+		//setMinimumSize(new Dimension(100, 100));  //....
+		//setBackground(Color.white);  //....
+		//setBorder(BorderFactory.createLineBorder(Color.lightGray));  //....
+
+		sheetPanel = new SheetPanel(this);
+		sheetPanel.setLayout(null);
 		setGraphPanel(workspace.getProject().createAndAddGraphPanel(ID));
 		getGraphPanel().setBounds(0, 0, Toolkit.getDefaultToolkit().getScreenSize().width,
 				Toolkit.getDefaultToolkit().getScreenSize().height);
-		panel.add(getGraphPanel());
-		panel.setOpaque(true);
-		getViewport().add(panel);
+		sheetPanel.add(getGraphPanel());
+		sheetPanel.setOpaque(true);
+
+		//getViewport().add(sheetPanel);  //....
+
 		graphPanel.setOriginSize(graphPanel.getSize());
 		id = ID;
+
+		//scrollPane = new JScrollPane(sheetPanel);
+		//scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		//scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	}
+
+	public JScrollPane getScrollPane() {
+		return scrollPane;
+	}
+
+	public void setScrollPane(JScrollPane sp) {
+		scrollPane = sp;
 	}
 
 	/**
@@ -56,16 +75,17 @@ public class WorkspaceSheet extends JScrollPane {
 	}
 
 	/**
-	 * Metoda zwraca obiekt JPanel.
-	 * @return JPanel - JPanel
+	 * Metoda zwraca obiekt JPanel. W zasadzie to SheetPanel która rozszera JPanel. SheetPanel siedzi
+	 * jako klasa wewnętrzna w WorkspaceSheet.
+	 * @return JPanel - JPanel (WorkspaceSheet.SheetPanel)
 	 */
 	public JPanel getContainerPanel() {
-		return panel;
+		return sheetPanel;
 	}
 
 	/**
 	 * Metoda zwracająca obiekt GraphPanel.
-	 * @return GraphPanel - obiekt
+	 * @return GraphPanel - obiekt klasy.
 	 */
 	public GraphPanel getGraphPanel() {
 		return graphPanel;
@@ -83,7 +103,8 @@ public class WorkspaceSheet extends JScrollPane {
 	 * @param delta int - długość przewinięcia
 	 */
 	public void scrollHorizontal(int delta) {
-		JScrollBar bar = this.getHorizontalScrollBar();
+		//JScrollBar bar = this.getHorizontalScrollBar();
+		JScrollBar bar = this.scrollPane.getHorizontalScrollBar();
 		int value = bar.getValue();
 		value += delta;
 		bar.setValue(value);
@@ -94,7 +115,8 @@ public class WorkspaceSheet extends JScrollPane {
 	 * @param delta int - długość przewinięcia
 	 */
 	public void scrollVertical(int delta) {
-		JScrollBar bar = this.getVerticalScrollBar();
+		//JScrollBar bar = this.getVerticalScrollBar();
+		JScrollBar bar = this.scrollPane.getVerticalScrollBar();
 		int value = bar.getValue();
 		value += delta;
 		bar.setValue(value);

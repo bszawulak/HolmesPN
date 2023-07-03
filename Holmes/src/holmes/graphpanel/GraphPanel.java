@@ -402,7 +402,7 @@ public class GraphPanel extends JComponent {
 		w = (int) (w * (double)zoom / (double)100);
 		this.setSize(w, h);
 		WorkspaceSheet sheet = overlord.getWorkspace().getSheets().get(overlord.IDtoIndex(sheetId));
-		sheet.revalidate();
+		sheet.getScrollPane().revalidate();  //03072023
 		this.invalidate();
 		this.repaint();
 	}
@@ -488,10 +488,10 @@ public class GraphPanel extends JComponent {
 		if (!isAutoDragScroll())
 			return;
 		WorkspaceSheet sheet = overlord.getWorkspace().getSheets().get(overlord.IDtoIndex(sheetId));
-		Dimension viewSize = sheet.getViewport().getSize();
+		Dimension viewSize = sheet.getScrollPane().getViewport().getSize();//03072023
 		Point delta = new Point();
 		delta.setLocation(currentPoint.x - previousPoint.x, currentPoint.y - previousPoint.y);
-		JViewport viewport = sheet.getViewport();
+		JViewport viewport = sheet.getScrollPane().getViewport();//03072023
 		Point viewPoint = new Point(currentPoint.x - viewport.getViewPosition().x, currentPoint.y
 				- viewport.getViewPosition().y);
 		if (isAutoDragScroll() && ((viewSize.width - 20) < viewPoint.x
@@ -1681,8 +1681,8 @@ public class GraphPanel extends JComponent {
 			return;
 		}
 		
-		int visibleX = ws.getWidth(); 
-		int visibleY = ws.getHeight(); //tyle pikseli dokładnie widać na ekranie
+		int visibleX = ws.getScrollPane().getWidth(); //03072023 DODANO .getScrollPane().
+		int visibleY = ws.getScrollPane().getHeight(); //tyle pikseli dokładnie widać na ekranie//03072023
 		//jeśli odejmiemy powyższe od getSize otrzymamy dane ile w pionie i w poziomie nie widać
 		int clickedX = mousePt.x;
 		int clickedY = mousePt.y;
@@ -1690,8 +1690,8 @@ public class GraphPanel extends JComponent {
 		int centerX = visibleX / 2;
 		int centerY = visibleY / 2; //współrzedne środka panelu
 		
-		int barHorX =  ws.getHorizontalScrollBar().getValue(); // aktualna wartość przesunięcia 
-		int barVerY =  ws.getVerticalScrollBar().getValue();
+		int barHorX =  ws.getScrollPane().getHorizontalScrollBar().getValue(); // aktualna wartość przesunięcia //03072023
+		int barVerY =  ws.getScrollPane().getVerticalScrollBar().getValue();//03072023
 		
 		centerX += barHorX;
 		centerY += barVerY;

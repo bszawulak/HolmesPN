@@ -369,10 +369,15 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getFrame().add(shortcutsBar,BorderLayout.PAGE_START);
 
 		JPanel mainpanel = new JPanel();
-		mainpanel.add(getWorkspace().getSelectedSheet());
+		//JScrollPane jsp = getWorkspace().getSelectedSheet().getScrollPane();
+		//mainpanel.add(jsp);	//03072023 do not work
+		mainpanel.add(getWorkspace().getSelectedSheet());	//03072023 old code
+
 		mainpanel.setLayout(new BorderLayout());
 		mainpanel.setSize(200,200);
-		getFrame().add(getWorkspace().getSelectedSheet(),BorderLayout.CENTER);
+
+		//getFrame().add(jsp,  BorderLayout.CENTER); //03072023 do not work
+		getFrame().add(getWorkspace().getSelectedSheet(),  BorderLayout.CENTER); //03072023 old code
 
 
 		// create tools

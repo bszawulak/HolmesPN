@@ -19,7 +19,9 @@ import holmes.petrinet.elements.MetaNode.MetaType;
  * jak nie zarządzać obiektami, vide: dockables, docks, sheets i sheetsIDtable. Wypada zapytać: tylko 4
  * tablice *ŚCIŚLE POWIĄZANYCH ZE SOBĄ* obiektów? Czemu nie 40? Acha, 2 z nich są osobnymi tablicami w DarkMenu, 
  * które należy aktualizować przy każdej zmianie liczby zakładek. Rozum nie jest w stanie tego ogarnąć, jak
- * powiedział król Desmond zaglądając po skończonej potrzebie do nocnika.
+ * powiedział król Desmod zaglądając po skończonej potrzebie do nocnika.
+ * 30.06.2023 : po wywaleniu Javadocking zaczyna (powoli) wracać prostota i zdrowy rozsądek. Komentarze
+ * pozostają - ku przestrodze.
  */
 public class Workspace implements SelectionActionListener {
 	//private DockFactory dockFactory;
@@ -27,13 +29,13 @@ public class Workspace implements SelectionActionListener {
 	/** Zawiera obiekty Dockable, czyli opakowanie w którym jest WorkspaceSheet. W tym miejscu kończy się ludzka logika.  */
 	//private ArrayList<Dockable> dockables;
 
-	/**  Zawiera elementy typu Dock, zawierające obiekty typu Dockable. One z kolei zawierają WorkspaceSheet, które zawiera SheetPanel, który
-	 * zawiera GraphPanel. Ku chwale ojczyzny. */
+	/**  Zawiera elementy typu Dock, zawierające obiekty typu Dockable. One z kolei zawierają WorkspaceSheet, które zawiera SheetPanel oraz
+	 * GraphPanel. Ku chwale ojczyzny. */
 	//private ArrayList<Dock> docks;
 
 	private JTabbedPane tp = new JTabbedPane();
 	
-	/** Tablica zawierająca obiekty WorkspaceSheet, które z kolei zawierają SheetPanel (JPanel) który zawiera GraphPanel. By żyło się lepiej. */
+	/** Tablica zawierająca obiekty WorkspaceSheet, które z kolei zawierają SheetPanel (JPanel) oraz GraphPanel. By żyło się lepiej. */
 	private ArrayList<WorkspaceSheet> sheets;
 	
 	/** Tablica identyfikatorów obiektów WorkspaceSheet przechowywanych w tablicy sheets */
@@ -111,19 +113,29 @@ public class Workspace implements SelectionActionListener {
 		int id = index;
 		if (sheetsIDtable.contains(id))
 			id = getMaximumSubnetID() + 1;
-		Point position = new Point(0, 0);
+
+		//Point position = new Point(0, 0);
+
 		sheetsIDtable.add(id);
 
-		WorkspaceSheet ws = new WorkspaceSheet("I am sheet " + id, id, this);
+		WorkspaceSheet ws = new WorkspaceSheet("Subnet " + id, id, this);
 		sheets.add(ws);
 
 		JScrollPane scroll = new JScrollPane(ws.getContainerPanel());
+		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		ws.setScrollPane(scroll);
+		//tp.add("Subnet " + id, scroll);
+		tp.add("Subnet " + id, scroll);
+
+		if(addMetaNode) {
+			addMetaNode(pos, whichSubnet, id, type);
+			//setSelectedDock(getIndexOfId(whichSubnet));
+		}
+		return id;
 
 		//int index2 = GUIManager.getDefaultGUIManager().getTabbedWorkspace().getTabCount();
 		//.getTabbedWorkspace().add("Subnet-P: "+index,new WorkspaceSheet("Subnet P",index,GUIManager.getDefaultGUIManager().getWorkspace()));
-
-		GUIManager.getDefaultGUIManager().getTabbedWorkspace().add("I am sheet " + id, scroll);
-
 
 		//tp.add("Sheetsssssssssssssssss " + sheets.size()+1,ws);
 
@@ -136,12 +148,6 @@ public class Workspace implements SelectionActionListener {
 		// add menu item to the menu
 		//overlord.getMenu().addSheetItem(dockables.get(index));
 		//overlord.globalSheetsList.add(tempDockable);
-		
-		if(addMetaNode) {
-			addMetaNode(pos, whichSubnet, id, type);
-			//setSelectedDock(getIndexOfId(whichSubnet));
-		}
-		return id;
 	}
 
 	/**
@@ -190,8 +196,11 @@ public class Workspace implements SelectionActionListener {
 		tp.remove(id);
 	}
 
+	/**
+	 * Używana przez GUIReset, do czyszczenia wszystkich paneli sieci poza pierwszym.
+	 */
 	public void deleteAllSheetButFirst() {
-		for(WorkspaceSheet sheet : sheets) {
+		for(WorkspaceSheet sheet : sheets) { //TODO 03072023 coś nie działa jak się doda podsieć, przy wyjściu z programu, sprawdzić
 			if(sheet.getId() != 0) {
 				int sheetID = sheet.getId();
 				boolean result = getProject().removeGraphPanel(sheetID);
@@ -199,7 +208,7 @@ public class Workspace implements SelectionActionListener {
 					GUIManager.getDefaultGUIManager().log("Error, removing graph panel in Workspace.deleteSheetFromArrays() failed" +
 							"for WorkspaceSheet "+sheet.getId(), "error", true);
 				}
-				int id = sheets.indexOf(sheet);// + 1 - 1;
+				int id = sheets.indexOf(sheet);
 				sheets.remove(id);
 				sheetsIDtable.remove(id);
 				tp.remove(id);

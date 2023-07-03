@@ -428,11 +428,11 @@ public class HolmesSearch extends JFrame {
 			//int visibleX = xxx.getWidth(); //widocza na ekranie szerokość panelu rysowania (+24)
 			//int visibleY = xxx.getHeight(); //j.w. wysokość (+63)
 			
-			int visibleX = ws.getWidth(); 
-			int visibleY = ws.getHeight(); //tyle pikseli dokładnie widać na ekranie
+			int visibleX = ws.getScrollPane().getWidth(); //03072023 dodano .getScrollPane()
+			int visibleY = ws.getScrollPane().getHeight(); //tyle pikseli dokładnie widać na ekranie//03072023 dodano .getScrollPane()
 
-			int barHorX =  ws.getHorizontalScrollBar().getValue(); // aktualna wartość przesunięcia 
-			int barVerY =  ws.getVerticalScrollBar().getValue();
+			int barHorX =  ws.getScrollPane().getHorizontalScrollBar().getValue(); // aktualna wartość przesunięcia //03072023 dodano .getScrollPane()
+			int barVerY =  ws.getScrollPane().getVerticalScrollBar().getValue();//03072023 dodano .getScrollPane()
 			
 			ws.scrollHorizontal(-barHorX); //przewiń na x=0
 			ws.scrollVertical(-barVerY); //przewiń na y=0
