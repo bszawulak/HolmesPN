@@ -396,11 +396,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		analysisTabs = new JTabbedPane();
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getQuickSimBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(0, new JLabel("Quick Simulation"));
+		analysisTabs.setTabComponentAt(0, new JLabel("QuickSim"));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getT_invBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(1, new JLabel("T-invariant"));
+		analysisTabs.setTabComponentAt(1, new JLabel("T-Inv"));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getP_invBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(2, new JLabel("P-invariant"));
+		analysisTabs.setTabComponentAt(2, new JLabel("P-Inv"));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getMctBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(3, new JLabel("MCT"));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getMCSBox().getCurrentDockWindow().getPanel());
@@ -408,7 +408,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getKnockoutBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(5, new JLabel("Knockout"));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getFixBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(6, new JLabel("Network Fixes"));
+		analysisTabs.setTabComponentAt(6, new JLabel("NetFix"));
 		analysisTabs.setPreferredSize(new Dimension(200,200));
 		//analysisTabs.add("T-invariants",t_invariantsBox.getCurrentDockWindow().getPanel());
 		//analysisTabs.setTabComponentAt(0, new JLabel("Toolbox"));

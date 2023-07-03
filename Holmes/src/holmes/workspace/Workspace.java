@@ -181,10 +181,31 @@ public class Workspace implements SelectionActionListener {
 		}
 		
 		int id = sheets.indexOf(sheet);// + 1 - 1;
+
 		//getWorkspaceDock().emptyChild(docks.get(id));
 		//docks.remove(id);
 		sheets.remove(id);
 		sheetsIDtable.remove(id);
+
+		tp.remove(id);
+	}
+
+	public void deleteAllSheetButFirst() {
+		for(WorkspaceSheet sheet : sheets) {
+			if(sheet.getId() != 0) {
+				int sheetID = sheet.getId();
+				boolean result = getProject().removeGraphPanel(sheetID);
+				if(!result) {
+					GUIManager.getDefaultGUIManager().log("Error, removing graph panel in Workspace.deleteSheetFromArrays() failed" +
+							"for WorkspaceSheet "+sheet.getId(), "error", true);
+				}
+				int id = sheets.indexOf(sheet);// + 1 - 1;
+				sheets.remove(id);
+				sheetsIDtable.remove(id);
+				tp.remove(id);
+			}
+
+		}
 	}
 
 	///**

@@ -1134,7 +1134,6 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda pomocnicza konstruktora podokna wyświetlającego właściwości klikniętego miejsca sieci.
-     *
      * @param place    Place - obiekt miejsca
      * @param location ElementLocation - lokalizacja miejsca
      */
@@ -7800,61 +7799,73 @@ public class HolmesDockWindowsTable extends JPanel {
      * Tworzy okno wykrywania i wskazywania problemów sieci.
      */
     private void createFixerSubWindow() {
-        int posX = 10;
-        int posY = 10;
+        int internalX = 10;
+        int internalY = 10;
 
         initiateContainers();
         detector = new ProblemDetector(this);
 
         JLabel label0 = new JLabel("t-invariants:");
-        label0.setBounds(posX, posY, 100, 20);
+        label0.setBounds(internalX, internalY, 100, 20);
         components.add(label0);
 
+        internalY += 20;
+
         fixInvariants = new JLabel("Normal: 0 / Non-inv.: 0");
-        fixInvariants.setBounds(posX, posY += 20, 190, 20);
+        fixInvariants.setBounds(internalX, internalY, 190, 20);
         components.add(fixInvariants);
 
+        internalY += 20;
+
         fixInvariants2 = new JLabel("Sub-inv.: 0 / Sur-inv: 0");
-        fixInvariants2.setBounds(posX, posY += 20, 190, 20);
+        fixInvariants2.setBounds(internalX, internalY, 190, 20);
         components.add(fixInvariants2);
 
         JButton markInvButton = new JButton();
         markInvButton.setText("<html>Show<br>&nbsp;&nbsp;&nbsp;inv.</html>");
-        markInvButton.setBounds(posX + 185, posY - 18, 100, 32);
+        markInvButton.setBounds(internalX + 185, internalY - 18, 100, 32);
         markInvButton.setMargin(new Insets(0, 0, 0, 0));
         markInvButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
         markInvButton.addActionListener(actionEvent -> detector.markSubSurNonInvariantsPlaces());
         markInvButton.setFocusPainted(false);
         components.add(markInvButton);
 
+        internalY += 25;
+
         JLabel label1 = new JLabel("Input and output places:");
-        label1.setBounds(posX, posY += 25, 200, 20);
+        label1.setBounds(internalX, internalY, 200, 20);
         components.add(label1);
 
+        internalY += 20;
+
         fixIOPlaces = new JLabel("Input: 0 / Output: 0");
-        fixIOPlaces.setBounds(posX, posY += 20, 190, 20);
+        fixIOPlaces.setBounds(internalX, internalY, 190, 20);
         components.add(fixIOPlaces);
 
         JButton markIOPlacesButton = new JButton();
         markIOPlacesButton.setText("<html>Show<br>places</html>");
-        markIOPlacesButton.setBounds(posX + 185, posY - 16, 100, 32);
+        markIOPlacesButton.setBounds(internalX + 185, internalY - 16, 100, 32);
         markIOPlacesButton.setMargin(new Insets(0, 0, 0, 0));
         markIOPlacesButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
         markIOPlacesButton.addActionListener(actionEvent -> detector.markIOPlaces());
         markIOPlacesButton.setFocusPainted(false);
         components.add(markIOPlacesButton);
 
+        internalY += 25;
+
         JLabel label2 = new JLabel("Input and output transitions:");
-        label2.setBounds(posX, posY += 25, 200, 20);
+        label2.setBounds(internalX, internalY, 200, 20);
         components.add(label2);
 
+        internalY += 20;
+
         fixIOTransitions = new JLabel("Input: 0 / Output: 0");
-        fixIOTransitions.setBounds(posX, posY += 20, 190, 20);
+        fixIOTransitions.setBounds(internalX, internalY, 190, 20);
         components.add(fixIOTransitions);
 
         JButton markIOTransButton = new JButton();
         markIOTransButton.setText("<html>Show<br>trans.</html>");
-        markIOTransButton.setBounds(posX + 185, posY - 14, 100, 32);
+        markIOTransButton.setBounds(internalX + 185, internalY - 14, 100, 32);
         markIOTransButton.setMargin(new Insets(0, 0, 0, 0));
         markIOTransButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
         markIOTransButton.addActionListener(actionEvent -> detector.markIOTransitions());
@@ -7862,16 +7873,18 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(markIOTransButton);
 
         JLabel label3 = new JLabel("Linear transitions and places");
-        label3.setBounds(posX, posY += 25, 200, 20);
+        label3.setBounds(internalX, internalY += 25, 200, 20);
         components.add(label3);
 
+        internalY += 20;
+
         fixlinearTrans = new JLabel("Transitions: 0 / Places: 0");
-        fixlinearTrans.setBounds(posX, posY += 20, 190, 20);
+        fixlinearTrans.setBounds(internalX, internalY, 190, 20);
         components.add(fixlinearTrans);
 
         JButton markLinearTPButton = new JButton();
         markLinearTPButton.setText("<html>Show<br>T & P</html>");
-        markLinearTPButton.setBounds(posX + 185, posY - 12, 100, 32);
+        markLinearTPButton.setBounds(internalX + 185, internalY - 12, 100, 32);
         markLinearTPButton.setMargin(new Insets(0, 0, 0, 0));
         markLinearTPButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
         markLinearTPButton.addActionListener(actionEvent -> detector.markLinearRegions());
@@ -7897,14 +7910,14 @@ public class HolmesDockWindowsTable extends JPanel {
      */
     @SuppressWarnings("UnusedAssignment")
     private void createQuickSimSubWindow() {
-        int posX = 10;
-        int posY = 10;
+        int internalX = 10;
+        int internalY = 10;
         initiateContainers();
 
         quickSim = new QuickSimTools(this);
 
         JButton acqDataButton = new JButton("SimStart");
-        acqDataButton.setBounds(posX, posY, 110, 40);
+        acqDataButton.setBounds(internalX, internalY, 110, 40);
         acqDataButton.setMargin(new Insets(0, 0, 0, 0));
         acqDataButton.setFocusPainted(false);
         acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
@@ -7915,7 +7928,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(acqDataButton);
 
         JButton simSettingsButton = new JButton("SimSettings");
-        simSettingsButton.setBounds(posX + 120, posY, 130, 40);
+        simSettingsButton.setBounds(internalX + 120, internalY, 130, 40);
         simSettingsButton.setMargin(new Insets(0, 0, 0, 0));
         simSettingsButton.setFocusPainted(false);
         simSettingsButton.setIcon(Tools.getResIcon32("/icons/simSettings/setupIcon.png"));
@@ -7923,8 +7936,10 @@ public class HolmesDockWindowsTable extends JPanel {
         simSettingsButton.addActionListener(actionEvent -> new HolmesSimSetup(GUIManager.getDefaultGUIManager().getFrame()));
         components.add(simSettingsButton);
 
+        internalY += 45;
+
         quickProgressBar = new JProgressBar();
-        quickProgressBar.setBounds(posX, posY += 45, 280, 25);
+        quickProgressBar.setBounds(internalX, internalY, 280, 25);
         quickProgressBar.setMaximum(100);
         quickProgressBar.setMinimum(0);
         quickProgressBar.setValue(0);
@@ -7933,9 +7948,11 @@ public class HolmesDockWindowsTable extends JPanel {
         //quickProgressBar.setBorder(border);
         components.add(quickProgressBar);
 
+        internalY += 30;
+
         JPanel borderPanel = new JPanel(null);
         //borderPanel.setLayout(new BorderLayout());
-        borderPanel.setBounds(posX, posY += 30, 280, 80);
+        borderPanel.setBounds(internalX, internalY, 280, 80);
         borderPanel.setBorder(BorderFactory.createTitledBorder("Data type simulated"));
         components.add(borderPanel);
 
