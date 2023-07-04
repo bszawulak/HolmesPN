@@ -90,9 +90,9 @@ public class PetriNetTools implements TreeSelectionListener {
 		//otherPetriNetsNode.add(new DefaultMutableTreeNode("(SPN) Scheduled"));
 		
 		DefaultMutableTreeNode hierachicalNode = new DefaultMutableTreeNode("Subsets");
-		hierachicalNode.add(new DefaultMutableTreeNode("Subnet T-type"));
-		hierachicalNode.add(new DefaultMutableTreeNode("Subnet P-type"));
-		hierachicalNode.add(new DefaultMutableTreeNode("General Subnet"));
+		//hierachicalNode.add(new DefaultMutableTreeNode("Subnet T-type"));
+		//hierachicalNode.add(new DefaultMutableTreeNode("Subnet P-type"));
+		hierachicalNode.add(new DefaultMutableTreeNode("Subnet"));
 
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Tools");
 		rootNode.add(miscNode);
@@ -212,7 +212,7 @@ public class PetriNetTools implements TreeSelectionListener {
 				case "xTransition" -> guiManager.getWorkspace().setGraphMode(DrawModes.XTRANSITION);
 				case "Subnet T-type" -> guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_T);
 				case "Subnet P-type" -> guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_P);
-				case "General Subnet" -> guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_PT);
+				case "Subnet" -> guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_PT);
 				case "C-Place" -> guiManager.getWorkspace().setGraphMode(DrawModes.CPLACE);
 				case "C-Transition" -> guiManager.getWorkspace().setGraphMode(DrawModes.CTRANSITION);
 				case "C-Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.CARC);
@@ -384,7 +384,7 @@ public class PetriNetTools implements TreeSelectionListener {
 						setIcon(subnetP);
 						setToolTipText("Allows you to create subnet with transition-interfaces.");
 					}
-					case "General Subnet" -> {
+					case "Subnet" -> {
 						setIcon(subnetPT);
 						setToolTipText("Allows you to create subnet with P/T interfaces.");
 					}

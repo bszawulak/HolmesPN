@@ -315,6 +315,19 @@ public class SelectionManager {
 					int index = transitions.indexOf((Transition)n);
 					pn.accessFiringRatesManager().removeTrans(index);
 				}
+
+				if(n instanceof MetaNode) {
+					//TODO MetaNode: dodać ostrzeżenie przed usunięciem
+
+
+					int sheetID = ((MetaNode) n).getRepresentedSheetID();
+					//TODO MetaNode: usunąć wszystkie elementy podsieci (najlepiej dla każdego ElementLocation będącego
+					//wewnątrz sheetID wywołać tą właśnie metodę w której jesteśmy. Najpierw usunie ona każdy element
+					//w podsieci,  a na koniec wywoła to (czyli usunięcie panelu).
+					overlord.testRemovePanel(sheetID);
+
+				}
+
 				this.getGraphPanelNodes().remove(n);
 			}
 			

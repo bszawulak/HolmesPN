@@ -69,6 +69,8 @@ public class Workspace implements SelectionActionListener {
 		setProject(new PetriNet(this, "default"));
 
 		setTablePane(new JTabbedPane());
+		gui.setTabbedWorkspace(getTablePane());
+
 		this.getProject().addActionListener(this);
 		//newTab(false, new Point(0,0), 1, MetaType.SUBNET);
 		//tp.setPreferredSize(new Dimension(1300,400));
@@ -186,13 +188,9 @@ public class Workspace implements SelectionActionListener {
 					"for WorkspaceSheet "+sheet.getId(), "error", true);
 		}
 		
-		int id = sheets.indexOf(sheet);// + 1 - 1;
-
-		//getWorkspaceDock().emptyChild(docks.get(id));
-		//docks.remove(id);
+		int id = sheets.indexOf(sheet);
 		sheets.remove(id);
 		sheetsIDtable.remove(id);
-
 		tp.remove(id);
 	}
 
@@ -468,10 +466,19 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	 */
+
+	/**
+	 * Pobieranie obiektu zakładek sieci.
+	 * @return JTabbedPane - obiekt z zakładami.
+	 */
 	public JTabbedPane getTablePane() {
 		return tp;
 	}
 
+	/**
+	 * Ustawianie referencji głównego obiektu zakładek.
+	 * @param tp (<b>JTabbedPane</b>) - obiekt zakładek.
+	 */
 	public void setTablePane(JTabbedPane tp) {
 		this.tp = tp;
 	}

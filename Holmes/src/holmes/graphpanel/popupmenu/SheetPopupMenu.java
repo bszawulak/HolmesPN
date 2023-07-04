@@ -33,12 +33,15 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
     public int x;
     public int y;
 
+    public int sheetID = -1;
+
     /**
      * Konstruktor obiektu klasy SheetPopupMenu.
-     * @param graphPanel GraphPanel - panel dla którego powstaje menu
+     * @param graphPanel GraphPanel - panel dla którego powstaje menu.
      */
     public SheetPopupMenu(GraphPanel graphPanel, PetriNetElementType pne) {
         super(graphPanel, pne);
+        sheetID = graphPanel.getSheetId();
 
         //x = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet().getMousePosition().x;
         //y = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet().getMousePosition().y;
@@ -194,6 +197,10 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         netMenu.add(createMenuItem("Show DPN transitions", "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(1)));
         netMenu.add(createMenuItem("Show TPN/DPN transitions", "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(2)));
         netMenu.add(createMenuItem("Fix Snoopy compatibility", "", null, arg0 -> GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility()));
+
+        if(sheetID != 0) {
+            netMenu.add(createMenuItem("Remove panel", "", null, arg0 -> GUIManager.getDefaultGUIManager().testRemovePanel(sheetID)  ) );
+        }
 
         //SUBNET IMPORT PROTOTYP
         this.addSeparator();

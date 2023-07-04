@@ -23,6 +23,7 @@ import holmes.windows.ssim.HolmesSim;
 import holmes.windows.xtpn.HolmesSimXTPN;
 import holmes.workspace.ExtensionFileFilter;
 import holmes.workspace.Workspace;
+import holmes.workspace.WorkspaceSheet;
 
 import java.awt.*;
 import java.awt.event.ComponentEvent;
@@ -43,7 +44,7 @@ import javax.swing.filechooser.FileFilter;
  * graficznych programu, a dalej jakoś tak samo już się wszystko toczy. Albo wywala.
  * 
  * @author students - ktoś musiał zacząć.
- * @author MR - Metody, Metody. Nowe Metody. Podpisano: Cyryl
+ * @author MR - Metody, Metody. Nowe Metody. сделал: Цириль
  */
 public class GUIManager extends JPanel implements ComponentListener {
 	@Serial
@@ -75,6 +76,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	// main Docks
 	private Workspace workspace;
 	private JTabbedPane tabbedWorkspace = new JTabbedPane();
+
+
 	//private CompositeTabDock leftTabDock;
 	//private CompositeTabDock bottomLeftTabDock;
 	//private CompositeTabDock topRightTabDock;
@@ -86,18 +89,18 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	private PetriNetTools toolBox;
 	
-	// podokna dokowalne głównego okna Holmes:
+	// podokna głównego okna programu
 	private HolmesDockWindow simulatorBox;	//podokno przycisków symulatorów sieci
-	private HolmesDockWindow selectionBox;	//podokno zaznaczonych elementów sieci
+	private HolmesDockWindow selectionBox;	//podokno zaznaczonych elementów sieci //06.2023: ni ma. Widział ktoś??
 	private HolmesDockWindow mctBox;			//podokno MCT
 	private HolmesDockWindow t_invariantsBox;	//podokno t-inwariantów
-	private HolmesDockWindow p_invariantsBox;
+	private HolmesDockWindow p_invariantsBox;	//p-inwarianty
 	private HolmesDockWindow selElementBox;  //podokno klikniętego elementu sieci
 	private HolmesDockWindow clustersBox;	//podokno podświetlania klastrów
-	private HolmesDockWindow mcsBox;
+	private HolmesDockWindow mcsBox;	//minimal cuttting sets
 	private HolmesDockWindow fixBox;
-	private HolmesDockWindow knockoutBox;
-	private HolmesDockWindow quickSimBox;
+	private HolmesDockWindow knockoutBox;	//symulator knockout
+	private HolmesDockWindow quickSimBox;  //szybki symulator
 	//-//private HolmesDockWindow decompositionBox;
 	
 	//UNUSED
@@ -155,9 +158,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private Node nameSelectedNode = null;
 	private ElementLocation nameNodeEL = null;
 
-	//TODO tabs
-	//public ArrayList<Dockable> globalSheetsList = new ArrayList<>();
-
 	public JPanel propericeTMPBox;
 	public JTabbedPane analysisTabs;
 	
@@ -181,10 +181,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		 */
 
-
-
-
 		//JavaDocking wysypuje się jeśli numer wersji nie posiada przynajmniej jednej .
+		//Piękny był to fuckup, nie zapomnę go nigdy [MR].
 		if(!System.getProperty("java.version").contains("."))
 			System.setProperty("java.version",System.getProperty("java.version")+".0");
 
@@ -432,7 +430,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		//GroupLayout layout = new GroupLayout(getFrame().getContentPane());
 		//getFrame().getContentPane().setLayout(layout);
-// default workspace dock
+		// default workspace dock
 		//getDockingListener().setWorkspace(workspace);
 
 		//getFrame().setLayout(new BorderLayout());
@@ -1751,11 +1749,24 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 
 	public JTabbedPane getTabbedWorkspace() {
-		//return tabbedWorkspace;
 		return GUIManager.getDefaultGUIManager().getWorkspace().getTablePane();
 	}
 
 	public void setTabbedWorkspace(JTabbedPane tabbedWorkspace) {
 		this.tabbedWorkspace = tabbedWorkspace;
+	}
+
+	public void testRemovePanel(int sheetID) {
+		WorkspaceSheet begone = null;
+		for(WorkspaceSheet ws : getWorkspace().getSheets()) {
+			if(ws.getId() == sheetID) {
+				begone = ws;
+				break;
+			}
+		}
+
+		if(begone != null) {
+			getWorkspace().deleteSheetFromArrays(begone);
+		}
 	}
 }
