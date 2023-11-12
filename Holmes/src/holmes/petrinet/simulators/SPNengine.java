@@ -24,7 +24,6 @@ public class SPNengine implements IEngine {
 	private Transition lastFired;
 	private IRandomGenerator generator;
 	private ArrayList<Transition> transitions;
-	
 	/** Tranzycja z tej listy zostanie uruchomiona */
 	private ArrayList<Transition> launchableTransitions;
 	/** Tranzycje z tej listy muszą mieć przeliczone firing rate, dotyczy tranzycji ST */
