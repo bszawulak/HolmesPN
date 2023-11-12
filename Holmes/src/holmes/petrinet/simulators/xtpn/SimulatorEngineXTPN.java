@@ -263,7 +263,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
         double currentMinTime = Double.MAX_VALUE;
 
         for(PlaceXTPN place : places) { //znajdź najmniejszy czas do zmiany w miejscach
-            if(!place.isGammaModeActive() || place.accessMultiset().size() == 0) {
+            if(!place.isGammaModeActive() || place.accessMultiset().isEmpty()) {
                 //czyli nie dotyczy miejsc klasycznych, lub pusty multizbiór
                 continue;
             }
