@@ -2029,7 +2029,7 @@ public class HolmesDockWindowsTable extends JPanel {
         height = (int) (((double) 100 / (double) zoom) * height);
 
         JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
-        sheetLabel.setBounds(columnA_posX, columnA_Y += 40, colACompLength, 20);
+        sheetLabel.setBounds(columnA_posX, columnA_Y += 80, colACompLength, 20);
         components.add(sheetLabel);
         JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
         sheetIdLabel.setBounds(columnB_posX, columnB_Y += 40, colBCompLength, 20);
