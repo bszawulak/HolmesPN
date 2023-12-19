@@ -27,7 +27,6 @@ import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.subnets.SubnetsTools;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;
-import holmes.workspace.Workspace;
 import holmes.workspace.WorkspaceSheet;
 
 /**
@@ -69,10 +68,10 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Konstruktor obiektu klasy GraphPanel
-	 * @param sheetId int - nr arkusza
-	 * @param petriNet PetriNet - sieć Petriego
-	 * @param nodesList ArrayList[Node]- lista wierzchołków
-	 * @param arcsList ArrayList[Arc]- lista łuków
+	 * @param sheetId <b>int</b> - nr arkusza
+	 * @param petriNet <b>PetriNet</b> - sieć Petriego
+	 * @param nodesList ArrayList[<b>Node</b>]- lista wierzchołków
+	 * @param arcsList ArrayList[<b>Arc</b>]- lista łuków
 	 */
 	public GraphPanel(int sheetId, PetriNet petriNet, ArrayList<Node> nodesList, ArrayList<Arc> arcsList) {
 		this.overlord = GUIManager.getDefaultGUIManager();
@@ -83,7 +82,7 @@ public class GraphPanel extends JComponent {
 	}
 
 	/**
-	 * Inicjalizacja obiektów dla panelu
+	 * Inicjalizacja obiektów dla panelu.
 	 */
 	public void Initialize() {
 		this.setBorder(BorderFactory.createLineBorder(Color.lightGray));
@@ -101,8 +100,8 @@ public class GraphPanel extends JComponent {
 	 * Zbiór ten jest wspólny dla wszystkich arkuszy i jest przechowywana w obiekcie
 	 * PetriNet, o tym gdzie dany element zostanie narysowany decyduje jego lokalizacja
 	 * ElementLocation.SheetId.
-	 * @param nodes ArrayList[Nodes] - lista węzłów przekazywana do danego arkusza
-	 * @param arcs ArrayList[Arc] - lista łuków przekazywana do danego arkusza
+	 * @param nodes ArrayList[<b>Node</b>] - lista węzłów przekazywana do danego arkusza
+	 * @param arcs ArrayList[<b>Arc</b>] - lista łuków przekazywana do danego arkusza
 	 */
 	public void setNodesAndArcs(ArrayList<Node> nodes, ArrayList<Arc> arcs) {
 		this.nodes = nodes;
@@ -122,7 +121,7 @@ public class GraphPanel extends JComponent {
 	 * Zbiór ten jest wspólny dla wszystkich arkuszy i jest przechowywana w
 	 * obiekcie PetriNet, o tym gdzie dany element zostanie narysowany decyduje
 	 * jego lokalizacja
-	 * @param nodes ArrayList[Node] - lista węzłów przekazywana do danego arkusza
+	 * @param nodes ArrayList[<b>Node</b>] - lista węzłów przekazywana do danego arkusza
 	 */
 	public void setNodes(ArrayList<Node> nodes) {
 		this.nodes = nodes;
@@ -156,7 +155,7 @@ public class GraphPanel extends JComponent {
 	/**
 	 * Metoda odpowiedzialna za konwersję części sieci wyświetlanej w komponencie
 	 * GraphPanel na obiekt typu BufferedImage.
-	 * @return BufferedImage - obraz arkusza sieci
+	 * @return <b>BufferedImage</b> - obraz arkusza sieci
 	 */
 	public BufferedImage createImageFromSheet() {
 		Rectangle r = getBounds();
@@ -170,7 +169,7 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Metoda pozwala na pobranie numery identyfikacyjnego danego arkusza.
-	 * @return int - zwraca id arkusza z pola sheetId
+	 * @return <b>int</b> - zwraca id arkusza z pola sheetId
 	 */
 	public int getSheetId() {
 		return sheetId;
@@ -178,7 +177,7 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Metoda pozwala na ustawienie nowego identyfikatora dla danego arkusza.
-	 * @param sheetID int - id arkusza dla sieci
+	 * @param sheetID <b>int</b> - id arkusza dla sieci
 	 */
 	public void setSheetId(int sheetID) {
 		this.sheetId = sheetID;
@@ -187,7 +186,7 @@ public class GraphPanel extends JComponent {
 	/**
 	 * Metoda pozwala na pobrania listy wierzchołków przypisanych do danego arkusza.
 	 * Lista ta jest wspólna dla wszystkich arkuszy i jest przechowywana w obiekcie PetriNet.
-	 * @return ArrayList[Node] - lista węzłów
+	 * @return ArrayList[<b>Node</b>] - lista węzłów
 	 */
 	public ArrayList<Node> getNodes() {
 		return this.nodes;
@@ -197,7 +196,7 @@ public class GraphPanel extends JComponent {
 	 * Metoda pozwala na ustawienie zbioru łuków dla danego arkusza. Zbiór ten jest wspólny
 	 * dla wszystkich arkuszy, o tym gdzie dany element zostanie narysowany, decyduje jego
 	 * lokalizacja startowa i końcowa (ElementLocation.SheetId).
-	 * @param arcs ArrayList[Arc] - lista łuków przekazywana do danego arkusza
+	 * @param arcs ArrayList[<b>Arc</b>] - lista łuków przekazywana do danego arkusza
 	 */
 	public void setArcs(ArrayList<Arc> arcs) {
 		this.arcs = arcs;
@@ -208,7 +207,7 @@ public class GraphPanel extends JComponent {
 	/**
 	 * Metoda pozwala na pobrania listy łuków przypisanych do danego arkusza. Lista ta jest
 	 * wspólna dla wszystkich arkuszy i jest przechowywana w obiekcie PetriNet.
-	 * @return ArrayList[Arc] - zwraca listę łuków
+	 * @return ArrayList[<b>Arc</b>] - zwraca listę łuków
 	 */
 	public ArrayList<Arc> getArcs() {
 		return arcs;
@@ -218,7 +217,7 @@ public class GraphPanel extends JComponent {
 	 * Metoda pozwala na pobrania aktualnego prostokąta zaznaczenia, na podstawie którego
 	 * rysowany jest obszar zaznaczenia oraz wybierane są obiekty, które kwalifikują się aby
 	 * zostały zaznaczone. W sytuacji, gdy zaznaczenie nie jest rysowane, przyjmuje wartość null.
-	 * @return Rectangle - prostokąt aktualnego zaznaczenia, z pola this.selectingRect
+	 * @return <b>Rectangle</b> - prostokąt aktualnego zaznaczenia, z pola this.selectingRect
 	 */
 	public Rectangle getSelectingRect() {
 		return selectingRect;
@@ -231,7 +230,7 @@ public class GraphPanel extends JComponent {
 	 * na podstawie ich lokalizacji ElementLocation.sheetId, następnie każdemu z obiektów
 	 * zakwalifikowanych, zlecane jest narysowanie "siebie" na dostarczonym w parametrze metody
 	 * obiekcie Graphics2D. W rysowaniu wykorzystany został podwójny bufor oraz filtr antyaliasingowy.
-	 * @param g Graphics - obiekt zawierający prezentowaną grafikę
+	 * @param g <b>Graphics</b> - obiekt zawierający prezentowaną grafikę
 	 */
 	public void paintComponent(Graphics g) {
 		g.setColor(new Color(0x00f0f0f0));
@@ -250,7 +249,7 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * Metoda rysująca siatkę na panelu.
-	 * @param g2d Graphics2D - obiekt rysujący
+	 * @param g2d <b>Graphics2D</b> - obiekt rysujący
 	 */
 	private void drawMesh(Graphics2D g2d) {
 		g2d.setColor(EditorResources.graphPanelMeshColor);
@@ -292,7 +291,6 @@ public class GraphPanel extends JComponent {
 		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().getSimNetType() == SimulatorGlobals.SimNetType.COLOR) {
 			eds.color = true;
 		}
-		//TODO:
 		
 		for (Arc a : getArcs()) {
 			a.draw(g2d, this.sheetId, getZoom(), eds);
@@ -330,7 +328,7 @@ public class GraphPanel extends JComponent {
 
 	/**
 	 * W prawym górnym rogu wyświetla informacje o ustawieniach symulatora.
-	 * @param g2d Graphics2D - obiekt rysujący
+	 * @param g2d <b>Graphics2D</b> - obiekt rysujący
 	 */
 	private void debugInfo(Graphics2D g2d) {
 		g2d.setColor(Color.RED);
@@ -1060,7 +1058,7 @@ public class GraphPanel extends JComponent {
 						}
 					}
 					case XTRANSITION -> {
-						if(project.getNodes().size() == 0) {
+						if(project.getNodes().isEmpty()) {
 							_putXTPNtransition(project);
 						} else if (project.hasNonXTPNnodes()){
 							JOptionPane.showMessageDialog(null, "TODO: transformation. Please create clean new project to use XTPN nodes.",
@@ -1086,7 +1084,7 @@ public class GraphPanel extends JComponent {
 						}
 					}
 					case XPLACE -> {
-						if(project.getNodes().size() == 0) {
+						if(project.getNodes().isEmpty()) {
 							_putXTPNplace(project);
 						} else if (project.hasNonXTPNnodes()){
 							JOptionPane.showMessageDialog(null, "TODO: transformation. Please create clean new project to use XTPN nodes.",
@@ -1426,7 +1424,7 @@ public class GraphPanel extends JComponent {
 					} else if(isReverseArcPresent(drawnArc.getStartLocation(), clickedLocation)) {
 						if(arcType == DrawModes.ARC) {
 							//JOptionPane.showMessageDialog(null, "Please use Read Arc drawing mode to draw a read-arc!", "Problem", JOptionPane.WARNING_MESSAGE);
-							proceed = true;
+							//proceed = true;
 						} else if(arcType == DrawModes.READARC) {
 							JOptionPane.showMessageDialog(null, "Please remove arc between these two nodes in order to create a read-arc.", "Problem", 
 									JOptionPane.WARNING_MESSAGE);
@@ -1699,7 +1697,7 @@ public class GraphPanel extends JComponent {
 		double zoom = getZoom();
 		zoom = 100/zoom;
 		centerX *= zoom;
-		centerY *= zoom;
+		centerY *=  zoom;
 		
 		if(clickedX <= centerX && clickedY <= centerY) { //I cwiartka, przesuwanie w lewo/góra
 			scrollSheetHorizontal(-(centerX - clickedX)); // w lewo

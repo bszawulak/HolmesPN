@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.settings.SettingsManager;
 import holmes.graphpanel.ElementDrawSettings;
-import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.utilities.Tools;
 
 import static holmes.graphpanel.EditorResources.*;
@@ -37,9 +36,7 @@ public abstract class Node extends PetriNetElement {
 	protected boolean invisible = false;
 	private int radius = 20;
 
-
 	public boolean qSimArcSign = false; //znacznik dła łuku - czy ma być wzmocniony pomiędzy węzłami które mają tu wartość true
-
 
 	public Color branchColor = null;
 	public ArrayList<Color> branchBorderColors = new ArrayList<>();
@@ -129,7 +126,7 @@ public abstract class Node extends PetriNetElement {
 	/**
 	 * Metoda pozwala pobrać listę wszystkich punktów lokalizacji nazwy wierzchołka na arkuszu o określonym identyfikatorze.
 	 * @param sheetId (<b>int</b>) identyfikator arkusza
-	 * @param nameType  (GUIManager.locationMoveType) - ALPHA, BETA, GAMMA, DELTA
+	 * @param nameType (GUIManager.locationMoveType) - ALPHA, BETA, GAMMA, DELTA
 	 * @return (<b>ArrayList[Point]</b>) - lista punktów lokalizacji nazwy wierzchołka na wybranym arkuszu
 	 */
 	public ArrayList<Point> getNodeNamePositions(int sheetId, GUIManager.locationMoveType nameType) {
@@ -213,15 +210,6 @@ public abstract class Node extends PetriNetElement {
 				} else {
 					name = "t"+x;
 				}
-
-				/*
-				if(((Transition)this).getTransType() == TransitionType.PN) {
-					name = "t"+x;
-				} else if(this instanceof TransitionXTPN) {
-					xtpnID = x+"";
-					name = "t";
-				}
-				 */
 			} else {
 				int x = metanodes.indexOf(this);
 				name = "M"+x;
@@ -239,7 +227,7 @@ public abstract class Node extends PetriNetElement {
 		
 		int name_width = g.getFontMetrics().stringWidth(name);
 
-		// Node może mieć wiele EL (portal):
+		// Node może mieć wiele obiektów ElementLocation (portal):
 		ArrayList<Point> nodePoints = this.getNodePositions(sheetId);
 		ArrayList<Point> namesPoints = getNodeNamePositions(sheetId, GUIManager.locationMoveType.NAME); // lokalizacja przesunięcia nazwy
 		for (int i=0; i<nodePoints.size(); i++) {
@@ -264,12 +252,9 @@ public abstract class Node extends PetriNetElement {
 
 				if(this instanceof Transition) { //inaczej dla tranzycji
 					g.drawString(name, drawX, drawY+add_transY);
-					g.setFont(new Font("Tahoma", Font.BOLD, size - 2));
 					g.drawString(xtpnID, drawX+8+offset, drawY+add_transY+5);
-
 				} else if(this instanceof Place) { //inaczej dla miejsc
 					g.drawString(name, drawX, drawY+add_transY);
-					g.setFont(new Font("Tahoma", Font.BOLD, size - 2));
 					g.drawString(xtpnID, drawX+10+offset, drawY+add_transY+5);
 				}
 			} else {
@@ -311,7 +296,6 @@ public abstract class Node extends PetriNetElement {
 							gammaStr = "]";
 							g.drawString(gammaStr, drawX+width+width2, drawY);
 							 */
-							//String gammaStr = "\u03B3:" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMinValue(), franctionDigits) + " / " + gammaMaxVal;
 							String gammaStr = "\u03B3: [" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMinValue(), franctionDigits) + ", " + gammaMaxVal+"]";
 							g.drawString(gammaStr, drawX, drawY);
 						}
@@ -492,8 +476,6 @@ public abstract class Node extends PetriNetElement {
 						}
 					}
 				}
-
-
 			}
 		}
 	}

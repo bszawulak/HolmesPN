@@ -92,19 +92,15 @@ public final class ElementDraw {
 					if(portalColor.equals(new Color(224, 224, 224))) {
 						portalColor = Color.LIGHT_GRAY;
 					}
-					//if(!trans.defColor.equals(new Color(224, 224, 224))) {
-					//	normalColor = trans.defColor;
-					//}
 				}
 			}
 			
 			for (ElementLocation el : trans.getNodeLocations(sheetId)) { //rysowanie tranzycji
 				int radius = trans.getRadius();
-
 				g.setColor(Color.WHITE);
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, radius * 2, radius * 2);
 				
-				if(eds.view3d) {
+				if(eds.view3d) { //jeżeli widok '3D'
 					Color backup = g.getColor();
 
 					g.setColor(Color.LIGHT_GRAY);
@@ -250,7 +246,7 @@ public final class ElementDraw {
 							g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height-(trans.qSimBoxT.qSimFillValue-2));
 						}
 					}
-				} else {
+				} else { //if(trans.qSimBoxT.qSimDrawed && el.qSimDrawed)
 					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
 				}
 
@@ -262,7 +258,7 @@ public final class ElementDraw {
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
-				if (trans.isPortal()) {
+				if (trans.isPortal()) { //jeżeli tranzycja jest portalem
 					if( trans.getTransType() == TransitionType.TPN  ) {//|| trans.getTransType() == TransitionType.DPN ) {
 						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
 						g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
@@ -271,12 +267,15 @@ public final class ElementDraw {
 							g.setColor(normalColor);
 							g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 						} else {
-							g.setColor(lightSky);
-							g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
-							g.setColor(lightSky2);
-							g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
-							g.setColor(lightSky3);
-							g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
+							//Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, radius * 2, radius * 2);
+							g.drawRect(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
+
+							//g.setColor(lightSky);
+							//g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
+							//g.setColor(lightSky2);
+							//g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
+							//g.setColor(lightSky3);
+							//g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
 						}
 					}
 				}
@@ -307,7 +306,7 @@ public final class ElementDraw {
 
 						int intTimer = (int) trans.timeExtension.getTPNtimer();
 						int intFireTime = (int) trans.timeExtension.getTPNtimerLimit();
-						String timeInfo = ""+intTimer+"  /  "+intFireTime;
+						String timeInfo = intTimer+"  /  "+intFireTime;
 						
 						if(!trans.isActive())
 							timeInfo = "# / #";
@@ -665,7 +664,7 @@ public final class ElementDraw {
 
 				//wypełnianie kolorem:
 				if(el.isPortalSelected()) { //dla wszystkich innych ElLocations portalu właśnie klikniętego
-					g.setColor(portalSelColor);
+					//g.setColor(portalSelColor);
 				} else if (place.isGlowed_Sub()){
 					g.setColor(subNetColor);
 				} else{
@@ -697,7 +696,7 @@ public final class ElementDraw {
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
 				
-				if(place.isInvisible()) {
+				if(place.isInvisible()) { //knockout niezmienników
 					try {
 						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
 						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-4), 
@@ -738,19 +737,9 @@ public final class ElementDraw {
 
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 				}
-				
-				//RYSOWANIE PORTALU - OKRĄG W ŚRODKU
-				if (place.isPortal()) {
-					if(eds.snoopyMode) {
-						g.setColor(portalColor);
-						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-					} else {
-						g.setColor(Color.BLACK);
-						g.setStroke(new BasicStroke(1.5F));
-						g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
-						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
-					}
-				}
+
+				//ty był blok kodu [BLOK001]
+
 				
 				if(place.qSimBoxP.qSimDrawed && el.qSimDrawed) {
 					if(place.qSimBoxP.qSimTokens == 0) {
@@ -810,32 +799,42 @@ public final class ElementDraw {
 					g.setColor(oldC);
 				}
 
-				if (el.isPortalSelected() && !el.isSelected()) {
+				//[BLOK001] RYSOWANIE PORTALU - OKRĄG W ŚRODKU
+				if (place.isPortal()) {
+					if(eds.snoopyMode) {
+						g.setColor(portalColor);
+						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
+					} else {
+						g.setColor(Color.BLACK);
+						//g.setStroke(new BasicStroke(1.5F));
+						g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
+						//g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
+					}
+				}
+
+				if (el.isPortalSelected() && !el.isSelected()) { //jeżeli kliknięto miejsce-portal, ale NIE TEN elementLocation
 					g.setColor(normalColor);
 					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-1, nodeBounds.height-1);
-					
-					g.setColor(EditorResources.selectionColorLevel1);
-					g.setStroke(EditorResources.glowStrokeLevel1);
-					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
-					g.setColor(EditorResources.selectionColorLevel2);
-					g.setStroke(EditorResources.glowStrokeLevel2);
-					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					//wywalenie ciemnego kółka w środku
+					//g.setColor(EditorResources.selectionColorLevel1);
+					//g.setStroke(EditorResources.glowStrokeLevel1);
+					//g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					//g.setColor(EditorResources.selectionColorLevel2);
+					//g.setStroke(EditorResources.glowStrokeLevel2);
+					//g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					
 					if(eds.snoopyMode) {
 						g.setColor(portalSelColor); 
 						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 					} else {
-						g.setColor(portalSelColor);
-						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-						
+						//g.setColor(portalSelColor);
+						//g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 						g.setColor(Color.BLACK);
-						g.setStroke(new BasicStroke(1.5F));
-						g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
-						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
-						
+						//g.setStroke(new BasicStroke(1.5F));
+						g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
+						//g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
 					}
-					
 					drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.blue, xTPNplace);
 				}
 				
@@ -868,6 +867,7 @@ public final class ElementDraw {
 				}
 
 				//dubel
+				/*
 				if (place.isPortal()) {
 					if(eds.snoopyMode) {
 						g.setColor(portalColor);
@@ -879,6 +879,7 @@ public final class ElementDraw {
 						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
 					}
 				}
+				*/
 				
 				//TODO: COLORS
 				if (eds.color || place instanceof PlaceColored) {
@@ -1301,7 +1302,7 @@ public final class ElementDraw {
 		}
 		
 		if (arc.getWeight() > 1 || arc.getArcType() == TypeOfArc.COLOR) {
-			if(arc.accessBreaks().size() > 0) {
+			if(!arc.accessBreaks().isEmpty()) {
 				Point breakP = arc.accessBreaks().get(0);
 				
 				g.setFont(new Font("Tahoma", Font.PLAIN, 18));

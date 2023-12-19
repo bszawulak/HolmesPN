@@ -947,7 +947,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				}
 			}
 
-			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
+			//SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
 			getSimulator().resetSimulator();
 
 			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep(); //-1, jak wyżej
@@ -976,7 +976,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				((TransitionXTPN)trans).resetTimeVariables_xTPN();
 			}
 
-			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
+			//SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
 			getSimulatorXTPN().resetSimulator();
 
 			overlord.io.updateTimeStep(true, getSimulatorXTPN().getStepsCounterXTPN(), getSimulatorXTPN().getTimeCounterXTPN(), 0); //-1 po resecie symulatorów
@@ -1068,7 +1068,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				}
 			}
 
-			SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
+			//SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
 			getSimulator().resetSimulator();
 			getSimulatorXTPN().resetSimulator();
 			//setSimulator(new GraphicalSimulator(nt, this));
@@ -1691,7 +1691,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	@SuppressWarnings("unused")
 	private boolean checkIfEmpty() {
 		//TODO: UNUSED
-		if(getNodes().size() == 0) {
+		if(getNodes().isEmpty()) {
 			return true;
 		} else {
 			Object[] options = {"Load and replace project", "Cancel operation",};
