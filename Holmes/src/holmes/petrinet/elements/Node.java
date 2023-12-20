@@ -264,12 +264,12 @@ public abstract class Node extends PetriNetElement {
 
 				if(this instanceof Transition) { //inaczej dla tranzycji
 					g.drawString(name, drawX, drawY+add_transY);
-					g.setFont(new Font("Tahoma", Font.BOLD, size - 2));
+					//g.setFont(new Font("Tahoma", Font.BOLD, size - 2));
 					g.drawString(xtpnID, drawX+8+offset, drawY+add_transY+5);
 
 				} else if(this instanceof Place) { //inaczej dla miejsc
 					g.drawString(name, drawX, drawY+add_transY);
-					g.setFont(new Font("Tahoma", Font.BOLD, size - 2));
+					//g.setFont(new Font("Tahoma", Font.BOLD, size - 2));
 					g.drawString(xtpnID, drawX+10+offset, drawY+add_transY+5);
 				}
 			} else {

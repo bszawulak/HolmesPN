@@ -172,7 +172,7 @@ public final class ElementDraw {
 						g.setColor(EditorResources.selectionColorLevel3);
 						g.setStroke(EditorResources.glowStrokeLevel3);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-						
+
 						try {
 							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.black, xTPNtrans);
 						} catch (Exception ex) {
@@ -264,19 +264,21 @@ public final class ElementDraw {
 
 				if (trans.isPortal()) {
 					if( trans.getTransType() == TransitionType.TPN  ) {//|| trans.getTransType() == TransitionType.DPN ) {
-						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
-						g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
+						//g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
+						//g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
+						g.drawRect(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
 					} else {
 						if(eds.snoopyMode) {
 							g.setColor(normalColor);
 							g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 						} else {
-							g.setColor(lightSky);
-							g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
-							g.setColor(lightSky2);
-							g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
-							g.setColor(lightSky3);
-							g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
+							g.drawRect(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
+							//g.setColor(lightSky);
+							//g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
+							//g.setColor(lightSky2);
+							//g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
+							//g.setColor(lightSky3);
+							//g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
 						}
 					}
 				}
@@ -467,7 +469,7 @@ public final class ElementDraw {
 				if (el.isPortalSelected() && !el.isSelected()) {
 					g.setColor(Color.BLACK);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-	
+
 					g.setColor(EditorResources.selectionColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -476,15 +478,15 @@ public final class ElementDraw {
 					g.setStroke(EditorResources.glowStrokeLevel2);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.cyan, xTPNtrans);
-					
+
 					if(eds.snoopyMode) {
 						g.setColor(portalSelColor);
 						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 					} else {
-						g.setColor(Color.black);
-						g.setStroke(new BasicStroke(1.5F));
-						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
-						g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
+						//g.setColor(Color.black);
+						//g.setStroke(new BasicStroke(1.5F));
+						//g.drawOval(nodeBounds.x + 2, nodeBounds.y + 2, nodeBounds.width - 4, nodeBounds.height - 4);
+						//g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
 					}
 				}
 
@@ -979,7 +981,7 @@ public final class ElementDraw {
 				g.setColor(Color.black);
 				g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 				g.setColor(EditorResources.glowTransitonTextColor);
-				
+
 			}
 		}
 		return g;
