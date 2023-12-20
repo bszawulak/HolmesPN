@@ -42,10 +42,10 @@ public final class ElementDraw {
 	 */
 	private static void drawCrossHair(Graphics2D g, int x, int y, Color color, boolean xTPNelement){
 		if(xTPNelement) {
-			g.setColor(lightSky);
-		} else {
-			g.setColor(color);
+			//g.setColor(lightSky);
 		}
+
+		g.setColor(lightSky); //override
 
 		g.setStroke(new BasicStroke(4.0f));
 
@@ -204,7 +204,12 @@ public final class ElementDraw {
 				} else if(trans.drawGraphBoxT.isColorChanged()) { //klaster lub inny powód
 					g.setColor(trans.drawGraphBoxT.getTransitionNewColor());
 				} else if(el.isPortalSelected()) { //inny ELoc portalu:
-					g.setColor(EditorResources.selectionColorLevel3);
+
+					if(el.isSelected()) { //nie działa!
+						g.setColor(EditorResources.selectionColorLevel3);
+					} else {
+						g.setColor(normalColor);
+					}
 				} else {
 					g.setColor(normalColor);
 					if( ((Transition)node).getTransType() == TransitionType.TPN) {
@@ -250,7 +255,7 @@ public final class ElementDraw {
 							g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height-(trans.qSimBoxT.qSimFillValue-2));
 						}
 					}
-				} else {
+				} else { //bez tego tranzycje będą na biało, bez wypełnienia kolorem:
 					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
 				}
 
@@ -283,17 +288,6 @@ public final class ElementDraw {
 					}
 				}
 
-				//RAMKA dodać wyłączenie
-				/*
-				if(trans.borderFrame){
-					g.drawRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-					g.drawRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-4, nodeBounds.height-4);
-					g.drawRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width-6, nodeBounds.height-6);
-				}
-				*/
-
-				// -------- do tego miejsca wspólne dla Transition i TimeTransition --------
-				
 				//dla tranzycji czasowych, w tym XTPN (po else)
 				if(trans.getTransType() == TransitionType.TPN) {
 					int dpnTextOffset = -5;
@@ -467,18 +461,14 @@ public final class ElementDraw {
 				}
 				
 				if (el.isPortalSelected() && !el.isSelected()) {
-					g.setColor(Color.BLACK);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-					g.setColor(EditorResources.selectionColorLevel1);
-					g.setStroke(EditorResources.glowStrokeLevel1);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-					g.setColor(EditorResources.selectionColorLevel2);
-					g.setStroke(EditorResources.glowStrokeLevel2);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.cyan, xTPNtrans);
-
+					//g.setColor(Color.BLACK);
+					//g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					//g.setColor(EditorResources.selectionColorLevel1);
+					//g.setStroke(EditorResources.glowStrokeLevel1);
+					//g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+					//g.setColor(EditorResources.selectionColorLevel2);
+					//g.setStroke(EditorResources.glowStrokeLevel2);
+					//g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					if(eds.snoopyMode) {
 						g.setColor(portalSelColor);
 						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
@@ -488,6 +478,7 @@ public final class ElementDraw {
 						//g.drawOval(nodeBounds.x + 2, nodeBounds.y + 2, nodeBounds.width - 4, nodeBounds.height - 4);
 						//g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
 					}
+					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.cyan, xTPNtrans);
 				}
 
 				if(trans.branchColor != null){
