@@ -38,18 +38,21 @@ public final class ElementDraw {
 	 * @param x (<b>int</b>) poziom.
 	 * @param y (<b>int</b>) pion.
 	 * @param color (<b>Color</b>) kolor, a co?.
-	 * @param xTPNelement (<b>boolean</b>) true, jeśli XTPN.
+	 * @param light (<b>boolean</b>) true, jeśli XTPN.
 	 */
-	private static void drawCrossHair(Graphics2D g, int x, int y, Color color, boolean xTPNelement){
-		if(xTPNelement) {
-			//g.setColor(lightSky);
+	private static void drawCrossHair(Graphics2D g, int x, int y, Color color, boolean light){
+		g.setColor(color); //override
+
+		int bigger = 0;
+		if(light) {
+			g.setStroke(new BasicStroke(2.0f));
+			bigger++;
+		} else {
+			g.setStroke(new BasicStroke(4.0f));
 		}
 
-		g.setColor(lightSky); //override
 
-		g.setStroke(new BasicStroke(4.0f));
-
-		g.drawOval(x, y, 60, 60);
+		g.drawOval(x, y, 60+bigger, 60+bigger);
 		g.fillArc(x + 20, y + 41, 20, 20, -45, -90);
 		g.fillArc(x - 1, y + 20, 20, 20, -135, -90);
 		g.fillArc(x + 20, y - 1, 20, 20, -225, -90);
@@ -61,7 +64,6 @@ public final class ElementDraw {
 		g.fillArc(x + 35, y + 5, 20, 20, -270, -90);
 	}
 
-	//TODO: znacznik tranzycji
 	/**
 	 * Główna metoda statyczna odpowiedzialna za rysowanie węzłów sieci.
 	 * @param node (<b>Node</b>) obiekt węzła.
@@ -76,8 +78,7 @@ public final class ElementDraw {
 			Transition trans = (Transition)node;
 			boolean xTPNtrans = (node instanceof TransitionXTPN);//trans.isXTPNtransition();
 			Color portalColor = new Color(224,224,224);
-			Color portalSelColor = EditorResources.selectionColorLevel3;
-			Color normalColor = new Color(224,224,224);
+            Color normalColor = new Color(224,224,224);
 			Color tpnNormalColor = Color.GRAY;
 			
 			if(eds.nonDefColors) {
@@ -92,9 +93,6 @@ public final class ElementDraw {
 					if(portalColor.equals(new Color(224, 224, 224))) {
 						portalColor = Color.LIGHT_GRAY;
 					}
-					//if(!trans.defColor.equals(new Color(224, 224, 224))) {
-					//	normalColor = trans.defColor;
-					//}
 				}
 			}
 			
@@ -160,21 +158,20 @@ public final class ElementDraw {
 					}
 					
 					//NIGDY ELSE!:
-					if (el.isSelected() && !el.isPortalSelected()) {  //kliknięto tranzycję, ale nie portal
+					if (el.isSelected()) { // && !el.isPortalSelected()) {  //kliknięto dany ElementLocation
+						//błękitna poświata:
 						g.setColor(EditorResources.selectionColorLevel1);
 						g.setStroke(EditorResources.glowStrokeLevel1);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
 						g.setColor(EditorResources.selectionColorLevel2);
 						g.setStroke(EditorResources.glowStrokeLevel2);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
 						g.setColor(EditorResources.selectionColorLevel3);
 						g.setStroke(EditorResources.glowStrokeLevel3);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
-						try {
-							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.black, xTPNtrans);
+						try { //kliknięty element
+							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), lightSky, false);
 						} catch (Exception ex) {
 							GUIManager.getDefaultGUIManager().log("Error (272399642) | Exception:  "+ex.getMessage(), "error", true);
 						}
@@ -194,7 +191,9 @@ public final class ElementDraw {
 					g.setStroke(EditorResources.glowStrokeLevel3);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
-				
+
+
+				//blok wypełniania kwadratu tranzycji:
 				if (trans.drawGraphBoxT.isGlowed()) { //inwarianty
 					g.setColor(EditorResources.glowTransitonColorLevel3);
 					int row = 4;
@@ -203,19 +202,15 @@ public final class ElementDraw {
 					g.setColor(EditorResources.glowMTCTransitonColorLevel3);
 				} else if(trans.drawGraphBoxT.isColorChanged()) { //klaster lub inny powód
 					g.setColor(trans.drawGraphBoxT.getTransitionNewColor());
-				} else if(el.isPortalSelected()) { //inny ELoc portalu:
-
-					if(el.isSelected()) { //nie działa!
-						g.setColor(EditorResources.selectionColorLevel3);
-					} else {
-						g.setColor(normalColor);
-					}
+				} else if(el.isSelected()) { //czy kliknięto, wtedy błękitna poświata
+					g.setColor(EditorResources.selectionColorLevel3);
 				} else {
 					g.setColor(normalColor);
 					if( ((Transition)node).getTransType() == TransitionType.TPN) {
 						g.setColor(tpnNormalColor);
 					}
 				}
+				//wypełnianie:
 				Color back = g.getColor(); // te 4 linie: lekki trójwymiar, ładniejsza tranzycja
 				g.setColor(Color.white);
 				g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -259,6 +254,7 @@ public final class ElementDraw {
 					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
 				}
 
+				//rysowanie zewnętrznej ramki:
 				if(trans.getTransType() == TransitionType.CPN) {
 					g.setColor(Color.BLUE);
 				} else {
@@ -423,27 +419,25 @@ public final class ElementDraw {
 					g.setColor(oldC);
 				}
 				
-				if(trans.isKnockedOut()) {
+				if(trans.isKnockedOut()) { //chodzi tu o knockout symulacyjny - błyskawica
 					try {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/offlineTransition2.png")));
-						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
-								nodeBounds.y-(trans.getRadius()+2));
+						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), nodeBounds.y-(trans.getRadius()+2));
 					} catch (Exception ex) {
 						GUIManager.getDefaultGUIManager().log("Error (858049410) | Exception:  "+ex.getMessage(), "error", true);
 					}
 				}
 				
-				if(trans.isInvisible()) {
+				if(trans.isInvisible()) { //chodzi o knockout t-inwariantów, przekreślone oko
 					try {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility.png")));
-						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
-								nodeBounds.y-(trans.getRadius()+2));
+						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), nodeBounds.y-(trans.getRadius()+2));
 					} catch (Exception ex) {
 						GUIManager.getDefaultGUIManager().log("Error (856997329) | Exception:  "+ex.getMessage(), "error", true);
 					}
 				}
 				
-				//dodatkowy tekst nad tranzycją
+				//dodatkowy tekst nad tranzycją:
 				if(trans.drawGraphBoxT.isShowedAddText()) {
 					String txt = trans.drawGraphBoxT.returnAddText();
 					
@@ -459,26 +453,14 @@ public final class ElementDraw {
 					g.setFont(old);
 					g.setColor(oldC);
 				}
-				
-				if (el.isPortalSelected() && !el.isSelected()) {
-					//g.setColor(Color.BLACK);
-					//g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					//g.setColor(EditorResources.selectionColorLevel1);
-					//g.setStroke(EditorResources.glowStrokeLevel1);
-					//g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					//g.setColor(EditorResources.selectionColorLevel2);
-					//g.setStroke(EditorResources.glowStrokeLevel2);
-					//g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
+
+				if (el.isPortalSelected() && !el.isSelected()) { //kliknięto ten portal, ale NIE TEN ElementLocation
 					if(eds.snoopyMode) {
-						g.setColor(portalSelColor);
+						g.setColor(EditorResources.selectionColorLevel3);
 						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-					} else {
-						//g.setColor(Color.black);
-						//g.setStroke(new BasicStroke(1.5F));
-						//g.drawOval(nodeBounds.x + 2, nodeBounds.y + 2, nodeBounds.width - 4, nodeBounds.height - 4);
-						//g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
 					}
-					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.cyan, xTPNtrans);
+					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), lightSky2, true);
 				}
 
 				if(trans.branchColor != null){
@@ -577,13 +559,11 @@ public final class ElementDraw {
 					
 					g.setFont(currentFont);
 				}
-
 			}
-		} else if(node instanceof Place) { // MIEJSCA  //TODO: znacznik miejsc
+		} else if(node instanceof Place) { //rysowanie miejsca
 			Place place = (Place)node;
-			boolean xTPNplace = (node instanceof PlaceXTPN); //place.isXTPNplace();
 			Color portalColor = Color.WHITE;
-			Color portalSelColor = EditorResources.selectionColorLevel3;
+			//Color portalSelColor = EditorResources.selectionColorLevel3;
             Color subNetColor = EditorResources.glowMTCTransitonColorLevel3;
 			Color normalColor = Color.WHITE;
 			
@@ -628,7 +608,8 @@ public final class ElementDraw {
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
 
-				if (el.isSelected() && !el.isPortalSelected()) {
+				if (el.isSelected() && !el.isPortalSelected()) { //dla miejsca ale nie portalu:
+					//lekka błękitna poświata wokół:
 					g.setColor(EditorResources.selectionColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -642,11 +623,11 @@ public final class ElementDraw {
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					
 					try {
-						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.black, xTPNplace);
+						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), lightSky, false);
 					} catch (Exception ex) {
 						GUIManager.getDefaultGUIManager().log("Error (777866480) | Exception:  "+ex.getMessage(), "error", true);
 					}
-				} else if (el.isPortalSelected()) {
+				} else if (el.isPortalSelected()) { //jeżeli kliknięto portal
 					g.setColor(EditorResources.selectionColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -658,7 +639,7 @@ public final class ElementDraw {
 
 				//wypełnianie kolorem:
 				if(el.isPortalSelected()) { //dla wszystkich innych ElLocations portalu właśnie klikniętego
-					g.setColor(portalSelColor);
+					//g.setColor(portalSelColor);
 				} else if (place.isGlowed_Sub()){
 					g.setColor(subNetColor);
 				} else{
@@ -701,7 +682,7 @@ public final class ElementDraw {
 				}
 
 				// _XTPN symbol
-				if( place instanceof PlaceXTPN ) { //miejsce XTPN
+				if(place instanceof PlaceXTPN ) { //miejsce XTPN
 					//klepsydra:
 					if( ((PlaceXTPN)place).isGammaModeActive() ) {
 						g.setColor(lightGray);
@@ -739,9 +720,9 @@ public final class ElementDraw {
 						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 					} else {
 						g.setColor(Color.BLACK);
-						g.setStroke(new BasicStroke(1.5F));
-						g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
-						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
+						//g.setStroke(new BasicStroke(1.5F));
+						g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
+						//g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
 					}
 				}
 				
@@ -803,35 +784,15 @@ public final class ElementDraw {
 					g.setColor(oldC);
 				}
 
-				if (el.isPortalSelected() && !el.isSelected()) {
-					g.setColor(normalColor);
-					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-1, nodeBounds.height-1);
-					
-					g.setColor(EditorResources.selectionColorLevel1);
-					g.setStroke(EditorResources.glowStrokeLevel1);
-					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
-					g.setColor(EditorResources.selectionColorLevel2);
-					g.setStroke(EditorResources.glowStrokeLevel2);
-					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					
-					if(eds.snoopyMode) {
-						g.setColor(portalSelColor); 
+				if (el.isPortalSelected() && !el.isSelected()) { //kliknięto portal, ale NIE TEN ElementLocation
+					if(eds.snoopyMode) { //portal selected color
+						g.setColor(EditorResources.selectionColorLevel3);
 						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-					} else {
-						g.setColor(portalSelColor);
-						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-						
-						g.setColor(Color.BLACK);
-						g.setStroke(new BasicStroke(1.5F));
-						g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
-						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
-						
 					}
-					
-					drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.blue, xTPNplace);
+					drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), lightSky2, true);
 				}
-				
+
+				//TOKENY TUTAJ!
 				drawTokens(g, place, nodeBounds);
 
 				if(place.branchColor != null){
@@ -861,6 +822,7 @@ public final class ElementDraw {
 				}
 
 				//dubel
+				/*
 				if (place.isPortal()) {
 					if(eds.snoopyMode) {
 						g.setColor(portalColor);
@@ -872,6 +834,8 @@ public final class ElementDraw {
 						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
 					}
 				}
+
+				 */
 				
 				//TODO: COLORS
 				if (eds.color || place instanceof PlaceColored) {
