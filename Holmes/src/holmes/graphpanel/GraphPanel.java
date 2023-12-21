@@ -295,6 +295,13 @@ public class GraphPanel extends JComponent {
 		for (Arc a : getArcs()) {
 			a.draw(g2d, this.sheetId, getZoom(), eds);
 		}
+
+		if(overlord.getSettingsManager().getValue("editorPortalLines").equals("1")) {
+			for (Node n : getNodes()) {
+				n.drawPortalLines(g2d, this.sheetId, eds);
+			}
+		}
+
 		if (this.isSimulationActive()) {
 			for (Arc a : getArcs()) {
 				a.drawSimulationMovingToken(g2d, this.sheetId);

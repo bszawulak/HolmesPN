@@ -29,8 +29,8 @@ public class SettingsManager {
     /**
      * Metoda zwraca wartość związaną z podawanym ID.
      *
-     * @param ID String - identyfikator właściwości
-     * @return String - właściwość
+     * @param ID <b>String</b> - identyfikator właściwości
+     * @return <b>String</b> - właściwość
      */
     public String getValue(String ID) {
         for (Setting s : settings) {
@@ -43,8 +43,8 @@ public class SettingsManager {
     /**
      * Metoda ustawia nową wartość związaną z podawanym ID.
      *
-     * @param ID    String - identyfikator właściwości
-     * @param value String - nowa wartość właściwości
+     * @param ID    <b>String</b> - identyfikator właściwości
+     * @param value <b>String</b> - nowa wartość właściwości
      * @param save  boolean - jeśli true to od razu zapis do pliku
      * @return int - 0 jeśli znaleziono id, -1 jeśli nie - dodawana jest wtedy od razu NOWA
      * właściwość pod podanym ID
@@ -71,9 +71,8 @@ public class SettingsManager {
 
     /**
      * Metoda dodaje nową właściwość z ID oraz wartością
-     *
-     * @param ID    String - unikalny ID
-     * @param value String - wartość właściwości
+     * @param ID    <b>String</b> - unikalny ID
+     * @param value <b>String</b> - wartość właściwości
      */
     private void addSetting(ArrayList<Setting> settings, String ID, String value) {
         for (Setting s : settings) {
@@ -141,6 +140,7 @@ public class SettingsManager {
         checkAndFix(settingsNew, "editorSnoopyCompatibleMode", "1");
         checkAndFix(settingsNew, "editorShowShortNames", "0");
         checkAndFix(settingsNew, "editorExportCheckAndWarning", "1");
+        checkAndFix(settingsNew, "editorPortalLines", "1");
 
         try {
             String tmp = getValue("editorGraphFontSize");
@@ -180,12 +180,11 @@ public class SettingsManager {
     }
 
     /**
-     * Metoda sprawdza, czy dane ustawienie istnieje - jeśli tak, dodaje je do nowej listy, jeśli nie - ustawia
+     * Sprawdzamy, czy dane ustawienie istnieje - jeśli tak, dodajemy je do nowej listy, jeśli nie - ustawiamy
      * jego nową wartość na domyślną.
-     *
-     * @param settings ArrayList[Setting] - nowa tablica ustawień
-     * @param ID       String - identyfikator ustawienia
-     * @param value    String - wartość domyślna, jeśli nie udało się wczytać ustawienia z danym ID
+     * @param settings ArrayList[<b>Setting</b>] - nowa tablica ustawień
+     * @param ID <b>String</b> - identyfikator ustawienia
+     * @param value <b>String</b> - wartość domyślna, jeśli nie udało się wczytać ustawienia z danym ID
      */
     private void checkAndFix(ArrayList<Setting> settings, String ID, String value) {
         if (getValue(ID) == null)
@@ -215,7 +214,7 @@ public class SettingsManager {
     /**
      * Metoda wczytuje plik właściwości albo go odtwarza w razie braku.
      *
-     * @param error boolean - true, jeśli wywołała samą siebie, bo nie dało się wczytać pliku, w takim
+     * @param error <b>boolean</b> - true, jeśli wywołała samą siebie, bo nie dało się wczytać pliku, w takim
      *              wypadku podejmowana jest jeszcze TYLKO jedna próba, bez dalszej rekurencji
      */
     private void readSettingsFile(boolean error) {
@@ -257,8 +256,8 @@ public class SettingsManager {
     /**
      * Metoda odpowiedzialna za wczytanie właściwości i jej ID w lini (ID do pierwszej spacji).
      *
-     * @param line String - linia z pliku
-     * @return Setting - właściwość programu
+     * @param line <b>String</b> - linia z pliku
+     * @return <b>Setting</b> - właściwość programu
      */
     private Setting convertLineToSetting(String line) {
         try {

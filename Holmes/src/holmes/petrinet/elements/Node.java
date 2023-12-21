@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.settings.SettingsManager;
+import holmes.graphpanel.EditorResources;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.utilities.Tools;
@@ -175,6 +176,54 @@ public abstract class Node extends PetriNetElement {
 		int width = g.getFontMetrics().stringWidth(getName());
 		for (Point p : this.getNodePositions(sheetId)) {
 			g.drawString(getName(), p.x - width / 2, p.y + getRadius() + 15);
+		}
+	}
+
+	/**
+	 * Malowanie linii pomiędzy lokacjami węzła, jeśli jest to portal.
+	 * @param g <b>Graphics2D</b>
+	 * @param sheetId <b>int</b>
+	 * @param eds <b>ElementDrawSettings</b>
+	 */
+	public void drawPortalLines(Graphics2D g, int sheetId, ElementDrawSettings eds) {
+		g.setColor(EditorResources.selectionColorLevel2);
+		g.setStroke(EditorResources.glowStrokeLevel2);
+		if(this instanceof Place) {
+			Place p = (Place)this;
+			if(p.isPortal()) {
+				ArrayList<ElementLocation> nodeLocations = this.getNodeLocations(sheetId);
+				//iterate nodeLocation to find the selected one
+				for(int i=0; i<nodeLocations.size(); i++) { //po wszystkich węzłach
+					if(nodeLocations.get(i).isSelected()) { //czy jakiś jest w ogóle klinięty
+						Point nodePoint = nodeLocations.get(i).getPosition(); //znajdź lokację
+                        for (ElementLocation nodeLocation : nodeLocations) { //iteruj od nowa po wszystkich
+                            if (nodeLocations.get(i) == nodeLocation) //z wyjątkiem klikniętego
+                                continue;
+                            Point nodePoint2 = nodeLocation.getPosition(); //znajdź lokację drugiego
+                            //g.setColor(Color.black);
+                            g.drawLine(nodePoint.x, nodePoint.y, nodePoint2.x, nodePoint2.y); //narysuj linię
+                        }
+						return;
+					}
+				}
+			}
+		} else if (this instanceof Transition) {
+			Transition t = (Transition)this;
+			ArrayList<ElementLocation> nodeLocations = this.getNodeLocations(sheetId);
+			//iterate nodeLocation to find the selected one
+			for(int i=0; i<nodeLocations.size(); i++) { //po wszystkich węzłach
+				if(nodeLocations.get(i).isSelected()) { //czy jakiś jest w ogóle klinięty
+					Point nodePoint = nodeLocations.get(i).getPosition(); //znajdź lokację
+                    for (ElementLocation nodeLocation : nodeLocations) { //iteruj od nowa po wszystkich
+                        if (nodeLocations.get(i) == nodeLocation) //z wyjątkiem klikniętego
+                            continue;
+                        Point nodePoint2 = nodeLocation.getPosition(); //znajdź lokację drugiego
+                        //g.setColor(Color.black);
+                        g.drawLine(nodePoint.x, nodePoint.y, nodePoint2.x, nodePoint2.y); //narysuj linię
+                    }
+					return;
+				}
+			}
 		}
 	}
 	
