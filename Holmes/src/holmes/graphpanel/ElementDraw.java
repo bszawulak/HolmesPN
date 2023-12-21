@@ -254,15 +254,6 @@ public final class ElementDraw {
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
-				if (trans.isPortal()) { //rysowanie wewnętrznej ramki:
-					if(eds.snoopyMode) {
-						g.setColor(normalColor);
-						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-					} else {
-						g.drawRect(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
-					}
-				}
-
 				//dla tranzycji czasowych, w tym XTPN (po else)
 				timeTransitionsSpecialFeatures(g, trans, nodeBounds);
 
@@ -330,8 +321,8 @@ public final class ElementDraw {
 				
 				if(trans.isInvisible()) { //chodzi o knockout t-inwariantów, przekreślone oko
 					try {
-						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility.png")));
-						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), nodeBounds.y-(trans.getRadius()+2));
+						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility2.png")));
+						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()-10), nodeBounds.y-(trans.getRadius()-8));
 					} catch (Exception ex) {
 						GUIManager.getDefaultGUIManager().log("Error (856997329) | Exception:  "+ex.getMessage(), "error", true);
 					}
@@ -361,6 +352,15 @@ public final class ElementDraw {
 						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 					}
 					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), lightSky2, true);
+				}
+
+				if (trans.isPortal()) { //rysowanie wewnętrznej ramki:
+					if(eds.snoopyMode) {
+						g.setColor(normalColor);
+						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
+					} else {
+						g.drawRect(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
+					}
 				}
 
 				if(trans.branchColor != null){
@@ -503,15 +503,6 @@ public final class ElementDraw {
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
-				if (place.isPortal()) { //rysowanie wewnętrznej ramki:
-					if(eds.snoopyMode) {
-						g.setColor(portalColor);
-						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-					} else {
-						//g.setColor(Color.BLACK);
-						g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
-					}
-				}
 
 				//w czasie sumulacji miejsca mogą zmieniać kolory:
 				if(eds.crazyColors && !(place instanceof PlaceXTPN)) {
@@ -525,9 +516,8 @@ public final class ElementDraw {
 				if(place.isInvisible()) {
 					try {
 						//BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
-						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility.png")));
-						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-4), 
-								nodeBounds.y-(place.getRadius()-3));
+						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility2.png")));
+						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-15), nodeBounds.y-(place.getRadius()-13));
 					} catch (Exception ex) {
 						GUIManager.getDefaultGUIManager().log("Error (372587144) | Exception:  "+ex.getMessage(), "error", true);
 					}
@@ -629,6 +619,17 @@ public final class ElementDraw {
 						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 					}
 					drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), lightSky2, true);
+				}
+
+				//rysowanie wewnętrznej ramki:
+				if (place.isPortal()) {
+					if(eds.snoopyMode) {
+						g.setColor(portalColor);
+						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
+					} else {
+						//g.setColor(Color.BLACK);
+						g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
+					}
 				}
 
 				//TOKENY TUTAJ!
