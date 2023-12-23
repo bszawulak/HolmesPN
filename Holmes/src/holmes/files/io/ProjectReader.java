@@ -119,7 +119,7 @@ public class ProjectReader {
 				return false;
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 		return status;
@@ -415,10 +415,8 @@ public class ProjectReader {
 						} else {
 							nodes.add(transition);
 						}
-
 						transitionsProcessed++;
 					}
-
 				}
 				//przeczytano tranzycje
 			}
@@ -584,6 +582,34 @@ public class ProjectReader {
 					place.setTokensNumber(tokens);
 				} catch (Exception exc) {
 					overlord.log("Tokens reading failed for place "+placesProcessed, "error", true);
+					place.setTokensNumber(0);
+				}
+				return;
+			}
+
+			query = "Place SSAvalue:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				try {
+					double ssaValue = Double.parseDouble(line);
+					place.setSSAvalue(ssaValue);
+				} catch (Exception exc) {
+					overlord.log("SSA value reading failed for place "+placesProcessed, "error", true);
+					place.setTokensNumber(0);
+				}
+				return;
+			}
+
+			query = "Place SSAconcStatus:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				try {
+					boolean isConc = Boolean.parseBoolean(line);
+					place.setSSAconcentrationStatus(isConc);
+				} catch (Exception exc) {
+					overlord.log("SSA concentration status reading failed for place "+placesProcessed, "error", true);
 					place.setTokensNumber(0);
 				}
 				return;
@@ -1994,7 +2020,7 @@ public class ProjectReader {
 			
 			if((readedLine /3) > statesMngr.accessStateMatrix().size()) {
 				overlord.log("Error reading state vector number "+(readedLine), "error", true);
-				if(statesMngr.accessStateMatrix().size() == 0) {
+				if(statesMngr.accessStateMatrix().isEmpty()) {
 					statesMngr.createCleanStatePN();
 				}
 			}
@@ -2097,7 +2123,7 @@ public class ProjectReader {
 			}
 			if((readedLine /3) > statesMngr.accessStateMatrix().size()) {
 				overlord.log("Error reading state XTPN vector number "+(readedLine), "error", true);
-				if(statesMngr.accessStateMatrix().size() == 0) {
+				if(statesMngr.accessStateMatrix().isEmpty()) {
 					statesMngr.createCleanStatePN();
 				}
 			}
@@ -2199,7 +2225,7 @@ public class ProjectReader {
 				}
 			} catch (Exception e) {
 				overlord.log("Operation failed, wrong SPN data in line "+(readedLine), "error", true);
-				if(frateMngr.accessSPNmatrix().size() == 0) {
+				if(frateMngr.accessSPNmatrix().isEmpty()) {
 					frateMngr.createCleanSPNdataVector();
 				}
 			}
@@ -2207,7 +2233,7 @@ public class ProjectReader {
 			if(readProtocol == 0) {
 				if((readedLine/4) > frateMngr.accessSPNmatrix().size()) {
 					overlord.log("Error: SPN vector could not be read. Creating clean vector.", "error", true);
-					if(frateMngr.accessSPNmatrix().size() == 0) {
+					if(frateMngr.accessSPNmatrix().isEmpty()) {
 						frateMngr.createCleanSPNdataVector();
 					} else {
 						frateMngr.reset(false); //false!!!
@@ -2216,7 +2242,7 @@ public class ProjectReader {
 				}
 			} else {
 				if((readedLine/3) > frateMngr.accessSPNmatrix().size()) {
-					if(frateMngr.accessSPNmatrix().size() == 0) {
+					if(frateMngr.accessSPNmatrix().isEmpty()) {
 						frateMngr.createCleanSPNdataVector();
 						overlord.log("Error: SPN vector could not be read. Creating clean vector.", "error", true);
 					} else {
@@ -2340,7 +2366,7 @@ public class ProjectReader {
 			
 			if((readedLine /3) > ssaMngr.accessSSAmatrix().size()) {
 				overlord.log("Error reading state vector number "+(readedLine), "error", true);
-				if(ssaMngr.accessSSAmatrix().size() == 0) {
+				if(ssaMngr.accessSSAmatrix().isEmpty()) {
 					ssaMngr.createCleanSSAvector();
 				}
 			}

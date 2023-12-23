@@ -82,7 +82,7 @@ public class ProjectWriter {
 			Date date = new Date();
 			bw.write("Project name: "+projName+newline);
 			bw.write("Date: "+dateFormat.format(date)+newline);
-			bw.write("Net type: "+projectCore.getProjectType()+""+newline);
+			bw.write("Net type: "+projectCore.getProjectType()+newline);
 			
 			bw.write("<Project blocks>"+newline);
 			bw.write("  <Subnets>"+newline);
@@ -174,6 +174,8 @@ public class ProjectWriter {
 
 				bw.write(spaces(sp)+"<Place comment:"+Tools.convertToCode(place.getComment())+">"+newline); //komentarz
 				bw.write(spaces(sp)+"<Place tokens:"+place.getTokensNumber()+">"+newline); //tokeny
+				bw.write(spaces(sp)+"<Place SSAvalue:"+place.getSSAvalue()+">"+newline); //SSA value
+				bw.write(spaces(sp)+"<Place SSAconcStatus:"+place.isSSAconcentration()+">"+newline); //czy SSA mole czy koncentracja w roztworze
 
 				if(XTPNdataMode) {
 					//bw.write(spaces(sp) + "<Place XTPN status:" + ((PlaceXTPN)place).isXTPNplace() + ">" + newline); //czy to miejsce XTPN?
@@ -427,7 +429,7 @@ public class ProjectWriter {
 							int weight = arc.getWeight();
 
 							StringBuilder brokenLine = new StringBuilder();
-							if (arc.accessBreaks().size() > 0) {
+							if (!arc.accessBreaks().isEmpty()) {
 								brokenLine.append(";");
 								for (Point point : arc.accessBreaks()) {
 									brokenLine.append(point.x);
@@ -442,7 +444,7 @@ public class ProjectWriter {
 
 							boolean isColored = arc.getArcType() == TypeOfArc.COLOR;
 
-							String coloredWeights = "" + arc.getColorWeight(0) + ":" + arc.getColorWeight(1) + ":" + arc.getColorWeight(2) + ":"
+							String coloredWeights = arc.getColorWeight(0) + ":" + arc.getColorWeight(1) + ":" + arc.getColorWeight(2) + ":"
 									+ arc.getColorWeight(3) + ":" + arc.getColorWeight(4) + ":" + arc.getColorWeight(5);
 
 							if(isColored) {
@@ -507,7 +509,7 @@ public class ProjectWriter {
 							int weight = arc.getWeight();
 
 							StringBuilder brokenLine = new StringBuilder();
-							if (arc.accessBreaks().size() > 0) {
+							if (!arc.accessBreaks().isEmpty()) {
 								brokenLine.append(";");
 								for (Point point : arc.accessBreaks()) {
 									brokenLine.append(point.x);
@@ -522,7 +524,7 @@ public class ProjectWriter {
 
 							boolean isColored = arc.getArcType() == TypeOfArc.COLOR;
 
-							String coloredWeights = "" + arc.getColorWeight(0) + ":" + arc.getColorWeight(1) + ":" + arc.getColorWeight(2) + ":"
+							String coloredWeights = arc.getColorWeight(0) + ":" + arc.getColorWeight(1) + ":" + arc.getColorWeight(2) + ":"
 									+ arc.getColorWeight(3) + ":" + arc.getColorWeight(4) + ":" + arc.getColorWeight(5);
 
 							if(isColored) {
@@ -629,7 +631,7 @@ public class ProjectWriter {
 				Transition transition = transitions.get(t);
 				ArrayList<FunctionContainer> fVector = transition.fpnExtension.accessFunctionsList();
 				for(FunctionContainer fc : fVector) {
-					if(fc.simpleExpression.length() == 0)
+					if(fc.simpleExpression.isEmpty())
 						continue;
 					
 					bw.write(spaces(sp)+"<T"+t+";"+fc.fID+";"+fc.simpleExpression+";"+fc.correct+";"+fc.enabled+">"+newline);
@@ -675,7 +677,7 @@ public class ProjectWriter {
 			for(int i=0; i<invNumber; i++) {
 				sp = 4;
 				ArrayList<Integer> invariant = t_invariantsMatrix.get(i);
-				StringBuilder line = new StringBuilder("" + i + ";");
+				StringBuilder line = new StringBuilder(i + ";");
 				
 				for(int it=0; it<invSize; it++) {
 					line.append(invariant.get(it)).append(";");
@@ -727,7 +729,7 @@ public class ProjectWriter {
 			for(int i=0; i<invNumber; i++) {
 				sp = 4;
 				ArrayList<Integer> invariant = p_invariantsMatrix.get(i);
-				StringBuilder line = new StringBuilder("" + i + ";");
+				StringBuilder line = new StringBuilder(i + ";");
 				
 				for(int it=0; it<invSize; it++) {
 					line.append(invariant.get(it)).append(";");
@@ -778,7 +780,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<MCT: "+mctNumber+">"+newline);
 			for (ArrayList<Transition> mctDatum : mctData) {
 				sp = 4;
-				if (mctDatum.size() == 0) {
+				if (mctDatum.isEmpty()) {
 					bw.write(";" + newline);
 					continue;
 				}
@@ -818,7 +820,7 @@ public class ProjectWriter {
 			int sp = 2;
 			int statesNumber = statesMatrix.size();
 	
-			if(places.size() > 0) { 
+			if(!places.isEmpty()) {
 				bw.write(spaces(sp)+"<States: "+statesNumber+">"+newline);
 				for (StatePlacesVector vector : statesMatrix) {
 					sp = 4;
@@ -857,7 +859,7 @@ public class ProjectWriter {
 			int sp = 2;
 			int statesNumber = statesMatrixXTPN.size();
 
-			if(places.size() > 0) {
+			if(!places.isEmpty()) {
 				bw.write(spaces(sp)+"<States: "+statesNumber+">"+newline);
 				StringBuilder stateLine = new StringBuilder();
 				String type;
@@ -889,7 +891,7 @@ public class ProjectWriter {
 						} else {
 							boolean isXTPNplace = multisetMobject.isPlaceStoredAsGammaActive(placeIndex);
 							if(isXTPNplace) {
-								if(multisetK.size() == 0) {
+								if(multisetK.isEmpty()) {
 									stateLine.append("-1.0;");
 								} else {
 									int counter = 0;
@@ -939,7 +941,7 @@ public class ProjectWriter {
 			int sp = 2;
 			int frNumber = firingRatesMatrix.size();
 	
-			if(transitions.size()>0) {
+			if(!transitions.isEmpty()) {
 				bw.write(spaces(sp)+"<FRvectors: "+frNumber+">"+newline);
 				for (SPNdataVector ratesMatrix : firingRatesMatrix) {
 					sp = 4;
@@ -989,7 +991,7 @@ public class ProjectWriter {
 			int sp = 2;
 			int ssaNumber = ssaMatrix.size();
 	
-			if(places.size() > 0) {
+			if(!places.isEmpty()) {
 				bw.write(spaces(sp)+"<SSA vectors: "+ssaNumber+">"+newline);
 				for (SSAplacesVector matrix : ssaMatrix) {
 					sp = 4;

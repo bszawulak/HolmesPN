@@ -35,6 +35,7 @@ public class Place extends Node {
 
 	//SSA:
 	protected double ssaValue = 0.0;
+	protected boolean isConcentration = false;
 
 	/**
 	 * Konstruktor obiektu miejsca sieci.
@@ -235,5 +236,21 @@ public class Place extends Node {
 	 */
 	public double getSSAvalue() {
 		return this.ssaValue;
+	}
+
+	/**
+	 * Ustawia status dla ssaValue - czy mole czy koncentracja na litr
+	 * @param value (<b>double</b>) nowa wartość.
+	 */
+	public void setSSAconcentrationStatus(boolean value) {
+		this.isConcentration = value;
+	}
+
+	/**
+	 * Zwraca aktualny status dla ssaValue - czy mole czy koncentracja na litr.
+	 * @return (<b>double</b>) - liczba cząstek
+	 */
+	public boolean isSSAconcentration() {
+		return this.isConcentration;
 	}
 }
