@@ -60,7 +60,7 @@ public final class InvariantsTools {
 	 * @return ArrayList[ArrayList[Integer]] - macierz wyjściowa
 	 */
 	public static ArrayList<ArrayList<Integer>> transposeMatrix(ArrayList<ArrayList<Integer>> matrix) {
-		if(matrix == null || matrix.size() == 0)
+		if(matrix == null || matrix.isEmpty())
 			return null;
 		
 		//int rows = matrix.size();
@@ -84,7 +84,7 @@ public final class InvariantsTools {
 	 * @return ArrayList[ArrayList[Integer]] - macierz 0-01
 	 */
 	public static ArrayList<ArrayList<Integer>> returnBinaryMatrix(ArrayList<ArrayList<Integer>> matrix) {
-		if(matrix == null || matrix.size() == 0)
+		if(matrix == null || matrix.isEmpty())
 			return null;
 		
 		//int rows = matrix.size();
@@ -916,7 +916,7 @@ public final class InvariantsTools {
 	public static ArrayList<Integer> detectCovered(ArrayList<ArrayList<Integer>> invMatrix) {
 		ArrayList<Integer> coveredTransSet = new ArrayList<Integer>();
 		
-		if(invMatrix.size() > 0) {
+		if(!invMatrix.isEmpty()) {
 			int invSize = invMatrix.get(0).size();
 			for (ArrayList<Integer> inv : invMatrix) {
 				for(int t=0; t<invSize; t++) {
@@ -943,7 +943,7 @@ public final class InvariantsTools {
 		ArrayList<Integer> uncoveredTransSet = null;
 		ArrayList<Integer> coveredSet = detectCovered(invMatrix);
 		
-		if(invMatrix != null && invMatrix.size() > 0) {
+		if(invMatrix != null && !invMatrix.isEmpty()) {
 			int invSize = invMatrix.get(0).size();
 			uncoveredTransSet = new ArrayList<Integer>();
 			for(int t=0; t<invSize; t++) {
@@ -953,7 +953,7 @@ public final class InvariantsTools {
 		} else {
 			if(t_inv) {
 				ArrayList<Transition> trans = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-				if(trans != null && trans.size()>0) {
+				if(trans != null && !trans.isEmpty()) {
 					int transSize = trans.size();
 					uncoveredTransSet = new ArrayList<Integer>();
 					for(int t=0; t<transSize; t++) {
@@ -962,7 +962,7 @@ public final class InvariantsTools {
 				}
 			} else {
 				ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-				if(places != null && places.size()>0) {
+				if(places != null && !places.isEmpty()) {
 					int placesSize = places.size();
 					uncoveredTransSet = new ArrayList<Integer>();
 					for(int p=0; p<placesSize; p++) {
@@ -985,7 +985,7 @@ public final class InvariantsTools {
 		
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 		
-		if (invMatrix != null && invMatrix.size() > 0) {
+		if (invMatrix != null && !invMatrix.isEmpty()) {
 			invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
 			if (transitions != null && invMatrix.get(0).size() == transitions.size()) {
 				ArrayList<InvariantTransition> currentInvariant;
@@ -1037,11 +1037,19 @@ public final class InvariantsTools {
 	 * @return int - największy wspólny dzielnik
 	 */
 	public static int nwd(int x, int y) {
+		/*
 		while (x != y) {
 			if (x > y)
 				x -= y;
 			else
 				y -= x;
+		}*/
+
+		//or:
+		while (y != 0) {
+			int temp = y;
+			y = x % y;
+			x = temp;
 		}
 		return x;
 	}
@@ -1111,7 +1119,7 @@ public final class InvariantsTools {
 	 */
 	public static ArrayList<Integer> getFrequency(ArrayList<ArrayList<Integer>> invariants, boolean mmMode) {
 		ArrayList<Integer> frequency = new ArrayList<Integer>();
-		if(invariants == null || invariants.size() ==0) {
+		if(invariants == null || invariants.isEmpty()) {
 			return frequency;
 		}
 		
@@ -1144,7 +1152,7 @@ public final class InvariantsTools {
 	 */
 	public static ArrayList<Integer> getFrequencyRealInvariants(ArrayList<ArrayList<Integer>> invariants, boolean mmMode) {
 		ArrayList<Integer> frequency = new ArrayList<Integer>();
-		if(invariants == null || invariants.size() ==0) {
+		if(invariants == null || invariants.isEmpty()) {
 			return frequency;
 		}
 		
@@ -1387,7 +1395,7 @@ public final class InvariantsTools {
     		}
     	}
 		
-		if(readarcTransitions.size() > 0) {
+		if(!readarcTransitions.isEmpty()) {
 			for(int tID : readarcTransitions) { //dla każdej tranzycji 'readarc'
 				Transition transition = transitions.get(tID);
 				ArrayList<Place> connPlaces = new ArrayList<Place>();
@@ -1416,7 +1424,7 @@ public final class InvariantsTools {
 					ArrayList<Integer> test = new ArrayList<Integer>(set);
 					
 				    test.retainAll(support);
-				    if(test.size() == 0)
+				    if(test.isEmpty())
 				    	return true; //non feasible   
 				}
 			}
@@ -1528,7 +1536,7 @@ public final class InvariantsTools {
 			results.add(0);
 		
 		ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
-		if(invariantsMatrix == null || invariantsMatrix.size() == 0)
+		if(invariantsMatrix == null || invariantsMatrix.isEmpty())
 			return results;
 
 		for (ArrayList<Integer> matrix : invariantsMatrix) { // po wszystkich inwariantach

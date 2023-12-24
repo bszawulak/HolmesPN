@@ -331,7 +331,7 @@ public class ClusteringExcelWriter {
 			addTextCell(mctSheet, 2, rowIndex++, "MCT#"+(mctIndex+1)+ " Size: "+mctSize, defCellFormatBold, null);
 			
 			for(int mctElIndex=0; mctElIndex < mctSize; mctElIndex++) {
-				String txt = "";
+				String txt;
 				int elementIndex = dataCore.mctSets.get(mctIndex).get(mctElIndex);
 				txt = dataCore.transNames[elementIndex];
 				addTextCell(mctSheet, 2, rowIndex++, txt, defCellFormat, null);

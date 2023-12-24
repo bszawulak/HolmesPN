@@ -5817,7 +5817,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void createT_invSubWindow(ArrayList<ArrayList<Integer>> invariantsData) {
         doNotUpdate = true;
         initiateContainers();
-        if (invariantsData == null || invariantsData.size() == 0) {
+        if (invariantsData == null || invariantsData.isEmpty()) {
             return;
         } else {
             mode = tINVARIANTS;

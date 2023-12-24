@@ -108,7 +108,7 @@ public class InvariantsCalculatorFeasible {
 				ArrayList<Integer> connectedTransitions = getConnectedTransitionsSet(pl);
 
 				if (allowSelfPropelledInvariants) {
-					if (intersection(nonFInvSupport, connectedTransitions).size() > 0) {
+					if (!intersection(nonFInvSupport, connectedTransitions).isEmpty()) {
 						continue;
 					}
 				}
@@ -182,7 +182,7 @@ public class InvariantsCalculatorFeasible {
 					}
 				}
 
-				if (upperSearchBound == 0 || connectedTransitionsSet.size() == 0) {
+				if (upperSearchBound == 0 || connectedTransitionsSet.isEmpty()) {
 					break;
 				}
 			}
@@ -221,7 +221,7 @@ public class InvariantsCalculatorFeasible {
 		
 		for(ArrayList<Integer> set : connectedTransitionsSet) {
 			
-			if(intersection(support, set).size() > 0) {
+			if(!intersection(support, set).isEmpty()) {
 				//jeśli true, wtedy nie dodajemy, i tego zbioru dalej nie będziemy szukać...
 				//newConnTransSet.add(set);
 			} else {

@@ -12,7 +12,6 @@ import holmes.darkgui.GUIManager;
 import holmes.darkgui.settings.SettingsManager;
 import holmes.graphpanel.EditorResources;
 import holmes.graphpanel.ElementDrawSettings;
-import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.utilities.Tools;
 
 import static holmes.graphpanel.EditorResources.*;
@@ -159,7 +158,7 @@ public abstract class Node extends PetriNetElement {
 	 * @return (<b>ElementLocation</b>) - ostatnia dodana lokalizacja.
 	 */
 	public ElementLocation getLastLocation() {
-		if (this.getNodeLocations().size() == 0)
+		if (this.getNodeLocations().isEmpty())
 			return null;
 		return this.getNodeLocations().get(this.getNodeLocations().size() - 1);
 	}
@@ -236,6 +235,7 @@ public abstract class Node extends PetriNetElement {
 	 * @param timeTransitions (<b>ArrayList[Transition]</b>) wektor tranzycji czasowych.
 	 * @param metanodes (<b>ArrayList[MetaNode]</b>) wektor metawęzłów.
 	 */
+	@SuppressWarnings("all")
 	public void drawName(Graphics2D g, int sheetId, ArrayList<Node> places, ArrayList<Node> transitions, ArrayList<Node> timeTransitions,
 			 ArrayList<Node> metanodes) {
 		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
@@ -344,24 +344,15 @@ public abstract class Node extends PetriNetElement {
 							g.setColor(gammaColor);
 							g.setFont(f_BigL);
 							double gamma = ((PlaceXTPN)this).getGammaMaxValue();
-							String gammaMaxVal = "\u221E";
+							//String gammaMaxVal = "\u221E";
+							String gammaMaxVal = "∞";
 							if(gamma < Integer.MAX_VALUE-2) {
 								gammaMaxVal = Tools.cutValueExt(((PlaceXTPN)this).getGammaMaxValue(), franctionDigits);
 							}
-							/*
-							String gammaStr = "\u03B3: [";
-							g.drawString(gammaStr, drawX, drawY);
-							int width = g.getFontMetrics().stringWidth(gammaStr);
-							g.setFont(f_BigL);
-							gammaStr = Tools.cutValueExt(((PlaceXTPN)this).getGammaMinValue(), franctionDigits)+", " + gammaMaxVal;
-							int width2 = g.getFontMetrics().stringWidth(gammaStr);
-							g.drawString(gammaStr, drawX+width, drawY);
-							g.setFont(f_Big);
-							gammaStr = "]";
-							g.drawString(gammaStr, drawX+width+width2, drawY);
-							 */
-							//String gammaStr = "\u03B3:" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMinValue(), franctionDigits) + " / " + gammaMaxVal;
-							String gammaStr = "\u03B3: [" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMinValue(), franctionDigits) + ", " + gammaMaxVal+"]";
+
+							//String gammaStr = "\u03B3: [" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMinValue(), franctionDigits) + ", " + gammaMaxVal+"]";
+							String gammaStr = "γ: [" + Tools.cutValueExt(((PlaceXTPN)this).getGammaMinValue(), franctionDigits) + ", " + gammaMaxVal+"]";
+
 							g.drawString(gammaStr, drawX, drawY);
 						}
 					} else {
@@ -433,8 +424,11 @@ public abstract class Node extends PetriNetElement {
 
 								//String alfa = "\u03B1:" + Tools.cutValueExt(transXTPN.getAlphaMinValue(), transXTPN.getFraction_xTPN()) + " / "
 								//		+ Tools.cutValueExt(transXTPN.getAlphaMaxValue(), transXTPN.getFraction_xTPN());
-								String alfa = "\u03B1: [" + Tools.cutValueExt(transXTPN.getAlphaMinValue(), transXTPN.getFraction_xTPN()) + ", "
+								//String alfa = "\u03B1: [" + Tools.cutValueExt(transXTPN.getAlphaMinValue(), transXTPN.getFraction_xTPN()) + ", "
+								//		+ Tools.cutValueExt(transXTPN.getAlphaMaxValue(), transXTPN.getFraction_xTPN())+"]";
+								String alfa = "α: [" + Tools.cutValueExt(transXTPN.getAlphaMinValue(), transXTPN.getFraction_xTPN()) + ", "
 										+ Tools.cutValueExt(transXTPN.getAlphaMaxValue(), transXTPN.getFraction_xTPN())+"]";
+
 								if(!transXTPN.isBetaModeActive()) { //jak nie ma bety, to alfa bliżej kwadratu tranzycji
 									g.drawString(alfa,drawX, drawY);
 								} else {
@@ -450,22 +444,10 @@ public abstract class Node extends PetriNetElement {
 							if(transXTPN.isBetaModeActive()) {
 								g.setFont(f_BigL);
 								g.setColor(betaColor);
-								/*
-								String betaStr = "\u03B2: [";
-								g.drawString(betaStr, drawX, drawY);
-								int width = g.getFontMetrics().stringWidth(betaStr);
-								g.setFont(f_BigL);
-								betaStr = Tools.cutValueExt(transXTPN.getBetaMinValue(), transXTPN.getFraction_xTPN()) + ", "
-										+ Tools.cutValueExt(transXTPN.getBetaMaxValue(), transXTPN.getFraction_xTPN());
-								int width2 = g.getFontMetrics().stringWidth(betaStr);
-								g.drawString(betaStr, drawX+width, drawY);
-								g.setFont(f_Big);
-								betaStr = "]";
-								g.drawString(betaStr, drawX+width+width2, drawY);
-								 */
-								//String beta = "\u03B2:" + Tools.cutValueExt(transXTPN.getBetaMinValue(), transXTPN.getFraction_xTPN()) + " / "
-								//		+ Tools.cutValueExt(transXTPN.getBetaMaxValue(), transXTPN.getFraction_xTPN());
-								String beta = "\u03B2: [" + Tools.cutValueExt(transXTPN.getBetaMinValue(), transXTPN.getFraction_xTPN()) + ", "
+
+								//String beta = "\u03B2: [" + Tools.cutValueExt(transXTPN.getBetaMinValue(), transXTPN.getFraction_xTPN()) + ", "
+								//		+ Tools.cutValueExt(transXTPN.getBetaMaxValue(), transXTPN.getFraction_xTPN())+"]";
+								String beta = "β: [" + Tools.cutValueExt(transXTPN.getBetaMinValue(), transXTPN.getFraction_xTPN()) + ", "
 										+ Tools.cutValueExt(transXTPN.getBetaMaxValue(), transXTPN.getFraction_xTPN())+"]";
 								g.drawString(beta, drawX, drawY);
 
@@ -499,41 +481,53 @@ public abstract class Node extends PetriNetElement {
 							g.setColor(tauColor);
 							if(alphaTime < 0 && betaTime < 0) {
 								if(isAlpha) {
-									timerA = "\u03C4(\u03B1): #\u279F#";
+									//timerA = "\u03C4(\u03B1): #\u279F#";
+									timerA = "τ(α): #➟#";
 									g.drawString(timerA, drawX + 40, drawY + 12);
 								}
 								if(isBeta) {
-									timerB = "\u03C4(\u03B2): #\u279F#";
+									//timerB = "\u03C4(\u03B2): #\u279F#";
+									timerB = "τ(β): #➟#";
 									g.drawString(timerB, drawX + 40, drawY + 26);
 								}
 							} else if(alphaTime < 0) {
 								if(isAlpha) {
-									timerA = "\u03C4(\u03B1): #\u279F#";
+									//timerA = "\u03C4(\u03B1): #\u279F#";
+									timerA = "τ(α): #➟#";
 									g.drawString(timerA, drawX + 40, drawY + 12);
 								}
 								if(isBeta) {
-									timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+									//timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+									//		+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
+									timerB = "τ(β): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
 											+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
 									g.drawString(timerB, drawX + 40, drawY + 26);
 								}
 							} else if(betaTime < 0) {
 								if(isAlpha) {
-									timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+									//timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+									//		+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
+									timerA = "τ(α): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
 											+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
 									g.drawString(timerA, drawX + 40, drawY + 12);
 								}
 								if(isBeta) {
+									//timerB = "\u03C4(\u03B2): #\u279F#";
 									timerB = "\u03C4(\u03B2): #\u279F#";
 									g.drawString(timerB, drawX + 40, drawY + 26);
 								}
 							} else {
 								if(isAlpha) {
-									timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+									//timerA = "\u03C4(\u03B1): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+									//		+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
+									timerA = "τ(α): " + Tools.cutValueExt(u_alfaTime, transXTPN.getFraction_xTPN()) + "\u279F"
 											+ Tools.cutValueExt(alphaTime, transXTPN.getFraction_xTPN());
 									g.drawString(timerA, drawX + 40, drawY + 12);
 								}
 								if(isBeta) {
-									timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+									//timerB = "\u03C4(\u03B2): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
+									//		+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
+									timerB = "τ(β): " + Tools.cutValueExt(v_betaTime, transXTPN.getFraction_xTPN()) + "\u279F"
 											+ Tools.cutValueExt(betaTime, transXTPN.getFraction_xTPN());
 									g.drawString(timerB, drawX + 40, drawY + 26);
 								}

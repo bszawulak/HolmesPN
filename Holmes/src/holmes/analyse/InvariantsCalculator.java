@@ -40,13 +40,12 @@ public class InvariantsCalculator implements Runnable {
 
     private ArrayList<ArrayList<Integer>> globalIncidenceMatrix; //aktualna macierz przekształceń liniowych
     private ArrayList<Integer> GLOBAL_INC_VECTOR;
-    private int INC_MATRIX_ROW_SIZE;
     private int IDENT_MATRIX_ROW_SIZE;
     private ArrayList<ArrayList<Integer>> globalIdentityMatrix; //macierz przekształacna w inwarianty
     private ArrayList<ArrayList<Integer>> CMatrix; //oryginalna macierz incydencji sieci
     private ArrayList<Integer> removalList;
 
-    private ArrayList<Integer> zeroColumnVector;
+    //private ArrayList<Integer> zeroColumnVector;
     private ArrayList<Integer> nonZeroColumnVector;
     private ArrayList<ArrayList<Integer>> doubleArcs;
 
@@ -75,7 +74,7 @@ public class InvariantsCalculator implements Runnable {
         transitions = overlord.getWorkspace().getProject().getTransitions();
         arcs = overlord.getWorkspace().getProject().getArcs();
 
-        zeroColumnVector = new ArrayList<>();
+        //zeroColumnVector = new ArrayList<>();
         nonZeroColumnVector = new ArrayList<>();
 
     }
@@ -90,7 +89,7 @@ public class InvariantsCalculator implements Runnable {
         transitions = pn.getTransitions();
         arcs = pn.getArcs();
 
-        zeroColumnVector = new ArrayList<>();
+        //zeroColumnVector = new ArrayList<>();
         nonZeroColumnVector = new ArrayList<>();
     }
 
@@ -110,7 +109,7 @@ public class InvariantsCalculator implements Runnable {
         this.transitions = transitions;
         this.arcs = arcs;
 
-        zeroColumnVector = new ArrayList<>();
+        //zeroColumnVector = new ArrayList<>();
         nonZeroColumnVector = new ArrayList<>();
     }
 
@@ -209,7 +208,7 @@ public class InvariantsCalculator implements Runnable {
                     logInternal("Feasible invariants computation/check is recommended. \n", false);
                 }
 
-                if (doubleArcs.size() > 0) {
+                if (!doubleArcs.isEmpty()) {
                     logInternal("\n", false);
                     logInternal("WARNING! Double arcs (read-arcs) detected between nodes::\n", false);
                     for (ArrayList<Integer> trouble : doubleArcs) {
@@ -241,7 +240,7 @@ public class InvariantsCalculator implements Runnable {
                 overlord.getMctBox().showMCT(mct);
 
                 if (showInvSetsDifference) {
-                    if (invBackupMatrix != null && invBackupMatrix.size() > 0) {
+                    if (invBackupMatrix != null && !invBackupMatrix.isEmpty()) {
                         //TODO:
                         logInternal("Calculating difference...", false);
                         logInternal("", false);
@@ -313,7 +312,7 @@ public class InvariantsCalculator implements Runnable {
                     logInternal("WARNING! Read-arcs detected. There are " + (arcClasses.get(1) / 2) + " read-arcs in net.\n", false);
                 }
 
-                if (doubleArcs.size() > 0) {
+                if (!doubleArcs.isEmpty()) {
                     logInternal("\n", false);
                     logInternal("Double arcs (read-arcs) detected between nodes::\n", false);
                     for (ArrayList<Integer> trouble : doubleArcs) {
@@ -431,6 +430,7 @@ public class InvariantsCalculator implements Runnable {
         if (!silence)
             logInternal("\nTP-class incidence matrix created for " + transitions.size() + " transitions and " + places.size() + " places.\n", false);
 
+        int INC_MATRIX_ROW_SIZE;
         if (tInvMode) {
             for (int t = 0; t < transitions.size(); t++) {
                 ArrayList<Integer> identRow = new ArrayList<>();
@@ -496,14 +496,15 @@ public class InvariantsCalculator implements Runnable {
                 logInternal("Processing simple-class column: " + col + "\n", false);
                 generatedRows = findNewRows(col); // na bazie globalIncidenceMatrix i Identity
                 rewriteIncidenceIntegrityMatrices(generatedRows, col);
-                zeroColumnVector.add(col);
-                int vIndex = nonZeroColumnVector.indexOf(col);
-                nonZeroColumnVector.remove(vIndex);
+                //zeroColumnVector.add(col);
+                //int vIndex = nonZeroColumnVector.indexOf(col);
+                //nonZeroColumnVector.remove(vIndex);
+                nonZeroColumnVector.remove((Integer) col);
             }
         }
 
         // Etap II - cała reszta
-        while (nonZeroColumnVector.size() != 0) {
+        while (!nonZeroColumnVector.isEmpty()) {
             //generatedRows.clear(); //wyczyść macierz przekształceń
             int stepsToFinish = nonZeroColumnVector.size();
             int[] res = chooseNextColumn();
@@ -515,9 +516,11 @@ public class InvariantsCalculator implements Runnable {
 
             generatedRows = findNewRows(cand); // na bazie globalIncidenceMatrix i Identity
             rewriteIncidenceIntegrityMatrices(generatedRows, cand);
-            int indCand = nonZeroColumnVector.indexOf(cand);
-            nonZeroColumnVector.remove(indCand);
-            zeroColumnVector.add(cand);
+
+            //zeroColumnVector.add(cand);
+            //int indCand = nonZeroColumnVector.indexOf(cand);
+            //nonZeroColumnVector.remove(indCand);
+            nonZeroColumnVector.remove((Integer) cand);
 
             int newSize = globalIncidenceMatrix.size();
             logInternal("\nNew rows number: " + newSize + " | rejected: " + newRejected + " replaced: " + oldReplaced + " not canonical: " + notCanonical + "\n", false);
@@ -543,14 +546,15 @@ public class InvariantsCalculator implements Runnable {
                 logInternal("Processing simple-class column: " + col + "\n", false);
                 generatedRows = findNewRows(col); // na bazie globalIncidenceMatrix i Identity
                 rewriteIncidenceIntegrityMatrices(generatedRows, col);
-                zeroColumnVector.add(col);
-                int vIndex = nonZeroColumnVector.indexOf(col);
-                nonZeroColumnVector.remove(vIndex);
+                //zeroColumnVector.add(col);
+                //int vIndex = nonZeroColumnVector.indexOf(col);
+                //nonZeroColumnVector.remove(vIndex);
+                nonZeroColumnVector.remove((Integer) col);
             }
         }
 
         // Etap II - cała reszta
-        while (nonZeroColumnVector.size() != 0) {
+        while (!nonZeroColumnVector.isEmpty()) {
             //generatedRows.clear(); //wyczyść macierz przekształceń
             int stepsToFinish = nonZeroColumnVector.size();
             int[] res = chooseNextColumn();
@@ -562,12 +566,11 @@ public class InvariantsCalculator implements Runnable {
 
             generatedRows = findNewRows(cand); // na bazie globalIncidenceMatrix i Identity
             rewriteIncidenceIntegrityMatrices(generatedRows, cand);
-            int indCand = nonZeroColumnVector.indexOf(cand);
-            nonZeroColumnVector.remove(indCand);
-            zeroColumnVector.add(cand);
-
+            //int indCand = nonZeroColumnVector.indexOf(cand);
+            //nonZeroColumnVector.remove(indCand);
+            //zeroColumnVector.add(cand);
+            nonZeroColumnVector.remove((Integer) cand);
             int newSize = globalIncidenceMatrix.size();
-
             logInternal("\nNew rows number: " + newSize + " | rejected: " + newRejected + " replaced: " + oldReplaced + " not canonical: " + notCanonical + "\n", false);
         }
 
@@ -762,7 +765,7 @@ public class InvariantsCalculator implements Runnable {
             canonize(invCandidate, canonicalNWD); //Burn the heretic. Kill the mutant. Purge the unclean.
 
             ArrayList<Integer> matrixSupport = InvariantsTools.getSupport(incMatrixNewRow);
-            if (matrixSupport.size() > 0) {
+            if (!matrixSupport.isEmpty()) {
                 int matrixNWD = checkCanonityNWD(incMatrixNewRow, matrixSupport);
                 if (matrixNWD > 1) {
                     canonize(incMatrixNewRow, canonicalNWD);
@@ -801,7 +804,7 @@ public class InvariantsCalculator implements Runnable {
                     //System.out.println("Inwariant się nie nadaje, ale jest mniejszy niż obecne w macierzy! ERROR!");
                 }
 
-                while (resList.size() > 0) { //inne do usunięcia
+                while (!resList.isEmpty()) { //inne do usunięcia
                     int remCandidate = resList.get(0);
                     if (!removalList.contains(remCandidate)) {
                         removalList.add(remCandidate);
@@ -978,7 +981,7 @@ public class InvariantsCalculator implements Runnable {
      * @param columnIndex   int - nr kolumny zerowanej, jest to miejsce dla t-inv lub tranzycja dla p-inv
      */
     private void rewriteIncidenceIntegrityMatrices(ArrayList<ArrayList<Integer>> newRowsMatrix, int columnIndex) {
-        if (newRowsMatrix.size() == 0) {
+        if (newRowsMatrix.isEmpty()) {
             return; //nothing to add;
         }
         //jeśli są nowe wiersze do dodania:
@@ -1065,9 +1068,10 @@ public class InvariantsCalculator implements Runnable {
      * @param nwd          int - największy wspólny dzielnik
      */
     private void canonize(ArrayList<Integer> invCandidate, int nwd) {
-        for (int i = 0; i < invCandidate.size(); i++) {
-            invCandidate.set(i, invCandidate.get(i) / nwd);
-        }
+        //for (int i = 0; i < invCandidate.size(); i++) {
+        //    invCandidate.set(i, invCandidate.get(i) / nwd);
+        //}
+        invCandidate.replaceAll(integer -> integer / nwd);
     }
 
     /**
@@ -1095,11 +1099,20 @@ public class InvariantsCalculator implements Runnable {
      * @return int - największy wspólny dzielnik
      */
     public static int nwd(int x, int y) {
+        /*
         while (x != y) {
             if (x > y)
                 x -= y;
             else
                 y -= x;
+        }*/
+
+        //or:
+
+        while (y != 0) {
+            int temp = y;
+            y = x % y;
+            x = temp;
         }
         return x;
     }

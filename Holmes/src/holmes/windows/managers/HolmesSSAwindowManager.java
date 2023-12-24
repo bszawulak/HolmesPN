@@ -437,8 +437,11 @@ public class HolmesSSAwindowManager extends JFrame {
 	 */
 	protected void cellClickAction() {
 		try {
-			doNotUpdate = true;
             selectedRow = table.getSelectedRow();
+			if(selectedRow == -1)
+				return;
+
+			doNotUpdate = true;
 			fillDescriptionField();
 			
 			if(ssaManager.getSSAvector(selectedRow).getType() == SSAdataType.MOLECULES)

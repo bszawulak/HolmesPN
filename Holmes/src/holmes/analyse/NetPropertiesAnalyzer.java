@@ -180,7 +180,7 @@ public class NetPropertiesAnalyzer {
 		pf0Prop.add(pf0Txt);
 		NetProps.add(pf0Prop);
 
-		if (places.size() == 0 || transitions.size() == 0 || arcs.size() == 0) {
+		if (places.isEmpty() || transitions.isEmpty() || arcs.isEmpty()) {
 			return NetProps;
 		}
 		
@@ -353,7 +353,7 @@ public class NetPropertiesAnalyzer {
 	 * @param n1 Node - wierzchołek nr 1
 	 * @param n2 Node - wierzchołek nr 2
 	 * @param last Node - ostatni wierzchołek
-	 * @param mode boolean - 
+	 * @param mode boolean - diabli wiedzą co :)
 	 * @return boolean - true, jeśli silnie połączona
 	 */
 	private boolean checkStronglyConnectionExist(Node n1, Node n2, Node last, boolean mode) {
@@ -442,7 +442,7 @@ public class NetPropertiesAnalyzer {
 	 */
 	private boolean fastStrongConnectivityTest() {
 		for(Node n : nodes) {
-			if(n.getInArcs().size() == 0 || n.getOutArcs().size() == 0)
+			if(n.getInArcs().isEmpty() || n.getOutArcs().isEmpty())
 				return false;
 		}
 		return true;

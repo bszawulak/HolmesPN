@@ -23,7 +23,7 @@ public class MDTSCalculator {
 	 */
 	public MDTSCalculator() {
 		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix(); 
-    	if(invariants == null || invariants.size() == 0) { //STEP 1: EM obliczono
+    	if(invariants == null || invariants.isEmpty()) { //STEP 1: EM obliczono
     		GUIManager.getDefaultGUIManager().log("No invariants found!", "errer", true);
     	} else {
     		invariantsNumber = invariants.size(); //wiersze w notacji pierwszej
@@ -36,24 +36,24 @@ public class MDTSCalculator {
 	public ArrayList<Set<Integer>> calculateMDTS() {
 		ArrayList<Set<Integer>> resultList = new ArrayList<Set<Integer>>();
 		ArrayList<Integer> unassignedRows = new ArrayList<Integer>();
-		ArrayList<Integer> assignedRows = new ArrayList<Integer>();
+		//ArrayList<Integer> assignedRows = new ArrayList<Integer>();
 		for(int i=0; i<tmpInvariantsMatrix.size(); i++)
 			unassignedRows.add(i);
 		
 		tmpInvariantsMatrix = InvariantsTools.returnBinaryMatrix(tmpInvariantsMatrix);
 		
-		while(unassignedRows.size() > 0) {
+		while(!unassignedRows.isEmpty()) {
 			Set<Integer> mdts = new HashSet<Integer>();
 			int rowValue = unassignedRows.get(0);
 			mdts.add(rowValue); //dodaj pierwszy nieprzypisany
-			assignedRows.add(rowValue);
+			//assignedRows.add(rowValue);
 			unassignedRows.remove(0);
 			
 			ArrayList<Integer> removeList = new ArrayList<Integer>();
 			for(int otherRow : unassignedRows) {
 				if(tmpInvariantsMatrix.get(rowValue).equals(tmpInvariantsMatrix.get(otherRow))) { //są w tych samych inwariantach
 					mdts.add(otherRow);
-					assignedRows.add(otherRow);
+					//assignedRows.add(otherRow);
 					removeList.add(unassignedRows.indexOf(otherRow));
 					//unassignedRows.remove(unassignedRows.indexOf(otherRow)); // ???
 				}

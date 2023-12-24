@@ -939,6 +939,9 @@ public class HolmesStatesManager extends JFrame {
 	protected void cellClickActionXTPN() {
 		try {
 			selectedRow = statesTableXTPN.getSelectedRow();
+			if(selectedRow > -1)
+				return;
+
 			fillDescriptionFieldXTPN();
 		} catch (Exception ex) {
 			GUIManager.getDefaultGUIManager().log("Error (164166738) | Exception:  "+ex.getMessage(), "error", true);

@@ -19,6 +19,7 @@ import holmes.utilities.Tools;
 import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.decompositions.HolmesMergeNets;
 import holmes.windows.managers.HolmesSPNmanager;
+import holmes.windows.managers.HolmesSSAwindowManager;
 import holmes.windows.managers.HolmesStatesManager;
 
 
@@ -31,8 +32,6 @@ public class DarkMenu extends JMenuBar {
 	// GUI
 	private GUIManager guiManager;
 	private JMenu sheetsMenu;
-	// dockable
-	//private ArrayList<Dockable> dockables;
 	private ArrayList<DockableMenuItem> sheetItems;
 
 	/**
@@ -41,7 +40,6 @@ public class DarkMenu extends JMenuBar {
 	public DarkMenu() {
 		guiManager = GUIManager.getDefaultGUIManager();
 		sheetItems = new ArrayList<DockableMenuItem>();
-		//dockables = new ArrayList<Dockable>();
 		
 		JMenu xMenu = new JMenu(" ");
 		xMenu.setEnabled(false);
@@ -268,7 +266,7 @@ public class DarkMenu extends JMenuBar {
 		//***********************************                 *****************************************
 		//*********************************************************************************************
 
-		JMenu netMenu = new JMenu("Net");
+		JMenu netMenu = new JMenu("Net Data");
 		netMenu.setMnemonic(KeyEvent.VK_N);
 		netMenu.getAccessibleContext().setAccessibleDescription("Net menu");
 		this.add(netMenu);
@@ -290,21 +288,21 @@ public class DarkMenu extends JMenuBar {
 		
 		JMenuItem netTablesItem = new JMenuItem("Net data tables...", KeyEvent.VK_4);
 		netTablesItem.setIcon(Tools.getResIcon32("/icons/menu/menu_netTables.png"));
-		netTablesItem.setAccelerator(KeyStroke.getKeyStroke('A', InputEvent.CTRL_DOWN_MASK));
+		//netTablesItem.setAccelerator(KeyStroke.getKeyStroke('A', InputEvent.CTRL_DOWN_MASK));
 		netTablesItem.getAccessibleContext().setAccessibleDescription("Show net data tables window");
 		netTablesItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showNetTablesWindow());
 		netMenu.add(netTablesItem);
 		
 		JMenuItem invViewItem = new JMenuItem("Invariants Viewer...", KeyEvent.VK_5);
 		invViewItem.setIcon(Tools.getResIcon32("/icons/menu/menu_invViewer.png"));
-		invViewItem.setAccelerator(KeyStroke.getKeyStroke('J', InputEvent.CTRL_DOWN_MASK));
+		//invViewItem.setAccelerator(KeyStroke.getKeyStroke('J', InputEvent.CTRL_DOWN_MASK));
 		invViewItem.getAccessibleContext().setAccessibleDescription("Show invariants information window");
 		invViewItem.addActionListener(arg0 -> new HolmesInvariantsViewer());
 		netMenu.add(invViewItem);
 		
-		JMenuItem netStatessItem = new JMenuItem("Net m0 states...", KeyEvent.VK_6);
+		JMenuItem netStatessItem = new JMenuItem("Initial p-states manager...", KeyEvent.VK_6);
 		netStatessItem.setIcon(Tools.getResIcon32("/icons/menu/menu_statesViewer.png"));
-		netStatessItem.setAccelerator(KeyStroke.getKeyStroke('M', InputEvent.CTRL_DOWN_MASK));
+		netStatessItem.setAccelerator(KeyStroke.getKeyStroke('T', InputEvent.CTRL_DOWN_MASK));
 		netStatessItem.getAccessibleContext().setAccessibleDescription("Show net data states tables window");
 		netStatessItem.addActionListener(arg0 -> {
 			if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
@@ -316,10 +314,10 @@ public class DarkMenu extends JMenuBar {
 		});
 		netMenu.add(netStatessItem);
 
-		JMenuItem netTransFreqItem = new JMenuItem("Transitions firing rates...", KeyEvent.VK_6);
+		JMenuItem netTransFreqItem = new JMenuItem("SPN firing rates manager...", KeyEvent.VK_6);
 		netTransFreqItem.setIcon(Tools.getResIcon32("/icons/menu/menu_firingRates.png"));
 		///icons/toolbar/firingRates.png
-		netTransFreqItem.setAccelerator(KeyStroke.getKeyStroke('T', InputEvent.CTRL_DOWN_MASK));
+		netTransFreqItem.setAccelerator(KeyStroke.getKeyStroke('Y', InputEvent.CTRL_DOWN_MASK));
 		netTransFreqItem.getAccessibleContext().setAccessibleDescription("Show transitions firing rates manager window");
 		netTransFreqItem.addActionListener(arg0 -> {
 			if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
@@ -332,18 +330,17 @@ public class DarkMenu extends JMenuBar {
 		});
 		netMenu.add(netTransFreqItem);
 
-		JMenuItem netSSAmanagerItem = new JMenuItem("SSA places manager...", KeyEvent.VK_6);
+		JMenuItem netSSAmanagerItem = new JMenuItem("SSA p-states manager...", KeyEvent.VK_6);
 		netSSAmanagerItem.setIcon(Tools.getResIcon32("/icons/menu/menu_SSAmanager.png"));
 		///icons/toolbar/firingRates.png
-		netSSAmanagerItem.setAccelerator(KeyStroke.getKeyStroke('T', InputEvent.CTRL_DOWN_MASK));
+		netSSAmanagerItem.setAccelerator(KeyStroke.getKeyStroke('U', InputEvent.CTRL_DOWN_MASK));
 		netSSAmanagerItem.getAccessibleContext().setAccessibleDescription("Show SSA values for places manager window");
 		netSSAmanagerItem.addActionListener(arg0 -> {
 			if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 				JOptionPane.showMessageDialog(null, "Net simulator must be stopped in order to access state manager.",
 						"Simulator working", JOptionPane.WARNING_MESSAGE);
 			} else {
-				//new HolmesSPNmanager(GUIManager.getDefaultGUIManager().getFrame());
-				//new HolmesStatesManager();
+				new HolmesSSAwindowManager(GUIManager.getDefaultGUIManager().getFrame());
 			}
 		});
 		netMenu.add(netSSAmanagerItem);

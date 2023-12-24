@@ -318,7 +318,7 @@ public class ClusterReader {
 				ArrayList<String> tmpMCT = new ArrayList<String>();
 				if(line != null && line.contains("Proper MCT sets")) {
 					while((line = br.readLine()) != null && !line.contains("Single MCT sets") 
-							&& !line.equals("")) {
+							&& !line.isEmpty()) {
 						tmpMCT.add(line); //wczytywanie linii opisujących zbiory MCT
 					}
 					br.close();

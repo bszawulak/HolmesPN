@@ -23,7 +23,7 @@ public class CHmetricReader {
 	 * @return double - święta liczba rzeczywista
 	 */
 	double ParseDouble(String strNumber) {
-		if (strNumber != null && strNumber.length() > 0) {
+		if (strNumber != null && !strNumber.isEmpty()) {
 			try {
 				return Double.parseDouble(strNumber);
 			} catch(Exception e) {

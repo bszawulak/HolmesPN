@@ -47,7 +47,7 @@ public class MCSCalculator implements Runnable {
      */
     public MCSCalculator(int objR, ArrayList<ArrayList<Integer>> invariants, 
     		ArrayList<Transition> transitionsList, int MAX_CUTSETSIZE, int maxNumber, HolmesMCS mstWindow, boolean safe) {
-    	if(invariants == null || invariants.size() == 0) { //STEP 1: EM obliczono
+    	if(invariants == null || invariants.isEmpty()) { //STEP 1: EM obliczono
     		return;
     	} else {
     		em_obR = new ArrayList<ArrayList<Integer>>();

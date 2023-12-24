@@ -38,7 +38,8 @@ public class HolmesSPNmanager extends JFrame {
 	private GUIManager overlord;
 	private JFrame parentWindow;
 	private JFrame ego;
-	private boolean doNotUpdate = false;
+	//private boolean doNotUpdate = false;
+	//private boolean doNotUpdate = false;
 	private SPNdataVectorsTableModel tableModel;
 	private JTable table;
 	private JTextArea vectorDescrTextArea;
@@ -179,7 +180,7 @@ public class HolmesSPNmanager extends JFrame {
 		selectStateButton.setFocusPainted(false);
 		selectStateButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/selectVectorIcon.png"));
 		selectStateButton.addActionListener(actionEvent -> {
-			if(transitions.size() == 0) {
+			if(transitions.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -208,7 +209,7 @@ public class HolmesSPNmanager extends JFrame {
 		addNewStateButton.setFocusPainted(false);
 		addNewStateButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/addVectorIcon.png"));
 		addNewStateButton.addActionListener(actionEvent -> {
-			if(transitions.size() == 0) {
+			if(transitions.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -232,7 +233,7 @@ public class HolmesSPNmanager extends JFrame {
 		replaceStateButton.setFocusPainted(false);
 		replaceStateButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/replaceVectorIcon.png"));
 		replaceStateButton.addActionListener(actionEvent -> {
-			if(transitions.size() == 0) {
+			if(transitions.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -246,7 +247,7 @@ public class HolmesSPNmanager extends JFrame {
 		removeStateButton.setFocusPainted(false);
 		removeStateButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/removeVectorIcon.png"));
 		removeStateButton.addActionListener(actionEvent -> {
-			if(transitions.size() == 0) {
+			if(transitions.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -260,7 +261,7 @@ public class HolmesSPNmanager extends JFrame {
 		editStateButton.setFocusPainted(false);
 		editStateButton.setIcon(Tools.getResIcon32("/icons/fRatesManager/fireRateEdit.png"));
 		editStateButton.addActionListener(actionEvent -> {
-			if(transitions.size() == 0) {
+			if(transitions.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -394,6 +395,9 @@ public class HolmesSPNmanager extends JFrame {
 		try {
 			//doNotUpdate = true;
 			selectedRow = table.getSelectedRow();
+			if(selectedRow == -1)
+				return;
+
 			fillDescriptionField();
 			//doNotUpdate = false;
 		} catch (Exception ex) {

@@ -18,7 +18,6 @@ import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.workspace.Workspace;
-import holmes.workspace.WorkspaceSheet;
 
 /**
  * Klasa odpowiedzialna za różne rzeczy związane z czyszczeniem wszystkiego i wszystkich w ramach
@@ -328,7 +327,7 @@ public class GUIReset {
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
 		GraphicalSimulator obj = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();// GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
-		if(obj instanceof GraphicalSimulator) {
+		if(obj != null) {
 			if(obj.getSimulatorStatus() == SimulatorMode.STOPPED) {
 				return false;
 			} else {
