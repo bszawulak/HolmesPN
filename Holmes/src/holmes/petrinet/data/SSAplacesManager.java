@@ -38,8 +38,8 @@ public class SSAplacesManager {
 	
 	/**
 	 * Usuwa we wszystkich wektorach SSA dane o właśnie kasowanym miejscu.
-	 * @param index int - indeks miejsca
-	 * @return boolean - true, jeśli operacja przebiegła poprawnie
+	 * @param index (<b>int</b>) - indeks miejsca
+	 * @return (<b>boolean</b>) - true, jeśli operacja przebiegła poprawnie
 	 */
 	public boolean removePlace(int index) {
 		if(index >= ssaMatrix.get(0).getSize())
@@ -57,8 +57,8 @@ public class SSAplacesManager {
 	
 	/**
 	 * Zwraca obiekt wektora stanu o zadanym indeksie.
-	 * @param index int - nr stanu
-	 * @return PlacesStateVector - obiekt wektora stanów
+	 * @param index (<b>int</b>) - nr stanu
+	 * @return (<b>PlacesStateVector</b>) - obiekt wektora stanów
 	 */
 	public SSAplacesVector getSSAvector(int index) {
 		if(index >= ssaMatrix.size())
@@ -96,7 +96,7 @@ public class SSAplacesManager {
 	
 	/**
 	 * Metoda ustawia nowy stan SSA miejsc sieci.
-	 * @param stateID int - nr stanu z tablicy
+	 * @param stateID (<b>int</b>) - nr stanu z tablicy
 	 */
 	public void setNetworkSSAvector(int stateID) {
 		ArrayList<Place> places = pn.getPlaces();

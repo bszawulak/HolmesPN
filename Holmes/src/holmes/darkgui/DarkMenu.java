@@ -18,6 +18,7 @@ import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.decompositions.HolmesMergeNets;
+import holmes.windows.managers.HolmesSPNmanager;
 import holmes.windows.managers.HolmesStatesManager;
 
 
@@ -314,6 +315,38 @@ public class DarkMenu extends JMenuBar {
 			}
 		});
 		netMenu.add(netStatessItem);
+
+		JMenuItem netTransFreqItem = new JMenuItem("Transitions firing rates...", KeyEvent.VK_6);
+		netTransFreqItem.setIcon(Tools.getResIcon32("/icons/menu/menu_firingRates.png"));
+		///icons/toolbar/firingRates.png
+		netTransFreqItem.setAccelerator(KeyStroke.getKeyStroke('T', InputEvent.CTRL_DOWN_MASK));
+		netTransFreqItem.getAccessibleContext().setAccessibleDescription("Show transitions firing rates manager window");
+		netTransFreqItem.addActionListener(arg0 -> {
+			if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+				JOptionPane.showMessageDialog(null, "Net simulator must be stopped in order to access state manager.",
+						"Simulator working", JOptionPane.WARNING_MESSAGE);
+			} else {
+				new HolmesSPNmanager(GUIManager.getDefaultGUIManager().getFrame());
+				//new HolmesStatesManager();
+			}
+		});
+		netMenu.add(netTransFreqItem);
+
+		JMenuItem netSSAmanagerItem = new JMenuItem("SSA places manager...", KeyEvent.VK_6);
+		netSSAmanagerItem.setIcon(Tools.getResIcon32("/icons/menu/menu_SSAmanager.png"));
+		///icons/toolbar/firingRates.png
+		netSSAmanagerItem.setAccelerator(KeyStroke.getKeyStroke('T', InputEvent.CTRL_DOWN_MASK));
+		netSSAmanagerItem.getAccessibleContext().setAccessibleDescription("Show SSA values for places manager window");
+		netSSAmanagerItem.addActionListener(arg0 -> {
+			if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+				JOptionPane.showMessageDialog(null, "Net simulator must be stopped in order to access state manager.",
+						"Simulator working", JOptionPane.WARNING_MESSAGE);
+			} else {
+				//new HolmesSPNmanager(GUIManager.getDefaultGUIManager().getFrame());
+				//new HolmesStatesManager();
+			}
+		});
+		netMenu.add(netSSAmanagerItem);
 		
 		//*********************************************************************************************
 		//***********************************                 *****************************************

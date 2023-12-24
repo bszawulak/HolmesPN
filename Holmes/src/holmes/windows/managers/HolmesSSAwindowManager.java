@@ -193,7 +193,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		selectStateButton.setFocusPainted(false);
 		selectStateButton.setIcon(Tools.getResIcon16("/icons/ssaWindow/selectSSAVectorIcon.png"));
 		selectStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -221,7 +221,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		addNewStateButton.setFocusPainted(false);
 		addNewStateButton.setIcon(Tools.getResIcon16("/icons/ssaWindow/addSSAVectorIcon.png"));
 		addNewStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -244,7 +244,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		replaceStateButton.setFocusPainted(false);
 		replaceStateButton.setIcon(Tools.getResIcon16("/icons/ssaWindow/replaceSSAVectorIcon.png"));
 		replaceStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -258,7 +258,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		removeStateButton.setFocusPainted(false);
 		removeStateButton.setIcon(Tools.getResIcon16("/icons/ssaWindow/removeSSAVectorIcon.png"));
 		removeStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -272,7 +272,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		editStateButton.setFocusPainted(false);
 		editStateButton.setIcon(Tools.getResIcon32("/icons/ssaWindow/ssaEditor.png"));
 		editStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -438,8 +438,7 @@ public class HolmesSSAwindowManager extends JFrame {
 	protected void cellClickAction() {
 		try {
 			doNotUpdate = true;
-			int newSelection = table.getSelectedRow();
-			selectedRow = newSelection;
+            selectedRow = table.getSelectedRow();
 			fillDescriptionField();
 			
 			if(ssaManager.getSSAvector(selectedRow).getType() == SSAdataType.MOLECULES)

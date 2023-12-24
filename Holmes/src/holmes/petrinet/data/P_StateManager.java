@@ -55,7 +55,8 @@ public class P_StateManager {
 	}
 	
 	/**
-	 * Usuwa we wszystkich stanach dane o stanie właśnie kasowanego miejsca. Wspólna metoda dla sieci zwykłych i XTPN.
+	 * Usuwa we wszystkich stanach dane o stanie właśnie kasowanego miejsca.
+	 * Wspólna metoda dla sieci zwykłych i XTPN.
 	 * @param index (<b>int</b>) indeks miejsca.
 	 */
 	public void removePlace(int index) {

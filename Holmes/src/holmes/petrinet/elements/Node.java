@@ -717,12 +717,13 @@ public abstract class Node extends PetriNetElement {
 				GUIManager.getDefaultGUIManager().subnetsHQ.clearAllMetaArcs(this, subNet);
 			}
 		}
-		return (this.getNodeLocations().size() > 0);
+		return (!this.getNodeLocations().isEmpty());
+			//false, jeżeli usunięto jedyną (czyli ostatnią) lokalizację wierzchołka
 	}
 
 	/**
 	 * Metoda pozwala pobrać listę łuków wejściowych.
-	 * @return (<b>ArrayList[Arc]</b>) - lista łuków wejściowych.
+	 * @return (ArrayList[<b>Arc</b>]) - lista łuków wejściowych.
 	 */
 	public ArrayList<Arc> getInArcs() {
 		ArrayList<Arc> totalInArcs = new ArrayList<>();
@@ -734,7 +735,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala pobrać listę WSZYSTKICH łuków wyjściowych wierzchołka.
-	 * @return (<b>ArrayList[Arc]</b>) - lista łuków wyjściowych
+	 * @return (ArrayList[<b>Arc</b>]) - lista łuków wyjściowych
 	 */
 	public ArrayList<Arc> getOutArcs() {
 		ArrayList<Arc> totalOutArcs = new ArrayList<>();
@@ -746,7 +747,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala pobrać listę WSZYSTKICH wierzchołków wejściowych wierzchołka.
-	 * @return (<b>ArrayList[Node]</b>) - lista wierzchołków wejściowych.
+	 * @return (ArrayList[<b>Node</b>]) - lista wierzchołków wejściowych.
 	 */
 	public ArrayList<Node> getInNodes() {
 		ArrayList<Node> totalInNodes = new ArrayList<>();
@@ -758,7 +759,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala pobrać listę wierzchołków wyjściowych.
-	 * @return (<b>ArrayList[Node]</b>) - lista wierzchołków wyjściowych.
+	 * @return (ArrayList[<b>Node</b>]) - lista wierzchołków wyjściowych.
 	 */
 	public ArrayList<Node> getOutNodes() {
 		ArrayList<Node> totalOutNodes = new ArrayList<>();
@@ -770,7 +771,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala pobrać listę wszystkich sąsiadujących wierzchołków..
-	 * @return (<b>ArrayList[Node]</b>) - lista wierzchołków sąsiadujących.
+	 * @return (ArrayList[<b>Node</b>]) - lista wierzchołków sąsiadujących.
 	 */
 	public ArrayList<Node> getOutInNodes() {
 		ArrayList<Node> totalNodes = new ArrayList<>();
@@ -802,7 +803,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda zwraca wektor lokalizacji wierzchołka.
-	 * @return (<b>ArrayList[ElementLocation]</b>) - tablica lokalizacji
+	 * @return (ArrayList[<b>ElementLocation</b>]) - tablica lokalizacji
 	 */
 	public ArrayList<ElementLocation> getElementLocations() {
 		return elementLocations;
@@ -810,7 +811,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda pozwala ustawić listę wszystkich lokalizacji wierzchołka.
-	 * @param elementLocations (<b>ArrayList[ElementLocation]</b>) wektor lokalizacji wierzchołka
+	 * @param elementLocations (ArrayList[<b>ElementLocation</b>]) wektor lokalizacji wierzchołka
 	 */
 	public void setElementLocations(ArrayList<ElementLocation> elementLocations) {
 		this.elementLocations = elementLocations;
@@ -819,7 +820,7 @@ public abstract class Node extends PetriNetElement {
 	/**
 	 * Metoda zwraca wektor lokalizacji nazwy wierzchołka.
 	 * @param dataType (<b>GUIManager.locationMoveType</b>) NAME, ALPHA, BETA, GAMMA, TAU
-	 * @return (<b>ArrayList[ElementLocation]</b>) - odpowiedni wektor lokalizacji nazw.
+	 * @return (ArrayList[<b>ElementLocation</b>]) - odpowiedni wektor lokalizacji nazw.
 	 */
 	public ArrayList<ElementLocation> getTextsLocations(GUIManager.locationMoveType dataType) {
 		return switch (dataType) {
@@ -833,7 +834,7 @@ public abstract class Node extends PetriNetElement {
 
 	/**
 	 * Metoda ustawia nowy wektor lokalizacji nazw odpowiedniego typu.
-	 * @param namesLocations (<b>ArrayList[ElementLocation]</b>) wektor lokalizacji nazw.
+	 * @param namesLocations (ArrayList[<b>ElementLocation</b>]) wektor lokalizacji nazw.
 	 * @param nameType (<b>GUIManager.locationMoveType</b>) NAME, ALPHA, BETA, GAMMA, TAU
 	 */
 	public void setTextsLocations(ArrayList<ElementLocation> namesLocations, GUIManager.locationMoveType nameType) {

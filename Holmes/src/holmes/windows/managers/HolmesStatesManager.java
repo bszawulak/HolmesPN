@@ -206,7 +206,7 @@ public class HolmesStatesManager extends JFrame {
 				+ "net places according to values of the selected state.");
 		selectStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/selectStateIcon.png"));
 		selectStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -238,7 +238,7 @@ public class HolmesStatesManager extends JFrame {
 		addNewStateButton.setToolTipText("Create new state vector based on current net state (distribution of tokens in places)");
 		addNewStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/addStateIcon.png"));
 		addNewStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -262,7 +262,7 @@ public class HolmesStatesManager extends JFrame {
 		addNewCleanStateButton.setToolTipText("Create new and clean state vector (all tokens values set to 0).");
 		addNewCleanStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/addCleanState.png"));
 		addNewCleanStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -286,7 +286,7 @@ public class HolmesStatesManager extends JFrame {
 		replaceStateButton.setToolTipText("Replace the values of the selected state from the table with the current net places values.");
 		replaceStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/replaceStateIcon.png"));
 		replaceStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -306,7 +306,7 @@ public class HolmesStatesManager extends JFrame {
 		removeStateButton.setToolTipText("Removes state vector from project data.");
 		removeStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/removeStateIcon.png"));
 		removeStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -325,7 +325,7 @@ public class HolmesStatesManager extends JFrame {
 		editStateButton.setFocusPainted(false);
 		editStateButton.setIcon(Tools.getResIcon32("/icons/stateManager/stateEdit.png"));
 		editStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
@@ -604,7 +604,7 @@ public class HolmesStatesManager extends JFrame {
 		selectStateButton.setToolTipText("<html>Use selected XTPN p-state as the active one and change number of tokens in<br>"
 				+ "all net places according to values of the selected p-state.<html>");
 		selectStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfoXTPN();
 				return;
 			}
@@ -643,7 +643,7 @@ public class HolmesStatesManager extends JFrame {
 		addNewStateButton.setFocusPainted(false);
 		addNewStateButton.setToolTipText("Store current XTPN net p-state as a state vector.");
 		addNewStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfoXTPN();
 				return;
 			}
@@ -667,7 +667,7 @@ public class HolmesStatesManager extends JFrame {
 		addNewCleanStateButton.setFocusPainted(false);
 		addNewCleanStateButton.setToolTipText("Create new clean p-state vector (no tokens, clean multisets).");
 		addNewCleanStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfoXTPN();
 				return;
 			}
@@ -691,7 +691,7 @@ public class HolmesStatesManager extends JFrame {
 		replaceStateButton.setFocusPainted(false);
 		replaceStateButton.setToolTipText("<html>Replace the values of the selected XTPN p-state from the table<br>with the current XTPN net p-state.</html>");
 		replaceStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfoXTPN();
 				return;
 			}
@@ -713,7 +713,7 @@ public class HolmesStatesManager extends JFrame {
 		removeStateButton.setFocusPainted(false);
 		removeStateButton.setToolTipText("Removes XTPN p-state vector from the project data.");
 		removeStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfoXTPN();
 				return;
 			}
@@ -735,7 +735,7 @@ public class HolmesStatesManager extends JFrame {
 		editStateButton.setFocusPainted(false);
 		editStateButton.setToolTipText("Opens p-state editor window based on the currently selected p-state.");
 		editStateButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				noNetInfoXTPN();
 				return;
 			}

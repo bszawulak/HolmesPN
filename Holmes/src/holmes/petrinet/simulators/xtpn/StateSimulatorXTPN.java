@@ -67,7 +67,7 @@ public class StateSimulatorXTPN implements Runnable {
 
     /**
      * Metoda ta musi być wywołana przed każdym startem symulatora. Inicjalizuje początkowe struktury
-     * danych dla symulatora
+     * danych dla symulatora.
      * @param ownSettings (<b>SimulatorGlobals</b>) parametry symulacji.
      * @return (<b>boolean</b>) - true, jeśli wszystko się udało.
      */
@@ -94,7 +94,8 @@ public class StateSimulatorXTPN implements Runnable {
             readyToSimulate = false;
             return readyToSimulate;
         }
-        if (!(transitions.size() > 0 && places.size() > 0)) {
+        //if (!(transitions.size() > 0 && places.size() > 0)) {
+        if(transitions.isEmpty() || places.isEmpty()) {
             readyToSimulate = false;
             return readyToSimulate;
         }
@@ -203,14 +204,14 @@ public class StateSimulatorXTPN implements Runnable {
         consumingTokensTransitionsClassical = engineXTPN.returnConsumingTransClassicalVector(nextXTPNsteps);
         producingTokensTransitionsAll = engineXTPN.returnProducingTransVector(nextXTPNsteps);
 
-        if (consumingTokensTransitionsXTPN.size() > 0 || consumingTokensTransitionsClassical.size() > 0) {
+        if (!consumingTokensTransitionsXTPN.isEmpty() || !consumingTokensTransitionsClassical.isEmpty()) {
             //faza zabierana tokenów, czyli uruchamianie tranzycji:
             transitionsAfterSubtracting = consumeTokensSubphase();
             //wszystko co trafia poniżej dostaje status production(true), tranzycje XTPN - nowy timer beta:
             engineXTPN.endSubtractPhase(transitionsAfterSubtracting);
         }
 
-        if (producingTokensTransitionsAll.size() > 0) { //tylko produkcja tokenów
+        if (!producingTokensTransitionsAll.isEmpty()) { //tylko produkcja tokenów
             engineXTPN.endProductionPhase(producingTokensTransitionsAll);
         }
 
@@ -339,6 +340,7 @@ public class StateSimulatorXTPN implements Runnable {
                     //arc.setTransportingTokens(true);
                     PlaceXTPN place = (PlaceXTPN) arc.getStartNode(); //miejsce, z którego zabieramy
                     if (arc.getArcType() == Arc.TypeOfArc.INHIBITOR) {
+                        //TODO: implement maybe?
                         //arc.setTransportingTokens(false);
                     } else { //teraz określamy ile zabrać
                         int weight = arc.getWeight();
@@ -400,6 +402,7 @@ public class StateSimulatorXTPN implements Runnable {
                     //arc.setTransportingTokens(true);
                     PlaceXTPN place = (PlaceXTPN) arc.getStartNode(); //miejsce, z którego zabieramy
                     if (arc.getArcType() == Arc.TypeOfArc.INHIBITOR) {
+                        //TODO: implement maybe?
                         //arc.setTransportingTokens(false);
                     } else { //teraz określamy ile
                         int weight = arc.getWeight();
@@ -542,6 +545,7 @@ public class StateSimulatorXTPN implements Runnable {
         ArrayList<Double> timeVector = new ArrayList<>();
         ArrayList<Double> statsVector = new ArrayList<>();
 
+        //statsVector.addAll(Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
         statsVector.addAll(Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
 
         if (!readyToSimulate) {

@@ -23,8 +23,7 @@ import holmes.windows.ssim.HolmesSim;
 public class StateSimulator implements Runnable {
 	private GUIManager overlord;
 	private ArrayList<Transition> transitions;
-	private ArrayList<Transition> time_transitions;
-	private ArrayList<Place> places;
+    private ArrayList<Place> places;
 	private boolean readyToSimulate = false;
 	public double timeNetStepCounter = 0;
 	public double timeNetPartStepCounter = 0;
@@ -86,6 +85,9 @@ public class StateSimulator implements Runnable {
 		} else if(simulationType == 6) { //QuickSimNoReps
 			this.progressBar = (JProgressBar)blackBox[0];
 			this.quickSim = (QuickSimTools)blackBox[1];
+		} else if(simulationType == 7) { //SSA v1.0
+			this.progressBar = (JProgressBar)blackBox[0];
+			this.quickSim = (QuickSimTools)blackBox[1];
 		}
 	}
 
@@ -112,6 +114,9 @@ public class StateSimulator implements Runnable {
 		} else if(simulationType == 6) {
 			quickSimGatherDataNoReps();
 			quickSim.finishedStatsData(quickSimAllStats, transitions, places);
+		} else if(simulationType == 7) {
+			quickSimGatherDataSSA();
+			quickSim.finishedStatsData(quickSimAllStats, transitions, places);
 		}
 		this.terminate = false;
 	}
@@ -127,13 +132,14 @@ public class StateSimulator implements Runnable {
 		checkEngine(useGlobals);
 		
 		transitions = overlord.getWorkspace().getProject().getTransitions();
-		time_transitions = overlord.getWorkspace().getProject().getTimeTransitions();
+        ArrayList<Transition> time_transitions = overlord.getWorkspace().getProject().getTimeTransitions();
 		places = overlord.getWorkspace().getProject().getPlaces();
 		if(transitions == null || places == null) {
 			readyToSimulate = false;
 			return readyToSimulate;
 		}
-		if(!(transitions.size() > 0 && places.size() > 0)) {
+		//if(!(transitions.size() > 0 && places.size() > 0)) {
+		if(transitions.isEmpty() || places.isEmpty()) {
 			readyToSimulate = false;
 			return readyToSimulate;
 		}
@@ -187,6 +193,10 @@ public class StateSimulator implements Runnable {
 			} else if (engineType == 1) {
 				if(!(engine instanceof SPNengine)) {
 					engine = new SPNengine();
+				}
+			} else if (engineType == 2) {
+				if(!(engine instanceof SPNengine)) {
+					engine = new SSAengine();
 				}
 			} else { //domyślnie standardowy silnik
 				if(!(engine instanceof SimulatorStandardPN)) {
@@ -314,7 +324,7 @@ public class StateSimulator implements Runnable {
 	 * oraz przez ustaloną liczbę powtórek symulacji. Zwraca obiekt klasy kontenerowej NetSimulationData. Może być
 	 * to zarówno pakiet danych referencyjnych, jak i pakiet danych dla wyłączonych odpowiednich tranzycji. Oczywiście
 	 * musi być to wszystko ustawione przed jej uruchomieniem.
-	 * @return NetSimulationData - pakiet danych z powtórzonych symulacji.
+	 * @return <b>NetSimulationData</b> - pakiet danych z powtórzonych symulacji.
 	 */
 	public NetSimulationData simulateNetReferenceAndKnockout() {
 		if(!readyToSimulate) {
@@ -595,10 +605,10 @@ public class StateSimulator implements Runnable {
 	 * jeśli maximumMode = true, wtedy każda aktywna tranzycja musi się uruchomić.
 	 * Od simulate różni się tym, że nie zbiera historii odpaleń i tokenów dla miejsc, tylko
 	 * średnie wartości. Dzięki temu działa szybciej i nie zabiera tyle miejsca w pamięci.
-	 * @param steps int - liczba kroków do symulacji
-	 * @param placesToo boolean - true, jeśli ma gromadzić też dane dla miejsc
-	 * @param emptySteps boolean - true, jeśli dozwolone puste przebiegi
-	 * @return int - liczba rzeczywiście wykonanych kroków
+	 * @param steps <b>int</b> - liczba kroków do symulacji
+	 * @param placesToo <b>boolean</b> - true, jeśli ma gromadzić też dane dla miejsc
+	 * @param emptySteps <b>boolean</b> - true, jeśli dozwolone puste przebiegi
+	 * @return <b>int</b> - liczba rzeczywiście wykonanych kroków
 	 */
 	public int simulateNetSimple(int steps, boolean placesToo, boolean emptySteps) {
 		if(!readyToSimulate) {
@@ -660,10 +670,10 @@ public class StateSimulator implements Runnable {
 	/**
 	 * Metoda symuluje podaną liczbę kroków sieci Petriego dla wybranego wcześniej trybu, dla konkretnego
 	 * miejsca. Dane dla wybranego miejsca funkcja zwraca jako ArrayList[Integer].
-	 * @param steps int - liczba kroków do symulacji
-	 * @param place Place - wybrane miejsce do testowania
-	 * @param emptySteps boolean - true, jeśli dozwolone puste przebiegi
-	 * @return ArrayList[Integer] - wektor danych o tokenach w miejscu
+	 * @param steps <b>int</b> - liczba kroków do symulacji
+	 * @param place <b>Place</b> - wybrane miejsce do testowania
+	 * @param emptySteps <b>boolean</b> - true, jeśli dozwolone puste przebiegi
+	 * @return ArrayList[<b>Integer</b>] - wektor danych o tokenach w miejscu
 	 */
 	public ArrayList<Integer> simulateNetSinglePlace(int steps, Place place, boolean emptySteps) {
 		if(!readyToSimulate) {
@@ -695,10 +705,10 @@ public class StateSimulator implements Runnable {
 	/**
 	 * Metoda symuluje podaną liczbę kroków sieci Petriego dla wybranego wcześniej trybu, dla konkretnej
 	 * tranzycji. Dane dla wybranej tranzycji funkcja zwraca jako ArrayList[Integer].
-	 * @param steps int - liczba kroków do symulacji
-	 * @param trans Transition - wybrana tranzycja do testowania
-	 * @param emptySteps boolean - true, jeśli dozwolone kroki bez odpalonych tranzycji
-	 * @return ArrayList[Integer] - wektor danych o odpalaniu tranzycji
+	 * @param steps <b>int</b> - liczba kroków do symulacji
+	 * @param trans <b>Transition</b> - wybrana tranzycja do testowania
+	 * @param emptySteps <b>boolean</b> - true, jeśli dozwolone kroki bez odpalonych tranzycji
+	 * @return ArrayList[<b>Integer</b>] - wektor danych o odpalaniu tranzycji
 	 */
 	public ArrayList<Integer> simulateNetSingleTransition(int steps, Transition trans, boolean emptySteps) {
 		if(!readyToSimulate) {
@@ -744,10 +754,10 @@ public class StateSimulator implements Runnable {
 	
 	/**
 	 * Symulacja na potrzeby okna podglądu inwariantów - dane o odpaleniach tranzycji w inwariancie.
-	 * @param steps int - ile kroków symulacji
-	 * @param reps int - ile powtórek
-	 * @param emptySteps boolean - true, jeśli dozwolone kroki bez odpalania tranzycji
-	 * @return ArrayList[ArrayList[Double]] - dwa wektory danych, pierwszy to średnie, drugi - odchylenie standardowe
+	 * @param steps <b>int</b> - ile kroków symulacji
+	 * @param reps <b>int</b> - ile powtórek
+	 * @param emptySteps <b>boolean</b> - true, jeśli dozwolone kroki bez odpalania tranzycji
+	 * @return ArrayList[ArrayList[<b>Double</b>]] - dwa wektory danych, pierwszy to średnie, drugi - odchylenie standardowe
 	 */
 	public ArrayList<ArrayList<Double>> simulateForInvariantTrans(int steps, int reps, boolean emptySteps) {
 		ArrayList<ArrayList<Double>> result = new ArrayList<>();
@@ -846,7 +856,7 @@ public class StateSimulator implements Runnable {
 	
 	/**
 	 * Ustawia status wymuszonego kończenia symulacji. 
-	 * @param val boolean - true, jeśli symulator ma zakończyć działanie
+	 * @param val <b>boolean</b> - true, jeśli symulator ma zakończyć działanie
 	 */
 	public void setCancelStatus(boolean val) {
 		this.terminate = val;
@@ -856,7 +866,7 @@ public class StateSimulator implements Runnable {
 	
 	/**
 	 * Zwraca flagę wymuszonego kończenia symulacji.
-	 * @return boolean - true, jeśli symulator został awaryjnie wyłączony
+	 * @return <b>boolean</b> - true, jeśli symulator został awaryjnie wyłączony
 	 */
 	public boolean getCancelStatus() {
 		return this.terminate;
@@ -867,7 +877,7 @@ public class StateSimulator implements Runnable {
 	 * określonego zmienną duration. Czyli jeśli timer to 0, to tranzycja liczy. Jeśli w takim wypadku
 	 * duration > 0, wtedy ją usuwamy z listy launchingTransitions (tokeny już odjęto z miejsc, dodanie
 	 * nastąpi kilka kroków później). Jeśli timer = duration = 0, tranzycja zostaje na liście.
-	 * @param launchingTransitions ArrayList[Integer] - lista tranzycji odpalających
+	 * @param launchingTransitions ArrayList[<b>Integer</b>] - lista tranzycji odpalających
 	 */
 	private void removeDPNtransition(ArrayList<Transition> launchingTransitions) {
 		if(launchingTransitions == null)
@@ -886,7 +896,7 @@ public class StateSimulator implements Runnable {
 	
 	/**
 	 * Metoda uruchamia fazę odejmowania tokenów z miejsc wejściowych do odpalonych tranzycji
-	 * @param launchingTransitions ArrayList[Transition] - lista uruchamianych tranzycji
+	 * @param launchingTransitions ArrayList[<b>Transition</b>] - lista uruchamianych tranzycji
 	 */
 	private void launchSubtractPhase(ArrayList<Transition> launchingTransitions) {
 		if(launchingTransitions == null)
@@ -923,7 +933,7 @@ public class StateSimulator implements Runnable {
 	
 	/**
 	 * Metoda sprawdzająca, czy krok jest możliwy - czy istnieje choć jedna aktywna tranzycja.
-	 * @return boolean - true jeśli jest choć jedna aktywna tranzycja; false w przeciwnym wypadku
+	 * @return <b>boolean</b> - true jeśli jest choć jedna aktywna tranzycja; false w przeciwnym wypadku
 	 */
 	private boolean isPossibleStep() {
 		if(engine instanceof SimulatorStandardPN) {
@@ -938,7 +948,7 @@ public class StateSimulator implements Runnable {
 	
 	/**
 	 * Metoda uruchamia fazę faktycznego dodawania tokenów do miejsc wyjściowych z odpalonych tranzycji. 
-	 * @param launchingTransitions ArrayList[Transition] - lista odpalanych tranzycji
+	 * @param launchingTransitions ArrayList[<b>Transition</b>] - lista odpalanych tranzycji
 	 */
 	private void launchAddPhase(ArrayList<Transition> launchingTransitions) {
 		if(launchingTransitions == null)
@@ -969,7 +979,7 @@ public class StateSimulator implements Runnable {
 	
 	/**
 	 * Metoda zwraca tablicę liczb tokenów w czasie dla miejsc.
-	 * @return ArrayList[ArrayList[Integer]] - tablica po symulacji
+	 * @return ArrayList[ArrayList[<b>Integer</b>]] - tablica po symulacji
 	 */
 	public ArrayList<ArrayList<Integer>> getPlacesData() {
 		return placesData;
@@ -977,7 +987,7 @@ public class StateSimulator implements Runnable {
 	
 	/**
 	 * Metoda zwraca tablicę uruchomień dla tranzycji.
-	 * @return ArrayList[ArrayList[Integer]] - tablica po symulacji
+	 * @return ArrayList[ArrayList[<b>Integer</b>]] - tablica po symulacji
 	 */
 	public ArrayList<ArrayList<Integer>> getTransitionsData() {
 		return transitionsData;
@@ -985,7 +995,7 @@ public class StateSimulator implements Runnable {
 	
 	/**
 	 * Metoda zwraca wektor sumy uruchomień dla tranzycji.
-	 * @return ArrayList[Integer] - wektor tranzycji po symulacji
+	 * @return ArrayList[<b>Integer</b>] - wektor tranzycji po symulacji
 	 */
 	public ArrayList<Integer> getTransitionsCompactData() {
 		return transitionsTotalFiring;
@@ -993,7 +1003,7 @@ public class StateSimulator implements Runnable {
 	
 	/**
 	 * Metoda zwraca wektor średnich uruchomień tranzycji po wszystkich krokach.
-	 * @return ArrayList[Double] - wektor średniej liczby uruchomień tranzycji po symulacji
+	 * @return ArrayList[<b>Double</b>] - wektor średniej liczby uruchomień tranzycji po symulacji
 	 */
 	public ArrayList<Double> getTransitionsAvgData() {
 		return transitionsAvgData;
@@ -1001,7 +1011,7 @@ public class StateSimulator implements Runnable {
 	
 	/**
 	 * Metoda zwraca wektor średniej liczby tokenów w miejsach po wszystkich krokach.
-	 * @return ArrayList[Double] - wektor średniej liczby tokenów
+	 * @return ArrayList[<b>Double</b>] - wektor średniej liczby tokenów
 	 */
 	public ArrayList<Double> getPlacesAvgData() {
 		return placesAvgData;
@@ -1009,7 +1019,7 @@ public class StateSimulator implements Runnable {
 	
 	/**
 	 * Zwraca wektor zawierający sumę wszystkich tokenów w miejsach po wszystkich krokach symulacji.
-	 * @return ArrayList[Long] - wektor sumy tokenów
+	 * @return ArrayList[<b>Long</b>] - wektor sumy tokenów
 	 */
 	public ArrayList<Long> getPlacesTotalData() {
 		return placesTotalData;
@@ -1070,8 +1080,8 @@ public class StateSimulator implements Runnable {
 	/**
 	 * Metoda tworzy nowy obiekt silnika symulacji.
 	 * @param type int - typ:<br>
-	 * 		1 - SSA<br>
-	 * 		2 - Gillespie SSA<br>
+	 * 		1 - SS (Stochastic Simulation) for SPN<br>
+	 * 		2 - Gillespie SSA (Stochastic Simulation Algorith)<br>
 	 * 		0 lub każdy inny niz powyższy - standardowy symulator tokenów
 	 */
 	public void setEngine(int type) {
@@ -1079,6 +1089,9 @@ public class StateSimulator implements Runnable {
 		if(type == 1) {
 			engine = new SPNengine();
 			overlord.simSettings.setSimulatorType(1);
+		} else if(type == 2) {
+			engine = new SSAengine();
+			overlord.simSettings.setSimulatorType(2);
 		} else {
 			engine = new SimulatorStandardPN();
 			overlord.simSettings.setSimulatorType(0);
@@ -1327,5 +1340,19 @@ public class StateSimulator implements Runnable {
 		quickSimAllStats.add(null);
 		quickSimAllStats.add(tokensSum);
 		return quickSimAllStats;
+	}
+
+	public ArrayList<ArrayList<Double>> quickSimGatherDataSSA() {
+		ArrayList<ArrayList<Double>> result = new ArrayList<>();
+
+		if(!readyToSimulate) {
+			overlord.log("Simulation simple mode cannot start.", "warning", true);
+			return null;
+		}
+		prepareNetM0(); //backup, m0, etc.
+
+
+
+		return result;
 	}
 }

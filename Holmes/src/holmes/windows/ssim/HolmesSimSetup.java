@@ -196,7 +196,7 @@ public class HolmesSimSetup extends JFrame {
 		panel.add(simulatorLabel);
 		
 		String[] simulatorName = {"Standard token simulator", "Stochastics simulation for SPN", 
-				"Gillespie SSA (exact version)", "Gillespie SSA (fast version)"};
+				"Gillespie SSA (test version)", "Gillespie SSA (fast version)"};
 		simulatorType = new JComboBox<String>(simulatorName);
 		simulatorType.setBounds(posX, posY+60, 250, 20);
 		simulatorType.setSelectedIndex(0);
@@ -209,6 +209,8 @@ public class HolmesSimSetup extends JFrame {
 				overlord.simSettings.setSimulatorType(0);
 			} else if(selected == 1) {
 				overlord.simSettings.setSimulatorType(1);
+			} else if(selected == 2) {
+				overlord.simSettings.setSimulatorType(2);
 			} else {
 				JOptionPane.showMessageDialog(ego, "This feature is not yet implemented.",
 						"Simulator unavailable", JOptionPane.INFORMATION_MESSAGE);

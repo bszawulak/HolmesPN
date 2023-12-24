@@ -268,9 +268,9 @@ public class SelectionManager {
 	/**
 	 * Metoda pozwala sprawdzić czy podana w parametrze lokalizacja wierzchołka ElementLocation
 	 * znajduje się na liście zaznaczonych lokalizacji wierzchołków.
-	 * @param el ElementLocation - lokalizacja wierzchołka której obecność na liście zaznaczenia
+	 * @param el <b>ElementLocation</b> - lokalizacja wierzchołka której obecność na liście zaznaczenia
 	 * 		ma zostać sprawdzona
-	 * @return boolean - true, jeśli podany w parametrze ElementLocation znajduje się na liście
+	 * @return <b>boolean</b> - true, jeśli podany w parametrze ElementLocation znajduje się na liście
 	 * 		zaznaczonych; false w sytuacji przeciwnej
 	 */
 	public boolean isElementLocationSelected(ElementLocation el) {
@@ -306,7 +306,7 @@ public class SelectionManager {
 			if (!n.removeElementLocation(el)) {
 				if(n instanceof Place) {
 					int index = places.indexOf((Place)n);
-					pn.accessStatesManager().removePlace(index);
+					pn.accessStatesManager().removePlace(index); //zwykłe + XTPN
 					pn.accessSSAmanager().removePlace(index);
 					if(FunctionsTools.revalidateFunctions((Place)n, index))
 						functionWarning = true;

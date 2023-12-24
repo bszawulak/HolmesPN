@@ -43,9 +43,9 @@ public class HolmesStatesEditorXTPN extends JFrame {
 
     /**
      * Główny konstruktor okna edycji stanu sieci.
-     * @param parent HolmesStatesManager - okno wywołujące
-     * @param stateVector StatePlacesVector - wektor SSA
-     * @param stateIndex int - indeks powyższego wektora w tablicy
+     * @param parent <b>HolmesStatesManager</b> - okno wywołujące
+     * @param stateVector <b>StatePlacesVector</b> - wektor SSA
+     * @param stateIndex <b>int</b> - indeks powyższego wektora w tablicy
      */
     public HolmesStatesEditorXTPN(HolmesStatesManager parent, MultisetM stateVector, int stateIndex) {
         setTitle("Holmes p-state editor XTPN");
