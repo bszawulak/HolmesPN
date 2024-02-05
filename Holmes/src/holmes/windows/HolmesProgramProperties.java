@@ -717,9 +717,7 @@ public class HolmesProgramProperties extends JFrame {
 		//int io_x = 10;
 		//int io_y = 15;
 		noAction = true;
-		
-		
-		
+
 		noAction = false;
 		return panel;
 	}

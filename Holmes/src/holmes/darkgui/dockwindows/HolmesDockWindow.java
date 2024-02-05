@@ -199,8 +199,12 @@ public class HolmesDockWindow {//extends SingleDock {
      */
     public void showT_invBoxWindow(ArrayList<ArrayList<Integer>> t_invariants) {
         if (type == DockWindowType.T_INVARIANTS) {
-            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, t_invariants));
-            scrollPane.getViewport().add(getCurrentDockWindow());
+            //MRtinv 5.02.2024
+            //setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, t_invariants));
+            //scrollPane.getViewport().add(getCurrentDockWindow());
+            guiManager.getT_invBox().getCurrentDockWindow().resetT_invariants();
+            guiManager.getT_invBox().getCurrentDockWindow().setT_invariants(t_invariants);
+            guiManager.getT_invBox().getCurrentDockWindow().refreshInvariantsComboBox();
         }
     }
 
