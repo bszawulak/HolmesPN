@@ -161,6 +161,7 @@ public class ProjectReader {
 				projectCore.setT_InvMatrix(null, false);
 			} else {
 				overlord.getT_invBox().showT_invBoxWindow(projectCore.getT_InvMatrix());
+				overlord.reset.setT_invariantsStatus(true);
 			}
 
 			//overlord.getDecompositionBox().showDecompositionBoxWindows();

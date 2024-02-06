@@ -109,8 +109,8 @@ public class SettingsManager {
 
         //width and height of the main window
         checkAndFix(settingsNew, "mainWindowStartMaximized", "false");
-        checkAndFix(settingsNew, "mainWindowWidth", "1600");
-        checkAndFix(settingsNew, "mainWindowHeight", "1024");
+        checkAndFix(settingsNew, "mainWindowWidth", "1500");
+        checkAndFix(settingsNew, "mainWindowHeight", "800");
 
         //program - ogólne
         checkAndFix(settingsNew, "programUseOldSnoopyLoaders", "0");

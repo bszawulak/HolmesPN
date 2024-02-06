@@ -204,6 +204,8 @@ public class HolmesDockWindow {//extends SingleDock {
             //scrollPane.getViewport().add(getCurrentDockWindow());
             guiManager.getT_invBox().getCurrentDockWindow().resetT_invariants();
             guiManager.getT_invBox().getCurrentDockWindow().setT_invariants(t_invariants);
+            //guiManager.getT_invBox().getCurrentDockWindow().setNetData(guiManager.getWorkspace().getProject().getTransitions()
+            //        , guiManager.getWorkspace().getProject().getPlaces());
             guiManager.getT_invBox().getCurrentDockWindow().refreshInvariantsComboBox();
         }
     }

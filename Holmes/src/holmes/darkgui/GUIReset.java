@@ -168,8 +168,7 @@ public class GUIReset {
 	 * @param clearWindows boolean - jeśli true, wtedy nakazuje czystkę dużych okien programu, np. klastry
 	 */
 	public void reset2ndOrderData(boolean clearWindows) {
-		//"I nie będzie niczego."
-		// Księga Kononowicza
+		//"I nie będzie niczego." Księga Kononowicza
 		PetriNet pNet = overlord.getWorkspace().getProject();
 		//clearGraphColors();
 		
@@ -183,22 +182,13 @@ public class GUIReset {
 	
 		if(t_invGenerated) {
 			overlord.accessNetTablesWindow().resetT_invData();
-			
 			resetCommunicationProtocol();
 			pNet.setT_InvMatrix(null, false);
 			pNet.getMCSdataCore().resetMSC();
-			
+
 			if(overlord.getT_invBox().getCurrentDockWindow() != null) {
 				overlord.getT_invBox().getCurrentDockWindow().resetT_invariants();
-				//overlord.getT_invBox().getCurrentDockWindow().removeAll();
 			}
-
-			//HolmesDockWindowsTable newWindow = new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, pNet.getT_InvMatrix());
-			//overlord.getT_invBox().setCurrentDockWindow(newWindow);
-
-			//overlord.getT_invBox().getContentPanel().removeAll();
-			//overlord.getT_invBox().getCurrentDockWindow().validate();
-			//overlord.getT_invBox().getCurrentDockWindow().repaint();
 
 			t_invGenerated = false;
 			overlord.log("T-invariants data removed from memory.", "text", true);
@@ -210,9 +200,9 @@ public class GUIReset {
 			
 			if(overlord.getP_invBox().getCurrentDockWindow() != null) {
 				overlord.getP_invBox().getCurrentDockWindow().resetP_invariants();
-				overlord.getP_invBox().getCurrentDockWindow().removeAll();
+				//overlord.getP_invBox().getCurrentDockWindow().removeAll();
 			}
-			overlord.getP_invBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, pNet.getP_InvMatrix()));	
+			//overlord.getP_invBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, pNet.getP_InvMatrix()));
 			//overlord.getP_invBox().validate();
 			//overlord.getP_invBox().repaint();
 			
@@ -259,7 +249,7 @@ public class GUIReset {
 			overlord.getDecompositionBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.DECOMPOSITION, null));
 			overlord.getDecompositionBox().validate();
 			overlord.getDecompositionBox().repaint();
-*/
+			*/
 			subNetGenerated = false;
 			overlord.log("Decomposition data removed from memory.", "text", true);
 		}

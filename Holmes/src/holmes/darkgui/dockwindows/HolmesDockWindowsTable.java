@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.Serial;
+import java.lang.reflect.Array;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -5817,18 +5818,13 @@ public class HolmesDockWindowsTable extends JPanel {
     private void createT_invSubWindow(ArrayList<ArrayList<Integer>> invariantsData) {
         doNotUpdate = true;
         initiateContainers();
-        //if (invariantsData == null || invariantsData.isEmpty()) {
-            //return;
-        //} else {
-            mode = tINVARIANTS;
-            t_invariantsMatrix = invariantsData;
-            transitions = overlord.getWorkspace().getProject().getTransitions();
-            places = overlord.getWorkspace().getProject().getPlaces();
-            overlord.reset.setT_invariantsStatus(true);
-            if(t_invariantsMatrix == null) {
-                t_invariantsMatrix = new ArrayList<>();
-            }
-        //}
+
+        mode = tINVARIANTS;
+        t_invariantsMatrix = new ArrayList<>();
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        places = overlord.getWorkspace().getProject().getPlaces();
+        overlord.reset.setT_invariantsStatus(true);
+
         //panel = GUIManager.getDefaultGUIManager().getT_invBox().getSelectionPanel();
         components.clear();
         panel.removeAll();
@@ -5842,18 +5838,19 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(chooseInvLabel);
 
         //MRtinv
-        String[] invariantHeaders = new String[t_invariantsMatrix.size() + 3];
+        String[] invariantHeaders = new String[3];
         invariantHeaders[0] = "---";
-        for (int i = 0; i < t_invariantsMatrix.size(); i++) {
-            int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(i)).size();
-            invariantHeaders[i + 1] = "Inv. #" + (i + 1) + " (size: " + invSize + ")";
-        }
-        invariantHeaders[invariantHeaders.length - 2] = "null transitions";
-        invariantHeaders[invariantHeaders.length - 1] = "inv/trans frequency";
+        invariantHeaders[1] = "null transitions";
+        invariantHeaders[2] = "inv/trans frequency";
 
         chooseInvBox = new JComboBox<>(invariantHeaders);
         chooseInvBox.setBounds(colB_posX, positionY, 150, 20);
         chooseInvBox.addActionListener(actionEvent -> {
+            if(!GUIController.access().canRefresh())
+                return;
+
+            getRecentNetData();
+
             @SuppressWarnings("unchecked")
             JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             int items = comboBox.getItemCount();
@@ -5903,7 +5900,15 @@ public class HolmesDockWindowsTable extends JPanel {
         JButton recalculateTypesButton = new JButton("Refresh");
         recalculateTypesButton.setBounds(colA_posX, positionY += 25, 100, 20);
         recalculateTypesButton.setToolTipText("If t-inv types have been determined, this button will refresh the content of the three comboboxes below:");
-        recalculateTypesButton.addActionListener(actionEvent -> refreshSubSurCombos());
+        //recalculateTypesButton.addActionListener(actionEvent -> refreshSubSurCombos());
+        recalculateTypesButton.addActionListener(actionEvent -> {
+            try {
+                getRecentNetData();
+                refreshSubSurCombos();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        });
         components.add(recalculateTypesButton);
 
         JButton recalculateInvTypesButton = new JButton("Recalculate");
@@ -5912,6 +5917,7 @@ public class HolmesDockWindowsTable extends JPanel {
         recalculateInvTypesButton.setBounds(colA_posX + 105, positionY, 130, 20);
         recalculateInvTypesButton.addActionListener(actionEvent -> {
             try {
+                getRecentNetData();
                 InvariantsCalculator ic = new InvariantsCalculator(true);
                 InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), t_invariantsMatrix, true);
 
@@ -5923,6 +5929,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(recalculateInvTypesButton);
 
         //sur-sub-non-invariants:
+        /*
         ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
         if(typesVector == null)
             typesVector = new ArrayList<>();
@@ -5939,33 +5946,37 @@ public class HolmesDockWindowsTable extends JPanel {
             if (typesVector.get(i) == 11)
                 nonsInv.add(i);
         }
+*/
 
-        String[] surHeaders = new String[sursInv.size() + 1];
+        String[] surHeaders = new String[1];
         surHeaders[0] = "---";
-        if (sursInv.size() > 0) {
+        /*
+        if (!sursInv.isEmpty()) {
             for (int i = 0; i < sursInv.size(); i++) {
                 int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(sursInv.get(i))).size();
                 surHeaders[i + 1] = "Inv. #" + (sursInv.get(i) + 1) + " (size: " + invSize + ")";
             }
-        }
-        String[] subHeaders = new String[subsInv.size() + 1];
+        }*/
+        String[] subHeaders = new String[1];
         subHeaders[0] = "---";
-        if (subsInv.size() > 0) {
+        /*
+        if (!subsInv.isEmpty()) {
             for (int i = 0; i < subsInv.size(); i++) {
                 int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(subsInv.get(i))).size();
                 subHeaders[i + 1] = "Inv. #" + (subsInv.get(i) + 1) + " (size: " + invSize + ")";
             }
-        }
+        }*/
 
         @SuppressWarnings("MismatchedReadAndWriteOfArray")
-        String[] nonsHeaders = new String[nonsInv.size() + 1];
+        String[] nonsHeaders = new String[1];
         nonsHeaders[0] = "---";
-        if (nonsInv.size() > 0) {
+        /*
+        if (!nonsInv.isEmpty()) {
             for (int i = 0; i < nonsInv.size(); i++) {
                 int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(nonsInv.get(i))).size();
                 nonsHeaders[i + 1] = "Inv. #" + (nonsInv.get(i) + 1) + " (size: " + invSize + ")";
             }
-        }
+        }*/
 
         JLabel surLabel1 = new JLabel("Sur-inv: ");
         surLabel1.setBounds(colA_posX, positionY += 25, 80, 20);
@@ -6161,10 +6172,22 @@ public class HolmesDockWindowsTable extends JPanel {
         add(panel);
     }
 
+    private void getRecentNetData() {
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        places = overlord.getWorkspace().getProject().getPlaces();
+        t_invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
+        if(t_invariantsMatrix == null)
+            t_invariantsMatrix = new ArrayList<>();
+    }
+
     /**
      * Metoda odświeża zawartość comboBoxów dla niekanonicznych "inwariantów".
      */
     public void refreshSubSurCombos() {
+        if(t_invariantsMatrix.isEmpty()) { //nie ma co odświeżać
+            return;
+        }
+
         ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
 
         ArrayList<Integer> sursInv = new ArrayList<>();
@@ -6226,6 +6249,10 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda odpowiedzialna za podświetlanie inwariantów na rysunku sieci.
      */
     private void showT_invariant() {
+        if(t_invariantsMatrix.isEmpty()) { //nie ma co pokazywać
+            return;
+        }
+
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
 
@@ -6350,17 +6377,16 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda pokazująca w ilu inwariantach występuje każda tranzycja
      */
     private void showT_invTransFrequency() {
+        if(t_invariantsMatrix.isEmpty()) { //nie ma co pokazywać
+            return;
+        }
+
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
 
         //ArrayList<Integer> freqVector = InvariantsTools.getFrequency(t_invariantsMatrix, false);
         ArrayList<Integer> freqVector = InvariantsTools.getFrequencyRealInvariants(t_invariantsMatrix, false);
         ArrayList<Transition> transitions_tmp = overlord.getWorkspace().getProject().getTransitions();
-
-        if(t_invariantsMatrix == null || t_invariantsMatrix.isEmpty()) {
-            //JOptionPane.showMessageDialog(null, "T-invariants data unavailable.", "No t-invariants", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
 
         int max_freq = freqVector.stream()
                 .mapToInt(v -> v)
@@ -6439,6 +6465,10 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda pomocnicza do zaznaczania tranzycji nie pokrytych inwariantami.
      */
     private void showDeadT_inv() {
+        if(t_invariantsMatrix.isEmpty()) { //nie ma co pokazywać
+            return;
+        }
+
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
 
@@ -6536,10 +6566,15 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda pomocnicza konstruktora odpowiedzialna za wypełnienie podokna informacji o t-inwariantach sieci.
-     * @param tInvData ArrayList[ArrayList[Integer]] - macierz inwariantów
+     * @param tInvariants ArrayList[ArrayList[Integer]] - macierz inwariantów
      */
     public void setT_invariants(ArrayList<ArrayList<Integer>> tInvariants) {
         t_invariantsMatrix = tInvariants;
+    }
+
+    public void setNetData(ArrayList<Transition> trans, ArrayList<Place> places) {
+        this.transitions = trans;
+        this.places = places;
     }
 
     //**************************************************************************************

@@ -325,7 +325,8 @@ public class GraphPanel extends JComponent {
 			g2d.setColor(EditorResources.selectionRectFill);
 			g2d.fillRoundRect(getSelectingRect().x, getSelectingRect().y, getSelectingRect().width, getSelectingRect().height, 3, 3);
 		}
-		if (drawnArc != null) {
+
+		if (drawnArc != null) { //rysowanie łuku - dosłownie, podczas jego tworzenia - dodawania do sieci
 			drawnArc.draw(g2d, this.sheetId, getZoom(), eds);
 		}
 		

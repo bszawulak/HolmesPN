@@ -127,7 +127,12 @@ public class GUIOperations {
 			boolean status = false;
 			if (extension.toLowerCase().contains(".apf") || extension.toLowerCase().contains(".project")) { //ABYSS/Holmes project reader
 				ProjectReader pRdr = new ProjectReader();
+				//access controller:
+				GUIController.access().setRefresh(false);
+
 				status = pRdr.readProject(file.getPath());
+
+				GUIController.access().setRefresh(true);
 				
 				overlord.setLastPath(file.getParentFile().getPath());	
 				overlord.subnetsGraphics.resizePanels();
