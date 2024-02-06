@@ -190,11 +190,15 @@ public class GUIReset {
 			
 			if(overlord.getT_invBox().getCurrentDockWindow() != null) {
 				overlord.getT_invBox().getCurrentDockWindow().resetT_invariants();
-				overlord.getT_invBox().getCurrentDockWindow().removeAll();
+				//overlord.getT_invBox().getCurrentDockWindow().removeAll();
 			}
-			overlord.getT_invBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, pNet.getT_InvMatrix()));	
-			//overlord.getT_invBox().validate();
-			//overlord.getT_invBox().repaint();
+
+			//HolmesDockWindowsTable newWindow = new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, pNet.getT_InvMatrix());
+			//overlord.getT_invBox().setCurrentDockWindow(newWindow);
+
+			//overlord.getT_invBox().getContentPanel().removeAll();
+			//overlord.getT_invBox().getCurrentDockWindow().validate();
+			//overlord.getT_invBox().getCurrentDockWindow().repaint();
 
 			t_invGenerated = false;
 			overlord.log("T-invariants data removed from memory.", "text", true);

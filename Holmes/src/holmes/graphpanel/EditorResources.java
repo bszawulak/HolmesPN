@@ -7,6 +7,7 @@ import java.awt.Stroke;
 /**
  * Klasa zasobów programu, ogólnie mówiac definiuje stałe związane z grafiką.
  */
+@SuppressWarnings("unused")
 public class EditorResources {
 	public static final Color selectionColorLevel1 = new Color(30, 144, 255, 20);
 	public static final Color selectionColorLevel2 = new Color(30, 144, 255, 50);
