@@ -384,12 +384,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		propericeTMPBox = GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow();
 		propericeTMPBox.setPreferredSize(new Dimension(200, 400));
 
-
-
 		//getFrame().add(propericeTMPBox,BorderLayout.LINE_END);
-
-
-
 		JTabbedPane leftCentralPanel = new JTabbedPane();
 		leftCentralPanel.add(getToolBox().getTree());
 		leftCentralPanel.setTabComponentAt(0, new JLabel("Toolbox"));
@@ -423,6 +418,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		simAndworkspacePanel.setDividerLocation(180);
 		JSplitPane rightPanelSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propericeTMPBox, analysisTabs);
 		JSplitPane uberMainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, simAndworkspacePanel, rightPanelSplit);
+
 		uberMainPanel.setDividerLocation(this.screenSize.width-330);
 		getFrame().add(uberMainPanel,BorderLayout.CENTER);
 
@@ -499,6 +495,25 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		//getSimulatorBox().createSimulatorProperties(false);
 		getFrame().repaint();
+
+		//getFrame().setLocation((int) (screenSize.width * 0.1) / 2, (int) (screenSize.height * 0.1) / 2);
+		//getFrame().setSize((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
+		//getFrame().setVisible(true);
+		//getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
+
+		//set/get size
+
+		boolean startMaximized = Boolean.parseBoolean(settingsManager.getValue("mainWindowStartMaximized"));
+		int width = Integer.parseInt(settingsManager.getValue("mainWindowWidth"));
+		int height = Integer.parseInt(settingsManager.getValue("mainWindowHeight"));
+
+		int screenHeight = screenSize.height;
+		int screenWidth = screenSize.width;
+
+		getFrame().setSize(width, height);
+		getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.NORMAL);
+
+		uberMainPanel.setDividerLocation(width-330); //pasek okien po prawej
 	}
 
 	/**

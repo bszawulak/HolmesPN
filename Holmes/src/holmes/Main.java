@@ -6,12 +6,12 @@ import holmes.darkgui.GUIManager;
 
 /**
  * Główna klasa programu. Jedna metoda, odpowiedzialna za tworzenie środowiska graficznego Holmes. I całej reszty.
- * Przy okazji jedyna zrozumiała.
+ * Przy okazji jedyna zrozumiała. Garść sucharów poniżej, wszędzie dalej w kodzie jest już tylko gorzej.
  *
  * [2022-06-21] Wrócilem. MR.
  * [2022-07-01] Jak sie nazywa szersza langusta? wangusta!
- * <p>
  * "Czy położyłby się Pan pod kroplówką obsługiwaną przez ten algorytm? -A co by w niej było? -Denaturat." A.D. circa 2001
+ * [2024-02-06] rozwój trwa, tym razem z copilotem
  *
  */
 public class Main {

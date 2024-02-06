@@ -107,6 +107,11 @@ public class SettingsManager {
         checkAndFix(settingsNew, "ina_COMMAND3", "nnnfnn");
         checkAndFix(settingsNew, "ina_COMMAND4", "eqqy");
 
+        //width and height of the main window
+        checkAndFix(settingsNew, "mainWindowStartMaximized", "false");
+        checkAndFix(settingsNew, "mainWindowWidth", "1600");
+        checkAndFix(settingsNew, "mainWindowHeight", "1024");
+
         //program - ogólne
         checkAndFix(settingsNew, "programUseOldSnoopyLoaders", "0");
         checkAndFix(settingsNew, "programAskForRonStartup", "0");
