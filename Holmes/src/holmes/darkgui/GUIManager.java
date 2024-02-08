@@ -212,8 +212,30 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		getFrame().setLocation((int) (screenSize.width * 0.1) / 2, (int) (screenSize.height * 0.1) / 2);
 		getFrame().setSize((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
-		getFrame().setVisible(true);
 		getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
+
+		boolean startMaximized = Boolean.parseBoolean(settingsManager.getValue("mainWindowStartMaximized"));
+		int width = Integer.parseInt(settingsManager.getValue("mainWindowWidth"));
+		int height = Integer.parseInt(settingsManager.getValue("mainWindowHeight"));
+
+		int screenHeight = screenSize.height;
+		int screenWidth = screenSize.width;
+
+		float aspect = (float)screenWidth / (float)screenHeight;
+		if(aspect > 2.0) {
+			getFrame().setSize(screenHeight*2, screenHeight-40);
+			getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.NORMAL);
+			getFrame().setLocation(-7, -1);
+		} else {
+			if(startMaximized) {
+				getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
+			} else {
+				getFrame().setSize(width, height);
+				getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.NORMAL);
+			}
+		}
+
+		getFrame().setVisible(true);
 
 		// set docking listener
 		setDockingListener(new DarkDockingListener());
@@ -301,8 +323,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 		JSplitPane rightPanelSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propericeTMPBox, analysisTabs);
 		JSplitPane uberMainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, simAndworkspacePanel, rightPanelSplit);
 
-		uberMainPanel.setDividerLocation(this.screenSize.width-330);
+		if(aspect > 2.0) {
+			uberMainPanel.setDividerLocation(screenHeight*2-330); //pasek okien po prawej
+		} else {
+			uberMainPanel.setDividerLocation(this.screenSize.width-330); //normal
+		}
+
 		getFrame().add(uberMainPanel,BorderLayout.CENTER);
+
 
 
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
@@ -355,36 +383,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		//getSimulatorBox().createSimulatorProperties(false);
 		getFrame().repaint();
-
-		//getFrame().setLocation((int) (screenSize.width * 0.1) / 2, (int) (screenSize.height * 0.1) / 2);
-		//getFrame().setSize((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
-		//getFrame().setVisible(true);
-		//getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
-
-		//set/get size
-
-		boolean startMaximized = Boolean.parseBoolean(settingsManager.getValue("mainWindowStartMaximized"));
-		int width = Integer.parseInt(settingsManager.getValue("mainWindowWidth"));
-		int height = Integer.parseInt(settingsManager.getValue("mainWindowHeight"));
-
-		int screenHeight = screenSize.height;
-		int screenWidth = screenSize.width;
-
-		float aspect = (float)screenWidth / (float)screenHeight;
-		if(aspect > 2.0) {
-			getFrame().setSize(screenHeight*2, screenHeight-40);
-			getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.NORMAL);
-			getFrame().setLocation(-7, -1);
-
-			uberMainPanel.setDividerLocation(screenHeight*2-330); //pasek okien po prawej
-		} else {
-			if(startMaximized) {
-				getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
-			} else {
-				getFrame().setSize(width, height);
-				getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.NORMAL);
-			}
-		}
 	}
 
 	/**

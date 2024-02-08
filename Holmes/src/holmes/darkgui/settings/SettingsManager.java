@@ -108,7 +108,7 @@ public class SettingsManager {
         checkAndFix(settingsNew, "ina_COMMAND4", "eqqy");
 
         //width and height of the main window
-        checkAndFix(settingsNew, "mainWindowStartMaximized", "false");
+        checkAndFix(settingsNew, "mainWindowStartMaximized", "true");
         checkAndFix(settingsNew, "mainWindowWidth", "1500");
         checkAndFix(settingsNew, "mainWindowHeight", "800");
 
