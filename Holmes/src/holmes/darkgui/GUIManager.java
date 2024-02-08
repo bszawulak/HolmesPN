@@ -63,30 +63,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private Dimension screenSize; 		// praca w maksymalizacji
 	@SuppressWarnings("unused")
 	private Dimension smallScreenSize;	// praca poza maksymalizowanym oknem
-	//private FloatDockModel dockModel;
-	
+
 	// settings
 	private final SettingsManager settingsManager;
-	
-	// visualizers
-	//private LineMinimizer minimizer;
-	//private SingleMaximizer maximizer;
-	//private FloatExternalizer externalizer;
 	
 	// main Docks
 	private Workspace workspace;
 	private JTabbedPane tabbedWorkspace = new JTabbedPane();
 
-
-	//private CompositeTabDock leftTabDock;
-	//private CompositeTabDock bottomLeftTabDock;
-	//private CompositeTabDock topRightTabDock;
-	//private CompositeTabDock bottomRightTabDock;
-	// SplitDocks
-	//private SplitDock leftSplitDock;
-	//private SplitDock rightSplitDock;
-	//private SplitDock totalSplitDock;
-	
 	private PetriNetTools toolBox;
 	
 	// podokna głównego okna programu
@@ -104,8 +88,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	//-//private HolmesDockWindow decompositionBox;
 	
 	//UNUSED
-	
-	
 	// docking listener
 	private DarkDockingListener dockingListener;
 	private Toolbar shortcutsBar;
@@ -143,7 +125,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	//private HolmesSubnetComparison windowsComp;
 	private HolmesComparisonModule windowsComp;
 	private HolmesReductionPrototype windowReduction;
-
 
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	private boolean inaReady = true;
@@ -183,6 +164,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		//JavaDocking wysypuje się jeśli numer wersji nie posiada przynajmniej jednej .
 		//Piękny był to fuckup, nie zapomnę go nigdy [MR].
+		// [2024]Już nie ważne, ale zostawmy na pamiątkę.
 		if(!System.getProperty("java.version").contains("."))
 			System.setProperty("java.version",System.getProperty("java.version")+".0");
 
@@ -232,31 +214,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getFrame().setSize((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
 		getFrame().setVisible(true);
 		getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
-		
-		
-		// Create the dock model for the docks.
-		//setDockModel(new FloatDockModel());
-		//getDockModel().addOwner("frame0", getFrame());
-
-		//FloatDock floatDock = getDockModel().getFloatDock(getFrame());
-		//floatDock.setChildDockFactory(new LeafDockFactory(false));
-
-		// setfactories
-		//DefaultPopupMenuFactory popupMenuFactory = new DefaultPopupMenuFactory();
-		//popupMenuFactory.setPopupActions(DefaultPopupMenuFactory.DOCKABLE_ACTIONS
-		//		| DefaultPopupMenuFactory.CLOSE_ALL_ACTION
-		//		| DefaultPopupMenuFactory.CLOSE_OTHERS_ACTION);
-		//DefaultSwComponentFactory componentFactory = new DefaultSwComponentFactory();
-		//componentFactory.setPopupMenuFactory(popupMenuFactory);
-		//DockingManager.setComponentFactory(componentFactory);
-
-		// Give the dock model to the docking manager.
-		//DockingManager.setDockModel(getDockModel());
-
-		// Create the composite tab docks.
-		//leftTabDock = new CompositeTabDock(); // default Toolbox dock
-		//topRightTabDock = new CompositeTabDock(); // default Properties dock
-		//bottomRightTabDock = new CompositeTabDock(); // default Simulator dock
 
 		// set docking listener
 		setDockingListener(new DarkDockingListener());
@@ -285,81 +242,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// create menu
 		setMenu(new DarkMenu());
 		getFrame().setJMenuBar(getMenu());
-
-
-
-		//??
-		//setFixBox(new HolmesDockWindow(DockWindowType.FIXNET));
-
-		//leftTabDock.setHeaderPosition(Position.BOTTOM);
-		//leftTabDock.addChildDock(getToolBox(), new Position(0));
-		//leftTabDock.addChildDock(getSimulatorBox(), new Position(1));
-		//leftTabDock.setSelectedDock(getToolBox());
-
-		//topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
-		//topRightTabDock.setSelectedDock(getPropertiesBox());
-		
-		//bottomRightTabDock.addChildDock(getT_invBox(), new Position(1));
-		//bottomRightTabDock.addChildDock(getP_invBox(), new Position(2));
-		//bottomRightTabDock.addChildDock(getMctBox(), new Position(3));
-		//bottomRightTabDock.addChildDock(getMCSBox(), new Position(4));
-		//bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(5));
-		//bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
-		//bottomRightTabDock.addChildDock(getQuickSimBox(), new Position(7));
-		//bottomRightTabDock.addChildDock(getFixBox(), new Position(8));
-		//bottomRightTabDock.addChildDock(getDecompositionBox(), new Position(9));
-
-		// create the split docks
-		//leftSplitDock = new SplitDock();
-		//leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
-		//leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
-				
-		//leftSplitDock = new SplitDock();
-		//leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
-		
-		//SplitDock workspaceSplit = new SplitDock();
-		//workspaceSplit.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
-		//if(debug) {
-		//	workspaceSplit.addChildDock(getSelectionBox(), new Position(Position.BOTTOM));
-		//} else {
-		//	topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
-		//	topRightTabDock.setSelectedDock(getPropertiesBox());
-		//}
-		//workspaceSplit.setDividerLocation((int) (screenSize.getHeight() * 7 / 10));
-		//leftSplitDock.addChildDock(workspaceSplit, new Position(Position.CENTER));
-		//leftSplitDock.setDividerLocation(180);
-		
-		//rightSplitDock = new SplitDock();
-		//rightSplitDock.addChildDock(topRightTabDock, new Position(Position.TOP));
-		//rightSplitDock.addChildDock(bottomRightTabDock, new Position(Position.BOTTOM));
-		//rightSplitDock.setDividerLocation((int) (screenSize.getHeight() * 2 / 5));
-
-		//totalSplitDock = new SplitDock();
-		//totalSplitDock.addChildDock(leftSplitDock, new Position(Position.LEFT));
-		//totalSplitDock.addChildDock(rightSplitDock,new Position(Position.RIGHT));
-		//totalSplitDock.setDividerLocation(400);
-		//totalSplitDock.setDividerLocation((int) screenSize.getWidth() - (int) screenSize.getWidth() / 6);
-		
-		// // Add root dock
-		//getDockModel().addRootDock("totalSplitDock", totalSplitDock, getFrame());
-		//add(totalSplitDock, BorderLayout.CENTER);
-
-		// save docking paths
-		//DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getToolBox().getDockable()));
-		//DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getPropertiesBox().getDockable()));
-
-		// Create an externalizer.
-		//setExternalizer(new FloatExternalizer(getFrame()));
-		//dockModel.addVisualizer("externalizer", getExternalizer(), getFrame());
-
-		// Create a minimizer.
-		//setMinimizer(new LineMinimizer(totalSplitDock));
-		//dockModel.addVisualizer("minimizer", getMinimizer(), getFrame());
-
-		// Create a maximizer.
-		//setMaximizer(new SingleMaximizer(getMinimizer()));
-		//dockModel.addVisualizer("maximizer", getMaximizer(), getFrame());
-		//this.add(getMaximizer(), BorderLayout.CENTER);
 
 		// default screen size unmaximized
 		smallScreenSize = new Dimension((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
@@ -422,29 +304,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		uberMainPanel.setDividerLocation(this.screenSize.width-330);
 		getFrame().add(uberMainPanel,BorderLayout.CENTER);
 
-		//getFrame().add(GUIManager.getDefaultGUIManager().getSelectionBox().getSelectionPanel());
 
-		//GroupLayout layout = new GroupLayout(getFrame().getContentPane());
-		//getFrame().getContentPane().setLayout(layout);
-		// default workspace dock
-		//getDockingListener().setWorkspace(workspace);
-
-		//getFrame().setLayout(new BorderLayout());
-
-		// create sim
-
-		//getFrame().add(new HolmesDockWindowsTable(HolmesDockWindowsTable.SubWindow.SIMULATOR,netSim,netSimXTPN,false).getPanel());
-		//simPanel.add(new HolmesDockWindowsTable(HolmesDockWindowsTable.SubWindow.SIMULATOR,netSim,netSimXTPN,false).getPanel());
-		//simPanel.setSize(100,100);
-		//simPanel.setLayout(new FlowLayout());
-		//getFrame().add(simPanel);
-		//getFrame().setLayout(new FlowLayout());
-
-		// Add the shortcuts bar also as root dock to the dock model.
-		//dockModel.addRootDock("toolBarBorderDock", getShortcutsBar().getToolBarBorderDock(), frame);
-
-		// Add the shortcuts bar to this panel.
-		//this.add(getShortcutsBar().getToolBarBorderDock(), BorderLayout.CENTER);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new KeyManager(this));
 
@@ -510,10 +370,21 @@ public class GUIManager extends JPanel implements ComponentListener {
 		int screenHeight = screenSize.height;
 		int screenWidth = screenSize.width;
 
-		getFrame().setSize(width, height);
-		getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.NORMAL);
+		float aspect = (float)screenWidth / (float)screenHeight;
+		if(aspect > 2.0) {
+			getFrame().setSize(screenHeight*2, screenHeight-40);
+			getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.NORMAL);
+			getFrame().setLocation(-7, -1);
 
-		uberMainPanel.setDividerLocation(width-330); //pasek okien po prawej
+			uberMainPanel.setDividerLocation(screenHeight*2-330); //pasek okien po prawej
+		} else {
+			if(startMaximized) {
+				getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
+			} else {
+				getFrame().setSize(width, height);
+				getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.NORMAL);
+			}
+		}
 	}
 
 	/**
@@ -677,46 +548,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private void resetSplitDocks() {
 		if (getFrame().getExtendedState() == JFrame.MAXIMIZED_BOTH) {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			//leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 10);
-			//leftSplitDock.setDividerLocation(180);
-			//
-			//int width = this.getWidth();
-			//totalSplitDock.setDividerLocation(600);
-			//totalSplitDock.setDividerLocation((int) (screenSize.getWidth() * 5.6 / 7));
-			//totalSplitDock.setDividerLocation((int) (screenSize.getWidth() - 350));
 		} else {
 			smallScreenSize = getFrame().getSize();
-			//leftSplitDock.setDividerLocation((int) smallScreenSize.getWidth() / 8);
-			//leftSplitDock.setDividerLocation(180);
-			//totalSplitDock.setDividerLocation((int) (smallScreenSize.getWidth() * 5.6 / 7));
-			//totalSplitDock.setDividerLocation((int) (screenSize.getWidth() - 350));
 		}
 	}
-
-	/*
-	 * Metoda odpowiedzialna za dodawanie nowych ikonek w prawy górnym roku każdego podokna programu.
-	 * @param dockable - okno do przystrojenia dodatkowymi okienkami
-	 * @param deletable - true, jeśli dodajemy ikonę usuwania (główne podokno arkuszy sieci)
-	 * @return Dockable - nowe okno po dodaniu elementów
-	 */
-	/*
-	public Dockable decorateDockableWithActions(Dockable dockable, boolean deletable) {
-		Dockable wrapper = new StateActionDockable(dockable, new DefaultDockableStateActionFactory(), new int[0]);
-		int[] states = { DockableState.NORMAL, DockableState.MINIMIZED, DockableState.MAXIMIZED, DockableState.EXTERNALIZED, DockableState.CLOSED };
-		wrapper = new StateActionDockable(wrapper, new DefaultDockableStateActionFactory(), states);
-
-		if (deletable) {
-			DeleteAction deleteAction = new DeleteAction(this, "Delete", Tools.getResIcon16("/icons/page_white_delete.png"));
-			Action[][] actions = new Action[1][];
-			actions[0] = new Action[1];
-			actions[0][0] = deleteAction;
-			wrapper = new ActionDockable(wrapper, actions);
-			deleteAction.setDockable(wrapper);
-		}
-
-		return wrapper;
-	}
-	*/
 
 	/**
 	 * Metoda zwraca ścieżki do ostatio używanego katalagu.

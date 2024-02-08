@@ -202,11 +202,21 @@ public class HolmesDockWindow {//extends SingleDock {
             //MRtinv 5.02.2024
             //setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, t_invariants));
             //scrollPane.getViewport().add(getCurrentDockWindow());
-            guiManager.getT_invBox().getCurrentDockWindow().resetT_invariants();
+            guiManager.getT_invBox().getCurrentDockWindow().cleanTINVsubwindowFields();
             guiManager.getT_invBox().getCurrentDockWindow().setT_invariants(t_invariants);
-            //guiManager.getT_invBox().getCurrentDockWindow().setNetData(guiManager.getWorkspace().getProject().getTransitions()
-            //        , guiManager.getWorkspace().getProject().getPlaces());
             guiManager.getT_invBox().getCurrentDockWindow().refreshInvariantsComboBox();
+        }
+    }
+
+
+    /**
+     * Metoda odpowiedzialna za pokazanie podokna ze zbiorami MCT sieci.
+     * @param mctGroups ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
+     */
+    public void showMCT(ArrayList<ArrayList<Transition>> mctGroups) {
+        if (type == DockWindowType.MctANALYZER) {
+            guiManager.getMctBox().getCurrentDockWindow().cleanMCtsubwindowFields();
+            guiManager.getMctBox().getCurrentDockWindow().refreshMCTComboBox(mctGroups);
         }
     }
 
@@ -218,8 +228,13 @@ public class HolmesDockWindow {//extends SingleDock {
      */
     public void showP_invBoxWindow(ArrayList<ArrayList<Integer>> p_invariants) {
         if (type == DockWindowType.P_INVARIANTS) {
-            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, p_invariants));
-            scrollPane.getViewport().add(getCurrentDockWindow());
+
+            guiManager.getP_invBox().getCurrentDockWindow().cleanPINVsubwindowFields();
+            guiManager.getP_invBox().getCurrentDockWindow().setP_invariants(p_invariants);
+            guiManager.getP_invBox().getCurrentDockWindow().refreshP_invComboBox();
+
+           // setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, p_invariants));
+            //scrollPane.getViewport().add(getCurrentDockWindow());
         }
     }
 
@@ -240,18 +255,6 @@ public class HolmesDockWindow {//extends SingleDock {
     public void showClusterSelector(ClusterDataPackage data) {
         if (type == DockWindowType.ClusterSELECTOR) {
             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CLUSTERS, data));
-            scrollPane.getViewport().add(getCurrentDockWindow());
-        }
-    }
-
-    /**
-     * Metoda odpowiedzialna za pokazanie podokna ze zbiorami MCT sieci.
-     *
-     * @param mctGroups ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
-     */
-    public void showMCT(ArrayList<ArrayList<Transition>> mctGroups) {
-        if (type == DockWindowType.MctANALYZER) {
-            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCT, mctGroups));
             scrollPane.getViewport().add(getCurrentDockWindow());
         }
     }

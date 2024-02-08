@@ -24,15 +24,6 @@ import holmes.petrinet.elements.MetaNode.MetaType;
  * pozostają - ku przestrodze.
  */
 public class Workspace implements SelectionActionListener {
-	//private DockFactory dockFactory;
-	
-	/** Zawiera obiekty Dockable, czyli opakowanie w którym jest WorkspaceSheet. W tym miejscu kończy się ludzka logika.  */
-	//private ArrayList<Dockable> dockables;
-
-	/**  Zawiera elementy typu Dock, zawierające obiekty typu Dockable. One z kolei zawierają WorkspaceSheet, które zawiera SheetPanel oraz
-	 * GraphPanel. Ku chwale ojczyzny. */
-	//private ArrayList<Dock> docks;
-
 	private JTabbedPane tp = new JTabbedPane();
 	
 	/** Tablica zawierająca obiekty WorkspaceSheet, które z kolei zawierają SheetPanel (JPanel) oraz GraphPanel. By żyło się lepiej. */
@@ -40,31 +31,19 @@ public class Workspace implements SelectionActionListener {
 	
 	/** Tablica identyfikatorów obiektów WorkspaceSheet przechowywanych w tablicy sheets */
 	private ArrayList<Integer> sheetsIDtable;
-
-	//private Dock fillerDock;
-	//private Dockable fillerDockable;
 	private PetriNet project;
 	private GUIManager overlord;
-	//private CompositeTabDock workspaceDock;
 
 	/**
 	 * Konstruktor obiektu klasy Workspace.
 	 * @param gui GUIManager - obiekt managera środowiska graficznego programu
 	 */
 	public Workspace(GUIManager gui) {
-		//setWorkspaceDock(new CompositeTabDock());
 		overlord = gui;
-		//setDockFactory(getWorkspaceDock().getChildDockFactory());
-		//dockables = new ArrayList<Dockable>();
-		//docks = new ArrayList<Dock>();
 		sheets = new ArrayList<WorkspaceSheet>();
 		sheetsIDtable = new ArrayList<Integer>();
 
-		// filler = new WorkspaceFiller();
-		//setFillerDockable(new DefaultDockable("Workspace", new WorkspaceFiller(), "Workspace"));
-		//setFillerDock(getDockFactory().createDock(getFillerDockable(), DockingMode.SINGLE));
 		Point position = new Point(0, 0);
-		//getFillerDock().addDockable(getFillerDockable(), position, position);
 
 		setProject(new PetriNet(this, "default"));
 
@@ -72,37 +51,6 @@ public class Workspace implements SelectionActionListener {
 		gui.setTabbedWorkspace(getTablePane());
 
 		this.getProject().addActionListener(this);
-		//newTab(false, new Point(0,0), 1, MetaType.SUBNET);
-		//tp.setPreferredSize(new Dimension(1300,400));
-	}
-	
-	@SuppressWarnings("unused")
-	public void redockSheets() {
-		int i = 0;
-		Point position = new Point(0, 0);
-		
-		//CompositeTabDock ctd = getWorkspaceDock();
-		//int ile = ctd.getChildDockCount();
-		
-		//for(Dock dock: docks) {
-		//	CompositeTabDock parent = (CompositeTabDock)dock.getParentDock();
-		//	Container cont = ((Component)dock).getParent();
-		//	int x=1;
-		//}
-		
-		//getWorkspaceDock().addChildDock(docks.get(index), new Position(index));
-		/*
-		setWorkspaceDock(new CompositeTabDock());
-		setDockFactory(getWorkspaceDock().getChildDockFactory());
-		for (WorkspaceSheet sheet : getSheets()) {
-			Dock dock = docks.get(sheet.getId());
-			Dockable dockable = dockables.get(sheet.getId());
-			dockable.setDock(null);
-			dock.addDockable(dockable, position, position);
-			getWorkspaceDock().addChildDock(dock, new Position(i));
-			i++;
-		}
-		*/
 	}
 
 	/**
@@ -127,29 +75,12 @@ public class Workspace implements SelectionActionListener {
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		ws.setScrollPane(scroll);
-		//tp.add("Subnet " + id, scroll);
 		tp.add("Subnet " + id, scroll);
 
 		if(addMetaNode) {
 			addMetaNode(pos, whichSubnet, id, type);
-			//setSelectedDock(getIndexOfId(whichSubnet));
 		}
 		return id;
-
-		//int index2 = GUIManager.getDefaultGUIManager().getTabbedWorkspace().getTabCount();
-		//.getTabbedWorkspace().add("Subnet-P: "+index,new WorkspaceSheet("Subnet P",index,GUIManager.getDefaultGUIManager().getWorkspace()));
-
-		//tp.add("Sheetsssssssssssssssss " + sheets.size()+1,ws);
-
-		//Dockable tempDockable = new DefaultDockable("Sheet "+ id, sheets.get(index), "Sheet "+ id);
-		//dockables.add(index, withListener(tempDockable));
-		
-		//docks.add(getDockFactory().createDock(dockables.get(index), DockingMode.SINGLE));
-		//docks.get(index).addDockable(dockables.get(index), position, position);
-		//getWorkspaceDock().addChildDock(docks.get(index), new Position(index));
-		// add menu item to the menu
-		//overlord.getMenu().addSheetItem(dockables.get(index));
-		//overlord.globalSheetsList.add(tempDockable);
 	}
 
 	/**
@@ -215,73 +146,6 @@ public class Workspace implements SelectionActionListener {
 		}
 	}
 
-	///**
-	// * Metoda odpowiedzialna za usuwanie arkusza rysowania sieci z przestrzeni roboczej.
-	// * @param dockable Dockable - obiekt do usunięcia
-	// * @param fastMode boolean - true - szybkie usuwanie
-	// */
-	/*
-	public void deleteTab(Dockable dockable, boolean fastMode) {
-		int index = dockables.indexOf(dockable);
-		if(fastMode) {	
-			int indexSh = sheets.get(index).getId();
-			GUIManager.getDefaultGUIManager().subnetsHQ.removeMetaNode(indexSh);
-			deleteSheetFromArrays(sheets.get(index));
-			overlord.getMenu().deleteSheetItem(dockables.get(index));
-			dockables.remove(dockable);
-			return;
-		}
-		
-		if(index == -1) {
-			GUIManager.getDefaultGUIManager().cleanLostOne(dockable);
-			return;
-		}
-		
-		if(index == 0) {
-			JOptionPane.showMessageDialog(null, "First sheet cannot be deleted. Please use clear project instead.",
-					"Cannot proceed", JOptionPane.INFORMATION_MESSAGE);
-			return;
-		}
-		
-		int indexSheet = dockables.indexOf(dockable);
-		int elementsNumber = GUIManager.getDefaultGUIManager().subnetsHQ.getSubnetsVector().get(indexSheet);
-		if(elementsNumber > 0) {
-			JOptionPane.showMessageDialog(null, "Sheet contains "+elementsNumber+" net elements that must be\n removed manually (or moved to another subnet).",
-					"Cannot proceed", JOptionPane.INFORMATION_MESSAGE);
-			return;
-		}
-
-		int n = JOptionPane.showOptionDialog(null,
-				"Are you sure you want to delete this sheet? You will not be able to retrieve it later.",
-				"Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-		if ((n == 0) && (sheets.size() > 1)) {
-			//meta:
-			int indexSh = sheets.get(index).getId();
-			GUIManager.getDefaultGUIManager().subnetsHQ.removeMetaNode(indexSh);
-			//normal:
-			deleteSheetFromArrays(sheets.get(index));
-			overlord.getMenu().deleteSheetItem(dockables.get(index));
-			dockables.remove(dockable);
-		} else {
-			if (sheets.size() == 1 && n == 0)
-				JOptionPane.showMessageDialog(null, "Can't delete this sheet! A project must contain at least one sheet!",
-						"Can't delete this sheet!", JOptionPane.ERROR_MESSAGE);
-			
-			Point position = new Point(0, 0);
-			dockables.set(index, withListener(new DefaultDockable(
-					"Sheet " + sheets.get(index).getId(), sheets.get(index),
-					"Sheet " + sheets.get(index).getId())));
-			docks.get(index).addDockable(dockables.get(index), position, position);
-		}
-	}
-
-	private Dockable withListener(Dockable dockable) {
-		Dockable wrapper = overlord.decorateDockableWithActions(dockable, true);
-		wrapper.addDockingListener(GUIManager.getDefaultGUIManager().getDockingListener());
-		return wrapper;
-	}
-	*/
-	
 	public void globalDeselection() {
 		for(WorkspaceSheet ws : sheets) {
 			ws.getGraphPanel().getSelectionManager().deselectAllElements();
@@ -305,14 +169,6 @@ public class Workspace implements SelectionActionListener {
 	public ArrayList<Integer> accessSheetsIDtable() {
 		return sheetsIDtable;
 	}
-
-	/**
-	 * Metoda zwraca tablicę zadokowanych elementów w Workspace.
-	 * @return ArrayList[Dockable] - tablica elementów
-	 */
-	//public ArrayList<Dockable> getDockables() {
-	//	return dockables;
-	//}
 
 	/**
 	 * Metoda zwraca tablicę zadokowanych zakładek w Workspace.
@@ -373,99 +229,11 @@ public class Workspace implements SelectionActionListener {
 	}
 
 	/**
-	 * Metoda powoduje wyświetlenie arkusza o podanym numerze.
-	 * @param i int - nr arkusza
-	 */
-	/*
-	public void setSelectedDock(int i) {
-		if(i < docks.size()) {
-			workspaceDock.setSelectedDock(docks.get(i));
-		}
-	}
-	*/
-
-	/**
-	 * Metoda zwracająca obiekt dokowalny.
-	 * @return CompositeTabDock - obiekt
-	 */
-	/*public CompositeTabDock getWorkspaceDock() {
-		return workspaceDock;
-	}
-
-	 */
-
-	/**
-	 * Metoda ustawiająca nowy obiekt dokowalny.
-	 */
-	/*private void setWorkspaceDock(CompositeTabDock workspaceDock) {
-		this.workspaceDock = workspaceDock;
-	}
-
-	 */
-
-	/**
 	 * Metoda inicjująca przerysowanie wszystkich paneli.
 	 */
 	public void repaintAllGraphPanels() {
 		this.getProject().repaintAllGraphPanels();
 	}
-
-	/**
-	 * Metoda zwracająca obiekt dokowalny.
-	 * @return Dock - obiekt
-	 */
-	/*public Dock getFillerDock() {
-		return fillerDock;
-	}
-
-	 */
-
-	/**
-	 * Metoda ustawiająca nowy obiekt dokowalny.
-	 */
-	/*public void setFillerDock(Dock fillerDock) {
-		this.fillerDock = fillerDock;
-	}
-
-	 */
-
-	/**
-	 * Metoda zwracająca obiekt dokowalny-wypełniający.
-	 * @return Dock - obiekt
-	 */
-	/*public Dockable getFillerDockable() {
-		return fillerDockable;
-	}
-
-	 */
-
-	/**
-	 * Metoda ustawiająca nowy obiekt dokowalny-wypełniający.
-	 */
-	/*public void setFillerDockable(Dockable fillerDockable) {
-		this.fillerDockable = fillerDockable;
-	}
-
-	 */
-
-	/**
-	 * Metoda zwracająca obiekt fabryki dokowalnej.
-	 * @return Dock - obiekt
-	 */
-	/*public DockFactory getDockFactory() {
-		return dockFactory;
-	}
-
-	 */
-
-	/**
-	 * Metoda ustawiająca nowy fabryki dokowalnej.
-	 */
-	/*private void setDockFactory(DockFactory dockFactory) {
-		this.dockFactory = dockFactory;
-	}
-
-	 */
 
 	/**
 	 * Pobieranie obiektu zakładek sieci.
@@ -482,6 +250,4 @@ public class Workspace implements SelectionActionListener {
 	public void setTablePane(JTabbedPane tp) {
 		this.tp = tp;
 	}
-
-
 }

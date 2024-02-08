@@ -180,6 +180,7 @@ public class ProjectReader {
 				projectCore.setMCTMatrix(null, false);
 			} else {
 				overlord.getMctBox().showMCT(projectCore.getMCTMatrix());
+				overlord.reset.setMCTStatus(true);
 			}
 			
 			if(states) {

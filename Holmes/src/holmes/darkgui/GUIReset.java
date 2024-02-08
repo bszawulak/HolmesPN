@@ -1,7 +1,5 @@
 package holmes.darkgui;
 
-import java.util.ArrayList;
-
 import javax.swing.*;
 
 import holmes.analyse.MCTCalculator;
@@ -12,7 +10,6 @@ import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
@@ -187,50 +184,45 @@ public class GUIReset {
 			pNet.getMCSdataCore().resetMSC();
 
 			if(overlord.getT_invBox().getCurrentDockWindow() != null) {
-				overlord.getT_invBox().getCurrentDockWindow().resetT_invariants();
+				overlord.getT_invBox().getCurrentDockWindow().cleanTINVsubwindowFields();
 			}
 
 			t_invGenerated = false;
 			overlord.log("T-invariants data removed from memory.", "text", true);
 		}
 		
+		if(mctGenerated) {
+			pNet.setMCTMatrix(null, false);
+			pNet.accessMCTnames().clear();
+
+			if(overlord.getMctBox().getCurrentDockWindow() != null) {
+				overlord.getMctBox().getCurrentDockWindow().cleanMCtsubwindowFields();
+			}
+
+			mctGenerated = false;
+			overlord.log("MCT data removed from memory.", "text", true);
+		}
+
 		if(p_invGenerated) {
-			resetCommunicationProtocol();
+			//resetCommunicationProtocol();
 			pNet.setP_InvMatrix(null);
-			
+
 			if(overlord.getP_invBox().getCurrentDockWindow() != null) {
-				overlord.getP_invBox().getCurrentDockWindow().resetP_invariants();
+				overlord.getP_invBox().getCurrentDockWindow().cleanPInvSubwindowData();
 				//overlord.getP_invBox().getCurrentDockWindow().removeAll();
 			}
 			//overlord.getP_invBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, pNet.getP_InvMatrix()));
 			//overlord.getP_invBox().validate();
 			//overlord.getP_invBox().repaint();
-			
+
 			p_invGenerated = false;
 			overlord.log("P-invariants data removed from memory.", "text", true);
-		}
-		
-		if(mctGenerated) {
-			if(overlord.getMctBox().getCurrentDockWindow() != null) {
-				overlord.getMctBox().getCurrentDockWindow().removeAll();
-				overlord.getMctBox().getCurrentDockWindow().resetMCT();
-			}
-			overlord.getMctBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCT,
-					new ArrayList<ArrayList<Transition>>()));
-			//overlord.getMctBox().validate();
-			//overlord.getMctBox().repaint();
-			
-			pNet.setMCTMatrix(null, false);
-			pNet.accessMCTnames().clear();
-			
-			mctGenerated = false;
-			overlord.log("MCT data removed from memory.", "text", true);
 		}
 		
 		if(clustersGenerated) {
 			if(overlord.getClusterSelectionBox().getCurrentDockWindow() != null) {
 				overlord.getClusterSelectionBox().getCurrentDockWindow().removeAll();
-				overlord.getClusterSelectionBox().getCurrentDockWindow().resetClusters();
+				overlord.getClusterSelectionBox().getCurrentDockWindow().cleanClustersSubwindowData();
 			}
 			overlord.getClusterSelectionBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CLUSTERS, new ClusterDataPackage()));
 			//overlord.getClusterSelectionBox().validate();
