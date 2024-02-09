@@ -212,7 +212,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		getFrame().setLocation((int) (screenSize.width * 0.1) / 2, (int) (screenSize.height * 0.1) / 2);
 		getFrame().setSize((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
-		getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		//getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		getFrame().setVisible(true);
+
+
 
 		boolean startMaximized = Boolean.parseBoolean(settingsManager.getValue("mainWindowStartMaximized"));
 		int width = Integer.parseInt(settingsManager.getValue("mainWindowWidth"));
