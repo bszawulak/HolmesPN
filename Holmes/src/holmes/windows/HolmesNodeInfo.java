@@ -29,6 +29,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 import javax.swing.text.DefaultFormatter;
 
+import holmes.graphpanel.GraphPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -133,8 +134,11 @@ public class HolmesNodeInfo extends JFrame {
 		parentFrame = papa;
 		setTitle("MetaNode: "+metanode.getName());
 
+		GraphPanel graphPanel = overlord.getWorkspace().getProject().getGraphPanel(metanode.getRepresentedSheetID());
 		initializeCommon();
-		//initializeTransitionInfo();
+
+		HolmesSubnetsInfo subnetsInfo = new HolmesSubnetsInfo(graphPanel, overlord);
+		subnetsInfo.bind(this);
 	}
 	
 	/**
