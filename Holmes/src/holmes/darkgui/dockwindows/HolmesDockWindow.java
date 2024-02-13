@@ -57,47 +57,6 @@ public class HolmesDockWindow {//extends SingleDock {
         scrollPane = new JScrollPane();
         guiManager = GUIManager.getDefaultGUIManager();
 
-        /*
-        switch (type) {
-            case EDITOR -> setDockable(GUIManager.externalWithListener(new DefaultDockable("NetElement", scrollPane,
-                    "Net Element"), GUIManager.getDefaultGUIManager().getDockingListener()));
-            case SIMULATOR -> setDockable(GUIManager.externalWithListener(new DefaultDockable("Simulator", scrollPane,
-                    "Simulator"), GUIManager.getDefaultGUIManager().getDockingListener()));
-            case SELECTOR -> setDockable(GUIManager.externalWithListener(new DefaultDockable("Selection", scrollPane,
-                    "Selection"), GUIManager.getDefaultGUIManager().getDockingListener()));
-            case T_INVARIANTS ->
-                    setDockable(GUIManager.externalWithListener(new DefaultDockable("Transition_Invariants", scrollPane,
-                            "T-inv"), GUIManager.getDefaultGUIManager().getDockingListener()));
-            case P_INVARIANTS ->
-                    setDockable(GUIManager.externalWithListener(new DefaultDockable("Place_Invariants", scrollPane,
-                            "P-inv"), GUIManager.getDefaultGUIManager().getDockingListener()));
-            case MctANALYZER ->
-                    setDockable(GUIManager.externalWithListener(new DefaultDockable("MCT_Groups", scrollPane,
-                            "MCT"), GUIManager.getDefaultGUIManager().getDockingListener()));
-            case ClusterSELECTOR ->
-                    setDockable(GUIManager.externalWithListener(new DefaultDockable("Clusters_Selection", scrollPane,
-                            "Clusters"), GUIManager.getDefaultGUIManager().getDockingListener()));
-            case MCSselector ->
-                    setDockable(GUIManager.externalWithListener(new DefaultDockable("MCS_selector", scrollPane,
-                            "MCS"), GUIManager.getDefaultGUIManager().getDockingListener()));
-            case FIXNET -> setDockable(GUIManager.externalWithListener(new DefaultDockable("Fix_selector", scrollPane,
-                    "Fix"), GUIManager.getDefaultGUIManager().getDockingListener()));
-            case QuickSim ->
-                    setDockable(GUIManager.externalWithListener(new DefaultDockable("Quick_simulator", scrollPane,
-                            "qSim"), GUIManager.getDefaultGUIManager().getDockingListener()));
-            case Knockout ->
-                    setDockable(GUIManager.externalWithListener(new DefaultDockable("Knockout_selector", scrollPane,
-                            "Knockout"), GUIManager.getDefaultGUIManager().getDockingListener()));
-            case DECOMPOSITION ->
-                    setDockable(GUIManager.externalWithListener(new DefaultDockable("Decomposition", scrollPane,
-                            "DECOMPOSITION"), GUIManager.getDefaultGUIManager().getDockingListener()));
-        }
-        */
-
-        Point position = new Point(0, 0);
-        //this.addDockable(getDockable(), position, position);
-
-        //immediate creation:
         switch (type) {
             case SIMULATOR -> {
                 GraphicalSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
@@ -153,22 +112,6 @@ public class HolmesDockWindow {//extends SingleDock {
     }
 
     /**
-     * Metoda zwracająca podokno dokowalne intefejsu programu.
-     *
-     * @return Dockable - obiekt dokowalny
-     */
-    //public Dockable getDockable() {
-    //    return dockable;
-    //}
-
-    /**
-     * Metoda ustawiająca podokno dokowalne intefejsu programu.
-     */
-    //private void setDockable(Dockable dockable) {
-    //    this.dockable = dockable;
-    //}
-
-    /**
      * Metoda odpowiedzialna za wypełnienie sekcji symulatora sieci.
      */
     public void createSimulatorProperties(boolean XTPN) {
@@ -176,7 +119,7 @@ public class HolmesDockWindow {//extends SingleDock {
             GraphicalSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
             GraphicalSimulatorXTPN netSimXTPN = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
 
-            //29062023: wywołanie tej metody powoduje problemy z panelami symulatoró (obu!)
+            //29062023: wywołanie tej metody powoduje problemy z panelami symulatorów (obu!)
             //a kiedy działała, odpowiadzalna jest za reset paneli symulatorów. Tylko ze jak je teraz zresetujemy
             //to np. nie działa już wygaszanie i właćzanie przycisków stop/pause simulator, zarówno dla
             //clasic jak i XTPN. Zakomentowanie jej to hotfix, który powoduje pewne problemy, ale jest mniejszym
@@ -208,7 +151,6 @@ public class HolmesDockWindow {//extends SingleDock {
         }
     }
 
-
     /**
      * Metoda odpowiedzialna za pokazanie podokna ze zbiorami MCT sieci.
      * @param mctGroups ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
@@ -223,7 +165,6 @@ public class HolmesDockWindow {//extends SingleDock {
     /**
      * Metoda wywoływana po wygenerowaniu t-inwariantów przez program. Zleca wykonanie
      * elementów interfejsu dla pokazywania t-inwariantów.
-     *
      * @param p_invariants ArrayList[ArrayList[InvariantTransition]] - p-inwarianty
      */
     public void showP_invBoxWindow(ArrayList<ArrayList<Integer>> p_invariants) {
@@ -260,14 +201,15 @@ public class HolmesDockWindow {//extends SingleDock {
     }
 
     /**
-     * Metoda odpowiedzialna za pokazanie podokna ze zbiorami MCS sieci.
+     * Metoda odpowiedzialna za odświeżenie podokna ze zbiorami MCS sieci.
      */
     public void showMCS() {
         if (type == DockWindowType.MCSselector) {
-            MCSDataMatrix mcsData = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-            setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCS, mcsData));
-            scrollPane.getViewport().add(getCurrentDockWindow());
+            guiManager.getMCSBox().getCurrentDockWindow().cleanMCScomboBoxes();
 
+            //MCSDataMatrix mcsData = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+            //setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCS, mcsData));
+            //scrollPane.getViewport().add(getCurrentDockWindow());
         }
     }
 

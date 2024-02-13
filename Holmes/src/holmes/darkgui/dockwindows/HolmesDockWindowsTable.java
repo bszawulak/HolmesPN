@@ -50,7 +50,7 @@ import holmes.windows.ssim.HolmesSimSetup;
 import holmes.workspace.WorkspaceSheet;
 
 /**
- * Klasa zawierająca szczegóły interfejsu podokien dokowalnych programu.
+ * Klasa zawierająca szczegóły interfejsu podokien programu.
  * <b>Absolute positioning. Of absolute everything here.</b><br>
  * Nie obchodzi mnie, co o tym myślicie<br> (╯゜Д゜）╯︵ ┻━┻) . Idźcie w layout i nie wracajcie. ┌∩┐(◣_◢)┌∩┐
  */
@@ -7733,8 +7733,6 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda pomocnicza konstruktora podokna dla zbiorów MCS.
-     *
-     *
      */
     @SuppressWarnings("UnusedAssignment")
     private void createMCSSubWindow(){//MCSDataMatrix mcsData) {
@@ -7756,7 +7754,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         //WYBÓR REAKCJI ZE ZBIORAMI MCS
         mcsObjRCombo = new JComboBox<>(objRset);
-        mcsObjRCombo.setBounds(posX + 60, posY, 230, 20);
+        mcsObjRCombo.setBounds(posX + 60, posY, 210, 20);
         mcsObjRCombo.addActionListener(actionEvent -> {
             if (stopAction)
                 return;
@@ -7820,11 +7818,11 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(mcsMCSforObjRCombo);
 
         JButton refreshButton = new JButton();
-        refreshButton.setText("Refresh");
-        refreshButton.setBounds(posX + 225, posY, 70, 20);
+        refreshButton.setText("Refresh data");
+        refreshButton.setBounds(posX, posY + 30, 120, 30);
         refreshButton.addActionListener(actionEvent -> {
             transitions = overlord.getWorkspace().getProject().getTransitions();
-            if (transitions.size() == 0)
+            if (transitions.isEmpty())
                 return;
 
             String[] objRset1 = new String[transitions.size() + 1];
@@ -7853,8 +7851,36 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     /**
+     * Metoda inicjująca kontenery dla podokna z danymi o MCS.
+     */
+    public void cleanMCScomboBoxes() {
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        if (transitions.isEmpty())
+            return;
+
+        String[] objRset = new String[transitions.size() + 1];
+        objRset[0] = "---";
+        for (int i = 0; i < transitions.size(); i++) {
+            objRset[i + 1] = "t" + i + transitions.get(i).getName();
+        }
+
+        stopAction = true;
+        mcsObjRCombo.removeAllItems();
+        for (String str : objRset) {
+            mcsObjRCombo.addItem(str);
+        }
+
+        String[] init = new String[1];
+        init[0] = "---";
+        mcsMCSforObjRCombo.removeAllItems();
+        for (String str : init) {
+            mcsMCSforObjRCombo.addItem(str);
+        }
+        stopAction = false;
+    }
+
+    /**
      * Metoda pokazuje w kolorach tranzycje wchodzące w skład MCS oraz tramzycję bazową zbioru MCS.
-     *
      * @param sets          String - zbiór w formie łańcucha znaków [x, y, z, ...]
      * @param objReactionID int - nr tranzycji bazowe
      */

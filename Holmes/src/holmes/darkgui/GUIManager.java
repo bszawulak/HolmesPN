@@ -215,11 +215,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		getFrame().setVisible(true);
 
-
-
 		boolean startMaximized = Boolean.parseBoolean(settingsManager.getValue("mainWindowStartMaximized"));
-		int width = Integer.parseInt(settingsManager.getValue("mainWindowWidth"));
-		int height = Integer.parseInt(settingsManager.getValue("mainWindowHeight"));
+		startMaximized = true; // fot the moment
 
 		int screenHeight = screenSize.height;
 		int screenWidth = screenSize.width;
@@ -233,6 +230,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 			if(startMaximized) {
 				getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
 			} else {
+				int width = Integer.parseInt(settingsManager.getValue("mainWindowWidth"));
+				int height = Integer.parseInt(settingsManager.getValue("mainWindowHeight"));
+
 				getFrame().setSize(width, height);
 				getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.NORMAL);
 			}
@@ -251,6 +251,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getWorkspace().newTab(false, new Point(0,0), 1, MetaNode.MetaType.SUBNET);
 		getTabbedWorkspace().setPreferredSize(new Dimension(1300,400));
 
+		// create sub panels for main frame:
 		setPropertiesBox(new HolmesDockWindow(DockWindowType.EDITOR));
 		setSimulatorBox(new HolmesDockWindow(DockWindowType.SIMULATOR));
 		setSelectionBox(new HolmesDockWindow(DockWindowType.SELECTOR));
@@ -327,14 +328,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 		JSplitPane uberMainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, simAndworkspacePanel, rightPanelSplit);
 
 		if(aspect > 2.0) {
-			uberMainPanel.setDividerLocation(screenHeight*2-330); //pasek okien po prawej
+			uberMainPanel.setDividerLocation(screenHeight*2 - 330); //pasek okien po prawej
 		} else {
-			uberMainPanel.setDividerLocation(this.screenSize.width-330); //normal
+			uberMainPanel.setDividerLocation(this.screenSize.width - 350); //normal
 		}
-
 		getFrame().add(uberMainPanel,BorderLayout.CENTER);
-
-
 
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new KeyManager(this));
@@ -1031,7 +1029,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda pokazuje podokienko zbiorów MCS.
+	 * Metoda wywołuje funkcję odświeżenia zawartości okna MCS.
 	 */
 	public void showMCS() {
 		getMCSBox().showMCS();
