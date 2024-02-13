@@ -28,9 +28,7 @@ public final class ElementDraw {
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
 	 */
-	private ElementDraw() {
-
-	}
+	private ElementDraw() { }
 
 	/**
 	 * Metoda rysuje celownik nad wskazanym elementem.
@@ -38,18 +36,20 @@ public final class ElementDraw {
 	 * @param x (<b>int</b>) poziom.
 	 * @param y (<b>int</b>) pion.
 	 * @param color (<b>Color</b>) kolor, a co?.
-	 * @param xTPNelement (<b>boolean</b>) true, jeśli XTPN.
+	 * @param light (<b>boolean</b>) true, jeśli XTPN.
 	 */
-	private static void drawCrossHair(Graphics2D g, int x, int y, Color color, boolean xTPNelement){
-		if(xTPNelement) {
-			g.setColor(lightSky);
+	private static void drawCrossHair(Graphics2D g, int x, int y, Color color, boolean light){
+		g.setColor(color); //override
+
+		int bigger = 0;
+		if(light) {
+			g.setStroke(new BasicStroke(2.0f));
+			bigger++;
 		} else {
-			g.setColor(color);
+			g.setStroke(new BasicStroke(4.0f));
 		}
 
-		g.setStroke(new BasicStroke(4.0f));
-
-		g.drawOval(x, y, 60, 60);
+		g.drawOval(x-bigger, y-bigger, 60+bigger, 60+bigger);
 		g.fillArc(x + 20, y + 41, 20, 20, -45, -90);
 		g.fillArc(x - 1, y + 20, 20, 20, -135, -90);
 		g.fillArc(x + 20, y - 1, 20, 20, -225, -90);
@@ -61,7 +61,6 @@ public final class ElementDraw {
 		g.fillArc(x + 35, y + 5, 20, 20, -270, -90);
 	}
 
-	//TODO: znacznik tranzycji
 	/**
 	 * Główna metoda statyczna odpowiedzialna za rysowanie węzłów sieci.
 	 * @param node (<b>Node</b>) obiekt węzła.
@@ -72,14 +71,12 @@ public final class ElementDraw {
 	 */
 	@SuppressWarnings("UnusedReturnValue")
 	public static Graphics2D drawElement(Node node, Graphics2D g, int sheetId, ElementDrawSettings eds) {
-		if(node instanceof Transition) { 
+		if(node instanceof Transition) {
 			Transition trans = (Transition)node;
-			boolean xTPNtrans = (node instanceof TransitionXTPN);//trans.isXTPNtransition();
 			Color portalColor = new Color(224,224,224);
-			Color portalSelColor = EditorResources.selectionColorLevel3;
 			Color normalColor = new Color(224,224,224);
 			Color tpnNormalColor = Color.GRAY;
-			
+
 			if(eds.nonDefColors) {
 				normalColor = transDefColor;
 				portalColor = transDefColor;
@@ -92,21 +89,16 @@ public final class ElementDraw {
 					if(portalColor.equals(new Color(224, 224, 224))) {
 						portalColor = Color.LIGHT_GRAY;
 					}
-					//if(!trans.defColor.equals(new Color(224, 224, 224))) {
-					//	normalColor = trans.defColor;
-					//}
 				}
 			}
-			
+
 			for (ElementLocation el : trans.getNodeLocations(sheetId)) { //rysowanie tranzycji
 				int radius = trans.getRadius();
-
 				g.setColor(Color.WHITE);
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, radius * 2, radius * 2);
-				
+
 				if(eds.view3d) {
 					Color backup = g.getColor();
-
 					g.setColor(Color.LIGHT_GRAY);
 					g.fillRect(nodeBounds.x+4, nodeBounds.y+4, nodeBounds.width+1, nodeBounds.height+1);
 					g.setColor(Color.GRAY);
@@ -119,7 +111,7 @@ public final class ElementDraw {
 					g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					g.setColor(backup);
 				}
-				
+
 				if (!trans.isLaunching()) { //jeśli nieaktywna
 					if (trans.drawGraphBoxT.isGlowed_MTC()) { //jeśli ma się świecić jako MCT
 						g.setColor(EditorResources.glowMTCTransitonColorLevel1);
@@ -158,30 +150,27 @@ public final class ElementDraw {
 						g.setStroke(EditorResources.glowStrokeLevel3);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					}
-					
+
 					//NIGDY ELSE!:
-					if (el.isSelected() && !el.isPortalSelected()) {  //kliknięto tranzycję, ale nie portal
+					if (el.isSelected()) { // && !el.isPortalSelected()) {  //kliknięto dany ElementLocation
+						//błękitna poświata:
 						g.setColor(EditorResources.selectionColorLevel1);
 						g.setStroke(EditorResources.glowStrokeLevel1);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
 						g.setColor(EditorResources.selectionColorLevel2);
 						g.setStroke(EditorResources.glowStrokeLevel2);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-
 						g.setColor(EditorResources.selectionColorLevel3);
 						g.setStroke(EditorResources.glowStrokeLevel3);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-						
-						try {
-							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.black, xTPNtrans);
+
+						try { //kliknięty element
+							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), lightSky, false);
 						} catch (Exception ex) {
 							GUIManager.getDefaultGUIManager().log("Error (272399642) | Exception:  "+ex.getMessage(), "error", true);
 						}
 					}
-				}
-
-				if (trans.isLaunching()) {
+				} else { //if (!trans.isLaunching())
 					g.setColor(EditorResources.launchColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -194,7 +183,9 @@ public final class ElementDraw {
 					g.setStroke(EditorResources.glowStrokeLevel3);
 					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
-				
+
+
+				// *************** blok wypełniania kwadratu tranzycji: ***************
 				if (trans.drawGraphBoxT.isGlowed()) { //inwarianty
 					g.setColor(EditorResources.glowTransitonColorLevel3);
 					int row = 4;
@@ -203,7 +194,7 @@ public final class ElementDraw {
 					g.setColor(EditorResources.glowMTCTransitonColorLevel3);
 				} else if(trans.drawGraphBoxT.isColorChanged()) { //klaster lub inny powód
 					g.setColor(trans.drawGraphBoxT.getTransitionNewColor());
-				} else if(el.isPortalSelected()) { //inny ELoc portalu:
+				} else if(el.isSelected()) { //czy kliknięto, wtedy błękitna poświata
 					g.setColor(EditorResources.selectionColorLevel3);
 				} else {
 					g.setColor(normalColor);
@@ -211,12 +202,15 @@ public final class ElementDraw {
 						g.setColor(tpnNormalColor);
 					}
 				}
+				//wypełnianie:
 				Color back = g.getColor(); // te 4 linie: lekki trójwymiar, ładniejsza tranzycja
 				g.setColor(Color.white);
 				g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				g.setColor(back);
+				// *************** koniec bloku wypełniania kwadratu tranzycji: ***************
 
-				if(trans.qSimBoxT.qSimDrawed && el.qSimDrawed) {
+
+				if(trans.qSimBoxT.qSimDrawed && el.qSimDrawed) { //jeżeli quickSim, override above color
 					if(trans.qSimBoxT.qSimFired == 0) {
 						if(trans.qSimBoxT.qSimDrawStats) {
 							try {
@@ -224,10 +218,10 @@ public final class ElementDraw {
 								g.fillRect(nodeBounds.x+2, nodeBounds.y+10, 23, 10);
 								g.setColor(Color.BLACK);
 								g.drawRect(nodeBounds.x+2, nodeBounds.y+10, 23, 10);
-								
+
 								g.fillRect(nodeBounds.x+25, nodeBounds.y+12, 3, 6);
 								g.setColor(Color.RED);
-								//g.fillRect(nodeBounds.x+3, nodeBounds.y+11, 3, 8);
+
 								g.drawLine(nodeBounds.x+15, nodeBounds.y+11, nodeBounds.x+13, nodeBounds.y+15);
 								g.drawLine(nodeBounds.x+13, nodeBounds.y+15, nodeBounds.x+16, nodeBounds.y+14);
 								g.drawLine(nodeBounds.x+16, nodeBounds.y+14, nodeBounds.x+14, nodeBounds.y+19);
@@ -237,7 +231,7 @@ public final class ElementDraw {
 						}
 						g.setColor(trans.qSimBoxT.qSimOvalColor);
 						g.setStroke(new BasicStroke(2.5F));
-						
+
 						int os = trans.qSimBoxT.qSimOvalSize;
 						g.drawOval(nodeBounds.x-os, nodeBounds.y-os, nodeBounds.width +(2*os), nodeBounds.height +(2*os));
 						g.drawOval(nodeBounds.x-(os+1), nodeBounds.y-(os+1), nodeBounds.width +(2*os+2), nodeBounds.height +(2*os+2));
@@ -245,134 +239,23 @@ public final class ElementDraw {
 						if(trans.qSimBoxT.qSimDrawStats) {
 							g.setColor(trans.qSimBoxT.qSimFillColor);
 							g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-							
+
 							g.setColor(Color.white);
 							g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height-(trans.qSimBoxT.qSimFillValue-2));
 						}
 					}
-				} else {
+				} else { //bez tego tranzycje będą na biało, bez wypełnienia kolorem:
+					//tutaj jest faktyczne wypełnianie:
 					g.fillRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-3, nodeBounds.height-3);
 				}
 
-				if(trans.getTransType() == TransitionType.CPN) {
-					g.setColor(Color.BLUE);
-				} else {
-					g.setColor(Color.DARK_GRAY);
-				}
+				//rysowanie zewnętrznej ramki:
+				g.setColor(Color.BLACK);
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
-				if (trans.isPortal()) {
-					if( trans.getTransType() == TransitionType.TPN  ) {//|| trans.getTransType() == TransitionType.DPN ) {
-						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
-						g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
-					} else {
-						if(eds.snoopyMode) {
-							g.setColor(normalColor);
-							g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-						} else {
-							g.setColor(lightSky);
-							g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
-							g.setColor(lightSky2);
-							g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
-							g.setColor(lightSky3);
-							g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
-						}
-					}
-				}
-
-				//RAMKA dodać wyłączenie
-				/*
-				if(trans.borderFrame){
-					g.drawRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-					g.drawRect(nodeBounds.x+2, nodeBounds.y+2, nodeBounds.width-4, nodeBounds.height-4);
-					g.drawRect(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width-6, nodeBounds.height-6);
-				}
-				*/
-
-				// -------- do tego miejsca wspólne dla Transition i TimeTransition --------
-				
 				//dla tranzycji czasowych, w tym XTPN (po else)
-				if(trans.getTransType() == TransitionType.TPN) {
-					int dpnTextOffset = -5;
-					if(trans.timeExtension.isTPN()) {
-						dpnTextOffset = -15;
-						g.setColor(Color.black);
-						g.setFont(f_plain);
-						String eft = String.valueOf( trans.timeExtension.getEFT() );
-						g.drawString(eft, nodeBounds.x+35, nodeBounds.y + 8);
-
-						String lft = String.valueOf( trans.timeExtension.getLFT() );
-						g.drawString(lft, nodeBounds.x +35, nodeBounds.y + 28);
-
-						int intTimer = (int) trans.timeExtension.getTPNtimer();
-						int intFireTime = (int) trans.timeExtension.getTPNtimerLimit();
-						String timeInfo = ""+intTimer+"  /  "+intFireTime;
-						
-						if(!trans.isActive())
-							timeInfo = "# / #";
-						
-						int offset = -9;
-						if(timeInfo.length() < 7)
-							offset = 4;
-						else if(timeInfo.length() < 9)
-							offset = 1;
-						else if(timeInfo.length() < 10)
-							offset = -3;
-						else if(timeInfo.length() < 11)
-							offset = -5;
-						else if(timeInfo.length() < 12)
-							offset = -7;
-						
-						g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y - 4);
-					}
-					if(trans.timeExtension.isDPN()) {
-						String dur = String.valueOf( trans.timeExtension.getDPNduration() );
-						if(trans.timeExtension.getDPNtimer() >= 0) {
-							dur = trans.timeExtension.getDPNtimer() + " / "+dur;
-						} else {
-							dur = " # / "+dur;
-						}
-						dur = "("+dur+")";
-						int offset;
-						if(dur.length() < 7)
-							offset = 2;
-						else if(dur.length() < 9)
-							offset = -1;
-						else if(dur.length() < 10)
-							offset = -3;
-						else if(dur.length() < 11)
-							offset = -7;
-						else if(dur.length() < 12)
-							offset = -10;
-						else
-							offset = -13;
-						
-						g.setFont(f_bold);
-						g.setColor(Color.red);
-						g.drawString(dur, nodeBounds.x +offset, nodeBounds.y + dpnTextOffset);
-						g.setColor(Color.black);
-						g.setFont(f_plain);
-					}
-
-					//klepsydra:
-					g.setColor(Color.LIGHT_GRAY);
-					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 7, nodeBounds.x + 22, nodeBounds.y + 7);
-					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 23, nodeBounds.x + 22, nodeBounds.y + 23);
-					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 8, nodeBounds.x + 21, nodeBounds.y + 22);
-					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 22, nodeBounds.x + 21, nodeBounds.y + 8);
-					g.setColor(Color.black);
-					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
-				} else if( trans instanceof TransitionXTPN ) { // trans.getTransType() == TransitionType.XTPN) { //tranzycja XTPN
-					//klepsydra:
-					g.setColor(Color.DARK_GRAY);
-					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 7, nodeBounds.x + 22, nodeBounds.y + 7);
-					g.drawLine(nodeBounds.x + 8, nodeBounds.y + 23, nodeBounds.x + 22, nodeBounds.y + 23);
-					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 8, nodeBounds.x + 21, nodeBounds.y + 22);
-					g.drawLine(nodeBounds.x + 9, nodeBounds.y + 22, nodeBounds.x + 21, nodeBounds.y + 8);
-					g.setColor(Color.black);
-					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
-				}
+				timeTransitionsSpecialFeatures(g, trans, nodeBounds);
 
 				//SYMBOL TRANZYCJI FUNKCYJNEJ
 				if(trans.fpnExtension.isFunctional()) {
@@ -382,11 +265,11 @@ public final class ElementDraw {
 					Color oldC = g.getColor();
 					g.setFont(new Font("Garamond", Font.BOLD + Font.ITALIC, 22));
 					g.setColor(Color.RED);
-					g.drawString("f", posX, posY);	
+					g.drawString("f", posX, posY);
 					g.setFont(old);
 					g.setColor(oldC);
 				}
-				
+
 				//SYMBOL TRANZYCJI KOLOROWANEJ
 				if(trans.getTransType() == TransitionType.CPN) {
 					int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth("C") / 2 - 3;
@@ -395,7 +278,7 @@ public final class ElementDraw {
 					Color oldC = g.getColor();
 					g.setFont(new Font("Garamond", Font.BOLD, 22));
 					g.setColor(Color.RED);
-					g.drawString("C", posX, posY);	
+					g.drawString("C", posX, posY);
 					g.setFont(old);
 					g.setColor(oldC);
 				}
@@ -409,7 +292,7 @@ public final class ElementDraw {
 					g.setFont(new Font("Garamond", Font.BOLD, 16));
 					g.drawString(Integer.toString(trans.drawGraphBoxT.getFiring_INV()), posX, posY);
 				}
-				
+
 				//WYŚWIETLANIE DANYCH ODNOŚNIE WYSTĘPOWANIA TRANZYCJI W KLASTRZE:
 				if(trans.drawGraphBoxT.isColorChanged() && trans.drawGraphBoxT.getNumericalValueVisibility()) {
 					String clNumber = formatD(trans.drawGraphBoxT.getNumericalValueDOUBLE());
@@ -418,73 +301,65 @@ public final class ElementDraw {
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
 					Font old = g.getFont();
 					Color oldC = g.getColor();
-					
+
 					g.setFont(new Font("TimesRoman", Font.BOLD, 14));
 					g.setColor(Color.black);
 					g.drawString(clNumber, posX-5+trans.drawGraphBoxT.valueXoff, posY+trans.drawGraphBoxT.valueYoff);
-					
+
 					g.setFont(old);
 					g.setColor(oldC);
 				}
-				
-				if(trans.isKnockedOut()) {
+
+				if(trans.isKnockedOut()) { //chodzi tu o knockout symulacyjny - błyskawica
 					try {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/offlineTransition2.png")));
-						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
-								nodeBounds.y-(trans.getRadius()+2));
+						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), nodeBounds.y-(trans.getRadius()+2));
 					} catch (Exception ex) {
 						GUIManager.getDefaultGUIManager().log("Error (858049410) | Exception:  "+ex.getMessage(), "error", true);
 					}
 				}
-				
-				if(trans.isInvisible()) {
+
+				if(trans.isInvisible()) { //chodzi o knockout t-inwariantów, przekreślone oko
 					try {
-						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility.png")));
-						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), 
-								nodeBounds.y-(trans.getRadius()+2));
+						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility2.png")));
+						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()-10), nodeBounds.y-(trans.getRadius()-8));
 					} catch (Exception ex) {
 						GUIManager.getDefaultGUIManager().log("Error (856997329) | Exception:  "+ex.getMessage(), "error", true);
 					}
 				}
-				
-				//dodatkowy tekst nad tranzycją
+
+				//dodatkowy tekst nad tranzycją:
 				if(trans.drawGraphBoxT.isShowedAddText()) {
 					String txt = trans.drawGraphBoxT.returnAddText();
-					
+
 					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(txt) / 2);
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
 					Font old = g.getFont();
 					Color oldC = g.getColor();
-					
-					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
+
+					g.setFont(new Font("TimesRoman", Font.BOLD, 14));
 					g.setColor(Color.BLACK);
 					g.drawString(txt, posX+trans.drawGraphBoxT.txtXoff, posY+trans.drawGraphBoxT.txtYoff);
-					
+
 					g.setFont(old);
 					g.setColor(oldC);
 				}
-				
-				if (el.isPortalSelected() && !el.isSelected()) {
-					g.setColor(Color.BLACK);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-	
-					g.setColor(EditorResources.selectionColorLevel1);
-					g.setStroke(EditorResources.glowStrokeLevel1);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
-					g.setColor(EditorResources.selectionColorLevel2);
-					g.setStroke(EditorResources.glowStrokeLevel2);
-					g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), Color.cyan, xTPNtrans);
-					
+
+				if (el.isPortalSelected() && !el.isSelected()) { //kliknięto ten portal, ale NIE TEN ElementLocation
 					if(eds.snoopyMode) {
-						g.setColor(portalSelColor);
+						g.setColor(EditorResources.selectionColorLevel3);
+						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
+					}
+					drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), lightSky2, true);
+				}
+
+				if (trans.isPortal()) { //rysowanie wewnętrznej ramki:
+					if(eds.snoopyMode) {
+						g.setColor(normalColor);
 						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 					} else {
-						g.setColor(Color.black);
-						g.setStroke(new BasicStroke(1.5F));
-						g.drawOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
-						g.drawOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 10, nodeBounds.height - 10);
+						g.drawRect(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
 					}
 				}
 
@@ -505,7 +380,7 @@ public final class ElementDraw {
 						g.setColor(c);
 						g.fillOval(nodeBounds.x+40+x, nodeBounds.y+y, 5, 5);
 						y=y+6;
-						if(y==42) {
+						if(y==42) { //ah, yes. The Answer to the Ultimate Question of Life, the Universe, and Everything
 							y=0;
 							x=x+6;
 						}
@@ -513,87 +388,21 @@ public final class ElementDraw {
 				}
 
 				if (eds.color || trans instanceof TransitionColored) {
-					Font currentFont = g.getFont();
-					Font newFont = currentFont.deriveFont(currentFont.getSize() * 1.4F);
-					g.setFont(newFont);
-					
-					int r0 = ((TransitionColored)trans).getRequiredColoredTokens(0);
-					int r1 = ((TransitionColored)trans).getRequiredColoredTokens(1);
-					int r2 = ((TransitionColored)trans).getRequiredColoredTokens(2);
-					int r3 = ((TransitionColored)trans).getRequiredColoredTokens(3);
-					int r4 = ((TransitionColored)trans).getRequiredColoredTokens(4);
-					int r5 = ((TransitionColored)trans).getRequiredColoredTokens(5);
-					String txtT0 = "" +r0;
-					String txtT1 = "" +r1;
-					String txtT2 = "" +r2;
-					String txtT3 = "" +r3;
-					String txtT4 = "" +r4;
-					String txtT5 = "" +r5;
-					int txtW0 = g.getFontMetrics().stringWidth(txtT0);
-					int txtW1 = g.getFontMetrics().stringWidth(txtT1);
-					int txtW2 = g.getFontMetrics().stringWidth(txtT2);
-					int txtW3 = g.getFontMetrics().stringWidth(txtT3);
-					int txtW4 = g.getFontMetrics().stringWidth(txtT4);
-					int txtW5 = g.getFontMetrics().stringWidth(txtT5);
-					g.setColor(Color.black);
-					String txt = "<";
-					int posX = nodeBounds.x - (g.getFontMetrics().stringWidth(txt) / 2 ) - 15;
-					int posY = nodeBounds.y - 1;
-					g.drawString(txt, posX, posY);
-					int lastSize = g.getFontMetrics().stringWidth(txt);
-					if(r0 > 0) {
-						posX += (txtW0 - 6*txtT0.length() + lastSize);
-						g.setColor(cRed);
-						g.drawString(txtT0, posX, posY);
-						lastSize = txtW0;
+					try {
+						assert trans instanceof TransitionColored;
+						coloredTransitionDemo(g, (TransitionColored) trans, nodeBounds);
+					} catch (Exception ex) {
+						GUIManager.getDefaultGUIManager().log("Error (162349662) | Exception:  "+ex.getMessage(), "error", true);
 					}
-					if(r1 > 0) {
-						posX += (txtW1 - 6*txtT1.length()  + lastSize);
-						g.setColor(cGreen);
-						g.drawString(txtT1, posX, posY);
-						lastSize = txtW1;
-					}
-					if(r2 > 0) {
-						posX += (txtW2 - 6*txtT2.length()  + lastSize);
-						g.setColor(cBlue);
-						g.drawString(txtT2, posX, posY);
-						lastSize = txtW2;
-					}
-					if(r3 > 0) {
-						posX += (txtW3 - 6*txtT3.length()  + lastSize);
-						g.setColor(cYellow);
-						g.drawString(txtT3, posX, posY);
-						lastSize = txtW3;
-					}
-					if(r4 > 0) {
-						posX += (txtW4 - 6*txtT4.length()  + lastSize);
-						g.setColor(cGrey);
-						g.drawString(txtT4, posX, posY);
-						lastSize = txtW4;
-					}
-					if(r5 > 0) {
-						posX += (txtW5 - 6*txtT5.length()  + lastSize);
-						g.setColor(cBlack);
-						g.drawString(txtT5, posX, posY);
-						lastSize = txtW5;
-					}
-					txt = ">";
-					posX += (g.getFontMetrics().stringWidth(txt) );
-					g.setColor(cBlack);
-					g.drawString(txt, posX, posY);
-					
-					g.setFont(currentFont);
 				}
-
 			}
-		} else if(node instanceof Place) { // MIEJSCA  //TODO: znacznik miejsc
+		} else if(node instanceof Place) { //rysowanie miejsca
 			Place place = (Place)node;
-			boolean xTPNplace = (node instanceof PlaceXTPN); //place.isXTPNplace();
 			Color portalColor = Color.WHITE;
-			Color portalSelColor = EditorResources.selectionColorLevel3;
-            Color subNetColor = EditorResources.glowMTCTransitonColorLevel3;
+			//Color portalSelColor = EditorResources.selectionColorLevel3;
+			//Color subNetColor = EditorResources.glowMTCTransitonColorLevel3;
 			Color normalColor = Color.WHITE;
-			
+
 			if(eds.nonDefColors) {
 				normalColor = placeDefColor;
 				portalColor = placeDefColor;
@@ -606,11 +415,11 @@ public final class ElementDraw {
 						portalColor = Color.LIGHT_GRAY;
 				}
 			}
-			
+
 			for (ElementLocation el : node.getNodeLocations(sheetId)) {
-				Rectangle nodeBounds = new Rectangle(el.getPosition().x - place.getRadius(), el.getPosition().y - place.getRadius(), 
+				Rectangle nodeBounds = new Rectangle(el.getPosition().x - place.getRadius(), el.getPosition().y - place.getRadius(),
 						place.getRadius() * 2, place.getRadius() * 2);
-				
+
 				if(eds.view3d) {
 					Color backup = g.getColor();
 					g.setColor(Color.DARK_GRAY);
@@ -635,7 +444,8 @@ public final class ElementDraw {
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
 
-				if (el.isSelected() && !el.isPortalSelected()) {
+				if (el.isSelected() && !el.isPortalSelected()) { //dla miejsca ale nie portalu:
+					//lekka błękitna poświata wokół:
 					g.setColor(EditorResources.selectionColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -647,13 +457,14 @@ public final class ElementDraw {
 					g.setColor(EditorResources.selectionColorLevel3);
 					g.setStroke(EditorResources.glowStrokeLevel3);
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					
+
 					try {
-						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.black, xTPNplace);
+						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), lightSky, false);
 					} catch (Exception ex) {
 						GUIManager.getDefaultGUIManager().log("Error (777866480) | Exception:  "+ex.getMessage(), "error", true);
 					}
-				} else if (el.isPortalSelected()) {
+				} else if (el.isPortalSelected()) { //jeżeli kliknięto portal, ale nie ten ElementLocation
+					//błękitna poświata:
 					g.setColor(EditorResources.selectionColorLevel1);
 					g.setStroke(EditorResources.glowStrokeLevel1);
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -661,34 +472,39 @@ public final class ElementDraw {
 					g.setColor(EditorResources.selectionColorLevel2);
 					g.setStroke(EditorResources.glowStrokeLevel2);
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
+					g.setColor(EditorResources.selectionColorLevel3);
+					g.setStroke(EditorResources.glowStrokeLevel3);
+					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
 
-				//wypełnianie kolorem:
-				if(el.isPortalSelected()) { //dla wszystkich innych ElLocations portalu właśnie klikniętego
-					g.setColor(portalSelColor);
-				} else if (place.isGlowed_Sub()){
-					g.setColor(subNetColor);
-				} else{
+
+				// *************** blok wypełniania okręgu miejsca: ***************
+				if (place.isGlowed_Sub()){
+					g.setColor(EditorResources.glowMTCTransitonColorLevel3); //subnet color
+				} else if (el.isSelected()){
+					g.setColor(EditorResources.selectionColorLevel3);
+				} else {
 					g.setColor(normalColor);
 				}
 				g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				
-				if(!eds.nonDefColors) {
-					Color back = g.getColor(); // te 4 linie: lekki trojwymiar, ladniejsza
-					g.setColor(new Color(249,249,249));
-					g.fillOval(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width-3, nodeBounds.height-3);
-					g.setColor(back);
-				}
 
-				if(place.isColored) {
-					g.setColor(Color.BLUE);
-				} else {
-					g.setColor(Color.DARK_GRAY);
+				if(!eds.nonDefColors) {
+					Color backup = g.getColor(); // te 4 linie: lekki trojwymiar, ladniejsza
+					g.setColor(Color.white); //najpierw na biało ZARYSUJ łuk wewnątrz:
+					g.fillOval(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width-3, nodeBounds.height-3);
+					g.setColor(backup); //przywróc kolor ustawiony wyżej i zamaluj głównym kolorem:
+					g.fillOval(nodeBounds.x+3, nodeBounds.y+3, nodeBounds.width-3, nodeBounds.height-3);
 				}
-				
+				// *************** koniec bloku wypełniania okręgu miejsca: ***************
+
+				//rysowanie zewnętrznej ramki:
+				g.setColor(Color.BLACK);
 				g.setStroke(new BasicStroke(1.5F));
 				g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 
+
+				//w czasie sumulacji miejsca mogą zmieniać kolory:
 				if(eds.crazyColors && !(place instanceof PlaceXTPN)) {
 					g.setColor(getColor(place.getTokensNumber()));
 					g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -696,19 +512,19 @@ public final class ElementDraw {
 					g.setStroke(new BasicStroke(1.5F));
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
-				
+
 				if(place.isInvisible()) {
 					try {
-						BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
-						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-4), 
-								nodeBounds.y-(place.getRadius()-3));
+						//BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
+						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility2.png")));
+						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-15), nodeBounds.y-(place.getRadius()-13));
 					} catch (Exception ex) {
 						GUIManager.getDefaultGUIManager().log("Error (372587144) | Exception:  "+ex.getMessage(), "error", true);
 					}
 				}
 
 				// _XTPN symbol
-				if( place instanceof PlaceXTPN ) { //miejsce XTPN
+				if(place instanceof PlaceXTPN ) { //miejsce XTPN
 					//klepsydra:
 					if( ((PlaceXTPN)place).isGammaModeActive() ) {
 						g.setColor(lightGray);
@@ -738,20 +554,7 @@ public final class ElementDraw {
 
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 				}
-				
-				//RYSOWANIE PORTALU - OKRĄG W ŚRODKU
-				if (place.isPortal()) {
-					if(eds.snoopyMode) {
-						g.setColor(portalColor);
-						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-					} else {
-						g.setColor(Color.BLACK);
-						g.setStroke(new BasicStroke(1.5F));
-						g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
-						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
-					}
-				}
-				
+
 				if(place.qSimBoxP.qSimDrawed && el.qSimDrawed) {
 					if(place.qSimBoxP.qSimTokens == 0) {
 						g.setColor(place.qSimBoxP.qSimOvalColor);
@@ -762,19 +565,19 @@ public final class ElementDraw {
 					} else {
 						if(place.qSimBoxP.qSimDrawStats) {
 							g.setStroke(new BasicStroke(1F));
-							
+
 							g.setColor(place.qSimBoxP.qSimFillColor);
 							g.fillRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height);
-							
+
 							g.setColor(Color.WHITE);
 							g.fillRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height-(place.qSimBoxP.qSimFillValue-2));
-							
+
 							g.setColor(Color.BLACK);
 							g.drawRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height);
 						}
 					}
 				}
-				
+
 				// KOLOROWANKI
 				if(place.drawGraphBoxP.isColorChanged() ) {
 					Color oldColor = g.getColor();
@@ -782,14 +585,14 @@ public final class ElementDraw {
 					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-1, nodeBounds.height-1);
 					g.setColor(oldColor);
 				}
-				
+
 				if(place.drawGraphBoxP.getNumericalValueVisibility()) {
 					String clNumber = formatD(place.drawGraphBoxP.getNumericalValueDOUBLE());
 					int posX = nodeBounds.x + nodeBounds.width - (g.getFontMetrics().stringWidth(clNumber) / 2);
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
 					Font old = g.getFont();
 					Color oldC = g.getColor();
-					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
+					g.setFont(new Font("TimesRoman", Font.BOLD, 14));
 					g.setColor(Color.black);
 					g.drawString(clNumber, posX-5+place.drawGraphBoxP.valueXoff, posY+place.drawGraphBoxP.valueYoff);
 					g.setFont(old);
@@ -803,42 +606,33 @@ public final class ElementDraw {
 					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
 					Font old = g.getFont();
 					Color oldC = g.getColor();
-					g.setFont(new Font("TimesRoman", Font.BOLD, 14)); 
+					g.setFont(new Font("TimesRoman", Font.BOLD, 14));
 					g.setColor(Color.BLACK);
 					g.drawString(txt, posX+place.drawGraphBoxP.txtXoff, posY+place.drawGraphBoxP.txtYoff);
 					g.setFont(old);
 					g.setColor(oldC);
 				}
 
-				if (el.isPortalSelected() && !el.isSelected()) {
-					g.setColor(normalColor);
-					g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-1, nodeBounds.height-1);
-					
-					g.setColor(EditorResources.selectionColorLevel1);
-					g.setStroke(EditorResources.glowStrokeLevel1);
-					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+				if (el.isPortalSelected() && !el.isSelected()) { //kliknięto portal, ale NIE TEN ElementLocation
+					if(eds.snoopyMode) { //portal selected color
+						g.setColor(EditorResources.selectionColorLevel3);
+						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
+					}
+					drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), lightSky2, true);
+				}
 
-					g.setColor(EditorResources.selectionColorLevel2);
-					g.setStroke(EditorResources.glowStrokeLevel2);
-					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					
+				//rysowanie wewnętrznej ramki:
+				if (place.isPortal()) {
 					if(eds.snoopyMode) {
-						g.setColor(portalSelColor); 
+						g.setColor(portalColor);
 						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 					} else {
-						g.setColor(portalSelColor);
-						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-						
-						g.setColor(Color.BLACK);
-						g.setStroke(new BasicStroke(1.5F));
-						g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
-						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
-						
+						//g.setColor(Color.BLACK);
+						g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
 					}
-					
-					drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), Color.blue, xTPNplace);
 				}
-				
+
+				//TOKENY TUTAJ!
 				drawTokens(g, place, nodeBounds);
 
 				if(place.branchColor != null){
@@ -856,10 +650,8 @@ public final class ElementDraw {
 						g.fillOval(nodeBounds.x+40+x, nodeBounds.y+y, 6, 6);
 						g.setColor(c);
 						g.fillOval(nodeBounds.x+40+x, nodeBounds.y+y, 5, 5);
-
-
 						y=y+6;
-						if(y==42)
+						if(y==42) //ah, yes. The Answer to the Ultimate Question of Life, the Universe, and Everything
 						{
 							y=0;
 							x=x+6;
@@ -867,74 +659,13 @@ public final class ElementDraw {
 					}
 				}
 
-				//dubel
-				if (place.isPortal()) {
-					if(eds.snoopyMode) {
-						g.setColor(portalColor);
-						g.fillOval(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
-					} else {
-						g.setColor(Color.BLACK);
-						g.setStroke(new BasicStroke(1.5F));
-						g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 12, nodeBounds.height - 12);
-						g.drawOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 14, nodeBounds.height - 14);
-					}
-				}
-				
-				//TODO: COLORS
 				if (eds.color || place instanceof PlaceColored) {
-					Font currentFont = g.getFont();
-					Font newFont = currentFont.deriveFont(currentFont.getSize() * 1.4F);
-					g.setFont(newFont);
-					
-					String txtT0 = "" +((PlaceColored)place).getColorTokensNumber(0);
-					String txtT1 = "" +((PlaceColored)place).getColorTokensNumber(1);
-					String txtT2 = "" +((PlaceColored)place).getColorTokensNumber(2);
-					String txtT3 = "" +((PlaceColored)place).getColorTokensNumber(3);
-					String txtT4 = "" +((PlaceColored)place).getColorTokensNumber(4);
-					String txtT5 = "" +((PlaceColored)place).getColorTokensNumber(5);
-					int txtW0 = g.getFontMetrics().stringWidth(txtT0);
-					int txtW1 = g.getFontMetrics().stringWidth(txtT1);
-					int txtW2 = g.getFontMetrics().stringWidth(txtT2);
-					int txtW3 = g.getFontMetrics().stringWidth(txtT3);
-					int txtW4 = g.getFontMetrics().stringWidth(txtT4);
-					int txtW5 = g.getFontMetrics().stringWidth(txtT5);
-					
-					g.setColor(Color.black);
-					String txt = "[";
-					int posX = nodeBounds.x - (g.getFontMetrics().stringWidth(txt) / 2 ) - 15;
-					int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
-					g.drawString(txt, posX, posY);
-					
-					posX += (txtW0 - 8*txtT0.length() );
-					g.setColor(cRed);
-					g.drawString(txtT0, posX, posY);
-					
-					posX += (txtW1 - 10*txtT1.length()  + txtW0);
-					g.setColor(cGreen);
-					g.drawString(txtT1, posX, posY);
-					
-					posX += (txtW2 - 10*txtT2.length()  + txtW1);
-					g.setColor(cBlue);
-					g.drawString(txtT2, posX, posY);
-					
-					posX += (txtW3 - 10*txtT3.length()  + txtW2);
-					g.setColor(cYellow);
-					g.drawString(txtT3, posX, posY);
-					
-					posX += (txtW4 - 10*txtT4.length()  + txtW3);
-					g.setColor(cGrey);
-					g.drawString(txtT4, posX, posY);
-					
-					posX += (txtW5 - 10*txtT5.length()  + txtW4);
-					g.setColor(cBlack);
-					g.drawString(txtT5, posX, posY);
-					
-					txt = "]";
-					posX += (g.getFontMetrics().stringWidth(txt) + txtW5 -5);
-					g.setColor(cBlack);
-					g.drawString(txt, posX, posY);
-					
-					g.setFont(currentFont);
+					try {
+						assert place instanceof PlaceColored;
+						coloredPlaceDemo(g, (PlaceColored) place, nodeBounds);
+					} catch (Exception ex) {
+						GUIManager.getDefaultGUIManager().log("Error (172349662) | Exception:  "+ex.getMessage(), "error", true);
+					}
 				}
 			}
 		} else if(node instanceof MetaNode) { //TODO: znacznik meta
@@ -943,7 +674,7 @@ public final class ElementDraw {
 				int radius = metanode.getRadius();
 				//radius = 30;
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, radius * 2, radius * 2);
-				
+
 				g.setColor(new Color(224,224,224));
 				g.setColor(Color.DARK_GRAY);
 				g.setStroke(new BasicStroke(1.5F));
@@ -969,22 +700,117 @@ public final class ElementDraw {
 					g.setStroke(new BasicStroke(2F));
 					g.setColor(Color.RED);
 					g.drawOval(nodeBounds.x + 6, nodeBounds.y + 6, 18, 18);
-					
+
 					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.x + 20, nodeBounds.y + 10);
 					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 20, nodeBounds.x + 20, nodeBounds.y + 20);
 					g.drawLine(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.x + 10, nodeBounds.y + 20);
 					g.drawLine(nodeBounds.x + 20, nodeBounds.y + 10, nodeBounds.x + 20, nodeBounds.y + 20);
 				}
-				
+
+				if (el.isSelected()) {
+					drawCrossHair(g, nodeBounds.x - radius, nodeBounds.y - radius, lightSky, false);
+				}
+
 				g.setColor(Color.black);
 				g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 				g.setColor(EditorResources.glowTransitonTextColor);
-				
+
 			}
 		}
 		return g;
 	}
-	
+
+	/**
+	 * Rysowanie klepsydr (na końcu) oraz zabawa z wyświetlaniem danych dla tranzycji TPN / DPN
+	 * @param g <b>Graphics2D</b>
+	 * @param trans <b>Transition</b>
+	 * @param nodeBounds <b>Rectangle</b>
+	 */
+	private static void timeTransitionsSpecialFeatures(Graphics2D g, Transition trans, Rectangle nodeBounds) {
+		if(trans.getTransType() == TransitionType.TPN) {
+			int dpnTextOffset = -5;
+			if(trans.timeExtension.isTPN()) {
+				dpnTextOffset = -15;
+				g.setColor(Color.black);
+				g.setFont(f_plain);
+				String eft = String.valueOf( trans.timeExtension.getEFT() );
+				g.drawString(eft, nodeBounds.x+35, nodeBounds.y + 8);
+
+				String lft = String.valueOf( trans.timeExtension.getLFT() );
+				g.drawString(lft, nodeBounds.x +35, nodeBounds.y + 28);
+
+				int intTimer = (int) trans.timeExtension.getTPNtimer();
+				int intFireTime = (int) trans.timeExtension.getTPNtimerLimit();
+				String timeInfo = intTimer+"  /  "+intFireTime;
+
+				if(!trans.isActive())
+					timeInfo = "# / #";
+
+				int offset = -9;
+				if(timeInfo.length() < 7)
+					offset = 4;
+				else if(timeInfo.length() < 9)
+					offset = 1;
+				else if(timeInfo.length() < 10)
+					offset = -3;
+				else if(timeInfo.length() < 11)
+					offset = -5;
+				else if(timeInfo.length() < 12)
+					offset = -7;
+
+				g.drawString(timeInfo, nodeBounds.x + offset, nodeBounds.y - 4);
+			}
+			//może być RÓWNOCZEŚNIE DPN:
+			if(trans.timeExtension.isDPN()) {
+				String dur = String.valueOf( trans.timeExtension.getDPNduration() );
+				if(trans.timeExtension.getDPNtimer() >= 0) {
+					dur = trans.timeExtension.getDPNtimer() + " / "+dur;
+				} else {
+					dur = " # / "+dur;
+				}
+				dur = "("+dur+")";
+				int offset;
+				//if(dur.length() < 7)
+				//	offset = 2;
+				//else
+				if(dur.length() < 9)
+					offset = -1;
+				else if(dur.length() < 10)
+					offset = -3;
+				else if(dur.length() < 11)
+					offset = -7;
+				else if(dur.length() < 12)
+					offset = -10;
+				else
+					offset = -13;
+
+				g.setFont(f_bold);
+				g.setColor(Color.red);
+				g.drawString(dur, nodeBounds.x +offset, nodeBounds.y + dpnTextOffset);
+				g.setColor(Color.black);
+				g.setFont(f_plain);
+			}
+
+			//klepsydra:
+			g.setColor(Color.LIGHT_GRAY);
+			g.drawLine(nodeBounds.x + 8, nodeBounds.y + 7, nodeBounds.x + 22, nodeBounds.y + 7);
+			g.drawLine(nodeBounds.x + 8, nodeBounds.y + 23, nodeBounds.x + 22, nodeBounds.y + 23);
+			g.drawLine(nodeBounds.x + 9, nodeBounds.y + 8, nodeBounds.x + 21, nodeBounds.y + 22);
+			g.drawLine(nodeBounds.x + 9, nodeBounds.y + 22, nodeBounds.x + 21, nodeBounds.y + 8);
+			g.setColor(Color.black);
+			g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
+		} else if( trans instanceof TransitionXTPN ) {
+			//klepsydra:
+			g.setColor(Color.DARK_GRAY);
+			g.drawLine(nodeBounds.x + 8, nodeBounds.y + 7, nodeBounds.x + 22, nodeBounds.y + 7);
+			g.drawLine(nodeBounds.x + 8, nodeBounds.y + 23, nodeBounds.x + 22, nodeBounds.y + 23);
+			g.drawLine(nodeBounds.x + 9, nodeBounds.y + 8, nodeBounds.x + 21, nodeBounds.y + 22);
+			g.drawLine(nodeBounds.x + 9, nodeBounds.y + 22, nodeBounds.x + 21, nodeBounds.y + 8);
+			g.setColor(Color.black);
+			g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
+		}
+	}
+
 	/**
 	 * Główna metoda statyczna odpowiedzialna za rysowanie łuku sieci.
 	 * @param arc (<b>Arc</b>) obiekt łuku.
@@ -1015,10 +841,10 @@ public final class ElementDraw {
 			endP = (Point)arc.getEndLocation().getPosition().clone();
 			endRadius = arc.getEndLocation().getParentNode().getRadius();// * zoom / 100;
 		}
-		
+
 		int distX = Tools.absolute(startP.x - endP.x);
 		int distY = Tools.absolute(startP.y - endP.y);
-		
+
 		if(distX == distY) {
 			startP.setLocation(startP.x+1, startP.y); //yes, this magic is essential
 		}
@@ -1029,12 +855,12 @@ public final class ElementDraw {
 			incFactorM = 6;
 			incFactorRadius = 15;
 		}
-		
+
 		Point tmpStart = (Point)startP.clone();
 		if(breaks>0) {
 			tmpStart = breakPoints.get(breaks-1);
 		}
-		
+
 		double alfa = endP.x - tmpStart.x + endP.y - tmpStart.y == 0 ? 0 : Math.atan(((double) endP.y - (double) tmpStart.y) / ((double) endP.x - (double) tmpStart.x));
 		double alfaCos = Math.cos(alfa);
 		double alfaSin = Math.sin(alfa);
@@ -1047,7 +873,7 @@ public final class ElementDraw {
 		double yl = endP.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign - M * alfaCos;
 		double xk = endP.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign - M * alfaSin;
 		double yk = endP.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign + M * alfaCos;
-	
+
 		if (arc.getSelected()) {
 			g.setColor(EditorResources.selectionColorLevel3);
 			g.setStroke(EditorResources.glowStrokeArc);
@@ -1056,13 +882,13 @@ public final class ElementDraw {
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
 		}
 
-        if (arc.isGlowed_Sub() && breaks == 0) {
-            g.setColor(EditorResources.glowMTCTransitonColorLevel3);
-            g.setStroke(EditorResources.glowStrokeArc);
-            g.drawLine(startP.x, startP.y, endP.x, endP.y);
-            g.drawPolygon(new int[] { (int) xp, (int) xl, (int) xk },
-                    new int[] { (int) yp, (int) yl, (int) yk }, 3);
-        }
+		if (arc.isGlowed_Sub() && breaks == 0) {
+			g.setColor(EditorResources.glowMTCTransitonColorLevel3);
+			g.setStroke(EditorResources.glowStrokeArc);
+			g.drawLine(startP.x, startP.y, endP.x, endP.y);
+			g.drawPolygon(new int[] { (int) xp, (int) xl, (int) xk },
+					new int[] { (int) yp, (int) yl, (int) yk }, 3);
+		}
 
 		g.setStroke(new BasicStroke(1.0f));
 		if (arc.getIsCorect()) {
@@ -1075,7 +901,7 @@ public final class ElementDraw {
 			g.setColor(new Color(176, 23, 31));
 
 		//NIE-KLIKNIĘTY ŁUK
-		if (arc.getPairedArc() == null || arc.isMainArcOfPair()) { 
+		if (arc.getPairedArc() == null || arc.isMainArcOfPair()) {
 			//czyli nie rysuje kreski tylko wtedy, jeśli to podrzędny łuk w ramach read-arc - żeby nie dublować
 			if(arc.getArcType() == TypeOfArc.META_ARC) {
 				g.setColor( new Color(30, 144, 255, 150));
@@ -1186,13 +1012,13 @@ public final class ElementDraw {
 			g.setColor(arc.arcQSimBox.qSimForcedColor);
 			g.setStroke(new BasicStroke(4));
 			g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
-			
+
 			alfa = endP.x - startP.x + endP.y - startP.y == 0 ? 0 : Math.atan(((double) endP.y - (double) startP.y) / ((double) endP.x - (double) startP.x));
 			alfaCos = Math.cos(alfa);
 			alfaSin = Math.sin(alfa);
 			//double sign = endP.x < arc.getStartLocation().getPosition().x ? 1 : -1;
 			sign = endP.x < startP.x ? 1 : -1;
-			M = 4 + incFactorM;
+			//M = 4 + incFactorM;
 			xp = endP.x + endRadius * alfaCos * sign;
 			yp = endP.y + endRadius * alfaSin * sign;
 			xl = endP.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign + M * alfaSin;
@@ -1205,7 +1031,7 @@ public final class ElementDraw {
 		//int leftRight = 0; //im wieksze, tym bardziej w prawo
 		//int upDown = 0; //im większa, tym mocniej w dół
 		g.setStroke(sizeStroke);
-		
+
 		if(arc.getArcType() == TypeOfArc.NORMAL || arc.getArcType() == TypeOfArc.READARC ) {
 			if(arc.arcXTPNbox.isXTPN()) {
 				M += 2;
@@ -1230,7 +1056,7 @@ public final class ElementDraw {
 						new int[] { (int) yp, (int) yl, (int) yk }, 3);
 			}
 		} else if(arc.getArcType() == TypeOfArc.COLOR ) {
-			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
+			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk },
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
 		} else if (arc.getArcType() == TypeOfArc.INHIBITOR) {
 			if(arc.arcXTPNbox.isXTPNinhibitor()) {
@@ -1239,22 +1065,22 @@ public final class ElementDraw {
 			}
 
 			int xPos = (int) ((xl + xk)/2);
-	    	int yPos = (int) ((yl + yk)/2);
-	    	int xT = (int) ((xPos - xp)/3.14);
-	    	int yT = (int) ((yPos - yp)/3.14);
-	    	
-	    	if(arc.arcQSimBox.qSimForcedArc) {
+			int yPos = (int) ((yl + yk)/2);
+			int xT = (int) ((xPos - xp)/3.14);
+			int yT = (int) ((yPos - yp)/3.14);
+
+			if(arc.arcQSimBox.qSimForcedArc) {
 				g.setColor(arc.arcQSimBox.qSimForcedColor);
 				g.setStroke(new BasicStroke(4));
 				g.drawOval(xPos-6-xT, yPos-6-yT, 12, 12);
-	    	} else {
-	    		g.drawOval(xPos-5-xT, yPos-5-yT, 10, 10);
-	    	}
-	    	
+			} else {
+				g.drawOval(xPos-5-xT, yPos-5-yT, 10, 10);
+			}
+
 		} else if (arc.getArcType() == TypeOfArc.RESET) {
-			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
+			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk },
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
-			
+
 			xl = endP.x + (endRadius + 30) * alfaCos * sign + M * alfaSin;
 			yl = endP.y + (endRadius + 30) * alfaSin * sign - M * alfaCos;
 			xk = endP.x + (endRadius + 30) * alfaCos * sign - M * alfaSin;
@@ -1262,20 +1088,20 @@ public final class ElementDraw {
 			double newxp = endP.x - (endRadius-45) * alfaCos * sign;
 			double newyp = endP.y - (endRadius-45) * alfaSin * sign;
 
-			g.fillPolygon(new int[] { (int) newxp, (int) xl, (int) xk }, 
+			g.fillPolygon(new int[] { (int) newxp, (int) xl, (int) xk },
 					new int[] { (int) newyp, (int) yl, (int) yk }, 3);
 		} else if (arc.getArcType() == TypeOfArc.EQUAL) {
 			int xPos = (int) ((xl + xk)/2);
-	    	int yPos = (int) ((yl + yk)/2);
-	    	int xT = (int) ((xPos - xp)/3.14);
-	    	int yT = (int) ((yPos - yp)/3.14);
-	    	
-	    	g.fillOval(xPos-4-xT, yPos-4-yT, 8, 8);
-	    	
-	    	xT = (int) ((xPos - xp));
-	    	yT = (int) ((yPos - yp));
-	    	
-	    	g.fillOval(xPos-4+xT, yPos-4+yT, 8, 8);
+			int yPos = (int) ((yl + yk)/2);
+			int xT = (int) ((xPos - xp)/3.14);
+			int yT = (int) ((yPos - yp)/3.14);
+
+			g.fillOval(xPos-4-xT, yPos-4-yT, 8, 8);
+
+			xT = (int) ((xPos - xp));
+			yT = (int) ((yPos - yp));
+
+			g.fillOval(xPos-4+xT, yPos-4+yT, 8, 8);
 		} else if (arc.getArcType() == TypeOfArc.META_ARC) {
 			double Mmeta = 6;
 			double xpmeta = endP.x + (endRadius-10) * alfaCos * sign;
@@ -1284,13 +1110,13 @@ public final class ElementDraw {
 			double ylmeta = endP.y + (endRadius + 13) * alfaSin * sign - Mmeta * alfaCos;
 			double xkmeta = endP.x + (endRadius + 13) * alfaCos * sign - Mmeta * alfaSin;
 			double ykmeta = endP.y + (endRadius + 13) * alfaSin * sign + Mmeta * alfaCos;
-			
+
 			g.setColor( new Color(30, 144, 255, 250));
-			g.fillPolygon(new int[] { (int) xpmeta, (int) xlmeta, (int) xkmeta }, 
+			g.fillPolygon(new int[] { (int) xpmeta, (int) xlmeta, (int) xkmeta },
 					new int[] { (int) ypmeta, (int) ylmeta, (int) ykmeta }, 3);
 		}
-		
-		
+
+
 		//**********************************************
 		//***********    LOKALIZACJA WAGI    ***********
 		//**********************************************
@@ -1299,22 +1125,22 @@ public final class ElementDraw {
 			wTxt = arc.getColorWeight(0)+","+arc.getColorWeight(1)+","+arc.getColorWeight(2)+","+
 					arc.getColorWeight(3)+","+arc.getColorWeight(4)+","+arc.getColorWeight(5);
 		}
-		
+
 		if (arc.getWeight() > 1 || arc.getArcType() == TypeOfArc.COLOR) {
-			if(arc.accessBreaks().size() > 0) {
+			if(!arc.accessBreaks().isEmpty()) {
 				Point breakP = arc.accessBreaks().get(0);
-				
+
 				g.setFont(new Font("Tahoma", Font.PLAIN, 18));
 				g.drawString(wTxt, breakP.x, breakP.y - 10);
 			} else {
 				int x_weight = (endP.x + startP.x) / 2;
 				int y_weight = (endP.y + startP.y) / 2;
-				
+
 				//double atang = Math.atan2(p2.y-p1.y,p2.x-p1.x)*180.0/Math.PI;
 				double atang = Math.toDegrees(Math.atan2(endP.y-startP.y,endP.x-startP.x));
 				if(atang < 0){
 					atang += 360;
-			    }
+				}
 				if(atang == 90 || atang == 270) { //pionowo
 					x_weight = x_weight + 10;
 				}
@@ -1327,7 +1153,7 @@ public final class ElementDraw {
 				}
 
 				g.setFont(new Font("Tahoma", Font.PLAIN, 18));
-				
+
 				if(arc.getArcType() == TypeOfArc.COLOR) {
 					//test długości ciągu wag:
 					int aW0 = arc.getColorWeight(0);
@@ -1349,10 +1175,10 @@ public final class ElementDraw {
 						defract += 7;
 					if(aW5 > 0)
 						defract += 7;
-				
+
 					x_weight-=defract;
 					y_weight+=10;
-					
+
 					if(aW0 > 0) {
 						g.setColor(cRed);
 						g.drawString(""+aW0, x_weight, y_weight);
@@ -1429,7 +1255,7 @@ public final class ElementDraw {
 		} else {
 			g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 		}
-		
+
 		//g.drawLine(startP.x, startP.y, breaksVector.get(0).x, breaksVector.get(0).y);
 
 		if(arc.arcDecoBox.isColorChanged()) {
@@ -1584,17 +1410,17 @@ public final class ElementDraw {
 	private static void drawTokens(Graphics2D g, Place place, Rectangle nodeBounds) {
 		g.setColor(Color.black);
 		g.setFont(new Font("TimesRoman", Font.BOLD, 14));
-		
+
 		if(place.isColored) {
-				int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth("C") / 2 - 3;
-				int posY = nodeBounds.y + nodeBounds.height / 2 + 8;
-				Font old = g.getFont();
-				Color oldC = g.getColor();
-				g.setFont(new Font("Garamond", Font.BOLD, 22));
-				g.setColor(Color.RED);
-				g.drawString("C", posX, posY);	
-				g.setFont(old);
-				g.setColor(oldC);
+			int posX = nodeBounds.x + nodeBounds.width / 2 - g.getFontMetrics().stringWidth("C") / 2 - 3;
+			int posY = nodeBounds.y + nodeBounds.height / 2 + 8;
+			Font old = g.getFont();
+			Color oldC = g.getColor();
+			g.setFont(new Font("Garamond", Font.BOLD, 22));
+			g.setColor(Color.RED);
+			g.drawString("C", posX, posY);
+			g.setFont(old);
+			g.setColor(oldC);
 			return;
 		}
 
@@ -1834,22 +1660,21 @@ public final class ElementDraw {
 						nodeBounds.y + nodeBounds.height / 2 + 5);
 			}
 		}
-
 	}
-	
+
 	/**
 	 * Metoda zmienia liczbę double na formatowany ciąg znaków.
 	 * @param value double - liczba
 	 * @return String - ciąg znaków
 	 */
 	private static String formatD(double value) {
-        DecimalFormat df = new DecimalFormat("#.####");
-        String txt = "";
-        txt += df.format(value);
-        txt = txt.replace(",", ".");
+		DecimalFormat df = new DecimalFormat("#.####");
+		String txt = "";
+		txt += df.format(value);
+		txt = txt.replace(",", ".");
 		return txt;
 	}
-	
+
 	private static Color getColor(int tokens) {
 		long steps = GUIManager.getDefaultGUIManager().simSettings.currentStep;
 		if(steps>10) {
@@ -1868,7 +1693,7 @@ public final class ElementDraw {
 				return new Color(0, 255, 0);
 			}
 		}
-		
+
 		return Color.white;
 	}
 
@@ -1884,7 +1709,7 @@ public final class ElementDraw {
 		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcGraphicDelay();
 		int step = arc.getGraphicalSimulationSteps();
 		int weight; //arc.getWeight();
-		
+
 		if (!arc.isTransportingTokens || arc.getLocationSheetId() != sheetId  || step > STEP_COUNT) { //koniec rysowania ruchu tokenów
 			return;
 		}
@@ -1911,7 +1736,7 @@ public final class ElementDraw {
 				a = endPos.x + stepSize * step * (startPos.x - endPos.x) / arcWidth;
 				b = endPos.y + stepSize * step * (startPos.y - endPos.y) / arcWidth;
 			}
-			
+
 			g.setColor(EditorResources.tokenDefaultColor);
 
 			boolean trollMode = false;
@@ -1928,21 +1753,21 @@ public final class ElementDraw {
 				g.setStroke(EditorResources.tokenDefaultStroke);
 				g.drawOval((int) a - 5, (int) b - 5, 10, 10);
 			}
-			
+
 			String wTxt = Integer.toString(weight);
 			if(arc.getArcType() == TypeOfArc.COLOR) {
 				wTxt = arc.getColorWeight(0)+","+arc.getColorWeight(1)+","+arc.getColorWeight(2)+","+
 						arc.getColorWeight(3)+","+arc.getColorWeight(4)+","+arc.getColorWeight(5);
 			}
-			
+
 			Font font1 = new Font("Tahoma", Font.BOLD, 14);
 			Font font2 = new Font("Tahoma", Font.BOLD, 13);
 			Font font3 = new Font("Tahoma", Font.PLAIN, 12);
-			
+
 			TextLayout textLayout1 = new TextLayout(wTxt, font1, g.getFontRenderContext());
 			TextLayout textLayout2 = new TextLayout(wTxt, font2, g.getFontRenderContext());
 			TextLayout textLayout3 = new TextLayout(wTxt, font3, g.getFontRenderContext());
-			
+
 			g.setColor(new Color(255, 255, 255, 70));
 			textLayout1.draw(g, (int) a + 10, (int) b);
 			g.setColor(new Color(255, 255, 255, 150));
@@ -1951,7 +1776,7 @@ public final class ElementDraw {
 			textLayout3.draw(g, (int) a + 10, (int) b);
 		}
 	}
-	
+
 	/**
 	 * Rysowanie tokenów po łuku łamanym. Euklides dziękuje i idzie w cholerę, bo ma dosyć.
 	 * @param g (<b>Graphics2D</b>) obiekt rysujący.
@@ -1966,12 +1791,12 @@ public final class ElementDraw {
 	 * @param arc (<b>Arc</b>) obiekt łuku.
 	 */
 	private static void handleBrokenArc(Graphics2D g, int STEP_COUNT, int step, ArrayList<Point> breakPoints,
-			int breaks, Point startPos, Point endPos, double arcWidth, int weight, Arc arc) {
+										int breaks, Point startPos, Point endPos, double arcWidth, int weight, Arc arc) {
 		double stepSize;
 		double tmp;
 		double a = 0;
 		double b = 0;
-		
+
 		ArrayList<Double> segmentLengths = new ArrayList<Double>(); //dlugości odcinków
 		ArrayList<Point> allPointsVector = new ArrayList<Point>(); //odcinki składające się na łuk
 		tmp = Math.hypot(startPos.x - breakPoints.get(0).x, startPos.y - breakPoints.get(0).y);
@@ -1993,7 +1818,7 @@ public final class ElementDraw {
 
 		stepSize = arcWidth / (double) STEP_COUNT;
 		double endPoint = stepSize * step;
-		
+
 		double counter = segmentLengths.get(0);
 		for(int i=1; i<segmentLengths.size()+1; i++) { //kosmos panie, kosmos
 			if(counter > endPoint) {
@@ -2001,7 +1826,7 @@ public final class ElementDraw {
 				double tylePrzeszedl = segmentLengths.get(i-1) - distInCurrent;
 				double proportion = tylePrzeszedl / segmentLengths.get(i-1);
 				//proportion *= distances.get(i-1); //długość do przebycia
-				
+
 				Point startingPoint = allPointsVector.get(i-1);
 				Point endingPoint = allPointsVector.get(i);
 				int signX = 1;
@@ -2010,26 +1835,26 @@ public final class ElementDraw {
 					signX = -1;
 				if(startingPoint.y > endingPoint.y)
 					signY = -1;
-				
+
 				int distX = Math.abs(startingPoint.x - endingPoint.x);
 				int distY = Math.abs(startingPoint.y - endingPoint.y);
-				
+
 				a = startingPoint.x + (signX * proportion * distX);
 				b = startingPoint.y + (signY * proportion * distY);
 				//b = endPos.y + stepSize * step * (startPos.y - endPos.y) / arcWidth;
-				
+
 				break;
 			}
 			if(i < segmentLengths.size())
 				counter += segmentLengths.get(i);
 		}
-		
+
 		g.setColor(EditorResources.tokenDefaultColor);
 		g.fillOval((int) a - 5, (int) b - 5, 10, 10);
 		g.setColor(Color.black);
 		g.setStroke(EditorResources.tokenDefaultStroke);
 		g.drawOval((int) a - 5, (int) b - 5, 10, 10);
-		
+
 		String wTxt = Integer.toString(weight);
 		if(arc.getArcType() == TypeOfArc.COLOR) {
 			wTxt = arc.getColorWeight(0)+","+arc.getColorWeight(1)+","+arc.getColorWeight(2)+","+
@@ -2042,12 +1867,157 @@ public final class ElementDraw {
 		TextLayout textLayout1 = new TextLayout(wTxt, font1, g.getFontRenderContext());
 		TextLayout textLayout2 = new TextLayout(wTxt, font2, g.getFontRenderContext());
 		TextLayout textLayout3 = new TextLayout(wTxt, font3, g.getFontRenderContext());
-		
+
 		g.setColor(new Color(255, 255, 255, 70));
 		textLayout1.draw(g, (int) a + 10, (int) b);
 		g.setColor(new Color(255, 255, 255, 150));
 		textLayout2.draw(g, (int) a + 10, (int) b);
 		g.setColor(Color.black);
 		textLayout3.draw(g, (int) a + 10, (int) b);
+	}
+
+
+	// ***************** METODY NIEPOWAŻNE: *****************
+	/**
+	 * Ja po prostu nie chcę tego widzieć w głównej metodzie. Cała masa linijek o niczym.
+	 * Nic tu nie ma, proszę się rozejść.
+	 * @param g <b>Graphics2D</b>
+	 * @param trans <b>TransitionColored</b>
+	 * @param nodeBounds <b>Rectangle</b>
+	 */
+	private static void coloredTransitionDemo(Graphics2D g, TransitionColored trans, Rectangle nodeBounds) {
+		Font currentFont = g.getFont();
+		Font newFont = currentFont.deriveFont(currentFont.getSize() * 1.4F);
+		g.setFont(newFont);
+
+		int r0 = trans.getRequiredColoredTokens(0);
+		int r1 = trans.getRequiredColoredTokens(1);
+		int r2 = trans.getRequiredColoredTokens(2);
+		int r3 = trans.getRequiredColoredTokens(3);
+		int r4 = trans.getRequiredColoredTokens(4);
+		int r5 = trans.getRequiredColoredTokens(5);
+		String txtT0 = "" +r0;
+		String txtT1 = "" +r1;
+		String txtT2 = "" +r2;
+		String txtT3 = "" +r3;
+		String txtT4 = "" +r4;
+		String txtT5 = "" +r5;
+		int txtW0 = g.getFontMetrics().stringWidth(txtT0);
+		int txtW1 = g.getFontMetrics().stringWidth(txtT1);
+		int txtW2 = g.getFontMetrics().stringWidth(txtT2);
+		int txtW3 = g.getFontMetrics().stringWidth(txtT3);
+		int txtW4 = g.getFontMetrics().stringWidth(txtT4);
+		int txtW5 = g.getFontMetrics().stringWidth(txtT5);
+		g.setColor(Color.black);
+		String txt = "<";
+		int posX = nodeBounds.x - (g.getFontMetrics().stringWidth(txt) / 2 ) - 15;
+		int posY = nodeBounds.y - 1;
+		g.drawString(txt, posX, posY);
+		int lastSize = g.getFontMetrics().stringWidth(txt);
+		if(r0 > 0) {
+			posX += (txtW0 - 6*txtT0.length() + lastSize);
+			g.setColor(cRed);
+			g.drawString(txtT0, posX, posY);
+			lastSize = txtW0;
+		}
+		if(r1 > 0) {
+			posX += (txtW1 - 6*txtT1.length()  + lastSize);
+			g.setColor(cGreen);
+			g.drawString(txtT1, posX, posY);
+			lastSize = txtW1;
+		}
+		if(r2 > 0) {
+			posX += (txtW2 - 6*txtT2.length()  + lastSize);
+			g.setColor(cBlue);
+			g.drawString(txtT2, posX, posY);
+			lastSize = txtW2;
+		}
+		if(r3 > 0) {
+			posX += (txtW3 - 6*txtT3.length()  + lastSize);
+			g.setColor(cYellow);
+			g.drawString(txtT3, posX, posY);
+			lastSize = txtW3;
+		}
+		if(r4 > 0) {
+			posX += (txtW4 - 6*txtT4.length()  + lastSize);
+			g.setColor(cGrey);
+			g.drawString(txtT4, posX, posY);
+			lastSize = txtW4;
+		}
+		if(r5 > 0) {
+			posX += (txtW5 - 6*txtT5.length()  + lastSize);
+			g.setColor(cBlack);
+			g.drawString(txtT5, posX, posY);
+			lastSize = txtW5;
+		}
+		txt = ">";
+		posX += (g.getFontMetrics().stringWidth(txt) );
+		g.setColor(cBlack);
+		g.drawString(txt, posX, posY);
+
+		g.setFont(currentFont);
+	}
+
+	/**
+	 * Ja po prostu nie chcę tego widzieć w głównej metodzie. Cała masa linijek o niczym.
+	 * Nic tu nie ma, proszę się rozejść.
+	 * @param g <b>Graphics2D</b>
+	 * @param place <b>PlaceColored</b>
+	 * @param nodeBounds <b>Rectangle</b>
+	 */
+	private static void coloredPlaceDemo(Graphics2D g, PlaceColored place, Rectangle nodeBounds) {
+		Font currentFont = g.getFont();
+		Font newFont = currentFont.deriveFont(currentFont.getSize() * 1.4F);
+		g.setFont(newFont);
+
+		String txtT0 = "" + place.getColorTokensNumber(0);
+		String txtT1 = "" + place.getColorTokensNumber(1);
+		String txtT2 = "" + place.getColorTokensNumber(2);
+		String txtT3 = "" + place.getColorTokensNumber(3);
+		String txtT4 = "" + place.getColorTokensNumber(4);
+		String txtT5 = "" + place.getColorTokensNumber(5);
+		int txtW0 = g.getFontMetrics().stringWidth(txtT0);
+		int txtW1 = g.getFontMetrics().stringWidth(txtT1);
+		int txtW2 = g.getFontMetrics().stringWidth(txtT2);
+		int txtW3 = g.getFontMetrics().stringWidth(txtT3);
+		int txtW4 = g.getFontMetrics().stringWidth(txtT4);
+		int txtW5 = g.getFontMetrics().stringWidth(txtT5);
+
+		g.setColor(Color.black);
+		String txt = "[";
+		int posX = nodeBounds.x - (g.getFontMetrics().stringWidth(txt) / 2 ) - 15;
+		int posY = nodeBounds.y - 1;// + (nodeBounds.height / 2) + 5;
+		g.drawString(txt, posX, posY);
+
+		posX += (txtW0 - 8*txtT0.length() );
+		g.setColor(cRed);
+		g.drawString(txtT0, posX, posY);
+
+		posX += (txtW1 - 10*txtT1.length()  + txtW0);
+		g.setColor(cGreen);
+		g.drawString(txtT1, posX, posY);
+
+		posX += (txtW2 - 10*txtT2.length()  + txtW1);
+		g.setColor(cBlue);
+		g.drawString(txtT2, posX, posY);
+
+		posX += (txtW3 - 10*txtT3.length()  + txtW2);
+		g.setColor(cYellow);
+		g.drawString(txtT3, posX, posY);
+
+		posX += (txtW4 - 10*txtT4.length()  + txtW3);
+		g.setColor(cGrey);
+		g.drawString(txtT4, posX, posY);
+
+		posX += (txtW5 - 10*txtT5.length()  + txtW4);
+		g.setColor(cBlack);
+		g.drawString(txtT5, posX, posY);
+
+		txt = "]";
+		posX += (g.getFontMetrics().stringWidth(txt) + txtW5 -5);
+		g.setColor(cBlack);
+		g.drawString(txt, posX, posY);
+
+		g.setFont(currentFont);
 	}
 }
