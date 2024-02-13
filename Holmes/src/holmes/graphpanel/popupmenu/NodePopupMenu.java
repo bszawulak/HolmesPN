@@ -2,13 +2,14 @@ package holmes.graphpanel.popupmenu;
 
 import java.io.Serial;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
+import holmes.petrinet.subnets.SubnetsActions;
 import holmes.windows.HolmesNodeInfo;
 import holmes.windows.xtpn.HolmesNodeInfoXTPN;
 
@@ -96,7 +97,33 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 			this.add(copyMenuItem);
 			this.add(pasteMenuItem);
 		}
-		
+
+		if(pne == PetriNetElementType.META && graphPanel.getSelectionManager().getSelectedElementLocations().size() == 1) {
+			this.addMenuItem("Delete", "", e ->
+					GUIManager.getDefaultGUIManager().subnetsHQ.deleteSubnet(graphPanel)
+			);
+
+			this.addMenuItem("Consolidate with parent petri-net ", "", e ->
+					GUIManager.getDefaultGUIManager().subnetsHQ.flatSubnet(graphPanel)
+			);
+		}
+
+		if (graphPanel.getSelectionManager().getSelectedElementLocations().stream()
+				.map(ElementLocation::getParentNode)
+				.filter(MetaNode.class::isInstance)
+				.findAny().isEmpty()
+		) {
+			this.addSeparator();
+
+			this.addMenuItem("Create subnet", "", e ->
+					GUIManager.getDefaultGUIManager().subnetsHQ.createSubnetFromSelectedElements(graphPanel)
+			);
+
+			this.addMenuItem("Add elements to subnet", "", e ->
+					SubnetsActions.openAddSelectedElementsToSubnet(graphPanel)
+			);
+		}
+
 		this.addSeparator();
 	}
 }

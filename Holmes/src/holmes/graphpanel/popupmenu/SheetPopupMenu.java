@@ -8,19 +8,15 @@ import java.io.IOException;
 import java.io.Serial;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
 import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
 import holmes.graphpanel.GraphPanel;
-import holmes.petrinet.elements.ElementLocation;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.subnets.SubnetsActions;
 import holmes.utilities.HolmesFileView;
 import holmes.workspace.ExtensionFileFilter;
 
@@ -237,6 +233,12 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 
             }
         }));
+
+        if (getGraphPanel().getSheetId() != 0) {
+            this.addMenuItem("Add existing element", "", e ->
+                    SubnetsActions.addExistingElement(graphPanel)
+            );
+        }
 
         /*
         this.addMenuItem("ImporttSubnetFromFile", "refresh.png", new ActionListener() {

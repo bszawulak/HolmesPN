@@ -1,13 +1,13 @@
 package holmes.petrinet.subnets;
 
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import holmes.darkgui.GUIManager;
+import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
@@ -20,6 +20,7 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.windows.HolmesNotepad;
 import holmes.workspace.Workspace;
+import holmes.workspace.WorkspaceSheet;
 
 /**
  * Klasa odpowiedzialna za metody pomagające w kontrolowaniu sieci hierarchicznych. Albo przynajmniej
@@ -411,7 +412,18 @@ public class SubnetsControl {
 		}
 		return result;
 	}
-	
+
+	public Optional<MetaNode> getMetanode(int sheetID) {
+		return overlord.getWorkspace().getProject().getNodes().stream()
+				.filter(node -> node instanceof MetaNode m && m.getRepresentedSheetID() == sheetID)
+				.map(MetaNode.class::cast)
+				.findAny();
+	}
+
+	public GraphPanel getGraphPanel(int sheetID) {
+		return overlord.getWorkspace().getSheetById(sheetID).getGraphPanel();
+	}
+
 	/**
 	 * Metoda zwraca wektor z ilością elementów dla każdej podsieci.
 	 * @return ArrayList[Integer] - wektor liczności elementów dla podsieci
@@ -1095,4 +1107,155 @@ public class SubnetsControl {
 		
 		return true;
 	}
+
+	public void moveSelectedElementsToSubnet(GraphPanel graphPanel, int subnetSheetId) {
+		List<ElementLocation> elements = graphPanel.getSelectionManager().getSelectedElementLocations();
+		this.moveNodesToSubnet(elements, subnetSheetId);
+		this.clearMetaArcs(elements);
+		this.createPortalsAndMetaArcs(elements, this.findSubnet(graphPanel, subnetSheetId));
+		graphPanel.getSelectionManager().deselectAllElements();
+	}
+
+	private MetaNode findSubnet(GraphPanel graphPanel, int subnetSheetId) {
+		return graphPanel.getNodes().stream().filter(node ->
+						node instanceof MetaNode metaNode && metaNode.getRepresentedSheetID() == subnetSheetId)
+				.map(MetaNode.class::cast)
+				.findAny().orElseThrow();
+	}
+
+	private void moveNodesToSubnet(List<ElementLocation> elements, int subnetSheetId) {
+		for (ElementLocation element : elements) {
+			element.setSheetID(subnetSheetId);
+			Node parent = element.getParentNode();
+
+			int index = parent.getElementLocations().indexOf(element);
+			ElementLocation textLocation = parent.getTextsLocations(GUIManager.locationMoveType.NAME).get(index);
+			textLocation.setSheetID(subnetSheetId);
+		}
+	}
+
+	private void clearMetaArcs(List<ElementLocation> elements) {
+		for (ElementLocation element : elements) {
+			for (Arc arc : element.accessMetaInArcs()) {
+				arc.getStartLocation().accessMetaOutArcs().remove(arc);
+				overlord.getWorkspace().getProject().getArcs().remove(arc);
+			}
+			element.accessMetaInArcs().clear();
+			for (Arc arc : element.accessMetaOutArcs()) {
+				arc.getEndLocation().accessMetaInArcs().remove(arc);
+				overlord.getWorkspace().getProject().getArcs().remove(arc);
+			}
+			element.accessMetaOutArcs().clear();
+		}
+	}
+
+	private void createPortalsAndMetaArcs(List<ElementLocation> elements, MetaNode subnetNode) {
+		int currentSheetId = subnetNode.getMySheetID();
+		int subnetSheetId = subnetNode.getRepresentedSheetID();
+		ElementLocation subnetElementLocation = subnetNode.getFirstELoc();
+
+		for (ElementLocation element : elements) {
+			for (Arc arc : element.getInArcs()) {
+				int sheetID = arc.getStartLocation().getSheetID();
+				if (sheetID == currentSheetId) {
+					Arc newArc = new Arc(IdGenerator.getNextId(), arc.getStartLocation(), subnetElementLocation, Arc.TypeOfArc.META_ARC);
+					overlord.getWorkspace().getProject().addArc(newArc);
+					arc.modifyStartLocation(cloneNodeIntoPortal(arc.getStartLocation(), subnetSheetId));
+				}
+			}
+
+			for (Arc arc : element.getOutArcs()) {
+				int sheetID = arc.getEndLocation().getSheetID();
+				if (sheetID == currentSheetId) {
+					Arc newArc = new Arc(IdGenerator.getNextId(), subnetElementLocation, arc.getEndLocation(), Arc.TypeOfArc.META_ARC);
+					overlord.getWorkspace().getProject().addArc(newArc);
+					arc.modifyEndLocation(cloneNodeIntoPortal(arc.getEndLocation(), subnetSheetId));
+				}
+			}
+		}
+	}
+
+	public ElementLocation cloneNodeIntoPortal(ElementLocation selectedEL, int sheetID) {
+		Node parent = selectedEL.getParentNode();
+
+		ElementLocation newGraphicsEL = new ElementLocation(sheetID, new Point(selectedEL.getPosition().x, selectedEL.getPosition().y), parent);
+		ElementLocation newNameEL = new ElementLocation(sheetID, new Point(0, 0), parent);
+
+		parent.getElementLocations().add(newGraphicsEL);
+		parent.getTextsLocations(GUIManager.locationMoveType.NAME).add(newNameEL);
+		parent.getTextsLocations(GUIManager.locationMoveType.ALPHA).add(newNameEL);
+		parent.getTextsLocations(GUIManager.locationMoveType.BETA).add(newNameEL);
+		parent.getTextsLocations(GUIManager.locationMoveType.GAMMA).add(newNameEL);
+		parent.getTextsLocations(GUIManager.locationMoveType.TAU).add(newNameEL);
+		parent.setPortal(true);
+
+		return newGraphicsEL;
+	}
+
+	public void realignElements(List<ElementLocation> elementsToAlign, List<ElementLocation> otherElements) {
+		int bottom = otherElements.stream()
+				.map(location -> location.getPosition().y)
+				.max(Comparator.naturalOrder())
+				.orElse(0);
+
+		int offsetX = elementsToAlign.stream()
+				.map(location -> location.getPosition().x)
+				.min(Comparator.naturalOrder())
+				.orElseThrow();
+
+		int offsetY = elementsToAlign.stream()
+				.map(location -> location.getPosition().y)
+				.min(Comparator.naturalOrder())
+				.orElseThrow();
+
+		int margin = 50;
+
+		for (ElementLocation location : elementsToAlign) {
+			Point position = location.getPosition();
+			position.setLocation(position.x - offsetX + margin, position.y - offsetY + bottom + margin);
+		}
+	}
+
+	public void deleteSubnet(GraphPanel graphPanel) {
+		MetaNode metaNode = graphPanel.getSelectionManager().getSelectedMetanode();
+		WorkspaceSheet subnetSheet = overlord.getWorkspace().getSheetById(metaNode.getRepresentedSheetID());
+
+		for (ElementLocation location : overlord.subnetsHQ.getSubnetElementLocations(metaNode.getRepresentedSheetID())) {
+			subnetSheet.getGraphPanel().getSelectionManager().deleteElementLocation(location);
+		}
+		overlord.subnetsHQ.removeMetaNode(metaNode.getRepresentedSheetID());
+		overlord.getWorkspace().deleteSheetFromArrays(subnetSheet);
+		overlord.getWorkspace().repaintAllGraphPanels();
+	}
+
+	public void flatSubnet(GraphPanel graphPanel) {
+		MetaNode metaNode = graphPanel.getSelectionManager().getSelectedMetanode();
+		WorkspaceSheet subnetSheet = overlord.getWorkspace().getSheetById(metaNode.getRepresentedSheetID());
+
+		List<ElementLocation> subnetElements = List.copyOf(overlord.subnetsHQ.getSubnetElementLocations(metaNode.getRepresentedSheetID()));
+		List<ElementLocation> parentNetElements = overlord.subnetsHQ.getSubnetElementLocations(metaNode.getMySheetID()).stream()
+						.filter(location -> location.getParentNode() != metaNode).toList();
+		moveNodesToSubnet(subnetElements, metaNode.getMySheetID());
+		realignElements(subnetElements, parentNetElements);
+		graphPanel.adjustOriginSize();
+
+		overlord.subnetsHQ.removeMetaNode(metaNode.getRepresentedSheetID());
+		overlord.getWorkspace().deleteSheetFromArrays(subnetSheet);
+		overlord.getWorkspace().repaintAllGraphPanels();
+	}
+
+	public void createSubnetFromSelectedElements(GraphPanel graphPanel) {
+		int newSheetId = overlord.getWorkspace().newTab(
+				true,
+				graphPanel.getSelectionManager().getMeanSelectionPoint(),
+				graphPanel.getSheetId(),
+				MetaNode.MetaType.SUBNET
+		);
+		this.moveSelectedElementsToSubnet(graphPanel, newSheetId);
+
+		this.realignElements(this.getSubnetElementLocations(newSheetId), List.of());
+		overlord.subnetsHQ.getGraphPanel(newSheetId).adjustOriginSize();
+		overlord.getWorkspace().repaintAllGraphPanels();
+	}
+
 }

@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -1214,4 +1215,40 @@ public class SelectionManager {
 		IOprotocols io = new IOprotocols();
 		io.exportSubnet(listOfElements);
     }
+
+	public Point getMeanSelectionPoint() {
+		int x = 0;
+		int y = 0;
+
+		List<Point> points = getSelectedElementLocations().stream()
+				.map(ElementLocation::getPosition)
+				.toList();
+
+		if (points.isEmpty()) {
+			throw new IllegalStateException("Nothing is selected");
+		}
+
+		for (Point p : points) {
+			x += p.x;
+			y += p.y;
+		}
+
+		return new Point(x / points.size(), y / points.size());
+	}
+
+	public MetaNode getSelectedMetanode() {
+		List<MetaNode> metaNodes = getSelectedElementLocations()
+				.stream()
+				.map(ElementLocation::getParentNode)
+				.filter(MetaNode.class::isInstance)
+				.map(MetaNode.class::cast)
+				.toList();
+
+		if (metaNodes.isEmpty()) {
+			throw new IllegalStateException("No subnet selected");
+		} else if (metaNodes.size() > 1) {
+			throw new IllegalStateException("More than one subnet selected");
+		}
+		return metaNodes.get(0);
+	}
 }

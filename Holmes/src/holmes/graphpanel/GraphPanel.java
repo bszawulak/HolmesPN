@@ -5,6 +5,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -27,7 +29,6 @@ import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.subnets.SubnetsTools;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;
-import holmes.workspace.Workspace;
 import holmes.workspace.WorkspaceSheet;
 
 /**
@@ -41,8 +42,8 @@ public class GraphPanel extends JComponent {
 	private static final int meshSize = 20;
 	private GUIManager overlord;
 	private PetriNet petriNet;
-	private ArrayList<Node> nodes = new ArrayList<Node>();
-	private ArrayList<Arc> arcs = new ArrayList<Arc>();
+	private ArrayList<Node> nodes = new ArrayList<>();
+	private ArrayList<Arc> arcs = new ArrayList<>();
 	private SelectionManager selectionManager;
 	private Point mousePt;// = new Point(WIDE / 2, HIGH / 2);
 	private DrawModes drawMode = DrawModes.POINTER;
@@ -242,6 +243,7 @@ public class GraphPanel extends JComponent {
 		try {
 			drawPetriNet(g2d);
 		} catch (Exception e) {
+			e.printStackTrace();
 			overlord.log("CRITICAL error while drawing net. (Which should not happen. Obviously.) "
 					+ "Loaded file probably corrupted (if after project loading). Restarting program.", "error", true);
 			overlord.reset.emergencyRestart();
@@ -822,7 +824,12 @@ public class GraphPanel extends JComponent {
 		arcNewBreakPoint = (Point) mousePt2.clone(); //będzie potrzebne (opcjonalnie) w oknie kontekstowycm
 		return new ArcPopupMenu(this, arc, pne);
 	}
-		
+
+	public Point getMousePt() {
+		return mousePt;
+	}
+
+
 	/**
 	 * WTH?
 	 * @return (<b>boolean</b>)
@@ -903,7 +910,17 @@ public class GraphPanel extends JComponent {
 	public void setOriginSize(Dimension originSize) {
 		this.originSize = originSize;
 	}
-	
+
+	public void adjustOriginSize() {
+		int margin = 50;
+		List<ElementLocation> elements = overlord.subnetsHQ.getSubnetElementLocations(sheetId);
+		int width = elements.stream().map(location -> location.getPosition().x).max(Comparator.naturalOrder()).orElseThrow() + margin;
+		int height = elements.stream().map(location -> location.getPosition().y).max(Comparator.naturalOrder()).orElseThrow() + margin;
+		originSize.width = Math.max(width, originSize.width);
+		originSize.height = Math.max(height, originSize.height);
+		setZoom(zoom, zoom);
+	}
+
 	//***********************************************************************************
 	//***********************************************************************************
 	//***********************************************************************************

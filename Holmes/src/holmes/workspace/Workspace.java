@@ -120,7 +120,7 @@ public class Workspace implements SelectionActionListener {
 
 		sheetsIDtable.add(id);
 
-		WorkspaceSheet ws = new WorkspaceSheet("Subnet " + id, id, this);
+		WorkspaceSheet ws = new WorkspaceSheet(id, this);
 		sheets.add(ws);
 
 		JScrollPane scroll = new JScrollPane(ws.getContainerPanel());
@@ -161,6 +161,7 @@ public class Workspace implements SelectionActionListener {
 	 */
 	private void addMetaNode(Point pos, int whichSubnet, int representedSubnet, MetaType type) {
 		MetaNode metanode = new MetaNode(whichSubnet, IdGenerator.getNextId(), pos, type);
+		metanode.setName("Subnet" + representedSubnet);
 		metanode.setRepresentedSheetID(representedSubnet);
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().add(metanode);
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
@@ -363,13 +364,12 @@ public class Workspace implements SelectionActionListener {
 	 * @return WorkspaceSheet - kliknięty arkusz
 	 */
 	public WorkspaceSheet getSelectedSheet() {
-		try {
-			//TODO wybór
-			int index = 0;// docks.indexOf(workspaceDock.getSelectedDock());
-			return sheets.get(index);
-		} catch (Exception e) {
-			return null;
-		}
+		Component component = getTablePane().getSelectedComponent();
+		return sheets.stream().filter(sheet -> sheet.getScrollPane() == component).findAny().orElseThrow();
+	}
+
+	public WorkspaceSheet getSheetById(int sheetId) {
+		return sheets.stream().filter(sheet -> sheet.getId() == sheetId).findAny().orElseThrow();
 	}
 
 	/**
