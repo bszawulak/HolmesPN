@@ -191,6 +191,12 @@ public class HolmesSubnetsInfo {
 
     public static void open() {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
+        GraphPanel graphPanel = overlord.getWorkspace().getSelectedSheet().getGraphPanel();
+        if (graphPanel.getSheetId() == 0) {
+            JOptionPane.showMessageDialog(null, "Current sheet is not a subnet", "Cannot proceed",
+                    JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
 
         JFrame mainFrame = overlord.getFrame();
         JFrame targetFrame = new JFrame();
@@ -212,8 +218,6 @@ public class HolmesSubnetsInfo {
             }
         });
 
-
-        GraphPanel graphPanel = overlord.getWorkspace().getSelectedSheet().getGraphPanel();
         MetaNode metaNode = overlord.subnetsHQ.getMetanode(graphPanel.getSheetId()).orElseThrow();
 
         targetFrame.setTitle(metaNode.getName());

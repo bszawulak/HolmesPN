@@ -99,8 +99,17 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 		}
 
 		if(pne == PetriNetElementType.META && graphPanel.getSelectionManager().getSelectedElementLocations().size() == 1) {
-			this.addMenuItem("Delete", "", e ->
-					GUIManager.getDefaultGUIManager().subnetsHQ.deleteSubnet(graphPanel)
+			this.addMenuItem("Delete", "cross.png", e ->
+					{
+						Object[] options = {"Delete", "Cancel",};
+						int n = JOptionPane.showOptionDialog(null,
+								"Do you want to delete selected subnet?", "Deletion warning?", JOptionPane.YES_NO_OPTION,
+								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+						if (n == 0) {
+							GUIManager.getDefaultGUIManager().subnetsHQ.deleteSubnet(graphPanel.getSelectionManager().getSelectedMetanode());
+							//GUIManager.getDefaultGUIManager().markNetChange();
+						}
+					}
 			);
 
 			this.addMenuItem("Consolidate with parent petri-net ", "", e ->
@@ -119,9 +128,12 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 					GUIManager.getDefaultGUIManager().subnetsHQ.createSubnetFromSelectedElements(graphPanel)
 			);
 
-			this.addMenuItem("Add elements to subnet", "", e ->
-					SubnetsActions.openAddSelectedElementsToSubnet(graphPanel)
-			);
+			if (GUIManager.getDefaultGUIManager().subnetsHQ.getSubnetElementLocations(graphPanel.getSheetId()).stream()
+					.anyMatch(location -> location.getParentNode() instanceof MetaNode)) {
+				this.addMenuItem("Add elements to subnet", "", e ->
+						SubnetsActions.openAddSelectedElementsToSubnet(graphPanel)
+				);
+			}
 		}
 
 		this.addSeparator();

@@ -45,9 +45,10 @@ public class SubnetsActions {
         button.addActionListener(e1 -> {
             ComboBoxItem<Integer> selectedItem = (ComboBoxItem) comboBox.getSelectedItem();
             Optional.ofNullable(selectedItem).ifPresent(item -> {
-                        List<ElementLocation> newSubnetElements = List.copyOf(graphPanel.getSelectionManager().getSelectedElementLocations());
                         List<ElementLocation> oldSubnetElements = List.copyOf(overlord.subnetsHQ.getSubnetElementLocations(item.getValue()));
                         overlord.subnetsHQ.moveSelectedElementsToSubnet(graphPanel, item.getValue());
+                        List<ElementLocation> newSubnetElements = overlord.subnetsHQ.getSubnetElementLocations(item.getValue()).stream()
+                                .filter(location -> !oldSubnetElements.contains(location)).toList();
                         overlord.subnetsHQ.realignElements(newSubnetElements, oldSubnetElements);
                         overlord.subnetsHQ.getGraphPanel(item.getValue()).adjustOriginSize();
                     });
