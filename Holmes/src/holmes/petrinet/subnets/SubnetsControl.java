@@ -1,26 +1,20 @@
 package holmes.petrinet.subnets;
 
-import java.awt.*;
-import java.util.*;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.MetaNode;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.windows.HolmesNotepad;
 import holmes.workspace.Workspace;
 import holmes.workspace.WorkspaceSheet;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+import java.util.*;
 
 /**
  * Klasa odpowiedzialna za metody pomagające w kontrolowaniu sieci hierarchicznych. Albo przynajmniej
@@ -1116,6 +1110,28 @@ public class SubnetsControl {
 		graphPanel.getSelectionManager().deselectAllElements();
 	}
 
+	public boolean canMoveSelectedElementsToSubnet(GraphPanel graphPanel) {
+		List<ElementLocation> locations = graphPanel.getSelectionManager().getSelectedElementLocations();
+		if (locations.stream().anyMatch(loc -> !checkIfExpendable(loc))) {
+			JOptionPane.showMessageDialog(null,
+					"Some element is connected to a subnet. Their corresponding\n"
+							+ "portal within this subnet must be deleted first.",
+					"Cannot be moved to a subnet", JOptionPane.WARNING_MESSAGE);
+			return false;
+
+		} else if (locations.stream().anyMatch(loc -> overlord.getWorkspace().getProject().getMetaNodes().stream()
+				.filter(metaNode -> metaNode.getRepresentedSheetID() == loc.getSheetID())
+				.map(MetaNode::getMySheetID)
+				.anyMatch(parentID -> !loc.getParentNode().getNodeLocations(parentID).isEmpty()))) {
+			JOptionPane.showMessageDialog(null,
+					"Some element has a portal element in the parent net.\n"
+							+ "This element cannot be moved to another subnet.",
+					"Cannot be moved to a subnet", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		return true;
+	}
+
 	private void moveNodesToSubnet(List<ElementLocation> elements, int subnetSheetId) {
 		for (ElementLocation element : elements) {
 			element.setSheetID(subnetSheetId);
@@ -1264,6 +1280,10 @@ public class SubnetsControl {
 	}
 
 	public void createSubnetFromSelectedElements(GraphPanel graphPanel) {
+		if (!canMoveSelectedElementsToSubnet(graphPanel)) {
+			return;
+		}
+
 		int newSheetId = overlord.getWorkspace().newTab(
 				true,
 				graphPanel.getSelectionManager().getMeanSelectionPoint(),
@@ -1277,18 +1297,23 @@ public class SubnetsControl {
 		overlord.getWorkspace().repaintAllGraphPanels();
 	}
 
-	// todo: check metaarcs
 	public void mergePortals(ElementLocation clickedELoc, List<ElementLocation> selectedELoc) {
 		GraphPanel graphPanel = getGraphPanel(clickedELoc.getSheetID());
 		selectedELoc.remove(clickedELoc);
 
 		List<Arc> inArcs = new ArrayList<>();
+		List<Arc> inMetaArcs = new ArrayList<>();
 		List<Arc> outArcs = new ArrayList<>();
+		List<Arc> outMetaArcs = new ArrayList<>();
 		for (ElementLocation location : selectedELoc) {
 			inArcs.addAll(location.getInArcs());
 			location.getInArcs().clear();
 			outArcs.addAll(location.getOutArcs());
 			location.getOutArcs().clear();
+			inMetaArcs.addAll(location.accessMetaInArcs());
+			location.accessMetaInArcs().clear();
+			outMetaArcs.addAll(location.accessMetaOutArcs());
+			location.accessMetaOutArcs().clear();
 		}
 
 		for (Arc arc : inArcs) {
@@ -1299,8 +1324,18 @@ public class SubnetsControl {
 			arc.modifyStartLocation(clickedELoc);
 		}
 
+		for (Arc arc : inMetaArcs) {
+			arc.modifyEndLocation(clickedELoc);
+		}
+
+		for (Arc arc : outMetaArcs) {
+			arc.modifyStartLocation(clickedELoc);
+		}
+
 		clickedELoc.getInArcs().addAll(inArcs);
 		clickedELoc.getOutArcs().addAll(outArcs);
+		clickedELoc.accessMetaInArcs().addAll(inMetaArcs);
+		clickedELoc.accessMetaOutArcs().addAll(outMetaArcs);
 
 		graphPanel.getSelectionManager().deselectElementLocation(clickedELoc);
 		graphPanel.getSelectionManager().deleteAllSelectedElements();

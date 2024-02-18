@@ -44,17 +44,19 @@ public class SubnetsActions {
         button.setBounds(130, 150, 120, 30);
         button.addActionListener(e1 -> {
             ComboBoxItem<Integer> selectedItem = (ComboBoxItem) comboBox.getSelectedItem();
-            Optional.ofNullable(selectedItem).ifPresent(item -> {
-                        List<ElementLocation> oldSubnetElements = List.copyOf(overlord.subnetsHQ.getSubnetElementLocations(item.getValue()));
-                        overlord.subnetsHQ.moveSelectedElementsToSubnet(graphPanel, item.getValue());
-                        List<ElementLocation> newSubnetElements = overlord.subnetsHQ.getSubnetElementLocations(item.getValue()).stream()
-                                .filter(location -> !oldSubnetElements.contains(location)).toList();
-                        overlord.subnetsHQ.realignElements(newSubnetElements, oldSubnetElements);
-                        overlord.subnetsHQ.getGraphPanel(item.getValue()).adjustOriginSize();
-                    });
             GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
             GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
             dialog.dispose();
+            Optional.ofNullable(selectedItem).ifPresent(item -> {
+                        List<ElementLocation> oldSubnetElements = List.copyOf(overlord.subnetsHQ.getSubnetElementLocations(item.getValue()));
+                        if (overlord.subnetsHQ.canMoveSelectedElementsToSubnet(graphPanel)) {
+                            overlord.subnetsHQ.moveSelectedElementsToSubnet(graphPanel, item.getValue());
+                            List<ElementLocation> newSubnetElements = overlord.subnetsHQ.getSubnetElementLocations(item.getValue()).stream()
+                                    .filter(location -> !oldSubnetElements.contains(location)).toList();
+                            overlord.subnetsHQ.realignElements(newSubnetElements, oldSubnetElements);
+                            overlord.subnetsHQ.getGraphPanel(item.getValue()).adjustOriginSize();
+                        }
+                    });
         });
 
         dialog.setVisible(true);
