@@ -1277,4 +1277,33 @@ public class SubnetsControl {
 		overlord.getWorkspace().repaintAllGraphPanels();
 	}
 
+	// todo: check metaarcs
+	public void mergePortals(ElementLocation clickedELoc, List<ElementLocation> selectedELoc) {
+		GraphPanel graphPanel = getGraphPanel(clickedELoc.getSheetID());
+		selectedELoc.remove(clickedELoc);
+
+		List<Arc> inArcs = new ArrayList<>();
+		List<Arc> outArcs = new ArrayList<>();
+		for (ElementLocation location : selectedELoc) {
+			inArcs.addAll(location.getInArcs());
+			location.getInArcs().clear();
+			outArcs.addAll(location.getOutArcs());
+			location.getOutArcs().clear();
+		}
+
+		for (Arc arc : inArcs) {
+			arc.modifyEndLocation(clickedELoc);
+		}
+
+		for (Arc arc : outArcs) {
+			arc.modifyStartLocation(clickedELoc);
+		}
+
+		clickedELoc.getInArcs().addAll(inArcs);
+		clickedELoc.getOutArcs().addAll(outArcs);
+
+		graphPanel.getSelectionManager().deselectElementLocation(clickedELoc);
+		graphPanel.getSelectionManager().deleteAllSelectedElements();
+		graphPanel.getSelectionManager().selectElementLocation(clickedELoc);
+	}
 }

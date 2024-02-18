@@ -134,6 +134,13 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 						SubnetsActions.openAddSelectedElementsToSubnet(graphPanel)
 				);
 			}
+
+			if (graphPanel.getSelectionManager().getSelectedElementLocations().size() > 1 && graphPanel.getSelectionManager().getSelectedElementLocations().stream()
+					.allMatch(location -> eloc.getParentNode() == location.getParentNode())) {
+				this.addMenuItem("Merge portals", "", e ->
+						GUIManager.getDefaultGUIManager().subnetsHQ.mergePortals(eloc, graphPanel.getSelectionManager().getSelectedElementLocations())
+				);
+			}
 		}
 
 		this.addSeparator();
