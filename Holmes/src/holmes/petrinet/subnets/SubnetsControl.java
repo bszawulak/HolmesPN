@@ -1263,7 +1263,7 @@ public class SubnetsControl {
 		overlord.getWorkspace().repaintAllGraphPanels();
 	}
 
-	public void flatSubnet(GraphPanel graphPanel) {
+	public void unwrapSubnet(GraphPanel graphPanel) {
 		MetaNode metaNode = graphPanel.getSelectionManager().getSelectedMetanode();
 		WorkspaceSheet subnetSheet = overlord.getWorkspace().getSheetById(metaNode.getRepresentedSheetID());
 

@@ -99,8 +99,7 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 		}
 
 		if(pne == PetriNetElementType.META && graphPanel.getSelectionManager().getSelectedElementLocations().size() == 1) {
-			this.addMenuItem("Delete", "cross.png", e ->
-					{
+			this.addMenuItem("Delete", "cross.png", e -> {
 						Object[] options = {"Delete", "Cancel",};
 						int n = JOptionPane.showOptionDialog(null,
 								"Do you want to delete selected subnet?", "Deletion warning?", JOptionPane.YES_NO_OPTION,
@@ -112,8 +111,16 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 					}
 			);
 
-			this.addMenuItem("Consolidate with parent petri-net ", "", e ->
-					GUIManager.getDefaultGUIManager().subnetsHQ.flatSubnet(graphPanel)
+			this.addMenuItem("Unwrap ", "", e -> {
+						Object[] options = {"Unwrap", "Cancel",};
+						int n = JOptionPane.showOptionDialog(null,
+								"Do you want to unwrap selected subnet?", "Unwrapping warning?", JOptionPane.YES_NO_OPTION,
+								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+						if (n == 0) {
+							GUIManager.getDefaultGUIManager().subnetsHQ.unwrapSubnet(graphPanel);
+							//GUIManager.getDefaultGUIManager().markNetChange();
+						}
+					}
 			);
 		}
 
