@@ -5,6 +5,8 @@ import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 import javax.imageio.ImageIO;
@@ -1775,6 +1777,37 @@ public final class ElementDraw {
 			g.setColor(Color.black);
 			textLayout3.draw(g, (int) a + 10, (int) b);
 		}
+	}
+
+	public static void drawSubnetsIcons(Graphics2D g) {
+		GUIManager overlord = GUIManager.getDefaultGUIManager();
+		if (overlord.getWorkspace().getSelectedSheet().getId() != 0) {
+			return;
+		}
+		int x = 20;
+		int y = 20;
+		List<MetaNode> metaNodes = overlord.getWorkspace().getProject().getMetaNodes().stream()
+				.sorted(Comparator.comparingInt(MetaNode::getMySheetID).thenComparing(MetaNode::getRepresentedSheetID))
+				.toList();
+		for (MetaNode metaNode : metaNodes) {
+			if (metaNode.getMySheetID() == 0) {
+				g.setColor(new Color(94, 179, 48));
+			} else {
+				g.setColor(new Color(73, 86, 204));
+			}
+			g.fillRect(x, y, 40, 40);
+			g.setColor(Color.BLACK);
+			String label = String.format("%d-%d", metaNode.getMySheetID(), metaNode.getRepresentedSheetID());
+			drawCenteredString(g, label, x, y + 40, 40, 20);
+			x += 60;
+		}
+	}
+
+	private static void drawCenteredString(Graphics g, String text, int x, int y, int width, int height) {
+		FontMetrics metrics = g.getFontMetrics(g.getFont());
+		int textX = x + (width - metrics.stringWidth(text)) / 2;
+		int textY = y + ((height - metrics.getHeight()) / 2) + metrics.getAscent();
+		g.drawString(text, textX, textY);
 	}
 
 	/**

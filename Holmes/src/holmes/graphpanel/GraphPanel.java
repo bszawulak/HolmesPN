@@ -12,11 +12,7 @@ import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.GUIController;
-import holmes.graphpanel.popupmenu.ArcPopupMenu;
-import holmes.graphpanel.popupmenu.MetaNodePopupMenu;
-import holmes.graphpanel.popupmenu.PlacePopupMenu;
-import holmes.graphpanel.popupmenu.SheetPopupMenu;
-import holmes.graphpanel.popupmenu.TransitionPopupMenu;
+import holmes.graphpanel.popupmenu.*;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
@@ -289,6 +285,8 @@ public class GraphPanel extends JComponent {
 				counterHorizontal++;
 			}
 		}
+
+		ElementDraw.drawSubnetsIcons(g2d);
 		
 		ElementDrawSettings eds = new ElementDrawSettings();
 		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().getSimNetType() == SimulatorGlobals.SimNetType.COLOR) {
@@ -1016,6 +1014,17 @@ public class GraphPanel extends JComponent {
 			
 			// nie kliknięto ani w Node ani w Arc
 			if (el == null && a == null) {
+				Integer clickedSubnetID = getPossiblyClickedSubnetID(e.getPoint());
+				if (clickedSubnetID != null) {
+					if (e.getButton() == MouseEvent.BUTTON1) {
+						int tabID = overlord.getWorkspace().accessSheetsIDtable().indexOf(clickedSubnetID);
+						overlord.getTabbedWorkspace().setSelectedIndex(tabID);
+					} else if (e.getButton() == MouseEvent.BUTTON3) {
+						SubnetIconPopupMenu.createAndShow(e, overlord.getWorkspace().getSelectedSheet().getGraphPanel(), clickedSubnetID);
+					}
+					return;
+				}
+
 				if (e.getButton() == MouseEvent.BUTTON3) { //menu kontekstowe
 					if (getDrawMode() == DrawModes.POINTER)
 						getSheetPopupMenu(PetriNetElementType.UNKNOWN).show(e);
@@ -1241,6 +1250,26 @@ public class GraphPanel extends JComponent {
 				}
 			}
 			e.getComponent().repaint();
+		}
+
+		private Integer getPossiblyClickedSubnetID(Point mousePoint) {
+			if (overlord.getWorkspace().getSelectedSheet().getId() != 0) {
+				return null;
+			}
+
+			int x = 20;
+			int y = 20;
+			List<MetaNode> metaNodes = overlord.getWorkspace().getProject().getMetaNodes().stream()
+					.sorted(Comparator.comparingInt(MetaNode::getMySheetID).thenComparing(MetaNode::getRepresentedSheetID))
+					.toList();
+			for (MetaNode metaNode : metaNodes) {
+				Rectangle subnetIcon = new Rectangle(x, y, 40, 40);
+				if (subnetIcon.contains(mousePoint)) {
+					return metaNode.getRepresentedSheetID();
+				}
+				x += 60;
+			}
+			return null;
 		}
 
 		private void _putPlace() {

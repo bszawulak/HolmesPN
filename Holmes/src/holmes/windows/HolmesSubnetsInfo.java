@@ -191,7 +191,13 @@ public class HolmesSubnetsInfo {
 
     public static void open() {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
-        GraphPanel graphPanel = overlord.getWorkspace().getSelectedSheet().getGraphPanel();
+        int subnetID = overlord.getWorkspace().getSelectedSheet().getId();
+        open(subnetID);
+    }
+
+    public static void open(int subnetID) {
+        GUIManager overlord = GUIManager.getDefaultGUIManager();
+        GraphPanel graphPanel = overlord.subnetsHQ.getGraphPanel(subnetID);
         if (graphPanel.getSheetId() == 0) {
             JOptionPane.showMessageDialog(null, "Current sheet is not a subnet", "Cannot proceed",
                     JOptionPane.INFORMATION_MESSAGE);
