@@ -7040,6 +7040,10 @@ public class HolmesDockWindowsTable extends JPanel {
      */
     public void refreshMCTComboBox(ArrayList<ArrayList<Transition>> mct) {
         this.mctGroups = mct;
+        if(mctGroups == null) { //nie ma co pokazywać
+            return;
+        }
+
         if(mctGroups.isEmpty())
             return;
         overlord.reset.setMCTStatus(true);
