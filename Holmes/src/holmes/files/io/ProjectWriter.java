@@ -618,8 +618,6 @@ public class ProjectWriter {
 			ArrayList<Integer> arcClasses = Check.getArcClassCount();
 			int readArcs = arcClasses.get(1) / 2;
 			int doubleArc = arcClasses.get(5) / 2;
-			//readArcs = 0;
-			//int totalArcs = arcs.size()-readArcs-doubleArc;
 			int totalArcs = arcs.size();
 			if(savedArcs != totalArcs) {
 				GUIManager.getDefaultGUIManager().log("Error: saved "+savedArcs+" out of total "+totalArcs+" arcs.", "error", true);

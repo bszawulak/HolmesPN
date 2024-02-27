@@ -6179,9 +6179,10 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda odświeża zawartość comboBoxów dla niekanonicznych "inwariantów".
      */
     public void refreshSubSurCombos() {
-        if(t_invariantsMatrix.isEmpty()) { //nie ma co odświeżać
+        if(t_invariantsMatrix == null)
             return;
-        }
+        //if(t_invariantsMatrix.isEmpty()) //nie ma co odświeżać
+        //    return;
 
         ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
 
@@ -6244,9 +6245,10 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda odpowiedzialna za podświetlanie inwariantów na rysunku sieci.
      */
     private void showT_invariant() {
-        if(t_invariantsMatrix.isEmpty()) { //nie ma co pokazywać
+        if(t_invariantsMatrix == null)
             return;
-        }
+        if(t_invariantsMatrix.isEmpty()) //nie ma co odświeżać
+            return;
 
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
@@ -6372,9 +6374,10 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda pokazująca w ilu inwariantach występuje każda tranzycja.
      */
     private void showT_invTransFrequency() {
-        if(t_invariantsMatrix.isEmpty()) { //nie ma co pokazywać
+        if(t_invariantsMatrix == null)
             return;
-        }
+        if(t_invariantsMatrix.isEmpty()) //nie ma co odświeżać
+            return;
 
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
@@ -6449,9 +6452,10 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda pomocnicza do zaznaczania tranzycji nie pokrytych inwariantami.
      */
     private void showDeadT_inv() {
-        if(t_invariantsMatrix.isEmpty()) { //nie ma co pokazywać
+        if(t_invariantsMatrix == null)
             return;
-        }
+        if(t_invariantsMatrix.isEmpty()) //nie ma co odświeżać
+            return;
 
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
@@ -6484,9 +6488,8 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     public void refreshInvariantsComboBox() {
-        if (t_invariantsMatrix == null) {
+        if (t_invariantsMatrix == null)
             return;
-        }
 
         String[] invariantHeaders = new String[t_invariantsMatrix.size() + 3];
         invariantHeaders[0] = "---";
@@ -6634,9 +6637,10 @@ public class HolmesDockWindowsTable extends JPanel {
         showDetailsButton.setIcon(Tools.getResIcon32("/icons/menu/menu_invViewer.png"));
         showDetailsButton.setBounds(colA_posX, positionY += 30, 120, 32);
         showDetailsButton.addActionListener(actionEvent -> {
-            if(p_invariantsMatrix.isEmpty()) { //nie ma co pokazywać
+            if(p_invariantsMatrix == null)
                 return;
-            }
+            if(p_invariantsMatrix.isEmpty()) //nie ma co pokazywać
+                return;
 
             if (selectedP_invIndex == -1) {
                 return;
@@ -6800,9 +6804,8 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda odświeża zawartość comboBoxów dla p-invariantów.
      */
     public void refreshP_invComboBox() {
-        if (p_invariantsMatrix == null) {
+        if (p_invariantsMatrix == null)
             return;
-        }
 
         String[] invariantHeaders = new String[p_invariantsMatrix.size() + 3];
         invariantHeaders[0] = "---";
@@ -7040,10 +7043,8 @@ public class HolmesDockWindowsTable extends JPanel {
      */
     public void refreshMCTComboBox(ArrayList<ArrayList<Transition>> mct) {
         this.mctGroups = mct;
-        if(mctGroups == null) { //nie ma co pokazywać
+        if(mctGroups == null) //nie ma co pokazywać
             return;
-        }
-
         if(mctGroups.isEmpty())
             return;
         overlord.reset.setMCTStatus(true);
@@ -7110,6 +7111,9 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda odpowiedzialna za pokazanie szczegółów wybranego zbioru MCT.
      */
     private void showMct() {
+        if(mctGroups == null)
+            return;
+
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
 
@@ -7172,7 +7176,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void createClustersSubWindow(ClusterDataPackage clusteringData) {
         initiateContainers();
         doNotUpdate = true;
-        if (clusteringData == null || clusteringData.dataMatrix.size() == 0) {
+        if (clusteringData == null || clusteringData.dataMatrix.isEmpty()) {
             return;
         } else {
             mode = CLUSTERS;

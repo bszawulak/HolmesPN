@@ -141,86 +141,132 @@ public class ProjectReader {
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(dis));
 			
 			overlord.log("Reading project file: "+filepath, "text", true);
-			
-			status = readProjectHeader(buffer);
-			if(!status) {
-				overlord.log("Reading project data block failure.", "error", true);
-				buffer.close();
+
+			try {
+				status = readNetwork(buffer,false);
+				if(!status) {
+					overlord.log("Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.", "error", true);
+					buffer.close();
+					return false;
+				}
+			} catch (Exception e) {
+				overlord.log("Critical error while reading project net structure section.", "error", true);
 				return false;
-			}
-			
-			status = readNetwork(buffer,false);
-			if(!status) {
-				overlord.log("Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.", "error", true);
-				buffer.close();
-				return false;
-			}
-			
-			status = readTInvariants(buffer);
-			if(!status) {
-				projectCore.setT_InvMatrix(null, false);
-			} else {
-				overlord.getT_invBox().showT_invBoxWindow(projectCore.getT_InvMatrix());
-				overlord.reset.setT_invariantsStatus(true);
 			}
 
-			//overlord.getDecompositionBox().showDecompositionBoxWindows();
-			
-			if(pInvariants) {
-				status = readPInvariants(buffer);
+			try {
+				status = readTInvariants(buffer);
 				if(!status) {
-					projectCore.setP_InvMatrix(null);
+					projectCore.setT_InvMatrix(null, false);
 				} else {
-					overlord.getP_invBox().showP_invBoxWindow(projectCore.getP_InvMatrix());
+					try{
+						overlord.getT_invBox().showT_invBoxWindow(projectCore.getT_InvMatrix());
+						overlord.reset.setT_invariantsStatus(true);
+					} catch (Exception e) {
+						overlord.log("Error encountered during reading, while trying to " +
+								"initialize t-invariants panel.", "error", true);
+					}
 				}
+			} catch (Exception e) {
+				overlord.log("Critical error while reading project t-invariants section.", "error", true);
+				return false;
 			}
-			
-			status = readMCT(buffer);
-			if(!status) {
-				projectCore.setMCTMatrix(null, false);
-			} else {
-				overlord.getMctBox().showMCT(projectCore.getMCTMatrix());
-				overlord.reset.setMCTStatus(true);
+
+			try {
+				if(pInvariants) {
+					status = readPInvariants(buffer);
+					if(!status) {
+						projectCore.setP_InvMatrix(null);
+					} else {
+						try{
+							overlord.getP_invBox().showP_invBoxWindow(projectCore.getP_InvMatrix());
+						} catch (Exception e) {
+							overlord.log("Error encountered during reading, while trying to " +
+									"initialize p-invariants panel.", "error", true);
+						}
+					}
+				}
+			} catch (Exception e) {
+				overlord.log("Critical error while reading project p-invariants section.", "error", true);
+				return false;
 			}
-			
-			if(states) {
-				status = readStates(buffer);
+
+			try {
+				status = readMCT(buffer);
 				if(!status) {
+					projectCore.setMCTMatrix(null, false);
+				} else {
+					try{
+						overlord.getMctBox().showMCT(projectCore.getMCTMatrix());
+						overlord.reset.setMCTStatus(true);
+					} catch (Exception e) {
+						overlord.log("Error encountered during reading, while trying to " +
+								"initialize MCT panel.", "error", true);
+					}
+				}
+			} catch (Exception e) {
+				overlord.log("Critical error while reading project MCT section.", "error", true);
+				return false;
+			}
+
+			try {
+				if(states) {
+					status = readStates(buffer);
+					if(!status) {
+						projectCore.accessStatesManager().createCleanStatePN();
+					}
+				} else {
 					projectCore.accessStatesManager().createCleanStatePN();
 				}
-			} else {
-				projectCore.accessStatesManager().createCleanStatePN();
+			} catch (Exception e) {
+				overlord.log("Critical error while reading project classical net states section.", "error", true);
+				return false;
 			}
 
-			if(statesXTPN) {
-				status = readStatesXTPN(buffer);
-				if(!status) {
-					projectCore.accessStatesManager().createFirstMultiset_M();
+			try {
+				if(statesXTPN) {
+					status = readStatesXTPN(buffer);
+					if(!status) {
+						projectCore.accessStatesManager().createFirstMultiset_M();
+					}
+				} else {
+					if(XTPNdataMode) { //tylko dla XTPN
+						projectCore.accessStatesManager().createFirstMultiset_M();
+					}
 				}
-			} else {
-				if(XTPNdataMode) { //tylko dla XTPN
-					projectCore.accessStatesManager().createFirstMultiset_M();
-				}
+			} catch (Exception e) {
+				overlord.log("Critical error while reading project xTPN states section.", "error", true);
+				return false;
 			}
-			
-			if(firingRates) {
-				status = readFiringRates(buffer);
-				if(!status) {
+
+			try {
+				if(firingRates) {
+					status = readFiringRates(buffer);
+					if(!status) {
+						projectCore.accessFiringRatesManager().createCleanSPNdataVector();
+					}
+				} else {
 					projectCore.accessFiringRatesManager().createCleanSPNdataVector();
 				}
-			} else {
-				projectCore.accessFiringRatesManager().createCleanSPNdataVector();
+			} catch (Exception e) {
+				overlord.log("Critical error while reading project firing rates section.", "error", true);
+				return false;
 			}
-			
-			if(ssaData) {
-				status = readSSAvectors(buffer);
-				if(!status) {
+
+			try {
+				if(ssaData) {
+					status = readSSAvectors(buffer);
+					if(!status) {
+						projectCore.accessSSAmanager().createCleanSSAvector();
+					}
+				} else {
 					projectCore.accessSSAmanager().createCleanSSAvector();
 				}
-			} else {
-				projectCore.accessSSAmanager().createCleanSSAvector();
+			} catch (Exception e) {
+				overlord.log("Critical error while reading project SSA section.", "error", true);
+				return false;
 			}
-			
+
 			overlord.subnetsGraphics.addRequiredSheets();
 			//overlord.getWorkspace().setSelectedDock(0);
 			buffer.close();
