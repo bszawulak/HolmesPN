@@ -1014,7 +1014,7 @@ public class GraphPanel extends JComponent {
 			
 			// nie kliknięto ani w Node ani w Arc
 			if (el == null && a == null) {
-				Integer clickedSubnetID = getPossiblyClickedSubnetID(e.getPoint());
+				Integer clickedSubnetID = getPossiblyClickedSubnetID(mousePt);
 				if (clickedSubnetID != null) {
 					if (e.getButton() == MouseEvent.BUTTON1) {
 						int tabID = overlord.getWorkspace().accessSheetsIDtable().indexOf(clickedSubnetID);
