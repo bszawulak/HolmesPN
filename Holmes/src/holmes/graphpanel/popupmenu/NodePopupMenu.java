@@ -63,14 +63,7 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 			});
 		}
 		
-		boolean proceed = true;
-		if(pne == PetriNetElementType.ARC) {
-			Arc arc = (Arc)pneObject;
-			if(arc.getArcType() == TypeOfArc.META_ARC)
-				proceed = false;
-		}
-		
-		if(pne != PetriNetElementType.META && proceed) {
+		if(pne != PetriNetElementType.META) {
 			this.addMenuItem("Delete", "cross.png", e -> {
 				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
 						"Operation impossible when simulator is working.", "Warning"))
@@ -124,10 +117,17 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 			);
 		}
 
+		if (graphPanel.getSelectionManager().getSelectedElementLocations().size() > 1 && graphPanel.getSelectionManager().getSelectedElementLocations().stream()
+				.allMatch(location -> eloc.getParentNode() == location.getParentNode())) {
+			this.addMenuItem("Merge portals", "", e ->
+					GUIManager.getDefaultGUIManager().subnetsHQ.mergePortals(eloc, graphPanel.getSelectionManager().getSelectedElementLocations())
+			);
+		}
+
 		if (graphPanel.getSelectionManager().getSelectedElementLocations().stream()
 				.map(ElementLocation::getParentNode)
 				.filter(MetaNode.class::isInstance)
-				.findAny().isEmpty()
+				.findAny().isEmpty() && !graphPanel.getSelectionManager().getSelectedElementLocations().isEmpty()
 		) {
 			this.addSeparator();
 
@@ -145,13 +145,6 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 				);
 				this.addMenuItem("Copy into subnet", "", e ->
 						SubnetsActions.openCopyElementsToSubnet(graphPanel)
-				);
-			}
-
-			if (graphPanel.getSelectionManager().getSelectedElementLocations().size() > 1 && graphPanel.getSelectionManager().getSelectedElementLocations().stream()
-					.allMatch(location -> eloc.getParentNode() == location.getParentNode())) {
-				this.addMenuItem("Merge portals", "", e ->
-						GUIManager.getDefaultGUIManager().subnetsHQ.mergePortals(eloc, graphPanel.getSelectionManager().getSelectedElementLocations())
 				);
 			}
 		}
