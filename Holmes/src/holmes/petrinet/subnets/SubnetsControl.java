@@ -1102,11 +1102,11 @@ public class SubnetsControl {
 		return true;
 	}
 
-	public void moveSelectedElementsToSubnet(GraphPanel graphPanel, int subnetSheetId) {
+	public void moveSelectedElementsToSubnet(GraphPanel graphPanel, int subnetSheetId, boolean createMetaArcs) {
 		List<ElementLocation> elements = graphPanel.getSelectionManager().getSelectedElementLocations();
 		moveNodesToSubnet(elements, subnetSheetId);
 		clearMetaArcs(elements);
-		createPortalsAndMetaArcs(elements, getMetanode(subnetSheetId).orElseThrow());
+		createPortalsAndMetaArcs(elements, getMetanode(subnetSheetId).orElseThrow(), createMetaArcs);
 		graphPanel.getSelectionManager().deselectAllElements();
 	}
 
@@ -1118,6 +1118,13 @@ public class SubnetsControl {
 			int index = parent.getElementLocations().indexOf(element);
 			ElementLocation textLocation = parent.getTextsLocations(GUIManager.locationMoveType.NAME).get(index);
 			textLocation.setSheetID(subnetSheetId);
+		}
+	}
+
+	public void copySelectedElementsToSubnet(GraphPanel graphPanel, int subnetSheetId) {
+		List<ElementLocation> elements = graphPanel.getSelectionManager().getSelectedElementLocations();
+		for (ElementLocation location : elements) {
+			cloneNodeIntoPortal(location, subnetSheetId);
 		}
 	}
 
@@ -1136,7 +1143,7 @@ public class SubnetsControl {
 		}
 	}
 
-	private void createPortalsAndMetaArcs(List<ElementLocation> elements, MetaNode subnetNode) {
+	private void createPortalsAndMetaArcs(List<ElementLocation> elements, MetaNode subnetNode, boolean createMetaArcs) {
 		int currentSheetId = subnetNode.getMySheetID();
 		int subnetSheetId = subnetNode.getRepresentedSheetID();
 		ElementLocation subnetElementLocation = subnetNode.getFirstELoc();
@@ -1146,8 +1153,10 @@ public class SubnetsControl {
 			for (Arc arc : element.getInArcs()) {
 				int sheetID = arc.getStartLocation().getSheetID();
 				if (sheetID == currentSheetId) {
-					Arc newArc = new Arc(IdGenerator.getNextId(), arc.getStartLocation(), subnetElementLocation, Arc.TypeOfArc.META_ARC);
-					overlord.getWorkspace().getProject().addArc(newArc);
+					if (createMetaArcs) {
+						Arc newArc = new Arc(IdGenerator.getNextId(), arc.getStartLocation(), subnetElementLocation, Arc.TypeOfArc.META_ARC);
+						overlord.getWorkspace().getProject().addArc(newArc);
+					}
 
 					ElementLocation portal;
 					if (locationToPortal.containsKey(arc.getStartLocation())) {
@@ -1264,7 +1273,7 @@ public class SubnetsControl {
 				graphPanel.getSheetId(),
 				MetaNode.MetaType.SUBNET
 		);
-		moveSelectedElementsToSubnet(graphPanel, newSheetId);
+		moveSelectedElementsToSubnet(graphPanel, newSheetId, true);
 
 		realignElements(getSubnetElementLocations(newSheetId), List.of());
 		getGraphPanel(newSheetId).adjustOriginSize();

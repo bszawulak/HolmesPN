@@ -137,8 +137,14 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 
 			if (GUIManager.getDefaultGUIManager().subnetsHQ.getSubnetElementLocations(graphPanel.getSheetId()).stream()
 					.anyMatch(location -> location.getParentNode() instanceof MetaNode)) {
-				this.addMenuItem("Add elements to subnet", "", e ->
-						SubnetsActions.openAddSelectedElementsToSubnet(graphPanel)
+				this.addMenuItem("Transfer to subnet (with M-Arcs)", "", e ->
+						SubnetsActions.openTransferElementsToSubnet(graphPanel, true)
+				);
+				this.addMenuItem("Transfer to subnet (no M-Arcs)", "", e ->
+						SubnetsActions.openTransferElementsToSubnet(graphPanel, false)
+				);
+				this.addMenuItem("Copy into subnet", "", e ->
+						SubnetsActions.openCopyElementsToSubnet(graphPanel)
 				);
 			}
 
