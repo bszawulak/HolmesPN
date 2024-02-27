@@ -48,15 +48,13 @@ public class SubnetsActions {
             GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
             dialog.dispose();
             Optional.ofNullable(selectedItem).ifPresent(item -> {
-                        List<ElementLocation> oldSubnetElements = List.copyOf(overlord.subnetsHQ.getSubnetElementLocations(item.getValue()));
-                        if (overlord.subnetsHQ.canMoveSelectedElementsToSubnet(graphPanel)) {
-                            overlord.subnetsHQ.moveSelectedElementsToSubnet(graphPanel, item.getValue());
-                            List<ElementLocation> newSubnetElements = overlord.subnetsHQ.getSubnetElementLocations(item.getValue()).stream()
-                                    .filter(location -> !oldSubnetElements.contains(location)).toList();
-                            overlord.subnetsHQ.realignElements(newSubnetElements, oldSubnetElements);
-                            overlord.subnetsHQ.getGraphPanel(item.getValue()).adjustOriginSize();
-                        }
-                    });
+                List<ElementLocation> oldSubnetElements = List.copyOf(overlord.subnetsHQ.getSubnetElementLocations(item.getValue()));
+                overlord.subnetsHQ.moveSelectedElementsToSubnet(graphPanel, item.getValue());
+                List<ElementLocation> newSubnetElements = overlord.subnetsHQ.getSubnetElementLocations(item.getValue()).stream()
+                        .filter(location -> !oldSubnetElements.contains(location)).toList();
+                overlord.subnetsHQ.realignElements(newSubnetElements, oldSubnetElements);
+                overlord.subnetsHQ.getGraphPanel(item.getValue()).adjustOriginSize();
+            });
         });
 
         dialog.setVisible(true);

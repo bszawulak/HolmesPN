@@ -1110,28 +1110,6 @@ public class SubnetsControl {
 		graphPanel.getSelectionManager().deselectAllElements();
 	}
 
-	public boolean canMoveSelectedElementsToSubnet(GraphPanel graphPanel) {
-		List<ElementLocation> locations = graphPanel.getSelectionManager().getSelectedElementLocations();
-		if (locations.stream().anyMatch(loc -> !checkIfExpendable(loc))) {
-			JOptionPane.showMessageDialog(null,
-					"Some element is connected to a subnet. Their corresponding\n"
-							+ "portal within this subnet must be deleted first.",
-					"Cannot be moved to a subnet", JOptionPane.WARNING_MESSAGE);
-			return false;
-
-		} else if (locations.stream().anyMatch(loc -> overlord.getWorkspace().getProject().getMetaNodes().stream()
-				.filter(metaNode -> metaNode.getRepresentedSheetID() == loc.getSheetID())
-				.map(MetaNode::getMySheetID)
-				.anyMatch(parentID -> !loc.getParentNode().getNodeLocations(parentID).isEmpty()))) {
-			JOptionPane.showMessageDialog(null,
-					"Some element has a portal element in the parent net.\n"
-							+ "This element cannot be moved to another subnet.",
-					"Cannot be moved to a subnet", JOptionPane.WARNING_MESSAGE);
-			return false;
-		}
-		return true;
-	}
-
 	private void moveNodesToSubnet(List<ElementLocation> elements, int subnetSheetId) {
 		for (ElementLocation element : elements) {
 			element.setSheetID(subnetSheetId);
@@ -1280,10 +1258,6 @@ public class SubnetsControl {
 	}
 
 	public void createSubnetFromSelectedElements(GraphPanel graphPanel) {
-		if (!canMoveSelectedElementsToSubnet(graphPanel)) {
-			return;
-		}
-
 		int newSheetId = overlord.getWorkspace().newTab(
 				true,
 				graphPanel.getSelectionManager().getMeanSelectionPoint(),
