@@ -1128,7 +1128,7 @@ public class SubnetsControl {
 		}
 	}
 
-	private void clearMetaArcs(List<ElementLocation> elements) {
+	public void clearMetaArcs(List<ElementLocation> elements) {
 		for (ElementLocation element : elements) {
 			for (Arc arc : element.accessMetaInArcs()) {
 				arc.getStartLocation().accessMetaOutArcs().remove(arc);

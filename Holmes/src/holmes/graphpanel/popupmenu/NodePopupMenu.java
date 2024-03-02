@@ -84,37 +84,12 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 				}
 			});
 		}
-		this.addSeparator();
+
 		if(pne != PetriNetElementType.META) {
+			this.addSeparator();
 			this.add(cutMenuItem);
 			this.add(copyMenuItem);
 			this.add(pasteMenuItem);
-		}
-
-		if(pne == PetriNetElementType.META && graphPanel.getSelectionManager().getSelectedElementLocations().size() == 1) {
-			this.addMenuItem("Delete", "cross.png", e -> {
-						Object[] options = {"Delete", "Cancel",};
-						int n = JOptionPane.showOptionDialog(null,
-								"Do you want to delete selected subnet?", "Deletion warning?", JOptionPane.YES_NO_OPTION,
-								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-						if (n == 0) {
-							GUIManager.getDefaultGUIManager().subnetsHQ.deleteSubnet(graphPanel.getSelectionManager().getSelectedMetanode());
-							//GUIManager.getDefaultGUIManager().markNetChange();
-						}
-					}
-			);
-
-			this.addMenuItem("Unwrap ", "", e -> {
-						Object[] options = {"Unwrap", "Cancel",};
-						int n = JOptionPane.showOptionDialog(null,
-								"Do you want to unwrap selected subnet?", "Unwrapping warning?", JOptionPane.YES_NO_OPTION,
-								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-						if (n == 0) {
-							GUIManager.getDefaultGUIManager().subnetsHQ.unwrapSubnet(graphPanel);
-							//GUIManager.getDefaultGUIManager().markNetChange();
-						}
-					}
-			);
 		}
 
 		if (graphPanel.getSelectionManager().getSelectedElementLocations().size() > 1 && graphPanel.getSelectionManager().getSelectedElementLocations().stream()
