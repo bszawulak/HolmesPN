@@ -289,16 +289,16 @@ public class SelectionManager {
 		ArrayList<Place> places = pn.getPlaces();
 		ArrayList<Transition> transitions = pn.getTransitions();
 		boolean functionWarning = false;
-		boolean canDo = overlord.subnetsHQ.checkIfExpendable(el);
-		if(!canDo) {
-			JOptionPane.showMessageDialog(null, 
-					"This element is the only one that leads to subnet\n"
-					+ "with other portals of same node. Please remove all\n"
-					+ "portals in correct subnets before removing THIS portal.", 
-					"Cannot be removed now", JOptionPane.WARNING_MESSAGE);
-			this.invokeActionListener();
-			
-		} else {
+//		boolean canDo = overlord.subnetsHQ.checkIfExpendable(el);
+//		if(!canDo) {
+//			JOptionPane.showMessageDialog(null,
+//					"This element is the only one that leads to subnet\n"
+//					+ "with other portals of same node. Please remove all\n"
+//					+ "portals in correct subnets before removing THIS portal.",
+//					"Cannot be removed now", JOptionPane.WARNING_MESSAGE);
+//			this.invokeActionListener();
+//
+//		} else {
 			ArrayList<Integer> sheetModified = new ArrayList<>();
 			sheetModified.add(el.getSheetID());
 			
@@ -367,7 +367,7 @@ public class SelectionManager {
 			if(functionWarning) {
 				overlord.log("Some functions have been affected by the removal operation. Please read reports above this message.", "error", true);
 			}
-		}
+//		}
 	}
 
 	/**
@@ -381,17 +381,17 @@ public class SelectionManager {
 		ArrayList<Place> places = pn.getPlaces();
 		ArrayList<Transition> transitions = pn.getTransitions();
 		ArrayList<Integer> sheetsModified = new ArrayList<>();
-		ArrayList<ElementLocation> protectedList = new ArrayList<>();
+//		ArrayList<ElementLocation> protectedList = new ArrayList<>();
 		boolean functionWarning = false;
 		
 		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
 			ElementLocation el = i.next();
 			
-			boolean canDo = overlord.subnetsHQ.checkIfExpendable(el);
-			if(!canDo) {
-				protectedList.add(el);
-				continue;
-			}
+//			boolean canDo = overlord.subnetsHQ.checkIfExpendable(el);
+//			if(!canDo) {
+//				protectedList.add(el);
+//				continue;
+//			}
 			
 			int sheetID = el.getSheetID();
 			if(!sheetsModified.contains(sheetID))
@@ -445,16 +445,16 @@ public class SelectionManager {
 			i.remove();
 		}
 		// kasuje wszystkie zaznaczone łuki:
-		boolean securedDelete = protectedList.size() > 0;
+//		boolean securedDelete = protectedList.size() > 0;
 
 		for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
 			Arc a = i.next();
 			
-			if(securedDelete) { //nie kasuj łuków EL, który nie został skasowany
-				if(protectedList.contains(a.getStartLocation()) || protectedList.contains(a.getEndLocation())) {
-					continue;
-				}
-			}
+//			if(securedDelete) { //nie kasuj łuków EL, który nie został skasowany
+//				if(protectedList.contains(a.getStartLocation()) || protectedList.contains(a.getEndLocation())) {
+//					continue;
+//				}
+//			}
 			
 			this.getGraphPanelArcs().remove(a);
 			a.unlinkElementLocations();
@@ -474,12 +474,12 @@ public class SelectionManager {
 		this.getGraphPanel().repaint();
 		this.invokeActionListener();
 		
-		if(securedDelete) {
-			JOptionPane.showMessageDialog(null, 
-					"Some element connected with subnets could not be deleted. Their corresponding\n"
-					+ "portal within these subnets must be deleted first.", 
-					"Cannot be removed", JOptionPane.WARNING_MESSAGE);
-		}
+//		if(securedDelete) {
+//			JOptionPane.showMessageDialog(null,
+//					"Some element connected with subnets could not be deleted. Their corresponding\n"
+//					+ "portal within these subnets must be deleted first.",
+//					"Cannot be removed", JOptionPane.WARNING_MESSAGE);
+//		}
 		
 		if(functionWarning) {
 			overlord.log("Some functions have been affected by the removal operation. Please read reports above this message.", "error", true);
