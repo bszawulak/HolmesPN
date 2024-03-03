@@ -1011,7 +1011,7 @@ public class GraphPanel extends JComponent {
 				if(arcBreakPoint != null)
 					return;
 			}
-			
+
 			// nie kliknięto ani w Node ani w Arc
 			if (el == null && a == null) {
 				Integer clickedSubnetID = getPossiblyClickedSubnetID(mousePt);
@@ -1543,10 +1543,10 @@ public class GraphPanel extends JComponent {
 							}
 							clearDrawnArc();
 
-							int arcSheet = arc.getStartLocation().getSheetID();
-							if(arcSheet > 0) {
-								overlord.subnetsHQ.addMetaArc(arc);
-							}
+//							int arcSheet = arc.getStartLocation().getSheetID();
+//							if(arcSheet > 0) {
+//								overlord.subnetsHQ.addMetaArc(arc);
+//							}
 							overlord.reset.reset2ndOrderData(true);
 							overlord.markNetChange();
 						}
