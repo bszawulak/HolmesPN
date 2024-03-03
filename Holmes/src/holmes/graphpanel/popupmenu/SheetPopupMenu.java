@@ -235,7 +235,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         }));
 
         if (getGraphPanel().getSheetId() != 0) {
-            this.addMenuItem("Add existing element", "", e ->
+            this.addMenuItem("Add existing node", "", e ->
                     SubnetsActions.addExistingElement(graphPanel)
             );
         }

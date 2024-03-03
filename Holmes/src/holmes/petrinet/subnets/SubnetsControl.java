@@ -1324,4 +1324,20 @@ public class SubnetsControl {
 		graphPanel.getSelectionManager().deleteAllSelectedElements();
 		graphPanel.getSelectionManager().selectElementLocation(clickedELoc);
 	}
+
+	public void cloneLocationNearMetanode(ElementLocation location, int subnetID) {
+		Random gen = new Random();
+		int angle = gen.nextInt(360);
+		int radius = gen.nextInt(40) + 60;
+		MetaNode metanode = getMetanode(subnetID).orElseThrow();
+		Point p = metanode.getFirstELoc().getPosition();
+		int x = Math.toIntExact(Math.round(radius * Math.cos(Math.toRadians(angle)) + p.x));
+		int y = Math.toIntExact(Math.round(radius * Math.sin(Math.toRadians(angle)) + p.y));
+
+		ElementLocation newLocation = overlord.subnetsHQ.cloneNodeIntoPortal(location, metanode.getMySheetID());
+		newLocation.setPosition(new Point(x, y));
+
+		Arc newArc = new Arc(IdGenerator.getNextId(), newLocation, metanode.getFirstELoc(), Arc.TypeOfArc.META_ARC);
+		overlord.getWorkspace().getProject().addArc(newArc);
+	}
 }

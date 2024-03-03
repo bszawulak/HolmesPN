@@ -46,12 +46,8 @@ public class OnSubnetAction extends BaseDialog {
         button.addActionListener(action);
     }
 
-    public JComboBox<ComboBoxItem<Integer>> getComboBox() {
-        return comboBox;
-    }
-
-    public JButton getButton() {
-        return button;
+    public ComboBoxItem<Integer> getComboBoxValue() {
+        return (ComboBoxItem) comboBox.getSelectedItem();
     }
 }
 

@@ -3,6 +3,9 @@ package holmes.petrinet.subnets;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
+import holmes.petrinet.elements.Node;
+import holmes.petrinet.elements.Place;
+import holmes.petrinet.elements.Transition;
 import holmes.petrinet.subnets.dialogs.ComboBoxItem;
 import holmes.petrinet.subnets.dialogs.OnNodeAction;
 import holmes.petrinet.subnets.dialogs.OnSubnetAction;
@@ -19,7 +22,7 @@ public class SubnetsActions {
 
         OnSubnetAction onSubnetActionDialog = new OnSubnetAction(graphPanel, "Transfer to subnet (with M-Arcs)", 400, 240);
         onSubnetActionDialog.setAction(e -> {
-            ComboBoxItem<Integer> selectedItem = (ComboBoxItem) onSubnetActionDialog.getComboBox().getSelectedItem();
+            ComboBoxItem<Integer> selectedItem = onSubnetActionDialog.getComboBoxValue();
             GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
             GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
             onSubnetActionDialog.getDialog().dispose();
@@ -40,7 +43,7 @@ public class SubnetsActions {
 
         OnSubnetAction onSubnetActionDialog = new OnSubnetAction(graphPanel, "Copy into subnet", 400, 240);
         onSubnetActionDialog.setAction(e -> {
-            ComboBoxItem<Integer> selectedItem = (ComboBoxItem) onSubnetActionDialog.getComboBox().getSelectedItem();
+            ComboBoxItem<Integer> selectedItem = onSubnetActionDialog.getComboBoxValue();
             GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
             GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
             onSubnetActionDialog.getDialog().dispose();
@@ -60,12 +63,25 @@ public class SubnetsActions {
     public static void addExistingElement(GraphPanel graphPanel) {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
 
-        OnNodeAction onNodeActionDialog = new OnNodeAction(graphPanel, "Add element to subnet", 400, 240);
+        OnNodeAction onNodeActionDialog = new OnNodeAction(graphPanel, "Add node to subnet", 540, 340);
         onNodeActionDialog.setAction(e -> {
-            ComboBoxItem<ElementLocation> selectedItem = (ComboBoxItem) onNodeActionDialog.getComboBox().getSelectedItem();
-            Optional.ofNullable(selectedItem).ifPresent(item -> {
-                ElementLocation newLocation = overlord.subnetsHQ.cloneNodeIntoPortal(item.getValue(), graphPanel.getSheetId());
+            ComboBoxItem<Place> selectedPlace = onNodeActionDialog.getPlaceComboBoxValue();
+            ComboBoxItem<Transition> selectedTransition = onNodeActionDialog.getTransitionComboBoxValue();
+            Node selectedNode = null;
+            if (selectedPlace != null) {
+                selectedNode = selectedPlace.getValue();
+            } else if (selectedTransition != null) {
+                selectedNode = selectedTransition.getValue();
+            }
+
+            boolean addMetaArcs = onNodeActionDialog.getCheckboxValue();
+
+            Optional.ofNullable(selectedNode).ifPresent(node -> {
+                ElementLocation newLocation = overlord.subnetsHQ.cloneNodeIntoPortal(node.getLastLocation(), graphPanel.getSheetId());
                 newLocation.setPosition(graphPanel.getMousePt());
+                if (addMetaArcs) {
+                    overlord.subnetsHQ.cloneLocationNearMetanode(newLocation, graphPanel.getSheetId());
+                }
             });
 
             GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
