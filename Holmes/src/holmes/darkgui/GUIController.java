@@ -12,6 +12,16 @@ public class GUIController {
     private static final GUIController singleton = new GUIController();
     private PetriNet.GlobalNetType currentNetType = PetriNet.GlobalNetType.PN;
 
+    private boolean doNotRefresh = false;
+
+    public void setRefresh(boolean status) {
+        doNotRefresh = status;
+    }
+
+    public boolean canRefresh() {
+        return doNotRefresh;
+    }
+
     private GUIController() { //access denied, może pan pana Singletona w d*** pocałować
         //Tu jest konstruktor. Spróbujcie kanalie się tu dostać z zewnątrz. No dalej.
         //P.S. jeśli ktoś mi użyje mechanizmu refleksji, znajdę i dopadnę. Ostrzegam.

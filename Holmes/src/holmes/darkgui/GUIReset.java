@@ -1,7 +1,5 @@
 package holmes.darkgui;
 
-import java.util.ArrayList;
-
 import javax.swing.*;
 
 import holmes.analyse.MCTCalculator;
@@ -12,13 +10,11 @@ import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.workspace.Workspace;
-import holmes.workspace.WorkspaceSheet;
 
 /**
  * Klasa odpowiedzialna za różne rzeczy związane z czyszczeniem wszystkiego i wszystkich w ramach
@@ -169,8 +165,7 @@ public class GUIReset {
 	 * @param clearWindows boolean - jeśli true, wtedy nakazuje czystkę dużych okien programu, np. klastry
 	 */
 	public void reset2ndOrderData(boolean clearWindows) {
-		//"I nie będzie niczego."
-		// Księga Kononowicza
+		//"I nie będzie niczego." Księga Kononowicza
 		PetriNet pNet = overlord.getWorkspace().getProject();
 		//clearGraphColors();
 		
@@ -184,60 +179,50 @@ public class GUIReset {
 	
 		if(t_invGenerated) {
 			overlord.accessNetTablesWindow().resetT_invData();
-			
 			resetCommunicationProtocol();
 			pNet.setT_InvMatrix(null, false);
 			pNet.getMCSdataCore().resetMSC();
-			
+
 			if(overlord.getT_invBox().getCurrentDockWindow() != null) {
-				overlord.getT_invBox().getCurrentDockWindow().resetT_invariants();
-				overlord.getT_invBox().getCurrentDockWindow().removeAll();
+				overlord.getT_invBox().getCurrentDockWindow().cleanTINVsubwindowFields();
 			}
-			overlord.getT_invBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, pNet.getT_InvMatrix()));	
-			//overlord.getT_invBox().validate();
-			//overlord.getT_invBox().repaint();
 
 			t_invGenerated = false;
 			overlord.log("T-invariants data removed from memory.", "text", true);
 		}
 		
-		if(p_invGenerated) {
-			resetCommunicationProtocol();
-			pNet.setP_InvMatrix(null);
-			
-			if(overlord.getP_invBox().getCurrentDockWindow() != null) {
-				overlord.getP_invBox().getCurrentDockWindow().resetP_invariants();
-				overlord.getP_invBox().getCurrentDockWindow().removeAll();
-			}
-			overlord.getP_invBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, pNet.getP_InvMatrix()));	
-			//overlord.getP_invBox().validate();
-			//overlord.getP_invBox().repaint();
-			
-			p_invGenerated = false;
-			overlord.log("P-invariants data removed from memory.", "text", true);
-		}
-		
 		if(mctGenerated) {
-			if(overlord.getMctBox().getCurrentDockWindow() != null) {
-				overlord.getMctBox().getCurrentDockWindow().removeAll();
-				overlord.getMctBox().getCurrentDockWindow().resetMCT();
-			}
-			overlord.getMctBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCT,
-					new ArrayList<ArrayList<Transition>>()));
-			//overlord.getMctBox().validate();
-			//overlord.getMctBox().repaint();
-			
 			pNet.setMCTMatrix(null, false);
 			pNet.accessMCTnames().clear();
-			
+
+			if(overlord.getMctBox().getCurrentDockWindow() != null) {
+				overlord.getMctBox().getCurrentDockWindow().cleanMCtsubwindowFields();
+			}
+
 			mctGenerated = false;
 			overlord.log("MCT data removed from memory.", "text", true);
+		}
+
+		if(p_invGenerated) {
+			//resetCommunicationProtocol();
+			pNet.setP_InvMatrix(null);
+
+			if(overlord.getP_invBox().getCurrentDockWindow() != null) {
+				overlord.getP_invBox().getCurrentDockWindow().cleanPInvSubwindowData();
+				//overlord.getP_invBox().getCurrentDockWindow().removeAll();
+			}
+			//overlord.getP_invBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, pNet.getP_InvMatrix()));
+			//overlord.getP_invBox().validate();
+			//overlord.getP_invBox().repaint();
+
+			p_invGenerated = false;
+			overlord.log("P-invariants data removed from memory.", "text", true);
 		}
 		
 		if(clustersGenerated) {
 			if(overlord.getClusterSelectionBox().getCurrentDockWindow() != null) {
 				overlord.getClusterSelectionBox().getCurrentDockWindow().removeAll();
-				overlord.getClusterSelectionBox().getCurrentDockWindow().resetClusters();
+				overlord.getClusterSelectionBox().getCurrentDockWindow().cleanClustersSubwindowData();
 			}
 			overlord.getClusterSelectionBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CLUSTERS, new ClusterDataPackage()));
 			//overlord.getClusterSelectionBox().validate();
@@ -256,7 +241,7 @@ public class GUIReset {
 			overlord.getDecompositionBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.DECOMPOSITION, null));
 			overlord.getDecompositionBox().validate();
 			overlord.getDecompositionBox().repaint();
-*/
+			*/
 			subNetGenerated = false;
 			overlord.log("Decomposition data removed from memory.", "text", true);
 		}
@@ -328,7 +313,7 @@ public class GUIReset {
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
 		GraphicalSimulator obj = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();// GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
-		if(obj instanceof GraphicalSimulator) {
+		if(obj != null) {
 			if(obj.getSimulatorStatus() == SimulatorMode.STOPPED) {
 				return false;
 			} else {
