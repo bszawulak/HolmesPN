@@ -78,8 +78,8 @@ public class SubnetsActions {
                 ElementLocation newLocation = overlord.subnetsHQ.cloneNodeIntoPortal(node.getLastLocation(), graphPanel.getSheetId());
                 newLocation.setPosition(graphPanel.getMousePt());
                 if (addMetaArcs) {
-                    overlord.subnetsHQ.cloneLocationNearMetanode(newLocation, graphPanel.getSheetId());
-                    Arc newArc = new Arc(IdGenerator.getNextId(), newLocation,
+                    ElementLocation nearMetanode = overlord.subnetsHQ.cloneLocationNearMetanode(newLocation, graphPanel.getSheetId());
+                    Arc newArc = new Arc(IdGenerator.getNextId(), nearMetanode,
                             overlord.subnetsHQ.getMetanode(graphPanel.getSheetId()).orElseThrow().getFirstELoc(),
                             Arc.TypeOfArc.META_ARC);
                     overlord.getWorkspace().getProject().addArc(newArc);
