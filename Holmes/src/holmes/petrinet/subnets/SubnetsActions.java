@@ -2,10 +2,8 @@ package holmes.petrinet.subnets;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.data.IdGenerator;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.subnets.dialogs.ComboBoxItem;
 import holmes.petrinet.subnets.dialogs.OnNodeAction;
 import holmes.petrinet.subnets.dialogs.OnSubnetAction;
@@ -81,6 +79,10 @@ public class SubnetsActions {
                 newLocation.setPosition(graphPanel.getMousePt());
                 if (addMetaArcs) {
                     overlord.subnetsHQ.cloneLocationNearMetanode(newLocation, graphPanel.getSheetId());
+                    Arc newArc = new Arc(IdGenerator.getNextId(), newLocation,
+                            overlord.subnetsHQ.getMetanode(graphPanel.getSheetId()).orElseThrow().getFirstELoc(),
+                            Arc.TypeOfArc.META_ARC);
+                    overlord.getWorkspace().getProject().addArc(newArc);
                 }
             });
 

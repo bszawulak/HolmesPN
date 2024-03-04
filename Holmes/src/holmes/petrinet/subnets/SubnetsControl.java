@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * Klasa odpowiedzialna za metody pomagające w kontrolowaniu sieci hierarchicznych. Albo przynajmniej
@@ -1325,7 +1327,7 @@ public class SubnetsControl {
 		graphPanel.getSelectionManager().selectElementLocation(clickedELoc);
 	}
 
-	public void cloneLocationNearMetanode(ElementLocation location, int subnetID) {
+	public ElementLocation cloneLocationNearMetanode(ElementLocation location, int subnetID) {
 		Random gen = new Random();
 		int angle = gen.nextInt(360);
 		int radius = gen.nextInt(40) + 60;
@@ -1336,8 +1338,43 @@ public class SubnetsControl {
 
 		ElementLocation newLocation = overlord.subnetsHQ.cloneNodeIntoPortal(location, metanode.getMySheetID());
 		newLocation.setPosition(new Point(x, y));
+		return newLocation;
+	}
 
-		Arc newArc = new Arc(IdGenerator.getNextId(), newLocation, metanode.getFirstELoc(), Arc.TypeOfArc.META_ARC);
-		overlord.getWorkspace().getProject().addArc(newArc);
+	public void fixMetaArcsNumber(MetaNode metaNode) {
+		Set<Node> nodes = getSubnetElementLocations(metaNode.getMySheetID()).stream()
+				.map(ElementLocation::getParentNode).collect(Collectors.toSet());
+		Set<Node> subnetNodes = getSubnetElementLocations(metaNode.getRepresentedSheetID()).stream()
+				.map(ElementLocation::getParentNode).collect(Collectors.toSet());
+
+		nodes.retainAll(subnetNodes);
+
+		for (Node node : nodes) {
+			AtomicBoolean hasInArcs = new AtomicBoolean(false);
+			AtomicBoolean hasOutArcs = new AtomicBoolean(false);
+
+			node.getNodeLocations().stream().filter(location -> location.getSheetID() == metaNode.getRepresentedSheetID()).forEach(location -> {
+				if (!location.getInArcs().isEmpty()) {
+					hasInArcs.set(true);
+				}
+				if (!location.getOutArcs().isEmpty()) {
+					hasOutArcs.set(true);
+				}
+			});
+
+			if (!hasInArcs.get() && !hasOutArcs.get()) {
+				continue;
+			}
+
+			ElementLocation newLocation = cloneLocationNearMetanode(node.getLastLocation(), metaNode.getRepresentedSheetID());
+			if (hasInArcs.get()) {
+				Arc newArc = new Arc(IdGenerator.getNextId(), metaNode.getFirstELoc(), newLocation, Arc.TypeOfArc.META_ARC);
+				overlord.getWorkspace().getProject().addArc(newArc);
+			}
+			if (hasOutArcs.get()) {
+				Arc newArc = new Arc(IdGenerator.getNextId(), newLocation, metaNode.getFirstELoc(), Arc.TypeOfArc.META_ARC);
+				overlord.getWorkspace().getProject().addArc(newArc);
+			}
+		}
 	}
 }
