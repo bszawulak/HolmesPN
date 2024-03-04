@@ -2,6 +2,7 @@ package holmes.workspace;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -199,20 +200,16 @@ public class Workspace implements SelectionActionListener {
 	 * Używana przez GUIReset, do czyszczenia wszystkich paneli sieci poza pierwszym.
 	 */
 	public void deleteAllSheetButFirst() {
-		for(WorkspaceSheet sheet : sheets) { //TODO 03072023 coś nie działa jak się doda podsieć, przy wyjściu z programu, sprawdzić
-			if(sheet.getId() != 0) {
-				int sheetID = sheet.getId();
-				boolean result = getProject().removeGraphPanel(sheetID);
-				if(!result) {
-					GUIManager.getDefaultGUIManager().log("Error, removing graph panel in Workspace.deleteSheetFromArrays() failed" +
-							"for WorkspaceSheet "+sheet.getId(), "error", true);
-				}
-				int id = sheets.indexOf(sheet);
-				sheets.remove(id);
-				sheetsIDtable.remove(id);
-				tp.remove(id);
+		for (int i = sheets.size() - 1; i > 0; i--) {
+			int subnetID = sheets.get(i).getId();
+			boolean result = getProject().removeGraphPanel(subnetID);
+			if (!result) {
+				GUIManager.getDefaultGUIManager().log("Error, removing graph panel in Workspace.deleteSheetFromArrays() failed" +
+						"for WorkspaceSheet "+subnetID, "error", true);
 			}
-
+			tp.remove(i);
+			sheets.remove(i);
+			sheetsIDtable.remove(i);
 		}
 	}
 
