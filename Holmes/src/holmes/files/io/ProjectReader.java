@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import holmes.analyse.InvariantsCalculator;
+import holmes.analyse.InvariantsTools;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.*;

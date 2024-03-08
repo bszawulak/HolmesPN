@@ -5906,6 +5906,12 @@ public class HolmesDockWindowsTable extends JPanel {
         //recalculateTypesButton.addActionListener(actionEvent -> refreshSubSurCombos());
         recalculateTypesButton.addActionListener(actionEvent -> {
             try {
+
+                if(t_invariantsMatrix != null && !t_invariantsMatrix.isEmpty()) {
+                    InvariantsCalculator ic = new InvariantsCalculator(true);
+                    InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), t_invariantsMatrix, true);
+                }
+
                 refreshTINVwindowData();
                 refreshSubSurCombos();
             } catch (Exception e) {
@@ -5921,8 +5927,11 @@ public class HolmesDockWindowsTable extends JPanel {
         recalculateInvTypesButton.addActionListener(actionEvent -> {
             try {
                 refreshTINVwindowData();
-                InvariantsCalculator ic = new InvariantsCalculator(true);
-                InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), t_invariantsMatrix, true);
+
+                if(t_invariantsMatrix != null && !t_invariantsMatrix.isEmpty()) {
+                    InvariantsCalculator ic = new InvariantsCalculator(true);
+                    InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), t_invariantsMatrix, true);
+                }
 
                 refreshSubSurCombos();
             } catch (Exception e) {
@@ -6173,6 +6182,56 @@ public class HolmesDockWindowsTable extends JPanel {
         panel.setOpaque(true);
         panel.repaint();
         add(panel);
+    }
+
+    /**
+     * Metoda odświeża zawartość comboBoxa dla inwariantów. Wyświetla tylko te, dla których cX=0.
+     */
+    public void refreshInvariantsComboBox() {
+        if (t_invariantsMatrix == null)
+            return;
+
+        ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
+        ArrayList<Integer> zeroInv = new ArrayList<>();
+        //ArrayList<Integer> sursInv = new ArrayList<>();
+        //ArrayList<Integer> subsInv = new ArrayList<>();
+        //ArrayList<Integer> nonsInv = new ArrayList<>();
+
+        for (int i = 0; i < typesVector.size(); i++) { //zliczanie tałatajstwa
+            if(typesVector.get(i) == 0)
+                zeroInv.add(i);
+            //else if (typesVector.get(i) == 1)
+            //    sursInv.add(i);
+            //else if (typesVector.get(i) == -1)
+            //    subsInv.add(i);
+            //else if (typesVector.get(i) == 11)
+            //    nonsInv.add(i);
+        }
+
+        //String[] invariantHeaders = new String[t_invariantsMatrix.size() + 3];
+        String[] invariantHeaders = new String[zeroInv.size() + 3];
+        invariantHeaders[0] = "---";
+
+        if (!zeroInv.isEmpty()) {
+            for (int i = 0; i < zeroInv.size(); i++) {
+                int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(zeroInv.get(i))).size();
+                invariantHeaders[i + 1] = "Inv. #" + (zeroInv.get(i) + 1) + " (size: " + invSize + ")";
+            }
+        }
+        //for (int i = 0; i < t_invariantsMatrix.size(); i++) {
+        //    int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(i)).size();
+        //    invariantHeaders[i + 1] = "Inv. #" + (i + 1) + " (size: " + invSize + ")";
+        //}
+        invariantHeaders[invariantHeaders.length - 2] = "null transitions";
+        invariantHeaders[invariantHeaders.length - 1] = "inv/trans frequency";
+
+        doNotUpdate = true;
+        chooseInvBox.removeAllItems();
+        for (String header : invariantHeaders) {
+            chooseInvBox.addItem(header);
+        }
+        chooseInvBox.setSelectedIndex(0);
+        doNotUpdate = false;
     }
 
     /**
@@ -6452,9 +6511,9 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda pomocnicza do zaznaczania tranzycji nie pokrytych inwariantami.
      */
     private void showDeadT_inv() {
-        if(t_invariantsMatrix == null)
+        if (t_invariantsMatrix == null)
             return;
-        if(t_invariantsMatrix.isEmpty()) //nie ma co odświeżać
+        if (t_invariantsMatrix.isEmpty()) //nie ma co odświeżać
             return;
 
         PetriNet pn = overlord.getWorkspace().getProject();
@@ -6485,28 +6544,6 @@ public class HolmesDockWindowsTable extends JPanel {
         }
 
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
-    }
-
-    public void refreshInvariantsComboBox() {
-        if (t_invariantsMatrix == null)
-            return;
-
-        String[] invariantHeaders = new String[t_invariantsMatrix.size() + 3];
-        invariantHeaders[0] = "---";
-        for (int i = 0; i < t_invariantsMatrix.size(); i++) {
-            int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(i)).size();
-            invariantHeaders[i + 1] = "Inv. #" + (i + 1) + " (size: " + invSize + ")";
-        }
-        invariantHeaders[invariantHeaders.length - 2] = "null transitions";
-        invariantHeaders[invariantHeaders.length - 1] = "inv/trans frequency";
-
-        doNotUpdate = true;
-        chooseInvBox.removeAllItems();
-        for (String header : invariantHeaders) {
-            chooseInvBox.addItem(header);
-        }
-        chooseInvBox.setSelectedIndex(0);
-        doNotUpdate = false;
     }
 
     /**

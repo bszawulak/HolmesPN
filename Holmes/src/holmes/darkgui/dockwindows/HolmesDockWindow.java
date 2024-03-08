@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
+import holmes.analyse.InvariantsCalculator;
+import holmes.analyse.InvariantsTools;
 import holmes.clusters.ClusterDataPackage;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable.SubWindow;
@@ -145,9 +147,15 @@ public class HolmesDockWindow {//extends SingleDock {
             //MRtinv 5.02.2024
             //setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, t_invariants));
             //scrollPane.getViewport().add(getCurrentDockWindow());
+            if(t_invariants != null) {
+                InvariantsCalculator ic = new InvariantsCalculator(true);
+                InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), t_invariants, true);
+            }
+
             guiManager.getT_invBox().getCurrentDockWindow().cleanTINVsubwindowFields();
             guiManager.getT_invBox().getCurrentDockWindow().setT_invariants(t_invariants);
             guiManager.getT_invBox().getCurrentDockWindow().refreshInvariantsComboBox();
+            guiManager.getT_invBox().getCurrentDockWindow().refreshSubSurCombos();
         }
     }
 
