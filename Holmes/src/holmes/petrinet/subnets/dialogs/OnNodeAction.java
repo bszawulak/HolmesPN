@@ -86,7 +86,8 @@ public class OnNodeAction extends BaseDialog {
                 List<String> subnets = item.getValue().getElementLocations().stream()
                         .map(ElementLocation::getSheetID)
                         .map(integer -> GUIManager.getDefaultGUIManager().subnetsHQ.getMetanode(integer)
-                                .map(PetriNetElement::getName).orElse("Subnet0")).toList();
+                                .map(PetriNetElement::getName).orElse("Subnet0"))
+                        .sorted().distinct().toList();
                 subnetsLabel.setText(String.format("Portals in subnets: %s", String.join(", ", subnets)));
                 if (transitionComboBox.getSelectedIndex() != -1) {
                     transitionComboBox.setSelectedIndex(-1);
@@ -104,7 +105,8 @@ public class OnNodeAction extends BaseDialog {
                 List<String> subnets = item.getValue().getElementLocations().stream()
                         .map(ElementLocation::getSheetID)
                         .map(integer -> GUIManager.getDefaultGUIManager().subnetsHQ.getMetanode(integer)
-                                .map(PetriNetElement::getName).orElse("Subnet0")).toList();
+                                .map(PetriNetElement::getName).orElse("Subnet0"))
+                        .sorted().distinct().toList();
                 subnetsLabel.setText(String.format("Portals in subnets: %s", String.join(", ", subnets)));
                 if (placeComboBox.getSelectedIndex() != -1) {
                     placeComboBox.setSelectedIndex(-1);
