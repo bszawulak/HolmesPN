@@ -1149,15 +1149,18 @@ public class SubnetsControl {
 		int currentSheetId = subnetNode.getMySheetID();
 		int subnetSheetId = subnetNode.getRepresentedSheetID();
 		ElementLocation subnetElementLocation = subnetNode.getFirstELoc();
-		HashMap<ElementLocation, ElementLocation> locationToPortal = new HashMap<>();
+		Map<ElementLocation, ElementLocation> locationToPortal = new HashMap<>();
+		Set<ElementLocation> elementToMetanode = new HashSet<>();
+		Set<ElementLocation> elementFromMetanode = new HashSet<>();
 
 		for (ElementLocation element : elements) {
 			for (Arc arc : element.getInArcs()) {
 				int sheetID = arc.getStartLocation().getSheetID();
 				if (sheetID == currentSheetId) {
-					if (createMetaArcs) {
+					if (createMetaArcs && !elementToMetanode.contains(arc.getStartLocation())) {
 						Arc newArc = new Arc(IdGenerator.getNextId(), arc.getStartLocation(), subnetElementLocation, Arc.TypeOfArc.META_ARC);
 						overlord.getWorkspace().getProject().addArc(newArc);
+						elementToMetanode.add(arc.getStartLocation());
 					}
 
 					ElementLocation portal;
@@ -1177,8 +1180,11 @@ public class SubnetsControl {
 			for (Arc arc : element.getOutArcs()) {
 				int sheetID = arc.getEndLocation().getSheetID();
 				if (sheetID == currentSheetId) {
-					Arc newArc = new Arc(IdGenerator.getNextId(), subnetElementLocation, arc.getEndLocation(), Arc.TypeOfArc.META_ARC);
-					overlord.getWorkspace().getProject().addArc(newArc);
+					if (createMetaArcs && !elementFromMetanode.contains(arc.getEndLocation())) {
+						Arc newArc = new Arc(IdGenerator.getNextId(), subnetElementLocation, arc.getEndLocation(), Arc.TypeOfArc.META_ARC);
+						overlord.getWorkspace().getProject().addArc(newArc);
+						elementFromMetanode.add(arc.getEndLocation());
+					}
 
 					ElementLocation portal;
 					if (locationToPortal.containsKey(arc.getEndLocation())) {

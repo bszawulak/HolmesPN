@@ -18,7 +18,8 @@ public class SubnetsActions {
     public static void openTransferElementsToSubnet(GraphPanel graphPanel, boolean createMetaArcs) {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
 
-        OnSubnetAction onSubnetActionDialog = new OnSubnetAction(graphPanel, "Transfer to subnet (with M-Arcs)", 400, 240);
+        String title = createMetaArcs ? "Transfer to subnet (with M-Arcs)" : "Transfer to subnet (no M-Arcs)";
+        OnSubnetAction onSubnetActionDialog = new OnSubnetAction(graphPanel, title, 400, 240);
         onSubnetActionDialog.setAction(e -> {
             ComboBoxItem<Integer> selectedItem = onSubnetActionDialog.getComboBoxValue();
             GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
