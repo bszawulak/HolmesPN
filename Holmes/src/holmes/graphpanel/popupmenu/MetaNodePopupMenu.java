@@ -108,28 +108,16 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 			private ElementLocation elMeta;
 			public void actionPerformed(ActionEvent arg0) {
 				getGraphPanel().getSelectionManager().deselectAllElementLocations();
-				ArrayList<Integer> sheetModified = new ArrayList<Integer>();
-				sheetModified.add(((MetaNode)elMeta.getParentNode()).getRepresentedSheetID());
-				gui.subnetsHQ.validateMetaArcs(sheetModified, true, false);
+//				ArrayList<Integer> sheetModified = new ArrayList<Integer>();
+//				sheetModified.add(((MetaNode)elMeta.getParentNode()).getRepresentedSheetID());
+//				gui.subnetsHQ.validateMetaArcs(sheetModified, true, false);
+				gui.subnetsHQ.fixMetaArcsNumber((MetaNode)elMeta.getParentNode());
 				getGraphPanel().repaint();
 			}
 			private ActionListener yesWeCan(ElementLocation inLoc){
 				elMeta = inLoc;
 		        return this;
 		    }
-		}.yesWeCan(el) ));
-
-		fixMenu.add(createMenuItem("Fix meta-arcs number v2", "invImportPopup.png", null, new ActionListener() {
-			private ElementLocation elMeta;
-			public void actionPerformed(ActionEvent arg0) {
-				getGraphPanel().getSelectionManager().deselectAllElementLocations();
-				gui.subnetsHQ.fixMetaArcsNumber((MetaNode)elMeta.getParentNode());
-				getGraphPanel().repaint();
-			}
-			private ActionListener yesWeCan(ElementLocation inLoc){
-				elMeta = inLoc;
-				return this;
-			}
 		}.yesWeCan(el) ));
 	}
 }

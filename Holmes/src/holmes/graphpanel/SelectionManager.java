@@ -360,7 +360,7 @@ public class SelectionManager {
 				i.remove();
 			}
 			
-			overlord.subnetsHQ.validateMetaArcs(sheetModified, false, false);
+//			overlord.subnetsHQ.validateMetaArcs(sheetModified, false, false);
 			this.getGraphPanel().repaint();
 			this.invokeActionListener();
 			
@@ -466,7 +466,7 @@ public class SelectionManager {
 			i.remove();
 		}
 		
-		overlord.subnetsHQ.validateMetaArcs(sheetsModified, false, false);
+//		overlord.subnetsHQ.validateMetaArcs(sheetsModified, false, false);
 		
 		// Kasuj wszystko. I wszystkich. Wszędzie. Kill'em all:
 		this.getSelectedArcs().clear();
