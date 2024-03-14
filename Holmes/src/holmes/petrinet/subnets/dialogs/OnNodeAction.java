@@ -38,7 +38,13 @@ public class OnNodeAction extends BaseDialog {
                 .filter(Place.class::isInstance)
                 .map(Place.class::cast)
                 .map(place -> {
-                    String label = String.format("[%d] %s", place.getID(), place.getName());
+                    List<String> subnets = place.getElementLocations().stream()
+                            .map(ElementLocation::getSheetID)
+                            .filter(i -> i != 0)
+                            .map(Object::toString)
+                            .sorted().distinct().toList();
+                    String subnetsLabel = subnets.isEmpty() ? "" : String.format(" (%s)", String.join(",", subnets));
+                    String label = String.format("[%d]%s: %s", place.getID(), subnetsLabel, place.getName());
                     return new ComboBoxItem<Place>(place, label);
                 })
                 .forEach(placeComboBox::addItem);
@@ -55,7 +61,13 @@ public class OnNodeAction extends BaseDialog {
                 .filter(Transition.class::isInstance)
                 .map(Transition.class::cast)
                 .map(transition -> {
-                    String label = String.format("[%d] %s", transition.getID(), transition.getName());
+                    List<String> subnets = transition.getElementLocations().stream()
+                            .map(ElementLocation::getSheetID)
+                            .filter(i -> i != 0)
+                            .map(Object::toString)
+                            .sorted().distinct().toList();
+                    String subnetsLabel = subnets.isEmpty() ? "" : String.format(" (%s)", String.join(",", subnets));
+                    String label = String.format("[%d]%s: %s", transition.getID(), subnetsLabel, transition.getName());
                     return new ComboBoxItem<Transition>(transition, label);
                 })
                 .forEach(transitionComboBox::addItem);
