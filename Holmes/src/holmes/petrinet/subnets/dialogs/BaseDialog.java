@@ -5,13 +5,28 @@ import holmes.utilities.Tools;
 
 import javax.swing.*;
 
+/**
+ * Klasa abstrakcyjna będąca podstawą dla pozostałych klas tworzących dialogi powiązane z podsiecami.
+ */
 public abstract class BaseDialog {
     private JDialog dialog;
 
+    /**
+     * Konstruktor klasy BaseDialog.
+     * @param title String - tytuł dialogu
+     * @param width int - szerokość okna dialogu
+     * @param height int - wysokość okna dialogu
+     */
     protected BaseDialog(String title, int width, int height) {
         initDialog(title, width, height);
     }
 
+    /**
+     * Metoda inicjująca podstawowe właściwości dialogu.
+     * @param title String - tytuł dialogu
+     * @param width int - szerokość okna dialogu
+     * @param height int - wysokość okna dialogu
+     */
     private void initDialog(String title, int width, int height) {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
         dialog = new JDialog(overlord.getFrame(), title);
@@ -31,12 +46,19 @@ public abstract class BaseDialog {
         });
     }
 
+    /**
+     * Metoda otwierająca dialog.
+     */
     public void open() {
         JFrame frame = GUIManager.getDefaultGUIManager().getFrame();
         frame.setEnabled(false);
         dialog.setVisible(true);
     }
 
+    /**
+     * Metoda zwracająca dialog.
+     * @return JDialog - dialog
+     */
     public JDialog getDialog() {
         return dialog;
     }

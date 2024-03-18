@@ -3,6 +3,9 @@ package holmes.windows;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+/**
+ * Interfejs funkcyjny pozwalający na nasłuchiwanie i reagowanie na zmiany w komponentach tekstowych np. JTextField
+ */
 @FunctionalInterface
 public interface SimpleDocumentListener extends DocumentListener {
     void update(DocumentEvent e);

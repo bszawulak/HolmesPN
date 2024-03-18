@@ -1216,6 +1216,10 @@ public class SelectionManager {
 		io.exportSubnet(listOfElements);
     }
 
+	/**
+	 * Metoda zwraca punkt będący środkiem wszystkich zaznaczonych elementów.
+	 * @return Point - punkt
+	 */
 	public Point getMeanSelectionPoint() {
 		int x = 0;
 		int y = 0;
@@ -1236,6 +1240,10 @@ public class SelectionManager {
 		return new Point(x / points.size(), y / points.size());
 	}
 
+	/**
+	 * Metoda zwraca zaznaczony meta-węzeł.
+	 * @return MetaNode - meta-węzeł
+	 */
 	public MetaNode getSelectedMetanode() {
 		List<MetaNode> metaNodes = getSelectedElementLocations()
 				.stream()

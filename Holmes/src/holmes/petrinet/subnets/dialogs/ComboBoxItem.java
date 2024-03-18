@@ -1,5 +1,8 @@
 package holmes.petrinet.subnets.dialogs;
 
+/**
+ * Klasa generyczna wykorzystywana w combo-boxach składająca się z etykiety (label) i wartości (value).
+ */
 public class ComboBoxItem<T> {
     private T value;
     private String label;

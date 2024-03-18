@@ -6,16 +6,31 @@ import holmes.petrinet.elements.MetaNode;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
+/**
+ * Klasa tworząca dialog, w którym po wybraniu podsieci i kliknięciu przycisku, wykonywana jest
+ * dowolna wcześniej przekazana akcja.
+ */
 public class OnSubnetAction extends BaseDialog {
 
     private JComboBox<ComboBoxItem<Integer>> comboBox;
     private JButton button;
 
+    /**
+     * Konstruktor klasy OnSubnetAction.
+     * @param graphPanel GraphPanel - aktualnie wybrany arkusz
+     * @param title String - tytuł dialogu
+     * @param width int - szerokość okna dialogu
+     * @param height int - wysokość okna dialogu
+     */
     public OnSubnetAction(GraphPanel graphPanel, String title, int width, int height) {
         super(title, width, height);
         initComponents(graphPanel);
     }
 
+    /**
+     * Metoda inicjująca wszystkie komponenty dialogu.
+     * @param graphPanel GraphPanel - aktualnie wybrany arkusz
+     */
     private void initComponents(GraphPanel graphPanel) {
         JPanel panel = new JPanel(null);
         getDialog().add(panel);
@@ -42,6 +57,10 @@ public class OnSubnetAction extends BaseDialog {
         button.setBounds(130, 150, 120, 30);
     }
 
+    /**
+     * Metoda ustawiająca akcję wykonywaną po kliknięciu przycisku.
+     * @param action ActionListener - dowolna akcja
+     */
     public void setAction(ActionListener action) {
         button.addActionListener(action);
     }

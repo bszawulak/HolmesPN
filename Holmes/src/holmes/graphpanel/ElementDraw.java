@@ -1779,6 +1779,10 @@ public final class ElementDraw {
 		}
 	}
 
+	/**
+	 * Rysowanie ikon podsieci na panelu sieci głównej.
+	 * @param g (<b>Graphics2D</b>) obiekt rysujący.
+	 */
 	public static void drawSubnetsIcons(Graphics2D g) {
 		GUIManager overlord = GUIManager.getDefaultGUIManager();
 		if (overlord.getWorkspace().getSelectedSheet().getId() != 0) {
@@ -1803,6 +1807,15 @@ public final class ElementDraw {
 		}
 	}
 
+	/**
+	 * Metoda rysująca napis wyśrodkowany w podanych wymiarach prostokąta
+	 * @param g Graphics - obiekt rysujący
+	 * @param text String - podany tekst
+	 * @param x int - współrzędna x
+	 * @param y int - współrzędna y
+	 * @param width int - szerokość
+	 * @param height int - wysokość
+	 */
 	private static void drawCenteredString(Graphics g, String text, int x, int y, int width, int height) {
 		FontMetrics metrics = g.getFontMetrics(g.getFont());
 		int textX = x + (width - metrics.stringWidth(text)) / 2;

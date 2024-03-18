@@ -9,17 +9,27 @@ import org.jfree.ui.tabbedui.VerticalLayout;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Klasa pozwalająca otworzyć okno właściwości podsieci.
+ */
 public class HolmesSubnetsInfo {
     private final GraphPanel graphPanel;
     private final GUIManager overlord;
 
-    public HolmesSubnetsInfo(GraphPanel graphPanel, GUIManager overlord) {
+    /**
+     * Konstruktor klasy HolmesSubnetsInfo.
+     * @param graphPanel GraphPanel - aktualnie wybrany arkusz
+     */
+    public HolmesSubnetsInfo(GraphPanel graphPanel) {
         this.graphPanel = graphPanel;
-        this.overlord = overlord;
+        this.overlord = GUIManager.getDefaultGUIManager();
     }
 
+    /**
+     * Metoda inicjująca wszystkie komponenty dialogu.
+     * @return JPanel - główny panel okna
+     */
     private JPanel initMainPanel() {
         JPanel mainPanel = new JPanel(null);
         mainPanel.setBounds(0, 0, 600, 480);
@@ -185,16 +195,27 @@ public class HolmesSubnetsInfo {
         return mainPanel;
     }
 
+    /**
+     * Metoda łączy panel właściwości z oknem aplikacji.
+     * @param frame JFrame - okno aplikacji
+     */
     public void bind(JFrame frame) {
         frame.add(initMainPanel());
     }
 
+    /**
+     * Metoda otwiera panel właściwości aktualnie wybranej podsieci.
+     */
     public static void open() {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
         int subnetID = overlord.getWorkspace().getSelectedSheet().getId();
         open(subnetID);
     }
 
+    /**
+     * Metoda otwiera panel właściwości podanej podsieci.
+     * @param subnetID int - id podsieci
+     */
     public static void open(int subnetID) {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
         GraphPanel graphPanel = overlord.subnetsHQ.getGraphPanel(subnetID);
@@ -227,7 +248,7 @@ public class HolmesSubnetsInfo {
         MetaNode metaNode = overlord.subnetsHQ.getMetanode(graphPanel.getSheetId()).orElseThrow();
 
         targetFrame.setTitle(metaNode.getName());
-        HolmesSubnetsInfo holmesSubnetsInfo = new HolmesSubnetsInfo(graphPanel, overlord);
+        HolmesSubnetsInfo holmesSubnetsInfo = new HolmesSubnetsInfo(graphPanel);
         holmesSubnetsInfo.bind(targetFrame);
         targetFrame.setVisible(true);
     }

@@ -409,9 +409,14 @@ public class SubnetsControl {
 		return result;
 	}
 
-	public Optional<MetaNode> getMetanode(int sheetID) {
+	/**
+	 * Metoda zwraca opcjonalny meta-węzeł reprezentujący podaną podsieć
+	 * @param subnetID int - id podsieci
+	 * @return Optional[MetaNode] - opcjonalny meta-węzeł
+	 */
+	public Optional<MetaNode> getMetanode(int subnetID) {
 		return overlord.getWorkspace().getProject().getNodes().stream()
-				.filter(node -> node instanceof MetaNode m && m.getRepresentedSheetID() == sheetID)
+				.filter(node -> node instanceof MetaNode m && m.getRepresentedSheetID() == subnetID)
 				.map(MetaNode.class::cast)
 				.findAny();
 	}
@@ -1104,15 +1109,26 @@ public class SubnetsControl {
 		return true;
 	}
 
+	/**
+	 * Metoda przenosi zaznaczone elementy do wybranej podsieci.
+	 * @param graphPanel GraphPanel - arkusz z zaznaczonymi elementami
+	 * @param subnetSheetId int - id podsieci
+	 * @param createMetaArcs boolean - czy do otoczenia przenoszonych elementów powinny zostać dodane meta-łuki
+	 */
 	public void moveSelectedElementsToSubnet(GraphPanel graphPanel, int subnetSheetId, boolean createMetaArcs) {
 		List<ElementLocation> elements = graphPanel.getSelectionManager().getSelectedElementLocations();
-		moveNodesToSubnet(elements, subnetSheetId);
+		changeNodesSheetID(elements, subnetSheetId);
 		clearMetaArcs(elements);
 		createPortalsAndMetaArcs(elements, getMetanode(subnetSheetId).orElseThrow(), createMetaArcs);
 		graphPanel.getSelectionManager().deselectAllElements();
 	}
 
-	private void moveNodesToSubnet(List<ElementLocation> elements, int subnetSheetId) {
+	/**
+	 * Metoda zmienia sheetID przekazanych elementów.
+	 * @param elements List[ElementLocation] - elementy na których operacja ma zostać wykonana
+	 * @param subnetSheetId int - id podsieci (sheetID)
+	 */
+	private void changeNodesSheetID(List<ElementLocation> elements, int subnetSheetId) {
 		for (ElementLocation element : elements) {
 			element.setSheetID(subnetSheetId);
 			Node parent = element.getParentNode();
@@ -1123,6 +1139,11 @@ public class SubnetsControl {
 		}
 	}
 
+	/**
+	 * Metoda kopiuje zaznaczone elementy do wybranej podsieci bez odwzorowania łuków.
+	 * @param graphPanel GraphPanel - arkusz z zaznaczonymi elementami
+	 * @param subnetSheetId int - id podsieci
+	 */
 	public void copySelectedElementsToSubnet(GraphPanel graphPanel, int subnetSheetId) {
 		List<ElementLocation> elements = graphPanel.getSelectionManager().getSelectedElementLocations();
 		for (ElementLocation location : elements) {
@@ -1130,6 +1151,10 @@ public class SubnetsControl {
 		}
 	}
 
+	/**
+	 * Metoda usuwa wszystkie meta-łuki w przekazanych elementach.
+	 * @param elements List[ElementLocation] - elementy na których operacja ma zostać wykonana
+	 */
 	public void clearMetaArcs(List<ElementLocation> elements) {
 		for (ElementLocation element : elements) {
 			for (Arc arc : element.accessMetaInArcs()) {
@@ -1145,6 +1170,13 @@ public class SubnetsControl {
 		}
 	}
 
+	/**
+	 * Metoda odtwarza otoczenie elementów, które zostały przeniesione do podsieci
+	 * i opcjonalnie dodaje meta-łuki do oryginalnego otoczenia.
+	 * @param elements List[ElementLocation] - przeniesione elementy na których operacja ma zostać wykonana
+	 * @param subnetNode MetaNode - meta-węzeł reprezentujący podsieć do której zostały przeniesione elementy
+	 * @param createMetaArcs boolean - czy do oryginalnego otoczenia przeniesionych elementów powinny zostać dodane meta-łuki
+	 */
 	private void createPortalsAndMetaArcs(List<ElementLocation> elements, MetaNode subnetNode, boolean createMetaArcs) {
 		int currentSheetId = subnetNode.getMySheetID();
 		int subnetSheetId = subnetNode.getRepresentedSheetID();
@@ -1202,11 +1234,17 @@ public class SubnetsControl {
 		}
 	}
 
-	public ElementLocation cloneNodeIntoPortal(ElementLocation selectedEL, int sheetID) {
-		Node parent = selectedEL.getParentNode();
+	/**
+	 * Metoda tworzy portal elementu w wybranej podsieci.
+	 * @param element ElementLocation - element, który ma zostać skopiowany
+	 * @param subnetSheetId int - id podsieci
+	 * @return ElementLocation - utworzony portal
+	 */
+	public ElementLocation cloneNodeIntoPortal(ElementLocation element, int subnetSheetId) {
+		Node parent = element.getParentNode();
 
-		ElementLocation newGraphicsEL = new ElementLocation(sheetID, new Point(selectedEL.getPosition().x, selectedEL.getPosition().y), parent);
-		ElementLocation newNameEL = new ElementLocation(sheetID, new Point(0, 0), parent);
+		ElementLocation newGraphicsEL = new ElementLocation(subnetSheetId, new Point(element.getPosition().x, element.getPosition().y), parent);
+		ElementLocation newNameEL = new ElementLocation(subnetSheetId, new Point(0, 0), parent);
 
 		parent.getElementLocations().add(newGraphicsEL);
 		parent.getTextsLocations(GUIManager.locationMoveType.NAME).add(newNameEL);
@@ -1219,6 +1257,11 @@ public class SubnetsControl {
 		return newGraphicsEL;
 	}
 
+	/**
+	 * Metoda przesuwa wybrane elementy w dolną lewą część arkusza względem pozostałych elementów.
+	 * @param elementsToAlign List[ElementLocation] - wybrane elementy do przesunięcia
+	 * @param otherElements List[ElementLocation] - pozostałe elementy
+	 */
 	public void realignElements(List<ElementLocation> elementsToAlign, List<ElementLocation> otherElements) {
 		int bottom = otherElements.stream()
 				.map(location -> location.getPosition().y)
@@ -1243,6 +1286,10 @@ public class SubnetsControl {
 		}
 	}
 
+	/**
+	 * Metoda usuwa wybraną podsieć.
+	 * @param metaNode MetaNode - meta-węzeł reprezentujący podsieć do usunięcia
+	 */
 	public void deleteSubnet(MetaNode metaNode) {
 		WorkspaceSheet subnetSheet = overlord.getWorkspace().getSheetById(metaNode.getRepresentedSheetID());
 
@@ -1258,6 +1305,10 @@ public class SubnetsControl {
 		overlord.getWorkspace().repaintAllGraphPanels();
 	}
 
+	/**
+	 * Metoda rozpakowuje zaznaczoną podsieć w sieci nadrzędnej.
+	 * @param graphPanel GraphPanel - arkusz na którym został zaznaczony meta-węzeł
+	 */
 	public void unwrapSubnet(GraphPanel graphPanel) {
 		MetaNode metaNode = graphPanel.getSelectionManager().getSelectedMetanode();
 		WorkspaceSheet subnetSheet = overlord.getWorkspace().getSheetById(metaNode.getRepresentedSheetID());
@@ -1265,7 +1316,7 @@ public class SubnetsControl {
 		List<ElementLocation> subnetElements = List.copyOf(getSubnetElementLocations(metaNode.getRepresentedSheetID()));
 		List<ElementLocation> parentNetElements = getSubnetElementLocations(metaNode.getMySheetID()).stream()
 						.filter(location -> location.getParentNode() != metaNode).toList();
-		moveNodesToSubnet(subnetElements, metaNode.getMySheetID());
+		changeNodesSheetID(subnetElements, metaNode.getMySheetID());
 		realignElements(subnetElements, parentNetElements);
 		graphPanel.adjustOriginSize();
 
@@ -1274,6 +1325,10 @@ public class SubnetsControl {
 		overlord.getWorkspace().repaintAllGraphPanels();
 	}
 
+	/**
+	 * Metoda tworzy podsieć z zaznaczonych elementów.
+	 * @param graphPanel GraphPanel - arkusz z zaznaczonymi elementami
+	 */
 	public void createSubnetFromSelectedElements(GraphPanel graphPanel) {
 		int newSheetId = overlord.getWorkspace().newTab(
 				true,
@@ -1288,6 +1343,11 @@ public class SubnetsControl {
 		overlord.getWorkspace().repaintAllGraphPanels();
 	}
 
+	/**
+	 * Metoda scala portale tych samych węzłów.
+	 * @param clickedELoc GraphPanel - kliknięty element, do którego zostaną dodane łuki z pozostałych portali
+	 * @param selectedELoc List[ElementLocation] - pozostałe portale
+	 */
 	public void mergePortals(ElementLocation clickedELoc, List<ElementLocation> selectedELoc) {
 		GraphPanel graphPanel = getGraphPanel(clickedELoc.getSheetID());
 		selectedELoc.remove(clickedELoc);
@@ -1333,7 +1393,13 @@ public class SubnetsControl {
 		graphPanel.getSelectionManager().selectElementLocation(clickedELoc);
 	}
 
-	public ElementLocation cloneLocationNearMetanode(ElementLocation location, int subnetID) {
+	/**
+	 * Metoda tworzy portal elementu w pobliżu meta-węzła reprezentującego wybraną podsieć.
+	 * @param element ElementLocation - element, który ma zostać skopiowany
+	 * @param subnetID int - id wybranej podsieci
+	 * @return ElementLocation - utworzony portal
+	 */
+	public ElementLocation cloneLocationNearMetanode(ElementLocation element, int subnetID) {
 		Random gen = new Random();
 		int angle = gen.nextInt(360);
 		int radius = gen.nextInt(40) + 60;
@@ -1342,11 +1408,16 @@ public class SubnetsControl {
 		int x = Math.toIntExact(Math.round(radius * Math.cos(Math.toRadians(angle)) + p.x));
 		int y = Math.toIntExact(Math.round(radius * Math.sin(Math.toRadians(angle)) + p.y));
 
-		ElementLocation newLocation = overlord.subnetsHQ.cloneNodeIntoPortal(location, metanode.getMySheetID());
+		ElementLocation newLocation = overlord.subnetsHQ.cloneNodeIntoPortal(element, metanode.getMySheetID());
 		newLocation.setPosition(new Point(x, y));
 		return newLocation;
 	}
 
+	/**
+	 * Metoda naprawia meta-łuki wybranego meta-węzła poprzez dodanie w jego pobliżu wraz z meta-łukami portali
+	 * węzłów, które znajdują się zarówno w podsieci oraz nadsieci.
+	 * @param metaNode MetaNode - meta-węzeł, którego meta-łuki mają zostać naprawione
+	 */
 	public void fixMetaArcsNumber(MetaNode metaNode) {
 		Set<Node> nodes = getSubnetElementLocations(metaNode.getMySheetID()).stream()
 				.map(ElementLocation::getParentNode).collect(Collectors.toSet());

@@ -137,7 +137,7 @@ public class HolmesNodeInfo extends JFrame {
 		GraphPanel graphPanel = overlord.getWorkspace().getProject().getGraphPanel(metanode.getRepresentedSheetID());
 		initializeCommon();
 
-		HolmesSubnetsInfo subnetsInfo = new HolmesSubnetsInfo(graphPanel, overlord);
+		HolmesSubnetsInfo subnetsInfo = new HolmesSubnetsInfo(graphPanel);
 		subnetsInfo.bind(this);
 	}
 	

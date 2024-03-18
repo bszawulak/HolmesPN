@@ -11,10 +11,22 @@ import holmes.petrinet.subnets.dialogs.OnSubnetAction;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Klasa użytkowa grupująca metody, które wywołują dialogi powiązane z podsieciami.
+ */
 public class SubnetsActions {
+
+    /**
+     * Konstruktor prywatny, ponieważ klasa składa się wyłącznie z metod statycznych.
+     */
     private SubnetsActions() {
     }
 
+    /**
+     * Metoda otwiera dialog, który pozwala na przeniesienie zaznaczonych elementów do podsieci.
+     * @param graphPanel GraphPanel - aktualnie wybrany arkusz
+     * @param createMetaArcs boolean - czy tworzyć meta-łuki pomiędzy otoczeniem przenoszonych elementów a meta-węzłem
+     */
     public static void openTransferElementsToSubnet(GraphPanel graphPanel, boolean createMetaArcs) {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
 
@@ -37,6 +49,10 @@ public class SubnetsActions {
         onSubnetActionDialog.open();
     }
 
+    /**
+     * Metoda otwiera dialog, który pozwala na skopiowanie zaznaczonych elementów do podsieci.
+     * @param graphPanel GraphPanel - aktualnie wybrany arkusz
+     */
     public static void openCopyElementsToSubnet(GraphPanel graphPanel) {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
 
@@ -59,6 +75,10 @@ public class SubnetsActions {
     }
 
 
+    /**
+     * Metoda otwiera dialog, który pozwala na dodanie istniejącego elementu do podsieci wybranego arkusza.
+     * @param graphPanel GraphPanel - aktualnie wybrany arkusz
+     */
     public static void addExistingElement(GraphPanel graphPanel) {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
 

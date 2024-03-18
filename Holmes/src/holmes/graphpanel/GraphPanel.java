@@ -823,10 +823,13 @@ public class GraphPanel extends JComponent {
 		return new ArcPopupMenu(this, arc, pne);
 	}
 
+	/**
+	 * Metoda zwracająca aktualny punkt w którym znajduje się kursor
+	 * @return Point - punkt
+	 */
 	public Point getMousePt() {
 		return mousePt;
 	}
-
 
 	/**
 	 * WTH?
@@ -909,6 +912,9 @@ public class GraphPanel extends JComponent {
 		this.originSize = originSize;
 	}
 
+	/**
+	 * Metoda powiększająca panel jeśli istnieją elementy, których współrzędne wykraczają poza aktualne granice
+	 */
 	public void adjustOriginSize() {
 		int margin = 50;
 		List<ElementLocation> elements = overlord.subnetsHQ.getSubnetElementLocations(sheetId);
@@ -1252,6 +1258,11 @@ public class GraphPanel extends JComponent {
 			e.getComponent().repaint();
 		}
 
+		/**
+		 * Metoda zwracająca id podsieci, której ikona została kliknięta.
+		 * @param mousePoint Point - kliknięty punkt
+		 * @return Integer - id podsieci lub null jeśl nie kliknięto w żadną ikonę
+		 */
 		private Integer getPossiblyClickedSubnetID(Point mousePoint) {
 			if (overlord.getWorkspace().getSelectedSheet().getId() != 0) {
 				return null;

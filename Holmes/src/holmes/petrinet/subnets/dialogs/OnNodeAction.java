@@ -9,6 +9,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.List;
 
+/**
+ * Klasa tworząca dialog, w którym po wybraniu miejsca/tranzycji i kliknięciu przycisku, wykonywana jest
+ * dowolna wcześniej przekazana akcja.
+ */
 public class OnNodeAction extends BaseDialog {
 
     private JComboBox<ComboBoxItem<Place>> placeComboBox;
@@ -17,11 +21,22 @@ public class OnNodeAction extends BaseDialog {
 
     private JCheckBox checkBox;
 
+    /**
+     * Konstruktor klasy OnNodeAction.
+     * @param graphPanel GraphPanel - aktualnie wybrany arkusz
+     * @param title String - tytuł dialogu
+     * @param width int - szerokość okna dialogu
+     * @param height int - wysokość okna dialogu
+     */
     public OnNodeAction(GraphPanel graphPanel, String title, int width, int height) {
         super(title, width, height);
         initComponents(graphPanel);
     }
 
+    /**
+     * Metoda inicjująca wszystkie komponenty dialogu.
+     * @param graphPanel GraphPanel - aktualnie wybrany arkusz
+     */
     private void initComponents(GraphPanel graphPanel) {
         JPanel panel = new JPanel(null);
         getDialog().add(panel);
@@ -136,6 +151,10 @@ public class OnNodeAction extends BaseDialog {
         button.setBounds(190, 245, 150, 30);
     }
 
+    /**
+     * Metoda ustawiająca akcję wykonywaną po kliknięciu przycisku.
+     * @param action ActionListener - dowolna akcja
+     */
     public void setAction(ActionListener action) {
         button.addActionListener(action);
     }
