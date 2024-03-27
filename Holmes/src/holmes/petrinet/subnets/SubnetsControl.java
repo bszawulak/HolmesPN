@@ -1341,6 +1341,7 @@ public class SubnetsControl {
 		realignElements(getSubnetElementLocations(newSheetId), List.of());
 		getGraphPanel(newSheetId).adjustOriginSize();
 		overlord.getWorkspace().repaintAllGraphPanels();
+		overlord.markNetChange();
 	}
 
 	/**
@@ -1391,6 +1392,7 @@ public class SubnetsControl {
 		graphPanel.getSelectionManager().deselectElementLocation(clickedELoc);
 		graphPanel.getSelectionManager().deleteAllSelectedElements();
 		graphPanel.getSelectionManager().selectElementLocation(clickedELoc);
+		overlord.markNetChange();
 	}
 
 	/**
