@@ -9,6 +9,8 @@ import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 
+import javax.swing.*;
+
 /**
  * Klasa tworząca wpisy w menu kontekstowym dla łuków sieci.
  */
@@ -22,8 +24,11 @@ public class ArcPopupMenu extends NodePopupMenu {
 	 */
 	public ArcPopupMenu(GraphPanel graphPanel, Arc a, PetriNetElementType pne) {
 		super(graphPanel, null, pne, a);
-		
-		this.addMenuItem("Create break point here", "", new ActionListener() {
+
+		boolean notMetaArc = !a.getArcType().equals(Arc.TypeOfArc.META_ARC);
+		JMenuItem menuItem;
+
+		menuItem = this.createMenuItem("Create break point here", "", null, new ActionListener() {
 			Arc arc = null;
 			public void actionPerformed(ActionEvent e) {
 				Point breakP = getGraphPanel().arcNewBreakPoint;
@@ -37,9 +42,11 @@ public class ArcPopupMenu extends NodePopupMenu {
 				this.arc = arc;
 				return this;
 		    }
-		}.yesWeCan(a) ); 
-		
-		this.addMenuItem("Remove break point", "", new ActionListener() {
+		}.yesWeCan(a));
+		menuItem.setEnabled(notMetaArc);
+		add(menuItem);
+
+		menuItem = this.createMenuItem("Remove break point", "", null, new ActionListener() {
 			Arc arc = null;
 			public void actionPerformed(ActionEvent e) {
 				Point breakP = getGraphPanel().arcNewBreakPoint;
@@ -53,9 +60,11 @@ public class ArcPopupMenu extends NodePopupMenu {
 				this.arc = arc;
 				return this;
 		    }
-		}.yesWeCan(a) );
-		
-		this.addMenuItem("Remove ALL break points", "", new ActionListener() {
+		}.yesWeCan(a));
+		menuItem.setEnabled(notMetaArc);
+		add(menuItem);
+
+		menuItem = this.createMenuItem("Remove ALL break points", "", null, new ActionListener() {
 			Arc arc = null;
 			public void actionPerformed(ActionEvent e) {
 				arc.clearBreakPoints();
@@ -65,6 +74,8 @@ public class ArcPopupMenu extends NodePopupMenu {
 				this.arc = arc;
 				return this;
 		    }
-		}.yesWeCan(a) );
+		}.yesWeCan(a));
+		menuItem.setEnabled(notMetaArc);
+		add(menuItem);
 	}
 }

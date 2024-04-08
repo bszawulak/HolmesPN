@@ -5,16 +5,14 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.GUIController;
-import holmes.graphpanel.popupmenu.ArcPopupMenu;
-import holmes.graphpanel.popupmenu.MetaNodePopupMenu;
-import holmes.graphpanel.popupmenu.PlacePopupMenu;
-import holmes.graphpanel.popupmenu.SheetPopupMenu;
-import holmes.graphpanel.popupmenu.TransitionPopupMenu;
+import holmes.graphpanel.popupmenu.*;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
@@ -40,8 +38,8 @@ public class GraphPanel extends JComponent {
 	private static final int meshSize = 20;
 	private GUIManager overlord;
 	private PetriNet petriNet;
-	private ArrayList<Node> nodes = new ArrayList<Node>();
-	private ArrayList<Arc> arcs = new ArrayList<Arc>();
+	private ArrayList<Node> nodes = new ArrayList<>();
+	private ArrayList<Arc> arcs = new ArrayList<>();
 	private SelectionManager selectionManager;
 	private Point mousePt;// = new Point(WIDE / 2, HIGH / 2);
 	private DrawModes drawMode = DrawModes.POINTER;
@@ -241,6 +239,7 @@ public class GraphPanel extends JComponent {
 		try {
 			drawPetriNet(g2d);
 		} catch (Exception e) {
+			e.printStackTrace();
 			overlord.log("CRITICAL error while drawing net. (Which should not happen. Obviously.) "
 					+ "Loaded file probably corrupted (if after project loading). Restarting program.", "error", true);
 			overlord.reset.emergencyRestart();
@@ -286,6 +285,8 @@ public class GraphPanel extends JComponent {
 				counterHorizontal++;
 			}
 		}
+
+		ElementDraw.drawSubnetsIcons(g2d);
 		
 		ElementDrawSettings eds = new ElementDrawSettings();
 		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().getSimNetType() == SimulatorGlobals.SimNetType.COLOR) {
@@ -828,7 +829,15 @@ public class GraphPanel extends JComponent {
 		arcNewBreakPoint = (Point) mousePt2.clone(); //będzie potrzebne (opcjonalnie) w oknie kontekstowycm
 		return new ArcPopupMenu(this, arc, pne);
 	}
-		
+
+	/**
+	 * Metoda zwracająca aktualny punkt w którym znajduje się kursor
+	 * @return Point - punkt
+	 */
+	public Point getMousePt() {
+		return mousePt;
+	}
+
 	/**
 	 * WTH?
 	 * @return (<b>boolean</b>)
@@ -909,7 +918,20 @@ public class GraphPanel extends JComponent {
 	public void setOriginSize(Dimension originSize) {
 		this.originSize = originSize;
 	}
-	
+
+	/**
+	 * Metoda powiększająca panel jeśli istnieją elementy, których współrzędne wykraczają poza aktualne granice
+	 */
+	public void adjustOriginSize() {
+		int margin = 50;
+		List<ElementLocation> elements = overlord.subnetsHQ.getSubnetElementLocations(sheetId);
+		int width = elements.stream().map(location -> location.getPosition().x).max(Comparator.naturalOrder()).orElseThrow() + margin;
+		int height = elements.stream().map(location -> location.getPosition().y).max(Comparator.naturalOrder()).orElseThrow() + margin;
+		originSize.width = Math.max(width, originSize.width);
+		originSize.height = Math.max(height, originSize.height);
+		setZoom(zoom, zoom);
+	}
+
 	//***********************************************************************************
 	//***********************************************************************************
 	//***********************************************************************************
@@ -1002,9 +1024,20 @@ public class GraphPanel extends JComponent {
 				if(arcBreakPoint != null)
 					return;
 			}
-			
+
 			// nie kliknięto ani w Node ani w Arc
 			if (el == null && a == null) {
+				Integer clickedSubnetID = getPossiblyClickedSubnetID(mousePt);
+				if (clickedSubnetID != null) {
+					if (e.getButton() == MouseEvent.BUTTON1) {
+						int tabID = overlord.getWorkspace().accessSheetsIDtable().indexOf(clickedSubnetID);
+						overlord.getTabbedWorkspace().setSelectedIndex(tabID);
+					} else if (e.getButton() == MouseEvent.BUTTON3) {
+						SubnetIconPopupMenu.createAndShow(e, overlord.getWorkspace().getSelectedSheet().getGraphPanel(), clickedSubnetID);
+					}
+					return;
+				}
+
 				if (e.getButton() == MouseEvent.BUTTON3) { //menu kontekstowe
 					if (getDrawMode() == DrawModes.POINTER)
 						getSheetPopupMenu(PetriNetElementType.UNKNOWN).show(e);
@@ -1230,6 +1263,31 @@ public class GraphPanel extends JComponent {
 				}
 			}
 			e.getComponent().repaint();
+		}
+
+		/**
+		 * Metoda zwracająca id podsieci, której ikona została kliknięta.
+		 * @param mousePoint Point - kliknięty punkt
+		 * @return Integer - id podsieci lub null jeśl nie kliknięto w żadną ikonę
+		 */
+		private Integer getPossiblyClickedSubnetID(Point mousePoint) {
+			if (overlord.getWorkspace().getSelectedSheet().getId() != 0) {
+				return null;
+			}
+
+			int x = 20;
+			int y = 20;
+			List<MetaNode> metaNodes = overlord.getWorkspace().getProject().getMetaNodes().stream()
+					.sorted(Comparator.comparingInt(MetaNode::getMySheetID).thenComparing(MetaNode::getRepresentedSheetID))
+					.toList();
+			for (MetaNode metaNode : metaNodes) {
+				Rectangle subnetIcon = new Rectangle(x, y, 40, 40);
+				if (subnetIcon.contains(mousePoint)) {
+					return metaNode.getRepresentedSheetID();
+				}
+				x += 60;
+			}
+			return null;
 		}
 
 		private void _putPlace() {
@@ -1503,10 +1561,10 @@ public class GraphPanel extends JComponent {
 							}
 							clearDrawnArc();
 
-							int arcSheet = arc.getStartLocation().getSheetID();
-							if(arcSheet > 0) {
-								overlord.subnetsHQ.addMetaArc(arc);
-							}
+//							int arcSheet = arc.getStartLocation().getSheetID();
+//							if(arcSheet > 0) {
+//								overlord.subnetsHQ.addMetaArc(arc);
+//							}
 							overlord.reset.reset2ndOrderData(true);
 							overlord.markNetChange();
 						}

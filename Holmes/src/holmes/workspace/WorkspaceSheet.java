@@ -29,11 +29,10 @@ public class WorkspaceSheet extends JScrollPane {
 
 	/**
 	 * Konstruktor obiektu klasy WorkspaceSheet
-	 * @param text String - opis
 	 * @param ID int - identyfikator
 	 * @param work Workspace - referencja na obiekt inicjujący i przechowujący
 	 */
-	public WorkspaceSheet(String text, int ID, Workspace work) {
+	public WorkspaceSheet(int ID, Workspace work) {
 		workspace = work;
 
 		//setMinimumSize(new Dimension(100, 100));  //....

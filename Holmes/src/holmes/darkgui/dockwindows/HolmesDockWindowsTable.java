@@ -6238,11 +6238,6 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda odświeża zawartość comboBoxów dla niekanonicznych "inwariantów".
      */
     public void refreshSubSurCombos() {
-        if(t_invariantsMatrix == null)
-            return;
-        //if(t_invariantsMatrix.isEmpty()) //nie ma co odświeżać
-        //    return;
-
         ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
 
         ArrayList<Integer> sursInv = new ArrayList<>();

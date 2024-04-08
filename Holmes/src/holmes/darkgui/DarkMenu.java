@@ -17,6 +17,7 @@ import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesInvariantsViewer;
+import holmes.windows.HolmesSubnetsInfo;
 import holmes.windows.decompositions.HolmesMergeNets;
 import holmes.windows.managers.HolmesSPNmanager;
 import holmes.windows.managers.HolmesSSAwindowManager;
@@ -380,6 +381,11 @@ public class DarkMenu extends JMenuBar {
 		resizePanelsItem.getAccessibleContext().setAccessibleDescription("Resize all panels to better fit the contained subnet");
 		resizePanelsItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().subnetsGraphics.resizePanels());
 		hierachyMenu.add(resizePanelsItem);
+
+		JMenuItem showDetailsItem = new JMenuItem("Show details", KeyEvent.VK_1);
+		showDetailsItem.getAccessibleContext().setAccessibleDescription("Show details about current subnet");
+		showDetailsItem.addActionListener(arg0 -> HolmesSubnetsInfo.open());
+		hierachyMenu.add(showDetailsItem);
 		
 		//*********************************************************************************************
 		//***********************************                 *****************************************

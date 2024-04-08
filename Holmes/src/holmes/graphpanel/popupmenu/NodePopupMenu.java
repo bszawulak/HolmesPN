@@ -2,13 +2,14 @@ package holmes.graphpanel.popupmenu;
 
 import java.io.Serial;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
+import holmes.petrinet.subnets.SubnetsActions;
 import holmes.windows.HolmesNodeInfo;
 import holmes.windows.xtpn.HolmesNodeInfoXTPN;
 
@@ -62,14 +63,7 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 			});
 		}
 		
-		boolean proceed = true;
-		if(pne == PetriNetElementType.ARC) {
-			Arc arc = (Arc)pneObject;
-			if(arc.getArcType() == TypeOfArc.META_ARC)
-				proceed = false;
-		}
-		
-		if(pne != PetriNetElementType.META && proceed) {
+		if(pne != PetriNetElementType.META) {
 			this.addMenuItem("Delete", "cross.png", e -> {
 				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
 						"Operation impossible when simulator is working.", "Warning"))
@@ -90,13 +84,46 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 				}
 			});
 		}
-		this.addSeparator();
+
 		if(pne != PetriNetElementType.META) {
+			this.addSeparator();
 			this.add(cutMenuItem);
 			this.add(copyMenuItem);
 			this.add(pasteMenuItem);
 		}
-		
+
+		if (graphPanel.getSelectionManager().getSelectedElementLocations().size() > 1 && graphPanel.getSelectionManager().getSelectedElementLocations().stream()
+				.allMatch(location -> eloc.getParentNode() == location.getParentNode())) {
+			this.addMenuItem("Merge portals", "", e ->
+					GUIManager.getDefaultGUIManager().subnetsHQ.mergePortals(eloc, graphPanel.getSelectionManager().getSelectedElementLocations())
+			);
+		}
+
+		if (graphPanel.getSelectionManager().getSelectedElementLocations().stream()
+				.map(ElementLocation::getParentNode)
+				.filter(MetaNode.class::isInstance)
+				.findAny().isEmpty() && !graphPanel.getSelectionManager().getSelectedElementLocations().isEmpty()
+		) {
+			this.addSeparator();
+
+			this.addMenuItem("Create subnet", "", e ->
+					GUIManager.getDefaultGUIManager().subnetsHQ.createSubnetFromSelectedElements(graphPanel)
+			);
+
+			if (GUIManager.getDefaultGUIManager().subnetsHQ.getSubnetElementLocations(graphPanel.getSheetId()).stream()
+					.anyMatch(location -> location.getParentNode() instanceof MetaNode)) {
+				this.addMenuItem("Transfer to subnet (with M-Arcs)", "", e ->
+						SubnetsActions.openTransferElementsToSubnet(graphPanel, true)
+				);
+				this.addMenuItem("Transfer to subnet (no M-Arcs)", "", e ->
+						SubnetsActions.openTransferElementsToSubnet(graphPanel, false)
+				);
+				this.addMenuItem("Copy into subnet", "", e ->
+						SubnetsActions.openCopyElementsToSubnet(graphPanel)
+				);
+			}
+		}
+
 		this.addSeparator();
 	}
 }

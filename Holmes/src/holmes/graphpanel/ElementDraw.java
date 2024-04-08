@@ -5,6 +5,8 @@ import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 import javax.imageio.ImageIO;
@@ -71,12 +73,12 @@ public final class ElementDraw {
 	 */
 	@SuppressWarnings("UnusedReturnValue")
 	public static Graphics2D drawElement(Node node, Graphics2D g, int sheetId, ElementDrawSettings eds) {
-		if(node instanceof Transition) { 
+		if(node instanceof Transition) {
 			Transition trans = (Transition)node;
 			Color portalColor = new Color(224,224,224);
             Color normalColor = new Color(224,224,224);
 			Color tpnNormalColor = Color.GRAY;
-			
+
 			if(eds.nonDefColors) {
 				normalColor = transDefColor;
 				portalColor = transDefColor;
@@ -91,12 +93,12 @@ public final class ElementDraw {
 					}
 				}
 			}
-			
+
 			for (ElementLocation el : trans.getNodeLocations(sheetId)) { //rysowanie tranzycji
 				int radius = trans.getRadius();
 				g.setColor(Color.WHITE);
 				Rectangle nodeBounds = new Rectangle(el.getPosition().x - radius, el.getPosition().y - radius, radius * 2, radius * 2);
-				
+
 				if(eds.view3d) {
 					Color backup = g.getColor();
 					g.setColor(Color.LIGHT_GRAY);
@@ -111,7 +113,7 @@ public final class ElementDraw {
 					g.fillRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					g.setColor(backup);
 				}
-				
+
 				if (!trans.isLaunching()) { //jeśli nieaktywna
 					if (trans.drawGraphBoxT.isGlowed_MTC()) { //jeśli ma się świecić jako MCT
 						g.setColor(EditorResources.glowMTCTransitonColorLevel1);
@@ -150,16 +152,18 @@ public final class ElementDraw {
 						g.setStroke(EditorResources.glowStrokeLevel3);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 					}
-					
+
 					//NIGDY ELSE!:
 					if (el.isSelected()) { // && !el.isPortalSelected()) {  //kliknięto dany ElementLocation
 						//błękitna poświata:
 						g.setColor(EditorResources.selectionColorLevel1);
 						g.setStroke(EditorResources.glowStrokeLevel1);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
 						g.setColor(EditorResources.selectionColorLevel2);
 						g.setStroke(EditorResources.glowStrokeLevel2);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
+
 						g.setColor(EditorResources.selectionColorLevel3);
 						g.setStroke(EditorResources.glowStrokeLevel3);
 						g.drawRect(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
@@ -402,7 +406,7 @@ public final class ElementDraw {
 			//Color portalSelColor = EditorResources.selectionColorLevel3;
             //Color subNetColor = EditorResources.glowMTCTransitonColorLevel3;
 			Color normalColor = Color.WHITE;
-			
+
 			if(eds.nonDefColors) {
 				normalColor = placeDefColor;
 				portalColor = placeDefColor;
@@ -417,9 +421,9 @@ public final class ElementDraw {
 			}
 			
 			for (ElementLocation el : node.getNodeLocations(sheetId)) {
-				Rectangle nodeBounds = new Rectangle(el.getPosition().x - place.getRadius(), el.getPosition().y - place.getRadius(), 
+				Rectangle nodeBounds = new Rectangle(el.getPosition().x - place.getRadius(), el.getPosition().y - place.getRadius(),
 						place.getRadius() * 2, place.getRadius() * 2);
-				
+
 				if(eds.view3d) {
 					Color backup = g.getColor();
 					g.setColor(Color.DARK_GRAY);
@@ -457,7 +461,7 @@ public final class ElementDraw {
 					g.setColor(EditorResources.selectionColorLevel3);
 					g.setStroke(EditorResources.glowStrokeLevel3);
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-					
+
 					try {
 						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), lightSky, false);
 					} catch (Exception ex) {
@@ -488,7 +492,7 @@ public final class ElementDraw {
 					g.setColor(normalColor);
 				}
 				g.fillOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
-				
+
 				if(!eds.nonDefColors) {
 					Color backup = g.getColor(); // te 4 linie: lekki trojwymiar, ladniejsza
 					g.setColor(Color.white); //najpierw na biało ZARYSUJ łuk wewnątrz:
@@ -512,7 +516,7 @@ public final class ElementDraw {
 					g.setStroke(new BasicStroke(1.5F));
 					g.drawOval(nodeBounds.x, nodeBounds.y, nodeBounds.width, nodeBounds.height);
 				}
-				
+
 				if(place.isInvisible()) {
 					try {
 						//BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/invisibility.png"));
@@ -554,7 +558,7 @@ public final class ElementDraw {
 
 					g.setFont(new Font("TimesRoman", Font.PLAIN, 7));
 				}
-				
+
 				if(place.qSimBoxP.qSimDrawed && el.qSimDrawed) {
 					if(place.qSimBoxP.qSimTokens == 0) {
 						g.setColor(place.qSimBoxP.qSimOvalColor);
@@ -565,7 +569,7 @@ public final class ElementDraw {
 					} else {
 						if(place.qSimBoxP.qSimDrawStats) {
 							g.setStroke(new BasicStroke(1F));
-							
+
 							g.setColor(place.qSimBoxP.qSimFillColor);
 							g.fillRect(nodeBounds.x+35, nodeBounds.y-25, 10, nodeBounds.height);
 							
@@ -837,10 +841,10 @@ public final class ElementDraw {
 			endP = (Point)arc.getEndLocation().getPosition().clone();
 			endRadius = arc.getEndLocation().getParentNode().getRadius();// * zoom / 100;
 		}
-		
+
 		int distX = Tools.absolute(startP.x - endP.x);
 		int distY = Tools.absolute(startP.y - endP.y);
-		
+
 		if(distX == distY) {
 			startP.setLocation(startP.x+1, startP.y); //yes, this magic is essential
 		}
@@ -851,12 +855,12 @@ public final class ElementDraw {
 			incFactorM = 6;
 			incFactorRadius = 15;
 		}
-		
+
 		Point tmpStart = (Point)startP.clone();
 		if(breaks>0) {
 			tmpStart = breakPoints.get(breaks-1);
 		}
-		
+
 		double alfa = endP.x - tmpStart.x + endP.y - tmpStart.y == 0 ? 0 : Math.atan(((double) endP.y - (double) tmpStart.y) / ((double) endP.x - (double) tmpStart.x));
 		double alfaCos = Math.cos(alfa);
 		double alfaSin = Math.sin(alfa);
@@ -869,7 +873,7 @@ public final class ElementDraw {
 		double yl = endP.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign - M * alfaCos;
 		double xk = endP.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign - M * alfaSin;
 		double yk = endP.y + (endRadius + 10 + incFactorRadius) * alfaSin * sign + M * alfaCos;
-	
+
 		if (arc.getSelected()) {
 			g.setColor(EditorResources.selectionColorLevel3);
 			g.setStroke(EditorResources.glowStrokeArc);
@@ -878,13 +882,13 @@ public final class ElementDraw {
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);
 		}
 
-        if (arc.isGlowed_Sub() && breaks == 0) {
-            g.setColor(EditorResources.glowMTCTransitonColorLevel3);
-            g.setStroke(EditorResources.glowStrokeArc);
-            g.drawLine(startP.x, startP.y, endP.x, endP.y);
-            g.drawPolygon(new int[] { (int) xp, (int) xl, (int) xk },
-                    new int[] { (int) yp, (int) yl, (int) yk }, 3);
-        }
+		if (arc.isGlowed_Sub() && breaks == 0) {
+			g.setColor(EditorResources.glowMTCTransitonColorLevel3);
+			g.setStroke(EditorResources.glowStrokeArc);
+			g.drawLine(startP.x, startP.y, endP.x, endP.y);
+			g.drawPolygon(new int[] { (int) xp, (int) xl, (int) xk },
+					new int[] { (int) yp, (int) yl, (int) yk }, 3);
+		}
 
 		g.setStroke(new BasicStroke(1.0f));
 		if (arc.getIsCorect()) {
@@ -897,7 +901,7 @@ public final class ElementDraw {
 			g.setColor(new Color(176, 23, 31));
 
 		//NIE-KLIKNIĘTY ŁUK
-		if (arc.getPairedArc() == null || arc.isMainArcOfPair()) { 
+		if (arc.getPairedArc() == null || arc.isMainArcOfPair()) {
 			//czyli nie rysuje kreski tylko wtedy, jeśli to podrzędny łuk w ramach read-arc - żeby nie dublować
 			if(arc.getArcType() == TypeOfArc.META_ARC) {
 				g.setColor( new Color(30, 144, 255, 150));
@@ -1014,7 +1018,7 @@ public final class ElementDraw {
 			alfaSin = Math.sin(alfa);
 			//double sign = endP.x < arc.getStartLocation().getPosition().x ? 1 : -1;
 			sign = endP.x < startP.x ? 1 : -1;
-			//M = 4 + incFactorM;
+			M = 4 + incFactorM;
 			xp = endP.x + endRadius * alfaCos * sign;
 			yp = endP.y + endRadius * alfaSin * sign;
 			xl = endP.x + (endRadius + 10 + incFactorRadius) * alfaCos * sign + M * alfaSin;
@@ -1088,16 +1092,16 @@ public final class ElementDraw {
 					new int[] { (int) newyp, (int) yl, (int) yk }, 3);
 		} else if (arc.getArcType() == TypeOfArc.EQUAL) {
 			int xPos = (int) ((xl + xk)/2);
-	    	int yPos = (int) ((yl + yk)/2);
-	    	int xT = (int) ((xPos - xp)/3.14);
-	    	int yT = (int) ((yPos - yp)/3.14);
-	    	
-	    	g.fillOval(xPos-4-xT, yPos-4-yT, 8, 8);
-	    	
-	    	xT = (int) ((xPos - xp));
-	    	yT = (int) ((yPos - yp));
-	    	
-	    	g.fillOval(xPos-4+xT, yPos-4+yT, 8, 8);
+			int yPos = (int) ((yl + yk)/2);
+			int xT = (int) ((xPos - xp)/3.14);
+			int yT = (int) ((yPos - yp)/3.14);
+
+			g.fillOval(xPos-4-xT, yPos-4-yT, 8, 8);
+
+			xT = (int) ((xPos - xp));
+			yT = (int) ((yPos - yp));
+
+			g.fillOval(xPos-4+xT, yPos-4+yT, 8, 8);
 		} else if (arc.getArcType() == TypeOfArc.META_ARC) {
 			double Mmeta = 6;
 			double xpmeta = endP.x + (endRadius-10) * alfaCos * sign;
@@ -1125,18 +1129,18 @@ public final class ElementDraw {
 		if (arc.getWeight() > 1 || arc.getArcType() == TypeOfArc.COLOR) {
 			if(!arc.accessBreaks().isEmpty()) {
 				Point breakP = arc.accessBreaks().get(0);
-				
+
 				g.setFont(new Font("Tahoma", Font.PLAIN, 18));
 				g.drawString(wTxt, breakP.x, breakP.y - 10);
 			} else {
 				int x_weight = (endP.x + startP.x) / 2;
 				int y_weight = (endP.y + startP.y) / 2;
-				
+
 				//double atang = Math.atan2(p2.y-p1.y,p2.x-p1.x)*180.0/Math.PI;
 				double atang = Math.toDegrees(Math.atan2(endP.y-startP.y,endP.x-startP.x));
 				if(atang < 0){
 					atang += 360;
-			    }
+				}
 				if(atang == 90 || atang == 270) { //pionowo
 					x_weight = x_weight + 10;
 				}
@@ -1149,7 +1153,7 @@ public final class ElementDraw {
 				}
 
 				g.setFont(new Font("Tahoma", Font.PLAIN, 18));
-				
+
 				if(arc.getArcType() == TypeOfArc.COLOR) {
 					//test długości ciągu wag:
 					int aW0 = arc.getColorWeight(0);
@@ -1772,7 +1776,51 @@ public final class ElementDraw {
 			textLayout3.draw(g, (int) a + 10, (int) b);
 		}
 	}
-	
+
+	/**
+	 * Rysowanie ikon podsieci na panelu sieci głównej.
+	 * @param g (<b>Graphics2D</b>) obiekt rysujący.
+	 */
+	public static void drawSubnetsIcons(Graphics2D g) {
+		GUIManager overlord = GUIManager.getDefaultGUIManager();
+		if (overlord.getWorkspace().getSelectedSheet().getId() != 0) {
+			return;
+		}
+		int x = 20;
+		int y = 20;
+		List<MetaNode> metaNodes = overlord.getWorkspace().getProject().getMetaNodes().stream()
+				.sorted(Comparator.comparingInt(MetaNode::getMySheetID).thenComparing(MetaNode::getRepresentedSheetID))
+				.toList();
+		for (MetaNode metaNode : metaNodes) {
+			if (metaNode.getMySheetID() == 0) {
+				g.setColor(new Color(94, 179, 48));
+			} else {
+				g.setColor(new Color(73, 86, 204));
+			}
+			g.fillRect(x, y, 40, 40);
+			g.setColor(Color.BLACK);
+			String label = String.format("%d-%d", metaNode.getMySheetID(), metaNode.getRepresentedSheetID());
+			drawCenteredString(g, label, x, y + 40, 40, 20);
+			x += 60;
+		}
+	}
+
+	/**
+	 * Metoda rysująca napis wyśrodkowany w podanych wymiarach prostokąta
+	 * @param g Graphics - obiekt rysujący
+	 * @param text String - podany tekst
+	 * @param x int - współrzędna x
+	 * @param y int - współrzędna y
+	 * @param width int - szerokość
+	 * @param height int - wysokość
+	 */
+	private static void drawCenteredString(Graphics g, String text, int x, int y, int width, int height) {
+		FontMetrics metrics = g.getFontMetrics(g.getFont());
+		int textX = x + (width - metrics.stringWidth(text)) / 2;
+		int textY = y + ((height - metrics.getHeight()) / 2) + metrics.getAscent();
+		g.drawString(text, textX, textY);
+	}
+
 	/**
 	 * Rysowanie tokenów po łuku łamanym. Euklides dziękuje i idzie w cholerę, bo ma dosyć.
 	 * @param g (<b>Graphics2D</b>) obiekt rysujący.
@@ -1787,12 +1835,12 @@ public final class ElementDraw {
 	 * @param arc (<b>Arc</b>) obiekt łuku.
 	 */
 	private static void handleBrokenArc(Graphics2D g, int STEP_COUNT, int step, ArrayList<Point> breakPoints,
-			int breaks, Point startPos, Point endPos, double arcWidth, int weight, Arc arc) {
+										int breaks, Point startPos, Point endPos, double arcWidth, int weight, Arc arc) {
 		double stepSize;
 		double tmp;
 		double a = 0;
 		double b = 0;
-		
+
 		ArrayList<Double> segmentLengths = new ArrayList<Double>(); //dlugości odcinków
 		ArrayList<Point> allPointsVector = new ArrayList<Point>(); //odcinki składające się na łuk
 		tmp = Math.hypot(startPos.x - breakPoints.get(0).x, startPos.y - breakPoints.get(0).y);
@@ -1814,7 +1862,7 @@ public final class ElementDraw {
 
 		stepSize = arcWidth / (double) STEP_COUNT;
 		double endPoint = stepSize * step;
-		
+
 		double counter = segmentLengths.get(0);
 		for(int i=1; i<segmentLengths.size()+1; i++) { //kosmos panie, kosmos
 			if(counter > endPoint) {
@@ -1822,7 +1870,7 @@ public final class ElementDraw {
 				double tylePrzeszedl = segmentLengths.get(i-1) - distInCurrent;
 				double proportion = tylePrzeszedl / segmentLengths.get(i-1);
 				//proportion *= distances.get(i-1); //długość do przebycia
-				
+
 				Point startingPoint = allPointsVector.get(i-1);
 				Point endingPoint = allPointsVector.get(i);
 				int signX = 1;
@@ -1831,26 +1879,26 @@ public final class ElementDraw {
 					signX = -1;
 				if(startingPoint.y > endingPoint.y)
 					signY = -1;
-				
+
 				int distX = Math.abs(startingPoint.x - endingPoint.x);
 				int distY = Math.abs(startingPoint.y - endingPoint.y);
-				
+
 				a = startingPoint.x + (signX * proportion * distX);
 				b = startingPoint.y + (signY * proportion * distY);
 				//b = endPos.y + stepSize * step * (startPos.y - endPos.y) / arcWidth;
-				
+
 				break;
 			}
 			if(i < segmentLengths.size())
 				counter += segmentLengths.get(i);
 		}
-		
+
 		g.setColor(EditorResources.tokenDefaultColor);
 		g.fillOval((int) a - 5, (int) b - 5, 10, 10);
 		g.setColor(Color.black);
 		g.setStroke(EditorResources.tokenDefaultStroke);
 		g.drawOval((int) a - 5, (int) b - 5, 10, 10);
-		
+
 		String wTxt = Integer.toString(weight);
 		if(arc.getArcType() == TypeOfArc.COLOR) {
 			wTxt = arc.getColorWeight(0)+","+arc.getColorWeight(1)+","+arc.getColorWeight(2)+","+
@@ -1863,7 +1911,7 @@ public final class ElementDraw {
 		TextLayout textLayout1 = new TextLayout(wTxt, font1, g.getFontRenderContext());
 		TextLayout textLayout2 = new TextLayout(wTxt, font2, g.getFontRenderContext());
 		TextLayout textLayout3 = new TextLayout(wTxt, font3, g.getFontRenderContext());
-		
+
 		g.setColor(new Color(255, 255, 255, 70));
 		textLayout1.draw(g, (int) a + 10, (int) b);
 		g.setColor(new Color(255, 255, 255, 150));

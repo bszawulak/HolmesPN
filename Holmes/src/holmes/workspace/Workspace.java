@@ -2,6 +2,7 @@ package holmes.workspace;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -68,7 +69,7 @@ public class Workspace implements SelectionActionListener {
 
 		sheetsIDtable.add(id);
 
-		WorkspaceSheet ws = new WorkspaceSheet("Subnet " + id, id, this);
+		WorkspaceSheet ws = new WorkspaceSheet(id, this);
 		sheets.add(ws);
 
 		JScrollPane scroll = new JScrollPane(ws.getContainerPanel());
@@ -92,6 +93,7 @@ public class Workspace implements SelectionActionListener {
 	 */
 	private void addMetaNode(Point pos, int whichSubnet, int representedSubnet, MetaType type) {
 		MetaNode metanode = new MetaNode(whichSubnet, IdGenerator.getNextId(), pos, type);
+		metanode.setName("Subnet" + representedSubnet);
 		metanode.setRepresentedSheetID(representedSubnet);
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().add(metanode);
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
@@ -129,20 +131,16 @@ public class Workspace implements SelectionActionListener {
 	 * Używana przez GUIReset, do czyszczenia wszystkich paneli sieci poza pierwszym.
 	 */
 	public void deleteAllSheetButFirst() {
-		for(WorkspaceSheet sheet : sheets) { //TODO 03072023 coś nie działa jak się doda podsieć, przy wyjściu z programu, sprawdzić
-			if(sheet.getId() != 0) {
-				int sheetID = sheet.getId();
-				boolean result = getProject().removeGraphPanel(sheetID);
-				if(!result) {
-					GUIManager.getDefaultGUIManager().log("Error, removing graph panel in Workspace.deleteSheetFromArrays() failed" +
-							"for WorkspaceSheet "+sheet.getId(), "error", true);
-				}
-				int id = sheets.indexOf(sheet);
-				sheets.remove(id);
-				sheetsIDtable.remove(id);
-				tp.remove(id);
+		for (int i = sheets.size() - 1; i > 0; i--) {
+			int subnetID = sheets.get(i).getId();
+			boolean result = getProject().removeGraphPanel(subnetID);
+			if (!result) {
+				GUIManager.getDefaultGUIManager().log("Error, removing graph panel in Workspace.deleteSheetFromArrays() failed" +
+						"for WorkspaceSheet "+subnetID, "error", true);
 			}
-
+			tp.remove(i);
+			sheets.remove(i);
+			sheetsIDtable.remove(i);
 		}
 	}
 
@@ -219,13 +217,12 @@ public class Workspace implements SelectionActionListener {
 	 * @return WorkspaceSheet - kliknięty arkusz
 	 */
 	public WorkspaceSheet getSelectedSheet() {
-		try {
-			//TODO wybór
-			int index = 0;// docks.indexOf(workspaceDock.getSelectedDock());
-			return sheets.get(index);
-		} catch (Exception e) {
-			return null;
-		}
+		Component component = getTablePane().getSelectedComponent();
+		return sheets.stream().filter(sheet -> sheet.getScrollPane() == component).findAny().orElseThrow();
+	}
+
+	public WorkspaceSheet getSheetById(int sheetId) {
+		return sheets.stream().filter(sheet -> sheet.getId() == sheetId).findAny().orElseThrow();
 	}
 
 	/**
