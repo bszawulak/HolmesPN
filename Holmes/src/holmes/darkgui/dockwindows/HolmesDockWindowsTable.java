@@ -6259,6 +6259,8 @@ public class HolmesDockWindowsTable extends JPanel {
      */
     public void refreshSubSurCombos() {
         ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
+        if(typesVector == null)
+            typesVector = new ArrayList<>();
 
         ArrayList<Integer> sursInv = new ArrayList<>();
         ArrayList<Integer> subsInv = new ArrayList<>();
