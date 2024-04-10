@@ -66,8 +66,8 @@ public class GUIOperations {
 	public void importNetwork() {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[5];
-		filters[0] = new ExtensionFileFilter("All supported Snoopy files", new String[] { "SPPED", "SPEPT", "SPTPT", "PN" });
-		filters[1] = new ExtensionFileFilter("Snoopy Petri Net file (.spped), (.pn)", new String[] { "SPPED" , "PN" });
+		filters[0] = new ExtensionFileFilter("All supported Snoopy files", new String[] { "SPPED", "SPEPT", "SPTPT", "PN", "XPN" });
+		filters[1] = new ExtensionFileFilter("Snoopy Petri Net file (.spped), (.pn)", new String[] { "SPPED" , "PN", "XPN" });
 		filters[2] = new ExtensionFileFilter("Snoopy Extended PN file (.spept), (.xpn)", new String[] { "SPEPT","XPN" });
 		filters[3] = new ExtensionFileFilter("Snoopy Time PN file (.sptpt)", new String[] { "SPTPT" });
 		filters[4] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });

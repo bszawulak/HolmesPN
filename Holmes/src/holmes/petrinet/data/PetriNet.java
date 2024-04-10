@@ -654,6 +654,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda zwraca wektor informacji o type t-inwariantu.
+	 * [0] - normalny t-inwariant, -1 - sub, +1 - sur, 11 - non-inv
 	 * @return ArrayList[Integer] - wektor typów t-inwariantów
 	 */
 	public ArrayList<Integer> accessT_InvTypesVector() {

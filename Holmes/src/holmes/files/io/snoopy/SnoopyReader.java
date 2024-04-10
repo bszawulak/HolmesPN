@@ -1503,6 +1503,9 @@ public class SnoopyReader {
 		double result = defaultVal;
 		try {
 			int location = line.indexOf(signature);
+			if(location == -1) {
+				return 0;
+			}
 			String tmp = line.substring(location + signature.length());
 			location = tmp.indexOf("\"");
 			tmp = tmp.substring(0, location);

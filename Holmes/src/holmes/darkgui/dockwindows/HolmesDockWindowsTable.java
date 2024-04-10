@@ -5849,7 +5849,9 @@ public class HolmesDockWindowsTable extends JPanel {
         chooseInvBox = new JComboBox<>(invariantHeaders);
         chooseInvBox.setBounds(colB_posX, positionY, 150, 20);
         chooseInvBox.addActionListener(actionEvent -> {
-            if(!GUIController.access().canRefresh())
+            //if(GUIController.access().canRefresh() == false)
+             //   return;
+            if(doNotUpdate)
                 return;
 
             refreshTINVwindowData();
@@ -5867,7 +5869,19 @@ public class HolmesDockWindowsTable extends JPanel {
                 selectedT_invIndex = -1;
                 showT_invTransFrequency(); //show transition frequency (in invariants)
             } else {
-                selectedT_invIndex = comboBox.getSelectedIndex() - 1;
+                try{
+                    String xStr = String.valueOf(comboBox.getSelectedItem());
+                    int selInd = -1;
+                    int ind1 = xStr.indexOf("#");
+                    int ind2 = xStr.indexOf("(");
+                    String invIndex = xStr.substring(ind1 + 1, ind2 - 1);
+                    selInd = Integer.parseInt(invIndex);
+                    selectedT_invIndex = selInd - 1;
+                } catch (Exception ignored) {
+                    overlord.log("Error (7474237434)", "error", true);
+                    return;
+                }
+                //selectedT_invIndex = comboBox.getSelectedIndex() - 1;
                 showT_invariant();
             }
         });
@@ -5997,6 +6011,8 @@ public class HolmesDockWindowsTable extends JPanel {
         chooseSurInvBox = new JComboBox<>(surHeaders);
         chooseSurInvBox.setBounds(colB_posX, positionY, 150, 20);
         chooseSurInvBox.addActionListener(actionEvent -> {
+            if(doNotUpdate)
+                return;
             @SuppressWarnings("unchecked")
             JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             if (comboBox.getSelectedIndex() == 0) {
@@ -6025,6 +6041,8 @@ public class HolmesDockWindowsTable extends JPanel {
         chooseSubInvBox = new JComboBox<>(subHeaders);
         chooseSubInvBox.setBounds(colB_posX, positionY, 150, 20);
         chooseSubInvBox.addActionListener(actionEvent -> {
+            if(doNotUpdate)
+                return;
             @SuppressWarnings("unchecked")
             JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             if (comboBox.getSelectedIndex() == 0) {
@@ -6053,6 +6071,8 @@ public class HolmesDockWindowsTable extends JPanel {
         chooseNoneInvBox = new JComboBox<>(subHeaders);
         chooseNoneInvBox.setBounds(colB_posX, positionY, 150, 20);
         chooseNoneInvBox.addActionListener(actionEvent -> {
+            if(doNotUpdate)
+                return;
             @SuppressWarnings("unchecked")
             JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             if (comboBox.getSelectedIndex() == 0) {
