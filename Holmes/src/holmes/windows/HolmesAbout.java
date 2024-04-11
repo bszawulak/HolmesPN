@@ -37,7 +37,7 @@ public class HolmesAbout extends JFrame {
 		} catch (Exception ex) {
 			GUIManager.getDefaultGUIManager().log("Error (801625237) | Exception:  "+ex.getMessage(), "error", true);
 		}
-		setTitle("About the program.");
+		setTitle("About Holmes");
 		setLayout(null);
 		setSize(new Dimension(550, 550));
 		
@@ -99,22 +99,22 @@ public class HolmesAbout extends JFrame {
 			GUIManager.getDefaultGUIManager().log("Error (835870912) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		
-		JLabel nameLabel = new JLabel("Holmes v1.6.9"); // (Trust me, I'm an engineer edition)");
+		JLabel nameLabel = new JLabel("Holmes v1.6.9.2"); // (Trust me, I'm an engineer edition)");
 		nameLabel.setFont(new Font("Consolas", Font.PLAIN, 25));
 		nameLabel.setBounds(170, 30, 300, 40);
 		panel.add(nameLabel);
 		
-		JLabel nameLabel1b = new JLabel("(stable, with subnets)");
+		JLabel nameLabel1b = new JLabel("Petri nets editor and analyzer");
 		nameLabel1b.setFont(new Font("Consolas", Font.PLAIN, 18));
 		nameLabel1b.setBounds(170, 50, 300, 40);
 		panel.add(nameLabel1b);
 		
-		JLabel nameLabel2 = new JLabel("Petri nets editor and analyzer");
-		nameLabel2.setFont(new Font("Consolas", Font.PLAIN, 18));
-		nameLabel2.setBounds(170, 70, 330, 40);
+		JLabel nameLabel2 = new JLabel("[build 11-04-2024]");
+		nameLabel2.setFont(new Font("Consolas", Font.PLAIN, 14));
+		nameLabel2.setBounds(170, 90, 330, 40);
 		panel.add(nameLabel2);
 		
-		JLabel nameLabel3 = new JLabel("Release: 8-02-2024 test stable release");
+		JLabel nameLabel3 = new JLabel("stable release with subnets");
 		nameLabel3.setFont(new Font("Consolas", Font.PLAIN, 14));
 		nameLabel3.setBounds(170, 110, 330, 40);
 		panel.add(nameLabel3);
