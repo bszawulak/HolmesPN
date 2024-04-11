@@ -144,6 +144,13 @@ public class ProjectReader {
 			
 			overlord.log("Reading project file: "+filepath, "text", true);
 
+			status = readProjectHeader(buffer);
+			if (!status) {
+				overlord.log("Reading project data block failure.", "error", true);
+				buffer.close();
+				return false;
+			}
+
 			try {
 				status = readNetwork(buffer,false);
 				if(!status) {
