@@ -6536,8 +6536,10 @@ public class HolmesDockWindowsTable extends JPanel {
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
 
-        HolmesNotepad note = new HolmesNotepad(640, 480);
+        HolmesNotepad note = new HolmesNotepad(700, 480);
         note.addTextLineNL("Transitions not covered by t-invariants:", "text");
+        note.addTextLineNL("(IMPORTANT: only real, canonical t-invariants (Cx=0) were used for coverage evaluation!)", "text");
+        note.addTextLineNL("", "text");
 
         ArrayList<Integer> deadTrans = InvariantsTools.detectUncovered(t_invariantsMatrix, true);
         ArrayList<Transition> transitions_tmp = overlord.getWorkspace().getProject().getTransitions();

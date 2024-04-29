@@ -915,10 +915,25 @@ public final class InvariantsTools {
 	 */
 	public static ArrayList<Integer> detectCovered(ArrayList<ArrayList<Integer>> invMatrix) {
 		ArrayList<Integer> coveredTransSet = new ArrayList<Integer>();
-		
+
+		ArrayList<Integer> typesVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessT_InvTypesVector();
+		int invNumber = 0;
+
 		if(!invMatrix.isEmpty()) {
+			if(typesVector.size() != invMatrix.size()) {
+				GUIManager.getDefaultGUIManager().log(
+						"Error (945439621) detectCovered method, typesVector size does not match invMatrix size.",
+						"error", true);
+			}
+
 			int invSize = invMatrix.get(0).size();
 			for (ArrayList<Integer> inv : invMatrix) {
+
+				//poprawka 29042024: ignoruj inwarianty nie będące typu Cx=0
+				if(typesVector.get(invNumber++) != 0) { //jeśli inwariant nie jest typu Cx=0, ignorujemy
+					continue;
+				}
+
 				for(int t=0; t<invSize; t++) {
 					if(inv.get(t) != 0) {
 						if(!coveredTransSet.contains(t))
