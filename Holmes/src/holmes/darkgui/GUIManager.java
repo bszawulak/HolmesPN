@@ -321,7 +321,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//analysisTabs.setPreferredSize(new Dimension(200,400));
 
 		JSplitPane simAndworkspacePanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftCentralPanel , getTabbedWorkspace());
-		leftCentralPanel.setPreferredSize(new Dimension(200, 200));
+		leftCentralPanel.setPreferredSize(new Dimension(200, 400));
 		simAndworkspacePanel.setPreferredSize(new Dimension(1200,200));
 		simAndworkspacePanel.setDividerLocation(180);
 		JSplitPane rightPanelSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propericeTMPBox, analysisTabs);
@@ -332,6 +332,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 		} else {
 			uberMainPanel.setDividerLocation(this.screenSize.width - 350); //normal
 		}
+
+		rightPanelSplit.setDividerLocation(340); //podział pionowy prawego panelu
+
 		getFrame().add(uberMainPanel,BorderLayout.CENTER);
 
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
