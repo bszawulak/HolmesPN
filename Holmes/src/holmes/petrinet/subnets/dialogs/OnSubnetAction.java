@@ -43,7 +43,7 @@ public class OnSubnetAction extends BaseDialog {
         panel.add(comboBox);
         comboBox.setBounds(145, 50, 200, 30);
         graphPanel.getNodes().stream()
-                .filter(node -> node instanceof MetaNode metaNode && metaNode.getMySheetID() == graphPanel.getSheetId())
+                .filter(node -> node instanceof MetaNode && ((MetaNode)node).getMySheetID() == graphPanel.getSheetId())
                 .map(MetaNode.class::cast)
                 .map(metaNode -> {
                     String subnetName = metaNode.getName();

@@ -415,8 +415,15 @@ public class SubnetsControl {
 	 * @return Optional[MetaNode] - opcjonalny meta-węzeł
 	 */
 	public Optional<MetaNode> getMetanode(int subnetID) {
-		return overlord.getWorkspace().getProject().getNodes().stream()
+		/*
+		Java18
+			return overlord.getWorkspace().getProject().getNodes().stream()
 				.filter(node -> node instanceof MetaNode m && m.getRepresentedSheetID() == subnetID)
+				.map(MetaNode.class::cast)
+				.findAny();
+		 */
+		return overlord.getWorkspace().getProject().getNodes().stream()
+				.filter(node -> node instanceof MetaNode && ((MetaNode)node).getRepresentedSheetID() == subnetID)
 				.map(MetaNode.class::cast)
 				.findAny();
 	}
@@ -1294,8 +1301,12 @@ public class SubnetsControl {
 		WorkspaceSheet subnetSheet = overlord.getWorkspace().getSheetById(metaNode.getRepresentedSheetID());
 
 		for (ElementLocation location : getSubnetElementLocations(metaNode.getRepresentedSheetID())) {
-			if (location.getParentNode() instanceof MetaNode m) {
-				deleteSubnet(m);
+			/*
+			//Java18
+			if (location.getParentNode() instanceof MetaNode m) {..
+			 */
+			if (location.getParentNode() instanceof MetaNode) {
+				deleteSubnet((MetaNode) location.getParentNode());
 			} else {
 				subnetSheet.getGraphPanel().getSelectionManager().deleteElementLocation(location);
 			}
