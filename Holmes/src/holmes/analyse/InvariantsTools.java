@@ -920,14 +920,13 @@ public final class InvariantsTools {
 		int invNumber = 0;
 
 		if(!invMatrix.isEmpty()) {
-			if(typesVector.size() != invMatrix.size()) {
-				GUIManager.getDefaultGUIManager().log(
-						"Error (945439621) detectCovered method, typesVector size does not match invMatrix size.",
-						"error", true);
-			}
-
 			int invSize = invMatrix.get(0).size();
 			for (ArrayList<Integer> inv : invMatrix) {
+				if(typesVector.size() != invMatrix.size()) {
+					GUIManager.getDefaultGUIManager().log(
+							"Error (945439621) detectCovered method, typesVector size does not match invMatrix size.",
+							"error", true);
+				}
 
 				//poprawka 29042024: ignoruj inwarianty nie będące typu Cx=0
 				if(typesVector.get(invNumber++) != 0) { //jeśli inwariant nie jest typu Cx=0, ignorujemy

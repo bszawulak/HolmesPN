@@ -404,7 +404,7 @@ public class HolmesMCS extends JFrame {
 		panel.add(transitionsResultsCombo);
 		
 		JCheckBox showAllCheckBox = new JCheckBox("Show full info", true);
-		showAllCheckBox.setBounds(posX+490, posY, 120, 20);
+		showAllCheckBox.setBounds(posX+380, posY+20, 110, 20);
 		showAllCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			showFullInfo = abstractButton.getModel().isSelected();
@@ -457,8 +457,8 @@ public class HolmesMCS extends JFrame {
 		panel.add(calculateFragilityButton);
 
 		JButton doSmthButtonMk1 = new JButton();
-		doSmthButtonMk1.setText("Ocena MCS");
-		doSmthButtonMk1.setBounds(posX+400, posY+25, 110, 32);
+		doSmthButtonMk1.setText("<html><center>MCS<br />evaluation<center></html>");
+		doSmthButtonMk1.setBounds(posX+500, posY, 110, 50);
 		doSmthButtonMk1.setMargin(new Insets(0, 0, 0, 0));
 		doSmthButtonMk1.setIcon(Tools.getResIcon22("/icons/mcsWindow/computeData.png"));
 		doSmthButtonMk1.addActionListener(actionEvent -> {
