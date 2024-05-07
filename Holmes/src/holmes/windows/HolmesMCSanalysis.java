@@ -970,12 +970,41 @@ public class HolmesMCSanalysis extends JFrame {
         button1.setFocusPainted(false);
         panel.add(button1);
 
+        /*info*/
+        JButton button1Info = new JButton("Jenson");
+        button1Info.setText("<html>Info</html>");
+        button1Info.setBounds(posX+170, posY+50, 40, 15);
+        button1Info.setMargin(new Insets(0, 0, 0, 0));
+        button1Info.setIcon(Tools.getResIcon32(""));
+        button1Info.addActionListener(actionEvent -> {
+            JOptionPane.showMessageDialog(null,
+                    "Ten opracowany algorytm odpowiedzialny jest za stworzenie rankingu\n" +
+                    "zbiorów MCS dla każdej z tranzycji modelu, wynikającego z wpływu wyłączenia danego\n" +
+                    "zbioru MCS na przepływ tokenów w sieci, czyli na jej dynamikę. Na początku tworzony jest zbiór\n" +
+                    "P_x, który zawiera miejsca, do których prowadzą łuki z tranzycji MCS. Dalej dla każdego miejsca ze\n" +
+                    "zbioru P_x sprawdzane jest czy ma inne tranzycje wejściowe niż te z MCS. Miejsca, które nie mają\n" +
+                    "żadnych innych tranzycji wejściowych, niż te z MCS, tworzą zbiór P_off . Oznacza to, że wyłączenie\n" +
+                    "MCS, efektywnie wyłączą możliwość tworzenia tokenów w tych miejscach. Im mniejszy zbiór\n" +
+                    "P_off dla danego MCS, tym lepiej, ponieważ oznacza to że mniej miejsc zostanie całkowicie zagłodzonych\n" +
+                    "przez wyłączenie tranzycji z MCS. Następnie tworzony jest zbiór tranzycji T_off , który\n" +
+                    "zawiera wszystkie tranzycje, które jako miejsce wejściowe posiadają przynajmniej jedno miejsce\n" +
+                    "ze zbioru P_off . Wszystkie tranzycje ze zbioru Toff nie mogą się uruchomić, z powodu braku tokenów\n" +
+                    "w przynajmniej jednym swoim miejscu wejściowym, co jest efektem użycia zbioru MCS.\n" +
+                    "Analogicznie jak ze zbiorem P_off , im mniejszy zbiór T_off , tym lepiej w kontekście użycia danego\n" +
+                    "zbioru MCS. Wynika to z założenia, że użycie zbiory MCS, które z definicji niejako wyłącza jakiś\n" +
+                    "element sieci (tranzycję docelową), nie powinno skutkować wyłączaniem innych elementów sieci."
+                    , "Info", JOptionPane.INFORMATION_MESSAGE);
+
+        });
+        button1Info.setFocusPainted(false);
+        panel.add(button1Info);
+
         description  = new JCheckBox("Full trans/places names");
-        description.setBounds(posX-5,posY+45, 250,20);
+        description.setBounds(posX-5,posY+45, 170,20);
         panel.add(description);
 
         ID = new JCheckBox("ID of transitions/places");
-        ID.setBounds(posX-5,posY+70, 250,15);
+        ID.setBounds(posX-5,posY+70, 160,15);
         panel.add(ID);
 
         JLabel comboDesc = new JLabel("Sort by:");
@@ -1007,6 +1036,30 @@ public class HolmesMCSanalysis extends JFrame {
         });
         transRank.setFocusPainted(false);
         panel.add(transRank);
+
+        JButton transRankInfo = new JButton("Jenson");
+        transRankInfo.setText("<html>Info</html>");
+        transRankInfo.setBounds(posX+471, posY+75, 40, 15);
+        transRankInfo.setMargin(new Insets(0, 0, 0, 0));
+        transRankInfo.setIcon(Tools.getResIcon32(""));
+        transRankInfo.addActionListener(actionEvent -> {
+            JOptionPane.showMessageDialog(null,
+                    "Przycisk Invariant Ranking jest odpowiedzialny za uruchomienie kolejnego z algorytmów.\n" +
+                            "Ten algorytm tworzy ranking zbiorów MCS dla każdej z tranzycji badanego modelu w oparciu\n" +
+                            "o wpływ zbiorów MCS na jego t-inwarianty. Na początku tworzony jest zbiór A, który zawiera\n" +
+                            "te t-inwarianty x, których wsparcie supp(x) zawiera choć jedną tranzycję z danego zbioru MCS.\n" +
+                            "Dalej tworzony jest zbiór T_x, czyli zbiór tych wszystkich tranzycji, które zostały wyłączone przez\n" +
+                            "to, że zniknęły te t-inwarianty, które zawierały we wsparciach jakąkolwiek tranzycje z MCS. Sprowadza\n" +
+                            "się to do zebrania tranzycji ze wsparcia wyłączonych przez MCS t-inwariantów. Kryterium\n" +
+                            "oceny zbioru MCS w tym algorytmie jest rozmiar zbioru T_x, czyli zbioru tranzycji ze wsparcia\n" +
+                            "tych t-inwariantów, które zostały wyłączone przez dany MCS. Im mniejszy zbiór T_x tym lepiej.\n" +
+                            "Wyniki działania tego algorytmu zawierają rozmiar zbioru T_x oraz procent wszystkich tranzycji\n" +
+                            "jaki stanowi zbiór T_x."
+                    , "Info", JOptionPane.INFORMATION_MESSAGE);
+
+        });
+        transRankInfo.setFocusPainted(false);
+        panel.add(transRankInfo);
 
         JButton buttonData = new JButton("Button 4");
         buttonData.setText("<html><center>Clear<br />window</center></html>");
@@ -1088,7 +1141,7 @@ public class HolmesMCSanalysis extends JFrame {
 
         JButton mcsOffRank = new JButton("Off Rank");
         mcsOffRank.setText("<html><center>Minimum offline<br />places and transitions<br />ranking</center></html>");
-        mcsOffRank.setBounds(posX + 840, posY, 190, 75);
+        mcsOffRank.setBounds(posX + 840, posY, 190, 70);
         mcsOffRank.setMargin(new Insets(0, 0, 0, 0));
         mcsOffRank.setIcon(Tools.getResIcon22("/icons/toolbar/simLog.png"));
         mcsOffRank.addActionListener(actionEvent -> {
@@ -1096,6 +1149,32 @@ public class HolmesMCSanalysis extends JFrame {
         });
         mcsOffRank.setFocusPainted(false);
         panel.add(mcsOffRank);
+
+        JButton mcsOffRankInfo = new JButton("Jenson");
+        mcsOffRankInfo.setText("<html>Info</html>");
+        mcsOffRankInfo.setBounds(posX+840, posY+71, 40, 15);
+        mcsOffRankInfo.setMargin(new Insets(0, 0, 0, 0));
+        mcsOffRankInfo.setIcon(Tools.getResIcon32(""));
+        mcsOffRankInfo.addActionListener(actionEvent -> {
+            JOptionPane.showMessageDialog(null,
+                    "Zadaniem jest wybranie jednego najlepszego zbioru MCS dla każdej tranzycji badanego\n" +
+                            "modelu. Ten algorytm jest w zasadzie rozwinięciem pierwszego algorytmu, ponieważ również\n" +
+                            "tworzy zbiory P_off oraz T_off , ale zamiast tworzyć ranking minimalnych zbiorów odcinających to\n" +
+                            "wybiera teoretycznie najlepszy zbiór dla danej tranzycji. Według kryteriów algorytmu, najlepszy\n" +
+                            "zbiór to taki, którego tranzycje bezpośrednio wyłączają najmniej miejsc i tranzycji w sieci, czyli\n" +
+                            "zbiory P_off i T_off są najmniejsze. Ponadto, w sytuacji kiedy trafi się jeden lub więcej zbiorów o\n" +
+                            "takim samym wyniku to sprawdzana jest liczba tranzycji w każdym ze zbiorów MCS. Im mniejszy\n" +
+                            "jest zbiór MCS tym lepiej. Oczywiście w tym algorytmie również istnieje możliwość oznaczenia\n" +
+                            "ważnych tranzycji, które mają pozostać włączone. Jeśli potencjalnie najlepszy zbiór MCS wyłącza\n" +
+                            "taką tranzycję, to obok niego pojawi się kolejny najlepszy zbiór, który takiej tranzycji nie wyłącza.\n" +
+                            "Dodatkowo, tam gdzie to możliwe, algorytm stara się nie wybierać jako najlepszy zbiór trywialnego\n" +
+                            "przypadku, gdzie MCS to jedno-elementowy zbiór składający się z tranzycji, dla której szukany\n" +
+                            "jest najlepszy zbiór."
+                    , "Info", JOptionPane.INFORMATION_MESSAGE);
+
+        });
+        mcsOffRankInfo.setFocusPainted(false);
+        panel.add(mcsOffRankInfo);
 
         return panel;
     }
