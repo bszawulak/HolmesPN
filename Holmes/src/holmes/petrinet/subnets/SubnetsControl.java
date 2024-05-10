@@ -1352,6 +1352,7 @@ public class SubnetsControl {
 		realignElements(getSubnetElementLocations(newSheetId), List.of());
 		getGraphPanel(newSheetId).adjustOriginSize();
 		overlord.getWorkspace().repaintAllGraphPanels();
+		overlord.markNetChange();
 	}
 
 	/**
@@ -1402,6 +1403,7 @@ public class SubnetsControl {
 		graphPanel.getSelectionManager().deselectElementLocation(clickedELoc);
 		graphPanel.getSelectionManager().deleteAllSelectedElements();
 		graphPanel.getSelectionManager().selectElementLocation(clickedELoc);
+		overlord.markNetChange();
 	}
 
 	/**
@@ -1441,7 +1443,7 @@ public class SubnetsControl {
 			AtomicBoolean hasInArcs = new AtomicBoolean(false);
 			AtomicBoolean hasOutArcs = new AtomicBoolean(false);
 
-			node.getNodeLocations().stream().filter(location -> location.getSheetID() == metaNode.getRepresentedSheetID()).forEach(location -> {
+			node.getNodeLocations(metaNode.getRepresentedSheetID()).forEach(location -> {
 				if (!location.getInArcs().isEmpty()) {
 					hasInArcs.set(true);
 				}
@@ -1450,7 +1452,13 @@ public class SubnetsControl {
 				}
 			});
 
-			if (!hasInArcs.get() && !hasOutArcs.get()) {
+			boolean alreadyConnected = node.getNodeLocations(metaNode.getMySheetID()).stream().anyMatch(location -> {
+				boolean inArcExists = location.accessMetaInArcs().stream().anyMatch(arc -> arc.getStartLocation().equals(metaNode.getFirstELoc()));
+				boolean outArcExists = location.accessMetaOutArcs().stream().anyMatch(arc -> arc.getEndLocation().equals(metaNode.getFirstELoc()));
+				return inArcExists || outArcExists;
+			});
+
+			if (alreadyConnected || (!hasInArcs.get() && !hasOutArcs.get())) {
 				continue;
 			}
 

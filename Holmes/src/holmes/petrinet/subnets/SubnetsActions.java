@@ -34,10 +34,11 @@ public class SubnetsActions {
         OnSubnetAction onSubnetActionDialog = new OnSubnetAction(graphPanel, title, 400, 240);
         onSubnetActionDialog.setAction(e -> {
             ComboBoxItem<Integer> selectedItem = onSubnetActionDialog.getComboBoxValue();
-            GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-            GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
+            overlord.getWorkspace().repaintAllGraphPanels();
+            overlord.getFrame().setEnabled(true);
             onSubnetActionDialog.getDialog().dispose();
             Optional.ofNullable(selectedItem).ifPresent(item -> {
+                overlord.markNetChange();
                 List<ElementLocation> oldSubnetElements = List.copyOf(overlord.subnetsHQ.getSubnetElementLocations(item.getValue()));
                 overlord.subnetsHQ.moveSelectedElementsToSubnet(graphPanel, item.getValue(), createMetaArcs);
                 List<ElementLocation> newSubnetElements = overlord.subnetsHQ.getSubnetElementLocations(item.getValue()).stream()
@@ -59,10 +60,11 @@ public class SubnetsActions {
         OnSubnetAction onSubnetActionDialog = new OnSubnetAction(graphPanel, "Copy into subnet", 400, 240);
         onSubnetActionDialog.setAction(e -> {
             ComboBoxItem<Integer> selectedItem = onSubnetActionDialog.getComboBoxValue();
-            GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-            GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
+            overlord.getWorkspace().repaintAllGraphPanels();
+            overlord.getFrame().setEnabled(true);
             onSubnetActionDialog.getDialog().dispose();
             Optional.ofNullable(selectedItem).ifPresent(item -> {
+                overlord.markNetChange();
                 List<ElementLocation> oldSubnetElements = List.copyOf(overlord.subnetsHQ.getSubnetElementLocations(item.getValue()));
                 overlord.subnetsHQ.copySelectedElementsToSubnet(graphPanel, item.getValue());
                 List<ElementLocation> newSubnetElements = overlord.subnetsHQ.getSubnetElementLocations(item.getValue()).stream()
@@ -96,6 +98,7 @@ public class SubnetsActions {
             boolean addMetaArcs = onNodeActionDialog.getCheckboxValue();
 
             Optional.ofNullable(selectedNode).ifPresent(node -> {
+                overlord.markNetChange();
                 ElementLocation newLocation = overlord.subnetsHQ.cloneNodeIntoPortal(node.getLastLocation(), graphPanel.getSheetId());
                 newLocation.setPosition(graphPanel.getMousePt());
                 if (addMetaArcs) {

@@ -70,7 +70,7 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 						if (n == 0) {
 							GUIManager.getDefaultGUIManager().subnetsHQ.deleteSubnet(graphPanel.getSelectionManager().getSelectedMetanode());
-							//GUIManager.getDefaultGUIManager().markNetChange();
+							GUIManager.getDefaultGUIManager().markNetChange();
 						}
 					}
 			);
@@ -82,7 +82,7 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 						if (n == 0) {
 							GUIManager.getDefaultGUIManager().subnetsHQ.unwrapSubnet(graphPanel);
-							//GUIManager.getDefaultGUIManager().markNetChange();
+							GUIManager.getDefaultGUIManager().markNetChange();
 						}
 					}
 			);
@@ -95,7 +95,7 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 						if (n == 0) {
 							GUIManager.getDefaultGUIManager().subnetsHQ.clearMetaArcs(List.of(el));
 							getGraphPanel().repaint();
-							//GUIManager.getDefaultGUIManager().markNetChange();
+							GUIManager.getDefaultGUIManager().markNetChange();
 						}
 					}
 			);
@@ -113,6 +113,7 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 //				gui.subnetsHQ.validateMetaArcs(sheetModified, true, false);
 				gui.subnetsHQ.fixMetaArcsNumber((MetaNode)elMeta.getParentNode());
 				getGraphPanel().repaint();
+				GUIManager.getDefaultGUIManager().markNetChange();
 			}
 			private ActionListener yesWeCan(ElementLocation inLoc){
 				elMeta = inLoc;

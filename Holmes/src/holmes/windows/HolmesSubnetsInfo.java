@@ -8,6 +8,7 @@ import org.jfree.ui.tabbedui.VerticalLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -91,49 +92,54 @@ public class HolmesSubnetsInfo {
         statisticsPanel.setBounds(5, 135, 230, 300);
         statisticsPanel.setBorder(BorderFactory.createTitledBorder("Subnet statistics:"));
 
-        JLabel nodesCountLabel = new JLabel("Elements count:");
+        JLabel nodesCountLabel = new JLabel("Number of element locations:");
         statisticsPanel.add(nodesCountLabel);
-        nodesCountLabel.setBounds(10, 25, 120, 20);
+        nodesCountLabel.setBounds(10, 25, 200, 20);
 
         List<ElementLocation> elements = overlord.subnetsHQ.getSubnetElementLocations(graphPanel.getSheetId());
         JTextField nodesCountField = new JTextField(String.valueOf(elements.size()));
         statisticsPanel.add(nodesCountField);
-        nodesCountField.setBounds(130, 25, 30, 20);
+        nodesCountField.setBounds(190, 25, 30, 20);
         nodesCountField.setEditable(false);
 
+        List<Node> uniqueNodes = elements.stream()
+                .map(ElementLocation::getParentNode)
+                .sorted(Comparator.comparingInt(PetriNetElement::getID))
+                .distinct().toList();
 
-        JLabel placeCountLabel = new JLabel("Places count:");
+
+        JLabel placeCountLabel = new JLabel("Number of places:");
         statisticsPanel.add(placeCountLabel);
-        placeCountLabel.setBounds(10, 50, 120, 20);
+        placeCountLabel.setBounds(10, 50, 200, 20);
 
-        long placeCount = elements.stream().filter(location -> location.getParentNode() instanceof Place).count();
+        long placeCount = uniqueNodes.stream().filter(Place.class::isInstance).count();
         JTextField placeCountField = new JTextField(String.valueOf(placeCount));
         statisticsPanel.add(placeCountField);
-        placeCountField.setBounds(130, 50, 30, 20);
+        placeCountField.setBounds(190, 50, 30, 20);
         placeCountField.setEditable(false);
 
 
-        JLabel transitionCountLabel = new JLabel("Transitions count:");
+        JLabel transitionCountLabel = new JLabel("Number of transitions:");
         statisticsPanel.add(transitionCountLabel);
-        transitionCountLabel.setBounds(10, 75, 120, 20);
+        transitionCountLabel.setBounds(10, 75, 200, 20);
 
-        long transitionCount = elements.stream().filter(location -> location.getParentNode() instanceof Transition).count();
+        long transitionCount = uniqueNodes.stream().filter(Transition.class::isInstance).count();
         JTextField transitionCountField = new JTextField(String.valueOf(transitionCount));
         statisticsPanel.add(transitionCountField);
-        transitionCountField.setBounds(130, 75, 30, 20);
+        transitionCountField.setBounds(190, 75, 30, 20);
         transitionCountField.setEditable(false);
 
-        JLabel tokensCountLabel = new JLabel("Total tokens:");
+        JLabel tokensCountLabel = new JLabel("Number of tokens:");
         statisticsPanel.add(tokensCountLabel);
-        tokensCountLabel.setBounds(10, 100, 120, 20);
+        tokensCountLabel.setBounds(10, 100, 200, 20);
 
-        int tokenCount = elements.stream()
-                .filter(location -> location.getParentNode() instanceof Place)
-                .map(location -> ((Place) location.getParentNode()).getTokensNumber())
+        int tokenCount = uniqueNodes.stream()
+                .filter(Place.class::isInstance)
+                .map(node -> ((Place) node).getTokensNumber())
                 .reduce(Integer::sum).orElse(0);
         JTextField tokenCountField = new JTextField(String.valueOf(tokenCount));
         statisticsPanel.add(tokenCountField);
-        tokenCountField.setBounds(130, 100, 30, 20);
+        tokenCountField.setBounds(190, 100, 30, 20);
         tokenCountField.setEditable(false);
 
         JPanel connectionsPanel = new JPanel(null);
