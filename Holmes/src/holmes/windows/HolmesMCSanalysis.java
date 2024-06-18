@@ -555,7 +555,190 @@ public class HolmesMCSanalysis extends JFrame {
         X = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
 
         //for(int transitionIndex : il_trans){
+
+        int selectedTrans = transBox.getSelectedIndex();
+
         for(int transitionIndex = 0; transitionIndex<mcsd.getSize(); transitionIndex++) {
+            if(selectedTrans > 0) {
+                if(selectedTrans-1 != transitionIndex) {
+                    continue;
+                }
+            }
+
+            ArrayList<ArrayList<Integer>> dataVector = mcsd.getMCSlist(transitionIndex);
+            if (dataVector == null || dataVector.size() == 0 ) {
+                //logField1stTab.append(" *** Brak zbiorów MCS dla tranzycji o numerze: " + transitionIndex + "\n");
+                continue;
+            }
+            if (X == null || X.size() == 0 ) {
+                logField1stTab.append(" *** t-invariants set empty! ***\n");
+            }
+
+            logField1stTab.append(" *** MCS sets for transition ID: " + transitionIndex + " ***\n");
+//            logField1stTab.append("\\begin{longtable}{@{}cccclll@{}}\n" +
+//                    "\\caption{Wynik działania algorytmu bazującego na t-inwariantach dla tranzycji "+transitionIndex+".}\\\\\n" +
+//                    "\\toprule\n" +
+//                    "MCS\\# &\n" +
+//                    "  \\begin{tabular}[c]{@{}c@{}}Tranzycje wchodzące w\\\\ skład MCS\\end{tabular} &\n" +
+//                    "  \\begin{tabular}[c]{@{}c@{}}Liczba wyłączonych tranzycji\\\\ w sieci ($T_{x}$)\\end{tabular} &\n" +
+//                    "  \\begin{tabular}[c]{@{}c@{}}Procent wyłączonych \\\\ tranzycji (\\%)\\end{tabular} &\n" +
+//                    "   &\n" +
+//                    "   &\n" +
+//                    "   \\\\* \\midrule\n" +
+//                    "\\endfirsthead\n" +
+//                    "%\n" +
+//                    "\\endhead\n" +
+//                    "%\n" +
+//                    "\\bottomrule\n" +
+//                    "\\endfoot\n" +
+//                    "%\n" +
+//                    "\\endlastfoot\n" +
+//                    "%\n");
+
+            Map<Integer,ArrayList<Integer>> B  =  new  HashMap<Integer,ArrayList<Integer>>();//t-inwarianty,które pozostały, bo nie zawierają we wsparciach ani jednej tranzycji z danego MCS
+            Map<Integer,ArrayList<Integer>> A  =  new  HashMap<Integer,ArrayList<Integer>>();//t-inwarianty, których wsparcie zawiera choć jedną tranzycję z danego zbioru MCS
+            Set<Integer> Tb = new HashSet<>();//zostawione tranzycje
+            Set<Integer> Tx = new HashSet<>();//wyłączone tranzycje
+
+            Map<String,Long> MCSrank  =  new  HashMap<String,Long>();
+            Map<String,Set<Integer>> MCSsets  =  new  HashMap<String,Set<Integer>>();
+            int MCScounter = 0;
+
+            for(ArrayList<Integer> MCSset : dataVector){
+
+                StringBuilder rankmsg = new StringBuilder("MCS#");
+                rankmsg.append(MCScounter).append(" ").append("[");
+                for (int el : MCSset) {
+                    //toSubscript(Integer.toString(el))
+                    rankmsg.append("t").append(el).append(", ");
+                }
+                rankmsg.append("]");
+                rankmsg = new StringBuilder(rankmsg.toString().replace(", ]", "]"));
+
+                int counter = 0;
+                for(ArrayList<Integer> tInv : X){
+                    ArrayList<Integer> tInvSupp = InvariantsTools.getSupport(tInv);
+                    boolean flag = true;
+                    for(Integer MCStrans : MCSset){
+                        if(tInvSupp.contains(MCStrans)){
+                            flag = false;
+                            A.put(counter,tInvSupp);
+                            Tx.addAll(tInvSupp);
+                            break;
+                        }
+                    }
+                    if(flag){
+                        B.put(counter,tInvSupp);
+                        Tb.addAll(tInvSupp);
+                    }
+                    counter++;
+                }
+                rankmsg.append(" dis-inv: ").append(A.size()); //liczba wyłączonych inwariantów
+
+                //logField1stTab.append(rankmsg.toString()+" :   "+Tx.size());
+                MCSrank.put(rankmsg.toString(), (long)(A.size()* 100000L)+ Tx.size() );
+                MCSsets.put(rankmsg.toString(), new HashSet<Integer>(Tx));
+
+//                logField1stTab.append("Wylaczone tranzycje:"+Tx.size()+" Zostawione tranzycje:"+Tb.size()+"\n");
+//                for(Integer tebe: Tb){
+//                    if (Tx.contains(tebe)){
+//                        logField1stTab.append(tebe.toString()+",");
+//                    }
+//                }
+//                logField1stTab.append("\n");
+                A.clear();
+                B.clear();
+                Tx.clear();
+                Tb.clear();
+                MCScounter++;
+            }
+            //logField1stTab.append(" === Liczba wyłączonych tranzycji przez każdy MCS ===\n");
+
+            LinkedHashMap<String, Long> lhm = new LinkedHashMap<String, Long>();
+            int lim = MCSrank.size();
+            for (int i = 0; i <lim; i++) {
+                //int min = transitions.size()+1;
+                int min = Integer.MAX_VALUE;
+                long originalEntryValue = 0;
+                String remembered = "";
+                for (Map.Entry<String, Long> entry : MCSrank.entrySet()) { //sortowanie po inwariantach
+                    int invNumber = (int)(entry.getValue() / 100000);
+                    if(invNumber<min){
+                        remembered = entry.getKey();
+                        min = invNumber;
+                        originalEntryValue = entry.getValue();
+                    }
+
+                }
+                lhm.put(remembered, originalEntryValue);
+                MCSrank.remove(remembered);
+            }
+            ArrayList<Integer> ImportantTrans = new ArrayList<>();
+            if(importantTrans.getText().length()>0) {
+                if(importantTrans.getText().contains(",")){
+                    String[] parseImportantTrans = importantTrans.getText().split(",");
+                    for (String elem : parseImportantTrans) {
+                        ImportantTrans.add(Integer.parseInt(elem));
+                    }
+                }
+                else{
+                    ImportantTrans.add(Integer.parseInt(importantTrans.getText()));
+                }
+            }
+            int liczba_wynikow = 20;
+            for (Map.Entry<String, Long> mapElement : lhm.entrySet()) {
+                //if(liczba_wynikow==0){break;}
+                String[] mcs = mapElement.getKey().split("\\[");
+
+                int transNumberValue = (int)(mapElement.getValue() % 100000); //powrót do starej wartości
+                int percentage = transNumberValue  * 100 / transitions.size();
+                String percent = "%";
+                for(Integer trans: ImportantTrans){
+                    if(MCSsets.get(mapElement.getKey()).contains(trans)){
+                        logField1stTab.append("(DENIED)_");
+                        break;
+                    }
+                }
+                //String lowerMCSindexes = mcs[1].replace("t", "$t_{").replace(",","}$,").replace("]","}$");
+                //logField1stTab.append(mcs[0].split("#")[1]+" & "+lowerMCSindexes+" & "+mapElement.getValue()+"  & "+percentage+"    &  &  &  \\\\");
+//                String deniedMCStrans = mcs[1];
+//                for (int impTrans : ImportantTrans){
+//                    if(mcs[1].contains(Integer.toString(impTrans))){
+//                        deniedMCStrans = deniedMCStrans.replace("t"+Integer.toString(impTrans),"(DENIED)_t"+Integer.toString(impTrans));
+//                    }
+//                }
+                //logField1stTab.append(String.format("%-8s %-30s%s%d, %d%s)", mcs[0],"["+mcs[1],"(Tx:", mapElement.getValue(), percentage,percent));
+                logField1stTab.append(String.format("%-8s %-30s%s%d, %d%s)", mcs[0],"["+mcs[1],"(Tx:", transNumberValue, percentage,percent));
+
+
+                //logField1stTab.append(String.format("%-8s %-20s%s%d, %d%s)", mcs[0],"["+mapElement.getKey(),"(Tx:", mapElement.getValue(), percentage,percent));
+                logField1stTab.append("\n");
+                liczba_wynikow--;
+            }
+            lhm.clear();
+            MCSrank.clear();
+            MCSsets.clear();
+//            logField1stTab.append("* \\bottomrule\n" +
+//                    "\\end{longtable}\n\n");
+        }
+    }
+
+
+    private void orgInvTransRankingAlg(){
+        mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+        transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+        X = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+
+        //for(int transitionIndex : il_trans){
+        int selectedTrans = transBox.getSelectedIndex();
+
+        for(int transitionIndex = 0; transitionIndex<mcsd.getSize(); transitionIndex++) {
+            if(selectedTrans > 0) {
+                if(selectedTrans-1 != transitionIndex) {
+                    continue;
+                }
+            }
+
 
             ArrayList<ArrayList<Integer>> dataVector = mcsd.getMCSlist(transitionIndex);
             if (dataVector == null || dataVector.size() == 0 ) {
@@ -625,11 +808,11 @@ public class HolmesMCSanalysis extends JFrame {
                     }
                     counter++;
                 }
+                rankmsg.append(" dis-inv: ").append(A.size()); //liczba wyłączonych inwariantów
+
                 //logField1stTab.append(rankmsg.toString()+" :   "+Tx.size());
                 MCSrank.put(rankmsg.toString(), Tx.size());
                 MCSsets.put(rankmsg.toString(), new HashSet<Integer>(Tx));
-
-
 
 //                logField1stTab.append("Wylaczone tranzycje:"+Tx.size()+" Zostawione tranzycje:"+Tb.size()+"\n");
 //                for(Integer tebe: Tb){
@@ -645,6 +828,7 @@ public class HolmesMCSanalysis extends JFrame {
                 MCScounter++;
             }
             //logField1stTab.append(" === Liczba wyłączonych tranzycji przez każdy MCS ===\n");
+
             LinkedHashMap<String, Integer> lhm = new LinkedHashMap<String, Integer>();
             int lim = MCSrank.size();
             for (int i = 0; i <lim; i++) {
@@ -691,7 +875,7 @@ public class HolmesMCSanalysis extends JFrame {
 //                        deniedMCStrans = deniedMCStrans.replace("t"+Integer.toString(impTrans),"(DENIED)_t"+Integer.toString(impTrans));
 //                    }
 //                }
-                logField1stTab.append(String.format("%-8s %-20s%s%d, %d%s)", mcs[0],"["+mcs[1],"(Tx:", mapElement.getValue(), percentage,percent));
+                logField1stTab.append(String.format("%-8s %-30s%s%d, %d%s)", mcs[0],"["+mcs[1],"(Tx:", mapElement.getValue(), percentage,percent));
                 //logField1stTab.append(String.format("%-8s %-20s%s%d, %d%s)", mcs[0],"["+mapElement.getKey(),"(Tx:", mapElement.getValue(), percentage,percent));
                 logField1stTab.append("\n");
                 liczba_wynikow--;
@@ -702,8 +886,9 @@ public class HolmesMCSanalysis extends JFrame {
 //            logField1stTab.append("* \\bottomrule\n" +
 //                    "\\end{longtable}\n\n");
         }
-
     }
+
+
 
     void trzy(){
         places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
@@ -1032,7 +1217,7 @@ public class HolmesMCSanalysis extends JFrame {
         transRank.setIcon(Tools.getResIcon22("/icons/menu/menu_analysis_invariants.png"));
         transRank.addActionListener(actionEvent -> {
             dwa();
-
+            orgInvTransRankingAlg();
         });
         transRank.setFocusPainted(false);
         panel.add(transRank);
