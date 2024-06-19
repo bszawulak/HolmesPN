@@ -32,6 +32,7 @@ public class HolmesMCSanalysis extends JFrame {
     JCheckBox description;
     JCheckBox ID;
     JCheckBox rankByTrans;
+    JCheckBox iFeelCourageous;
 
     JComboBox<String> transBox;
     JComboBox<String> mcsBox;
@@ -1135,6 +1136,11 @@ public class HolmesMCSanalysis extends JFrame {
         int posX = 10;
         int posY = 10;
 
+        iFeelCourageous = new JCheckBox("I feel courageous");
+        iFeelCourageous.setBounds(posX+165,posY+70, 130,15);
+        panel.add(iFeelCourageous);
+
+
         JButton button1 = new JButton("Jenson");
         button1.setText("<html>Tokens<br />ranking</html>");
         button1.setBounds(posX, posY, 150, 40);
@@ -1151,7 +1157,13 @@ public class HolmesMCSanalysis extends JFrame {
                 return;
             }
 
-            jeden();
+            if(iFeelCourageous.isSelected()) {
+                checkStarvedTransitions();
+            } else {
+                jeden();
+
+            }
+
         });
         button1.setFocusPainted(false);
         panel.add(button1);
@@ -1439,19 +1451,6 @@ public class HolmesMCSanalysis extends JFrame {
             for(ArrayList<Integer> MCS : MCSsForObjReaction) {
                 counter++;
 
-                StringBuilder rankmsg = new StringBuilder("MCS#");
-                StringBuilder msg;
-                rankmsg.append(counter).append(" ").append("[");
-                msg = new StringBuilder("[");
-                for (int el : MCS) {
-                    msg.append("t").append(el).append(", ");
-                    rankmsg.append("t").append(el).append(", ");
-                }
-                msg.append("] : ");
-                rankmsg.append("] ");
-                msg = new StringBuilder(msg.toString().replace(", ]", "]"));
-                rankmsg = new StringBuilder(rankmsg.toString().replace(", ]", "]"));
-
 
                 //stworzenie zbioru T_dng:
                 HashSet<Place> outputPlacesOfMCS = new HashSet<Place>();
@@ -1470,6 +1469,10 @@ public class HolmesMCSanalysis extends JFrame {
                 }
 
                 boolean stop = false;
+                ArrayList<Transition> doNotBotherWithTheseTransitions = new ArrayList<Transition>();
+
+
+                Map<String,Integer> MCSrank  =  new  HashMap<String,Integer>();
 
                 while (true) { //tak długo, aż wewnętrzna pętla niczego nie usunie
                     if (stop) {
@@ -1480,22 +1483,27 @@ public class HolmesMCSanalysis extends JFrame {
                         boolean removeTransitionFromEndangeredSet = false;
                         stop = true; //zostanie tak, jeżeli niczego nie usuniemy
 
+                        if(doNotBotherWithTheseTransitions.contains(t)) {
+                            //tu coś będzie, jeżeli wykryjemy, że miejsce wejściowe tej tranzycji
+                            //już zostało zidentyfikowane jako zagłodzone
+
+                            //continue; //nie jestem pewien, czy to ma sens w konteście 'stop'
+                        }
+
                         for(Transition trans : T_dng) { //dla kazdej ze zbioru T_dng
                             boolean potentiallyRemoveTransAsStarved = false;
-                            //tworzy zbiór miejsc, które karmią tranzycję T_dng tokenami:
-                            HashSet<Place> inputPlacesForT_dng = new HashSet<Place>();
-                            inputPlacesForT_dng.addAll(trans.getPrePlaces()); //pobierz miejsca wejsciowe
+                            //tworzy zbiór miejsc wejściowych, które karmią tranzycję T_dng tokenami:
+                            HashSet<Place> inputPlacesForTransFormT_dng = new HashSet<Place>(trans.getPrePlaces()); //pobierz miejsca wejściowe
 
-                            for(Place place : inputPlacesForT_dng) { //dla każdego takiego miejsca musimy sprawdzić,
-                                //czy ma choć jedną tranzycję wejściow, która a) nie jest w MCS, b) nie jest w T_dng
+                            for(Place place : inputPlacesForTransFormT_dng) { //dla każdego takiego miejsca musimy sprawdzić,
+                                //czy ma choć jedną tranzycję wejściową, która a) nie jest w MCS, b) nie jest w T_dng
                                 // c) nie jest oddalona o dystans od T_dng
-                                //tworzymy zbior tranzycji karmiacych miejsce wejsciowe dla T_dng:
-                                HashSet<Transition> inputTransToInputPlacesForT_dng = new HashSet<Transition>();
-                                inputTransToInputPlacesForT_dng.addAll(place.getPreTransitions()); //pobierz tranzycje wejsciowe
+                                //tworzymy zbior tranzycji wejściowych, produkujących tokeny w miejscu wejsciowym dla T_dng:
+                                HashSet<Transition> inputTransToInputPlacesForT_dng = new HashSet<Transition>(place.getPreTransitions()); //pobierz tranzycje wejściowe
 
-                                //nie liczy sie, jezeli tranzycja jest w zbiorze T_dng:
+                                //nie liczy się, jeżeli tranzycja jest w zbiorze T_dng:
                                 inputTransToInputPlacesForT_dng.removeIf(T_dng::contains); //TU JEST TRICKY! KOLEJNOSC!!!
-                                //usuwamy takze te ktore i tak są w MCS:
+                                //usuwamy także te, które i tak są w MCS:
                                 inputTransToInputPlacesForT_dng.removeIf(hashSetMCS::contains);
 
                                 if(inputTransToInputPlacesForT_dng.isEmpty())
@@ -1504,47 +1512,173 @@ public class HolmesMCSanalysis extends JFrame {
                                 boolean triggerHappy = false;
                                 //jesli jeszcze jakies zostaly do sprawdzanie, ktore nie sa w MCS i T_dng:
                                 for(Transition toCheckTrans : inputTransToInputPlacesForT_dng) {
-                                    boolean canTransitionFire = canFire(toCheckTrans, hashSetMCS, T_dng, Distance);
+                                    boolean canTransitionFire = canFire(toCheckTrans,  T_dng, Distance);
                                     if(canTransitionFire) {
-                                        triggerHappy = true; //znaleziono jedna niezagrozona tranzycje
-                                        //wiec miejsce wejsciowe bedzie mialo tokeny
+                                        triggerHappy = true; //znaleziono jedna niezagrożoną tranzycję
+                                        //więc miejsce wejściowe będzie miało tokeny
                                         break; //wystarczy jedna
                                     }
                                 }
 
                                 if(triggerHappy) { //miejsce wejsciowe ma tokeny
                                     potentiallyRemoveTransAsStarved = true;
-                                    continue; //dla kolejnego miejsca wejsciowego
-                                } else { //jedno z miejsc wejsciowych nie ma tokenow
+                                    continue; //dla kolejnego miejsca wejsciowego tej tranzycji trans
+                                } else { //jedno z miejsc wejsciowych nie ma tokenów:
                                     potentiallyRemoveTransAsStarved = false;
-                                    break; //nie ma tokenow w miejscu wejsciowym, wiec tranzycja jest zaglodzona
+
+                                    //wszystkie inne tranzycje wyjściowe tego miejsca - można już sobie podarować sprawdzanie:
+                                    for(Transition t_tmp : place.getPostTransitions()) {
+
+                                        //wszystkie tranzycje wyjsciowe zaglodzonego miejsca, ktore są w zbiorze
+                                        //T_dng - oznaczyć, że ich nie sprawdzamy główną pętlą, bo po co. Wystarczy,
+                                        //że to jedno miejsce jest zagłodzone, żeby pozostały one (tranzycje) w w T_dng.
+                                        if(T_dng.contains(t_tmp)) {
+                                            doNotBotherWithTheseTransitions.add(t_tmp);
+                                        }
+                                    }
+
+                                    break; //nie ma tokenów w miejscu wejściowym, więc tranzycja jest zagłodzona
                                 }
                             }
 
                             if(potentiallyRemoveTransAsStarved) { //jeżeli wciąż true, to znaczy
-                                //że tranzycja NIE jest zagłodzona bo kazde miejsce wejsciowe ma tokeny
+                                //że tranzycja NIE jest zagłodzona bo każde jej miejsce wejściowe ma tokeny
                                 T_dng.remove(t);
                                 removeTransitionFromEndangeredSet = true;
                             }
                             //else: tranzycja pozostaje w T_dng, bo jedno z jej miejsc wejsciowych nie ma tokenow
                         }
 
-                        if(removeTransitionFromEndangeredSet) { //jezeli usunelismy tranzycje z T_dng
-                            //to musimy sprawdzic jeszcze raz
-                            stop = false; //usunelismy cos, wiec musimy sprawdzic jeszcze raz
+                        if(removeTransitionFromEndangeredSet) { //jezeli usunęliśmy tranzycję z T_dng
+                            //to musimy sprawdzić jeszcze raz dla nowego zbioru T_dng
+                            stop = false; //usunęliśmy coś, więc musimy sprawdzić jeszcze raz
                             break;
+                        }
+                    } //for (Transition t : T_dng)
+                }  //while(true)
+
+                //dodawanie informacji o MCS do rankingu:
+                StringBuilder rankmsg = new StringBuilder("MCS#");
+                rankmsg.append(counter).append(" ").append("[");
+                for (int el : MCS) {
+                    rankmsg.append("t").append(el).append(", ");
+                }
+                rankmsg.append("]");
+                rankmsg = new StringBuilder(rankmsg.toString().replace(", ]", "]"));
+                MCSrank.put(rankmsg.toString(), T_dng.size()); //dodaj do rankingu
+
+            } //dla wszystkich MCSów
+        }
+    }
+
+    /*
+    \begin{algorithm}
+\caption{Estimate Transition Firing Capability}\label{alg:alg1_2}
+\begin{algorithmic}[1]
+\Statex \textbf{Input:} Transition $t_x$ to evaluate, $T_{dng}$ is a set of potentially non-firing transitions.
+\Statex \textbf{Input:}  \( distance \): Level of search (1, 2, or 3).
+\Statex \textbf{Output:}  Boolean indicating if \( t_x \) can fire.
+
+\Function{canFire}{$t_x, T_{dng}, distance$}
+    \For{each place $p \in {^\bullet}t_x$}
+        \If{(AllTransitionsInDng($p, T_{dng}$) == \textbf{true} )}
+            \State \Return \textbf{false}
+        \EndIf
+        \If{($distance > 1$)}
+            \For{each transition $t \in {^\bullet}p$}
+                \If{(CheckHigherLevels($t, T_{dng}, distance-1$) )}
+                    \State \Return \textbf{false}
+                \EndIf
+            \EndFor
+        \EndIf
+    \EndFor
+    \State \Return \textbf{true}
+\EndFunction
+\Statex
+\Function{AllTransitionsInDng}{$p, T_{dng}$}
+    \For{each transition $t \in {^\bullet}p$}
+        \If{($t \notin T_{dng}$)}
+            \State \Return \textbf{false}
+        \EndIf
+    \EndFor
+    \State \Return \textbf{true}
+\EndFunction
+\Statex
+\Function{CheckHigherLevels}{$t, T_{dng}, distance$}
+    \If{($distance = 1$)}
+        \State \Return AllTransitionsInDng($t, T_{dng}$)
+    \Else
+        \For{($p \in {^\bullet}t$)}
+            \If{(AllTransitionsInDng($p, T_{dng}$) == \textbf{true})}
+                \State \Return \textbf{true}
+            \EndIf
+            \If{($distance > 2$)}
+                \For{each transition $t' \in {^\bullet}p$}
+                    \If{(CheckHigherLevels($t', T_{dng}, distance-1$) == \textbf{true})}
+                        \State \Return \textbf{true}
+                    \EndIf
+                \EndFor
+            \EndIf
+        \EndFor
+    \EndIf
+    \State \Return \text{false}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+     */
+
+    private boolean canFire(Transition t_x, HashSet<Transition> T_dng, int distance) {
+        for(Place p : t_x.getPrePlaces()) {
+            if(AllInputTransitionsInDngSet(p, T_dng) == true) { //to znaczy, że wszystkie tranzycje wejściowe p, są w T_dng
+                return false; //czyli uważamy, że tranzycja t_x jest w niebezpieczeństwie
+            }
+            if(distance > 1) {
+                for(Transition t : p.getPreTransitions()) { //dla wszystkich tranzycji t, które prowadzą do miejsca p
+                    if(CheckHigherLevels(t, T_dng, distance-1)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean AllInputTransitionsInDngSet(Place p, HashSet<Transition> T_dng) {
+        for(Transition t : p.getPreTransitions()) { //każda tranzycja wejściowa miejsca
+            if(T_dng.contains(t) == false) {
+                return false;   //jeśli chociaż jedna tranzycja nie jest w T_dng
+                //to dostarczy tokeny do miejsca p
+            }
+        }
+        return true; //jak tu dotrzemy, to znaczy, że wszystkie tranzycje są w T_dng
+    }
+
+    private boolean CheckHigherLevels(Transition t, HashSet<Transition> T_dng, int distance) {
+        if(distance == 1) {
+            for(Place p : t.getPrePlaces()) {
+                if(AllInputTransitionsInDngSet(p, T_dng) == false) {
+                    return false;
+                }
+            }
+            //return AllInputTransitionsInDngSet(t, T_dng);
+        } else {
+            for(Place p : t.getPrePlaces()) {
+                if(AllInputTransitionsInDngSet(p, T_dng)) {
+                    return true; //jeżeli wszystkie tranzycje wejściowe do miejsca p są w T_dng
+                    //to nie ma co sprawdzać dalej
+                }
+                if(distance > 2) {
+                    for(Transition t_prime : p.getPreTransitions()) {
+                        if(CheckHigherLevels(t_prime, T_dng, distance-1)) {
+                            return true;
                         }
                     }
                 }
             }
         }
-    }
-
-    private boolean canFire(Transition toCheckTrans, HashSet<Transition> hashSetMCS, HashSet<Transition> tDng, int distance) {
-
-
         return false;
     }
+
 
 
 //    private JPanel createUpperButtonPanel2ndTab(int x, int y, int width, int height) {
