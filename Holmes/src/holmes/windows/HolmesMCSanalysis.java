@@ -229,32 +229,12 @@ public class HolmesMCSanalysis extends JFrame {
                 continue;
             }
             logField1stTab.append(" *** MCS sets for transition ID: " + transitionIndex + ": ***\n");
-//            logField1stTab.append("\\begin{longtable}{cccclll}\n" +
-//                    "\\caption{Wynik działania algorytmu bazującego na przepływie tokenów dla tranzycji "+transitionIndex+".}\\\\\n" +
-//                    "\\hline\n" +
-//                    "MCS\\# &\n" +
-//                    "  \\begin{tabular}[c]{@{}c@{}}Tranzycje wchodzące w\\\\ skład MCS\\end{tabular} &\n" +
-//                    "  \\begin{tabular}[c]{@{}c@{}}Wyłączone tranzycje\\\\ ($T_{off}$)\\end{tabular} &\n" +
-//                    "  \\begin{tabular}[c]{@{}c@{}}Wyłączone miejsca\\\\ ($T_{off}$)\\end{tabular} &\n" +
-//                    "   &\n" +
-//                    "   &\n" +
-//                    "   \\\\ \\hline\n" +
-//                    "\\endfirsthead\n" +
-//                    "%\n" +
-//                    "\\endhead\n" +
-//                    "%\n" +
-//                    "\\hline\n" +
-//                    "\\endfoot\n" +
-//                    "%\n" +
-//                    "\\endlastfoot\n" +
-//                    "%\n");
 
             Map<String, ArrayList<Integer>> MCSsets = new HashMap<String, ArrayList<Integer>>();
             Map<String, ArrayList<Integer>> MCSsetsindexes = new HashMap<String, ArrayList<Integer>>();
             Map<String, ArrayList<Integer>> MCStrans= new HashMap<String, ArrayList<Integer>>();
             int counter = 0;
             for(ArrayList<Integer>MCS : dataVector){
-
                 StringBuilder rankmsg = new StringBuilder("MCS#");
                 StringBuilder msg;
                 //logField1stTab.append("MCS#" + counter + " ");
@@ -318,6 +298,8 @@ public class HolmesMCSanalysis extends JFrame {
                 Poff.clear();
                 Toff.clear();
             }
+
+
             LinkedHashMap<String, Integer> lhm = new LinkedHashMap<String, Integer>();
             Map<String, ArrayList<Integer>> MCSsetscp = new HashMap<String, ArrayList<Integer>>(MCSsets);
             int lim = MCSsets.size();
@@ -752,25 +734,6 @@ public class HolmesMCSanalysis extends JFrame {
             }
 
             logField1stTab.append(" *** MCS sets for transition ID: " + transitionIndex + " ***\n");
-//            logField1stTab.append("\\begin{longtable}{@{}cccclll@{}}\n" +
-//                    "\\caption{Wynik działania algorytmu bazującego na t-inwariantach dla tranzycji "+transitionIndex+".}\\\\\n" +
-//                    "\\toprule\n" +
-//                    "MCS\\# &\n" +
-//                    "  \\begin{tabular}[c]{@{}c@{}}Tranzycje wchodzące w\\\\ skład MCS\\end{tabular} &\n" +
-//                    "  \\begin{tabular}[c]{@{}c@{}}Liczba wyłączonych tranzycji\\\\ w sieci ($T_{x}$)\\end{tabular} &\n" +
-//                    "  \\begin{tabular}[c]{@{}c@{}}Procent wyłączonych \\\\ tranzycji (\\%)\\end{tabular} &\n" +
-//                    "   &\n" +
-//                    "   &\n" +
-//                    "   \\\\* \\midrule\n" +
-//                    "\\endfirsthead\n" +
-//                    "%\n" +
-//                    "\\endhead\n" +
-//                    "%\n" +
-//                    "\\bottomrule\n" +
-//                    "\\endfoot\n" +
-//                    "%\n" +
-//                    "\\endlastfoot\n" +
-//                    "%\n");
 
             Map<Integer,ArrayList<Integer>> B  =  new  HashMap<Integer,ArrayList<Integer>>();//t-inwarianty,które pozostały, bo nie zawierają we wsparciach ani jednej tranzycji z danego MCS
             Map<Integer,ArrayList<Integer>> A  =  new  HashMap<Integer,ArrayList<Integer>>();//t-inwarianty, których wsparcie zawiera choć jedną tranzycję z danego zbioru MCS
@@ -812,24 +775,15 @@ public class HolmesMCSanalysis extends JFrame {
                 }
                 rankmsg.append(" dis-inv: ").append(A.size()); //liczba wyłączonych inwariantów
 
-                //logField1stTab.append(rankmsg.toString()+" :   "+Tx.size());
                 MCSrank.put(rankmsg.toString(), Tx.size());
                 MCSsets.put(rankmsg.toString(), new HashSet<Integer>(Tx));
 
-//                logField1stTab.append("Wylaczone tranzycje:"+Tx.size()+" Zostawione tranzycje:"+Tb.size()+"\n");
-//                for(Integer tebe: Tb){
-//                    if (Tx.contains(tebe)){
-//                        logField1stTab.append(tebe.toString()+",");
-//                    }
-//                }
-//                logField1stTab.append("\n");
                 A.clear();
                 B.clear();
                 Tx.clear();
                 Tb.clear();
                 MCScounter++;
             }
-            //logField1stTab.append(" === Liczba wyłączonych tranzycji przez każdy MCS ===\n");
 
             LinkedHashMap<String, Integer> lhm = new LinkedHashMap<String, Integer>();
             int lim = MCSrank.size();
@@ -869,24 +823,13 @@ public class HolmesMCSanalysis extends JFrame {
                         break;
                     }
                 }
-                //String lowerMCSindexes = mcs[1].replace("t", "$t_{").replace(",","}$,").replace("]","}$");
-                //logField1stTab.append(mcs[0].split("#")[1]+" & "+lowerMCSindexes+" & "+mapElement.getValue()+"  & "+percentage+"    &  &  &  \\\\");
-//                String deniedMCStrans = mcs[1];
-//                for (int impTrans : ImportantTrans){
-//                    if(mcs[1].contains(Integer.toString(impTrans))){
-//                        deniedMCStrans = deniedMCStrans.replace("t"+Integer.toString(impTrans),"(DENIED)_t"+Integer.toString(impTrans));
-//                    }
-//                }
                 logField1stTab.append(String.format("%-8s %-30s%s%d, %d%s)", mcs[0],"["+mcs[1],"(Tx:", mapElement.getValue(), percentage,percent));
-                //logField1stTab.append(String.format("%-8s %-20s%s%d, %d%s)", mcs[0],"["+mapElement.getKey(),"(Tx:", mapElement.getValue(), percentage,percent));
                 logField1stTab.append("\n");
                 liczba_wynikow--;
             }
             lhm.clear();
             MCSrank.clear();
             MCSsets.clear();
-//            logField1stTab.append("* \\bottomrule\n" +
-//                    "\\end{longtable}\n\n");
         }
     }
 
@@ -1427,7 +1370,7 @@ public class HolmesMCSanalysis extends JFrame {
 
         int selectedTrans = transBox.getSelectedIndex();
 
-        int Distance = 2;
+        int Distance = 3;
 
         for(int objReaction = 0; objReaction<mcsd.getSize(); objReaction++) {
             //tranzycja to wyznacznik zbiorów
@@ -1446,6 +1389,8 @@ public class HolmesMCSanalysis extends JFrame {
             }
 
             logField1stTab.append(" *** MCS sets for transition ID: " + objReaction + " ***\n");
+
+            Map<String,Integer> MCSrank  =  new  HashMap<String,Integer>();
 
             int counter = -1;
             for(ArrayList<Integer> MCS : MCSsForObjReaction) {
@@ -1471,14 +1416,14 @@ public class HolmesMCSanalysis extends JFrame {
                 boolean stop = false;
                 ArrayList<Transition> doNotBotherWithTheseTransitions = new ArrayList<Transition>();
 
-
-                Map<String,Integer> MCSrank  =  new  HashMap<String,Integer>();
-
                 while (true) { //tak długo, aż wewnętrzna pętla niczego nie usunie
                     if (stop) {
                         break;
                     }
 
+                    //for (Iterator<Transition> ite_t = T_dng.iterator(); ite_t.hasNext();) {
+                    //    Transition t = ite_t.next();
+                    //}
                     for (Transition t : T_dng) { //dla kazdej potencjalnie zaglodzonej
                         boolean removeTransitionFromEndangeredSet = false;
                         stop = true; //zostanie tak, jeżeli niczego nie usuniemy
@@ -1486,7 +1431,6 @@ public class HolmesMCSanalysis extends JFrame {
                         if(doNotBotherWithTheseTransitions.contains(t)) {
                             //tu coś będzie, jeżeli wykryjemy, że miejsce wejściowe tej tranzycji
                             //już zostało zidentyfikowane jako zagłodzone
-
                             //continue; //nie jestem pewien, czy to ma sens w konteście 'stop'
                         }
 
@@ -1543,7 +1487,8 @@ public class HolmesMCSanalysis extends JFrame {
 
                             if(potentiallyRemoveTransAsStarved) { //jeżeli wciąż true, to znaczy
                                 //że tranzycja NIE jest zagłodzona bo każde jej miejsce wejściowe ma tokeny
-                                T_dng.remove(t);
+                                //T_dng.remove(t);
+                                //ite_t.remove();
                                 removeTransitionFromEndangeredSet = true;
                             }
                             //else: tranzycja pozostaje w T_dng, bo jedno z jej miejsc wejsciowych nie ma tokenow
@@ -1555,6 +1500,10 @@ public class HolmesMCSanalysis extends JFrame {
                             break;
                         }
                     } //for (Transition t : T_dng)
+                    if(T_dng.isEmpty()) {
+                        stop = true;
+                    }
+
                 }  //while(true)
 
                 //dodawanie informacji o MCS do rankingu:
@@ -1568,64 +1517,47 @@ public class HolmesMCSanalysis extends JFrame {
                 MCSrank.put(rankmsg.toString(), T_dng.size()); //dodaj do rankingu
 
             } //dla wszystkich MCSów
+
+            LinkedHashMap<String, Integer> lhm = new LinkedHashMap<String, Integer>();
+            int lim = MCSrank.size();
+            for (int i = 0; i <lim; i++) {
+                Integer min = transitions.size()+1;
+                String rem = "";
+                for (Map.Entry<String, Integer> entry : MCSrank.entrySet()) {
+                    if(entry.getValue()<min){
+                        rem = entry.getKey();
+                        min = entry.getValue();
+                    }
+                }
+                lhm.put(rem,min);
+                MCSrank.remove(rem);
+            }
+            ArrayList<Integer> ImportantTrans = new ArrayList<>();
+            if(importantTrans.getText().length()>0) {
+                if(importantTrans.getText().contains(",")){
+                    String[] parseImportantTrans = importantTrans.getText().split(",");
+                    for (String elem : parseImportantTrans) {
+                        ImportantTrans.add(Integer.parseInt(elem));
+                    }
+                }
+                else{
+                    ImportantTrans.add(Integer.parseInt(importantTrans.getText()));
+                }
+            }
+            int liczba_wynikow = 20;
+            for (Map.Entry<String, Integer> mapElement : lhm.entrySet()) {
+                //if(liczba_wynikow==0){break;}
+                String[] mcs = mapElement.getKey().split("\\[");
+                int percentage = mapElement.getValue()  * 100 / transitions.size();
+                String percent = "%";
+                logField1stTab.append(String.format("%-8s %-30s%s%d, %d%s)", mcs[0],"["+mcs[1],"(Tx:", mapElement.getValue(), percentage,percent));
+                logField1stTab.append("\n");
+                liczba_wynikow--;
+            }
+            lhm.clear();
+            MCSrank.clear();
         }
     }
-
-    /*
-    \begin{algorithm}
-\caption{Estimate Transition Firing Capability}\label{alg:alg1_2}
-\begin{algorithmic}[1]
-\Statex \textbf{Input:} Transition $t_x$ to evaluate, $T_{dng}$ is a set of potentially non-firing transitions.
-\Statex \textbf{Input:}  \( distance \): Level of search (1, 2, or 3).
-\Statex \textbf{Output:}  Boolean indicating if \( t_x \) can fire.
-
-\Function{canFire}{$t_x, T_{dng}, distance$}
-    \For{each place $p \in {^\bullet}t_x$}
-        \If{(AllTransitionsInDng($p, T_{dng}$) == \textbf{true} )}
-            \State \Return \textbf{false}
-        \EndIf
-        \If{($distance > 1$)}
-            \For{each transition $t \in {^\bullet}p$}
-                \If{(CheckHigherLevels($t, T_{dng}, distance-1$) )}
-                    \State \Return \textbf{false}
-                \EndIf
-            \EndFor
-        \EndIf
-    \EndFor
-    \State \Return \textbf{true}
-\EndFunction
-\Statex
-\Function{AllTransitionsInDng}{$p, T_{dng}$}
-    \For{each transition $t \in {^\bullet}p$}
-        \If{($t \notin T_{dng}$)}
-            \State \Return \textbf{false}
-        \EndIf
-    \EndFor
-    \State \Return \textbf{true}
-\EndFunction
-\Statex
-\Function{CheckHigherLevels}{$t, T_{dng}, distance$}
-    \If{($distance = 1$)}
-        \State \Return AllTransitionsInDng($t, T_{dng}$)
-    \Else
-        \For{($p \in {^\bullet}t$)}
-            \If{(AllTransitionsInDng($p, T_{dng}$) == \textbf{true})}
-                \State \Return \textbf{true}
-            \EndIf
-            \If{($distance > 2$)}
-                \For{each transition $t' \in {^\bullet}p$}
-                    \If{(CheckHigherLevels($t', T_{dng}, distance-1$) == \textbf{true})}
-                        \State \Return \textbf{true}
-                    \EndIf
-                \EndFor
-            \EndIf
-        \EndFor
-    \EndIf
-    \State \Return \text{false}
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
-     */
 
     private boolean canFire(Transition t_x, HashSet<Transition> T_dng, int distance) {
         for(Place p : t_x.getPrePlaces()) {
