@@ -1421,9 +1421,8 @@ public class HolmesMCSanalysis extends JFrame {
                         break;
                     }
 
-                    //for (Iterator<Transition> ite_t = T_dng.iterator(); ite_t.hasNext();) {
-                    //    Transition t = ite_t.next();
-                    //}
+                    Transition transToRemove = null;
+
                     for (Transition t : T_dng) { //dla kazdej potencjalnie zaglodzonej
                         boolean removeTransitionFromEndangeredSet = false;
                         stop = true; //zostanie tak, jeżeli niczego nie usuniemy
@@ -1497,9 +1496,15 @@ public class HolmesMCSanalysis extends JFrame {
                         if(removeTransitionFromEndangeredSet) { //jezeli usunęliśmy tranzycję z T_dng
                             //to musimy sprawdzić jeszcze raz dla nowego zbioru T_dng
                             stop = false; //usunęliśmy coś, więc musimy sprawdzić jeszcze raz
+                            transToRemove = t;
                             break;
                         }
                     } //for (Transition t : T_dng)
+
+                    if(stop == false) {
+                        T_dng.remove(transToRemove);
+                    }
+
                     if(T_dng.isEmpty()) {
                         stop = true;
                     }
