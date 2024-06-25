@@ -32,7 +32,9 @@ public class HolmesMCSanalysis extends JFrame {
     JCheckBox description;
     JCheckBox ID;
     JCheckBox rankByTrans;
-    JCheckBox iFeelCourageous;
+    //JCheckBox iFeelCourageous;
+    JSpinner distanceSpinner;
+    private int distanceVar = 3;
 
     JComboBox<String> transBox;
     JComboBox<String> mcsBox;
@@ -1079,11 +1081,6 @@ public class HolmesMCSanalysis extends JFrame {
         int posX = 10;
         int posY = 10;
 
-        iFeelCourageous = new JCheckBox("I feel courageous");
-        iFeelCourageous.setBounds(posX+165,posY+70, 130,15);
-        panel.add(iFeelCourageous);
-
-
         JButton button1 = new JButton("Jenson");
         button1.setText("<html>Tokens<br />ranking</html>");
         button1.setBounds(posX, posY, 150, 40);
@@ -1093,20 +1090,12 @@ public class HolmesMCSanalysis extends JFrame {
             places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
             transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
             mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-
-
             if(mcsd.getSize() == 0) {
                 logField1stTab.append(" *** BRAK DANYCH MCS! \n");
                 return;
             }
-
-            if(iFeelCourageous.isSelected()) {
-                checkStarvedTransitions();
-            } else {
-                jeden();
-
-            }
-
+            checkStarvedTransitions();
+            // if(iFeelCourageous.isSelected()) checkStarvedTransitions(); else jeden();
         });
         button1.setFocusPainted(false);
         panel.add(button1);
@@ -1114,7 +1103,7 @@ public class HolmesMCSanalysis extends JFrame {
         /*info*/
         JButton button1Info = new JButton("Jenson");
         button1Info.setText("<html>Info</html>");
-        button1Info.setBounds(posX+170, posY+50, 40, 15);
+        button1Info.setBounds(posX+185, posY+45, 40, 15);
         button1Info.setMargin(new Insets(0, 0, 0, 0));
         button1Info.setIcon(Tools.getResIcon32(""));
         button1Info.addActionListener(actionEvent -> {
@@ -1165,6 +1154,26 @@ public class HolmesMCSanalysis extends JFrame {
         importantTrans = new JTextField();
         importantTrans.setBounds(posX+230, posY+20, 100, 20);
         panel.add(importantTrans);
+
+        //iFeelCourageous = new JCheckBox("I feel courageous");
+        //iFeelCourageous.setBounds(posX+165,posY+70, 130,15);
+        //panel.add(iFeelCourageous);
+
+        JLabel distLabel = new JLabel("Dist:");
+        distLabel.setBounds(posX+160,posY+68, 40,20);
+        panel.add(distLabel);
+
+        SpinnerModel distSpinnerModel = new SpinnerNumberModel(3, 2, 3, 1);
+        distanceSpinner = new JSpinner(distSpinnerModel);
+        distanceSpinner.setBounds(posX+190, posY+68, 60, 20);
+        distanceSpinner.addChangeListener(e -> {
+            JSpinner spinner = (JSpinner) e.getSource();
+            distanceVar = (int) spinner.getValue();
+        });
+        panel.add(distanceSpinner);
+
+
+        //**************************************************************************
 
 
         rankByTrans = new JCheckBox("Ranking by disabled transitions");
@@ -1370,7 +1379,7 @@ public class HolmesMCSanalysis extends JFrame {
 
         int selectedTrans = transBox.getSelectedIndex();
 
-        int Distance = 3;
+        int Distance = distanceVar;
 
         for(int objReaction = 0; objReaction<mcsd.getSize(); objReaction++) {
             //tranzycja to wyznacznik zbiorów
@@ -1414,102 +1423,91 @@ public class HolmesMCSanalysis extends JFrame {
                 }
 
                 boolean stop = false;
-                ArrayList<Transition> doNotBotherWithTheseTransitions = new ArrayList<Transition>();
+                ArrayList<Transition> transPotentiallyDeadOfTdng = new ArrayList<Transition>(); //miejsce wejściowe ma trans w T_dng
+                ArrayList<Transition> transDeadDirectlyBecauseOfMCS = new ArrayList<Transition>(); //miejsce wejściowe ma TYLKO trans z MCS
+                boolean triggerFoundReallyDeadTransitionInTdng = false;
 
                 while (true) { //tak długo, aż wewnętrzna pętla niczego nie usunie
-                    if (stop) {
-                        break;
-                    }
+                    if (stop) break;
 
                     Transition transToRemove = null;
-
-                    for (Transition t : T_dng) { //dla kazdej potencjalnie zaglodzonej
-                        boolean removeTransitionFromEndangeredSet = false;
+                    for (Transition currentTrans : T_dng) { //dla kazdej potencjalnie zaglodzonej
                         stop = true; //zostanie tak, jeżeli niczego nie usuniemy
+                        boolean removeTransitionFromEndangeredSet = false;
+                        boolean potentiallyRemoveTransAsStarved = false;
 
-                        if(doNotBotherWithTheseTransitions.contains(t)) {
-                            //tu coś będzie, jeżeli wykryjemy, że miejsce wejściowe tej tranzycji
-                            //już zostało zidentyfikowane jako zagłodzone
-                            //continue; //nie jestem pewien, czy to ma sens w konteście 'stop'
-                        }
+                        //tworzy zbiór miejsc wejściowych, które karmią tranzycję T_dng tokenami:
+                        HashSet<Place> inputPlacesForTransFormT_dng = new HashSet<Place>(currentTrans.getPrePlaces()); //pobierz miejsca wejściowe
 
-                        for(Transition trans : T_dng) { //dla kazdej ze zbioru T_dng
-                            boolean potentiallyRemoveTransAsStarved = false;
-                            //tworzy zbiór miejsc wejściowych, które karmią tranzycję T_dng tokenami:
-                            HashSet<Place> inputPlacesForTransFormT_dng = new HashSet<Place>(trans.getPrePlaces()); //pobierz miejsca wejściowe
-
-                            for(Place place : inputPlacesForTransFormT_dng) { //dla każdego takiego miejsca musimy sprawdzić,
-                                //czy ma choć jedną tranzycję wejściową, która a) nie jest w MCS, b) nie jest w T_dng
-                                // c) nie jest oddalona o dystans od T_dng
-                                //tworzymy zbior tranzycji wejściowych, produkujących tokeny w miejscu wejsciowym dla T_dng:
-                                HashSet<Transition> inputTransToInputPlacesForT_dng = new HashSet<Transition>(place.getPreTransitions()); //pobierz tranzycje wejściowe
-
-                                //nie liczy się, jeżeli tranzycja jest w zbiorze T_dng:
-                                inputTransToInputPlacesForT_dng.removeIf(T_dng::contains); //TU JEST TRICKY! KOLEJNOSC!!!
-                                //usuwamy także te, które i tak są w MCS:
-                                inputTransToInputPlacesForT_dng.removeIf(hashSetMCS::contains);
-
-                                if(inputTransToInputPlacesForT_dng.isEmpty())
-                                    continue;
-
-                                boolean triggerHappy = false;
-                                //jesli jeszcze jakies zostaly do sprawdzanie, ktore nie sa w MCS i T_dng:
-                                for(Transition toCheckTrans : inputTransToInputPlacesForT_dng) {
-                                    boolean canTransitionFire = canFire(toCheckTrans,  T_dng, Distance);
-                                    if(canTransitionFire) {
-                                        triggerHappy = true; //znaleziono jedna niezagrożoną tranzycję
-                                        //więc miejsce wejściowe będzie miało tokeny
-                                        break; //wystarczy jedna
+                        for(Place place : inputPlacesForTransFormT_dng) { //sprawdzamy czy miejsce może mieć tokeny
+                            triggerFoundReallyDeadTransitionInTdng = false;
+                            HashSet<Transition> inputTransToInputPlacesForT_dng = new HashSet<Transition>(place.getPreTransitions()); //pobierz t wejściowe
+                            inputTransToInputPlacesForT_dng.removeIf(hashSetMCS::contains); //usuwamy te, które są w MCS
+                            if(inputTransToInputPlacesForT_dng.isEmpty()) { //miejsce martwe, bo nie ma tokenów
+                                for(Transition t_tmp : place.getPostTransitions()) {
+                                    if(T_dng.contains(t_tmp)) {
+                                        transDeadDirectlyBecauseOfMCS.add(t_tmp);
                                     }
                                 }
+                                stop = false;
+                                triggerFoundReallyDeadTransitionInTdng = true;
+                                break;
+                            }
+                            //jeżeli tranzycja jest w zbiorze T_dng:
+                            inputTransToInputPlacesForT_dng.removeIf(T_dng::contains); //TU JEST TRICKY! KOLEJNOSC!!!
+                            if(inputTransToInputPlacesForT_dng.isEmpty()) {
+                                //właśnie znaleziono miejsce, które nie ma tokenów, bo nie ma tranzycji wejściowych, które nie są w MCS i T_dng
+                                break; //break, a nie continue, bo po co sprawdzać pozostałe miejsca jak jedno i tak nie ma tokenów?
+                            }
 
-                                if(triggerHappy) { //miejsce wejsciowe ma tokeny
-                                    potentiallyRemoveTransAsStarved = true;
-                                    continue; //dla kolejnego miejsca wejsciowego tej tranzycji trans
-                                } else { //jedno z miejsc wejsciowych nie ma tokenów:
-                                    potentiallyRemoveTransAsStarved = false;
-
-                                    //wszystkie inne tranzycje wyjściowe tego miejsca - można już sobie podarować sprawdzanie:
-                                    for(Transition t_tmp : place.getPostTransitions()) {
-
-                                        //wszystkie tranzycje wyjsciowe zaglodzonego miejsca, ktore są w zbiorze
-                                        //T_dng - oznaczyć, że ich nie sprawdzamy główną pętlą, bo po co. Wystarczy,
-                                        //że to jedno miejsce jest zagłodzone, żeby pozostały one (tranzycje) w w T_dng.
-                                        if(T_dng.contains(t_tmp)) {
-                                            doNotBotherWithTheseTransitions.add(t_tmp);
-                                        }
-                                    }
-
-                                    break; //nie ma tokenów w miejscu wejściowym, więc tranzycja jest zagłodzona
+                            boolean triggerHappy = false; //jesli jeszcze zostaly do sprawdzania te tranz., których nie ma w MCS i T_dng:
+                            for(Transition toCheckTrans : inputTransToInputPlacesForT_dng) {
+                                boolean canTransitionFire = canFire(toCheckTrans,  T_dng, Distance);
+                                if(canTransitionFire) {
+                                    triggerHappy = true; //znaleziono jedna niezagrożoną tranzycję więc miejsce wejściowe będzie miało tokeny
+                                    break; //wystarczy jedna
                                 }
                             }
-
-                            if(potentiallyRemoveTransAsStarved) { //jeżeli wciąż true, to znaczy
-                                //że tranzycja NIE jest zagłodzona bo każde jej miejsce wejściowe ma tokeny
-                                //T_dng.remove(t);
-                                //ite_t.remove();
-                                removeTransitionFromEndangeredSet = true;
+                            if(triggerHappy) { //miejsce wejsciowe ma tokeny
+                                potentiallyRemoveTransAsStarved = true;
+                                continue; //dla kolejnego miejsca wejsciowego tej tranzycji trans
+                            } else { //jedno z miejsc wejsciowych nie ma tokenów:
+                                potentiallyRemoveTransAsStarved = false;
+                                for(Transition t_tmp : place.getPostTransitions()) {
+                                    if(T_dng.contains(t_tmp)) {
+                                        transPotentiallyDeadOfTdng.add(t_tmp);
+                                    }
+                                }
+                                //wszystkie inne tranzycje wyjściowe tego miejsca - można już sobie podarować sprawdzanie:
+                                break; //nie ma tokenów w miejscu wejściowym, więc tranzycja jest zagłodzona
                             }
-                            //else: tranzycja pozostaje w T_dng, bo jedno z jej miejsc wejsciowych nie ma tokenow
+                        }
+                        if(triggerFoundReallyDeadTransitionInTdng) { //usuwamy z Tdng na stałe bo jest MARTWA
+                            break;  //i to się już nie zmieni, bo ten trigger oznacza, że tylko t z MCS karmi tokenami
                         }
 
-                        if(removeTransitionFromEndangeredSet) { //jezeli usunęliśmy tranzycję z T_dng
-                            //to musimy sprawdzić jeszcze raz dla nowego zbioru T_dng
+                        if(potentiallyRemoveTransAsStarved) {
+                            //jeżeli wciąż true, to znaczy, że tranzycja nie jest zagłodzona bo każde jej miejsce wejściowe ma tokeny
+                            //jezeli usyniemy tranzycję z T_dng to musimy sprawdzić jeszcze raz dla nowego zbioru T_dng
                             stop = false; //usunęliśmy coś, więc musimy sprawdzić jeszcze raz
-                            transToRemove = t;
+                            transToRemove = currentTrans;
                             break;
                         }
                     } //for (Transition t : T_dng)
-
+                    if(triggerFoundReallyDeadTransitionInTdng) { //usuwamy z Tdng na stałe bo jest MARTWA
+                        T_dng.removeIf(transDeadDirectlyBecauseOfMCS::contains);
+                        break;
+                    }
                     if(stop == false) {
                         T_dng.remove(transToRemove);
                     }
-
                     if(T_dng.isEmpty()) {
                         stop = true;
                     }
-
                 }  //while(true)
+
+                //przywróć do T_dng te, które są na pewno zagłodzone bezpośrednio przez MCS:
+                T_dng.addAll(transDeadDirectlyBecauseOfMCS);
 
                 //dodawanie informacji o MCS do rankingu:
                 StringBuilder rankmsg = new StringBuilder("MCS#");
@@ -1553,9 +1551,9 @@ public class HolmesMCSanalysis extends JFrame {
             for (Map.Entry<String, Integer> mapElement : lhm.entrySet()) {
                 //if(liczba_wynikow==0){break;}
                 String[] mcs = mapElement.getKey().split("\\[");
-                int percentage = mapElement.getValue()  * 100 / transitions.size();
+                float percentage = (float) (mapElement.getValue() * 100) / transitions.size();
                 String percent = "%";
-                logField1stTab.append(String.format("%-8s %-30s%s%d, %d%s)", mcs[0],"["+mcs[1],"(Tx:", mapElement.getValue(), percentage,percent));
+                logField1stTab.append(String.format("%-8s %-30s%s%d, %.2f%s)", mcs[0],"["+mcs[1],"(Tx:", mapElement.getValue(), percentage, percent));
                 logField1stTab.append("\n");
                 liczba_wynikow--;
             }
