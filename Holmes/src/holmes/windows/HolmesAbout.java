@@ -99,7 +99,7 @@ public class HolmesAbout extends JFrame {
 			GUIManager.getDefaultGUIManager().log("Error (835870912) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		
-		JLabel nameLabel = new JLabel("Holmes v1.6.9.5"); // (Trust me, I'm an engineer edition)");
+		JLabel nameLabel = new JLabel("Holmes v1.6.9.6"); // (Trust me, I'm an engineer edition)");
 		nameLabel.setFont(new Font("Consolas", Font.PLAIN, 25));
 		nameLabel.setBounds(170, 30, 300, 40);
 		panel.add(nameLabel);
