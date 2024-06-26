@@ -357,7 +357,7 @@ public class Toolbar extends JPanel {
 
         /*
         ToolbarButtonAction cleanButton = new ToolbarButtonAction(this, "ClearColors", "Restore net default colors",
-                Tools.getResIcon48("/icons/toolbar/cleanGraphColors.png")) {
+                Tools.getResIcon48("/icons/toolbar/cleanLogArea.png")) {
             public void actionPerformed(ActionEvent actionEvent) {
                 overlord.reset.clearGraphColors();
             }

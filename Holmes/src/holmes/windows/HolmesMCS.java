@@ -41,8 +41,8 @@ public class HolmesMCS extends JFrame {
 	private static final long serialVersionUID = -5765964470006303431L;
 	private MCSCalculator mcsGenerator = null;
 	private ArrayList<Transition> transitions;
-	private int maxCutSize; //wybrana kardynalność zbiorów
-	private int maximumMCS; //górne ograniczenie kardynalności - przy szukaniu
+	private int maxCutSize = 3; //wybrana kardynalność zbiorów
+	private int maximumMCS = 10; //górne ograniczenie kardynalności - przy szukaniu
 	private int maxSetsNumber = 300; //maksymalna liczba zbiorów
 	
 	private boolean generateAll = true; 
@@ -70,7 +70,8 @@ public class HolmesMCS extends JFrame {
 		}
 		setVisible(false);
 		this.setTitle("Minimal Cutting Sets generator");
-		
+
+		/*
 		if(transitions != null && transitions.size()>1) {
 			maxCutSize = 2;
 			maximumMCS = transitions.size();
@@ -78,6 +79,7 @@ public class HolmesMCS extends JFrame {
 			maxCutSize = 0;
 			maximumMCS = 0;
 		}
+		 */
 		
 		setLayout(new BorderLayout());
 		setSize(new Dimension(860, 754));
@@ -155,7 +157,7 @@ public class HolmesMCS extends JFrame {
 		mcsLabel2.setBounds(posX, posY+25, 80, 20);
 		panel.add(mcsLabel2);
         
-		SpinnerModel mcsSpinnerModel = new SpinnerNumberModel(maxCutSize, 0, maximumMCS, 1);
+		SpinnerModel mcsSpinnerModel = new SpinnerNumberModel(maxCutSize, 1, maximumMCS, 1);
 		mcsSpinner = new JSpinner(mcsSpinnerModel);
 		mcsSpinner.setBounds(posX+90, posY+25, 60, 20);
 		mcsSpinner.addChangeListener(e -> {
@@ -404,7 +406,7 @@ public class HolmesMCS extends JFrame {
 		panel.add(transitionsResultsCombo);
 		
 		JCheckBox showAllCheckBox = new JCheckBox("Show full info", true);
-		showAllCheckBox.setBounds(posX+380, posY+20, 110, 20);
+		showAllCheckBox.setBounds(posX+490, posY, 110, 20);
 		showAllCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			showFullInfo = abstractButton.getModel().isSelected();
@@ -456,9 +458,20 @@ public class HolmesMCS extends JFrame {
 		calculateFragilityButton.setFocusPainted(false);
 		panel.add(calculateFragilityButton);
 
+		JButton cleanButton = new JButton("", Tools.getResIcon48("/icons/mcsWindow/cleanLogArea.png"));
+		cleanButton.setText("Clean");
+		cleanButton.setBounds(posX+360, posY+25, 110, 31);
+		cleanButton.setMargin(new Insets(0, 0, 0, 0));
+		cleanButton.addActionListener(actionEvent -> {
+			logField.setText("");
+		});
+		cleanButton.setFocusPainted(false);
+		panel.add(cleanButton);
+
+
 		JButton doSmthButtonMk1 = new JButton();
 		doSmthButtonMk1.setText("<html><center>MCS<br />evaluation<center></html>");
-		doSmthButtonMk1.setBounds(posX+500, posY, 110, 50);
+		doSmthButtonMk1.setBounds(posX+600, posY, 110, 60);
 		doSmthButtonMk1.setMargin(new Insets(0, 0, 0, 0));
 		doSmthButtonMk1.setIcon(Tools.getResIcon22("/icons/mcsWindow/computeData.png"));
 		doSmthButtonMk1.addActionListener(actionEvent -> {
@@ -466,6 +479,8 @@ public class HolmesMCS extends JFrame {
 		});
 		doSmthButtonMk1.setFocusPainted(false);
 		panel.add(doSmthButtonMk1);
+
+
 		
 		return panel;
 	}
@@ -786,15 +801,12 @@ public class HolmesMCS extends JFrame {
 		//int minimumValue = 0;
 
 		if(transitions != null && transitions.size() > 1) {
-			if(maxCutSize >= transitions.size())
-				maxCutSize = 2;
-			
 			maximumMCS = transitions.size();
-			//minimumValue = 0;
+			if(maxCutSize >= transitions.size() || maxCutSize == 0)
+				maxCutSize = 3;
 		} else {
 			maxCutSize = 0;
 			maximumMCS = 0;
-			//minimumValue = 0;
 		}
 		
 		SpinnerModel mcsSpinnerModel = new SpinnerNumberModel(maxCutSize, 0, maximumMCS, 1);
