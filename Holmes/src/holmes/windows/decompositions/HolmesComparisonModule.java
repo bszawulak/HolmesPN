@@ -140,7 +140,7 @@ public class HolmesComparisonModule extends JFrame {
         tabbedPane.addTab("Invariant based comparison", null, invCompPanel, "");
 
         GRDFPanel = makeGraphletPanel();
-        tabbedPane.addTab("Graphlets (GRDF) comparison", null, GRDFPanel, "");
+        tabbedPane.addTab("Graphlets (RGF) comparison", null, GRDFPanel, "");
 
         GDDAPanel = makeGDDAPanel();
         tabbedPane.addTab("Graphlets (GDDA) comparison", null, GDDAPanel, "");
@@ -706,7 +706,7 @@ public class HolmesComparisonModule extends JFrame {
     }
 
     JPanel createChartPanel() {
-        String chartTitle = "Graflet Relative Distribution Frequency (GRDF)";
+        String chartTitle = "Relative Graphlet Frequency distance (RGF)";
         String xAxisLabel = "Grphlets";
         String yAxisLabel = "Count";
 
