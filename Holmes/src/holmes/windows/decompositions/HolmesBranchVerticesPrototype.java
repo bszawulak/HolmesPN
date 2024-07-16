@@ -356,7 +356,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
 
     private void calcBase() {
         for (Node n : overlord.getWorkspace().getProject().getNodes()) {
-            if ((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)) {
+            if ((n.getOutputNodes().size() > 1 || n.getInputNodes().size() > 1)) {
                 BranchStructure bs = new BranchStructure(n, new Color(0, 0, 0));
                 bsl.add(bs);
             }
@@ -471,15 +471,15 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                 case 1:
                     if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)
                             &&
-                            (n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)
+                            (n.getOutputNodes().size() > 1 || n.getInputNodes().size() > 1)
                             &&
-                            (n.getOutNodes().size() + n.getInNodes().size() >= minimalValue)
+                            (n.getOutputNodes().size() + n.getInputNodes().size() >= minimalValue)
                             &&
-                            (n.getOutNodes().size() + n.getInNodes().size() <= maximalValue)
+                            (n.getOutputNodes().size() + n.getInputNodes().size() <= maximalValue)
                             && ((
-                            (n.getInNodes().size() >= minimaInlValue && n.getInNodes().size() <= maximaInlValue))
+                            (n.getInputNodes().size() >= minimaInlValue && n.getInputNodes().size() <= maximaInlValue))
                             || (
-                            (n.getOutNodes().size() >= minimalOutValue && n.getOutNodes().size() <= maximalOutValue)))
+                            (n.getOutputNodes().size() >= minimalOutValue && n.getOutputNodes().size() <= maximalOutValue)))
                     ) {
                         BranchStructure bs = new BranchStructure(n, cp.getColor());
                         bsl.add(bs);
@@ -488,30 +488,30 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                 case 2:
                     if (n.getType().equals(PetriNetElement.PetriNetElementType.PLACE)
                             &&
-                            (n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)
+                            (n.getOutputNodes().size() > 1 || n.getInputNodes().size() > 1)
                             &&
-                            (n.getOutNodes().size() + n.getInNodes().size() >= minimalValue)
+                            (n.getOutputNodes().size() + n.getInputNodes().size() >= minimalValue)
                             &&
-                            (n.getOutNodes().size() + n.getInNodes().size() <= maximalValue)
+                            (n.getOutputNodes().size() + n.getInputNodes().size() <= maximalValue)
                             && ((
-                            (n.getInNodes().size() >= minimaInlValue && n.getInNodes().size() <= maximaInlValue))
+                            (n.getInputNodes().size() >= minimaInlValue && n.getInputNodes().size() <= maximaInlValue))
                             | (
-                            (n.getOutNodes().size() >= minimalOutValue && n.getOutNodes().size() <= maximalOutValue)))
+                            (n.getOutputNodes().size() >= minimalOutValue && n.getOutputNodes().size() <= maximalOutValue)))
                     ) {
                         BranchStructure bs = new BranchStructure(n, cp.getColor());
                         bsl.add(bs);
                     }
                     break;
                 default:
-                    if ((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)
+                    if ((n.getOutputNodes().size() > 1 || n.getInputNodes().size() > 1)
                             &&
-                            (n.getOutNodes().size() + n.getInNodes().size() >= minimalValue)
+                            (n.getOutputNodes().size() + n.getInputNodes().size() >= minimalValue)
                             &&
-                            (n.getOutNodes().size() + n.getInNodes().size() <= maximalValue)
+                            (n.getOutputNodes().size() + n.getInputNodes().size() <= maximalValue)
                             &&
-                            (n.getInNodes().size() >= minimaInlValue && n.getInNodes().size() <= maximaInlValue)
+                            (n.getInputNodes().size() >= minimaInlValue && n.getInputNodes().size() <= maximaInlValue)
                             &&
-                            (n.getOutNodes().size() >= minimalOutValue && n.getOutNodes().size() <= maximalOutValue)
+                            (n.getOutputNodes().size() >= minimalOutValue && n.getOutputNodes().size() <= maximalOutValue)
                     ) {
                         BranchStructure bs = new BranchStructure(n, cp.getColor());
                         bsl.add(bs);
@@ -539,9 +539,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
 
 
                 if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION))
-                    resultString.append("\t ").append(direction).append(" T: <").append(n.getInNodes().size()).append(" | ").append(n.getOutNodes().size()).append("> ").append(n.getName()).append("\n\r");
+                    resultString.append("\t ").append(direction).append(" T: <").append(n.getInputNodes().size()).append(" | ").append(n.getOutputNodes().size()).append("> ").append(n.getName()).append("\n\r");
                 else
-                    resultString.append("\t ").append(direction).append(" P: <").append(n.getInNodes().size()).append(" | ").append(n.getOutNodes().size()).append("> ").append(n.getName()).append("\n\r");
+                    resultString.append("\t ").append(direction).append(" P: <").append(n.getInputNodes().size()).append(" | ").append(n.getOutputNodes().size()).append("> ").append(n.getName()).append("\n\r");
             }
         }
 
@@ -556,19 +556,19 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         int placeNumberOutWeight = 0;
 
         for (Node n : overlord.getWorkspace().getProject().getNodes()) {
-            if (n.getInArcs().size() > 1 || n.getOutArcs().size() > 1) {
+            if (n.getInputArcs().size() > 1 || n.getOutputArcs().size() > 1) {
                 if (n.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)) {
-                    transitionNumberIn += n.getInArcs().size();
-                    transitionNumberInWeight += n.getInArcs().stream().mapToInt(Arc::getWeight).sum();
+                    transitionNumberIn += n.getInputArcs().size();
+                    transitionNumberInWeight += n.getInputArcs().stream().mapToInt(Arc::getWeight).sum();
 
-                    transitionNumberOut += n.getInArcs().size();
-                    transitionNumberOutWeight += n.getInArcs().stream().mapToInt(Arc::getWeight).sum();
+                    transitionNumberOut += n.getInputArcs().size();
+                    transitionNumberOutWeight += n.getInputArcs().stream().mapToInt(Arc::getWeight).sum();
                 } else {
-                    placeNumberIn += n.getInArcs().size();
-                    placeNumberInWeight += n.getInArcs().stream().mapToInt(Arc::getWeight).sum();
+                    placeNumberIn += n.getInputArcs().size();
+                    placeNumberInWeight += n.getInputArcs().stream().mapToInt(Arc::getWeight).sum();
 
-                    placeNumberOut += n.getInArcs().size();
-                    placeNumberOutWeight += n.getInArcs().stream().mapToInt(Arc::getWeight).sum();
+                    placeNumberOut += n.getInputArcs().size();
+                    placeNumberOutWeight += n.getInputArcs().stream().mapToInt(Arc::getWeight).sum();
                 }
             }
         }
@@ -610,12 +610,12 @@ public class HolmesBranchVerticesPrototype extends JFrame {
             for (int i = 0; i < path.path.size() - 1; i++) {
                 Node startNode = path.path.get(i);
                 Node endNode = path.path.get(i + 1);
-                for (Arc arc : startNode.getOutArcs()) {
+                for (Arc arc : startNode.getOutputArcs()) {
                     if (arc.getEndNode().getID() == endNode.getID())
                         listOfAllArcs.add(arc);
                 }
             }
-            for (Arc arc : path.endNode.getOutArcs()) {
+            for (Arc arc : path.endNode.getOutputArcs()) {
                 if (arc.getEndNode().getID() == path.startNode.getID())
                     listOfAllArcs.add(arc);
             }
@@ -627,7 +627,7 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         ArrayList<Node> nodes = new ArrayList<>();
         ArrayList<VertCounter> counters = new ArrayList<>();
         for (Node n : overlord.getWorkspace().getProject().getNodes()) {
-            Integer degree = n.getInNodes().size() + n.getOutNodes().size();
+            Integer degree = n.getInputNodes().size() + n.getOutputNodes().size();
 
             if (counters.stream().anyMatch(x -> x.deg.equals(degree))) {
                 for (VertCounter vc : counters) {
@@ -713,11 +713,11 @@ public class HolmesBranchVerticesPrototype extends JFrame {
 
         private void calcPaths() {
 
-            for (Node m : root.getOutNodes()) {
+            for (Node m : root.getOutputNodes()) {
                 ArrayList<Node> startPath = new ArrayList<>();
                 startPath.add(root);
                 ArrayList<Node> nodes = calculatePath(m, startPath);
-                if (nodes.get(nodes.size() - 1).getOutNodes().contains(nodes.get(0))) {
+                if (nodes.get(nodes.size() - 1).getOutputNodes().contains(nodes.get(0))) {
                     paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true, false));
                 } else {
                     paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), false, false));
@@ -725,11 +725,11 @@ public class HolmesBranchVerticesPrototype extends JFrame {
             }
 
 
-            for (Node m : root.getInNodes()) {
+            for (Node m : root.getInputNodes()) {
                 ArrayList<Node> startPath = new ArrayList<>();
                 startPath.add(root);
                 ArrayList<Node> nodes = calculatePathRevers(m, startPath);
-                if (nodes.get(nodes.size() - 1).getInNodes().contains(nodes.get(0))) {
+                if (nodes.get(nodes.size() - 1).getInputNodes().contains(nodes.get(0))) {
                     paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true, true));
                 } else {
                     paths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), false, true));
@@ -742,13 +742,13 @@ public class HolmesBranchVerticesPrototype extends JFrame {
         private void setElemetsColor() {
             for (SubnetCalculator.Path p : paths) {
                 for (int i = 0; i < p.path.size() - 1; i++) {
-                    for (Arc a : p.path.get(i).getOutArcs()
+                    for (Arc a : p.path.get(i).getOutputArcs()
                     ) {
                         if (a.getEndNode().getID() == p.path.get(i + 1).getID()) {
                             a.arcDecoBox.layers.add(branchColor);
                         }
                     }
-                    for (Arc a : p.path.get(i).getInArcs()) {
+                    for (Arc a : p.path.get(i).getInputArcs()) {
                         if (a.getStartNode().getID() == p.path.get(i + 1).getID()) {
                             a.arcDecoBox.layers.add(branchColor);
                         }
@@ -777,9 +777,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                 return path;
             }
             path.add(m);
-            if (m.getOutNodes().size() < 2 || m.getInNodes().size() < 2) {
-                if (m.getOutNodes().size() == 1 && m.getInNodes().size() == 1) {
-                    calculatePath(m.getOutNodes().get(0), path);
+            if (m.getOutputNodes().size() < 2 || m.getInputNodes().size() < 2) {
+                if (m.getOutputNodes().size() == 1 && m.getInputNodes().size() == 1) {
+                    calculatePath(m.getOutputNodes().get(0), path);
                 }
             }
             return path;
@@ -790,9 +790,9 @@ public class HolmesBranchVerticesPrototype extends JFrame {
                 return path;
             }
             path.add(m);
-            if (m.getOutNodes().size() < 2 || m.getInNodes().size() < 2) {
-                if ((m.getInNodes().size() == 1) && (m.getOutNodes().size() == 1)) {
-                    calculatePathRevers(m.getInNodes().get(0), path);
+            if (m.getOutputNodes().size() < 2 || m.getInputNodes().size() < 2) {
+                if ((m.getInputNodes().size() == 1) && (m.getOutputNodes().size() == 1)) {
+                    calculatePathRevers(m.getInputNodes().get(0), path);
                 }
             }
             return path;

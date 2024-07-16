@@ -81,7 +81,7 @@ public class TransitionColored extends Transition {
         int tokens4grey = 0;
         int tokens5black = 0;
 
-        for (Arc arc : getInArcs()) {
+        for (Arc arc : getInputArcs()) {
             Place arcStartPlace = (Place) arc.getStartNode();
             Arc.TypeOfArc arcType = arc.getArcType();
 

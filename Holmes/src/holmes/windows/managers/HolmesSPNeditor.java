@@ -93,8 +93,8 @@ public class HolmesSPNeditor extends JFrame {
 			
 			String postFix = "";
 			Transition t = transitions.get(row);
-			int inSize = t.getInArcs().size();
-			int outSize = t.getOutArcs().size();
+			int inSize = t.getInputArcs().size();
+			int outSize = t.getOutputArcs().size();
 			
 			if(inSize == 0 && outSize != 0)
 				postFix += "     - IN -    ";

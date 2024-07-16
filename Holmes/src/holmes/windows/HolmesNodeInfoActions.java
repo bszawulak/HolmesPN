@@ -103,7 +103,7 @@ public class HolmesNodeInfoActions {
 				if(t == 0)
 					continue;
 				
-				for(Arc arc : transitions.get(position).getInArcs()) {
+				for(Arc arc : transitions.get(position).getInputArcs()) {
 					if(arc.getStartNode().equals(place)) {
 						sourcePlaceFound = true;
 						break;
@@ -122,7 +122,7 @@ public class HolmesNodeInfoActions {
 				if(t == 0)
 					continue;
 				
-				for(Arc arc : transitions.get(position).getOutArcs()) {
+				for(Arc arc : transitions.get(position).getOutputArcs()) {
 					if(arc.getEndNode().equals(place)) {
 						targetPlaceFound = true;
 						break;

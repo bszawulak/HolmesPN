@@ -1,6 +1,5 @@
 package holmes.petrinet.simulators.xtpn;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -165,7 +164,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                         transition.setProductionStatus_xTPN(true);
 
                         if(graphicalSimulation) {
-                            for(Arc arc : transition.getOutArcs()) { //ustaw łuki w tryb produkcji
+                            for(Arc arc : transition.getOutputArcs()) { //ustaw łuki w tryb produkcji
                                 arc.arcXTPNbox.setXTPNprodStatus(true);
                             }
                         }
@@ -197,7 +196,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                                 transition.setProductionStatus_xTPN(true);
 
                                 if(graphicalSimulation) { //ustaw łuki w tryb produkcji
-                                    for(Arc arc : transition.getOutArcs()) {
+                                    for(Arc arc : transition.getOutputArcs()) {
                                         arc.arcXTPNbox.setXTPNprodStatus(true);
                                     }
                                 }
@@ -214,7 +213,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                             transition.setTimerBetaValue(0.0);
 
                             if(graphicalSimulation) {
-                                for(Arc arc : transition.getOutArcs()) { //ustaw łuki w tryb produkcji
+                                for(Arc arc : transition.getOutputArcs()) { //ustaw łuki w tryb produkcji
                                     arc.arcXTPNbox.setXTPNprodStatus(true);
                                 }
                             }
@@ -226,7 +225,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                         //będzie dodana do listy produkcji w computeNextState() tak czy owak
                         //jakikolwiek powyższy scenariusz by nie był, jest to jednak aktywna tranzycja, więc:
                         if(graphicalSimulation) { //ustaw zielony kolor łuku - tryb potrzymywania aktywacji
-                            ArrayList<Arc> arcs = transition.getInArcs();
+                            ArrayList<Arc> arcs = transition.getInputArcs();
                             for (Arc arc : arcs) {
                                 arc.arcXTPNbox.setXTPNactStatus(true);
                             }
@@ -509,7 +508,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                         transition.setTimerAlfaValue(-1.0);
                     }
                     if(graphicalSimulation) {
-                        for(Arc arc : transition.getOutArcs()) {
+                        for(Arc arc : transition.getOutputArcs()) {
                             arc.arcXTPNbox.setXTPNprodStatus(true);
                         }
                     }
@@ -534,7 +533,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
             transition.setLaunching(false);
             // skoro tutaj dotarliśmy, to znaczy że tranzycja już swoje zrobiła
             // i jej status aktywnej się skończy w tym kroku.
-            arcs = transition.getOutArcs();
+            arcs = transition.getOutputArcs();
 
             //dodaj odpowiednią liczbę tokenów do miejsc
             for (Arc arc : arcs) {
@@ -583,7 +582,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                     Collections.sort(box.placeBack.accessMultiset());
                     Collections.reverse(box.placeBack.accessMultiset());
 
-                    box.placeBack.modifyTokensNumber(returnedTokens.size());
+                    box.placeBack.addTokensNumber(returnedTokens.size());
                     box.Clear();
                 }
             }

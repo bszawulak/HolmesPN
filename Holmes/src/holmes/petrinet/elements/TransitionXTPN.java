@@ -484,10 +484,10 @@ public class TransitionXTPN extends Transition {
     }
 
     public boolean isInputTransition() {
-        return getInArcs().size() == 0;
+        return getInputArcs().size() == 0;
     }
     public boolean isOutputTransition() {
-        return getOutArcs().size() == 0;
+        return getOutputArcs().size() == 0;
     }
 
     /**
@@ -503,7 +503,7 @@ public class TransitionXTPN extends Transition {
 
         // accuracy = SimulatorGlobals.calculationsAccuracy;
 
-        for (Arc arc : getInArcs()) { //jeśli brak, to aktywna wejściowa
+        for (Arc arc : getInputArcs()) { //jeśli brak, to aktywna wejściowa
             if( !(arc.getStartNode() instanceof PlaceXTPN) ) {
                 GUIManager.getDefaultGUIManager().log("Error, non-XTPN place found! Place: "+arc.getStartNode().getName(), "error", true);
                 break;
@@ -568,7 +568,7 @@ public class TransitionXTPN extends Transition {
         }
 
         if(graphics) {
-            ArrayList<Arc> arcs = getInArcs();
+            ArrayList<Arc> arcs = getInputArcs();
             for (Arc arc : arcs) {
                 arc.arcXTPNbox.setXTPNactStatus(false);
             }

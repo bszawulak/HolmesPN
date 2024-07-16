@@ -874,7 +874,7 @@ public class SelectionManager {
 					return;
 				}
 
-				place.modifyTokensNumber(1);
+				place.addTokensNumber(1);
 				if(overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
 					int tokens = place.getTokensNumber();
 					ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
@@ -927,7 +927,7 @@ public class SelectionManager {
 					safetyNodesList.add(el.getParentNode());
 					int tokens = ((Place) el.getParentNode()).getTokensNumber();
 					if(tokens >= 1) {
-						((Place) el.getParentNode()).modifyTokensNumber(-1);
+						((Place) el.getParentNode()).addTokensNumber(-1);
 
 						if(overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
 							int value = ((Place) el.getParentNode()).getTokensNumber();

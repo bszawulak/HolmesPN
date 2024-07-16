@@ -157,12 +157,12 @@ public class HolmesMCSanalysis extends JFrame {
         HashSet<Place> Px = new HashSet<Place>();
         for(Integer MCStransition : MCS){
             Transition transition = transitions.get(MCStransition);
-            Px.addAll(transition.getPostPlaces());
+            Px.addAll(transition.getOutputPlaces());
         }
         HashSet<Place> Poff = new HashSet<Place>();
         for(Place place : Px){
             boolean flag = true;
-            for(Transition transition : place.getPreTransitions()){
+            for(Transition transition : place.getInputTransitions()){
                 if(!MCS.contains(transition.getID()- places.size())){
                     flag = false;
                     break;
@@ -175,7 +175,7 @@ public class HolmesMCSanalysis extends JFrame {
 
         HashSet<Transition> Toff = new HashSet<Transition>();
         for(Place place : Poff){
-            Toff.addAll(place.getPostTransitions());
+            Toff.addAll(place.getOutputTransitions());
         }
         notePad.addTextLine("(T_off: [\n", "text");
 
@@ -740,7 +740,7 @@ public class HolmesMCSanalysis extends JFrame {
                 }
                 HashSet<Transition> T_dng = new HashSet<Transition>();
                 for (Place place : outputPlacesOfMCS) {
-                    T_dng.addAll(place.getPostTransitions());
+                    T_dng.addAll(place.getOutputTransitions());
                 }
 
 
@@ -759,14 +759,14 @@ public class HolmesMCSanalysis extends JFrame {
                         boolean potentiallyRemoveTransAsStarved = false;
 
                         //tworzy zbiór miejsc wejściowych, które karmią tranzycję T_dng tokenami:
-                        HashSet<Place> inputPlacesForTransFormT_dng = new HashSet<Place>(currentTrans.getPrePlaces()); //pobierz miejsca wejściowe
+                        HashSet<Place> inputPlacesForTransFormT_dng = new HashSet<Place>(currentTrans.getInputPlaces()); //pobierz miejsca wejściowe
 
                         for(Place place : inputPlacesForTransFormT_dng) { //sprawdzamy czy miejsce może mieć tokeny
                             triggerFoundReallyDeadTransitionInTdng = false;
-                            HashSet<Transition> inputTransToInputPlacesForT_dng = new HashSet<Transition>(place.getPreTransitions()); //pobierz t wejściowe
+                            HashSet<Transition> inputTransToInputPlacesForT_dng = new HashSet<Transition>(place.getInputTransitions()); //pobierz t wejściowe
                             inputTransToInputPlacesForT_dng.removeIf(hashSetMCS::contains); //usuwamy te, które są w MCS
                             if(inputTransToInputPlacesForT_dng.isEmpty()) { //miejsce martwe, bo nie ma tokenów
-                                for(Transition t_tmp : place.getPostTransitions()) {
+                                for(Transition t_tmp : place.getOutputTransitions()) {
                                     if(T_dng.contains(t_tmp)) {
                                         transDeadDirectlyBecauseOfMCS.add(t_tmp);
                                     }
@@ -912,7 +912,7 @@ public class HolmesMCSanalysis extends JFrame {
     private HashSet<Place> createOutputPlacesOfMCS(HashSet<Transition> hashSetMCS) {
         HashSet<Place> outputPlacesOfMCS = new HashSet<Place>();
         for(Transition t : hashSetMCS) {
-            outputPlacesOfMCS.addAll(t.getPostPlaces());
+            outputPlacesOfMCS.addAll(t.getOutputPlaces());
         }
         return outputPlacesOfMCS;
     }
@@ -926,13 +926,13 @@ public class HolmesMCSanalysis extends JFrame {
     private HashSet<Transition> redefineMCS(HashSet<Transition> hashSetMCS) {
         HashSet<Transition> newMCS = new HashSet<Transition>();
         for(Transition t : hashSetMCS) { //dla wszystkich tranzycji w MCS
-            ArrayList<Place> outPlaces = t.getPostPlaces();
+            ArrayList<Place> outPlaces = t.getOutputPlaces();
             for(Place p : outPlaces) { //dla wszystkich miejsc wyjściowych tranzycji
                 //sprawdzanie, czy tranzycje wejściowe do p są w CAŁOŚCI w MCS:
-                HashSet<Transition> inTrans = new HashSet<Transition>(p.getPreTransitions());
+                HashSet<Transition> inTrans = new HashSet<Transition>(p.getInputTransitions());
                 inTrans.removeIf(hashSetMCS::contains); //usuwamy te, które są w MCS
                 if(inTrans.isEmpty()) { //miejsce jest zagłodzone całkowicie
-                    newMCS.addAll(p.getPostTransitions());  //dodajemy wszystkie tranzycje wyjściowe tego miejsca
+                    newMCS.addAll(p.getOutputTransitions());  //dodajemy wszystkie tranzycje wyjściowe tego miejsca
                     break;
                 }
             }
@@ -942,12 +942,12 @@ public class HolmesMCSanalysis extends JFrame {
     }
 
     private boolean canFire(Transition t_x, HashSet<Transition> T_dng, int distance) {
-        for(Place p : t_x.getPrePlaces()) {
+        for(Place p : t_x.getInputPlaces()) {
             if(AllInputTransitionsInDngSet(p, T_dng) == true) { //to znaczy, że wszystkie tranzycje wejściowe p, są w T_dng
                 return false; //czyli uważamy, że tranzycja t_x jest w niebezpieczeństwie
             }
             if(distance > 1) {
-                for(Transition t : p.getPreTransitions()) { //dla wszystkich tranzycji t, które prowadzą do miejsca p
+                for(Transition t : p.getInputTransitions()) { //dla wszystkich tranzycji t, które prowadzą do miejsca p
                     if(CheckHigherLevels(t, T_dng, distance-1)) {
                         return false;
                     }
@@ -958,7 +958,7 @@ public class HolmesMCSanalysis extends JFrame {
     }
 
     private boolean AllInputTransitionsInDngSet(Place p, HashSet<Transition> T_dng) {
-        for(Transition t : p.getPreTransitions()) { //każda tranzycja wejściowa miejsca
+        for(Transition t : p.getInputTransitions()) { //każda tranzycja wejściowa miejsca
             if(T_dng.contains(t) == false) {
                 return false;   //jeśli chociaż jedna tranzycja nie jest w T_dng
                 //to dostarczy tokeny do miejsca p
@@ -969,20 +969,20 @@ public class HolmesMCSanalysis extends JFrame {
 
     private boolean CheckHigherLevels(Transition t, HashSet<Transition> T_dng, int distance) {
         if(distance == 1) {
-            for(Place p : t.getPrePlaces()) {
+            for(Place p : t.getInputPlaces()) {
                 if(AllInputTransitionsInDngSet(p, T_dng) == false) {
                     return false;
                 }
             }
             //return AllInputTransitionsInDngSet(t, T_dng);
         } else {
-            for(Place p : t.getPrePlaces()) {
+            for(Place p : t.getInputPlaces()) {
                 if(AllInputTransitionsInDngSet(p, T_dng)) {
                     return true; //jeżeli wszystkie tranzycje wejściowe do miejsca p są w T_dng
                     //to nie ma co sprawdzać dalej
                 }
                 if(distance > 2) {
-                    for(Transition t_prime : p.getPreTransitions()) {
+                    for(Transition t_prime : p.getInputTransitions()) {
                         if(CheckHigherLevels(t_prime, T_dng, distance-1)) {
                             return true;
                         }
@@ -1071,7 +1071,7 @@ public class HolmesMCSanalysis extends JFrame {
                 HashSet<Place> Px = new HashSet<Place>();
                 for(Integer MCStransition : MCS){
                     Transition transition = transitions.get(MCStransition);
-                    Px.addAll(transition.getPostPlaces());
+                    Px.addAll(transition.getOutputPlaces());
                 }
                 //---
                 //Teraz sprawdzamy, ile miejsc z Px nie posiada żadnych innych łuków wejściowych, tj. innych niż te wychodzące z tranzycji ze zbioru MCS.
@@ -1080,7 +1080,7 @@ public class HolmesMCSanalysis extends JFrame {
                 HashSet<Place> Poff = new HashSet<Place>();
                 for(Place place : Px){
                     boolean flag = true;
-                    for(Transition transition : place.getPreTransitions()){
+                    for(Transition transition : place.getInputTransitions()){
                         if(!MCS.contains(transition.getID()- places.size())){
                             flag = false;
                             break;
@@ -1094,7 +1094,7 @@ public class HolmesMCSanalysis extends JFrame {
                 //Następnie idziemy poziom dalej. Sprawdzamy wszystkie tranzycje, które mają jako swoje miejsce wejściowe przynajmniej jedno miejsce ze zbioru Poff.
                 HashSet<Transition> Toff = new HashSet<Transition>();
                 for(Place place : Poff){
-                    Toff.addAll(place.getPostTransitions());
+                    Toff.addAll(place.getOutputTransitions());
                 }
 
                 ArrayList<Integer> indexes = new ArrayList<>();
@@ -1563,7 +1563,7 @@ public class HolmesMCSanalysis extends JFrame {
                 HashSet<Place> Px = new HashSet<Place>();
                 for(Integer MCStransition : MCS){
                     Transition transition = transitions.get(MCStransition);
-                    Px.addAll(transition.getPostPlaces());
+                    Px.addAll(transition.getOutputPlaces());
                 }
                 //---
                 //Teraz sprawdzamy, ile miejsc z Px nie posiada żadnych innych łuków wejściowych, tj. innych niż te wychodzące z tranzycji ze zbioru MCS.
@@ -1572,7 +1572,7 @@ public class HolmesMCSanalysis extends JFrame {
                 HashSet<Place> Poff = new HashSet<Place>();
                 for(Place place : Px){
                     boolean flag = true;
-                    for(Transition transition : place.getPreTransitions()){
+                    for(Transition transition : place.getInputTransitions()){
                         if(!MCS.contains(transition.getID()- places.size())){
                             flag = false;
                             break;
@@ -1586,7 +1586,7 @@ public class HolmesMCSanalysis extends JFrame {
                 //Następnie idziemy poziom dalej. Sprawdzamy wszystkie tranzycje, które mają jako swoje miejsce wejściowe przynajmniej jedno miejsce ze zbioru Poff.
                 HashSet<Transition> Toff = new HashSet<Transition>();
                 for(Place place : Poff){
-                    Toff.addAll(place.getPostTransitions());
+                    Toff.addAll(place.getOutputTransitions());
                 }
                 ArrayList<Integer> ids = new ArrayList<>();
                 for(Transition trans : Toff){

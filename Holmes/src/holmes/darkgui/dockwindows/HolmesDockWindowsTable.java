@@ -2005,14 +2005,14 @@ public class HolmesDockWindowsTable extends JPanel {
                     double lastToken = place.accessMultiset().get(size - 1);
                     if (lastToken == 0.0) {
                         place.accessMultiset().remove(size - 1);
-                        place.modifyTokensNumber(-1);
+                        place.addTokensNumber(-1);
                     }
 
                 }
             } else {
                 int tokens = place.getTokensNumber();
                 if (tokens > 0)
-                    place.modifyTokensNumber(-1);
+                    place.addTokensNumber(-1);
             }
 
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();

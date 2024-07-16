@@ -106,7 +106,7 @@ public class HolmesReductionPrototype extends JFrame {
     private void preReduction() {
         ArrayList<Node> list = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
 
-        ArrayList<Node> toReduce = list.stream().filter(x -> x.getInArcs().size() == 1 && x.getOutArcs().size() == 1).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Node> toReduce = list.stream().filter(x -> x.getInputArcs().size() == 1 && x.getOutputArcs().size() == 1).collect(Collectors.toCollection(ArrayList::new));
 
         ArrayList<SubnetCalculator.Path> paths = findPaths();
 
@@ -114,12 +114,12 @@ public class HolmesReductionPrototype extends JFrame {
         ArrayList<SubnetCalculator.Path> tpaths = paths.stream().filter(x -> x.startNode.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && x.endNode.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION)).collect(Collectors.toCollection(ArrayList::new));
 
         for (Node t : toReduce) {
-            if ((ppaths.stream().anyMatch(x -> x.innerpath.contains(t)) || tpaths.stream().anyMatch(x -> x.innerpath.contains(t))) && !t.getInNodes().isEmpty()&& !t.getOutNodes().isEmpty()){
-                Node inPlace = t.getInNodes().get(0);
-                Node outPlace = t.getOutNodes().get(0);
+            if ((ppaths.stream().anyMatch(x -> x.innerpath.contains(t)) || tpaths.stream().anyMatch(x -> x.innerpath.contains(t))) && !t.getInputNodes().isEmpty()&& !t.getOutputNodes().isEmpty()){
+                Node inPlace = t.getInputNodes().get(0);
+                Node outPlace = t.getOutputNodes().get(0);
 
-                if (inPlace.getOutArcs().size() == 1 && outPlace.getInArcs().size() == 1 && outPlace.getOutArcs().size() == 1 && inPlace.getInArcs().size() == 1) {
-                    for (Arc a : outPlace.getInArcs()) {
+                if (inPlace.getOutputArcs().size() == 1 && outPlace.getInputArcs().size() == 1 && outPlace.getOutputArcs().size() == 1 && inPlace.getInputArcs().size() == 1) {
+                    for (Arc a : outPlace.getInputArcs()) {
                         if (!(a.getStartNode().getID() == t.getID())) {
                             Arc na = new Arc(IdGenerator.getNextId(), a.getStartLocation(), inPlace.getLastLocation(), Arc.TypeOfArc.NORMAL);
                             na.setWeight(a.getWeight());
@@ -127,7 +127,7 @@ public class HolmesReductionPrototype extends JFrame {
                         }
                     }
 
-                    for (Arc a : outPlace.getOutArcs()) {
+                    for (Arc a : outPlace.getOutputArcs()) {
                         if (!(a.getEndNode().getID() == t.getID())) {
                             Arc na = new Arc(IdGenerator.getNextId(), inPlace.getLastLocation(), a.getEndLocation(), Arc.TypeOfArc.NORMAL);
                             na.setWeight(a.getWeight());
@@ -141,12 +141,12 @@ public class HolmesReductionPrototype extends JFrame {
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().deleteElementLocation(outPlace.getLastLocation());
 
-                    for (Arc a : outPlace.getOutInArcs()) {
+                    for (Arc a : outPlace.getNeighborsArcs()) {
                         GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().getGraphPanelArcs().remove(a);
                     }
 
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().deleteElementLocation(t.getLastLocation());
-                    for (Arc a : t.getOutInArcs()) {
+                    for (Arc a : t.getNeighborsArcs()) {
                         GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().getGraphPanelArcs().remove(a);
                     }
 
@@ -154,8 +154,8 @@ public class HolmesReductionPrototype extends JFrame {
                     GUIManager.getDefaultGUIManager().repaint();
 
                     for (Node n : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes()) {
-                        System.out.println("n : " + n.getName() + " in Arc: " + n.getInArcs().size()
-                                + " out Arc: " + n.getOutArcs().size() + " in Nodes: " + n.getInNodes().size() + " out Nodes: " + n.getOutNodes().size());
+                        System.out.println("n : " + n.getName() + " in Arc: " + n.getInputArcs().size()
+                                + " out Arc: " + n.getOutputArcs().size() + " in Nodes: " + n.getInputNodes().size() + " out Nodes: " + n.getOutputNodes().size());
                     }
 
                     if (inPlace.getType().equals(PetriNetElement.PetriNetElementType.PLACE))
@@ -171,7 +171,7 @@ public class HolmesReductionPrototype extends JFrame {
     private void reductionA() {
         ArrayList<Transition> list = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 
-        ArrayList<Transition> toReduce =list.stream().filter(x->x.getInArcs().size()==1 && x.getOutArcs().size()==1).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Transition> toReduce =list.stream().filter(x->x.getInputArcs().size()==1 && x.getOutputArcs().size()==1).collect(Collectors.toCollection(ArrayList::new));
 
         ArrayList<SubnetCalculator.Path>  paths = findPaths();
 
@@ -180,13 +180,13 @@ public class HolmesReductionPrototype extends JFrame {
         for(Transition t : toReduce)
         {
             if(ppaths.stream().anyMatch(x->x.innerpath.contains(t))) {
-                Node inPlace = t.getInNodes().get(0);
-                Node outPlace = t.getOutNodes().get(0);
+                Node inPlace = t.getInputNodes().get(0);
+                Node outPlace = t.getOutputNodes().get(0);
 
                 System.out.println(t.getName());
 
-                if ((inPlace.getOutArcs().size() == 1 && inPlace.getInArcs().size() > 0) || (outPlace.getOutArcs().size() > 0 && outPlace.getInArcs().size() == 1)) {
-                    for (Arc a : outPlace.getInArcs()) {
+                if ((inPlace.getOutputArcs().size() == 1 && inPlace.getInputArcs().size() > 0) || (outPlace.getOutputArcs().size() > 0 && outPlace.getInputArcs().size() == 1)) {
+                    for (Arc a : outPlace.getInputArcs()) {
                         if (!(a.getStartNode().getID() == t.getID())) {
                             Arc na = new Arc(IdGenerator.getNextId(), a.getStartLocation(), inPlace.getLastLocation(), Arc.TypeOfArc.NORMAL);
                             na.setWeight(a.getWeight());
@@ -194,7 +194,7 @@ public class HolmesReductionPrototype extends JFrame {
                         }
                     }
 
-                    for (Arc a : outPlace.getOutArcs()) {
+                    for (Arc a : outPlace.getOutputArcs()) {
                         if (!(a.getEndNode().getID() == t.getID())) {
                             Arc na = new Arc(IdGenerator.getNextId(), inPlace.getLastLocation(), a.getEndLocation(), Arc.TypeOfArc.NORMAL);
                             na.setWeight(a.getWeight());
@@ -208,12 +208,12 @@ public class HolmesReductionPrototype extends JFrame {
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().deleteElementLocation(outPlace.getLastLocation());
 
-                    for (Arc a : outPlace.getOutInArcs()) {
+                    for (Arc a : outPlace.getNeighborsArcs()) {
                         GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().getGraphPanelArcs().remove(a);
                     }
 
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().deleteElementLocation(t.getLastLocation());
-                    for (Arc a : t.getOutInArcs()) {
+                    for (Arc a : t.getNeighborsArcs()) {
                         GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().getGraphPanelArcs().remove(a);
                     }
 
@@ -221,8 +221,8 @@ public class HolmesReductionPrototype extends JFrame {
                     GUIManager.getDefaultGUIManager().repaint();
 
                     for (Node n : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes()) {
-                        System.out.println("n : " + n.getName() + " in Arc: " + n.getInArcs().size()
-                                + " out Arc: " + n.getOutArcs().size() + " in Nodes: " + n.getInNodes().size() + " out Nodes: " + n.getOutNodes().size());
+                        System.out.println("n : " + n.getName() + " in Arc: " + n.getInputArcs().size()
+                                + " out Arc: " + n.getOutputArcs().size() + " in Nodes: " + n.getInputNodes().size() + " out Nodes: " + n.getOutputNodes().size());
                     }
 
                     ((Place) inPlace).drawGraphBoxP.setColorWithNumber(true, Color.BLUE, false, 0, true, "");
@@ -239,9 +239,9 @@ public class HolmesReductionPrototype extends JFrame {
 
         for (Node n : nodes) {
             //DLA sink jeszcze
-            if(n.getOutNodes().size()>1 || n.getInNodes().size()>1)
+            if(n.getOutputNodes().size()>1 || n.getInputNodes().size()>1)
             {
-                for (Node outN : n.getOutNodes()) {
+                for (Node outN : n.getOutputNodes()) {
                     ArrayList<Node> path = new ArrayList<>();
                     path.add(n);
                     path = walkPath(outN,path);
@@ -255,9 +255,9 @@ public class HolmesReductionPrototype extends JFrame {
 
     private ArrayList<Node> walkPath(Node n, ArrayList<Node> walk){
         walk.add(n);
-        if(n.getOutNodes().size()==1 && n.getInNodes().size()==1)
+        if(n.getOutputNodes().size()==1 && n.getInputNodes().size()==1)
         {
-            walk = walkPath(n.getOutNodes().get(0),walk);
+            walk = walkPath(n.getOutputNodes().get(0),walk);
         }
 
         return  walk;
@@ -304,9 +304,9 @@ public class HolmesReductionPrototype extends JFrame {
         }
         usedNodes.add(m);
         path.add(m);
-        if (m.getOutNodes().size() > 0) {
-            if (m.getOutNodes().size() == 1) {
-                calculatePath(m.getOutNodes().get(0), path,usedNodes);
+        if (m.getOutputNodes().size() > 0) {
+            if (m.getOutputNodes().size() == 1) {
+                calculatePath(m.getOutputNodes().get(0), path,usedNodes);
             }
         }
         return path;
@@ -317,7 +317,7 @@ public class HolmesReductionPrototype extends JFrame {
         ArrayList<Node> result = new ArrayList<>();
 
         for (Node n: nodes) {
-            if(n.getInNodes().size()>1|| n.getOutNodes().size()>1)
+            if(n.getInputNodes().size()>1|| n.getOutputNodes().size()>1)
             {
                 result.add(n);
             }
@@ -329,7 +329,7 @@ public class HolmesReductionPrototype extends JFrame {
     private void reductionB() {
         ArrayList<Place> list = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 
-        ArrayList<Place> toReduce =list.stream().filter(x->x.getInArcs().size()==1 && x.getOutArcs().size()==1).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Place> toReduce =list.stream().filter(x->x.getInputArcs().size()==1 && x.getOutputArcs().size()==1).collect(Collectors.toCollection(ArrayList::new));
 
         ArrayList<SubnetCalculator.Path>  paths = findPaths();
 
@@ -337,12 +337,12 @@ public class HolmesReductionPrototype extends JFrame {
 
         for(Place t : toReduce) {
             if (tpaths.stream().anyMatch(x -> x.innerpath.contains(t))) {
-                Node inTransition = t.getInNodes().get(0);
-                Node outTransition = t.getOutNodes().get(0);
+                Node inTransition = t.getInputNodes().get(0);
+                Node outTransition = t.getOutputNodes().get(0);
 
-                if ((inTransition.getOutArcs().size() == 1 && inTransition.getInArcs().size() > 0) || (outTransition.getOutArcs().size() > 0 && outTransition.getInArcs().size() == 1)) {
+                if ((inTransition.getOutputArcs().size() == 1 && inTransition.getInputArcs().size() > 0) || (outTransition.getOutputArcs().size() > 0 && outTransition.getInputArcs().size() == 1)) {
                 //if (inTransition.getOutArcs().size() == 1 && outTransition.getInArcs().size() == 1) {
-                    for (Arc a : outTransition.getInArcs()) {
+                    for (Arc a : outTransition.getInputArcs()) {
                         if (!(a.getStartNode().getID() == t.getID())) {
                             Arc na = new Arc(IdGenerator.getNextId(), a.getStartLocation(), inTransition.getLastLocation(), Arc.TypeOfArc.NORMAL);
                             na.setWeight(a.getWeight());
@@ -350,7 +350,7 @@ public class HolmesReductionPrototype extends JFrame {
                         }
                     }
 
-                    for (Arc a : outTransition.getOutArcs()) {
+                    for (Arc a : outTransition.getOutputArcs()) {
                         if (!(a.getEndNode().getID() == t.getID())) {
                             Arc na = new Arc(IdGenerator.getNextId(), inTransition.getLastLocation(), a.getEndLocation(), Arc.TypeOfArc.NORMAL);
                             na.setWeight(a.getWeight());
@@ -363,12 +363,12 @@ public class HolmesReductionPrototype extends JFrame {
 
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().deleteElementLocation(outTransition.getLastLocation());
-                    for (Arc a : outTransition.getOutInArcs()) {
+                    for (Arc a : outTransition.getNeighborsArcs()) {
                         GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().getGraphPanelArcs().remove(a);
                     }
 
                     GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().deleteElementLocation(t.getLastLocation());
-                    for (Arc a : t.getOutInArcs()) {
+                    for (Arc a : t.getNeighborsArcs()) {
                         GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().getGraphPanelArcs().remove(a);
                     }
                     GUIManager.getDefaultGUIManager().markNetChange();
@@ -383,8 +383,8 @@ public class HolmesReductionPrototype extends JFrame {
     private void reductionC() {
         ArrayList<Place> list = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 
-        ArrayList<Place> toReduce =list.stream().filter(x->x.getInArcs().size()==1 && x.getOutArcs().size()==1
-            && x.getInArcs().get(0).getWeight()==x.getOutArcs().get(0).getWeight()).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Place> toReduce =list.stream().filter(x->x.getInputArcs().size()==1 && x.getOutputArcs().size()==1
+            && x.getInputArcs().get(0).getWeight()==x.getOutputArcs().get(0).getWeight()).collect(Collectors.toCollection(ArrayList::new));
 
         //to only where is one arc
 
@@ -393,7 +393,7 @@ public class HolmesReductionPrototype extends JFrame {
             Place p = toReduce.get(0);
             toReduce.remove(0);
 
-            ArrayList<Node> parallel = toReduce.stream().filter(x->x.getInNodes().get(0).getID()== p.getInNodes().get(0).getID() && x.getOutNodes().get(0).getID()== p.getOutNodes().get(0).getID()).collect(Collectors.toCollection(ArrayList::new));
+            ArrayList<Node> parallel = toReduce.stream().filter(x->x.getInputNodes().get(0).getID()== p.getInputNodes().get(0).getID() && x.getOutputNodes().get(0).getID()== p.getOutputNodes().get(0).getID()).collect(Collectors.toCollection(ArrayList::new));
 
             String parallelElements = "";
             for (Node n : parallel) {
@@ -412,8 +412,8 @@ public class HolmesReductionPrototype extends JFrame {
     private void reductionD() {
         ArrayList<Transition> list = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 
-        ArrayList<Transition> toReduce =list.stream().filter(x->x.getInArcs().size()==1 && x.getOutArcs().size()==1
-                && x.getInArcs().get(0).getWeight()==x.getOutArcs().get(0).getWeight()).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Transition> toReduce =list.stream().filter(x->x.getInputArcs().size()==1 && x.getOutputArcs().size()==1
+                && x.getInputArcs().get(0).getWeight()==x.getOutputArcs().get(0).getWeight()).collect(Collectors.toCollection(ArrayList::new));
 
         //to only where is one arc
 
@@ -423,7 +423,7 @@ public class HolmesReductionPrototype extends JFrame {
             toReduce.remove(0);
 
             System.out.println("Redukowana t: " + t.getName());
-            ArrayList<Node> parallel = toReduce.stream().filter(x->x.getInNodes().get(0).getID()== t.getInNodes().get(0).getID() && x.getOutNodes().get(0).getID()== t.getOutNodes().get(0).getID()).collect(Collectors.toCollection(ArrayList::new));
+            ArrayList<Node> parallel = toReduce.stream().filter(x->x.getInputNodes().get(0).getID()== t.getInputNodes().get(0).getID() && x.getOutputNodes().get(0).getID()== t.getOutputNodes().get(0).getID()).collect(Collectors.toCollection(ArrayList::new));
 
             String parallelElements = "";
             for (Node n : parallel) {
@@ -442,7 +442,7 @@ public class HolmesReductionPrototype extends JFrame {
     private void reductionE() {
         ArrayList<Transition> list = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 
-        ArrayList<Transition> toReduce =list.stream().filter(x->x.getInArcs().size()==1 && x.getInArcs().get(0).getArcType().equals(Arc.TypeOfArc.READARC)).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Transition> toReduce =list.stream().filter(x->x.getInputArcs().size()==1 && x.getInputArcs().get(0).getArcType().equals(Arc.TypeOfArc.READARC)).collect(Collectors.toCollection(ArrayList::new));
 
         for (Node n : toReduce) {
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().deleteElementLocation(n.getLastLocation());
@@ -452,7 +452,7 @@ public class HolmesReductionPrototype extends JFrame {
     private void reductionF() {
         ArrayList<Place> list = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 
-        ArrayList<Place> toReduce =list.stream().filter(x->x.getInArcs().size()==1 && x.getInArcs().get(0).getArcType().equals(Arc.TypeOfArc.READARC)).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Place> toReduce =list.stream().filter(x->x.getInputArcs().size()==1 && x.getInputArcs().get(0).getArcType().equals(Arc.TypeOfArc.READARC)).collect(Collectors.toCollection(ArrayList::new));
 
         for (Node n : toReduce) {
             GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels().get(0).getSelectionManager().deleteElementLocation(n.getLastLocation());
@@ -473,7 +473,7 @@ public class HolmesReductionPrototype extends JFrame {
             //TODO for some unstable should be possible
             for (Node n : path.innerpath) {
                 nameMergedArc+= ">"+n.getName() + ">";
-                for(Arc a :n.getOutInArcs()){
+                for(Arc a :n.getNeighborsArcs()){
                     if(a.getWeight()!=1)
                         differentWeight = true;
                 }
@@ -515,7 +515,7 @@ public class HolmesReductionPrototype extends JFrame {
             //TODO for some unstable should be possible
             for (Node n : path.innerpath) {
                 nameMergedArc+= ">"+n.getName() + ">";
-                for(Arc a :n.getOutInArcs()){
+                for(Arc a :n.getNeighborsArcs()){
                     if(a.getWeight()!=1)
                         differentWeight = true;
                 }

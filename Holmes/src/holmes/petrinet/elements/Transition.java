@@ -116,7 +116,7 @@ public class Transition extends Node {
      * Zwraca zbiór miejsc wejściowych *t.
      * @return ArrayList[Place] - lista miejsc ze zbioru *t
      */
-    public ArrayList<Place> getPrePlaces() {
+    public ArrayList<Place> getInputPlaces() {
         ArrayList<Place> prePlaces = new ArrayList<>();
         for (ElementLocation el : getElementLocations()) {
             for (Arc arc : el.getInArcs()) {
@@ -133,7 +133,7 @@ public class Transition extends Node {
      * Zwraca zbiór miejsc wyjściowych t*.
      * @return ArrayList[Place] - lista miejsc ze zbioru t*
      */
-    public ArrayList<Place> getPostPlaces() {
+    public ArrayList<Place> getOutputPlaces() {
         ArrayList<Place> postPlaces = new ArrayList<>();
         for (ElementLocation el : getElementLocations()) {
             for (Arc arc : el.getOutArcs()) {
@@ -153,7 +153,7 @@ public class Transition extends Node {
     @SuppressWarnings("unused")
     public int getAvailableTokens() {
         int availableTokens = 0;
-        for (Arc arc : getInArcs()) {
+        for (Arc arc : getInputArcs()) {
             Place origin = (Place) arc.getStartNode();
             availableTokens += origin.getTokensNumber();
         }
@@ -167,7 +167,7 @@ public class Transition extends Node {
     @SuppressWarnings("unused")
     public int getRequiredTokens() {
         int requiredTokens = 0;
-        for (Arc arc : getInArcs()) {
+        for (Arc arc : getInputArcs()) {
             requiredTokens += arc.getWeight();
         }
         return requiredTokens;
@@ -229,7 +229,7 @@ public class Transition extends Node {
             }
         }
 
-        for (Arc arc : getInArcs()) {
+        for (Arc arc : getInputArcs()) {
             Place arcStartPlace = (Place) arc.getStartNode();
             TypeOfArc arcType = arc.getArcType();
             int startPlaceTokens = arcStartPlace.getNonReservedTokensNumber();
@@ -258,7 +258,7 @@ public class Transition extends Node {
      * niezbędne do uruchomienia tokeny. Inne tranzycje nie mogą ich odebrać.
      */
     public void bookRequiredTokens() {
-        for (Arc arc : getInArcs()) { //dla inhibitor nie działa, w ogóle tu nie wejdzie
+        for (Arc arc : getInputArcs()) { //dla inhibitor nie działa, w ogóle tu nie wejdzie
             Place origin = (Place) arc.getStartNode();
 
             if (arc.getArcType() == TypeOfArc.INHIBITOR) {
@@ -307,7 +307,7 @@ public class Transition extends Node {
      * miejscach wejściowych. Stają się one dostępne dla innych tranzycji.
      */
     public void returnBookedTokens() {
-        for (Arc arc : getInArcs()) {
+        for (Arc arc : getInputArcs()) {
             ((Place) arc.getStartNode()).freeReservedTokens();
         }
     }
@@ -326,9 +326,9 @@ public class Transition extends Node {
      * @param outPlace Place - miejsce połączone z daną tranzycją (od niej)
      * @return int - waga łuku łączącego
      */
-    public int getOutArcWeightTo(Place outPlace) {
+    public int getOutputArcWeightTo(Place outPlace) {
         int weight = 0;
-        for (Arc currentArc : getOutArcs()) {
+        for (Arc currentArc : getOutputArcs()) {
             if (currentArc.getEndNode().equals(outPlace))
                 weight = currentArc.getWeight();
         }
@@ -340,9 +340,9 @@ public class Transition extends Node {
      * @param inPlace Place - miejsce połączone do danej tranzycji
      * @return int - waga łuku łączącego
      */
-    public int getInArcWeightFrom(Place inPlace) {
+    public int getInputArcWeightFrom(Place inPlace) {
         int weight = 0;
-        for (Arc currentArc : getInArcs()) {
+        for (Arc currentArc : getInputArcs()) {
             if (currentArc.getStartNode().equals(inPlace))
                 weight = currentArc.getWeight();
         }

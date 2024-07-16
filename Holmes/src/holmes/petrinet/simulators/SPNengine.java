@@ -90,13 +90,13 @@ public class SPNengine implements IEngine {
 
 		for(Transition transition : transitions) {
 			ArrayList<Place> placesVector = new ArrayList<Place>();
-			for(Node node : transition.getInNodes()) {
+			for(Node node : transition.getInputNodes()) {
 				placesVector.add((Place)node);
 			}
 			ArrayList<Place> prePlacesVector = new ArrayList<Place>(placesVector);
 			prePlacesMap.put(transition, prePlacesVector);
 			
-			for(Node node : transition.getOutNodes()) {
+			for(Node node : transition.getOutputNodes()) {
 				if(!placesVector.contains((Place)node))
 					placesVector.add((Place)node);
 			}
@@ -109,7 +109,7 @@ public class SPNengine implements IEngine {
 				//transitionsVector.add((Transition)node); //NIE! patrz niżej:
 			//}
 			//TODO: tylko tranzycje wyjściowe, wejściowe DO miejsca nie mają znaczenia dla funkcji P(t)
-			for(Node node : place.getOutNodes()) {
+			for(Node node : place.getOutputNodes()) {
 				if(!transitionsVector.contains((Transition) node))
 					transitionsVector.add((Transition) node);
 
@@ -437,12 +437,12 @@ public class SPNengine implements IEngine {
 		}
 		
 		for(Transition t : transitions) {
-			if(t.getOutArcs().size() == 0) {
+			if(t.getOutputArcs().size() == 0) {
 				if(!transitionSTtypeUpdateList.contains(t) && t.spnExtension.getSPNtype() == TransitionSPNExtension.StochaticsType.ST) {
 					transitionSTtypeUpdateList.add(t);
 				}
 			}
-			if(t.getInArcs().size() == 0) {
+			if(t.getInputArcs().size() == 0) {
 				if(!transitionSTtypeUpdateList.contains(t) && t.spnExtension.getSPNtype() == TransitionSPNExtension.StochaticsType.ST) {
 					transitionSTtypeUpdateList.add(t);
 				}

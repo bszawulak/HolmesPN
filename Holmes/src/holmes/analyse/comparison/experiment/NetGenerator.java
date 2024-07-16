@@ -387,15 +387,15 @@ public class NetGenerator {
                 boolean matched = false;
                 for (Node n : snNew.getSubNode()) {
                     if (n.getType().equals(m.getType())) {
-                        for (Node mIn : m.getInNodes()) {
+                        for (Node mIn : m.getInputNodes()) {
                             boolean in = false;
                             boolean out = false;
-                            for (Node nIn : n.getInNodes()) {
-                                if (nIn.getInNodes().size() == mIn.getInNodes().size())
+                            for (Node nIn : n.getInputNodes()) {
+                                if (nIn.getInputNodes().size() == mIn.getInputNodes().size())
                                     in = true;
                             }
-                            for (Node nIn : n.getOutNodes()) {
-                                if (nIn.getOutNodes().size() == mIn.getOutNodes().size())
+                            for (Node nIn : n.getOutputNodes()) {
+                                if (nIn.getOutputNodes().size() == mIn.getOutputNodes().size())
                                     out = true;
                             }
 
@@ -416,15 +416,15 @@ public class NetGenerator {
                 boolean matched = false;
                 for (Node m : snOld.getSubNode()) {
                     if (n.getType().equals(m.getType())) {
-                        for (Node nIn : n.getInNodes()) {
+                        for (Node nIn : n.getInputNodes()) {
                             boolean in = false;
                             boolean out = false;
-                            for (Node mIn : m.getInNodes()) {
-                                if (nIn.getInNodes().size() == mIn.getInNodes().size())
+                            for (Node mIn : m.getInputNodes()) {
+                                if (nIn.getInputNodes().size() == mIn.getInputNodes().size())
                                     in = true;
                             }
-                            for (Node mIn : m.getOutNodes()) {
-                                if (nIn.getOutNodes().size() == mIn.getOutNodes().size())
+                            for (Node mIn : m.getOutputNodes()) {
+                                if (nIn.getOutputNodes().size() == mIn.getOutputNodes().size())
                                     out = true;
                             }
 
@@ -1047,10 +1047,10 @@ public class NetGenerator {
 
     private void cleanNetwork(SubnetCalculator.SubNet sn) {
         for (Node n : sn.getSubNode()) {
-            ArrayList<Arc> tmp = new ArrayList<>(n.getOutInArcs());
+            ArrayList<Arc> tmp = new ArrayList<>(n.getNeighborsArcs());
             for (Arc arc : tmp) {
                 if (!sn.getSubArcs().contains(arc)) {
-                    n.getOutInArcs().remove(arc);
+                    n.getNeighborsArcs().remove(arc);
                 }
             }
         }
@@ -2167,16 +2167,16 @@ public class NetGenerator {
             //find read arcki
 
             for (Place p : listOfPlaces) {
-                if (p.getInArcs().size() == 0) {
+                if (p.getInputArcs().size() == 0) {
                     ArrayList<Transition> toChoose = new ArrayList<>(listOfTransitions);
-                    toChoose.removeAll(p.getOutNodes());
+                    toChoose.removeAll(p.getOutputNodes());
                     int index = r.nextInt(toChoose.size());
                     Arc newArc = new Arc(toChoose.get(index).getLastLocation(), p.getLastLocation(), Arc.TypeOfArc.NORMAL);
                     listOfArcs.add(newArc);
                     arc_index++;
-                } else if (p.getOutArcs().size() == 0) {
+                } else if (p.getOutputArcs().size() == 0) {
                     ArrayList<Transition> toChoose = new ArrayList<>(listOfTransitions);
-                    toChoose.removeAll(p.getInNodes());
+                    toChoose.removeAll(p.getInputNodes());
                     int index = r.nextInt(toChoose.size());
                     Arc newArc = new Arc(p.getLastLocation(), toChoose.get(index).getLastLocation(), Arc.TypeOfArc.NORMAL);
                     listOfArcs.add(newArc);
@@ -2186,14 +2186,14 @@ public class NetGenerator {
 
             //SINK SOURCE TRANSITIONS
 
-            boolean sinkTRansition = listOfPlaces.stream().anyMatch(x -> (x.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && (x.getOutArcs().size() == 0)));
-            boolean sourceTRansition = listOfPlaces.stream().anyMatch(x -> (x.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && (x.getInArcs().size() == 0)));
+            boolean sinkTRansition = listOfPlaces.stream().anyMatch(x -> (x.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && (x.getOutputArcs().size() == 0)));
+            boolean sourceTRansition = listOfPlaces.stream().anyMatch(x -> (x.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && (x.getInputArcs().size() == 0)));
 
             if (sinkTRansition && !sourceTRansition) {
-                ArrayList<Node> listToModify = listOfPlaces.stream().filter(x -> (x.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && (x.getOutArcs().size() == 0))).collect(Collectors.toCollection(ArrayList::new));
+                ArrayList<Node> listToModify = listOfPlaces.stream().filter(x -> (x.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && (x.getOutputArcs().size() == 0))).collect(Collectors.toCollection(ArrayList::new));
                 for (Node n : listToModify) {
                     ArrayList<Place> toChoose = new ArrayList<>(listOfPlaces);
-                    toChoose.removeAll(n.getOutNodes());
+                    toChoose.removeAll(n.getOutputNodes());
                     int index = r.nextInt(toChoose.size());
                     Arc newArc = new Arc(n.getLastLocation(), toChoose.get(index).getLastLocation(), Arc.TypeOfArc.NORMAL);
                     listOfArcs.add(newArc);
@@ -2202,10 +2202,10 @@ public class NetGenerator {
             }
 
             if (!sinkTRansition && sourceTRansition) {
-                ArrayList<Node> listToModify = listOfPlaces.stream().filter(x -> (x.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && (x.getInArcs().size() == 0))).collect(Collectors.toCollection(ArrayList::new));
+                ArrayList<Node> listToModify = listOfPlaces.stream().filter(x -> (x.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && (x.getInputArcs().size() == 0))).collect(Collectors.toCollection(ArrayList::new));
                 for (Node n : listToModify) {
                     ArrayList<Place> toChoose = new ArrayList<>(listOfPlaces);
-                    toChoose.removeAll(n.getOutNodes());
+                    toChoose.removeAll(n.getOutputNodes());
                     int index = r.nextInt(toChoose.size());
                     Arc newArc = new Arc(toChoose.get(index).getLastLocation(), n.getLastLocation(), Arc.TypeOfArc.NORMAL);
                     listOfArcs.add(newArc);

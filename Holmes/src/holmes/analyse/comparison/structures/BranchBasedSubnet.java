@@ -29,7 +29,7 @@ public class BranchBasedSubnet {
 
         for (Transition t : sn.getSubTransitions()) {
             //if ((t.getInNodes().size() > 1 || t.getOutNodes().size() > 1) || (t.getInNodes().size() == 0 && t.getOutNodes().size() == 1) || (t.getInNodes().size() == 1 && t.getOutNodes().size() ==0)) {//|| (t.getOutInNodes().size() == 1)) {
-            if ((t.getInNodes().size() > 1 || t.getOutNodes().size() > 1)) {//|| (t.getOutInNodes().size() == 1)) {
+            if ((t.getInputNodes().size() > 1 || t.getOutputNodes().size() > 1)) {//|| (t.getOutInNodes().size() == 1)) {
                 branchVertices.add(new BranchVertex(t, this));
             }
         }
@@ -83,16 +83,16 @@ public class BranchBasedSubnet {
 
         ArrayList<SubnetCalculator.Path> listOfPaths = new ArrayList<>();
         for (Node n : allNodes) {
-            if (n.getOutNodes().size() > 1 || n.getInNodes().size() == 0 || (n.getInNodes().size() > 1 && n.getOutNodes().size() != 0)) {
+            if (n.getOutputNodes().size() > 1 || n.getInputNodes().size() == 0 || (n.getInputNodes().size() > 1 && n.getOutputNodes().size() != 0)) {
 
-                if (n.getOutNodes().size() > 1) {
+                if (n.getOutputNodes().size() > 1) {
                     usedNodes.add(n);
-                    for (Node m : n.getOutNodes()) {
+                    for (Node m : n.getOutputNodes()) {
                         if (allNodes.contains(m)) {
                             ArrayList<Node> startPath = new ArrayList<>();
                             startPath.add(n);
                             ArrayList<Node> nodes = calculatePath(m, startPath, allNodes);
-                            if (nodes.get(nodes.size() - 1).getOutNodes().contains(nodes.get(0))) {
+                            if (nodes.get(nodes.size() - 1).getOutputNodes().contains(nodes.get(0))) {
                                 listOfPaths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true));
                             } else {
                                 listOfPaths.add(new SubnetCalculator.Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes)));
@@ -161,10 +161,10 @@ public class BranchBasedSubnet {
         }
         usedNodes.add(m);
         path.add(m);
-        if (m.getOutNodes().size() > 0) {
-            if (m.getOutNodes().size() == 1) {
-                if (possibleNodes.contains(m.getOutNodes().get(0)))
-                    calculatePath(m.getOutNodes().get(0), path, possibleNodes);
+        if (m.getOutputNodes().size() > 0) {
+            if (m.getOutputNodes().size() == 1) {
+                if (possibleNodes.contains(m.getOutputNodes().get(0)))
+                    calculatePath(m.getOutputNodes().get(0), path, possibleNodes);
             }
         }
         return path;
@@ -211,7 +211,7 @@ public class BranchBasedSubnet {
         public BranchVertex(Node r, BranchBasedSubnet bbs) {
             root = r;
 
-            for (Node n : r.getOutNodes()) {
+            for (Node n : r.getOutputNodes()) {
                 Branch br = new Branch(r, n, bbs);
                 if (br.startNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE) || br.endNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE))
                     pbranches.add(br);
@@ -224,7 +224,7 @@ public class BranchBasedSubnet {
                 }
             }
 
-            for (Node n : r.getInNodes()) {
+            for (Node n : r.getInputNodes()) {
                 Branch br = new Branch(r, n, bbs);
                 //reverse branch
                 if ((br.startNode.getType().equals(PetriNetElement.PetriNetElementType.TRANSITION) && br.endNode.getType().equals(PetriNetElement.PetriNetElementType.PLACE)))//|| (br.startNode.equals(br.endNode)))
@@ -244,7 +244,7 @@ public class BranchBasedSubnet {
 
         public ArrayList<Branch> getSek() {
             //TODO czy startowy też?
-            return tbranch.stream().filter(x -> x.endNode.getOutInArcs().size() == 1 || x.startNode.getOutInArcs().size() == 1).collect(Collectors.toCollection(ArrayList::new));
+            return tbranch.stream().filter(x -> x.endNode.getNeighborsArcs().size() == 1 || x.startNode.getNeighborsArcs().size() == 1).collect(Collectors.toCollection(ArrayList::new));
         }
 
         public ArrayList<Branch> getLoop() {
@@ -328,19 +328,19 @@ public class BranchBasedSubnet {
         private void sortBranch() {
             ArrayList<Node> newOrdering = new ArrayList<>();
 
-            ArrayList<Node> elements = branchElements.stream().filter(x -> x.getInArcs().size() > 1 || x.getOutArcs().size() > 1 || x.getOutArcs().size() == 0 || x.getInArcs().size() == 0).collect(Collectors.toCollection(ArrayList::new));
+            ArrayList<Node> elements = branchElements.stream().filter(x -> x.getInputArcs().size() > 1 || x.getOutputArcs().size() > 1 || x.getOutputArcs().size() == 0 || x.getInputArcs().size() == 0).collect(Collectors.toCollection(ArrayList::new));
             Node start = null;
             Node end = null;
             //get start element
             for (Node nod : elements) {
-                ArrayList<Node> tmp = nod.getInNodes();
+                ArrayList<Node> tmp = nod.getInputNodes();
                 tmp.retainAll(branchElements);
                 if (tmp.size() > 0)
                     end = nod;
             }
 
             for (Node nod : elements) {
-                ArrayList<Node> tmp = nod.getOutNodes();
+                ArrayList<Node> tmp = nod.getOutputNodes();
                 tmp.retainAll(branchElements);
                 if (tmp.size() > 0)
                     start = nod;
@@ -351,7 +351,7 @@ public class BranchBasedSubnet {
                 while (newOrdering.size() != branchElements.size()) {
                     ArrayList<Node> tmp = new ArrayList<>(branchElements);
                     tmp.retainAll(
-                            newOrdering.get(0).getInNodes());
+                            newOrdering.get(0).getInputNodes());
                     if (tmp.size() == 0) {
                         break;
                     } else if (tmp.size() == 1) {
@@ -366,7 +366,7 @@ public class BranchBasedSubnet {
                 while (newOrdering.size() != branchElements.size()) {
                     ArrayList<Node> tmp = new ArrayList<>(branchElements);
                     tmp.retainAll(
-                            newOrdering.get(newOrdering.size() - 1).getOutNodes());
+                            newOrdering.get(newOrdering.size() - 1).getOutputNodes());
                     if (tmp.size() == 0) {
                         break;
                     } else if (tmp.size() == 1) {
@@ -397,11 +397,11 @@ public class BranchBasedSubnet {
                 boolean noPrev = false;
                 boolean noNext = false;
                 ArrayList<Node> tmp = new ArrayList<>(branchElements);
-                tmp.retainAll(newOrdering.get(0).getInNodes());
+                tmp.retainAll(newOrdering.get(0).getInputNodes());
                 if (tmp.size() == 0) {
                     noPrev = true;
                 } else if (tmp.size() == 1) {
-                    if (tmp.get(0).getOutArcs().size() > 1 || tmp.get(0).getInArcs().size() > 1) {
+                    if (tmp.get(0).getOutputArcs().size() > 1 || tmp.get(0).getInputArcs().size() > 1) {
                         System.out.println("-> " + tmp.get(0).getName());
                     }
                     if (newOrdering.contains(tmp.get(0)))
@@ -411,11 +411,11 @@ public class BranchBasedSubnet {
                 }
 
                 tmp = new ArrayList<>(branchElements);
-                tmp.retainAll(newOrdering.get(newOrdering.size() - 1).getOutNodes());
+                tmp.retainAll(newOrdering.get(newOrdering.size() - 1).getOutputNodes());
                 if (tmp.size() == 0) {
                     noNext = true;
                 } else if (tmp.size() == 1) {
-                    if (tmp.get(0).getOutArcs().size() > 1 || tmp.get(0).getInArcs().size() > 1) {
+                    if (tmp.get(0).getOutputArcs().size() > 1 || tmp.get(0).getInputArcs().size() > 1) {
                         System.out.println("<- " + tmp.get(0).getName());
                     }
                     newOrdering.add(tmp.get(0));
@@ -434,14 +434,14 @@ public class BranchBasedSubnet {
             this.parent = parentNode;
             startNode = s;
             branchElements.add(s);
-            for (Arc a : s.getOutInArcs()) {
+            for (Arc a : s.getNeighborsArcs()) {
                 if (a.getStartNode().equals(nextNode) || a.getEndNode().equals(nextNode))
                     branchArcs.add(a);
             }
             generateList(nextNode);
 
             // TO CHECK
-            if (internalBranchElements.size() > 0 && startNode.getID() != endNode.getID() && startNode.getInNodes().contains(internalBranchElements.get(0))) {
+            if (internalBranchElements.size() > 0 && startNode.getID() != endNode.getID() && startNode.getInputNodes().contains(internalBranchElements.get(0))) {
                 Collections.reverse(branchElements);
                 Collections.reverse(internalBranchElements);
                 Node tmp = endNode;
@@ -473,15 +473,15 @@ public class BranchBasedSubnet {
         }
 
         void generateList(Node n) {
-            if ((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1) || (n.getOutNodes().size() == 0 || n.getInNodes().size() == 0)) {
+            if ((n.getOutputNodes().size() > 1 || n.getInputNodes().size() > 1) || (n.getOutputNodes().size() == 0 || n.getInputNodes().size() == 0)) {
                 ArrayList<Node> list = new ArrayList<>(parent.nodes);
-                list.retainAll(n.getOutInNodes());
+                list.retainAll(n.getNeighborsNodes());
 
                 ArrayList<Node> listIn = new ArrayList<>(parent.nodes);
-                listIn.retainAll(n.getInNodes());
+                listIn.retainAll(n.getInputNodes());
 
                 ArrayList<Node> listOut = new ArrayList<>(parent.nodes);
-                listOut.retainAll(n.getOutNodes());
+                listOut.retainAll(n.getOutputNodes());
                 if (list.size() > 1 && n.getType().equals(PetriNetElement.PetriNetElementType.PLACE)) {
                     //probably add more
                     if ((listIn.size() > 1 && listOut.size() == 0) || (listOut.size() > 1 && listIn.size() == 0)) {
@@ -493,11 +493,11 @@ public class BranchBasedSubnet {
                         branchElements.add(n);
                         if (branchElements.size() > 1) {
                             int counter = 0;
-                            for (Node m : n.getOutInNodes()) {
+                            for (Node m : n.getNeighborsNodes()) {
                                 //if((!branchElements.get(branchElements.size()-1).equals(m)&&m.equals(startNode))||(!branchElements.contains(m)&&!m.equals(startNode)&& parent.nodes.contains(m))) {
                                 if (!branchElements.contains(m) && parent.nodes.contains(m)) {
-                                    ArrayList<Arc> arc1 = new ArrayList<>(n.getOutInArcs());
-                                    ArrayList<Arc> arc2 = new ArrayList<>(m.getOutInArcs());
+                                    ArrayList<Arc> arc1 = new ArrayList<>(n.getNeighborsArcs());
+                                    ArrayList<Arc> arc2 = new ArrayList<>(m.getNeighborsArcs());
                                     arc1.retainAll(arc2);
                                     branchArcs.addAll(arc1);
                                     generateList(m);
@@ -523,15 +523,15 @@ public class BranchBasedSubnet {
                 branchElements.add(n);
                 if (branchElements.size() > 1) {
                     int counter = 0;
-                    for (Node m : n.getOutInNodes()) {
+                    for (Node m : n.getNeighborsNodes()) {
                         //nie zawiera idziesz dalej
 
                         //zawiera i
 
                         //if ((!branchElements.get(branchElements.size()-1).equals(m)&&m.equals(startNode))||
                         if ((!branchElements.contains(m) && !m.equals(startNode))) {
-                            ArrayList<Arc> arc1 = new ArrayList<>(n.getOutInArcs());
-                            ArrayList<Arc> arc2 = new ArrayList<>(m.getOutInArcs());
+                            ArrayList<Arc> arc1 = new ArrayList<>(n.getNeighborsArcs());
+                            ArrayList<Arc> arc2 = new ArrayList<>(m.getNeighborsArcs());
                             arc1.retainAll(arc2);
                             branchArcs.addAll(arc1);
                             generateList(m);
@@ -547,8 +547,8 @@ public class BranchBasedSubnet {
                 }
             }
 
-            if (endNode == null && branchElements.get(branchElements.size() - 1).getOutInNodes().contains(startNode)) {
-                for (Arc a : branchElements.get(branchElements.size() - 1).getOutInArcs()) {
+            if (endNode == null && branchElements.get(branchElements.size() - 1).getNeighborsNodes().contains(startNode)) {
+                for (Arc a : branchElements.get(branchElements.size() - 1).getNeighborsArcs()) {
                     if (a.getStartNode().equals(startNode) || a.getEndNode().equals(startNode))
                         branchArcs.add(a);
                 }

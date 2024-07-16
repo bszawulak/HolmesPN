@@ -270,7 +270,7 @@ public class GraphletComparator {
         if (i < 0) {
             return listOfNodes;
         }
-        for (Node m : n.getOutInNodes()) {
+        for (Node m : n.getNeighborsNodes()) {
             if (!listOfNodes.contains(m)) {
                 listOfNodes.add(m);
                 //listOfNodes.addAll(deepDown(m,i,listOfNodes));

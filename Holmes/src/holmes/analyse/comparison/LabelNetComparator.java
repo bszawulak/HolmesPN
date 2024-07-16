@@ -154,13 +154,13 @@ public class LabelNetComparator {
 
         void checkNeighbourhood() {
 
-            for (int i = 0; i < firstNetNode.getInNodes().size(); i++) {
+            for (int i = 0; i < firstNetNode.getInputNodes().size(); i++) {
                 boolean found = false;
-                for (int j = 0; j < secondNetNode.getInNodes().size(); j++) {
-                    if (firstNetNode.getInNodes().get(i).getName().equals(secondNetNode.getInNodes().get(j).getName())) {
+                for (int j = 0; j < secondNetNode.getInputNodes().size(); j++) {
+                    if (firstNetNode.getInputNodes().get(i).getName().equals(secondNetNode.getInputNodes().get(j).getName())) {
                         found = true;
-                        ArrayList<Arc> firstNetArc = firstNetNode.getInArcs();//.stream().filter(x -> x.getStartNode().getID() == firstNetNode.getID()).collect(Collectors.toCollection(ArrayList::new));
-                        ArrayList<Arc> secondNetArc = secondNetNode.getInArcs();//.stream().filter(x -> x.getStartNode().getID() == secondNetNode.getID()).collect(Collectors.toCollection(ArrayList::new));
+                        ArrayList<Arc> firstNetArc = firstNetNode.getInputArcs();//.stream().filter(x -> x.getStartNode().getID() == firstNetNode.getID()).collect(Collectors.toCollection(ArrayList::new));
+                        ArrayList<Arc> secondNetArc = secondNetNode.getInputArcs();//.stream().filter(x -> x.getStartNode().getID() == secondNetNode.getID()).collect(Collectors.toCollection(ArrayList::new));
 
 
                         for (Arc a1 : firstNetArc) {
@@ -176,13 +176,13 @@ public class LabelNetComparator {
                 }
             }
 
-            for (int i = 0; i < firstNetNode.getOutNodes().size(); i++) {
+            for (int i = 0; i < firstNetNode.getOutputNodes().size(); i++) {
                 boolean found = false;
-                for (int j = 0; j < secondNetNode.getOutNodes().size(); j++) {
-                    if (firstNetNode.getOutNodes().get(i).getName().equals(secondNetNode.getOutNodes().get(j).getName())) {
+                for (int j = 0; j < secondNetNode.getOutputNodes().size(); j++) {
+                    if (firstNetNode.getOutputNodes().get(i).getName().equals(secondNetNode.getOutputNodes().get(j).getName())) {
                         found = true;
-                        ArrayList<Arc> firstNetArc = firstNetNode.getOutArcs();//.stream().filter(x -> x.getEndNode().getID() == firstNetNode.getID()).collect(Collectors.toCollection(ArrayList::new));
-                        ArrayList<Arc> secondNetArc = secondNetNode.getOutArcs();//.stream().filter(x -> x.getEndNode().getID() == secondNetNode.getID()).collect(Collectors.toCollection(ArrayList::new));
+                        ArrayList<Arc> firstNetArc = firstNetNode.getOutputArcs();//.stream().filter(x -> x.getEndNode().getID() == firstNetNode.getID()).collect(Collectors.toCollection(ArrayList::new));
+                        ArrayList<Arc> secondNetArc = secondNetNode.getOutputArcs();//.stream().filter(x -> x.getEndNode().getID() == secondNetNode.getID()).collect(Collectors.toCollection(ArrayList::new));
 
                         for (Arc a1 : firstNetArc) {
                             for(Arc a2 : secondNetArc)

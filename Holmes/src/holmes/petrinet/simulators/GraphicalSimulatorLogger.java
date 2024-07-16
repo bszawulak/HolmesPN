@@ -73,8 +73,8 @@ public class GraphicalSimulatorLogger {
 	 */
 	public void logSimStepFinished(ArrayList<Transition> launchingTransitions, boolean details) {
 		for (Transition transition : launchingTransitions) {
-			ArrayList<Arc> inArcs = transition.getInArcs();
-			ArrayList<Arc> outArcs = transition.getOutArcs();
+			ArrayList<Arc> inArcs = transition.getInputArcs();
+			ArrayList<Arc> outArcs = transition.getOutputArcs();
 			ArrayList<Node> prePlaces = new ArrayList<Node>();
 			ArrayList<Node> postPlaces = new ArrayList<Node>();
 			

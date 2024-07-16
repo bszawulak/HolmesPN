@@ -360,12 +360,12 @@ public class NetPropertiesAnalyzer {
 		if (mode && n1.getID() == n2.getID())
 			return false;
 
-		if (n1.getInArcs()!=null)
+		if (n1.getInputArcs()!=null)
 		{
-			for (Arc a : n1.getInArcs())
+			for (Arc a : n1.getInputArcs())
 				if (a.getStartNode().getID() == last.getID())
 					return true;
-			for (Arc a : n1.getInArcs())
+			for (Arc a : n1.getInputArcs())
 				if (checkStronglyConnectionExist(a.getStartNode(), n2, last, true))
 					return true;
 		}else{
@@ -389,9 +389,9 @@ public class NetPropertiesAnalyzer {
 			reachable.add(start);
 		}
 		
-		if (start.getInArcs()!=null)
+		if (start.getInputArcs()!=null)
 		{
-			for (Arc a : start.getInArcs()) { //łuki wchodzące do aktualnie badanego wierzchołka
+			for (Arc a : start.getInputArcs()) { //łuki wchodzące do aktualnie badanego wierzchołka
 				Node nod = a.getStartNode(); //wierzchołek początkowy łuku
 				if(!reachable.contains(nod)) { //jeśli jeszcze nie ma
 					reachable.add(nod);
@@ -399,9 +399,9 @@ public class NetPropertiesAnalyzer {
 				}
 			}
 		}
-		if (start.getOutArcs()!=null)
+		if (start.getOutputArcs()!=null)
 		{
-			for (Arc a : start.getOutArcs()) { //łuki wychodzące z aktualnego
+			for (Arc a : start.getOutputArcs()) { //łuki wychodzące z aktualnego
 				Node nod = a.getEndNode(); //wierzchołek końcowy łuku
 				if(!reachable.contains(nod)) {//jeśli jeszcze nie ma
 					reachable.add(nod);
@@ -422,9 +422,9 @@ public class NetPropertiesAnalyzer {
 		if(!reachable.contains(start)) { //jeśli jeszcze nie ma
 			reachable.add(start);
 		}
-		if (start.getOutArcs()!=null)
+		if (start.getOutputArcs()!=null)
 		{
-			for (Arc a : start.getOutArcs()) { //łuki wychodzące z aktualnego
+			for (Arc a : start.getOutputArcs()) { //łuki wychodzące z aktualnego
 				Node nod = a.getEndNode(); //wierzchołek końcowy łuku
 				if(!reachable.contains(nod)) {//jeśli jeszcze nie ma
 					reachable.add(nod);
@@ -442,7 +442,7 @@ public class NetPropertiesAnalyzer {
 	 */
 	private boolean fastStrongConnectivityTest() {
 		for(Node n : nodes) {
-			if(n.getInArcs().isEmpty() || n.getOutArcs().isEmpty())
+			if(n.getInputArcs().isEmpty() || n.getOutputArcs().isEmpty())
 				return false;
 		}
 		return true;

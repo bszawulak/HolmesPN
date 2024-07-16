@@ -184,7 +184,7 @@ public class PlaceXTPN extends Place {
                 Collections.reverse(multisetK);
             }
         }
-        modifyTokensNumber(howMany);
+        addTokensNumber(howMany);
     }
 
     /**
@@ -229,7 +229,7 @@ public class PlaceXTPN extends Place {
 			}
 			 */
         }
-        modifyTokensNumber(-removed);
+        addTokensNumber(-removed);
         return removed;
     }
 
@@ -244,7 +244,7 @@ public class PlaceXTPN extends Place {
         ArrayList<Double> removedTokens = new ArrayList<>();
 
         if(!isGammaModeActive()) { //gdy XTPN wyłączone, tylko usuwamy liczbę
-            modifyTokensNumber(-howMany);
+            addTokensNumber(-howMany);
             return removedTokens;
         }
 
@@ -294,7 +294,7 @@ public class PlaceXTPN extends Place {
                 multisetK.remove(index);
             }
         }
-        modifyTokensNumber(-howMany);
+        addTokensNumber(-howMany);
         return removedTokens;
     }
 
@@ -333,7 +333,7 @@ public class PlaceXTPN extends Place {
         if(index > -1 && index < multisetK.size()) {
             multisetK.remove(index);
         }
-        modifyTokensNumber(-1);
+        addTokensNumber(-1);
     }
 
     /**

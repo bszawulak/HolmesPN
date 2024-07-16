@@ -281,9 +281,9 @@ public class GraphicalSimulator {
 		for (Transition transition : transitions) {
 			transition.setLaunching(true);
 			if (!backtracking)
-				arcs = transition.getInArcs();
+				arcs = transition.getInputArcs();
 			else
-				arcs = transition.getOutArcs();
+				arcs = transition.getOutputArcs();
 			
 			if(transition.timeExtension.getDPNtimer() > 0) //yeah, trust me, I'm an engineer
 				continue;
@@ -304,9 +304,9 @@ public class GraphicalSimulator {
 						// nic nie zabieraj
 					} else if(arc.getArcType() == TypeOfArc.RESET) {
 						int tokens = place.getTokensNumber();
-						place.modifyTokensNumber(-tokens);
+						place.addTokensNumber(-tokens);
 					} else if(arc.getArcType() == TypeOfArc.EQUAL) {
-						place.modifyTokensNumber(-arc.getWeight());
+						place.addTokensNumber(-arc.getWeight());
 					} else if(arc.getArcType() == TypeOfArc.COLOR) {
 						try {
 							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(0), 0);
@@ -331,10 +331,10 @@ public class GraphicalSimulator {
 					//	arc.setTransportingTokens(false);
 						// nic nie oddawaj
 					} else if(arc.getArcType() == TypeOfArc.RESET) {
-						place.modifyTokensNumber(-1); 
+						place.addTokensNumber(-1);
 						// PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
 					}  else if(arc.getArcType() == TypeOfArc.EQUAL) {
-						place.modifyTokensNumber(-arc.getWeight());
+						place.addTokensNumber(-arc.getWeight());
 					} else if(arc.getArcType() == TypeOfArc.COLOR) {
 						try {
 							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(0), 0);
@@ -371,10 +371,10 @@ public class GraphicalSimulator {
 		ArrayList<Arc> arcs;
 		if (!backtracking) {
 			transition = transitions.get(0);
-			arcs = transition.getInArcs();
+			arcs = transition.getInputArcs();
 		} else {
 			transition = chosenTransition;
-			arcs = transition.getOutArcs();
+			arcs = transition.getOutputArcs();
 		}
 		transition.setLaunching(true);
 		for (Arc arc : arcs) {
@@ -393,9 +393,9 @@ public class GraphicalSimulator {
 					// nic nie zabieraj
 				} else if(arc.getArcType() == TypeOfArc.RESET) {
 					int tokens = place.getTokensNumber();
-					place.modifyTokensNumber(-tokens);
+					place.addTokensNumber(-tokens);
 				} else if(arc.getArcType() == TypeOfArc.EQUAL) {
-					place.modifyTokensNumber(-arc.getWeight());
+					place.addTokensNumber(-arc.getWeight());
 				} else if(arc.getArcType() == TypeOfArc.COLOR) {
 					try {
 						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(0), 0);
@@ -420,10 +420,10 @@ public class GraphicalSimulator {
 				//	arc.setTransportingTokens(false);
 					// nic nie oddawaj
 				} else if(arc.getArcType() == TypeOfArc.RESET) {
-					place.modifyTokensNumber(-1);
+					place.addTokensNumber(-1);
 					// PROBLEM, ten łuk nie jest odwracalny, skąd mamy wiedzieć, ile kiedyś-tam zabrano?!
 				} else if(arc.getArcType() == TypeOfArc.EQUAL) {
-					place.modifyTokensNumber(-arc.getWeight());
+					place.addTokensNumber(-arc.getWeight());
 				} else if(arc.getArcType() == TypeOfArc.COLOR) {
 					try {
 						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(0), 0);
@@ -455,9 +455,9 @@ public class GraphicalSimulator {
 		for (Transition tran : transitions) {
 			tran.setLaunching(true);
 			if (!backtracking)
-				arcs = tran.getOutArcs();
+				arcs = tran.getOutputArcs();
 			else
-				arcs = tran.getInArcs();
+				arcs = tran.getInputArcs();
 			
 			for (Arc arc : arcs) {
 				//if(arc.getArcType() == TypeOfArc.INHIBITOR || arc.getArcType() == TypeOfArc.READARC)
@@ -486,10 +486,10 @@ public class GraphicalSimulator {
 		ArrayList<Arc> arcs;
 		if (!backtracking) {
 			tran = transitions.get(0);
-			arcs = tran.getOutArcs();
+			arcs = tran.getOutputArcs();
 		} else {
 			tran = chosenTransition;
-			arcs = tran.getInArcs();
+			arcs = tran.getInputArcs();
 		}
 		tran.setLaunching(true);
 
@@ -516,9 +516,9 @@ public class GraphicalSimulator {
 			transition.setLaunching(false);  // skoro tutaj dotarliśmy, to znaczy że tranzycja już
 			//swoje zrobiła i jej status aktywnej się kończy w tym kroku
 			if (!backtracking)
-				arcs = transition.getOutArcs();
+				arcs = transition.getOutputArcs();
 			else
-				arcs = transition.getInArcs();
+				arcs = transition.getInputArcs();
 			//dodaj odpowiednią liczbę tokenów do miejsc
 			for (Arc arc : arcs) {
 				//if(arc.getArcType() == TypeOfArc.READARC)
@@ -572,10 +572,10 @@ public class GraphicalSimulator {
 		ArrayList<Arc> arcs;
 		if (!backtracking) {
 			transition = transitions.get(0);
-			arcs = transition.getOutArcs();
+			arcs = transition.getOutputArcs();
 		} else {
 			transition = chosenTransition;
-			arcs = transition.getInArcs();
+			arcs = transition.getInputArcs();
 		}
 		for (Arc arc : arcs) {
 			if(arc.getArcType() == TypeOfArc.READARC)

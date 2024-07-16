@@ -73,8 +73,8 @@ public class TransitionFPNExtension implements Serializable {
             }
         }
 
-        ArrayList<Arc> inArcs = masterTransition.getInArcs();
-        ArrayList<Arc> outArcs = masterTransition.getOutArcs();
+        ArrayList<Arc> inArcs = masterTransition.getInputArcs();
+        ArrayList<Arc> outArcs = masterTransition.getOutputArcs();
 
         for (Arc arc : inArcs) {
             if (fArcs.contains(arc))

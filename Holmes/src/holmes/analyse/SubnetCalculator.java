@@ -115,10 +115,10 @@ public class SubnetCalculator implements Serializable {
         boolean paralel = false;
         boolean seq = false;
         for (Transition subTran : sub) {
-            boolean in = chceckNodeOutIn(newTran.getInNodes(), subTran.getInNodes());
-            boolean out = chceckNodeOutIn(newTran.getOutNodes(), subTran.getOutNodes());
-            boolean inout = chceckNodeOutIn(newTran.getInNodes(), subTran.getOutNodes());
-            boolean outin = chceckNodeOutIn(newTran.getOutNodes(), subTran.getInNodes());
+            boolean in = chceckNodeOutIn(newTran.getInputNodes(), subTran.getInputNodes());
+            boolean out = chceckNodeOutIn(newTran.getOutputNodes(), subTran.getOutputNodes());
+            boolean inout = chceckNodeOutIn(newTran.getInputNodes(), subTran.getOutputNodes());
+            boolean outin = chceckNodeOutIn(newTran.getOutputNodes(), subTran.getInputNodes());
 
             if (in || out)
                 paralel = true;
@@ -135,10 +135,10 @@ public class SubnetCalculator implements Serializable {
         boolean paralel = false;
         boolean seq = false;
         for (Place subPlace : sub) {
-            boolean in = chceckNodeOutIn(newPlac.getInNodes(), subPlace.getInNodes());
-            boolean out = chceckNodeOutIn(newPlac.getOutNodes(), subPlace.getOutNodes());
-            boolean inout = chceckNodeOutIn(newPlac.getInNodes(), subPlace.getOutNodes());
-            boolean outin = chceckNodeOutIn(newPlac.getOutNodes(), subPlace.getInNodes());
+            boolean in = chceckNodeOutIn(newPlac.getInputNodes(), subPlace.getInputNodes());
+            boolean out = chceckNodeOutIn(newPlac.getOutputNodes(), subPlace.getOutputNodes());
+            boolean inout = chceckNodeOutIn(newPlac.getInputNodes(), subPlace.getOutputNodes());
+            boolean outin = chceckNodeOutIn(newPlac.getOutputNodes(), subPlace.getInputNodes());
 
             if (in || out)
                 paralel = true;
@@ -155,10 +155,10 @@ public class SubnetCalculator implements Serializable {
         boolean paralel = false;
         boolean seq = false;
         for (Transition subPlace : sub) {
-            boolean in = chceckNodeOutIn(newPlac.getInNodes(), subPlace.getInNodes());
-            boolean out = chceckNodeOutIn(newPlac.getOutNodes(), subPlace.getOutNodes());
-            boolean inout = chceckNodeOutIn(newPlac.getInNodes(), subPlace.getOutNodes());
-            boolean outin = chceckNodeOutIn(newPlac.getOutNodes(), subPlace.getInNodes());
+            boolean in = chceckNodeOutIn(newPlac.getInputNodes(), subPlace.getInputNodes());
+            boolean out = chceckNodeOutIn(newPlac.getOutputNodes(), subPlace.getOutputNodes());
+            boolean inout = chceckNodeOutIn(newPlac.getInputNodes(), subPlace.getOutputNodes());
+            boolean outin = chceckNodeOutIn(newPlac.getOutputNodes(), subPlace.getInputNodes());
 
             if (in || out)
                 paralel = true;
@@ -220,15 +220,15 @@ public class SubnetCalculator implements Serializable {
                     ArrayList<Place> invPlace = new ArrayList<>();
                     for (int i = 0; i < invSupport.size(); i++) {
                         for (int j = i + 1; j < invSupport.size(); j++) {
-                            for (Place ip : invSupport.get(i).getPostPlaces()) {
-                                for (Place jp : invSupport.get(j).getPrePlaces()) {
+                            for (Place ip : invSupport.get(i).getOutputPlaces()) {
+                                for (Place jp : invSupport.get(j).getInputPlaces()) {
                                     if (ip.getID() == jp.getID() && !inv.contains(ip))
                                         invPlace.add(ip);
                                 }
                             }
 
-                            for (Place ip : invSupport.get(i).getPrePlaces()) {
-                                for (Place jp : invSupport.get(j).getPostPlaces()) {
+                            for (Place ip : invSupport.get(i).getInputPlaces()) {
+                                for (Place jp : invSupport.get(j).getOutputPlaces()) {
                                     if (ip.getID() == jp.getID() && !inv.contains(ip))
                                         invPlace.add(ip);
                                 }
@@ -642,8 +642,8 @@ public class SubnetCalculator implements Serializable {
         boolean connected = false;
 
         for (Integer i : newADTset) {
-            ArrayList<Node> common = new ArrayList<Node>(pn.getTransitions().get(i).getOutInNodes());
-            common.retainAll(new ArrayList<>(pn.getTransitions().get(j).getOutInNodes()));
+            ArrayList<Node> common = new ArrayList<Node>(pn.getTransitions().get(i).getNeighborsNodes());
+            common.retainAll(new ArrayList<>(pn.getTransitions().get(j).getNeighborsNodes()));
             if (common.size() > 0) {
                 connected = true;
             }
@@ -1052,8 +1052,8 @@ public class SubnetCalculator implements Serializable {
         for (Path path : paths) {
 
             for (Node n : path.path) {
-                for (Node chceck : n.getOutNodes()) {
-                    if (chceck.getOutNodes().isEmpty()) {
+                for (Node chceck : n.getOutputNodes()) {
+                    if (chceck.getOutputNodes().isEmpty()) {
                         ArrayList<Node> list = new ArrayList<>();
                         list.add(n);
                         list.add(chceck);
@@ -1062,8 +1062,8 @@ public class SubnetCalculator implements Serializable {
                     }
                 }
 
-                for (Node chceck : n.getInNodes()) {
-                    if (chceck.getInNodes().isEmpty()) {
+                for (Node chceck : n.getInputNodes()) {
+                    if (chceck.getInputNodes().isEmpty()) {
                         ArrayList<Node> list = new ArrayList<>();
                         list.add(n);
                         list.add(chceck);
@@ -1084,8 +1084,8 @@ public class SubnetCalculator implements Serializable {
         for (Path path : paths) {
 
             for (Node n : path.path) {
-                for (Node chceck : n.getOutNodes()) {
-                    if (chceck.getOutNodes().isEmpty()) {
+                for (Node chceck : n.getOutputNodes()) {
+                    if (chceck.getOutputNodes().isEmpty()) {
                         ArrayList<Node> list = new ArrayList<>();
                         list.add(n);
                         list.add(chceck);
@@ -1095,8 +1095,8 @@ public class SubnetCalculator implements Serializable {
                     }
                 }
 
-                for (Node chceck : n.getInNodes()) {
-                    if (chceck.getInNodes().isEmpty()) {
+                for (Node chceck : n.getInputNodes()) {
+                    if (chceck.getInputNodes().isEmpty()) {
                         ArrayList<Node> list = new ArrayList<>();
                         list.add(n);
                         list.add(chceck);
@@ -1159,11 +1159,11 @@ public class SubnetCalculator implements Serializable {
         ArrayList<Node> outNode = new ArrayList<>();
 
         for (Path p : paths) {
-            if (p.startNode.getInNodes().size() == 0 && p.startNode.getOutNodes().size() != 0) {
+            if (p.startNode.getInputNodes().size() == 0 && p.startNode.getOutputNodes().size() != 0) {
                 inNode.add(p.startNode);
             }
 
-            if (p.endNode.getInNodes().size() != 0 && p.endNode.getOutNodes().size() == 0) {
+            if (p.endNode.getInputNodes().size() != 0 && p.endNode.getOutputNodes().size() == 0) {
                 outNode.add(p.endNode);
             }
         }
@@ -1211,11 +1211,11 @@ public class SubnetCalculator implements Serializable {
         ArrayList<Node> outNode = new ArrayList<>();
 
         for (Path p : paths) {
-            if (p.startNode.getInNodes().size() == 0 && p.startNode.getOutNodes().size() != 0) {
+            if (p.startNode.getInputNodes().size() == 0 && p.startNode.getOutputNodes().size() != 0) {
                 inNode.add(p.startNode);
             }
 
-            if (p.endNode.getInNodes().size() != 0 && p.endNode.getOutNodes().size() == 0) {
+            if (p.endNode.getInputNodes().size() != 0 && p.endNode.getOutputNodes().size() == 0) {
                 outNode.add(p.endNode);
             }
         }
@@ -1234,7 +1234,7 @@ public class SubnetCalculator implements Serializable {
                     listOfCycles.add(path);
                     for (Path paralelPath : paths) {
                         if (!(paralelPath.startNode == path.startNode && paralelPath.endNode == path.endNode)) {
-                            if (paralelPath.startNode.getInNodes().size() == 0 && paralelPath.endNode == path.endNode) {
+                            if (paralelPath.startNode.getInputNodes().size() == 0 && paralelPath.endNode == path.endNode) {
                                 localListOfPaths.remove(paralelPath);
                                 listOfCycles.add(paralelPath);
                             }
@@ -1337,7 +1337,7 @@ public class SubnetCalculator implements Serializable {
     public static void generateBranchesVerticles() {
 
         for (Node n : allNodes) {
-            if ((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)) {
+            if ((n.getOutputNodes().size() > 1 || n.getInputNodes().size() > 1)) {
                 HolmesBranchVerticesPrototype.BranchStructure bs = new HolmesBranchVerticesPrototype.BranchStructure(n);
                 bvSubNets.add(new SubNet(SubNetType.BV, null, null, null, null, bs.paths));
             }
@@ -1347,7 +1347,7 @@ public class SubnetCalculator implements Serializable {
     public static void generateBranchesTransitions() {
 
         for (Node n : allTransitions) {
-            if ((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)) {
+            if ((n.getOutputNodes().size() > 1 || n.getInputNodes().size() > 1)) {
                 HolmesBranchVerticesPrototype.BranchStructure bs = new HolmesBranchVerticesPrototype.BranchStructure(n);
                 btSubNets.add(new SubNet(SubNetType.BV, null, null, null, null, bs.paths));
             }
@@ -1357,7 +1357,7 @@ public class SubnetCalculator implements Serializable {
     public static void generateBranchesPlaces() {
 
         for (Node n : allPlaces) {
-            if ((n.getOutNodes().size() > 1 || n.getInNodes().size() > 1)) {
+            if ((n.getOutputNodes().size() > 1 || n.getInputNodes().size() > 1)) {
                 HolmesBranchVerticesPrototype.BranchStructure bs = new HolmesBranchVerticesPrototype.BranchStructure(n);
                 bpSubNets.add(new SubNet(SubNetType.BV, null, null, null, null, bs.paths));
             }
@@ -1415,7 +1415,7 @@ public class SubnetCalculator implements Serializable {
         //is cycle add
         if (outNodes.contains(used.get(used.size() - 1).endNode)) {
             for (Path paralelPath : paths) {
-                if (paralelPath.endNode.getOutNodes().size() == 0) {// && paralelPath.startNode == paralelPath.startNode) { //to check
+                if (paralelPath.endNode.getOutputNodes().size() == 0) {// && paralelPath.startNode == paralelPath.startNode) { //to check
                     used.add(paralelPath);
                 }
             }
@@ -1496,9 +1496,9 @@ public class SubnetCalculator implements Serializable {
         }
         usedNodes.add(m);
         path.add(m);
-        if (m.getOutNodes().size() > 0) {
-            if (m.getOutNodes().size() == 1) {
-                calculatePath(m.getOutNodes().get(0), path);
+        if (m.getOutputNodes().size() > 0) {
+            if (m.getOutputNodes().size() == 1) {
+                calculatePath(m.getOutputNodes().get(0), path);
             }
         }
         return path;
@@ -1507,15 +1507,15 @@ public class SubnetCalculator implements Serializable {
     private static ArrayList<Path> calculatePaths() {
         ArrayList<Path> listOfPaths = new ArrayList<>();
         for (Node n : allNodes) {
-            if (n.getOutNodes().size() > 1 || n.getInNodes().size() == 0 || (n.getInNodes().size() > 1 && n.getOutNodes().size() != 0)) {
+            if (n.getOutputNodes().size() > 1 || n.getInputNodes().size() == 0 || (n.getInputNodes().size() > 1 && n.getOutputNodes().size() != 0)) {
 
-                if (n.getOutNodes().size() > 1) {
+                if (n.getOutputNodes().size() > 1) {
                     usedNodes.add(n);
-                    for (Node m : n.getOutNodes()) {
+                    for (Node m : n.getOutputNodes()) {
                         ArrayList<Node> startPath = new ArrayList<>();
                         startPath.add(n);
                         ArrayList<Node> nodes = calculatePath(m, startPath);
-                        if (nodes.get(nodes.size() - 1).getOutNodes().contains(nodes.get(0))) {
+                        if (nodes.get(nodes.size() - 1).getOutputNodes().contains(nodes.get(0))) {
                             listOfPaths.add(new Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes), true));
                         } else {
                             listOfPaths.add(new Path(nodes.get(0), nodes.get(nodes.size() - 1), new ArrayList<>(nodes)));
@@ -1542,7 +1542,7 @@ public class SubnetCalculator implements Serializable {
 
         ArrayList<Node> listOfStartNodes = new ArrayList<>();
         for (Node n : allNodes) {
-            if (!((n.getInNodes().size() == 1 && n.getOutNodes().size() == 1) || (n.getInNodes().size() > 0 && n.getOutNodes().size() == 0)))//(n.getOutNodes().size()>=1 || n.getInNodes().size()==0)
+            if (!((n.getInputNodes().size() == 1 && n.getOutputNodes().size() == 1) || (n.getInputNodes().size() > 0 && n.getOutputNodes().size() == 0)))//(n.getOutNodes().size()>=1 || n.getInNodes().size()==0)
             {
                 listOfStartNodes.add(n);
             }
@@ -1551,7 +1551,7 @@ public class SubnetCalculator implements Serializable {
         for (Node n : listOfStartNodes) {
             ArrayList<Node> pathList = new ArrayList<>();
             pathList.add(n);
-            for (Node singeOutNode : n.getOutNodes()) {
+            for (Node singeOutNode : n.getOutputNodes()) {
                 pathList.add(singeOutNode);
                 pathList = getDeeper(singeOutNode, pathList);
 
@@ -1566,13 +1566,13 @@ public class SubnetCalculator implements Serializable {
     }
 
     private static ArrayList<Node> getDeeper(Node n, ArrayList<Node> list) {
-        if (n.getOutNodes().size() > 1 || n.getInNodes().size() > 1) {
+        if (n.getOutputNodes().size() > 1 || n.getInputNodes().size() > 1) {
             return list;
         } else {
             //zabezpieczenie na źródłowe
-            if (!n.getOutNodes().isEmpty()) {
-                list.add(n.getOutNodes().get(0));
-                list = getDeeper(n.getOutNodes().get(0), list);
+            if (!n.getOutputNodes().isEmpty()) {
+                list.add(n.getOutputNodes().get(0));
+                list = getDeeper(n.getOutputNodes().get(0), list);
             }
         }
         return list;
@@ -1746,10 +1746,10 @@ public class SubnetCalculator implements Serializable {
 
             ArrayList<Arc> listOfAllArcs = new ArrayList<>();
             for (Transition transition : subTransitions) {
-                for (Arc arc : transition.getInArcs())
+                for (Arc arc : transition.getInputArcs())
                     if (!listOfAllArcs.contains(arc))
                         listOfAllArcs.add(arc);
-                for (Arc arc : transition.getOutArcs())
+                for (Arc arc : transition.getOutputArcs())
                     if (!listOfAllArcs.contains(arc))
                         listOfAllArcs.add(arc);
             }
@@ -1848,10 +1848,10 @@ public class SubnetCalculator implements Serializable {
         private void calculateArcs(ArrayList<Place> subPlaces) {
             ArrayList<Arc> listOfAllArcs = new ArrayList<>();
             for (Place place : subPlaces) {
-                for (Arc arc : place.getInArcs())
+                for (Arc arc : place.getInputArcs())
                     if (!listOfAllArcs.contains(arc))
                         listOfAllArcs.add(arc);
-                for (Arc arc : place.getOutArcs())
+                for (Arc arc : place.getOutputArcs())
                     if (!listOfAllArcs.contains(arc))
                         listOfAllArcs.add(arc);
             }
@@ -1880,13 +1880,13 @@ public class SubnetCalculator implements Serializable {
                 for (int i = 0; i < path.path.size() - 1; i++) {
                     Node startNode = path.path.get(i);
                     Node endNode = path.path.get(i + 1);
-                    for (Arc arc : startNode.getOutArcs()) {
+                    for (Arc arc : startNode.getOutputArcs()) {
                         if (arc.getEndNode().getID() == endNode.getID())
                             listOfAllArcs.add(arc);
                     }
                 }
 
-                for (Arc arc : path.endNode.getOutArcs()) {
+                for (Arc arc : path.endNode.getOutputArcs()) {
                     if (arc.getEndNode().getID() == path.startNode.getID())
                         listOfAllArcs.add(arc);
                 }
@@ -1917,17 +1917,17 @@ public class SubnetCalculator implements Serializable {
                 for (int i = 0; i < path.path.size() - 1; i++) {
                     Node startNode = path.path.get(i);
                     Node endNode = path.path.get(i + 1);
-                    for (Arc arc : startNode.getOutArcs()) {
+                    for (Arc arc : startNode.getOutputArcs()) {
                         if (arc.getEndNode().getID() == endNode.getID())
                             listOfAllArcs.add(arc);
                     }
-                    for (Arc arc : startNode.getInArcs()) {
+                    for (Arc arc : startNode.getInputArcs()) {
                         if (arc.getStartNode().getID() == endNode.getID())
                             listOfAllArcs.add(arc);
                     }
                 }
 
-                for (Arc arc : path.endNode.getOutArcs()) {
+                for (Arc arc : path.endNode.getOutputArcs()) {
                     if (arc.getEndNode().getID() == path.startNode.getID())
                         listOfAllArcs.add(arc);
                 }
@@ -1970,11 +1970,11 @@ public class SubnetCalculator implements Serializable {
             //Zbiór wszystkich miejsc
             ArrayList<Place> listOfInOutPlaces = new ArrayList<>();
             for (Transition transition : this.subTransitions) {
-                for (Place place : transition.getPostPlaces()) {
+                for (Place place : transition.getOutputPlaces()) {
                     if (!listOfInOutPlaces.contains(place))
                         listOfInOutPlaces.add(place);
                 }
-                for (Place place : transition.getPrePlaces()) {
+                for (Place place : transition.getInputPlaces()) {
                     if (!listOfInOutPlaces.contains(place))
                         listOfInOutPlaces.add(place);
                 }
@@ -1984,13 +1984,13 @@ public class SubnetCalculator implements Serializable {
             //Zbiór miejsc granicznych
             for (Place place : listOfInOutPlaces) {
                 boolean border = false;
-                for (Transition transition : place.getPostTransitions())
+                for (Transition transition : place.getOutputTransitions())
                     if (!this.subTransitions.contains(transition)) {
                         border = true;
                         break;
                     }
 
-                for (Transition transition : place.getPreTransitions())
+                for (Transition transition : place.getInputTransitions())
                     if (!this.subTransitions.contains(transition)) {
                         border = true;
                         break;
@@ -2005,10 +2005,10 @@ public class SubnetCalculator implements Serializable {
             //wylicz łuki
             ArrayList<Arc> listOfAllArcs = new ArrayList<>();
             for (Transition transition : subTransitions) {
-                for (Arc arc : transition.getInArcs())
+                for (Arc arc : transition.getInputArcs())
                     if (!listOfAllArcs.contains(arc))
                         listOfAllArcs.add(arc);
-                for (Arc arc : transition.getOutArcs())
+                for (Arc arc : transition.getOutputArcs())
                     if (!listOfAllArcs.contains(arc))
                         listOfAllArcs.add(arc);
             }
@@ -2023,11 +2023,11 @@ public class SubnetCalculator implements Serializable {
             //Zbiór wszystkich miejsc
             ArrayList<Transition> listOfInOutTransition = new ArrayList<>();
             for (Place place : this.subPlaces) {
-                for (Transition transition : place.getPostTransitions()) {
+                for (Transition transition : place.getOutputTransitions()) {
                     if (!listOfInOutTransition.contains(transition))
                         listOfInOutTransition.add(transition);
                 }
-                for (Transition transition : place.getPreTransitions()) {
+                for (Transition transition : place.getInputTransitions()) {
                     if (!listOfInOutTransition.contains(transition))
                         listOfInOutTransition.add(transition);
                 }
@@ -2037,13 +2037,13 @@ public class SubnetCalculator implements Serializable {
             //Zbiór tranzycji granicznych
             for (Transition transition : listOfInOutTransition) {
                 boolean border = false;
-                for (Place place : transition.getPostPlaces())
+                for (Place place : transition.getOutputPlaces())
                     if (!this.subPlaces.contains(place)) {
                         border = true;
                         break;
                     }
 
-                for (Place place : transition.getPrePlaces())
+                for (Place place : transition.getInputPlaces())
                     if (!this.subPlaces.contains(place)) {
                         border = true;
                         break;

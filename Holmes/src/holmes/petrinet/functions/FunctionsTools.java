@@ -280,13 +280,13 @@ public class FunctionsTools {
 			{
 				fc.currentValue = getFunctionValue(fc); //wartość równania, ale:
 				fc.currentValue = fc.currentValue <= 0 ? arc.getWeight() : fc.currentValue; //like a boss
-				place.modifyTokensNumber(-((int) fc.currentValue));
+				place.addTokensNumber(-((int) fc.currentValue));
 				//nie ważne, aktywna czy nie, jeśli nie, to tu jest i tak oryginalna waga
 			} else {
-				place.modifyTokensNumber(-arc.getWeight());
+				place.addTokensNumber(-arc.getWeight());
 			}
 		} else {
-			place.modifyTokensNumber(-arc.getWeight());
+			place.addTokensNumber(-arc.getWeight());
 		}
 	}
 
@@ -324,15 +324,15 @@ public class FunctionsTools {
 					fc.currentValue = getFunctionValue(fc); //wartość równania, ale:
 					fc.currentValue = fc.currentValue <= 0 ? arc.getWeight() : fc.currentValue; //like a boss
 					
-					place.modifyTokensNumber((int) fc.currentValue);
+					place.addTokensNumber((int) fc.currentValue);
 				} else {
-					place.modifyTokensNumber(arc.getWeight());
+					place.addTokensNumber(arc.getWeight());
 				}
 			} else {
-				place.modifyTokensNumber(arc.getWeight());
+				place.addTokensNumber(arc.getWeight());
 			}
 		} else {
-			place.modifyTokensNumber(arc.getWeight());
+			place.addTokensNumber(arc.getWeight());
 		}
 	}
 }

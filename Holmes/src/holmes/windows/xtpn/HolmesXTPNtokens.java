@@ -289,7 +289,7 @@ public class HolmesXTPNtokens extends JFrame {
                     }
                 } else { //miejsca klasyczne
                     if(parentWindow == null) { //to znaczy, że usuwamy bezpośrednio z miejsca
-                        place.modifyTokensNumber(-1); //poprzez metodę, a nie bezpośrednio z multisetK!
+                        place.addTokensNumber(-1); //poprzez metodę, a nie bezpośrednio z multisetK!
                         GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
                     } else {
                         if(parentWindow instanceof HolmesStatesEditorXTPN) { // usuwamy token tylko z przechowywanego p-stanu z managera:

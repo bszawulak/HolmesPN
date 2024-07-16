@@ -1555,50 +1555,50 @@ public class IOprotocols {
                 fileBuffer.append("    ");
 
                 // łuki
-                if (placeList.get(i).getInArcs().isEmpty()
-                        && placeList.get(i).getOutArcs().isEmpty()) {
+                if (placeList.get(i).getInputArcs().isEmpty()
+                        && placeList.get(i).getOutputArcs().isEmpty()) {
                     fileBuffer.append(" ");
                 }
-                if (placeList.get(i).getInArcs().size() > 0 && placeList.get(i).getOutArcs().isEmpty()) {
-                    for (int j = 0; j < placeList.get(i).getInArcs().size(); j++) {
-                        if (transitionList.contains((Transition)placeList.get(i).getInArcs().get(j).getStartNode())) {
+                if (placeList.get(i).getInputArcs().size() > 0 && placeList.get(i).getOutputArcs().isEmpty()) {
+                    for (int j = 0; j < placeList.get(i).getInputArcs().size(); j++) {
+                        if (transitionList.contains((Transition)placeList.get(i).getInputArcs().get(j).getStartNode())) {
                             fileBuffer.append(" ");
-                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getInArcs().get(j).getStartNode()));
-                            if (placeList.get(i).getInArcs().get(j).getWeight() > 1) {
-                                fileBuffer.append(": ").append(placeList.get(i).getInArcs().get(j).getWeight());
+                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getInputArcs().get(j).getStartNode()));
+                            if (placeList.get(i).getInputArcs().get(j).getWeight() > 1) {
+                                fileBuffer.append(": ").append(placeList.get(i).getInputArcs().get(j).getWeight());
                             }
                         }
                     }
                 }
-                if (placeList.get(i).getInArcs().size() > 0 && placeList.get(i).getOutArcs().size() > 0) {
-                    for (int j = 0; j < placeList.get(i).getInArcs().size(); j++) {
-                        if (transitionList.contains((Transition)placeList.get(i).getInArcs().get(j).getStartNode())) {
+                if (placeList.get(i).getInputArcs().size() > 0 && placeList.get(i).getOutputArcs().size() > 0) {
+                    for (int j = 0; j < placeList.get(i).getInputArcs().size(); j++) {
+                        if (transitionList.contains((Transition)placeList.get(i).getInputArcs().get(j).getStartNode())) {
                             fileBuffer.append(" ");
-                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getInArcs().get(j).getStartNode()));
-                            if (placeList.get(i).getInArcs().get(j).getWeight() > 1) {
-                                fileBuffer.append(": ").append(placeList.get(i).getInArcs().get(j).getWeight());
+                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getInputArcs().get(j).getStartNode()));
+                            if (placeList.get(i).getInputArcs().get(j).getWeight() > 1) {
+                                fileBuffer.append(": ").append(placeList.get(i).getInputArcs().get(j).getWeight());
                             }
                         }
                     }
                     fileBuffer.append(",");
-                    for (int j = 0; j < placeList.get(i).getOutArcs().size(); j++) {
-                        if (transitionList.contains((Transition)placeList.get(i).getOutArcs().get(j).getEndNode())) {
+                    for (int j = 0; j < placeList.get(i).getOutputArcs().size(); j++) {
+                        if (transitionList.contains((Transition)placeList.get(i).getOutputArcs().get(j).getEndNode())) {
                             fileBuffer.append(" ");
-                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getOutArcs().get(j).getEndNode()));
-                            if (placeList.get(i).getOutArcs().get(j).getWeight() > 1) {
-                                fileBuffer.append(": ").append(placeList.get(i).getOutArcs().get(j).getWeight());
+                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getOutputArcs().get(j).getEndNode()));
+                            if (placeList.get(i).getOutputArcs().get(j).getWeight() > 1) {
+                                fileBuffer.append(": ").append(placeList.get(i).getOutputArcs().get(j).getWeight());
                             }
                         }
                     }
                 }
-                if (placeList.get(i).getInArcs().isEmpty() && placeList.get(i).getOutArcs().size() > 0) {
+                if (placeList.get(i).getInputArcs().isEmpty() && placeList.get(i).getOutputArcs().size() > 0) {
                     fileBuffer.append(",");
-                    for (int j = 0; j < placeList.get(i).getOutArcs().size(); j++) {
-                        if(transitionList.contains((Transition)placeList.get(i).getOutArcs().get(j).getEndNode())) {
+                    for (int j = 0; j < placeList.get(i).getOutputArcs().size(); j++) {
+                        if(transitionList.contains((Transition)placeList.get(i).getOutputArcs().get(j).getEndNode())) {
                             fileBuffer.append(" ");
-                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getOutArcs().get(j).getEndNode()));
-                            if (placeList.get(i).getOutArcs().get(j).getWeight() > 1) {
-                                fileBuffer.append(": ").append(placeList.get(i).getOutArcs().get(j).getWeight());
+                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getOutputArcs().get(j).getEndNode()));
+                            if (placeList.get(i).getOutputArcs().get(j).getWeight() > 1) {
+                                fileBuffer.append(": ").append(placeList.get(i).getOutputArcs().get(j).getWeight());
                             }
                         }
                     }

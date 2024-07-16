@@ -1515,8 +1515,8 @@ public final class InvariantsTools {
 		if(currentNode.equals(target))
 			return 0;
 		
-		if (currentNode.getOutArcs()!=null) {
-			for (Arc a : currentNode.getOutArcs()) { //łuki wychodzące z aktualnego wierzchołka
+		if (currentNode.getOutputArcs()!=null) {
+			for (Arc a : currentNode.getOutputArcs()) { //łuki wychodzące z aktualnego wierzchołka
 				Node node = a.getEndNode(); //wierzchołek końcowy łuku
 				if(!visited.contains(node)) {//jeśli jeszcze nie ma
 					visited.add(node);
@@ -1575,7 +1575,7 @@ public final class InvariantsTools {
 		Node startN = arc.getStartNode();
 		Node endN = arc.getEndNode();
 		
-		for(Arc a : endN.getOutArcs()) {
+		for(Arc a : endN.getOutputArcs()) {
 			if(a.getEndNode() == startN) {
 				return true;
 			}
@@ -1587,7 +1587,7 @@ public final class InvariantsTools {
 		Node startN = arc.getStartNode();
 		Node endN = arc.getEndNode();
 		
-		for(Arc a : endN.getOutArcs()) {
+		for(Arc a : endN.getOutputArcs()) {
 			if(a.getEndNode() == startN) {
 				return a;
 			}

@@ -556,7 +556,7 @@ public class GraphicalSimulatorXTPN {
             for (TransitionXTPN transition : consumingTokensTransitionsXTPN) { //lista tych, które zabierają tokeny
                 if(transition.isActiveTransitionXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                     transition.setLaunching(true);
-                    arcs = transition.getInArcs();
+                    arcs = transition.getInputArcs();
                     for (Arc arc : arcs) {
                         arc.setSimulationForwardDirection(true); //zawsze dla tego symulatora (nie działamy wstecz)
                         arc.setTransportingTokens(true);
@@ -580,7 +580,7 @@ public class GraphicalSimulatorXTPN {
                     transition.deactivateTransitionXTPN(true);
                     transition.setActivationStatusXTPN(false);
                     transition.setProductionStatus_xTPN(false);
-                    for(Arc arc : transition.getOutArcs()) {
+                    for(Arc arc : transition.getOutputArcs()) {
                         arc.arcXTPNbox.setXTPNprodStatus(false);
                     }
                     producingTokensTransitionsAll.remove(transition);
@@ -620,7 +620,7 @@ public class GraphicalSimulatorXTPN {
                 if(transition.isActiveTransitionXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                     fireClassSoFar++;
                     transition.setLaunching(true);
-                    arcs = transition.getInArcs();
+                    arcs = transition.getInputArcs();
                     for (Arc arc : arcs) {
                         arc.setSimulationForwardDirection(true); //zawsze dla tego symulatora
                         arc.setTransportingTokens(true);
@@ -655,7 +655,7 @@ public class GraphicalSimulatorXTPN {
             ArrayList<Arc> arcs;
             for (TransitionXTPN tran : producingTokensTransitionsAll) {
                 tran.setLaunching(true);
-                arcs = tran.getOutArcs();
+                arcs = tran.getOutputArcs();
 
                 for (Arc arc : arcs) { //read arc...
                     if(arc.getArcType() == TypeOfArc.INHIBITOR )

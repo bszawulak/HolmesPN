@@ -1654,7 +1654,7 @@ public class BranchesServerCalc {
     public ArrayList<BranchVertex> calcBranches(PetriNet pn) {
         ArrayList<BranchVertex> listOfBranchVertices = new ArrayList<>();
         for (Node n : pn.getNodes()) {
-            if (n.getInArcs().size() > 1 || n.getOutArcs().size() > 1)
+            if (n.getInputArcs().size() > 1 || n.getOutputArcs().size() > 1)
                 listOfBranchVertices.add(addBV(n));
         }
 
@@ -1668,7 +1668,7 @@ public class BranchesServerCalc {
 
     private ArrayList<Node> calcOutEndpoints(Node n) {
         ArrayList<Node> endpoints = new ArrayList<>();
-        for (Arc a : n.getOutArcs()) {
+        for (Arc a : n.getOutputArcs()) {
             endpoints.add(findOutEndpoint(a.getEndNode()));
         }
 
@@ -1677,7 +1677,7 @@ public class BranchesServerCalc {
 
     private ArrayList<Node> calcInEndpoints(Node n) {
         ArrayList<Node> endpoints = new ArrayList<>();
-        for (Arc a : n.getInArcs()) {
+        for (Arc a : n.getInputArcs()) {
             endpoints.add(findInEndpoint(a.getStartNode()));
         }
         return endpoints;
@@ -1685,10 +1685,10 @@ public class BranchesServerCalc {
 
     private Node findInEndpoint(Node n) {
         Node result;
-        if (n.getInArcs().size() > 1 || n.getOutArcs().size() > 1) {
+        if (n.getInputArcs().size() > 1 || n.getOutputArcs().size() > 1) {
             return n;
         } else {
-            result = findInEndpoint(n.getOutNodes().get(0));
+            result = findInEndpoint(n.getOutputNodes().get(0));
         }
 
         return result;
@@ -1696,10 +1696,10 @@ public class BranchesServerCalc {
 
     private Node findOutEndpoint(Node n) {
         Node result;
-        if (n.getInArcs().size() > 1 || n.getOutArcs().size() > 1) {
+        if (n.getInputArcs().size() > 1 || n.getOutputArcs().size() > 1) {
             return n;
         } else {
-            result = findInEndpoint(n.getInNodes().get(0));
+            result = findInEndpoint(n.getInputNodes().get(0));
         }
 
         return result;

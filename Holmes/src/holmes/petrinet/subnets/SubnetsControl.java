@@ -480,7 +480,7 @@ public class SubnetsControl {
 		for(MetaNode node : metanodes) {
 			if(node.getRepresentedSheetID() == sheetID) {
 				found = true;
-				if(node.getInArcs().size() > 0 || node.getOutArcs().size() > 0) {
+				if(node.getInputArcs().size() > 0 || node.getOutputArcs().size() > 0) {
 					overlord.log("Serious internal problem encountered. MetaNode should NEVER have normal arcs."
 							+ " Please contact authors. Also, net analysis may be wrong.", "error", true);
 					

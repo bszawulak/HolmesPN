@@ -291,9 +291,9 @@ public class InvariantsSimulator {
 		for (Transition transition : transitions) {
 			transition.setLaunching(true);
 			if (!backtracking)
-				arcs = transition.getInArcs();
+				arcs = transition.getInputArcs();
 			else
-				arcs = transition.getOutArcs();
+				arcs = transition.getOutputArcs();
 			// subtract adequate number of tokens from origins
 			for (Arc arc : arcs) {
 				arc.setSimulationForwardDirection(!backtracking);
@@ -303,7 +303,7 @@ public class InvariantsSimulator {
 					place = (Place) arc.getStartNode();
 				else
 					place = (Place) arc.getEndNode();
-				place.modifyTokensNumber(-arc.getWeight());
+				place.addTokensNumber(-arc.getWeight());
 			}
 		}
 	}
@@ -324,10 +324,10 @@ public class InvariantsSimulator {
 			ArrayList<Arc> arcs;
 			if (!backtracking) {
 				tran = transitions.get(0);
-				arcs = tran.getInArcs();
+				arcs = tran.getInputArcs();
 			} else {
 				tran = chosenTransition;
-				arcs = tran.getOutArcs();
+				arcs = tran.getOutputArcs();
 			}
 			tran.setLaunching(true);
 			for (Arc arc : arcs) {
@@ -338,7 +338,7 @@ public class InvariantsSimulator {
 					place = (Place) arc.getStartNode();
 				else
 					place = (Place) arc.getEndNode();
-				place.modifyTokensNumber(-arc.getWeight());
+				place.addTokensNumber(-arc.getWeight());
 			}
 			return true;
 		}
@@ -354,9 +354,9 @@ public class InvariantsSimulator {
 		for (Transition tran : transitions) {
 			tran.setLaunching(true);
 			if (!backtracking)
-				arcs = tran.getOutArcs();
+				arcs = tran.getOutputArcs();
 			else
-				arcs = tran.getInArcs();
+				arcs = tran.getInputArcs();
 			for (Arc arc : arcs) {
 				arc.setSimulationForwardDirection(!backtracking);
 				arc.setTransportingTokens(true);
@@ -374,10 +374,10 @@ public class InvariantsSimulator {
 			ArrayList<Arc> arcs;
 			if (!backtracking) {
 				tran = transitions.get(0);
-				arcs = tran.getOutArcs();
+				arcs = tran.getOutputArcs();
 			} else {
 				tran = chosenTransition;
-				arcs = tran.getInArcs();
+				arcs = tran.getInputArcs();
 			}
 			tran.setLaunching(true);
 			for (Arc arc : arcs) {
@@ -393,9 +393,9 @@ public class InvariantsSimulator {
 		ArrayList<Arc> arcs;
 		for (Transition transition : transitions) {
 			if (!backtracking)
-				arcs = transition.getOutArcs();
+				arcs = transition.getOutputArcs();
 			else
-				arcs = transition.getInArcs();
+				arcs = transition.getInputArcs();
 			// add adequate number of tokens to destinations
 			for (Arc arc : arcs) {
 				Place place;
@@ -403,7 +403,7 @@ public class InvariantsSimulator {
 					place = (Place) arc.getEndNode();
 				else
 					place = (Place) arc.getStartNode();
-				place.modifyTokensNumber(arc.getWeight());
+				place.addTokensNumber(arc.getWeight());
 			}
 		}
 		transitions.clear();
@@ -418,10 +418,10 @@ public class InvariantsSimulator {
 			ArrayList<Arc> arcs;
 			if (!backtracking) {
 				tran = transitions.get(0);
-				arcs = tran.getOutArcs();
+				arcs = tran.getOutputArcs();
 			} else {
 				tran = chosenTransition;
-				arcs = tran.getInArcs();
+				arcs = tran.getInputArcs();
 			}
 			for (Arc arc : arcs) {
 				Place place;
@@ -429,7 +429,7 @@ public class InvariantsSimulator {
 					place = (Place) arc.getEndNode();
 				else
 					place = (Place) arc.getStartNode();
-				place.modifyTokensNumber(arc.getWeight());
+				place.addTokensNumber(arc.getWeight());
 			}
 			transitions.remove(tran);
 			return true;
@@ -739,8 +739,8 @@ public class InvariantsSimulator {
 										if(lastTransition.get(invariant)!=Integer.MAX_VALUE)
 										{
 											boolean connectionExist=false;
-											for(Arc arc : invariants.get(invariant).get(tran).getTransition().getInArcs())
-												for(Arc arcPlace : arc.getStartNode().getInArcs())
+											for(Arc arc : invariants.get(invariant).get(tran).getTransition().getInputArcs())
+												for(Arc arcPlace : arc.getStartNode().getInputArcs())
 													if(arcPlace.getStartNode().getID() == lastTransition.get(invariant))
 														connectionExist = true;
 											if(connectionExist)

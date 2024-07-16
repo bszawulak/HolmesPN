@@ -91,7 +91,7 @@ public class Place extends Node {
 	 * Zwraca zbiór tranzycji wejściowych *p.
 	 * @return (<b>ArrayList[Transition]</b>) - lista tranzycji ze zbioru *p.
 	 */
-	public ArrayList<Transition> getPreTransitions() {
+	public ArrayList<Transition> getInputTransitions() {
 		ArrayList<Transition> preTransitions = new ArrayList<Transition>();
 		for(ElementLocation el : getElementLocations()) {
 			for(Arc arc : el.getInArcs()) {
@@ -108,7 +108,7 @@ public class Place extends Node {
 	 * Zwraca zbiór tranzycji wyjściowych p*.
 	 * @return (<b>ArrayList[Transition]</b>) - lista tranzycji ze zbioru p*.
 	 */
-	public ArrayList<Transition> getPostTransitions() {
+	public ArrayList<Transition> getOutputTransitions() {
 		ArrayList<Transition> postTransitions = new ArrayList<>();
 		for(ElementLocation el : getElementLocations()) {
 			for(Arc arc : el.getOutArcs()) {
@@ -145,7 +145,7 @@ public class Place extends Node {
 	 * Metoda pozwala zmienić liczbę tokenów w miejscu, dodając ich określoną wartość.
 	 * @param delta (<b>int</b>) wartość, o którą zmieni się liczba tokenów.
 	 */
-	public void modifyTokensNumber(int delta) {
+	public void addTokensNumber(int delta) {
 		if((tokensNumber + delta) < 0) {
 			this.tokensNumber = 0;
 			GUIManager.getDefaultGUIManager().log("Error: something tried to lower tokens below zero! Place: "

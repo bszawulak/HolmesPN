@@ -334,7 +334,7 @@ public class StateSimulatorXTPN implements Runnable {
         for (TransitionXTPN transition : consumingTokensTransitionsXTPN) { //lista tych, które zabierają tokeny
             if (transition.isActiveTransitionXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                 //transition.setLaunching(true);
-                arcs = transition.getInArcs();
+                arcs = transition.getInputArcs();
                 for (Arc arc : arcs) {
                     //arc.setSimulationForwardDirection(true); //zawsze dla tego symulatora (nie działamy wstecz)
                     //arc.setTransportingTokens(true);
@@ -396,7 +396,7 @@ public class StateSimulatorXTPN implements Runnable {
             if (transition.isActiveTransitionXTPN(sg.getCalculationsAccuracy())) { //jeżeli jest aktywna, to zabieramy tokeny
                 fireClassSoFar++;
                 transition.setLaunching(true);
-                arcs = transition.getInArcs();
+                arcs = transition.getInputArcs();
                 for (Arc arc : arcs) {
                     //arc.setSimulationForwardDirection(true); //zawsze dla tego symulatora
                     //arc.setTransportingTokens(true);

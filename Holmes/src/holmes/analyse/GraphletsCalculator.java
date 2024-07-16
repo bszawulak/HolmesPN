@@ -6,14 +6,11 @@ import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 
-import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -711,7 +708,7 @@ public class GraphletsCalculator {
                 }
 
                 for (Node n : toExtend.mapa.values()) {
-                    for (Arc a : n.getOutInArcs()) {
+                    for (Arc a : n.getNeighborsArcs()) {
                         if (properNodeList.contains(a.getEndNode()) && properNodeList.contains(a.getStartNode())) {
                             if (!properArcList.contains(a)) {
                                 properGraphlet = false;
@@ -821,7 +818,7 @@ public class GraphletsCalculator {
             boolean bubel = false;
 
             for (Node n : graphlet.getSubNode()) {
-                for (Arc a : n.getInArcs()) {
+                for (Arc a : n.getInputArcs()) {
                     Arc mapedArc = st.mapaArcow.get(a);
 
                     Node startNode = mapedArc.getStartNode();
@@ -904,13 +901,13 @@ public class GraphletsCalculator {
                 //wcześniej sprawdzasz czy to nie jest cykl w ramach grafletu
 
                 //zbió© potencjalnych rozszrrzeń - zwracasz ich start nody
-                result.addAll(entry.getValue().getInArcs());
+                result.addAll(entry.getValue().getInputArcs());
             }
 
             //freeGrahletArcToAdd łukiem wyjściowym
             if (freeGrahletArcToAdd.getStartNode().getID() == entry.getKey().getID()) {
                 //result.add(a.getEndNode());
-                result.addAll(entry.getValue().getOutArcs());
+                result.addAll(entry.getValue().getOutputArcs());
             }
         }
 
@@ -921,14 +918,14 @@ public class GraphletsCalculator {
         Arc result = null;
 
         for (Entry<Node, Node> entry : toExtend.mapa.entrySet()) {
-            ArrayList<Arc> connectedToRoot = entry.getKey().getInArcs();
+            ArrayList<Arc> connectedToRoot = entry.getKey().getInputArcs();
             connectedToRoot.removeAll(toExtend.mapaArcow.keySet());
             if (connectedToRoot.size() > 0) {
                 result = connectedToRoot.get(0);
                 break;
             }
 
-            connectedToRoot = entry.getKey().getOutArcs();
+            connectedToRoot = entry.getKey().getOutputArcs();
             connectedToRoot.removeAll(toExtend.mapaArcow.keySet());
             if (connectedToRoot.size() > 0) {
                 result = connectedToRoot.get(0);

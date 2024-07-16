@@ -910,7 +910,7 @@ public class StateSimulator implements Runnable {
 			//równy -1, to w ogóle nie będzie takiej tranzycji na liście transitions tutaj.
 			
 			transition.setLaunching(true);
-			arcs = transition.getInArcs();
+			arcs = transition.getInputArcs();
 			for (Arc arc : arcs) {
 				Place place = (Place)arc.getStartNode();
 				
@@ -920,9 +920,9 @@ public class StateSimulator implements Runnable {
 					// nic nie zabieraj
 				} else if(arc.getArcType() == TypeOfArc.RESET) {
 					int tokens = place.getTokensNumber();
-					place.modifyTokensNumber(-tokens);
+					place.addTokensNumber(-tokens);
 				} else if(arc.getArcType() == TypeOfArc.EQUAL) {
-					place.modifyTokensNumber(-arc.getWeight());
+					place.addTokensNumber(-arc.getWeight());
 				} else {
 					FunctionsTools.functionalExtraction(transition, arc, place);
 					//place.modifyTokensNumber(-arc.getWeight());
@@ -958,7 +958,7 @@ public class StateSimulator implements Runnable {
 		for (Transition transition : launchingTransitions) {
 			transition.setLaunching(false);  // skoro tutaj dotarliśmy, to znaczy że tranzycja już
 			//swoje zrobiła i jej status aktywnej się kończy w tym kroku
-			arcs = transition.getOutArcs();
+			arcs = transition.getOutputArcs();
 			// dodaj odpowiednią liczbę tokenów do miejsc
 			for (Arc arc : arcs) {
 				Place place = (Place)arc.getEndNode();

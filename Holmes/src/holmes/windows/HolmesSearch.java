@@ -396,8 +396,8 @@ public class HolmesSearch extends JFrame {
 				
 				nodeName.setText(x.getName());
 				nodeType.setText("place");
-				nodeInArcs.setText(x.getInArcs().size()+"");
-				nodeOutArcs.setText(x.getOutArcs().size()+"");
+				nodeInArcs.setText(x.getInputArcs().size()+"");
+				nodeOutArcs.setText(x.getOutputArcs().size()+"");
 				if(x.isPortal())
 					nodeIsPortal.setText("yes");
 				else
@@ -409,8 +409,8 @@ public class HolmesSearch extends JFrame {
 				
 				nodeName.setText(x.getName());
 				nodeType.setText("place");
-				nodeInArcs.setText(x.getInArcs().size()+"");
-				nodeOutArcs.setText(x.getOutArcs().size()+"");
+				nodeInArcs.setText(x.getInputArcs().size()+"");
+				nodeOutArcs.setText(x.getOutputArcs().size()+"");
 				if(x.isPortal())
 					nodeIsPortal.setText("yes");
 				else

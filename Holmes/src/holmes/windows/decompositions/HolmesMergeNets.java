@@ -650,14 +650,14 @@ public class HolmesMergeNets extends JFrame {
 	    	
 			int id = 0;
 			for(Transition trans : transitions) {
-				projectTableModel.addNew(id++, trans.getName(), trans.getPrePlaces().size(), trans.getPostPlaces().size());
+				projectTableModel.addNew(id++, trans.getName(), trans.getInputPlaces().size(), trans.getOutputPlaces().size());
 			}
 		} else {
 			projectTableModel.clearModel();
 	    	
 			int id = 0;
 			for(Place place : places) {
-				projectTableModel.addNew(id++, place.getName(), place.getPreTransitions().size(), place.getPostTransitions().size());
+				projectTableModel.addNew(id++, place.getName(), place.getInputTransitions().size(), place.getOutputTransitions().size());
 			}
 		}
 		projectTable.setFillsViewportHeight(true); //żadnych update cośtam i innych!
@@ -678,7 +678,7 @@ public class HolmesMergeNets extends JFrame {
 			int id = 0;
 			for(Node trans : nodes) {
 				if(trans instanceof Transition) {
-					importTableModel.addNew(id++, trans.getName(), ((Transition)trans).getPrePlaces().size(), ((Transition)trans).getPostPlaces().size());
+					importTableModel.addNew(id++, trans.getName(), ((Transition)trans).getInputPlaces().size(), ((Transition)trans).getOutputPlaces().size());
 				}
 			}
 		} else {
@@ -687,7 +687,7 @@ public class HolmesMergeNets extends JFrame {
 			int id = 0;
 			for(Node place : nodes) {
 				if(place instanceof Place) {
-					importTableModel.addNew(id++, place.getName(), ((Place)place).getPreTransitions().size(), ((Place)place).getPostTransitions().size());
+					importTableModel.addNew(id++, place.getName(), ((Place)place).getInputTransitions().size(), ((Place)place).getOutputTransitions().size());
 				}
 			}
 		}

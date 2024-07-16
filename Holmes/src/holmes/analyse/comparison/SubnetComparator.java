@@ -336,14 +336,14 @@ public class SubnetComparator {
 
 
         ArrayList<Node> common = new ArrayList<>();
-        ArrayList<Place> outPlacesF = key.getPostPlaces();
-        outPlacesF = (ArrayList<Place>) outPlacesF.stream().filter(x -> x.getInNodes().size() > 1).collect(Collectors.toList());
-        ArrayList<Place> outPlacesS = value.getPostPlaces();
-        outPlacesS = (ArrayList<Place>) outPlacesS.stream().filter(x -> x.getInNodes().size() > 1).collect(Collectors.toList());
-        ArrayList<Place> inPlacesF = key.getPrePlaces();
-        inPlacesF = (ArrayList<Place>) inPlacesF.stream().filter(x -> x.getOutNodes().size() > 1).collect(Collectors.toList());
-        ArrayList<Place> inPlacesS = value.getPrePlaces();
-        inPlacesS = (ArrayList<Place>) inPlacesS.stream().filter(x -> x.getOutNodes().size() > 1).collect(Collectors.toList());
+        ArrayList<Place> outPlacesF = key.getOutputPlaces();
+        outPlacesF = (ArrayList<Place>) outPlacesF.stream().filter(x -> x.getInputNodes().size() > 1).collect(Collectors.toList());
+        ArrayList<Place> outPlacesS = value.getOutputPlaces();
+        outPlacesS = (ArrayList<Place>) outPlacesS.stream().filter(x -> x.getInputNodes().size() > 1).collect(Collectors.toList());
+        ArrayList<Place> inPlacesF = key.getInputPlaces();
+        inPlacesF = (ArrayList<Place>) inPlacesF.stream().filter(x -> x.getOutputNodes().size() > 1).collect(Collectors.toList());
+        ArrayList<Place> inPlacesS = value.getInputPlaces();
+        inPlacesS = (ArrayList<Place>) inPlacesS.stream().filter(x -> x.getOutputNodes().size() > 1).collect(Collectors.toList());
 
         outPlacesF.removeAll(listOfMapedFunctionalPlaces.keySet());
         inPlacesF.removeAll(listOfMapedFunctionalPlaces.keySet());
@@ -366,7 +366,7 @@ public class SubnetComparator {
         ArrayList<Arc> uniqueArcs = new ArrayList<>();
         for (Node n : unique) {
             if (n != key) {
-                for (Arc a : n.getOutInArcs()) {
+                for (Arc a : n.getNeighborsArcs()) {
                     if ((a.getEndNode().equals(key) && a.getStartNode().equals(n)) || (a.getStartNode().equals(key) && a.getEndNode().equals(n))) {
                         uniqueArcs.add(a);
                     }
@@ -400,7 +400,7 @@ public class SubnetComparator {
         ArrayList<Arc> uniqueArcs = new ArrayList<>();
         for (Node n : unique) {
             if (n != key) {
-                for (Arc a : n.getOutInArcs()) {
+                for (Arc a : n.getNeighborsArcs()) {
                     if ((a.getEndNode().equals(key) && a.getStartNode().equals(n)) || (a.getStartNode().equals(key) && a.getEndNode().equals(n))) {
                         uniqueArcs.add(a);
                     }
@@ -416,11 +416,11 @@ public class SubnetComparator {
         ArrayList<Node> nodes = new ArrayList<>();
         ArrayList<Arc> arcs = new ArrayList<>();
 
-        ArrayList<Place> inPlacesF = key.getPrePlaces();
-        ArrayList<Place> outPlacesF = key.getPostPlaces();
+        ArrayList<Place> inPlacesF = key.getInputPlaces();
+        ArrayList<Place> outPlacesF = key.getOutputPlaces();
 
-        ArrayList<Place> inPlacesS = value.getPrePlaces();
-        ArrayList<Place> outPlacesS = value.getPostPlaces();
+        ArrayList<Place> inPlacesS = value.getInputPlaces();
+        ArrayList<Place> outPlacesS = value.getOutputPlaces();
 
         ArrayList<Node> thoseMaped = new ArrayList<>();
         for (Node n : commonNodes) {
@@ -458,7 +458,7 @@ public class SubnetComparator {
 
         for (Node n : nodes) {
             if (n != key) {
-                for (Arc a : n.getOutInArcs()) {
+                for (Arc a : n.getNeighborsArcs()) {
                     if ((a.getEndNode().equals(key) && a.getStartNode().equals(n)) || (a.getStartNode().equals(key) && a.getEndNode().equals(n))) {
                         arcs.add(a);
                     }
@@ -472,14 +472,14 @@ public class SubnetComparator {
     private ArrayList<Node> soloNodes(Transition key, Transition value, HashMap<Transition, Transition> map) {
 
         ArrayList<Node> common = new ArrayList<>();
-        ArrayList<Place> outPlacesF = key.getPostPlaces();
-        outPlacesF = (ArrayList<Place>) outPlacesF.stream().filter(x -> x.getInNodes().size() == 1).collect(Collectors.toList());
-        ArrayList<Place> outPlacesS = value.getPostPlaces();
-        outPlacesS = (ArrayList<Place>) outPlacesS.stream().filter(x -> x.getInNodes().size() == 1).collect(Collectors.toList());
-        ArrayList<Place> inPlacesF = key.getPrePlaces();
-        inPlacesF = (ArrayList<Place>) inPlacesF.stream().filter(x -> x.getOutNodes().size() == 1).collect(Collectors.toList());
-        ArrayList<Place> inPlacesS = value.getPrePlaces();
-        inPlacesS = (ArrayList<Place>) inPlacesS.stream().filter(x -> x.getOutNodes().size() == 1).collect(Collectors.toList());
+        ArrayList<Place> outPlacesF = key.getOutputPlaces();
+        outPlacesF = (ArrayList<Place>) outPlacesF.stream().filter(x -> x.getInputNodes().size() == 1).collect(Collectors.toList());
+        ArrayList<Place> outPlacesS = value.getOutputPlaces();
+        outPlacesS = (ArrayList<Place>) outPlacesS.stream().filter(x -> x.getInputNodes().size() == 1).collect(Collectors.toList());
+        ArrayList<Place> inPlacesF = key.getInputPlaces();
+        inPlacesF = (ArrayList<Place>) inPlacesF.stream().filter(x -> x.getOutputNodes().size() == 1).collect(Collectors.toList());
+        ArrayList<Place> inPlacesS = value.getInputPlaces();
+        inPlacesS = (ArrayList<Place>) inPlacesS.stream().filter(x -> x.getOutputNodes().size() == 1).collect(Collectors.toList());
 
         for (int i = 0; i < outPlacesF.size() && i < outPlacesS.size(); i++) {
             common.add(outPlacesF.get(i));
@@ -494,22 +494,22 @@ public class SubnetComparator {
     }
 
     private ArrayList<Node> getConOutPlaces(Transition key, Transition value, HashMap<Transition, Transition> map) {
-        ArrayList<Place> outPlacesF = key.getPostPlaces();
-        outPlacesF = (ArrayList<Place>) outPlacesF.stream().filter(x -> x.getInNodes().size() > 1).collect(Collectors.toList());
+        ArrayList<Place> outPlacesF = key.getOutputPlaces();
+        outPlacesF = (ArrayList<Place>) outPlacesF.stream().filter(x -> x.getInputNodes().size() > 1).collect(Collectors.toList());
 
-        ArrayList<Place> outPlacesS = value.getPostPlaces();
-        outPlacesS = (ArrayList<Place>) outPlacesS.stream().filter(x -> x.getInNodes().size() > 1).collect(Collectors.toList());
+        ArrayList<Place> outPlacesS = value.getOutputPlaces();
+        outPlacesS = (ArrayList<Place>) outPlacesS.stream().filter(x -> x.getInputNodes().size() > 1).collect(Collectors.toList());
 
         if (!outPlacesF.isEmpty() && !outPlacesS.isEmpty()) {
             ArrayList<Node> conectedF = new ArrayList<>();
             for (Place p : outPlacesF) {
-                conectedF.addAll(p.getInNodes());
+                conectedF.addAll(p.getInputNodes());
                 conectedF.remove(key);
             }
 
             ArrayList<Node> conectedS = new ArrayList<>();
             for (Place p : outPlacesS) {
-                conectedS.addAll(p.getInNodes());
+                conectedS.addAll(p.getInputNodes());
                 conectedS.remove(value);
             }
 
@@ -533,13 +533,13 @@ public class SubnetComparator {
                 }
 
 
-                ArrayList<Node> lp = new ArrayList<>(key.getPostPlaces());
-                lp.retainAll(RT.getOutNodes());
+                ArrayList<Node> lp = new ArrayList<>(key.getOutputPlaces());
+                lp.retainAll(RT.getOutputNodes());
                 places.addAll(lp);
 
 
-                ArrayList<Node> revers = new ArrayList<>(map.get(RT).getOutNodes());
-                revers.retainAll(value.getPostPlaces());
+                ArrayList<Node> revers = new ArrayList<>(map.get(RT).getOutputNodes());
+                revers.retainAll(value.getOutputPlaces());
 
                 for (int i = 0; i < lp.size() && i < revers.size(); i++) {
                     listOfMapedFunctionalPlaces.put(lp.get(i), revers.get(i));
@@ -552,25 +552,25 @@ public class SubnetComparator {
     }
 
     private ArrayList<Node> getConInPlaces(Transition key, Transition value, HashMap<Transition, Transition> map) {
-        ArrayList<Place> inPlacesF = key.getPrePlaces();
-        inPlacesF = (ArrayList<Place>) inPlacesF.stream().filter(x -> x.getOutNodes().size() > 1).collect(Collectors.toList());
+        ArrayList<Place> inPlacesF = key.getInputPlaces();
+        inPlacesF = (ArrayList<Place>) inPlacesF.stream().filter(x -> x.getOutputNodes().size() > 1).collect(Collectors.toList());
         //inPlacesF.stream().filter(x->x.getInNodes().size()>1).collect(Collectors.toList());
         //inPlacesF.remove(key);
 
-        ArrayList<Place> inPlacesS = value.getPrePlaces();
-        inPlacesS = (ArrayList<Place>) inPlacesS.stream().filter(x -> x.getOutNodes().size() > 1).collect(Collectors.toList());
+        ArrayList<Place> inPlacesS = value.getInputPlaces();
+        inPlacesS = (ArrayList<Place>) inPlacesS.stream().filter(x -> x.getOutputNodes().size() > 1).collect(Collectors.toList());
         //inPlacesS.remove(value);
 
         if (!inPlacesF.isEmpty() && !inPlacesS.isEmpty()) {
             ArrayList<Node> conectedF = new ArrayList<>();
             for (Place p : inPlacesF) {
-                conectedF.addAll(p.getOutNodes());
+                conectedF.addAll(p.getOutputNodes());
                 conectedF.remove(key);
             }
 
             ArrayList<Node> conectedS = new ArrayList<>();
             for (Place p : inPlacesS) {
-                conectedS.addAll(p.getOutNodes());
+                conectedS.addAll(p.getOutputNodes());
                 conectedS.remove(value);
             }
             HashSet<Node> hset = new HashSet<Node>(conectedF);
@@ -592,12 +592,12 @@ public class SubnetComparator {
                     }
                 }
 
-                ArrayList<Node> lp = new ArrayList<>(key.getPrePlaces());
-                lp.retainAll(RT.getInNodes());
+                ArrayList<Node> lp = new ArrayList<>(key.getInputPlaces());
+                lp.retainAll(RT.getInputNodes());
                 places.addAll(lp);
 
-                ArrayList<Node> revers = new ArrayList<>(map.get(RT).getInNodes());
-                revers.retainAll(value.getPrePlaces());
+                ArrayList<Node> revers = new ArrayList<>(map.get(RT).getInputNodes());
+                revers.retainAll(value.getInputPlaces());
 
                 for (int i = 0; i < lp.size() && i < revers.size(); i++) {
                     listOfMapedFunctionalPlaces.put(lp.get(i), revers.get(i));
@@ -1062,7 +1062,7 @@ public class SubnetComparator {
         ArrayList<Arc> arcList = new ArrayList<>();
         for (int i = 0; i < path.size() - 1; i++) {
             int finalI = i;
-            Arc a = path.get(i).getOutInArcs().stream().filter(x -> x.getEndNode().getID() == path.get(finalI + 1).getID()).findFirst().orElse(null);
+            Arc a = path.get(i).getNeighborsArcs().stream().filter(x -> x.getEndNode().getID() == path.get(finalI + 1).getID()).findFirst().orElse(null);
             if (a != null) {
                 arcList.add(a);
             }
@@ -1718,7 +1718,7 @@ public class SubnetComparator {
     }
 
     private boolean getDirection(BranchBasedSubnet.Branch br) {
-        if (br.branchElements.get(0).getInArcs().stream().anyMatch(x -> x.getStartNode().equals(br.branchElements.get(1))))
+        if (br.branchElements.get(0).getInputArcs().stream().anyMatch(x -> x.getStartNode().equals(br.branchElements.get(1))))
             return true;
         else
             return false;
@@ -2138,10 +2138,10 @@ public class SubnetComparator {
             if (k > 1 || l > 1) {
                 pse.partialArcs.remove(a);
 
-                ArrayList<Arc> arcsS = new ArrayList<>(a.getStartNode().getOutInArcs());
+                ArrayList<Arc> arcsS = new ArrayList<>(a.getStartNode().getNeighborsArcs());
                 arcsS.retainAll(pse.partialArcs);
 
-                ArrayList<Arc> arcsE = new ArrayList<>(a.getEndNode().getOutInArcs());
+                ArrayList<Arc> arcsE = new ArrayList<>(a.getEndNode().getNeighborsArcs());
                 arcsE.retainAll(pse.partialArcs);
 
                 if (arcsS.size() == 1 && k > 1) {
@@ -3199,12 +3199,12 @@ public class SubnetComparator {
     }
 
     private ArrayList<Arc> getArc(Node start, Node end) {
-        ArrayList<Arc> sio = start.getOutInArcs();
-        ArrayList<Arc> eio = end.getOutInArcs();
-        ArrayList<Arc> listOfArcs = new ArrayList<>(start.getOutArcs());
+        ArrayList<Arc> sio = start.getNeighborsArcs();
+        ArrayList<Arc> eio = end.getNeighborsArcs();
+        ArrayList<Arc> listOfArcs = new ArrayList<>(start.getOutputArcs());
 
-        ArrayList<Arc> olistOfArcs = new ArrayList<>(start.getInArcs());
-        listOfArcs.retainAll(end.getInArcs());
+        ArrayList<Arc> olistOfArcs = new ArrayList<>(start.getInputArcs());
+        listOfArcs.retainAll(end.getInputArcs());
         return listOfArcs;
     }
 
@@ -3888,7 +3888,7 @@ public class SubnetComparator {
             for (Arc a : listToRemove) {
                 Set<Arc> keySet = getKeys(arcsMap, a);
                 for (Arc as : keySet) {
-                    if (as.getStartNode().getOutInArcs().size() > 1 && as.getEndNode().getOutInArcs().size() > 1) {
+                    if (as.getStartNode().getNeighborsArcs().size() > 1 && as.getEndNode().getNeighborsArcs().size() > 1) {
                         arcsMap.remove(as);
                         partialArcs.remove(as);
                     }
