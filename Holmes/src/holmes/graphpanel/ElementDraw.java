@@ -1684,23 +1684,23 @@ public final class ElementDraw {
 			if(tokens > steps * 0.65) {
 				return new Color(255, 0, 0);
 			} else if(tokens > steps * 0.6) {
-				return new Color(255, 64, 0);
+				return new Color(255, 96, 0);
 			} else if(tokens > steps * 0.55) {
-				return new Color(255, 128, 0);
+				return new Color(255, 164, 0);
 			} else if(tokens > steps * 0.45) {
-				return new Color(255, 212, 0);
+				return new Color(255, 220, 0);
 			} else if(tokens > steps * 0.4) {
 				return new Color(255, 255, 0);
 			} else if(tokens > steps * 0.35) {
-				return new Color(212, 255, 0);
-			} else if(tokens > steps * 0.35) {
-				return new Color(192, 255, 0);
+				return new Color(196, 255, 0);
+			} else if(tokens > steps * 0.25) {
+				return new Color(154, 255, 0);
 			} else if(tokens > steps * 0.2) {
-				return new Color(128, 255, 0);
+				return new Color(100, 255, 0);
 			} else if(tokens > steps * 0.15) {
-				return new Color(0, 255, 0);
+				return new Color(0, 200, 0);
 			} else {
-				return new Color(0, 196, 0);
+				return new Color(0, 164, 0);
 			}
 		}
 		
