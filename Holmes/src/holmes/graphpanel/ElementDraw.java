@@ -1681,16 +1681,26 @@ public final class ElementDraw {
 			if(tokens < 10)
 				return Color.white;
 
-			if(tokens > steps * 0.5) {
+			if(tokens > steps * 0.65) {
 				return new Color(255, 0, 0);
-			} else if(tokens > steps * 0.4) {
+			} else if(tokens > steps * 0.6) {
+				return new Color(255, 64, 0);
+			} else if(tokens > steps * 0.55) {
 				return new Color(255, 128, 0);
-			} else if(tokens > steps * 0.25) {
+			} else if(tokens > steps * 0.45) {
+				return new Color(255, 212, 0);
+			} else if(tokens > steps * 0.4) {
 				return new Color(255, 255, 0);
-			} else if(tokens > steps * 0.1) {
-				return new Color(0, 128, 0);
-			} else {
+			} else if(tokens > steps * 0.35) {
+				return new Color(212, 255, 0);
+			} else if(tokens > steps * 0.35) {
+				return new Color(192, 255, 0);
+			} else if(tokens > steps * 0.2) {
+				return new Color(128, 255, 0);
+			} else if(tokens > steps * 0.15) {
 				return new Color(0, 255, 0);
+			} else {
+				return new Color(0, 196, 0);
 			}
 		}
 		
