@@ -314,7 +314,7 @@ public class HolmesXTPNtokens extends JFrame {
                 doNotUpdate =true;
 
                 if(isGammaPlace) {
-                    if(multisetK.size() != 0)
+                    if(!multisetK.isEmpty())
                         tokensComboBox.setSelectedIndex(0);
                 }
 

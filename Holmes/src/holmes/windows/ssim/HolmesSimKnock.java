@@ -755,7 +755,7 @@ public class HolmesSimKnock extends JPanel {
 		dataTransitionsCombo.removeAllItems();
 		dataTransitionsCombo.addItem("---");
 		
-		if(transitions.size() > 0) {
+		if(!transitions.isEmpty()) {
 			for(int t=0; t < transitions.size(); t++) {
 				dataTransitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
 			}
@@ -768,7 +768,7 @@ public class HolmesSimKnock extends JPanel {
 			dataMctCombo.addItem("---");
 			ArrayList<ArrayList<Transition>> mcts = pn.getMCTMatrix();
 			ArrayList<String> mctNames = pn.accessMCTnames();
-			if(mcts != null && mcts.size() > 0) {
+			if(mcts != null && !mcts.isEmpty()) {
 				for(int m=0; m < mcts.size(); m++) {
 					dataMctCombo.addItem("MCT"+(m+1)+": "+mctNames.get(m));
 				}

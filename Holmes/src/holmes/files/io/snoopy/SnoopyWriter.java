@@ -80,8 +80,8 @@ public class SnoopyWriter {
 			return false;
 		}
 		
-		int startNodeId = 226; // bo tak
-		int currentActiveID = startNodeId;
+		//int startNodeId = 226; // bo tak
+		int currentActiveID = 226;
 		int arcsNumber = 0;
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
@@ -143,7 +143,7 @@ public class SnoopyWriter {
 			//TEGO NA RAZIE NIE RUSZAMY (DA BÓG: NIGDY)
 			//21-07-2015 you wish...
 			boolean weAreInDeepShit = false;
-			if(coarsePlaces.size() == 0) {
+			if(coarsePlaces.isEmpty()) {
 				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
 			} else {
 				weAreInDeepShit = true;
@@ -162,7 +162,7 @@ public class SnoopyWriter {
 				write(bw, "    </nodeclass>");
 			}
 			
-			if(coarseTransitions.size() == 0) {
+			if(coarseTransitions.isEmpty()) {
 				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
 			} else {
 				weAreInDeepShit = true;
@@ -222,8 +222,8 @@ public class SnoopyWriter {
 			return false;
 		}
 		
-		int startNodeId = 226; // bo tak
-		int currentActiveID = startNodeId;
+		//int startNodeId = 226; // bo tak
+		int currentActiveID = 226;
 		//int arcsNumber = 0;
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
@@ -270,7 +270,7 @@ public class SnoopyWriter {
 			write(bw, "    </nodeclass>");
 			
 			boolean weAreInDeepShit = false;
-			if(coarsePlaces.size() == 0) {
+			if(coarsePlaces.isEmpty()) {
 				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
 			} else {
 				int coarsePnumber = coarsePlaces.size();
@@ -288,7 +288,7 @@ public class SnoopyWriter {
 				write(bw, "    </nodeclass>");
 			}
 			
-			if(coarseTransitions.size() == 0) {
+			if(coarseTransitions.isEmpty()) {
 				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
 			} else {
 				int coarseTnumber = coarseTransitions.size();
@@ -398,8 +398,8 @@ public class SnoopyWriter {
 			return false;
 		}
 		
-		int startNodeId = 226; // bo tak
-		int currentActiveID = startNodeId;
+		//int startNodeId = 226; // bo tak
+		int currentActiveID = 226;
 		int arcsNumber = 0;
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
@@ -460,7 +460,7 @@ public class SnoopyWriter {
 			write(bw, "    </nodeclass>");
 			
 			boolean weAreInDeepShit = false;
-			if(coarsePlaces.size() == 0) {
+			if(coarsePlaces.isEmpty()) {
 				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Place\"/>");
 			} else {
 				int coarsePnumber = coarsePlaces.size();
@@ -478,7 +478,7 @@ public class SnoopyWriter {
 				write(bw, "    </nodeclass>");
 			}
 			
-			if(coarseTransitions.size() == 0) {
+			if(coarseTransitions.isEmpty()) {
 				write(bw, "    <nodeclass count=\"0\" name=\"Coarse Transition\"/>");
 			} else {
 				int coarseTnumber = coarseTransitions.size();
@@ -533,8 +533,8 @@ public class SnoopyWriter {
 	private void write(BufferedWriter bw, String text) {
 		try {
 			bw.write(text+"\n");
-		} catch (Exception e) {
-			return;
+		} catch (Exception ignored) {
+
 		}
 	}
 	

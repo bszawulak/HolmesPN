@@ -146,7 +146,7 @@ public class HolmesMCS extends JFrame {
 		transitionsCombo.setMaximumRowCount(6);
 		transitionsCombo.removeAllItems();
 		transitionsCombo.addItem("---");
-		if(transitions != null && transitions.size()>0) {
+		if(transitions != null && !transitions.isEmpty()) {
 			for(int t=0; t < transitions.size(); t++) {
 				transitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
 			}
@@ -395,7 +395,7 @@ public class HolmesMCS extends JFrame {
 		transitionsResultsCombo.setMaximumRowCount(6);
 		transitionsResultsCombo.removeAllItems();
 		transitionsResultsCombo.addItem("---");
-		if(transitions != null && transitions.size()>0) {
+		if(transitions != null && !transitions.isEmpty()) {
 			for(int t=0; t < transitions.size(); t++) {
 				transitionsResultsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
 			}
@@ -501,7 +501,7 @@ public class HolmesMCS extends JFrame {
 			}
 			
 			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
-			if(invariants == null || invariants.size() < 1) {
+			if(invariants == null || invariants.isEmpty()) {
 				JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
 						"Warning", JOptionPane.INFORMATION_MESSAGE);
 				return;
@@ -565,7 +565,7 @@ public class HolmesMCS extends JFrame {
 		} else {
 			String all = reactionSetsTextField.getText();
 			
-			if(all.length() > 0) {
+			if(!all.isEmpty()) {
 				all = all.trim();
 				String[] splittedSets = all.split(",");
 				if(splittedSets.length > 0) {
@@ -589,7 +589,7 @@ public class HolmesMCS extends JFrame {
 	 * @param objReactions ArrayList[Integer] - wektor numerów reakcji (tranzycji)
 	 */
 	protected void launchMCSanalysis(ArrayList<Integer> objReactions) {
-		if(objReactions.size() == 0)
+		if(objReactions.isEmpty())
 			return;
 		
 		if(isMCSGeneratorWorking) {
@@ -604,7 +604,7 @@ public class HolmesMCS extends JFrame {
 			}
 			
 			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
-			if(invariants == null || invariants.size() < 1) {
+			if(invariants == null || invariants.isEmpty()) {
 				JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
 						"Warning", JOptionPane.INFORMATION_MESSAGE);
 				return;
@@ -639,7 +639,6 @@ public class HolmesMCS extends JFrame {
 			}
 			
 			for(int el : objReactions) {
-				
 				while(getGeneratorStatus()) {
 					try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
 				}

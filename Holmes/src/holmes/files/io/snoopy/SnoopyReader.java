@@ -330,8 +330,8 @@ public class SnoopyReader {
 									GUIManager.getDefaultGUIManager().log("Error (721736374) | Exception:  "+ex.getMessage(), "error", true);
 								}
 								
-								x *= resizeFactor;
-								y *= resizeFactor;
+								x = (int)(x * resizeFactor);
+								y = (int)(y * resizeFactor);
 								
 								if(logicalELNumber_graphics == 0) { 
 									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation
@@ -620,8 +620,8 @@ public class SnoopyReader {
 								} catch (Exception ex) {
 									GUIManager.getDefaultGUIManager().log("Error (289585336) | Exception:  "+ex.getMessage(), "error", true);
 								}
-								x *= resizeFactor;
-								y *= resizeFactor;
+								x = (int)(x * resizeFactor);
+								y = (int)(y * resizeFactor);
 								
 								if(logicalELNumber_graphics == 0) { 
 									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation
@@ -872,8 +872,8 @@ public class SnoopyReader {
 									GUIManager.getDefaultGUIManager().log("Error (805518514) | Exception:  "+ex.getMessage(), "error", true);
 								}
 								
-								x *= resizeFactor;
-								y *= resizeFactor;
+								x = (int)(x * resizeFactor);
+								y = (int)(y * resizeFactor);
 								
 								if(logicalELNumber_graphics == 0) { 
 									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation
@@ -1090,9 +1090,9 @@ public class SnoopyReader {
 								} catch (Exception ex) {
 									GUIManager.getDefaultGUIManager().log("Error (979647504) | Exception:  "+ex.getMessage(), "error", true);
 								}
-								
-								x *= resizeFactor;
-								y *= resizeFactor;
+
+								x = (int)(x * resizeFactor);
+								y = (int)(y * resizeFactor);
 								
 								if(logicalELNumber_graphics == 0) { 
 									//użyty konstruktor dla place w super-klasie Node utworzył już pierwszy ElementLocation

@@ -402,7 +402,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		cardinalityButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_canon.png"));
 		cardinalityButton.addActionListener(actionEvent -> {
 			ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
-			if(invariants == null || invariants.size() == 0) {
+			if(invariants == null || invariants.isEmpty()) {
 				JOptionPane.showMessageDialog(ego, "No t-invariants to analyze.",
 						"No invariants", JOptionPane.INFORMATION_MESSAGE);
 			} else {
@@ -424,7 +424,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		minSuppButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_minsup.png"));
 		minSuppButton.addActionListener(actionEvent -> {
 			ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
-			if(invariants == null || invariants.size() == 0) {
+			if(invariants == null || invariants.isEmpty()) {
 				JOptionPane.showMessageDialog(ego, "No t-invariants to analyze.",
 						"No invariants",JOptionPane.INFORMATION_MESSAGE);
 			} else {
@@ -446,7 +446,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		checkMatrixZeroButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_invC.png"));
 		checkMatrixZeroButton.addActionListener(actionEvent -> {
 			ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
-			if(invariants == null || invariants.size() == 0) {
+			if(invariants == null || invariants.isEmpty()) {
 				JOptionPane.showMessageDialog(ego, "No t-invariants to analyze.",
 						"No invariants",JOptionPane.INFORMATION_MESSAGE);
 			} else {
@@ -706,7 +706,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		cardinalityButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_canon.png"));
 		cardinalityButton.addActionListener(actionEvent -> {
 			ArrayList<ArrayList<Integer>> p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
-			if(p_invariants == null || p_invariants.size() == 0) {
+			if(p_invariants == null || p_invariants.isEmpty()) {
 				JOptionPane.showMessageDialog(ego, "No p-invariants to analyze.",
 						"No p-invariants",JOptionPane.INFORMATION_MESSAGE);
 			} else {
@@ -728,7 +728,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		minSuppButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_minsup.png"));
 		minSuppButton.addActionListener(actionEvent -> {
 			ArrayList<ArrayList<Integer>> p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
-			if(p_invariants == null || p_invariants.size() == 0) {
+			if(p_invariants == null || p_invariants.isEmpty()) {
 				JOptionPane.showMessageDialog(null, "No p-invariants to analyze.",
 						"No p-invariants",JOptionPane.INFORMATION_MESSAGE);
 			} else {
@@ -750,7 +750,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		checkMatrixZeroButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_invC.png"));
 		checkMatrixZeroButton.addActionListener(actionEvent -> {
 			ArrayList<ArrayList<Integer>> p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
-			if(p_invariants == null || p_invariants.size() == 0) {
+			if(p_invariants == null || p_invariants.isEmpty()) {
 				JOptionPane.showMessageDialog(null, "No invariants to analyze.",
 						"No invariants",JOptionPane.INFORMATION_MESSAGE);
 			} else {
@@ -912,7 +912,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 			filters[0] = new ExtensionFileFilter("INA p-invariants file (.inv)", new String[] { "INV" });
 		
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file", "");
-		if(selectedFile.equals(""))
+		if(selectedFile.isEmpty())
 			return;
 		
 		File file = new File(selectedFile);

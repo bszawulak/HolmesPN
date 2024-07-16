@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class SSAplacesVector {
 	private ArrayList<Double> ssaVector;
-	private String description = "";
+	private String description;
 	private SSAdataType type;
 	private double experimentVolume;
 	

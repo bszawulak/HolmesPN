@@ -176,7 +176,7 @@ public class HolmesSearch extends JFrame {
 			try {
 				field.commitEdit();
 				String newName = field.getText();
-				if(newName.length() > 0)
+				if(!newName.isEmpty())
 					searchForString(newName);
 			} catch (ParseException ex) {
 				GUIManager.getDefaultGUIManager().log("Error (762682665) | Exception:  "+ex.getMessage(), "error", true);
@@ -200,7 +200,7 @@ public class HolmesSearch extends JFrame {
 			try {
 				field.commitEdit();
 				String IDstr = field.getText();
-				if(IDstr.length() == 0)
+				if(IDstr.isEmpty())
 					return;
 				int id = Integer.parseInt(IDstr);
 				selectByID(id);
@@ -220,7 +220,7 @@ public class HolmesSearch extends JFrame {
 			if(aButton.isSelected()) {
 				String newName = searchField.getText();
 				idField.setText("");
-				if(newName.length() > 0)
+				if(!newName.isEmpty())
 					searchForString(newName);
 				//System.out.println("Selected: " + aButton.getText());
 			}
@@ -238,7 +238,7 @@ public class HolmesSearch extends JFrame {
 			if(aButton.isSelected()) {
 				String newName = searchField.getText();
 				idField.setText("");
-				if(newName.length() > 0)
+				if(!newName.isEmpty())
 					searchForString(newName);
 				//System.out.println("Selected: " + aButton.getText());
 			}
@@ -534,7 +534,7 @@ public class HolmesSearch extends JFrame {
 	private void showFound(String mode) {
 		try {
 		if(mode.equals("prev")) {
-			if(foundNodes.size() > 0 && selectedFound > 0) {
+			if(!foundNodes.isEmpty() && selectedFound > 0) {
 				selectedFound--;
 				int id = foundNodes.get(selectedFound);
 				if(foundType.get(selectedFound)==0) { //jeśli to miejsce
@@ -544,7 +544,7 @@ public class HolmesSearch extends JFrame {
 				}
 			}
 		} else if(mode.equals("next")) {
-			if(foundNodes.size() > 0 && selectedFound + 1 < foundNodes.size()) {
+			if(!foundNodes.isEmpty() && selectedFound + 1 < foundNodes.size()) {
 				selectedFound++;
 				int id = foundNodes.get(selectedFound);
 				if(foundType.get(selectedFound)==0) { //jeśli to miejsce

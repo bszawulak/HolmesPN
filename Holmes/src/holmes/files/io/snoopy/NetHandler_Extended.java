@@ -289,7 +289,7 @@ public class NetHandler_Extended extends NetHandler {
 					readString = "";
 				}
 				if (variableMarking) {
-					if (readString.equals("")) {
+					if (readString.isEmpty()) {
 						nodeMarking = 0;
 					} else {
 						nodeMarking = Integer.parseInt(readString);
@@ -298,7 +298,7 @@ public class NetHandler_Extended extends NetHandler {
 					}
 				}
 				if (variableLogic) {
-					if (readString.equals("")) {
+					if (readString.isEmpty()) {
 						nodeLogic = 0;
 					} else {
 						nodeLogic = Integer.parseInt(readString);
@@ -314,7 +314,7 @@ public class NetHandler_Extended extends NetHandler {
 			}
 			if (edge && atribute) {
 				if (variableMultiplicity) {
-					if (readString.equals("")) {
+					if (readString.isEmpty()) {
 						arcMultiplicity = 0;
 					} else {
 						arcMultiplicity = Integer.parseInt(readString);

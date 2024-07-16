@@ -91,7 +91,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		    }
 		});
 		
-		if(places.size() == 0) {
+		if(places.isEmpty()) {
 			JOptionPane.showMessageDialog(null,
 					"At least one places required.", 
 					"Error: to few places", JOptionPane.ERROR_MESSAGE);
@@ -422,7 +422,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		tableFunc.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		cellClickedFuncTable();
           	    }
           	 }
@@ -509,7 +509,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		auxTable.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		;
           	    }
           	 }

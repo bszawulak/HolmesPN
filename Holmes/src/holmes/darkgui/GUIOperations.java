@@ -72,7 +72,7 @@ public class GUIOperations {
 		filters[3] = new ExtensionFileFilter("Snoopy Time PN file (.sptpt)", new String[] { "SPTPT" });
 		filters[4] = new ExtensionFileFilter(".pnt - INA PNT file (.pnt)", new String[] { "PNT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters,  "Select PN", "Select petri net file", "");
-		if(selectedFile.equals(""))
+		if(selectedFile.isEmpty())
 			return;
 		
 		File file = new File(selectedFile);
@@ -114,7 +114,7 @@ public class GUIOperations {
 		if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			String extension = fc.getFileFilter().getDescription();
-			if(fc.getSelectedFile().toString().equals(""))
+			if(fc.getSelectedFile().toString().isEmpty())
 				return;
 			if(!file.exists()) 
 				return;
@@ -158,7 +158,7 @@ public class GUIOperations {
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("INA PNT file (.pnt)", new String[] { "PNT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", overlord.getWorkspace().getProject().getFileName());
-		if(selectedFile.equals(""))
+		if(selectedFile.isEmpty())
 			return;
 		
 		File file = new File(selectedFile);
@@ -290,6 +290,7 @@ public class GUIOperations {
 	 * Metoda odpowiedzialna za zapis projektu sieci do pliku natywnego aplikacji..
 	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było problemów.
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	public boolean saveAsAbyssFile() {
 		boolean status = false;
 		String lastPath = overlord.getLastPath();
@@ -367,7 +368,7 @@ public class GUIOperations {
 		filters[5] = new ExtensionFileFilter("INA PNT format (.pnt)", new String[] { "PNT" });
 
 		String selectedFile = Tools.selectNetSaveFileDialog(lastPath, filters, "Save", "", overlord.getWorkspace().getProject().getFileName());
-		if(selectedFile.equals("")) {
+		if(selectedFile.isEmpty()) {
 			return false;
 		}
 		
@@ -375,7 +376,7 @@ public class GUIOperations {
 			return false;
 		
 		String extension = Tools.lastExtension;
-		if(extension == null || extension.equals("")) {
+		if(extension == null || extension.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "File choosing error. Cannot proceed.", "Error", JOptionPane.ERROR_MESSAGE);
 			overlord.log("File choosing error. No extension: "+extension, "error", true);
 			return false;
@@ -473,7 +474,7 @@ public class GUIOperations {
 					+ "Please advise authors and in the meantime: Holmes project file is STRONGLY RECOMMENDED.";
 		}
 		
-		if(extension.toLowerCase().contains(fileFormat) && additionalWhining.length()==0) {
+		if(extension.toLowerCase().contains(fileFormat) && additionalWhining.isEmpty()) {
 			return extension;
 		} else {
 			if(fileFormat.equals(".project"))
@@ -514,7 +515,7 @@ public class GUIOperations {
 			filters[0] = new ExtensionFileFilter("P-invariants file (.inv)", new String[] { "INV" });
 		
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file", "");
-		if(selectedFile.equals(""))
+		if(selectedFile.isEmpty())
 			return false;
 		
 		File file = new File(selectedFile);
@@ -715,7 +716,7 @@ public class GUIOperations {
 			filters[0] = new ExtensionFileFilter("MCT sets file (.mct)",  new String[] { "MCT" });
 			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select MCT target path", "");
 			
-			if(selectedFile.equals("")) { //jeśli nie wybrano lokalizacji, zostaje w tmp
+			if(selectedFile.isEmpty()) { //jeśli nie wybrano lokalizacji, zostaje w tmp
 				File csvFile = new File(filePath);
 				csvFile.delete();
 				
@@ -789,7 +790,7 @@ public class GUIOperations {
 			if (n == 0) {
 				String choosenDir = Tools.selectDirectoryDialog(overlord.getLastPath(), "Select CH metric dir",
 						"Target directory for CH metric results");
-				if(choosenDir.equals("")) {
+				if(choosenDir.isEmpty()) {
 					dir_path = overlord.getTmpPath();
 					overlord.log("CH metric files will be put into the "+dir_path, "text", true);
 				} else {
@@ -816,8 +817,8 @@ public class GUIOperations {
 				overlord.log("Warning: Celinski-Harabasz metric computation in 32bit mode for large number of invariants can cause R/system crash","warning",true);
 			}
 			
-			Runnable runnable = new Rprotocols(1);
-			((Rprotocols)runnable).setForRunnableAllClusters(r_path, dir_path, "cluster.csv", 
+			Rprotocols runnable = new Rprotocols(1);
+			runnable.setForRunnableAllClusters(r_path, dir_path, "cluster.csv",
 					"scripts\\f_CHindex.r", "scripts\\f_clusters_run.r", 
 					"scripts\\f_CHindex_Pearson.r", "scripts\\f_clusters_Pearson_run.r", howMany, commandsValidate);
 	        Thread thread = new Thread(runnable);
@@ -870,7 +871,7 @@ public class GUIOperations {
 			if (n == 0) {
 				String choosenDir = Tools.selectDirectoryDialog(overlord.getLastPath(), "Select cluster dir",
 						"Target directory for cluster results");
-				if(choosenDir.equals("")) {
+				if(choosenDir.isEmpty()) {
 					dir_path = overlord.getTmpPath();
 					overlord.log("Cluster files will be put into the "+dir_path, "text", true);
 				} else {
@@ -891,11 +892,11 @@ public class GUIOperations {
 			
 			dir_path = dir_path.replace("\\", "/");
 			
-			Runnable runnable = new Rprotocols();
-			((Rprotocols)runnable).setForRunnableAllClusters(overlord.getSettingsManager().getValue("r_path"), dir_path, "cluster.csv", 
+			Rprotocols runnable = new Rprotocols();
+			runnable.setForRunnableAllClusters(overlord.getSettingsManager().getValue("r_path"), dir_path, "cluster.csv",
 					"scripts\\f_clusters.r", "scripts\\f_clusters_run.r", 
 					"scripts\\f_clusters_Pearson.r", "scripts\\f_clusters_Pearson_run.r", c_number, commandsValidate);
-			((Rprotocols)runnable).setWorkingMode(0);
+			runnable.setWorkingMode(0);
             Thread thread = new Thread(runnable);
             thread.start();
             
@@ -921,7 +922,7 @@ public class GUIOperations {
 			filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
 			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file", "");
 			
-			if(selectedFile.equals(""))
+			if(selectedFile.isEmpty())
 				return null;
 			else
 				return selectedFile;
@@ -938,7 +939,7 @@ public class GUIOperations {
 				filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
 				String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file", "");
 				
-				if(selectedFile.equals(""))
+				if(selectedFile.isEmpty())
 					return null;
 				else
 					return selectedFile;
@@ -982,7 +983,7 @@ public class GUIOperations {
 				FileFilter[] filters = new FileFilter[1];
 				filters[0] = new ExtensionFileFilter(".csv - Comma Separated Values", new String[] { "CSV" });
 				filePath = Tools.selectFileDialog(clustersPath, filters, "Select", "Select CSV invariants file", "");
-				if(filePath.equals(""))
+				if(filePath.isEmpty())
 					return null;
 				
 				csvFile = new File(filePath);

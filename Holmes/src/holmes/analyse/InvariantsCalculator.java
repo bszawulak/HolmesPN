@@ -1130,18 +1130,6 @@ public class InvariantsCalculator implements Runnable {
     }
 
     /**
-     * Metoda oblicza silnię. Z bliżej nieznanych powodów.
-     * @param i int - liczba wyjściowa
-     * @return int - wynik: i!
-     */
-    public int silnia(int i) {
-        if (i == 0)
-            return 1;
-        else
-            return i * silnia(i - 1);
-    }
-
-    /**
      * Metoda zwraca macierz inwariantów.
      * @param tinv boolean - true jeśli zwracać ma t-inwarianty, false dla p-inwariantów
      * @return ArrayList[ArrayList[Integer]] - macierz inwariantów (wiersze)

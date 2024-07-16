@@ -78,7 +78,7 @@ public class HolmesNetTablesActions {
 	 */
 	public void addPlacesToModel(PlacesTableModel modelPlaces) {
 		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		if(places.size() == 0) {
+		if(places.isEmpty()) {
 			return;
 		}
 		
@@ -114,7 +114,7 @@ public class HolmesNetTablesActions {
 			}
 			
 			double avgTokens = 0;
-			if(resVector != null && resVector.size() > 0)
+			if(resVector != null && !resVector.isEmpty())
 				avgTokens = resVector.get(iterIndex);
 			
 			modelPlaces.addNew(index, name, tokens, inTrans, outTrans, (float)avgTokens);
@@ -127,7 +127,7 @@ public class HolmesNetTablesActions {
 	 */
 	public void addTransitionsToModel(TransitionsTableModel modelTransitions) {
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		if(transitions.size() == 0) {
+		if(transitions.isEmpty()) {
 			return;
 		}
 		
@@ -159,7 +159,7 @@ public class HolmesNetTablesActions {
 			}
 			
 			double avgFired = 0;
-			if(resVector.size() > 0)
+			if(!resVector.isEmpty())
 				avgFired = resVector.get(iterIndex);
 			avgFired *= 100;
 			int inInv = 0;
@@ -176,16 +176,16 @@ public class HolmesNetTablesActions {
 		//TODO:
 		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		ArrayList<Transition> transitions = pn.getTransitions();
-		if(transitions.size() == 0) return;
+		if(transitions.isEmpty()) return;
 		
 		ArrayList<Arc> arcs = pn.getArcs();
-		if(arcs.size() == 0) return;
+		if(arcs.isEmpty()) return;
 		
 		ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
-		if(invMatrix == null || invMatrix.size() == 0) return;
+		if(invMatrix == null || invMatrix.isEmpty()) return;
 		int invMatrixSize = invMatrix.size();
 
-    	if(dataMatrix == null || dataMatrix.size() == 0) {
+    	if(dataMatrix == null || dataMatrix.isEmpty()) {
     		dataMatrix = new ArrayList<InvariantContainer>();
     		ArrayList<ArrayList<Integer>> nonMinimalInvariants = InvariantsTools.checkSupportMinimalityThorough(invMatrix);
     		ArrayList<ArrayList<Integer>> arcsInfoMatrix = InvariantsTools.getExtendedT_invariantsInfo(invMatrix, true);
@@ -204,7 +204,7 @@ public class HolmesNetTablesActions {
     			ic.name = pn.accessT_InvDescriptions().get(i);
     			ic.transNumber = support.size();
 
-				ic.minimal = nonMinimalInvariants.get(i).size() == 0;
+				ic.minimal = nonMinimalInvariants.get(i).isEmpty();
 				ic.feasible = feasibleVector.get(i) != -1;
     		
     			ic.pureInTransitions = inOutInfoMatrix.get(i).get(0);
@@ -368,7 +368,7 @@ public class HolmesNetTablesActions {
 		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
 		ArrayList<Transition> transitions = pn.getTransitions();
 		ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
-		if(invMatrix == null || invMatrix.size() == 0) 
+		if(invMatrix == null || invMatrix.isEmpty())
 			return;
 		int invMatrixSize = invMatrix.size();
 		

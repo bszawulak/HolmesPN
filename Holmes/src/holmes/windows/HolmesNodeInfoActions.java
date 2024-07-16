@@ -83,7 +83,7 @@ public class HolmesNodeInfoActions {
 
 	public void showTinvForPlace(Place place, JProgressBar progressBar) {
 		ArrayList<ArrayList<Integer>> invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
-		if(invariantsMatrix == null || invariantsMatrix.size() == 0)
+		if(invariantsMatrix == null || invariantsMatrix.isEmpty())
 			return;
 
 		HolmesNotepad notepad = new HolmesNotepad(800, 600, true);
@@ -180,7 +180,7 @@ public class HolmesNodeInfoActions {
 
 	public void showTinvForTransition(Transition transition, JProgressBar progressBar) {
 		ArrayList<ArrayList<Integer>> invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
-		if(invariantsMatrix == null || invariantsMatrix.size() == 0)
+		if(invariantsMatrix == null || invariantsMatrix.isEmpty())
 			return;
 		
 		HolmesNotepad notepad = new HolmesNotepad(800, 600, true);

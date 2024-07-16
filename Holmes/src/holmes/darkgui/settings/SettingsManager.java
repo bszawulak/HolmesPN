@@ -219,7 +219,6 @@ public class SettingsManager {
 
     /**
      * Metoda wczytuje plik właściwości albo go odtwarza w razie braku.
-     *
      * @param error <b>boolean</b> - true, jeśli wywołała samą siebie, bo nie dało się wczytać pliku, w takim
      *              wypadku podejmowana jest jeszcze TYLKO jedna próba, bez dalszej rekurencji
      */
@@ -268,8 +267,8 @@ public class SettingsManager {
     private Setting convertLineToSetting(String line) {
         try {
             Random rand = new Random();
-            String ID = "";
-            String value = "";
+            String ID;
+            String value;
             int index = line.indexOf(" ");
             if (index < 1) {
                 ID = "Unknown_" + rand.nextInt(999999);

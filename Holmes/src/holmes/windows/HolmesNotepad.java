@@ -192,7 +192,7 @@ public class HolmesNotepad extends JFrame {
 		filters[0] = new ExtensionFileFilter("Holmes notepad text file (.txt)",  new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", "Select text file", "");
 		
-		if(!selectedFile.equals("")) {
+		if(!selectedFile.isEmpty()) {
 			try {
 				clearContent();
 				DataInputStream dis = new DataInputStream(new FileInputStream(selectedFile));
@@ -220,7 +220,7 @@ public class HolmesNotepad extends JFrame {
 		filters[0] = new ExtensionFileFilter("Holmes notepad text file (.txt)",  new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select new filename", "");
 		
-		if(!selectedFile.equals("")) {
+		if(!selectedFile.isEmpty()) {
 			String extension = ".txt";
 			if(!selectedFile.contains(extension))
 				selectedFile += extension;

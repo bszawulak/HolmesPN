@@ -178,7 +178,7 @@ public class MauritiusMap {
 			resultNames.add(t.getName());
 		}
 		
-		if(mct.size() == 0) {
+		if(mct.isEmpty()) {
 			return resultNames;
 		} else {
 			//mct = getSortedMCT(mct);
@@ -235,7 +235,7 @@ public class MauritiusMap {
 		ArrayList<ArrayList<Integer>> invsWithCurrentNode = InvariantsTools.returnT_invWithTransition(subInvariants, maxTransition);
 		ArrayList<ArrayList<Integer>> invsWithoutCurrentNode = InvariantsTools.returnT_invWithoutTransition(subInvariants, maxTransition);
 		
-		if(invsWithoutCurrentNode.size() == 0 || howManyLeft == 0) {
+		if(invsWithoutCurrentNode.isEmpty() || howManyLeft == 0) {
 			// brak inwariantów bez tranzycji maxTransition: węzeł typu Data
 			// czyli: brak poddrzewa invsWithoutCurrentNode
 			
@@ -305,7 +305,7 @@ public class MauritiusMap {
 	 */
 	private ArrayList<Integer> addInvsIndices(ArrayList<ArrayList<Integer>> invsWithCurrentNode) {
 		ArrayList<Integer> idVector = new ArrayList<Integer>();
-		if(invsWithCurrentNode.size() == 0) {
+		if(invsWithCurrentNode.isEmpty()) {
 			return idVector;
 		}
 		
@@ -475,7 +475,7 @@ public class MauritiusMap {
 		ArrayList<ArrayList<Integer>> rightInvariants = InvariantsTools.returnT_invWithTransition(subInvariants, maxTransition);
 		ArrayList<ArrayList<Integer>> leftInvariants = InvariantsTools.returnT_invWithoutTransition(subInvariants, maxTransition);
 		
-		if(leftInvariants.size() == 0 || howManyLeft == 0) {
+		if(leftInvariants.isEmpty() || howManyLeft == 0) {
 			// brak inwariantów bez tranzycji maxTransition: węzeł typu Data
 			// czyli: brak lewego podrzewa
 			

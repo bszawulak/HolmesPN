@@ -515,8 +515,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
         mainInfoPanel.add(chartButtonPanel);
 
         try {
-            if(overlord.getWorkspace().getProject().getTransitions().size() > 0
-                    && overlord.getWorkspace().getProject().getPlaces().size() > 0) {
+            if(!overlord.getWorkspace().getProject().getTransitions().isEmpty()
+                    && !overlord.getWorkspace().getProject().getPlaces().isEmpty()) {
 
                 fillPlaceDynamicData(chartMainPanel);
             }
@@ -1296,8 +1296,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
         mainInfoPanel.add(simStatsPanel);
 
         try {
-            if(overlord.getWorkspace().getProject().getTransitions().size() > 0
-                    && overlord.getWorkspace().getProject().getPlaces().size() > 0) {
+            if(!overlord.getWorkspace().getProject().getTransitions().isEmpty()
+                    && !overlord.getWorkspace().getProject().getPlaces().isEmpty()) {
                 fillTransitionDynamicData(transStatsFiringStepsTextBox, chartMainPanel, chartButtonPanel);
             }
         } catch (Exception ex) {

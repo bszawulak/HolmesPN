@@ -1467,7 +1467,7 @@ public class HolmesSimXTPN extends JFrame {
         selStateLabel.setText(""+overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN);
 
         ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-        if(places== null || places.size() == 0) {
+        if(places== null || places.isEmpty()) {
             placesCombo.removeAllItems();
             placesCombo.addItem("---");
             transitionsCombo.removeAllItems();
@@ -1504,7 +1504,7 @@ public class HolmesSimXTPN extends JFrame {
         }
 
         ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        if(transitions== null || transitions.size() == 0)
+        if(transitions== null || transitions.isEmpty())
             return;
 
         transitionsCombo.removeAllItems();
@@ -1555,7 +1555,7 @@ public class HolmesSimXTPN extends JFrame {
         }
 
         ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-        if(places == null || places.size() == 0)
+        if(places == null || places.isEmpty())
             return;
 
         clearTransitionsChart();

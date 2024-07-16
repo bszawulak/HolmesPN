@@ -30,7 +30,7 @@ public class HolmesProgramPropertiesActions {
 		filters[0] = new ExtensionFileFilter("Rscript.exe (.exe)",  new String[] { "EXE" });
 		String selectedFile = Tools.selectFileDialog("", filters, "Select Rscript.exe", 
 				"Please select Rscript exe, usually located in R/Rx.x.x/bin directory.", "");
-		if(selectedFile.equals("")) {
+		if(selectedFile.isEmpty()) {
 			return;
 		} else {
 			if(!selectedFile.contains("x64")) { //jeśli nie wskazano 64bitowej wersji

@@ -144,7 +144,7 @@ public class HolmesKnockout extends JFrame {
 		transitionsCombo.setMaximumRowCount(6);
 		transitionsCombo.removeAllItems();
 		transitionsCombo.addItem("---");
-		if(transitions != null && transitions.size()>0) {
+		if(transitions != null && !transitions.isEmpty()) {
 			for(int t=0; t < transitions.size(); t++) {
 				transitionsCombo.addItem("t"+(t)+"."+transitions.get(t).getName());
 			}
@@ -371,7 +371,7 @@ public class HolmesKnockout extends JFrame {
 			notePad.addTextLineNL("Objective reaction (knock-out reaction): "+infoMap.getRoot().transName, "text");
 			notePad.addTextLineNL("", "text");
 			
-			if(dataMatrix.get(0).size() == 0) {
+			if(dataMatrix.get(0).isEmpty()) {
 				notePad.addTextLine("Reactions knocked out: ", "text");
 				notePad.addTextLineNL(" 0  (zero, all transitions present in some unaffected t-invariants).", "text");
 			} else {
@@ -425,7 +425,7 @@ public class HolmesKnockout extends JFrame {
 	//TODO:
 	protected void getKnockoutFullInfo(HolmesNotepad notePad) {
 		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
-		if(invariants == null || invariants.size() < 1) {
+		if(invariants == null || invariants.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
 					"Warning", JOptionPane.INFORMATION_MESSAGE);
 			return;
@@ -469,7 +469,7 @@ public class HolmesKnockout extends JFrame {
 		filters[0] = new ExtensionFileFilter("MonaLisa Knockout transitions (.txt)",  new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", "", "");
 		
-		if(selectedFile.equals("")) {
+		if(selectedFile.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Incorrect file location.", "Operation failed.", 
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -497,7 +497,7 @@ public class HolmesKnockout extends JFrame {
 				for(int t=0; t<transSize; t++) {
 					if(transitions.get(t).getName().equals(name)) {
 						String next = line.substring(line.indexOf("->")+2);
-						if(next.length() == 0) {
+						if(next.isEmpty()) {
 							break;
 						} else { //z MCT
 							next = next.trim();
@@ -536,7 +536,7 @@ public class HolmesKnockout extends JFrame {
 		filters[0] = new ExtensionFileFilter("MonaLisa Knockout transitions (.txt)",  new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", "", "");
 		
-		if(selectedFile.equals("")) {
+		if(selectedFile.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Incorrect file location.", "Operation failed.", 
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -586,7 +586,7 @@ public class HolmesKnockout extends JFrame {
 				for(int t=0; t<transSize; t++) {
 					if(transitions.get(t).getName().equals(name)) {
 						String next = line.substring(line.indexOf("->")+2);
-						if(next.length() == 0) {
+						if(next.isEmpty()) {
 							String newLine = "t"+t+"_"+name+" | Knockout: 0% (0 / "+transSize+")  ";
 							newLine += mctOrNot.get(t);
 							
@@ -861,7 +861,7 @@ public class HolmesKnockout extends JFrame {
 		selection--;
 		
 		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
-		if(invariants == null || invariants.size() < 1) {
+		if(invariants == null || invariants.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Invariants matrix empty! Operation cannot start.", 
 					"Warning", JOptionPane.INFORMATION_MESSAGE);
 			return null;

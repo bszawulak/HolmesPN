@@ -849,7 +849,7 @@ public class HolmesSimKnockVis extends JFrame {
     	placesTable.setDefaultRenderer(Object.class, tableRenderer);
 
     	try {
-    		if(places.size() == 0) {
+    		if(places.isEmpty()) {
         		for(int p=0; p<data.placesNumber; p++) 
         			modelPlaces.addNew(data, p, null);
         	} else {
@@ -937,7 +937,7 @@ public class HolmesSimKnockVis extends JFrame {
     	placesTable.setDefaultRenderer(Double.class, tableRendererPlaces);
 
     	try {
-    		if(places.size() == 0) {
+    		if(places.isEmpty()) {
         		for(int index=0; index<dataRef.placesNumber; index++) 
         			modelPlacesComp.addNew(dataRef, dataComp, index, null);
         	} else {
@@ -1060,7 +1060,7 @@ public class HolmesSimKnockVis extends JFrame {
     	transTable.setDefaultRenderer(Object.class, tableRenderer);
 
     	try {
-    		if(transitions.size() == 0) {
+    		if(transitions.isEmpty()) {
         		for(int p=0; p<data.transNumber; p++) 
         			modelTrans.addNew(data, p, null);
         	} else {
@@ -1149,7 +1149,7 @@ public class HolmesSimKnockVis extends JFrame {
     	
 
     	try {
-    		if(transitions.size() == 0) {
+    		if(transitions.isEmpty()) {
         		for(int index=0; index<dataRef.transNumber; index++) 
         			modelTransComp.addNew(dataRef, dataComp, index, null);
         	} else {
@@ -1308,7 +1308,7 @@ public class HolmesSimKnockVis extends JFrame {
     		
     		//NAZWY:
     		String name;
-    		if(transitions.size() == 0) {
+    		if(transitions.isEmpty()) {
     			name = "t"+t;
     		} else {
     			name = "t"+transitions.get(t).getName();

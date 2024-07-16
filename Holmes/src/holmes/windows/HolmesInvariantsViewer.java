@@ -97,7 +97,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		this.invariantsMatrix = pn.getT_InvMatrix();
 		
 		boolean problem = false;
-		if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
+		if(invariantsMatrix == null || invariantsMatrix.isEmpty()) {
 			JOptionPane.showMessageDialog(null,
 					"No invariants found, window cannot be initialized.", 
 					"Error: no invariants", JOptionPane.ERROR_MESSAGE);
@@ -126,7 +126,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		this.currentSelected = invNumber+1;
 		
 		boolean problem = false;
-		if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
+		if(invariantsMatrix == null || invariantsMatrix.isEmpty()) {
 			JOptionPane.showMessageDialog(null,
 					"No invariants found, window cannot initiate itself.", 
 					"Error: no ivnariants", JOptionPane.ERROR_MESSAGE);

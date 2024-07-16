@@ -70,7 +70,7 @@ public class SnoopyWriterTransition {
 		//sprawdź, ile jest lokalizacji (portal check)
 		boolean isInterface = false;
 		for(ElementLocation el : holmesTransition.getElementLocations()) {
-			if(el.accessMetaInArcs().size()>0 || el.accessMetaOutArcs().size()>0) {
+			if(!el.accessMetaInArcs().isEmpty() || !el.accessMetaOutArcs().isEmpty()) {
 				isInterface = true;
 				break;
 			}
@@ -83,7 +83,7 @@ public class SnoopyWriterTransition {
 			if(isInterface) {
 				if(el.getSheetID() != 0) //wszystkie podsieci
 					stateForEL.add(8);
-				else if(el.accessMetaInArcs().size()>0 || el.accessMetaOutArcs().size()>0) { //sieć główna
+				else if(!el.accessMetaInArcs().isEmpty() || !el.accessMetaOutArcs().isEmpty()) { //sieć główna
 					stateForEL.add(4);
 				} else { // zwykły portal
 					stateForEL.add(1);

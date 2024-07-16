@@ -315,7 +315,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 		analysisTabs.setTabComponentAt(5, new JLabel("Knockout"));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getFixBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(6, new JLabel("NetFix"));
+		analysisTabs.add(GUIManager.getDefaultGUIManager().getClusterSelectionBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(7, new JLabel("Clusters"));
+
 		analysisTabs.setPreferredSize(new Dimension(200,200));
+
+		//getClusterSelectionBox
+
+
 		//analysisTabs.add("T-invariants",t_invariantsBox.getCurrentDockWindow().getPanel());
 		//analysisTabs.setTabComponentAt(0, new JLabel("Toolbox"));
 		//analysisTabs.setPreferredSize(new Dimension(200,400));
@@ -513,7 +520,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 				filters[0] = new ExtensionFileFilter(".exe - Rscript",  new String[] { "EXE" });
 				String selectedFile = Tools.selectFileDialog("", filters, "Select Rscript.exe", 
 						"Please select Rscript exe, usually located in R/Rx.x.x/bin directory.", "");
-				if(selectedFile.equals("")) {
+				if(selectedFile.isEmpty()) {
 					log("Rscript executable file inaccessible. Some features (clusters operations) will be disabled.", "error", true);
 				} else {
 					if(!selectedFile.contains("x64")) { //jeśli wskazano 64b

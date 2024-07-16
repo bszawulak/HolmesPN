@@ -30,7 +30,7 @@ public class MCSoperations {
 		filters[0] = new ExtensionFileFilter("ObjR single MCS data file (.objR)",  new String[] { "OBJR" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select objR MCS file target path", "");
 		
-		if(selectedFile.equals("")) {
+		if(selectedFile.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Incorrect file location.", "Operation failed.", 
 					JOptionPane.ERROR_MESSAGE);
 		} else {
@@ -91,7 +91,7 @@ public class MCSoperations {
 		filters[0] = new ExtensionFileFilter("MCS full data file (.mcs)",  new String[] { "MCS" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select MCS data file target path", "");
 		
-		if(selectedFile.equals("")) {
+		if(selectedFile.isEmpty()) {
 			//JOptionPane.showMessageDialog(null,"Incorrect file location.","Operation failed.",JOptionPane.ERROR_MESSAGE);
 		} else {
 			String extension = ".mcs";
@@ -151,7 +151,7 @@ public class MCSoperations {
 		filters[0] = new ExtensionFileFilter("ObjR single MCS data file (.objr)",  new String[] { "OBJR" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", "Select objR MCS data file", "");
 		
-		if(selectedFile.equals("")) {
+		if(selectedFile.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "Incorrect file location.", "Operation failed.", 
 					JOptionPane.ERROR_MESSAGE);
 			return false;
@@ -264,7 +264,7 @@ public class MCSoperations {
 		filters[0] = new ExtensionFileFilter("MCS full data file (.mcs)",  new String[] { "MCS" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", "Select MCS data file", "");
 		
-		if(selectedFile.equals("")) {
+		if(selectedFile.isEmpty()) {
 			JOptionPane.showMessageDialog(null,"Incorrect file location.","Operation failed.",JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {

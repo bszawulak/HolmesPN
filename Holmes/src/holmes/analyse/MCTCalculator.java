@@ -89,11 +89,11 @@ public class MCTCalculator {
 			ArrayList<Integer> support = InvariantsTools.getSupport(invVector); //tutaj: niezerowy, jeśli t należy do inw
 			for(int t2=0; t2<size; t2++) {
 				ArrayList<Integer> invVector2 = invariantsTranspose.get(t2);
-				if(invVector.equals(invVector2) && support.size()>0 ) {
+				if(invVector.equals(invVector2) && !support.isEmpty()) {
 					currentMCT.add(allTransitions.get(t2));
 				}
 			}
-			if ((currentMCT.size() > 0) && !mctGroups.contains(currentMCT))
+			if ((!currentMCT.isEmpty()) && !mctGroups.contains(currentMCT))
 				mctGroups.add(currentMCT);
 		}
 		

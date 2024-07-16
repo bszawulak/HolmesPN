@@ -351,7 +351,7 @@ public class HolmesSim extends JFrame {
 		addPlaceButton.setIcon(Tools.getResIcon16("/icons/stateSim/addChart.png"));
 		addPlaceButton.setToolTipText("Add data about place tokens to the chart.");
 		addPlaceButton.addActionListener(actionEvent -> {
-			if(placesRawData.size() == 0)
+			if(placesRawData.isEmpty())
 				return;
 
 			int selected = placesCombo.getSelectedIndex();
@@ -377,7 +377,7 @@ public class HolmesSim extends JFrame {
 		removePlaceButton.setIcon(Tools.getResIcon16("/icons/stateSim/removeChart.png"));
 		removePlaceButton.setToolTipText("Remove data about place tokens from the chart.");
 		removePlaceButton.addActionListener(actionEvent -> {
-			if(placesRawData.size() == 0)
+			if(placesRawData.isEmpty())
 				return;
 
 			int selected = placesCombo.getSelectedIndex();
@@ -575,7 +575,7 @@ public class HolmesSim extends JFrame {
 		addTransitionButton.setIcon(Tools.getResIcon16("/icons/stateSim/addChart.png"));
 		addTransitionButton.setToolTipText("Add data about transition firing to the chart.");
 		addTransitionButton.addActionListener(actionEvent -> {
-			if(transitionsRawData.size() == 0)
+			if(transitionsRawData.isEmpty())
 				return;
 
 			int selected = transitionsCombo.getSelectedIndex();
@@ -599,7 +599,7 @@ public class HolmesSim extends JFrame {
 		removeTransitionButton.setIcon(Tools.getResIcon16("/icons/stateSim/removeChart.png"));
 		removeTransitionButton.setToolTipText("Remove data about transition firing from the chart.");
 		removeTransitionButton.addActionListener(actionEvent -> {
-			if(transitionsRawData.size() == 0)
+			if(transitionsRawData.isEmpty())
 				return;
 
 			int selected = transitionsCombo.getSelectedIndex();
@@ -818,7 +818,7 @@ public class HolmesSim extends JFrame {
 	 */
 	@SuppressWarnings("deprecation")
 	private void showAllPlacesData() {
-		if(placesAvgData.size() == 0)
+		if(placesAvgData.isEmpty())
 			return;
 
 		placesChartType = 0;
@@ -906,7 +906,7 @@ public class HolmesSim extends JFrame {
 	 * Pokazuje wyniki dla wszystkich miejsc w notatniku.
 	 */
 	private void showPlacesAllInNotepad() {
-		if(placesAvgData.size() == 0)
+		if(placesAvgData.isEmpty())
 			return;
 		
 		HolmesNotepad notePad = new HolmesNotepad(900,600);
@@ -1033,7 +1033,7 @@ public class HolmesSim extends JFrame {
 	 */
 	@SuppressWarnings("deprecation")
 	private void showAllTransData() {
-		if(transitionsCompactData.size() == 0)
+		if(transitionsCompactData.isEmpty())
 			return;
 
 		transChartType = 0;
@@ -1116,7 +1116,7 @@ public class HolmesSim extends JFrame {
 	 * Metoda pokazuje w notatniku dane odpaleń tranzycji w symulacji.
 	 */
 	private void showTransAllInNotepad() {
-		if(transitionsCompactData.size() == 0)
+		if(transitionsCompactData.isEmpty())
 			return;
 		
 		double max = 0.0;
@@ -1164,7 +1164,7 @@ public class HolmesSim extends JFrame {
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Portable Network Graphics (.png)", new String[] { "PNG" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
-		if(selectedFile.equals(""))
+		if(selectedFile.isEmpty())
 			return;
 		
 		if(!selectedFile.contains(".png"))
@@ -1189,7 +1189,7 @@ public class HolmesSim extends JFrame {
 		selStateLabel.setText(""+overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN);
 		
 		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		if(places== null || places.size() == 0) {
+		if(places== null || places.isEmpty()) {
 			placesCombo.removeAllItems();
 			placesCombo.addItem("---");
 			transitionsCombo.removeAllItems();
@@ -1225,7 +1225,7 @@ public class HolmesSim extends JFrame {
 		}
 		
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		if(transitions== null || transitions.size() == 0)
+		if(transitions== null || transitions.isEmpty())
 			return;
 		
 		transitionsCombo.removeAllItems();
@@ -1272,7 +1272,7 @@ public class HolmesSim extends JFrame {
 		}
 		
 		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		if(places == null || places.size() == 0)
+		if(places == null || places.isEmpty())
 			return;
 		
 		clearTransitionsChart();

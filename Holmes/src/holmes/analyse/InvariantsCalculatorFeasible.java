@@ -550,18 +550,18 @@ public class InvariantsCalculatorFeasible {
 				if(InvariantsTools.isDoubleArc(a)) {
 					Node n = a.getEndNode();
 					if(n instanceof Place) {
-						if(((Place) n).getTokensNumber() > 0)
+						if (((Place) n).getTokensNumber() > 0) {
 							continue;
-						else {
+						} else {
 							int position = transitions.indexOf((Transition)a.getStartNode());
 							if(!raTrans.contains(position))
 								raTrans.add(position);
 						}
 					} else { //a.getEndNode(); = tranzycja
 						n = a.getStartNode();
-						if(((Place) n).getTokensNumber() > 0)
+						if(((Place) n).getTokensNumber() > 0) {
 							continue;
-						else {
+						} else {
 							int position = transitions.indexOf((Transition)a.getEndNode());
 							if(!raTrans.contains(position))
 								raTrans.add(position);
@@ -608,14 +608,6 @@ public class InvariantsCalculatorFeasible {
 	 */
 	public boolean getStatus() {
 		return success;
-	}
-
-	/**
-	 * Metoda zwraca status tekstowy końca operacji szukania inwariantów.
-	 * @return String - status końcowy
-	 */
-	public String getTextStatus() {
-		return status;
 	}
 	
 	/**

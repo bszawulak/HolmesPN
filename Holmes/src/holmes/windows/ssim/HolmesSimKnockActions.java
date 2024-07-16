@@ -55,7 +55,7 @@ public class HolmesSimKnockActions {
 		}
 		
 		ArrayList<Transition> transitions = pn.getTransitions();
-		if(transitions == null || transitions.size() == 0) {
+		if(transitions == null || transitions.isEmpty()) {
 			JOptionPane.showMessageDialog(null,
 					"At least single place and transition required for simulation.", 
 					"Net not found", JOptionPane.WARNING_MESSAGE);
@@ -150,7 +150,7 @@ public class HolmesSimKnockActions {
 		}
 		
 		ArrayList<Transition> transitions = pn.getTransitions();
-		if(transitions == null || transitions.size() == 0) {
+		if(transitions == null || transitions.isEmpty()) {
 			JOptionPane.showMessageDialog(null,
 					"At least single place and transition required for simulation.", 
 					"Net not found", JOptionPane.WARNING_MESSAGE);
@@ -242,7 +242,7 @@ public class HolmesSimKnockActions {
 		}
 		
 		ArrayList<Transition> transitions = pn.getTransitions();
-		if(transitions == null || transitions.size() == 0) {
+		if(transitions == null || transitions.isEmpty()) {
 			JOptionPane.showMessageDialog(null,
 					"At least single place and transition required for simulation.", 
 					"Net not found", JOptionPane.WARNING_MESSAGE);

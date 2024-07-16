@@ -370,7 +370,7 @@ public final class InvariantsTools {
 	 */
 	public static int checkT_invariant(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> invariant, boolean tInv) {
 		//CMatrix - każdy wiersz to wektor miejsc indeksowany numerem tranzycji [2][3] - 2 tranzycja, 3 miejsce
-		if(tInv && CMatrix.size() > 0) {
+		if(tInv && !CMatrix.isEmpty()) {
 			ArrayList<Integer> placesSumVector = new ArrayList<Integer>();
 			if(invariant.size() != CMatrix.size())
 				return -99;
@@ -418,7 +418,7 @@ public final class InvariantsTools {
 	 */
 	public static ArrayList<Integer> check_invariantV2(ArrayList<ArrayList<Integer>> CMatrix, ArrayList<Integer> inv) {
 		ArrayList<Integer> results = new ArrayList<Integer>();
-		if(CMatrix.size() == 0)
+		if(CMatrix.isEmpty())
 			return null;
 		
 		ArrayList<Integer> invSupport = getSupport(inv);

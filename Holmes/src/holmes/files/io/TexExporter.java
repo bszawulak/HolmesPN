@@ -41,7 +41,7 @@ public class TexExporter {
 		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 
-		if(places.size()==0 || transitions.size() == 0) {
+		if(places.isEmpty() || transitions.isEmpty()) {
 			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), "At least 1 place and transition needed.", 
 					"Unable to export", JOptionPane.WARNING_MESSAGE);
 			return;
@@ -51,7 +51,7 @@ public class TexExporter {
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
-		if(selectedFile.equals(""))
+		if(selectedFile.isEmpty())
 			return;
 		
 		if(!selectedFile.contains(".txt"))
@@ -317,7 +317,7 @@ public class TexExporter {
 			return;
 		}
 		
-		if(mctSet.size() == 0) {
+		if(mctSet.isEmpty()) {
 			String msg = "Unable to extract MCT data from the net.";
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
@@ -364,7 +364,7 @@ public class TexExporter {
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
-		if(selectedFile.equals(""))
+		if(selectedFile.isEmpty())
 			return;
 		if(!selectedFile.contains(".txt"))
 			selectedFile += ".txt";
@@ -427,7 +427,7 @@ public class TexExporter {
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
-		if(selectedFile.equals(""))
+		if(selectedFile.isEmpty())
 			return;
 		
 		if(!selectedFile.contains(".txt"))
@@ -462,7 +462,7 @@ public class TexExporter {
 					String mctLine = invArray.get(1); //MCT
 					mctLine = mctLine.replace("[", "");
 					mctLine = mctLine.replace("]", "");
-					if(mctLine.length()>0) {
+					if(!mctLine.isEmpty()) {
 						String[] mctVector = mctLine.split(",");
 						for (String mctTmp : mctVector) {
 							line.append("$m_{").append(mctTmp).append("}$,");
@@ -525,7 +525,7 @@ public class TexExporter {
 				
 				mctLine = mctLine.replace("[", "");
 				mctLine = mctLine.replace("]", "");
-				if(mctLine.length()>0) {
+				if(!mctLine.isEmpty()) {
 					String[] mctVector = mctLine.split(",");
 					for (String s : mctVector) {
 						try {
@@ -558,7 +558,7 @@ public class TexExporter {
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
-		if(selectedFile.equals(""))
+		if(selectedFile.isEmpty())
 			return;
 		
 		if(!selectedFile.contains(".txt"))

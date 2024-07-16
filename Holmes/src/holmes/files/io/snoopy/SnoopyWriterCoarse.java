@@ -158,7 +158,7 @@ public class SnoopyWriterCoarse {
 		txt += "M"+mPos + " [gcID:"+globalCoarseID+"]";
 		txt += " [SnoopyStartID: "+snoopyStartingID+"]";
 		txt += " "+type;
-		if(grParents.size()>0)
+		if(!grParents.isEmpty())
 			txt += " [gParentID:"+grParents.get(0)+"]";
 		
 		return txt;

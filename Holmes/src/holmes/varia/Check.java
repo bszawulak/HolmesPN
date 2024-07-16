@@ -28,7 +28,7 @@ public final class Check {
     		invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
     	else
     		invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix();
-		if(invariants == null || invariants.size() < 1)
+		if(invariants == null || invariants.isEmpty())
     		return null;
     	else
     		return invariants;
@@ -182,12 +182,12 @@ public final class Check {
 			return GlobalNetType.XTPN; // po prostu, idźcie dalej, Symulator rozpozna swoich.
 		}
 
-    	int places = netElements.get(0); //miejsce
-    	int transitions = netElements.get(1); //tranzycje
+    	//int places = netElements.get(0); //miejsce
+    	//int transitions = netElements.get(1); //tranzycje
     	int timeTransitions = netElements.get(2); //tranzycje czasowa
-    	//int metaNodes = netElements.get(3); //meta-węzły
+    	////int metaNodes = netElements.get(3); //meta-węzły
     	int functionalTransitions = netElements.get(4); //tranzycje funkcyjna
-    	int stochasticTransitions = netElements.get(5); //tranzycje stochastyczne
+    	//int stochasticTransitions = netElements.get(5); //tranzycje stochastyczne
 
     	//int arc = arcClasses.get(0); //łuk
     	//int readArc = arcClasses.get(1); //łuk odczytu
@@ -254,7 +254,7 @@ public final class Check {
 			case PN_extArcs -> GlobalFileNetType.SPEPT;
 			case TPN -> GlobalFileNetType.SPTPT;
 			case TPN_extArcs, FPN, timeFPN, FPN_extArcs, timeFPN_extArcs, SPN, functionalSPN -> GlobalFileNetType.HOLMESPROJECT;
-			default -> null;
+			default -> GlobalFileNetType.HOLMESPROJECT;
 		};
 	}
     
