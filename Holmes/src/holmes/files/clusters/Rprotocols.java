@@ -166,7 +166,7 @@ public class Rprotocols implements Runnable {
 	 * plik z numerami inwariantów dla każdego klastra.
 	 * @throws IOException - wyjątek operacji na plikach
 	 */
-	public void executeAllClustersScripts() throws IOException{		
+	public void executeAllClustersScripts() throws IOException{
 		File file = new File(scriptName);
 		FileInputStream fis = new FileInputStream(file);
 		byte[] data = new byte[(int) file.length()];
