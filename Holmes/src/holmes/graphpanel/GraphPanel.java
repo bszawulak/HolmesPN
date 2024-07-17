@@ -1434,9 +1434,9 @@ public class GraphPanel extends JComponent {
 						clearDrawnArc();
 						return;
 					}
-					
+
 					MetaNode n = (MetaNode) clickedLocation.getParentNode();
-					
+
 					if(drawnArc.getStartLocation().getParentNode() instanceof Place && n.getMetaType() == MetaType.SUBNETPLACE ) {
 						JOptionPane.showMessageDialog(null, "Meta-node type P (transitions-interfaced) can get connection only from transitions!", 
 								"Problem", JOptionPane.WARNING_MESSAGE);
@@ -1762,8 +1762,11 @@ public class GraphPanel extends JComponent {
 		
 		double zoom = getZoom();
 		zoom = 100/zoom;
-		centerX *= zoom;
-		centerY *=  zoom;
+		//centerX *= zoom;
+		//centerY *=  zoom;
+
+		centerX = (int)(centerX * zoom);
+		centerY = (int)(centerY * zoom);
 		
 		if(clickedX <= centerX && clickedY <= centerY) { //I cwiartka, przesuwanie w lewo/góra
 			scrollSheetHorizontal(-(centerX - clickedX)); // w lewo
