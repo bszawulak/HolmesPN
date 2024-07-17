@@ -107,7 +107,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	protected void addMenuItem(String text, String iconName, ActionListener actionListener) {
 		try {
 			JMenuItem menuItem;
-			if(!iconName.equals(""))
+			if(!iconName.isEmpty())
 				menuItem = new JMenuItem(text, Tools.getResIcon16("/icons/" + iconName));
 			else
 				menuItem = new JMenuItem(text);
@@ -131,7 +131,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	protected JMenuItem createMenuItem(String text, String iconName, KeyStroke accelerator, ActionListener actionListener) {
 		try {
 			JMenuItem menuItem;
-			if(!iconName.equals(""))
+			if(!iconName.isEmpty())
 				menuItem = new JMenuItem(text, Tools.getResIcon16("/icons/" + iconName));
 			else
 				menuItem = new JMenuItem(text);

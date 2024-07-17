@@ -13,7 +13,6 @@ import holmes.darkgui.GUIManager;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable.SubWindow;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
-import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
@@ -251,7 +250,7 @@ public class HolmesDockWindow {//extends SingleDock {
         //dockWindowPanel.setBackground(Color.BLUE);
         if (e.getActionType() == SelectionActionType.SELECTED_ONE) {
 
-            if (e.getElementLocationGroup().size() > 0) {
+            if (!e.getElementLocationGroup().isEmpty()) {
                 Node n = e.getElementLocation().getParentNode();
                 if (n.getType() == PetriNetElementType.PLACE) {
                     if( n instanceof PlaceXTPN ) {
@@ -293,18 +292,11 @@ public class HolmesDockWindow {//extends SingleDock {
                     }
                 }
                 scrollPane.getViewport().add(getCurrentDockWindow());
-            } else if (e.getArcGroup().size() > 0) {
+            } else if (!e.getArcGroup().isEmpty()) {
                 setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.ARC, e.getArc()));
                 scrollPane.getViewport().add(getCurrentDockWindow());
             }
-            //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().getPanel().removeAll();
-            //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().setPanel(dockWindowPanel.getPanel());
-            //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().revalidate();
-            //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().repaint();
-            /*JFrame nowe = new JFrame();
-            nowe.add(dockWindowPanel.getPanel());
-            nowe.setSize(300,300);
-            nowe.setVisible(true);*/
+
             GUIManager.getDefaultGUIManager().propericeTMPBox.removeAll();
             GUIManager.getDefaultGUIManager().propericeTMPBox.add(dockWindowPanel.getPanel());
             GUIManager.getDefaultGUIManager().getFrame().revalidate();

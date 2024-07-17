@@ -22,7 +22,7 @@ public class MCTCalculator {
 
 	/**
 	 * Konstruktor obiektu analizatora
-	 * @param petriNet
+	 * @param petriNet PetriNet
 	 */
 	public MCTCalculator(PetriNet petriNet) {
 		this.petriNet = petriNet;

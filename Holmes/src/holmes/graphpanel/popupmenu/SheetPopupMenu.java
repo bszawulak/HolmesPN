@@ -137,7 +137,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         this.addSeparator();
 
         this.addMenuItem("All Invisibility: OFF", "smallInvisibility.png", e -> {
-            if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+            if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
                 return;
 
             for(Transition trans : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
@@ -150,7 +150,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         });
 
         this.addMenuItem("All knockout: OFF", "offlineSmall.png", e -> {
-            if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+            if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
                 return;
 
             for(Transition trans : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {

@@ -1,13 +1,10 @@
 package holmes.graphpanel.popupmenu;
 
 import java.io.Serial;
-
 import javax.swing.*;
-
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.*;
-import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.subnets.SubnetsActions;
 import holmes.windows.HolmesNodeInfo;

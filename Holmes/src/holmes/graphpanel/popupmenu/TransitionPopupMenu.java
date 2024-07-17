@@ -2,14 +2,11 @@ package holmes.graphpanel.popupmenu;
 
 import java.io.Serial;
 import java.util.ArrayList;
-
 import javax.swing.JOptionPane;
-
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.windows.HolmesFunctionsBuilder;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
@@ -30,7 +27,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 		super(graphPanel, el, pne, el.getParentNode());
 		
 		this.addMenuItem("Knockout ON/OFF", "offlineSmall.png", e -> {
-			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
 				return;
 
 			ArrayList<Node> listOfSelectedNodes =  new ArrayList<>();
@@ -49,7 +46,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 		});
 		
 		this.addMenuItem("Invisibility (invariants) ON/OFF", "smallInvisibility.png", e -> {
-			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
 				return;
 
 			ArrayList<Node> listOfSelectedNodes =  new ArrayList<>();
@@ -67,7 +64,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 		});
 
 		this.addMenuItem("Functions builder...", "functionalWindowIcon.png", e -> {
-			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
 				return;
 
 			Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();

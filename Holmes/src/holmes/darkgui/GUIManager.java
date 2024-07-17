@@ -89,7 +89,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	//UNUSED
 	// docking listener
-	private DarkDockingListener dockingListener;
+	//private DarkDockingListener dockingListener;
 	private Toolbar shortcutsBar;
 
 	// main frame
@@ -165,8 +165,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//JavaDocking wysypuje się jeśli numer wersji nie posiada przynajmniej jednej .
 		//Piękny był to fuckup, nie zapomnę go nigdy [MR].
 		// [2024]Już nie ważne, ale zostawmy na pamiątkę.
-		if(!System.getProperty("java.version").contains("."))
-			System.setProperty("java.version",System.getProperty("java.version")+".0");
+		//if(!System.getProperty("java.version").contains("."))
+		//	System.setProperty("java.version",System.getProperty("java.version")+".0");
 
 		guiManager = this;
 		io = new GUIOperations(this); //obiekt klasy operacji głównych
@@ -241,7 +241,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getFrame().setVisible(true);
 
 		// set docking listener
-		setDockingListener(new DarkDockingListener());
+		//setDockingListener(new DarkDockingListener());
 		setToolBox(new PetriNetTools());
 
 		// create workspace
@@ -317,15 +317,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		analysisTabs.setTabComponentAt(6, new JLabel("NetFix"));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getClusterSelectionBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(7, new JLabel("Clusters"));
-
 		analysisTabs.setPreferredSize(new Dimension(200,200));
-
-		//getClusterSelectionBox
-
-
-		//analysisTabs.add("T-invariants",t_invariantsBox.getCurrentDockWindow().getPanel());
-		//analysisTabs.setTabComponentAt(0, new JLabel("Toolbox"));
-		//analysisTabs.setPreferredSize(new Dimension(200,400));
 
 		JSplitPane simAndworkspacePanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftCentralPanel , getTabbedWorkspace());
 		leftCentralPanel.setPreferredSize(new Dimension(200, 400));
@@ -680,22 +672,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		this.quickSimBox = quickSimBox;
 	}
 
-	/*
-	 * Metoda ustawia nowe podokno dekompozycji.
-	 * @param deompositionBox HolmesDockWindow - nowe okno dekompozycji
-	 */
-	//public void setDecompositionBox(HolmesDockWindow deompositionBox){
-		//this.decompositionBox = deompositionBox;
-	//}
-
-	/*
-	 * Metoda zwraca obiekt podokna dekompozycji.
-	 * @return HolmesDockWindow - okno dekompozycji
-	 */
-	//public HolmesDockWindow getDecompositionBox() {
-		//return decompositionBox;
-	//}
-
 	/**
 	 * Metoda zwraca obiekt podokna symulatora QuickSim.
 	 * @return HolmesDockWindow - okno QuickSim
@@ -833,50 +809,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		return workspace.getIndexOfId(id);
 	}
 
-	/*
-	 * Zwraca obiekt przycisku powiększającego okno do rozmiarów ekranu.
-	 * @return SingleMaximizer
-	 */
-	//public SingleMaximizer getMaximizer() {
-	//	return maximizer;
-	//}
-
-	/*
-	 * Ustawia obiekt przycisku powiększającego okno do rozmiarów ekranu.
-	 * @param maximizer SingleMaximizer
-	 */
-	//private void setMaximizer(SingleMaximizer maximizer) {
-	//	this.maximizer = maximizer;
-	//}
-
-	/*
-	 * Zwraca obiekt przycisku pomniejszającego okno do paska zadań.
-	 * @return LineMinimizer
-	 */
-	//public LineMinimizer getMinimizer() {
-	//	return minimizer;
-	//}
-
-	/*
-	 * Ustawia obiekt przycisku pomniejszającego okno do paska zadań.
-	 * @param minimizer LineMinimizer
-	 */
-	//private void setMinimizer(LineMinimizer minimizer) {
-	//	this.minimizer = minimizer;
-	//}
-
-	//public FloatExternalizer getExternalizer() {
-	//	return externalizer;
-	//}
-
-	/*
-	 * Opis: I have no idea...
-	 * @param externalizer FloatExternalizer
-	 */
-	//private void setExternalizer(FloatExternalizer externalizer) {
-	//	this.externalizer = externalizer;
-	//}
-	
 	/**
 	 * Metoda zwraca obiekt ramki.
 	 * @return JFrame - ramka
@@ -939,37 +871,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	private void setShortcutsBar(Toolbar shortcutsBar) {
 		this.shortcutsBar = shortcutsBar;
-	}
-	
-	/*
-	 * Metoda pomocnicza wywoływana w trakcie tworzenia podokien Holmes (inwarianty, mct, inne, także 
-	 * narzedzia do rysowania).
-	 * @param dockable Dockable
-	 * @param listener DockingListener
-	 * @return Dockable - obiekt podokna zaboxowany w obiekcie dokowalnym
-	 */
-	/*
-	public static Dockable externalWithListener(Dockable dockable, DockingListener listener) {
-		Dockable wrapper = guiManager.decorateDockableWithActions(dockable, false);
-		wrapper.addDockingListener(listener);
-		return wrapper;
-	}
-	*/
-
-	/**
-	 * Metoda zwracająca obiekt nasłuchujący zdarzenia dokowania podokna.
-	 * @return DarkDockingListener - obiekt nasłuchujący
-	 */
-	public DarkDockingListener getDockingListener() {
-		return dockingListener;
-	}
-
-	/**
-	 * Metoda ustawiająca nowy obiekt nasłuchujący zdarzenia dokowania podokna.
-	 * @param dockingListener DarkDockingListener - nowy obiekt nasłuchujący
-	 */
-	public void setDockingListener(DarkDockingListener dockingListener) {
-		this.dockingListener = dockingListener;
 	}
 	
 	/**
@@ -1580,32 +1481,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	public static void setXTPN_simMode(boolean simMode) { //jeżeli false = PN, true = XTPN
 		GUIManager.isXTPNmode = simMode;
 	}
-
-	/*
-	 * Metoda sprawdza do jakiego komponentu nadrzędnego należy przesłany w parametrze i go stamtąd usuwa.
-	 * @param x Dockable - komponent
-	 */
-	/*
-	public void cleanLostOne(Dockable x) {
-		Dock xxx = x.getDock();
-		CompositeDock yyy = xxx.getParentDock();
-		yyy.emptyChild(xxx);
-	}
-	*/
-	/**
-	 * Metoda usuwa wszystkie panele podsieci nie będące zadokowanymi w oknie worksheet.
-	 */
-	/*
-	public void cleanDockables() {
-		ArrayList<Dockable> activeSheets = getWorkspace().getDockables();
-		
-		for(Dockable d : globalSheetsList){
-			if(!activeSheets.contains(d))
-				cleanLostOne(d);
-		}
-	}
-	*/
-
 
 	public JTabbedPane getTabbedWorkspace() {
 		return GUIManager.getDefaultGUIManager().getWorkspace().getTablePane();

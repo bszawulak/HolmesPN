@@ -26,7 +26,7 @@ public class PlacePopupMenu extends NodePopupMenu {
 		super(graphPanel, el, pne, el.getParentNode());
 		
 		this.addMenuItem("Invisibility (invariants) ON/OFF", "smallInvisibility.png", e -> {
-			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
 				return;
 
 			Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();

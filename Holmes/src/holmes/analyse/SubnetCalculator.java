@@ -96,10 +96,8 @@ public class SubnetCalculator implements Serializable {
         for (Transition transition : allTransitionsT) {
             ArrayList<Transition> listToAdd = new ArrayList<>();
             if (chceckParalellInputOutPut(transition, temporaryList)) {
-                if (!listToAdd.contains(transition)) {
-                    listToAdd.add(transition);
-                    found = true;
-                }
+                listToAdd.add(transition);
+                found = true;
             }
             temporaryList.addAll(listToAdd);
         }
@@ -1159,11 +1157,11 @@ public class SubnetCalculator implements Serializable {
         ArrayList<Node> outNode = new ArrayList<>();
 
         for (Path p : paths) {
-            if (p.startNode.getInputNodes().size() == 0 && p.startNode.getOutputNodes().size() != 0) {
+            if (p.startNode.getInputNodes().isEmpty() && !p.startNode.getOutputNodes().isEmpty()) {
                 inNode.add(p.startNode);
             }
 
-            if (p.endNode.getInputNodes().size() != 0 && p.endNode.getOutputNodes().size() == 0) {
+            if (!p.endNode.getInputNodes().isEmpty() && p.endNode.getOutputNodes().isEmpty()) {
                 outNode.add(p.endNode);
             }
         }
@@ -1211,11 +1209,11 @@ public class SubnetCalculator implements Serializable {
         ArrayList<Node> outNode = new ArrayList<>();
 
         for (Path p : paths) {
-            if (p.startNode.getInputNodes().size() == 0 && p.startNode.getOutputNodes().size() != 0) {
+            if (p.startNode.getInputNodes().isEmpty() && !p.startNode.getOutputNodes().isEmpty()) {
                 inNode.add(p.startNode);
             }
 
-            if (p.endNode.getInputNodes().size() != 0 && p.endNode.getOutputNodes().size() == 0) {
+            if (!p.endNode.getInputNodes().isEmpty() && p.endNode.getOutputNodes().isEmpty()) {
                 outNode.add(p.endNode);
             }
         }
@@ -1234,7 +1232,7 @@ public class SubnetCalculator implements Serializable {
                     listOfCycles.add(path);
                     for (Path paralelPath : paths) {
                         if (!(paralelPath.startNode == path.startNode && paralelPath.endNode == path.endNode)) {
-                            if (paralelPath.startNode.getInputNodes().size() == 0 && paralelPath.endNode == path.endNode) {
+                            if (paralelPath.startNode.getInputNodes().isEmpty() && paralelPath.endNode == path.endNode) {
                                 localListOfPaths.remove(paralelPath);
                                 listOfCycles.add(paralelPath);
                             }
@@ -1415,7 +1413,7 @@ public class SubnetCalculator implements Serializable {
         //is cycle add
         if (outNodes.contains(used.get(used.size() - 1).endNode)) {
             for (Path paralelPath : paths) {
-                if (paralelPath.endNode.getOutputNodes().size() == 0) {// && paralelPath.startNode == paralelPath.startNode) { //to check
+                if (paralelPath.endNode.getOutputNodes().isEmpty()) {// && paralelPath.startNode == paralelPath.startNode) { //to check
                     used.add(paralelPath);
                 }
             }
@@ -1496,7 +1494,7 @@ public class SubnetCalculator implements Serializable {
         }
         usedNodes.add(m);
         path.add(m);
-        if (m.getOutputNodes().size() > 0) {
+        if (!m.getOutputNodes().isEmpty()) {
             if (m.getOutputNodes().size() == 1) {
                 calculatePath(m.getOutputNodes().get(0), path);
             }
@@ -1507,7 +1505,7 @@ public class SubnetCalculator implements Serializable {
     private static ArrayList<Path> calculatePaths() {
         ArrayList<Path> listOfPaths = new ArrayList<>();
         for (Node n : allNodes) {
-            if (n.getOutputNodes().size() > 1 || n.getInputNodes().size() == 0 || (n.getInputNodes().size() > 1 && n.getOutputNodes().size() != 0)) {
+            if (n.getOutputNodes().size() > 1 || n.getInputNodes().isEmpty() || (n.getInputNodes().size() > 1 && !n.getOutputNodes().isEmpty())) {
 
                 if (n.getOutputNodes().size() > 1) {
                     usedNodes.add(n);
@@ -1542,7 +1540,8 @@ public class SubnetCalculator implements Serializable {
 
         ArrayList<Node> listOfStartNodes = new ArrayList<>();
         for (Node n : allNodes) {
-            if (!((n.getInputNodes().size() == 1 && n.getOutputNodes().size() == 1) || (n.getInputNodes().size() > 0 && n.getOutputNodes().size() == 0)))//(n.getOutNodes().size()>=1 || n.getInNodes().size()==0)
+            if (!((n.getInputNodes().size() == 1 && n.getOutputNodes().size() == 1)
+                    || (!n.getInputNodes().isEmpty() && n.getOutputNodes().isEmpty())))//(n.getOutNodes().size()>=1 || n.getInNodes().size()==0)
             {
                 listOfStartNodes.add(n);
             }

@@ -367,9 +367,7 @@ public class MauritiusMapPanel extends JPanel {
 		float zoom = getZoom();
 		if(zoom < 50) {
 			baseSize = 10;
-			baseSize *= (100/zoom);
-		} else {
-			//baseSize *= (100/zoom);
+			baseSize = (int)(baseSize * (100/zoom) );
 		}
 		
 		Font oldFont = g2d.getFont();
@@ -509,21 +507,8 @@ public class MauritiusMapPanel extends JPanel {
 			return;
 
 		this.zoom = zoom;
-		
 		this.invalidate();
 		this.repaint();
-		
-		/*
-		Dimension hidden = getOriginSize();
-		int orgHeight = (int) hidden.getHeight();
-		int orgWidth = (int) hidden.getWidth();
-		int h = orgHeight;
-		h = (int) (h * (double)zoom / (double)100);
-		int w = orgWidth;
-		w = (int) (w * (double)zoom / (double)100);
-		this.setSize(w, h);
-		
-		*/
 	}
     
     /**

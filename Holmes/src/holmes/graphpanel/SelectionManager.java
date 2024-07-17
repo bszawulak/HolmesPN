@@ -381,17 +381,10 @@ public class SelectionManager {
 		ArrayList<Place> places = pn.getPlaces();
 		ArrayList<Transition> transitions = pn.getTransitions();
 		ArrayList<Integer> sheetsModified = new ArrayList<>();
-//		ArrayList<ElementLocation> protectedList = new ArrayList<>();
 		boolean functionWarning = false;
 		
 		for (Iterator<ElementLocation> i = this.getSelectedElementLocations().iterator(); i.hasNext();) {
 			ElementLocation el = i.next();
-			
-//			boolean canDo = overlord.subnetsHQ.checkIfExpendable(el);
-//			if(!canDo) {
-//				protectedList.add(el);
-//				continue;
-//			}
 			
 			int sheetID = el.getSheetID();
 			if(!sheetsModified.contains(sheetID))
@@ -444,17 +437,9 @@ public class SelectionManager {
 			}
 			i.remove();
 		}
-		// kasuje wszystkie zaznaczone łuki:
-//		boolean securedDelete = protectedList.size() > 0;
 
 		for (Iterator<Arc> i = this.getSelectedArcs().iterator(); i.hasNext();) {
 			Arc a = i.next();
-			
-//			if(securedDelete) { //nie kasuj łuków EL, który nie został skasowany
-//				if(protectedList.contains(a.getStartLocation()) || protectedList.contains(a.getEndLocation())) {
-//					continue;
-//				}
-//			}
 			
 			this.getGraphPanelArcs().remove(a);
 			a.unlinkElementLocations();
@@ -473,13 +458,6 @@ public class SelectionManager {
 		this.getSelectedElementLocations().clear();
 		this.getGraphPanel().repaint();
 		this.invokeActionListener();
-		
-//		if(securedDelete) {
-//			JOptionPane.showMessageDialog(null,
-//					"Some element connected with subnets could not be deleted. Their corresponding\n"
-//					+ "portal within these subnets must be deleted first.",
-//					"Cannot be removed", JOptionPane.WARNING_MESSAGE);
-//		}
 		
 		if(functionWarning) {
 			overlord.log("Some functions have been affected by the removal operation. Please read reports above this message.", "error", true);
@@ -985,13 +963,7 @@ public class SelectionManager {
 		for (Arc a : this.getGraphPanelArcs()) {
 			if (a.getLocationSheetId() == this.getGraphPanel().getSheetId())
 				if (a.checkIntersection(p)) {
-					//TODO:
 					return a;
-					
-					//if (a.getPairedArc() != null && !a.isMainArcOfPair())
-						//return a.getPairedArc();
-					//else
-						//return a;
 				}
 		}
 		return null;

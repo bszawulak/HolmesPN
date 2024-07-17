@@ -6807,7 +6807,7 @@ public class HolmesDockWindowsTable extends JPanel {
         ArrayList<Integer> freqVector = InvariantsTools.getFrequency(p_invariantsMatrix, false);
         ArrayList<Place> places_tmp = pn.getPlaces();
 
-        if (freqVector == null) {
+        if (freqVector.isEmpty()) {
             JOptionPane.showMessageDialog(null, "P-invariants data unavailable.", "No p-invariants", JOptionPane.INFORMATION_MESSAGE);
         } else {
             for (int i = 0; i < freqVector.size(); i++) {

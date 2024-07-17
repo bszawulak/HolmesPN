@@ -642,34 +642,4 @@ public class DarkMenu extends JMenuBar {
 		aboutItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().createAboutWindow());
 		aboutMenu.add(aboutItem);
 	}
-
-	/**
-	 * Metoda odpowiedzialna za dodanie do menu zakładek w Windows->Project... nazwy nowo utworzonego arkusza.
-	 * @param dockableItem Dockable - obiekt menu do osadzenia.
-	 */
-	/*
-	public void addSheetItem(Dockable dockableItem) {
-		dockables.add(dockableItem);
-		DockableMenuItem menuItem = new DockableMenuItem(dockableItem, null);
-		sheetItems.add(menuItem);
-		sheetsMenu.add(menuItem);
-	}
-	*/
-
-	/**
-	 * Metoda odpowiedzialna za usuwanie z menu Windows->Project wpisu o arkuszu.
-	 * @param dockableItem Dockable - obiekt menu do usunięcia
-	 */
-	/*
-	public void deleteSheetItem(Dockable dockableItem) {
-		int index = dockables.indexOf(dockableItem);
-		if(index == -1)
-			return;
-		
-		dockables.remove(index);
-		sheetItems.remove(index);
-		if (index > 0)
-			sheetsMenu.remove(index);
-	}
-	*/
 }
