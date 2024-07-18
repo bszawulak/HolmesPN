@@ -139,16 +139,10 @@ public class OvalButton extends JButton implements MouseListener, MouseMotionLis
 
     /**
      * Set the thickness of the border on the button. Set to 0 if you do not want any border.
-     *
      * @param borderThickness Thickness in pixels.
      */
     public void setBorderThickness(int borderThickness) {
-        if (borderThickness < 0) {
-            this.borderThickness = 0;
-        }
-        else {
-            this.borderThickness = borderThickness;
-        }
+        this.borderThickness = Math.max(borderThickness, 0);
     }
 
     /**
@@ -248,12 +242,12 @@ public class OvalButton extends JButton implements MouseListener, MouseMotionLis
         double y = p.y;
 
         // Calculate centre of the ellipse.
-        double s1 = getLocationOnScreen().x + getSize().width / 2;
-        double s2 = getLocationOnScreen().y + getSize().height / 2;
+        double s1 = getLocationOnScreen().x + (double) getSize().width / 2;
+        double s2 = getLocationOnScreen().y + (double) getSize().height / 2;
 
         // Calculate semi-major and semi-minor axis
-        double a = getSize().width / 2;
-        double b = getSize().height / 2;
+        double a = (double) getSize().width / 2;
+        double b = (double) getSize().height / 2;
 
         // Check if the given point is withing the specified ellipse:
         return ((((x - s1)*(x - s1)) / (a*a)) + (((y - s2)*(y - s2)) / (b*b))) <= 1;
@@ -270,16 +264,16 @@ public class OvalButton extends JButton implements MouseListener, MouseMotionLis
         double y = p.y;
 
         if (orientation == VERTICAL) {
-            Double r = 0.5 * radius * getSize().height;
+            double r = 0.5 * radius * getSize().height;
             double buttonX = getLocationOnScreen().x;
             double buttonY = getLocationOnScreen().y;
             if (y < buttonY + r) {
                 // check if in upper ellipse
 
                 // center of ellipse, semi-major and semi-minor axis
-                double s1 = buttonX + getSize().width / 2;
+                double s1 = buttonX + (double) getSize().width / 2;
                 double s2 = buttonY + r;
-                double a = getSize().width / 2;
+                double a = (double) getSize().width / 2;
                 double b = r;
 
                 return ((((x - s1)*(x - s1)) / (a*a)) + (((y - s2)*(y - s2)) / (b*b))) <= 1;
@@ -288,9 +282,9 @@ public class OvalButton extends JButton implements MouseListener, MouseMotionLis
                 // check if in lower ellipse
 
                 // center of ellipse, semi-major and semi-minor axis
-                double s1 = buttonX + getSize().width / 2;
+                double s1 = buttonX + (double) getSize().width / 2;
                 double s2 = buttonY + getSize().height - r;
-                double a = getSize().width / 2;
+                double a = (double) getSize().width / 2;
                 double b = r;
 
                 return ((((x - s1)*(x - s1)) / (a*a)) + (((y - s2)*(y - s2)) / (b*b))) <= 1;
@@ -300,7 +294,7 @@ public class OvalButton extends JButton implements MouseListener, MouseMotionLis
             }
         }
         else {
-            Double r = 0.5 * radius * getSize().width;
+            double r = 0.5 * radius * getSize().width;
             double buttonX = getLocationOnScreen().x;
             double buttonY = getLocationOnScreen().y;
             if (x < buttonX + r) {
@@ -308,9 +302,9 @@ public class OvalButton extends JButton implements MouseListener, MouseMotionLis
 
                 // center of ellipse, semi-major and semi-minor axis
                 double s1 = buttonX + r;
-                double s2 = buttonY + getSize().height / 2;
+                double s2 = buttonY + (double) getSize().height / 2;
                 double a = r;
-                double b = getSize().height / 2;
+                double b = (double) getSize().height / 2;
 
                 return ((((x - s1)*(x - s1)) / (a*a)) + (((y - s2)*(y - s2)) / (b*b))) <= 1;
             }
@@ -319,9 +313,9 @@ public class OvalButton extends JButton implements MouseListener, MouseMotionLis
 
                 // center of ellipse, semi-major and semi-minor axis
                 double s1 = buttonX + getSize().width - r;
-                double s2 = buttonY + getSize().height / 2;
+                double s2 = buttonY + (double) getSize().height / 2;
                 double a = r;
-                double b = getSize().height / 2;
+                double b = (double) getSize().height / 2;
 
                 return ((((x - s1)*(x - s1)) / (a*a)) + (((y - s2)*(y - s2)) / (b*b))) <= 1;
             }

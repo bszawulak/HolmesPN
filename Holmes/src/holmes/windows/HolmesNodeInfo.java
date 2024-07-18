@@ -92,9 +92,9 @@ public class HolmesNodeInfo extends JFrame {
 		add(main);
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("General info", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializePlaceInfo(), "General information about node");
+		tabbedPane.addTab("Node data", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializePlaceInfo(), "General information about node");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("Invariants data", Tools.getResIcon16("/icons/nodeViewer/tab2.png"), initializePlaceInvPanel(), "Invariants going through node");
+		tabbedPane.addTab("Analysis", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializePlaceSecondPanel(), "Analysis panel");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 		
 		main.add(tabbedPane);
@@ -121,9 +121,9 @@ public class HolmesNodeInfo extends JFrame {
 		add(main);
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("General info", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializeTransitionInfo(), "General information about node");
+		tabbedPane.addTab("Node data", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializeTransitionInfo(), "General information about node");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("Invariants data", Tools.getResIcon16("/icons/nodeViewer/tab2.png"), initializeTransInvPanel(), "Invariants going through node");
+		tabbedPane.addTab("Analysis", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializeTransSecondPanel(), "Analysis panel");
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
 		main.add(tabbedPane);
@@ -345,36 +345,64 @@ public class HolmesNodeInfo extends JFrame {
 		
 		return mainInfoPanel;
 	}
-	
-	//TODO:
-	private JPanel initializePlaceInvPanel() {
-		JPanel panel = new JPanel(null);
-		panel.setBounds(0, 0, 600, 480);
+
+	private JPanel initializePlaceSecondPanel() {
+		JPanel secondaryTabMainPanel = new JPanel(null);
+		secondaryTabMainPanel.setBounds(0, 0, 600, 480);
 		
-		int posX = 20;
-		int posY = 20;
-		
+		int mPanelX = 0;
+		int mPanelY = 0;
+
+		//panel informacji podstawowych
+		JPanel analP_firstPanel = new JPanel(null);
+		analP_firstPanel.setBounds(mPanelX, mPanelY, secondaryTabMainPanel.getWidth()-20, 200);
+		analP_firstPanel.setBorder(BorderFactory.createTitledBorder("XTPN analysis:"));
+
+		int subPanelX = 10;
+		int subPanelY = 20;
+
+		//************************* NEWLINE *************************
+
+		JLabel labelID = new JLabel("ID:");
+		labelID.setBounds(subPanelX, subPanelY, 20, 20);
+		analP_firstPanel.add(labelID);
+
+		int id = overlord.getWorkspace().getProject().getPlaces().indexOf(place);
+		JFormattedTextField idTextBox = new JFormattedTextField(id);
+		idTextBox.setBounds(subPanelX+20, subPanelY, 30, 20);
+		idTextBox.setEditable(false);
+		analP_firstPanel.add(idTextBox);
+
+		secondaryTabMainPanel.add(analP_firstPanel);
+
+
+		JPanel analP_secondPanel = new JPanel(null);
+		analP_secondPanel.setBounds(mPanelX, analP_firstPanel.getHeight(), mainInfoPanel.getWidth()-20, 130);
+		analP_secondPanel.setBorder(BorderFactory.createTitledBorder("Analysis"));
+		subPanelX = 10;
+		subPanelY = 20;
+
 		final JProgressBar progressBar = new JProgressBar();
-		
-		JButton tInvButton = new JButton("Get t-inv list");
-		tInvButton.setBounds(posX, posY, 140, 32);
+		JButton tInvButton = new JButton("t-inv list");
+		tInvButton.setBounds(subPanelX, subPanelY, 120, 26);
 		tInvButton.setMargin(new Insets(0, 0, 0, 0));
 		tInvButton.setIcon(Tools.getResIcon32("/icons/nodeViewer/iconInv.png"));
 		tInvButton.setToolTipText("Show information about t-invariants going through place");
 		tInvButton.addActionListener(actionEvent -> action.showTinvForPlace(place, progressBar));
-		panel.add(tInvButton);
-		
-		progressBar.setBounds(posX, posY+40, 500, 40);
+		analP_secondPanel.add(tInvButton);
+
+		progressBar.setBounds(subPanelX+130, subPanelY, 400, 30);
 		progressBar.setMaximum(100);
 		progressBar.setMinimum(0);
 	    progressBar.setValue(0);
 	    progressBar.setStringPainted(true);
 	    Border border = BorderFactory.createTitledBorder("Progress");
 	    progressBar.setBorder(border);
+		analP_secondPanel.add(progressBar);
+
+		secondaryTabMainPanel.add(analP_secondPanel);
 		
-	    panel.add(progressBar);
-		
-		return panel;
+		return secondaryTabMainPanel;
 	}
 
 	/**
@@ -610,42 +638,70 @@ public class HolmesNodeInfo extends JFrame {
 		mainInfoPanel.add(chartButtonPanel);
 
 		try {
-			fillTransitionDynamicData(avgFiredTextBox, chartMainPanel, chartButtonPanel);
+			if(!transition.getOutputPlaces().isEmpty() || !transition.getInputPlaces().isEmpty()) {
+				fillTransitionDynamicData(avgFiredTextBox, chartMainPanel, chartButtonPanel);
+			}
 		} catch (Exception e) {
 			overlord.log("Error Ex: "+e.getMessage(), "error", true);
 		}
 		return mainInfoPanel;
 	}
 	
-	private JPanel initializeTransInvPanel() {
-		JPanel panel = new JPanel(null);
-		panel.setBounds(0, 0, 600, 480);
-		
-		int posX = 20;
-		int posY = 20;
-		
+	private JPanel initializeTransSecondPanel() {
+		JPanel secondaryTabMainPanel = new JPanel(null);
+		secondaryTabMainPanel.setBounds(0, 0, 600, 480);
+
+		int mPanelX = 0;
+		int mPanelY = 0;
+
+		//panel informacji podstawowych
+		JPanel analT_firstPanel = new JPanel(null);
+		analT_firstPanel.setBounds(mPanelX, mPanelY, secondaryTabMainPanel.getWidth()-20, 130);
+		analT_firstPanel.setBorder(BorderFactory.createTitledBorder("XTPN analysis:"));
+		int subPanelX = 10;
+		int subPanelY = 20;
+
+		JLabel labelID = new JLabel("ID:");
+		labelID.setBounds(subPanelX, subPanelY, 20, 20);
+		analT_firstPanel.add(labelID);
+
+		int id = overlord.getWorkspace().getProject().getPlaces().indexOf(transition);
+		JFormattedTextField idTextBox = new JFormattedTextField(id);
+		idTextBox.setBounds(subPanelX+20, subPanelY, 30, 20);
+		idTextBox.setEditable(false);
+		analT_firstPanel.add(idTextBox);
+
+		secondaryTabMainPanel.add(analT_firstPanel);
+
+
+		JPanel analT_secondPanel = new JPanel(null);
+		analT_secondPanel.setBounds(mPanelX, analT_firstPanel.getHeight(), secondaryTabMainPanel.getWidth()-20, 130);
+		analT_secondPanel.setBorder(BorderFactory.createTitledBorder("Analysis:"));
+		subPanelX = 10;
+		subPanelY = 20;
+
 		final JProgressBar progressBar = new JProgressBar();
-		
-		JButton tInvButton = new JButton("Get t-inv list");
-		tInvButton.setBounds(posX, posY, 140, 32);
+		JButton tInvButton = new JButton("t-inv list");
+		tInvButton.setBounds(subPanelX, subPanelY, 120, 26);
 		tInvButton.setMargin(new Insets(0, 0, 0, 0));
 		tInvButton.setIcon(Tools.getResIcon32("/icons/nodeViewer/iconInv.png"));
 		tInvButton.setToolTipText("Show information about t-invariants going through transition");
 		tInvButton.addActionListener(actionEvent -> action.showTinvForTransition(transition, progressBar));
-		panel.add(tInvButton);
-		
-		
-		progressBar.setBounds(posX, posY+40, 500, 40);
+		analT_secondPanel.add(tInvButton);
+
+		progressBar.setBounds(subPanelX+130, subPanelY, 400, 30);
 		progressBar.setMaximum(100);
 		progressBar.setMinimum(0);
 	    progressBar.setValue(0);
 	    progressBar.setStringPainted(true);
 	    Border border = BorderFactory.createTitledBorder("Progress");
 	    progressBar.setBorder(border);
-		
-	    panel.add(progressBar);
+		analT_secondPanel.add(progressBar);
+
+		secondaryTabMainPanel.add(analT_secondPanel);
+
 	    
-		return panel;
+		return secondaryTabMainPanel;
 	}
 
 	/**
@@ -787,11 +843,10 @@ public class HolmesNodeInfo extends JFrame {
 	 * @param avgFiredTextBox JFormattedTextField - pole z wartością procentową
 	 * @param chartMainPanel JPanel - panel wykresu
 	 */
-	private void fillTransitionDynamicData(JFormattedTextField avgFiredTextBox, JPanel chartMainPanel,
-			JPanel chartButtonPanel) {
+	private void fillTransitionDynamicData(JFormattedTextField avgFiredTextBox, JPanel chartMainPanel, JPanel chartButtonPanel) {
 		if(!mainSimulatorActive) {
 			ArrayList<Integer> dataVector = acquireNewTransitionData();
-			if(dataVector != null) {
+			if(!dataVector.isEmpty()) {
 				int sum = dataVector.get(dataVector.size()-2);
 	    		int steps = dataVector.get(dataVector.size()-1);
 	    		double avgFired = sum;
@@ -844,8 +899,6 @@ public class HolmesNodeInfo extends JFrame {
 					overlord.log("Unable to gather "+repeated+" data vectors (places) of same size. "
 							+ "State simulator cannot proceed "+simSteps+ " steps. First pass had: "+ dataVector.size() +" steps.", "error", true);
 					break;
-				} else {
-					//continue;
 				}
 			} else { //ok, taki sam lub dłuższy
 				rep_succeed++;
