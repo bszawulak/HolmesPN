@@ -12,24 +12,13 @@ import java.io.Serial;
 import java.text.ParseException;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.text.DefaultFormatter;
 
+import holmes.analyse.XTPN.AlgorithmsXTPN;
 import holmes.graphpanel.GraphPanel;
+import holmes.petrinet.elements.*;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -39,11 +28,6 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.MetaNode;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.StateSimulator;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.petrinet.simulators.SimulatorGlobals;
@@ -74,6 +58,9 @@ public class HolmesNodeInfo extends JFrame {
 	private JFormattedTextField avgFiredTextBox;
 	
 	private SimulatorGlobals.SimNetType choosenNetType = SimulatorGlobals.SimNetType.BASIC;
+
+	//XTPN second panel analysis:
+	JTextArea placeSecondPanelResults;
 	
 	/**
 	 * Konstruktor do tworzenia okna właściwości miejsca.
@@ -372,6 +359,29 @@ public class HolmesNodeInfo extends JFrame {
 		idTextBox.setBounds(subPanelX+20, subPanelY, 30, 20);
 		idTextBox.setEditable(false);
 		analP_firstPanel.add(idTextBox);
+
+		subPanelY+=30;
+
+		JButton button1 = new JButton("Test");
+		button1.setBounds(subPanelX, subPanelY, 100, 32);
+		button1.setMargin(new Insets(0, 0, 0, 0));
+		button1.setIcon(Tools.getResIcon32("/icons/nodeViewer/iconInv.png"));
+		button1.setToolTipText("Show information about t-invariants going through place");
+		button1.addActionListener(actionEvent -> {
+
+		});
+		analP_firstPanel.add(button1);
+
+		subPanelY+=40;
+
+		placeSecondPanelResults = new JTextArea();
+		placeSecondPanelResults.setLineWrap(true);
+		JPanel CreationPanel = new JPanel();
+		CreationPanel.setLayout(new BorderLayout());
+		CreationPanel.add(new JScrollPane(placeSecondPanelResults), BorderLayout.CENTER);
+		CreationPanel.setBounds(subPanelX, subPanelY, 400, 40);
+		analP_firstPanel.add(CreationPanel);
+
 
 		secondaryTabMainPanel.add(analP_firstPanel);
 

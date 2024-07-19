@@ -1,5 +1,6 @@
 package holmes.windows.xtpn;
 
+import holmes.analyse.XTPN.AlgorithmsXTPN;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.dockwindows.SharedActionsXTPN;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
@@ -18,6 +19,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.text.DefaultFormatter;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
@@ -38,6 +40,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private boolean doNotUpdate = false;
 
     private JPanel mainInfoPanel;
+    private JPanel secondTabPanel;
     private JFrame parentFrame;
     public boolean mainSimulatorActive = false;
     private XYSeriesCollection dynamicsSeriesDataSet = null;
@@ -108,6 +111,10 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
     SimulatorGlobals ownSettings = new SimulatorGlobals();
 
+    //XTPN second panel analysis:
+    JTextArea placeSecondPanelResults;
+    JTextArea transSecondPanelResults;
+
     /**
      * Konstruktor do tworzenia okna właściwości miejsca.
      * @param place PlaceXTPN - obiekt miejsca
@@ -127,9 +134,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
         add(main);
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("XTPN Place Info", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializePlaceInfo(), "General information about XTPN place");
+        tabbedPane.addTab("XTPN place data", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializePlaceInfo(), "General information about XTPN place");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-        tabbedPane.addTab("Additional Data", Tools.getResIcon16("/icons/nodeViewer/tab3.png"), initializePlaceInvPanel(), "Additional data");
+        tabbedPane.addTab("Analysis", Tools.getResIcon16("/icons/nodeViewer/tab3.png"), initializePlaceSecondPanel(), "Additional data");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
         tabbedPane.setBackgroundAt(0, Color.WHITE);
@@ -158,9 +165,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
         add(main);
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("XTPN Transition Info", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializeTransitionInfo(), "General information about XTPN transition");
+        tabbedPane.addTab("XTPN transition data", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializeTransitionInfo(), "General information about XTPN transition");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-        tabbedPane.addTab("Additional data", Tools.getResIcon16("/icons/nodeViewer/tab3.png"), initializeTransInvPanel(), "Additional data");
+        tabbedPane.addTab("Analysis", Tools.getResIcon16("/icons/nodeViewer/tab3.png"), initializeTransSecondPanel(), "Analysis panel");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
         tabbedPane.setBackgroundAt(0, Color.WHITE);
@@ -526,15 +533,82 @@ public class HolmesNodeInfoXTPN extends JFrame {
         return mainInfoPanel;
     }
 
-    private JPanel initializePlaceInvPanel() {
-        JPanel panel = new JPanel(null);
-        panel.setBounds(0, 0, 600, 470);
-        panel.setBackground(Color.WHITE);
+    private JPanel initializePlaceSecondPanel() {
+        secondTabPanel = new JPanel(null);
+        secondTabPanel.setBounds(0, 0, 800, 590);
+        secondTabPanel.setBackground(Color.WHITE);
 
-        //int posX = 20;
-        //int posY = 20;
-        //panel.add(progressBar);
-        return panel;
+        int mPanelX = 0;
+        int mPanelY = 0;
+
+        //panel informacji podstawowych
+        JPanel analP_firstPanel = new JPanel(null);
+        analP_firstPanel.setBackground(Color.WHITE);
+        analP_firstPanel.setBounds(mPanelX, mPanelY, secondTabPanel.getWidth()-24, 320);
+        analP_firstPanel.setBorder(BorderFactory.createTitledBorder("XTPN analysis:"));
+
+        int subPanelX = 10;
+        int subPanelY = 20;
+
+        //************************* NEWLINE *************************
+
+        //JLabel labelID = new JLabel("ID:");
+        //labelID.setBounds(subPanelX, subPanelY, 20, 20);
+        //analP_firstPanel.add(labelID);
+        //JFormattedTextField idTextBox = new JFormattedTextField(id);
+        //idTextBox.setBounds(subPanelX+20, subPanelY, 30, 20);
+        //idTextBox.setEditable(false);
+        //analP_firstPanel.add(idTextBox);
+
+        int id = overlord.getWorkspace().getProject().getPlaces().indexOf(thePlace);
+        HolmesRoundedButton checkKboundButton = new HolmesRoundedButton("<html>Check boundedness</html>"
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+        checkKboundButton.setMargin(new Insets(0, 0, 0, 0));
+        checkKboundButton.setBounds(subPanelX, subPanelY, 130, 32);
+        checkKboundButton.addActionListener(actionEvent -> {
+            ArrayList<Integer> result = AlgorithmsXTPN.getTokensPerPlace(thePlace, 100, -1, false);
+            placeSecondPanelResults.setText("");
+            placeSecondPanelResults.append("Place: "+thePlace.getName()+"\n");
+            placeSecondPanelResults.append("Tokens per place: "+result.get(0).toString()+"\n");
+        });
+        analP_firstPanel.add(checkKboundButton);
+
+        subPanelY+=40;
+
+        placeSecondPanelResults = new JTextArea();
+        placeSecondPanelResults.setLineWrap(true);
+        JPanel CreationPanel = new JPanel();
+        CreationPanel.setLayout(new BorderLayout());
+        CreationPanel.add(new JScrollPane(placeSecondPanelResults), BorderLayout.CENTER);
+        CreationPanel.setBounds(subPanelX, subPanelY, 755, 120);
+        analP_firstPanel.add(CreationPanel);
+
+
+        secondTabPanel.add(analP_firstPanel);
+
+
+        JPanel analP_secondPanel = new JPanel(null);
+        analP_secondPanel.setBackground(Color.WHITE);
+        analP_secondPanel.setBounds(mPanelX, analP_firstPanel.getHeight(), secondTabPanel.getWidth()-24, 200);
+        analP_secondPanel.setBorder(BorderFactory.createTitledBorder("Analysis"));
+        subPanelX = 10;
+        subPanelY = 20;
+
+        final JProgressBar progressBar = new JProgressBar();
+
+        progressBar.setBounds(subPanelX, subPanelY, 750, 40);
+        progressBar.setBackground(Color.WHITE);
+        progressBar.setMaximum(100);
+        progressBar.setMinimum(0);
+        progressBar.setValue(0);
+        progressBar.setStringPainted(true);
+        Border border = BorderFactory.createTitledBorder("Calculations progress");
+        progressBar.setBorder(border);
+        analP_secondPanel.add(progressBar);
+
+        secondTabPanel.add(analP_secondPanel);
+
+        return secondTabPanel;
     }
 
     /**
@@ -769,11 +843,82 @@ public class HolmesNodeInfoXTPN extends JFrame {
     //********************************************************************************************
     //********************************************************************************************
 
-    private JPanel initializeTransInvPanel() {
-        JPanel panel = new JPanel(null);
-        panel.setBounds(0, 0, 600, 480);
-        panel.setBackground(Color.WHITE);
-        return panel;
+    private JPanel initializeTransSecondPanel() {
+        secondTabPanel = new JPanel(null);
+        secondTabPanel.setBounds(0, 0, 800, 590);
+        secondTabPanel.setBackground(Color.WHITE);
+
+        int mPanelX = 0;
+        int mPanelY = 0;
+
+        //panel informacji podstawowych
+        JPanel analP_firstPanel = new JPanel(null);
+        analP_firstPanel.setBackground(Color.WHITE);
+        analP_firstPanel.setBounds(mPanelX, mPanelY, secondTabPanel.getWidth()-24, 320);
+        analP_firstPanel.setBorder(BorderFactory.createTitledBorder("XTPN analysis:"));
+
+        int subPanelX = 10;
+        int subPanelY = 20;
+
+        //************************* NEWLINE *************************
+
+        //JLabel labelID = new JLabel("ID:");
+        //labelID.setBounds(subPanelX, subPanelY, 20, 20);
+        //analP_firstPanel.add(labelID);
+        //JFormattedTextField idTextBox = new JFormattedTextField(id);
+        //idTextBox.setBounds(subPanelX+20, subPanelY, 30, 20);
+        //idTextBox.setEditable(false);
+        //analP_firstPanel.add(idTextBox);
+
+        int id = overlord.getWorkspace().getProject().getTransitions().indexOf(theTransition);
+        HolmesRoundedButton checkKboundButton = new HolmesRoundedButton("<html>Check lifeness</html>"
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+        checkKboundButton.setMargin(new Insets(0, 0, 0, 0));
+        checkKboundButton.setBounds(subPanelX, subPanelY, 130, 32);
+        checkKboundButton.addActionListener(actionEvent -> {
+            //ArrayList<Integer> result = AlgorithmsXTPN.getTokensPerPlace(thePlace, 100, -1, false);
+            //placeSecondPanelResults.setText("");
+            //placeSecondPanelResults.append("Place: "+thePlace.getName()+"\n");
+            //placeSecondPanelResults.append("Tokens per place: "+result.get(0).toString()+"\n");
+        });
+        analP_firstPanel.add(checkKboundButton);
+
+        subPanelY+=40;
+
+        transSecondPanelResults = new JTextArea();
+        transSecondPanelResults.setLineWrap(true);
+        JPanel CreationPanel = new JPanel();
+        CreationPanel.setLayout(new BorderLayout());
+        CreationPanel.add(new JScrollPane(transSecondPanelResults), BorderLayout.CENTER);
+        CreationPanel.setBounds(subPanelX, subPanelY, 755, 120);
+        analP_firstPanel.add(CreationPanel);
+
+
+        secondTabPanel.add(analP_firstPanel);
+
+
+        JPanel analP_secondPanel = new JPanel(null);
+        analP_secondPanel.setBackground(Color.WHITE);
+        analP_secondPanel.setBounds(mPanelX, analP_firstPanel.getHeight(), secondTabPanel.getWidth()-24, 200);
+        analP_secondPanel.setBorder(BorderFactory.createTitledBorder("Analysis"));
+        subPanelX = 10;
+        subPanelY = 20;
+
+        final JProgressBar progressBar = new JProgressBar();
+
+        progressBar.setBounds(subPanelX, subPanelY, 750, 40);
+        progressBar.setBackground(Color.WHITE);
+        progressBar.setMaximum(100);
+        progressBar.setMinimum(0);
+        progressBar.setValue(0);
+        progressBar.setStringPainted(true);
+        Border border = BorderFactory.createTitledBorder("Calculations progress");
+        progressBar.setBorder(border);
+        analP_secondPanel.add(progressBar);
+
+        secondTabPanel.add(analP_secondPanel);
+
+        return secondTabPanel;
     }
 
     /**

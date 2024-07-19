@@ -11,6 +11,8 @@ public class TransitionNanoXTPN {
     public int alphaU_N;
     public int betaL_N;
     public int betaU_N;
+    public int tauAlphaLimit;
+    public int tauBetaLimit;
 
     public double tauAlpha;
     public double tauBeta;
