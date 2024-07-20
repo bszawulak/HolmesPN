@@ -51,6 +51,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private static final long serialVersionUID = -817072868916096442L;
 	// Static fields.
 	private static GUIManager guiManager;
+	private static LanguageManager lang;
 	public boolean debug = false;
 	public Random randGen = new Random(System.currentTimeMillis());
 	public GUIOperations io;
@@ -159,9 +160,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		} catch (Exception e) {
 			// If Nimbus is not available, you can set the GUI to another look and feel.
 		}
-
 		 */
-
 		//JavaDocking wysypuje się jeśli numer wersji nie posiada przynajmniej jednej .
 		//Piękny był to fuckup, nie zapomnę go nigdy [MR].
 		// [2024]Już nie ważne, ale zostawmy na pamiątkę.
@@ -169,6 +168,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//	System.setProperty("java.version",System.getProperty("java.version")+".0");
 
 		guiManager = this;
+		createHiddenConsole(); // okno konsoli logowania zdarzeń
+
+		lang = new LanguageManager();
+
 		io = new GUIOperations(this); //obiekt klasy operacji głównych
 		tex = new TexExporter(); //obiekt zarządzający eksportem tabel do formatu latex
 		reset = new GUIReset(); //obiekt odpowiadający za resetowanie danych / kasowanie / czyszczenie
@@ -182,18 +185,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 		} catch (Exception e ) {
 			System.out.println(e.getMessage());
 		}
-		
-		//frame.getContentPane().add(this);
+
 		frame.addComponentListener(this);
-		//getFrame().getContentPane().add(this);
 		getFrame().addComponentListener(this);
-		
-		createHiddenConsole(); // okno konsoli logowania zdarzeń
-		
+
 		settingsManager = new SettingsManager();
 		settingsManager.loadSettings();
 		frame.setTitle("Holmes "+settingsManager.getValue("holmes_version"));
-		
+		lang.setLanguage(settingsManager.getValue("selected_language"));
 		
 		createClusterWindow(); // okno tabeli klastrów
 		createNetPropertiesWindow(); // okno właściwości sieci
@@ -302,21 +301,21 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		analysisTabs = new JTabbedPane();
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getQuickSimBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(0, new JLabel("QuickSim"));
+		analysisTabs.setTabComponentAt(0, new JLabel(lang.getText("GUIM_quicksimTabName")));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getT_invBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(1, new JLabel("T-Inv"));
+		analysisTabs.setTabComponentAt(1, new JLabel(lang.getText("GUIM_tinvTabName")));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getP_invBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(2, new JLabel("P-Inv"));
+		analysisTabs.setTabComponentAt(2, new JLabel(lang.getText("GUIM_pinvTabName")));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getMctBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(3, new JLabel("MCT"));
+		analysisTabs.setTabComponentAt(3, new JLabel(lang.getText("GUIM_mctTabName")));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getMCSBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(4, new JLabel("MCS"));
+		analysisTabs.setTabComponentAt(4, new JLabel(lang.getText("GUIM_mcsTabName")));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getKnockoutBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(5, new JLabel("Knockout"));
+		analysisTabs.setTabComponentAt(5, new JLabel(lang.getText("GUIM_KnockoutTabName")));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getFixBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(6, new JLabel("NetFix"));
+		analysisTabs.setTabComponentAt(6, new JLabel(lang.getText("GUIM_fixTabName")));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getClusterSelectionBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(7, new JLabel("Clusters"));
+		analysisTabs.setTabComponentAt(7, new JLabel(lang.getText("GUIM_clustersTabName")));
 		analysisTabs.setPreferredSize(new Dimension(200,200));
 
 		JSplitPane simAndworkspacePanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftCentralPanel , getTabbedWorkspace());
@@ -344,14 +343,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 		    	boolean status = GUIManager.getDefaultGUIManager().getNetChangeStatus();
 				if(status) {
-					Object[] options = {"Exit", "Save and exit", "Cancel",};
+					Object[] options = {lang.getText("exit"), lang.getText("saveAndExit"), lang.getText("cancel"),};
 					int n = JOptionPane.showOptionDialog(null,
-									"Net or its data have been changed since last save. Exit, save&exit or do not exit now?",
-									"Project has been modified", JOptionPane.YES_NO_OPTION,
+									lang.getText("GUIM_closingQuestion001"),
+									lang.getText("GUIM_closeWindowTitle001"), JOptionPane.YES_NO_OPTION,
 									JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 					//cancel
 					if (n == 0) {
-						log("Exiting program","text",true);
+						log(lang.getText("LOGentry00001"),"text",true);
 						windowConsole.saveLogToFile(null);
 						System.exit(0);
 					} else if (n == 1) { //try to save
@@ -359,14 +358,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 						if(!savingStatus) {
 							return;
 						} else {
-							log("Exiting program","text",true);
+							log(lang.getText("LOGentry00001"),"text",true);
 			            	windowConsole.saveLogToFile(null);
 			            	System.exit(0);
 						}
 					}
-				} else if (JOptionPane.showConfirmDialog(frame, "Are you sure you want to close the program?", "Exit?", 
+				} else if (JOptionPane.showConfirmDialog(frame, lang.getText("GUIM_closingQuestion002"), lang.getText("exit")+"?",
 		            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-		        		log("Exiting program","text",true);
+		        		log(lang.getText("LOGentry00001"),"text",true);
 		            	windowConsole.saveLogToFile(null);
 		            	System.exit(0);
 		        	}
@@ -419,8 +418,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 			//log("Something wrong with the INA tools directory.", "warning", true);
 			if(!checkFileINA0.exists()) {
 				checkFileINA0.mkdirs();
-				logNoEnter("Tools directory does not exist: ", "warning", true);
-				log("fixed", "italic", false);
+				logNoEnter(lang.getText("LOGentry00002"), "warning", true);
+				log(lang.getText("fixed"), "italic", false);
 			}
 			
 			if(!checkFileINA2.exists() || !(checkFileINA2.length() == 80)) { //COMMAND.ina
@@ -431,12 +430,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 					pw.print(settingsManager.getValue("ina_COMMAND3")+"\r");
 					pw.print(settingsManager.getValue("ina_COMMAND4"));
 					pw.close();
-					logNoEnter("File COMMAND.ina does not exist or is corrupted. ", "warning", true);
-					log("Fixed", "italic", false);
+					logNoEnter(lang.getText("LOGentry00003"), "warning", true);
+					log(lang.getText("fixed"), "italic", false);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Unable to recreate COMMAND.ina.","Error - COMMAND.ina", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("GUI_inaProblem001"),lang.getText("GUI_inaProblem002"), JOptionPane.ERROR_MESSAGE);
 					inaReady = false;
-					log("Unable to recreate COMMAND.ina. Invariants generator will work in Holmes mode only.", "warning", true);
+					log(lang.getText("LOGentry00004"), "warning", true);
 				}
 			} 
 			
@@ -447,12 +446,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 					pw.print(settingsManager.getValue("ina_COMMAND2p")+"\r");
 					pw.print(settingsManager.getValue("ina_COMMAND4"));
 					pw.close();
-					logNoEnter("File COMMANDp.ina does not exist or is corrupted. ", "warning", true);
+					logNoEnter(lang.getText("LOGentry00005"), "warning", true);
 					log("Fixed", "italic", false);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Unable to recreate COMMANDp.ina.","Error - COMMANDp.ina", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("GUI_inaProblem001"),lang.getText("GUI_inaProblem003"), JOptionPane.ERROR_MESSAGE);
 					inaReady = false;
-					log("Unable to recreate COMMANDp.ina. Invariants generator will work in Holmes mode only.", "warning", true);
+					log(lang.getText("LOGentry00004"), "warning", true);
 				}
 			} 
 			
@@ -461,14 +460,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 					PrintWriter pw = new PrintWriter(checkFileINA3.getPath());
 					pw.print(settingsManager.getValue("ina_bat"));
 					pw.close();
-					logNoEnter("File ina.bat did not exist or was corrupted: ", "warning", true);
-					log("fixed", "italic", false);
+					logNoEnter(lang.getText("LOGentry00006"), "warning", true);
+					log(lang.getText("fixed"), "italic", false);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Unable to recreate ina.bat. This is a critical error, possible write"
-							+ " protection issues in program directory. Invariants generation using INAwin32 will"
-							+ " most likely fail.","Critical error - writing", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("GUI_inaProblem004"),lang.getText("GUI_inaProblem005"), JOptionPane.ERROR_MESSAGE);
 					inaReady = false;
-					log("Critical error, unable to recreate ina.bat file. Invariants generator will not work.", "warning", true);
+					log(lang.getText("LOGentry00007"), "warning", true);
 				}
 			} 
 			
@@ -496,24 +493,24 @@ public class GUIManager extends JPanel implements ComponentListener {
 		File rF = new File(Rpath);
 		if(!rF.exists()) {
 			rReady = false;
-			log("Invalid path ("+Rpath+") to Rscript executable file.", "warning", true);
+			log(lang.getText("LOGentry00008R")+Rpath+lang.getText("LOGentry00009R"), "warning", true);
 			if(!forceCheck) { //jeśli nie jest wymuszone sprawdzanie, sprawdź status settings
 				if(getSettingsManager().getValue("programAskForRonStartup").equals("0"))
 					return;
 			}
 
-			Object[] options = {"Manually locate Rscript.exe", "R not installed",};
+			Object[] options = {lang.getText("GUI_RscriptProblem001"), lang.getText("GUI_RscriptProblem002"),};
 			int n = JOptionPane.showOptionDialog(null,
-					"Rscript.exe missing in path "+Rpath,
-					"Missing executable", JOptionPane.YES_NO_OPTION,
+					lang.getText("GUI_RscriptProblem003")+Rpath,
+					lang.getText("GUI_RscriptProblem004"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 			if (n == 0) {
 				FileFilter[] filters = new FileFilter[1];
 				filters[0] = new ExtensionFileFilter(".exe - Rscript",  new String[] { "EXE" });
-				String selectedFile = Tools.selectFileDialog("", filters, "Select Rscript.exe", 
-						"Please select Rscript exe, usually located in R/Rx.x.x/bin directory.", "");
+				String selectedFile = Tools.selectFileDialog("", filters, lang.getText("GUI_RscriptButton001"),
+						lang.getText("GUI_RscriptButton002tip"), "");
 				if(selectedFile.isEmpty()) {
-					log("Rscript executable file inaccessible. Some features (clusters operations) will be disabled.", "error", true);
+					log(lang.getText("LOGentry00010R"), "error", true);
 				} else {
 					if(!selectedFile.contains("x64")) { //jeśli wskazano 64b
 						String dest = selectedFile.substring(0,selectedFile.lastIndexOf(File.separator));
@@ -530,12 +527,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 						settingsManager.setValue("r_path", selectedFile, true);
 						settingsManager.saveSettings();
 						setRStatus(true);
-						log("Rscript.exe manually located in "+selectedFile+". Settings file updated.", "text", true);
+						log(lang.getText("LOGentry00011R")+selectedFile+lang.getText("LOGentry00012R"), "text", true);
 					
 					} else {
 						settingsManager.setValue("r_path", "", true);
 						setRStatus(false);
-						log("Rscript.exe location unknown. Clustering procedures will not work.", "error", true);	
+						log(lang.getText("LOGentry00013R"), "error", true);
 					}
 				}
 			}
@@ -776,28 +773,20 @@ public class GUIManager extends JPanel implements ComponentListener {
 		this.menu = menu;
 	}
 
-	/*
-	 * Opis: I have no idea...
-	 * @return FloatDockModel
-	 */
-	//public FloatDockModel getDockModel() {
-	//	return dockModel;
-	//}
-
-	/*
-	 * Opis: I have no idea...
-	 * @param dockModel FloatDockModel
-	 */
-	//private void setDockModel(FloatDockModel dockModel) {
-	//	this.dockModel = dockModel;
-	//}
-
 	/**
 	 * Metoda zwraca obiekt - referencji swojej klasy.
 	 * @return GUIManager - obiekt managaera
 	 */
 	public static GUIManager getDefaultGUIManager() {
 		return guiManager;
+	}
+
+	/**
+	 * Zwraca obiekt zarządzający językiem interfejsu.
+	 * @return LanguageManager - obiekt zarządzający językiem.
+	 */
+	public static LanguageManager getL() {
+		return lang;
 	}
 
 	/**
@@ -1126,10 +1115,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void showNetTablesWindow() {
 		if(windowNetTables != null) {
-			if(!reset.isSimulatorActiveWarning("Warning: simulator active. Cannot proceed until manually stopped."
-					, "Net simulator working")) {
-				if(!reset.isXTPNSimulatorActiveWarning("Warning: XTPN simulator active. Cannot proceed until manually stopped."
-						, "Net simulator working")) {
+			if(!reset.isSimulatorActiveWarning(lang.getText("GUI_simulator0001warn"), lang.getText("netSimWork01"))) {
+				if(!reset.isXTPNSimulatorActiveWarning(lang.getText("GUI_simulator0002warn"), lang.getText("netSimWork01"))) {
 					windowNetTables.setVisible(true);
 				}
 			}

@@ -1,0 +1,47 @@
+//english dictionary 20.07.2024
+GUIM_toolboxTabName, Toolbox
+GUIM_simulatorTabName, Simulator
+GUIM_quicksimTabName, QuickSim
+GUIM_tinvTabName, T-inv
+GUIM_pinvTabName, P-inv
+GUIM_mctTabName, MCT
+GUIM_mcsTabName, MCS
+GUIM_KnockoutTabName, Knockout
+GUIM_fixTabName, NetFix
+GUIM_clustersTabName, Clusters
+GUIM_closingQuestion001, Net or its data have been changed since last save. Exit, save&exit or do not exit now?
+GUIM_closeWindowTitle001, Project has been modified
+LOGentry00001, Exiting program
+GUIM_closingQuestion002, Are you sure you want to close the program?
+LOGentry00002, Tools directory does not exist:
+LOGentry00003, File COMMAND.ina does not exist or is corrupted.
+GUI_inaProblem001, Unable to recreate COMMAND.ina.
+GUI_inaProblem002, Error - COMMAND.ina
+LOGentry00004, Unable to recreate COMMAND.ina. Invariants generator will work in Holmes mode only.
+LOGentry00005, File COMMANDp.ina does not exist or is corrupted.
+GUI_inaProblem003, Error - COMMANDp.ina
+LOGentry00006, File ina.bat did not exist or was corrupted:
+GUI_inaProblem004, Unable to recreate ina.bat. This is a critical error, possible write protection issues in program directory. Invariants generation using INAwin32 will most likely fail.
+GUI_inaProblem005, Critical error - writing
+LOGentry00007, Critical error, unable to recreate ina.bat file. Invariants generator will not work.
+LOGentry00008R, Invalid path (
+LOGentry00009R, ) to Rscript executable file.
+GUI_RscriptProblem001, Manually locate Rscript.exe
+GUI_RscriptProblem002, R not installed
+GUI_RscriptProblem003, Rscript.exe missing in path
+GUI_RscriptProblem004, Missing executable
+GUI_RscriptButton001, Select Rscript.exe
+GUI_RscriptButton002tip, Please select Rscript exe, usually located in R/Rx.x.x/bin directory.
+LOGentry00010R, Rscript executable file inaccessible. Some features (clusters operations) will be disabled.
+LOGentry00011R, Rscript.exe manually located in
+LOGentry00012R, . Settings file updated.
+LOGentry00013R, Rscript.exe location unknown. Clustering procedures will not work.
+GUI_simulator0001warn, Warning: simulator active. Cannot proceed until manually stopped.
+GUI_simulator0002warn, Warning: XTPN simulator active. Cannot proceed until manually stopped.
+
+//generalPurposeTags:
+exit, Exit
+saveAndExit, Save and Exit
+cancel, Cancel
+fixed, Fixed
+netSimWork01, Net simulator working

@@ -1,0 +1,173 @@
+package holmes.darkgui;
+
+import holmes.LangEngDafaultDB;
+
+import javax.swing.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class LanguageManager {
+    private GUIManager overlord;
+    private HashMap<String, String> defaultDictionary;
+    private HashMap<String, String> availableLanguagesFromCfg;
+    private HashMap<String, HashMap<String, String>> loadedLanguages;
+    private HashMap<String, String> currentDictionary;
+
+    private boolean languageCorrupted = false;
+    private boolean fileCorrupted = false;
+    private String selectedLanguage; //= "English";
+
+    public LanguageManager() {
+        this.overlord = GUIManager.getDefaultGUIManager();
+        overlord.log("Holmes language processing started.", "text", true);
+
+        defaultDictionary = LangEngDafaultDB.getDefaultEnglish();
+
+        overlord.logNoEnter("Language: ", "bold", false);
+        overlord.logNoEnter("default english", "italic", false);
+        overlord.logNoEnter(" Entries: ", "bold", false);
+        overlord.log(""+defaultDictionary.size(), "italic", false);
+
+        availableLanguagesFromCfg = new HashMap<String, String>();
+        loadedLanguages = new HashMap<String, HashMap<String, String>>();
+
+
+
+        if(LoadConfigFile() ) { //najpierw wczytaj config z informacją o językach i ich ścieżkach
+            //następnie wczytaj pliki językowe:
+            for(HashMap.Entry<String, String> entry : availableLanguagesFromCfg.entrySet()) {
+                HashMap<String, String> loadedDict = LoadDictionaryFile(entry.getKey(), entry.getValue());
+                if(!fileCorrupted) {
+                    loadedLanguages.put(entry.getKey(), loadedDict);
+                }
+            }
+
+            if(loadedLanguages.isEmpty()) {
+                selectedLanguage = "English";
+                currentDictionary = defaultDictionary;
+            }
+        }
+    }
+
+    /**
+     * Metoda ustawia język w programie.
+     * @param language String - nazwa języka
+     */
+    public void setLanguage(String language) {
+        if(loadedLanguages.containsKey(language)) {
+            selectedLanguage = language;
+            currentDictionary = loadedLanguages.get(language);
+        } else {
+            overlord.log("Language not found: " + language, "error", true);
+            selectedLanguage = "English";
+            currentDictionary = defaultDictionary;
+        }
+    }
+
+    /**
+     * Metoda zwracająca tekst z bazy danych językowej, jeżeli brak ID, zwraca ze słownika domyślnego
+     * @param ID String -
+     * @return String - zwraca tekst ze słownika językowego
+     */
+    public String getText(String ID) {
+        if(currentDictionary.containsKey(ID)) {
+            return currentDictionary.get(ID);
+        } else {
+            if(defaultDictionary.containsKey(ID)) {
+                return defaultDictionary.get(ID);
+            } else {
+                overlord.log("Severe language manager error, phrase ID: " + ID + " not found in internal default dictionary.", "error", true);
+                return "-----";
+            }
+        }
+    }
+
+    /**
+     * Wczytuje plik language.cfg
+     * @return boolean - zwraca true jeżeli wystąpił błąd
+     */
+    private boolean LoadConfigFile() {
+        languageCorrupted = false;
+        Path path = Paths.get("language.cfg");
+        String currentLine;
+        try (Scanner scanner = new Scanner(path)) {
+            while (scanner.hasNextLine()) {
+                currentLine = scanner.nextLine();
+                //parse by ,
+                String[] parts = currentLine.split(",");
+                if (parts.length == 2) {
+                    availableLanguagesFromCfg.put(parts[0], parts[1].substring(6));
+                }
+            }
+
+            overlord.log("Language config read: " + availableLanguagesFromCfg.size() + " dictionaries.", "text", false);
+
+            overlord.logNoEnter("Dictionary:", "bold", false);
+            overlord.logNoEnter(" | ", "text", false);
+            for (HashMap.Entry<String, String> entry : availableLanguagesFromCfg.entrySet()) {
+                String key = entry.getKey();
+                overlord.logNoEnter(key + " | ", "text", false);
+                overlord.log("", "text", false);
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null,
+                    "Error reading language config file",
+                    "Config error",
+                    JOptionPane.ERROR_MESSAGE);
+            overlord.log("Error in language config file, reverting to default english.", "error", true);
+            languageCorrupted = true;
+        }
+        return !languageCorrupted;
+    }
+
+    /**
+     * Wczytuje plik językowy.
+     * @param language String - nazwa języka
+     * @param dictPath String - ścieżka do pliku językowego
+     * @return HashMap<String, String> - zwraca słownik językowy
+     */
+    private HashMap<String, String> LoadDictionaryFile(String language, String dictPath) {
+        HashMap<String, String> dictionary = new HashMap<String, String>();
+
+        Path path = Paths.get(dictPath);
+        String currentLine;
+        try (Scanner scanner = new Scanner(path)) {
+            while (scanner.hasNextLine()) {
+                currentLine = scanner.nextLine();
+                if(currentLine.startsWith("//") || currentLine.length() < 5) {
+                    continue;
+                }
+                //String[] parts = currentLine.split(",");
+                try {
+                    int comma = currentLine.indexOf(",");
+                    if(comma == -1) continue;
+                    String[] parts = {currentLine.substring(0, comma), currentLine.substring(comma+1)};
+
+                    if(dictionary.containsKey(parts[0])) {
+                        overlord.log("Duplicate entry "+ parts[0] +" in language file: " + dictPath, "error", false);
+                    } else {
+                        dictionary.put(parts[0], parts[1].stripLeading());
+                    }
+
+                } catch (Exception e) {
+                    overlord.log("Error parsing line (" + dictPath + "): " + currentLine, "text", true);
+                }
+            }
+
+            overlord.logNoEnter("Loaded: ", "bold", false);
+            overlord.logNoEnter(language, "italic", false);
+            overlord.logNoEnter(" File: ", "bold", false);
+            overlord.logNoEnter(dictPath, "italic", false);
+            overlord.logNoEnter(" Entries: ", "bold", false);
+            overlord.log(""+dictionary.size(), "italic", false);
+        } catch (Exception e) {
+            overlord.log("Error in language dictionary file " +dictPath+ "", "error", true);
+            fileCorrupted = true;
+        }
+
+        return dictionary;
+    }
+}
