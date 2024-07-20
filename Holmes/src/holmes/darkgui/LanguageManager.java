@@ -1,7 +1,5 @@
 package holmes.darkgui;
 
-import holmes.LangEngDafaultDB;
-
 import javax.swing.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;

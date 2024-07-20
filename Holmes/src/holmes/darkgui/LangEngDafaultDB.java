@@ -1,4 +1,4 @@
-package holmes;
+package holmes.darkgui;
 
 import java.util.HashMap;
 
