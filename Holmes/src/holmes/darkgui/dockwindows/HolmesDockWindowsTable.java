@@ -1437,7 +1437,6 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(nameLocChangeButton);
 
         //COLORS:
-        //TODO
         if (place.isColored) {
             // PLACE TOKEN
             JLabel tokenLabel = new JLabel("T0 Red:", JLabel.LEFT);
@@ -1698,7 +1697,6 @@ public class HolmesDockWindowsTable extends JPanel {
         JLabel gammaLabel = new JLabel("XTPN mode:", JLabel.LEFT);
         gammaLabel.setBounds(columnA_posX, columnA_Y += 25, colACompLength + 15, 20);
         components.add(gammaLabel);
-
 
         buttonGammaMode = new HolmesRoundedButton("<html><center>Gamma<br>ON</center></html>"
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
@@ -2007,7 +2005,6 @@ public class HolmesDockWindowsTable extends JPanel {
                         place.accessMultiset().remove(size - 1);
                         place.addTokensNumber(-1);
                     }
-
                 }
             } else {
                 int tokens = place.getTokensNumber();
@@ -5457,7 +5454,6 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(label8B);
 
         //KOLORY
-        //TODO:
         if (arc.getArcType() == TypeOfArc.COLOR) {
             String type1 = "T-->P (Transition to Place weights):";
             String type2 = "P-->T (Place to Transition weights):";
