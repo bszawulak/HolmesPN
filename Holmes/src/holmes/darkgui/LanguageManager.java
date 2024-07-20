@@ -17,6 +17,8 @@ public class LanguageManager {
     private boolean fileCorrupted = false;
     private String selectedLanguage; //= "English";
 
+    public static String newline = System.getProperty("line.separator");
+
     public LanguageManager() {
         this.overlord = GUIManager.getDefaultGUIManager();
         overlord.log("Holmes language processing started.", "text", true);
@@ -31,8 +33,6 @@ public class LanguageManager {
         availableLanguagesFromCfg = new HashMap<String, String>();
         loadedLanguages = new HashMap<String, HashMap<String, String>>();
 
-
-
         if(LoadConfigFile() ) { //najpierw wczytaj config z informacją o językach i ich ścieżkach
             //następnie wczytaj pliki językowe:
             for(HashMap.Entry<String, String> entry : availableLanguagesFromCfg.entrySet()) {
@@ -41,7 +41,6 @@ public class LanguageManager {
                     loadedLanguages.put(entry.getKey(), loadedDict);
                 }
             }
-
             if(loadedLanguages.isEmpty()) {
                 selectedLanguage = "English";
                 currentDictionary = defaultDictionary;
@@ -51,7 +50,7 @@ public class LanguageManager {
 
     /**
      * Metoda ustawia język w programie.
-     * @param language String - nazwa języka
+     * @param language <b>String</b>, nazwa języka
      */
     public void setLanguage(String language) {
         if(loadedLanguages.containsKey(language)) {
@@ -66,12 +65,17 @@ public class LanguageManager {
 
     /**
      * Metoda zwracająca tekst z bazy danych językowej, jeżeli brak ID, zwraca ze słownika domyślnego
-     * @param ID String -
-     * @return String - zwraca tekst ze słownika językowego
+     * @param ID <b>String</b>, identyfikator tekstu
+     * @return <b>String</b>, zwraca tekst ze słownika językowego
      */
     public String getText(String ID) {
         if(currentDictionary.containsKey(ID)) {
-            return currentDictionary.get(ID);
+            String result = currentDictionary.get(ID);
+            if(result.contains("\\n")) {
+                result = result.replace("\\n", newline);
+            }
+            return result;
+            //return currentDictionary.get(ID);
         } else {
             if(defaultDictionary.containsKey(ID)) {
                 return defaultDictionary.get(ID);
@@ -84,7 +88,7 @@ public class LanguageManager {
 
     /**
      * Wczytuje plik language.cfg
-     * @return boolean - zwraca true jeżeli wystąpił błąd
+     * @return <b>boolean</b>, zwraca true jeżeli wystąpił błąd
      */
     private boolean LoadConfigFile() {
         languageCorrupted = false;

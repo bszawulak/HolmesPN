@@ -1,4 +1,5 @@
 //english dictionary 20.07.2024
+//GUIManager:
 GUIM_toolboxTabName, Toolbox
 GUIM_simulatorTabName, Simulator
 GUIM_quicksimTabName, QuickSim
@@ -38,10 +39,118 @@ LOGentry00012R, . Settings file updated.
 LOGentry00013R, Rscript.exe location unknown. Clustering procedures will not work.
 GUI_simulator0001warn, Warning: simulator active. Cannot proceed until manually stopped.
 GUI_simulator0002warn, Warning: XTPN simulator active. Cannot proceed until manually stopped.
+//GUIOperations:
+GUIO_openProject001, Reading project file succcessful.
+LOGentry00014, Unable to extract net as image. Cannot save to file:
+GUIO_messageBox001, File choosing error. Cannot proceed.
+LOGentry00015, File choosing error. No extension:
+GUIO_warning001, \nWarning: hierarchical net structure detected. Using Holmes project is strongly advised.\nOther save format will most probably fail.\n
+GUIO_warning002, Warning. There has been a problem detecting type of the Petri net.\nHolmes project file as save is highly recommended.
+GUIO_warning003, Selected net file format:
+GUIO_warning003b, Net real type:
+GUIO_warning003c, Suggested file format:
+GUIO_warning003d, Selected format will not contain all features of the current Petri Net. Resulting file\nwill contain reduced net or will be corrupted.\n
+GUIO_warning003title, Invalid out net file format
+GUIO_button001, Load invariants
+GUIO_button001b, Select invariant file
+GUIO_inaInv001, Net saving as .pnt file failed. There may be problems with file:
+GUIO_inaInv002,  or there is no network yet.
+GUIO_inaInv003, Missing net or file
+GUIO_inaInv004, INAwin32.exe will now start. This may take a while. Click OK and please wait.\nWhen console shows in, please type Y, then N after invariants are computed.
+GUIO_inaInv005, Please wait
+LOGentry00016, Activating INAwin32.exe. Please wait, this may take a few seconds due to OS delays.
+LOGentry00017, INAwin32.exe process finished. Reading results...
+GUIO_inaInv006, I/O operation: activating INAwin32.exe failed.
+GUIO_inaInv007, No invariants file - using INAwin32.exe failed.
+GUIO_inaInv008, Save .inv file
+GUIO_inaInv009, No, thanks
+GUIO_inaInv010, Do you want to save generated .inv file?
+GUIO_inaInv011, Save the invariants?
+GUIO_inaInv012, Select invariants target path
+LOGentry00018, Invariants generation successful.
+GUIO_inaInv013, Missing executables in the tools directory. Required: INAwin32.exe, ina.bat and COMMAND.ina
+GUIO_inaInv014, Missing files
+GUIO_invariants001, Invariants generation already in progress.
+GUIO_invariants002, Generator working
+GUIO_mct001, Exporting net into CSV file failed.
+GUIO_mct002, Write error
+LOGentry00019, Starting MCT generator.
+GUIO_mct003, Select MCT target path
+GUIO_mct004, MCT file created
+GUIO_mct005, Operation successful.
+LOGentry00020, MCT file saved. Path:
+GUIO_mct006, MCT file created
+GUIO_mct007, File operation failed when creating MCT sets.
+GUIO_mct008, MCT generator error
+LOGentry00021, MCT generator failed:
+LOGentry00022, Warning: unable to check if given clusters number (
+LOGentry00023, ) exceeds invariants number. If so, the procedure may fail.
+GUIO_clusters001, Select CH metric directory
+GUIO_clusters002, Use temporary directory
+GUIO_clusters003, Multiple CH metric files can we written into default temporary directory (inadvised) or into\nthe selected one.
+GUIO_clusters004, Directory selection
+GUIO_clusters005, Select CH metric dir
+GUIO_clusters006, Target directory for CH metric results
+LOGentry00024, CH metric files will be put into the
+LOGentry00025, Cluster files will be put into the
+LOGentry00026, Cluster files will be put into the
+LOGentry00027, Warning: Celinski-Harabasz metric computation in 32bit mode for large number of invariants can cause R/OS failure.
+GUIO_clusters007, CH metric computation failed for
+GUIO_clusters008,  clusters.\nPath:
+LOGentry00028, Warning: unable to check if a given number of clusters (
+LOGentry00029, ) exceeds invariants number. If so, the procedure may fail.
+GUIO_clusters009, Select cluster directory
+GUIO_clusters009b, Use temporary directory
+GUIO_clusters009c, Cancel operation
+GUIO_clusters010, Multiple cluster files can we written into default temporary directory (not advised) or into\nthe selected one.
+GUIO_clusters011, Select cluster dir
+GUIO_clusters012, Target directory for cluster results
+LOGentry00030, Cluster files will be put into the
+GUIO_clusters013, Clustering generation failed for
+GUIO_clusters014,  clusters.\nPath:
+GUIO_csv001, CSV invariants file (.csv)
+GUIO_csv002, Select CSV
+GUIO_csv003, Select CSV file
+GUIO_csv004, Select invariants file manually
+GUIO_csv004b, Use computed invariants
+LOGentry00031, Please select invariant file (.CSV) for the clustering manually or use invariants\nfrom the current network (they must be computed/loaded already!).
+GUIO_inv001, Invariants source
+GUIO_inv002, Exporting invariants into CSV file failed.\nCluster procedure cannot begin.
+GUIO_inv003, CSV export error
+GUIO_clusters015, Manually locate file
+GUIO_clusters015b, Cancel procedure
+GUIO_clusters016, No input.csv file in:\n
+GUIO_clusters017, \nDo you want to select location manually?
+GUIO_clusters018, No CSV invariants file
+GUIO_clusters019, Select CSV invariants file
+GUIO_clusters020, CSV invariants file:
+GUIO_clusters021,  located. Starting single clustering procedure.
+GUIO_clusters022, Starting MCT generator for file:
+GUIO_clusters023, MCT generation (file) failed for:
+LOGentry00032, R function failed for parameters:
+LOGentry00032b, File name:
+LOGentry00032c, Output dir:
+LOGentry00032d, Algorithm:
+LOGentry00032e, Metric:
+LOGentry00032f, No. of clusters:
+GUIO_clusters024, Clustering failed. Check log.
+LOGentry00033, Unable to update simulator fields: (XTPN=
+LOGentry00033b, ; stepsValue=
+LOGentry00033c, ; stepsValue=
+GUIO_fix001, Invisible arc: p
+GUIO_fix002, . Removing...
+GUIO_fix003, Invisible arc: t
+GUIO_fix004, Arc list:
+GUIO_fix005, , processed arcs:
+GUIO_fix006, , removed ghost-arcs:
 
 //generalPurposeTags:
 exit, Exit
 saveAndExit, Save and Exit
+save, Save
+select, Select
 cancel, Cancel
 fixed, Fixed
 netSimWork01, Net simulator working
+error, Error
+critError, Critical error

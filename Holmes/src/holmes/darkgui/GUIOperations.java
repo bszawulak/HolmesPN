@@ -40,13 +40,14 @@ import static holmes.graphpanel.EditorResources.*;
  * Wciąż z resztą jest.
  */
 public class GUIOperations {
-	GUIManager overlord;
-
+	private GUIManager overlord;
+	private LanguageManager lang;
 	/**
 	 * Konstruktor domyślny obiektu klasy GUIOperations. A nóż do czegoś się przyda...
 	 */
 	public GUIOperations() {
 		overlord = GUIManager.getDefaultGUIManager();
+		lang = GUIManager.getLanguageManager();
 	}
 	
 	/**
@@ -142,7 +143,7 @@ public class GUIOperations {
 			}
 			
 			if(status) {
-				overlord.log("Reading project file succcessful.", "text", true);
+				overlord.log(lang.getText("GUIO_openProject001"), "text", true);
 				GUIManager.getDefaultGUIManager().getFrame().setTitle(
 						"Holmes "+GUIManager.getDefaultGUIManager().getSettingsManager().getValue("holmes_version")+
 						"  "+Tools.getFileName(file));
@@ -279,7 +280,7 @@ public class GUIOperations {
 					ImageIO.write(bi, ext.substring(1), new File(fullPath));
 					//index++;
 				} catch (IOException ex) {
-					overlord.log("Unable to extract net as image. Cannot save to file "+fullPath, "error", true);
+					overlord.log(lang.getText("LOGentry00014")+fullPath, "error", true);
 				}
 			}
 			overlord.setLastPath(file.getParentFile().getPath());
@@ -377,8 +378,8 @@ public class GUIOperations {
 		
 		String extension = Tools.lastExtension;
 		if(extension == null || extension.isEmpty()) {
-			JOptionPane.showMessageDialog(null, "File choosing error. Cannot proceed.", "Error", JOptionPane.ERROR_MESSAGE);
-			overlord.log("File choosing error. No extension: "+extension, "error", true);
+			JOptionPane.showMessageDialog(null, lang.getText("GUIO_messageBox001"), lang.getText("error"), JOptionPane.ERROR_MESSAGE);
+			overlord.log(lang.getText("LOGentry00015")+extension, "error", true);
 			return false;
 		}
 
@@ -464,14 +465,12 @@ public class GUIOperations {
 			fileFormat = fileFormat.toLowerCase();
 			netRealName = Check.getNetName(netType);
 			if(Check.isHierarchical()) {
-				additionalWhining = "\nWarning: hierarchical net structure detected. Using Holmes project is strongly advised.\n"
-						+ "Other save format will most probably fail.\n";
+				additionalWhining = lang.getText("GUIO_warning001");
 			}
 		} else {
 			netRealName = "Unknown";
 			fileFormat = "Holmes Project file";
-			additionalWhining = "Warning. There has been a problem detecting type of the Petri net.\n"
-					+ "Please advise authors and in the meantime: Holmes project file is STRONGLY RECOMMENDED.";
+			additionalWhining = lang.getText("GUIO_warning002");
 		}
 		
 		if(extension.toLowerCase().contains(fileFormat) && additionalWhining.isEmpty()) {
@@ -482,12 +481,11 @@ public class GUIOperations {
 
 			Object[] options = {"Use selected anyway", "Use suggested format", "Save as project", "Cancel save",};
 			int n = JOptionPane.showOptionDialog(null,
-							"Selected net file format: "+extension+"\n"
-							+ "Net real type: "+netRealName+"\n"
-							+ "Suggested file format: "+fileFormat+"\n\n"
-							+ "Selected format will not contain all features of the current Petri Net. Resulting file\n"
-							+ "will contain reduced net or will be corrupted.\n"+additionalWhining,
-							"Invalid out net file format", JOptionPane.YES_NO_OPTION,
+							lang.getText("GUIO_warning003")+extension+"\n"
+							+ lang.getText("GUIO_warning003b")+netRealName+"\n"
+							+ lang.getText("GUIO_warning003c")+fileFormat+"\n\n"
+							+ lang.getText("GUIO_warning003d")+additionalWhining,
+							lang.getText("GUIO_warning003title"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 			if (n == 0) {
 				return extension;
@@ -504,7 +502,7 @@ public class GUIOperations {
 	/**
 	 * Metoda odpowiedzialna za wczytywanie inwariantów z pliku.
 	 * @param t_inv (<b>boolean</b>) true, jeśli chodzi o t-inwarianty.
-	 * @return (<b>boolean</b>) - true, jeśli operacja się powiodła.
+	 * @return (<b>boolean</b>), true jeśli operacja się powiodła.
 	 */
 	public boolean loadExternalAnalysis(boolean t_inv) {
 		String lastPath = overlord.getLastPath();
@@ -514,7 +512,7 @@ public class GUIOperations {
 		else
 			filters[0] = new ExtensionFileFilter("P-invariants file (.inv)", new String[] { "INV" });
 		
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("GUIO_button001"), lang.getText("GUIO_button001b"), "");
 		if(selectedFile.isEmpty())
 			return false;
 		
@@ -555,9 +553,8 @@ public class GUIOperations {
 		overlord.getWorkspace().getProject().saveAsPNT(x); //zakończono zapis do pliku .pnt
 		long size = tmpPNTfile.length(); //124 dla nieistniejącej (pustej) sieci
 		if(size <154) {
-			String msg = "Net saving as .pnt file failed. There may be problems with file: "+x + 
-					" or there is no network yet.";
-			JOptionPane.showMessageDialog(null, msg, "Missing net or file", JOptionPane.ERROR_MESSAGE);
+			String msg = lang.getText("GUIO_inaInv001") + x + lang.getText("GUIO_inaInv002");
+			JOptionPane.showMessageDialog(null, msg, lang.getText("GUIO_inaInv003"), JOptionPane.ERROR_MESSAGE);
 			overlord.log(msg, "error", true);
 			overlord.accessInvariantsWindow().setGeneratorStatus(false);
 			return;
@@ -572,10 +569,9 @@ public class GUIOperations {
 		String holmesPath = overlord.getHolmesPath();
 		if(inaExe.exists() && commandFile.exists()) {
 			try {
-				JOptionPane.showMessageDialog(null, "INAwin32.exe will now start. This may take a while. Click OK and please wait.\n"
-						+ "When console shows in, please type Y, then N after invariants are computed.", "Please wait", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("GUIO_inaInv004"), lang.getText("GUIO_inaInv005"), JOptionPane.INFORMATION_MESSAGE);
 				overlord.log(stars, "text", false);
-				overlord.log("Activating INAwin32.exe. Please wait, this may take a few seconds due to OS delays.", "text", true);
+				overlord.log(lang.getText("LOGentry00016"), "text", true);
 				//kopiowanie plików:
 				Tools.copyFileByPath(inaExe.getPath(), holmesPath+"\\INAwin32.exe");
 				Tools.copyFileByPath(batFile.getPath(), holmesPath+"\\ina.bat");
@@ -609,10 +605,10 @@ public class GUIOperations {
 					t2.delete();
 				if(t3.exists())
 					t3.delete();
-				overlord.log("INAwin32.exe process terminated. Reading results into network now.", "text",true);
+				overlord.log(lang.getText("LOGentry00017"), "text",true);
 			} catch (Exception e) {
-				String msg = "I/O operation: activating INAwin32.exe failed.";
-				JOptionPane.showMessageDialog(null, msg, "Critical error", JOptionPane.ERROR_MESSAGE);
+				String msg = lang.getText("GUIO_inaInv006");
+				JOptionPane.showMessageDialog(null, msg, lang.getText("critError"), JOptionPane.ERROR_MESSAGE);
 				overlord.log(msg, "error", true);
 				overlord.log(stars, "text", false);
 				overlord.accessInvariantsWindow().setGeneratorStatus(false);
@@ -622,8 +618,8 @@ public class GUIOperations {
 			// check whether the file with T-invariants has been generated
 			File invariantsFile = new File("siec.inv");
 			if (!invariantsFile.exists()) {
-				String msg = "No invariants file - using INAwin32.exe unsuccessful.";
-				JOptionPane.showMessageDialog(null,msg,	"Critical error",JOptionPane.ERROR_MESSAGE);
+				String msg = lang.getText("GUIO_inaInv007");
+				JOptionPane.showMessageDialog(null,msg,	lang.getText("critError"),JOptionPane.ERROR_MESSAGE);
 				overlord.log(msg, "error", true);
 				overlord.accessInvariantsWindow().setGeneratorStatus(false);
 				return;
@@ -645,16 +641,16 @@ public class GUIOperations {
 		
 			//co dalej z plikiem?
 			String lastPath = overlord.getLastPath();
-			Object[] options = {"Save .inv file", "No, thanks",};
+			Object[] options = {lang.getText("GUIO_inaInv008"), lang.getText("GUIO_inaInv009"),};
 			int n = JOptionPane.showOptionDialog(null,
-							"Do you want to save generated .inv file?",
-							"Save the invariants?", JOptionPane.YES_NO_OPTION,
+							lang.getText("GUIO_inaInv010"),
+							lang.getText("GUIO_inaInv011"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (n == 0) { //save the file
 				FileFilter[] filters = new FileFilter[1];
 				filters[0] = new ExtensionFileFilter("INA Invariants file (.inv)",  new String[] { "INV" });
-				String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", 
-						"Select invariants target path", "");
+				String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"),
+						lang.getText("GUIO_inaInv012"), "");
 				
 				if(!selectedFile.equals("")) { //jeśli wskazano plik
 					File file = new File(selectedFile);
@@ -665,14 +661,14 @@ public class GUIOperations {
 					Tools.copyFileDirectly(invariantsFile, properName);
 				}
 			}
-			overlord.log("Invariants generation successful.", "text", true);
+			overlord.log(lang.getText("LOGentry00018"), "text", true);
 			overlord.log(stars, "text", false);
 			invariantsFile.delete();
 			overlord.accessInvariantsWindow().setGeneratorStatus(false);
 		} else { //brak plikow
 			overlord.accessInvariantsWindow().setGeneratorStatus(false);
-			String msg = "Missing executables in the tools directory. Required: INAwin32.exe, ina.bat and COMMAND.ina";
-			JOptionPane.showMessageDialog(null,msg,	"Missing files",JOptionPane.ERROR_MESSAGE);
+			String msg = lang.getText("GUIO_inaInv013");
+			JOptionPane.showMessageDialog(null,msg,	lang.getText("GUIO_inaInv014"),JOptionPane.ERROR_MESSAGE);
 			overlord.log(msg, "error", true);
 		}
 	}
@@ -683,7 +679,7 @@ public class GUIOperations {
 	public void fastGenerateTinvariants() {
 		boolean status = overlord.accessInvariantsWindow().isGeneratorWorking;
 		if(status) {
-			JOptionPane.showMessageDialog(null, "Invariants generation already in progress.", "Generator working",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("GUIO_invariants001"), lang.getText("GUIO_invariants002"),JOptionPane.WARNING_MESSAGE);
 		} else {
 			InvariantsCalculator invGenerator = new InvariantsCalculator(true);
 			Thread myThread = new Thread(invGenerator);
@@ -698,14 +694,14 @@ public class GUIOperations {
 		String filePath = overlord.getTmpPath() + "input.csv";
 		int result = overlord.getWorkspace().getProject().saveInvariantsToCSV(filePath, true, true);
 		if(result == -1) {
-			String msg = "Exporting net into CSV file failed.";
-			JOptionPane.showMessageDialog(null,msg,	"Write error",JOptionPane.ERROR_MESSAGE);
+			String msg = lang.getText("GUIO_mct001");
+			JOptionPane.showMessageDialog(null,msg,	lang.getText("GUIO_mct002") ,JOptionPane.ERROR_MESSAGE);
 			overlord.log(msg, "error", true);
 			return;
 		}
 		
 		try {
-			overlord.log("Starting MCT generator.","text",true);
+			overlord.log(lang.getText("LOGentry00019"),"text",true);
 			Runner mctRunner = new Runner();
 			String[] args = new String[1];
 			args[0] = filePath;
@@ -714,14 +710,14 @@ public class GUIOperations {
 			
 			FileFilter[] filters = new FileFilter[1];
 			filters[0] = new ExtensionFileFilter("MCT sets file (.mct)",  new String[] { "MCT" });
-			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select MCT target path", "");
+			String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"), lang.getText("GUIO_mct003"), "");
 			
 			if(selectedFile.isEmpty()) { //jeśli nie wybrano lokalizacji, zostaje w tmp
 				File csvFile = new File(filePath);
 				csvFile.delete();
 				
-				JOptionPane.showMessageDialog(null,"MCT file created","Operation successful.",JOptionPane.INFORMATION_MESSAGE);
-				overlord.log("MCT file saved. Path: " + overlord.getTmpPath() + "input.csv.analysed.txt", "text", true);
+				JOptionPane.showMessageDialog(null,lang.getText("GUIO_mct004"),lang.getText("GUIO_mct005"), JOptionPane.INFORMATION_MESSAGE);
+				overlord.log(lang.getText("LOGentry00020") + overlord.getTmpPath() + "input.csv.analysed.txt", "text", true);
 			} else {
 				File file = new File(selectedFile);
 				
@@ -737,13 +733,13 @@ public class GUIOperations {
 				csvFile.delete();
 				//overlord.setLastPath(file.getParentFile().getPath());
 				
-				JOptionPane.showMessageDialog(null,"MCT file created","Operation successful.",JOptionPane.INFORMATION_MESSAGE);
-				overlord.log("MCT file saved. Path: "+filePath, "text", true);
+				JOptionPane.showMessageDialog(null,lang.getText("GUIO_mct006"),lang.getText("GUIO_mct005") ,JOptionPane.INFORMATION_MESSAGE);
+				overlord.log(lang.getText("LOGentry00020") + filePath, "text", true);
 			}
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "File operation failed when creating MCT sets.", 
-					"MCT generator error",JOptionPane.ERROR_MESSAGE);
-			overlord.log("MCT generator failed: "+e.getMessage(), "error", true);
+			JOptionPane.showMessageDialog(null, lang.getText("GUIO_mct007"),
+					lang.getText("GUIO_mct008"), JOptionPane.ERROR_MESSAGE);
+			overlord.log(lang.getText("LOGentry00021") + e.getMessage(), "error", true);
 		}
 	}
 	
@@ -770,8 +766,7 @@ public class GUIOperations {
 		try{
 			int invNumber;
 			if(overlord.getWorkspace().getProject().getT_InvMatrix() == null) {
-				overlord.log("Warning: unable to check if given clusters number ("+howMany+") exceeds invariants "
-						+ "number. If so, the procedure may fail.", "warning", true);
+				overlord.log(lang.getText("LOGentry00022") + howMany+ lang.getText("LOGentry00023"), "warning", true);
 			} else {
 				invNumber = overlord.getWorkspace().getProject().getT_InvMatrix().size();
 				if(invNumber < howMany)
@@ -781,28 +776,27 @@ public class GUIOperations {
 			//File test = new File(CSVfilePath);
 			//String CSVDirectoryPath = test.getParent();
 
-			Object[] options = {"Select CH metric directory", "Use temporary directory",};
+			Object[] options = {lang.getText("GUIO_clusters001"), lang.getText("GUIO_clusters002"),};
 			int n = JOptionPane.showOptionDialog(null,
-					"Multiple CH metric files can we written into default temporary directory (inadvised) or into\n"
-					+ "the selected one. What to do?",
-					"Directory selection", JOptionPane.YES_NO_OPTION,
+					lang.getText("GUIO_clusters003"),
+					lang.getText("GUIO_clusters004"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
-				String choosenDir = Tools.selectDirectoryDialog(overlord.getLastPath(), "Select CH metric dir",
-						"Target directory for CH metric results");
+				String choosenDir = Tools.selectDirectoryDialog(overlord.getLastPath(), lang.getText("GUIO_clusters005"),
+						lang.getText("GUIO_clusters006"));
 				if(choosenDir.isEmpty()) {
 					dir_path = overlord.getTmpPath();
-					overlord.log("CH metric files will be put into the "+dir_path, "text", true);
+					overlord.log(lang.getText("LOGentry00024") + dir_path, "text", true);
 				} else {
 					File dir = new File(choosenDir);
 					dir_path = dir.getPath() + "//";
 					
 					Tools.copyFileByPath(CSVfilePath, dir_path+"cluster.csv");
-					overlord.log("Cluster files will be put into the "+dir_path, "text", true);
+					overlord.log(lang.getText("LOGentry00025")+dir_path, "text", true);
 				}
 			} else { //default one
 				dir_path = overlord.getTmpPath();
-				overlord.log("Cluster files will be put into the "+dir_path, "text", true);
+				overlord.log(lang.getText("LOGentry00026") + dir_path, "text", true);
 			}
 			
 			overlord.showConsole(true);
@@ -814,7 +808,7 @@ public class GUIOperations {
 				r_path = overlord.getSettingsManager().getValue("r_path64");
 			else {
 				r_path = overlord.getSettingsManager().getValue("r_path");
-				overlord.log("Warning: Celinski-Harabasz metric computation in 32bit mode for large number of invariants can cause R/system crash","warning",true);
+				overlord.log(lang.getText("LOGentry00027"),"warning",true);
 			}
 			
 			Rprotocols runnable = new Rprotocols(1);
@@ -825,8 +819,8 @@ public class GUIOperations {
 	        thread.start();
 	        return dir_path;
 		} catch (IOException e){
-			String msg = "CH metric computation failed for " + c_number + " clusters.\nPath: "+dir_path;
-			JOptionPane.showMessageDialog(null, msg, "Critical error",JOptionPane.ERROR_MESSAGE);
+			String msg = lang.getText("GUIO_clusters007") + c_number + lang.getText("GUIO_clusters008") + dir_path;
+			JOptionPane.showMessageDialog(null, msg, lang.getText("critError"), JOptionPane.ERROR_MESSAGE);
 			overlord.log(msg, "error", true);
 			overlord.log(e.getMessage(), "error", true);
 			return null;
@@ -854,36 +848,34 @@ public class GUIOperations {
 		try{
 			int invNumber;
 			if(overlord.getWorkspace().getProject().getT_InvMatrix() == null) {
-				overlord.log("Warning: unable to check if a given number of clusters ("+howMany+") exceeds invariants "
-						+ "number. If so, the procedure may fail.", "warning", true);
+				overlord.log(lang.getText("LOGentry00028")+howMany+lang.getText("LOGentry00029"), "warning", true);
 			} else {
 				invNumber = overlord.getWorkspace().getProject().getT_InvMatrix().size();
 				if(invNumber < howMany)
 					howMany = invNumber;
 			}
 
-			Object[] options = {"Select cluster directory", "Use temporary directory", "Cancel operation"};
+			Object[] options = {lang.getText("GUIO_clusters009"), lang.getText("GUIO_clusters009b"), lang.getText("GUIO_clusters009c")};
 			int n = JOptionPane.showOptionDialog(null,
-					"Multiple cluster files can we written into default temporary directory (not advised) or into\n"
-					+ "the selected one. What to do?",
-					"Directory selection", JOptionPane.YES_NO_OPTION,
+					lang.getText("GUIO_clusters010"),
+					lang.getText("GUIO_clusters004"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
-				String choosenDir = Tools.selectDirectoryDialog(overlord.getLastPath(), "Select cluster dir",
-						"Target directory for cluster results");
+				String choosenDir = Tools.selectDirectoryDialog(overlord.getLastPath(), lang.getText("GUIO_clusters011"),
+						lang.getText("GUIO_clusters012"));
 				if(choosenDir.isEmpty()) {
 					dir_path = overlord.getTmpPath();
-					overlord.log("Cluster files will be put into the "+dir_path, "text", true);
+					overlord.log(lang.getText("LOGentry00030") + dir_path, "text", true);
 				} else {
 					File dir = new File(choosenDir);
 					dir_path = dir.getPath() + "//";
 					
 					Tools.copyFileByPath(CSVfilePath, dir_path+"cluster.csv");
-					overlord.log("Cluster files will be put into the "+dir_path, "text", true);
+					overlord.log(lang.getText("LOGentry00030") + dir_path, "text", true);
 				}
 			} else if(n==1) { //default one
 				dir_path = overlord.getTmpPath();
-				overlord.log("Cluster files will be put into the "+dir_path, "text", true);
+				overlord.log(lang.getText("LOGentry00030") + dir_path, "text", true);
 			} else {
 				return null;
 			}
@@ -902,8 +894,8 @@ public class GUIOperations {
             
             return dir_path+"/"+"cluster.csv";
 		} catch (Exception e) {
-			String msg = "Clustering generation failed for "+c_number+" clusters.\nPath: "+dir_path;
-			JOptionPane.showMessageDialog(null, msg, "Critical error",JOptionPane.ERROR_MESSAGE);
+			String msg = lang.getText("GUIO_clusters013") + c_number+lang.getText("GUIO_clusters014")+dir_path;
+			JOptionPane.showMessageDialog(null, msg, lang.getText("critError"),JOptionPane.ERROR_MESSAGE);
 			overlord.log(msg, "error", true);
 			overlord.log(e.getMessage(), "error", true);
 			return null;
@@ -919,8 +911,8 @@ public class GUIOperations {
 		String lastPath = overlord.getLastPath();
 		if(overlord.getWorkspace().getProject().getT_InvMatrix() == null) { //brak inwariantów
 			FileFilter[] filters = new FileFilter[1];
-			filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
-			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file", "");
+			filters[0] = new ExtensionFileFilter(lang.getText("GUIO_csv001"),  new String[] { "CSV" });
+			String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("GUIO_csv002"), lang.getText("GUIO_csv003"), "");
 			
 			if(selectedFile.isEmpty())
 				return null;
@@ -928,16 +920,15 @@ public class GUIOperations {
 				return selectedFile;
 		} else {
 			//wybór: z sieci, czy wskazanie CSV
-			Object[] options = {"Select invariants file manually", "Use computed invariants", "Cancel operation"};
+			Object[] options = {lang.getText("GUIO_csv004"), lang.getText("GUIO_csv004b"), lang.getText("GUIO_clusters009c")};
 			int n = JOptionPane.showOptionDialog(null,
-					"Please select invariant file (.CSV) for the clustering manually or use invariants\n"
-					+ "from the current network (they MUST be computed/loaded already!).",
-					"Invariants source", JOptionPane.YES_NO_OPTION,
+					lang.getText("LOGentry00031"),
+					lang.getText("GUIO_inv001"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
 				FileFilter[] filters = new FileFilter[1];
 				filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
-				String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file", "");
+				String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("GUIO_csv002"), lang.getText("GUIO_csv003"), "");
 				
 				if(selectedFile.isEmpty())
 					return null;
@@ -948,12 +939,11 @@ public class GUIOperations {
 				String CSVfilePath = overlord.getTmpPath() + "cluster.csv";
 				int result = overlord.getWorkspace().getProject().saveInvariantsToCSV(CSVfilePath, true, true);
 				if(result == -1) {
-					String msg = "Exporting invariants into CSV file failed. \nCluster procedure cannot begin.";
-					JOptionPane.showMessageDialog(null,msg,	"CSV export error",JOptionPane.ERROR_MESSAGE);
+					String msg = lang.getText("GUIO_inv002");
+					JOptionPane.showMessageDialog(null, msg,lang.getText("GUIO_inv003"), JOptionPane.ERROR_MESSAGE);
 					overlord.log(msg, "error", true);
 					return null;
 				}
-				
 				return CSVfilePath;
 			} else {
 				return null;
@@ -974,15 +964,15 @@ public class GUIOperations {
 		String filePath = clustersPath + "//cluster.csv";
 		File csvFile = new File(filePath);
 		if(!csvFile.exists()) { //jeśli nie ma pliku
-			Object[] options = {"Manually locate file", "Cancel procedure",};
+			Object[] options = {lang.getText("GUIO_clusters015"), lang.getText("GUIO_clusters015b"),};
 			int n = JOptionPane.showOptionDialog(null,
-							"No input.csv file in:\n"+filePath+ "\nDo you want to select location manually?",
-							"No CSV invariants file", JOptionPane.YES_NO_OPTION,
+							lang.getText("GUIO_clusters016") + filePath+ lang.getText("GUIO_clusters017"),
+							lang.getText("GUIO_clusters018"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
 				FileFilter[] filters = new FileFilter[1];
 				filters[0] = new ExtensionFileFilter(".csv - Comma Separated Values", new String[] { "CSV" });
-				filePath = Tools.selectFileDialog(clustersPath, filters, "Select", "Select CSV invariants file", "");
+				filePath = Tools.selectFileDialog(clustersPath, filters, lang.getText("select"), lang.getText("GUIO_clusters019"), "");
 				if(filePath.isEmpty())
 					return null;
 				
@@ -994,12 +984,12 @@ public class GUIOperations {
 			}
 		}
 
-		String msg = "CSV invariants file: "+filePath+" located. Starting single clustering procedure." ;
+		String msg = lang.getText("GUIO_clusters020") + filePath+ lang.getText("GUIO_clusters021");
 		overlord.log(msg, "text", true);
 		String resultFilePath_MCT;
 		String resultFilePath_clusterCSV = filePath;
 		try {
-			overlord.log("Starting MCT generator for file: "+filePath, "text", true);
+			overlord.log(lang.getText("GUIO_clusters022") + filePath, "text", true);
 			Runner mctRunner = new Runner();
 			mctRunner.activate(new String[] { filePath } ); //throwable
 			
@@ -1007,9 +997,9 @@ public class GUIOperations {
 			
 			
 		} catch (Exception e) {
-			msg = "MCT generation(file) failed for: "+filePath;
+			msg = lang.getText("GUIO_clusters023") + filePath;
 			overlord.log(msg, "text", true);
-			JOptionPane.showMessageDialog(null, msg, "Critical error",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, msg, lang.getText("critError"),JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 
@@ -1029,13 +1019,13 @@ public class GUIOperations {
 						"scripts\\f_SingleCluster.r", metric, algorithm, howMany);
 			}
 		} catch (Exception e) {
-			overlord.log("R function failed for parameters:", "error", true);
-			overlord.log("File name: "+csvFileName, "error", true);
-			overlord.log("Output dir: "+pathOutput, "error", true);
-			overlord.log("Algorithm: "+algorithm, "error", true);
-			overlord.log("Metric: "+metric, "error", true);
-			overlord.log("No. of clusters: "+howMany, "error", true);
-			JOptionPane.showMessageDialog(null, "Clustering failed. Check log.", "Critical error", JOptionPane.ERROR_MESSAGE);
+			overlord.log(lang.getText("LOGentry00032"), "error", true);
+			overlord.log(lang.getText("LOGentry00032b") + csvFileName, "error", true);
+			overlord.log(lang.getText("LOGentry00032c") + pathOutput, "error", true);
+			overlord.log(lang.getText("LOGentry00032d") + algorithm, "error", true);
+			overlord.log(lang.getText("LOGentry00032e") + metric, "error", true);
+			overlord.log(lang.getText("LOGentry00032f") + howMany, "error", true);
+			JOptionPane.showMessageDialog(null, lang.getText("GUIO_clusters024"), lang.getText("critError"), JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		String[] result = new String[5];
@@ -1063,7 +1053,7 @@ public class GUIOperations {
 				overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("" + stepsValue);
 			}
 		} catch (Exception e) {
-			overlord.log("Unable to update simulator fields: (XTPN="+XTPN+"; stepsValue="+stepsValue+"; stepsValue="+stepsValue + "."
+			overlord.log(lang.getText("LOGentry00033") + XTPN+ lang.getText("LOGentry00033b") + stepsValue + lang.getText("LOGentry00033c") + stepsValue + "."
 					, "warning", true);
 		}
 	}
@@ -1118,7 +1108,7 @@ public class GUIOperations {
 						ghosts++;
 						int placeId = places.indexOf(p);
 						int transId = transitions.indexOf((Transition)a.getEndNode());
-						overlord.log("Invisible arc: p"+placeId+" -> t"+transId+". Removing...", "error", true);
+						overlord.log(lang.getText("GUIO_fix001") + placeId+" -> t" + transId+ lang.getText("GUIO_fix002"), "error", true);
 						removeArc(a, arcs);
 					}
 				}
@@ -1136,14 +1126,14 @@ public class GUIOperations {
 						
 						int transId = transitions.indexOf(t);
 						int placeId = places.indexOf((Place)a.getEndNode());
-						overlord.log("Invisible arc: t"+transId+" -> p"+placeId+". Removing...", "error", true);
+						overlord.log(lang.getText("GUIO_fix003") + transId+" -> p"+placeId + lang.getText("GUIO_fix002"), "error", true);
 						removeArc(a, arcs);
 					}
 				}
 			}
 		}
 		
-		overlord.log("Arc list: "+arcSize+", processed arcs: "+arcCounter+", removed ghost-arcs: "+ghosts, "text", true);
+		overlord.log(lang.getText("GUIO_fix004") + arcSize + lang.getText("GUIO_fix005") + arcCounter + lang.getText("GUIO_fix006") + ghosts, "text", true);
 	}
 	
 	private void removeArc(Arc arc, ArrayList<Arc> arcs) {

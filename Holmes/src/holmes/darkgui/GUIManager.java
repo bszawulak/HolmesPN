@@ -344,8 +344,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 		    	boolean status = GUIManager.getDefaultGUIManager().getNetChangeStatus();
 				if(status) {
 					Object[] options = {lang.getText("exit"), lang.getText("saveAndExit"), lang.getText("cancel"),};
+					String tmp = lang.getText("GUIM_closingQuestion001");
 					int n = JOptionPane.showOptionDialog(null,
-									lang.getText("GUIM_closingQuestion001"),
+									tmp,
 									lang.getText("GUIM_closeWindowTitle001"), JOptionPane.YES_NO_OPTION,
 									JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 					//cancel
@@ -785,7 +786,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Zwraca obiekt zarządzający językiem interfejsu.
 	 * @return LanguageManager - obiekt zarządzający językiem.
 	 */
-	public static LanguageManager getL() {
+	public static LanguageManager getLanguageManager() {
 		return lang;
 	}
 
