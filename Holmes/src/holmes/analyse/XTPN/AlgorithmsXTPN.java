@@ -46,6 +46,7 @@ public class AlgorithmsXTPN {
 
         //tutaj przygotowujemy obiekty TransitionNanoXTPN i PlaceNanoXTPN do obliczeń:
 
+        boolean areReadArcs = false;
         ArrayList<TransitionNanoXTPN> preTransitionsNano = new ArrayList<>();
         ArrayList<TransitionNanoXTPN> postTransitionsNano = new ArrayList<>();
         PlaceNanoXTPN placeNano = null;
@@ -92,6 +93,7 @@ public class AlgorithmsXTPN {
 
             if(postTransitions.contains(t)) { //jeśli tranzycja jest zarówno wejściowa, jak i wyjściowa
                 nt.hasReadArcToPlace = true;   //to ustawiamy flagę
+                areReadArcs = true;
                 postTransitions.remove(t); //usuwamy z listy tranzycji wyjściowych
             }
 
@@ -170,9 +172,17 @@ public class AlgorithmsXTPN {
         int result = 0;
         ArrayList<Integer> Kp = new ArrayList<>();
         for (long time = 0; time < maxSteps; time++) {
-            processInputTransitions(preTransitionsNano, placeNano, Kp);
+
+            if(!areReadArcs)
+                shuffleElements(preTransitionsNano);
+
+            processInputTransitions(preTransitionsNano, placeNano);
             placeNano.updateTokensSet_N(1);
-            //processTransitions(preTransitionsNano, Kp);
+
+            if(considerOutputTransitions) {
+                shuffleElements(preTransitionsNano);
+                processOutputTransitions(postTransitionsNano, placeNano);
+            }
             if(Kp.size() > result) {
                 result = Kp.size();
             }
@@ -180,15 +190,34 @@ public class AlgorithmsXTPN {
         return result;
     }
 
-    private static void processInputTransitions(ArrayList<TransitionNanoXTPN> transitions, PlaceNanoXTPN place, ArrayList<Integer> Kp) {
+    /**
+     * Metoda przetasowuje elementy w liście tranzycji.
+     * @param preTransitionsNano ArrayList<TransitionNanoXTPN> lista tranzycji
+     */
+    private static void shuffleElements(ArrayList<TransitionNanoXTPN> preTransitionsNano) {
+        for(int i = 0; i < preTransitionsNano.size(); i++) {
+            int randomIndex = (int) (Math.random() * preTransitionsNano.size());
+            TransitionNanoXTPN temp = preTransitionsNano.get(i);
+            preTransitionsNano.set(i, preTransitionsNano.get(randomIndex));
+            preTransitionsNano.set(randomIndex, temp);
+        }
+    }
+
+    /**
+     * Metoda przetwarza tranzycje wejściowe. W tej metodzie przetwarzany jest zbiór transitions, które MOGĄ mieć
+     * łuki odczytu do miejsca place, tak więc są równocześnie wyjściowymi i podlegają zasadom aktywacji. Te tranzycje
+     * które nie mają łyków odczytu do miejsca place, są zawsze aktywne.
+     * @param transitions ArrayList<TransitionNanoXTPN> lista tranzycji
+     * @param place PlaceNanoXTPN miejsce
+     */
+    private static void processInputTransitions(ArrayList<TransitionNanoXTPN> transitions, PlaceNanoXTPN place) {
         for (TransitionNanoXTPN inputTrans : transitions) {
             if(inputTrans.hasReadArcToPlace) {
                 if(inputTrans.tauBeta_N != -1) { //jeżeli produkuje
                     inputTrans.tauBeta_N++; //zwiększ zegar
                     if(inputTrans.tauBeta_N == inputTrans.tauBetaLimit) { //jeżeli skończyła produkcję
-                        for(int i = 0; i < inputTrans.weightToPlace; i++) { //dodaj tokeny do miejsca
-                            Kp.add(0);
-                        }
+
+                        place.addTokens_N(inputTrans.weightToPlace); //dodaj tokeny do miejsca
                         inputTrans.tauBeta_N = -1;
                         if(canActivate(inputTrans, place)) {
                             inputTrans.tauAlpha_N = 0; //aktywuj
@@ -224,10 +253,54 @@ public class AlgorithmsXTPN {
                 //zawsze aktywna, bo wejściowa, wtedy zegar aktywacji odpowiada za aktywację ORAZ produkcję
                 inputTrans.tauAlpha_N++;
                 if(inputTrans.tauAlpha_N == inputTrans.tauAlphaLimit + inputTrans.tauBetaLimit) {
-                    for(int i = 0; i < inputTrans.weightToPlace; i++) {
-                        Kp.add(0);
-                    }
+                    place.addTokens_N(inputTrans.weightToPlace); //dodaj tokeny do miejsca
                     inputTrans.tauAlpha_N = 0;
+                }
+            }
+        }
+    }
+
+    /**
+     * Metoda przetwarza tranzycje wyjściowe. W tej metodzie przetwarzany jest zbiór transitions, które NIE MAJĄ
+     * łuków odczytu do miejsca place, tak więc cokolwiek gdziekolwiek produkują, jest ignorowane. Jedyne co robią,
+     * to po zakończeniu aktywacji, zabierają tokeny z miejsca place.
+     * @param transitions ArrayList<TransitionNanoXTPN> lista tranzycji
+     * @param place PlaceNanoXTPN miejsce
+     */
+    private static void processOutputTransitions(ArrayList<TransitionNanoXTPN> transitions, PlaceNanoXTPN place) {
+        for (TransitionNanoXTPN outputTrans : transitions) {
+            if (outputTrans.tauBeta_N != -1) { //jeżeli produkuje
+                outputTrans.tauBeta_N++; //zwiększ zegar
+                if (outputTrans.tauBeta_N == outputTrans.tauBetaLimit) { //jeżeli skończyła produkcję
+                    place.removeTokens_N(outputTrans.weightToPlace); //usuń tokeny z miejsca
+                    outputTrans.tauBeta_N = -1;
+                    if (canActivate(outputTrans, place)) {
+                        outputTrans.tauAlpha_N = 0; //aktywuj
+                    } else {
+                        outputTrans.tauAlpha_N = -1; //dezaktywuj
+                    }
+                } else if (outputTrans.tauBeta_N > outputTrans.tauBetaLimit) { //jeżeli przekroczył limit
+                    int error = 1; //np gdy aktywacja = 0, ORAZ produkcja = 0
+                    error++;
+                }
+            } else { //jeżeli nie produkuje, sprawdzić czy aktywna:
+                if (canActivate(outputTrans, place)) { //sprawdź, czy można ją aktywować
+                    if (outputTrans.tauAlpha_N == -1) { //jeżeli nie była aktywna
+                        outputTrans.tauAlpha_N = 0; //aktywuj
+
+                        if (outputTrans.tauAlpha_N == outputTrans.tauAlphaLimit) { //jeżeli aktywacja w zerowym czasie
+                            outputTrans.tauBeta_N = 0; //rozpocznij produkcję
+                            place.removeTokens_N(outputTrans.weightToPlace); //usuń tokeny z miejsca
+                        }
+                    } else { //jeżeli już jest aktywna
+                        outputTrans.tauAlpha_N++; //zwiększ zegar
+                        if (outputTrans.tauAlpha_N == outputTrans.tauAlphaLimit) { //jeżeli skończyła aktywację
+                            outputTrans.tauBeta_N = 0; //rozpocznij produkcję
+                            place.removeTokens_N(outputTrans.weightToPlace); //usuń tokeny z miejsca
+                        }
+                    }
+                } else {
+                    outputTrans.tauAlpha_N = -1; //dezaktywuj
                 }
             }
         }

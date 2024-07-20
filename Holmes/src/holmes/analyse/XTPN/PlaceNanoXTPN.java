@@ -29,6 +29,12 @@ public class PlaceNanoXTPN {
         this.gammaU = place.getGammaMaxValue();
     }
 
+    public void addTokens_N(int numberOfTokens) {
+        for(int i=0; i<numberOfTokens; i++) {
+            tokens_N.add(0);
+        }
+    }
+
     public void updateTokensSet_N(int i) {
         tokens_N.replaceAll(integer -> integer + i);
         //usuwanie tokenów, które przekroczyły czas maxTime:
