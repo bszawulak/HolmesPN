@@ -1,6 +1,7 @@
 package holmes.analyse;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.windows.decompositions.HolmesComparisonModule;
 import org.jfree.chart.axis.*;
@@ -16,9 +17,8 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class GRDFcalculator implements Runnable {
-
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     private HolmesComparisonModule masterWindow = null;
-
     public GRDFcalculator() {
         masterWindow = GUIManager.getDefaultGUIManager().accessComparisonWindow();
     }
@@ -27,10 +27,10 @@ public class GRDFcalculator implements Runnable {
     public void run() {
         int chiisenGraohletSize = masterWindow.getChoosenGraohletSize(masterWindow.graphletSize.getSelectedIndex());
 
-        masterWindow.infoPaneDRGF.append("Comparison process started. \n");
-        masterWindow.infoPaneDRGF.append("First net count... \n");
+        masterWindow.infoPaneDRGF.append(lang.getText("GRDF_entry001")); //Comparison process started.
+        masterWindow.infoPaneDRGF.append(lang.getText("GRDF_entry002")); //First net count...
         long[] firstSingleDRGF = calcDRGF(GUIManager.getDefaultGUIManager().getWorkspace().getProject());
-        masterWindow.infoPaneDRGF.append("\nSecond net count... \n");
+        masterWindow.infoPaneDRGF.append(lang.getText("GRDF_entry003")); //Second net count...
         long[] secondSingleDRGF = calcDRGF(masterWindow.secondNet);
 
         long firstSum = Arrays.stream(firstSingleDRGF).sum();
@@ -54,14 +54,14 @@ public class GRDFcalculator implements Runnable {
         int nodeN = masterWindow.graphletSize.getSelectedIndex() + 1;
         masterWindow.infoPaneDRGF.append("\nGRDF (" + nodeN + "-node) : " + result);
 
-        XYSeries series1 = new XYSeries("Number of graphlets of net 1");
-        XYSeries series2 = new XYSeries("Number of graphlets of net 2");
+        XYSeries series1 = new XYSeries("Number of graphlets of net 1"); //Number of graphlets of net 1
+        XYSeries series2 = new XYSeries("Number of graphlets of net 2"); //Number of graphlets of net 2
         masterWindow.dataDRGF = new Object[chiisenGraohletSize ][4];
         String[] colNames = new String[4];
-        colNames[0] = "Graphlets";
-        colNames[1] = "First net";
-        colNames[2] = "Second net";
-        colNames[3] = "Distance";
+        colNames[0] = "Graphlets"; //Graphlets
+        colNames[1] = "First net"; //First net
+        colNames[2] = "Second net";//Second net
+        colNames[3] = "Distance"; //Distance
         for (int i = 0; i < chiisenGraohletSize; i++) {
             masterWindow.dataDRGF[i][0] = "G " + i;
             masterWindow.dataDRGF[i][1] = firstSingleDRGF[i];
@@ -90,7 +90,7 @@ public class GRDFcalculator implements Runnable {
         String[] axisX = new String[151];
         for (int i=0 ; i< 151 ; i++)
             axisX[i]=String.valueOf(i+1);
-        SymbolAxis rangeAxis = new SymbolAxis("Graphlets", axisX);
+        SymbolAxis rangeAxis = new SymbolAxis("Graphlets", axisX); //Graphlets
         rangeAxis.setVerticalTickLabels(true);
         xyplot.setDomainAxis(rangeAxis);
 
@@ -116,7 +116,7 @@ public class GRDFcalculator implements Runnable {
 
         masterWindow.grdfChartPanel.setVisible(true);
         masterWindow.drgfTable.revalidate();
-        masterWindow.infoPaneDRGF.append("\nComparison process ended.\n");
+        masterWindow.infoPaneDRGF.append(lang.getText("GRDF_entry004")); //Comparison process ended.
     }
 
     private long[] calcDRGF(PetriNet project) {

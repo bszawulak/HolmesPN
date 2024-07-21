@@ -9,6 +9,7 @@ import java.util.HashMap;
 import javax.swing.JTextArea;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Place;
@@ -32,6 +33,7 @@ import holmes.windows.HolmesNotepad;
  */
 public class InvariantsCalculator implements Runnable {
     private GUIManager overlord;
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     private ArrayList<Arc> arcs;
     private ArrayList<Place> places;
     private ArrayList<Transition> transitions;
@@ -45,7 +47,6 @@ public class InvariantsCalculator implements Runnable {
     private ArrayList<ArrayList<Integer>> CMatrix; //oryginalna macierz incydencji sieci
     private ArrayList<Integer> removalList;
 
-    //private ArrayList<Integer> zeroColumnVector;
     private ArrayList<Integer> nonZeroColumnVector;
     private ArrayList<ArrayList<Integer>> doubleArcs;
 
@@ -56,9 +57,7 @@ public class InvariantsCalculator implements Runnable {
     private int notCanonical = 0;
 
     private boolean showInvSetsDifference = false;
-
     private HolmesInvariantsGenerator masterWindow = null;
-
     private ArrayList<ArrayList<Integer>> invBackupMatrix = null;
 
     /**
@@ -74,14 +73,14 @@ public class InvariantsCalculator implements Runnable {
         transitions = overlord.getWorkspace().getProject().getTransitions();
         arcs = overlord.getWorkspace().getProject().getArcs();
 
-        //zeroColumnVector = new ArrayList<>();
         nonZeroColumnVector = new ArrayList<>();
-
     }
 
+    /**
+     * Konstruktor obiektu klasy InvariantsCalculator. Zapewnia dostęp do miejsc, tranzycji i łuków sieci.
+     * @param pn PetriNet - sieć do analizy
+     */
     public InvariantsCalculator(PetriNet pn) {
-        //overlord = GUIManager.getDefaultGUIManager();
-        //masterWindow = overlord.accessInvariantsWindow();
         overlord = GUIManager.getDefaultGUIManager();
 
         t_InvMode = true;
@@ -89,7 +88,6 @@ public class InvariantsCalculator implements Runnable {
         transitions = pn.getTransitions();
         arcs = pn.getArcs();
 
-        //zeroColumnVector = new ArrayList<>();
         nonZeroColumnVector = new ArrayList<>();
     }
 
@@ -102,14 +100,12 @@ public class InvariantsCalculator implements Runnable {
      */
     public InvariantsCalculator(ArrayList<Place> places, ArrayList<Transition> transitions, ArrayList<Arc> arcs, boolean transCal) {
         overlord = GUIManager.getDefaultGUIManager();
-        //masterWindow = overlord.accessInvariantsWindow();
 
         t_InvMode = transCal;
         this.places = places;
         this.transitions = transitions;
         this.arcs = arcs;
 
-        //zeroColumnVector = new ArrayList<>();
         nonZeroColumnVector = new ArrayList<>();
     }
 
@@ -119,7 +115,6 @@ public class InvariantsCalculator implements Runnable {
     public void generateInvariantsForTest(PetriNet project) {
         try {
             if (t_InvMode) {
-                //PetriNet project = overlord.getWorkspace().getProject();
                 if (showInvSetsDifference) {
                     invBackupMatrix = project.getT_InvMatrix();
                 }
@@ -127,17 +122,15 @@ public class InvariantsCalculator implements Runnable {
                 this.createTPIncidenceAndIdentityMatrix(false, t_InvMode);
                 this.calculateInvariants();
             } else {
-                //PetriNet project = overlord.getWorkspace().getProject();
                 if (showInvSetsDifference) {
                     invBackupMatrix = project.getP_InvMatrix();
                 }
-
                 this.createTPIncidenceAndIdentityMatrix(false, t_InvMode);
                 this.calculateInvariants();
             }
         } catch (Exception e) {
-            overlord.log("InvModule: Invariants generation failed.", "warning", true);
-            logInternal("Invariants generation failed.\n", true);
+            overlord.log(lang.getText("LOGentry00052"), "warning", true);
+            logInternal(lang.getText("IC_entry002"), true);
         }
     }
 
@@ -146,7 +139,7 @@ public class InvariantsCalculator implements Runnable {
      */
     public void run() {
         try {
-            logInternal("Invariant calculations started.\n", true);
+            logInternal(lang.getText("IC_entry001"), true);
             if (t_InvMode) {
                 PetriNet project = overlord.getWorkspace().getProject();
                 if (showInvSetsDifference) {
@@ -158,14 +151,15 @@ public class InvariantsCalculator implements Runnable {
 
                 if (GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1")) {
                     logInternal("\n", false);
-                    logInternal("Removing all non-canonical t-invariants from the dataset." + "\n", false);
+                    logInternal(lang.getText("IC_entry003") + "\n", false);
                     InvariantsCalculator minion_ic = new InvariantsCalculator(true);
                     ArrayList<ArrayList<Integer>> cleanInv = InvariantsTools.getOnlyRealInvariants(
                             minion_ic.getCMatrix(), getInvariants(true), true);
 
                     if (getInvariants(true).size() != cleanInv.size()) {
-                        logInternal((getInvariants(true).size() - cleanInv.size()) + " non-canonical t-invariants has been removed: "
-                                + cleanInv.size() + " remained from " + getInvariants(true).size() + "\n", false);
+                        logInternal((getInvariants(true).size() - cleanInv.size()) + " "
+                                + lang.getText("IC_entry004") + " "
+                                + cleanInv.size() + " " + lang.getText("IC_entry005") + " " + getInvariants(true).size() + "\n", false);
                     }
 
                     t_invariantsList = cleanInv;
@@ -173,7 +167,7 @@ public class InvariantsCalculator implements Runnable {
 
                 if (GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1")) {
                     logInternal("\n", false);
-                    logInternal("Removing all single-element t-invariants from the dataset." + "\n", false);
+                    logInternal(lang.getText("IC_entry006") + "\n", false);
 
                     int size = t_invariantsList.size();
                     int removed = 0;
@@ -191,43 +185,43 @@ public class InvariantsCalculator implements Runnable {
                         }
                     }
 
-                    logInternal(removed + " single-element t-invariants has been removed. T-invariants current size: "
-                            + t_invariantsList.size() + "\n", false);
+                    logInternal(removed + " " + lang.getText("IC_entry007")
+                            + " " + t_invariantsList.size() + "\n", false);
                 }
 
                 project.setT_InvMatrix(getInvariants(true), true); //MCT HERE!!!
                 overlord.getT_invBox().showT_invBoxWindow(getInvariants(true));
                 overlord.reset.setT_invariantsStatus(true);
                 overlord.accessNetTablesWindow().resetT_invData();
-                logInternal("Operation successfull, invariants found: " + getInvariants(true).size() + "\n", true);
+                logInternal(lang.getText("IC_entry008") + " " + getInvariants(true).size() + "\n", true);
 
                 ArrayList<Integer> arcClasses = Check.getArcClassCount();
                 if (arcClasses.get(1) > 0) {
                     logInternal("\n", false);
-                    logInternal("Read-arcs detected. There are " + (arcClasses.get(1) / 2) + " read-arcs in net.\n", false);
-                    logInternal("Feasible invariants computation/check is recommended. \n", false);
+                    logInternal(lang.getText("IC_entry009") + " " + (arcClasses.get(1) / 2)
+                            + " " + lang.getText("IC_entry010"), false);
+                    logInternal(lang.getText("IC_entry011"), false);
                 }
 
                 if (!doubleArcs.isEmpty()) {
                     logInternal("\n", false);
-                    logInternal("WARNING! Double arcs (read-arcs) detected between nodes::\n", false);
+                    logInternal(lang.getText("IC_entry012"), false);
                     for (ArrayList<Integer> trouble : doubleArcs) {
-                        logInternal("Place: p_" + trouble.get(0) + " and Transition t_" + trouble.get(1) + "\n", false);
+                        logInternal(lang.getText("IC_entry013") + trouble.get(0)
+                                + " " + lang.getText("IC_entry014") + trouble.get(1) + "\n", false);
                     }
-                    //logInternal("\n", false);
-                    logInternal("Feasible invariants computation/check is recommended - "
-                            + "depending on the set it may or may not change during this procedure.\n", false);
+                    logInternal(lang.getText("IC_entry015"), false);
                 }
 
                 logInternal("\n", false);
                 logInternal("=====================================================================\n", false);
-                logInternal("Checking t-invariants correctness for " + t_invariantsList.size() + " invariants.\n", false);
+                logInternal(lang.getText("IC_entry016") + " " + t_invariantsList.size() + " " +lang.getText("IC_entry017"), false);
                 InvariantsCalculator ic = new InvariantsCalculator(true);
                 ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(ic.getCMatrix(), t_invariantsList, true);
-                logInternal("Proper t-invariants (Cx = 0): " + results.get(0).get(0) + "\n", false);
-                logInternal("Sur-t-invariants (Cx > 0): " + results.get(0).get(1) + "\n", false);
-                logInternal("Sub-t-invariants (Cx < 0): " + results.get(0).get(2) + "\n", false);
-                logInternal("Non-t-invariants (Cx <=> 0): " + results.get(0).get(3) + "\n", false);
+                logInternal(lang.getText("IC_entry018") + " " + results.get(0).get(0) + "\n", false);
+                logInternal(lang.getText("IC_entry019") + " " + results.get(0).get(1) + "\n", false);
+                logInternal(lang.getText("IC_entry020") + " " + results.get(0).get(2) + "\n", false);
+                logInternal(lang.getText("IC_entry021") + " " + results.get(0).get(3) + "\n", false);
                 logInternal("=====================================================================\n", false);
 
                 overlord.markNetChange();
@@ -242,7 +236,7 @@ public class InvariantsCalculator implements Runnable {
                 if (showInvSetsDifference) {
                     if (invBackupMatrix != null && !invBackupMatrix.isEmpty()) {
                         //TODO:
-                        logInternal("Calculating difference...", false);
+                        logInternal(lang.getText("IC_entry022"), false);
                         logInternal("", false);
                         int size = getInvariants(true).size();
                         int step = size / 50;
@@ -267,7 +261,7 @@ public class InvariantsCalculator implements Runnable {
                         }
                         HolmesNotepad notePad = new HolmesNotepad(900, 600);
                         notePad.setVisible(true);
-                        notePad.addTextLineNL("Difference set size: " + invBackupMatrix.size(), "text");
+                        notePad.addTextLineNL("Difference set size:"+ " " + invBackupMatrix.size(), "text");
                         notePad.addTextLineNL("Removed " + removed + " t-invariants that are present in the current set.", "text");
                         notePad.addTextLineNL("CSV below contains invariants that are not present in the currenly gerenerated set and have been present in the previously generated set.", "text");
                         notePad.addTextLineNL("CSV set:", "text");

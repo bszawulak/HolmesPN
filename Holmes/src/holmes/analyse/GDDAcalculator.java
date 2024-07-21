@@ -1,14 +1,14 @@
 package holmes.analyse;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.windows.decompositions.HolmesComparisonModule;
 
 import javax.swing.table.DefaultTableModel;
 
 public class GDDAcalculator implements Runnable {
-
     private HolmesComparisonModule masterWindow = null;
-
+    private static LanguageManager lang = GUIManager.getLanguageManager();
 
     public GDDAcalculator() {
         masterWindow = GUIManager.getDefaultGUIManager().accessComparisonWindow();
@@ -17,9 +17,9 @@ public class GDDAcalculator implements Runnable {
     @Override
     public void run() {
         GraphletsCalculator.GraphletsCalculator();
-        masterWindow.infoPaneGDDA.append("First net count... \n");
+        masterWindow.infoPaneGDDA.append(lang.getText("GDDA_entry001")); //First net count...
         int[][] firstSingleDGDD = masterWindow.calcDGDD(GUIManager.getDefaultGUIManager().getWorkspace().getProject(), true);
-        masterWindow.infoPaneGDDA.append("\nSecond net count... \n");
+        masterWindow.infoPaneGDDA.append(lang.getText("GDDA_entry002")); //Second net count...
         int[][] secondSingleDGDD = masterWindow.calcDGDD(masterWindow.secondNet, false);
 
         //long firstSum =  Arrays.stream(firstSingleDGDDA).sum();
@@ -48,7 +48,7 @@ public class GDDAcalculator implements Runnable {
         long[] distanceDGDD = new long[GraphletsCalculator.globalOrbitMap.size()];
         double result = 0;
 
-        masterWindow.infoPaneGDDA.append("\nCalculate GDDA...\n");
+        masterWindow.infoPaneGDDA.append(lang.getText("GDDA_entry003")); //Calculate GDDA...
         double DGDDA = masterWindow.calcDGDDA(firstSingleDGDD, secondSingleDGDD, masterWindow.getOrbitsNumber());
 
         /*
@@ -57,13 +57,10 @@ public class GDDAcalculator implements Runnable {
             distanceDRGF[i] = Math.abs(firstSingleDRGF[i] - secondSingleDRGF[i]);
             //if(firstSingleDRGF[i]!=0 && secondSingleDRGF[i]!=0) {
             result += Math.abs(((double) firstSingleDRGF[i] / (double) firstSum) - ((double) secondSingleDRGF[i] / (double) secondSum));
-
-
         }
         */
 
         masterWindow.infoPaneGDDA.append("\n");
-
         masterWindow.infoPaneGDDA.append("DGDDA : " + DGDDA + "\n");
 
         /*
@@ -93,6 +90,5 @@ public class GDDAcalculator implements Runnable {
             masterWindow.dgddTable.setModel(model);
             masterWindow.dgddTable.setAutoResizeMode(5);
         }
-
     }
 }

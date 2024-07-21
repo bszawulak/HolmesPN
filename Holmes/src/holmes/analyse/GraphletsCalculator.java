@@ -45,14 +45,14 @@ public class GraphletsCalculator {
         graphetsList.clear();
         graphetsList.add(graphlet_1());
         graphetsList.add(graphlet_2());
-        System.out.println("2-sieze graphlet number : " + globalOrbitMap.size());
+        //System.out.println("2-size graphlet number : " + globalOrbitMap.size());
         graphetsList.add(graphlet_3());
         graphetsList.add(graphlet_4());
         graphetsList.add(graphlet_5());
         graphetsList.add(graphlet_6());
         graphetsList.add(graphlet_7());
         graphetsList.add(graphlet_8());
-        System.out.println("3-sieze graphlet number : " + globalOrbitMap.size());
+        //System.out.println("3-size graphlet number : " + globalOrbitMap.size());
 
         graphetsList.add(graphlet_9());
         graphetsList.add(graphlet_10());
@@ -79,7 +79,7 @@ public class GraphletsCalculator {
         graphetsList.add(graphlet_29());
         graphetsList.add(graphlet_30());
         graphetsList.add(graphlet_31());
-        System.out.println("4-sieze graphlet number : " + globalOrbitMap.size());
+        //System.out.println("4-size graphlet number : " + globalOrbitMap.size());
 
         //---
         graphetsList.add(graphlet_32());
@@ -104,7 +104,7 @@ public class GraphletsCalculator {
         graphetsList.add(graphlet_51());
         graphetsList.add(graphlet_52());
         graphetsList.add(graphlet_53());
-        System.out.println("5-1 graphlet number : " + globalOrbitMap.size());
+        //System.out.println("5-1 graphlet number : " + globalOrbitMap.size());
         //graphetsList.add(graphlet_54());
         //graphetsList.add(graphlet_55());
         graphetsList.add(graphlet_56());
@@ -132,7 +132,7 @@ public class GraphletsCalculator {
         graphetsList.add(graphlet_77());
         graphetsList.add(graphlet_78());
         graphetsList.add(graphlet_79());
-        System.out.println("5-2 graphlet number : " + globalOrbitMap.size());
+        //System.out.println("5-2 graphlet number : " + globalOrbitMap.size());
 
         graphetsList.add(graphlet_80());
         graphetsList.add(graphlet_81());
@@ -144,7 +144,7 @@ public class GraphletsCalculator {
         graphetsList.add(graphlet_87());
         graphetsList.add(graphlet_88());
         graphetsList.add(graphlet_89());
-        System.out.println("5-3 graphlet number : " + globalOrbitMap.size());
+        //System.out.println("5-3 graphlet number : " + globalOrbitMap.size());
 
         graphetsList.add(graphlet_90());
         graphetsList.add(graphlet_91());
@@ -190,7 +190,7 @@ public class GraphletsCalculator {
         graphetsList.add(graphlet_127());
         graphetsList.add(graphlet_128());
         graphetsList.add(graphlet_129());
-        System.out.println("5-4 graphlet number : " + globalOrbitMap.size());
+        //System.out.println("5-4 graphlet number : " + globalOrbitMap.size());
 
         graphetsList.add(graphlet_130());
         graphetsList.add(graphlet_131());
@@ -220,7 +220,7 @@ public class GraphletsCalculator {
         graphetsList.add(graphlet_151());
         graphetsList.add(graphlet_152());
         graphetsList.add(graphlet_153());
-        System.out.println("5-5 graphlet number : " + globalOrbitMap.size());
+        //System.out.println("5-5 graphlet number : " + globalOrbitMap.size());
 
         System.out.println("Total graphlet number : " + globalOrbitMap.size());
     }

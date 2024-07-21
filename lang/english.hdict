@@ -727,6 +727,42 @@ DCC_entry013, No ADT sets!
 DCC_entry014, Second net: Functional nets generated.\n
 DCC_entry015, Start comparison...\n
 
+\\GDDAcalculator:
+GDDA_entry001, First net count...
+GDDA_entry002, \nSecond net count... \n
+GDDA_entry003, \nCalculate GDDA... \n
+
+\\GRDFcalculator:
+GRDF_entry001, Comparison process started. \n
+GRDF_entry002, First net count... \n
+GRDF_entry003, \nSecond net count... \n
+GRDF_entry004, \nComparison process ended. \n
+
+\\InvariantsCalculator:
+IC_entry001, Invariants calculation started. \n
+LOGentry00052, InvModule: Invariants generation failed.
+IC_entry002, Invariants generation failed.\n
+IC_entry003, Removing all non-canonical t-invariants from the dataset.
+IC_entry004, non-canonical t-invariants has been removed:
+IC_entry005, remained out of
+IC_entry006, Removing all single-element t-invariants from the dataset.
+IC_entry007, single-element t-invariants has been removed. t-invariants current size:
+IC_entry008, Operation successfull, invariants found:
+IC_entry009, Read-arcs detected. There are
+IC_entry010, read-arcs in net.\n
+IC_entry011, Feasible invariants computation/check is recommended. \n
+IC_entry012, Warning: double arcs (read-arcs) detected between nodes:\n
+IC_entry013, Place: p_
+IC_entry014, and Transition t_
+IC_entry015, Feasible invariants computation/check is recommended - depending on the set it may or may not change during this procedure.\n
+IC_entry016, Checking t-invariants correctness for
+IC_entry017, t-invariants.\n
+IC_entry018, Real t-invariants (Cx = 0):
+IC_entry019, Sur-t-invariants (Cx > 0):
+IC_entry020, Sub-t-invariants (Cx < 0):
+IC_entry021, Non-t-invariants (Cx <=> 0):
+IC_entry022, Calculating difference...
+
 
 //generalPurposeTags:
 cancel, Cancel
