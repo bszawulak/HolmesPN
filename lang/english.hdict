@@ -727,18 +727,18 @@ DCC_entry013, No ADT sets!
 DCC_entry014, Second net: Functional nets generated.\n
 DCC_entry015, Start comparison...\n
 
-\\GDDAcalculator:
+//GDDAcalculator:
 GDDA_entry001, First net count...
 GDDA_entry002, \nSecond net count... \n
 GDDA_entry003, \nCalculate GDDA... \n
 
-\\GRDFcalculator:
+//GRDFcalculator:
 GRDF_entry001, Comparison process started. \n
 GRDF_entry002, First net count... \n
 GRDF_entry003, \nSecond net count... \n
 GRDF_entry004, \nComparison process ended. \n
 
-\\InvariantsCalculator:
+//InvariantsCalculator:
 IC_entry001, Invariants calculation started. \n
 LOGentry00052, InvModule: Invariants generation failed.
 IC_entry002, Invariants generation failed.\n
@@ -762,7 +762,47 @@ IC_entry019, Sur-t-invariants (Cx > 0):
 IC_entry020, Sub-t-invariants (Cx < 0):
 IC_entry021, Non-t-invariants (Cx <=> 0):
 IC_entry022, Calculating difference...
-
+IC_entry023, Difference set size:
+IC_entry024, Removed
+IC_entry025, t-invariants that were present in the current set.
+IC_entry026, CSV below contains invariants that are not present in the currenly gerenerated set and have been present in the previously generated set.
+IC_entry027, CSV set:
+IC_entry028, Removing all non-canonical p-invariants from the dataset.
+IC_entry029, non-canonical p-invariants has been removed:
+IC_entry030, remained out of
+IC_entry031, Operation successfull, invariants found:
+IC_entry032, Warning: read-arcs detected. There are
+IC_entry033, read-arcs in net.\n
+IC_entry034, Double arcs (read-arcs) detected between nodes:\n
+IC_entry035, Place: p_
+IC_entry036, and Transition t_
+IC_entry037, Checking p-invariants correctness for
+IC_entry038, p-invariants.\n
+IC_entry039, Proper p-invariants (Cx = 0):
+IC_entry040, Sur-p-invariants (Cx > 0):
+IC_entry041, Sub-p-invariants (Cx < 0):
+IC_entry042, Non-p-invariants (Cx <=> 0):
+LOGentry00053, InvModule: Invariants generation failed.
+IC_entry043, Invariants generation failed.\n
+IC_entry044, \nTP-class incidence matrix created for
+IC_entry045, transitions and
+IC_entry046, places.\n
+IC_entry047, Identity matrix created for
+IC_entry048, transitions.\n
+IC_entry049, No incidence matrix. Terminating.\n
+IC_entry050, Phase I inititated. Performing only for all 1-in/1-out columns.\n
+IC_entry051, Processing simple-class column:
+IC_entry052, Processing column:
+IC_entry053, , projected rows change:
+IC_entry054, , remaining steps:
+IC_entry055, \nNew rows number:
+IC_entry056, | rejected:
+IC_entry057, replaced:
+IC_entry058, not canonical:
+IC_entry059, Phase I inititated. Performing only for all 1-in/1-out columns.\n
+IC_entry060, Processing simple-class column:
+LOGentry00054error, Critical error (2000001) calculating invariants.
+LOGentry00055error, CheckCoverability function, catastrophic error (2000002): impossible state detected.
 
 //generalPurposeTags:
 cancel, Cancel

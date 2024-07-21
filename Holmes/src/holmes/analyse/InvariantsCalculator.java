@@ -261,10 +261,10 @@ public class InvariantsCalculator implements Runnable {
                         }
                         HolmesNotepad notePad = new HolmesNotepad(900, 600);
                         notePad.setVisible(true);
-                        notePad.addTextLineNL("Difference set size:"+ " " + invBackupMatrix.size(), "text");
-                        notePad.addTextLineNL("Removed " + removed + " t-invariants that are present in the current set.", "text");
-                        notePad.addTextLineNL("CSV below contains invariants that are not present in the currenly gerenerated set and have been present in the previously generated set.", "text");
-                        notePad.addTextLineNL("CSV set:", "text");
+                        notePad.addTextLineNL(lang.getText("IC_entry023")+ " " + invBackupMatrix.size(), "text");
+                        notePad.addTextLineNL(lang.getText("IC_entry024")+ " " + removed + " "+lang.getText("IC_entry025"), "text");
+                        notePad.addTextLineNL(lang.getText("IC_entry026"), "text");
+                        notePad.addTextLineNL(lang.getText("IC_entry027"), "text");
                         notePad.addTextLineNL("", "text");
                         for (int i = 0; i < invBackupMatrix.size(); i++) {
                             StringBuilder csvVector = new StringBuilder(i + ";");
@@ -282,14 +282,14 @@ public class InvariantsCalculator implements Runnable {
 
                 if (GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1")) {
                     logInternal("\n", false);
-                    logInternal("Removing all non-canonical p-invariants from the dataset." + "\n", false);
+                    logInternal(lang.getText("IC_entry028") + "\n", false);
                     InvariantsCalculator minion_ic = new InvariantsCalculator(false);
                     ArrayList<ArrayList<Integer>> cleanInv = InvariantsTools.getOnlyRealInvariants(
                             minion_ic.getCMatrix(), getInvariants(false), false);
 
                     if (getInvariants(false).size() != cleanInv.size()) {
-                        logInternal((getInvariants(false).size() - cleanInv.size()) + " non-canonical p-invariants has been removed: "
-                                + cleanInv.size() + " remained from " + getInvariants(false).size() + "\n", false);
+                        logInternal((getInvariants(false).size() - cleanInv.size()) + " "+lang.getText("IC_entry029")+" "
+                                + cleanInv.size() + " "+lang.getText("IC_entry030")+" " + getInvariants(false).size() + "\n", false);
                     }
                     p_invariantsList = cleanInv;
                 }
@@ -298,38 +298,38 @@ public class InvariantsCalculator implements Runnable {
                 overlord.getP_invBox().showP_invBoxWindow(getInvariants(false));
                 project.setP_InvMatrix(getInvariants(false));
                 overlord.reset.setP_invariantsStatus(true);
-                logInternal("Operation successfull, invariants found: " + getInvariants(false).size() + "\n", true);
+                logInternal(lang.getText("IC_entry031")+ " " + getInvariants(false).size() + "\n", true);
 
                 ArrayList<Integer> arcClasses = Check.getArcClassCount();
                 if (arcClasses.get(1) > 0) {
                     logInternal("\n", false);
-                    logInternal("WARNING! Read-arcs detected. There are " + (arcClasses.get(1) / 2) + " read-arcs in net.\n", false);
+                    logInternal(lang.getText("IC_entry032")+ " " + (arcClasses.get(1) / 2) + " "+lang.getText("IC_entry033"), false);
                 }
 
                 if (!doubleArcs.isEmpty()) {
                     logInternal("\n", false);
-                    logInternal("Double arcs (read-arcs) detected between nodes::\n", false);
+                    logInternal(lang.getText("IC_entry034"), false);
                     for (ArrayList<Integer> trouble : doubleArcs) {
-                        logInternal("Place: p_" + trouble.get(0) + " and Transition t_" + trouble.get(1) + "\n", false);
+                        logInternal(lang.getText("IC_entry035") + trouble.get(0) + " " + lang.getText("IC_entry036") + trouble.get(1) + "\n", false);
                     }
                 }
 
                 logInternal("\n", false);
                 logInternal("=====================================================================\n", false);
-                logInternal("Checking p-invariants correctness for " + p_invariantsList.size() + " invariants.\n", false);
+                logInternal(lang.getText("IC_entry037")+" " + p_invariantsList.size() + " "+lang.getText("IC_entry038"), false);
                 InvariantsCalculator ic = new InvariantsCalculator(true);
                 ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(ic.getCMatrix(), p_invariantsList, false);
-                logInternal("Proper p-invariants (Cx = 0): " + results.get(0).get(0) + "\n", false);
-                logInternal("Sur-p-invariants (Cx > 0): " + results.get(0).get(1) + "\n", false);
-                logInternal("Sub-p-invariants (Cx < 0): " + results.get(0).get(2) + "\n", false);
-                logInternal("Non-p-invariants (Cx <=> 0): " + results.get(0).get(3) + "\n", false);
+                logInternal(lang.getText("IC_entry039")+" " + results.get(0).get(0) + "\n", false);
+                logInternal(lang.getText("IC_entry040")+" " + results.get(0).get(1) + "\n", false);
+                logInternal(lang.getText("IC_entry041")+" " + results.get(0).get(2) + "\n", false);
+                logInternal(lang.getText("IC_entry042")+" " + results.get(0).get(3) + "\n", false);
                 logInternal("=====================================================================\n", false);
 
                 overlord.markNetChange();
             }
         } catch (Exception e) {
-            overlord.log("InvModule: Invariants generation failed.", "warning", true);
-            logInternal("Invariants generation failed.\n", true);
+            overlord.log(lang.getText("LOGentry00053"), "warning", true);
+            logInternal(lang.getText("IC_entry043"), true);
         } finally {
             masterWindow.resetInvariantGenerator(); //odłącz obiekt
         }
@@ -422,7 +422,8 @@ public class InvariantsCalculator implements Runnable {
         }
 
         if (!silence)
-            logInternal("\nTP-class incidence matrix created for " + transitions.size() + " transitions and " + places.size() + " places.\n", false);
+            logInternal(lang.getText("IC_entry044")+ " " + transitions.size() + " "
+                    +lang.getText("IC_entry045")+" " + places.size() + " "+lang.getText("IC_entry046"), false);
 
         int INC_MATRIX_ROW_SIZE;
         if (tInvMode) {
@@ -464,7 +465,7 @@ public class InvariantsCalculator implements Runnable {
                 GLOBAL_INC_VECTOR.add(0);
         }
         if (!silence)
-            logInternal("Identity matrix created for " + transitions.size() + " transitions.\n", false);
+            logInternal(lang.getText("IC_entry047")+" " + transitions.size() + " "+lang.getText("IC_entry048"), false);
     }
 
     /**
@@ -472,13 +473,13 @@ public class InvariantsCalculator implements Runnable {
      */
     public void calculateInvariants() {
         if (globalIncidenceMatrix == null) {
-            logInternal("No incidence matrix. Terminating.\n", false);
+            logInternal(lang.getText("IC_entry049"), false);
             return;
         }
 
         // Etap I - miejsca 1-in 1-out
         ArrayList<ArrayList<Integer>> generatedRows;
-        logInternal("Phase I inititated. Performing only for all 1-in/1-out columns.\n", false);
+        logInternal(lang.getText("IC_entry050"), false);
         int columnsNumber = globalIncidenceMatrix.get(0).size();
 
         for (int p = 0; p < columnsNumber; p++) { //t-inv: liczba miejsc; p-inv: liczba tranzycji
@@ -487,12 +488,9 @@ public class InvariantsCalculator implements Runnable {
 
         for (int col = 0; col < columnsNumber; col++) { //col = miejsce dla T-inv, tranz. dla P-inv
             if (isSimpleColumn(globalIncidenceMatrix, col)) { // wystepuje tylko jedno wejście i wyjście
-                logInternal("Processing simple-class column: " + col + "\n", false);
+                logInternal(lang.getText("IC_entry051")+" " + col + "\n", false);
                 generatedRows = findNewRows(col); // na bazie globalIncidenceMatrix i Identity
                 rewriteIncidenceIntegrityMatrices(generatedRows, col);
-                //zeroColumnVector.add(col);
-                //int vIndex = nonZeroColumnVector.indexOf(col);
-                //nonZeroColumnVector.remove(vIndex);
                 nonZeroColumnVector.remove((Integer) col);
             }
         }
@@ -506,18 +504,17 @@ public class InvariantsCalculator implements Runnable {
             int rowsChange = res[1];
             int oldSize = globalIncidenceMatrix.size();
 
-            logInternal("Processing column: " + cand + ", projected rows change: " + (oldSize + rowsChange) + ", remaining steps: " + stepsToFinish, false);
+            logInternal(lang.getText("IC_entry052")+ " " + cand + lang.getText("IC_entry053")+ " " 
+                    + (oldSize + rowsChange) + lang.getText("IC_entry054")+ " " + stepsToFinish, false);
 
             generatedRows = findNewRows(cand); // na bazie globalIncidenceMatrix i Identity
             rewriteIncidenceIntegrityMatrices(generatedRows, cand);
 
-            //zeroColumnVector.add(cand);
-            //int indCand = nonZeroColumnVector.indexOf(cand);
-            //nonZeroColumnVector.remove(indCand);
             nonZeroColumnVector.remove((Integer) cand);
 
             int newSize = globalIncidenceMatrix.size();
-            logInternal("\nNew rows number: " + newSize + " | rejected: " + newRejected + " replaced: " + oldReplaced + " not canonical: " + notCanonical + "\n", false);
+            logInternal(lang.getText("IC_entry055")+ " " + newSize + " "+lang.getText("IC_entry056")+" " + newRejected 
+                    + " "+lang.getText("IC_entry057")+" " + oldReplaced + " "+lang.getText("IC_entry058")+" " + notCanonical + "\n", false);
         }
         setInvariants(globalIdentityMatrix);
     }
@@ -528,7 +525,7 @@ public class InvariantsCalculator implements Runnable {
     public void calculateSecondNetInvariants() {
         // Etap I - miejsca 1-in 1-out
         ArrayList<ArrayList<Integer>> generatedRows;
-        logInternal("Phase I inititated. Performing only for all 1-in/1-out columns.\n", false);
+        logInternal(lang.getText("IC_entry059"), false);
         int columnsNumber = globalIncidenceMatrix.get(0).size();
 
         for (int p = 0; p < columnsNumber; p++) { //t-inv: liczba miejsc; p-inv: liczba tranzycji
@@ -537,12 +534,9 @@ public class InvariantsCalculator implements Runnable {
 
         for (int col = 0; col < columnsNumber; col++) { //col = miejsce dla T-inv, tranz. dla P-inv
             if (isSimpleColumn(globalIncidenceMatrix, col)) { // wystepuje tylko jedno wejście i wyjście
-                logInternal("Processing simple-class column: " + col + "\n", false);
+                logInternal(lang.getText("IC_entry060")+ " " + col + "\n", false);
                 generatedRows = findNewRows(col); // na bazie globalIncidenceMatrix i Identity
                 rewriteIncidenceIntegrityMatrices(generatedRows, col);
-                //zeroColumnVector.add(col);
-                //int vIndex = nonZeroColumnVector.indexOf(col);
-                //nonZeroColumnVector.remove(vIndex);
                 nonZeroColumnVector.remove((Integer) col);
             }
         }
@@ -556,7 +550,8 @@ public class InvariantsCalculator implements Runnable {
             int rowsChange = res[1];
             int oldSize = globalIncidenceMatrix.size();
 
-            logInternal("Processing column: " + cand + ", projected rows change: " + (oldSize + rowsChange) + ", remaining steps: " + stepsToFinish, false);
+            logInternal(lang.getText("IC_entry052")+ " " + cand + lang.getText("IC_entry053")+" " 
+                    + (oldSize + rowsChange) + lang.getText("IC_entry054")+" " + stepsToFinish, false);
 
             generatedRows = findNewRows(cand); // na bazie globalIncidenceMatrix i Identity
             rewriteIncidenceIntegrityMatrices(generatedRows, cand);
@@ -565,9 +560,9 @@ public class InvariantsCalculator implements Runnable {
             //zeroColumnVector.add(cand);
             nonZeroColumnVector.remove((Integer) cand);
             int newSize = globalIncidenceMatrix.size();
-            logInternal("\nNew rows number: " + newSize + " | rejected: " + newRejected + " replaced: " + oldReplaced + " not canonical: " + notCanonical + "\n", false);
+            logInternal(lang.getText("IC_entry055")+ " " + newSize + " "+lang.getText("IC_entry056")+ " " + newRejected 
+                    + " "+lang.getText("IC_entry057")+" " + oldReplaced + " "+lang.getText("IC_entry058")+ " " + notCanonical + "\n", false);
         }
-
         setInvariants(globalIdentityMatrix);
     }
 
@@ -737,7 +732,6 @@ public class InvariantsCalculator implements Runnable {
             invCandidate.add((globalIdentityMatrix.get(row1).get(b) * multFactorT1) +
                     (globalIdentityMatrix.get(row2).get(b) * multFactorT2));
         }
-
         addOrNot(incMatrixNewRow, invCandidate, row1, row2);
     }
 
@@ -752,7 +746,6 @@ public class InvariantsCalculator implements Runnable {
      */
     private void addOrNot(ArrayList<Integer> incMatrixNewRow, ArrayList<Integer> invCandidate, int t1, int t2) {
         ArrayList<Integer> candidateSupport = InvariantsTools.getSupport(invCandidate);
-
         int canonicalNWD = checkCanonityNWD(invCandidate, candidateSupport);
         if (canonicalNWD > 1) {
             notCanonical++;
@@ -765,14 +758,9 @@ public class InvariantsCalculator implements Runnable {
                     canonize(incMatrixNewRow, canonicalNWD);
                     //canonize(incMatrixNewRow, matrixNWD);
                     // ^ TEST: BAD IDEA, po prostu nie działa, powstają nie-inwarianty, a inwariantów jest za mało
-                    if (nwd(canonicalNWD, matrixNWD) != canonicalNWD) {
-                        @SuppressWarnings("unused")
-                        int check = 1; //sieć athero: ani razu! Hurray!!!!
-                    }
                 }
             }
         }
-        //TODO:
         boolean fmtResult = fastMinimalityTest(invCandidate, candidateSupport); //BARDZO BARDZO WAŻNE.
 
         //boolean fmtResult = true; //nadmiarowy
@@ -794,8 +782,7 @@ public class InvariantsCalculator implements Runnable {
 
             if (resList.size() > 1) {
                 if (!added) {
-                    overlord.log("Critical error calculating invariants. Error 00011", "error", true);
-                    //System.out.println("Inwariant się nie nadaje, ale jest mniejszy niż obecne w macierzy! ERROR!");
+                    overlord.log(lang.getText("LOGentry00054error"), "error", true);
                 }
 
                 while (!resList.isEmpty()) { //inne do usunięcia
@@ -823,9 +810,7 @@ public class InvariantsCalculator implements Runnable {
     private ArrayList<Integer> supportMinimalityTest(ArrayList<Integer> invCandidate, ArrayList<Integer> invSupport, int t1, int t2) {
         ArrayList<Integer> removeList = new ArrayList<>();
         removeList.add(-1); //domyślnie można dodać nowy inw
-
         int matrixSize = globalIdentityMatrix.size();
-        //int invSuppSize = invSupport.size();
         int successCounter = 0;
 
         for (int vector = 0; vector < matrixSize; vector++) {
@@ -845,24 +830,15 @@ public class InvariantsCalculator implements Runnable {
                 removeList.set(0, -99);
                 return removeList;
             }
-
-
+            
             int result = checkCoverability(globalIdentityMatrix.get(vector), refSupport, invCandidate, invSupport);
             //0 - identyczne lub nie jest minimalny, nie dodajemy
             //1 - inne powody, nie dodajemy
             //2 - dodajemy, ale trzeba usunąć jakiegoś z macierzy
             //3 - dodajemy, po prostu
-
             if (result == 0 || result == -1) { //identyczny jak znaleziony w macierzy lub referencyjny jest w nim zawarty: nie dodajemy
                 newRejected++;
                 removeList.set(0, -99);
-
-                if (removeList.size() > 1) {
-                    @SuppressWarnings("unused")
-                    int x = 1;
-                    //JAKIM CUDEM? zupełnie nie pasuje, ale jest mniejszy od znalezionego w macierzy?!
-                }
-
                 return removeList; //Q:a co gdyby kontynuować szukanie dalej? A: nic ciekawego, tylko dłużej
             } else if (result == 2) { //jest lepszy od testowanego referencyjnego - referencyjny do wywalenia
                 successCounter++;
@@ -909,8 +885,7 @@ public class InvariantsCalculator implements Runnable {
         int RefInCanStrong = 0; // >
         int refSuppSize = refSupport.size();
         int candSuppSize = candSupport.size();
-
-        //TODO: po sumie zbiorów wsparć - będzie szybciej
+        
         ArrayList<Integer> sumOfSupport = new ArrayList<>(refSupport);
         for (int el : candSupport) {
             if (!sumOfSupport.contains(el))
@@ -963,7 +938,7 @@ public class InvariantsCalculator implements Runnable {
              * na jakimś elemencie jest mniejszy, a nie tylko mniejszy/równy (CanInRefStrong > 0).
              */
         } else {
-            overlord.log("CheckCoverability function: catastrophic error, impossible state detected.", "error", true);
+            overlord.log(lang.getText("LOGentry00055error"), "error", true);
             return 3; //teoretycznie NIGDY nie powinniśmy się tu pojawić
         }
     }
@@ -1062,9 +1037,6 @@ public class InvariantsCalculator implements Runnable {
      * @param nwd          int - największy wspólny dzielnik
      */
     private void canonize(ArrayList<Integer> invCandidate, int nwd) {
-        //for (int i = 0; i < invCandidate.size(); i++) {
-        //    invCandidate.set(i, invCandidate.get(i) / nwd);
-        //}
         invCandidate.replaceAll(integer -> integer / nwd);
     }
 
@@ -1100,9 +1072,7 @@ public class InvariantsCalculator implements Runnable {
             else
                 y -= x;
         }*/
-
         //or:
-
         while (y != 0) {
             int temp = y;
             y = x % y;
@@ -1179,7 +1149,6 @@ public class InvariantsCalculator implements Runnable {
             } else {
                 jta.append("[" + timeStamp + "] " + msg);
                 jta.setCaretPosition(jta.getDocument().getLength());
-                //masterWindow.accessLogField().append("["+timeStamp+"] "+msg);
             }
         }
     }

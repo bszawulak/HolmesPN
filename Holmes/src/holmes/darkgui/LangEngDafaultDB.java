@@ -722,10 +722,102 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HDWT_entry303QuickSim","Places tokens data");
         defaultEnglish.put("HDWT_entry304QuickSim","Color arcs");
         defaultEnglish.put("HDWT_entry305QuickSim","Repetitions");
-        
-        
-        
 
+        //DecoCalccalculator:
+        defaultEnglish.put("DCC_entry001","Please choose comparison type");
+        defaultEnglish.put("DCC_entry002","No t-invariants sets!");
+        defaultEnglish.put("DCC_entry003","Second net: Invariants generated.\n");
+        defaultEnglish.put("DCC_entry004","Second net: ADT generated.\n");
+        defaultEnglish.put("DCC_entry005","Start comparison...\n");
+        defaultEnglish.put("DCC_entry006","No t-nets sets!");
+        defaultEnglish.put("DCC_entry007","Second net: T-net generated.\n");
+        defaultEnglish.put("DCC_entry008","Start comparison...\n");
+        defaultEnglish.put("DCC_entry009","No ADT sets!");
+        defaultEnglish.put("DCC_entry010","Second net: Invariants generated.\n");
+        defaultEnglish.put("DCC_entry011","Second net: ADT generated.\n");
+        defaultEnglish.put("DCC_entry012","Start comparison...\n");
+        defaultEnglish.put("DCC_entry013","No ADT sets!");
+        defaultEnglish.put("DCC_entry014","Second net: Functional nets generated.\n");
+        defaultEnglish.put("DCC_entry015","Start comparison...\n");
+
+        //GDDAcalculator:
+        defaultEnglish.put("GDDA_entry001","First net count...");
+        defaultEnglish.put("GDDA_entry002","\nSecond net count... \n");
+        defaultEnglish.put("GDDA_entry003","\nCalculate GDDA... \n");
+
+        //GRDFcalculator:
+        defaultEnglish.put("GRDF_entry001","Comparison process started. \n");
+        defaultEnglish.put("GRDF_entry002","First net count... \n");
+        defaultEnglish.put("GRDF_entry003","\nSecond net count... \n");
+        defaultEnglish.put("GRDF_entry004","\nComparison process ended. \n");
+
+        //InvariantsCalculator:
+        defaultEnglish.put("IC_entry001","Invariants calculation started. \n");
+        defaultEnglish.put("LOGentry00052","InvModule: Invariants generation failed.");
+        defaultEnglish.put("IC_entry002","Invariants generation failed.\n");
+        defaultEnglish.put("IC_entry003","Removing all non-canonical t-invariants from the dataset.");
+        defaultEnglish.put("IC_entry004","non-canonical t-invariants has been removed:");
+        defaultEnglish.put("IC_entry005","remained out of");
+        defaultEnglish.put("IC_entry006","Removing all single-element t-invariants from the dataset.");
+        defaultEnglish.put("IC_entry007","single-element t-invariants has been removed. t-invariants current size:");
+        defaultEnglish.put("IC_entry008","Operation successfull, invariants found:");
+        defaultEnglish.put("IC_entry009","Read-arcs detected. There are");
+        defaultEnglish.put("IC_entry010","read-arcs in net.\n");
+        defaultEnglish.put("IC_entry011","Feasible invariants computation/check is recommended. \n");
+        defaultEnglish.put("IC_entry012","Warning: double arcs (read-arcs) detected between nodes:\n");
+        defaultEnglish.put("IC_entry013","Place: p_");
+        defaultEnglish.put("IC_entry014","and Transition t_");
+        defaultEnglish.put("IC_entry015","Feasible invariants computation/check is recommended - depending on the set it may or may not change during this procedure.\n");
+        defaultEnglish.put("IC_entry016","Checking t-invariants correctness for");
+        defaultEnglish.put("IC_entry017","t-invariants.\n");
+        defaultEnglish.put("IC_entry018","Real t-invariants (Cx = 0):");
+        defaultEnglish.put("IC_entry019","Sur-t-invariants (Cx > 0):");
+        defaultEnglish.put("IC_entry020","Sub-t-invariants (Cx < 0):");
+        defaultEnglish.put("IC_entry021","Non-t-invariants (Cx <=> 0):");
+        defaultEnglish.put("IC_entry022","Calculating difference...");
+        defaultEnglish.put("IC_entry023","Difference set size:");
+        defaultEnglish.put("IC_entry024","Removed");
+        defaultEnglish.put("IC_entry025","t-invariants that were present in the current set.");
+        defaultEnglish.put("IC_entry026","CSV below contains invariants that are not present in the currenly gerenerated set and have been present in the previously generated set.");
+        defaultEnglish.put("IC_entry027","CSV set:");
+        defaultEnglish.put("IC_entry028","Removing all non-canonical p-invariants from the dataset.");
+        defaultEnglish.put("IC_entry029","non-canonical p-invariants has been removed:");
+        defaultEnglish.put("IC_entry030","remained out of");
+        defaultEnglish.put("IC_entry031","Operation successfull, invariants found:");
+        defaultEnglish.put("IC_entry032","Warning: read-arcs detected. There are");
+        defaultEnglish.put("IC_entry033","read-arcs in net.\n");
+        defaultEnglish.put("IC_entry034","Double arcs (read-arcs) detected between nodes:\n");
+        defaultEnglish.put("IC_entry035","Place: p_");
+        defaultEnglish.put("IC_entry036","and Transition t_");
+        defaultEnglish.put("IC_entry037","Checking p-invariants correctness for");
+        defaultEnglish.put("IC_entry038","p-invariants.\n");
+        defaultEnglish.put("IC_entry039","Proper p-invariants (Cx = 0):");
+        defaultEnglish.put("IC_entry040","Sur-p-invariants (Cx > 0):");
+        defaultEnglish.put("IC_entry041","Sub-p-invariants (Cx < 0):");
+        defaultEnglish.put("IC_entry042","Non-p-invariants (Cx <=> 0):");
+        defaultEnglish.put("LOGentry00053","InvModule: Invariants generation failed.");
+        defaultEnglish.put("IC_entry043","Invariants generation failed.\n");
+        defaultEnglish.put("IC_entry044","\nTP-class incidence matrix created for");
+        defaultEnglish.put("IC_entry045","transitions and");
+        defaultEnglish.put("IC_entry046","places.\n");
+        defaultEnglish.put("IC_entry047","Identity matrix created for");
+        defaultEnglish.put("IC_entry048","transitions.\n");
+        defaultEnglish.put("IC_entry049","No incidence matrix. Terminating.\n");
+        defaultEnglish.put("IC_entry050","Phase I inititated. Performing only for all 1-in/1-out columns.\n");
+        defaultEnglish.put("IC_entry051","Processing simple-class column:");
+        defaultEnglish.put("IC_entry052","Processing column:");
+        defaultEnglish.put("IC_entry053",", projected rows change:");
+        defaultEnglish.put("IC_entry054",", remaining steps:");
+        defaultEnglish.put("IC_entry055","\nNew rows number:");
+        defaultEnglish.put("IC_entry056","| rejected:");
+        defaultEnglish.put("IC_entry057","replaced:");
+        defaultEnglish.put("IC_entry058","not canonical:");
+        defaultEnglish.put("IC_entry059","Phase I inititated. Performing only for all 1-in/1-out columns.\n");
+        defaultEnglish.put("IC_entry060","Processing simple-class column:");
+        defaultEnglish.put("LOGentry00054error","Critical error (2000001) calculating invariants.");
+        defaultEnglish.put("LOGentry00055error","CheckCoverability function, catastrophic error (2000002): impossible state detected.");
+
+        //generalPurposeTags:
         defaultEnglish.put("cancel","Cancel");
         defaultEnglish.put("critError","Critical error");
         defaultEnglish.put("confirm","Confirm");
@@ -741,10 +833,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("netSimWork01","Net simulator working");
         defaultEnglish.put("unimplemented","Not implemented yet.");
         defaultEnglish.put("unimplementedTitle","Subsystem offline");
-
-
-
-
+        
 
         return defaultEnglish;
     }
