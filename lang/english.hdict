@@ -710,6 +710,23 @@ HDWT_entry303QuickSim, Places tokens data
 HDWT_entry304QuickSim, Color arcs
 HDWT_entry305QuickSim, Repetitions
 
+//DecoCalccalculator:
+DCC_entry001, Please choose comparison type
+DCC_entry002, No t-invariants sets!
+DCC_entry003, Second net: Invariants generated.\n
+DCC_entry004, Second net: ADT generated.\n
+DCC_entry005, Start comparison...\n
+DCC_entry006, No t-nets sets!
+DCC_entry007, Second net: T-net generated.\n
+DCC_entry008, Start comparison...\n
+DCC_entry009, No ADT sets!
+DCC_entry010, Second net: Invariants generated.\n
+DCC_entry011, Second net: ADT generated.\n
+DCC_entry012, Start comparison...\n
+DCC_entry013, No ADT sets!
+DCC_entry014, Second net: Functional nets generated.\n
+DCC_entry015, Start comparison...\n
+
 
 //generalPurposeTags:
 cancel, Cancel

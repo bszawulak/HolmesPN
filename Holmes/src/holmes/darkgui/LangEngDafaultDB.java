@@ -722,6 +722,9 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HDWT_entry303QuickSim","Places tokens data");
         defaultEnglish.put("HDWT_entry304QuickSim","Color arcs");
         defaultEnglish.put("HDWT_entry305QuickSim","Repetitions");
+        
+        
+        
 
         defaultEnglish.put("cancel","Cancel");
         defaultEnglish.put("critError","Critical error");
