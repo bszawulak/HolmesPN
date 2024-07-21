@@ -144,13 +144,597 @@ GUIO_fix004, Arc list:
 GUIO_fix005, , processed arcs:
 GUIO_fix006, , removed ghost-arcs:
 
+//DarkMenu:
+DM_menuFile, File
+DM_menuFileDesc, The File Menu
+DM_menuFileProject, New Project
+DM_menuFileOpenProject, Open project...
+DM_menuFileImportNet, Import network...
+DM_menuFileMerge, Merge nets...
+DM_menuFileSavePr, Save project...
+DM_menuFileExport, Export network...
+DM_menuFileExportPNT, Export as PNT...
+DM_menuFileExportImg, Export to image...
+DM_menuFileExportTex, Tex Export
+DM_menuFileExportTexPT, Places and transitions table...
+DM_menuFileExportTexInv, Invariants table...
+DM_menuFileExportTexMCT, MCT table...
+DM_menuFileExit, Exit
+DM_menuFileExitQ1, Are you sure you want to close the program?
+DM_menuFileExitQ2, Close Holmes
+DM_menuView, View
+DM_menuViewZoom100, Zoom 100%
+DM_menuViewZoomIn, Increase zoom 10%
+DM_menuViewZoomOut, Decrease zoom 10%
+DM_menuWindows, Windows
+DM_menuWindowsProject, Project
+DM_menuWindowsConsole, Log Console
+DM_menuWindowsProperties, Properties
+DM_menuNetData, Net Data
+DM_menuNetDataProperties, Net properties...
+DM_menuNetDataSearch, Search node...
+DM_menuNetDataTable, Net data tables...
+DM_menuNetDataInvariants, Invariants Viewer...
+DM_menuNetDataPStateM, Initial p-states manager...
+DM_menuNetDataPStateMQ1, Net simulator must be stopped in order to access state manager.
+DM_menuNetDataPStateMQ2, Simulator working
+DM_menuNetDataSPNM, SPN firing rates manager...
+DM_menuNetDataSSA, SSA p-states manager...
+DM_menuSubnets, Subnets
+DM_menuSubnetsCompr, Compress subnets
+DM_menuSubnetsAlign, Align to upper left
+DM_menuSubnetsResize, Resize panels
+DM_menuSubnetsShowDet, Show details
+DM_menuAnalysis, Analysis
+DM_menuAnalysisInvariants, Invariants
+DM_menuAnalysisInvGen, Invariants generator...
+DM_menuAnalysisMCS, Minimal Cutting Sets...
+DM_menuAnalysisKnockout, Knockout analysis...
+DM_menuAnalysisClusters, Cluster analysis...
+DM_menuAnalysisSim, Simulation
+DM_menuAnalysisStateSim, State Simulator...
+DM_menuAnalysisXTPNSim, XTPN Simulator...
+DM_menuAnalysisNetDeco, Net decomposition
+DM_menuAnalysisNetDecoA, Decomposition analysis...
+DM_menuAnalysisNetDecoB, Branch analysis...
+DM_menuAnalysisNetDecoC, Net comparison
+DM_menuAnalysisNetDecoD, Graphlets
+DM_menuAnalysisNetDecoE, Reduction
+DM_menuOther, Other
+DM_menuOtherMCT, MCT
+DM_menuOtherMCTGen, Generate MCT Groups
+DM_menuOtherMCTCre, Create simple MCT file
+DM_menuOtherMCTFiles, MCT Files
+DM_menuOtherMCTFilesA, MCT
+DM_menuOtherInvGen, Invariants Simulation
+DM_menuOtherFixArcs, FixArcs
+DM_menuHelp, Help
+DM_menuHelpAbout, About Holmes
+
+//GUIReset:
+GUIR_reset001, Please stop simulation completely before continuing.
+GUIR_reset002, Please stop XTPN simulation completely before continuing.
+GUIR_reset003, Net has been changed since the last save. Continue and clear all data?
+GUIR_reset004, Data clear warning
+LOGentry00034, Net data deletion initiated.
+LOGentry00035, Something went terribly wrong. Holmes emergency restart initiated.
+GUIR_reset005, Net data deletion initiated.
+LOGentry00036, t-invariants data removed from memory.
+LOGentry00037, MCT data removed from memory.
+LOGentry00038, p-invariants data removed from memory.
+LOGentry00039, Clustering data removed from memory.
+LOGentry00040, Decomposition data removed from memory.
+
+//Toolbar:
+TB_toolTip001, LoopBack
+TB_toolTip001d, Loop back to oldest action saved
+TB_toolTip002, StepBack
+TB_toolTip002d, Single action back simulation
+TB_toolTip003, Loop
+TB_toolTip003d, Loop simulation
+TB_toolTip004, LoopSingleTrans
+TB_toolTip004d, Loop single transition simulation
+TB_toolTip005, Pause
+TB_toolTip005d, Pause simulation
+TB_toolTip006, Stop
+TB_toolTip006d, Schedule a stop for the simulation
+TB_toolTip007, SingleForward
+TB_toolTip007d, Single transition forward simulation
+TB_toolTip008, StepForward
+TB_toolTip008d, Step forward simulation
+TB_toolTip009, Reset
+TB_toolTip009d, Reset simulator
+TB_toolTip010, Ext.Net
+TB_toolTip010d, Extend net elements
+
+//PetriNetTools:
+PNTT_toolTipPointer, Allows to point at and move net components on the sheet.
+PNTT_toolTipEraser, Allows to delete net components.
+PNTT_toolTipPlace, Allows you to place a Place on the sheet.
+PNTT_toolTipTrans, Allows you to place a Transition on the sheet.
+PNTT_toolTipTPNTrans, Allows you to place a Time Transition on the sheet.
+PNTT_toolTipSPNTrans, Allows you to place a Stochastic Transition on the sheet.
+PNTT_toolTipSPNImmed, Allows you to place a Immediate Transition on the sheet.
+PNTT_toolTipSPNDeter, Allows you to place a Deterministic Transition on the sheet.
+PNTT_toolTipSPNSched, Allows you to place a Scheduled Transition on the sheet.
+PNTT_toolTipArc, Allows you to place an Arc on the sheet.
+PNTT_toolTipReadArc, Allows you to place an Readarc on the sheet.
+PNTT_toolTipInhibArc, Allows you to place an Inhibitor Arc on the sheet.
+PNTT_toolTipResetArc, Allows you to place a Reset Arc on the sheet.
+PNTT_toolTipEquArc, Allows you to place an Equal Arc on the sheet.
+PNTT_toolTipModArc, Allows you to place an Modifier Arc on the sheet.
+PNTT_toolTipXTPNplace, xTPN place with time range.
+PNTT_toolTipXTPNtrans, xTPN transition with TPN and DPN-like time ranges.
+PNTT_toolTipXTPNarc, xTPN new arc
+PNTT_toolTipXTPNinhArc, xTPN new inhibitor arc
+PNTT_toolTipSubnetP, Allows you to create subnet with place-interfaces.
+PNTT_toolTipSubnetT, Allows you to create subnet with transition-interfaces.
+PNTT_toolTipSubnetPT, Allows you to create subnet with P/T interfaces.
+PNTT_toolTipCplace, Allows you to create colored place.
+PNTT_toolTipCtrans, Allows you to create colored transition.
+PNTT_toolTipCarc, Allows you to create arc for colored net.
+
+//SharedActionsXTPN:
+SAXTPN_entry001, Input or output XTPN transitions cannot be immediate. This transition\nis not in Beta-mode or Beta time values are zero. Change impossible.
+SAXTPN_entry001t, Immediate int/out XTPN transitions problem
+SAXTPN_entry002, Input or output XTPN transitions cannot be immediate. This transition\nis not in Alfa-mode and Beta time values are zero. Change impossible.
+SAXTPN_entry002t, Immediate int/out XTPN transitions problem
+SAXTPN_entry003, Reduce XTPN transition into classical one? This can reset\ncurrent time values assigned to Alfa/Beta ranges.
+SAXTPN_entry003t, XTPN transition reduction
+SAXTPN_entry004opt1, Reduce to classical place
+SAXTPN_entry004opt2, Stay as XTPN
+SAXTPN_entry004_1, Turning γ-mode off will clear all times of tokens (
+SAXTPN_entry004_2, ) and \nas a result place will have classical PN features.\nTransform XTPN place into classical place?
+SAXTPN_entry004t, Transformation into classical place
+SAXTPN_entry005opt1, Transform into XTPN
+SAXTPN_entry005opt2, Stay as classical PN place
+SAXTPN_entry005_1, This will transform classical PN place into XTPN.\nAll tokens (
+SAXTPN_entry005_2, ) will be assigned 0.0 time values.\nTransform into XTPN place?
+SAXTPN_entry005t, Conversion into XTPN place
+SAXTPN_entry006opt1, ▲ Increase α-max to 
+SAXTPN_entry006opt1b, ▼ Decrease α-min to 
+SAXTPN_entry006opt2, ❌ Cancel
+SAXTPN_entry006_1, Proposed value α-min = 
+SAXTPN_entry006_2,  cannot be higher than current α-max = 
+SAXTPN_entry006_3, \nIncrease old α-max (default action) or decrease new α-min?
+SAXTPN_entry006t, Alpha range problem: α-minimum too high
+SAXTPN_entry007, Input or output XTPN transitions cannot be immediate. Alternatively\nturn off both Alfa and Beta modes for a classical immediate transition.
+SAXTPN_entry007t, Immediate int/out XTPN transitions problem
+SAXTPN_entry007op1, ▲ Increase α-max to 
+SAXTPN_entry007op2, ▼ Decrease α-min 
+SAXTPN_entry007op3, ❌ Cancel
+SAXTPN_entry007_1, Proposed value α-max = 
+SAXTPN_entry007_1b,  cannot be lower than current α-min = 
+SAXTPN_entry007_1c, \nIncrease new α-max or decrease old α-min (default action)?
+SAXTPN_entry007t2, Alpha range problem: α-maximum too low
+SAXTPN_entry008opt1, ▲ Increase β-max to 
+SAXTPN_entry008opt2, ▼ Decrease β-min to 
+SAXTPN_entry008opt3, ❌ Cancel
+SAXTPN_entry008_1, Proposed value β-min = 
+SAXTPN_entry008_2,  cannot be higher than current β-max = 
+SAXTPN_entry008_3, Increase old betaMaximum (default action) or decrease new betaMinimum?
+SAXTPN_entry008t, Beta range problem: β-minimum too high
+SAXTPN_entry009, Input or output XTPN transitions cannot be immediate. Alternatively\nturn off both Alfa and Beta modes for a classical immediate transition.
+SAXTPN_entry009t, Immediate int/out XTPN transitions problem
+SAXTPN_entry009op1, ▲ Increase β-max to 
+SAXTPN_entry009op2, ▼ Decrease β-min to 
+SAXTPN_entry009op3, ❌ Cancel
+SAXTPN_entry009_1, Proposed value β-max = 
+SAXTPN_entry009_1b, cannot be lower than current β-min = 
+SAXTPN_entry009_1c, Increase new β-max or decrease old β-min (default action)?
+SAXTPN_entry009t2, Beta range problem: β-maximum too low
+SAXTPN_entry010op1, ▲ Increase γ-max to 
+SAXTPN_entry010op2, ▼ Decrease γ-min to 
+SAXTPN_entry010op3, ❌ Cancel
+SAXTPN_entry010_1, Proposed value γ-min = 
+SAXTPN_entry010_2, cannot be higher than current γ-max = 
+SAXTPN_entry010_3, Increase current γ-max (default action) or decrease proposed γ-min?
+SAXTPN_entry010t, Gamma range problem: γ-minimum too high
+SAXTPN_entry011op1, ▲ Increase γ-max to 
+SAXTPN_entry011op2, ▼ Decrease γ-min to 
+SAXTPN_entry011op3, ❌ Cancel
+SAXTPN_entry011_1, Proposed value γ-max = 
+SAXTPN_entry011_2, cannot be lower than current γ-min = 
+SAXTPN_entry011_3, Increase proposed γ-max or decrease current γ-min (default action)?
+SAXTPN_entry011t, Gamma range problem: γ-maximum too low
+
+//SelectionPanel:
+SP_toolTip001, No elements selected.
+
+//HolmesDockWindowsTable:
+HDWT_entry001, Mode:
+HDWT_entry001op1, XTPN simulator
+HDWT_entry001op2, PN simulators
+HDWT_dialog001, XTPN simulator must be stopped first.
+HDWT_dialog001t, XTPN Simulator working
+HDWT_dialog002, PN simulator must be stopped first.
+HDWT_dialog002t, PN Simulator working
+LOGentry00041, Error while changing graphical simulator mode.
+HDWT_entry002PNsim, Time/step:
+HDWT_entry003PNsim, Simulation options:
+HDWT_entry004PNsim, Loop simulation
+HDWT_entry005PNsim, Loop single transition simulation
+HDWT_entry006PNsim, Pause simulation
+HDWT_entry007PNsim, Schedule a stop for the simulation
+HDWT_entry008PNsim, Reset all tokens in places.
+HDWT_entry009PNsim, Save m0 state.
+LOGentry00042, Operation impossible while simulator is working.
+LOGentry00043, Operation impossible while XTPN simulator is working.
+HDWT_entry010op1, Save new m0 state
+HDWT_entry010msg1, Add new net state to states table?
+HDWT_entry010t, Saving m0 state
+HDWT_entry011PNsim, Other modes:
+HDWT_entry012PNsim, One action back
+HDWT_entry013PNsim, One transition forward
+HDWT_entry014PNsim, Loop back to oldest saved action
+HDWT_entry015PNsim, One step forward
+HDWT_entry016PNsim, Reset all color tokens in places.
+HDWT_entry017PNsim, Reset all color tokens in places.
+HDWT_entry017PNsim_1, Color PN (experimental) simulator - highly unstable.
+HDWT_entry017PNsim_2, Module under construction
+HDWT_entry018PNsim, Open states manager window.
+HDWT_entry018PNsim_1, Net simulator must be stopped in order to access state manager.
+HDWT_entry018PNsim_1t, Simulator working
+HDWT_entry019PNsim, Maximum mode
+HDWT_entry019PNsim_1, Mode overrided by an active single mode.
+HDWT_entry019PNsim_1t, Cannot change now
+HDWT_entry020PNsim, Single mode
+HDWT_entry021XTPNsim, Step:
+HDWT_entry022XTPNsim, Time:
+HDWT_entry023XTPNsim, Simulation buttons:
+HDWT_entry024XTPNsim, Loop simulation
+HDWT_entry024XTPNsim_1, Holmes simulator is running. Please wait or stop it manually first.
+HDWT_entry024XTPNsim_1t, Simulator working
+HDWT_entry025XTPNsim, Pause simulation
+HDWT_entry026XTPNsim, Schedule a stop for the simulation
+HDWT_entry027XTPNsim, Reset all tokens in places.
+HDWT_entry028XTPNsim, Reset all tokens in places.
+HDWT_entry028XTPNsim_op1, Replace XTPN state
+HDWT_entry028XTPNsim_1, Replace first p-state vector with the current net state?
+HDWT_entry028XTPNsim_1t, Replace XTPN state
+HDWT_entry029XTPNsim, Firing delay:
+HDWT_entry030XTPNsim, Time values visibility:
+HDWT_entry031XTPNsim, Switch alpha visibility.
+HDWT_entry032XTPNsim, Switch beta visibility.
+HDWT_entry033XTPNsim, Switch gamma visibility.
+HDWT_entry034XTPNsim, Switch tau visibility.
+HDWT_entry035XTPNsim, Fast simulation options:
+HDWT_entry036XTPNsim, Compute steps from zero marking through the number of states
+HDWT_entry036XTPNsim_1, Holmes simulator is running. Please wait or stop it manually first.
+HDWT_entry036XTPNsim_1t, Simulator working
+HDWT_entry037XTPNsim, Steps
+HDWT_entry038XTPNsim, Time
+HDWT_entry039XTPNsim, Rep.:
+HDWT_entry040XTPNsim, Knockout simulation
+HDWT_entry041XTPNsim, Compute steps from zero marking through the number of states
+HDWT_entry041XTPNsim_1, Holmes simulator is running. Please wait or stop it manually first.
+HDWT_entry041XTPNsim_1t, Simulator working
+HDWT_entry042place, Name
+HDWT_entry043place, Comment:
+HDWT_entry044place, Tokens:
+LOGentry00044, Negative number of tokens in
+HDWT_entry045place, Sheet:
+HDWT_entry046place, Zoom:
+HDWT_entry047place, Portal:
+HDWT_entry047place_1, Place contains more than one location!
+HDWT_entry048place, Location:
+HDWT_entry049place, Name offset:
+HDWT_entry050place, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry051place, T0 Red:
+LOGentry00045, Negative number of tokens in 
+HDWT_entry052place, T3 Yellow:
+HDWT_entry053place, T1 Green:
+HDWT_entry054place, T4 Grey:
+HDWT_entry055place, T2 Blue:
+HDWT_entry056place, T5 Black:
+HDWT_entry057XTPNplace, Name:
+HDWT_entry058XTPNplace, Comment:
+HDWT_entry059XTPNplace, XTPN mode:
+HDWT_entry060XTPNplaceG_ON, <html><center>Gamma<br>ON</center></html>
+HDWT_entry060XTPNplaceG_OFF, <html><center>Gamma<br>OFF</center></html>
+HDWT_entry061XTPNplaceG_vis, <html><center>Gamma<br>visible</center></html>
+HDWT_entry061XTPNplaceG_invis, <html><center>Gamma<br>hidden</center><html>
+HDWT_entry062XTPNplaceG_off, <html><center>Gamma<br>offset</center></html>
+HDWT_entry063XTPNplaceG_changeLoc, <html><center>Change<br>location</center><html>
+HDWT_entry064XTPNplaceG, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry065XTPNplaceG, γ (min/max):
+HDWT_entry066XTPNplaceG, Tokens in place:
+HDWT_entry067XTPNplaceG, Fraction:
+HDWT_entry068XTPNplaceName_OFF, <html><center>Name<br>offset</center><html>
+HDWT_entry069XTPNplaceName, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry070XTPNplaceName_changeLoc, <html><center>Change<br>location</center><html>
+HDWT_entry071XTPNplaceTokens, <html>Tokens<br>window</html>
+HDWT_entry072XTPNplaceTokens, <html><center>Add<br>0-token</center></html>
+HDWT_entry073XTPNplaceTokens, <html>Add<br>0-token</html>
+HDWT_entry074XTPNplaceTokens, <html>Add<br>token</html>
+HDWT_entry075XTPNplaceTokens, <html><center>Remove<br>0-token</center></html>
+HDWT_entry076XTPNplaceTokens, <html>Remove<br>0-token</html>
+HDWT_entry077XTPNplaceTokens, <html>Remove<br>token</html>
+HDWT_entry078XTPNplace, Sheet:
+HDWT_entry079XTPNplace, Zoom:
+HDWT_entry080XTPNplace, Portal:
+HDWT_entry080XTPNplace_1, Place contains more than one location!
+HDWT_entry080XTPNplace_1t, Cannot proceed
+HDWT_entry081XTPNplace, Location:
+HDWT_entry082XTPNplace, Name offset:
+HDWT_entry083XTPNplace, <html><center>Name<br>offset</center><html>
+HDWT_entry084XTPNplace, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry085XTPNplace, <html><center>Change<br>location</center><html>
+HDWT_entry086trans, Name:
+HDWT_entry087trans, Comment:
+HDWT_entry088trans, Trans. Type:
+HDWT_entry089trans, Sheet:
+HDWT_entry090trans, Zoom:
+HDWT_entry091trans, Location:
+HDWT_entry092trans, Portal:
+HDWT_entry092trans_1, Transition contains more than one location!
+HDWT_entry092trans_1t, Cannot proceed
+HDWT_entry093trans, Functional:
+HDWT_entry094trans, <html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>
+HDWT_entry095trans, Name offset:
+HDWT_entry096trans, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry097Ctrans, Colored transition data:
+HDWT_entry098Ctrans, Name:
+HDWT_entry099Ctrans, Comment:
+HDWT_entry100Ctrans, Sheet:
+HDWT_entry101Ctrans, Zoom:
+HDWT_entry102Ctrans, Portal:
+HDWT_entry102Ctrans_1, Transition contains more than one location!
+HDWT_entry102Ctrans_1t, Cannot proceed
+HDWT_entry103Ctrans, Location:
+HDWT_entry104Ctrans, Name offset:
+HDWT_entry105Ctrans, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry106Ctrans, Required tokens threshold:
+HDWT_entry107Ctrans, T0 red:
+HDWT_entry108Ctrans, T3 yellow:
+HDWT_entry109Ctrans, T1 green:
+HDWT_entry110Ctrans, T4 grey:
+HDWT_entry111Ctrans, T2 blue:
+HDWT_entry112Ctrans, T5 black:
+HDWT_entry113SPNtrans, Name:
+HDWT_entry114SPNtrans, Comment:
+HDWT_entry115SPNtrans, Trans. Type:
+HDWT_entry116SPNtrans, Firing rate:
+HDWT_entry117SPNtrans, Sheet:
+HDWT_entry118SPNtrans, Zoom:
+HDWT_entry119SPNtrans, Location:
+HDWT_entry120SPNtrans, Portal:
+HDWT_entry120SPNtrans_1, Transition contains more than one location!
+HDWT_entry120SPNtrans_1t, Cannot proceed
+HDWT_entry121SPNtrans, Functional:
+HDWT_entry122SPNtrans, <html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>
+HDWT_entry123SPNtrans, Name offset:
+HDWT_entry124SPNtrans, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry125TPNtrans, Name:
+HDWT_entry126TPNtrans, Comment:
+HDWT_entry127TPNtrans, Trans. Type:
+HDWT_entry128TPNtrans, Duration:
+HDWT_entry129TPNtrans, TPN active
+HDWT_entry130TPNtrans, DPN active
+HDWT_entry131TPNtrans, Sheet:
+HDWT_entry132TPNtrans, Zoom:
+HDWT_entry133TPNtrans, Location:
+HDWT_entry134TPNtrans, Portal:
+HDWT_entry134TPNtrans_1, Transition contains more than one location!
+HDWT_entry134TPNtrans_1t, Cannot proceed
+HDWT_entry135TPNtrans, Functional:
+HDWT_entry136TPNtrans, <html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>
+HDWT_entry137TPNtrans, Name offset:
+HDWT_entry138TPNtrans, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry139XTPNtrans, Name:
+HDWT_entry140XTPNtrans, Comment:
+HDWT_entry141XTPNtrans, Time mode:
+HDWT_entry142XTPNtransA_ON, <html><center>Alpha:<br>ON</center></html>
+HDWT_entry142XTPNtransA_OFF, <html><center>Alpha:<br>OFF</center></html>
+HDWT_entry143XTPNtransB_ON, <html><center>Beta:<br>ON</center></html>
+HDWT_entry143XTPNtransB_OFF, <html><center>Beta:<br>OFF</center></html>
+HDWT_entry144XTPNtrans, <html><center>XTPN</center></html>
+HDWT_entry145XTPNtransA_vis, <html>α:visible<html>
+HDWT_entry145XTPNtransA_invis, <html>α:hidden<html>
+HDWT_entry146XTPNtransB_vis, <html>β:visible</html>
+HDWT_entry146XTPNtransB_invis, <html>β:hidden</html>
+HDWT_entry147XTPNtransT_vis, <html>τ:visible</html>
+HDWT_entry147XTPNtransT_invis, <html>τ:hidden<html>
+HDWT_entry148XTPNtransA_off, <html><center>Alpha<br>offset</center><html>
+HDWT_entry149XTPNtransB_changeLoc, <html><center>Change<br>location</center><html>
+HDWT_entry150XTPNtrans, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry151XTPNtransB_off, <html><center>Beta<br>offset</center><html>
+HDWT_entry152XTPNtransB_changeLoc, <html><center>Change<br>location</center><html>
+HDWT_entry153XTPNtransB, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry154XTPNtransB_off, <html><center>Beta<br>offset</center><html>
+HDWT_entry155XTPNtransT_off, <html><center>Tau<br>offset</center><html>
+HDWT_entry156XTPNtransT_changeLoc, <html><center>Change<br>location</center><html>
+HDWT_entry157XTPNtransT, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry158XTPNtrans, α (min/max): 
+HDWT_entry159XTPNtrans, β (min/max): 
+HDWT_entry160XTPNtrans, Mass-Action kinetics
+HDWT_entry161XTPNtrans, Immediate
+HDWT_entry162XTPNtrans, Functional
+HDWT_entry163XTPNtrans, <html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>
+HDWT_entry164XTPNtrans, Portal:
+HDWT_entry164XTPNtrans_1, XTPN Transition contains more than one location!
+HDWT_entry164XTPNtrans_1t, Cannot proceed
+HDWT_entry165XTPNtrans, Fraction:
+HDWT_entry166XTPNtrans, Sheet:
+HDWT_entry167XTPNtrans, Zoom:
+HDWT_entry168XTPNtrans, Location:
+HDWT_entry169XTPNtrans, Name offset:
+HDWT_entry170XTPNtransName_off, <html><center>Name<br>offset</center><html>
+HDWT_entry171XTPNtransName, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry172XTPNtransName_changeLoc, <html><center>Change<br>location</center><html>
+HDWT_entry173subnet, Subnet(sheet):
+HDWT_entry174subnet, Name:
+HDWT_entry175subnet, Comment:
+HDWT_entry176subnet, Subnet T-type
+HDWT_entry177subnet, Subnet P-type
+HDWT_entry178subnet, Sheet:
+HDWT_entry179subnet, Zoom:
+HDWT_entry180subnet, Location:
+HDWT_entry181subnet, Name offset:
+HDWT_entry182subnet, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
+HDWT_entry183arc, Comment:
+HDWT_entry184arc, Weight (
+HDWT_entry185arc, Weight:
+HDWT_entry186arc, Type:
+HDWT_entry187arc, Read arc:
+HDWT_entry188arc, no
+HDWT_entry189arc, yes [paired arc ID:
+HDWT_entry190arc, double arc (hidden readarc)
+HDWT_entry191arc, Start Node name:
+HDWT_entry192arc, Sheet:
+HDWT_entry193arc, Location:
+HDWT_entry194arc, End Node name:
+HDWT_entry195arc, Sheet:
+HDWT_entry196arc, Location:
+HDWT_entry197arc, T-->P (Transition to Place weights):
+HDWT_entry198arc, P-->T (Place to Transition weights):
+HDWT_entry199arc, W0 (red):
+HDWT_entry200arc, W3 (yellow):
+HDWT_entry201arc, W1 (green):
+HDWT_entry202arc, W4 (grey):
+HDWT_entry203arc, W2 (blue):
+HDWT_entry204arc, W5 (black):
+HDWT_entry205sheet, Project type:
+HDWT_entry206sheet, Petri net (normal)
+HDWT_entry207sheet, PN Name:
+HDWT_entry208sheet, (sheet position:
+HDWT_entry209sheet, Zoom:
+HDWT_entry210sheet, Width:
+HDWT_entry211sheet, Height:
+HDWT_entry212sheet, Autoscroll:
+HDWT_entry213TinvPanel, T-invariant:
+HDWT_entry214TinvPanel, null transitions
+HDWT_entry215TinvPanel, inv/trans frequency
+LOGentry00046error, Error (1000001): createT_invSubWindow
+HDWT_entry216TinvPanel, Previous
+HDWT_entry217TinvPanel, Show previous invariant data.
+HDWT_entry218TinvPanel, <html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>
+HDWT_entry219TinvPanel, Show next invariant data.
+HDWT_entry220TinvPanel, Refresh
+HDWT_entry220TinvPanel_1, If t-inv types have been determined, this button will refresh the content of the three comboboxes below:
+HDWT_entry221TinvPanel, Recalculate
+HDWT_entry221TinvPanel_1, This will force the program to determine the type of t-invariants (it may take time) and refresh the comboboxes below:
+HDWT_entry222TinvPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>
+HDWT_entry223TinvPanel, Color MCT
+HDWT_entry224TinvPanel, Transitions glow
+HDWT_entry225TinvPanel, Invariant-net structure painted
+HDWT_entry226TinvPanel, Min. time: 
+HDWT_entry227TinvPanel, Max. time:
+HDWT_entry228TinvPanel, Avg. time:
+HDWT_entry229TinvPanel, Structure:
+HDWT_entry230TinvPanel, (size:
+LOGentry00047, Critical error in t-invariants subwindow.\nT-invariants size differ from transition set cardinality!
+LOGentry00048, Transitions not covered by t-invariants:
+LOGentry00049, (IMPORTANT: only real, canonical t-invariants (Cx=0) were used for coverage evaluation!)
+HDWT_entry231TinvPanel, t-invariants data unavailable.
+HDWT_entry231TinvPanel_t, No t-invariants
+HDWT_entry232PinvPanel, p-invariant:
+HDWT_entry233PinvPanel, null places
+HDWT_entry234PinvPanel, inv/place frequency
+HDWT_entry235PinvPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>
+LOGentry00050error, Error (1000003) : probably not implemented features for p-invariants in the t-invariants code window.
+LOGentry00051, Critical error in p-invariants subwindow.\np-invariants size differ from transition set cardinality!
+HWDT_entry236, p-invariants data unavailable.
+HDWT_entry236_t, No p-invariants
+HDWT_entry237PinvPanel, Places not covered by p-invariants:
+HDWT_entry237PinvPanel_1, p-invariants data unavailable.
+HDWT_entry237PinvPanel_1t, No p-invariants
+HDWT_entry238PinvPanel, (size: 
+HDWT_entry239MCTPanel, Choose MCT:
+HDWT_entry240MCTPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>
+HDWT_entry241MCTPanel, Different colors
+HDWT_entry242MCTPanel, (size:
+HDWT_entry243MCTPanel, No-MCT transitions
+HDWT_entry244MCTPanel, Show all
+HDWT_entry245MCTPanel, Trivial MCT-transitions (
+HDWT_entry246MCTPanel, Transitions (
+HDWT_entry247MCTPanel, ) of MCT #
+HDWT_entry248ClusterPanel, Algorithm:
+HDWT_entry249ClusterPanel, Metric:
+HDWT_entry250ClusterPanel, Clusters:
+HDWT_entry251ClusterPanel, Selected:
+HDWT_entry252ClusterPanel, Cluster
+HDWT_entry253ClusterPanel, (size:
+HDWT_entry254ClusterPanel, MSS value:
+HDWT_entry255ClusterPanel, Show transition average firing
+HDWT_entry256ClusterPanel, Show scaled colors
+HDWT_entry257ClusterPanel, Show MCT sets
+HDWT_entry258ClusterPanel, <html>&nbsp;Show&nbsp;<br>details</html>
+HDWT_entry259ClusterPanel, <html>&nbsp;Export&nbsp;<br>pictures</html>
+HDWT_entry260ClusterPanel, Completed
+HDWT_entry261ClusterPanel, Cluster inv.:
+HDWT_entry262ClusterPanel, <html>&nbsp;Time&nbsp;<br>details</html>
+HDWT_entry263ClusterPanel, <html>&nbsp;Clusters&nbsp;<br>details</html>
+HDWT_entry264ClusterPanel, Cluster:
+HDWT_entry265ClusterPanel, inv.) alg.:
+HDWT_entry266ClusterPanel, metric:
+HDWT_entry267ClusterPanel, t-invariants and their time values:
+HDWT_entry268ClusterPanel, Mean of average times:
+HDWT_entry269ClusterPanel, Variance:
+HDWT_entry270ClusterPanel, Standard deviation:
+HDWT_entry271ClusterPanel, Cluster#
+HDWT_entry272ClusterPanel, Select dir
+HDWT_entry273ClusterPanel, Select directory for clusters screenshots.
+HDWT_entry274ClusterPanel, Please click OK and wait until another window with information shows up.\nDepending on the number of clusters this should take from 10 seconds to 1 minute.\nPlease do not use the program until operation is finished.
+HDWT_entry274ClusterPanel_t, Please wait
+HDWT_entry275ClusterPanel, Saving clusters screenshots failed.
+HDWT_entry276ClusterPanel, Saving
+HDWT_entry276ClusterPanelb, clusters to graphic files completed.
+HDWT_entry277ClusterPanel, Cluster:
+HDWT_entry278ClusterPanel, inv.) alg.:
+HDWT_entry279ClusterPanel, metric:
+HDWT_entry280MCSPanel, Reaction:
+HDWT_entry281MCSPanel, MCS:
+HDWT_entry282MCSPanel, Refresh data
+HDWT_entry283KnockPanel, Knockout:
+HDWT_entry284KnockPanel, Knocked out:
+HDWT_entry285KnockPanel, * * * Also knocked out: \n
+HDWT_entry286FixPanel, t-invariants:
+HDWT_entry287FixPanel, Normal: 0 / Non-inv.: 0
+HDWT_entry288FixPanel, Sub-inv.: 0 / Sur-inv: 0
+HDWT_entry289FixPanel, <html>Show<br>&nbsp;&nbsp;&nbsp;inv.</html>
+HDWT_entry290FixPanel, Input and output places:
+HDWT_entry291FixPanel, Input: 0 / Output: 0
+HDWT_entry292FixPanel, <html>Show<br>places</html>
+HDWT_entry293FixPanel, Input and output transitions:
+HDWT_entry294FixPanel, Input: 0 / Output: 0
+HDWT_entry295FixPanel, <html>Show<br>trans.</html>
+HDWT_entry296FixPanel, Linear transitions and places
+HDWT_entry297FixPanel, Transitions: 0 / Places: 0
+HDWT_entry298FixPanel, <html>Show<br>T & P</html>
+HDWT_entry299QuickSim, Compute steps from zero marking through the number of states
+HDWT_entry300QuickSim, Set simulator options.
+HDWT_entry301QuickSim, Data type simulated
+HDWT_entry302QuickSim, Transitions firing data
+HDWT_entry303QuickSim, Places tokens data
+HDWT_entry304QuickSim, Color arcs
+HDWT_entry305QuickSim, Repetitions
+
+
 //generalPurposeTags:
+cancel, Cancel
+critError, Critical error
+confirm, Confirm
+continue, Continue
+error, Error
 exit, Exit
+fixed, Fixed
+problem, Problem
 saveAndExit, Save and Exit
+saveAndCont, Save and continue
 save, Save
 select, Select
-cancel, Cancel
-fixed, Fixed
 netSimWork01, Net simulator working
-error, Error
-critError, Critical error
+unimplemented, Not implemented yet.
+unimplementedTitle, Subsystem offline
+
+
+
+
+
+
+
+
+
+
+

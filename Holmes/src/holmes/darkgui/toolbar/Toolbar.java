@@ -9,19 +9,20 @@ import java.util.Set;
 import javax.swing.*;
 
 import holmes.analyse.GraphletsCalculator;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Node;
 
 import holmes.analyse.MDTSCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel.DrawModes;
-import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Transition.TransitionType;
-import holmes.petrinet.simulators.IRandomGenerator;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
-import holmes.petrinet.simulators.StandardRandom;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;
 import holmes.windows.HolmesNotepad;
+import holmes.windows.statespace.HolmesStSpRG;
+import holmes.windows.statespace.HolmesStSpRGtpn;
+import holmes.windows.statespace.HolmesStSpRP;
+import holmes.windows.statespace.HolmesStSpUNF;
 import holmes.windows.managers.HolmesSPNmanager;
 
 /**
@@ -35,6 +36,7 @@ public class Toolbar extends JPanel {
     @Serial
     private static final long serialVersionUID = 640320332920131092L;
     private GUIManager overlord;
+    private LanguageManager lang = GUIManager.getLanguageManager();
     private boolean buttonsDraggable = false;
 
     // simulator buttons
@@ -194,64 +196,52 @@ public class Toolbar extends JPanel {
         this.add(fireRatesButton);
 
         //TODO:
-        ToolbarButtonAction testButton = new ToolbarButtonAction(this, "Debug1", "Debug", Tools.getResIcon48("/icons/toolbar/aaa.png")) {
-            public void actionPerformed(ActionEvent actionEvent) {
-                IRandomGenerator generator2 = new StandardRandom();
+        JButton ssButtonUNF = new JButton("", Tools.getResIcon48("/icons/toolbar/ssUNF.png"));
+        ssButtonUNF.setPreferredSize(new Dimension(50,50));
+        ssButtonUNF.setBorderPainted(false);
+        ssButtonUNF.setContentAreaFilled(false);
+        ssButtonUNF.setFocusPainted(false);
+        ssButtonUNF.setOpaque(false);
+        ssButtonUNF.addActionListener(e -> {
+            HolmesStSpUNF stateSpaceWindow = new HolmesStSpUNF();
+        });
+        this.add(ssButtonUNF);
 
-                for (Transition t : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
-                    t.setTransType(TransitionType.TPN);
-                    int value = (int) generator2.nextLong(10);
-                    int eft;
-                    int lft;
-                    int duration;
+        JButton ssButtonRG = new JButton("", Tools.getResIcon48("/icons/toolbar/ssRG.png"));
+        ssButtonRG.setPreferredSize(new Dimension(50,50));
+        ssButtonRG.setBorderPainted(false);
+        ssButtonRG.setContentAreaFilled(false);
+        ssButtonRG.setFocusPainted(false);
+        ssButtonRG.setOpaque(false);
+        ssButtonRG.addActionListener(e -> {
+            HolmesStSpRG stateSpaceWindow = new HolmesStSpRG();
+        });
+        this.add(ssButtonRG);
 
-                    if (value > 7) {
-                        eft = (int) generator2.nextLong(6);
-                        lft = (int) generator2.nextLong(eft + 6) + 1;
-                        duration = (int) generator2.nextLong(10);
+        JButton ssButtonRGtpn = new JButton("", Tools.getResIcon48("/icons/toolbar/ssRGtpn.png"));
+        ssButtonRGtpn.setPreferredSize(new Dimension(50,50));
+        ssButtonRGtpn.setBorderPainted(false);
+        ssButtonRGtpn.setContentAreaFilled(false);
+        ssButtonRGtpn.setFocusPainted(false);
+        ssButtonRGtpn.setOpaque(false);
+        ssButtonRGtpn.addActionListener(e -> {
+            HolmesStSpRGtpn stateSpaceWindow = new HolmesStSpRGtpn();
+        });
+        this.add(ssButtonRGtpn);
 
-                        t.timeExtension.setDPNstatus(true);
-                        t.timeExtension.setTPNstatus(true);
-                        t.timeExtension.setLFT(lft);
-                        t.timeExtension.setEFT(eft);
-                        t.timeExtension.setDPNduration(duration);
-
-                    } else if (value > 3) {
-                        duration = (int) generator2.nextLong(10);
-
-                        t.timeExtension.setDPNstatus(true);
-                        t.timeExtension.setDPNduration(duration);
-                    } else {
-                        eft = (int) generator2.nextLong(6);
-                        lft = (int) generator2.nextLong(eft + 6) + 1;
-
-                        t.timeExtension.setTPNstatus(true);
-                        t.timeExtension.setLFT(lft);
-                        t.timeExtension.setEFT(eft);
-                    }
-                }
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-
-				/*
-				HolmesNotepad aa = new HolmesNotepad(600, 480);
-				aa.setVisible(true);
-				
-				JEP myParser = new JEP();
-				myParser.addStandardFunctions();
-				myParser.addVariable("p0", 2.0);
-				myParser.addVariable("p2", 2.0);
-				String expressionString = "(p1+p0)<1";
-				myParser.parseExpression(expressionString);
-				double result = myParser.getValue();
-				aa.addTextLineNL(expressionString+" = "+result, "text");
-				*/
-            }
-        };
-        //testButton.setEnabled(false);
-        //analysisDockables.add(createButtonDockable("Testing", testButton));
+        JButton ssButtonRP = new JButton("", Tools.getResIcon48("/icons/toolbar/ssRP.png"));
+        ssButtonRP.setPreferredSize(new Dimension(50,50));
+        ssButtonRP.setBorderPainted(false);
+        ssButtonRP.setContentAreaFilled(false);
+        ssButtonRP.setFocusPainted(false);
+        ssButtonRP.setOpaque(false);
+        ssButtonRP.addActionListener(e -> {
+            HolmesStSpRP stateSpaceWindow = new HolmesStSpRP();
+        });
+        this.add(ssButtonRP);
+        
 
         //TODO:
-
         ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", "Debug2", Tools.getResIcon48("/icons/toolbar/a.png")) {
             //@SuppressWarnings("unused")
             public void actionPerformed(ActionEvent actionEvent) {
@@ -381,7 +371,6 @@ public class Toolbar extends JPanel {
     /**
      * Metoda ta ustawia stan wszystkich przycisków symulatora poza dwoma: pauzą
      * i przyciskiem zatrzymania symulacji.
-     *
      * @param enabled boolean - true, jeśli mają być aktywne
      */
     public void setEnabledSimulationInitiateButtons(boolean enabled) {
@@ -429,7 +418,7 @@ public class Toolbar extends JPanel {
      * Metoda odpowiedzialna za tworzenie tablicy przycisków symulatora.
      *///TODO przyciski
     private void createSimulationBar() {
-        reverseLoopButton = new ToolbarButtonAction(this, "LoopBack", "Loop back to oldest action saved",
+        reverseLoopButton = new ToolbarButtonAction(this, lang.getText("lang"), lang.getText("TB_toolTip001d"),
                 Tools.getResIcon48("/icons/toolbar/sim_back.png")) {
             public void actionPerformed(ActionEvent actionEvent) {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -437,7 +426,7 @@ public class Toolbar extends JPanel {
             }
         };
 
-        reverseStepButton = new ToolbarButtonAction(this, "StepBack", "Single action back simulation",
+        reverseStepButton = new ToolbarButtonAction(this, lang.getText("TB_toolTip002"), lang.getText("TB_toolTip002d"),
                 Tools.getResIcon48("/icons/toolbar/sim_back_step.png")) {
             public void actionPerformed(ActionEvent actionEvent) {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -445,7 +434,7 @@ public class Toolbar extends JPanel {
             }
         };
 
-        loopSimButton = new ToolbarButtonAction(this, "Loop", "Loop simulation",
+        loopSimButton = new ToolbarButtonAction(this, lang.getText("TB_toolTip003"), lang.getText("TB_toolTip003d"),
                 Tools.getResIcon48("/icons/toolbar/sim_start.png")) {
             public void actionPerformed(ActionEvent actionEvent) {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -453,7 +442,7 @@ public class Toolbar extends JPanel {
             }
         };
 
-        singleTransitionLoopSimButton = new ToolbarButtonAction(this, "LoopSingleTrans", "Loop single transition simulation",
+        singleTransitionLoopSimButton = new ToolbarButtonAction(this, lang.getText("TB_toolTip004"), lang.getText("TB_toolTip004d"),
                 Tools.getResIcon48("/icons/toolbar/sim_start_single.png")) {
             public void actionPerformed(ActionEvent actionEvent) {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -461,7 +450,7 @@ public class Toolbar extends JPanel {
             }
         };
 
-        pauseSimButton = new ToolbarButtonAction(this, "Pause", "Pause simulation",
+        pauseSimButton = new ToolbarButtonAction(this, lang.getText("TB_toolTip005"), lang.getText("TB_toolTip005d"),
                 Tools.getResIcon48("/icons/toolbar/sim_pause.png")) {
             public void actionPerformed(ActionEvent actionEvent) {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -469,14 +458,14 @@ public class Toolbar extends JPanel {
             }
         };
 
-        stopSimButton = new ToolbarButtonAction(this, "Stop", "Schedule a stop for the simulation",
+        stopSimButton = new ToolbarButtonAction(this, lang.getText("TB_toolTip006"), lang.getText("TB_toolTip006d"),
                 Tools.getResIcon48("/icons/toolbar/sim_stop.png")) {
             public void actionPerformed(ActionEvent actionEvent) {
                 overlord.getWorkspace().getProject().getSimulator().stop();
             }
         };
 
-        smallStepFwdSimButton = new ToolbarButtonAction(this, "SingleForward", "Single transition forward simulation",
+        smallStepFwdSimButton = new ToolbarButtonAction(this, lang.getText("TB_toolTip007"), lang.getText("TB_toolTip007d"),
                 Tools.getResIcon48("/icons/toolbar/sim_forward_step.png")) {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -485,7 +474,7 @@ public class Toolbar extends JPanel {
             }
         };
 
-        stepFwdSimButton = new ToolbarButtonAction(this, "StepForward", "Step forward simulation",
+        stepFwdSimButton = new ToolbarButtonAction(this, lang.getText("TB_toolTip008"), lang.getText("TB_toolTip008d"),
                 Tools.getResIcon48("/icons/toolbar/sim_forward.png")) {
             public void actionPerformed(ActionEvent actionEvent) {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -493,7 +482,7 @@ public class Toolbar extends JPanel {
             }
         };
 
-        resetSimButton = new ToolbarButtonAction(this, "Reset", "Reset simulator",
+        resetSimButton = new ToolbarButtonAction(this, lang.getText("TB_toolTip009"), lang.getText("TB_toolTip009d"),
                 Tools.getResIcon48("/icons/toolbar/sim_reset.png")) {
             public void actionPerformed(ActionEvent actionEvent) {
                 overlord.getWorkspace().getProject().restoreMarkingZero();
@@ -506,11 +495,11 @@ public class Toolbar extends JPanel {
         panel.setPreferredSize(new Dimension(200, 60));
         panel.setMaximumSize(new Dimension(200, 60));
 
-        JButton button1 = new JButton("Ext.Net");
+        JButton button1 = new JButton(lang.getText("TB_toolTip010"));
         button1.setName("extNet");
         button1.setPreferredSize(new Dimension(60, 40));
         //button1.setBounds(0, 0, 60, 60);
-        button1.setToolTipText("Extend net elements");
+        button1.setToolTipText(lang.getText("TB_toolTip010d"));
         button1.addActionListener(actionEvent -> {
 
         });

@@ -169,7 +169,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		guiManager = this;
 		createHiddenConsole(); // okno konsoli logowania zdarzeń
-
 		lang = new LanguageManager();
 
 		io = new GUIOperations(this); //obiekt klasy operacji głównych
@@ -274,20 +273,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getFrame().add(shortcutsBar,BorderLayout.PAGE_START);
 
 		JPanel mainpanel = new JPanel();
-		//JScrollPane jsp = getWorkspace().getSelectedSheet().getScrollPane();
-		//mainpanel.add(jsp);	//03072023 do not work
 		mainpanel.add(getWorkspace().getSelectedSheet());	//03072023 old code
 
 		mainpanel.setLayout(new BorderLayout());
 		mainpanel.setSize(200,200);
-
-		//getFrame().add(jsp,  BorderLayout.CENTER); //03072023 do not work
+		
 		getFrame().add(getWorkspace().getSelectedSheet(),  BorderLayout.CENTER); //03072023 old code
-
-
+		
 		// create tools
-		//getFrame().add(getToolBox().getTree(),BorderLayout.LINE_START);
-		//getFrame().add(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getPanel());
 		propericeTMPBox = GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow();
 		propericeTMPBox.setPreferredSize(new Dimension(200, 400));
 
@@ -310,12 +303,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 		analysisTabs.setTabComponentAt(3, new JLabel(lang.getText("GUIM_mctTabName")));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getMCSBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(4, new JLabel(lang.getText("GUIM_mcsTabName")));
-		analysisTabs.add(GUIManager.getDefaultGUIManager().getKnockoutBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(5, new JLabel(lang.getText("GUIM_KnockoutTabName")));
+		
+		//analysisTabs.add(GUIManager.getDefaultGUIManager().getKnockoutBox().getCurrentDockWindow().getPanel());
+		//analysisTabs.setTabComponentAt(5, new JLabel(lang.getText("GUIM_KnockoutTabName")));
+		
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getFixBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(6, new JLabel(lang.getText("GUIM_fixTabName")));
+		analysisTabs.setTabComponentAt(5, new JLabel(lang.getText("GUIM_fixTabName")));
 		analysisTabs.add(GUIManager.getDefaultGUIManager().getClusterSelectionBox().getCurrentDockWindow().getPanel());
-		analysisTabs.setTabComponentAt(7, new JLabel(lang.getText("GUIM_clustersTabName")));
+		analysisTabs.setTabComponentAt(6, new JLabel(lang.getText("GUIM_clustersTabName")));
 		analysisTabs.setPreferredSize(new Dimension(200,200));
 
 		JSplitPane simAndworkspacePanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftCentralPanel , getTabbedWorkspace());

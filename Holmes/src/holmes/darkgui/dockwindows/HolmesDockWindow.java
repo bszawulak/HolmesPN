@@ -1,7 +1,6 @@
 package holmes.darkgui.dockwindows;
 
 import java.awt.*;
-import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -29,8 +28,7 @@ import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
  * @author students
  */
 public class HolmesDockWindow {//extends SingleDock {
-    @Serial
-    private static final long serialVersionUID = -1966643269924197502L;
+    //private static final long serialVersionUID = -1966643269924197502L;
     //private Dockable dockable;
     private GUIManager guiManager;
     private HolmesDockWindowsTable dockWindowPanel;
@@ -129,7 +127,6 @@ public class HolmesDockWindow {//extends SingleDock {
 
             //hotfix2 30062023: to powinno ustabilizować sytuację:
             dockWindowPanel.setSimulator(netSim, netSimXTPN);
-
             scrollPane.getViewport().add(getCurrentDockWindow());
         }
     }
@@ -143,14 +140,10 @@ public class HolmesDockWindow {//extends SingleDock {
      */
     public void showT_invBoxWindow(ArrayList<ArrayList<Integer>> t_invariants) {
         if (type == DockWindowType.T_INVARIANTS) {
-            //MRtinv 5.02.2024
-            //setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, t_invariants));
-            //scrollPane.getViewport().add(getCurrentDockWindow());
             if(t_invariants != null) {
                 InvariantsCalculator ic = new InvariantsCalculator(true);
                 InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), t_invariants, true);
             }
-
             guiManager.getT_invBox().getCurrentDockWindow().cleanTINVsubwindowFields();
             guiManager.getT_invBox().getCurrentDockWindow().setT_invariants(t_invariants);
             guiManager.getT_invBox().getCurrentDockWindow().refreshInvariantsComboBox();
@@ -176,13 +169,9 @@ public class HolmesDockWindow {//extends SingleDock {
      */
     public void showP_invBoxWindow(ArrayList<ArrayList<Integer>> p_invariants) {
         if (type == DockWindowType.P_INVARIANTS) {
-
             guiManager.getP_invBox().getCurrentDockWindow().cleanPINVsubwindowFields();
             guiManager.getP_invBox().getCurrentDockWindow().setP_invariants(p_invariants);
             guiManager.getP_invBox().getCurrentDockWindow().refreshP_invComboBox();
-
-           // setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, p_invariants));
-            //scrollPane.getViewport().add(getCurrentDockWindow());
         }
     }
 
@@ -258,16 +247,6 @@ public class HolmesDockWindow {//extends SingleDock {
                         //GUIManager.getDefaultGUIManager().setPropertiesBox(this);
                     } else {
                         setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.PLACE, n, e.getElementLocation()));
-                        //GUIManager.getDefaultGUIManager().getPropertiesBox().dockWindowPanel.setBackground(Color.BLUE);
-                        //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().setPanel(dockWindowPanel.getPanel());
-                        //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().getPanel().setBackground(Color.BLUE);
-                        //GUIManager.getDefaultGUIManager().setPropertiesBox(this);
-                        //GUIManager.getDefaultGUIManager().getPropertiesBox().dockWindowPanel.revalidate();
-                        //GUIManager.getDefaultGUIManager().getPropertiesBox().dockWindowPanel.repaint();
-                        //GUIManager.getDefaultGUIManager().getPropertiesBox().dockWindowPanel.getPanel().revalidate();
-                        //GUIManager.getDefaultGUIManager().getPropertiesBox().dockWindowPanel.getPanel().repaint();
-                        //.getPanel().revalidate();
-                        //GUIManager.getDefaultGUIManager().getPropertiesBox().dockWindowPanel.getPanel().repaint();
                     }
                 } else if (n.getType() == PetriNetElementType.META) {
                     setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.META, n, e.getElementLocation()));
@@ -306,21 +285,13 @@ public class HolmesDockWindow {//extends SingleDock {
             GUIManager.getDefaultGUIManager().getPropertiesBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SHEET,
                     guiManager.getWorkspace().getSheets().get(guiManager.getWorkspace().getIndexOfId(e.getSheetId()))));
             scrollPane.getViewport().add(getCurrentDockWindow());
-
-
-
-            //GUIManager.getDefaultGUIManager().getPropertiesBox().setCurrentDockWindow(dockWindowPanel.getPanel());
-            //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().getPanel().revalidate();
-            //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().getPanel().repaint();
+            
             GUIManager.getDefaultGUIManager().propericeTMPBox.removeAll();
             GUIManager.getDefaultGUIManager().propericeTMPBox.add(dockWindowPanel.getPanel());
             GUIManager.getDefaultGUIManager().getFrame().revalidate();
             GUIManager.getDefaultGUIManager().getFrame().repaint();
             dockWindowPanel.setBackground(Color.BLUE);
         }
-        //GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow().getPanel().setBackground(Color.GREEN);
-
-
     }
 
     /**

@@ -24,6 +24,7 @@ import holmes.workspace.Workspace;
  */
 public class GUIReset {
 	private GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private boolean t_invGenerated = false;
 	private boolean p_invGenerated = false;
 	private boolean mctGenerated = false;
@@ -42,22 +43,22 @@ public class GUIReset {
 	
 	/**
 	 * Metoda odpowiedzialna za czyszczenie danych i przywracanie programu do stanu początkowego.
+	 * @return boolean - true, jeśli nowy projekt został zainicjowany, false w przeciwnym wypadku/
 	 */
 	public boolean newProjectInitiated() {
-		if(isSimulatorActiveWarning("Please stop simulation completely before continuing.", "Warning")) {
+		if(isSimulatorActiveWarning(lang.getText("GUIR_reset001"), "Warning")) {
 			return false;
 		}
-		if(isXTPNSimulatorActiveWarning("Please stop XTPN simulation completely before continuing.", "Warning")) {
+		if(isXTPNSimulatorActiveWarning(lang.getText("GUIR_reset002"), "Warning")) {
 			return false;
 		}
-
 
 		boolean hasSomethingChanged = overlord.getNetChangeStatus();
 		if(hasSomethingChanged) {
-			Object[] options = {"Continue", "Save and continue", "Cancel",};
+			Object[] options = {lang.getText("continue"), lang.getText("saveAndCont"), lang.getText("cancel"),};
 			int n = JOptionPane.showOptionDialog(null,
-							"Net has been changed since the last save. Continue and clear all data?",
-							"Data clear warning", JOptionPane.YES_NO_OPTION,
+							lang.getText("GUIR_reset003"),
+							lang.getText("GUIR_reset004"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 			if (n == 2) { //save the file
 				return false;
@@ -69,12 +70,10 @@ public class GUIReset {
 		}
 
 		PetriNet pNet = overlord.getWorkspace().getProject();
-		overlord.log("Net data deletion initiated.", "text", true);
-
+		overlord.log(lang.getText("LOGentry00034"), "text", true);
 		for (GraphPanel gp : pNet.getGraphPanels()) {
 			gp.getSelectionManager().forceDeselectAllElements();
 		}
-		
 		clearAll();
 		return true;
 	}
@@ -83,7 +82,7 @@ public class GUIReset {
 	 * Używana w przypadku krytycznego błędu rysowania sieci.
 	 */
 	public void emergencyRestart() {
-		overlord.log("Something went terribly wrong. Holmes emergency restart initiated.", "error", true);
+		overlord.log(lang.getText("LOGentry00035"), "error", true);
 		clearAll();
 	}
 	
@@ -93,9 +92,9 @@ public class GUIReset {
 	 */
 	private void clearAll() {
 		PetriNet pNet = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-		overlord.log("Net data deletion initiated.", "text", true);
+		overlord.log(lang.getText("GUIR_reset005"), "text", true);
 		
-		//CLEAR PETRI NET DATA, kolejność MA ZNACZENIE JAK CHOLERA!!! Nie zmieniać bo coś j... się zepsuje.
+		//CLEAR PETRI NET DATA, kolejność MA ZNACZENIE JAK CHOLERA!!! Nie zmieniać bo coś j...tj. "się" zepsuje.
 		pNet.resetData(); // tylko w ten sposób!!!!
 		pNet.setProjectType(PetriNet.GlobalNetType.PN);
 		pNet.setT_InvMatrix(null, false);
@@ -127,35 +126,13 @@ public class GUIReset {
 		
 		Workspace workspace = overlord.getWorkspace();
 		workspace.deleteAllSheetButFirst();
-
-
-
-
-		//int dockableSize = workspace.getDockables().size();
-		/*
-		CompositeDock parentOfFirst = workspace.getDockables().get(0).getDock().getParentDock();
-		for(int d=0; d<dockableSize; d++) {
-			Dockable dockable = workspace.getDockables().get(d);
-			String x = dockable.getID();
-			if(x.equals("Sheet 0")) {
-				continue;
-			}
-			workspace.deleteTab(dockable, true);
-			d--;
-			dockableSize--;
-			
-			if(dockable.getDock().getParentDock().equals(parentOfFirst))
-				overlord.globalSheetsList.remove(dockable);
-		}
-		*/
 		
 		reset2ndOrderData(false);
 		IdGenerator.resetIDgenerator();
 		
 		GUIManager.getDefaultGUIManager().getFrame().setTitle(
 				"Holmes "+GUIManager.getDefaultGUIManager().getSettingsManager().getValue("holmes_version"));
-		
-		//overlord.cleanDockables();
+
 		overlord.markNetSaved();
 	}
 	
@@ -188,7 +165,7 @@ public class GUIReset {
 			}
 
 			t_invGenerated = false;
-			overlord.log("T-invariants data removed from memory.", "text", true);
+			overlord.log(lang.getText("LOGentry00036"), "text", true);
 		}
 		
 		if(mctGenerated) {
@@ -200,7 +177,7 @@ public class GUIReset {
 			}
 
 			mctGenerated = false;
-			overlord.log("MCT data removed from memory.", "text", true);
+			overlord.log(lang.getText("LOGentry00037"), "text", true);
 		}
 
 		if(p_invGenerated) {
@@ -209,14 +186,10 @@ public class GUIReset {
 
 			if(overlord.getP_invBox().getCurrentDockWindow() != null) {
 				overlord.getP_invBox().getCurrentDockWindow().cleanPInvSubwindowData();
-				//overlord.getP_invBox().getCurrentDockWindow().removeAll();
 			}
-			//overlord.getP_invBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, pNet.getP_InvMatrix()));
-			//overlord.getP_invBox().validate();
-			//overlord.getP_invBox().repaint();
 
 			p_invGenerated = false;
-			overlord.log("P-invariants data removed from memory.", "text", true);
+			overlord.log(lang.getText("LOGentry00038"), "text", true);
 		}
 		
 		if(clustersGenerated) {
@@ -225,27 +198,15 @@ public class GUIReset {
 				overlord.getClusterSelectionBox().getCurrentDockWindow().cleanClustersSubwindowData();
 			}
 			overlord.getClusterSelectionBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CLUSTERS, new ClusterDataPackage()));
-			//overlord.getClusterSelectionBox().validate();
-			//overlord.getClusterSelectionBox().repaint();
 			
 			clustersGenerated = false;
-			overlord.log("Clustering data removed from memory.", "text", true);
+			overlord.log(lang.getText("LOGentry00039"), "text", true);
 		}
 
 		if(subNetGenerated){
-			/*
-			if(overlord.getDecompositionBox().getCurrentDockWindow() != null) {
-				DefaultComboBoxModel model = new DefaultComboBoxModel();
-				((JComboBox)overlord.getDecompositionBox().getCurrentDockWindow().getPanel(). getComponent(3)).setModel(model);
-			}
-			overlord.getDecompositionBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.DECOMPOSITION, null));
-			overlord.getDecompositionBox().validate();
-			overlord.getDecompositionBox().repaint();
-			*/
 			subNetGenerated = false;
-			overlord.log("Decomposition data removed from memory.", "text", true);
+			overlord.log(lang.getText("LOGentry00040"), "text", true);
 		}
-
 	}
 	
 	/**
@@ -254,7 +215,6 @@ public class GUIReset {
 	public void resetCommunicationProtocol() {
 		overlord.getWorkspace().getProject().resetComm();
 	}
-	
 	
 	//*****************************************************************************************************
 	//*****************************************************************************************************
@@ -324,9 +284,15 @@ public class GUIReset {
 		return false;
 	}
 
+	/**
+	 * Metoda zwraca wartość true jeśli symulator XTPN działa. Dodatkowo wyświetla okno z ostrzeżeniem.
+	 * @param msg String, komunikat
+	 * @param msgTitle String, tytuł okna
+	 * @return boolean - true, jeśli symulator jest włączony, false w przeciwnym wypadku
+	 */
 	public boolean isXTPNSimulatorActiveWarning(String msg, String msgTitle) {
-		GraphicalSimulatorXTPN obj = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();//GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulatorXTPN();
-		if(obj instanceof GraphicalSimulatorXTPN) {
+		GraphicalSimulatorXTPN obj = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
+		if(obj != null) {
 			if(obj.getsimulatorStatusXTPN() == GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
 				return false;
 			} else {

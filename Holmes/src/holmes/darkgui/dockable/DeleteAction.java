@@ -11,8 +11,7 @@ import javax.swing.Icon;
 import holmes.darkgui.GUIManager;
 
 /**
- * Klasa odpowiedzialna za operacje na arkuszach 
- * 
+ * Klasa odpowiedzialna za operacje na arkuszach
  * @author students
  */
 public class DeleteAction extends AbstractAction {
@@ -31,13 +30,4 @@ public class DeleteAction extends AbstractAction {
 	public void actionPerformed(ActionEvent arg0) {
 		//guiManager.getWorkspace().deleteTab(dockable, false);
 	}
-
-	//public Dockable getDockable() {
-	//	return dockable;
-	//}
-
-	//public void setDockable(Dockable dockable) {
-	//	this.dockable = dockable;
-	//}
-
 }

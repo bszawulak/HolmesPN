@@ -1764,11 +1764,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
             reps = 1; //override if simPlaceReps = false
         }
 
-        statusVectorTransition = new ArrayList<>( ss.simulateNetSingleTransition(ownSettings, theTransition, reps) );
-
-        acqDataButton.setEnabled(true);
-        if(statusVectorTransition.size() == 3) {
-            showTransitionsChart();
+        ArrayList<ArrayList<Double>> tmp = ss.simulateNetSingleTransition(ownSettings, theTransition, reps);
+        if(tmp != null) {
+            statusVectorTransition = new ArrayList<>(tmp);
+            acqDataButton.setEnabled(true);
+            if(statusVectorTransition.size() == 3) {
+                showTransitionsChart();
+            }
         }
     }
 

@@ -20,6 +20,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.utilities.Tools;
 
@@ -32,10 +33,10 @@ import holmes.utilities.Tools;
 public class PetriNetTools implements TreeSelectionListener {
 	@Serial
 	private static final long serialVersionUID = 5385847227073467035L;
-	//private Dockable dockable;
 	private JPanel panel;
 	private Point position;
 	private GUIManager guiManager;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private JTree toolTree;
 	private DefaultMutableTreeNode pointerNode;
 
@@ -130,28 +131,9 @@ public class PetriNetTools implements TreeSelectionListener {
 	}
 
 	/**
-	 * Metoda zwracająca podokno dokowalne narzędzi intefejsu programu.
-	 * @return Dockable - obiekt dokowalny
-	 */
-	//public Dockable getDockable() {
-	//	return dockable;
-	//}
-
-	/**
-	 * Metoda ustawiająca podokno dokowalne narzędzi intefejsu programu.
-	 */
-	//private void setDockable(Dockable dockable) {
-	//	this.dockable = dockable;
-	//}
-	
-	/**
 	 * Metoda ustawiająca i podświetlająca wybór wskaźnika typu POINTER
 	 */
 	public void selectPointer() {
-		//TreeNode[] nodes = model.getPathToRoot(nextNode);
-		//toolTree.setSelectionPath(new TreePath(pointerNode));
-		//int index = toolTree.getRowForPath(new TreePath(pointerNode));
-		
 		toolTree.setSelectionRow(2);
 	}
 	
@@ -185,7 +167,6 @@ public class PetriNetTools implements TreeSelectionListener {
 			}
 		}
 
-		
 		Object nodeInfo = node.getUserObject();
 		if (node.isLeaf()) {
 			String description = (String) nodeInfo;
@@ -298,113 +279,108 @@ public class PetriNetTools implements TreeSelectionListener {
 				switch (nodeInfo) {
 					case "Pointer" -> {
 						setIcon(pointerIcon);
-						setToolTipText("Allows to point at and move net components on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipPointer"));
 					}
 					case "Eraser" -> {
 						setIcon(eraserIcon);
-						setToolTipText("Allows to delete net components.");
+						setToolTipText(lang.getText("PNTT_toolTipEraser"));
 					}
 					case "Place" -> {
 						setIcon(placeIcon);
-						setToolTipText("Allows you to place a Place on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipPlace"));
 					}
 					case "Transition" -> {
 						setIcon(transitionIcon);
-						setToolTipText("Allows you to place a Transition on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipTrans"));
 					}
 					case "(TPN) Time" -> {
 						setIcon(timeTransitionIcon);
-						setToolTipText("Allows you to place a Time Transition on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipTPNTrans"));
 					}
-					//case "(FPN) Functional" -> {
-					//	setIcon(functionalTransIcon);
-					//	setToolTipText("Allows you to place a Functional Transition on the sheet.");
-					//}
 					case "(SPN) Stochastic" -> {
 						setIcon(stochasticTrans);
-						setToolTipText("Allows you to place a Stochastic Transition on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipSPNTrans"));
 					}
 					case "(SPN) Immediate" -> {
 						setIcon(immediateTransIcon);
-						setToolTipText("Allows you to place a Immediate Transition on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipSPNImmed"));
 					}
 					case "(SPN) Deterministic" -> {
 						setIcon(deterministicTransIcon);
-						setToolTipText("Allows you to place a Deterministic Transition on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipSPNDeter"));
 					}
 					case "(SPN) Scheduled" -> {
 						setIcon(scheduledTransIcon);
-						setToolTipText("Allows you to place a Scheduled Transition on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipSPNSched"));
 					}
 					case "Arc" -> {
 						setIcon(arcIcon);
-						setToolTipText("Allows you to place an Arc on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipArc"));
 					}
 					case "Read Arc" -> {
 						setIcon(arcIconRead);
-						setToolTipText("Allows you to place an Readarc on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipReadArc"));
 					}
 					case "Inhibitor Arc" -> {
 						setIcon(arcIconInh);
-						setToolTipText("Allows you to place an Inhibitor Arc on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipInhibArc"));
 					}
 					case "Reset Arc" -> {
 						setIcon(arcIconRst);
-						setToolTipText("Allows you to place a Reset Arc on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipResetArc"));
 					}
 					case "Equal Arc" -> {
 						setIcon(arcIconEql);
-						setToolTipText("Allows you to place an Equal Arc on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipEquArc"));
 					}
 					case "Modifier Arc" -> {
 						setIcon(arcIconModifier);
-						setToolTipText("Allows you to place an Modifier Arc on the sheet.");
+						setToolTipText(lang.getText("PNTT_toolTipModArc"));
 					}
 					case "xPlace" -> {
 						setIcon(xPlaceIcon);
-						setToolTipText("xTPN place with time range.");
+						setToolTipText(lang.getText("PNTT_toolTipXTPNplace"));
 					}
 					case "xTransition" -> {
 						setIcon(xTransIcon);
-						setToolTipText("xTPN transition with TPN and DPN-like time ranges.");
+						setToolTipText(lang.getText("PNTT_toolTipXTPNtrans"));
 					}
 					case "xArc" -> {
 						setIcon(xArcIcon);
-						setToolTipText("xTPN new arc");
+						setToolTipText(lang.getText("PNTT_toolTipXTPNarc"));
 					}
 					case "xInhibitor" -> {
 						setIcon(xInhArcIcon);
-						setToolTipText("xTPN new inhibitor arc");
+						setToolTipText(lang.getText("PNTT_toolTipXTPNinhArc"));
 					}
 					case "Subnet T-type" -> {
 						setIcon(subnetT);
-						setToolTipText("Allows you to create subnet with place-interfaces.");
+						setToolTipText(lang.getText("PNTT_toolTipSubnetP"));
 					}
 					case "Subnet P-type" -> {
 						setIcon(subnetP);
-						setToolTipText("Allows you to create subnet with transition-interfaces.");
+						setToolTipText(lang.getText("PNTT_toolTipSubnetT"));
 					}
 					case "Subnet" -> {
 						setIcon(subnetPT);
-						setToolTipText("Allows you to create subnet with P/T interfaces.");
+						setToolTipText(lang.getText("PNTT_toolTipSubnetPT"));
 					}
 					case "C-Place" -> {
 						setIcon(cplaceIcon);
-						setToolTipText("Allows you to create colored place.");
+						setToolTipText(lang.getText("PNTT_toolTipCplace"));
 					}
 					case "C-Transition" -> {
 						setIcon(ctransitionIcon);
-						setToolTipText("Allows you to create colored transition.");
+						setToolTipText(lang.getText("PNTT_toolTipCtrans"));
 					}
 					case "C-Arc" -> {
 						setIcon(carcIcon);
-						setToolTipText("Allows you to create arc for colored net.");
+						setToolTipText(lang.getText("PNTT_toolTipCarc"));
 					}
 				}
 			} else {
 				setToolTipText(null); // no tool tip
 			}
-
 			return this;
 		}
 	}

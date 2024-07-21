@@ -237,9 +237,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if (n instanceof Place) {
 				places.add(n);
 			} else if(n instanceof Transition) {
-				if (((Transition)n).getTransType() == TransitionType.TPN)
+				if (((Transition)n).getTransType() == TransitionType.TPN) {
+					transitions.add(n);
 					timeTransitions.add(n);
-				else
+				} else
 					transitions.add(n);
 			} else if(n instanceof MetaNode) {
 				metaNodes.add(n);
