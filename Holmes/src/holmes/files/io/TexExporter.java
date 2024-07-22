@@ -17,6 +17,7 @@ import holmes.adam.mct.Runner;
 import holmes.analyse.MCTCalculator;
 import holmes.clusters.ClusteringExtended;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.files.io.snoopy.SnoopyWriter;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
@@ -28,6 +29,7 @@ import holmes.workspace.ExtensionFileFilter;
  * w GUIManager przy starcie programu.
  */
 public class TexExporter {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	String newline = "\n";
 	public TexExporter() {
 		
@@ -42,15 +44,15 @@ public class TexExporter {
 		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 
 		if(places.isEmpty() || transitions.isEmpty()) {
-			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), "At least 1 place and transition needed.", 
-					"Unable to export", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), lang.getText("TEX_entry001"), 
+					lang.getText("TEX_entry001t"), JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"), "", "");
 		if(selectedFile.isEmpty())
 			return;
 		
@@ -154,11 +156,11 @@ public class TexExporter {
 				transitions.get(i).setName(transitionsNames.get(i));
 			}
 		} catch (Exception e) {
-			String msg = "Unable to save places and transition data to: "+selectedFile;
+			String msg = lang.getText("LOGentry00211exception")+" "+selectedFile;
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			msg = msg.replace(": ", ":\n");
 			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
-					"Write error", JOptionPane.ERROR_MESSAGE);
+					lang.getText("TEX_entry002"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -168,10 +170,10 @@ public class TexExporter {
 	public void writeInvariants() {
 		String mctFile = invMCTSubroutines();
 		if(mctFile == null) {
-			String msg = "Unable to extract invariants data from the net.";
+			String msg = lang.getText("LOGentry00212");
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
-					"Invariants export error", JOptionPane.ERROR_MESSAGE);
+					lang.getText("TEX_entry003"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
@@ -226,14 +228,14 @@ public class TexExporter {
 			}
 	        br.close();
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Error. Cannot extract MCT from file "+mctFile, "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00213exception")+" "+mctFile, "error", true);
 		}
 		
 		//TERAZ ZAPIS DO PLIKU:
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"), "", "");
 		if(selectedFile.equals(""))
 			return;
 		if(!selectedFile.contains(".txt"))
@@ -262,11 +264,11 @@ public class TexExporter {
 			bw.write(""+newline);
 			bw.close();
 		} catch (Exception e) {
-			String msg = "Unable to save invariants data to: "+selectedFile;
+			String msg = lang.getText("LOGentry00214")+" "+selectedFile;
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			msg = msg.replace(": ", ":\n");
 			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
-					"Write error", JOptionPane.ERROR_MESSAGE);
+					lang.getText("TEX_entry002"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -279,13 +281,13 @@ public class TexExporter {
 		String filePath = GUIManager.getDefaultGUIManager().getTmpPath() + "input.csv";
 		int result = GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveInvariantsToCSV(filePath, true, true);
 		if(result == -1) {
-			String msg = "Exporting net into CSV file failed.";
+			String msg = lang.getText("LOGentry00215");
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			return null;
 		}
 		
 		try {
-			GUIManager.getDefaultGUIManager().log("Starting MCT generator.","text",true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00216"),"text",true);
 			Runner mctRunner = new Runner();
 			String[] args = new String[1];
 			args[0] = filePath;
@@ -295,11 +297,12 @@ public class TexExporter {
 			String path = Tools.getFilePath(csvFile);
 			csvFile.delete();
 			
-			GUIManager.getDefaultGUIManager().log("MCT file saved. Path: " + path + "input.csv.analysed.txt", "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00217")+ " " + path 
+					+ "input.csv.analysed.txt", "text", true);
 		
 			return path+"input.csv.analysed.txt";
 		} catch (IOException e) {
-			GUIManager.getDefaultGUIManager().log("MCT generator failed: "+e.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00218exception")+" "+e.getMessage(), "error", true);
 			return null;
 		}
 	}
@@ -313,23 +316,21 @@ public class TexExporter {
 		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTanalyzer();
 		ArrayList<ArrayList<Transition>> mctSet = analyzer.generateMCT();
 		if(mctSet == null) {
-			GUIManager.getDefaultGUIManager().log("No MCT sets returned to writeMCT(). Writing operation terminated.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00219"), "error", true);
 			return;
 		}
 		
 		if(mctSet.isEmpty()) {
-			String msg = "Unable to extract MCT data from the net.";
+			String msg = lang.getText("LOGentry00220");
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
-					"MCT export error", JOptionPane.ERROR_MESSAGE);
+					lang.getText("TEX_entry004"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
-		//ArrayList<Transition> unused = new ArrayList<Transition>();
 		for(int i=0; i<mctSet.size(); i++) { //wyzeruj MCT 1-elementowe
 			ArrayList<Transition> mctRow = mctSet.get(i);
 			if(mctRow.size()==1) {
-				//unused.add(mctRow.get(0));
 				mctSet.set(i, null);
 			}
 		}
@@ -363,7 +364,7 @@ public class TexExporter {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"), "", "");
 		if(selectedFile.isEmpty())
 			return;
 		if(!selectedFile.contains(".txt"))
@@ -393,12 +394,6 @@ public class TexExporter {
 					int trID = transitions.lastIndexOf(trNumber);
 					transLine.append(trID);
 					transLine.append("}$");
-					
-					//transLine += " ";
-					//Transition trNumber = mctSet.get(i).get(t);
-					//int trID = transitions.lastIndexOf(trNumber);
-					//transLine += " "+transitions.get(trID).getName().replace("_", " ");
-					
 					if(t+1 < mctSet.get(i).size())
 						transLine.append(",");
 				}
@@ -411,22 +406,19 @@ public class TexExporter {
 			bw.write(""+newline);
 			bw.close();
 		} catch (Exception e) {
-			String msg = "Unable to save invariants data to: "+selectedFile;
+			String msg = lang.getText("LOGentry00221")+" "+selectedFile;
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			msg = msg.replace(": ", ":\n");
 			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
-					"Write error", JOptionPane.ERROR_MESSAGE);
+					lang.getText("TEX_entry002"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
-	
 
 	public void writeCluster(ClusteringExtended data) {
-		
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"), "", "");
 		if(selectedFile.isEmpty())
 			return;
 		
@@ -454,8 +446,6 @@ public class TexExporter {
 					line = new StringBuilder();
 					int invNumber = data.clustersInv.get(cl).get(inv);		
 					ArrayList<String> invArray = data.getNormalizedInvariant(invNumber, true);
-					//String nr = invArray.get(0);// ID
-					
 					
 					line.append("$x_{").append(invNumber + 1).append("}$ & "); // nr inwariantu: II komorka
 					
@@ -494,14 +484,13 @@ public class TexExporter {
 			bw.write(""+newline);
 			bw.close();
 		} catch (Exception e) {
-			String msg = "Unable to save cluster tables to: "+selectedFile;
+			String msg = lang.getText("LOGentry00222")+" "+selectedFile;
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			msg = msg.replace(": ", ":\n");
 			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
-					"Write error", JOptionPane.ERROR_MESSAGE);
+					lang.getText("TEX_entry002"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
 	
 	public void writeClusterExt(ClusteringExtended data) {
 		ArrayList<ArrayList<Integer>> clustersMCT = new ArrayList<ArrayList<Integer>>();
@@ -534,7 +523,8 @@ public class TexExporter {
 							oldValue++;
 							mctRow.set(mctNumber, oldValue); //występuje
 						} catch (Exception ex) {
-							GUIManager.getDefaultGUIManager().log("Error (552019684) | Exception:  "+ex.getMessage(), "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00223exception")+" "
+									+ex.getMessage(), "error", true);
 						}
 					}
 				}
@@ -547,7 +537,8 @@ public class TexExporter {
 						oldValue++;
 						transRow.set(tranNumber, oldValue); //występuje
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (231781194) | Exception:  "+ex.getMessage(), "error", true);
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00224exception")+ " "
+								+ex.getMessage(), "error", true);
 					}
 				}
 			}
@@ -557,15 +548,13 @@ public class TexExporter {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"), "", "");
 		if(selectedFile.isEmpty())
 			return;
 		
 		if(!selectedFile.contains(".txt"))
 			selectedFile += ".txt";
 		
-		//ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
 			//Tabelka główna:
@@ -599,11 +588,11 @@ public class TexExporter {
 			bw.write(""+newline);
 			bw.close();
 		} catch (Exception e) {
-			String msg = "Unable to save cluster tables to: "+selectedFile;
+			String msg = lang.getText("LOGentry00225")+" "+selectedFile;
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			msg = msg.replace(": ", ":\n");
 			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
-					"Write error", JOptionPane.ERROR_MESSAGE);
+					lang.getText("TEX_entry002"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

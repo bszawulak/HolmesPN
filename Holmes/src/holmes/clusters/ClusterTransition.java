@@ -49,6 +49,4 @@ public class ClusterTransition {
 		this.transInCluster = transInCluster;
 		this.firedInCluster = firedInCluster;
 	}
-	
-	
 }

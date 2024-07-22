@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 
+import holmes.darkgui.LanguageManager;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -23,6 +24,7 @@ import holmes.petrinet.elements.Transition.TransitionType;
  * Parser sieci czasowych (Snoopy)
  */
 public class NetHandler_Time extends NetHandler {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	// Zmienne boolowskie parsera
 	public boolean Snoopy = false;
 	public boolean node = false;
@@ -119,7 +121,7 @@ public class NetHandler_Time extends NetHandler {
 		if (qName.equalsIgnoreCase("metadataclass")) {
 			if(anyProblems) {
 				anyProblems = false;
-				GUIManager.getDefaultGUIManager().log("Problems encountered during loading file.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00106"), "error", true);
 			}
 		}
 		
@@ -164,7 +166,8 @@ public class NetHandler_Time extends NetHandler {
 			} catch (Exception e) {
 				duration = 0.0;
 				anyProblems = true;
-				GUIManager.getDefaultGUIManager().log("Warning. Node "+nodeName+" had unassigned duration value. Duration set to zero.", "warning", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00107_1a")+nodeName+" "
+						+lang.getText("LOGentry00107_1b"), "warning", true);
 			}
 			
 			readDPN = false;
@@ -173,11 +176,9 @@ public class NetHandler_Time extends NetHandler {
 			variableDuration = false;
 		}
 		
-		
 		if(colDPN && readString.equals("Main")) {
 			readDPN = true;
 		}
-		
 		
 		if (qName.equalsIgnoreCase("colList_body") && variableInterval) {
 			colTPN = true; //jestesmy w sekcji gdzie beda zmienne czasowe EFT i LFT
@@ -188,7 +189,8 @@ public class NetHandler_Time extends NetHandler {
 			} catch (Exception e) {
 				nodeLFT = 0.0;
 				anyProblems = true;
-				GUIManager.getDefaultGUIManager().log("Warning. Node "+nodeName+" had unassigned lft value. Lft set to zero.", "warning", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00108a")+" "+nodeName+" "
+						+lang.getText("LOGentry00108b"), "warning", true);
 			}
 			readLFT = false;
 			readEFT = false;
@@ -202,7 +204,8 @@ public class NetHandler_Time extends NetHandler {
 			} catch (Exception e) {
 				nodeEFT = 0.0;
 				anyProblems = true;
-				GUIManager.getDefaultGUIManager().log("Warning. Node "+nodeName+" had unassigned eft value. Eft set to zero.", "warning", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00109_1a")+" "+nodeName+" "
+						+lang.getText("LOGentry00109_1b"), "warning", true);
 			}
 			
 			readLFT = true;
@@ -234,7 +237,7 @@ public class NetHandler_Time extends NetHandler {
 					int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
 					resizeFactor += ((double)addF/(double)100);
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (494913094) | Exception:  "+ex.getMessage(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00110exception")+ex.getMessage(), "error", true);
 				}
 				
 				xPos *= resizeFactor;
@@ -295,7 +298,7 @@ public class NetHandler_Time extends NetHandler {
 					if(yoff_name < -8)
 						yoff_name = -55; //nad node, uwzględnia różnicę
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (479349294) | Exception:  "+ex.getMessage(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00111_1exception")+ex.getMessage(), "error", true);
 				}
 			}
 			graphicNamesPointsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
@@ -344,7 +347,7 @@ public class NetHandler_Time extends NetHandler {
 					readString = "";
 				}
 				if (variableMarking) {
-					if (readString.equals("")) {
+					if (readString.isEmpty()) {
 						nodeMarking = 0;
 					} else {
 						nodeMarking = Integer.parseInt(readString);
@@ -353,7 +356,7 @@ public class NetHandler_Time extends NetHandler {
 					}
 				}
 				if (variableLogic) {
-					if (readString.equals("")) {
+					if (readString.isEmpty()) {
 						nodeLogic = 0;
 					} else {
 						nodeLogic = Integer.parseInt(readString);
@@ -377,7 +380,7 @@ public class NetHandler_Time extends NetHandler {
 			if (edge && atribute) {
 
 				if (variableMultiplicity) {
-					if (readString.equals("")) {
+					if (readString.isEmpty()) {
 						arcMultiplicity = 0;
 					} else {
 						arcMultiplicity = Integer.parseInt(readString);
@@ -441,7 +444,7 @@ public class NetHandler_Time extends NetHandler {
 			ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
 
 			if(graphicPointsList.size() != graphicNamesPointsList.size()) {
-				GUIManager.getDefaultGUIManager().log("Critical error reading Snoopy file. Wrong number of names locations and nodes locations.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00112"), "error", true);
 			}
 			
 			for (int k = 0; k < graphicPointsList.size(); k++) {
@@ -472,13 +475,9 @@ public class NetHandler_Time extends NetHandler {
 
 				nodesList.add(tmpPlace);
 				IdGenerator.getNextPlaceId();
-				
-				//tmpNode = new Place(nodeID, tmpElementLocationList, nodeName, nodeComment, nodeMarking);
-				//nodesList.add(tmpNode);
 			} else {	
 				if(timeTrans) {			
 					timeTrans = false;
-					//TimeTransition tmpTTran = new TimeTransition(nodeID, tmpElementLocationList, nodeName, nodeComment);
 					Transition tmpTTran = new Transition(nodeID, elementLocationsList, nodeName, nodeComment);
 					tmpTTran.timeExtension.setEFT(nodeEFT);
 					tmpTTran.timeExtension.setLFT(nodeLFT);

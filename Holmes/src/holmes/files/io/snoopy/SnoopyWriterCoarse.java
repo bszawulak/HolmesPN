@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.MetaNode.MetaType;
@@ -16,6 +17,7 @@ import holmes.varia.NetworkTransformations;
  * Cthulhu fhtagn!
  */
 public class SnoopyWriterCoarse {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private MetaNode coarseNode;
 	/** Identyfikator podstawowy coarseNode  */
 	public int snoopyStartingID = -1;
@@ -119,9 +121,8 @@ public class SnoopyWriterCoarse {
 		currID++;
 		write(bw, "        <graphics count=\"1\">");
 		if(currID != grParents.get(0)) {
-			GUIManager.getDefaultGUIManager().log("Critical error while writing Snoopy file. ID's don't match.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00144critErr"), "error", true);
 		}
-		
 		write(bw, "          <graphic x=\""+grParentsLocation.get(0).x+".00\""
 				+ " y=\""+grParentsLocation.get(0).y+".00\""
 				+ " id=\""+grParents.get(0)+"\" net=\""+netMainID+"\""
@@ -129,7 +130,6 @@ public class SnoopyWriterCoarse {
 				+ " pen=\"0,0,0\" brush=\"255,255,255\"/>");
 		write(bw,"        </graphics>");
 		write(bw, "      </node>");
-
 		return grParents.get(0);
 	}
 
@@ -142,7 +142,7 @@ public class SnoopyWriterCoarse {
 		try {
 			bw.write(text+"\n");
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (620782847) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00145exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	

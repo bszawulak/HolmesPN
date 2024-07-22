@@ -49,7 +49,7 @@ GUIO_warning002, Warning. There has been a problem detecting type of the Petri n
 GUIO_warning003, Selected net file format:
 GUIO_warning003b, Net real type:
 GUIO_warning003c, Suggested file format:
-GUIO_warning003d, Selected format will not contain all features of the current Petri Net. Resulting file\nwill contain reduced net or will be corrupted.\n
+GUIO_warning003d, Selected format will not contain all features of the current Petri Net. Resulting file will \ncontain reduced net or will be corrupted.\n
 GUIO_warning003title, Invalid out net file format
 GUIO_button001, Load invariants
 GUIO_button001b, Select invariant file
@@ -605,7 +605,7 @@ HDWT_entry212sheet, Autoscroll:
 HDWT_entry213TinvPanel, T-invariant:
 HDWT_entry214TinvPanel, null transitions
 HDWT_entry215TinvPanel, inv/trans frequency
-LOGentry00046error, Error (1000001): createT_invSubWindow
+LOGentry00046exception, Exception (1000001): createT_invSubWindow
 HDWT_entry216TinvPanel, Previous
 HDWT_entry217TinvPanel, Show previous invariant data.
 HDWT_entry218TinvPanel, <html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>
@@ -632,7 +632,7 @@ HDWT_entry232PinvPanel, p-invariant:
 HDWT_entry233PinvPanel, null places
 HDWT_entry234PinvPanel, inv/place frequency
 HDWT_entry235PinvPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>
-LOGentry00050error, Error (1000003) : probably not implemented features for p-invariants in the t-invariants code window.
+LOGentry00050exception, Exception (1000003) : probably not implemented features for p-invariants in the t-invariants code window.
 LOGentry00051, Critical error in p-invariants subwindow.\np-invariants size differ from transition set cardinality!
 HWDT_entry236, p-invariants data unavailable.
 HDWT_entry236_t, No p-invariants
@@ -801,8 +801,647 @@ IC_entry057, replaced:
 IC_entry058, not canonical:
 IC_entry059, Phase I inititated. Performing only for all 1-in/1-out columns.\n
 IC_entry060, Processing simple-class column:
-LOGentry00054error, Critical error (2000001) calculating invariants.
-LOGentry00055error, CheckCoverability function, catastrophic error (2000002): impossible state detected.
+LOGentry00054critErr, Critical error (2000001) calculating invariants.
+LOGentry00055critErr, Critical error (2000002) CheckCoverability function, impossible state detected.
+
+//InvariantsCalculatorFeasible:
+ICF_entry001, Set computed. Returning.
+ICF_entry002, Created non-minimal feasible invariants:
+ICF_entry003, Self-propelled readarc/double arcs invariants left unchanged:
+ICF_entry004, Feasible P-inv search? Not implemented.
+ICF_entry005, Cannot compute feasibility for p-invariants set.
+ICF_entry006a, Non-feasible invariant (pos:
+ICF_entry006b, ) already contains some required transitions:
+ICF_entry006c, out of
+ICF_entry007a, Created feasible invariant number
+ICF_entry007b, is not canonical.\n
+
+//MCSCalculator:
+MCSC_entry001, Searching MCS started. \n
+MCSC_entry002, MCS list created. \n
+LOG_entry0071_exception, Exception (1000004): out of memory.\nOperation terminated unconditionally.
+LOG_entry0072_exception, Exception (1000005): operation failed due to unknown error.\n
+MCSC_entry005, Computing for set size:
+MCSC_entry006a, MCS found:
+MCSC_entry006b, pre-cutsets list size:
+MCSC_entry007a, Precutsets increase factor:
+MCSC_entry007b, Last interval time:
+MCSC_entry007c, seconds.\n
+MCSC_entry008, Infeasible sets reduction completed. Remained:
+MCSC_entry009, Computed sets:
+
+//MDTSCalculator:
+MDTS_entry001, No invariants found!
+
+//NetPropertiesAnalyzer:
+NPA_entry001, Pure
+NPA_entry001d1, There are no two nodes, directly connected in both directions. This precludes \nread arcs and double arcs.
+NPA_entry001d2, No component is produced and consumed by the same reaction.
+NPA_entry002, Ordinary
+NPA_entry002d1, All arc weights are equal to 1.
+NPA_entry002d2, Every stoichiometric coefficient of each reaction is equal to one.
+NPA_entry003, Homogeneous
+NPA_entry003d1, All outgoing arcs of a given place have the same multiplicity.
+NPA_entry003d2, Each consuming reaction associated with one component takes the same \namount of molecules of this component.
+NPA_entry004, Connected
+NPA_entry004d1, A Petri net is connected if it holds for every two nodes a and b that \nthere is an undirected path between a and b. Disconnected parts of a\n
+NPA_entry004d1_1, Petri net can not influence each other, so they can be usually analysed \nseparately.
+NPA_entry004d2, All components in a system are directly or indirectly connected with \neach other through a set of reactions, e.g., metabolic paths, signal flows.
+NPA_entry005, Strongly Connected
+NPA_entry005d1, A Petri net is strongly connected if it holds for every two nodes a and b that \nthere is a directed path from a to b, vice versa. Strong connectedness \n
+NPA_entry005d1_1, involves connectedness and the absence of boundary nodes. It is a necessary \ncondition for a Petri net to be live and bounded at the same time.
+NPA_entry005d2, All components in a system are directly connected with each other through a set \nof reactions, e.g., metabolic paths, signal flows.
+NPA_entry006, Non-blocking Multiplicity
+NPA_entry006d1, The minimum of the multiplicity of the incoming arcs for a place is not \nless than the maximum of the multiplicities of its outgoing arcs.
+NPA_entry006d2, The amount of produced and consumed molecules of a certain component \nis always equal.
+NPA_entry007, Conservative
+NPA_entry007d1, All transitions add exactly as many tokens to their post-places as they \nsubtract from their pre-places (token-preservingly firing). A conservative \nPetri net is structurally bounded.
+NPA_entry007d2, The total amount of consumed and produced molecules by a certain reaction \nis always equal.
+NPA_entry008, Static Conflict Free
+NPA_entry008d1, There are no two transitions sharing a pre-place. Transitions involved in a \ndynamic conflict compete for the tokens on shared places.
+NPA_entry008d2, For every reactant exist just one possible reaction or there are no two \nreactions sharing at least one reactant.
+NPA_entry009, Input transitions
+NPA_entry009d1, There are transitions without a pre-places.
+NPA_entry009d2, Infinite source of a component.
+NPA_entry010, Output transitions
+NPA_entry010d1, There are transitions without a post-places.
+NPA_entry010d2, Sink of a component.
+NPA_entry011, Input places
+NPA_entry011d1, There are places without pre-transitions.
+NPA_entry011d2, Every component can be consumed by a reaction.
+NPA_entry012, Output places
+NPA_entry012d1, There are places without post-transitions.
+NPA_entry012d2, Components can infinitely accumulate in the system.
+NPA_entry013, Network analyzer detected a problem within the net. Number of places:
+NPA_entry013a, and number transitions:
+NPA_entry013b, do not sum to the total stored, number of nodes:
+NPA_entry013c, minus number of meta-nodes:
+
+//ProblemDetector:
+PD_entry001, IN-place
+PD_entry002, OUT-place
+PD_entry003, Input:
+PD_entry004, / Output:
+PD_entry005, IN-trans
+PD_entry006, OUT-trans
+PD_entry007, Input:
+PD_entry008, / Output:
+PD_entry009, Linear place
+PD_entry010, Linear trans
+PD_entry011, LINEAR REGION
+PD_entry012, Non-I:
+
+//SubnetCalculator:
+SC_entry001, Decomposition can not be processed, because of the lack of invariants!
+SC_entry002, Before determine ADT sets, you need to generate T-invariants.
+
+//TimeComputations:
+TC_entry001, Error: t-invariant and transition set sizes do not match!
+
+//CHmetricReader:
+CHM_entry001, -no sentence-
+LOGentry00056a, Warning. Directory
+LOGentry00056b, may not contain all necessary files. Operation will continue, but may fail.
+LOGentry00057, Reading failed for Celiński-Harabasz metric in file
+
+//ClusteringExcelWriter:
+CEW_entry001a, Cannot access file:
+CEW_entry001b, \nPlease make sure it is not open in any other application.
+CEW_entry002, Cluster #
+CEW_entry002b, ) Size:
+CEW_entry003, CLUSTER
+CEW_entry004, MCT#:
+CEW_entry005, HowMany?
+CEW_entry006, Size:
+CEW_entry007, Meaning
+CEW_entry008, Trans.#:
+CEW_entry009, Freq.:
+CEW_entry010, Avg.Fired:
+CEW_entry011, Transition name:
+CEW_entry012, Trans.
+CEW_entry013, Real firing of MCT transitions
+CEW_entry014, Trans.#:
+CEW_entry015, from MCT:
+CEW_entry016, Freq:
+CEW_entry017, Avg.fired:
+CEW_entry018, Transition name:
+CEW_entry019, Trans.
+CEW_entry020, MCT
+CEW_entry021, (very strong structure)
+CEW_entry022, (solid structure)
+CEW_entry023, (regular structure)
+CEW_entry024, (weak structure)
+CEW_entry025, (single element structure?)
+CEW_entry026, (no significant structure)
+CEW_entry027, MCT #:
+CEW_entry028, Size:
+CEW_entry029, Meaning:
+CEW_entry030, default meaning for mct no.
+CEW_entry031, MCT sets composition:
+
+//ClusterReader:
+LOGentry00058a, Some files are still missing in
+LOGentry00058b, Possible further errors.
+CR_entry001, Processing data for:
+LOGentry00059, Failure to fill the data for
+LOGentry00060a, Critical error: directory
+LOGentry00060b, does not contain any cluster file.
+LOGentry00061, Missing file:
+LOGentry00062, - Fixed: recreated clean.
+LOGentry00063, Restoring missing file has failed.
+CR_entry002, Output:Silhouette of
+LOGentry00064a, Critical error: cleaning file
+LOGentry00064b, has failed.
+LOGentry00065a, Critical error: creating of cleaning file
+LOGentry00065b, has failed.
+LOGentry00066, Critical error in readCluserFile while reading
+LOGentry00067, Attempting to extract clustering data from the following files:
+LOGentry00068, Invariants CSV:
+LOGentry00069, MCT master file:
+LOGentry00070, Clustering file:
+LOGentry00071, CSV file missing, wrong path:
+LOGentry00072, CSV file corrupt, unable to retrieve invariants data. Path:
+LOGentry00073, CSV invariants: extracted.
+LOGentry00074, MCT file missing, wrong path:
+LOGentry00075, Something is wrong with MCT data. File:
+LOGentry00076, MCT file corrupt. Path:
+LOGentry00077, MCT file reading error. Path:
+LOGentry00078, MCT data: extracted.
+LOGentry00079, Cluster file missing. Path:
+LOGentry00080a, Critical error in:
+LOGentry00080b, contains invalid number of invariants previously read from file
+LOGentry00081a, Critical error in:
+LOGentry00081b, contains invalid number of clusters.
+LOGentry00082, Error: more clusters have been read than possible. Cluster file corrupt, aborting procedure. Path:
+LOGentry00083, Cluster file corrupt, path:
+LOGentry00084, Clustering data: extracted.
+
+//RClusteringParserToXLS:
+RCP_entry001, Distance/Cluster alg.
+RCP_entry002, Silhouette
+RCP_entry003, Range
+RCP_entry004, Evaluation
+RCP_entry005, Strong structure
+RCP_entry006, Solid structure
+RCP_entry007, Important structure
+RCP_entry008, Weak structure
+RCP_entry009, Very weak structure
+RCP_entry010, No structure
+RCP_entry011, Single clusters
+RCP_entry012, Evaluation
+RCP_entry013, Very good
+RCP_entry014, Good
+RCP_entry015, Bad
+
+//Rprotocols:
+LOGentry00085, Processing CH:
+LOGentry00086, All Caliński-Harabasz metrics has been computed.
+LOGentry00087, Processing:
+LOGentry00088, All clusterings has been computed.
+RP_entry001, -no sentence-
+
+//SnoopyReader:
+LOGentry00089, Warnings while reading file.
+LOGentry00090, Reading Snoopy file:
+LOGentry00091exception, Exception (1000006): SnoopyReader.coreReader(): Reading Snoopy net failed.
+LOGentry00092exception, Exception (1000007): SnoopyReader.coreReader(): Unknown error.
+LOGentry00093, Error: program cannot read Snoopy Place ID from line:
+LOGentry00094exception, Exception (1000008): SnoopyReader.readSnoopyPlaces() failed:
+LOGentry00095, Warning: names locations number and graphics locations number vary for place
+LOGentry00096, Fix: resetting names locations (offsets) array.
+LOGentry00097, Reading Snoopy places failed in line:
+LOGentry00098a, Warning: places read:
+LOGentry00098b, , places number set in file:
+LOGentry00099_1exception, Exception (1000009): SnoopyReader.setBrushColor() failed:
+LOGentry00100, Criticial error: could not read Snoopy Transition ID from line:
+LOGentry00101, Warning: names locations number and graphics locations number vary for transition
+LOGentry00102, Fix: resetting names locations (offsets) array.
+LOGentry00103exception, Exception (1000010): SnoopyReader.readSnoopyTransitions() failed for line:
+LOGentry00104a, Warning: places read:
+LOGentry00104b, , places number set in file:
+LOGentry00105, Critical error: could not read Snoopy Coarse Place ID from line:
+LOGentry00106exception, Exception (1000011): SnoopyReader.readSnoopyCoarsePlaces() failed:
+LOGentry00107a, Warning: names locations number and graphics locations number vary for c-place
+LOGentry00107b, Fix: resetting names locations (offsets) array.
+LOGentry00108exception, Exception (1000012): SnoopyReader.readSnoopyCoarsePlaces() failed for line:
+LOGentry00109a, Warning: c-places read:
+LOGentry00109b, , c-places number set in file:
+LOGentry00110, Critical error: could not read Snoopy Coarse Transition ID from line:
+LOGentry00111exception, Exception (1000013): SnoopyReader.readSnoopyCoarseTransitions() failed:
+LOGentry00112a, Warning: names locations number and graphics locations number vary for c-transition
+LOGentry00112b, Fix: resetting names locations (offsets) array.
+LOGentry00113exception, Exception (1000014): SnoopyReader.readSnoopyCoarseTransitions() failed for line:
+LOGentry00114a, Warning: c-transitions read:
+LOGentry00114b, , c-transitions number set in file:
+LOGentry00115, Critical error: could not read Snoopy source/target ID for arc from line:
+LOGentry00116a, Fixed: wrong data for arc from (SnoopySourceID:
+LOGentry00116b, ) to (SnoopyTargetID:
+LOGentry00116c, ). Arc fixed.
+LOGentry00117a, Error: cannot create arc from (SnoopySourceID:
+LOGentry00117b, ) to (SnoopyTargetID:
+LOGentry00118a, Fixed: wrong data for arc from (SnoopySourceID:
+LOGentry00118b, ) to (SnoopyTargetID:
+LOGentry00118c, ). Arc fixed.
+LOGentry00119a, Error: cannot create arc from (SnoopySourceID:
+LOGentry00119b, ) to (SnoopyTargetID:
+LOGentry00120a, Error: could not create arc from (SnoopySourceID:
+LOGentry00120b, ) to (SnoopyTargetID:
+LOGentry00121a, Error: unable to load arc data (SnoopySourceID:
+LOGentry00121b, , SnoopyTargetID:
+LOGentry00122, Warning: meta-node to/from coarse graphic elements could not be created. This should not influence invariants-based analysis.
+LOGentry00123exception, Exception (1000015): SnoopyReader.readSnoopyEdges() failed for line:
+LOGentry00124a, Warning: arcs (
+LOGentry00124b, ) read:
+LOGentry00124c, , arcs number set in file:
+LOGentry00125exception, Exception (1000016): SnoopyReader.getAttributeValue() failed:
+LOGentry00126exception, Exception (1000017): SnoopyReader.getAttributeValueStr() failed:
+LOGentry00143exception, Exception (1000028): SnoopyReader.readSnoopyTransition() failed:
+
+//NetHandler_Classic:
+NH_entry001, -no sentence-
+LOGentry00099exception, Exception (1000018): NetHandler_Classic.startElement() failed:
+LOGentry00100exception, Exception (1000019): NetHandler_Classic.startElement() failed:
+LOGentry00101a, Warning: wrong number of names / nodes locations for
+LOGentry00101b, . Resetting names locations.
+LOGentry00102exception, Exception (1000020): NetHandler_Classic.endElement() failed:
+
+//NetHandler_Extended:
+NHE_entry001, -no sentence-
+LOGentry00103_1exception, Exception (1000021): NetHandler_Extended.startElement() failed:
+LOGentry00104exception, Exception (1000022): NetHandler_Extended.startElement() failed:
+LOGentry00105a, Warning: wrong number of names / nodes locations for
+LOGentry00105b, . Resetting names locations.
+
+//NetHandler_Time:
+NHT_entry001, -no sentence-
+LOGentry00106, Problems encountered during loading file.
+LOGentry00107_1a, NetHandler_Time.startElement() failed. Node:
+LOGentry00107_1b, had unassigned duration value. Duration set to zero.
+LOGentry00108a, Warning. Node
+LOGentry00108b, had unassigned lft value. Lft set to zero.
+LOGentry00109_1a, Warning. Node
+LOGentry00109_1b, had unassigned eft value. Eft set to zero.
+LOGentry00110exception, Exception (1000023): NetHandler_Time.startElement() failed:
+LOGentry00111_1exception, Exception (1000024): NetHandler_Time.startElement() failed:
+LOGentry00112, Critical error reading Snoopy file. Wrong number of names locations and nodes locations.
+
+//SnoopyWriter:
+SW_entry001, SPPED Problems that cannot be automatically fixed detected.\nPleease save as Project.
+SW_entry002, Petri Net has been exported as SPPED file:
+LOGentry00113_1exception, Exception (1000025): SnoopyWriter.writeSPPED() for:
+SW_entry003, SPEPT Problems that cannot be automatically fixed detected.\nPlaese save as Project.
+SW_entry004, Extened Petri Net has been exported as SPPED file:
+LOGentry00114exception, Exception (1000026): SnoopyWriter.writeSPEPT() for:
+SW_entry005, SPTPTProblems that cannot be automatically fixed detected.\nPlaese save as Project.
+SW_entry006, Time Petri Net has been exported as SPTPT file:
+LOGentry00115exception, Exception (1000027): SnoopyWriter.writeSPTPT() for:
+LOGentry00116exception, File access error.
+
+//SnoopyWriterArc:
+SWA_entry001, -no sentence-
+LOGentry00117critErr, Critical error (2000003) SnoopyWriterArc.AddArcsAndCoarseToFile() : wrong subnet type for interface node.
+LOGentry00118critErr, Critical error (2000004) SnoopyWriterArc.AddArcsAndCoarseToFile() : no meta-arc for existing arc of the interface node.
+LOGentry00119critErr, Critical error (2000005) SnoopyWriterArc.AddArcsAndCoarseToFile() : wrong subnet type for interface node.
+LOGentry00120critErr, Critical error (2000006) SnoopyWriterArc.AddArcsAndCoarseToFile() : no meta-arc for existing arc of the interface node.
+LOGentry00121critErr, Critical error (2000007) SnoopyWriterArc.AddArcsAndCoarseToFile() : wrong subnet type for interface node.
+LOGentry00122critErr, Critical error (2000008) SnoopyWriterArc.AddArcsAndCoarseToFile() : no meta-arc for existing arc of the interface node.
+LOGentry00123critErr, Critical error (2000009) SnoopyWriterArc.AddArcsAndCoarseToFile() : wrong subnet type for interface node.
+LOGentry00124critErr, Critical error (2000010) SnoopyWriterArc.AddArcsAndCoarseToFile() : no meta-arc for existing arc of the interface node.
+LOGentry00125, Error: SnoopyWriterArc encountered problem with net structure.
+LOGentry00126, Arcs saved do not match size of Arcs internal set. Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.
+LOGentry00127, More arcs saved than should be present in the model. Please notice authors of the program.
+LOGentry00128, Less arcs saved than should be present in the model. Please notice authors of the program.
+LOGentry00129a, Error while saving arc (001):
+LOGentry00129b, Wrong metanode:
+LOGentry00130a, Error while saving arc (002):
+LOGentry00130b, Unrecognized node:
+LOGentry00131a, Error while saving arc (003):
+LOGentry00131b, Wrong node:
+LOGentry00132a, Error while saving arc (004):
+LOGentry00132b, Unrecognized node:
+LOGentry00133a, Unable to save arc from (005)
+LOGentry00133b, to
+LOGentry00134a, Unable to save arc from (006)
+LOGentry00134b, to
+LOGentry00135, Arcs saved do not match size of Arcs internal set. Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.
+LOGentry00136, More arcs saved than should be present in the model. Please advise authors of the program as this may be element-removal algorithmic error.
+LOGentry00137, Less arcs saved than should be present in the model. Please advise authors of the program.
+LOGentry00138a, Unable to save arc from (007)
+LOGentry00138b, to
+LOGentry00139a, Unable to save arc from (008)
+LOGentry00139b, to
+LOGentry00140, Arcs saved do not match size of Arcs internal set. Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.
+LOGentry00141, More arcs saved than should be present in the model. Please advise authors of the program as this may be element-removal algorithmic error.
+LOGentry00142, Less arcs saved than should be present in the model. Please advise authors of the program.
+
+//SnoopyWriterCoarse:
+SWC_entry001, -no sentence-
+LOGentry00144critErr, Critical error (2000011) SnoopyWriterCoarse.writeMetaNodeInfoToFile() : ID's don't match.
+LOGentry00145exception, Exception (1000029): SnoopyWriterCoarse.writeMetaNodeInfoToFile() failed:
+
+//SnoopyWriterPlace:
+SWP_entry001, -no sentence-
+LOGentry00146critErr, Critical error (2000012) SnoopyWriterPlace.writePlaceInfoToFile() : ID's don't match.
+LOGentry00147exception, Exception (1000030): SnoopyWriterPlace.writePlaceInfoToFile() failed:
+
+//SnoopyWriterTimeTransition:
+SWTT_entry001, -no sentence-
+LOGentry00148critErr, Critical error (2000013) SnoopyWriterTimeTransition.writeTransitionInfoToFile() : Snoopy ID's do not match.
+LOGentry00149critErr, Critical error (2000014) SnoopyWriterTimeTransition.writeTransitionInfoToFile() : ID's don't match.
+
+//SnoopyWriterTransition:
+SWT_entry001, -no sentence-
+LOGentry00150critErr, Critical error (2000015) SnoopyWriterTransition.writeTransitionInfoToFile() : Snoopy ID's do not match
+LOGentry00151critErr, Critical error (2000016) SnoopyWriterTransition.writeTransitionInfoToFile() : ID's don't match.
+LOGentry00152exception, Exception (1000031): SnoopyWriterTransition.write() failed:
+
+//AbyssReader:
+AR_entry001, -no sentence-
+LOGentry00153, Petri net (.abyss) successfully read from file:
+LOGentry00154exception, Exception (1000032): AbyssReader.read() failed:
+
+//AbyssWriter:
+AW_entry001, -no sentence-
+LOGentry00155, Network has been saved to file:
+LOGentry00156exception, Exception (1000033): AbyssWriter.write() failed:
+
+//IOprotocols:
+IOP_entry001op1, Read as INA file
+IOP_entry001op2, Read as MonaLisa file
+IOP_entry001op3, Read as Charlie file
+IOP_entry001op4, Terminate reading
+IOP_entry001msg, Unknown or corrupted t-invariants file format. \nPlease choose format for this t-invariants file.
+IOP_entry001t, Error reading file header
+IOP_entry002, Wrong invariants. Only semipositives are acceptable.
+LOGentry00157, t-invariants from INA file have been read.
+LOGentry00158exception, Exception (1000034): IOprotocols.readT_invariants() failed.
+LOGentry00159exception, Exception (1000035): IOprotocols.readT_invariantsOut() failed in header section.
+LOGentry00160, t-invariants from INA file have been read.
+LOGentry00161exception, Exception (1000036): IOprotocols.readT_invariantsOut() failed:
+LOGentry00162exception, Exception (1000037): IOprotocols.readP_invariantsOut() failed in header section:
+LOGentry00163, p-invariants from INA file have been read.
+LOGentry00164exception, Exception (1000038): IOprotocols.readP_invariantsOut() failed:
+IOP_entry003op1, Read as INA file
+IOP_entry003op2, Read as MonaLisa file
+IOP_entry003op3, Read as Charlie file
+IOP_entry003op4, Terminate reading
+IOP_entry003msg, Unknown or corrupted p-invariants file format. \nPlease choose format for this p-invariants file.
+IOP_entry003t, Error reading file header
+LOGentry00165, Wrong invariants. Only semipositives are acceptable.
+LOGentry00166exception, Exception (1000039): IOprotocols.readP_invariants() failed in header section:
+LOGentry00167, p-invariants from INA file have been read.
+LOGentry00168exception, Exception (1000040): IOprotocols.readP_invariants() p-invariants reading operation failed:
+IOP_entry004op1, Force read as Charlie file
+IOP_entry004op2, Terminate reading
+IOP_entry004msg, Unknown or corrupted t-invariants file format! \nRead anyway as Charlie invariants?
+IOP_entry004t, Error reading file header
+LOGentry00169a, Transition name and location do not match! Read transition:
+LOGentry00169b, (loc:
+LOGentry00169c, ), while in net:
+LOGentry00170, Charlie t-invariants file has reference to non existing transitions in the current net. Operation cancelled.
+LOGentry00171, t-invariants from Charlie file have been read.
+LOGentry00172exception, Exception (1000041): IOprotocols.readT_invariantsCharlie() reading operation failed:
+IOP_entry005op1, Force read as Charlie file
+IOP_entry005op2, Terminate reading
+IOP_entry005msg, Unknown or corrupted p-invariants file format! \nRead anyway as Charlie invariants?
+IOP_entry005t, Error reading file header
+IOP_entry006a, Place name and location do not match! Read place:
+IOP_entry006b, (loc:
+IOP_entry006c, ), while in net:
+LOGentry00173, Charlie p-invariants file has reference to non existing places in the current net. Operation cancelled.
+LOGentry00174, p-invariants from Charlie file have been read.
+LOGentry00175exception, Exception (1000042): IOprotocols.readP_invariantsCharlie() p-invariants reading operation failed:
+IOP_entry007op1, Force read as Mona Lisa file
+IOP_entry007op2, Terminate reading
+IOP_entry007msg, Unknown or corrupted invariants file format! Read anyway as Mona Lisa invariants?
+IOP_entry007t, Error reading file header
+LOGentry00176exception, Exception (1000043): IOprotocols.readMonaLisaT_inv() failed for invariant:
+LOGentry00177, t-invariants from MonaLisa file have been read.
+LOGentry00178exception, Exception (1000044): IOprotocols.readMonaLisaT_inv() failed:
+IOP_entry008op1, Force read as Mona Lisa file
+IOP_entry008op2, Terminate reading
+IOP_entry008msg, Unknown or corrupted invariants file format! \nRead anyway as Mona Lisa p-invariants?
+IOP_entry008t, Error reading file header
+LOGentry00179exception, Exception (1000045): IOprotocols.readMonaLisaP_inv() failed reading p-invariant:
+LOGentry00180, p-invariants from MonaLisa file have been read.
+LOGentry00181exception, Exception (1000046): IOprotocols.readMonaLisaP_inv() failed:
+LOGentry00182, t-invariants in INA file format saved to:
+LOGentry00183exception, Exception (1000047): IOprotocols.writeT_invINA() failed:
+LOGentry00184, p-invariants in INA file format saved to:
+LOGentry00185exception, Exception (1000048): IOprotocols.writeP_invINA() failed:
+LOGentry00186, Petri net from INA .pnt file successfully read.
+LOGentry00187exception, Exception (1000049): IOprotocols.serverReadPNT() failed:
+LOGentry00188, Petri net from INA .pnt file successfully read.
+LOGentry00189exception, Exception (1000050): IOprotocols.readPNT() failed:
+LOGentry00190, Petri net exported as .pnt INA format. File: 
+LOGentry00191exception, Exception (1000051): IOprotocols.writePNT() failed:
+LOGentry00192, Invariants in Charlie file format saved to:
+LOGentry00193exception, Exception (1000052): IOprotocols.writeT_invCharlie() failed:
+LOGentry00194, p-invariants in Charlie file format saved to:
+LOGentry00195exception, Exception (1000053): IOprotocols.writeP_invCharlie() failed:
+LOGentry00196, Invariants saved as CSV file:
+LOGentry00197exception, Exception (1000054): IOprotocols.writeT_invCSV() failed:
+LOGentry00198, p-invariants saved as CSV file:
+LOGentry00199exception, Exception (1000055): IOprotocols.writeP_invCSV() failed:
+LOGentry00200exception, Exception (1000056): IOprotocols.exportSubnet() failed:
+LOGentry00201exception, Exception (1000057): IOprotocols.exportBranchVertices() failed:
+LOGentry00202exception, Exception (1000058): IOprotocols.importBranchVertices() failed:
+LOGentry00203exception, Exception (1000059): IOprotocols.exportSubnet() failed:
+LOGentry00204exception, Exception (1000060): IOprotocols.importSubnetFromFile() failed:
+
+//MCSoperations:
+MCS_entry001a, Save
+MCS_entry001b, Select objR MCS file target path
+MCS_entry002, Incorrect file location.
+MCS_entry003, Operation failed.
+LOGentry00205exception, Exception (1000061): MCSoperations.saveSingleMCS() failed:
+MCS_entry004a, Save
+MCS_entry004b, Select MCS data file target path
+LOGentry00206exception, Exception (1000062): MCSoperations.saveAllMCS() failed:
+MCS_entry005a, Load
+MCS_entry005b, Select objR MCS data file
+MCS_entry006, Incorrect file location.
+MCS_entry007, Operation failed.
+MCS_entry008, Invalid entry location. Not enough transition in net.
+MCS_entry009, Net transition:
+MCS_entry010, Transition index in read MCS set exceed transitions number!
+LOGentry00207, MCS data for given transition read: failed.\n
+LOGentry00208, MCS data for given transition read: success.\n
+LOGentry00209exception, Exception (1000063): MCSoperations.loadSingleMCS() failed:
+MCS_entry011a, Load
+MCS_entry011b, Select MCS data file
+MCSC_entry012, Incorrect file location.
+MCSC_entry013, MCS data file refers to different number of transitions!
+MCSC_entry014, Warning! Not all MCS data have been read!
+MCSC_entry015, Loading problem.
+MCSC_entry016a, MCS data for whole net have been read:
+MCSC_entry016b, lists with sets.\n
+LOGentry00210exception, Exception (1000064): MCSoperations.loadAllMCS() : reading MCS data file failed:
+
+//TexExporter:
+TEX_entry001, At least 1 place and transition needed.
+TEX_entry001t, Unable to export
+LOGentry00211exception, Exception (1000065): TexExporter.writePlacesTransitions() failed:
+TEX_entry002, Write error
+LOGentry00212, Unable to extract invariants data from the net.
+TEX_entry003, Invariants export error
+LOGentry00213exception, Exception (1000066): TexExporter.writeInvariants() failed: cannot extract MCT from file:
+LOGentry00214, Unable to save invariants data to:
+LOGentry00215, Exporting net into CSV file failed.
+LOGentry00216, Starting MCT generator.
+LOGentry00217, MCT file saved. Path:
+LOGentry00218exception, Exception (1000067): TexExporter.invMCTsubroutines() failed:
+LOGentry00219, No MCT sets returned to writeMCT(). Writing operation terminated.
+LOGentry00220, Unable to extract MCT data from the net.
+TEX_entry004, MCT export error
+LOGentry00221, Unable to save invariants data to:
+LOGentry00222, Unable to save cluster tables to:
+LOGentry00223exception, Exception (1000068): TexExporter.writeClusterExt() failed:
+LOGentry00224exception, Exception (1000069): TexExporter.writeClusterInt() failed:
+LOGentry00225, Unable to save cluster tables to:
+
+//ProjectWriter:
+PW_entry001, Net saved:
+PW_entry002, t-invariants saved:
+PW_entry003, p-invariants saved:
+PW_entry004, MCT saved:
+PW_entry005, Net states saved:
+PW_entry006, Net XTPN states saved:
+PW_entry007, Firing rates saved:
+PW_entry008, SSA vectors saved:
+LOGentry00226exception, Exception (1000070): ProjectWriter.writeProject() failed:
+LOGentry00227exception_1, Exception (1000071): ProjectWriter.saveNetwork() failed: gamma location for place
+LOGentry00227exception_2, unavailable. (Portal problem?)
+LOGentry00228exception_1, Exception (1000072): ProjectWriter.saveNetwork() failed: alpha location for place
+LOGentry00228exception_2, unavailable. (Portal problem?)
+LOGentry00229exception_1, Exception (1000073): ProjectWriter.saveNetwork() failed: beta location for transition
+LOGentry00229exception_2, unavailable. (Portal problem?)
+LOGentry00230exception_1, Exception (1000074): ProjectWriter.saveNetwork() failed: tau location for transition
+LOGentry00230exception_2, unavailable. (Portal problem?)
+LOGentry00231a, Error: saved
+LOGentry00231b, out of total
+LOGentry00231c, arcs.
+LOGentry00232exception, Exception (1000075): ProjectWriter.saveNetwork() failed:
+LOGentry00233exception, Exception (1000076): ProjectWriter.saveT_invariants() failed:
+LOGentry00234exception, Exception (1000077): ProjectWriter.saveP_invariants() failed:
+LOGentry00235exception, Exception (1000078): ProjectWriter.saveMCT() failed:
+LOGentry00236exception, Exception (1000079): ProjectWriter.saveStates() failed:
+LOGentry00237a, Error while saving multiset type-M # 
+LOGentry00237b, . There are more multisets type-K than net places.
+LOGentry00238exception, Exception (1000080): ProjectWriter.saveXTPNStates() failed:
+LOGentry00239exception, Exception (1000081): ProjectWriter.saveFiringRates() failed:
+LOGentry00240exception, Exception (1000082): ProjectWriter.saveSSAVectors() failed:
+
+//ProjectReader:
+PR_entry001, -no sentence-
+LOGentry00241, Reading project file:
+LOGentry00242, Reading project data block failure.
+LOGentry00243, Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.
+LOGentry00244exception, Exception (1000083): ProjectReader.readProjectForLabelComparison() failed:
+LOGentry00245exception, Exception (1000084): ProjectReader.readProject() failed:
+LOGentry00246exception, Exception (1000085): ProjectReader.readNetwork(): error encountered during reading, while trying to initialize t-invariants panel: 
+LOGentry00247exception, Exception (1000086): ProjectReader.readNetwork(): error while reading project t-invariants section: 
+LOGentry00248exception, Exception (1000087): ProjectReader.readNetwork(): error encountered during reading, while trying to initialize p-invariants panel.
+LOGentry00249exception, Exception (1000088): ProjectReader.readNetwork(): error while reading project p-invariants section:
+LOGentry00250exception, Exception (1000089): ProjectReader.readNetwork(): error encountered during reading, while trying to initialize MCT panel.
+LOGentry00251exception, Exception (1000090): ProjectReader.readNetwork(): error while reading project MCT section:
+LOGentry00252exception, Exception (1000091): ProjectReader.readNetwork(): error while reading project classical net states section.
+LOGentry00253exception, Exception (1000092): ProjectReader.readNetwork(): error while reading project xTPN states section.
+LOGentry00254exception, Exception (1000093): ProjectReader.readNetwork(): error while reading project firing rates section.
+LOGentry00255exception, Exception (1000094): ProjectReader.readNetwork(): error while reading project SSA section.
+LOGentry00256exception, Exception (1000095): ProjectReader.readNetwork(): reading project file failed:
+LOGentry00257exception, Exception (1000096): ProjectReader.readProjectHeader(): error while reading project header:
+LOGentry00258exception_1, Exception (1000097): ProjectReader.readProjectHeader(): error readling line: 
+LOGentry00258exception_2, for Transition
+LOGentry00259exception, Exception (1000098): ProjectReader.parseNetblocksLine(): error in line:
+LOGentry00260a, Read
+LOGentry00260b, places,
+LOGentry00260c, transitions,
+LOGentry00260d, arcs.
+LOGentry00260e, functions.
+LOGentry00261a, Failed to correctly parse
+LOGentry00261b, functions.
+LOGentry00262, Project error reading failed in network section.
+LOGentry00263a, Read so far:
+LOGentry00263b, places,
+LOGentry00263c, transitions,
+LOGentry00263d, arcs.
+LOGentry00263exception, Exception (1000099): ProjectReader.readNetwork(): failed:
+LOGentry00264exception, Exception (1000100): ProjectReader.parseFunction(): Error in line:
+LOGentry00265exception, Exception (1000101): ProjectReader.parsePlaceLine(): Reading failed for place:
+LOGentry00266exception, Exception (1000102): ProjectReader.parsePlaceLine(): SSA value reading failed for place:
+LOGentry00267exception, Exception (1000103): ProjectReader.parsePlaceLine(): SSA concentration status reading failed for place:
+LOGentry00268, Gamma mode status reading failed for place
+LOGentry00269, Gamma range visibility reading failed for place
+LOGentry00270, Gamma minimum reading failed for place
+LOGentry00271, Gamma maximum failed for place
+LOGentry00272, Fraction XTPN reading failed for place
+LOGentry00273, XPTN token value reading failed for place
+LOGentry00274, Portal status reading failed for place
+LOGentry00275exception, Exception (1000104): ProjectReader.parsePlaceLine(): Critical error while reading places location - failed for place:
+LOGentry00276exception_1, Exception (1000105): ProjectReader.parsePlaceLine(): Reading file error in line:
+LOGentry00276exception_2, for Place
+LOGentry00277, Alpha mode status reading failed for transition:
+LOGentry00278, Alpha range visibility reading failed for transition
+LOGentry00279, Alpha minimum reading failed for transition
+LOGentry00280exception, Exception (1000106): ProjectReader.parseTransitionLine(): Alpha maximum failed for transition
+LOGentry00281, Beta mode status reading failed for transition
+LOGentry00282, Beta range visibility reading failed for transition
+LOGentry00283exception, Exception (1000107): ProjectReader.parseTransitionLine(): Beta minimum reading failed for transition
+LOGentry00284exception, Exception (1000108): ProjectReader.parseTransitionLine(): Beta maximum failed for transition
+LOGentry00285, Tau timers visibility reading failed for transition
+LOGentry00286, Mass-action kinetics status reading failed for transition
+LOGentry00287exception, Exception (1000109): ProjectReader.parseTransitionLine(): Fraction XTPN reading failed for transition
+LOGentry00288, Immediate status reading failed for transition
+LOGentry00289exception_1, Exception (1000110): ProjectReader.parseTransitionLine(): Reading file error in line:
+LOGentry00289exception_2, for Transition
+LOGentry00290exception_1, Exception (1000111): ProjectReader.parseMetaNodesLine(): Reading file error in line:
+LOGentry00290exception_2, for Meta-node
+LOGentry00291exception, Exception (1000112): ProjectReader.parseArcLine(): failed:
+LOGentry00292exception, Exception (1000113): ProjectReader.parseArcLine(): Reading file error in line:
+LOGentry00293exception, Exception (1000114): ProjectReader.addColorsToArc(): Error while adding color data to arc:
+LOGentry00294exception, Exception (1000115): ProjectReader.addBroken(): failed:
+LOGentry00295a, Error: different numbers of t-invariants (
+LOGentry00295b, ) and their names (
+LOGentry00295c, ). Operation failed.
+LOGentry00296, t-invariants with wrong number of elements in file:
+LOGentry00297exception, Exception (1000116): ProjectReader.readTInvariants(): Reading t-invariants failed for t-invariant number:
+LOGentry00298a, Error: different numbers of p-invariants (
+LOGentry00298b, ) and their names (
+LOGentry00298c, ). Operation failed.
+LOGentry00299, p-invariants with wrong number of elements in file:
+LOGentry00300exception, Exception (1000117): ProjectReader.readPInvariants(): Reading p-invariants failed for invariant number:
+LOGentry00301a, Error: different numbers of MCT sets (
+LOGentry00301b, ) and their names (
+LOGentry00301c, ). Operation failed.
+LOGentry00302, MCT with wrong number ID numbers for their transitions in file
+LOGentry00303exception, Exception (1000118): ProjectReader.readMCT(): Reading MCT sets failed for MCT number:
+LOGentry00304exception, Exception (1000119): ProjectReader.readStates(): failed:
+LOGentry00305, Error reading state vector number
+LOGentry00306exception, Exception (1000120): ProjectReader.readStates(): Reading state vectors failed
+LOGentry00307a, Error while reading p-state #
+LOGentry00307b, : there are more multisets type-K stored than
+LOGentry00307c, processed places (
+LOGentry00308a, Problems while reading project p-state #
+LOGentry00308b, . Too few multisets in file, only:
+LOGentry00308c, found out of
+LOGentry00308d, total XTPN places. Missing multisets type-K replaced as empty.
+LOGentry00309exception, Exception (1000121): ProjectReader.readStatesXTPN(): failed:
+LOGentry00310, Error reading state XTPN vector number
+LOGentry00311exception, Exception (1000122): ProjectReader.readStatesXTPN(): Reading XTPN state vectors failed:
+LOGentry00312exception, Exception (1000123): ProjectReader.readFiringRates(): Operation failed, wrong SPN data in line
+LOGentry00313, Error: SPN vector could not be read. Creating clean vector.
+LOGentry00314, Error: Warning: some SPN vector could not be read properly. Possible data corruption.
+LOGentry00315exception, Exception (1000124): ProjectReader.readFiringRates(): Reading SPN data vectors failed.
+LOGentry00316exception, Exception (1000125): ProjectReader.parseSPNdataVector(): (IM_priority) failed:
+LOGentry00317exception, Exception (1000126): ProjectReader.parseSPNdataVector(): (DET_delay) failed:
+LOGentry00318exception, Exception (1000127): ProjectReader.parseSPNdataVector(): (SCH_rep) failed:
+LOGentry00319exception, Exception (1000128): ProjectReader.readSSAvectors(): failed:
+LOGentry00320, Error reading state vector number
+LOGentry00321exception, Exception (1000129): ProjectReader.readSSAvectors(): Reading SSA vectors failed:
+
+
+
 
 //generalPurposeTags:
 cancel, Cancel
@@ -820,14 +1459,6 @@ select, Select
 netSimWork01, Net simulator working
 unimplemented, Not implemented yet.
 unimplementedTitle, Subsystem offline
-
-
-
-
-
-
-
-
 
 
 

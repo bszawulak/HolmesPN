@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import jxl.Workbook;
 import jxl.format.Alignment;
 import jxl.format.Border;
@@ -31,6 +33,7 @@ import holmes.utilities.ByExt;
  *
  */
 public class RClusteringParserToXLS{
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	// czcionka i formatowanie komorki tabeli
 	private static WritableCellFormat getCellFormat(Colour colour, boolean header) throws WriteException {
 	  WritableFont cellFont;
@@ -74,12 +77,12 @@ public class RClusteringParserToXLS{
 		WritableCellFormat cellFormat = new WritableCellFormat(cellFont);
 		cellFormat.setWrap(true);
 		cellFormat.setAlignment(Alignment.CENTRE);
-		sheet.addCell(new Label(0, 2, "Distance/Cluster alg.", cellFormat));
+		sheet.addCell(new Label(0, 2, lang.getText("RCP_entry001"), cellFormat)); //Distance/Cluster alg.
 		sheet.setColumnView(0, 30);
 		//System.out.println("merge "+3+"-"+(column+1));
 		sheet.mergeCells(1, 2, column+1, 2);
 		
-	    sheet.addCell(new Label(1, 2, "Silhouette", cellFormat));
+	    sheet.addCell(new Label(1, 2, lang.getText("RCP_entry002"), cellFormat)); //Silhouette
 	}
 	
 	// legenda do tabeli
@@ -89,32 +92,32 @@ public class RClusteringParserToXLS{
 		WritableCellFormat cellFormat = new WritableCellFormat(cellFont);
 		cellFormat.setWrap(true);
 		cellFormat.setAlignment(Alignment.CENTRE);
-		sheet.addCell(new Label(column, 2, "Range", cellFormat));
+		sheet.addCell(new Label(column, 2, lang.getText("RCP_entry003"), cellFormat)); //Range
 		sheet.setColumnView(column, 30);
-		sheet.addCell(new Label(column+1, 2, "Evaluation", cellFormat));
+		sheet.addCell(new Label(column+1, 2, lang.getText("RCP_entry003"), cellFormat)); //Evaluation
 		sheet.setColumnView(column+1, 20);
 		
 		sheet.addCell(new Label(column, 3, "0.71-1.00", getCellFormat(setColorMeanMssPerCluster(0.9), false)));
-		sheet.addCell(new Label(column+1, 3, "Strong structure", getCellFormat(setColorMeanMssPerCluster(0.9), false)));
+		sheet.addCell(new Label(column+1, 3, lang.getText("RCP_entry005"), getCellFormat(setColorMeanMssPerCluster(0.9), false)));
 		sheet.addCell(new Label(column, 4, "0.61-0.70", getCellFormat(setColorMeanMssPerCluster(0.7), false)));
-		sheet.addCell(new Label(column+1, 4, "Important structure", getCellFormat(setColorMeanMssPerCluster(0.7), false)));
+		sheet.addCell(new Label(column+1, 4, lang.getText("RCP_entry006"), getCellFormat(setColorMeanMssPerCluster(0.7), false)));
 		sheet.addCell(new Label(column, 5, "0.50-0.60", getCellFormat(setColorMeanMssPerCluster(0.6), false)));
-		sheet.addCell(new Label(column+1, 5, "Important structure", getCellFormat(setColorMeanMssPerCluster(0.6), false)));
+		sheet.addCell(new Label(column+1, 5, lang.getText("RCP_entry007"), getCellFormat(setColorMeanMssPerCluster(0.6), false)));
 		sheet.addCell(new Label(column, 6, "0.34-0.49", getCellFormat(setColorMeanMssPerCluster(0.4), false)));
-		sheet.addCell(new Label(column+1, 6, "Weak structure", getCellFormat(setColorMeanMssPerCluster(0.4), false)));
+		sheet.addCell(new Label(column+1, 6, lang.getText("RCP_entry008"), getCellFormat(setColorMeanMssPerCluster(0.4), false)));
 		sheet.addCell(new Label(column, 7, "0.25-0.33", getCellFormat(setColorMeanMssPerCluster(0.3), false)));
-		sheet.addCell(new Label(column+1, 7, "Weak structure", getCellFormat(setColorMeanMssPerCluster(0.3), false)));
+		sheet.addCell(new Label(column+1, 7, lang.getText("RCP_entry009"), getCellFormat(setColorMeanMssPerCluster(0.3), false)));
 		sheet.addCell(new Label(column, 8, "<= 0.25", getCellFormat(setColorMeanMssPerCluster(0.1), false)));
-		sheet.addCell(new Label(column+1, 8, "No structure", getCellFormat(setColorMeanMssPerCluster(0.1), false)));
+		sheet.addCell(new Label(column+1, 8, lang.getText("RCP_entry010"), getCellFormat(setColorMeanMssPerCluster(0.1), false)));
 		
-		sheet.addCell(new Label(column, 10, "Single clusters", cellFormat));
-		sheet.addCell(new Label(column+1, 10, "Evaluation", cellFormat));
+		sheet.addCell(new Label(column, 10, lang.getText("RCP_entry011"), cellFormat)); //Single clusters
+		sheet.addCell(new Label(column+1, 10, lang.getText("RCP_entry012"), cellFormat)); //Evaluation
 		sheet.addCell(new Label(column, 11, "1-4", getCellFormat(setColorSingleInvariantPerCluster(1), false)));
-		sheet.addCell(new Label(column+1, 11, "Very good", getCellFormat(setColorSingleInvariantPerCluster(1), false)));
+		sheet.addCell(new Label(column+1, 11, lang.getText("RCP_entry013"), getCellFormat(setColorSingleInvariantPerCluster(1), false))); //Very good
 		sheet.addCell(new Label(column, 12, "5-9", getCellFormat(setColorSingleInvariantPerCluster(6), false)));
-		sheet.addCell(new Label(column+1, 12, "Quite good", getCellFormat(setColorSingleInvariantPerCluster(6), false)));
+		sheet.addCell(new Label(column+1, 12, lang.getText("RCP_entry014"), getCellFormat(setColorSingleInvariantPerCluster(6), false))); //Quite good
 		sheet.addCell(new Label(column, 13, "> 10", getCellFormat(setColorSingleInvariantPerCluster(11), false)));
-		sheet.addCell(new Label(column+1, 13, "Bad", getCellFormat(setColorSingleInvariantPerCluster(11), false)));
+		sheet.addCell(new Label(column+1, 13, lang.getText("RCP_entry015"), getCellFormat(setColorSingleInvariantPerCluster(11), false)));//Bad
 		
 	}
 	

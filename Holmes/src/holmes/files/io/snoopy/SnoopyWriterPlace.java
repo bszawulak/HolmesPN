@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Place;
 import holmes.varia.NetworkTransformations;
@@ -16,6 +17,7 @@ import static holmes.graphpanel.EditorResources.placeDefColor;
  * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie jest Sparta...
  */
 public class SnoopyWriterPlace {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private Place holmesPlace;
 	/** Identyfikator podstawowy miejsca (pierwsze miejsce w sieci ma nr 226, kolejne to już zależy)  */
 	public int snoopyStartingID = -1;
@@ -264,7 +266,7 @@ public class SnoopyWriterPlace {
 		write(bw, "        <graphics count=\""+locations+"\">");
 		
 		if(currID != grParents.get(0)) {
-			GUIManager.getDefaultGUIManager().log("Critical error while writing Snoopy file. ID's don't match.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00146critErr"), "error", true);
 		}
 		
 		Color snoopyColor = placeDefColor;
@@ -295,7 +297,7 @@ public class SnoopyWriterPlace {
 		try {
 			bw.write(text+"\n");
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (198617391) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00147exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	

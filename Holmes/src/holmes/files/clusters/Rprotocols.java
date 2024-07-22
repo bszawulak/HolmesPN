@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import rcaller.RCaller;
 import rcaller.RCode;
 
@@ -18,6 +19,7 @@ import rcaller.RCode;
  *
  */
 public class Rprotocols implements Runnable {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	String pathToR;
 	String pathOutput;
 	String fileNameCSV;
@@ -136,15 +138,13 @@ public class Rprotocols implements Runnable {
 			if(!commandsValidate.contains(line)) {
 				continue;
 			}
-			
-			
 			RCaller rcaller = new RCaller();
 			RCode code = new RCode();
 			rcaller.setRscriptExecutable(pathToR);
 			rcaller.cleanRCode();
 			code.addRCode(str);
 			
-			GUIManager.getDefaultGUIManager().log("Processing CH: "+line, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00085")+ " "+line, "text", true);
 			
 			//int reallyToCompute = nrClusters + 1; //don't ask (MR)
 			
@@ -158,7 +158,7 @@ public class Rprotocols implements Runnable {
 			rcaller.runOnly();
 		}
 		br.close();
-		GUIManager.getDefaultGUIManager().log("All Celiński-Harabasz metrics has been computed.", "text", true);
+		GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00086"), "text", true);
 	}
 	
 	/**
@@ -190,7 +190,7 @@ public class Rprotocols implements Runnable {
 			rcaller.cleanRCode();
 			code.addRCode(str);
 			
-			GUIManager.getDefaultGUIManager().log("Processing: "+line, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00087")+ " "+line, "text", true);
 			//tu wstawić logi w zależności od 'line'
 			String function = "veni1(" + line + ", \"" + pathOutput + "\",\"" + fileNameCSV + "\"," + nrClusters + ")";
 			code.addRCode(function);
@@ -202,7 +202,7 @@ public class Rprotocols implements Runnable {
 			rcaller.runOnly();
 		}
 		br.close();
-		GUIManager.getDefaultGUIManager().log("All clusterings has been computed.", "text", true);
+		GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00088"), "text", true);
 	}
 	
 	public String generateSingleClustering(String pathToR, String pathOutput, String fileNameCSV, 

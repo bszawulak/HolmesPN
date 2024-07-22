@@ -1,6 +1,7 @@
 package holmes.analyse;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 import holmes.windows.decompositions.HolmesBranchVerticesPrototype;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
  * Klasa odpowiedzialna za dekompozycję PN do wybranych typów podsieci
  */
 public class SubnetCalculator implements Serializable {
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     public enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADTcomp, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, NotTzCycles, SMC, MCT, TINV, PINV, BV, Export}
 
     public static ArrayList<SubNet> functionalSubNets = new ArrayList<>();
@@ -57,7 +59,6 @@ public class SubnetCalculator implements Serializable {
     /**
      * Metoda odpowiedzialna za dekompozycję do podsieci funkcyjnych Zajcewa - nie mylić z sieciami funkcyjnymi
      */
-
     public static void compileElements() {
         allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
         allPlaces = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
@@ -276,11 +277,11 @@ public class SubnetCalculator implements Serializable {
                         snetSubNets.add(new SubNet(SubNetType.SNET, null, net, null, null, null));
                     }
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            } else { //Decomposition can not be processed, because of the lack of invariants!
+                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Before determine ADT sets, you need to generate T-invariants.", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+        } else { //Before determine ADT sets, you need to generate T-invariants.
+            JOptionPane.showMessageDialog(null, lang.getText("SC_entry002"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -476,8 +477,8 @@ public class SubnetCalculator implements Serializable {
                 mctSubNets.add(new SubNet(SubNetType.MCT, mct, null, null, null, null));
             }
             mctSubNets.remove(mctSubNets.size() - 1);
-        } else {
-            JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+        } else { //Decomposition can not be processed, because of the lack of invariants!
+            JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -492,11 +493,11 @@ public class SubnetCalculator implements Serializable {
                     }
                     tinvSubNets.add(new SubNet(SubNetType.TINV, subTransitions, null, null, null, null));
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            } else { //Decomposition can not be processed, because of the lack of invariants!
+                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+        } else { //Decomposition can not be processed, because of the lack of invariants!
+            JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -511,11 +512,11 @@ public class SubnetCalculator implements Serializable {
                     }
                     pinvSubNets.add(new SubNet(SubNetType.PINV, null, subPlaces, null, null, null));
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            } else { 
+                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -588,11 +589,11 @@ public class SubnetCalculator implements Serializable {
                         listOfusedTransitions.addAll(listOfusedTransitions);
                     }
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            } else { //Decomposition can not be processed, because of the lack of invariants!
+                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Before determine ADT sets, you need to generate T-invariants.", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+        } else { //Before determine ADT sets, you need to generate T-invariants.
+            JOptionPane.showMessageDialog(null, lang.getText("SC_entry002"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -805,10 +806,10 @@ public class SubnetCalculator implements Serializable {
                     result.add(new SubNet(SubNetType.TINV, subTransitions, null, null, null, null));
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
 
         return result;
@@ -873,11 +874,11 @@ public class SubnetCalculator implements Serializable {
                         listOfusedTransitions.addAll(listOfusedTransitions);
                     }
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            } else { //Decomposition can not be processed, because of the lack of invariants!
+                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Before determine ADT sets, you need to generate T-invariants.", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+        } else { //Before determine ADT sets, you need to generate T-invariants.
+            JOptionPane.showMessageDialog(null, lang.getText("SC_entry002"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
         return result;
     }
@@ -937,11 +938,11 @@ public class SubnetCalculator implements Serializable {
                     if (!newADPset.isEmpty())
                         adpSubNets.add(new SubNet(SubNetType.ADP, null, null, null, newADPset, null));
                 }
-            } else {
-                JOptionPane.showMessageDialog(null, "Decomposition can not be processed, because of the lack of invariants!", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            } else { //Decomposition can not be processed, because of the lack of invariants!
+                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Before determine ADT sets, you need to generate T-invariants.", "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+        } else { //Before determine ADT sets, you need to generate T-invariants.
+            JOptionPane.showMessageDialog(null, lang.getText("SC_entry002"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
     }
 

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.*;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
@@ -21,6 +22,7 @@ import holmes.varia.Check;
  * oraz łuki), inwarianty, zbiory MCT i inne.
  */
 public class ProjectWriter {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private final PetriNet projectCore;
 	private final ArrayList<Place> places ;
 	private final ArrayList<Transition> transitions;
@@ -135,20 +137,20 @@ public class ProjectWriter {
 			bw.write("<SSA vectors data end>"+newline);
 
 			GUIManager.getDefaultGUIManager().log("*******************************************************","text", true);
-			GUIManager.getDefaultGUIManager().log("Net saved: "+statusNet, "text", true);
-			GUIManager.getDefaultGUIManager().log("T-invariants saved: "+statusInv, "text", true);
-			GUIManager.getDefaultGUIManager().log("P-invariants saved: "+statusPInv, "text", true);
-			GUIManager.getDefaultGUIManager().log("MCT saved: "+statusMCT, "text", true);
-			GUIManager.getDefaultGUIManager().log("Net states saved: "+statusStates, "text", true);
-			GUIManager.getDefaultGUIManager().log("Net XTPN states saved: "+statusXTPNStates, "text", true);
-			GUIManager.getDefaultGUIManager().log("Firing rates saved: "+statusFR, "text", true);
-			GUIManager.getDefaultGUIManager().log("SSA vectors saved: "+statusSSA, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry001")+" "+statusNet, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry002")+" "+statusInv, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry003")+" "+statusPInv, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry004")+" "+statusMCT, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry005")+" "+statusStates, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry006")+" "+statusXTPNStates, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry007")+" "+statusFR, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry008")+" "+statusSSA, "text", true);
 			GUIManager.getDefaultGUIManager().log("*******************************************************","text", true);
 
 			bw.close();
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Project data saved to: "+filepath, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00226exception")+" "+e.getMessage(), "text", true);
 			return false;
 		}
 	}
@@ -230,7 +232,8 @@ public class ProjectWriter {
 							pointY = gammaLoc.getPosition().y;
 							bw.write(spaces(sp) + "<Place gamma offset data sheet/x/y/elIndex:" + sheetId + ";" + pointX + ";" + pointY + ";" + e + ">" + newline); //sheetID/x/y
 						} catch (Exception exc) {
-							GUIManager.getDefaultGUIManager().log("Error: gamma location for place "+place.getName()+ " unavailable. (Portal problem?)", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00227exception_1")+" "
+									+place.getName()+ " "+lang.getText("LOGentry00227exception_2"), "error", true);
 						}
 					}
 				}
@@ -277,7 +280,6 @@ public class ProjectWriter {
 					bw.write(spaces(sp)+"<Transition XTPN fractionSize:"+((TransitionXTPN)trans).getFraction_xTPN()+">"+newline); //dokładność po przecinku
 					bw.write(spaces(sp)+"<Transition XTPN immediate:"+((TransitionXTPN)trans).isImmediateXTPN()+">"+newline); //czy immediate (dla classXTPN)
 				}
-
 				
 				bw.write(spaces(sp)+"<Transition colored:"+trans.isColored()+">"+newline); //is colored?
 				if(trans instanceof TransitionColored) {
@@ -289,7 +291,6 @@ public class ProjectWriter {
 							+((TransitionColored)trans).getRequiredColoredTokens(4)+";"
 							+((TransitionColored)trans).getRequiredColoredTokens(5)+">"+newline);
 				}
-
 				
 				bw.write(spaces(sp)+"<Location data"+">"+newline);
 				sp = 8;
@@ -318,7 +319,8 @@ public class ProjectWriter {
 							pointY = alphaLoc.getPosition().y;
 							bw.write(spaces(sp)+"<Transition alpha offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 						} catch (Exception exc) {
-							GUIManager.getDefaultGUIManager().log("Error: alpha location for place "+trans.getName()+ " unavailable. (Portal problem?)", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00228exception_1")+" "+trans.getName()
+									+" "+lang.getText("LOGentry00228exception_2"), "error", true);
 						}
 
 						try {
@@ -328,7 +330,8 @@ public class ProjectWriter {
 							pointY = betaLoc.getPosition().y;
 							bw.write(spaces(sp)+"<Transition beta offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 						} catch (Exception exc) {
-							GUIManager.getDefaultGUIManager().log("Error: beta location for transition "+trans.getName()+ " unavailable. (Portal problem?)", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00229exception_1")+ " "+trans.getName()
+									+ lang.getText("LOGentry00229exception_2"), "error", true);
 						}
 
 						try {
@@ -338,7 +341,8 @@ public class ProjectWriter {
 							pointY = betaLoc.getPosition().y;
 							bw.write(spaces(sp)+"<Transition tau offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 						} catch (Exception exc) {
-							GUIManager.getDefaultGUIManager().log("Error: tau location for transition "+trans.getName()+ " unavailable. (Portal problem?)", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00230exception_1")+ " "+trans.getName()+ " "
+									+lang.getText("LOGentry00230exception_2"), "error", true);
 						}
 					}
 				}
@@ -547,7 +551,6 @@ public class ProjectWriter {
 									break;
 								}
 							}
-
 							String endLoc = "M" + endNodeIndex + "(" + endNodeLocationIndex + ")";
 							int weight = arc.getWeight();
 
@@ -555,7 +558,6 @@ public class ProjectWriter {
 							savedArcs++;
 						}
 					}
-					
 				}
 			}
 
@@ -567,7 +569,7 @@ public class ProjectWriter {
 					ArrayList<Arc> tmp_outgoingArcs = new ArrayList<>(eLoc.getOutArcs());
 					ArrayList<Arc> metaOutArcs = eLoc.accessMetaOutArcs();
 					tmp_outgoingArcs.addAll(metaOutArcs);
-					//int arcsNumber = tmp_outgoingArcs.size();
+
 					for (Arc arc : tmp_outgoingArcs) { //wszystkie łuki wyjściowe
 						String arcType = "" + arc.getArcType();
 						Node endNode = arc.getEndNode();
@@ -620,7 +622,8 @@ public class ProjectWriter {
 			int doubleArc = arcClasses.get(5) / 2;
 			int totalArcs = arcs.size();
 			if(savedArcs != totalArcs) {
-				GUIManager.getDefaultGUIManager().log("Error: saved "+savedArcs+" out of total "+totalArcs+" arcs.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00231a")+" "
+						+savedArcs+" "+lang.getText("LOGentry00231b")+ " "+totalArcs+" "+lang.getText("LOGentry00231c"), "error", true);
 			}
 			
 			bw.write(spaces(sp)+"<Functions data block"+">"+newline);
@@ -641,11 +644,9 @@ public class ProjectWriter {
 
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Error while saving net data.", "error", true);
-			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00232exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
-		
 	}
 	
 	/**
@@ -694,8 +695,7 @@ public class ProjectWriter {
 			bw.write(spaces(2)+"<EOIN>"+newline);
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Error while saving t-invariants data.", "error", true);
-			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00233exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -747,8 +747,7 @@ public class ProjectWriter {
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Error while saving p-invariants data.", "error", true);
-			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00234exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -802,8 +801,7 @@ public class ProjectWriter {
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Error while saving MCT data.", "error", true);
-			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00235exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -841,8 +839,7 @@ public class ProjectWriter {
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Error while saving states data.", "error", true);
-			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00236exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -875,8 +872,8 @@ public class ProjectWriter {
 						placeIndex++;
 
 						if(placeIndex + 1 > places.size()) {
-							GUIManager.getDefaultGUIManager().log("Error while saving multiset type-M #"+stateProcessed+". There are more " +
-									"multisets type-K than net places.", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00237a")+stateProcessed
+									+lang.getText("LOGentry00237b"), "error", true);
 							int placeError = 0;
 							for(ArrayList<Double> multisetKK : multisetMobject.accessArrayListSOfMultiset_M()) {
 								String mTxt = "";
@@ -923,8 +920,7 @@ public class ProjectWriter {
 
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Error while saving XTPN states data.", "error", true);
-			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00238exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -943,19 +939,6 @@ public class ProjectWriter {
 				bw.write(spaces(sp)+"<FRvectors: "+frNumber+">"+newline);
 				for (SPNdataVector ratesMatrix : firingRatesMatrix) {
 					sp = 4;
-					/*
-					String frLine = "";
-					String stochTypeLine = "";
-					for(SPNdataContainer frc : frVector.accessVector()) {
-						frLine += frc.ST_function + ";"; //TODO: moduł wektora zapisu
-						stochTypeLine += frc.sType + ";";
-					}
-					frLine = frLine.substring(0, frLine.length()-1); //usun ostatni ';'
-					bw.write(spaces(sp)+frLine+newline);
-					
-					stochTypeLine = stochTypeLine.substring(0, stochTypeLine.length()-1); //usun ostatni ';'
-					bw.write(spaces(sp)+stochTypeLine+newline);
-					*/
 					StringBuilder dataLine = new StringBuilder("version101:");
 					for (SPNtransitionData frc : ratesMatrix.accessVector()) {
 						dataLine.append(frc.returnSaveVector()).append(";");
@@ -973,8 +956,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<EOFRv>"+newline);		
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Error while saving firing rates data.", "error", true);
-			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00239exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -1013,8 +995,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<EOSSA>"+newline);
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Error while saving SSA data.", "error", true);
-			GUIManager.getDefaultGUIManager().log("Message: "+e.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00240exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -1026,10 +1007,5 @@ public class ProjectWriter {
 	 */
 	private String spaces(int howMany) {
 		return " ".repeat(Math.max(0, howMany));
-		//StringBuilder result = new StringBuilder();
-		//		for(int i=0; i<howMany; i++) {
-		//			result.append(" ");
-		//		}
-		//		return result.toString();
 	}
 }

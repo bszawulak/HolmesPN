@@ -21,8 +21,8 @@ public class MCTCalculator {
 	private PetriNet petriNet;
 
 	/**
-	 * Konstruktor obiektu analizatora
-	 * @param petriNet PetriNet
+	 * Konstruktor klasy tworzącej MCT.
+	 * @param petriNet PetriNet, obiekt klasy PetriNet
 	 */
 	public MCTCalculator(PetriNet petriNet) {
 		this.petriNet = petriNet;
@@ -30,7 +30,7 @@ public class MCTCalculator {
 
 	/**
 	 * Metoda tworząca macierze wejściowe i wyjściowe (in/out arcs) oraz na ich
-	 * bazie tworząca nową macierz incydencji
+	 * bazie tworząca nową macierz incydencji.
 	 */
 	public void initiateData() {
 		inMatrix = new InputMatrix(petriNet.getTransitions(), petriNet.getPlaces());
@@ -40,7 +40,7 @@ public class MCTCalculator {
 
 	/**
 	 * Metoda zwracają aktualną macierz incydencji.
-	 * @return IncidenceMatrix - obiekt klasy IncidenceMatrix
+	 * @return IncidenceMatrix, obiekt klasy IncidenceMatrix
 	 */
 	public IncidenceMatrix getMatrix() {
 		return matrix;
@@ -48,7 +48,7 @@ public class MCTCalculator {
 
 	/**
 	 * Metoda ustawiająca nową macierz incydencji.
-	 * @param matrix IncidenceMatrix - nowa macierz
+	 * @param matrix IncidenceMatrix, nowa macierz
 	 */
 	private void setMatrix(IncidenceMatrix matrix) {
 		this.matrix = matrix;
@@ -56,7 +56,7 @@ public class MCTCalculator {
 
 	/**
 	 * Metoda generująca zbiory MCT na bazie macierzy T-inwariantów.
-	 * @return ArrayList[ArrayList[Transition]] - macierz wyjściowa
+	 * @return ArrayList[ArrayList[Transition]], macierz wyjściowa
 	 */
 	public ArrayList<ArrayList<Transition>> generateMCT() {
 		ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
@@ -81,7 +81,6 @@ public class MCTCalculator {
 		
 		ArrayList<ArrayList<Transition>> mctGroups = new ArrayList<ArrayList<Transition>>();
 		int size = allTransitions.size();
-	
 		
 		for(int t1=0; t1<size; t1++) {
 			ArrayList<Transition> currentMCT = new ArrayList<Transition>();

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.*;
 import holmes.petrinet.data.SSAplacesVector.SSAdataType;
@@ -27,6 +28,7 @@ import holmes.windows.HolmesNotepad;
  */
 public class ProjectReader {
 	private final GUIManager overlord;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private final PetriNet projectCore;
 	private final ArrayList<Node> nodes;
 	private ArrayList<MetaNode> metanodes = null;
@@ -103,25 +105,24 @@ public class ProjectReader {
 			DataInputStream dis = new DataInputStream(new FileInputStream(filepath));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(dis));
 
-			overlord.log("Reading project file: " + filepath, "text", true);
+			overlord.log(lang.getText("LOGentry00241")+ " " + filepath, "text", true);
 
 			status = readProjectHeader(buffer);
 			if (!status) {
-				overlord.log("Reading project data block failure.", "error", true);
+				overlord.log(lang.getText("LOGentry00242"), "error", true);
 				buffer.close();
 				return false;
 			}
 
 			status = readNetwork(buffer,true);
 			if (!status) {
-				overlord.log("Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.", "error", true);
+				overlord.log(lang.getText("LOGentry00243"), "error", true);
 				buffer.close();
 				return false;
 			}
-		} catch (IOException e) {
-			//e.printStackTrace();
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentry00244exception")+" "+e.getMessage(), "error", true);
 		}
-
 		return status;
 	}
 
@@ -140,11 +141,11 @@ public class ProjectReader {
 			DataInputStream dis = new DataInputStream(new FileInputStream(filepath));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(dis));
 			
-			overlord.log("Reading project file: "+filepath, "text", true);
+			overlord.log(lang.getText("LOGentry00241")+" "+filepath, "text", true);
 
 			status = readProjectHeader(buffer);
 			if (!status) {
-				overlord.log("Reading project data block failure.", "error", true);
+				overlord.log(lang.getText("LOGentry00242"), "error", true);
 				buffer.close();
 				return false;
 			}
@@ -152,12 +153,12 @@ public class ProjectReader {
 			try {
 				status = readNetwork(buffer,false);
 				if(!status) {
-					overlord.log("Reading network data block failure. Invariants/MCT reading cancelled. Terminating operation.", "error", true);
+					overlord.log(lang.getText("LOGentry00243"), "error", true);
 					buffer.close();
 					return false;
 				}
 			} catch (Exception e) {
-				overlord.log("Critical error while reading project net structure section.", "error", true);
+				overlord.log(lang.getText("LOGentry00245exception")+" "+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -170,12 +171,11 @@ public class ProjectReader {
 						overlord.getT_invBox().showT_invBoxWindow(projectCore.getT_InvMatrix());
 						overlord.reset.setT_invariantsStatus(true);
 					} catch (Exception e) {
-						overlord.log("Error encountered during reading, while trying to " +
-								"initialize t-invariants panel.", "error", true);
+						overlord.log(lang.getText("LOGentry00246exception")+" "+e.getMessage(), "error", true);
 					}
 				}
 			} catch (Exception e) {
-				overlord.log("Critical error while reading project t-invariants section.", "error", true);
+				overlord.log(lang.getText("LOGentry00247exception")+" "+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -188,13 +188,12 @@ public class ProjectReader {
 						try{
 							overlord.getP_invBox().showP_invBoxWindow(projectCore.getP_InvMatrix());
 						} catch (Exception e) {
-							overlord.log("Error encountered during reading, while trying to " +
-									"initialize p-invariants panel.", "error", true);
+							overlord.log(lang.getText("LOGentry00248exception")+" "+e.getMessage(), "error", true);
 						}
 					}
 				}
 			} catch (Exception e) {
-				overlord.log("Critical error while reading project p-invariants section.", "error", true);
+				overlord.log(lang.getText("LOGentry00249exception")+" "+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -207,12 +206,11 @@ public class ProjectReader {
 						overlord.getMctBox().showMCT(projectCore.getMCTMatrix());
 						overlord.reset.setMCTStatus(true);
 					} catch (Exception e) {
-						overlord.log("Error encountered during reading, while trying to " +
-								"initialize MCT panel.", "error", true);
+						overlord.log(lang.getText("LOGentry00250exception")+" "+e.getMessage(), "error", true);
 					}
 				}
 			} catch (Exception e) {
-				overlord.log("Critical error while reading project MCT section.", "error", true);
+				overlord.log(lang.getText("LOGentry00251exception")+" "+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -226,7 +224,7 @@ public class ProjectReader {
 					projectCore.accessStatesManager().createCleanStatePN();
 				}
 			} catch (Exception e) {
-				overlord.log("Critical error while reading project classical net states section.", "error", true);
+				overlord.log(lang.getText("LOGentry00252exception")+" "+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -242,7 +240,7 @@ public class ProjectReader {
 					}
 				}
 			} catch (Exception e) {
-				overlord.log("Critical error while reading project xTPN states section.", "error", true);
+				overlord.log(lang.getText("LOGentry00253exception")+" "+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -256,7 +254,7 @@ public class ProjectReader {
 					projectCore.accessFiringRatesManager().createCleanSPNdataVector();
 				}
 			} catch (Exception e) {
-				overlord.log("Critical error while reading project firing rates section.", "error", true);
+				overlord.log(lang.getText("LOGentry00254exception")+" "+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -270,7 +268,7 @@ public class ProjectReader {
 					projectCore.accessSSAmanager().createCleanSSAvector();
 				}
 			} catch (Exception e) {
-				overlord.log("Critical error while reading project SSA section.", "error", true);
+				overlord.log(lang.getText("LOGentry00255exception")+" "+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -279,7 +277,7 @@ public class ProjectReader {
 			buffer.close();
 			return true;
 		} catch (Exception e) {
-			overlord.log("Reading project file failed.", "error", true);
+			overlord.log(lang.getText("LOGentry00256exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -304,7 +302,7 @@ public class ProjectReader {
 			} 
 			return true;
 		} catch (Exception e) {
-			overlord.log("Uknown error while reading project header.", "error", true);
+			overlord.log(lang.getText("LOGentry00257exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -324,10 +322,6 @@ public class ProjectReader {
 			}
 			query = "Date:";
 			if(line.contains(query)) {
-				//line = line.substring(line.indexOf("date:")+6);
-				//projectCore.setName(line);
-
-				//ignore
 				return;
 			}
 			query = "Net type:";
@@ -340,7 +334,8 @@ public class ProjectReader {
 				}
 			}
 		} catch (Exception e) {
-			overlord.log("Reading file error in line: "+backup+" for Transition "+transitionsProcessed, "error", true);
+			overlord.log(lang.getText("LOGentry00258exception_1")+" "+backup+" "
+					+lang.getText("LOGentry00258exception_2") +" "+transitionsProcessed, "error", true);
 		}
 	}
 
@@ -366,7 +361,7 @@ public class ProjectReader {
 				ssaData = true;
 			}
 		} catch (Exception e) {
-			overlord.log("Reading error in line: "+ line, "error", true);
+			overlord.log(lang.getText("LOGentry00259exception")+" "+ line, "error", true);
 		}
 	}
 
@@ -421,7 +416,6 @@ public class ProjectReader {
 						} else {
 							nodes.add(place);
 						}
-
 						placesProcessed++;
 					}
 				}
@@ -552,16 +546,20 @@ public class ProjectReader {
 			else
 				notepad.dispose();
 			
-			overlord.log("Read "+placesProcessed+" places, "+transitionsProcessed+ 
-					" transitions, "+arcsProcessed+" arcs, "+functionsRead+" functions.", "text", true);
+			overlord.log(lang.getText("LOGentry00260a")+" "+placesProcessed+" " +lang.getText("LOGentry00260b")
+					+ " "+transitionsProcessed+ " "+lang.getText("LOGentry00260c")
+					+ " "+arcsProcessed+" "+lang.getText("LOGentry00260d") 
+					+ " "+functionsRead+" "+ lang.getText("LOGentry00260e"), "text", true);
 			if(functionsFailed > 0)
-				overlord.log("Failed to correctly parse "+functionsFailed+" functions.", "error", true);
+				overlord.log(lang.getText("LOGentry00261a")+" "+functionsFailed+" "+lang.getText("LOGentry00261b"), "error", true);
 			
 			status = true;
 		} catch (Exception e) {
-			overlord.log("Project error reading failed in network section.", "error", true);
-			overlord.log("Read so far: "+placesProcessed+" places, "+transitionsProcessed+ 
-					" transitions, "+arcsProcessed+" arcs.", "error", true);
+			overlord.log(lang.getText("LOGentry00262"), "error", true);
+			overlord.log(lang.getText("LOGentry00263a")+" "+placesProcessed+" "+lang.getText("LOGentry00263b")
+					+" "+transitionsProcessed+ " "+lang.getText("LOGentry00263c")
+					+" "+arcsProcessed+" "+lang.getText("LOGentry00263d"), "error", false);
+			overlord.log(lang.getText("LOGentry00263exception")+" "+e.getMessage(), "error", false);
 			status = false;
 		}
 		return status;
@@ -591,7 +589,8 @@ public class ProjectReader {
 
 			return transition.fpnExtension.updateFunctionString(table[1], table[2], correct, enabled);
 		} catch (Exception e) {
-			overlord.log("Failed to correctly parse line: "+functionLine, "warning", true);
+			overlord.log(lang.getText("LOGentry00264exception")+" "+functionLine, "warning", true);
+			overlord.log(lang.getText("LOGentry00264exception")+" "+e.getMessage(), "warning", false);
 			return false;
 		}
 	}
@@ -636,7 +635,8 @@ public class ProjectReader {
 					int tokens = Integer.parseInt(line);
 					place.setTokensNumber(tokens);
 				} catch (Exception exc) {
-					overlord.log("Tokens reading failed for place "+placesProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00265exception")+" "+placesProcessed
+							+"\n"+exc.getMessage(), "error", true);
 					place.setTokensNumber(0);
 				}
 				return;
@@ -650,7 +650,8 @@ public class ProjectReader {
 					double ssaValue = Double.parseDouble(line);
 					place.setSSAvalue(ssaValue);
 				} catch (Exception exc) {
-					overlord.log("SSA value reading failed for place "+placesProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00266exception")+" "+placesProcessed
+							+"\n"+exc.getMessage(), "error", true);
 					place.setTokensNumber(0);
 				}
 				return;
@@ -664,7 +665,8 @@ public class ProjectReader {
 					boolean isConc = Boolean.parseBoolean(line);
 					place.setSSAconcentrationStatus(isConc);
 				} catch (Exception exc) {
-					overlord.log("SSA concentration status reading failed for place "+placesProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00267exception")+" "+placesProcessed
+							+"\n"+exc.getMessage(), "error", true);
 					place.setTokensNumber(0);
 				}
 				return;
@@ -673,19 +675,6 @@ public class ProjectReader {
 			query = "Place XTPN status:";
 			if(line.contains(query) && XTPNdataMode) {
 				return;
-				/*
-				line = line.substring(line.indexOf(query)+query.length());
-				line = line.replace(">","");
-				if(line.contains("true")) {//isGammaModeActiveXTPN
-					place.setXTPNplaceStatus(true);
-				} else if(line.contains("false")) {
-					place.setXTPNplaceStatus(false);
-				} else {
-					overlord.log("XTPN place status reading failed for place "+placesProcessed, "error", true);
-					place.setXTPNplaceStatus(false);
-				}
-				return;
-				*/
 			}
 
 			query = "Place XTPN gammaMode:";
@@ -697,7 +686,7 @@ public class ProjectReader {
 				} else if(line.contains("false")) {
 					((PlaceXTPN)place).setGammaModeStatus(false);
 				} else {
-					overlord.log("Gamma mode status reading failed for place "+placesProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00268")+" "+placesProcessed, "error", true);
 					((PlaceXTPN)place).setGammaModeStatus(true);
 				}
 				return;
@@ -712,7 +701,7 @@ public class ProjectReader {
 				} else if(line.contains("false")) {
 					((PlaceXTPN)place).setGammaRangeVisibility(false);
 				} else {
-					overlord.log("Gamma range visibility reading failed for place "+placesProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00269")+" "+placesProcessed, "error", true);
 					((PlaceXTPN)place).setGammaRangeVisibility(true);
 				}
 				return;
@@ -726,7 +715,8 @@ public class ProjectReader {
 					double gammaMin = Double.parseDouble(line);
 					((PlaceXTPN)place).setGammaMinValue(gammaMin, true);
 				} catch (Exception exc) {
-					overlord.log("Gamma minimum reading failed for place "+placesProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00270")+" "+placesProcessed
+							+"\n"+exc.getMessage(), "error", true);
 					((PlaceXTPN)place).setGammaMinValue(0, true);
 				}
 				return;
@@ -740,7 +730,8 @@ public class ProjectReader {
 					double gammaMax = Double.parseDouble(line);
 					((PlaceXTPN)place).setGammaMaxValue(gammaMax, true);
 				} catch (Exception exc) {
-					overlord.log("Gamma maximum failed for place "+placesProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00271")+" "+placesProcessed
+							+"\n"+exc.getMessage(), "error", true);
 					if(((PlaceXTPN)place).getGammaMinValue() > 0)
 						((PlaceXTPN)place).setGammaMaxValue(((PlaceXTPN)place).getGammaMinValue(), true);
 					else
@@ -757,7 +748,8 @@ public class ProjectReader {
 					int fractionSize = Integer.parseInt(line);
 					((PlaceXTPN)place).setFractionForPlaceXTPN(fractionSize);
 				} catch (Exception exc) {
-					overlord.log("Fraction XTPN reading failed for place "+placesProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00272")+" "+placesProcessed
+							+"\n"+exc.getMessage(), "error", true);
 					((PlaceXTPN)place).setFractionForPlaceXTPN(6);
 				}
 				return;
@@ -773,9 +765,9 @@ public class ProjectReader {
 					try {
 						double token = Double.parseDouble(s);
 						((PlaceXTPN)place).accessMultiset().add(token); //dodanie poza seterem, aby nie dublować wartości tokensNumber
-						//place.addTokens_XTPN(1, token);
 					} catch (Exception exc) {
-						overlord.log("XPTN token value reading failed for place " + placesProcessed, "error", true);
+						overlord.log(lang.getText("LOGentry00273")+" "+placesProcessed
+								+"\n"+exc.getMessage(), "error", true);
 						((PlaceXTPN)place).addTokens_XTPN(1, 0);
 					}
 				}
@@ -791,7 +783,7 @@ public class ProjectReader {
 				} else if(line.contains("false")) {
 					place.setPortal(false);
 				} else {
-					overlord.log("Portal status reading failed for place "+placesProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00274")+" "+placesProcessed, "error", true);
 					place.setPortal(false);
 				}
 				return;
@@ -811,7 +803,8 @@ public class ProjectReader {
 						}
 					}
 				} catch (Exception exc) {
-					overlord.log("CRITICAL ERROR while reading places location - failed for place "+placesProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00275exception")+" "+placesProcessed
+							+"\n"+exc.getMessage(), "error", true);
 				}
 
 				return;
@@ -887,23 +880,11 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				tabPlaceTokens = line.split(";");
-
-				/*
-				try {
-					place.setColorTokensNumber(Integer.parseInt(tab[0]), 0);
-					place.setColorTokensNumber(Integer.parseInt(tab[1]), 1);
-					place.setColorTokensNumber(Integer.parseInt(tab[2]), 2);
-					place.setColorTokensNumber(Integer.parseInt(tab[3]), 3);
-					place.setColorTokensNumber(Integer.parseInt(tab[4]), 4);
-					place.setColorTokensNumber(Integer.parseInt(tab[5]), 5);
-				} catch (Exception ex) {
-					overlord.log("Error (806949108) | Exception: "+ex.getMessage(), "error", true);
-				}
-
-				 */
 			}
 		} catch (Exception e) {
-			overlord.log("Reading file error in line: "+backup+" for Place "+placesProcessed, "error", true);
+			overlord.log(lang.getText("LOGentry00276exception_1")+" "+backup+" "
+					+lang.getText("LOGentry00276exception_2")+" "+placesProcessed
+					+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -934,7 +915,6 @@ public class ProjectReader {
 					case "CPN" -> transition.setTransType(TransitionType.CPN);
 					case "XTPN" -> transition.setTransType(TransitionType.XTPN);
 				}
-
 				return;
 			}
 			
@@ -1019,20 +999,6 @@ public class ProjectReader {
 			query = "Transition XTPN status:";
 			if(line.contains(query) && XTPNdataMode) {
 				return;
-				/*
-				line = line.substring(line.indexOf(query)+query.length());
-				line = line.replace(">","");
-				if(line.contains("true")) {//is XTPN?
-					transition.setXTPNstatus(true);
-				} else if(line.contains("false")) {
-					transition.setXTPNstatus(false);
-				} else {
-					overlord.log("XTPN transition status reading failed for transition "+transitionsProcessed, "error", true);
-					transition.setXTPNstatus(false);
-				}
-				return;
-
-				 */
 			}
 
 			query = "Transition XTPN alphaMode:";
@@ -1044,7 +1010,7 @@ public class ProjectReader {
 				} else if(line.contains("false")) {
 					((TransitionXTPN)transition).setAlphaModeStatus(false);
 				} else {
-					overlord.log("Alpha mode status reading failed for transition "+transitionsProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00277")+" "+transitionsProcessed, "error", true);
 					((TransitionXTPN)transition).setAlphaModeStatus(true);
 				}
 				return;
@@ -1059,7 +1025,7 @@ public class ProjectReader {
 				} else if(line.contains("false")) {
 					((TransitionXTPN)transition).setAlphaRangeVisibility(false);
 				} else {
-					overlord.log("Alpha range visibility reading failed for transition "+transitionsProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00278")+" "+transitionsProcessed, "error", true);
 					((TransitionXTPN)transition).setAlphaRangeVisibility(true);
 				}
 				return;
@@ -1073,7 +1039,7 @@ public class ProjectReader {
 					double gammaMin = Double.parseDouble(line);
 					((TransitionXTPN)transition).setAlphaMinValue(gammaMin, true);
 				} catch (Exception exc) {
-					overlord.log("Alpha minimum reading failed for transition "+transitionsProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00279")+" "+transitionsProcessed, "error", true);
 					((TransitionXTPN)transition).setAlphaMinValue(0, true);
 				}
 				return;
@@ -1087,7 +1053,9 @@ public class ProjectReader {
 					double gammaMax = Double.parseDouble(line);
 					((TransitionXTPN)transition).setAlphaMaxValue(gammaMax, true);
 				} catch (Exception exc) {
-					overlord.log("Alpha maximum failed for transition "+transitionsProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00280exception")+" "+transitionsProcessed
+							+"\n"+ exc.getMessage(), "error", true);
+					
 					if(((TransitionXTPN)transition).getAlphaMinValue() > 0)
 						((TransitionXTPN)transition).setAlphaMaxValue(((TransitionXTPN)transition).getAlphaMinValue(), true);
 					else
@@ -1105,7 +1073,7 @@ public class ProjectReader {
 				} else if(line.contains("false")) {
 					((TransitionXTPN)transition).setBetaModeStatus(false);
 				} else {
-					overlord.log("Beta mode status reading failed for transition "+transitionsProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00281")+" "+transitionsProcessed, "error", true);
 					((TransitionXTPN)transition).setBetaModeStatus(true);
 				}
 				return;
@@ -1120,7 +1088,7 @@ public class ProjectReader {
 				} else if(line.contains("false")) {
 					((TransitionXTPN)transition).setBetaRangeVisibility(false);
 				} else {
-					overlord.log("Beta range visibility reading failed for transition "+transitionsProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00282")+" "+transitionsProcessed, "error", true);
 					((TransitionXTPN)transition).setBetaRangeVisibility(true);
 				}
 				return;
@@ -1134,7 +1102,8 @@ public class ProjectReader {
 					double gammaMin = Double.parseDouble(line);
 					((TransitionXTPN)transition).setBetaMinValue(gammaMin, true);
 				} catch (Exception exc) {
-					overlord.log("Beta minimum reading failed for transition "+transitionsProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00283exception")+" "+transitionsProcessed
+							+"\n"+ exc.getMessage(), "error", true);
 					((TransitionXTPN)transition).setBetaMinValue(0, true);
 				}
 				return;
@@ -1148,7 +1117,8 @@ public class ProjectReader {
 					double gammaMax = Double.parseDouble(line);
 					((TransitionXTPN)transition).setBetaMaxValue(gammaMax, true);
 				} catch (Exception exc) {
-					overlord.log("Beta maximum failed for transition "+transitionsProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00284exception")+" "+transitionsProcessed
+							+"\n"+ exc.getMessage(), "error", true);
 					if(((TransitionXTPN)transition).getBetaMinValue() > 0)
 						((TransitionXTPN)transition).setBetaMaxValue(((TransitionXTPN)transition).getBetaMinValue(), true);
 					else
@@ -1166,7 +1136,7 @@ public class ProjectReader {
 				} else if(line.contains("false")) {
 					((TransitionXTPN)transition).setTauTimersVisibility(false);
 				} else {
-					overlord.log("Tau timers visibility reading failed for transition "+transitionsProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00285")+" "+transitionsProcessed, "error", true);
 					((TransitionXTPN)transition).setTauTimersVisibility(true);
 				}
 				return;
@@ -1181,7 +1151,7 @@ public class ProjectReader {
 				} else if(line.contains("false")) {
 					((TransitionXTPN)transition).setMassActionKineticsXTPNstatus(false);
 				} else {
-					overlord.log("Mass-action kinetics status reading failed for transition "+transitionsProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00286")+" "+transitionsProcessed, "error", true);
 					((TransitionXTPN)transition).setMassActionKineticsXTPNstatus(false);
 				}
 				return;
@@ -1195,7 +1165,8 @@ public class ProjectReader {
 					int fractionSize = Integer.parseInt(line);
 					((TransitionXTPN)transition).setFraction_xTPN(fractionSize);
 				} catch (Exception exc) {
-					overlord.log("Fraction XTPN reading failed for transition "+transitionsProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00287exception")+" "+transitionsProcessed
+							+"\n"+ exc.getMessage(), "error", true);
 					((TransitionXTPN)transition).setFraction_xTPN(6);
 				}
 				return;
@@ -1210,7 +1181,7 @@ public class ProjectReader {
 				} else if(line.contains("false")) {
 					((TransitionXTPN)transition).setImmediateStatusXTPN(false);
 				} else {
-					overlord.log("Immediate status reading failed for transition "+transitionsProcessed, "error", true);
+					overlord.log(lang.getText("LOGentry00288")+" "+transitionsProcessed, "error", true);
 					((TransitionXTPN)transition).setImmediateStatusXTPN(false);
 				}
 				return;
@@ -1327,7 +1298,6 @@ public class ProjectReader {
 				line = line.replace(">","");
 				if(line.contains("true")) {
 					isTransitionColored = true;
-					//transition.setTransType(TransitionType.CPNbasic);
 				}
 				return;
 			}
@@ -1337,23 +1307,11 @@ public class ProjectReader {
 				line = line.substring(line.indexOf(query)+query.length());
 				line = line.replace(">","");
 				tabTransReqTokens = line.split(";");
-				/*
-				try {
-					transition.setRequiredColoredTokens(Integer.parseInt(tab[0]), 0);
-					transition.setRequiredColoredTokens(Integer.parseInt(tab[1]), 1);
-					transition.setRequiredColoredTokens(Integer.parseInt(tab[2]), 2);
-					transition.setRequiredColoredTokens(Integer.parseInt(tab[3]), 3);
-					transition.setRequiredColoredTokens(Integer.parseInt(tab[4]), 4);
-					transition.setRequiredColoredTokens(Integer.parseInt(tab[5]), 5);
-				} catch (Exception ex) {
-					overlord.log("Error (519160440) | Exception: "+ex.getMessage(), "error", true);
-				}
-
-				 */
-				//return;
 			}
 		} catch (Exception e) {
-			overlord.log("Reading file error in line: "+backup+" for Transition "+transitionsProcessed, "error", true);
+			overlord.log(lang.getText("LOGentry00289exception_1")+" "+backup+" "
+					+lang.getText("LOGentry00289exception_2")+" "+transitionsProcessed
+					+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -1368,7 +1326,6 @@ public class ProjectReader {
 		try {
 			String query = "MetaNode gID:";
 			if(line.contains(query)) {
-				//line = line.substring(line.indexOf(query)+query.length());
 				return;
 			}
 			
@@ -1383,7 +1340,6 @@ public class ProjectReader {
 					case "SUBNET" -> metanode.setMetaType(MetaType.SUBNET);
 					default -> metanode.setMetaType(MetaType.UNKNOWN);
 				}
-
 				return;
 			}
 			
@@ -1422,7 +1378,6 @@ public class ProjectReader {
 					metanode.getElementLocations().add(new ElementLocation(0, new Point(20,20), metanode));
 					metanode.getTextsLocations(GUIManager.locationMoveType.NAME).add(new ElementLocation(0, new Point(0,0), metanode));
 				}
-				
 				return;
 			}
 			//poniższa część MUSI się wywołać PO tej wyżej, inaczej nie będzie odpowiednio dużo pól ElementLocation!
@@ -1463,7 +1418,9 @@ public class ProjectReader {
 				//return;
 			}
 		} catch (Exception e) {
-			overlord.log("Reading file error in line: "+backup+" for MetaNode "+metanodesProcessed, "error", true);
+			overlord.log(lang.getText("LOGentry00290exception_1")+" "+backup
+					+" "+lang.getText("LOGentry00290exception_2")+" "+metanodesProcessed
+					+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -1563,7 +1520,7 @@ public class ProjectReader {
 					}
 				}
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (552674791) | Exception:  "+ex.getMessage(), "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00291exception")+" "+ex.getMessage(), "error", true);
 			}
 			
 			if(placeFirst) { //pierwsze jest miejsce
@@ -1698,7 +1655,8 @@ public class ProjectReader {
 				}
 			}
 		} catch (Exception e) {
-			overlord.log("Reading file error in line: "+backup, "error", true);
+			overlord.log(lang.getText("LOGentry00292exception")+" "+backup
+					+"\n"+e.getMessage(), "error", true);
 		}
 		return null;
 	}
@@ -1721,7 +1679,8 @@ public class ProjectReader {
 			newArc.setColorWeight(Integer.parseInt(colorsWeights[4]), 4);
 			newArc.setColorWeight(Integer.parseInt(colorsWeights[5]), 5);
 		} catch (Exception e) {
-			overlord.log("Error while adding color data to arc: "+newArc.toString(), "error", true);
+			overlord.log(lang.getText("LOGentry00293exception")+" "+newArc.toString()
+					+"\n"+e.getMessage(), "error", true);
 		}
 	}
 
@@ -1747,7 +1706,7 @@ public class ProjectReader {
 
 				newArc.addBreakPoint(new Point(x, y));
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (478781728) | Exception:  "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00294exception")+" "+ex.getMessage(), "error", true);
 			}
 		}
 	}
@@ -1821,19 +1780,20 @@ public class ProjectReader {
 					}
 					projectCore.setT_InvDescriptions(t_invariantsNames);
 					if(readLines != t_invariantsMatrix.size()) {
-						overlord.log("Error: different numbers of t-invariants ("+t_invariantsMatrix.size()+
-								") and their names ("+readLines+"). Operation failed.", "error", true);
+						
+						overlord.log(lang.getText("LOGentry00295a")+t_invariantsMatrix.size()+
+								lang.getText("LOGentry00295b")+readLines+lang.getText("LOGentry00295c"), "error", true);
 						return false;
 					}
 				} else {
-					overlord.log("T-invariants with wrong number of elements in file:"+problemWithInv, "error", true);
+					overlord.log(lang.getText("LOGentry00296")+" "+problemWithInv, "error", true);
 					return false;
 				}
 			}
-			
 			return true;
 		} catch (Exception e) {
-			overlord.log("Reading invariants failed for t-invariant number: \n"+t_invariantsProcessed, "error", true);
+			overlord.log(lang.getText("LOGentry00297exception")+" "+t_invariantsProcessed
+					+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -1908,23 +1868,20 @@ public class ProjectReader {
 						}
 					}
 					projectCore.setP_InvDescriptions(p_invariantsNames);
-					
-					
 					if(readLines != p_invariantsMatrix.size()) {
-						overlord.log("Error: different numbers of p-invariants ("+p_invariantsMatrix.size()+
-								") and their names ("+readLines+"). Operation failed.", "error", true);
+						overlord.log(lang.getText("LOGentry00298a")+p_invariantsMatrix.size()+
+								lang.getText("LOGentry00298b")+readLines+lang.getText("LOGentry00298c"), "error", true);
 						return false;
 					}
-					
 				} else {
-					overlord.log("P-invariants with wrong number of elements in file:"+problemWithInv, "error", true);
+					overlord.log(lang.getText("LOGentry00299")+" "+problemWithInv, "error", true);
 					return false;
 				}
 			}
-			
 			return true;
 		} catch (Exception e) {
-			overlord.log("Reading p-invariants failed for invariant number: \n"+p_invariantsProcessed, "error", true);
+			overlord.log(lang.getText("LOGentry00300exception")+" "+p_invariantsProcessed
+					+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -2000,21 +1957,21 @@ public class ProjectReader {
 					}
 					projectCore.setMCTNames(mctNames);
 					
-					
 					if(readLines != mctData.size()) {
-						overlord.log("Error: different numbers of MCT sets ("+mctData.size()+
-								") and their names ("+readLines+"). Operation failed.", "error", true);
+						overlord.log(lang.getText("LOGentry00301a")+mctData.size()+
+								lang.getText("LOGentry00301b")+readLines+lang.getText("LOGentry00301c"), "error", true);
 						return false;
 					}
 					
 				} else {
-					overlord.log("MCT with wrong number ID numbers for their transitions in file:"+problemWithMCTLines, "error", true);
+					overlord.log(lang.getText("LOGentry00302")+" "+problemWithMCTLines, "error", true);
 					return false;
 				}
 			}
 			return true;
 		} catch (Exception e) {
-			overlord.log("Reading MCT sets failed for MCT number: \n"+mctProcessed, "error", true);
+			overlord.log(lang.getText("LOGentry00303exception")+" "+t_invariantsProcessed
+					+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -2070,18 +2027,19 @@ public class ProjectReader {
 					statesMngr.accessStateMatrix().add(pVector);
 				}
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (651052447) | Exception:  "+ex.getMessage(), "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00304exception")+" "+ex.getMessage(), "error", true);
 			}
 			
 			if((readedLine /3) > statesMngr.accessStateMatrix().size()) {
-				overlord.log("Error reading state vector number "+(readedLine), "error", true);
+				overlord.log(lang.getText("LOGentry00305")+" "+(readedLine), "error", true);
 				if(statesMngr.accessStateMatrix().isEmpty()) {
 					statesMngr.createCleanStatePN();
 				}
 			}
 			return true;
 		} catch (Exception e) {
-			overlord.log("Reading state vectors failed.", "error", true);
+			overlord.log(lang.getText("LOGentry00306exception")+" "+t_invariantsProcessed
+					+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -2119,8 +2077,8 @@ public class ProjectReader {
 					for (String multisetString : stateTable) {
 						placesRead++;
 						if(placesRead > this.placesProcessed) {
-							overlord.log("Error while reading p-state #"+statesProcessed+": there are more multisets type-K stored than" +
-									" processed places ("+this.placesProcessed+").", "error", true);
+							overlord.log(lang.getText("LOGentry00307a")+statesProcessed+lang.getText("LOGentry00307b") +
+									" "+lang.getText("LOGentry00307c")+this.placesProcessed+").", "error", true);
 							break;
 						} else {
 							String[] multisetTab = multisetString.split(":"); //separator tokenów
@@ -2130,7 +2088,6 @@ public class ProjectReader {
 								if(token.contains("(C)")) {
 									token = token.replace("(C)", "");
 									double tokenValue = Double.parseDouble(token); //musi być przeczytane jako double
-									//((Place)nodes.get(placeIndex)).setTokensNumber((int)tokenValue); //WTF?!
 									multisetK.add(tokenValue);
 									isXTPNplace = 0; //miejsce klasyczne
 									break; //technicznie, nie powinno być ŻADNYCH innych wartości w tym "multizbiorze" miejsca klasycznego!
@@ -2152,8 +2109,9 @@ public class ProjectReader {
 						for(int i = 0; i< this.placesProcessed -placesRead; i++) {
 							pVector.addMultiset_K_toMultiset_M(new ArrayList<Double>(), 1);
 						}
-						overlord.log("Problems while reading project p-state #"+statesProcessed+". Too few multisets in file, only: "
-								+placesRead+" found out of "+placesProcessed+" total XTPN places. Missing multisets type-K replaced as empty.", "error", true);
+						overlord.log(lang.getText("LOGentry00308a")+statesProcessed+lang.getText("LOGentry00308b")+" "
+								+placesRead+" "+lang.getText("LOGentry00308c")+" "+placesProcessed+" "
+								+lang.getText("LOGentry00308d"), "error", true);
 					}
 
 					line = buffer.readLine(); //dane dodatkowe
@@ -2174,17 +2132,19 @@ public class ProjectReader {
 					statesMngr.accessStateMatrixXTPN().add(pVector);
 				}
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (248790053) | Exception:  "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00309exception")+" "+t_invariantsProcessed
+						+"\n"+ex.getMessage(), "error", true);
 			}
 			if((readedLine /3) > statesMngr.accessStateMatrix().size()) {
-				overlord.log("Error reading state XTPN vector number "+(readedLine), "error", true);
+				
+				overlord.log(lang.getText("LOGentry00310")+" "+(readedLine), "error", true);
 				if(statesMngr.accessStateMatrix().isEmpty()) {
 					statesMngr.createCleanStatePN();
 				}
 			}
 			return true;
 		} catch (Exception e) {
-			overlord.log("Reading XTPN state vectors failed.", "error", true);
+			overlord.log(lang.getText("LOGentry00311exception") +"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -2215,10 +2175,8 @@ public class ProjectReader {
 			int readProtocol = 0;
 			try {
 				while(go) {
-					
 					SPNdataVector frVector = new SPNdataVector();
 					line = line.replace(" ", "");
-					
 					String[] dataVectorTable = line.split(";");
 					
 					if(dataVectorTable.length < (transitionsProcessed + 3)) {
@@ -2279,7 +2237,8 @@ public class ProjectReader {
 					frateMngr.accessSPNmatrix().add(frVector); //boxing in manager
 				}
 			} catch (Exception e) {
-				overlord.log("Operation failed, wrong SPN data in line "+(readedLine), "error", true);
+				overlord.log(lang.getText("LOGentry00312exception")+" "+(readedLine)
+						+"\n"+e.getMessage(), "error", true);
 				if(frateMngr.accessSPNmatrix().isEmpty()) {
 					frateMngr.createCleanSPNdataVector();
 				}
@@ -2287,7 +2246,7 @@ public class ProjectReader {
 			
 			if(readProtocol == 0) {
 				if((readedLine/4) > frateMngr.accessSPNmatrix().size()) {
-					overlord.log("Error: SPN vector could not be read. Creating clean vector.", "error", true);
+					overlord.log(lang.getText("LOGentry00313"), "error", true);
 					if(frateMngr.accessSPNmatrix().isEmpty()) {
 						frateMngr.createCleanSPNdataVector();
 					} else {
@@ -2299,17 +2258,16 @@ public class ProjectReader {
 				if((readedLine/3) > frateMngr.accessSPNmatrix().size()) {
 					if(frateMngr.accessSPNmatrix().isEmpty()) {
 						frateMngr.createCleanSPNdataVector();
-						overlord.log("Error: SPN vector could not be read. Creating clean vector.", "error", true);
+						overlord.log(lang.getText("LOGentry00313"), "error", true);
 					} else {
-						overlord.log("Warning: some SPN vector could not be read properly. Possible data corruption.", "error", true);
-						//frateMngr.reset(false); //false!!!
-						//frateMngr.createCleanSPNdataVector();
+						overlord.log(lang.getText("LOGentry00314"), "error", true);
 					}
 				}
 			}
 			return true;
 		} catch (Exception e) {
-			overlord.log("Reading SPN data vectors failed.", "error", true);
+			overlord.log(lang.getText("LOGentry00315exception")
+					+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -2322,29 +2280,21 @@ public class ProjectReader {
 	 */
 	private ArrayList<SPNtransitionData> parseSPNdataVector(String[] dataVectorTable, SPNdataVector frVector) {
 		ArrayList<SPNtransitionData> spnVector = new ArrayList<SPNtransitionData>();
-		/*
-		 * public String ST_function = "";
-		public int IM_priority = 0;
-		public int DET_delay = 0;
-		public String SCH_start = "";
-		public int SCH_rep = 0;
-		public String SCH_end = "";
-		public StochaticsType sType = StochaticsType.ST;
-		 */
 		if(dataVectorTable[0].contains("version101:")) {
 			dataVectorTable[0] = dataVectorTable[0].replace("version101:", "");
 			for(int i=0; i<transitionsProcessed; i++) {
 				SPNtransitionData box = frVector.newContainer();
 				box.ST_function = dataVectorTable[i*7];
 				try { box.IM_priority = Integer.parseInt(dataVectorTable[(i*7)+1]); } catch(Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (186837711) | Exception:  "+ex.getMessage(), "error", true);
+					
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00316exception")+" "+ex.getMessage(), "error", true);
 				}
 				try { box.DET_delay = Integer.parseInt(dataVectorTable[(i*7)+2]); } catch(Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (535627810) | Exception:  "+ex.getMessage(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00317exception")+" "+ex.getMessage(), "error", true);
 				}
 				box.SCH_start = dataVectorTable[(i*7)+3];
 				try { box.SCH_rep = Integer.parseInt(dataVectorTable[(i*7)+4]); } catch(Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (229044942) | Exception:  "+ex.getMessage(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00318exception")+" "+ex.getMessage(), "error", true);
 				}
 				box.SCH_end = dataVectorTable[(i*7)+5];
 
@@ -2416,18 +2366,19 @@ public class ProjectReader {
 					ssaMngr.accessSSAmatrix().add(pVector);
 				}
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (652374812) | Exception:  "+ex.getMessage(), "error", true);
+				
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00319exception")+" "+ex.getMessage(), "error", true);
 			}
 			
 			if((readedLine /3) > ssaMngr.accessSSAmatrix().size()) {
-				overlord.log("Error reading state vector number "+(readedLine), "error", true);
+				overlord.log(lang.getText("LOGentry00320")+" "+(readedLine), "error", true);
 				if(ssaMngr.accessSSAmatrix().isEmpty()) {
 					ssaMngr.createCleanSSAvector();
 				}
 			}
 			return true;
 		} catch (Exception e) {
-			overlord.log("Reading SSA vectors failed.", "error", true);
+			overlord.log(lang.getText("LOGentry00321exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -2459,7 +2410,6 @@ public class ProjectReader {
 		graphPanel.repaint();
 	}
 
-
 	public ArrayList<Node> getNodes() {
 		return nodes;
 	}
@@ -2467,8 +2417,6 @@ public class ProjectReader {
 	public ArrayList<Arc> getArcs() {
 		return arcs;
 	}
-
-
 
 	private PlaceColored resurrectAsColoredPlace(Place place, int pID) {
 		PlaceColored rise = new PlaceColored(pID, 0, new Point(20,20));
@@ -2507,7 +2455,6 @@ public class ProjectReader {
 			rise.setColorTokensNumber(0, 4);
 			rise.setColorTokensNumber(0, 5);
 		}
-
 		return rise;
 	}
 

@@ -53,11 +53,9 @@ public class KnockoutCalculator {
 				}
 			}
 		}
-		
 		for(Transition trans : knockout) {
 			resultSet.remove(trans);
 		}
-		
 		return resultSet;
 	}
 }

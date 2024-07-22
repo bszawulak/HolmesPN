@@ -482,8 +482,8 @@ public class GUIOperations {
 			Object[] options = {"Use selected anyway", "Use suggested format", "Save as project", "Cancel save",};
 			int n = JOptionPane.showOptionDialog(null,
 							lang.getText("GUIO_warning003")+extension+"\n"
-							+ lang.getText("GUIO_warning003b")+netRealName+"\n"
-							+ lang.getText("GUIO_warning003c")+fileFormat+"\n\n"
+							+ lang.getText("GUIO_warning003b")+" "+netRealName+"\n"
+							+ lang.getText("GUIO_warning003c")+" "+fileFormat+"\n\n"
 							+ lang.getText("GUIO_warning003d")+additionalWhining,
 							lang.getText("GUIO_warning003title"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.WARNING_MESSAGE, null, options, options[0]);

@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Transition;
 import holmes.varia.NetworkTransformations;
@@ -13,6 +14,7 @@ import holmes.varia.NetworkTransformations;
 import static holmes.graphpanel.EditorResources.transDefColor;
 
 public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	public SnoopyWriterTimeTransition() {
 		super();
 	}
@@ -232,13 +234,13 @@ public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 		//JEGO ELEMENTÓW NIE WIADOMO ILE RAZY...
 		currID++; //365 == grParent(0)
 		if(currID != grParents.get(0)) {
-			GUIManager.getDefaultGUIManager().log("Critical error: Snoopy ID's do not match while writing", "errer", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00148critErr"), "errer", true);
 		}
 		
 		write(bw, "        <graphics count=\""+locations+"\">");
 		
 		if(currID != grParents.get(0)) {
-			GUIManager.getDefaultGUIManager().log("Critical error while writing Snoopy file. ID's don't match.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00149critErr"), "error", true);
 		}
 		
 		Color snoopyColor = transDefColor;

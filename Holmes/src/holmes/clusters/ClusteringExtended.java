@@ -184,8 +184,6 @@ public class ClusteringExtended {
                         //Hmm, dziwne. A przynajmniej odkryliśmy coś, co zainteresuje Adama.
                         if (!alreadyCried)
                             alreadyCried = true;
-                        //GUIManager.getDefaultGUIManager().log("Logical error MCT:invariant:transition in inv "+invRow.get(0), "warning",true);
-
                     }
                     invRow.set(transToRemove, 0);
                 }
@@ -342,11 +340,9 @@ public class ClusteringExtended {
         }
 		
 	    //double H = power * 0.4; // Hue (note 0.4 = Green, see huge chart below)
-	   // double S = 0.9; // Saturation
+	    // double S = 0.9; // Saturation
 	    //double B = 0.9; // Brightness
-
 	    //return Color.getHSBColor((float)H, (float)S, (float)B);
-	    
 	    return colors;
 	}
 

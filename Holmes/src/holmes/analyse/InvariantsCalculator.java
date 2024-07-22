@@ -782,7 +782,7 @@ public class InvariantsCalculator implements Runnable {
 
             if (resList.size() > 1) {
                 if (!added) {
-                    overlord.log(lang.getText("LOGentry00054error"), "error", true);
+                    overlord.log(lang.getText("LOGentry00054critErr"), "error", true);
                 }
 
                 while (!resList.isEmpty()) { //inne do usunięcia
@@ -938,7 +938,7 @@ public class InvariantsCalculator implements Runnable {
              * na jakimś elemencie jest mniejszy, a nie tylko mniejszy/równy (CanInRefStrong > 0).
              */
         } else {
-            overlord.log(lang.getText("LOGentry00055error"), "error", true);
+            overlord.log(lang.getText("LOGentry00055critErr"), "error", true);
             return 3; //teoretycznie NIGDY nie powinniśmy się tu pojawić
         }
     }

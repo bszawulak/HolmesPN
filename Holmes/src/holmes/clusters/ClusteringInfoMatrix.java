@@ -17,7 +17,6 @@ public class ClusteringInfoMatrix implements Serializable {
 	public int mainTablesNumber = 0;
 	public boolean secondaryTablesSameSize = true;
 	public int secondaryTablesMinNumber = 0;
-	//public boolean matrixFull = false;
 	
 	/**
 	 * Konstruktor domyślny obiektu klasy ClusteringInfoMatrix.

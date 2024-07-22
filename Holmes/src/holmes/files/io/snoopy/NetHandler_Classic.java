@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 
+import holmes.darkgui.LanguageManager;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -22,6 +23,7 @@ import holmes.petrinet.elements.MetaNode.MetaType;
  * Klasa zajmująca się wczytaniem standardowej sieci Petriego z formatu .spped.
  */
 public class NetHandler_Classic extends NetHandler {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	public boolean Snoopy = false;
 	public boolean node = false;
 	public boolean atribute = false;
@@ -95,7 +97,6 @@ public class NetHandler_Classic extends NetHandler {
 		
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			Snoopy = true;
-			//nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
 		}
 
 		// Ustawianie typu wierzchołka
@@ -113,11 +114,6 @@ public class NetHandler_Classic extends NetHandler {
 				coarseCatcher = true;
 				nodeType = "Transition";
 			}
-		}
-		
-		if(coarseCatcher) {
-			int xx=1;
-			
 		}
 		
 		if (qName.equalsIgnoreCase("node")) {
@@ -188,15 +184,13 @@ public class NetHandler_Classic extends NetHandler {
 					if(yoff_name < -8)
 						yoff_name = -55; //nad node, uwzględnia różnicę
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (932506083) | Exception:  "+ex.getMessage(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00099exception")+ex.getMessage(), "error", true);
 				}
 			}
-
 			graphicNamesXYLocationsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
 		}
 
 		// Wczytywanie informacji odnosnie ID i pozycji noda
-
 		if ((endAtribute) && (!atribute) && (graphics)
 				&& (graphic) && (!metadata)
 				&& (!edgeclass) && (!point)
@@ -219,7 +213,7 @@ public class NetHandler_Classic extends NetHandler {
 					if(resizeFactor==0)
 						resizeFactor=1;
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (928863304) | Exception:  "+ex.getMessage(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00100exception")+ex.getMessage(), "error", true);
 				}
 				
 				xPos *= resizeFactor;
@@ -391,7 +385,6 @@ public class NetHandler_Classic extends NetHandler {
 					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 150, hei));
 				}
 				if (!xFound && yFound) {
-					//graphPanel.setSize(new Dimension(graphPanel.getSize().width, globalElementLocationList.get(tmpY).getPosition().y + 150));
 					graphPanel.setSize(new Dimension(wid, globalElementLocationList.get(tmpY).getPosition().y + 150));
 				}
 				if (xFound && yFound) { //z każdym nowym punktem dostosowujemy rozmiar sieci
@@ -417,8 +410,8 @@ public class NetHandler_Classic extends NetHandler {
 			
 			if(!coarseCatcher) {
 				if(graphicPointsXYLocationsList.size() != graphicNamesXYLocationsList.size()) {
-					GUIManager.getDefaultGUIManager().log("Warning: wrong number of names / nodes locations for "+nodeName+
-							". Resetting names locations.", "warning", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00101a")+" "+nodeName+
+							lang.getText("LOGentry00101b"), "warning", true);
 					
 					graphicNamesXYLocationsList.clear();
 					for(int g=0; g<graphicPointsXYLocationsList.size(); g++) {
@@ -477,10 +470,7 @@ public class NetHandler_Classic extends NetHandler {
 					tmpTransitionList.add(tmpTran);
 					IdGenerator.getNextTransitionId();
 				}
-			} else {
-				@SuppressWarnings("unused")
-				int x=1;
-			}
+			} 
 			// zerowanie zmiennych
 			nodeName = "";
 			nodeID = 0;
@@ -514,13 +504,12 @@ public class NetHandler_Classic extends NetHandler {
 					Arc nArc = new Arc(globalElementLocationList.get(tmpSource), globalElementLocationList.get(tmpTarget), arcComment, arcMultiplicity, TypeOfArc.NORMAL);
 					arcList.add(nArc);
 				} catch (Exception e) {
-					GUIManager.getDefaultGUIManager().log("Error: unable to add arc.", "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00102exception"), "error", true);
 				}
 			}
 			edge = false;
 			arcComment = "";
 			arcMultiplicity = 0;
-			
 		}
 	}
 

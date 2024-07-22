@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.utilities.ByExt;
 
 /**
@@ -17,6 +18,7 @@ import holmes.utilities.ByExt;
  *
  */
 public class CHmetricReader {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Dość niezwykły sposób przeprowadzania elementarnej operacji konwersji :)
 	 * @param strNumber String - łańcuch znaków, który z pietyzmem zmieniamy w Double
@@ -79,8 +81,7 @@ public class CHmetricReader {
 			FilenameFilter only = new ByExt("_clusters.txt");
 			String[] tempList = fp1.list(only); // metoda list z filtrem
 			if(tempList.length != 56) {
-				String msg = "Warning. Directory "+CHmetricsPath+" may not contain all necessary files. Operation "
-						+ "will continue, but may fail.";
+				String msg = lang.getText("LOGentry00056a")+" "+CHmetricsPath+" "+lang.getText("LOGentry00056b");
 				GUIManager.getDefaultGUIManager().log(msg, "warning", true);
 			}
 			
@@ -95,7 +96,7 @@ public class CHmetricReader {
 				//.out.println("");
 			}
 		} catch (IOException e){
-			GUIManager.getDefaultGUIManager().log("Reading failed for Celiński-Harabasz metric in file "+currentFile, "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00057")+" "+currentFile, "error", true);
 		}
 		return chData;
 	}

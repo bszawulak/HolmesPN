@@ -10,6 +10,7 @@ import java.util.Date;
 import javax.swing.JOptionPane;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -29,6 +30,7 @@ import holmes.varia.Check;
  * wczytującego tenże plik (np. punkty startu i końca dla łuków).
  */
 public class SnoopyWriter {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<Place> places;
 	private ArrayList<Transition> transitions;
 	private ArrayList<MetaNode> metanodes;
@@ -74,9 +76,8 @@ public class SnoopyWriter {
 	public boolean writeSPPED(String filePath) {
 		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
 		if(!status) {
-			JOptionPane.showMessageDialog(null, "Problems that cannot be automatically fixed detected.\n"
-					+ "Plaese save as Project.", 
-					"Problem", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("SW_entry001"), 
+					lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		
@@ -200,25 +201,25 @@ public class SnoopyWriter {
 			bw.write("</Snoopy>\n");
 			bw.close();
 			
-			GUIManager.getDefaultGUIManager().log("Petri Net has been exported as SPPED file: "+filePath, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("SW_entry002")+" "+filePath, "text", true);
 			GUIManager.getDefaultGUIManager().markNetSaved();
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Critical error while exporting net to the SPPED file: "+filePath, "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00113_1exception")+" "+filePath, "error", true);
+			GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", false);
 			return false;
 		}
 	}
 	
 	/**
 	 * Metoda realizująca zapis do pliku SPEPT - sieci rozszerzone.
-	 * @return boolean - status operacji: true jeśli nie było problemów  (buahahahahahaha)
+	 * @return boolean - status operacji: true jeśli nie było problemów  (buachachachachachacha)
 	 */
 	public boolean writeSPEPT(String filePath) {
 		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
 		if(!status) {
-			JOptionPane.showMessageDialog(null, "Problems that cannot be automatically fixed detected.\n"
-					+ "Plaese save as Project.", 
-					"Problem", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("SW_entry003"), 
+					lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		
@@ -376,11 +377,12 @@ public class SnoopyWriter {
 			bw.write("</Snoopy>\n");
 			bw.close();
 			
-			GUIManager.getDefaultGUIManager().log("Extened Petri Net has been exported as SPPED file: "+filePath, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("SW_entry004")+" "+filePath, "text", true);
 			GUIManager.getDefaultGUIManager().markNetSaved();
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Critical error while exporting net to the SPPED file: "+filePath, "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00114exception")+" "+filePath, "error", true);
+			GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", false);
 			return false;
 		}
 	}
@@ -392,9 +394,8 @@ public class SnoopyWriter {
 	public boolean writeSPTPT(String filePath) {
 		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
 		if(!status) {
-			JOptionPane.showMessageDialog(null, "Problems that cannot be automatically fixed detected.\n"
-					+ "Plaese save as Project.", 
-					"Problem", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("SW_entry005"), 
+					lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		
@@ -515,15 +516,15 @@ public class SnoopyWriter {
 			bw.write("</Snoopy>\n");
 			bw.close();
 			
-			GUIManager.getDefaultGUIManager().log("Time Petri Net has been exported as SPTPT file: "+filePath, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("SW_entry006")+" "+filePath, "text", true);
 			GUIManager.getDefaultGUIManager().markNetSaved();
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Critical error while exporting net to the SPTPT file: "+filePath, "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00115exception")+" "+filePath, "error", true);
+			GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", false);
 			return false;
 		}
 	}
-	
 
 	/**
 	 * Metoda realizuje zapis pojedyńczej linii do pliku - zakończonej enterem.
@@ -597,7 +598,7 @@ public class SnoopyWriter {
 			write(bw, "    <metadataclass count=\"0\" name=\"Constant Class\"/>");
 			write(bw, "  </metadataclasses>");
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("File access error", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00116exception"), "error", true);
 		}
 	}
 }

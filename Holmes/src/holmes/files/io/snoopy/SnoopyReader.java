@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
@@ -25,6 +26,7 @@ import holmes.petrinet.elements.Transition.TransitionType;
  * (baczność!) Snoopy (spocznij!).
  */
 public class SnoopyReader {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	//private boolean classPN = false;
 	//private boolean TPN = false;
 	//private boolean extPN = false;
@@ -49,7 +51,7 @@ public class SnoopyReader {
 		coreReader(path);
 		
 		if(warnings)
-			GUIManager.getDefaultGUIManager().log("Warnings while reading file.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00089"), "error", true);
 	}
 	
 	/**
@@ -62,18 +64,21 @@ public class SnoopyReader {
 		try {
 			DataInputStream dis = new DataInputStream(new FileInputStream(filepath));
 			buffer = new BufferedReader(new InputStreamReader(dis));
-			GUIManager.getDefaultGUIManager().log("Reading Snoopy file: "+filepath, "text", true);	
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00090")+ " "+filepath, "text", true);	
 			
 			readNodesBlock(buffer);
 			readArcsBlock(buffer);
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading Snoopy net failed.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00091exception"), "error", true);
 		} finally {
-			try { 
-				buffer.close(); 
+			try {
+				try {
+					if(buffer != null)
+						buffer.close();
+				} catch (Exception ignored) {}
 			}
 			catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error: 818881476 | Exception "+ex, "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00092exception")+ex, "error", true);
 			}
 		}
 	}
@@ -162,7 +167,7 @@ public class SnoopyReader {
 				
 				int nodeSnoopyID = (int) getAttributeValue(line, " id=\"", -1);
 				if(nodeSnoopyID == -1) {
-					GUIManager.getDefaultGUIManager().log("Error: program cannot read Snoopy Place ID from line: "+backFirstLine, "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00093")+ " "+backFirstLine, "error", true);
 					break;
 				} else {
 					snoopyNodesIdList.add(nodeSnoopyID);
@@ -174,11 +179,6 @@ public class SnoopyReader {
 				Place place = new Place(IdGenerator.getNextId(), subNet, new Point(100,100));
 				nodesList.add(place);
 				placesCounter++;
-				
-				if(nodeSnoopyID == 951675) {
-					@SuppressWarnings("unused")
-					int x=1;
-				}
 				
 				goBoldly = true;
 				int logicalELNumber_names = -1;
@@ -327,7 +327,7 @@ public class SnoopyReader {
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									GUIManager.getDefaultGUIManager().log("Error (721736374) | Exception:  "+ex.getMessage(), "error", true);
+									GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00094exception")+" "+ex.getMessage(), "error", true);
 								}
 								
 								x = (int)(x * resizeFactor);
@@ -352,9 +352,9 @@ public class SnoopyReader {
 				
 				if(logicalELNumber_graphics != logicalELNumber_names) {
 					warnings = true;
-					GUIManager.getDefaultGUIManager().log("Warning: names locations number and graphics locations number vary for place "
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00095")+ " "
 							+place.getName(), "warning", true);
-					GUIManager.getDefaultGUIManager().log(" Fix: resetting names locations (offsets) array.", "warning", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00096"), "warning", true);
 					
 					place.getTextsLocations(GUIManager.locationMoveType.NAME).clear();
 					place.getTextsLocations(GUIManager.locationMoveType.ALPHA).clear();
@@ -369,20 +369,19 @@ public class SnoopyReader {
 						place.getTextsLocations(GUIManager.locationMoveType.BETA).add(new ElementLocation(sub, new Point(0, 0), place));
 						place.getTextsLocations(GUIManager.locationMoveType.GAMMA).add(new ElementLocation(sub, new Point(0, 0), place));
 						place.getTextsLocations(GUIManager.locationMoveType.TAU).add(new ElementLocation(sub, new Point(0, 0), place));
-
 					}
 				}
 			}
 			
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading Snoopy places failed in line:", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00097"), "error", true);
 			GUIManager.getDefaultGUIManager().log(line, "error", true);
 		}
 		
 		if(placesCounter != placesLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log("Warning: places read: "+(placesCounter+1)+
-					", places number set in file: "+(placesLimit+1), "warning", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00098a")+ " "+(placesCounter+1)+
+					lang.getText("LOGentry00098b")+ " "+(placesLimit+1), "warning", true);
 		}
 	}
 
@@ -407,7 +406,7 @@ public class SnoopyReader {
 			//	((Transition)node).defColor = new Color(r,g,b);
 			//}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (288907374) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00099_1exception")+ex.getMessage(), "error", true);
 		}
 	}
 
@@ -446,10 +445,9 @@ public class SnoopyReader {
 					break;
 				}
 				
-				
 				int nodeSnoopyID = (int) getAttributeValue(line, " id=\"", -1);
 				if(nodeSnoopyID == -1) {
-					GUIManager.getDefaultGUIManager().log("Catastrophic error: could not read Snoopy Transition ID from line: "+backFirstLine, "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00100")+ " "+backFirstLine, "error", true);
 					break;
 				} else {
 					snoopyNodesIdList.add(nodeSnoopyID);
@@ -618,7 +616,7 @@ public class SnoopyReader {
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									GUIManager.getDefaultGUIManager().log("Error (289585336) | Exception:  "+ex.getMessage(), "error", true);
+									GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00143exception")+ex.getMessage(), "error", true);
 								}
 								x = (int)(x * resizeFactor);
 								y = (int)(y * resizeFactor);
@@ -645,9 +643,9 @@ public class SnoopyReader {
 				
 				if(logicalELNumber_graphics != logicalELNumber_names) {
 					warnings = true;
-					GUIManager.getDefaultGUIManager().log("Warning: names locations number and graphics locations number vary for transition "
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00101")+ " "
 							+transition.getName(), "warning", true);
-					GUIManager.getDefaultGUIManager().log(" Fix: resetting names locations (offsets) array.", "warning", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00102"), "warning", true);
 					
 					transition.getTextsLocations(GUIManager.locationMoveType.NAME).clear();
 					transition.getTextsLocations(GUIManager.locationMoveType.ALPHA).clear();
@@ -666,14 +664,14 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading Snoopy transitions failed in line:", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00103exception"), "error", true);
 			GUIManager.getDefaultGUIManager().log(line, "error", true);
 		}
 		
 		if(transitionsCounter != transitionsLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log("Warning: places read: "+(transitionsCounter+1)+
-					", places number set in file: "+(transitionsLimit+1), "warning", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00104a")+ " "+(transitionsCounter+1)+
+					lang.getText("LOGentry00104b")+" "+(transitionsLimit+1), "warning", true);
 		}
 	}
 	
@@ -732,18 +730,15 @@ public class SnoopyReader {
 				}
 				if(!readForward)
 					break;
-				
-				//buffLine = buffer.readLine(); 
-				
+
 				if(line.contains("</nodeclass>")) {
 					break;
 				}
 				
-				
 				int nodeSnoopyID = (int) getAttributeValue(line, " id=\"", -1);
 				int nodeCoarseNumber = (int) getAttributeValue(line, " coarse=\"", -1);
 				if(nodeSnoopyID == -1) {
-					GUIManager.getDefaultGUIManager().log("Catastrophic error: could not read Snoopy Coarse Place ID from line: "+backFirstLine, "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00105")+" "+backFirstLine, "error", true);
 					break;
 				} else {
 					snoopyNodesIdList.add(nodeSnoopyID);
@@ -780,7 +775,7 @@ public class SnoopyReader {
 					if(!firstPass) {
 						if(!readAnything) {
 							while(!(line = buffer.readLine()).contains("</attribute>") ) {
-
+								;
 							}
 							line = buffer.readLine();
 						}
@@ -869,7 +864,7 @@ public class SnoopyReader {
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									GUIManager.getDefaultGUIManager().log("Error (805518514) | Exception:  "+ex.getMessage(), "error", true);
+									GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00106exception")+ex.getMessage(), "error", true);
 								}
 								
 								x = (int)(x * resizeFactor);
@@ -892,9 +887,9 @@ public class SnoopyReader {
 				
 				if(logicalELNumber_graphics != logicalELNumber_names) {
 					warnings = true;
-					GUIManager.getDefaultGUIManager().log("Warning: names locations number and graphics locations number vary for c-place "
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00107a")+ " "
 							+metaNode.getName(), "warning", true);
-					GUIManager.getDefaultGUIManager().log(" Fix: resetting names locations (offsets) array.", "warning", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00107b"), "warning", true);
 					
 					metaNode.getTextsLocations(GUIManager.locationMoveType.NAME).clear();
 					metaNode.getTextsLocations(GUIManager.locationMoveType.ALPHA).clear();
@@ -913,14 +908,14 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading Snoopy coarse places failed in line:", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00108exception"), "error", true);
 			GUIManager.getDefaultGUIManager().log(line, "error", true);
 		}
 		
 		if(coarsePlacesCounter != coarsePlacesLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log("Warning: c-places read: "+(coarsePlacesCounter+1)+
-					", c-places number set in file: "+(coarsePlacesLimit+1), "warning", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00109a")+ " "+(coarsePlacesCounter+1)+
+					lang.getText("LOGentry00109b")+ " "+(coarsePlacesLimit+1), "warning", true);
 		}
 	}
 	
@@ -963,7 +958,7 @@ public class SnoopyReader {
 				int nodeSnoopyID = (int) getAttributeValue(line, " id=\"", -1);
 				int nodeCoarseNumber = (int) getAttributeValue(line, " coarse=\"", -1);
 				if(nodeSnoopyID == -1) {
-					GUIManager.getDefaultGUIManager().log("Catastrophic error: could not read Snoopy Coarse Transition ID from line: "+backFirstLine, "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00110")+ " "+backFirstLine, "error", true);
 					break;
 				} else {
 					snoopyNodesIdList.add(nodeSnoopyID);
@@ -1088,7 +1083,7 @@ public class SnoopyReader {
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									GUIManager.getDefaultGUIManager().log("Error (979647504) | Exception:  "+ex.getMessage(), "error", true);
+									GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00111exception")+ex.getMessage(), "error", true);
 								}
 
 								x = (int)(x * resizeFactor);
@@ -1111,9 +1106,9 @@ public class SnoopyReader {
 				
 				if(logicalELNumber_graphics != logicalELNumber_names) {
 					warnings = true;
-					GUIManager.getDefaultGUIManager().log("Warning: names locations number and graphics locations number vary for c-transition "
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00112a")+ " "
 							+metaNode.getName(), "warning", true);
-					GUIManager.getDefaultGUIManager().log(" Fix: resetting names locations (offsets) array.", "warning", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00112b"), "warning", true);
 					
 					metaNode.getTextsLocations(GUIManager.locationMoveType.NAME).clear();
 					metaNode.getTextsLocations(GUIManager.locationMoveType.ALPHA).clear();
@@ -1132,14 +1127,14 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading Snoopy coarse transitions failed in line: ", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00113exception"), "error", true);
 			GUIManager.getDefaultGUIManager().log(line, "error", true);
 		}
 		
 		if(coarseTransitionsCounter != coarseTransitionsLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log("Warning: c-transitions read: "+(coarseTransitionsCounter+1)+
-					", c-transitions number set in file: "+(coarseTransitionsLimit+1), "warning", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00114a")+" "+(coarseTransitionsCounter+1)+
+					lang.getText("LOGentry00114b")+ " "+(coarseTransitionsLimit+1), "warning", true);
 		}
 	}
 	
@@ -1209,7 +1204,6 @@ public class SnoopyReader {
 		if(!line.contains("<edgeclass count=\"0\"") && line.contains("name=\"Equal Edge\"")) { //są jakieś łuki?
 			readEdges(buffer, line, TypeOfArc.EQUAL);
 		}
-		
 	}
 	
 	/**
@@ -1251,7 +1245,7 @@ public class SnoopyReader {
 				int nodeSourceID = (int) getAttributeValue(line, " source=\"", -1);
 				int nodeTargetID = (int) getAttributeValue(line, " target=\"", -1);
 				if(nodeSourceID == -1 || nodeTargetID == -1) {
-					GUIManager.getDefaultGUIManager().log("Catastrophic error: could not read Snoopy source/target ID for arc from line: "+backFirstLine, "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00115")+" "+backFirstLine, "error", true);
 					break;
 				}
 				
@@ -1364,11 +1358,11 @@ public class SnoopyReader {
 												sourceEL = nodesList.get(counter).getElementLocations().get(location);
 												//currentType = TypesOfArcs.META_ARC;
 												snoopyErrorFixed = false; //aby nie weszło poniżej
-												GUIManager.getDefaultGUIManager().log(" Fixed: wrong data for arc from (SnoopySourceID: "+sourceID+
-														") to (SnoopyTargetID: "+targetID+"). Arc fixed.", "error", true);
+												GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00116a")+ " "+sourceID+
+														lang.getText("LOGentry00116b")+" "+targetID+lang.getText("LOGentry00116c"), "error", true);
 											} else {
-												GUIManager.getDefaultGUIManager().log("Error: cannot create arc from (SnoopySourceID: "+sourceID+
-														") to (SnoopyTargetID: "+targetID+")", "error", true);
+												GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00117a")+" "+sourceID+
+														lang.getText("LOGentry00117b")+ " "+targetID+")", "error", true);
 											}
 										}
 										
@@ -1415,11 +1409,11 @@ public class SnoopyReader {
 												sourceEL = nodesList.get(counter).getElementLocations().get(location);
 												//currentType = TypesOfArcs.META_ARC;
 												snoopyErrorFixed = false; //aby nie weszło poniżej
-												GUIManager.getDefaultGUIManager().log(" Fixed: wrong data for arc from (SnoopySourceID: "+sourceID+
-														") to (SnoopyTargetID: "+targetID+"). Arc fixed.", "error", true);
+												GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00118a")+" "+sourceID+
+														lang.getText("LOGentry00118b")+" "+targetID+lang.getText("LOGentry00118c"), "error", true);
 											} else {
-												GUIManager.getDefaultGUIManager().log("Error: cannot create arc from (SnoopySourceID: "+sourceID+
-														") to (SnoopyTargetID: "+targetID+")", "error", true);
+												GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00119a")+ " "+sourceID+
+														lang.getText("LOGentry00119b")+" "+targetID+")", "error", true);
 											}
 										}
 										if(found || snoopyErrorFixed) {
@@ -1438,8 +1432,8 @@ public class SnoopyReader {
 										arcList.add(nArc);
 										edgesCounter++;
 									} else {
-										GUIManager.getDefaultGUIManager().log("Error: could not create arc from (SnoopySourceID: "+sourceID+
-												") to (SnoopyTargetID: "+targetID+").", "error", true);
+										GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00120a")+" "+sourceID+
+												lang.getText("LOGentry00120b")+" "+targetID+").", "error", true);
 									}
 								} catch (Exception e) {
 									boolean foundCoarse = false;
@@ -1450,11 +1444,10 @@ public class SnoopyReader {
 										}
 									}
 									if(!foundCoarse)
-										GUIManager.getDefaultGUIManager().log("Error: unable to load arc data (SnoopySourceID:"+sourceID+
-												", SnoopyTargetID:"+targetID+")", "error", true);
+										GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00121a")+" "+sourceID+
+												lang.getText("LOGentry00121b")+" "+targetID+")", "error", true);
 									else {
-										GUIManager.getDefaultGUIManager().log("Warning: meta-node to/from coarse graphic elements could not "
-												+ "be created. This should not influence invariants-based analysis.", "warning", true);
+										GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00122"), "warning", true);
 										warnings = true;
 									}
 								}
@@ -1481,14 +1474,15 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Reading Snoopy arcs failed in line: ", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00123exception")+" ", "error", true);
 			GUIManager.getDefaultGUIManager().log(line, "error", true);
 		}
 		
 		if(edgesCounter != edgesLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log("Warning: arcs ("+arcType+") read: "+(edgesCounter+1)+
-					", arcs number set in file: "+(edgesLimit+1), "warning", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00124a")
+					+arcType+lang.getText("LOGentry00124b")+ " "+(edgesCounter+1)+
+					lang.getText("LOGentry00124c")+ " "+(edgesLimit+1), "warning", true);
 		}
 	}
 
@@ -1511,7 +1505,7 @@ public class SnoopyReader {
 			tmp = tmp.substring(0, location);
 			result = Double.parseDouble(tmp);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (251415203) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00125exception")+ex.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1531,7 +1525,7 @@ public class SnoopyReader {
 			location = tmp.indexOf("\"");
 			result = tmp.substring(0, location);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (835501362) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00126exception")+ex.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1552,9 +1546,6 @@ public class SnoopyReader {
 				line = buffer.readLine();
 				resultLine.append(line);
 				reset = true;
-				
-				//if(line.contains("    <"))
-					//break;
 			}
 			if(reset)
 				buffer.reset();
@@ -1591,9 +1582,6 @@ public class SnoopyReader {
 				line = buffer.readLine();
 				resultLine.append(line);
 				reset = true;
-				
-				//if(line.contains("    <"))
-					//break;
 			}
 			if(reset)
 				buffer.reset();

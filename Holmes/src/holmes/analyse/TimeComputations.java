@@ -3,6 +3,7 @@ package holmes.analyse;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
 
@@ -10,6 +11,7 @@ import holmes.petrinet.elements.Transition.TransitionType;
  * Klasa odpowiedzialna za działania związane z czasem w sieci Petriego.
  */
 public class TimeComputations {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Metoda zwraca wektor danych czasowych dla t-inwariantu.
 	 * @param invariant ArrayList[Integer] - t-inwariant
@@ -34,7 +36,7 @@ public class TimeComputations {
 		int dpnPureTrans = 0;
 		int tdpnTrans = 0;
 		if(invariant.size() != transitions.size()) {
-			GUIManager.getDefaultGUIManager().log("Error: t-invariant and transition set sizes do not match!", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("TC_entry001"), "error", true);
 			return null;
 		}
 		

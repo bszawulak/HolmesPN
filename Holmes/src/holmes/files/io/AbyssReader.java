@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNetData;
@@ -20,6 +21,7 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
  * Klasa odpowiedzialna za odczyt plików projektu.
  */
 public class AbyssReader {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<Node> nodeArray = new ArrayList<Node>();
 	private ArrayList<Arc> arcArray = new ArrayList<Arc>();
 	private String pnName;
@@ -36,9 +38,6 @@ public class AbyssReader {
 			PetriNetData PND = (PetriNetData) xstream.fromXML(source);
 			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();
 			
-			//IdGenerator.setStartId(0);
-			//IdGenerator.setPlaceId(0);
-			//IdGenerator.setTransitionId(0);
 			int maxPlaceId = 0;
 			int maxTransitionId = 0;
 			int maxGlobalId = 0;
@@ -77,20 +76,17 @@ public class AbyssReader {
 			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager().createCleanSPNdataVector();
 			
 			xstream.fromXML(source);
-			GUIManager.getDefaultGUIManager().log("Petri net (.abyss) successfully read from file "+path, "text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00153")+" "+path, "text", true);
 		} catch (Exception e) {
-			e.printStackTrace();
-			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00154exception")+" " + e.getMessage(), "error", true);
 		}
-
 	}
 	
 	/**
 	 * Metoda pomocnicza ustawiająca rozmiar obszaru rysowania wczytanej sieci.
 	 * @param aln ArrayList[Node] - elementy z lokalizacjami
 	 */
-	private void setWorkframeBoundary(ArrayList<Node> aln)
-	{
+	private void setWorkframeBoundary(ArrayList<Node> aln) {
 		int x=0;
 		int y=0;
 

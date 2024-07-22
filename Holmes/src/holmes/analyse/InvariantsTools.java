@@ -63,7 +63,6 @@ public final class InvariantsTools {
 		if(matrix == null || matrix.isEmpty())
 			return null;
 		
-		//int rows = matrix.size();
 		int columns = matrix.get(0).size();
 		ArrayList<ArrayList<Integer>> resultMatrix = new ArrayList<ArrayList<Integer>>();
 		
@@ -74,7 +73,6 @@ public final class InvariantsTools {
 			}
 			resultMatrix.add(transposedRow);
 		}
-		
 		return resultMatrix;
 	}
 	
@@ -87,7 +85,6 @@ public final class InvariantsTools {
 		if(matrix == null || matrix.isEmpty())
 			return null;
 		
-		//int rows = matrix.size();
 		int columns = matrix.get(0).size();
 		ArrayList<ArrayList<Integer>> resultMatrix = new ArrayList<ArrayList<Integer>>();
 
@@ -101,7 +98,6 @@ public final class InvariantsTools {
 			}
 			resultMatrix.add(binaryRow);
 		}
-		
 		return resultMatrix;
 	}
 	
@@ -332,8 +328,6 @@ public final class InvariantsTools {
 				results.add(-99);
 			}
 		}
-	
-		
 		return results;
 	}
 	
@@ -478,7 +472,6 @@ public final class InvariantsTools {
 			results.set(0, -1); //sub-inwariant
 			return results;
 		}
-		
 		return null;
 	}
 	
@@ -668,7 +661,6 @@ public final class InvariantsTools {
 	 */
 	public static int checkCanonity(ArrayList<ArrayList<Integer>> invMatrix) {
 		int nonCardinal = 0;
-		//int size = invMatrix.size();
 		for (ArrayList<Integer> inv : invMatrix) {
 			int nextT = 0;
 			int result = 0;
@@ -683,7 +675,6 @@ public final class InvariantsTools {
 			}
 
 			boolean card = false;
-
 			for (int t = nextT + 1; t < inv.size(); t++) {
 				int value = inv.get(t);
 				if (value == 0)
@@ -697,11 +688,9 @@ public final class InvariantsTools {
 					break;
 				}
 			}
-
 			if (!card)
 				nonCardinal++;
 		}
-		
 		return nonCardinal;
 	}
 	
@@ -1101,7 +1090,6 @@ public final class InvariantsTools {
 				result.add(i);
 			}
 		}
-		
 		return result;
 	}
 	
@@ -1120,7 +1108,6 @@ public final class InvariantsTools {
 				result.add(new ArrayList<Integer>(vector));
 			}
 		}
-		
 		return result;
 	}
 	
@@ -1137,9 +1124,7 @@ public final class InvariantsTools {
 			return frequency;
 		}
 		
-		//int invNumber = invariants.size();
 		int invSize = invariants.get(0).size();
-		
 		if(mmMode)
 			invSize--;
 		
@@ -1153,7 +1138,6 @@ public final class InvariantsTools {
 			}
 			frequency.add(freq);
 		}
-		
 		return frequency;
 	}
 	
@@ -1191,7 +1175,6 @@ public final class InvariantsTools {
 			}
 			frequency.add(freq);
 		}
-		
 		return frequency;
 	}
 	
@@ -1317,7 +1300,6 @@ public final class InvariantsTools {
 							inArcs++;
 						}
 					}
-
 					for (Arc a : el.getOutArcs()) {
 						if (a.getArcType() != TypeOfArc.READARC) //nie liczy się: to jest in-arc w myśl dziwnych definicji!
 							outArcs++;
@@ -1343,31 +1325,6 @@ public final class InvariantsTools {
     	return results;
     }
     
-    
-    
-	/*
-	int supSize = candidateSupport.size();
-	ArrayList<ArrayList<Integer>> Hk = new ArrayList<ArrayList<Integer>>();
-	for(int s : candidateSupport) {
-		Hk.add(CMatrix.get(s));
-	}
-	double[][] A = new double[supSize][CMatrix.get(0).size()];
-	for(int x=0; x < supSize; x++) {
-		for(int y=0; y < CMatrix.get(0).size(); y++) {
-			A[x][y] = Hk.get(x).get(y);
-		}
-	}
-	Matrix xx = new Matrix(A);
-	int rank = xx.transpose().rank();
-	
-	if(supSize <= rank + 1) {
-		globalIncidenceMatrix.add(incMatrixNewRow);
-		globalIdentityMatrix.add(invCandidate);
-	} else {
-		newRejected++;
-	}
-	*/
-    
 	/**
 	 * Metoda zwraca wektor określający, czy dany t-inwariant jest wykonalny czy nie.
 	 * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
@@ -1387,7 +1344,6 @@ public final class InvariantsTools {
 			else
 				results.add(1); //feasible
 		}
-		
 		return results;
 	}
     
@@ -1401,8 +1357,6 @@ public final class InvariantsTools {
 			ArrayList<Transition> transitions) {
     	
 		ArrayList<Integer> readarcTransitions = new ArrayList<Integer>();
-    	//
-    	
 		for(int trans : readArcTransLocations) {
     		if(support.contains(trans)) {
     			readarcTransitions.add(trans);
@@ -1415,7 +1369,6 @@ public final class InvariantsTools {
 				ArrayList<Place> connPlaces = new ArrayList<Place>();
 				
 				for(ElementLocation el : transition.getElementLocations()) {
-					
 					for(Arc arc : el.getInArcs()) {
 						if(arc.getArcType() == TypeOfArc.READARC) {
 							Place p = (Place) arc.getStartNode();
@@ -1436,7 +1389,6 @@ public final class InvariantsTools {
 				for(ArrayList<Integer> set : connectedTransitions) {
 					//intersection:
 					ArrayList<Integer> test = new ArrayList<Integer>(set);
-					
 				    test.retainAll(support);
 				    if(test.isEmpty())
 				    	return true; //non feasible   
@@ -1562,7 +1514,6 @@ public final class InvariantsTools {
 				}
 			}
 		}
-		
 		return results;
 	}
 	
@@ -1666,27 +1617,23 @@ public final class InvariantsTools {
 			invClass = -99;
 		}
 		
-			
 		if(checkCanonitySingle(invariant))
 			canonical = 1;
 		else
 			canonical = -1;
 		
 		//informacje o połączeniach:
-		
 		ArrayList<Integer> transIDdouble = new ArrayList<Integer>();
-    	//if(searchDoubleArcs) {
-    		InvariantsCalculator ic = new InvariantsCalculator(true);
-    		ArrayList<ArrayList<Integer>> doubleArcs = ic.getDoubleArcs();
-    		
-    		for(int i=0; i<transitions.size(); i++)
-    			transIDdouble.add(0);
-    		
-    		for(ArrayList<Integer> pair : doubleArcs) {
-				int value = transIDdouble.get(pair.get(1));
-				transIDdouble.set(pair.get(1), value+1);
-    		}
-    	//}
+		InvariantsCalculator ic = new InvariantsCalculator(true);
+		ArrayList<ArrayList<Integer>> doubleArcs = ic.getDoubleArcs();
+
+		for(int i=0; i<transitions.size(); i++)
+			transIDdouble.add(0);
+
+		for(ArrayList<Integer> pair : doubleArcs) {
+			int value = transIDdouble.get(pair.get(1));
+			transIDdouble.set(pair.get(1), value+1);
+		}
 		
 		for(int e=0; e<invSize; e++) {
 			int supp = invariant.get(e);

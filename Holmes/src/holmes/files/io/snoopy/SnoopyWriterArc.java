@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -16,6 +17,7 @@ import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.subnets.SubnetsTools;
 
 public class SnoopyWriterArc {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<Place> places;
 	private ArrayList<Transition> transitions;
 	private ArrayList<MetaNode> metanodes;
@@ -149,7 +151,7 @@ public class SnoopyWriterArc {
 					
 					if(startN instanceof Place) {
 						if(metanode.getMetaType() != MetaType.SUBNETTRANS) {
-							GUIManager.getDefaultGUIManager().log("Error (759317895): wrong subnet type for interface node.", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00117critErr"), "error", true);
 						}
 						
 						boolean holmes = weNeedToGoDeeper(metanode, startN, true);
@@ -171,7 +173,7 @@ public class SnoopyWriterArc {
 						}
 						boolean ok = metaArcs.remove(metaInArc);
 						if(!ok) {
-							GUIManager.getDefaultGUIManager().log("Error: no meta-arc for existing arc of the interface node.", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00118critErr"), "error", true);
 						}
 
 						//metaInArc to łuk wejściowy, z niego wyciągamy ElementLocation startNode'a
@@ -217,7 +219,7 @@ public class SnoopyWriterArc {
 						
 					} else { //(startN instanceof Transition)
 						if(metanode.getMetaType() != MetaType.SUBNETPLACE) {
-							GUIManager.getDefaultGUIManager().log("Critical error: wrong subnet type for interface node.", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00119critErr"), "error", true);
 						}
 						
 						boolean deepSh = weNeedToGoDeeper(metanode, startN, true);
@@ -239,7 +241,7 @@ public class SnoopyWriterArc {
 						}
 						boolean ok = metaArcs.remove(metaInArc);
 						if(!ok) {
-							GUIManager.getDefaultGUIManager().log("Error: no meta-arc for existing arc of the interface node.", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00120critErr"), "error", true);
 						}	
 						
 						//metaInArc to łuk wejściowy, z niego wyciągamy ElementLocation startNode'a
@@ -368,7 +370,7 @@ public class SnoopyWriterArc {
 				
 					if(endN instanceof Place) {
 						if(metanode.getMetaType() != MetaType.SUBNETTRANS) {
-							GUIManager.getDefaultGUIManager().log("Critical error: wrong subnet type for interface node.", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00121critErr"), "error", true);
 						}
 						
 						boolean deepSh = weNeedToGoDeeper(metanode, startN, false);
@@ -390,7 +392,7 @@ public class SnoopyWriterArc {
 						}
 						boolean ok = metaArcs.remove(metaOutArc);
 						if(!ok) {
-							GUIManager.getDefaultGUIManager().log("Error: no meta-arc for existing arc of the interface node.", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00122critErr"), "error", true);
 						}
 						
 						//metaOutArc to łuk wyjściowy, z niego wyciągamy ElementLocation startNode'a
@@ -436,7 +438,7 @@ public class SnoopyWriterArc {
 						NET1halfY = (NET1realTargetY + NET1realSourceY) / 2;
 					} else { //(endN instanceof Transition)
 						if(metanode.getMetaType() != MetaType.SUBNETPLACE) {
-							GUIManager.getDefaultGUIManager().log("Critical error: wrong subnet type for interface node.", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00123critErr"), "error", true);
 						}
 						
 						boolean deepSh = weNeedToGoDeeper(metanode, startN, false);
@@ -458,7 +460,7 @@ public class SnoopyWriterArc {
 						}
 						boolean ok = metaArcs.remove(metaOutArc);
 						if(!ok) {
-							GUIManager.getDefaultGUIManager().log("Error: no meta-arc for existing arc of the interface node.", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00124critErr"), "error", true);
 						}
 
 						//metaInArc to łuk wejściowy, z niego wyciągamy ElementLocation startNode'a
@@ -583,7 +585,7 @@ public class SnoopyWriterArc {
 
 					
 				} else if(interfacesIN.contains(startN) && interfacesOUT.contains(endN) && arcStartElLocation.getSheetID() == 0) {
-					GUIManager.getDefaultGUIManager().log("Error - SnoopyWriter encountered problem with net structure.", "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00125"), "error", true);
 				} else { 
 					if(startN instanceof Place) {
 						int addToSPPEDAsSource = holmesPlacesID.lastIndexOf(startN.getID()); //który to był
@@ -699,16 +701,13 @@ public class SnoopyWriterArc {
 		int arcNumber = normalArcs.size() - metaArcsTotal;
 		
 		if(howMany != arcNumber) {
-			GUIManager.getDefaultGUIManager().log("Arcs saved do not match size of Arcs internal set."
-					+ " Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.",
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00126"),
 					 "error", true);
 			
 			if(howMany > arcNumber) 
-				GUIManager.getDefaultGUIManager().log("More arcs saved than should be present in the model. Please notice "
-						+ "authors of the program.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00127"), "error", true);
 			else
-				GUIManager.getDefaultGUIManager().log("Less arcs saved than should be present in the model. Please notice "
-						+ "authors of the program.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00128"), "error", true);
 		}
 		
 		return baseIDforNode + 1;
@@ -801,8 +800,8 @@ public class SnoopyWriterArc {
 					subSourcePoint.add(source.grParentsLocation.get(0));
 				} else {
 					if(sMetaNode.getMetaType() != MetaType.SUBNETTRANS) {
-						GUIManager.getDefaultGUIManager().log("Critical error while saving arc: "+arcus.toString()
-								+" Wrong metanode:"+sMetaNode.getMetaType(), "error", true);
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00129a")+" "+arcus.toString()
+								+" "+lang.getText("LOGentry00129b")+sMetaNode.getMetaType(), "error", true);
 						return IDbackup+1+spaceBetweenIDs;
 					}
 					int index = holmesCoarseTransitionsID.lastIndexOf(sourceNode.getID()); //który to był
@@ -811,7 +810,8 @@ public class SnoopyWriterArc {
 					subSourcePoint.add(source.grParentsLocation.get(0));
 				}
 			} else {
-				GUIManager.getDefaultGUIManager().log("Critical error while saving arc: "+arcus.toString()+" Unrecognized node:"+sourceNode, "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00130a")+" "+arcus.toString()+" "
+						+lang.getText("LOGentry00130b")+sourceNode, "error", true);
 				return IDbackup+1+spaceBetweenIDs;
 			}
 			
@@ -836,8 +836,8 @@ public class SnoopyWriterArc {
 					subTargetPoint.add(source.grParentsLocation.get(0));
 				} else {
 					if(sMetaNode.getMetaType() != MetaType.SUBNETTRANS) {
-						GUIManager.getDefaultGUIManager().log("Critical error while saving arc: "+arcus.toString()
-								+" Wrong metanode:"+sMetaNode.getMetaType(), "error", true);
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00131a")+" "+arcus.toString()
+								+" "+lang.getText("LOGentry00131b")+sMetaNode.getMetaType(), "error", true);
 						return IDbackup+1+spaceBetweenIDs;
 					}
 					int index = holmesCoarseTransitionsID.lastIndexOf(targetNode.getID()); //który to był
@@ -846,7 +846,8 @@ public class SnoopyWriterArc {
 					subTargetPoint.add(source.grParentsLocation.get(0));
 				}
 			} else {
-				GUIManager.getDefaultGUIManager().log("Critical error while saving arc: "+arcus.toString()+" Unrecognized node:"+sourceNode, "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00132a")+" "+arcus.toString()+" "
+						+lang.getText("LOGentry00132b")+sourceNode, "error", true);
 				return IDbackup+1+spaceBetweenIDs;
 			}
 			Point sPoint = subSourcePoint.get(subSourcePoint.size()-1);
@@ -855,7 +856,6 @@ public class SnoopyWriterArc {
 			int halfY = (tPoint.y + sPoint.y) / 2;
 			halfPoint.add(new Point(halfX, halfY));
 		}
-		
 		
 		write(bw, "      <edge source=\""+mainSourceID+"\" target=\""+mainTargetID+"\" id=\""+(grParents.get(0)-5)+
 				"\" net=\""+(subnetsPath.get(0).subnet)+"\">");
@@ -1011,7 +1011,6 @@ public class SnoopyWriterArc {
 									continue;	
 								}
 							}
-								
 						}
 					}
 				}
@@ -1080,7 +1079,6 @@ public class SnoopyWriterArc {
 		int xOff = 0;
 		//int yOff = 0;
 		for(Place p : places) { //najpierw wyjściowe z miejsc
-			//ArrayList<ElementLocation> clones = p.getElementLocations();
 			int location = -1;
 			for(ElementLocation el : p.getElementLocations()) { // dla wszystkich jego lokalizacji
 				location++; // która faktycznie to jest, jeśli przetwarzamy portal
@@ -1099,16 +1097,13 @@ public class SnoopyWriterArc {
 						
 						int addToSPPEDAsSource = holmesPlacesID.lastIndexOf(sourceHolmes.getID()); //który to był
 						if(addToSPPEDAsSource == -1) {
-							@SuppressWarnings("unused")
-							int WTF= 1; //!!! IMPOSSIBRU!!!!
-							return;
+							return; //IMPOSSIBRU!
 						}
 						SnoopyWriterPlace source = snoopyWriterPlaces.get(addToSPPEDAsSource);
 						int nodeSourceID = source.snoopyStartingID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
 						int realSourceY = source.grParentsLocation.get(location).y;
-						
 						
 						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
 						int addToSPPEDAsTarget = holmesTransitionsID.lastIndexOf(targetHolmes.getID());
@@ -1193,11 +1188,11 @@ public class SnoopyWriterArc {
 						
 						howMany++;
 					} catch (Exception e) {
-						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00133a")+" "
+								+a.getStartNode().getName()+" "+lang.getText("LOGentry00133b")+" "
 								+ a.getEndNode().getName(), "error", true);
 					}
 				}
-				
 			} //dla wszystkich lokalizacji
 			//iteracja++;
 		} //dla wszystkich miejsc
@@ -1219,21 +1214,17 @@ public class SnoopyWriterArc {
 						Node targetHolmes = a.getEndNode(); //tutaj trafia łuk w programie Holmes (w miejsce)
 						Node sourceHolmes = a.getStartNode(); //stąd wychodzi (tranzycja)
 						//przy czym należy okreslić, do której lokalizacji
-						
 						//sourceHolmes == t
 						
 						int addToSPPEDAsSource = holmesTransitionsID.lastIndexOf(sourceHolmes.getID()); //który to był
 						if(addToSPPEDAsSource == -1) {
-							@SuppressWarnings("unused")
-							int WTF= 1; //!!! IMPOSSIBRU!!!!
-							return;
+							return; //!!! IMPOSSIBRU!!!!
 						}
 						SnoopyWriterTransition source = snoopyWriterTransitions.get(addToSPPEDAsSource);
 						int nodeSourceID = source.snoopyStartingID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
 						int realSourceY = source.grParentsLocation.get(location).y;
-						
 						
 						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
 						int addToSPPEDAsTarget = holmesPlacesID.lastIndexOf(targetHolmes.getID());
@@ -1318,29 +1309,23 @@ public class SnoopyWriterArc {
 
 						howMany++;
 					} catch (Exception e) {
-						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00134a")+" "
+								+a.getStartNode().getName()+" "+lang.getText("LOGentry00134b")+" "
 								+ a.getEndNode().getName(), "error", true);
 					}
 				}
-				
 			} //dla wszystkich lokalizacji
 			//iteracja++;
 		} //dla wszystkich tranzycji
 		int arcNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().size();
 		if(howMany != arcNumber) {
-			GUIManager.getDefaultGUIManager().log("Arcs saved do not match size of Arcs internal set."
-					+ " Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.",
-					 "error", true);
-			
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00135"), "error", true);
 			if(howMany > arcNumber) 
-				GUIManager.getDefaultGUIManager().log("More arcs saved than should be present in the model. Please advise "
-						+ "authors of the program as this may be element-removal algorithmic error.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00136"), "error", true);
 			else
-				GUIManager.getDefaultGUIManager().log("Less arcs saved than should be present in the model. Please advise "
-						+ "authors of the program.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00137"), "error", true);
 		}
 	}
-	
 	
 	/**
 	 * Zapis łuków sieci rozszerzone - dla sieci jednowymiarowej.
@@ -1376,21 +1361,17 @@ public class SnoopyWriterArc {
 						Node targetHolmes = a.getEndNode(); //tutaj trafia łuk w programie Holmes
 						Node sourceHolmes = a.getStartNode(); //stąd wychodzi
 						//przy czym należy określić, do której lokalizacji
-						
 						//sourceHolmes == p
 						
 						int addToSPPEDAsSource = holmesPlacesID.lastIndexOf(sourceHolmes.getID()); //który to był
 						if(addToSPPEDAsSource == -1) {
-							@SuppressWarnings("unused")
-							int WTF= 1; //!!! IMPOSSIBRU!!!!
-							return nextID+10;
+							return nextID+10; //!!! IMPOSSIBRU!!!!
 						}
 						SnoopyWriterPlace source = snoopyWriterPlaces.get(addToSPPEDAsSource);
 						int nodeSourceID = source.snoopyStartingID;
 						int realSourceID = source.grParents.get(location); //k
 						int realSourceX = source.grParentsLocation.get(location).x;
 						int realSourceY = source.grParentsLocation.get(location).y;
-						
 						
 						//teraz pobieramy miejsce dodane do snoopiego - docelowe do naszego
 						int addToSPPEDAsTarget = holmesTransitionsID.lastIndexOf(targetHolmes.getID());
@@ -1483,11 +1464,11 @@ public class SnoopyWriterArc {
 						
 						howManySaved++;
 					} catch (Exception e) {
-						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00138a")+" "
+								+a.getStartNode().getName()+" "+lang.getText("LOGentry00138b")+" "
 								+ a.getEndNode().getName(), "error", true);
 					}
 				}
-				
 			} //dla wszystkich lokalizacji
 			//iteracja++;
 		} //dla wszystkich miejsc
@@ -1517,9 +1498,7 @@ public class SnoopyWriterArc {
 						
 						int addToSPPEDAsSource = holmesTransitionsID.lastIndexOf(sourceHolmes.getID()); //który to był
 						if(addToSPPEDAsSource == -1) {
-							@SuppressWarnings("unused")
-							int WTF= 1; //!!! IMPOSSIBRU!!!!
-							return nextID + 10;
+							return nextID + 10; //!!! IMPOSSIBRU!!!!
 						}
 						SnoopyWriterTransition source = snoopyWriterTransitions.get(addToSPPEDAsSource);
 						int nodeSourceID = source.snoopyStartingID;
@@ -1618,25 +1597,21 @@ public class SnoopyWriterArc {
 
 						howManySaved++;
 					} catch (Exception e) {
-						GUIManager.getDefaultGUIManager().log("Unable to save arc from "+a.getStartNode().getName()+" to "
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00139a")+" "
+								+a.getStartNode().getName()+" "+lang.getText("LOGentry00139b")+" "
 								+ a.getEndNode().getName(), "error", true);
 					}
 				}
-				
 			} //dla wszystkich lokalizacji
 			//iteracja++;
 		} //dla wszystkich tranzycji
 		
 		if(howManySaved != howManyToSave && arcClass != TypeOfArc.READARC) {
-			GUIManager.getDefaultGUIManager().log("Arcs saved do not match size of Arcs internal set."
-					+ " Meaning: Snoopy SPPED write error. Please ensure after loading that net is correct.",
-					 "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00140"), "error", true);
 			if(howManySaved > howManyToSave) 
-				GUIManager.getDefaultGUIManager().log("More arcs saved than should be present in the model. Please advise "
-						+ "authors of the program as this may be element-removal algorithmic error.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00141"), "error", true);
 			else
-				GUIManager.getDefaultGUIManager().log("Less arcs saved than should be present in the model. Please advise "
-						+ "authors of the program.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00142"), "error", true);
 		}
 		
 		return nextID;

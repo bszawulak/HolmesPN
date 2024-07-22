@@ -95,7 +95,7 @@ public class SettingsManager {
         //checkAndFix(settingsNew, "abyss_version", "1.30 release 30-3-2015");
         //settingsNew.add(new Setting("abyss_version", "1.31 release 7-4-2015"));
         //settingsNew.add(new Setting("abyss_version", "1.37 release 19-4-2015")); //always add new
-        settingsNew.add(new Setting("holmes_version", "1.7.0.0 [subnets, MCS] (Harry Du Bois edition)"));
+        settingsNew.add(new Setting("holmes_version", "1.7.0.1 (Harry Du Bois edition)"));
         //2.0 Tequila Sunset
         settingsNew.add(new Setting("selected_language", "English"));
         checkAndFix(settingsNew, "r_path", "c://Program Files//R//R-3.1.2//bin//Rscript.exe");

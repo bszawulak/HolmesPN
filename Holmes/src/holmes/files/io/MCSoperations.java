@@ -11,11 +11,13 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.utilities.Tools;
 import holmes.workspace.ExtensionFileFilter;
 
 public class MCSoperations {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	
 	/**
 	 * Metoda służąca do zapisu listy zbiorów MCS wybranej tranzycji.
@@ -28,10 +30,11 @@ public class MCSoperations {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("ObjR single MCS data file (.objR)",  new String[] { "OBJR" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select objR MCS file target path", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("MCS_entry001a")
+				, lang.getText("MCS_entry001b"), "");
 		
 		if(selectedFile.isEmpty()) {
-			JOptionPane.showMessageDialog(null, "Incorrect file location.", "Operation failed.", 
+			JOptionPane.showMessageDialog(null, lang.getText("MCS_entry002"), lang.getText("MCS_entry003"), 
 					JOptionPane.ERROR_MESSAGE);
 		} else {
 			String extension = ".objR";
@@ -44,7 +47,6 @@ public class MCSoperations {
 				pw.write("Location:"+pos+"\n");
 				
 				String buffer = "";
-				//pw.write("[["+data.accessMCStransitions().get(pos)+"]]\n");
 				ArrayList<ArrayList<Integer>> dataMatrix = data.getMCSlist(pos);
 				ArrayList<ArrayList<Integer>> infoMatrix = data.getMCSlistInfo(pos);
 				
@@ -73,7 +75,8 @@ public class MCSoperations {
 				pw.close();
 				return true;
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("MCS data file writing operation failed.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00205exception")
+						+" "+e.getMessage(), "error", true);
 				return false;
 			}
 		}
@@ -89,7 +92,7 @@ public class MCSoperations {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("MCS full data file (.mcs)",  new String[] { "MCS" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select MCS data file target path", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("MCS_entry004a"), lang.getText("MCS_entry004b"), "");
 		
 		if(selectedFile.isEmpty()) {
 			//JOptionPane.showMessageDialog(null,"Incorrect file location.","Operation failed.",JOptionPane.ERROR_MESSAGE);
@@ -134,7 +137,7 @@ public class MCSoperations {
 				pw.close();
 				return true;
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("MCS data file writing operation failed.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00206exception")+" "+e.getMessage(), "error", true);
 				return false;
 			}
 		}
@@ -149,10 +152,10 @@ public class MCSoperations {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("ObjR single MCS data file (.objr)",  new String[] { "OBJR" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", "Select objR MCS data file", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("MCS_entry005a"), lang.getText("MCS_entry005b"), "");
 		
 		if(selectedFile.isEmpty()) {
-			JOptionPane.showMessageDialog(null, "Incorrect file location.", "Operation failed.", 
+			JOptionPane.showMessageDialog(null, lang.getText("MCS_entry006"), lang.getText("MCS_entry006"), 
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
@@ -182,13 +185,13 @@ public class MCSoperations {
 				}
 				
 				if(insertPos >= dataSize) {
-					JOptionPane.showMessageDialog(null, "Invalid entry location. Not enough transition in net.", 
-							"Operation failed.", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("MCS_entry008"), 
+							lang.getText("MCS_entry007"), JOptionPane.ERROR_MESSAGE);
 					buffer.close();
 					return false;
 				}
 				
-				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append("Net transition: "+
+				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append(lang.getText("MCS_entry009")+" "+
 						GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(insertPos).getName()+"\n");
 				
 				ArrayList<ArrayList<Integer>> dataMatrix = new ArrayList<ArrayList<Integer>>();
@@ -213,10 +216,10 @@ public class MCSoperations {
 					for(String element : numberOfSet) {
 						int t = Integer.parseInt(element);
 						if(t >= transSize) {
-							JOptionPane.showMessageDialog(null, "Transition index in read MCS set exceed transitions number!", 
-									"Operation failed.", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(null, lang.getText("MCS_entry010"), 
+									lang.getText("MCS_entry007"), JOptionPane.ERROR_MESSAGE);
 							buffer.close();
-							GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append("MCS data for given transition read: failed.\n");
+							GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append(lang.getText("LOGentry00207"));
 							return false;
 						}
 						set.add(t);
@@ -242,13 +245,13 @@ public class MCSoperations {
 				}
 				dataCore.insertMCS(dataMatrix, infoMatrix, insertPos, true);
 
-				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append("MCS data for given transition read: success.\n");
+				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append(lang.getText("LOGentry00208"));
 				
 				buffer.close();
 				return true;
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Reading MCS data file failed. File corrupt.", "error", true);
-				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append("MCS data for given transition read: failed.\n");
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00209exception")+" "+e.getMessage(), "error", true);
+				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append(lang.getText("LOGentry00209exception")+" "+e.getMessage()+"\n");
 				return false;
 			}
 		}
@@ -262,10 +265,10 @@ public class MCSoperations {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("MCS full data file (.mcs)",  new String[] { "MCS" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", "Select MCS data file", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("MCS_entry011a"), lang.getText("MCS_entry011b"), "");
 		
 		if(selectedFile.isEmpty()) {
-			JOptionPane.showMessageDialog(null,"Incorrect file location.","Operation failed.",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,lang.getText("MCSC_entry012"),lang.getText("MCSC_entry007"),JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
 			MCSDataMatrix dataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
@@ -282,8 +285,8 @@ public class MCSoperations {
 				
 				int transSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
 				if(dataSize != transSize) {
-					JOptionPane.showMessageDialog(null, "MCS data file refers to different number of transitions!", 
-							"Operation failed.", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("MCSC_entry013"), 
+							lang.getText("MCSC_entry007"), JOptionPane.ERROR_MESSAGE);
 					buffer.close();
 					return false;
 				}
@@ -355,17 +358,17 @@ public class MCSoperations {
 					dataCore.insertMCS(dataVector, infoMatrix, readData-1, false);
 				}
 				if(transSize != readData) {
-					JOptionPane.showMessageDialog(null, "Warning! Not all MCS data have been read!", 
-							"Operation malfunction.", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("MCSC_entry014"), 
+							lang.getText("MCSC_entry015"), JOptionPane.WARNING_MESSAGE);
 				}
 				
 				int dataMCSsize = dataCore.getCalculatedMCSnumber();
-				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append("MCS data for whole net have been read: "+dataMCSsize+" lists with sets.\n");
+				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append(lang.getText("MCSC_entry016a")+ " "+dataMCSsize+" "+lang.getText("MCSC_entry016b"));
 				
 				buffer.close();
 				return true;
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Reading MCS data file failed. File corrupt.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00210exception")+" "+e.getMessage(), "error", true);
 				return false;
 			}
 		}

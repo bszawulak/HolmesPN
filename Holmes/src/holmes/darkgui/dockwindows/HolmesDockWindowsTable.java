@@ -5828,7 +5828,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     selInd = Integer.parseInt(invIndex);
                     selectedT_invIndex = selInd - 1;
                 } catch (Exception ignored) {
-                    overlord.log(lang.getText("LOGentry00046error"), "error", true);
+                    overlord.log(lang.getText("LOGentry00046exception"), "error", true);
                     return;
                 }
                 showT_invariant();
@@ -6566,10 +6566,8 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 new HolmesInvariantsViewer(selectedT_invIndex);
             } catch (Exception ex) {
-                overlord.log(lang.getText("LOGentry00050error") +
-                        "Exception: " + ex.getMessage(), "error", true);
+                overlord.log(lang.getText("LOGentry00050exception") +  "Exception: " + ex.getMessage(), "error", true);
             }
-
         });
         components.add(showDetailsButton);
 

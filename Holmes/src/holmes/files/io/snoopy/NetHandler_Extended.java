@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 
+import holmes.darkgui.LanguageManager;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 //import org.xml.sax.helpers.DefaultHandler;
@@ -23,6 +24,7 @@ import holmes.petrinet.elements.MetaNode.MetaType;
  * Parser sieci rozszerzonych (Snoopy)
  */
 public class NetHandler_Extended extends NetHandler {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	public boolean Snoopy = false;
 	public boolean node = false;
 	public boolean atribute = false;
@@ -101,7 +103,7 @@ public class NetHandler_Extended extends NetHandler {
 		
 		if (qName.equalsIgnoreCase("node")) {
 			node = true;
-			nodeID = IdGenerator.getNextId(); // Integer.parseInt(attributes.getValue(0));
+			nodeID = IdGenerator.getNextId();
 		}
 		
 		if (qName.equalsIgnoreCase("attribute")) {
@@ -167,10 +169,9 @@ public class NetHandler_Extended extends NetHandler {
 					if(yoff_name < -8)
 						yoff_name = -55; //nad node, uwzględnia różnicę
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (989048217) | Exception:  "+ex.getMessage(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00103_1exception")+ex.getMessage(), "error", true);
 				}
 			}
-
 			graphicNamesXYLocationsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
 		}
 
@@ -189,7 +190,6 @@ public class NetHandler_Extended extends NetHandler {
 				if(netNumber > globalNetsCounted)
 					globalNetsCounted = netNumber;
 				
-				//TODO:
 				double resizeFactor = 1;
 				try {
 					int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
@@ -198,16 +198,14 @@ public class NetHandler_Extended extends NetHandler {
 					if(resizeFactor==0)
 						resizeFactor=1;
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (474849019) | Exception:  "+ex.getMessage(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00104exception")+ex.getMessage(), "error", true);
 				}
 				
 				xPos *= resizeFactor;
 				yPos *= resizeFactor;
-				
 				int p1 = (int) xPos;
 				int p2 = (int) yPos;
 				graphicPointsXYLocationsList.add(new Point(p1, p2));
-				//graphicPointsSnoopyIDList.add(snoopyID);
 				graphicPointsNetNumbers.add(netNumber);
 				
 				if(coarseCatcher) {
@@ -371,15 +369,12 @@ public class NetHandler_Extended extends NetHandler {
 					graphPanel.setSize(new Dimension(globalElementLocationList.get(tmpX).getPosition().x + 90, 
 							globalElementLocationList.get(tmpY).getPosition().y + 90));
 				}
-
 			}
-			
 			// Tablice łuków dla ElementLocation
 			nodesList.addAll(tmpTransitionList);
 		}
 
 		// Tworzenie wierzchołka i wszystkich jego ElementLocation
-
 		if (qName.equalsIgnoreCase("node")) {
 			ArrayList<ElementLocation> elementLocationsList = new ArrayList<ElementLocation>();
 			ArrayList<ElementLocation> namesElLocations = new ArrayList<ElementLocation>();
@@ -390,8 +385,8 @@ public class NetHandler_Extended extends NetHandler {
 
 			if(!coarseCatcher) {
 				if(graphicPointsXYLocationsList.size() != graphicNamesXYLocationsList.size()) {
-					GUIManager.getDefaultGUIManager().log("Warning: wrong number of names / nodes locations for "+nodeName+
-							". Resetting names locations.", "warning", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00105a")+" "+nodeName+
+							lang.getText("LOGentry00105b"), "warning", true);
 					
 					graphicNamesXYLocationsList.clear();
 					for(int g=0; g<graphicPointsXYLocationsList.size(); g++) {
@@ -465,7 +460,6 @@ public class NetHandler_Extended extends NetHandler {
 		}
 
 		// tworzenie łuku
-
 		if (qName.equalsIgnoreCase("edge")) {
 			int tmpSource = 0;
 			int tmpTarget = 0;
