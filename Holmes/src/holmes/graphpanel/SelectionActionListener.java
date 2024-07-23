@@ -81,7 +81,7 @@ public interface SelectionActionListener {
 		 * @return Arc - zaznaczony łuk
 		 */
 		public Arc getArc() {
-			if (getArcGroup() == null || getArcGroup().size() == 0)
+			if (getArcGroup() == null || getArcGroup().isEmpty())
 				return null;
 			return getArcGroup().get(0);
 		}
@@ -136,7 +136,7 @@ public interface SelectionActionListener {
 		 * @return ElementLocation - lokalizacja zaznaczonego elementu
 		 */
 		public ElementLocation getElementLocation() {
-			if (getElementLocationGroup() == null || getElementLocationGroup().size() == 0)
+			if (getElementLocationGroup() == null || getElementLocationGroup().isEmpty())
 				return null;
 			return getElementLocationGroup().get(0);
 		}

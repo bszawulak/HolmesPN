@@ -12,6 +12,7 @@ import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.GUIController;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.popupmenu.*;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
@@ -35,6 +36,7 @@ import holmes.workspace.WorkspaceSheet;
 public class GraphPanel extends JComponent {
 	@Serial
 	private static final long serialVersionUID = -5746225670483573975L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private static final int meshSize = 20;
 	private GUIManager overlord;
 	private PetriNet petriNet;
@@ -141,7 +143,8 @@ public class GraphPanel extends JComponent {
 				modeName = this.getDrawMode().toString();
 				image = Tools.getImageFromIcon("/cursors/"+ modeName + ".gif");
 			} catch (Exception e ) {
-				overlord.log("Critical error, no "+modeName+".gif in jar file. Thank java un-catchable exceptions...", "error", true);
+				String strB = String.format(lang.getText("LOGentry00330exception"), modeName);
+				overlord.log(strB, "error", true);
 				//i tak nic nie pomoże, jak powyższe się wywali. Taka nasza Java piękna i wesoła.
 			}
 			Point hotSpot = new Point(0, 0);
@@ -239,9 +242,8 @@ public class GraphPanel extends JComponent {
 		try {
 			drawPetriNet(g2d);
 		} catch (Exception e) {
-			e.printStackTrace();
-			overlord.log("CRITICAL error while drawing net. (Which should not happen. Obviously.) "
-					+ "Loaded file probably corrupted (if after project loading). Restarting program.", "error", true);
+			//e.printStackTrace();
+			overlord.log(lang.getText("LOGentry00331critErr"), "error", true);
 			overlord.reset.emergencyRestart();
 		}
 	}
@@ -666,9 +668,8 @@ public class GraphPanel extends JComponent {
 	private void addNewSubnetPT(Point p) {
 		if (isLegalLocation(p)) {
 			if(overlord.getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1")) {
-					JOptionPane.showMessageDialog(null, "Snoopy compatibility mode is activated in program options.\n"
-							+ "Dual interface (PT) subnetworks are not allowed.", 
-							"Compatibility issue", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("GP_entry001"),
+							lang.getText("GP_entry001t"), JOptionPane.INFORMATION_MESSAGE);
 					return;
 			}
 			overlord.getWorkspace().newTab(true, p, this.sheetId, MetaType.SUBNET);
@@ -1064,24 +1065,24 @@ public class GraphPanel extends JComponent {
 					}
 					case PLACE -> {
 						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-							JOptionPane.showMessageDialog(null, "Normal place cannot be used with XTPN nodes.",
-									"Problem", JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(null, lang.getText("GP_entry002"),
+									lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						} else {
 							_putPlace();
 						}
 					}
 					case TRANSITION -> {
 						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-							JOptionPane.showMessageDialog(null, "Normal transition cannot be used with XTPN nodes.",
-									"Problem", JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(null, lang.getText("GP_entry003"),
+									lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						} else {
 							_putTransition();
 						}
 					}
 					case STOCHASTICTRANS -> {
 						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-							JOptionPane.showMessageDialog(null, "Stochastic transition cannot be used with XTPN nodes.",
-									"Problem", JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(null, lang.getText("GP_entry004"),
+									lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						} else {
 							_putStochasticTransition();
 						}
@@ -1092,8 +1093,8 @@ public class GraphPanel extends JComponent {
 					}
 					case TIMETRANSITION -> {
 						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-							JOptionPane.showMessageDialog(null, "Time transition cannot be used with XTPN nodes.",
-									"Problem", JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(null, lang.getText("GP_entry005"),
+									lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						} else {
 							_putTimeTransition();
 						}
@@ -1102,8 +1103,8 @@ public class GraphPanel extends JComponent {
 						if(project.getNodes().isEmpty()) {
 							_putXTPNtransition(project);
 						} else if (project.hasNonXTPNnodes()){
-							JOptionPane.showMessageDialog(null, "TODO: transformation. Please create clean new project to use XTPN nodes.",
-									"Compatibility issue", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null, lang.getText("GP_entry006"),
+									lang.getText("GP_entry006t"), JOptionPane.INFORMATION_MESSAGE);
 							//TODO
 							/*
 							String[] options = {"Place and transform project", "Cancel placement"};
@@ -1128,8 +1129,8 @@ public class GraphPanel extends JComponent {
 						if(project.getNodes().isEmpty()) {
 							_putXTPNplace(project);
 						} else if (project.hasNonXTPNnodes()){
-							JOptionPane.showMessageDialog(null, "TODO: transformation. Please create clean new project to use XTPN nodes.",
-									"Compatibility issue", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null, lang.getText("GP_entry007"),
+									lang.getText("GP_entry007t"), JOptionPane.INFORMATION_MESSAGE);
 							//TODO
 							/*
 							String[] options = {"Place and transform project", "Cancel placement"};
@@ -1151,16 +1152,16 @@ public class GraphPanel extends JComponent {
 					}
 					case CPLACE -> {
 						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-							JOptionPane.showMessageDialog(null, "Color place cannot be used with XTPN nodes.",
-									"Problem", JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(null, lang.getText("GP_entry008"),
+									lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						} else {
 							_putColorPlace();
 						}
 					}
 					case CTRANSITION -> {
 						if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-							JOptionPane.showMessageDialog(null, "Color transition cannot be used with XTPN nodes.",
-									"Problem", JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(null, lang.getText("GP_entry009"),
+									lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						} else {
 							_putColorTransition();
 						}
@@ -1191,14 +1192,14 @@ public class GraphPanel extends JComponent {
 					handleArcsDrawing(el, getDrawMode());
 					
 				} else if (getDrawMode() == DrawModes.ERASER) { //kasowanie czegoś
-					if(overlord.reset.isSimulatorActiveWarning("Operation impossible when simulator is working.", "Warning"))
+					if(overlord.reset.isSimulatorActiveWarning(lang.getText("GP_entry010"), lang.getText("warning")))
 						return;
-					if(overlord.reset.isXTPNSimulatorActiveWarning("Operation impossible when XTPN simulator is working.", "Warning"))
+					if(overlord.reset.isXTPNSimulatorActiveWarning(lang.getText("GP_entry011"), lang.getText("warning")))
 						return;
 					
-					Object[] options = {"Delete", "Cancel",};
-					int n = JOptionPane.showOptionDialog(null, "Do you want to delete selected elements?",
-							"Deletion warning?", JOptionPane.YES_NO_OPTION,
+					Object[] options = {lang.getText("delete"), lang.getText("cancel"),};
+					int n = JOptionPane.showOptionDialog(null, lang.getText("GP_entry012"),
+							lang.getText("GP_entry012t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					if (n == 0) {
 						getSelectionManager().deleteElementLocation(el);
@@ -1229,16 +1230,16 @@ public class GraphPanel extends JComponent {
 			} else { // kliknięto w łuk, więc zostanie on zaznaczony //było: if (a != null) {
 				if (getDrawMode() == DrawModes.ERASER) {
 					if(overlord.reset.isSimulatorActiveWarning(
-							"Operation impossible when simulator is working.", "Warning"))
+							lang.getText("GP_entry010"), lang.getText("warning")))
 						return;
 					if(overlord.reset.isXTPNSimulatorActiveWarning(
-							"Operation impossible when XTPN simulator is working.", "Warning"))
+							lang.getText("GP_entry011"), lang.getText("warning")))
 						return;
 					
-					Object[] options = {"Delete", "Cancel",};
+					Object[] options = {lang.getText("delete"), lang.getText("cancel"),};
 					int n = JOptionPane.showOptionDialog(null,
-							"Do you want to delete selected elements?",
-							"Deletion warning?", JOptionPane.YES_NO_OPTION,
+							lang.getText("GP_entry012"),
+							lang.getText("GP_entry012t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 					if (n == 0) {
 						//overlord.getWorkspace().getProject().restoreMarkingZero();
@@ -1359,8 +1360,8 @@ public class GraphPanel extends JComponent {
 			
 			Node node = clickedLocation.getParentNode();
 			if(node.isInvisible()) {
-				JOptionPane.showMessageDialog(null, "Cannot draw arc to invisible node!", 
-						"Problem", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("GP_entry013"),
+						lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 				return;
 			}
 			
@@ -1369,8 +1370,8 @@ public class GraphPanel extends JComponent {
 					drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
 					return;
 				} else {
-					JOptionPane.showMessageDialog(null, "Only normal arc allowed from meta-node!", 
-							"Problem", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("GP_entry014"),
+							lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 			}
@@ -1386,36 +1387,36 @@ public class GraphPanel extends JComponent {
 					drawnArc.arcXTPNbox.setXTPNinhibitorStatus(true);
 				}else if(arcType == DrawModes.READARC) {
 					if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-						JOptionPane.showMessageDialog(null, "Only XTPN normal arc and inhibitors are allowed in XTPN net mode.",
-								"Wrong arc type", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("GP_entry015"),
+								lang.getText("GP_entry016"), JOptionPane.WARNING_MESSAGE);
 					} else {
 						drawnArc = new Arc(clickedLocation, TypeOfArc.READARC);
 					}
 				} else if(arcType == DrawModes.ARC_INHIBITOR) {
 					if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-						JOptionPane.showMessageDialog(null, "Only XTPN normal arc and inhibitors are allowed in XTPN net mode.",
-								"Wrong arc type", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("GP_entry017"),
+								lang.getText("GP_entry016"), JOptionPane.WARNING_MESSAGE);
 					} else {
 						drawnArc = new Arc(clickedLocation, TypeOfArc.INHIBITOR);
 					}
 				} else if(arcType == DrawModes.ARC_RESET) {
 					if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-						JOptionPane.showMessageDialog(null, "Only XTPN normal arc and inhibitors are allowed in XTPN net mode.",
-								"Wrong arc type", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("GP_entry017"),
+								lang.getText("GP_entry016"), JOptionPane.WARNING_MESSAGE);
 					} else {
 						drawnArc = new Arc(clickedLocation, TypeOfArc.RESET);
 					}
 				} else if(arcType == DrawModes.ARC_EQUAL) {
 					if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-						JOptionPane.showMessageDialog(null, "Only XTPN normal arc and inhibitors are allowed in XTPN net mode.",
-								"Wrong arc type", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("GP_entry017"),
+								lang.getText("GP_entry016"), JOptionPane.WARNING_MESSAGE);
 					} else {
 						drawnArc = new Arc(clickedLocation, TypeOfArc.EQUAL);
 					}
 				} else if(arcType == DrawModes.CARC) {
 					if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-						JOptionPane.showMessageDialog(null, "Only XTPN normal arc and inhibitors are allowed in XTPN net mode.",
-								"Wrong arc type", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("GP_entry017"),
+								lang.getText("GP_entry016"), JOptionPane.WARNING_MESSAGE);
 					} else {
 						drawnArc = new Arc(clickedLocation, TypeOfArc.NORMAL);
 					}
@@ -1423,14 +1424,14 @@ public class GraphPanel extends JComponent {
 			} else {
 				if(clickedLocation.getParentNode() instanceof MetaNode) { //kończymy w meta-node
 					if(drawnArc.getStartLocation().getParentNode() instanceof MetaNode) {
-						JOptionPane.showMessageDialog(null, "Direct connection between two meta-nodes not possible.", 
-								"Problem", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("GP_entry018"),
+								lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						clearDrawnArc();
 						return;
 					}
 					if(drawnArc.getArcType() != TypeOfArc.NORMAL) {
-						JOptionPane.showMessageDialog(null, "Only normal arc can be connected with meta-node.", 
-								"Problem", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("GP_entry019"),
+								lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						clearDrawnArc();
 						return;
 					}
@@ -1438,14 +1439,14 @@ public class GraphPanel extends JComponent {
 					MetaNode n = (MetaNode) clickedLocation.getParentNode();
 
 					if(drawnArc.getStartLocation().getParentNode() instanceof Place && n.getMetaType() == MetaType.SUBNETPLACE ) {
-						JOptionPane.showMessageDialog(null, "Meta-node type P (transitions-interfaced) can get connection only from transitions!", 
-								"Problem", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("GP_entry020"),
+								lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						clearDrawnArc();
 						return;
 					}
 					if(drawnArc.getStartLocation().getParentNode() instanceof Transition && n.getMetaType() == MetaType.SUBNETTRANS ) {
-						JOptionPane.showMessageDialog(null, "Meta-node type T (places-interfaced) can get connection only from places!", 
-								"Problem", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("GP_entry021"),
+								lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						clearDrawnArc();
 						return;
 					}
@@ -1463,14 +1464,14 @@ public class GraphPanel extends JComponent {
 					MetaNode n = (MetaNode) drawnArc.getStartLocation().getParentNode();
 					
 					if(clickedLocation.getParentNode() instanceof Place && n.getMetaType() == MetaType.SUBNETPLACE ) {
-						JOptionPane.showMessageDialog(null, "Meta-node type P (transitions-interfaced) can get connection only from transitions!", 
-								"Problem", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("GP_entry022"),
+								lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						clearDrawnArc();
 						return;
 					}
 					if(clickedLocation.getParentNode() instanceof Transition && n.getMetaType() == MetaType.SUBNETTRANS ) {
-						JOptionPane.showMessageDialog(null, "Meta-node type T (places-interfaced) can get connection only from places!", 
-								"Problem", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("GP_entry023"),
+								lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						clearDrawnArc();
 						return;
 					}
@@ -1484,15 +1485,15 @@ public class GraphPanel extends JComponent {
 					boolean proceed = true;
 					
 					if(isArcDuplicated(drawnArc.getStartLocation(), clickedLocation)) {
-						JOptionPane.showMessageDialog(null,  "Arc going in this direction already exists.", 
-								"Problem", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null,  lang.getText("GP_entry024"),
+								lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 						proceed = false;
 					} else if(isReverseArcPresent(drawnArc.getStartLocation(), clickedLocation)) {
 						if(arcType == DrawModes.ARC) {
 							//JOptionPane.showMessageDialog(null, "Please use Read Arc drawing mode to draw a read-arc!", "Problem", JOptionPane.WARNING_MESSAGE);
 							//proceed = true;
 						} else if(arcType == DrawModes.READARC) {
-							JOptionPane.showMessageDialog(null, "Please remove arc between these two nodes in order to create a read-arc.", "Problem", 
+							JOptionPane.showMessageDialog(null, lang.getText("GP_entry025"), lang.getText("problem"),
 									JOptionPane.WARNING_MESSAGE);
 							proceed = false;
 						} else {
@@ -1508,8 +1509,8 @@ public class GraphPanel extends JComponent {
 						int second = SubnetsTools.isInterface(clickedLocation, metas);
 						
 						if(first > 0 && second > 0) {
-							JOptionPane.showMessageDialog(null, "Two interfaces cannot be linked directly within single subnet.", 
-									"Don't cross the streams!",  JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(null, lang.getText("GP_entry026"),
+									lang.getText("GP_entry026t"),  JOptionPane.WARNING_MESSAGE);
 								proceed = false;
 						}
 					}
@@ -1518,7 +1519,7 @@ public class GraphPanel extends JComponent {
 						if ((arcType == DrawModes.ARC_INHIBITOR || arcType == DrawModes.ARC_RESET || arcType == DrawModes.ARC_EQUAL
 								|| arcType == DrawModes.XINHIBITOR)
 								&& clickedLocation.getParentNode() instanceof Place) {
-							JOptionPane.showMessageDialog(null,  "This type of arc can only go FROM place TO transition!", "Problem", 
+							JOptionPane.showMessageDialog(null,  lang.getText("GP_entry027"), lang.getText("problem"),
 									JOptionPane.WARNING_MESSAGE);
 							clearDrawnArc();
 						} else {
@@ -1740,8 +1741,7 @@ public class GraphPanel extends JComponent {
 		//CompositeTabDock xxx = overlord.getWorkspace().getWorkspaceDock();
 		WorkspaceSheet ws = overlord.getWorkspace().getSelectedSheet();
 		if(ws == null) {
-			overlord.log("Unable to obtaint WorkspaceSheet object. Net sheet panel probably externized outside "
-					+ "program bounds.", "warning", true);
+			overlord.log(lang.getText("LOGentry00332"), "warning", true);
 			return;
 		}
 		

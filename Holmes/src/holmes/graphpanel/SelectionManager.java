@@ -9,6 +9,7 @@ import java.util.List;
 import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.files.io.IOprotocols;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
@@ -27,6 +28,7 @@ import holmes.windows.xtpn.HolmesNodeInfoXTPN;
  */
 public class SelectionManager {
 	private final GUIManager overlord;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private GraphPanel graphPanel;
 	private ArrayList<Node> graphPanelNodes;
 	private ArrayList<Arc> graphPanelArcs;
@@ -365,7 +367,7 @@ public class SelectionManager {
 			this.invokeActionListener();
 			
 			if(functionWarning) {
-				overlord.log("Some functions have been affected by the removal operation. Please read reports above this message.", "error", true);
+				overlord.log(lang.getText("LOGentry00333"), "error", true);
 			}
 //		}
 	}
@@ -460,7 +462,7 @@ public class SelectionManager {
 		this.invokeActionListener();
 		
 		if(functionWarning) {
-			overlord.log("Some functions have been affected by the removal operation. Please read reports above this message.", "error", true);
+			overlord.log(lang.getText("LOGentry00333"), "error", true);
 		}
 	}
 
@@ -656,8 +658,8 @@ public class SelectionManager {
 		// sprawdzenie czy wszystkie elementy sa tego samego typu (Place lub Transition)
 		if(this.getSelectedElementLocations().size() > 1) {
 			//String type = this.getSelectedElementLocations().get(0).getParentNode().getType().toString();
-			JOptionPane.showMessageDialog(null,"Cloning into Portals possible only for one selected node!",
-					"Multiple selection warning", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null,lang.getText("SM_entry001"),
+					lang.getText("SM_entry001t"), JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
@@ -692,8 +694,8 @@ public class SelectionManager {
 		// sprawdzenie czy wszystkie elementy sa tego samego typu (Place lub Transition)
 		if(this.getSelectedElementLocations().size() > 1) {
 			//String type = this.getSelectedElementLocations().get(0).getParentNode().getType().toString();
-			JOptionPane.showMessageDialog(null,"Cloning into Portals possible only for one selected node!",
-					"Multiple selection warning", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null,lang.getText("SM_entry001"),
+					lang.getText("SM_entry001t"), JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		

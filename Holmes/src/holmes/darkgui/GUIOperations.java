@@ -479,14 +479,13 @@ public class GUIOperations {
 			if(fileFormat.equals(".project"))
 				fileFormat = "Holmes project file (.project)";
 
+			String sB = String.format(lang.getText("GUIO_warning003x"), extension, netRealName, fileFormat, additionalWhining);
+
 			Object[] options = {"Use selected anyway", "Use suggested format", "Save as project", "Cancel save",};
 			int n = JOptionPane.showOptionDialog(null,
-							lang.getText("GUIO_warning003")+extension+"\n"
-							+ lang.getText("GUIO_warning003b")+" "+netRealName+"\n"
-							+ lang.getText("GUIO_warning003c")+" "+fileFormat+"\n\n"
-							+ lang.getText("GUIO_warning003d")+additionalWhining,
-							lang.getText("GUIO_warning003title"), JOptionPane.YES_NO_OPTION,
-							JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+					sB, lang.getText("GUIO_warning003title"), JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+
 			if (n == 0) {
 				return extension;
 			} else if (n == 1) {

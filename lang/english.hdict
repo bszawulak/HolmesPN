@@ -46,10 +46,7 @@ GUIO_messageBox001, File choosing error. Cannot proceed.
 LOGentry00015, File choosing error. No extension:
 GUIO_warning001, \nWarning: hierarchical net structure detected. Using Holmes project is strongly advised.\nOther save format will most probably fail.\n
 GUIO_warning002, Warning. There has been a problem detecting type of the Petri net.\nHolmes project file as save is highly recommended.
-GUIO_warning003, Selected net file format:
-GUIO_warning003b, Net real type:
-GUIO_warning003c, Suggested file format:
-GUIO_warning003d, Selected format will not contain all features of the current Petri Net. Resulting file will \ncontain reduced net or will be corrupted.\n
+GUIO_warning003, Selected net file format %s%nNet real type: %s%nSuggested file format: %s%n%nSelected format will not contain all features of the current Petri Net. Resulting file will %ncontain reduced net or will be corrupted.%n
 GUIO_warning003title, Invalid out net file format
 GUIO_button001, Load invariants
 GUIO_button001b, Select invariant file
@@ -304,14 +301,14 @@ SAXTPN_entry007op1, ▲ Increase α-max to
 SAXTPN_entry007op2, ▼ Decrease α-min 
 SAXTPN_entry007op3, ❌ Cancel
 SAXTPN_entry007_1, Proposed value α-max = 
-SAXTPN_entry007_1b,  cannot be lower than current α-min = 
+SAXTPN_entry007_1b, cannot be lower than current α-min =
 SAXTPN_entry007_1c, \nIncrease new α-max or decrease old α-min (default action)?
 SAXTPN_entry007t2, Alpha range problem: α-maximum too low
 SAXTPN_entry008opt1, ▲ Increase β-max to 
 SAXTPN_entry008opt2, ▼ Decrease β-min to 
 SAXTPN_entry008opt3, ❌ Cancel
 SAXTPN_entry008_1, Proposed value β-min = 
-SAXTPN_entry008_2,  cannot be higher than current β-max = 
+SAXTPN_entry008_2, cannot be higher than current β-max =
 SAXTPN_entry008_3, Increase old betaMaximum (default action) or decrease new betaMinimum?
 SAXTPN_entry008t, Beta range problem: β-minimum too high
 SAXTPN_entry009, Input or output XTPN transitions cannot be immediate. Alternatively\nturn off both Alfa and Beta modes for a classical immediate transition.
@@ -1440,14 +1437,65 @@ LOGentry00319exception, Exception (1000128): ProjectReader.readSSAvectors(): fai
 LOGentry00320, Error reading state vector number
 LOGentry00321exception, Exception (1000129): ProjectReader.readSSAvectors(): Reading SSA vectors failed:
 
+//ElementDraw:
+ED_entry001, -no sentence-
+LOGentry00322exception, Exception (1000130): ElementDraw.drawElement() failed:
+LOGentry00323exception, Exception (1000131): ElementDraw.drawElement() failed:
+LOGentry00324exception, Exception (1000132): ElementDraw.drawElement() failed:
+LOGentry00325exception, Exception (1000133): ElementDraw.drawElement() failed:
+LOGentry00326exception, Exception (1000134): ElementDraw.drawElement() failed:
+LOGentry00327exception, Exception (1000135): ElementDraw.drawElement() failed:
+LOGentry00328exception, Exception (1000136): ElementDraw.drawElement() failed:
+LOGentry00329exception, Exception (1000137): ElementDraw.drawElement() failed:
 
+//GraphPanel:
+LOGentry00330exception, Exception (1000138): GraphPanel.setCursorForMode() failed: Critical error, file  %s .gif not found in jar file. This is Java-level problem, please contact authors.
+LOGentry00331critErr, Critical error (2000017) Critical error while drawing net. Loaded file probably corrupted if encountered after project loading. Restarting program.
+GP_entry001, Snoopy compatibility mode is activated in program options.\nDual interface (PT) subnetworks are not allowed.
+GP_entry001t, Compatibility issue
+GP_entry002, Normal place cannot be used with XTPN nodes.
+GP_entry003, Normal transition cannot be used with XTPN nodes.
+GP_entry004, Stochastic transition cannot be used with XTPN nodes.
+GP_entry005, Time transition cannot be used with XTPN nodes.
+GP_entry006, XTPN trans: UnderConstruction: transformation. Please create clean new project to use XTPN nodes.
+GP_entry006t, Compatibility issue
+GP_entry007, XTPN place: UnderConstruction: transformation. Please create clean new project to use XTPN nodes.
+GP_entry007t, Compatibility issue
+GP_entry008, Color place cannot be used with XTPN nodes.
+GP_entry009, Color transition cannot be used with XTPN nodes.
+GP_entry010, Operation impossible when simulator is working.
+GP_entry011, Operation impossible when XTPN simulator is working.
+GP_entry012, Do you want to delete selected elements?
+GP_entry012t, Deletion warning
+GP_entry013, Cannot draw arc to invisible node!
+GP_entry014, Only normal arc allowed from meta-node!
+GP_entry015, Only XTPN normal arc and inhibitors are allowed in XTPN net mode.
+GP_entry016, Wrong arc type
+GP_entry017, Only XTPN normal arc and inhibitors are allowed in XTPN net mode.
+GP_entry018, Direct connection between two meta-nodes not possible.
+GP_entry019, Only normal arc can be connected with meta-node.
+GP_entry020, Meta-node type P (transitions-interfaced) can get connection only from transitions!
+GP_entry021, Meta-node type T (places-interfaced) can get connection only from places!
+GP_entry022, Meta-node type P (transitions-interfaced) can get connection only from transitions!
+GP_entry023, Meta-node type T (places-interfaced) can get connection only from places!
+GP_entry024, Arc going in this direction already exists.
+GP_entry025, Please remove arc between these two nodes in order to create a read-arc.
+GP_entry026, Two interfaces cannot be linked directly within single subnet.
+GP_entry026t, Don't cross the streams!
+GP_entry027, This type of arc can only go FROM place TO transition!
+LOGentry00332, Unable to obtaint WorkspaceSheet object. Net sheet panel probably externized outside program bounds.
 
+//SelectionManager:
+LOGentry00333, Some functions have been affected by the removal operation. Please read reports above this message.
+SM_entry001, Cloning into Portals possible only for one selected node!
+SM_entry001t, Multiple selection warning
 
 //generalPurposeTags:
 cancel, Cancel
 critError, Critical error
 confirm, Confirm
 continue, Continue
+delete, Delete
 error, Error
 exit, Exit
 fixed, Fixed

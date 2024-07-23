@@ -12,6 +12,7 @@ import java.util.Objects;
 import javax.imageio.ImageIO;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.MetaNode.MetaType;
@@ -26,7 +27,7 @@ import static holmes.graphpanel.EditorResources.*;
 public final class ElementDraw {
 	private static final Font f_plain = new Font("TimesRoman", Font.PLAIN, 10);
 	private static final Font f_bold = new Font("TimesRoman", Font.BOLD, 12);
-
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
 	 */
@@ -171,7 +172,7 @@ public final class ElementDraw {
 						try { //kliknięty element
 							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), lightSky, false);
 						} catch (Exception ex) {
-							GUIManager.getDefaultGUIManager().log("Error (272399642) | Exception:  "+ex.getMessage(), "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00322exception")+" "+ex.getMessage(), "error", true);
 						}
 					}
 				} else { //if (!trans.isLaunching())
@@ -230,7 +231,7 @@ public final class ElementDraw {
 								g.drawLine(nodeBounds.x+13, nodeBounds.y+15, nodeBounds.x+16, nodeBounds.y+14);
 								g.drawLine(nodeBounds.x+16, nodeBounds.y+14, nodeBounds.x+14, nodeBounds.y+19);
 							} catch (Exception ex) {
-								GUIManager.getDefaultGUIManager().log("Error (762886747) | Exception:  "+ex.getMessage(), "error", true);
+								GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00323exception")+" "+ex.getMessage(), "error", true);
 							}
 						}
 						g.setColor(trans.qSimBoxT.qSimOvalColor);
@@ -319,7 +320,7 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/offlineTransition2.png")));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), nodeBounds.y-(trans.getRadius()+2));
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (858049410) | Exception:  "+ex.getMessage(), "error", true);
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00324exception")+" "+ex.getMessage(), "error", true);
 					}
 				}
 				
@@ -328,7 +329,7 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility2.png")));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()-10), nodeBounds.y-(trans.getRadius()-8));
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (856997329) | Exception:  "+ex.getMessage(), "error", true);
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00325exception")+" "+ex.getMessage(), "error", true);
 					}
 				}
 				
@@ -396,7 +397,7 @@ public final class ElementDraw {
 						assert trans instanceof TransitionColored;
 						coloredTransitionDemo(g, (TransitionColored) trans, nodeBounds);
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (162349662) | Exception:  "+ex.getMessage(), "error", true);
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00326exception")+" "+ex.getMessage(), "error", true);
 					}
 				}
 			}
@@ -465,7 +466,7 @@ public final class ElementDraw {
 					try {
 						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), lightSky, false);
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (777866480) | Exception:  "+ex.getMessage(), "error", true);
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00327exception")+" "+ex.getMessage(), "error", true);
 					}
 				} else if (el.isPortalSelected()) { //jeżeli kliknięto portal, ale nie ten ElementLocation
 					//błękitna poświata:
@@ -523,7 +524,7 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility2.png")));
 						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-15), nodeBounds.y-(place.getRadius()-13));
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (372587144) | Exception:  "+ex.getMessage(), "error", true);
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00328exception")+" "+ex.getMessage(), "error", true);
 					}
 				}
 
@@ -668,7 +669,7 @@ public final class ElementDraw {
                         assert place instanceof PlaceColored;
                         coloredPlaceDemo(g, (PlaceColored) place, nodeBounds);
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log("Error (172349662) | Exception:  "+ex.getMessage(), "error", true);
+						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00329exception")+" "+ex.getMessage(), "error", true);
 					}
 				}
 			}

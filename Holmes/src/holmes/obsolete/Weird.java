@@ -105,4 +105,34 @@ public class Weird {
     			return false;
         }
     }
+
+	public static void testStr() {
+		int xxx = 1;
+		long yyy = 1;
+		String zzz = "1";
+
+        String strB = String.format(
+                "xxxxxxxxxxxxxxxxxxxx %d xxxxxxx",
+                xxx);
+
+		//  String strB = String.format(lang.getText("LOGentry00330exception"), modeName);
+		//overlord.log(strB, "error", true);
+	}
+
+	public static void testBuilder() {
+		int xxx = 1;
+		long yyy = 1;
+		String zzz = "1";
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format(
+				"xxxxxxxxxxxxxxxxxxxx %s xxxxxxxxxxxxxxxxx %d xxxxxxxxxxxxxxxxxxxx %s  xxxxxxxxxxxxxx %n",
+				xxx, yyy, zzz)
+		);
+
+		String s = builder.toString();
+	}
 }
+
+
+
+

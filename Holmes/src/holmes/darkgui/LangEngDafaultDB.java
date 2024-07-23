@@ -60,10 +60,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("LOGentry00015","File choosing error. No extension:");
         defaultEnglish.put("GUIO_warning001","\nWarning: hierarchical net structure detected. Using Holmes project is strongly advised.\nOther save format will most probably fail.\n");
         defaultEnglish.put("GUIO_warning002","Warning. There has been a problem detecting type of the Petri net.\nHolmes project file as save is highly recommended.");
-        defaultEnglish.put("GUIO_warning003","Selected net file format:");
-        defaultEnglish.put("GUIO_warning003b","Net real type: ");
-        defaultEnglish.put("GUIO_warning003c","Suggested file format: ");
-        defaultEnglish.put("GUIO_warning003d","Selected format will not contain all features of the current Petri Net. Resulting file\nwill contain reduced net or will be corrupted.\n");
+        defaultEnglish.put("GUIO_warning003","Selected net file format %s%nNet real type: %s%nSuggested file format: %s%n%nSelected format will not contain all features of the current Petri Net. Resulting file will %ncontain reduced net or will be corrupted.%n");
         defaultEnglish.put("GUIO_warning003title","Invalid out net file format");
         defaultEnglish.put("GUIO_button001","Load invariants");
         defaultEnglish.put("GUIO_button001b","Select invariant file");
@@ -317,14 +314,14 @@ public class LangEngDafaultDB {
         defaultEnglish.put("SAXTPN_entry007op2","▼ Decrease α-min ");
         defaultEnglish.put("SAXTPN_entry007op3","❌ Cancel");
         defaultEnglish.put("SAXTPN_entry007_1","Proposed value α-max = ");
-        defaultEnglish.put("SAXTPN_entry007_1b"," cannot be lower than current α-min = ");
+        defaultEnglish.put("SAXTPN_entry007_1b","cannot be lower than current α-min = ");
         defaultEnglish.put("SAXTPN_entry007_1c","\nIncrease new α-max or decrease old α-min (default action)?");
         defaultEnglish.put("SAXTPN_entry007t2","Alpha range problem: α-maximum too low");
         defaultEnglish.put("SAXTPN_entry008opt1","▲ Increase β-max to ");
         defaultEnglish.put("SAXTPN_entry008opt2","▼ Decrease β-min to ");
         defaultEnglish.put("SAXTPN_entry008opt3","❌ Cancel");
         defaultEnglish.put("SAXTPN_entry008_1","Proposed value β-min = ");
-        defaultEnglish.put("SAXTPN_entry008_2"," cannot be higher than current β-max = ");
+        defaultEnglish.put("SAXTPN_entry008_2","cannot be higher than current β-max = ");
         defaultEnglish.put("SAXTPN_entry008_3","Increase old betaMaximum (default action) or decrease new betaMinimum?");
         defaultEnglish.put("SAXTPN_entry008t","Beta range problem: β-minimum too high");
         defaultEnglish.put("SAXTPN_entry009","Input or output XTPN transitions cannot be immediate. Alternatively\nturn off both Alfa and Beta modes for a classical immediate transition.");
