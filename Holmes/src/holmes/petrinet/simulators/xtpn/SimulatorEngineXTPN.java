@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.functions.FunctionsTools;
 import holmes.petrinet.simulators.*;
@@ -23,6 +24,7 @@ import holmes.petrinet.simulators.*;
  */
 public class SimulatorEngineXTPN implements IEngineXTPN {
     private GUIManager overlord;
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     private SimulatorGlobals sg;
     private SimulatorGlobals.SimNetType netSimTypeXTPN = SimulatorGlobals.SimNetType.XTPN;
     private ArrayList<TransitionXTPN> transitions;
@@ -105,7 +107,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                 || simulationType == SimulatorGlobals.SimNetType.XTPNext_func) {
             this.netSimTypeXTPN = simulationType;
         } else {
-            overlord.log("Wrong simulation type for XTPN simulator: "+simulationType, "error", true);
+            overlord.log(lang.getText("LOGentry00399")+" "+simulationType, "error", true);
             //this.netSimTypeXTPN = SimulatorGlobals.SimNetType.XTPN;
         }
     }
@@ -119,18 +121,15 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
      */
     public ArrayList<NextXTPNstep> revalidateNetState() {
         ArrayList<NextXTPNstep> classicalInputOnes = new ArrayList<>(); //klasyczne wejściowe będą uruchamiane osobno 50/50
-        //czyszczenie miejsc ze starych tokenów:
-        for(PlaceXTPN place : places) {
+        for(PlaceXTPN place : places) { //czyszczenie miejsc ze starych tokenów:
             place.removeOldTokens_XTPN();
         }
-
 
         //tutaj uruchamiany tranzycje wejściowe, one są niewrażliwe na zmiany czasów w tokenach
         for(TransitionXTPN transition : transitions) {
             if(transition.isProducing_xTPN()) { //produkujące zostawiamy w spokoju
                 continue;
             }
-
             if(!transition.isActivated_xTPN()) { //nieaktywowana
                 if(transition.isInputTransition()) { //tranzycja wejściowa, więc może być aktywna, więc aktywujemy poniżej
                     if(transition.isAlphaModeActive()) { //typ alfa, ustaw zegar
@@ -435,7 +434,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
             currentMinTime = 0;
         }
 
-        if( (currentMinTime > Double.MAX_VALUE - 1) && transOtherClassical.size() > 0) {
+        if( (currentMinTime > Double.MAX_VALUE - 1) && !transOtherClassical.isEmpty()) {
             //znaleziono tylko aktywne klasyczne, nic więcej
             currentMinTime = 0;
         }
@@ -464,17 +463,6 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
             if(transition.getTimerBetaValue() >= 0) {
                 transition.updateTimerBetaValue(tau);
             }
-
-            /*
-            if(transition.isAlphaModeActive() && transition.isActivated_xTPN()) { //aktywna tranzycja Alfa
-                transition.updateTimerAlfaValue(tau);
-                continue;
-            }
-            if(transition.isBetaModeActive() && transition.isProducing_xTPN()) { //produkująca tranzycja Beta
-                transition.updateTimerBetaValue(tau);
-                transition.setProductionStatus_xTPN(true);
-            }
-            */
         }
     }
 
@@ -540,21 +528,14 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                 if(graphicalSimulation) { //koniec zaznaczania łuku jako produkcyjnego
                     arc.arcXTPNbox.setXTPNprodStatus(false);
                 }
-
                 PlaceXTPN place = (PlaceXTPN) arc.getEndNode();
-
-                if(place.getName().equals("IgG_proteins")) {
-                    int x=1;
-                    x=2;
-                }
-
                 if(!(arc.getArcType() == Arc.TypeOfArc.NORMAL || arc.getArcType() == Arc.TypeOfArc.READARC)) {
-                    overlord.log("Warning: non-standard arc used to produce tokens: "+place.getName()+ " arc: "+ arc, "warning", true);
+                    String strB = String.format(lang.getText("LOGentry00400"), place.getName(), arc);
+                    overlord.log(strB, "warning", true);
                 }
 
                 if(arc.getArcType() == Arc.TypeOfArc.READARC && sg.isXTPNreadArcActive() && place.isGammaModeActive()) {
-                    continue;
-                    //jeśli sg.isXTPNreadArcActive() == true i readarc, to zwrotem zajmie się pętla niżej
+                    continue; //jeśli sg.isXTPNreadArcActive() == true i readarc, to zwrotem zajmie się pętla niżej
                 }
 
                 int weight = arc.getWeight();

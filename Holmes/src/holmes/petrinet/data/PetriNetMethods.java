@@ -40,9 +40,6 @@ public class PetriNetMethods {
 				result.set(transitions.indexOf(t), mctNumber);
 			}
 		}
-		
 		return result;
 	}
-	
-	
 }

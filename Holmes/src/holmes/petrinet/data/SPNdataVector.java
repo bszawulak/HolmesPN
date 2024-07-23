@@ -3,12 +3,14 @@ package holmes.petrinet.data;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 /**
  * Klasa zarządzająca wektorem danych tranzycji SPN.
  */
 public class SPNdataVector {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<SPNtransitionData> dataVector;
 	private SPNvectorSuperType SPNvectorType;
 	private String SPNvectorDescription;
@@ -22,7 +24,7 @@ public class SPNdataVector {
 	public SPNdataVector() {
 		dataVector = new ArrayList<SPNtransitionData>();
 		SPNvectorType = SPNvectorSuperType.SPN;
-		SPNvectorDescription = "Default description for SPN transitions data vector.";
+		SPNvectorDescription = lang.getText("SPNDV_entry001"); //Default description for SPN transitions data vector.
 	}
 	
 	/**
@@ -99,7 +101,8 @@ public class SPNdataVector {
 				//TODO: moduł obliczania z funkcji:
 				return Double.parseDouble(dataVector.get(index).ST_function);
 			} catch(Exception e) {
-				GUIManager.getDefaultGUIManager().log("Firing rate function evaluation failed for t"+index+", returning 1.0.", "warning", true);
+				String strB = String.format(lang.getText("LOGentry00374exception"), index);
+				GUIManager.getDefaultGUIManager().log(strB, "warning", true);
 				return 1.0;
 			}
 		}

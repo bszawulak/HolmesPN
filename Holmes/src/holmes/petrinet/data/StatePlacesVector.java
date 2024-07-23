@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Place;
 
 /**
@@ -13,6 +14,7 @@ import holmes.petrinet.elements.Place;
 public class StatePlacesVector implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 6652562026923360610L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<Double> stateVector;
 	private String stateType;
 	private String stateDescription;
@@ -23,7 +25,7 @@ public class StatePlacesVector implements Serializable {
 	public StatePlacesVector() {
 		stateVector = new ArrayList<Double>();
 		stateType = "NORMAL";
-		stateDescription = "Default description for state.";
+		stateDescription = lang.getText("SPV_entry001");
 	}
 	
 	/**

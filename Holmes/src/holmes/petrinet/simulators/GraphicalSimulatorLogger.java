@@ -3,6 +3,7 @@ package holmes.petrinet.simulators;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Transition;
@@ -16,6 +17,7 @@ import holmes.windows.HolmesNotepad;
  */
 public class GraphicalSimulatorLogger {
 	private HolmesNotepad log; // = GUIManager.getDefaultGUIManager().getSimLog();
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 
 	/**
 	 * Konstruktor domyślny obiektu klasy GraphicalSimulatorLogger.
@@ -41,18 +43,18 @@ public class GraphicalSimulatorLogger {
 		if(!maximumMode)
 			max = "50/50";
 		
-		message = "Simulation started. Net sim model: "; //+simulationType.toString()+ " Steps history saved: "+histWrite + "";
+		message = lang.getText("GSL_entry001")+" "; //+simulationType.toString()+ " Steps history saved: "+histWrite + "";
 		log.addText(message, "t", true, false); //czas na początku
 		message = ""+simulationType.toString();
 		log.addText(message, "b", false, false);
 		
-		message =  " mode: ";	//maximum lub inny
+		message =  " "+lang.getText("GSL_entry003")+" ";	//maximum lub inny
 		log.addText(message, "t", false, false);
 		log.addText(max, "b", false, false);
 		log.addText(" / ", "t", false, false);
 		log.addText(sm.toString(), "b", false, false);
 		
-		message =  " steps history saved: ";
+		message =  " "+lang.getText("GSL_entry002")+" ";
 		log.addText(message, "t", false, false);
 		log.addText(histWrite, "b", false, true); //enter na końcu
 	}
@@ -62,7 +64,7 @@ public class GraphicalSimulatorLogger {
 	 * @param step long - krok w którym zatrzymano symulator
 	 */
 	public void logSimStopped(long step) {
-		log.addText("Simulator stopped in step: ", "t", true, false);
+		log.addText(lang.getText("GSL_entry004") +" ", "t", true, false);
 		log.addText(step+"", "t", false, true);
 	}
 	
@@ -89,8 +91,11 @@ public class GraphicalSimulatorLogger {
 				Node p = a.getStartNode();
 				if(!prePlaces.contains(p))
 					prePlaces.add(p);
-				else
-					log.addText("Warning, multi-arc detected between transition: "+transition.getName()+ " and place: "+p.getName(), "warning", true, true);
+				else {
+					String strB = String.format(lang.getText("GSL_entry005"), transition.getName(), p.getName());
+					log.addText(strB, "warning", true, true);
+				}
+					
 				
 				tokensTaken += a.getWeight();
 				prePlacesInfo.add(p.getName());
@@ -100,24 +105,26 @@ public class GraphicalSimulatorLogger {
 				Node p = a.getEndNode();
 				if(!postPlaces.contains(p))
 					postPlaces.add(p);
-				else
-					log.addText("Warning, multi-arc detected between transition: "+transition.getName()+ " and place: "+p.getName(), "warning", true, true);
+				else {
+					String strB = String.format(lang.getText("GSL_entry005"), transition.getName(), p.getName());
+					log.addText(strB, "warning", true, true);
+				}
 				
 				tokensProduced += a.getWeight();
 				postPlacesInfo.add(p.getName());
 				postPlacesInfoTokens.add(a.getWeight());
 			}
 			
-			log.addText("  *Transition: ", "t", false, false);
+			log.addText("  "+lang.getText("GSL_entry006")+" ", "t", false, false);
 			log.addText(transition.getName(), "b", false, false);
-			log.addText("  tokens consumed: ", "t", false, false);
+			log.addText("  "+lang.getText("GSL_entry007")+" ", "t", false, false);
 			log.addText(""+tokensTaken, "b", false, false);
-			log.addText("  tokens produced: ", "t", false, false);
+			log.addText("  "+lang.getText("GSL_entry008")+" ", "t", false, false);
 			log.addText(""+tokensProduced, "b", false, false);
-			log.addText("  pre-Places: ", "t", false, false); //lista miejsc wejściowych
+			log.addText("  "+lang.getText("GSL_entry009")+" ", "t", false, false); //lista miejsc wejściowych
 			log.addText(prePlacesInfo.size()+"", "b", false, false);
 			log.addText("", "t", false, false);
-			log.addText("  post-Places: ", "t", false, false);
+			log.addText("  "+lang.getText("GSL_entry010")+" ", "t", false, false);
 			log.addText(postPlacesInfo.size()+"", "b", false, false);
 			log.addText("", "t", false, true);
 			
@@ -125,7 +132,7 @@ public class GraphicalSimulatorLogger {
 				int m = getMaxLength(prePlacesInfo, 0);
 				m = getMaxLength(postPlacesInfo, m);
 				
-				if(prePlacesInfo.size() > 0) {
+				if(!prePlacesInfo.isEmpty()) {
 					for(int i=0; i<prePlacesInfo.size(); i++) {
 						log.addText("     (preP) ","t",false,false);
 						log.addText(Tools.setToSize(prePlacesInfo.get(i),m+2,false)+": ","nodeName",false,false);
@@ -133,10 +140,10 @@ public class GraphicalSimulatorLogger {
 					}
 				} else {
 					log.addText("     (preP) "+Tools.setToSize("---",m+2,false)+": ", "t", false, false);
-					log.addText("input transition", "b", false, true);
+					log.addText(lang.getText("GSL_entry011"), "b", false, true);
 				}
 
-				if(postPlacesInfo.size() > 0) {
+				if(!postPlacesInfo.isEmpty()) {
 					for(int i=0; i<postPlacesInfo.size(); i++) {
 						log.addText("     (postP)","t",false,false);
 						log.addText(Tools.setToSize(postPlacesInfo.get(i),m+2,false)+": ","nodeName",false,false);
@@ -144,7 +151,7 @@ public class GraphicalSimulatorLogger {
 					}
 				} else {
 					log.addText("     (postP)"+Tools.setToSize("---",m+2,false)+": ", "t", false, false);
-					log.addText("output transition", "b", false, true);
+					log.addText(lang.getText("GSL_entry012"), "b", false, true);
 				}
 			}
 		}
@@ -168,14 +175,14 @@ public class GraphicalSimulatorLogger {
 	 * Krótki komunikat o utworzeniu kopii stanu m0.
 	 */
 	public void logBackupCreated() {
-		log.addText("   State m0 backup created", "t", false, true); //czas na początku
+		log.addText("   "+lang.getText("GSL_entry013"), "t", false, true); //czas na początku
 	}
 	
 	/**
 	 * Metoda wywoływana kiedy przywracany jest stan m0.
 	 */
 	public void logSimReset() {
-		log.addText("Simulator reset confirmed, state m0 restored. Simulation state cleaned.", "b", true, true);
+		log.addText(lang.getText("GSL_entry014"), "b", true, true);
 		String stars = "**********************************************************************************************************";
 		log.addText(stars, "b", false, true);
 	}
@@ -186,9 +193,9 @@ public class GraphicalSimulatorLogger {
 	 */
 	public void logSimPause(boolean pause) {
 		if(pause) {
-			log.addText("   Simulator paused.", "t", false, true);
+			log.addText("   "+lang.getText("GSL_entry015"), "t", false, true);
 		} else {
-			log.addText("   Simulator restarted after pause.", "t", false, true);
+			log.addText("   "+lang.getText("GSL_entry016"), "t", false, true);
 		}
 	}
 }

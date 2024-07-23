@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
@@ -21,6 +22,7 @@ import holmes.windows.HolmesNotepad;
  * i chwycę się linii trakcyjnej, to pojadę jak tramwaj?
  */
 public class GraphicalSimulatorXTPN {
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     private SimulatorGlobals.SimNetType netSimTypeXTPN;
     private SimulatorModeXTPN simulatorStatusXTPN = SimulatorModeXTPN.STOPPED;
     private SimulatorModeXTPN previousSimStatusXTPN = SimulatorModeXTPN.STOPPED;
@@ -153,7 +155,6 @@ public class GraphicalSimulatorXTPN {
         }
         setTimer(new Timer(getDelay(), taskPerformer));
         getTimer().start();
-
     }
 
     /**
@@ -185,7 +186,7 @@ public class GraphicalSimulatorXTPN {
             unpauseSimulation();
         } else if (getsimulatorStatusXTPN() == SimulatorModeXTPN.STOPPED) {
             JOptionPane.showMessageDialog(null,
-                    "Can't pause a stopped simulation!", "XTPN simulator is already stopped!", JOptionPane.ERROR_MESSAGE);
+                    lang.getText("GSXTPN_entry001"), lang.getText("GSXTPN_entry001t"), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -361,7 +362,7 @@ public class GraphicalSimulatorXTPN {
         for(Transition trans : transitionsVector) {
             if( !(trans instanceof TransitionXTPN)) {
                 transitions.clear();
-                overlord.log("Error, non-XTPN transitions found in list sent into SimulatorXTPN!", "error", true);
+                overlord.log(lang.getText("LOGentry00397"), "error", true);
                 return transitions;
             }
             transitions.add( (TransitionXTPN) trans);
@@ -374,27 +375,19 @@ public class GraphicalSimulatorXTPN {
         for(Place place : placesVector) {
             if( !(place instanceof PlaceXTPN)) {
                 places.clear();
-                overlord.log("Error, non-XTPN places found in list sent into SimulatorXTPN!", "error", true);
+                overlord.log(lang.getText("LOGentry00398"), "error", true);
                 return places;
             }
             places.add( (PlaceXTPN) place);
         }
         return places;
     }
-
-
-
-    //************************************************************************************************
-    //************************************************************************************************
-    //************************************************************************************************
+    
     //************************************************************************************************
     //************************************************************************************************
     //******************************************            ******************************************
     //****************************************** EngineCore ******************************************
     //******************************************            ******************************************
-    //************************************************************************************************
-    //************************************************************************************************
-    //************************************************************************************************
     //************************************************************************************************
     //************************************************************************************************
 
@@ -448,8 +441,8 @@ public class GraphicalSimulatorXTPN {
                 if(infoNode.changeType == 0) {
                     setSimulationActive(false);
                     stopSimulation();
-                    JOptionPane.showMessageDialog(null, "Simulation stopped, no active transitions.",
-                            "Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, lang.getText("GSXTPN_entry002"),
+                            lang.getText("GSXTPN_entry002t"), JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
                 //TUTAJ NASTĘPUJE UPDATE STANU O WYLICZONĄ WCZEŚNIEJ WARTOŚĆ +TAU (infoNode.timeToChange)
@@ -472,10 +465,10 @@ public class GraphicalSimulatorXTPN {
 
                 newStateChangeStarts = false;
                 repaintSteps = 0;
-                if(consumingTokensTransitionsXTPN.size() > 0 || consumingTokensTransitionsClassical.size() > 0) {
+                if(!consumingTokensTransitionsXTPN.isEmpty() || !consumingTokensTransitionsClassical.isEmpty()) {
                     //faza zabierana tokenów, czyli uruchamianie tranzycji gdy timeAlfa = tauAlfa
                     subtractPhase = true;
-                } else if(producingTokensTransitionsAll.size() > 0) { //tylko produkcja tokenów
+                } else if(!producingTokensTransitionsAll.isEmpty()) { //tylko produkcja tokenów
                     addPhase = true;
                 } else { //tylko upływ czasu, co już miało miejsce
                     endThisSimulationStep();
@@ -498,7 +491,7 @@ public class GraphicalSimulatorXTPN {
 
                     subtractPhase = false;
                     repaintSteps = 0;
-                    if(producingTokensTransitionsAll.size() > 0) { //jeszcze produkcja
+                    if(!producingTokensTransitionsAll.isEmpty()) { //jeszcze produkcja
                         addPhase = true;
                     } else { //tylko upływ czasu?
                         endThisSimulationStep();
@@ -641,7 +634,6 @@ public class GraphicalSimulatorXTPN {
                     producingTokensTransitionsAll.remove(transition);
                 }
             }
-
             launchedTransitions.add(launchedXTPN);
             launchedTransitions.add(launchedClassical);
             return launchedTransitions;

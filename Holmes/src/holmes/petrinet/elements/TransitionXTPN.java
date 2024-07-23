@@ -1,6 +1,7 @@
 package holmes.petrinet.elements;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.containers.TransitionXTPNhistoryContainer;
 import holmes.petrinet.elements.containers.TransitionXTPNqSimGraphics;
 import holmes.petrinet.functions.FunctionsTools;
@@ -14,6 +15,7 @@ import java.util.Map;
 public class TransitionXTPN extends Transition {
     @Serial
     private static final long serialVersionUID = 4766270474155264671L;
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     private boolean alphaMode_xTPN = true;
     private boolean alphaRangeVisibility_XTPN = true;
     private double alphaMin_xTPN = 0.0;
@@ -484,10 +486,10 @@ public class TransitionXTPN extends Transition {
     }
 
     public boolean isInputTransition() {
-        return getInputArcs().size() == 0;
+        return getInputArcs().isEmpty();
     }
     public boolean isOutputTransition() {
-        return getOutputArcs().size() == 0;
+        return getOutputArcs().isEmpty();
     }
 
     /**
@@ -595,11 +597,6 @@ public class TransitionXTPN extends Transition {
         return false;
     }
 
-
-
-
-
-
     private Map<PlaceXTPN, Integer> preparePrePlaces() {
         Map<PlaceXTPN, Integer> prePlaces = new HashMap<>();
         for (ElementLocation el : getElementLocations()) {
@@ -618,7 +615,7 @@ public class TransitionXTPN extends Transition {
         long massActionKineticModifier = 1;
         Map<PlaceXTPN, Integer> prePlaces = preparePrePlaces();
 
-        if(prePlaces.size() != 0) {
+        if(!prePlaces.isEmpty()) {
             massActionKineticModifier = Long.MAX_VALUE;
             for (PlaceXTPN prePlace : prePlaces.keySet()) {
                 int weigth = prePlaces.get(prePlace);

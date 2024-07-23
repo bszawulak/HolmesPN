@@ -3,6 +3,7 @@ package holmes.petrinet.data;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.SPNdataVector.SPNvectorSuperType;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.extensions.TransitionSPNExtension;
@@ -12,6 +13,7 @@ import holmes.petrinet.elements.extensions.TransitionSPNExtension;
  */
 public class SPNdataVectorManager {
 	private GUIManager overlord;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private PetriNet pn;
 	
 	private ArrayList<SPNdataVector> SPNdataMatrix;
@@ -50,11 +52,10 @@ public class SPNdataVectorManager {
 		for(SPNdataVector frVector: SPNdataMatrix) {
 			boolean status = frVector.removeTrans(index);
 			if(!status) {
-				overlord.log("Critical error: invalid transition index in SPN data matrix.", "error", true);
+				overlord.log(lang.getText("LOGentry00375critErr"), "error", true);
 				return false;
 			}
 		}
-
 		return true;
 	}
 	

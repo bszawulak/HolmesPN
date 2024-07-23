@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JTextArea;
 
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.PlaceXTPN;
 import org.nfunk.jep.JEP;
 
@@ -20,7 +21,7 @@ import holmes.windows.HolmesNotepad;
  */
 public class FunctionsTools {
 	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Konstruktor obiektów klasy FunctionsTools.
 	 */
@@ -42,8 +43,8 @@ public class FunctionsTools {
 			for(FunctionContainer fc : transition.fpnExtension.accessFunctionsList()) {
 				if(fc.involvedPlaces.containsKey("p"+placeIndex)) {
 					int transIndex = transitions.indexOf(transition);
-					overlord.log("Function: '"+fc.simpleExpression+"' (fID: "+fc.fID+") of transition t"+transIndex+
-							" has been disabled due to removal of place p"+placeIndex, "warning", true);
+					String strB = String.format(lang.getText("LOGentry00395"), fc.simpleExpression, fc.fID, transIndex, placeIndex);
+					overlord.log(strB, "warning", true);
 					
 					fc.enabled = false;
 					fc.correct = false;
@@ -77,7 +78,7 @@ public class FunctionsTools {
 			if(index >= placesNumber || index < 0) {
 				fc.simpleExpression = fc.simpleExpression.replace(x, " ??? ");
 				if(commentField != null) {
-					commentField.append("Non existing place identifier used: "+x+"\n");
+					commentField.append(lang.getText("FT_entry001")+x+"\n");
 				}
 			} else {
 				Place place = places.get(index);
@@ -101,7 +102,7 @@ public class FunctionsTools {
 		boolean errorsFlag = false;
 		if(notepad != null) {
 			logErrors = true;
-			notepad.addTextLineNL("List of errors for previously enabled functions:", "text");
+			notepad.addTextLineNL(lang.getText("FT_entry002"), "text");
 			notepad.addTextLineNL("", "text");
 		}
 		
@@ -116,7 +117,7 @@ public class FunctionsTools {
 					continue;
 				
 				resetPlaceVector(fc, null, places);
-				if(fc.simpleExpression.contains("???") || fc.simpleExpression.length()==0) {
+				if(fc.simpleExpression.contains("???") || fc.simpleExpression.isEmpty()) {
 					errorsFlag = true;
 					fc.enabled = false;
 					fc.correct = false;
@@ -136,7 +137,7 @@ public class FunctionsTools {
 					if(myParser.hasError()) {
 						HolmesNotepad note = new HolmesNotepad(640, 480);
 						note.setVisible(true);
-						notepad.addTextLineNL("  variables initialization error (function disabled):", "text");
+						notepad.addTextLineNL("  "+lang.getText("FT_entry003"), "text");
 						note.addTextLineNL("    * "+myParser.getErrorInfo(), "text");
 						fc.enabled = false;
 						fc.correct = false;
@@ -145,7 +146,7 @@ public class FunctionsTools {
 					}
 				} catch (Exception e) {
 					errorsFlag = true;
-					notepad.addTextLineNL("   CRITICAL ERROR WHILE INITIALIZATION. FUNCTION DISABLED.", "text");
+					notepad.addTextLineNL("   "+lang.getText("FT_entry004"), "text");
 					fc.enabled = false;
 					fc.correct = false;
 				}
@@ -168,7 +169,7 @@ public class FunctionsTools {
 		
 		fc.simpleExpression = newEquation;
 		resetPlaceVector(fc, commentField, places);
-		if(fc.simpleExpression.contains("???") || fc.simpleExpression.length()==0)
+		if(fc.simpleExpression.contains("???") || fc.simpleExpression.isEmpty())
 			return false;
 		
 		try {
@@ -189,7 +190,6 @@ public class FunctionsTools {
 				if(commentField != null) {
 					commentField.append(myParser.getErrorInfo()+"\n");
 				}
-				
 				fc.enabled = false;
 				fc.correct = false;
 			} else {
@@ -198,7 +198,7 @@ public class FunctionsTools {
 			
 			return (!errors);
 		} catch (Exception e) {
-			commentField.append("Function creation critically failed for: "+fc.simpleExpression+"\n");
+			commentField.append(lang.getText("FT_entry005")+" "+fc.simpleExpression+"\n");
 			fc.enabled = false;
 			fc.correct = false;
 			return false;
@@ -235,7 +235,6 @@ public class FunctionsTools {
 		}
 	}
 	
-
 	/**
 	 * Metoda obliczająca wartość równania funkcji, na bazie tokenów w miejsach użytych w równaniu.
 	 * @param fc (<b>FunctionContainer</b>) kontener funkcji.
@@ -259,10 +258,10 @@ public class FunctionsTools {
 				}
 			}
 			myParser.parseExpression(fc.simpleExpression);
-			double result = myParser.getValue();
-			return result;
+            return myParser.getValue();
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Parsing equation failed for "+fc.simpleExpression, "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00396exception")+" "
+					+fc.simpleExpression+"\n"+e.getMessage(), "error", true);
 			return -1;
 		}
 	}
@@ -320,7 +319,7 @@ public class FunctionsTools {
 		if(transition.fpnExtension.isFunctional()) {
 			FunctionContainer fc = transition.fpnExtension.getFunctionContainer(arc);
 			if(fc != null) {//czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
-				if(fc != null && fc.enabled && fc.correct) {
+				if(fc.enabled && fc.correct) {
 					fc.currentValue = getFunctionValue(fc); //wartość równania, ale:
 					fc.currentValue = fc.currentValue <= 0 ? arc.getWeight() : fc.currentValue; //like a boss
 					

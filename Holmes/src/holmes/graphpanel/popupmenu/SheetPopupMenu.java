@@ -12,6 +12,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.files.io.IOprotocols;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.*;
@@ -26,6 +27,7 @@ import holmes.workspace.ExtensionFileFilter;
 public class SheetPopupMenu extends GraphPanelPopupMenu {
     @Serial
     private static final long serialVersionUID = 3206422633820189233L;
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     public int x;
     public int y;
 
@@ -42,7 +44,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         //x = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet().getMousePosition().x;
         //y = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet().getMousePosition().y;
 
-        this.addMenuItem("Select All", "", e -> getGraphPanel().getSelectionManager().selectAllElementLocations());
+        this.addMenuItem(lang.getText("SPM_entry001"), "", e -> getGraphPanel().getSelectionManager().selectAllElementLocations());
 
         this.addSeparator();
 
@@ -50,14 +52,14 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 
         this.addSeparator();
 
-        this.addMenuItem("Refresh", "refresh.png", e -> {
+        this.addMenuItem(lang.getText("SPM_entry002"), "refresh.png", e -> {
             getGraphPanel().invalidate();
             getGraphPanel().repaint();
         });
 
-        this.addMenuItem("Clear colors", "clearColors.png", e -> GUIManager.getDefaultGUIManager().reset.clearGraphColors());
+        this.addMenuItem(lang.getText("SPM_entry003"), "clearColors.png", e -> GUIManager.getDefaultGUIManager().reset.clearGraphColors());
 
-        this.addMenuItem("Save to image file", "picture_save.png",
+        this.addMenuItem(lang.getText("SPM_entry004"), "picture_save.png", //Save to image file
             new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     exportToPicture();
@@ -74,9 +76,9 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 
                     fc.setFileView(new HolmesFileView());
                     FileFilter pngFilter = new ExtensionFileFilter(".png - Portable Network Graphics", new String[]{"png"});
-                    FileFilter bmpFilter = new ExtensionFileFilter(".bmp -  Bitmap Image File", new String[]{"bmp"});
-                    FileFilter jpegFilter = new ExtensionFileFilter(".jpeg - JPEG Image File", new String[]{"jpeg"});
-                    FileFilter jpgFilter = new ExtensionFileFilter(".jpg - JPEG Image File", new String[]{"jpg"});
+                    FileFilter bmpFilter = new ExtensionFileFilter(".bmp -  Bitmap Image", new String[]{"bmp"});
+                    FileFilter jpegFilter = new ExtensionFileFilter(".jpeg - JPEG Image", new String[]{"jpeg"});
+                    FileFilter jpgFilter = new ExtensionFileFilter(".jpg - JPEG Image", new String[]{"jpg"});
                     fc.setFileFilter(pngFilter);
                     fc.addChoosableFileFilter(pngFilter);
                     fc.addChoosableFileFilter(bmpFilter);
@@ -101,16 +103,9 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
                             if (ext.equals(".jpeg") && !file.getPath().contains(".jpg")) ext2 = ".jpg";
 
                             ImageIO.write(image, ext.substring(1), new File(file.getPath() + ext2));
-
                             GUIManager.getDefaultGUIManager().setLastPath(file.getParentFile().getPath());
-
-                            //getGraphPanel().getPetriNet().getWorkspace().getGUI().setLastPath(
-                            //		file.getParentFile().getPath()); //  ╯°□°）╯ ︵  ┻━━━┻
                         } catch (IOException ex) {
-                            ex.printStackTrace();
-                            JOptionPane.showMessageDialog(null,
-                                    "Saving net sheet into picture failed.",
-                                    "Export Picture Error", JOptionPane.ERROR_MESSAGE);
+                            GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00371exception")+ "\n" + ex.getMessage(), "error", true);
                         }
                     }
                 }
@@ -118,9 +113,9 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 
         this.addSeparator();
 
-        this.addMenuItem("Fast zoom reset", "undo.png", e -> getGraphPanel().setZoom(100, getGraphPanel().getZoom()));
+        this.addMenuItem(lang.getText("SPM_entry005"), "undo.png", e -> getGraphPanel().setZoom(100, getGraphPanel().getZoom()));
 
-        JMenu zoomMenu = new JMenu("Zoom");
+        JMenu zoomMenu = new JMenu(lang.getText("SPM_entry006")); //zoom
 
         this.add(zoomMenu);
 
@@ -136,7 +131,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 
         this.addSeparator();
 
-        this.addMenuItem("All Invisibility: OFF", "smallInvisibility.png", e -> {
+        this.addMenuItem(lang.getText("SPM_entry007"), "smallInvisibility.png", e -> {
             if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
                 return;
 
@@ -149,7 +144,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
             GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
         });
 
-        this.addMenuItem("All knockout: OFF", "offlineSmall.png", e -> {
+        this.addMenuItem(lang.getText("SPM_entry008"), "offlineSmall.png", e -> {
             if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
                 return;
 
@@ -162,49 +157,49 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 
         this.addSeparator();
 
-        JMenu analMenu = new JMenu("Network Analysis"); // (⌐■_■)
+        JMenu analMenu = new JMenu(lang.getText("SPM_entry009")); // (⌐■_■) //Network Analysis
         this.add(analMenu);
-        analMenu.add(createMenuItem("Import t-invariants from file", "invImportPopup.png", null, arg0 -> GUIManager.getDefaultGUIManager().io.loadExternalAnalysis(true)));
-        analMenu.add(createMenuItem("Generate t-invariants", "generateINA.png", null, arg0 -> GUIManager.getDefaultGUIManager().io.fastGenerateTinvariants()));
+        analMenu.add(createMenuItem(lang.getText("SPM_entry010"), "invImportPopup.png", null, arg0 -> GUIManager.getDefaultGUIManager().io.loadExternalAnalysis(true)));
+        analMenu.add(createMenuItem(lang.getText("SPM_entry011"), "generateINA.png", null, arg0 -> GUIManager.getDefaultGUIManager().io.fastGenerateTinvariants()));
 
-        analMenu.add(createMenuItem("Generate MCT sets", "generateMCT.png", null, arg0 -> GUIManager.getDefaultGUIManager().generateMCT()));
+        analMenu.add(createMenuItem(lang.getText("SPM_entry012"), "generateMCT.png", null, arg0 -> GUIManager.getDefaultGUIManager().generateMCT()));
 
-        JMenu mctSubMenu = new JMenu("MCT Options");
+        JMenu mctSubMenu = new JMenu(lang.getText("SPM_entry013"));    //MCT Options
         analMenu.add(mctSubMenu);
 
-        JMenuItem mct1 = createMenuItem("Simple MCT file", "", null, arg0 -> GUIManager.getDefaultGUIManager().io.generateSimpleMCTFile());
+        JMenuItem mct1 = createMenuItem(lang.getText("SPM_entry014"), "", null, arg0 -> GUIManager.getDefaultGUIManager().io.generateSimpleMCTFile()); //Simple MCT file
         mctSubMenu.add(mct1);
 
-        JMenuItem mct2 = createMenuItem("Tex output file", "", null, arg0 -> {
+        JMenuItem mct2 = createMenuItem(lang.getText("SPM_entry015"), "", null, arg0 -> { //Tex output file
             //GUIManager.getDefaultGUIManager().generateMCT();
         });
         mct2.setEnabled(false);
         mctSubMenu.add(mct2);
 
-        JMenuItem mct3 = createMenuItem("Other files", "", null, arg0 -> {
+        JMenuItem mct3 = createMenuItem(lang.getText("SPM_entry016"), "", null, arg0 -> { //Other files
             //GUIManager.getDefaultGUIManager().generateMCT();
         });
         mct3.setEnabled(false);
         mctSubMenu.add(mct3);
 
-        JMenu netMenu = new JMenu("Network Tools");
+        JMenu netMenu = new JMenu(lang.getText("SPM_entry017")); //Network Tools
         this.add(netMenu);
-        netMenu.add(createMenuItem("Show TPN transitions", "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(0)));
-        netMenu.add(createMenuItem("Show DPN transitions", "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(1)));
-        netMenu.add(createMenuItem("Show TPN/DPN transitions", "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(2)));
-        netMenu.add(createMenuItem("Fix Snoopy compatibility", "", null, arg0 -> GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility()));
+        netMenu.add(createMenuItem(lang.getText("SPM_entry018"), "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(0))); //Show TPN transitions
+        netMenu.add(createMenuItem(lang.getText("SPM_entry019"), "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(1))); //Show DPN transitions
+        netMenu.add(createMenuItem(lang.getText("SPM_entry020"), "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(2))); //Show TPN/DPN transitions
+        netMenu.add(createMenuItem(lang.getText("SPM_entry021"), "", null, arg0 -> GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility())); //Fix Snoopy compatibility
 
         if(sheetID != 0) {
-            netMenu.add(createMenuItem("Remove panel", "", null, arg0 -> GUIManager.getDefaultGUIManager().testRemovePanel(sheetID)  ) );
+            netMenu.add(createMenuItem(lang.getText("SPM_entry022"), "", null, arg0 -> GUIManager.getDefaultGUIManager().testRemovePanel(sheetID)  ) ); //Remove panel
         }
 
         //SUBNET IMPORT PROTOTYP
         this.addSeparator();
 
-        JMenu subImpMenu = new JMenu("Subnet import");
+        JMenu subImpMenu = new JMenu(lang.getText("SPM_entry023")); //Subnet import
         this.add(subImpMenu);
 
-        subImpMenu.add(createMenuItem("Import Subnet with original location ", "", null, arg0 -> {
+        subImpMenu.add(createMenuItem(lang.getText("SPM_entry024"), "", null, arg0 -> { //Import Subnet with original location
             JFileChooser fc = new JFileChooser();
             int returnVal = fc.showOpenDialog(SheetPopupMenu.this);
 
@@ -216,16 +211,13 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
             }
         }));
 
-        subImpMenu.add(createMenuItem("Import Subnet with point click location ", "", null, arg0 -> {
-            //System.out.println("x " + GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet().getMousePosition().x  + " y " + GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet().getMousePosition().y);
+        subImpMenu.add(createMenuItem(lang.getText("SPM_entry025"), "", null, arg0 -> { //Import Subnet with point click location
             JFileChooser fc = new JFileChooser();
             int returnVal = fc.showOpenDialog(SheetPopupMenu.this);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
-
                 IOprotocols io = new IOprotocols();
-                //io.importSubnetFromFile(file.getAbsolutePath(), x, y);
 
                 for (ElementLocation el : getGraphPanel().getSelectionManager().getSelectedElementLocations()) {
                     el.setSelected(false);
@@ -235,44 +227,18 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         }));
 
         if (getGraphPanel().getSheetId() != 0) {
-            this.addMenuItem("Add existing node", "", e ->
-                    SubnetsActions.addExistingElement(graphPanel)
-            );
+            this.addMenuItem(lang.getText("SPM_entry026"), "", e ->SubnetsActions.addExistingElement(graphPanel) ); //Add existing node
         }
-
-        /*
-        this.addMenuItem("ImporttSubnetFromFile", "refresh.png", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-
-                JFileChooser fc = new JFileChooser();
-                int returnVal = fc.showOpenDialog(SheetPopupMenu.this);
-
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = fc.getSelectedFile();
-
-                    IOprotocols io = new IOprotocols();
-                    io.importSubnetFromFile(file.getAbsolutePath());
-                }
-            }
-        });
-        */
     }
-
-
-
-
 
     /**
      * Metoda eksportująca rysunek sieci do pliku - dla klikniętego arkusza.
      */
     private void exportToFile() {
         JFileChooser fc = new JFileChooser();
-        FileFilter pngFilter = new ExtensionFileFilter(
-                ".png - Portable Network Graphics", new String[]{"png"});
-        FileFilter bmpFilter = new ExtensionFileFilter(
-                ".bmp -  Bitmap Image File", new String[]{"bmp"});
-        FileFilter jpegFilter = new ExtensionFileFilter(
-                ".jpeg - JPEG Image File", new String[]{"jpeg"});
+        FileFilter pngFilter = new ExtensionFileFilter(".png - Portable Network Graphics", new String[]{"png"});
+        FileFilter bmpFilter = new ExtensionFileFilter(".bmp -  Bitmap Image", new String[]{"bmp"});
+        FileFilter jpegFilter = new ExtensionFileFilter(".jpeg - JPEG Image", new String[]{"jpeg"});
         fc.setFileFilter(pngFilter);
         fc.addChoosableFileFilter(pngFilter);
         fc.addChoosableFileFilter(bmpFilter);
@@ -295,10 +261,9 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
             BufferedImage image = getGraphPanel().createImageFromSheet();
             try {
                 ImageIO.write(image, ext.substring(1), new File(file.getPath() + ext));
-                GUIManager.getDefaultGUIManager().log("Network image save to file " + file.getPath() + ext, "text", true);
+                GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00372")+ " " + file.getPath() + ext, "text", true);
             } catch (IOException ex) {
-                ex.printStackTrace();
-                GUIManager.getDefaultGUIManager().log("Error: " + ex.getMessage(), "error", true);
+                GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00373exception")+ " " + ex.getMessage(), "error", true);
             }
         }
     }

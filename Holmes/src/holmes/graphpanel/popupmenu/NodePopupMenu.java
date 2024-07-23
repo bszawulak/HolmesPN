@@ -3,6 +3,7 @@ package holmes.graphpanel.popupmenu;
 import java.io.Serial;
 import javax.swing.*;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
@@ -16,6 +17,7 @@ import holmes.windows.xtpn.HolmesNodeInfoXTPN;
 public class NodePopupMenu extends GraphPanelPopupMenu {
 	@Serial
 	private static final long serialVersionUID = -8988739887642243733L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private ElementLocation elocation;
 
 	/**
@@ -27,8 +29,8 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 		this.elocation = eloc;
 		
 		if(pne != PetriNetElementType.ARC) {
-			this.addMenuItem("Show details...", "", e -> {
-				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+			this.addMenuItem(lang.getText("NPM_entry001"), "", e -> {
+				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
 					return;
 
 				Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
@@ -61,17 +63,17 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 		}
 		
 		if(pne != PetriNetElementType.META) {
-			this.addMenuItem("Delete", "cross.png", e -> {
+			this.addMenuItem(lang.getText("delete"), "cross.png", e -> {
 				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-						"Operation impossible when simulator is working.", "Warning"))
+						lang.getText("NPM_entry002"), "Warning"))
 					return;
 				if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
-						"Operation impossible when XTPN simulator is working.", "Warning"))
+						lang.getText("NPM_entry003"), "Warning"))
 					return;
 
-				Object[] options = {"Delete", "Cancel",};
+				Object[] options = {lang.getText("delete"), lang.getText("cancel"),};
 				int n = JOptionPane.showOptionDialog(null,
-						"Do you want to delete selected elements?", "Deletion warning?", JOptionPane.YES_NO_OPTION,
+						lang.getText("NPM_entry004"), lang.getText("NPM_entry004t"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 				if (n == 0) {
 					//GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
@@ -91,7 +93,7 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 
 		if (graphPanel.getSelectionManager().getSelectedElementLocations().size() > 1 && graphPanel.getSelectionManager().getSelectedElementLocations().stream()
 				.allMatch(location -> eloc.getParentNode() == location.getParentNode())) {
-			this.addMenuItem("Merge portals", "", e ->
+			this.addMenuItem(lang.getText("NPM_entry005"), "", e ->
 					GUIManager.getDefaultGUIManager().subnetsHQ.mergePortals(eloc, graphPanel.getSelectionManager().getSelectedElementLocations())
 			);
 		}
@@ -103,24 +105,23 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 		) {
 			this.addSeparator();
 
-			this.addMenuItem("Create subnet", "", e ->
+			this.addMenuItem(lang.getText("NPM_entry006"), "", e ->
 					GUIManager.getDefaultGUIManager().subnetsHQ.createSubnetFromSelectedElements(graphPanel)
 			);
 
 			if (GUIManager.getDefaultGUIManager().subnetsHQ.getSubnetElementLocations(graphPanel.getSheetId()).stream()
 					.anyMatch(location -> location.getParentNode() instanceof MetaNode)) {
-				this.addMenuItem("Transfer to subnet (with M-Arcs)", "", e ->
+				this.addMenuItem(lang.getText("NPM_entry007"), "", e ->
 						SubnetsActions.openTransferElementsToSubnet(graphPanel, true)
 				);
-				this.addMenuItem("Transfer to subnet (no M-Arcs)", "", e ->
+				this.addMenuItem(lang.getText("NPM_entry008"), "", e ->
 						SubnetsActions.openTransferElementsToSubnet(graphPanel, false)
 				);
-				this.addMenuItem("Copy into subnet", "", e ->
+				this.addMenuItem(lang.getText("NPM_entry009"), "", e ->
 						SubnetsActions.openCopyElementsToSubnet(graphPanel)
 				);
 			}
 		}
-
 		this.addSeparator();
 	}
 }

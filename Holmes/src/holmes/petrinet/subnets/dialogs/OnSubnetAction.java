@@ -1,5 +1,7 @@
 package holmes.petrinet.subnets.dialogs;
 
+import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.MetaNode;
 
@@ -11,7 +13,7 @@ import java.awt.event.ActionListener;
  * dowolna wcześniej przekazana akcja.
  */
 public class OnSubnetAction extends BaseDialog {
-
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     private JComboBox<ComboBoxItem<Integer>> comboBox;
     private JButton button;
 
@@ -35,7 +37,7 @@ public class OnSubnetAction extends BaseDialog {
         JPanel panel = new JPanel(null);
         getDialog().add(panel);
 
-        JLabel subnetsLabel = new JLabel("Select subnet:");
+        JLabel subnetsLabel = new JLabel(lang.getText("OSA_entry001"));
         panel.add(subnetsLabel);
         subnetsLabel.setBounds(50, 50, 90, 30);
 
@@ -52,7 +54,7 @@ public class OnSubnetAction extends BaseDialog {
                 })
                 .forEach(comboBox::addItem);
 
-        button = new JButton("Confirm");
+        button = new JButton(lang.getText("OSA_entry002"));
         panel.add(button);
         button.setBounds(130, 150, 120, 30);
     }

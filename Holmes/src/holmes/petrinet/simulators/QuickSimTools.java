@@ -8,6 +8,7 @@ import javax.swing.JProgressBar;
 
 import holmes.darkgui.GUIController;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.data.PetriNet;
@@ -23,6 +24,7 @@ import holmes.windows.HolmesNotepad;
  */
 public class QuickSimTools {
 	private GUIManager overlord;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private StateSimulator stateSimulatorPN;
 	private StateSimulatorXTPN stateSimulatorXTPN;
 	private boolean scanTransitions = true;
@@ -49,8 +51,8 @@ public class QuickSimTools {
 	 */
 	public void acquireData(boolean scanTransitions, boolean scanPlaces, boolean markArcs, boolean repetitions, JProgressBar quickProgressBar) {
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
-			JOptionPane.showMessageDialog(null, "Net simulator working. Unable to retrieve transitions statistics..", 
-					"Simulator working", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("QST_entry001"), 
+					lang.getText("QST_entry001t"), JOptionPane.ERROR_MESSAGE);
 		} else {
 			this.scanTransitions = scanTransitions;
 			this.scanPlaces = scanPlaces;
@@ -78,8 +80,8 @@ public class QuickSimTools {
 	public void acquireDataXTPN(boolean bySteps, int steps, double time, boolean repeate, int repetitions
 			, boolean knockout, JProgressBar quickProgressBar, HolmesRoundedButton button) {
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
-			JOptionPane.showMessageDialog(null, "Net simulator working. Unable to retrieve transitions statistics..",
-					"Simulator working", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("QST_entry002"),
+					lang.getText("QST_entry002t"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		startSimButton = button;
@@ -94,13 +96,13 @@ public class QuickSimTools {
 				}
 
 				if(!isKnockout) {
-					JOptionPane.showMessageDialog(null, "At least one transition must be disabled.", "qSim Knockout: no disabled transition",
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("QST_entry003")
+							, lang.getText("QST_entry003t"), JOptionPane.INFORMATION_MESSAGE);
 					return;
 				}
 			} else {
-				JOptionPane.showMessageDialog(null, "Knockout simulation must have repetitions turned on.", "qSim Knockout: repetitions",
-						JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("QST_entry004")
+						, lang.getText("QST_entry004t"), JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 		}
@@ -284,10 +286,10 @@ public class QuickSimTools {
 			, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
 
 		HolmesNotepad note = new HolmesNotepad(800, 600);
-		note.addTextLineNL("Simulation data", "text");
-		note.addTextLineNL("Avg. steps:  " + Tools.cutValue(result.simSteps), "text");
-		note.addTextLineNL("Avg. time:   " + Tools.cutValue(result.simTime), "text");
-		note.addTextLineNL("Repetitions: " + (int)result.simReps, "text");
+		note.addTextLineNL(lang.getText("QST_entry005"), "text");
+		note.addTextLineNL(lang.getText("QST_entry006")+"  " + Tools.cutValue(result.simSteps), "text");
+		note.addTextLineNL(lang.getText("QST_entry007")+"   " + Tools.cutValue(result.simTime), "text");
+		note.addTextLineNL(lang.getText("QST_entry008")+" " + (int)result.simReps, "text");
 
 		long milisecond = result.compTime;
 		long seconds = milisecond /= 1000;
@@ -307,7 +309,7 @@ public class QuickSimTools {
 		if(s.length() == 1)
 			s = "0" + s;
 
-		note.addTextLine("Simulation time recorded (h:m:s) : ", "text");
+		note.addTextLine(lang.getText("QST_entry009")+" ", "text");
 		note.addTextLineNL(h + ":" + m + ":" + s, "text");
 
 		int transIndex = 0;
@@ -315,55 +317,61 @@ public class QuickSimTools {
 		double simTime = result.simTime;
 
 		note.addTextLineNL("", "bold");
-		note.addTextLineNL("Transitions data", "bold");
+		note.addTextLineNL(lang.getText("QST_entry010"), "bold");
 		for(TransitionXTPN trans : transitions) {
 
 			double tmpSteps = result.transitionsStatistics.get(transIndex).get(0); //trans.simInactiveState
 			double tmpTime = result.transitionsStatistics.get(transIndex).get(4); //trans.simInactiveTime
 
-
-			note.addTextLine("Transition ", "text");
+			
+			note.addTextLine(lang.getText("QST_entry011")+" ", "text");
 			note.addTextLine(""+transIndex, "bold");
 			note.addTextLine( " ("+trans.getName()+")", "bold");
-			note.addTextLine(" Type: ", "text");
+			note.addTextLine(" "+lang.getText("QST_entry012")+" ", "text");
 			note.addTextLineNL(getTransType(trans), "bold");
 
-
-			String text = "   Inactive (#):  "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
-					"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
-			note.addTextLineNL(text, "text");
+			String strB = String.format(lang.getText("QST_entry013"), (int)tmpSteps, Tools.cutValue((tmpSteps*100)/simSteps)
+					, Tools.cutValue(tmpTime), Tools.cutValue((tmpTime * 100)/simTime));
+			//String text = "   "+"Inactive (#):"+"  "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
+			//		"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
+			note.addTextLineNL(strB, "text");
 
 			tmpSteps = result.transitionsStatistics.get(transIndex).get(1); //trans.simActiveState
 			tmpTime = result.transitionsStatistics.get(transIndex).get(5); //trans.simActiveTime
-			text = "   Active (#):    "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
-					"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
-			note.addTextLineNL(text, "text");
+			strB = String.format(lang.getText("QST_entry014"), (int)tmpSteps, Tools.cutValue((tmpSteps*100)/simSteps)
+					, Tools.cutValue(tmpTime), Tools.cutValue((tmpTime * 100)/simTime));
+			//String text = "   Active (#):    "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
+			//		"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
+			note.addTextLineNL(strB, "text");
 
 			tmpSteps = result.transitionsStatistics.get(transIndex).get(2); //trans.simProductionState
 			tmpTime = result.transitionsStatistics.get(transIndex).get(6); //trans.simProductionTime
-			text = "   Production (#): "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
-					"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
-			note.addTextLineNL(text, "text");
+			strB = String.format(lang.getText("QST_entry015"), (int)tmpSteps, Tools.cutValue((tmpSteps*100)/simSteps)
+					, Tools.cutValue(tmpTime), Tools.cutValue((tmpTime * 100)/simTime));
+			//String text = "   Production (#): "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
+			//		"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
+			note.addTextLineNL(strB, "text");
 
 			tmpSteps = result.transitionsStatistics.get(transIndex).get(3); //trans.simFiredState
-			text = "   Fired (#): "+(int)tmpSteps ;
-			note.addTextLineNL(text, "text");
+			strB = String.format(lang.getText("QST_entry016"), (int)tmpSteps);
+			//text = "   Fired (#): "+(int)tmpSteps ;
+			note.addTextLineNL(strB, "text");
 
 			note.addTextLineNL("", "text");
 			transIndex++;
 		}
 		note.addTextLineNL("", "bold");
-		note.addTextLineNL("Places data", "bold");
+		note.addTextLineNL(lang.getText("QST_entry017"), "bold");
 		int placeIndex = 0;
 		for(PlaceXTPN place : places) {
-			note.addTextLine("Place ", "text");
+			note.addTextLine(lang.getText("QST_entry018")+" ", "text");
 			note.addTextLine(""+placeIndex, "bold");
 			note.addTextLine( " ("+place.getName()+")", "bold");
-			note.addTextLine(" Type: ", "text");
+			note.addTextLine(lang.getText("QST_entry019")+" ", "text");
 			note.addTextLineNL(getPlaceType(place), "bold");
 
 			double avgTokens = result.avgTokens.get(placeIndex);
-			note.addTextLineNL("   Avg. tokens: "+Tools.cutValue(avgTokens), "text");
+			note.addTextLineNL(lang.getText("QST_entry020")+" "+Tools.cutValue(avgTokens), "text");
 			placeIndex++;
 		}
 
@@ -413,22 +421,22 @@ public class QuickSimTools {
 			, ArrayList<TransitionXTPN> transitions, ArrayList<PlaceXTPN> places) {
 
 		HolmesNotepad note = new HolmesNotepad(800, 600);
-		note.addTextLineNL("Simulation data", "text");
-		note.addTextLineNL("Repetitions: " + (int)result.get(0).simReps, "text");
-		note.addTextLineNL(" * Reference set:", "bold");
-		note.addTextLine("      Avg. steps:  ", "text");
+		note.addTextLineNL(lang.getText("QST_entry021"), "text"); //Simulation data
+		note.addTextLineNL(lang.getText("QST_entry022")+" " + (int)result.get(0).simReps, "text"); //Repetitions:
+		note.addTextLineNL(lang.getText("QST_entry023"), "bold"); // * Reference set:
+		note.addTextLine(lang.getText("QST_entry024")+"  ", "text"); //	  Avg. steps:
 		note.addTextLineNL(Tools.cutValue(result.get(0).simSteps), "bold");
-		note.addTextLine("      Avg. time:   ", "text");
+		note.addTextLine(lang.getText("QST_entry025")+"   ", "text"); //	  Avg. time:
 		note.addTextLineNL(Tools.cutValue(result.get(0).simTime), "bold");
-		note.addTextLine("      Time:        ", "text");
+		note.addTextLine(lang.getText("QST_entry026")+"        ", "text"); //	  Time:
 		note.addTextLineNL(Tools.getTime(result.get(0).compTime), "text");
 
-		note.addTextLineNL(" * Knockout set:", "bold");
-		note.addTextLine("      Avg. steps:  ", "text");
+		note.addTextLineNL(lang.getText("QST_entry027"), "bold"); // * Knockout set:
+		note.addTextLine(lang.getText("QST_entry028")+"  ", "text"); //	  Avg. steps:
 		note.addTextLineNL(Tools.cutValue(result.get(1).simSteps), "bold");
-		note.addTextLine("      Avg. time:   ", "text");
+		note.addTextLine(lang.getText("QST_entry029")+"   ", "text"); //	  Avg. time:
 		note.addTextLineNL(Tools.cutValue(result.get(1).simTime), "bold");
-		note.addTextLine("      Time:        ", "text");
+		note.addTextLine(lang.getText("QST_entry030")+"        ", "text"); //	  Time:
 		note.addTextLineNL(Tools.getTime(result.get(1).compTime), "text");
 
 		int transIndex = 0;
@@ -438,7 +446,7 @@ public class QuickSimTools {
 		double simTimeKnock = result.get(1).simTime;
 
 		note.addTextLineNL("", "bold");
-		note.addTextLineNL("Transitions data", "bold");
+		note.addTextLineNL(lang.getText("QST_entry031"), "bold"); //Transitions data
 		for(TransitionXTPN trans : transitions) {
 
 			double tmpStepsRef = result.get(0).transitionsStatistics.get(transIndex).get(0); //trans.simInactiveState
@@ -451,19 +459,23 @@ public class QuickSimTools {
 			double tmpStepsPercentKnock = (tmpStepsKnock*100)/simStepsKnock;
 			double tmpTimePercentKnock = (tmpTimeKnock * 100)/simTimeKnock;
 
-			note.addTextLine("Transition ", "text");
+			note.addTextLine(lang.getText("QST_entry032")+" ", "text"); //Transition
 			note.addTextLine(""+transIndex, "bold");
 			note.addTextLine( " ("+trans.getName()+")", "bold");
-			note.addTextLine(" Type: ", "text");
+			note.addTextLine(lang.getText("QST_entry033")+" ", "text"); // Type:
 			note.addTextLineNL(getTransType(trans), "bold");
 
-			String text = " R Inactive (#):  "+(int)tmpStepsRef + " ("+Tools.cutValue(tmpStepsPercentRef) +
-					"%) | \u03C4: "+ Tools.cutValue(tmpTimeRef) + " ("+Tools.cutValue(tmpTimePercentRef)+"%)" ;
-			note.addTextLineNL(text, "text");
+			String strB = String.format(lang.getText("QST_entry034"), (int)tmpStepsRef, Tools.cutValue(tmpStepsPercentRef)
+					, Tools.cutValue(tmpTimeRef), Tools.cutValue(tmpTimePercentRef));
+			//String text = " R Inactive (#):  "+(int)tmpStepsRef + " ("+Tools.cutValue(tmpStepsPercentRef) +
+			//		"%) | \u03C4: "+ Tools.cutValue(tmpTimeRef) + " ("+Tools.cutValue(tmpTimePercentRef)+"%)" ;
+			note.addTextLineNL(strB, "text");
 
-			text = " K Inactive (#):  "+(int)tmpStepsKnock + " ("+Tools.cutValue(tmpStepsPercentKnock) +
-					"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
-			note.addTextLineNL(text, "text");
+			strB = String.format(lang.getText("QST_entry035"), (int)tmpStepsKnock, Tools.cutValue(tmpStepsPercentKnock)
+					, Tools.cutValue(tmpTimeKnock), Tools.cutValue(tmpTimePercentKnock));
+			//String text = " K Inactive (#):  "+(int)tmpStepsKnock + " ("+Tools.cutValue(tmpStepsPercentKnock) +
+			//		"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
+			note.addTextLineNL(strB, "text");
 
 			double diffSteps = tmpStepsRef - tmpStepsKnock;
 			String signS = "+";
@@ -475,8 +487,12 @@ public class QuickSimTools {
 			if(diffTime > 0)
 				signT = "-";
 
-			String textDeltaInactive = "   \u0394Inact.:  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+signS+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
-					"%) | \u0394\u03C4: "+signT+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+signT+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
+			String textDeltaInactive = String.format(lang.getText("QST_entry036")
+					, signS, (int)(Math.abs(tmpStepsRef - tmpStepsKnock)), signS, Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock))
+					, signT, Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)), signT, Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock)));
+			
+			//String textDeltaInactive = "   \u0394Inact.:  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+signS+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
+			//		"%) | \u0394\u03C4: "+signT+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+signT+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
 
 			//note.addTextLineNL(text, "text");
 			//text = " \u0394 Inactive (#):  "+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
@@ -493,13 +509,17 @@ public class QuickSimTools {
 			tmpStepsPercentKnock = (tmpStepsKnock*100)/simStepsKnock;
 			tmpTimePercentKnock = (tmpTimeKnock * 100)/simTimeKnock;
 
-			text = " R Active (#):    "+(int)tmpStepsRef + " ("+Tools.cutValue(tmpStepsPercentRef) +
-					"%) | \u03C4: "+ Tools.cutValue(tmpTimeRef) + " ("+Tools.cutValue(tmpTimePercentRef)+"%)" ;
-			note.addTextLineNL(text, "text");
+			strB = String.format(lang.getText("QST_entry037"), (int)tmpStepsRef, Tools.cutValue(tmpStepsPercentRef)
+					, Tools.cutValue(tmpTimeRef), Tools.cutValue(tmpTimePercentRef));
+			//String text = " R Active (#):    "+(int)tmpStepsRef + " ("+Tools.cutValue(tmpStepsPercentRef) +
+			//		"%) | \u03C4: "+ Tools.cutValue(tmpTimeRef) + " ("+Tools.cutValue(tmpTimePercentRef)+"%)" ;
+			note.addTextLineNL(strB, "text");
 
-			text = " K Active (#):    "+(int)tmpStepsKnock + " ("+Tools.cutValue(tmpStepsPercentKnock) +
-					"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
-			note.addTextLineNL(text, "text");
+			strB = String.format(lang.getText("QST_entry038"), (int)tmpStepsKnock, Tools.cutValue(tmpStepsPercentKnock)
+					, Tools.cutValue(tmpTimeKnock), Tools.cutValue(tmpTimePercentKnock));
+			//String text = " K Active (#):    "+(int)tmpStepsKnock + " ("+Tools.cutValue(tmpStepsPercentKnock) +
+			//		"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
+			note.addTextLineNL(strB, "text");
 
 			diffSteps = tmpStepsRef - tmpStepsKnock;
 			signS = "+";
@@ -511,8 +531,11 @@ public class QuickSimTools {
 			if(diffTime > 0)
 				signT = "-";
 
-			String textDeltaActive = "   \u0394Act.  :  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+signS+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
-					"%) | \u0394\u03C4: "+signT+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+signT+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
+			String textDeltaActive = String.format("   \u0394Act.  :  %s%d (%s%s%%) | \u0394\u03C4: %s%s (%s%s%%)"
+					, signS, (int)(Math.abs(tmpStepsRef - tmpStepsKnock)), signS, Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock))
+					, signT, Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)), signT, Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock)));
+			//String textDeltaActive = "   \u0394Act.  :  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+signS+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
+			//		"%) | \u0394\u03C4: "+signT+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+signT+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
 
 			//text = " \u0394 Active (#):    "+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
 			//		"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
@@ -528,13 +551,17 @@ public class QuickSimTools {
 			tmpStepsPercentKnock = (tmpStepsKnock*100)/simStepsKnock;
 			tmpTimePercentKnock = (tmpTimeKnock * 100)/simTimeKnock;
 
-			text = " R Production (#): "+(int)tmpStepsRef + " ("+Tools.cutValue(tmpStepsPercentRef) +
-					"%) | \u03C4: "+ Tools.cutValue(tmpTimeRef) + " ("+Tools.cutValue(tmpTimePercentRef)+"%)" ;
-			note.addTextLineNL(text, "text");
+			strB = String.format(lang.getText("QST_entry040")
+					, (int)tmpStepsRef, Tools.cutValue(tmpStepsPercentRef), Tools.cutValue(tmpTimeRef), Tools.cutValue(tmpTimePercentRef));
+			//String text = " R Production (#): "+(int)tmpStepsRef + " ("+Tools.cutValue(tmpStepsPercentRef) +
+			//		"%) | \u03C4: "+ Tools.cutValue(tmpTimeRef) + " ("+Tools.cutValue(tmpTimePercentRef)+"%)" ;
+			note.addTextLineNL(strB, "text");
 
-			text = " K Production (#): "+(int)tmpStepsKnock + " ("+Tools.cutValue(tmpStepsPercentKnock) +
-					"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
-			note.addTextLineNL(text, "text");
+			strB = String.format(lang.getText("QST_entry041")
+					, (int)tmpStepsKnock, Tools.cutValue(tmpStepsPercentKnock), Tools.cutValue(tmpTimeKnock), Tools.cutValue(tmpTimePercentKnock));
+			//String text = " K Production (#): "+(int)tmpStepsKnock + " ("+Tools.cutValue(tmpStepsPercentKnock) +
+			//		"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
+			note.addTextLineNL(strB, "text");
 
 			diffSteps = tmpStepsRef - tmpStepsKnock;
 			signS = "+";
@@ -546,8 +573,11 @@ public class QuickSimTools {
 			if(diffTime > 0)
 				signT = "-";
 
-			String textDeltaProduction = "   \u0394Prod. :  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+signS+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
-					"%) | \u0394\u03C4: "+signT+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+signT+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
+			String textDeltaProduction = String.format(lang.getText("QST_entry042")
+					, signS, (int)(Math.abs(tmpStepsRef - tmpStepsKnock)), signS, Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock))
+					, signT, Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)), signT, Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock)));
+			//String textDeltaProduction = "   \u0394Prod. :  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+signS+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
+			//		"%) | \u0394\u03C4: "+signT+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+signT+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
 
 			//text = " \u0394 Production (#): "+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
 			//		"%) | \u0394\u03C4: "+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
@@ -555,48 +585,43 @@ public class QuickSimTools {
 
 			tmpStepsRef = result.get(0).transitionsStatistics.get(transIndex).get(3);
 			tmpStepsKnock = result.get(1).transitionsStatistics.get(transIndex).get(3);
-			text = " R Fired (#): "+(int)tmpStepsRef + "  |  " + " K Fired (#): "+(int)tmpStepsKnock;
-			note.addTextLineNL(text, "text");
-			//text = " K Fired (#): "+(int)tmpStepsKnock;
-			//note.addTextLineNL(text, "text");
+			
+			strB = String.format(lang.getText("QST_entry043"), (int)tmpStepsRef, (int)tmpStepsKnock);
+			//String text = " R Fired (#): "+(int)tmpStepsRef + "  |  " + " K Fired (#): "+(int)tmpStepsKnock;
+			note.addTextLineNL(strB, "text");
 
 			diffSteps = tmpStepsRef - tmpStepsKnock;
 			signS = "+";
 			if(diffSteps > 0)
 				signS = "-";
 
-			String textDeltaFire = "   \u0394Fired :  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock));
+			String textDeltaFire = String.format(lang.getText("QST_entry044"), signS, (int)(Math.abs(tmpStepsRef - tmpStepsKnock)));
+			//String textDeltaFire = "   \u0394Fired :  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock));
 
 			note.addTextLineNL(textDeltaInactive, "text");
 			note.addTextLineNL(textDeltaActive, "text");
 			note.addTextLineNL(textDeltaProduction, "text");
 			note.addTextLineNL(textDeltaFire, "text");
-
-			/*
-			tmpSteps = result.transDataMatrix.get(transIndex).get(3); //trans.simFiredState
-			text = "   Fired (#): "+(int)tmpSteps ;
-			note.addTextLineNL(text, "text");
-			 */
-
+			
 			note.addTextLineNL("", "text");
 			transIndex++;
 		}
 		note.addTextLineNL("", "bold");
-		note.addTextLineNL("Places data", "bold");
+		note.addTextLineNL(lang.getText("QST_entry045"), "bold");
 		int placeIndex = 0;
 		for(PlaceXTPN place : places) {
-			note.addTextLine("Place ", "text");
+			note.addTextLine(lang.getText("QST_entry046")+" ", "text");
 			note.addTextLine(""+placeIndex, "bold");
 			note.addTextLine( " ("+place.getName()+")", "bold");
-			note.addTextLine(" Type: ", "text");
+			note.addTextLine(lang.getText("QST_entry047")+" ", "text");
 			note.addTextLineNL(getPlaceType(place), "bold");
 
 			double avgTokensRef = result.get(0).avgTokens.get(placeIndex);
-			note.addTextLine("   (Ref)   Avg. tokens:", "bold");
+			note.addTextLine(lang.getText("QST_entry048"), "bold");
 			note.addTextLineNL(Tools.cutValue(avgTokensRef), "text");
 
 			double avgTokensKnock = result.get(1).avgTokens.get(placeIndex);
-			note.addTextLine("   (Knock) Avg. tokens:", "bold");
+			note.addTextLine(lang.getText("QST_entry049"), "bold");
 			note.addTextLineNL(Tools.cutValue(avgTokensKnock), "text");
 			placeIndex++;
 		}

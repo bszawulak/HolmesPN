@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
@@ -16,14 +17,15 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 public class MetaNodePopupMenu extends NodePopupMenu {
 	@Serial
 	private static final long serialVersionUID = 8356818331350683029L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 
 	public MetaNodePopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
 		super(graphPanel, el, pne, el.getParentNode());
 		final GUIManager gui = GUIManager.getDefaultGUIManager();
 
 		if(graphPanel.getSelectionManager().getSelectedElementLocations().size() == 1) {
-			this.addMenuItem("Delete", "cross.png", e -> {
-						Object[] options = {"Delete", "Cancel",};
+			this.addMenuItem(lang.getText("MNPM_entry001"), "cross.png", e -> {
+						Object[] options = {lang.getText("delete"), lang.getText("cancel"),};
 
 						MetaNode metaNode = (MetaNode) el.getParentNode();
 						int id = metaNode.getRepresentedSheetID();
@@ -44,11 +46,11 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 								.count();
 
 						StringBuilder builder = new StringBuilder();
-						builder.append(String.format(
-								"This subnet (%d) contains %d place(s) and %d transition(s) which are not portals.%n",
+						builder.append(String.format(//This subnet (%d) contains %d place(s) and %d transition(s) which are not portals.%n
+								lang.getText("MNPM_entry002"),
 								id, uniquePlaces, uniqueTransitions)
 						);
-						builder.append(String.format("Subnet has connections (portals in) the following subnets:%n"));
+						builder.append(String.format(lang.getText("MNPM_entry003")));
 
 						String parentName = GUIManager.getDefaultGUIManager().subnetsHQ.getMetanode(metaNode.getMySheetID())
 										.map(PetriNetElement::getName).orElse("Subnet0");
@@ -65,7 +67,7 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 
 
 						int n = JOptionPane.showOptionDialog(null,
-								builder.toString(), "Deletion warning", JOptionPane.YES_NO_OPTION,
+								builder.toString(), lang.getText("MNPM_entry004"), JOptionPane.YES_NO_OPTION,
 								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 						if (n == 0) {
 							GUIManager.getDefaultGUIManager().subnetsHQ.deleteSubnet(graphPanel.getSelectionManager().getSelectedMetanode());
@@ -74,10 +76,10 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 					}
 			);
 
-			this.addMenuItem("Unwrap ", "", e -> {
-						Object[] options = {"Unwrap", "Cancel",};
+			this.addMenuItem(lang.getText("unwrap"), "", e -> {
+						Object[] options = {lang.getText("unwrap"), lang.getText("cancel"),};
 						int n = JOptionPane.showOptionDialog(null,
-								"Do you want to unwrap selected subnet?", "Unwrapping warning?", JOptionPane.YES_NO_OPTION,
+								lang.getText("MNPM_entry005"), lang.getText("MNPM_entry005t"), JOptionPane.YES_NO_OPTION,
 								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 						if (n == 0) {
 							GUIManager.getDefaultGUIManager().subnetsHQ.unwrapSubnet(graphPanel);
@@ -86,10 +88,10 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 					}
 			);
 
-			this.addMenuItem("Delete meta-arcs ", "", e -> {
-						Object[] options = {"Delete", "Cancel",};
+			this.addMenuItem(lang.getText("MNPM_entry006"), "", e -> {
+						Object[] options = {lang.getText("delete"), lang.getText("cancel"),};
 						int n = JOptionPane.showOptionDialog(null,
-								"Do you want to delete all meta-arcs?", "Unwrapping warning?", JOptionPane.YES_NO_OPTION,
+								lang.getText("MNPM_entry007"), lang.getText("MNPM_entry007t"), JOptionPane.YES_NO_OPTION,
 								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 						if (n == 0) {
 							GUIManager.getDefaultGUIManager().subnetsHQ.clearMetaArcs(List.of(el));
@@ -100,10 +102,10 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 			);
 		}
 		
-		JMenu fixMenu = new JMenu("Fix meta-arcs");
+		JMenu fixMenu = new JMenu(lang.getText("MNPM_entry008"));
 		this.add(fixMenu);
 		
-		fixMenu.add(createMenuItem("Fix meta-arcs number", "invImportPopup.png", null, new ActionListener() {
+		fixMenu.add(createMenuItem(lang.getText("MNPM_entry009"), "invImportPopup.png", null, new ActionListener() {
 			private ElementLocation elMeta;
 			public void actionPerformed(ActionEvent arg0) {
 				getGraphPanel().getSelectionManager().deselectAllElementLocations();

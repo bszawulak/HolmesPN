@@ -234,7 +234,7 @@ public class SPNengine implements IEngine {
 			activeReadyToFireTransitions.add(trans);
 		}
 		
-		if(activeReadyToFireTransitions.size() > 0) {
+		if(!activeReadyToFireTransitions.isEmpty()) {
 			//tu wybieramy tranzycje z najnizszym czasie / najwiekszym P odpalenia
 			double compProbValue = activeReadyToFireTransitions.get(0).spnExtension.getSPNprobTime(); //zero?
 			ArrayList<Transition> toFire = new ArrayList<Transition>();
@@ -271,7 +271,7 @@ public class SPNengine implements IEngine {
 	 * @return Transition - tranzycja do uruchomienia lub null
 	 */
 	private Transition immediateFireSubsystem() {
-		if(immTransitions.size() == 0)
+		if(immTransitions.isEmpty())
 			return null;
 		
 		if(settingImmediateMode == 0) { //tylko 1, pierwsza aktywna (najwyższy priorytet)
@@ -284,7 +284,7 @@ public class SPNengine implements IEngine {
 			return null;
 		} else if(settingImmediateMode == 1) { //po priorytecie, ale wszystkie po kolei
 			//sprawdź, czy jest coś na liscie sekwencyjnego uruchamiania:
-			if(immFireListTransitionsOPTION.size() > 0) {
+			if(!immFireListTransitionsOPTION.isEmpty()) {
 				//Transition nowFiring
 				Transition youAreFired = immFireListTransitionsOPTION.get(0);
 				immFireListTransitionsOPTION.remove(0);
@@ -303,7 +303,7 @@ public class SPNengine implements IEngine {
 					trans.returnBookedTokens(); //zwolnij tokeny
 				}
 				//uruchom pierwszą
-				if(immFireListTransitionsOPTION.size() > 0) {
+				if(!immFireListTransitionsOPTION.isEmpty()) {
 					Transition youAreFired = immFireListTransitionsOPTION.get(0);
 					immFireListTransitionsOPTION.remove(0);
 					return youAreFired;
@@ -322,16 +322,14 @@ public class SPNengine implements IEngine {
 				roulette.add(trans);
 				prioritySum += trans.spnExtension.getSPNbox().IM_priority;
 			}
-			if(roulette.size() == 0)
+			if(roulette.isEmpty())
 				return null;
 			
 			for(Transition trans : roulette) {
 				trans.returnBookedTokens(); //zwolnij tokeny
 			}
 			
-			if(prioritySum == 0 && roulette.size() > 0) {
-				@SuppressWarnings("unused")
-				int xxx=12;
+			if(prioritySum == 0) {
 				//dziwne, nigdy nie powinno wystąpić
 				return roulette.get(0);
 			}
@@ -377,7 +375,7 @@ public class SPNengine implements IEngine {
 	 * @return Transition - następna do uruchomienia
 	 */
 	private Transition deterministicDelayFireSubsystem() {
-		if(detTransitionsSequence.size() > 0) { //obsługa kolejki
+		if(!detTransitionsSequence.isEmpty()) { //obsługa kolejki
 			for(Transition trans : detTransitionsSequence) {
 				trans.spnExtension.getSPNbox().tmp_DET_counter--;
 				if(trans.spnExtension.getSPNbox().tmp_DET_counter==0) {
@@ -437,12 +435,12 @@ public class SPNengine implements IEngine {
 		}
 		
 		for(Transition t : transitions) {
-			if(t.getOutputArcs().size() == 0) {
+			if(t.getOutputArcs().isEmpty()) {
 				if(!transitionSTtypeUpdateList.contains(t) && t.spnExtension.getSPNtype() == TransitionSPNExtension.StochaticsType.ST) {
 					transitionSTtypeUpdateList.add(t);
 				}
 			}
-			if(t.getInputArcs().size() == 0) {
+			if(t.getInputArcs().isEmpty()) {
 				if(!transitionSTtypeUpdateList.contains(t) && t.spnExtension.getSPNtype() == TransitionSPNExtension.StochaticsType.ST) {
 					transitionSTtypeUpdateList.add(t);
 				}
@@ -460,7 +458,7 @@ public class SPNengine implements IEngine {
 		if(settings.isSSAMassAction()) {
 			ArrayList<Place> prePlaces = prePlacesMap.get(transition);
 			
-			if(prePlaces.size() != 0) {
+			if(!prePlaces.isEmpty()) {
 				massActionKineticModifier = Long.MAX_VALUE;
 				for (Place prePlace : prePlaces) {
 					int placeLoc = placesMap.get(prePlace);

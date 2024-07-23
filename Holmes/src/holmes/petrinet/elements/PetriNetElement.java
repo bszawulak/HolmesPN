@@ -95,7 +95,7 @@ public class PetriNetElement implements Serializable {
      * @param name (<b>String</b>) nazwa elementu sieci Petriego.
      */
     public void setName(String name) {
-        if (name.length() == 0)
+        if (name.isEmpty())
             return;
 
         this.name = normalizeName(name);

@@ -278,10 +278,10 @@ public class SubnetCalculator implements Serializable {
                     }
                 }
             } else { //Decomposition can not be processed, because of the lack of invariants!
-                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, lang.getText("SCal_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
         } else { //Before determine ADT sets, you need to generate T-invariants.
-            JOptionPane.showMessageDialog(null, lang.getText("SC_entry002"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SCal_entry002"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -478,7 +478,7 @@ public class SubnetCalculator implements Serializable {
             }
             mctSubNets.remove(mctSubNets.size() - 1);
         } else { //Decomposition can not be processed, because of the lack of invariants!
-            JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SCal_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -494,10 +494,10 @@ public class SubnetCalculator implements Serializable {
                     tinvSubNets.add(new SubNet(SubNetType.TINV, subTransitions, null, null, null, null));
                 }
             } else { //Decomposition can not be processed, because of the lack of invariants!
-                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, lang.getText("SCal_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
         } else { //Decomposition can not be processed, because of the lack of invariants!
-            JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SCal_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -513,10 +513,10 @@ public class SubnetCalculator implements Serializable {
                     pinvSubNets.add(new SubNet(SubNetType.PINV, null, subPlaces, null, null, null));
                 }
             } else { 
-                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, lang.getText("SCal_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SCal_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -590,10 +590,10 @@ public class SubnetCalculator implements Serializable {
                     }
                 }
             } else { //Decomposition can not be processed, because of the lack of invariants!
-                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, lang.getText("SCal_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
         } else { //Before determine ADT sets, you need to generate T-invariants.
-            JOptionPane.showMessageDialog(null, lang.getText("SC_entry002"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SCal_entry002"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -806,10 +806,10 @@ public class SubnetCalculator implements Serializable {
                     result.add(new SubNet(SubNetType.TINV, subTransitions, null, null, null, null));
                 }
             } else {
-                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, lang.getText("SCal_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SCal_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
 
         return result;
@@ -875,10 +875,10 @@ public class SubnetCalculator implements Serializable {
                     }
                 }
             } else { //Decomposition can not be processed, because of the lack of invariants!
-                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, lang.getText("SCal_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
         } else { //Before determine ADT sets, you need to generate T-invariants.
-            JOptionPane.showMessageDialog(null, lang.getText("SC_entry002"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SCal_entry002"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
         }
         return result;
     }
@@ -939,7 +939,7 @@ public class SubnetCalculator implements Serializable {
                         adpSubNets.add(new SubNet(SubNetType.ADP, null, null, null, newADPset, null));
                 }
             } else { //Decomposition can not be processed, because of the lack of invariants!
-                JOptionPane.showMessageDialog(null, lang.getText("SC_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, lang.getText("SCal_entry001"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);
             }
         } else { //Before determine ADT sets, you need to generate T-invariants.
             JOptionPane.showMessageDialog(null, lang.getText("SC_entry002"), "WARNING MESSAGE", JOptionPane.WARNING_MESSAGE);

@@ -1,6 +1,7 @@
 package holmes.petrinet.elements;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.simulators.IRandomGenerator;
 
 import javax.swing.*;
@@ -10,6 +11,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 public class PlaceXTPN extends Place {
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     private double gammaMin_xTPN = 0.0;
     private double gammaMax_xTPN = 99;
     private boolean gammaMode_xTPN = true;
@@ -250,8 +252,8 @@ public class PlaceXTPN extends Place {
 
         int counter = howMany;
         if(howMany > multisetK.size()) {
-            GUIManager.getDefaultGUIManager().log("Error, trying to remove more tokens ("+howMany+") than\n" +
-                    "the multiset size ("+multisetK.size()+")", "error", true);
+            String strB = String.format(lang.getText("LOGentry00391"), howMany, multisetK.size());
+            GUIManager.getDefaultGUIManager().log(strB, "error", true);
             removedTokens.addAll(multisetK);
             multisetK.clear();
             return removedTokens;
@@ -306,9 +308,8 @@ public class PlaceXTPN extends Place {
         if(isGammaModeActive()) {
             multisetK.replaceAll(aDouble -> aDouble + tau);
         } else {
-            JOptionPane.showMessageDialog(null, "Critical error - tokens time update when XTPN status OFF" +
-                            "\nfor place"+this.getName(),
-                    "Error 587654", JOptionPane.ERROR_MESSAGE);
+            String strB = String.format(lang.getText("LOGentry00392"), this.getName());
+            GUIManager.getDefaultGUIManager().log(strB, "error", true);
         }
     }
 

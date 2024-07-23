@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
@@ -20,6 +21,7 @@ import holmes.windows.HolmesNotepad;
  * Klasa zajmująca się zarządzaniem całym procesem symulacji. Kiedyś nazywała się NetSimulator
  */
 public class GraphicalSimulator {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private SimulatorGlobals.SimNetType netSimType;
 	private SimulatorMode simulatorStatus = SimulatorMode.STOPPED;
 	private SimulatorMode previousSimStatus = SimulatorMode.STOPPED;
@@ -182,7 +184,6 @@ public class GraphicalSimulator {
 				if(transition.timeExtension.getDPNtimer() >= 0 && transition.timeExtension.getDPNduration() != 0) {
 					return true;
 				}
-					
 			}
 		}
 		return false;
@@ -241,8 +242,8 @@ public class GraphicalSimulator {
 			}
 			
 			if(colorDetected) {
-				JOptionPane.showMessageDialog(null, "Current net contains color places.\nSimulator switched to color mode.",
-						"Invalid mode", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("GS_entry001"),
+						lang.getText("GS_entry001t"), JOptionPane.ERROR_MESSAGE);
 				overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(3);
 				netSimType = SimulatorGlobals.SimNetType.COLOR;
 				engine.setNetSimType(netSimType);
@@ -255,8 +256,8 @@ public class GraphicalSimulator {
 				
 				if(n instanceof Transition) {
 					if(!(((Transition)n).getTransType() == TransitionType.TPN)) {
-						JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
-								"Invalid mode", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("GS_entry002"),
+								lang.getText("GS_entry002t"), JOptionPane.ERROR_MESSAGE);
 						overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
 						netSimType = SimulatorGlobals.SimNetType.HYBRID;
 						engine.setNetSimType(netSimType);
@@ -264,8 +265,8 @@ public class GraphicalSimulator {
 				}
 			}
 		} else if (netSimType == SimulatorGlobals.SimNetType.HYBRID) {
-			JOptionPane.showMessageDialog(null, "This mode is not yet implemented.",
-					"Invalid mode", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("GS_entry003"),
+					lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
 		}		
 	}
 
@@ -316,7 +317,7 @@ public class GraphicalSimulator {
 							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(4), 4);
 							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(5), 5);
 						} catch (Exception ex) {
-							overlord.log("GraphicalSimulator.launchSubtractPhase() failed to modify tokens. Probably not-colored place.", "error", true);
+							overlord.log(lang.getText("LOGentry00403exception"), "error", true);
 						}
 
 					} else {
@@ -344,7 +345,7 @@ public class GraphicalSimulator {
 							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(4), 4);
 							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(5), 5);
 						} catch (Exception ex) {
-							overlord.log("(2) GraphicalSimulator.launchSubtractPhase() failed to modify tokens. Probably not-colored place.", "error", true);
+							overlord.log(lang.getText("LOGentry00404exception"), "error", true);
 						}
 					} else {
 						FunctionsTools.functionalExtraction(transition, arc, place);
@@ -364,7 +365,7 @@ public class GraphicalSimulator {
 	 * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
 	 */
 	public void launchSingleSubtractPhase(ArrayList<Transition> transitions, boolean backtracking, Transition chosenTransition) {
-		if (transitions.size() < 1)
+		if (transitions.isEmpty())
 			return;
 
 		Transition transition;
@@ -405,7 +406,7 @@ public class GraphicalSimulator {
 						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(4), 4);
 						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(5), 5);
 					} catch (Exception ex) {
-						overlord.log("GraphicalSimulator.launchSingleSubtractPhase() failed to modify tokens. Probably not-colored place.", "error", true);
+						overlord.log(lang.getText("LOGentry00405exception"), "error", true);
 					}
 				} else {
 					FunctionsTools.functionalExtraction(transition, arc, place);
@@ -433,7 +434,7 @@ public class GraphicalSimulator {
 						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(4), 4);
 						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(5), 5);
 					} catch (Exception ex) {
-						overlord.log("(2) GraphicalSimulator.launchSingleSubtractPhase() failed to modify tokens. Probably not-colored place.", "error", true);
+						overlord.log(lang.getText("LOGentry00406exception"), "error", true);
 					}
 				} else {
 					FunctionsTools.functionalExtraction(transition, arc, place);
@@ -479,7 +480,7 @@ public class GraphicalSimulator {
 	 * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
 	 */
 	public void launchSingleAddPhaseGraphics( ArrayList<Transition> transitions, boolean backtracking, Transition chosenTransition) {
-		if (transitions.size() < 1)
+		if (transitions.isEmpty())
 			return;
 
 		Transition tran;
@@ -531,7 +532,8 @@ public class GraphicalSimulator {
 					place = (Place) arc.getStartNode();
 				
 				if(arc.getArcType() != TypeOfArc.NORMAL && arc.getArcType() != TypeOfArc.COLOR && arc.getArcType() != TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
-					overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ " arc: "+arc, "warning", true);
+					String strB = String.format(lang.getText("LOGentry00407"), place.getName(), arc);
+					overlord.log(strB, "warning", true);
 				}
 				
 				if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {
@@ -543,7 +545,7 @@ public class GraphicalSimulator {
 						((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(4), 4);
 						((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(5), 5);
 					} catch (Exception ex) {
-						overlord.log("GraphicalSimulator.launchAddPhase() failed to modify tokens. Probably not-colored place.", "error", true);
+						overlord.log(lang.getText("LOGentry00408exception"), "error", true);
 					}
 				} else {
 					//tylko zwykły łuk
@@ -565,7 +567,7 @@ public class GraphicalSimulator {
 	 * @param chosenTransition Transition - wybrana tranzycja, której dotyczy uruchomienie tej metody
 	 */
 	public void launchSingleAddPhase(ArrayList<Transition> transitions, boolean backtracking, Transition chosenTransition) {
-		if (transitions.size() < 1)
+		if (transitions.isEmpty())
 			return;
 
 		Transition transition;
@@ -588,7 +590,8 @@ public class GraphicalSimulator {
 				place = (Place) arc.getStartNode();
 
 			if(arc.getArcType() != TypeOfArc.NORMAL && arc.getArcType() != TypeOfArc.COLOR && arc.getArcType() != TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
-				overlord.log("Error: non-standard arc used to produce tokens: "+place.getName()+ " arc: "+arc, "warning", true);
+				String strB = String.format(lang.getText("LOGentry00409"), place.getName(), arc);
+				overlord.log(strB, "warning", true);
 			}
 
 			if(arc.getArcType() == TypeOfArc.COLOR && place.isColored) {
@@ -600,7 +603,7 @@ public class GraphicalSimulator {
 					((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(4), 4);
 					((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(5), 5);
 				} catch (Exception ex) {
-					overlord.log("GraphicalSimulator.launchSingleAddPhase() failed to modify tokens. Probably not-colored place.", "error", true);
+					overlord.log(lang.getText("LOGentry00410exception"), "error", true);
 				}
 			} else {
 				//tylko zwykły łuk
@@ -632,7 +635,7 @@ public class GraphicalSimulator {
 			unpauseSimulation();
 		} else if (getSimulatorStatus() == SimulatorMode.STOPPED) {
 			JOptionPane.showMessageDialog(null,
-				"Can't pause a stopped simulation!", "The simulator is already stopped!", JOptionPane.ERROR_MESSAGE);
+				lang.getText("GS_entry004"), lang.getText("GS_entry004t"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -645,7 +648,6 @@ public class GraphicalSimulator {
 		timer.stop();
 		previousSimStatus = simulatorStatus;
 		setSimulatorStatus(SimulatorMode.STOPPED);
-
 		setSimulationActive(false);
 		
 		nsl.logSimStopped(timeCounter);
@@ -921,7 +923,7 @@ public class GraphicalSimulator {
 					if(isHistoryMode()) {
 						actionStack.push(new SimulationStep(SimulatorMode.STEP, cloneTransitionArray(launchingTransitions)));
 						if (actionStack.peek().getPendingTransitions() == null) {
-							overlord.log("Unknown problem in actionPerformed(ActionEvent event) in GraphicalSimulator class.", "error", true);
+							overlord.log(lang.getText("LOGentry00411"), "error", true);
 						}
 					}
 				
@@ -941,8 +943,8 @@ public class GraphicalSimulator {
 					// simulation ends, no possible steps remaining
 					setSimulationActive(false);
 					stopSimulation();
-					JOptionPane.showMessageDialog(null, "Simulation stopped, no active transitions.",
-							"Simulation stopped", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("GS_entry005"),
+							lang.getText("GS_entry005t"), JOptionPane.INFORMATION_MESSAGE);
 				}
 				transitionDelay = 0;
 			} else if (transitionDelay >= DEFAULT_COUNTER && !subtractPhase) { 
@@ -1031,15 +1033,14 @@ public class GraphicalSimulator {
 							}
 						}
 					}
-					
 					subtractPhase = false;
 				} else {
 					// simulation ends, no possible steps remaining
 					setSimulationActive(false);
 					stopSimulation();
-					JOptionPane.showMessageDialog(null, "Simulation stopped, no active transitions.",
-							"Simulation stopped",JOptionPane.INFORMATION_MESSAGE);
-					overlord.log("Simulation ended - no more available steps.", "text", true);
+					JOptionPane.showMessageDialog(null, lang.getText("GS_entry005"),
+							lang.getText("GS_entry005t"),JOptionPane.INFORMATION_MESSAGE);
+					overlord.log(lang.getText("LOGentry00412"), "text", true);
 				}
 				transitionDelay = 0;
 			} else if (transitionDelay >= DEFAULT_COUNTER && !subtractPhase) {
@@ -1123,8 +1124,8 @@ public class GraphicalSimulator {
 					// simulation ends, no possible steps remaining
 					setSimulationActive(false);
 					stopSimulation();
-					JOptionPane.showMessageDialog(null, "Backtracking ended",
-						"No more available actions to backtrack!", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("GS_entry006"),
+						lang.getText("GS_entry006t"), JOptionPane.INFORMATION_MESSAGE);
 				}
 				transitionDelay = 0;
 			} else if (transitionDelay >= DEFAULT_COUNTER && !subtractPhase) {

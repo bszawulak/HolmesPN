@@ -902,8 +902,8 @@ public class LangEngDafaultDB {
         defaultEnglish.put("PD_entry012","Non-I:");
 
         //SubnetCalculator:
-        defaultEnglish.put("SC_entry001","Decomposition can not be processed, because of the lack of invariants!");
-        defaultEnglish.put("SC_entry002","Before determine ADT sets, you need to generate T-invariants.");
+        defaultEnglish.put("SCal_entry001","Decomposition can not be processed, because of the lack of invariants!");
+        defaultEnglish.put("SCal_entry002","Before determine ADT sets, you need to generate T-invariants.");
 
         //TimeComputations:
         defaultEnglish.put("TC_entry001","Error: t-invariant and transition set sizes do not match!");
@@ -1450,20 +1450,493 @@ public class LangEngDafaultDB {
         defaultEnglish.put("LOGentry00320","Error reading state vector number");
         defaultEnglish.put("LOGentry00321exception","Exception (1000129): ProjectReader.readSSAvectors(): Reading SSA vectors failed:");
 
+        //ElementDraw:
+        defaultEnglish.put("ED_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00322exception","Exception (1000130): ElementDraw.drawElement() failed:");
+        defaultEnglish.put("LOGentry00323exception","Exception (1000131): ElementDraw.drawElement() failed:");
+        defaultEnglish.put("LOGentry00324exception","Exception (1000132): ElementDraw.drawElement() failed:");
+        defaultEnglish.put("LOGentry00325exception","Exception (1000133): ElementDraw.drawElement() failed:");
+        defaultEnglish.put("LOGentry00326exception","Exception (1000134): ElementDraw.drawElement() failed:");
+        defaultEnglish.put("LOGentry00327exception","Exception (1000135): ElementDraw.drawElement() failed:");
+        defaultEnglish.put("LOGentry00328exception","Exception (1000136): ElementDraw.drawElement() failed:");
+        defaultEnglish.put("LOGentry00329exception","Exception (1000137): ElementDraw.drawElement() failed:");
+
+        //GraphPanel:
+        defaultEnglish.put("LOGentry00330exception","Exception (1000138): GraphPanel.setCursorForMode() failed: Critical error, file  %s .gif not found in jar file. This is Java-level problem, please contact authors.");
+        defaultEnglish.put("LOGentry00331critErr","Critical error (2000017) Critical error while drawing net. Loaded file probably corrupted if encountered after project loading. Restarting program.");
+        defaultEnglish.put("GP_entry001","Snoopy compatibility mode is activated in program options.\nDual interface (PT) subnetworks are not allowed.");
+        defaultEnglish.put("GP_entry001t","Compatibility issue");
+        defaultEnglish.put("GP_entry002","Normal place cannot be used with XTPN nodes.");
+        defaultEnglish.put("GP_entry003","Normal transition cannot be used with XTPN nodes.");
+        defaultEnglish.put("GP_entry004","Stochastic transition cannot be used with XTPN nodes.");
+        defaultEnglish.put("GP_entry005","Time transition cannot be used with XTPN nodes.");
+        defaultEnglish.put("GP_entry006","XTPN trans: UnderConstruction: transformation. Please create clean new project to use XTPN nodes.");
+        defaultEnglish.put("GP_entry006t","Compatibility issue");
+        defaultEnglish.put("GP_entry007","XTPN place: UnderConstruction: transformation. Please create clean new project to use XTPN nodes.");
+        defaultEnglish.put("GP_entry007t","Compatibility issue");
+        defaultEnglish.put("GP_entry008","Color place cannot be used with XTPN nodes.");
+        defaultEnglish.put("GP_entry009","Color transition cannot be used with XTPN nodes.");
+        defaultEnglish.put("GP_entry010","Operation impossible when simulator is working.");
+        defaultEnglish.put("GP_entry011","Operation impossible when XTPN simulator is working.");
+        defaultEnglish.put("GP_entry012","Do you want to delete selected elements?");
+        defaultEnglish.put("GP_entry012t","Deletion warning");
+        defaultEnglish.put("GP_entry013","Cannot draw arc to invisible node!");
+        defaultEnglish.put("GP_entry014","Only normal arc allowed from meta-node!");
+        defaultEnglish.put("GP_entry015","Only XTPN normal arc and inhibitors are allowed in XTPN net mode.");
+        defaultEnglish.put("GP_entry016","Wrong arc type");
+        defaultEnglish.put("GP_entry017","Only XTPN normal arc and inhibitors are allowed in XTPN net mode.");
+        defaultEnglish.put("GP_entry018","Direct connection between two meta-nodes not possible.");
+        defaultEnglish.put("GP_entry019","Only normal arc can be connected with meta-node.");
+        defaultEnglish.put("GP_entry020","Meta-node type P (transitions-interfaced) can get connection only from transitions!");
+        defaultEnglish.put("GP_entry021","Meta-node type T (places-interfaced) can get connection only from places!");
+        defaultEnglish.put("GP_entry022","Meta-node type P (transitions-interfaced) can get connection only from transitions!");
+        defaultEnglish.put("GP_entry023","Meta-node type T (places-interfaced) can get connection only from places!");
+        defaultEnglish.put("GP_entry024","Arc going in this direction already exists.");
+        defaultEnglish.put("GP_entry025","Please remove arc between these two nodes in order to create a read-arc.");
+        defaultEnglish.put("GP_entry026","Two interfaces cannot be linked directly within single subnet.");
+        defaultEnglish.put("GP_entry026t","Don't cross the streams!");
+        defaultEnglish.put("GP_entry027","This type of arc can only go FROM place TO transition!");
+        defaultEnglish.put("LOGentry00332","Unable to obtaint WorkspaceSheet object. Net sheet panel probably externized outside program bounds.");
+
+        //SelectionManager:
+        defaultEnglish.put("LOGentry00333","Some functions have been affected by the removal operation. Please read reports above this message.");
+        defaultEnglish.put("SM_entry001","Cloning into Portals possible only for one selected node!");
+        defaultEnglish.put("SM_entry001t","Multiple selection warning");
+
+        //MCSDataMatrix:
+        defaultEnglish.put("MCSDM_entry001","Existing MCS list detected for a given transition. Replace?");
+        defaultEnglish.put("MCSDM_entry001t","Transition already have MCS data");
+        defaultEnglish.put("LOGentry00334","Unable to add new MCS list. DataCore size:");
+        defaultEnglish.put("LOGentry00335","Unable to return MCS list. DataCore size:");
+        defaultEnglish.put("LOGentry00336","Unable to return MCS list info. DataCore size:");
+        defaultEnglish.put("MCSDM_entry002","MCS data for a given net is not empty. Cancel current operation,\nreplace data or save current MCS data to file before replacing?");
+        defaultEnglish.put("MCSDM_entry002t","Net change detected");
+        defaultEnglish.put("MCSDM_entry003","Saving current MCS sets failed. Loading new sets cancelled.");
+        defaultEnglish.put("MCSDM_entry003t","Operation cancelled");
+
+        //MultisetM:
+        defaultEnglish.put("MSM_entry001","Default description for XTPN state.");
+        defaultEnglish.put("LOGentry00337critErr","Critical error (2000018) MultisetM.overwriteMultiset_M_withNetState() failed.");
+
+        //NetSimulationDataCore:
+        defaultEnglish.put("NSDC_entry001","Load data");
+        defaultEnglish.put("LOGentry00338","Error: data package incomplete!");
+        defaultEnglish.put("LOGentry00339exception","Exception (1000139): NetSimulationDataCore.loadDataSets() failed for file:");
+        defaultEnglish.put("NSDC_entry002","Save data");
+        defaultEnglish.put("LOGentry00340exception","Exception (1000140): NetSimulationDataCore.saveDataSets() failed:");
+
+        //P_StateManager:
+        defaultEnglish.put("PSM_entry001","Default first (0) working state for current net.");
+        defaultEnglish.put("LOGentry00341critErr","Critical error (2000019) P_StateManager.removePlace() failed. Critical error: invalid place index (%d) in states matrix.");
+        defaultEnglish.put("LOGentry00342critErr","Critical error (2000020) P_StateManager.removePlace() failed. Critical error: invalid XTPN place index (%d) in XTPN states matrix.");
+        defaultEnglish.put("LOGentry00343critErr","Critical error (2000021) P_StateManager.createNewMultiset_M_basedOnNet() failed. Critical error: wrong place object.");
+        defaultEnglish.put("LOGentry00344critErr","Critical error (2000022) P_StateManager.createFirstMultiset_M() failed. Critical error: non-XTPN nodes detected.");
+        defaultEnglish.put("LOGentry00345critErr","Critical error (2000023) P_StateManager.replaceNetStateWithSelectedMultiset_M() failed. Critical error: wrong place object.");
+        defaultEnglish.put("LOGentry00346critErr","Critical error (2000024) P_StateManager.replaceStoredMultiset_M_withCurrentNetState() failed. Critical error: wrong place object.");
+
+        //PetriNet:
+        defaultEnglish.put("PN_entry001","Default description of t-invariant #");
+        defaultEnglish.put("LOGentry00347","Removing all nodes (places and transition) and all arcs.");
+        defaultEnglish.put("PN_entry002","Default description of p-invariant #");
+        defaultEnglish.put("PN_entry003","Default name for MCT #");
+        defaultEnglish.put("LOGentry00348exception","Exception (1000141): PetriNet.selectProperSimulatorBox() failed:");
+        defaultEnglish.put("LOGentry00349exception","Exception (1000142): PetriNet.restoreMarkingZero() failed. Unable to restore state m0 on request.");
+        defaultEnglish.put("LOGentry00350critErr","Critical error (2000025) PetriNet.restoreMarkingZeroXTPN() failed. Wrong place object.");
+        defaultEnglish.put("LOGentry00351exception","Exception (1000143): PetriNet.restoreMarkingZeroXTPN() failed. Unable to restore XTOM p-state m0 on request.");
+        defaultEnglish.put("LOGentry00352exception","Exception (1000144): PetriNet.restoreMarkingZeroFast() failed. Unable to restore state m0 on request.");
+        defaultEnglish.put("LOGentry00353exception","Exception (1000145): PetriNet.restoreColors() failed. Unable to restore colored state m0 on request.");
+        defaultEnglish.put("LOGentry00354","Activating old Snoopy loader. Will fail for hierarchical networks.");
+        defaultEnglish.put("LOGentry00355","Petri net successfully imported from file:");
+        defaultEnglish.put("LOGentry00356exception","Exception (1000146): PetriNet.loadFromFile() failed:");
+        defaultEnglish.put("PN_entry004","t-invariants saved to file:\n");
+        defaultEnglish.put("PN_entry005","There are no t-invariants to export.");
+        defaultEnglish.put("LOGentry00357","No t-invariants, saving into CSV file failed.");
+        defaultEnglish.put("PN_entry006","p-invariants saved to file:\n");
+        defaultEnglish.put("PN_entry007","There are no p-invariants to export.");
+        defaultEnglish.put("LOGentry00358","No p-invariants, saving into CSV file failed.");
+        defaultEnglish.put("LOGentry00359exception","Exception (1000147): PetriNet.saveInvariantsToCSV() failed:");
+        defaultEnglish.put("PN_entry008","t-invariants saved to file:\n");
+        defaultEnglish.put("LOGentry00360","t-invariants saved into .inv INA file.");
+        defaultEnglish.put("PN_entry009","There are no t-invariants to export");
+        defaultEnglish.put("LOGentry00361","No t-invariants, saving into CSV file failed.");
+        defaultEnglish.put("PN_entry010","p-invariants saved to file:\n");
+        defaultEnglish.put("LOGentry00362","p-invariants saved into .inv INA file.");
+        defaultEnglish.put("PN_entry011","There are no p-invariants to export");
+        defaultEnglish.put("LOGentry00363","No p-invariants, saving into CSV file failed.");
+        defaultEnglish.put("LOGentry00364exception","Exception (1000148): PetriNet.saveInvariantsToInaFormat() failed:");
+        defaultEnglish.put("PN_entry012","t-invariants saved to file:\n");
+        defaultEnglish.put("LOGentry00365","t-invariants saved in Charlie file format.");
+        defaultEnglish.put("PN_entry013","There are no t-invariants to export.");
+        defaultEnglish.put("LOGentry00366","No t-invariants, saving into CSV file failed.");
+        defaultEnglish.put("PN_entry014","p-invariants saved to file:\n");
+        defaultEnglish.put("LOGentry00367","p-invariants saved in Charlie file format.");
+        defaultEnglish.put("PN_entry015","There are no p-invariants to export.");
+        defaultEnglish.put("LOGentry00368","No p-invariants, saving into CSV file failed.");
+        defaultEnglish.put("LOGentry00369exception","Exception (1000149): PetriNet.saveInvariantsToCharlie() failed:");
+        defaultEnglish.put("LOGentry00370exception","Exception (1000150): PetriNet.loadTPinvariantsFromFile() failed. Invariants reading and/or adding to program failed.");
+
+        //ArcPopupMenu:
+        defaultEnglish.put("APM_entry001","Create break point here");
+        defaultEnglish.put("APM_entry002","Remove break point");
+        defaultEnglish.put("APM_entry003","Remove ALL break points");
+
+        //GraphPanelPopupMenu:
+        defaultEnglish.put("GPPM_entry001","Cut");
+        defaultEnglish.put("GPPM_entry002","Copy");
+        defaultEnglish.put("GPPM_entry003","Paste");
+
+        //MetaNodePopupMenu:
+        defaultEnglish.put("MNPM_entry001","Delete");
+        defaultEnglish.put("MNPM_entry002","This subnet (%d) contains %d place(s) and %d transition(s) which are not portals.%n");
+        defaultEnglish.put("MNPM_entry003","Subnet has connections (portals in) the following subnets:%n");
+        defaultEnglish.put("MNPM_entry004","Deletion warning");
+        defaultEnglish.put("MNPM_entry005","Do you want to unwrap selected subnet?");
+        defaultEnglish.put("MNPM_entry005t","Unwrapping warning");
+        defaultEnglish.put("MNPM_entry006","Delete meta-arcs");
+        defaultEnglish.put("MNPM_entry007","Do you want to delete all meta-arcs?");
+        defaultEnglish.put("MNPM_entry007t","Meta-arcs deletion warning");
+        defaultEnglish.put("MNPM_entry008","Fix meta-arcs");
+        defaultEnglish.put("MNPM_entry009","Fix meta-arcs number");
+
+        //NodePopupMenu:
+        defaultEnglish.put("NPM_entry001","Show details...");
+        defaultEnglish.put("NPM_entry002","Operation impossible when PN simulator is working.");
+        defaultEnglish.put("NPM_entry003","Operation impossible when XTPN simulator is working.");
+        defaultEnglish.put("NPM_entry004","Do you want to delete selected elements?");
+        defaultEnglish.put("NPM_entry004t","Deletion warning");
+        defaultEnglish.put("NPM_entry005","Merge portals");
+        defaultEnglish.put("NPM_entry006","Create subnet");
+        defaultEnglish.put("NPM_entry007","Transfer to subnet (with M-Arcs)");
+        defaultEnglish.put("NPM_entry008","Transfer to subnet (without M-Arcs)");
+        defaultEnglish.put("NPM_entry009","Copy into subnet");
+
+        //PlacePopupMenu:
+        defaultEnglish.put("PPM_entry001","Invisibility (invariants) ON/OFF");
+        defaultEnglish.put("PPM_entry002","Clone this Place into Portal");
+        defaultEnglish.put("PPM_entry003","Operation impossible when PN simulator is working.");
+        defaultEnglish.put("PPM_entry004","Operation impossible when XTPN simulator is working.");
+        defaultEnglish.put("PPM_entry005","Option possible for one place only.");
+        defaultEnglish.put("PPM_entry006","Multiple selection warning");
+        defaultEnglish.put("PPM_entry007","Export subnet to File");
+        defaultEnglish.put("PPM_entry008","Option possible for one transition only.");
+        defaultEnglish.put("PPM_entry009","Multiple selection warning");
+
+        //SheetPopupMenu:
+        defaultEnglish.put("SPM_entry001","Select All");
+        defaultEnglish.put("SPM_entry002","Refresh");
+        defaultEnglish.put("SPM_entry003","Clear colors");
+        defaultEnglish.put("SPM_entry004","Save to image file");
+        defaultEnglish.put("LOGentry00371exception","Exception (1000151): SheetPopupMenu.SheetPopupMenu() failed. Saving net sheet into picture failed.");
+        defaultEnglish.put("SPM_entry005","Fast zoom reset");
+        defaultEnglish.put("SPM_entry006","Zoom");
+        defaultEnglish.put("SPM_entry007","All Invisibility: OFF");
+        defaultEnglish.put("SPM_entry008","All knockout: OFF");
+        defaultEnglish.put("SPM_entry009","Network Analysis");
+        defaultEnglish.put("SPM_entry010","Import t-invariants from file");
+        defaultEnglish.put("SPM_entry011","Generate t-invariants");
+        defaultEnglish.put("SPM_entry012","Generate MCT sets");
+        defaultEnglish.put("SPM_entry013","MCT Options");
+        defaultEnglish.put("SPM_entry014","Simple MCT file");
+        defaultEnglish.put("SPM_entry015","Tex output file");
+        defaultEnglish.put("SPM_entry016","Other files");
+        defaultEnglish.put("SPM_entry017","Network Tools");
+        defaultEnglish.put("SPM_entry018","Show TPN transitions");
+        defaultEnglish.put("SPM_entry019","Show DPN transitions");
+        defaultEnglish.put("SPM_entry020","Show TPN/DPN transitions");
+        defaultEnglish.put("SPM_entry021","Fix Snoopy compatibility");
+        defaultEnglish.put("SPM_entry022","Remove panel");
+        defaultEnglish.put("SPM_entry023","Subnet import");
+        defaultEnglish.put("SPM_entry024","Import Subnet with original location");
+        defaultEnglish.put("SPM_entry025","Import Subnet with point click location");
+        defaultEnglish.put("SPM_entry026","Add existing node");
+        defaultEnglish.put("LOGentry00372","Network image save to file");
+        defaultEnglish.put("LOGentry00373exception","Exception (1000152): GraphPanelPopupMenu.exportToFile() failed:");
+
+        //SubnetIconPopupMenu:
+        defaultEnglish.put("SIPM_entry001","Show details...");
+
+        //TransitionPopupMenu:
+        defaultEnglish.put("TPM_entry001","Knockout ON/OFF");
+        defaultEnglish.put("TPM_entry002","Invisibility (invariants) ON/OFF");
+        defaultEnglish.put("TPM_entry003","Functions builder...");
+        defaultEnglish.put("TPM_entry004","Clone this Transition into Portal");
+        defaultEnglish.put("TPM_entry005","Operation impossible when PN simulator is working.");
+        defaultEnglish.put("TPM_entry006","Operation impossible when XTPN simulator is working.");
+        defaultEnglish.put("TPM_entry007","Option possible for one transition only.");
+        defaultEnglish.put("TPM_entry007t","Multiple selection warning");
+        defaultEnglish.put("TPM_entry008","Export subnet to File");
+
+        //SPNdataVector:
+        defaultEnglish.put("SPNDV_entry001","Default description for SPN transitions data vector.");
+        defaultEnglish.put("LOGentry00374exception","Exception (1000153): SPNdataVector.getFiringRate() failed. Firing rate function evaluation failed for t_%d  Returning 0.0");
+
+        //SPNdataVectorManager:
+        defaultEnglish.put("SPNDVM_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00375critErr","Critical error (2000026) SPNdataVectorManager.removeTrans() failed. Critical error: invalid transition index in SPN data matrix.");
+
+        //SSAplacesManager:
+        defaultEnglish.put("SSAPM_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00376critErr","Critical error (2000027) SSAplacesManager.removePlace() failed. Critical error: invalid place index in SSA vectors matrix.");
+
+        //StatePlacesVector:
+        defaultEnglish.put("SPV_entry001","Default description for PN state vector.");
+
+        //Node:
+        defaultEnglish.put("N_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00377critErr","Critical error (2000028) Node.drawName() Error: alpha, beta, tau and name arrays size do not match.");
+        defaultEnglish.put("LOGentry00378critErr","Critical error (2000029) Node.getTextLocation_X() Error: invalid index for name location (X position). Node:");
+        defaultEnglish.put("LOGentry00379critErr","Critical error (2000030) Node.getTextLocation_X() Error: invalid index for alpha location (X position). Node:");
+        defaultEnglish.put("LOGentry00380critErr","Critical error (2000031) Node.getTextLocation_X() Error: invalid index for beta location (X position). Node:");
+        defaultEnglish.put("LOGentry00381critErr","Critical error (2000032) Node.getTextLocation_X() Error: invalid index for gamma location (X position). Node:");
+        defaultEnglish.put("LOGentry00382critErr","Critical error (2000033) Node.getTextLocation_X() Error: invalid index for tau location (X position). Node:");
+        defaultEnglish.put("LOGentry00383critErr","Critical error (2000034) Node.getTextLocation_X() Error: invalid index for name location (X position). Node:");
+        defaultEnglish.put("LOGentry00384critErr","Critical error (2000035) Node.getTextLocation_Y() Error: invalid index for alpha location (Y position). Node:");
+        defaultEnglish.put("LOGentry00385critErr","Critical error (2000036) Node.getTextLocation_Y() Error: invalid index for beta location (Y position). Node:");
+        defaultEnglish.put("LOGentry00386critErr","Critical error (2000037) Node.getTextLocation_Y() Error: invalid index for gamma location (Y position). Node:");
+        defaultEnglish.put("LOGentry00387critErr","Critical error (2000038) Node.getTextLocation_Y() Error: invalid index for tau location (Y position). Node:");
+        defaultEnglish.put("LOGentry00388critErr","Critical error (2000039) Node.getTextLocation_Y() Error: invalid index for name location (Y position). Node:");
+
+        //Place:
+        defaultEnglish.put("P_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00389","CRITICAL SIMULATION ERROR. Number of tokens in place: %s below zero: (%d).");
+        defaultEnglish.put("LOGentry00390","Error: something tried to lower tokens below zero! Place:");
+
+        //PlaceXTPN:
+        defaultEnglish.put("PXTPN_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00391","Error, trying to remove more tokens (%d) ) than %n the multiset size (%d)");
+        defaultEnglish.put("LOGentry00392","CRITICAL SIMULATION ERROR: tokens time update when XTPN status OFF for place %s");
+
+        //Transition:
+        defaultEnglish.put("T_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00393exception","Exception (1000154): Transition.bookRequiredTokens() failed while booking colored tokens.");
+
+        //TransitionColored:
+        defaultEnglish.put("TCol_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00394","Error in TransitionColored.isColorActive(). Probably non-colored place in arc.");
+
+        //TransitionXTPN:
+        defaultEnglish.put("TXTPN_entry001","-no sentence-");
+
+        //FunctionsTools:
+        defaultEnglish.put("FT_entry001","Non existing place identifier used: ");
+        defaultEnglish.put("LOGentry00395","Function: '%s' (fID: %s) of transition t%d has been disabled due to removal of place p%d");
+        defaultEnglish.put("FT_entry002","List of errors for previously enabled functions:");
+        defaultEnglish.put("FT_entry003","variables initialization error (function disabled):");
+        defaultEnglish.put("FT_entry004","CRITICAL ERROR WHILE INITIALIZATION: FUNCTION DISABLED.");
+        defaultEnglish.put("FT_entry005","Function creation critically failed for:");
+        defaultEnglish.put("LOGentry00396exception","Exception (1000155): FunctionsTools.getFunctionValue() failed. Parsing equation failed for");
+
+        //GraphicalSimulatorXTPN:
+        defaultEnglish.put("GSXTPN_entry001","Can't pause a stopped simulation!");
+        defaultEnglish.put("GSXTPN_entry001t","XTPN simulator is already stopped!");
+        defaultEnglish.put("LOGentry00397","Error, non-XTPN transitions found in list sent into SimulatorXTPN!");
+        defaultEnglish.put("LOGentry00398","Error, non-XTPN places found in list sent into SimulatorXTPN!");
+        defaultEnglish.put("GSXTPN_entry002","Simulation stopped, no active transitions.");
+        defaultEnglish.put("GSXTPN_entry002t","XTPN simulator is already stopped!");
+
+        //SimulatorEngineXTPN:
+        defaultEnglish.put("SEXTPN_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00399","Wrong simulation type for XTPN simulator:");
+        defaultEnglish.put("LOGentry00400","Warning: non-standard arc used to produce tokens: %s arc: %s");
+
+        //StateSimulatorXTPN:
+        defaultEnglish.put("LOGentry00401","Error, non-XTPN transitions found in list sent into SimulatorXTPN!");
+        defaultEnglish.put("LOGentry00402","Error, non-XTPN places found in list sent into SimulatorXTPN!");
+        defaultEnglish.put("SSXTPN_entry001","XTPN Simulation cannot start, engine initialization failed.");
+
+        //GraphicalSimulator:
+        defaultEnglish.put("GS_entry001","Current net contains color places.\nSimulator switched to color mode.");
+        defaultEnglish.put("GS_entry001t","Invalid mode");
+        defaultEnglish.put("GS_entry002","Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.");
+        defaultEnglish.put("GS_entry002t","Invalid mode");
+        defaultEnglish.put("GS_entry003","This mode is not yet implemented.");
+        defaultEnglish.put("GS_entry003t","Unimplemented mode");
+        defaultEnglish.put("LOGentry00403exception","Exception (1000156): GraphicalSimulator.launchSubtractPhase() failed to modify tokens. Probably not-colored place.");
+        defaultEnglish.put("LOGentry00404exception","Exception (1000157): GraphicalSimulator.launchSubtractPhase() failed to modify tokens. Probably not-colored place.");
+        defaultEnglish.put("LOGentry00405exception","Exception (1000158): GraphicalSimulator.launchSingleSubtractPhase() failed to modify tokens. Probably not-colored place.");
+        defaultEnglish.put("LOGentry00406exception","Exception (1000159): GraphicalSimulator.launchSingleSubtractPhase() failed to modify tokens. Probably not-colored place.");
+        defaultEnglish.put("LOGentry00407","Error: non-standard arc used to produce tokens: %s arc: %s");
+        defaultEnglish.put("LOGentry00408exception","Exception (1000160): GraphicalSimulator.launchAddPhase() failed to modify tokens. Probably not-colored place.");
+        defaultEnglish.put("LOGentry00409","Error: non-standard arc used to produce tokens: %s arc: %s");
+        defaultEnglish.put("LOGentry00410exception","Exception (1000161): GraphicalSimulator.launchSingleAddPhase() failed to modify tokens. Probably not-colored place.");
+        defaultEnglish.put("GS_entry004","Can't pause a stopped simulation!");
+        defaultEnglish.put("GS_entry004t","Simulator is already stopped!");
+        defaultEnglish.put("LOGentry00411","Unknown problem in actionPerformed(ActionEvent event) in GraphicalSimulator class.");
+        defaultEnglish.put("GS_entry005","Simulation stopped, no active transitions.");
+        defaultEnglish.put("GS_entry005t","Simulation stopped");
+        defaultEnglish.put("LOGentry00412","Simulation ended - no more available steps.");
+        defaultEnglish.put("GS_entry006","No more available actions to backtrack!");
+        defaultEnglish.put("GS_entry006s","Backtracking ended");
+
+        //GraphicalSimulatorLogger:
+        defaultEnglish.put("GSL_entry001","Simulation started. Net sim model:");
+        defaultEnglish.put("GSL_entry002","steps history saved:");
+        defaultEnglish.put("GSL_entry003","mode:");
+        defaultEnglish.put("GSL_entry004","Simulator stopped in step:");
+        defaultEnglish.put("GSL_entry005","Warning, multi-arc detected between transition: %s and place: %s");
+        defaultEnglish.put("GSL_entry006","*Transition:");
+        defaultEnglish.put("GSL_entry007","tokens consumed:");
+        defaultEnglish.put("GSL_entry008","tokens produced:");
+        defaultEnglish.put("GSL_entry009","pre-Places:");
+        defaultEnglish.put("GSL_entry010","post-Places:");
+        defaultEnglish.put("GSL_entry011","input transition");
+        defaultEnglish.put("GSL_entry012","output transition");
+        defaultEnglish.put("GSL_entry013","State m0 backup created");
+        defaultEnglish.put("GSL_entry014","Simulator reset confirmed, state m0 restored. Simulation state cleaned.");
+        defaultEnglish.put("GSL_entry015","Simulator paused.");
+        defaultEnglish.put("GSL_entry016","Simulator restarted after pause.");
+
+        //QuickSimTools:
+        defaultEnglish.put("QST_entry001","PN simulator working. Unable to retrieve transitions statistics.");
+        defaultEnglish.put("QST_entry001t","Simulator working");
+        defaultEnglish.put("QST_entry002","XTPN simulator working. Unable to retrieve transitions statistics.");
+        defaultEnglish.put("QST_entry002t","Simulator working");
+        defaultEnglish.put("QST_entry003","At least one transition must be disabled.");
+        defaultEnglish.put("QST_entry003t","qSim Knockout: no disabled transition");
+        defaultEnglish.put("QST_entry004","Knockout simulation must have repetitions turned on.");
+        defaultEnglish.put("QST_entry004t","qSim Knockout: repetitions");
+        defaultEnglish.put("QST_entry005","Simulation data");
+        defaultEnglish.put("QST_entry006","Avg. steps:");
+        defaultEnglish.put("QST_entry007","Avg. time:");
+        defaultEnglish.put("QST_entry008","Repetitions:");
+        defaultEnglish.put("QST_entry009","Simulation time recorded (h:m:s) :");
+        defaultEnglish.put("QST_entry010","Transitions data");
+        defaultEnglish.put("QST_entry011","Transition");
+        defaultEnglish.put("QST_entry012","Type:");
+        defaultEnglish.put("QST_entry013","   Inactive (#):  %d (%s%%) | τ: %s (%s%%)");
+        defaultEnglish.put("QST_entry014","   Active (#):    %d (%s%%) | τ: %s (%s%%)");
+        defaultEnglish.put("QST_entry015","   Production (#): %d (%s%%) | τ: %s (%s%%)");
+        defaultEnglish.put("QST_entry016","   Fired (#): %d");
+        defaultEnglish.put("QST_entry017","Places data");
+        defaultEnglish.put("QST_entry018","Place");
+        defaultEnglish.put("QST_entry019"," Type:");
+        defaultEnglish.put("QST_entry020","   Avg. tokens:");
+        defaultEnglish.put("QST_entry021","Simulation data");
+        defaultEnglish.put("QST_entry022","Repetitions:");
+        defaultEnglish.put("QST_entry023"," * Reference set:");
+        defaultEnglish.put("QST_entry024","      Avg. steps:");
+        defaultEnglish.put("QST_entry025","      Avg. time:");
+        defaultEnglish.put("QST_entry026","      Time:");
+        defaultEnglish.put("QST_entry027"," * Knockout set:");
+        defaultEnglish.put("QST_entry028","      Avg. steps:");
+        defaultEnglish.put("QST_entry029","      Avg. time:");
+        defaultEnglish.put("QST_entry030","      Time:");
+        defaultEnglish.put("QST_entry031","Transitions data");
+        defaultEnglish.put("QST_entry032","Transition");
+        defaultEnglish.put("QST_entry033"," Type:");
+        defaultEnglish.put("QST_entry034"," R Inactive (#):  %d (%s%%) | τ: %s (%s%%)");
+        defaultEnglish.put("QST_entry035"," K Inactive (#):  %d (%s%%) | τ: %s (%s%%)");
+        defaultEnglish.put("QST_entry036","   ΔInact.:  %s%d (%s%s%%) | Δτ: %s%s (%s%s%%)");
+        defaultEnglish.put("QST_entry037"," R Active (#):    %d (%s%%) | τ: %s (%s%%)");
+        defaultEnglish.put("QST_entry038"," K Active (#):    %d (%s%%) | τ: %s (%s%%)");
+        defaultEnglish.put("QST_entry039","   ΔAct.  :  %s%d (%s%s%%) | Δτ: %s%s (%s%s%%)");
+        defaultEnglish.put("QST_entry040"," R Production (#): %d (%s%%) | τ: %s (%s%%)");
+        defaultEnglish.put("QST_entry041"," K Production (#): %d (%s%%) | τ: %s (%s%%)");
+        defaultEnglish.put("QST_entry042","   ΔProd. :  %s%d (%s%s%%) | Δτ: %s%s (%s%s%%)");
+        defaultEnglish.put("QST_entry043"," R Fired (#): %d  |  K Fired (#): %d");
+        defaultEnglish.put("QST_entry044","   ΔFired :  %s%d");
+        defaultEnglish.put("QST_entry045","Places data");
+        defaultEnglish.put("QST_entry046","Place");
+        defaultEnglish.put("QST_entry047"," Type:");
+        defaultEnglish.put("QST_entry048","   (Ref)   Avg. tokens:");
+        defaultEnglish.put("QST_entry049","   (Knock) Avg. tokens:");
+
+        //SimulatorGlobals:
+        defaultEnglish.put("SG_entry001","Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.");
+        defaultEnglish.put("SG_entry001t","Invalid mode");
+
+        //SimulatorStandardPN:
+        defaultEnglish.put("SSPN_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00413","Error, no active transition, yet generateValidLaunchingTransitions has been activated.");
+
+        //StateSimulator:
+        defaultEnglish.put("SS_entry001","Simulation cannot start, engine initialization failed.");
+        defaultEnglish.put("SS_entry002","50% firing chance");
+        defaultEnglish.put("SS_entry003","maximum");
+        defaultEnglish.put("SS_entry004","Starting states simulation for %d steps in %s mode.");
+        defaultEnglish.put("LOGentry00414","Simulation ended. Restoring zero marking.");
+        defaultEnglish.put("SS_entry005","Simulation for place %s cannot start.");
+        defaultEnglish.put("SS_entry006","Simulation for transition %s cannot start");
+        defaultEnglish.put("LOGentry00415","Simulation simple mode cannot start.");
+
+        //BaseDialog:
+        defaultEnglish.put("BD_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00416exception","Exception (1000162): BaseDialog.initDialog() failed:");
+
+        //OnNodeAction:
+        defaultEnglish.put("ONA_entry001","Place:");
+        defaultEnglish.put("ONA_entry002","Transition:");
+        defaultEnglish.put("ONA_entry003","Type:   Place");
+        defaultEnglish.put("ONA_entry004","Portals in subnets: %s");
+        defaultEnglish.put("ONA_entry005","Type:   Transition");
+        defaultEnglish.put("ONA_entry006","Portals in subnets: %s");
+        defaultEnglish.put("ONA_entry007","Also add Meta-Arcs with portals");
+        defaultEnglish.put("ONA_entry008","Add node");
+
+        //OnSubnetAction:
+        defaultEnglish.put("OSA_entry001","Select subnet:");
+        defaultEnglish.put("OSA_entry002","Confirm");
+
+        //SubnetsActions:
+        defaultEnglish.put("SA_entry001","Transfer to subnet (with M-Arcs)");
+        defaultEnglish.put("SA_entry002","Transfer to subnet (no M-Arcs)");
+        defaultEnglish.put("SA_entry003","Copy into subnet");
+        defaultEnglish.put("SA_entry004","Add node to subnet");
+
+        //SubnetsControl:
+        defaultEnglish.put("SC_entry001a","Add another portal");
+        defaultEnglish.put("SC_entry001b","Don't add new arc/portal");
+        defaultEnglish.put("SC_entry002","Subnet %d already contains %d portal(s) of%n%s.%nAdd another one?");
+        defaultEnglish.put("SC_entry002t","Add another portal symbol?");
+        defaultEnglish.put("SC_entry003a","Add another portal");
+        defaultEnglish.put("SC_entry003b","Don't add new arc/portal");
+        defaultEnglish.put("SC_entry004","Subnet %d already contains %d portal(s) of%n%s.%nAdd another one?");
+        defaultEnglish.put("SC_entry004t","Add another portal symbol?");
+        defaultEnglish.put("SC_entry005","Snoopy compatibility mode is activated in program options.\nDual interface (PT) subnetworks are not allowed.");
+        defaultEnglish.put("SC_entry005t","Compatibility problem");
+        defaultEnglish.put("SC_entry006","Subnet (type T or TP) contains place portals as interfaces to other subnetworks.\nSubnet P-type can only be connected by transition portals.");
+        defaultEnglish.put("SC_entry006t","Compatibility problem");
+        defaultEnglish.put("SC_entry007","Subnet (type P or TP) contains place portals as interfaces to other subnetworks.\nSubnet T-type can only be connected by place portals.");
+        defaultEnglish.put("SC_entry007t","Compatibility problem");
+        defaultEnglish.put("LOGentry00417critErr","Critical error (2000030) SubnetsControl.removeMetaNode() serious internal problem encountered. MetaNode should NEVER have normal arcs.");
+        defaultEnglish.put("SC_entry008","Metanode for sheet %d does not exist.");
+        defaultEnglish.put("SC_entry009","Failed to remove metanode for sheet %d.");
+        defaultEnglish.put("LOGentry00418critErr","Critical error (2000031) SubnetsControl.validateMetaArcs() unexpected error: metanode graphical symbol not found for existing subnet ID:");
+        defaultEnglish.put("SC_entry010","Multiple locations of metanodes:");
+        defaultEnglish.put("SC_entry011","   Metanode: %s [SUBNET: %d]");
+        defaultEnglish.put("SC_entry012","Wrong types of subnets:");
+        defaultEnglish.put("SC_entry013","   Metanode: %s [SUBNET: %d] [TYPE: %s]");
+
+        //SubnetsGraphics:
+        defaultEnglish.put("SGraph_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00419exception","Exception (1000163): SubnetsGraphics.resizePanels() failed:");
+
+        //SubnetsSnoopyCompatibility:
+        defaultEnglish.put("SSC_entry001","Fixed node:");
+        defaultEnglish.put("SSC_entry002","  += Added: %d in-metaArcs and %d out-metaArcs.");
+        defaultEnglish.put("LOGentry00420exception","Exception (1000164): SubnetsSnoopyCompatibility.checkAndFix() unable to fix node:");
+
+        //SPNsingleVectorTableModel:
+        defaultEnglish.put("SPNSVTM_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00421exception","Exception (1000165): SPNsingleVectorTableModel.getValueAt() failed:");
 
         //generalPurposeTags:
         defaultEnglish.put("cancel","Cancel");
         defaultEnglish.put("critError","Critical error");
         defaultEnglish.put("confirm","Confirm");
         defaultEnglish.put("continue","Continue");
+        defaultEnglish.put("delete","Delete");
         defaultEnglish.put("error","Error");
         defaultEnglish.put("exit","Exit");
         defaultEnglish.put("fixed","Fixed");
         defaultEnglish.put("problem","Problem");
+        defaultEnglish.put("replace","Replace");
         defaultEnglish.put("saveAndExit","Save and Exit");
         defaultEnglish.put("saveAndCont","Save and continue");
+        defaultEnglish.put("saveAndReplace","Save & replace");
         defaultEnglish.put("save","Save");
         defaultEnglish.put("select","Select");
+        defaultEnglish.put("success","Success");
         defaultEnglish.put("netSimWork01","Net simulator working");
         defaultEnglish.put("unimplemented","Not implemented yet.");
         defaultEnglish.put("unimplementedTitle","Subsystem offline");

@@ -178,8 +178,7 @@ public class PlaceColored extends Place {
         this.reserved4grey = 0;
         this.reserved5black = 0;
     }
-
-
+    
     /**
      * Metoda zwalnia wszystkie zarezerwowane kolorowe tokeny.
      * @param i int - nr porządkowy tokenu, default 0, od 0 do 5

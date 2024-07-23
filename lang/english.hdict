@@ -889,8 +889,8 @@ PD_entry011, LINEAR REGION
 PD_entry012, Non-I:
 
 //SubnetCalculator:
-SC_entry001, Decomposition can not be processed, because of the lack of invariants!
-SC_entry002, Before determine ADT sets, you need to generate T-invariants.
+SCal_entry001, Decomposition can not be processed, because of the lack of invariants!
+SCal_entry002, Before determine ADT sets, you need to generate T-invariants.
 
 //TimeComputations:
 TC_entry001, Error: t-invariant and transition set sizes do not match!
@@ -1502,7 +1502,7 @@ MCSDM_entry003, Saving current MCS sets failed. Loading new sets cancelled.
 MCSDM_entry003t, Operation cancelled
 
 //MultisetM:
-MSM_entry001, -no sentence-
+MSM_entry001, Default description for XTPN state.
 LOGentry00337critErr, Critical error (2000018) MultisetM.overwriteMultiset_M_withNetState() failed.
 
 //NetSimulationDataCore:
@@ -1513,7 +1513,7 @@ NSDC_entry002, Save data
 LOGentry00340exception, Exception (1000140): NetSimulationDataCore.saveDataSets() failed:
 
 //P_StateManager:
-PSM_entry001, -no sentence-
+PSM_entry001, Default first (0) working state for current net.
 LOGentry00341critErr, Critical error (2000019) P_StateManager.removePlace() failed. Critical error: invalid place index (%d) in states matrix.
 LOGentry00342critErr, Critical error (2000020) P_StateManager.removePlace() failed. Critical error: invalid XTPN place index (%d) in XTPN states matrix.
 LOGentry00343critErr, Critical error (2000021) P_StateManager.createNewMultiset_M_basedOnNet() failed. Critical error: wrong place object.
@@ -1562,6 +1562,350 @@ LOGentry00368, No p-invariants, saving into CSV file failed.
 LOGentry00369exception, Exception (1000149): PetriNet.saveInvariantsToCharlie() failed:
 LOGentry00370exception, Exception (1000150): PetriNet.loadTPinvariantsFromFile() failed. Invariants reading and/or adding to program failed.
 
+//ArcPopupMenu:
+APM_entry001, Create break point here
+APM_entry002, Remove break point
+APM_entry003, Remove ALL break points
+
+//GraphPanelPopupMenu:
+GPPM_entry001, Cut
+GPPM_entry002, Copy
+GPPM_entry003, Paste
+
+//MetaNodePopupMenu:
+MNPM_entry001, Delete
+MNPM_entry002, This subnet (%d) contains %d place(s) and %d transition(s) which are not portals.%n
+MNPM_entry003, Subnet has connections (portals in) the following subnets:%n
+MNPM_entry004, Deletion warning
+MNPM_entry005, Do you want to unwrap selected subnet?
+MNPM_entry005t, Unwrapping warning
+MNPM_entry006, Delete meta-arcs
+MNPM_entry007, Do you want to delete all meta-arcs?
+MNPM_entry007t, Meta-arcs deletion warning
+MNPM_entry008, Fix meta-arcs
+MNPM_entry009, Fix meta-arcs number
+
+//NodePopupMenu:
+NPM_entry001, Show details...
+NPM_entry002, Operation impossible when PN simulator is working.
+NPM_entry003, Operation impossible when XTPN simulator is working.
+NPM_entry004, Do you want to delete selected elements?
+NPM_entry004t, Deletion warning
+NPM_entry005, Merge portals
+NPM_entry006, Create subnet
+NPM_entry007, Transfer to subnet (with M-Arcs)
+NPM_entry008, Transfer to subnet (without M-Arcs)
+NPM_entry009, Copy into subnet
+
+//PlacePopupMenu:
+PPM_entry001, Invisibility (invariants) ON/OFF
+PPM_entry002, Clone this Place into Portal
+PPM_entry003, Operation impossible when PN simulator is working.
+PPM_entry004, Operation impossible when XTPN simulator is working.
+PPM_entry005, Option possible for one place only.
+PPM_entry006, Multiple selection warning
+PPM_entry007, Export subnet to File
+PPM_entry008, Option possible for one transition only.
+PPM_entry009, Multiple selection warning
+
+//SheetPopupMenu:
+SPM_entry001, Select All
+SPM_entry002, Refresh
+SPM_entry003, Clear colors
+SPM_entry004, Save to image file
+LOGentry00371exception, Exception (1000151): SheetPopupMenu.SheetPopupMenu() failed. Saving net sheet into picture failed.
+SPM_entry005, Fast zoom reset
+SPM_entry006, Zoom
+SPM_entry007, All Invisibility: OFF
+SPM_entry008, All knockout: OFF
+SPM_entry009, Network Analysis
+SPM_entry010, Import t-invariants from file
+SPM_entry011, Generate t-invariants
+SPM_entry012, Generate MCT sets
+SPM_entry013, MCT Options
+SPM_entry014, Simple MCT file
+SPM_entry015, Tex output file
+SPM_entry016, Other files
+SPM_entry017, Network Tools
+SPM_entry018, Show TPN transitions
+SPM_entry019, Show DPN transitions
+SPM_entry020, Show TPN/DPN transitions
+SPM_entry021, Fix Snoopy compatibility
+SPM_entry022, Remove panel
+SPM_entry023, Subnet import
+SPM_entry024, Import Subnet with original location
+SPM_entry025, Import Subnet with point click location
+SPM_entry026, Add existing node
+LOGentry00372, Network image save to file
+LOGentry00373exception, Exception (1000152): GraphPanelPopupMenu.exportToFile() failed:
+
+//SubnetIconPopupMenu:
+SIPM_entry001, Show details...
+
+//TransitionPopupMenu:
+TPM_entry001, Knockout ON/OFF
+TPM_entry002, Invisibility (invariants) ON/OFF
+TPM_entry003, Functions builder...
+TPM_entry004, Clone this Transition into Portal
+TPM_entry005, Operation impossible when PN simulator is working.
+TPM_entry006, Operation impossible when XTPN simulator is working.
+TPM_entry007, Option possible for one transition only.
+TPM_entry007t, Multiple selection warning
+TPM_entry008, Export subnet to File
+
+//SPNdataVector:
+SPNDV_entry001, Default description for SPN transitions data vector.
+LOGentry00374exception, Exception (1000153): SPNdataVector.getFiringRate() failed. Firing rate function evaluation failed for t_%d  Returning 0.0
+
+//SPNdataVectorManager:
+SPNDVM_entry001, -no sentence-
+LOGentry00375critErr, Critical error (2000026) SPNdataVectorManager.removeTrans() failed. Critical error: invalid transition index in SPN data matrix.
+
+//SSAplacesManager:
+SSAPM_entry001, -no sentence-
+LOGentry00376critErr, Critical error (2000027) SSAplacesManager.removePlace() failed. Critical error: invalid place index in SSA vectors matrix.
+
+//StatePlacesVector:
+SPV_entry001, Default description for PN state vector.
+
+//Node:
+N_entry001, -no sentence-
+LOGentry00377critErr, Critical error (2000028) Node.drawName() Error: alpha, beta, tau and name arrays size do not match.
+LOGentry00378critErr, Critical error (2000029) Node.getTextLocation_X() Error: invalid index for name location (X position). Node:
+LOGentry00379critErr, Critical error (2000030) Node.getTextLocation_X() Error: invalid index for alpha location (X position). Node:
+LOGentry00380critErr, Critical error (2000031) Node.getTextLocation_X() Error: invalid index for beta location (X position). Node:
+LOGentry00381critErr, Critical error (2000032) Node.getTextLocation_X() Error: invalid index for gamma location (X position). Node:
+LOGentry00382critErr, Critical error (2000033) Node.getTextLocation_X() Error: invalid index for tau location (X position). Node:
+LOGentry00383critErr, Critical error (2000034) Node.getTextLocation_X() Error: invalid index for name location (X position). Node:
+LOGentry00384critErr, Critical error (2000035) Node.getTextLocation_Y() Error: invalid index for alpha location (Y position). Node:
+LOGentry00385critErr, Critical error (2000036) Node.getTextLocation_Y() Error: invalid index for beta location (Y position). Node:
+LOGentry00386critErr, Critical error (2000037) Node.getTextLocation_Y() Error: invalid index for gamma location (Y position). Node:
+LOGentry00387critErr, Critical error (2000038) Node.getTextLocation_Y() Error: invalid index for tau location (Y position). Node:
+LOGentry00388critErr, Critical error (2000039) Node.getTextLocation_Y() Error: invalid index for name location (Y position). Node:
+
+//Place:
+P_entry001, -no sentence-
+LOGentry00389, CRITICAL SIMULATION ERROR. Number of tokens in place: %s below zero: (%d).
+LOGentry00390, Error: something tried to lower tokens below zero! Place:
+
+//PlaceXTPN:
+PXTPN_entry001, -no sentence-
+LOGentry00391, Error, trying to remove more tokens (%d) ) than %n the multiset size (%d)
+LOGentry00392, CRITICAL SIMULATION ERROR: tokens time update when XTPN status OFF for place %s
+
+//Transition:
+T_entry001, -no sentence-
+LOGentry00393exception, Exception (1000154): Transition.bookRequiredTokens() failed while booking colored tokens.
+
+//TransitionColored:
+TCol_entry001, -no sentence-
+LOGentry00394, Error in TransitionColored.isColorActive(). Probably non-colored place in arc.
+
+//TransitionXTPN:
+TXTPN_entry001, -no sentence-
+
+//FunctionsTools:
+FT_entry001, Non existing place identifier used: 
+LOGentry00395, Function: '%s' (fID: %s) of transition t%d has been disabled due to removal of place p%d
+FT_entry002, List of errors for previously enabled functions:
+FT_entry003, variables initialization error (function disabled):
+FT_entry004, CRITICAL ERROR WHILE INITIALIZATION: FUNCTION DISABLED.
+FT_entry005, Function creation critically failed for:
+LOGentry00396exception, Exception (1000155): FunctionsTools.getFunctionValue() failed. Parsing equation failed for
+
+//GraphicalSimulatorXTPN:
+GSXTPN_entry001, Can't pause a stopped simulation!
+GSXTPN_entry001t, XTPN simulator is already stopped!
+LOGentry00397, Error, non-XTPN transitions found in list sent into SimulatorXTPN!
+LOGentry00398, Error, non-XTPN places found in list sent into SimulatorXTPN!
+GSXTPN_entry002, Simulation stopped, no active transitions.
+GSXTPN_entry002t, XTPN simulator is already stopped!
+
+//SimulatorEngineXTPN:
+SEXTPN_entry001, -no sentence-
+LOGentry00399, Wrong simulation type for XTPN simulator:
+LOGentry00400, Warning: non-standard arc used to produce tokens: %s arc: %s
+
+//StateSimulatorXTPN:
+LOGentry00401, Error, non-XTPN transitions found in list sent into SimulatorXTPN!
+LOGentry00402, Error, non-XTPN places found in list sent into SimulatorXTPN!
+SSXTPN_entry001, XTPN Simulation cannot start, engine initialization failed.
+
+//GraphicalSimulator:
+GS_entry001, Current net contains color places.\nSimulator switched to color mode.
+GS_entry001t, Invalid mode
+GS_entry002, Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.
+GS_entry002t, Invalid mode
+GS_entry003, This mode is not yet implemented.
+GS_entry003t, Unimplemented mode
+LOGentry00403exception, Exception (1000156): GraphicalSimulator.launchSubtractPhase() failed to modify tokens. Probably not-colored place.
+LOGentry00404exception, Exception (1000157): GraphicalSimulator.launchSubtractPhase() failed to modify tokens. Probably not-colored place.
+LOGentry00405exception, Exception (1000158): GraphicalSimulator.launchSingleSubtractPhase() failed to modify tokens. Probably not-colored place.
+LOGentry00406exception, Exception (1000159): GraphicalSimulator.launchSingleSubtractPhase() failed to modify tokens. Probably not-colored place.
+LOGentry00407, Error: non-standard arc used to produce tokens: %s arc: %s
+LOGentry00408exception, Exception (1000160): GraphicalSimulator.launchAddPhase() failed to modify tokens. Probably not-colored place.
+LOGentry00409, Error: non-standard arc used to produce tokens: %s arc: %s
+LOGentry00410exception, Exception (1000161): GraphicalSimulator.launchSingleAddPhase() failed to modify tokens. Probably not-colored place.
+GS_entry004, Can't pause a stopped simulation!
+GS_entry004t, Simulator is already stopped!
+LOGentry00411, Unknown problem in actionPerformed(ActionEvent event) in GraphicalSimulator class.
+GS_entry005, Simulation stopped, no active transitions.
+GS_entry005t, Simulation stopped
+LOGentry00412, Simulation ended - no more available steps.
+GS_entry006, No more available actions to backtrack!
+GS_entry006s, Backtracking ended
+
+//GraphicalSimulatorLogger:
+GSL_entry001, Simulation started. Net sim model:
+GSL_entry002, steps history saved:
+GSL_entry003, mode:
+GSL_entry004, Simulator stopped in step:
+GSL_entry005, Warning, multi-arc detected between transition: %s and place: %s
+GSL_entry006, *Transition:
+GSL_entry007, tokens consumed:
+GSL_entry008, tokens produced:
+GSL_entry009, pre-Places:
+GSL_entry010, post-Places:
+GSL_entry011, input transition
+GSL_entry012, output transition
+GSL_entry013, State m0 backup created
+GSL_entry014, Simulator reset confirmed, state m0 restored. Simulation state cleaned.
+GSL_entry015, Simulator paused.
+GSL_entry016, Simulator restarted after pause.
+
+//QuickSimTools:
+QST_entry001, PN simulator working. Unable to retrieve transitions statistics.
+QST_entry001t, Simulator working
+QST_entry002, XTPN simulator working. Unable to retrieve transitions statistics.
+QST_entry002t, Simulator working
+QST_entry003, At least one transition must be disabled.
+QST_entry003t, qSim Knockout: no disabled transition
+QST_entry004, Knockout simulation must have repetitions turned on.
+QST_entry004t, qSim Knockout: repetitions
+QST_entry005, Simulation data
+QST_entry006, Avg. steps:
+QST_entry007, Avg. time:
+QST_entry008, Repetitions:
+QST_entry009, Simulation time recorded (h:m:s) :
+QST_entry010, Transitions data
+QST_entry011, Transition
+QST_entry012, Type:
+QST_entry013,    Inactive (#):  %d (%s%%) | τ: %s (%s%%)
+QST_entry014,    Active (#):    %d (%s%%) | τ: %s (%s%%)
+QST_entry015,    Production (#): %d (%s%%) | τ: %s (%s%%)
+QST_entry016,    Fired (#): %d
+QST_entry017, Places data
+QST_entry018, Place
+QST_entry019,  Type:
+QST_entry020,    Avg. tokens:
+QST_entry021, Simulation data
+QST_entry022, Repetitions:
+QST_entry023,  * Reference set:
+QST_entry024,       Avg. steps:
+QST_entry025,       Avg. time:
+QST_entry026,       Time:
+QST_entry027,  * Knockout set:
+QST_entry028,       Avg. steps:
+QST_entry029,       Avg. time:
+QST_entry030,       Time:
+QST_entry031, Transitions data
+QST_entry032, Transition
+QST_entry033,  Type:
+QST_entry034,  R Inactive (#):  %d (%s%%) | τ: %s (%s%%)
+QST_entry035,  K Inactive (#):  %d (%s%%) | τ: %s (%s%%)
+QST_entry036,    ΔInact.:  %s%d (%s%s%%) | Δτ: %s%s (%s%s%%)
+QST_entry037,  R Active (#):    %d (%s%%) | τ: %s (%s%%)
+QST_entry038,  K Active (#):    %d (%s%%) | τ: %s (%s%%)
+QST_entry039,    ΔAct.  :  %s%d (%s%s%%) | Δτ: %s%s (%s%s%%)
+QST_entry040,  R Production (#): %d (%s%%) | τ: %s (%s%%)
+QST_entry041,  K Production (#): %d (%s%%) | τ: %s (%s%%)
+QST_entry042,    ΔProd. :  %s%d (%s%s%%) | Δτ: %s%s (%s%s%%)
+QST_entry043,  R Fired (#): %d  |  K Fired (#): %d
+QST_entry044,    ΔFired :  %s%d
+QST_entry045, Places data
+QST_entry046, Place
+QST_entry047,  Type:
+QST_entry048,    (Ref)   Avg. tokens:
+QST_entry049,    (Knock) Avg. tokens:
+
+//SimulatorGlobals:
+SG_entry001, Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.
+SG_entry001t, Invalid mode
+
+//SimulatorStandardPN:
+SSPN_entry001, -no sentence-
+LOGentry00413, Error, no active transition, yet generateValidLaunchingTransitions has been activated.
+
+//StateSimulator:
+SS_entry001, Simulation cannot start, engine initialization failed.
+SS_entry002, 50% firing chance
+SS_entry003, maximum
+SS_entry004, Starting states simulation for %d steps in %s mode.
+LOGentry00414, Simulation ended. Restoring zero marking.
+SS_entry005, Simulation for place %s cannot start.
+SS_entry006, Simulation for transition %s cannot start
+LOGentry00415, Simulation simple mode cannot start.
+
+//BaseDialog:
+BD_entry001, -no sentence-
+LOGentry00416exception, Exception (1000162): BaseDialog.initDialog() failed:
+
+//OnNodeAction:
+ONA_entry001, Place:
+ONA_entry002, Transition:
+ONA_entry003, Type:   Place
+ONA_entry004, Portals in subnets: %s
+ONA_entry005, Type:   Transition
+ONA_entry006, Portals in subnets: %s
+ONA_entry007, Also add Meta-Arcs with portals
+ONA_entry008, Add node
+
+//OnSubnetAction:
+OSA_entry001, Select subnet:
+OSA_entry002, Confirm
+
+//SubnetsActions:
+SA_entry001, Transfer to subnet (with M-Arcs)
+SA_entry002, Transfer to subnet (no M-Arcs)
+SA_entry003, Copy into subnet
+SA_entry004, Add node to subnet
+
+//SubnetsControl:
+SC_entry001a, Add another portal
+SC_entry001b, Don't add new arc/portal
+SC_entry002, Subnet %d already contains %d portal(s) of%n%s.%nAdd another one?
+SC_entry002t, Add another portal symbol?
+SC_entry003a, Add another portal
+SC_entry003b, Don't add new arc/portal
+SC_entry004, Subnet %d already contains %d portal(s) of%n%s.%nAdd another one?
+SC_entry004t, Add another portal symbol?
+SC_entry005, Snoopy compatibility mode is activated in program options.\nDual interface (PT) subnetworks are not allowed.
+SC_entry005t, Compatibility problem
+SC_entry006, Subnet (type T or TP) contains place portals as interfaces to other subnetworks.\nSubnet P-type can only be connected by transition portals.
+SC_entry006t, Compatibility problem
+SC_entry007, Subnet (type P or TP) contains place portals as interfaces to other subnetworks.\nSubnet T-type can only be connected by place portals.
+SC_entry007t, Compatibility problem
+LOGentry00417critErr, Critical error (2000030) SubnetsControl.removeMetaNode() serious internal problem encountered. MetaNode should NEVER have normal arcs.
+SC_entry008, Metanode for sheet %d does not exist.
+SC_entry009, Failed to remove metanode for sheet %d.
+LOGentry00418critErr, Critical error (2000031) SubnetsControl.validateMetaArcs() unexpected error: metanode graphical symbol not found for existing subnet ID:
+SC_entry010, Multiple locations of metanodes:
+SC_entry011,    Metanode: %s [SUBNET: %d]
+SC_entry012, Wrong types of subnets:
+SC_entry013,    Metanode: %s [SUBNET: %d] [TYPE: %s]
+
+//SubnetsGraphics:
+SGraph_entry001, -no sentence-
+LOGentry00419exception, Exception (1000163): SubnetsGraphics.resizePanels() failed:
+
+//SubnetsSnoopyCompatibility:
+SSC_entry001, Fixed node:
+SSC_entry002,   += Added: %d in-metaArcs and %d out-metaArcs.
+LOGentry00420exception, Exception (1000164): SubnetsSnoopyCompatibility.checkAndFix() unable to fix node:
+
+//SPNsingleVectorTableModel:
+SPNSVTM_entry001, -no sentence-
+LOGentry00421exception, Exception (1000165): SPNsingleVectorTableModel.getValueAt() failed:
 
 //generalPurposeTags:
 cancel, Cancel

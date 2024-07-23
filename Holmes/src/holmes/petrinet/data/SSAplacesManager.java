@@ -3,6 +3,7 @@ package holmes.petrinet.data;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Place;
 
 /**
@@ -10,6 +11,7 @@ import holmes.petrinet.elements.Place;
  */
 public class SSAplacesManager {
 	private GUIManager overlord;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private PetriNet pn;
 	
 	private ArrayList<SSAplacesVector> ssaMatrix;
@@ -48,7 +50,7 @@ public class SSAplacesManager {
 		for(SSAplacesVector pVector: ssaMatrix) {
 			boolean status = pVector.removePlace(index);
 			if(!status) {
-				overlord.log("Critical error: invalid place index in SSA vectors matrix.", "error", true);
+				overlord.log(lang.getText("LOGentry00376critErr"), "error", true);
 				return false;
 			}
 		}
@@ -173,10 +175,9 @@ public class SSAplacesManager {
 	 */
 	public void reset(boolean isLoading) {
 		ssaMatrix = new ArrayList<SSAplacesVector>();
-		if(isLoading == false) {
+		if(!isLoading) {
 			ssaMatrix.add(new SSAplacesVector());
 		}
-		
 		selectedSSAvector = 0;
 	}
 }

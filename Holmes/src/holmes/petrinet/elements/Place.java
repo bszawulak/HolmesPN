@@ -6,6 +6,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
@@ -19,6 +20,7 @@ import holmes.petrinet.elements.containers.PlaceQSimContainer;
 public class Place extends Node {
 	@Serial
 	private static final long serialVersionUID = 2346995422046987174L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	/** PN, CPN, XTPN */
 	public enum PlaceType {PN, CPN, XTPN}
 	protected PlaceType placeType = PlaceType.PN; //default
@@ -136,8 +138,8 @@ public class Place extends Node {
 	public void setTokensNumber(int tokensNumber) {
 		this.tokensNumber = tokensNumber;
 		if(tokensNumber < 0) {
-			GUIManager.getDefaultGUIManager().log("Critical simulation error. Number of tokens in place: "
-					+this.getName()+ " below zero: ("+this.getTokensNumber()+").", "error", true);
+			String strB = String.format(lang.getText("LOGentry00389"), this.getName(), this.getTokensNumber());
+			GUIManager.getDefaultGUIManager().log(strB, "error", true);
 		}
 	}
 
@@ -148,7 +150,8 @@ public class Place extends Node {
 	public void addTokensNumber(int delta) {
 		if((tokensNumber + delta) < 0) {
 			this.tokensNumber = 0;
-			GUIManager.getDefaultGUIManager().log("Error: something tried to lower tokens below zero! Place: "
+			
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00390")+" "
 					+this.getName(), "error", true);
 		} else {
 			this.tokensNumber += delta;

@@ -9,6 +9,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.darkgui.settings.SettingsManager;
 import holmes.graphpanel.EditorResources;
 import holmes.graphpanel.ElementDrawSettings;
@@ -26,6 +27,7 @@ import static holmes.graphpanel.EditorResources.*;
 public abstract class Node extends PetriNetElement {
 	@Serial
 	private static final long serialVersionUID = -8569201372990876149L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<ElementLocation> elementLocations = new ArrayList<>();
 	//lokalizacje napisów do oddzielnego przesuwania
 	private ArrayList<ElementLocation> namesLocations = new ArrayList<>();
@@ -36,11 +38,9 @@ public abstract class Node extends PetriNetElement {
 	private boolean isPortal = false;
 	protected boolean invisible = false;
 	private int radius = 20;
-
-
+	
 	public boolean qSimArcSign = false; //znacznik dła łuku - czy ma być wzmocniony pomiędzy węzłami które mają tu wartość true
-
-
+	
 	public Color branchColor = null;
 	public ArrayList<Color> branchBorderColors = new ArrayList<>();
 	private static final Font f_Big = new Font("TimesRoman", Font.BOLD, 14);
@@ -199,7 +199,6 @@ public abstract class Node extends PetriNetElement {
                             if (nodeLocations.get(i) == nodeLocation) //z wyjątkiem klikniętego
                                 continue;
                             Point nodePoint2 = nodeLocation.getPosition(); //znajdź lokację drugiego
-                            //g.setColor(Color.black);
                             g.drawLine(nodePoint.x, nodePoint.y, nodePoint2.x, nodePoint2.y); //narysuj linię
                         }
 						return;
@@ -217,7 +216,6 @@ public abstract class Node extends PetriNetElement {
                         if (nodeLocations.get(i) == nodeLocation) //z wyjątkiem klikniętego
                             continue;
                         Point nodePoint2 = nodeLocation.getPosition(); //znajdź lokację drugiego
-                        //g.setColor(Color.black);
                         g.drawLine(nodePoint.x, nodePoint.y, nodePoint2.x, nodePoint2.y); //narysuj linię
                     }
 					return;
@@ -262,15 +260,6 @@ public abstract class Node extends PetriNetElement {
 				} else {
 					name = "t"+x;
 				}
-
-				/*
-				if(((Transition)this).getTransType() == TransitionType.PN) {
-					name = "t"+x;
-				} else if(this instanceof TransitionXTPN) {
-					xtpnID = x+"";
-					name = "t";
-				}
-				 */
 			} else {
 				int x = metanodes.indexOf(this);
 				name = "M"+x;
@@ -369,8 +358,7 @@ public abstract class Node extends PetriNetElement {
 
 				if(alphaLocations.size() + betaLocations.size() - tauLocations.size() - namesLocations.size() != 0) {
 					//error, impossible
-					GUIManager.getDefaultGUIManager().log("Error: alpha, beta, tau and name arrays size do not match. "
-							+ "Node drawName method.", "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00377critErr"), "error", true);
 					return;
 				}
 				if(transXTPN.qSimXTPN.showQSimXTPN) {
@@ -388,7 +376,6 @@ public abstract class Node extends PetriNetElement {
 						g.drawString(transXTPN.qSimXTPN.text4, drawX, drawY+45);
 					}
 				} else { //jeśli nie qSIM, pokaż alfa/beta
-
 					for (int i=0; i<alphaLocations.size(); i++) { // ==
 						if(namesLocations.get(i).getSheetID() != sheetId) //tylko dla danego arkusza
 							continue;
@@ -849,42 +836,42 @@ public abstract class Node extends PetriNetElement {
 		switch (nameType) {
 			case NAME -> {
 				if (index >= namesLocations.size()) {
-					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for name location (X position). Node: " + getName(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00378critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return namesLocations.get(index).getPosition().x;
 			}
 			case ALPHA -> {
 				if (index >= alphaLocations.size()) {
-					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for alpha location (X position). Node: " + getName(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00379critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return alphaLocations.get(index).getPosition().x;
 			}
 			case BETA -> {
 				if (index >= betaLocations.size()) {
-					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for beta location (X position). Node: " + getName(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00380critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return betaLocations.get(index).getPosition().x;
 			}
 			case GAMMA -> {
 				if (index >= gammaLocations.size()) {
-					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for gamma location (X position). Node: " + getName(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00381critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return gammaLocations.get(index).getPosition().x;
 			}
 			case TAU -> {
 				if (index >= tauLocations.size()) {
-					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for tau location (X position). Node: " + getName(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00382critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return tauLocations.get(index).getPosition().x;
 			}
 			default -> {
 				if (index >= namesLocations.size()) {
-					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for nama location (X position). Node: " + getName(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00383critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return namesLocations.get(index).getPosition().x;
@@ -900,37 +887,37 @@ public abstract class Node extends PetriNetElement {
 	 */
 	public int getTextLocation_Y(int index, GUIManager.locationMoveType nameType) {
 		switch (nameType) {
-			case ALPHA -> {
+            case ALPHA -> {
 				if (index >= alphaLocations.size()) {
-					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for alpha location (Y position). Node: " + getName(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00384critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return alphaLocations.get(index).getPosition().y;
 			}
 			case BETA -> {
 				if (index >= betaLocations.size()) {
-					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for beta location (Y position). Node: " + getName(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00385critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return betaLocations.get(index).getPosition().y;
 			}
 			case GAMMA -> {
 				if (index >= gammaLocations.size()) {
-					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for gamma location (Y position). Node: " + getName(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00386critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return gammaLocations.get(index).getPosition().y;
 			}
 			case TAU -> {
 				if (index >= tauLocations.size()) {
-					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for tau location (Y position). Node: " + getName(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00387critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return tauLocations.get(index).getPosition().y;
 			}
 			default -> {
 				if (index >= namesLocations.size()) {
-					GUIManager.getDefaultGUIManager().log("Internal error: invalid index for name location (Y position). Node: " + getName(), "error", true);
+					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00388critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return namesLocations.get(index).getPosition().y;

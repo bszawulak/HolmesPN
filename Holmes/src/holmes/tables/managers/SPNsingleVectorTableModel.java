@@ -8,6 +8,7 @@ import java.util.EventObject;
 import javax.swing.table.DefaultTableModel;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 import holmes.windows.managers.HolmesSPNeditor;
 
@@ -15,6 +16,7 @@ import holmes.windows.managers.HolmesSPNeditor;
  * Model tabeli tranzycji dla jednego wektora danych SPN.
  */
 public class SPNsingleVectorTableModel extends DefaultTableModel {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	@Serial
 	private static final long serialVersionUID = -6898959322396110431L;
 	private String[] columnNames;
@@ -160,7 +162,7 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 				dataMatrix.get(row).subType = (TransitionSPNExtension.StochaticsType)value;
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (497476884) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00421exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 }

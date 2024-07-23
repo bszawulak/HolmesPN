@@ -111,8 +111,7 @@ public class Weird {
 		long yyy = 1;
 		String zzz = "1";
 
-        String strB = String.format("xxxxxxxxxxxxxxxxxxxx %d xxxxxxx"
-				, xxx);
+        String strB = String.format("xxxxxxxxxxxxxxxxxxxx %d xxxxxxx", xxx);
 
 		//  String strB = String.format(lang.getText("LOGentry00330exception"), modeName);
 		//overlord.log(strB, "error", true);

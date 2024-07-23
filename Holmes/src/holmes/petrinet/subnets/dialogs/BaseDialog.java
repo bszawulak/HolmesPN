@@ -1,6 +1,7 @@
 package holmes.petrinet.subnets.dialogs;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.utilities.Tools;
 
 import javax.swing.*;
@@ -9,6 +10,7 @@ import javax.swing.*;
  * Klasa abstrakcyjna będąca podstawą dla pozostałych klas tworzących dialogi powiązane z podsiecami.
  */
 public abstract class BaseDialog {
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     private JDialog dialog;
 
     /**
@@ -36,7 +38,7 @@ public abstract class BaseDialog {
         try {
             dialog.setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            overlord.log("Error (830125713) | Exception:  " + ex.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00416exception") + ex.getMessage(), "error", true);
         }
         dialog.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override

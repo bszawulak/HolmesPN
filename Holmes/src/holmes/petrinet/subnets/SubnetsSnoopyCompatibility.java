@@ -3,6 +3,7 @@ package holmes.petrinet.subnets;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
@@ -16,6 +17,7 @@ import holmes.windows.HolmesNotepad;
  * w rozumieniu twórców Snoopiego czy nie, oraz do przywrócenia takiej kompatybilności.
  */
 public class SubnetsSnoopyCompatibility {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	GUIManager gui = null;
 	PetriNet pn = null;
 	
@@ -192,11 +194,13 @@ public class SubnetsSnoopyCompatibility {
 				
 				if(inFix || outFix) {
 					
-					notePad.addTextLineNL("Fixed node: "+node.getName(), "text");
-					notePad.addTextLineNL("  +=  Added: "+totalINadded+ " in-metaArcs and "+totalOUTadded+" out-metaArcs.", "text");
+					notePad.addTextLineNL(lang.getText("SSC_entry001")+" "+node.getName(), "text");
+					String strB = String.format(lang.getText("SSC_entry002"), totalINadded, totalOUTadded);
+					notePad.addTextLineNL(strB, "text");
 				}
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Unable to fix node: "+node.getName(), "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00420exception")+" "
+						+node.getName()+"\n"+e.getMessage(), "error", true);
 				fixedAll = false;
 			}
 		}

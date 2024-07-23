@@ -12,6 +12,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
+import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.utilities.Tools;
@@ -22,6 +24,7 @@ import holmes.utilities.Tools;
 public class GraphPanelPopupMenu extends JPopupMenu {
 	@Serial
 	private static final long serialVersionUID = 2192129184059718857L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private GraphPanel graphPanel;
 	protected JMenuItem cutMenuItem;
 	protected JMenuItem copyMenuItem;
@@ -42,13 +45,13 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	 * Metoda pomocnicza konstruktora, tworzy podstawowe elementy menu kontekstowego sieci.
 	 */
 	public void createPredefineMenuItems() {
-		cutMenuItem = this.createMenuItem("Cut", "cut.png",
+		cutMenuItem = this.createMenuItem(lang.getText("GPPM_entry001"), "cut.png",
 				KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK),
 				e -> {
 					// getGraphPanel().removeAllSelectedElementLocations();
 				});
 
-		copyMenuItem = this.createMenuItem("Copy", "copying_and_distribution.png",
+		copyMenuItem = this.createMenuItem(lang.getText("GPPM_entry002"), "copying_and_distribution.png",
 				KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK),
 				e -> {
 					@SuppressWarnings("unused")
@@ -56,7 +59,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 					// getGraphPanel().removeAllSelectedElementLocations();
 				});
 
-		pasteMenuItem = this.createMenuItem("Paste", "paste_plain.png",
+		pasteMenuItem = this.createMenuItem(lang.getText("GPPM_entry003"), "paste_plain.png",
 				KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK),
 				e -> {
 					//TODO

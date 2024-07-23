@@ -1,6 +1,7 @@
 package holmes.petrinet.subnets.dialogs;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.*;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * dowolna wcześniej przekazana akcja.
  */
 public class OnNodeAction extends BaseDialog {
-
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     private JComboBox<ComboBoxItem<Place>> placeComboBox;
     private JComboBox<ComboBoxItem<Transition>> transitionComboBox;
     private JButton button;
@@ -41,7 +42,7 @@ public class OnNodeAction extends BaseDialog {
         JPanel panel = new JPanel(null);
         getDialog().add(panel);
 
-        JLabel placeLabel = new JLabel("Place:");
+        JLabel placeLabel = new JLabel(lang.getText("ONA_entry001"));
         panel.add(placeLabel);
         placeLabel.setBounds(25, 50, 90, 25);
 
@@ -64,7 +65,7 @@ public class OnNodeAction extends BaseDialog {
                 })
                 .forEach(placeComboBox::addItem);
 
-        JLabel transitionLabel = new JLabel("Transition:");
+        JLabel transitionLabel = new JLabel(lang.getText("ONA_entry002"));
         panel.add(transitionLabel);
         transitionLabel.setBounds(25, 80, 90, 25);
 
@@ -105,7 +106,7 @@ public class OnNodeAction extends BaseDialog {
         placeComboBox.addItemListener(e -> {
             button.setEnabled(true);
             if (e.getStateChange() != ItemEvent.DESELECTED) {
-                typeLabel.setText("Type:   Place");
+                typeLabel.setText(lang.getText("ONA_entry003")); //Type:   Place
                 ComboBoxItem<Place> item = (ComboBoxItem) e.getItem();
                 int gID = item.getValue().getID();
                 int arrID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().indexOf(item.getValue());
@@ -115,7 +116,7 @@ public class OnNodeAction extends BaseDialog {
                         .map(integer -> GUIManager.getDefaultGUIManager().subnetsHQ.getMetanode(integer)
                                 .map(PetriNetElement::getName).orElse("Subnet0"))
                         .sorted().distinct().toList();
-                subnetsLabel.setText(String.format("Portals in subnets: %s", String.join(", ", subnets)));
+                subnetsLabel.setText(String.format(lang.getText("ONA_entry004"), String.join(", ", subnets))); //Portals in subnets:
                 if (transitionComboBox.getSelectedIndex() != -1) {
                     transitionComboBox.setSelectedIndex(-1);
                 }
@@ -124,7 +125,7 @@ public class OnNodeAction extends BaseDialog {
         transitionComboBox.addItemListener(e -> {
             button.setEnabled(true);
             if (e.getStateChange() != ItemEvent.DESELECTED) {
-                typeLabel.setText("Type:   Transition");
+                typeLabel.setText(lang.getText("ONA_entry005")); //Type:   Transition
                 ComboBoxItem<Transition> item = (ComboBoxItem) e.getItem();
                 int gID = item.getValue().getID();
                 int arrID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(item.getValue());
@@ -134,18 +135,18 @@ public class OnNodeAction extends BaseDialog {
                         .map(integer -> GUIManager.getDefaultGUIManager().subnetsHQ.getMetanode(integer)
                                 .map(PetriNetElement::getName).orElse("Subnet0"))
                         .sorted().distinct().toList();
-                subnetsLabel.setText(String.format("Portals in subnets: %s", String.join(", ", subnets)));
+                subnetsLabel.setText(String.format(lang.getText("ONA_entry006"), String.join(", ", subnets))); //Portals in subnets:
                 if (placeComboBox.getSelectedIndex() != -1) {
                     placeComboBox.setSelectedIndex(-1);
                 }
             }
         });
 
-        checkBox = new JCheckBox("Also add Meta-Arcs with portals");
+        checkBox = new JCheckBox(lang.getText("ONA_entry007")); //Also add Meta-Arcs with portals
         panel.add(checkBox);
         checkBox.setBounds(20, 205, 250, 25);
 
-        button = new JButton("Add node");
+        button = new JButton(lang.getText("ONA_entry008"));
         panel.add(button);
         button.setEnabled(false);
         button.setBounds(190, 245, 150, 30);

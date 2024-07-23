@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.MetaNode;
@@ -16,6 +17,7 @@ import holmes.workspace.Workspace;
  * Klasa odpowiedzialna za niektóre operacje graficzne związane z sieciami hierachicznymi.
  */
 public class SubnetsGraphics {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Konstruktor klasy HierarchicalGraphics;
 	 */
@@ -256,7 +258,7 @@ public class SubnetsGraphics {
 			}
 				
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Error: cannot resize sheets.", "error", true);	
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00419exception"), "error", true);	
 		}
 	}
 	

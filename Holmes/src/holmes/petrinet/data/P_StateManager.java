@@ -30,11 +30,11 @@ public class P_StateManager {
 		
 		this.statesMatrix = new ArrayList<>();
 		statesMatrix.add(new StatePlacesVector());
-		statesMatrix.get(0).setDescription("Default first (0) working state for current net.");
+		statesMatrix.get(0).setDescription(lang.getText("PSM_entry001"));
 
 		this.statesMatrixXTPN = new ArrayList<>();
 		statesMatrixXTPN.add(new MultisetM());
-		statesMatrixXTPN.get(0).setDescription("Default first (0) multiset M for the current XTPN net.");
+		statesMatrixXTPN.get(0).setDescription(lang.getText("PSM_entry001"));
 	}
 	
 	/**

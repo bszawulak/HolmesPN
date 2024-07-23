@@ -80,7 +80,7 @@ public class LanguageManager {
             if(defaultDictionary.containsKey(ID)) {
                 return defaultDictionary.get(ID);
             } else {
-                overlord.log("Severe language manager error, phrase ID: " + ID + " not found in internal default dictionary.", "error", true);
+                overlord.log("Language Manager error, phrase ID: \"" + ID + "\" not found in internal backup dictionary.", "error", true);
                 return "-----";
             }
         }

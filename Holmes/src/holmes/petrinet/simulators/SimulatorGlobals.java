@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
@@ -14,6 +15,7 @@ import holmes.petrinet.elements.Transition.TransitionType;
  * Globalne ustawienia symulatora.
  */
 public class SimulatorGlobals {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	/** BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func */
 	public enum SimNetType {
 		BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func
@@ -193,8 +195,8 @@ public class SimulatorGlobals {
 				
 				if(n instanceof Transition) {
 					if(!(((Transition)n).getTransType() == TransitionType.TPN)) {
-						JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
-								"Invalid mode", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(null, lang.getText("SG_entry001"),
+								lang.getText("SG_entry001t"), JOptionPane.ERROR_MESSAGE);
 						GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
 						return 2;
 					}

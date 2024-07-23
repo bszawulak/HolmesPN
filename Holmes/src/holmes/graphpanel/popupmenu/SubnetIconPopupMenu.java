@@ -1,5 +1,7 @@
 package holmes.graphpanel.popupmenu;
 
+import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesSubnetsInfo;
@@ -13,7 +15,7 @@ import java.awt.event.MouseEvent;
  * które wyświetlają się w górnej części panelu sieci głównej
  */
 public class SubnetIconPopupMenu extends JPopupMenu {
-
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     /**
      * Prywatny konstruktor klasy SubnetIconPopupMenu. Jedynym sposobem na tworzenie obiektów tej klasy
      * jest wykorzystanie statycznej metody "createAndShow"
@@ -30,7 +32,7 @@ public class SubnetIconPopupMenu extends JPopupMenu {
      */
     public static void createAndShow(MouseEvent event, GraphPanel graphPanel, int subnetID) {
         SubnetIconPopupMenu popupMenu = new SubnetIconPopupMenu();
-        popupMenu.addMenuItem("Show details...", "", e -> HolmesSubnetsInfo.open(subnetID));
+        popupMenu.addMenuItem(lang.getText("SIPM_entry001"), "", e -> HolmesSubnetsInfo.open(subnetID));
         popupMenu.show(event, graphPanel);
     }
 
@@ -50,7 +52,6 @@ public class SubnetIconPopupMenu extends JPopupMenu {
         menuItem.addActionListener(actionListener);
         this.add(menuItem);
     }
-
 
     /**
      * Metoda wyświetlające menu kontekstowe

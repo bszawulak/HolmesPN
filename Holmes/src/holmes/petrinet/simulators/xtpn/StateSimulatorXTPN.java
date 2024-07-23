@@ -1,6 +1,7 @@
 package holmes.petrinet.simulators.xtpn;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.MultisetM;
 import holmes.petrinet.elements.*;
 import holmes.petrinet.functions.FunctionsTools;
@@ -20,6 +21,7 @@ import java.util.Iterator;
  */
 public class StateSimulatorXTPN implements Runnable {
     private GUIManager overlord;
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     private SimulatorEngineXTPN engineXTPN;
     private SimulatorGlobals sg;
 
@@ -34,16 +36,14 @@ public class StateSimulatorXTPN implements Runnable {
     ArrayList<TransitionXTPN> consumingTokensTransitionsClassical = new ArrayList<>();
     ArrayList<TransitionXTPN> producingTokensTransitionsAll = new ArrayList<>();
     ArrayList<ArrayList<TransitionXTPN>> transitionsAfterSubtracting = new ArrayList<>();
-
-
+    
     private int simulationType;    //aktywny tryb symulacji
     private boolean readyToSimulate = false;
     private boolean terminate = false;
     public double simStepsCounter = 0;
     public double simTimeCounter = 0;
     public double simLastTimeChange = 0.0;
-
-
+    
     //okna wywołyjące i inne:
     public JProgressBar progressBar;//pasek postępu symulacji
     private HolmesSimXTPN boss;    //okno nadrzędne symulatora
@@ -76,7 +76,7 @@ public class StateSimulatorXTPN implements Runnable {
         for (Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
             if (!(trans instanceof TransitionXTPN)) {
                 transitions.clear();
-                overlord.log("Error, non-XTPN transitions found in list sent into SimulatorXTPN!", "error", true);
+                overlord.log(lang.getText("LOGentry00401"), "error", true);
                 return false;
             }
             transitions.add((TransitionXTPN) trans);
@@ -84,7 +84,7 @@ public class StateSimulatorXTPN implements Runnable {
         for (Place place : overlord.getWorkspace().getProject().getPlaces()) {
             if (!(place instanceof PlaceXTPN)) {
                 transitions.clear();
-                overlord.log("Error, non-XTPN places found in list sent into SimulatorXTPN!", "error", true);
+                overlord.log(lang.getText("LOGentry00402"), "error", true);
                 return false;
             }
             places.add((PlaceXTPN) place);
@@ -94,14 +94,12 @@ public class StateSimulatorXTPN implements Runnable {
             readyToSimulate = false;
             return readyToSimulate;
         }
-        //if (!(transitions.size() > 0 && places.size() > 0)) {
         if(transitions.isEmpty() || places.isEmpty()) {
             readyToSimulate = false;
             return readyToSimulate;
         }
 
         engineXTPN.setEngine(ownSettings.getNetType(), transitions, places);
-
         readyToSimulate = true;
         return readyToSimulate;
     }
@@ -485,8 +483,8 @@ public class StateSimulatorXTPN implements Runnable {
         ArrayList<Double> timeVector = new ArrayList<>();
 
         if (!readyToSimulate) {
-            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
-                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SSXTPN_entry001"),
+                    lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
             return null;
         }
         createBackupState(); //zapis p-stanu
@@ -543,14 +541,13 @@ public class StateSimulatorXTPN implements Runnable {
 
         ArrayList<Double> statusVector = new ArrayList<>();
         ArrayList<Double> timeVector = new ArrayList<>();
-        ArrayList<Double> statsVector = new ArrayList<>();
 
         //statsVector.addAll(Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-        statsVector.addAll(Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+        ArrayList<Double> statsVector = new ArrayList<>(Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
 
         if (!readyToSimulate) {
-            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
-                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SSXTPN_entry001"),
+                    lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
             return null;
         }
         createBackupState(); //zapis p-stanu
@@ -616,8 +613,8 @@ public class StateSimulatorXTPN implements Runnable {
     public ArrayList<Double> simulateNetSingleTransitionStatistics(SimulatorGlobals ownSettings, TransitionXTPN transition) {
         ArrayList<Double> dataVector = new ArrayList<>();
         if (!readyToSimulate) {
-            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
-                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SSXTPN_entry001"),
+                    lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
             return dataVector;
         }
         createBackupState(); //zapis p-stanu
@@ -672,8 +669,8 @@ public class StateSimulatorXTPN implements Runnable {
     public StateSimDataContainer simulateNet() {
         StateSimDataContainer resMatrix = new StateSimDataContainer();
         if (!readyToSimulate) {
-            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
-                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SSXTPN_entry001"),
+                    lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
             return resMatrix;
         }
 
@@ -1172,8 +1169,8 @@ public class StateSimulatorXTPN implements Runnable {
         resMatrix.simReps = 0;
 
         if (!readyToSimulate) {
-            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
-                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SSXTPN_entry001"),
+                    lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
             return resMatrix;
         }
         createBackupState(); //zapis p-stanu
@@ -1275,8 +1272,8 @@ public class StateSimulatorXTPN implements Runnable {
         Date dateStart = new Date();
 
         if (!readyToSimulate) {
-            JOptionPane.showMessageDialog(null, "XTPN Simulation cannot start, engine initialization failed.",
-                    "Simulation problem", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("SSXTPN_entry001"),
+                    lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
             return resMatrix;
         }
         createBackupState(); //zapis p-stanu

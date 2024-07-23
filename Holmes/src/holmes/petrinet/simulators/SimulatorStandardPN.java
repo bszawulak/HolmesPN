@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
@@ -14,6 +15,7 @@ import holmes.petrinet.elements.TransitionColored;
  * listy tranzycji które mają odpalić w kolejnym kroku symulacji.
  */
 public class SimulatorStandardPN implements IEngine {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private GUIManager overlord;
 	private SimulatorGlobals.SimNetType netSimType = SimulatorGlobals.SimNetType.BASIC;
 	private ArrayList<Transition> transitions = null;
@@ -130,7 +132,7 @@ public class SimulatorStandardPN implements IEngine {
 		int safetyCounter = 0;
 		while (!generated) {
 			generateLaunchingTransitions(netSimType);
-			if (launchableTransitions.size() > 0) {
+			if (!launchableTransitions.isEmpty()) {
 				generated = true; 
 			} else {
 				if (netSimType == SimulatorGlobals.SimNetType.TIME || netSimType == SimulatorGlobals.SimNetType.HYBRID) {
@@ -139,8 +141,7 @@ public class SimulatorStandardPN implements IEngine {
 					safetyCounter++;
 					if(safetyCounter == 9) { // safety measure
 						if(!isPossibleStep(transitions)) {
-							GUIManager.getDefaultGUIManager().log("Error, no active transition, yet generateValidLaunchingTransitions "
-									+ "has been activated. Please advise authors if this error show up frequently.", "error", true);
+							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00413"), "error", true);
 							generated = true; 
 							//return launchableTransitions; 
 						}

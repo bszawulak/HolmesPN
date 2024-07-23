@@ -6,6 +6,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.ElementDraw;
 import holmes.graphpanel.ElementDrawSettings;
 import holmes.petrinet.data.IdGenerator;
@@ -26,6 +27,7 @@ import holmes.petrinet.functions.FunctionsTools;
 public class Transition extends Node {
     @Serial
     private static final long serialVersionUID = -4981812911464514746L;
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     /** PN, TPN, SPN, XTPN, CPN */
     public enum TransitionType {PN, TPN, SPN, XTPN, CPN}
     protected TransitionType transType;
@@ -278,7 +280,7 @@ public class Transition extends Node {
                     ((PlaceColored)origin).reserveColorTokens(arc.getColorWeight(4), 4);
                     ((PlaceColored)origin).reserveColorTokens(arc.getColorWeight(5), 5);
                 } catch (Exception ex) {
-                    GUIManager.getDefaultGUIManager().log("Transition.bookRequiredTokens() error while booking colored tokens", "error", true);
+                    GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00393exception"), "error", true);
                 }
             } else { //read arc / normal
                 if (arc.getArcType() == TypeOfArc.READARC) {

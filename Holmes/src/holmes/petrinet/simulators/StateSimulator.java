@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.NetSimulationData;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Place;
@@ -22,6 +23,7 @@ import holmes.windows.ssim.HolmesSim;
  */
 public class StateSimulator implements Runnable {
 	private GUIManager overlord;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<Transition> transitions;
     private ArrayList<Place> places;
 	private boolean readyToSimulate = false;
@@ -203,7 +205,6 @@ public class StateSimulator implements Runnable {
 					engine = new SimulatorStandardPN();
 				}
 			}
-			
 		} else { //domyślny, prosty tryb
 			if(!(engine instanceof SimulatorStandardPN)) {
 				engine = new SimulatorStandardPN();
@@ -238,8 +239,8 @@ public class StateSimulator implements Runnable {
 	 */
 	public void simulateNetAll() {
 		if(!readyToSimulate) {
-			JOptionPane.showMessageDialog(null,"Simulation cannot start, engine initialization failed.", 
-					"Simulation problem",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,lang.getText("Simulation cannot start, engine initialization failed."), 
+					lang.getText("problem"),JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
@@ -249,11 +250,12 @@ public class StateSimulator implements Runnable {
 		int stepsLimit = overlord.simSettings.getSimSteps();
 		int updateTime = stepsLimit / 50;
 		
-		String max = "50% firing chance";
+		String max = lang.getText("SS_entry002");
 		if(overlord.simSettings.isMaxMode())
-			max = "maximum";
+			max = lang.getText("SS_entry003");
 		
-		overlord.log("Starting states simulation for "+stepsLimit+" steps in "+max+" mode.", "text", true);
+		String strB = String.format(lang.getText("SS_entry004"), stepsLimit, max);
+		overlord.log(strB, "text", true);
 		
 		int trueSteps = 0;
 		for(int i=0; i<stepsLimit; i++) {
@@ -314,7 +316,7 @@ public class StateSimulator implements Runnable {
 			double sumOfTokens = placesAvgData.get(p);
 			placesAvgData.set(p, sumOfTokens/(double)trueSteps);
 		}
-		overlord.log("Simulation ended. Restoring zero marking.", "text", true);
+		overlord.log(lang.getText("LOGentry00414"), "text", true);
 		readyToSimulate = false;
 		restoreInternalMarkingZero();
 	}
@@ -328,8 +330,8 @@ public class StateSimulator implements Runnable {
 	 */
 	public NetSimulationData simulateNetReferenceAndKnockout() {
 		if(!readyToSimulate) {
-			JOptionPane.showMessageDialog(null,"Simulation cannot start, engine initialization failed.", 
-					"Simulation problem",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,lang.getText("SS_entry001"), 
+					lang.getText("problem"),JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		prepareNetM0();
@@ -677,7 +679,8 @@ public class StateSimulator implements Runnable {
 	 */
 	public ArrayList<Integer> simulateNetSinglePlace(int steps, Place place, boolean emptySteps) {
 		if(!readyToSimulate) {
-			overlord.log("Simulation for place "+place.getName()+" cannot start.", "warning", true);
+			String strB = String.format(lang.getText("SS_entry005"), place.getName());
+			overlord.log(strB, "warning", true);
 			return null;
 		}
 		prepareNetM0();
@@ -712,7 +715,8 @@ public class StateSimulator implements Runnable {
 	 */
 	public ArrayList<Integer> simulateNetSingleTransition(int steps, Transition trans, boolean emptySteps) {
 		if(!readyToSimulate) {
-			overlord.log("Simulation for transition "+trans.getName()+" cannot start.", "warning", true);
+			String strB = String.format(lang.getText("SS_entry006"), trans.getName());
+			overlord.log(strB, "warning", true);
 			return null;
 		}
 		prepareNetM0();
@@ -741,8 +745,6 @@ public class StateSimulator implements Runnable {
 			} else {
 				break;
 			}
-
-
 			launchAddPhase(launchableTransitions);
 		}
 		readyToSimulate = false;
@@ -797,7 +799,6 @@ public class StateSimulator implements Runnable {
 				}
 				launchAddPhase(launchableTransitions);
 			}
-
 			//srednia liczba odpaleń:
 			for(int t=0; t<transFiring.size(); t++) {
 				double fired = transFiring.get(t);
@@ -838,15 +839,12 @@ public class StateSimulator implements Runnable {
 			stdDev.add(Math.sqrt(variance));
 		}
 		
-		
 		readyToSimulate = false;
 		restoreInternalMarkingZero();
 		result.add(avgFiring);
 		result.add(stdDev);
 		return result;
 	}
-	
-	
 	
 	//********************************************************************************************************************************
 	//****************************************              **************************************************************************
@@ -1149,8 +1147,6 @@ public class StateSimulator implements Runnable {
 			for(int p=0; p<places.size(); p++) {
 				tokensSum.add(0.0);
 			}
-			
-			
 			int internalSteps = 0;
 			for(int i=0; i<steps; i++) {
 				
@@ -1239,7 +1235,6 @@ public class StateSimulator implements Runnable {
 			avgTokens.set(p, oldRes);
 		}
 		
-		
 		//stdDev
 		for(int t=0; t<transitions.size(); t++) {
 			double variance = 0.0;
@@ -1251,7 +1246,6 @@ public class StateSimulator implements Runnable {
 			variance /= reps;
 			stdDev.add(Math.sqrt(variance));
 		}
-		
 		
 		readyToSimulate = false;
 		restoreInternalMarkingZero();
@@ -1330,9 +1324,7 @@ public class StateSimulator implements Runnable {
 			double tokens = tokensSum.get(p);
 			tokens /= internalSteps;
 			tokensSum.set(p, tokens);
-			
 		}
-		
 		restoreInternalMarkingZero();
 		readyToSimulate = false;
 		quickSimAllStats = new ArrayList<>();
@@ -1344,15 +1336,11 @@ public class StateSimulator implements Runnable {
 
 	public ArrayList<ArrayList<Double>> quickSimGatherDataSSA() {
 		ArrayList<ArrayList<Double>> result = new ArrayList<>();
-
 		if(!readyToSimulate) {
-			overlord.log("Simulation simple mode cannot start.", "warning", true);
+			overlord.log(lang.getText("LOGentry00415"), "warning", true);
 			return null;
 		}
 		prepareNetM0(); //backup, m0, etc.
-
-
-
 		return result;
 	}
 }

@@ -4,6 +4,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
@@ -18,7 +19,7 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 public class TransitionPopupMenu extends NodePopupMenu {
 	@Serial
 	private static final long serialVersionUID = 1268637178521514216L;
-
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Konstruktor obiektu klasy TransitionPopupMenu.
 	 * @param graphPanel GraphPanel - arkusz dla którego powstaje menu
@@ -26,7 +27,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 	public TransitionPopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
 		super(graphPanel, el, pne, el.getParentNode());
 		
-		this.addMenuItem("Knockout ON/OFF", "offlineSmall.png", e -> {
+		this.addMenuItem(lang.getText("TPM_entry001"), "offlineSmall.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
 				return;
 
@@ -45,7 +46,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 		});
 		
-		this.addMenuItem("Invisibility (invariants) ON/OFF", "smallInvisibility.png", e -> {
+		this.addMenuItem(lang.getText("TPM_entry002"), "smallInvisibility.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
 				return;
 
@@ -63,7 +64,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
 		});
 
-		this.addMenuItem("Functions builder...", "functionalWindowIcon.png", e -> {
+		this.addMenuItem(lang.getText("TPM_entry003"), "functionalWindowIcon.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
 				return;
 
@@ -91,43 +92,43 @@ public class TransitionPopupMenu extends NodePopupMenu {
 			}
 		});
 		*/
-		this.addMenuItem("Clone this Transition into Portal", "portal.png", e -> {
+		this.addMenuItem(lang.getText("TPM_entry004"), "portal.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
 				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-						"Operation impossible when simulator is working."
-						, "Warning"))
+						lang.getText("TPM_entry005")
+						, lang.getText("Warning")))
 					return;
 				if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
-						"Operation impossible when XTPN simulator is working."
-						, "Warning"))
+						lang.getText("TPM_entry006")
+						, lang.getText("Warning")))
 					return;
 
 				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
 				getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
 				GUIManager.getDefaultGUIManager().markNetChange();
 			} else {
-				JOptionPane.showMessageDialog(null, "Option possible for one transition only.", "Too many selections",
+				JOptionPane.showMessageDialog(null, lang.getText("TPM_entry007"), lang.getText("TPM_entry008"),
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 
 
-		this.addMenuItem("Export subnet to File", "cut.png", e -> {
+		this.addMenuItem(lang.getText("TPM_entry008"), "cut.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
 				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-						"Operation impossible when simulator is working."
-						, "Warning"))
+						lang.getText("TPM_entry005")
+						, lang.getText("Warning")))
 					return;
 				if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
-						"Operation impossible when XTPN simulator is working."
-						, "Warning"))
+						lang.getText("TPM_entry006")
+						, lang.getText("Warning")))
 					return;
 
 				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
 				getGraphPanel().getSelectionManager().saveSubnet();
 				GUIManager.getDefaultGUIManager().markNetChange();
 			} else {
-				JOptionPane.showMessageDialog(null, "Option possible for one transition only.", "Too many selections",
+				JOptionPane.showMessageDialog(null, lang.getText("TPM_entry007"), lang.getText("TPM_entry007t"),
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});

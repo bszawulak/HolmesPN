@@ -1,6 +1,7 @@
 package holmes.petrinet.subnets;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.elements.*;
@@ -15,7 +16,7 @@ import java.util.Optional;
  * Klasa użytkowa grupująca metody, które wywołują dialogi powiązane z podsieciami.
  */
 public class SubnetsActions {
-
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     /**
      * Konstruktor prywatny, ponieważ klasa składa się wyłącznie z metod statycznych.
      */
@@ -30,7 +31,7 @@ public class SubnetsActions {
     public static void openTransferElementsToSubnet(GraphPanel graphPanel, boolean createMetaArcs) {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
 
-        String title = createMetaArcs ? "Transfer to subnet (with M-Arcs)" : "Transfer to subnet (no M-Arcs)";
+        String title = createMetaArcs ? lang.getText("SA_entry001") : lang.getText("SA_entry002"); //Transfer to subnet (with M-Arcs) ; Transfer to subnet (no M-Arcs)
         OnSubnetAction onSubnetActionDialog = new OnSubnetAction(graphPanel, title, 400, 240);
         onSubnetActionDialog.setAction(e -> {
             ComboBoxItem<Integer> selectedItem = onSubnetActionDialog.getComboBoxValue();
@@ -57,7 +58,7 @@ public class SubnetsActions {
     public static void openCopyElementsToSubnet(GraphPanel graphPanel) {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
 
-        OnSubnetAction onSubnetActionDialog = new OnSubnetAction(graphPanel, "Copy into subnet", 400, 240);
+        OnSubnetAction onSubnetActionDialog = new OnSubnetAction(graphPanel, lang.getText("SA_entry003"), 400, 240); //Copy into subnet
         onSubnetActionDialog.setAction(e -> {
             ComboBoxItem<Integer> selectedItem = onSubnetActionDialog.getComboBoxValue();
             overlord.getWorkspace().repaintAllGraphPanels();
@@ -75,8 +76,7 @@ public class SubnetsActions {
         });
         onSubnetActionDialog.open();
     }
-
-
+    
     /**
      * Metoda otwiera dialog, który pozwala na dodanie istniejącego elementu do podsieci wybranego arkusza.
      * @param graphPanel GraphPanel - aktualnie wybrany arkusz
@@ -84,7 +84,7 @@ public class SubnetsActions {
     public static void addExistingElement(GraphPanel graphPanel) {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
 
-        OnNodeAction onNodeActionDialog = new OnNodeAction(graphPanel, "Add node to subnet", 540, 340);
+        OnNodeAction onNodeActionDialog = new OnNodeAction(graphPanel, lang.getText("SA_entry004"), 540, 340); //Add node to subnet
         onNodeActionDialog.setAction(e -> {
             ComboBoxItem<Place> selectedPlace = onNodeActionDialog.getPlaceComboBoxValue();
             ComboBoxItem<Transition> selectedTransition = onNodeActionDialog.getTransitionComboBoxValue();
@@ -116,5 +116,4 @@ public class SubnetsActions {
         });
         onNodeActionDialog.open();
     }
-
 }

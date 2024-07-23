@@ -30,14 +30,14 @@ public class MultisetM implements Serializable {
         multisetM_ArrayLists = new ArrayList<>();
         placesGammasVector = new ArrayList<>();
         stateType = "XTPN";
-        stateDescription = "Default description for XTPN state.";
+        stateDescription = lang.getText("MSM_entry001");
     }
 
     public void clearMultiset() {
         multisetM_ArrayLists.clear();
         placesGammasVector.clear();
         stateType = "XTPN";
-        stateDescription = "Default description for XTPN state.";
+        stateDescription = lang.getText("MSM_entry001");
     }
 
     /**

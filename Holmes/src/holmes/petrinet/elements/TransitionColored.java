@@ -1,6 +1,7 @@
 package holmes.petrinet.elements;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.functions.FunctionsTools;
 
 import java.awt.*;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
  * Nic tu nie ma, proszę się rozejść. Nazwanie tego eksperymentalnym prototypem (2017, 2022) to niedopowiedzenie.
  */
 public class TransitionColored extends Transition {
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     protected int reqT0red = 1;
     protected int reqT1green = 0;
     protected int reqT2blue = 0;
@@ -121,11 +123,9 @@ public class TransitionColored extends Transition {
                 tokens4grey += ((PlaceColored)arcStartPlace).getNonReservedColorTokensNumber(4);
                 tokens5black += ((PlaceColored)arcStartPlace).getNonReservedColorTokensNumber(5);
             } catch (Exception ex) {
-                GUIManager.getDefaultGUIManager().log("Error in TransitionColored.isColorActive(). Probably non-colored place in arc.", "error", false);
+                GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00394"), "error", false);
             }
-
         }
-
         return req0red > tokens0red || req1green > tokens1green || req2blue > tokens2blue || req3yellow > tokens3yellow ||
                 req4grey > tokens4grey || req5black > tokens5black;
     }

@@ -1,6 +1,7 @@
 package holmes.petrinet.subnets;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.data.IdGenerator;
 import holmes.petrinet.data.PetriNet;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
  */
 public class SubnetsControl {
 	GUIManager overlord;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 
 	/**
 	 * Konstruktor obiektu klasy SubnetsControl.
@@ -64,12 +66,10 @@ public class SubnetsControl {
 		if(!hasMetaArc) { //jeśli nie ma meta-łuku, dodaj bez zbędnych pytań
 			addIdAlready = true;
 		} else if(howManyExists > 0 && askStupidQuestions) { //jeśli jest, pytaj
-			Object[] options = {"Add another portal", "Don't add new arc/portal",};
+			Object[] options = {lang.getText("SC_entry001a"), lang.getText("SC_entry001b"),}; //Add another portal ; Don't add new arc/portal
+			String strB = String.format(lang.getText(("SC_entry002")), subnetID, howManyExists, startNode.getName());
 			int n = JOptionPane.showOptionDialog(null,
-							"Subnet "+subnetID+" already contains "+howManyExists+" portal(s) of\n"
-							+startNode.getName()+".\nAdd another one?",
-							
-							"Add another portal symbol?", JOptionPane.YES_NO_OPTION,
+					strB,lang.getText("SC_entry002t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
 				addIdAlready = true;
@@ -140,12 +140,10 @@ public class SubnetsControl {
 		if(!hasMetaArc) { //jeśli nie ma meta-łuku, dodaj bez zbędnych pytań
 			addIdAlready = true;
 		} else if(howManyExists > 0) {
-			Object[] options = {"Add another portal", "Don't add new arc/portal",};
+			Object[] options = {lang.getText("SC_entry003a"), lang.getText("SC_entry003b"),}; //Add another portal ; Don't add new arc/portal
+			String strB = String.format(lang.getText("SC_entry004"), subnetID, howManyExists, endNode.getName());
 			int n = JOptionPane.showOptionDialog(null,
-							"Subnet "+subnetID+" already contains "+howManyExists+" portal(s) of\n"
-							+endNode.getName()+".\nAdd another one?",
-							
-							"Add another portal symbol?", JOptionPane.YES_NO_OPTION,
+					strB,lang.getText("SC_entry004t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
 				addIdAlready = true;
@@ -301,7 +299,6 @@ public class SubnetsControl {
 				}
 			}
 		}
-		
 		return false;
 	}
 	
@@ -332,9 +329,8 @@ public class SubnetsControl {
 	public boolean changeSubnetType(MetaNode metanode, MetaType desiredType) {
 		if(overlord.getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1")) {
 			if(desiredType == MetaType.SUBNET) {
-				JOptionPane.showMessageDialog(null, "Snoopy compatibility mode is activated in program options.\n"
-						+ "Dual interface (PT) subnetworks are not allowed.", 
-						"Compatibility issue", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("SC_entry005"), 
+						lang.getText("SC_entry005t"), JOptionPane.INFORMATION_MESSAGE);
 				return false;
 			} 
 		} else {
@@ -358,9 +354,8 @@ public class SubnetsControl {
 					//sprawdzić, czy to nie jest tylko prywatny portal wewnętrzny
 					for(ElementLocation internalEL : el.getParentNode().getElementLocations()) {
 						if(internalEL.getSheetID() != sheetID) {
-							JOptionPane.showMessageDialog(null, "Subnet (type T or TP) contains place portals as interfaces to other subnetworks.\n"
-									+ "Subnet P-type can only be connected by transition portals.", 
-									"Compatibility issue", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null, lang.getText("SC_entry006"), 
+									lang.getText("SC_entry006t"), JOptionPane.INFORMATION_MESSAGE);
 							return false;
 						}
 					}
@@ -379,9 +374,8 @@ public class SubnetsControl {
 					//sprawdzić, czy to nie jest tylko prywatny portal wewnętrzny
 					for(ElementLocation internalEL : el.getParentNode().getElementLocations()) {
 						if(internalEL.getSheetID() != sheetID) {
-							JOptionPane.showMessageDialog(null, "Subnet (type P or TP) contains place portals as interfaces to other subnetworks.\n"
-									+ "Subnet T-type can only be connected by place portals.", 
-									"Compatibility issue", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(null, lang.getText("SC_entry007"), 
+									lang.getText("SC_entry007t"), JOptionPane.INFORMATION_MESSAGE);
 							return false;
 						}
 					}
@@ -472,7 +466,7 @@ public class SubnetsControl {
 		boolean removed = false;
 		boolean found = false;
 		
-		if(metanodes.size() == 0) {
+		if(metanodes.isEmpty()) {
 			//overlord.log("Metanodes vector already empty. Nothing to remove.", "text", true);
 			return;
 		}
@@ -480,9 +474,8 @@ public class SubnetsControl {
 		for(MetaNode node : metanodes) {
 			if(node.getRepresentedSheetID() == sheetID) {
 				found = true;
-				if(node.getInputArcs().size() > 0 || node.getOutputArcs().size() > 0) {
-					overlord.log("Serious internal problem encountered. MetaNode should NEVER have normal arcs."
-							+ " Please contact authors. Also, net analysis may be wrong.", "error", true);
+				if(!node.getInputArcs().isEmpty() || !node.getOutputArcs().isEmpty()) {
+					overlord.log(lang.getText("LOGentry00417critErr"), "error", true);
 					
 					for(ElementLocation el : node.getElementLocations()) {
 						for (Iterator<Arc> i = el.getInArcs().iterator(); i.hasNext();) {
@@ -530,9 +523,11 @@ public class SubnetsControl {
 			}
 		}
 		if(!found) {
-			overlord.log("Metanode for sheet "+sheetID+" does not exist.", "warning", true);
+			String strB = String.format(lang.getText("SC_entry008"), sheetID);
+			overlord.log(strB, "warning", true);
 		} else if(!removed) {
-			overlord.log("Failed to remove metanode for sheet "+sheetID, "error", true);
+			String strB = String.format(lang.getText("SC_entry009"), sheetID);
+			overlord.log(strB, "error", true);
 		}
 	}
 
@@ -563,7 +558,8 @@ public class SubnetsControl {
 				}
 			}
 			if(metanodeRepresSubnet == null) {
-				overlord.log("Unexpected error: metanode graphical symbol not found for existing subnet ID: "+sheetID, "error", true);
+				
+				overlord.log(lang.getText("LOGentry00418critErr")+" "+sheetID, "error", true);
 				break;
 			}
 	
@@ -596,7 +592,6 @@ public class SubnetsControl {
 						inInterfaceLinks += element.accessMetaOutArcs().size();
 					}
 				}
-				
 				
 				ElementLocation metaEL = metanodeRepresSubnet.getElementLocations().get(0);
 				int metaSheet = metaEL.getSheetID();
@@ -642,8 +637,8 @@ public class SubnetsControl {
 					
 					for(int r=inMetaArcs.size()-1; r>=inInterfaceLinks; r--) {
 						ElementLocation cand = inMetaArcs.get(r).getStartLocation();
-						if(cand.accessMetaOutArcs().size() == 1 && cand.accessMetaInArcs().size()==0 &
-								cand.getInArcs().size() == 0 && cand.getOutArcs().size() == 0) {
+						if(cand.accessMetaOutArcs().size() == 1 && cand.accessMetaInArcs().isEmpty() &
+                                cand.getInArcs().isEmpty() && cand.getOutArcs().isEmpty()) {
 							removeList.add(inMetaArcs.get(r));
 						}
 						if(removeList.size() == toRemove)
@@ -708,8 +703,8 @@ public class SubnetsControl {
 					//zidentyfikuj EL z tylko jednym połączeniem (tym, którego właśnie chcemy się i tak pozbyć)
 					for(int r=outMetaArcs.size()-1; r>=outInterfaceLinks; r--) {
 						ElementLocation cand = outMetaArcs.get(r).getEndLocation();
-						if(cand.accessMetaInArcs().size() == 1 && cand.accessMetaOutArcs().size()==0 &
-								cand.getInArcs().size() == 0 && cand.getOutArcs().size() == 0) {
+						if(cand.accessMetaInArcs().size() == 1 && cand.accessMetaOutArcs().isEmpty() &
+                                cand.getInArcs().isEmpty() && cand.getOutArcs().isEmpty()) {
 							removeList.add(outMetaArcs.get(r));
 						}
 						if(removeList.size() == toRemove)
@@ -776,7 +771,6 @@ public class SubnetsControl {
 			parent.getTextsLocations(GUIManager.locationMoveType.BETA).add(nameEL);
 			parent.getTextsLocations(GUIManager.locationMoveType.GAMMA).add(nameEL);
 			parent.getTextsLocations(GUIManager.locationMoveType.TAU).add(nameEL);
-
 			
 			Arc arc = new Arc(IdGenerator.getNextId(), newPortalEL, metanodeEL, TypeOfArc.META_ARC);
 			arcs.add(arc);
@@ -843,7 +837,7 @@ public class SubnetsControl {
 			other.accessMetaOutArcs().clear(); //wyczyść wszystkie
 			//sprawdź, czy other się do czegokolwiek nadaje:
 			if(howManyElements > 1)
-				if(other.accessMetaInArcs().size() == 0 && other.getInArcs().size() == 0 && other.getOutArcs().size() == 0) {
+				if(other.accessMetaInArcs().isEmpty() && other.getInArcs().isEmpty() && other.getOutArcs().isEmpty()) {
 					nodeTP.getElementLocations().remove(other);
 					howManyElements--;
 				}
@@ -948,7 +942,7 @@ public class SubnetsControl {
 			other.accessMetaInArcs().clear(); //wyczyść wszystkie
 			//sprawdź, czy other się do czegokolwiek nadaje:
 			if(howManyElements > 1) {
-				if(other.accessMetaOutArcs().size() == 0 && other.getInArcs().size() == 0 && other.getOutArcs().size() == 0) {
+				if(other.accessMetaOutArcs().isEmpty() && other.getInArcs().isEmpty() && other.getOutArcs().isEmpty()) {
 					nodeTP.getElementLocations().remove(other);
 					howManyElements--;
 				}
@@ -993,20 +987,20 @@ public class SubnetsControl {
 			ArrayList<Integer> problemWrongType = results.get(1);
 			ArrayList<MetaNode> metanodes = overlord.getWorkspace().getProject().getMetaNodes();
 			int size = problemWrongType.size();
-			notePad.addTextLineNL("Multiple locations of metanodes: ", "text");
+			notePad.addTextLineNL(lang.getText("SC_entry010"), "text");
 			for(int i=0; i<size; i++) {
 				if(problemMultiEL.get(i) != 0) {
-					notePad.addTextLineNL("   Metanode: "+metanodes.get(i).getName()+ 
-							" [SUBNET: "+metanodes.get(i).getRepresentedSheetID()+"]", "text");
+					String str = String.format(lang.getText("SC_entry011"), metanodes.get(i).getName(), metanodes.get(i).getRepresentedSheetID());
+					notePad.addTextLineNL(str, "text");
 				}
 			}
 			notePad.addTextLineNL(" ------ ", "text");
-			notePad.addTextLineNL("Wrong types of subnets: ", "text");
+			notePad.addTextLineNL(lang.getText("SC_entry012"), "text");
 			for(int i=0; i<size; i++) {
 				if(problemWrongType.get(i) != 0) {
-					notePad.addTextLineNL("   Metanode: "+metanodes.get(i).getName()+ 
-							" [SUBNET: "+metanodes.get(i).getRepresentedSheetID()+"]"+ 
-							" [TYPE: "+metanodes.get(i).getMetaType()+"]", "text");
+					String str = String.format(lang.getText("SC_entry013")
+							, metanodes.get(i).getName(), metanodes.get(i).getRepresentedSheetID(), metanodes.get(i).getMetaType());
+					notePad.addTextLineNL(str, "text");
 				}
 			}
 			notePad.addTextLineNL(" ------ ", "text");
@@ -1025,7 +1019,7 @@ public class SubnetsControl {
 	 */
 	public boolean checkIfExpendable(ElementLocation el) {
 		Node parent = el.getParentNode();
-		if(el.accessMetaInArcs().size() > 0) {
+		if(!el.accessMetaInArcs().isEmpty()) {
 			//sprawdź, czy są inne w tej podsieci z meta-łukiem
 			ArrayList<MetaNode> metanodesInSubnet = new ArrayList<MetaNode>();
 			//do jakich meta-węzłów prowadzą łuki MetaIN
@@ -1056,7 +1050,7 @@ public class SubnetsControl {
 				}
 			}
 			
-			if(metanodesInSubnet.size() > 0) {
+			if(!metanodesInSubnet.isEmpty()) {
 				//dla tych podsieci sprawdzić, czy jest tam w ogóle jakiś EL od parent
 				for(MetaNode meta : metanodesInSubnet) {
 					int repID = meta.getRepresentedSheetID();
@@ -1069,7 +1063,7 @@ public class SubnetsControl {
 			} 
 		}
 		
-		if(el.accessMetaOutArcs().size() > 0) {
+		if(!el.accessMetaOutArcs().isEmpty()) {
 			//sprawdź, czy są inne w tej podsieci z meta-łukiem
 			ArrayList<MetaNode> metanodesOutSubnet = new ArrayList<MetaNode>();
 			//do jakich meta-węzłów prowadzą łuki MetaIN
@@ -1100,7 +1094,7 @@ public class SubnetsControl {
 				}
 			}
 			
-			if(metanodesOutSubnet.size() > 0) {
+			if(!metanodesOutSubnet.isEmpty()) {
 				//dla tych podsieci sprawdzić, czy jest tam w ogóle jakiś EL od parent
 				for(MetaNode meta : metanodesOutSubnet) {
 					int repID = meta.getRepresentedSheetID();

@@ -6781,7 +6781,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void createMCTSubWindow(ArrayList<ArrayList<Transition>> mct) {
         initiateContainers();
         mode = MCT;
-        overlord.reset.setMCTStatus(true);
+        //overlord.reset.setMCTStatus(true);
 
         doNotUpdate = true;
 
