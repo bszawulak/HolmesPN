@@ -3,6 +3,7 @@ package holmes.petrinet.data;
 import holmes.analyse.MCTCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.GUIController;
+import holmes.darkgui.LanguageManager;
 import holmes.files.io.AbyssReader;
 import holmes.files.io.AbyssWriter;
 import holmes.files.io.IOprotocols;
@@ -48,6 +49,7 @@ import org.simpleframework.xml.Root;
  */
 @Root
 public class PetriNet implements SelectionActionListener, Cloneable {
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<>();
 	private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //macierz t-inwariantów
 	private ArrayList<String> t_invariantsDescriptions;
@@ -157,7 +159,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * w wielu obiektach programu.
 	 */
 	public void resetData() {
-		overlord.log("Removing all nodes (places and transition) and all arcs.", "text", true);
+		overlord.log(lang.getText("LOGentry00347"), "text", true);
 		getDataCore().nodes.clear();
 		getDataCore().arcs.clear();
 		getDataCore().netName = "default";
@@ -535,7 +537,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		}
 		
 		for(int i=0; i<t_invariantsMatrix.size(); i++) {
-			t_invariantsDescriptions.add("Default description of t-invariant #"+(i+1));
+			t_invariantsDescriptions.add(lang.getText("PN_entry001")+(i+1));
 			t_invariantsTypes.add(99999);
 		}
 		
@@ -561,7 +563,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			this.p_invariantsDescriptions = new ArrayList<>();
 		
 		for(int i=0; i<p_invariantsMatrix.size(); i++) {
-			p_invariantsDescriptions.add("Default description of p-invariant #"+(i+1));
+			p_invariantsDescriptions.add(lang.getText("PN_entry002")+(i+1));
 		}
 	}
 	
@@ -701,7 +703,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			mct = MCTCalculator.getSortedMCT(mct, true);
 		
 		for(int m=0; m<mct.size(); m++) {
-			mctNames.add("default name for mct"+(m+1));
+			mctNames.add(lang.getText("PN_entry003")+(m+1));
 		}
 		
 		transitionMCTnumber = methods.getTransMCTindicesVector();
@@ -920,15 +922,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 						}
 					}
 				}
-			} catch (Exception e) {}
-
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentry00348exception")+" "+e.getMessage(), "error", true);
+			}
 		} else {
 			if(simulatorType == 1) { //wybrany jest XTPN, przełaczamy na normalne
 				overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);
 			}
 		}
 	}
-
 
 	/**
 	 * Metoda ta przywraca stan sieci przed rozpoczęciem symulacji. Liczba tokenów jest przywracana
@@ -957,7 +959,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			repaintAllGraphPanels();
 			getSimulator().getSimLogger().logSimReset();
 		} catch (Exception e) {
-			overlord.log("Unknown error: unable to restore state m0 on request.", "error", true);
+			overlord.log(lang.getText("LOGentry00349exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 
@@ -970,7 +972,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			accessStatesManager().replaceNetStateWithSelectedMultiset_M(accessStatesManager().selectedStateXTPN);
 			for(Transition trans : getTransitions()) {
 				if( !(trans instanceof TransitionXTPN)) {
-					overlord.log("Critical error (834528336), wrong place object.", "error", true);
+					overlord.log(lang.getText("LOGentry00350critErr"), "error", true);
 					return;
 				}
 
@@ -988,7 +990,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			repaintAllGraphPanels();
 			getSimulator().getSimLogger().logSimReset();
 		} catch (Exception e) {
-			overlord.log("Unknown error: unable to restore XTOM p-state m0 on request.", "error", true);
+			overlord.log(lang.getText("LOGentry00351exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -1015,7 +1017,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 			getSimulator().getSimLogger().logSimReset();
 		} catch (Exception e) {
-			overlord.log("Unknown error: unable to restore state m0 on request.", "error", true);
+			overlord.log(lang.getText("LOGentry00352exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -1082,7 +1084,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			repaintAllGraphPanels();
 			getSimulator().getSimLogger().logSimReset();
 		} catch (Exception e) {
-			overlord.log("Unknown error: unable to restore colored state m0 on request.", "error", true);
+			overlord.log(lang.getText("LOGentry00353exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -1247,7 +1249,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			// Formaty Snoopiego
 			if (path.endsWith(".spped") || path.endsWith(".spept") || path.endsWith(".colpn") || path.endsWith(".sptpt") || path.endsWith(".pn") || path.endsWith(".xpn")) {
 				if(overlord.getSettingsManager().getValue("programUseOldSnoopyLoaders").equals("1")) {
-					overlord.log("Activating old Snoopy loader. Will fail for hierarchical networks.", "text", true);
+					overlord.log(lang.getText("LOGentry00354"), "text", true);
 					InputStream xmlInput = new FileInputStream(path);
 					SAXParser saxParser = readerSNOOPY.newSAXParser();
 					if (path.endsWith(".spped") || path.endsWith(".pn")) {
@@ -1306,7 +1308,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				accessFiringRatesManager().createCleanSPNdataVector();
 			}
 			
-			overlord.log("Petri net successfully imported from file "+path, "text", true);
+			overlord.log(lang.getText("LOGentry00355")+" "+path, "text", true);
 
 			ArrayList<Place> places = getPlaces();
 			ArrayList<Arc> arcs = getArcs();
@@ -1317,7 +1319,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			
 			return true;
 		} catch (Exception e) {
-			overlord.log("Critical error while loading network: " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00356exception")+" "+ e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -1336,34 +1338,33 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				if (getT_InvMatrix() != null) {
 					communicationProtocol.writeT_invCSV(path, getT_InvMatrix(), getTransitions());
 					if(!silence)
-						JOptionPane.showMessageDialog(null,  "T-invariants saved to file:\n"+path,
-							"Success",JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null,  lang.getText("PN_entry004")+path,
+							lang.getText("success"),JOptionPane.INFORMATION_MESSAGE);
 					result = 0;
 				} else {
 					if(!silence)
-						JOptionPane.showMessageDialog(null, "There are no t-invariants to export.",
-							"Warning",JOptionPane.WARNING_MESSAGE);
-					overlord.log("No t-invariants, saving into CSV file failed.","error", true);
+						JOptionPane.showMessageDialog(null, lang.getText("PN_entry005"),
+							lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
+					overlord.log(lang.getText("LOGentry00357"),"error", true);
 					//result = -1;
 				}
 			} else {
 				if (getP_InvMatrix() != null) {
 					communicationProtocol.writeP_invCSV(path, getP_InvMatrix(), getPlaces());
 					if(!silence)
-						JOptionPane.showMessageDialog(null,  "P-invariants saved to file:\n"+path,
-							"Success",JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null,  lang.getText("PN_entry006")+path,
+							lang.getText("success"),JOptionPane.INFORMATION_MESSAGE);
 					
 					result = 0;
 				} else {
 					if(!silence)
-						JOptionPane.showMessageDialog(null, "There are no p-invariants to export.",
-							"Warning",JOptionPane.WARNING_MESSAGE);
-					overlord.log("No p-invariants, saving into CSV file failed.","error", true);
-					//result = -1;
+						JOptionPane.showMessageDialog(null, lang.getText("PN_entry007"),
+							lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
+					overlord.log(lang.getText("LOGentry00358"),"error", true);
 				}
 			}
 		} catch (Exception e) {
-			overlord.log("Error: " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00359exception")+" " + e.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1380,34 +1381,32 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if(t_inv) {
 				if (getT_InvMatrix() != null) {
 					communicationProtocol.writeT_invINA(path, getT_InvMatrix(), getTransitions());
-					JOptionPane.showMessageDialog(null, "T-invariants saved to file:\n"+path,
-							"Success", JOptionPane.INFORMATION_MESSAGE);
-					overlord.log("T-invariants saved into .inv INA file.","text", true);
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry008")+path,
+							lang.getText("success"), JOptionPane.INFORMATION_MESSAGE);
+					overlord.log(lang.getText("LOGentry00360"),"text", true);
 					result = 0;
 				} else {
-					JOptionPane.showMessageDialog(null, "There are no t-invariants to export",
-							"Warning",JOptionPane.WARNING_MESSAGE);
-					overlord.log("No t-invariants, saving into CSV file failed.","error", true);
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry009"),
+							lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
+					overlord.log(lang.getText("LOGentry00361"),"error", true);
 					//result = -1;
 				}
 			} else {
 				if (getP_InvMatrix() != null) {
 					communicationProtocol.writeP_invINA(path, getP_InvMatrix(), getPlaces());
-					JOptionPane.showMessageDialog(null, "P-invariants saved to file:\n"+path,
-							"Success", JOptionPane.INFORMATION_MESSAGE);
-					overlord.log("P-invariants saved into .inv INA file.","text", true);
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry010")+path,
+							lang.getText("success"), JOptionPane.INFORMATION_MESSAGE);
+					overlord.log(lang.getText("LOGentry00362"),"text", true);
 					result = 0;
 				} else {
-					JOptionPane.showMessageDialog(null, "There are no p-invariants to export",
-							"Warning",JOptionPane.WARNING_MESSAGE);
-					overlord.log("No p-invariants, saving into CSV file failed.","error", true);
-					//result = -1;
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry011"),
+							lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
+					overlord.log(lang.getText("LOGentry00363"),"error", true);
 				}
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			overlord.log("Error: " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00364exception")+" " + e.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1424,34 +1423,30 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if(t_inv) {
 				if (getT_InvMatrix() != null) {
 					communicationProtocol.writeT_invCharlie(path, getT_InvMatrix(), getTransitions());
-					JOptionPane.showMessageDialog(null, "T-invariants saved to file:\n"+path,
-							"Success",JOptionPane.INFORMATION_MESSAGE);
-					overlord.log("T-invariants saved in Charlie file format.","text", true);
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry012")+path,
+							lang.getText("success"),JOptionPane.INFORMATION_MESSAGE);
+					overlord.log(lang.getText("LOGentry00365"),"text", true);
 					result = 0;
 				} else {
-					JOptionPane.showMessageDialog(null, "There are no t-invariants to export.",
-							"Warning",JOptionPane.WARNING_MESSAGE);
-					overlord.log("No t-invariants, saving into CSV file failed.","error", true);
-					//result = -1;
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry013"),
+							lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
+					overlord.log(lang.getText("LOGentry00366"),"error", true);
 				}
 			} else {
 				if (getP_InvMatrix() != null) {
 					communicationProtocol.writeP_invCharlie(path, getP_InvMatrix(), getPlaces());
-					JOptionPane.showMessageDialog(null, "P-invariants saved to file:\n"+path,
-							"Success",JOptionPane.INFORMATION_MESSAGE);
-					overlord.log("P-invariants saved in Charlie file format.","text", true);
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry014")+path,
+							lang.getText("success"),JOptionPane.INFORMATION_MESSAGE);
+					overlord.log(lang.getText("LOGentry00367"),"text", true);
 					result = 0;
 				} else {
-					JOptionPane.showMessageDialog(null, "There are no p-invariants to export.",
-							"Warning",JOptionPane.WARNING_MESSAGE);
-					overlord.log("No p-invariants, saving into CSV file failed.","error", true);
-					//result = -1;
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry015"),
+							lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
+					overlord.log(lang.getText("LOGentry00368"),"error", true);
 				}
 			}
-			
 		} catch (Exception e) {
-			//e.printStackTrace();
-			overlord.log("Error: " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00369exception")+" " + e.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1478,10 +1473,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				setP_InvMatrix(communicationProtocol.getInvariantsList());
 				overlord.reset.setP_invariantsStatus(true); //status p-inwariantów: wczytane
 			}
-			
 			return true;
 		} catch (Exception e) {
-			overlord.log("Invariants reading and/or adding to program failed.", "error", true);
+			overlord.log(lang.getText("LOGentry00370exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -1676,10 +1670,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				place.qSimBoxP.qSimDrawed = false;
 				place.qSimBoxP.qSimDrawStats = false;
 				place.qSimBoxP.qSimOvalSize = 10;
-
 				n.qSimArcSign = false; //NODE level
 			}
-
 			if(n instanceof PlaceXTPN) {
 				((PlaceXTPN)n).showQSimXTPN = false;
 			}

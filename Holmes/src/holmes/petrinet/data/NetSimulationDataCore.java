@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.swing.filechooser.FileFilter;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.utilities.Tools;
 import holmes.workspace.ExtensionFileFilter;
 
@@ -15,6 +16,7 @@ import holmes.workspace.ExtensionFileFilter;
 public class NetSimulationDataCore implements Serializable {
 	@Serial
 	private static final long serialVersionUID = -2180386709205258057L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<NetSimulationData> referenceSets = new ArrayList<NetSimulationData>();
 	private ArrayList<NetSimulationData> knockoutSets = new ArrayList<NetSimulationData>();
 	private ArrayList<Long> seriesData = new ArrayList<Long>();
@@ -151,7 +153,7 @@ public class NetSimulationDataCore implements Serializable {
 			}
 		}
 		if(result.size() != transSize) {
-			GUIManager.getDefaultGUIManager().log("Error: data package incomplete!", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00338"), "error", true);
 			return null;
 		}
 		return result;
@@ -174,8 +176,8 @@ public class NetSimulationDataCore implements Serializable {
 		{
 			FileFilter[] filter = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Simulation Data (.sim)",  new String[] { "sim" });
-			newLocation = Tools.selectFileDialog(lastPath, filter, "Load data", "", "");
-			if(newLocation.equals("")) 
+			newLocation = Tools.selectFileDialog(lastPath, filter, lang.getText("NSDC_entry001"), "", "");
+			if(newLocation.isEmpty())
 				return false;
 			
 			File test = new File(newLocation);
@@ -192,9 +194,9 @@ public class NetSimulationDataCore implements Serializable {
 			
 			return true;
 		} catch(Exception ioe){
-			String msg = "Simulation data loading failed for file "+newLocation;
+			String msg = lang.getText("LOGentry00339exception")+" "+newLocation;
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
-			GUIManager.getDefaultGUIManager().log(ioe.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(ioe.getMessage(), "error", false);
 			return false;
 		}
 	}
@@ -209,8 +211,8 @@ public class NetSimulationDataCore implements Serializable {
 			
 			FileFilter[] filter = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Simulation Data (.sim)",  new String[] { "sim" });
-			String newLocation = Tools.selectFileDialog(lastPath, filter, "Save data", "", "");
-			if(newLocation.equals(""))
+			String newLocation = Tools.selectFileDialog(lastPath, filter, lang.getText("NSDC_entry002"), "", "");
+			if(newLocation.isEmpty())
 				return false;
 			
 			if(!newLocation.contains(".sim"))
@@ -224,10 +226,9 @@ public class NetSimulationDataCore implements Serializable {
 			fos.close();
 			return true;
 		} catch(IOException ioe){
-			GUIManager.getDefaultGUIManager().log("Saving simulation data failed.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00340exception")
+					+" "+ioe.getMessage(), "error", true);
 			return false;
 		}
 	}
-
-
 }

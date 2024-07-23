@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.PlaceXTPN;
 
@@ -16,6 +17,7 @@ import holmes.petrinet.elements.PlaceXTPN;
 public class MultisetM implements Serializable {
     @Serial
     private static final long serialVersionUID = 2161649872359143583L;
+    private static LanguageManager lang = GUIManager.getLanguageManager();
     private final ArrayList<ArrayList<Double>> multisetM_ArrayLists;
     private final ArrayList<Integer> placesGammasVector;
     private String stateType;
@@ -149,7 +151,7 @@ public class MultisetM implements Serializable {
         int placesNumber = places.size();
         for(int p=0; p<placesNumber; p++) {
             if( !(places.get(p) instanceof PlaceXTPN) ) {
-                GUIManager.getDefaultGUIManager().log("Error 26y30923", "error", true);
+                GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00337critErr"), "error", true);
                 return;
             }
 

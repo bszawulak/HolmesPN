@@ -1490,6 +1490,79 @@ LOGentry00333, Some functions have been affected by the removal operation. Pleas
 SM_entry001, Cloning into Portals possible only for one selected node!
 SM_entry001t, Multiple selection warning
 
+//MCSDataMatrix:
+MCSDM_entry001, Existing MCS list detected for a given transition. Replace?
+MCSDM_entry001t, Transition already have MCS data
+LOGentry00334, Unable to add new MCS list. DataCore size:
+LOGentry00335, Unable to return MCS list. DataCore size:
+LOGentry00336, Unable to return MCS list info. DataCore size:
+MCSDM_entry002, MCS data for a given net is not empty. Cancel current operation,\nreplace data or save current MCS data to file before replacing?
+MCSDM_entry002t, Net change detected
+MCSDM_entry003, Saving current MCS sets failed. Loading new sets cancelled.
+MCSDM_entry003t, Operation cancelled
+
+//MultisetM:
+MSM_entry001, -no sentence-
+LOGentry00337critErr, Critical error (2000018) MultisetM.overwriteMultiset_M_withNetState() failed.
+
+//NetSimulationDataCore:
+NSDC_entry001, Load data
+LOGentry00338, Error: data package incomplete!
+LOGentry00339exception, Exception (1000139): NetSimulationDataCore.loadDataSets() failed for file:
+NSDC_entry002, Save data
+LOGentry00340exception, Exception (1000140): NetSimulationDataCore.saveDataSets() failed:
+
+//P_StateManager:
+PSM_entry001, -no sentence-
+LOGentry00341critErr, Critical error (2000019) P_StateManager.removePlace() failed. Critical error: invalid place index (%d) in states matrix.
+LOGentry00342critErr, Critical error (2000020) P_StateManager.removePlace() failed. Critical error: invalid XTPN place index (%d) in XTPN states matrix.
+LOGentry00343critErr, Critical error (2000021) P_StateManager.createNewMultiset_M_basedOnNet() failed. Critical error: wrong place object.
+LOGentry00344critErr, Critical error (2000022) P_StateManager.createFirstMultiset_M() failed. Critical error: non-XTPN nodes detected.
+LOGentry00345critErr, Critical error (2000023) P_StateManager.replaceNetStateWithSelectedMultiset_M() failed. Critical error: wrong place object.
+LOGentry00346critErr, Critical error (2000024) P_StateManager.replaceStoredMultiset_M_withCurrentNetState() failed. Critical error: wrong place object.
+
+//PetriNet:
+PN_entry001, Default description of t-invariant #
+LOGentry00347, Removing all nodes (places and transition) and all arcs.
+PN_entry002, Default description of p-invariant #
+PN_entry003, Default name for MCT #
+LOGentry00348exception, Exception (1000141): PetriNet.selectProperSimulatorBox() failed:
+LOGentry00349exception, Exception (1000142): PetriNet.restoreMarkingZero() failed. Unable to restore state m0 on request.
+LOGentry00350critErr, Critical error (2000025) PetriNet.restoreMarkingZeroXTPN() failed. Wrong place object.
+LOGentry00351exception, Exception (1000143): PetriNet.restoreMarkingZeroXTPN() failed. Unable to restore XTOM p-state m0 on request.
+LOGentry00352exception, Exception (1000144): PetriNet.restoreMarkingZeroFast() failed. Unable to restore state m0 on request.
+LOGentry00353exception, Exception (1000145): PetriNet.restoreColors() failed. Unable to restore colored state m0 on request.
+LOGentry00354, Activating old Snoopy loader. Will fail for hierarchical networks.
+LOGentry00355, Petri net successfully imported from file:
+LOGentry00356exception, Exception (1000146): PetriNet.loadFromFile() failed:
+PN_entry004, t-invariants saved to file:\n
+PN_entry005, There are no t-invariants to export.
+LOGentry00357, No t-invariants, saving into CSV file failed.
+PN_entry006, p-invariants saved to file:\n
+PN_entry007, There are no p-invariants to export.
+LOGentry00358, No p-invariants, saving into CSV file failed.
+LOGentry00359exception, Exception (1000147): PetriNet.saveInvariantsToCSV() failed:
+PN_entry008, t-invariants saved to file:\n
+LOGentry00360, t-invariants saved into .inv INA file.
+PN_entry009, There are no t-invariants to export
+LOGentry00361, No t-invariants, saving into CSV file failed.
+PN_entry010, p-invariants saved to file:\n
+LOGentry00362, p-invariants saved into .inv INA file.
+PN_entry011, There are no p-invariants to export
+LOGentry00363, No p-invariants, saving into CSV file failed.
+LOGentry00364exception, Exception (1000148): PetriNet.saveInvariantsToInaFormat() failed:
+PN_entry012, t-invariants saved to file:\n
+LOGentry00365, t-invariants saved in Charlie file format.
+PN_entry013, There are no t-invariants to export.
+LOGentry00366, No t-invariants, saving into CSV file failed.
+PN_entry014, p-invariants saved to file:\n
+LOGentry00367, p-invariants saved in Charlie file format.
+PN_entry015, There are no p-invariants to export.
+LOGentry00368, No p-invariants, saving into CSV file failed.
+LOGentry00369exception, Exception (1000149): PetriNet.saveInvariantsToCharlie() failed:
+LOGentry00370exception, Exception (1000150): PetriNet.loadTPinvariantsFromFile() failed. Invariants reading and/or adding to program failed.
+
+
 //generalPurposeTags:
 cancel, Cancel
 critError, Critical error
@@ -1500,10 +1573,13 @@ error, Error
 exit, Exit
 fixed, Fixed
 problem, Problem
+replace, Replace
 saveAndExit, Save and Exit
 saveAndCont, Save and continue
+saveAndReplace, Save & replace
 save, Save
 select, Select
+success, Success
 netSimWork01, Net simulator working
 unimplemented, Not implemented yet.
 unimplementedTitle, Subsystem offline

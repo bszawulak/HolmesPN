@@ -104,48 +104,6 @@ public class MauritiusMap {
 			ArrayList<ArrayList<Integer>> subInvariants = InvariantsTools.returnT_invWithTransition(invariants, rootTransition);
 			createMTreeV2(subInvariants, rootTransition, root);
 		}
-		
-		
-		
-		/*
-		//usuń tranzycje z anty-listy:
-		if(antiVector.size() == subInvariants.size()) {
-			for(ArrayList<Integer> inv : subInvariants) {
-				for(int i=0; i<inv.size()-1; i++) { //!!! ostatnie pole ignorujemy - to indeks inwariantu
-					if(antiVector.get(i) > 0) {
-						inv.set(i, 0);
-					}
-				}
-			}
-		}
-		//usuń tranzycje poniżej procentu pokrycia:
-		ArrayList<Integer> freqVector = InvariantsTools.getFrequency(subInvariants, true);
-		float treshold = (float)coverageVal / (float)100;
-		float maxCoverage = freqVector.get(rootTransition);
-		ArrayList<Integer> transToKeepVector = new ArrayList<Integer>();
-		for(int i=0; i<freqVector.size(); i++) {
-			int currentValue = freqVector.get(i);
-			if(currentValue == 0) {
-				transToKeepVector.add(0);
-			} else {
-				float coverage = (float)currentValue / maxCoverage;
-				if(coverage >= treshold) {
-					transToKeepVector.add(1);
-				} else {
-					transToKeepVector.add(0); //usun tranzycje ze zbioru
-				}
-			}
-		}
-		
-		for(ArrayList<Integer> inv : subInvariants) {
-			for(int i=0; i<inv.size()-1; i++) { //!!! ostatnie pole ignorujemy - to indeks inwariantu
-				if(transToKeepVector.get(i) == 0) {
-					inv.set(i, 0);
-				}
-			}
-		}
-		*/
-
 	}
 	
 	/**

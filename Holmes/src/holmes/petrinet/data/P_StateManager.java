@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import holmes.darkgui.GUIController;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.PlaceXTPN;
 
@@ -12,6 +13,7 @@ import holmes.petrinet.elements.PlaceXTPN;
  */
 public class P_StateManager {
 	private final GUIManager overlord;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private final PetriNet pn;
 	private ArrayList<StatePlacesVector> statesMatrix;
 	private ArrayList<MultisetM> statesMatrixXTPN;
@@ -51,7 +53,6 @@ public class P_StateManager {
 					multisetM.addMultiset_K_toMultiset_M( new ArrayList<>( ((PlaceXTPN)place).accessMultiset()), 0 );
 			}
 		}
-
 	}
 	
 	/**
@@ -63,14 +64,16 @@ public class P_StateManager {
 		for(StatePlacesVector pVector: statesMatrix) {
 			boolean status = pVector.removePlace(index);
 			if(!status) {
-				overlord.log("Critical error: invalid place index ("+index+") in states matrix.", "error", true);
+				String strB = String.format(lang.getText("LOGentry00341critError"), index);
+				overlord.log(strB, "error", true);
 			}
 		}
 		if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
 			for(MultisetM multisetM: statesMatrixXTPN) {
 				boolean status = multisetM.removePlaceFromMultiset_M(index);
 				if(!status) {
-					overlord.log("Critical error: invalid XTPN place index ("+index+") in XTPN states matrix.", "error", true);
+					String strB = String.format(lang.getText("LOGentry00342critErr"), index);
+					overlord.log(strB, "error", true);
 				}
 			}
 		}
@@ -230,7 +233,7 @@ public class P_StateManager {
 		MultisetM multisetM = new MultisetM();
 		for(Place place : pn.getPlaces()) {
 			if( !(place instanceof PlaceXTPN) ) {
-				overlord.log("Critical error, wrong place object. ID: 548932123.", "error", true);
+				overlord.log(lang.getText("LOGentry00343critErr"), "error", true);
 				return;
 			}
 
@@ -267,7 +270,7 @@ public class P_StateManager {
 		ArrayList<Place> places = pn.getPlaces();
 		for(Place place : places) {
 			if( !(place instanceof PlaceXTPN) ) {
-				overlord.log("Error code: 54284123. Non-XTPN nodes detected.", "error", true);
+				overlord.log(lang.getText("LOGentry00344critErr"), "error", true);
 				return;
 			}
 
@@ -290,7 +293,7 @@ public class P_StateManager {
 			for (int placeIndex = 0; placeIndex < places.size(); placeIndex++) {
 				Place place = places.get(placeIndex);
 				if( !(place instanceof PlaceXTPN) ) {
-					overlord.log("Critical error, wrong place object. ID: 19284133.", "error", true);
+					overlord.log(lang.getText("LOGentry00345critErr"), "error", true);
 					return false;
 				}
 
@@ -335,7 +338,7 @@ public class P_StateManager {
 
 		for (Place place : places) {
 			if( !(place instanceof PlaceXTPN) ) {
-				overlord.log("Critical error, wrong place object. ID: 93214125.", "error", true);
+				overlord.log(lang.getText("LOGentry00346critErr"), "error", true);
 				return;
 			}
 
