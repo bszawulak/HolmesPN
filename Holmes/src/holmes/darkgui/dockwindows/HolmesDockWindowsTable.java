@@ -51,9 +51,15 @@ import holmes.windows.ssim.HolmesSimSetup;
 import holmes.workspace.WorkspaceSheet;
 
 /**
- * Klasa zawierająca szczegóły interfejsu podokien programu.
- * [MR]<b>Absolute positioning. Of absolute everything here.</b><br>
- * Nie obchodzi mnie, co o tym myślicie<br> (╯゜Д゜）╯︵ ┻━┻) . Idźcie w layout i nie wracajcie. ┌∩┐(◣_◢)┌∩┐
+ * [MR]Klasa zawierająca szczegóły interfejsu podokien programu. Jest to najlepiej napisana klasa w całym programie.
+ * Nasi profesorowie inżynierii oprogramowania byliby dumni.
+ * 
+ * Aby wprawić się w odpowiedni nastrój do jej przeglądania, zacznijmy od dowcipu:
+ * Jedziesz na koniu. Żyrafa zapierdala popierdala przed tobą, z tyłu goni cię lew. Co robisz?
+ * Obrzygujesz lwa, mówisz sobie, że więcej nie pijesz i schodzisz z karuzeli.
+ * 
+ * Absolute positioning. Of absolute everything here. It's like a 90s website.
+ * Nie obchodzi mnie, co o tym myślicie (╯゜Д゜）╯︵ ┻━┻) . Idźcie w layout i nie wracajcie. ┌∩┐(◣_◢)┌∩┐
  */
 @SuppressWarnings("FieldCanBeLocal")
 public class HolmesDockWindowsTable extends JPanel {
@@ -607,7 +613,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             internalY += 30;
 
-            c1Button = new JButton("<html><center>Store<br>colors</center></html>");
+            c1Button = new JButton(lang.getText("HDWT_entry306QuickSim"));
             c1Button.setName("resetColor");
             c1Button.setBounds(internalX, internalY, 70, 30);
             c1Button.setToolTipText(lang.getText("HDWT_entry016PNsim"));
@@ -617,7 +623,7 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(c1Button);
 
-            c2Button = new JButton("<html><center>Restore<br>colors</center></html>");
+            c2Button = new JButton(lang.getText("HDWT_entry307QuickSim"));
             c2Button.setName("SaveM0Color");
             c2Button.setBounds(internalX+70, internalY, 70, 30);
             c2Button.setToolTipText(lang.getText("HDWT_entry017PNsim"));
@@ -631,7 +637,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             internalY += 35;
 
-            JButton statesButton = new JButton("State manager");
+            JButton statesButton = new JButton(lang.getText("HDWT_entry308QuickSim"));
             statesButton.setName("State manager");
             statesButton.setBounds(internalX, internalY, 140, 30);
             statesButton.setToolTipText(lang.getText("HDWT_entry018PNsim"));
@@ -766,7 +772,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             internalY += 40;
 
-            HolmesRoundedButton resetButton = new HolmesRoundedButton("<html><center>Reset<br>p-state</center></html>"
+            HolmesRoundedButton resetButton = new HolmesRoundedButton(lang.getText("HDWT_entry309QuickSim")
                     , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             resetButton.setName("resetM0button");
             resetButton.setBounds(internalX, internalY, 75, 40);
@@ -775,7 +781,7 @@ public class HolmesDockWindowsTable extends JPanel {
             resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
             components.add(resetButton);
 
-            HolmesRoundedButton storeButton = new HolmesRoundedButton("<html><center>Store<br>p-state</center></html>"
+            HolmesRoundedButton storeButton = new HolmesRoundedButton(lang.getText("HDWT_entry310QuickSim")
                     , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
             storeButton.setName("storeM0button");
             storeButton.setBounds(internalX+75, internalY, 75, 40);
@@ -826,7 +832,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             internalY += 50;
 
-            JLabel arcDelayLabel = new JLabel("Tokens delay:");
+            JLabel arcDelayLabel = new JLabel(lang.getText("HDWT_entry311QuickSim"));
             arcDelayLabel.setBounds(internalX, internalY, 120, 20);
             components.add(arcDelayLabel);
 
@@ -6347,10 +6353,10 @@ public class HolmesDockWindowsTable extends JPanel {
             if (freqVector.get(i) != 0) {
                 double fr = (double) freqVector.get(i) / (double) max_freq;
                 realT.drawGraphBoxT.setColorWithNumber(true, getDiscColor(fr), true, freqVector.get(i), false, "");
-                System.out.println(realT.getName() + " trans \t" + realT.getID() + " \t " + fr + " \t " + freqVector.get(i));
+                //System.out.println(realT.getName() + " trans \t" + realT.getID() + " \t " + fr + " \t " + freqVector.get(i));
             } else {
                 realT.drawGraphBoxT.setColorWithNumber(true, Color.gray, true, 0, false, "");
-                System.out.println(realT.getName() + " trans \t" + realT.getID() + " \t " + 0 + " \t " + 0);
+                //System.out.println(realT.getName() + " trans \t" + realT.getID() + " \t " + 0 + " \t " + 0);
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();

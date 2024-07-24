@@ -21,12 +21,15 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 
 /**
  * Klasa narzędziowa, odpowiednik klasy statycznej w <b>NORMALNYM</b> języku programowania.
  */
 public final class Tools {
 	public static String lastExtension = "";
+	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
 	
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
@@ -79,9 +82,7 @@ public final class Tools {
 			inStream.close();
 			outStream.close();
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null,
-					"I/O operation failed for reason unknown. You can now start panicking.\nHave a nice day!",
-					"Critical error", JOptionPane.ERROR_MESSAGE);
+			overlord.log(lang.getText("LOGentry00434exception"), "error", true);
 		}
     }
 	
@@ -109,12 +110,12 @@ public final class Tools {
 		}
 		fc.setFileFilter(filter[0]);
 
-		if(!buttonText.equals(""))
+		if(!buttonText.isEmpty())
 			fc.setApproveButtonText(buttonText);
-		if(!buttonToolTip.equals(""))
+		if(!buttonToolTip.isEmpty())
 			fc.setApproveButtonToolTipText(buttonToolTip);
 		//TODO:
-		if(suggestedFileName.length() > 0) { //sugerowana nazwa pliku
+		if(!suggestedFileName.isEmpty()) { //sugerowana nazwa pliku
 			fc.setSelectedFile(new File(suggestedFileName));
 		}
 		
@@ -148,12 +149,12 @@ public final class Tools {
 		//TODO: detekcja domyślnego filtra
 		fc.setFileFilter(filter[0]);
 
-		if(!buttonText.equals(""))
+		if(!buttonText.isEmpty())
 			fc.setApproveButtonText(buttonText);
-		if(!buttonToolTip.equals(""))
+		if(!buttonToolTip.isEmpty())
 			fc.setApproveButtonToolTipText(buttonToolTip);
 		
-		if(suggestedFileName.length() > 0) { //sugerowana nazwa pliku
+		if(!suggestedFileName.isEmpty()) { //sugerowana nazwa pliku
 			fc.setSelectedFile(new File(suggestedFileName));
 		}
 		
@@ -183,7 +184,7 @@ public final class Tools {
 		JFileChooser fc;
 		if(lastPath == null)
 			fc = new JFileChooser();
-		else if(lastPath.equals(""))
+		else if(lastPath.isEmpty())
 			fc = new JFileChooser();
 		else
 			fc = new JFileChooser(lastPath);
@@ -192,9 +193,9 @@ public final class Tools {
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fc.setAcceptAllFileFilterUsed(false);
 		
-		if(!buttonText.equals(""))
+		if(!buttonText.isEmpty())
 			fc.setApproveButtonText(buttonText);
-		if(!buttonToolTip.equals(""))
+		if(!buttonToolTip.isEmpty())
 			fc.setApproveButtonToolTipText(buttonToolTip);
 		
 		int returnVal = fc.showDialog(fc, fc.getApproveButtonText());
@@ -354,8 +355,7 @@ public final class Tools {
 				icon = new ImageIcon(Tools.class.getResource("/nullIcon16.png"));
 				result = icon.getImage(); //geniusz, zaiste geniusz to wymyślił w Javie...
 			} catch (Exception e2) {
-				System.out.println("CRITICAL EXCEPTION IN getImageFromIcon. "
-						+ "No FAILSAFE IMAGE: /nullIcon16.png IN JAR");
+				overlord.log(lang.getText("LOGentry00435exception")+"\n"+e2.getMessage(), "error", true);
 				return null;
 			}
 		}

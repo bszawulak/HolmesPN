@@ -719,6 +719,13 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HDWT_entry303QuickSim","Places tokens data");
         defaultEnglish.put("HDWT_entry304QuickSim","Color arcs");
         defaultEnglish.put("HDWT_entry305QuickSim","Repetitions");
+        defaultEnglish.put("HDWT_entry306QuickSim","<html><center>Store<br>colors</center></html>");
+        defaultEnglish.put("HDWT_entry307QuickSim","<html><center>Restore<br>colors</center></html>");
+        defaultEnglish.put("HDWT_entry308QuickSim","State manager");
+        defaultEnglish.put("HDWT_entry309QuickSim","<html><center>Reset<br>p-state</center></html>");
+        defaultEnglish.put("HDWT_entry310QuickSim","<html><center>Store<br>p-state</center></html>");
+        defaultEnglish.put("HDWT_entry311QuickSim","Tokens delay:");
+
 
         //DecoCalccalculator:
         defaultEnglish.put("DCC_entry001","Please choose comparison type");
@@ -1920,8 +1927,367 @@ public class LangEngDafaultDB {
         defaultEnglish.put("SPNSVTM_entry001","-no sentence-");
         defaultEnglish.put("LOGentry00421exception","Exception (1000165): SPNsingleVectorTableModel.getValueAt() failed:");
 
+        ////SSAplacesEditorTableModel
+        defaultEnglish.put("SSAPETM_entry001","Data type set for molecules. Expected number from a range of%n1 to (usually) billions - not fractions (there is no %f molecule!).");
+        defaultEnglish.put("SSAPETM_entry001t","Invalid value, integer number of molecules expected");
+        defaultEnglish.put("SSAPETM_entry002","Data type set for concentration. Units are moles/litre. Expected number \nfrom a range of 0 to (usually) tiny fraction (e.g. 1e-12). This value will\nbe MULTIPLIED by Avogadro constant (6.022*10^23 molecules!)");
+        defaultEnglish.put("SSAPETM_entry002t","Invalid value, moles/litre expected");
+        defaultEnglish.put("LOGentry00422exception","Exception (1000166): SSAplacesEditorTableModel.setValueAt() failed:");
+
+        //StatesPlacesEditorTableModel:
+        defaultEnglish.put("SPEdTM_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00423exception","Exception (1000167): StatesPlacesEditorTableModel.setValueAt() failed:");
+        defaultEnglish.put("LOGentry00424exception","Exception (1000168): StatesPlacesEditorTableModel.setQuietlyValueAt() failed:");
+
+        //StatesPlacesTableModel:
+        defaultEnglish.put("SPTM_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00425exception","Exception (1000169): StatesPlacesTableModel.setValueAt() failed:");
+        defaultEnglish.put("LOGentry00426exception","Exception (1000170): StatesPlacesTableModel.setQuietlyValueAt() failed:");
+
+        //StatesPlacesTableModelXTPN:
+        defaultEnglish.put("SPTMXTPN_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00427exception","Exception (1000171): StatesPlacesTableModelXTPN.setValueAt() failed:");
+        defaultEnglish.put("LOGentry00428exception","Exception (1000172): StatesPlacesTableModelXTPN.setQuietlyValueAt() failed:");
+
+        //SimKnockPlacesCompAllTableModel:
+        defaultEnglish.put("SKPCATM_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00429exception","Exception (1000173): SimKnockPlacesCompAllTableModel.getValueAt() failed:");
+        defaultEnglish.put("LOGentry00430exception","Exception (1000174): SimKnockPlacesCompAllTableModel.getValueAt() failed:");
+
+        //SimKnockTransCompAllTableModel:
+        defaultEnglish.put("SKTCATM_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00431exception","Exception (1000175): SimKnockTransCompAllTableModel.getValueAt() failed:");
+        defaultEnglish.put("LOGentry00432exception","Exception (1000176): SimKnockTransCompAllTableModel.getValueAt() failed:");
+
+        //FunctionalTransTableModel:
+        defaultEnglish.put("FTTM_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00433exception","Exception (1000177): FunctionalTransTableModel.getValueAt() failed:");
+
+        //Tools:
+        defaultEnglish.put("TOL_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00434exception","Exception (1000178): Tools.copyFileDirectly() failed. I/O operation failed for reason unknown. Have a nice day!");
+        defaultEnglish.put("LOGentry00435exception","Exception (1000179): Tools.getImageFromIcon() failed. No failsafe image: /nullIcon16.png in Holmes.jar!");
+
+        //***************   WINDOWS   ***************
+        //HolmesAbout:
+        defaultEnglish.put("HAwin_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00436exception","Exception (1000180): HolmesAbout.HolmesAbout() failed:");
+        defaultEnglish.put("LOGentry00437exception","Exception (1000181): HolmesAbout.HolmesAbout() failed:");
+        defaultEnglish.put("LOGentry00438exception","Exception (1000182): HolmesAbout.upperPanel() failed:");
+
+        //HolmesFunctionsBuilder:
+        defaultEnglish.put("HFBwin_entry001","Transition:");
+        defaultEnglish.put("LOGentry00439exception","Exception (1000183): HolmesFunctionsBuilder.HolmesFunctionsBuilder() failed:");
+        defaultEnglish.put("HFBwin_entry002","At least one places required.");
+        defaultEnglish.put("HFBwin_entry002t","Warning: to few places");
+        defaultEnglish.put("HFBwin_entry003","Function editor unavailable when simulator is working.");
+        defaultEnglish.put("HFBwin_entry003t","Warning: simulator working");
+        defaultEnglish.put("HFBwin_entry004","Function builder");
+        defaultEnglish.put("HFBwin_entry005","ID:");
+        defaultEnglish.put("HFBwin_entry006","Function edit field:");
+        defaultEnglish.put("HFBwin_entry007","Enabled?");
+        defaultEnglish.put("HFBwin_entry008","Result:");
+        defaultEnglish.put("HFBwin_entry009","Check and add");
+        defaultEnglish.put("HFBwin_entry009t","Validate the equation and add it to transition functions list");
+        defaultEnglish.put("HFBwin_entry010","Clear function");
+        defaultEnglish.put("HFBwin_entry010t","Clear the equation from the list");
+        defaultEnglish.put("HFBwin_entry011","<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</html>");
+        defaultEnglish.put("HFBwin_entry011t","Show list of operations and functions");
+        defaultEnglish.put("HFBwin_entry012","Functional transition");
+        defaultEnglish.put("HFBwin_entry013","Error log:");
+        defaultEnglish.put("HFBwin_entry014","Arithemic and logic operators:");
+        defaultEnglish.put("HFBwin_entry015"," Mathematical functions table:");
+        defaultEnglish.put("HFBwin_entry016","Function possible only for a normal arc");
+        defaultEnglish.put("HFBwin_entry017","Places table for selection");
+
+        //HolmesInvariantsGenerator:
+        defaultEnglish.put("HIGwin_entry001","-no sentence-");
+        defaultEnglish.put("LOGentry00440exception","Exception (1000184): HolmesInvariantsGenerator.HolmesInvariantsGenerator() failed:");
+        defaultEnglish.put("HIGwin_entry002","t-invariants");
+        defaultEnglish.put("HIGwin_entry002t","t-invariants");
+        defaultEnglish.put("HIGwin_entry003","p-invariants");
+        defaultEnglish.put("HIGwin_entry003t","p-invariants");
+        defaultEnglish.put("HIGwin_entry004","Generate");
+        defaultEnglish.put("HIGwin_entry005","Invariants generation already in progress.");
+        defaultEnglish.put("HIGwin_entry005t","Generator working");
+        defaultEnglish.put("HIGwin_entry006","<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA<br>generator</html>");
+        defaultEnglish.put("HIGwin_entry007","INAwin32.exe status set to non ready. Please read initial warnings\nin the Holmes log windows for more information.");
+        defaultEnglish.put("HIGwin_entry007t","INAwin32.exe problem");
+        defaultEnglish.put("HIGwin_entry008","<html>&nbsp;&nbsp;&nbsp;&nbsp;Load<br>t-invariants</html>");
+        defaultEnglish.put("LOGentry00441","Loaded t-invariants:");
+        defaultEnglish.put("LOGentry00442","Loading t-invariants from file has been unsuccessfull.\n");
+        defaultEnglish.put("HIGwin_entry009","<html>&nbsp;&nbsp;&nbsp;Export<br>t-invariants</html>");
+        defaultEnglish.put("LOGentry00443","Saved t-invariants:");
+        defaultEnglish.put("LOGentry00444","Saving t-invariants to file has been unsuccessfull.\n");
+        defaultEnglish.put("HIGwin_entry010","<html>&nbsp;&nbsp;&nbsp;&nbsp;Show<br>t-invariants</html>");
+        defaultEnglish.put("HIGwin_entry011","<html>&nbsp;&nbsp;&nbsp;&nbsp;Save<br>t-invariants</html>");
+        defaultEnglish.put("HIGwin_entry012","<html>&nbsp;&nbsp;&nbsp;&nbsp;Make<br>&nbsp;&nbsp;feasible</html>");
+        defaultEnglish.put("HIGwin_entry013","Feasible adv. mode");
+        defaultEnglish.put("HIGwin_entry014","Clean non-inv.");
+        defaultEnglish.put("HIGwin_entry015","Remove 1-el. inv.");
+        defaultEnglish.put("HIGwin_entry016","t-invariants - Kaja Style:");
+        defaultEnglish.put("HIGwin_entry017","p-invariants - Kaja Style:");
+        defaultEnglish.put("HIGwin_entry018","t-invariants log window");
+        defaultEnglish.put("HIGwin_entry019","Tools");
+        defaultEnglish.put("HIGwin_entry020","<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;canonity</html>");
+        defaultEnglish.put("HIGwin_entry021","No t-invariants to analyze.");
+        defaultEnglish.put("HIGwin_entry021t","No t-invariants");
+        defaultEnglish.put("HIGwin_entry022","Checking canonicality for %d t-invariants.%n");
+        defaultEnglish.put("HIGwin_entry023","Non canonical t-invariants:");
+        defaultEnglish.put("HIGwin_entry024","<html>Check sup.<br />&nbsp;minimality</html>");
+        defaultEnglish.put("HIGwin_entry025","Checking support minimality for %d t-invariants.%n");
+        defaultEnglish.put("HIGwin_entry026","Non support-minimal t-invariants:");
+        defaultEnglish.put("HIGwin_entry027","<html>&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>");
+        defaultEnglish.put("HIGwin_entry028","Checking t-invariants correctness for %d invariants.%n");
+        defaultEnglish.put("HIGwin_entry029","t-invariants (Cx = 0):");
+        defaultEnglish.put("HIGwin_entry030","sur-invariants (Cx > 0):");
+        defaultEnglish.put("HIGwin_entry031","sub-invariants (Cx < 0):");
+        defaultEnglish.put("HIGwin_entry032","non-invariants (Cx <=> 0):");
+        defaultEnglish.put("HIGwin_entry033","<html>&nbsp;&nbsp;&nbsp;Ref. set<br />&nbsp;&nbsp;&nbsp;compare</html>");
+        defaultEnglish.put("HIGwin_entry034","<html>&nbsp;&nbsp;Incidence<br />&nbsp;&nbsp;&nbsp;matrix</html>");
+        defaultEnglish.put("HIGwin_entry035","Details");
+        defaultEnglish.put("HIGwin_entry036","Show difference");
+        defaultEnglish.put("HIGwin_entry037","<html>Generate<br>p-inv.</html>");
+        defaultEnglish.put("HIGwin_entry038","Invariants generation already in progress.");
+        defaultEnglish.put("HIGwin_entry038t","Generator working");
+        defaultEnglish.put("HIGwin_entry039","<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA<br>generator</html>");
+        defaultEnglish.put("HIGwin_entry040","INAwin32.exe status set to non ready. Please read initial warnings\nin the Holmes log windows for more information.");
+        defaultEnglish.put("HIGwin_entry040t","INAwin32.exe problem");
+        defaultEnglish.put("HIGwin_entry041","<html>&nbsp;&nbsp;&nbsp;&nbsp;Load<br>p-invariants</html>");
+        defaultEnglish.put("LOGentry00445","Loaded p-invariants:");
+        defaultEnglish.put("LOGentry00446","p-invariants reading has been unsuccessfull.\n");
+        defaultEnglish.put("HIGwin_entry042","<html>&nbsp;&nbsp;&nbsp;Export<br>p-invariants</html>");
+        defaultEnglish.put("LOGentry00447","Saved p-invariants:");
+        defaultEnglish.put("LOGentry00448","p-invariants saving has been unsuccessfull.\n");
+        defaultEnglish.put("HIGwin_entry043","<html>&nbsp;&nbsp;&nbsp;&nbsp;Show<br>p-invariants</html>");
+        defaultEnglish.put("HIGwin_entry044","Clean non-inv.");
+        defaultEnglish.put("HIGwin_entry045","Remove 1-el. inv.");
+        defaultEnglish.put("HIGwin_entry046","p-invariants log window");
+        defaultEnglish.put("HIGwin_entry047","<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;canonity</html>");
+        defaultEnglish.put("HIGwin_entry048","No p-invariants to analyze.");
+        defaultEnglish.put("HIGwin_entry048t","No p-invariants");
+        defaultEnglish.put("HIGwin_entry049","Checking canonicality for %d p-invariants.%n");
+        defaultEnglish.put("HIGwin_entry050","non canonical p-invariants:");
+        defaultEnglish.put("HIGwin_entry051","<html>Check sup.<br>&nbsp;minimality</html>");
+        defaultEnglish.put("HIGwin_entry052","Checking support minimality for %d p-invariants.%n");
+        defaultEnglish.put("HIGwin_entry053","Non support-minimal p-invariants:");
+        defaultEnglish.put("HIGwin_entry054","<html>&nbsp;&nbsp;&nbsp;&nbsp;Check<br>&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>");
+        defaultEnglish.put("HIGwin_entry055","Checking p-invariants correctness for %d invariants.%n");
+        defaultEnglish.put("HIGwin_entry056","p-invariants (xC = 0):");
+        defaultEnglish.put("HIGwin_entry057","sur-invariants (xC > 0):");
+        defaultEnglish.put("HIGwin_entry058","sub-invariants (xC < 0):");
+        defaultEnglish.put("HIGwin_entry059","non-invariants (xC <=> 0):");
+        defaultEnglish.put("HIGwin_entry060","<html>&nbsp;&nbsp;&nbsp;Ref. set<br>&nbsp;&nbsp;&nbsp;compare</html>");
+        defaultEnglish.put("HIGwin_entry061","<html>&nbsp;&nbsp;Incidence<br>&nbsp;&nbsp;&nbsp;matrix</html>");
+        defaultEnglish.put("HIGwin_entry062","Details");
+        defaultEnglish.put("HIGwin_entry063","Load invariants");
+        defaultEnglish.put("HIGwin_entry063t","Select invariant file");
+        defaultEnglish.put("HIGwin_entry064","Prev. computed set size:");
+        defaultEnglish.put("HIGwin_entry065","Loaded (now) set size:");
+        defaultEnglish.put("HIGwin_entry066","Common set size (load & ref):");
+        defaultEnglish.put("HIGwin_entry067","Difference set size:");
+        defaultEnglish.put("HIGwin_entry068","Loaded");
+        defaultEnglish.put("HIGwin_entry068_1","invariants not in a computed set:");
+        defaultEnglish.put("HIGwin_entry069","Computed");
+        defaultEnglish.put("HIGwin_entry069_1","invariants not in a loaded set:");
+        defaultEnglish.put("HIGwin_entry070","Repetitions in common set:");
+        defaultEnglish.put("HIGwin_entry071","Total repetitions in loaded:");
+        defaultEnglish.put("HIGwin_entry072","Inititating further tests for the loaded set of");
+        defaultEnglish.put("HIGwin_entry072_1","invariants.\n");
+        defaultEnglish.put("HIGwin_entry073","-> Non canonical");
+        defaultEnglish.put("HIGwin_entry073_1","invariants found:");
+        defaultEnglish.put("HIGwin_entry074","-> Non support-minimal");
+        defaultEnglish.put("HIGwin_entry074_1","invariants found:");
+        defaultEnglish.put("HIGwin_entry075","invariants (Cx = 0):");
+        defaultEnglish.put("HIGwin_entry076","invariants (Cx > 0):");
+        defaultEnglish.put("HIGwin_entry077","invariants (Cx < 0):");
+        defaultEnglish.put("HIGwin_entry078","invariants (Cx <=> 0):");
+        defaultEnglish.put("HIGwin_entry079","Vectors (t-inv) analysed:");
+        defaultEnglish.put("HIGwin_entry080","Canonical t-invariants:");
+        defaultEnglish.put("HIGwin_entry081","Sur-t-invariants:");
+        defaultEnglish.put("HIGwin_entry082","Sub-t-invariants:");
+        defaultEnglish.put("HIGwin_entry083","Non-t-invariants:");
+        defaultEnglish.put("HIGwin_entry084","Places for which sur-t-invariants leaves tokens (tokens>0) :");
+        defaultEnglish.put("HIGwin_entry085","(in parenthesis number of sur-t-invariants for each place):");
+        defaultEnglish.put("HIGwin_entry086","Places for which sub-t-invariants takes tokens (tokens<0):");
+        defaultEnglish.put("HIGwin_entry087","(in parenthesis number of sub-t-invariants for each place):");
+        defaultEnglish.put("HIGwin_entry088","Places for which non-invariants takes or produces tokens:");
+        defaultEnglish.put("HIGwin_entry089","(in parenthesis number of non-t-invariants for each place):");
+        defaultEnglish.put("HIGwin_entry090","Vectors (p-inv) analysed:");
+        defaultEnglish.put("HIGwin_entry091","Canonical p-invariants:");
+        defaultEnglish.put("HIGwin_entry092","Sur-p-invariants:");
+        defaultEnglish.put("HIGwin_entry093","Sub-p-invariants:");
+        defaultEnglish.put("HIGwin_entry094","Non-p-invariants:");
+        defaultEnglish.put("HIGwin_entry095","Problematics transitions for sur-p-invariants:");
+        defaultEnglish.put("HIGwin_entry096","(in parenthesis number of sur-p-invariants for each transition):");
+        defaultEnglish.put("HIGwin_entry097","Problematics transitions for sub-p-invariants:");
+        defaultEnglish.put("HIGwin_entry098","(in parenthesis number of sub-p-invariants for each transition):");
+        defaultEnglish.put("HIGwin_entry099","Problematics transitions for non p-invariant vector:");
+        defaultEnglish.put("HIGwin_entry100","(in parenthesis number of non p-invariants for each transition):");
+        defaultEnglish.put("HIGwin_entry101","New (feasible) invariants set computed. What to do now?\nSave it to file and replace the current set.\nSave it to file only (do not replace current set).\nDo not save to file, only replace current set.\nDiscart new feasible invariants set.");
+        defaultEnglish.put("HIGwin_entry102exception","Exception (1000185): HolmesInvariantsGenerator.checkAndMakeFeasible() failed:");
+        defaultEnglish.put("HIGwin_entry103","t-invariants:");
+        defaultEnglish.put("HIGwin_entry104","p-invariants:");
+
+        //HolmesInvariantsViewer:
+        defaultEnglish.put("HIVwin_entry003title","Holmes Invariants Viewer");
+        defaultEnglish.put("HIVwin_entry001","No invariants found, window cannot be initialized.");
+        defaultEnglish.put("HIVwin_entry002","Net simulator working. Unable to retrieve transitions statistics.");
+        defaultEnglish.put("HIVwin_entry002t","Simulator working");
+        defaultEnglish.put("LOGentry00449exception","Exception (1000186): HolmesInvariantsViewer.initiateVariable() failed:");
+        defaultEnglish.put("LOGentry00450exception","Exception (1000187): HolmesInvariantsViewer.initalizeComponents() failed:");
+        defaultEnglish.put("HIVwin_entry04","Invariants viewer");
+        defaultEnglish.put("HIVwin_entry05","General information");
+        defaultEnglish.put("HIVwin_entry06","Invariant:");
+        defaultEnglish.put("HIVwin_entry07","Invariant");
+        defaultEnglish.put("HIVwin_entry08","Show previous invariant data.");
+        defaultEnglish.put("HIVwin_entry09","<html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>");
+        defaultEnglish.put("HIVwin_entry09t","Show next invariant data.");
+        defaultEnglish.put("HIVwin_entry10","Minimal:");
+        defaultEnglish.put("HIVwin_entry11","Feasible:");
+        defaultEnglish.put("HIVwin_entry12","Sub-inv:");
+        defaultEnglish.put("HIVwin_entry13","Sur-inv:");
+        defaultEnglish.put("HIVwin_entry14","Canonical:");
+        defaultEnglish.put("HIVwin_entry15","pInTrans:");
+        defaultEnglish.put("HIVwin_entry16","inTrans:");
+        defaultEnglish.put("HIVwin_entry17","outTrans:");
+        defaultEnglish.put("HIVwin_entry18","ReadArcs:");
+        defaultEnglish.put("HIVwin_entry19","Inhibitors:");
+        defaultEnglish.put("HIVwin_entry20","Min. time:");
+        defaultEnglish.put("HIVwin_entry21","Avg. time:");
+        defaultEnglish.put("HIVwin_entry22","Max. time:");
+        defaultEnglish.put("HIVwin_entry23","TPN trans:");
+        defaultEnglish.put("HIVwin_entry24","DPN trans:");
+        defaultEnglish.put("HIVwin_entry25","TDPN trans:");
+        defaultEnglish.put("HIVwin_entry26","PN trans:");
+        defaultEnglish.put("HIVwin_entry27","Description:");
+        defaultEnglish.put("HIVwin_entry28","<html>&nbsp;&nbsp;&nbsp;Recalculate statistics</html>");
+        defaultEnglish.put("HIVwin_entry28t","Show previous invariant data.");
+        defaultEnglish.put("HIVwin_entry29","<html>&nbsp;&nbsp;&nbsp;Show data in notepad</html>");
+        defaultEnglish.put("HIVwin_entry29t","Show invariants data in internal notepad.");
+        defaultEnglish.put("HIVwin_entry30","MCT/transitions table");
+        defaultEnglish.put("HIVwin_entry31","MCT/transitions");
+        defaultEnglish.put("LOGentry00451exception","Exception (1000188): HolmesInvariantsViewer.fillData() failed:");
+        defaultEnglish.put("HIVwin_entry32","t-invariant");
+        defaultEnglish.put("HIVwin_entry33","Description:");
+        defaultEnglish.put("HIVwin_entry34","Total number of transitions:");
+        defaultEnglish.put("HIVwin_entry35","Minimum firing time:");
+        defaultEnglish.put("HIVwin_entry36","Maximum firing time");
+        defaultEnglish.put("HIVwin_entry37","Average firing time:");
+        defaultEnglish.put("HIVwin_entry38","TPN trans: %d | DPN trans: %d | TDPN trans: %d | PN trans: %d");
+        defaultEnglish.put("HIVwin_entry39","Support structure:");
+        defaultEnglish.put("HIVwin_entry40","All transitions of INV #");
+        defaultEnglish.put("HIVwin_entry41","Critical error in invariants subwindow. Invariants support size refers to non-existing transitions.");
+        defaultEnglish.put("HIVwin_entry42","Fired:");
+        defaultEnglish.put("HIVwin_entry43","Invariant vector:");
+        defaultEnglish.put("LOGentry00452exception","Exception (1000189): HolmesInvariantsViewer.cellClickAction() failed:");
+
+        //HolmesKnockout:
+        defaultEnglish.put("LOGentry00453exception","Exception (1000190): HolmesKnockout.HolmesKnockout() failed:");
+        defaultEnglish.put("HKwin_entry001title","Knockout analysis");
+        defaultEnglish.put("HKwin_entry002","Obj. reaction:");
+        defaultEnglish.put("HKwin_entry003","Search options");
+        defaultEnglish.put("HKwin_entry004","Show tree for ramaining transitions");
+        defaultEnglish.put("HKwin_entry005","Show tree for knocked transitions");
+        defaultEnglish.put("HKwin_entry006","Show tree for knocked transitions (threshold)");
+        defaultEnglish.put("HKwin_entry007","Contracted");
+        defaultEnglish.put("HKwin_entry008","<html>&nbsp;Generate</html>");
+        defaultEnglish.put("HKwin_entry008t","Generate knockout map for the currently selected transition.");
+        defaultEnglish.put("HKwin_entry009","<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;notepad</html>");
+        defaultEnglish.put("HKwin_entry009t","For the selected transition show knockout detailed data in the notepad.");
+        defaultEnglish.put("LOGentry00454exception","Exception (1000191): HolmesKnockout.createUpperButtonPanel() failed:");
+        defaultEnglish.put("LOGentry00455exception","Exception (1000192): HolmesKnockout.createLowerButtonPanel() failed. Error in invariant section.");
+        defaultEnglish.put("HKwin_entry010","<html>Whole net<br>knockout</html>");
+        defaultEnglish.put("HKwin_entry011","<html>&nbsp;&nbsp;&nbsp;&nbsp;Color&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;net&nbsp;&nbsp;&nbsp;</html>");
+        defaultEnglish.put("HKwin_entry012","<html>Load Mona<br>Lisa data</html>");
+        defaultEnglish.put("HKwin_entry013","<html>&nbsp;&nbsp;Mona Lisa<br>-> Color net</html>");
+        defaultEnglish.put("HKwin_entry014","<html>&nbsp;Save image</html>");
+        defaultEnglish.put("HKwin_entry015","<html>Inv. knockout</html>");
+        defaultEnglish.put("HKwin_entry016","Show full names");
+        defaultEnglish.put("HKwin_entry017","Objective reaction (knock-out reaction):");
+        defaultEnglish.put("HKwin_entry018","Reactions knocked out:");
+        defaultEnglish.put("HKwin_entry019","0  (zero, all transitions present in some unaffected t-invariants).");
+        defaultEnglish.put("HKwin_entry020","Reactions knocked out:");
+        defaultEnglish.put("HKwin_entry021","Common-group (e.g., MCT set) reactions:");
+        defaultEnglish.put("LOGentry00456exception","Exception (1000193): HolmesKnockout.getKnockoutInfo() failed. Error in transition section.");
+        defaultEnglish.put("HKwin_entry022","t-invariants unaffected by knockout:");
+        defaultEnglish.put("HKwin_entry023","t-invariants disabled:");
+        defaultEnglish.put("HKwin_entry024","t_invariant (%d) with transition t_%d_%s (disabled t-inv.):");
+        defaultEnglish.put("LOGentry00457exception","Exception (1000194): HolmesKnockout.getKnockoutInfo() failed. Error in invariants section.");
+        defaultEnglish.put("HKwin_entry025","Invariants matrix empty! Operation cannot start.");
+        defaultEnglish.put("HKwin_entry026","Data collected for %d transitions.");
+        defaultEnglish.put("HKwin_entry027","| Knocked-out: %d | Common: %d");
+        defaultEnglish.put("HKwin_entry028","Incorrect file location.");
+        defaultEnglish.put("HKwin_entry028t","Operation unsuccessful");
+        defaultEnglish.put("LOGentry00458exception","Exception (1000195): HolmesKnockout.exportMonaLisaToNet() failed:");
+        defaultEnglish.put("HKwin_entry029","Incorrect file location.");
+        defaultEnglish.put("HKwin_entry030","Knockout:");
+        defaultEnglish.put("LOGentry00459exception","Exception (1000196): HolmesKnockout.showMonaLisaToNet() failed:");
+        defaultEnglish.put("LOGentry00460exception","Exception (1000197): HolmesKnockout.showMonaLisaToNet() failed:");
+        defaultEnglish.put("LOGentry00461exception","Exception (1000198): HolmesKnockout.showMonaLisaToNet() failed:");
+        defaultEnglish.put("LOGentry00462exception","Exception (1000199): HolmesKnockout.showMonaLisaToNet() failed:");
+        defaultEnglish.put("LOGentry00463exception","Exception (1000200): HolmesKnockout.getKnockoutInfoToNet() failed:");
+        defaultEnglish.put("HKwin_entry031","Please choose main reaction for Mauritius Map.");
+        defaultEnglish.put("HKwin_entry031t","No selection");
+        defaultEnglish.put("HKwin_entry032","Invariants matrix empty! Operation cannot start.");
+        defaultEnglish.put("LOGentry00464exception","Exception (1000201): HolmesKnockout.generateMap() failed:");
+        defaultEnglish.put("LOGentry00465exception","Exception (1000202): HolmesKnockout.exportToPicture() failed:");
+        defaultEnglish.put("HKwin_entry033","Export Picture Error");
+
+        //HolmesKnockoutViewer:
+        defaultEnglish.put("HKVwin_entry001title","Holmes Invariant-Knockout Details window");
+        defaultEnglish.put("LOGentry00466exception","Exception (1000203): HolmesKnockoutViewer.initalizeComponents() failed:");
+        defaultEnglish.put("HKVwin_entry002","Element:");
+        defaultEnglish.put("HKVwin_entry003","Knockout element general information");
+        defaultEnglish.put("HKVwin_entry004","MCT #");
+        defaultEnglish.put("HKVwin_entry005","MCT set:");
+        defaultEnglish.put("HKVwin_entry006","Dependent invariants:");
+        defaultEnglish.put("HKVwin_entry007","Unaffected invariants:");
+        defaultEnglish.put("HKVwin_entry008","Knockout path:");
+        defaultEnglish.put("HKVwin_entry009","Tables");
+        defaultEnglish.put("LOGentry00467exception","Exception (1000204): HolmesKnockoutViewer.cellClickAction() failed:");
+
+        //HolmesMCS:
+        defaultEnglish.put("HMCSwin_entry001title","Minimal Cut Sets generator");
+        defaultEnglish.put("LOGentry00468exception","Exception (1000205): HolmesMCS.HolmesMCS() failed:");
+        defaultEnglish.put("HMCSwin_entry002","Obj. reaction:");
+        defaultEnglish.put("HMCSwin_entry003","Max. |CutSet|:");
+        defaultEnglish.put("HMCSwin_entry004","Max. set number:");
+        defaultEnglish.put("HMCSwin_entry005","Reduce MCSs");
+        defaultEnglish.put("HMCSwin_entry006","<html>Generate<br />MCS</html>");
+        defaultEnglish.put("HMCSwin_entry007","STOP");
+        defaultEnglish.put("HMCSwin_entry008","<html>Load one<br />objR MCS</html>");
+        defaultEnglish.put("HMCSwin_entry009","<html>Load all<br />MCS</html>");
+        defaultEnglish.put("HMCSwin_entry010","<html>Save all<br />MCS</html>");
+        defaultEnglish.put("HMCSwin_entry011","Rem.");
+        defaultEnglish.put("HMCSwin_entry012","Compute all MCS");
+        defaultEnglish.put("HMCSwin_entry013","<html>Comp.<br />select.<br />MCSs</html>");
+        defaultEnglish.put("HMCSwin_entry014","Log");
+        defaultEnglish.put("HMCSwin_entry015","Computed MCS options");
+        defaultEnglish.put("HMCSwin_entry016","ObjR MCSs:");
+        defaultEnglish.put("HMCSwin_entry017","Show full info");
+        defaultEnglish.put("HMCSwin_entry018","<html>Save this<br />objR MCS</html>");
+        defaultEnglish.put("HMCSwin_entry019","Show MCS");
+        defaultEnglish.put("HMCSwin_entry020","Fragility");
+        defaultEnglish.put("HMCSwin_entry021","<html><center>MCS<br />evaluation<center></html>");
+        defaultEnglish.put("HMCSwin_entry022","MCS calculation already in progress.");
+        defaultEnglish.put("HMCSwin_entry022t","MCS calculation in progress");
+        defaultEnglish.put("HMCSwin_entry023","Not enough transitions in net. Operation cannot start.");
+        defaultEnglish.put("HMCSwin_entry024","Invariants matrix empty! Operation cannot start.");
+        defaultEnglish.put("HMCSwin_entry025","Please select objective reaction (objR).");
+        defaultEnglish.put("HMCSwin_entry026","MCSs maximal cardinality too low!");
+        defaultEnglish.put("HMCSwin_entry027","MCS list detected with different size than current cardinality of the transition set.\nClean old MCS list?");
+        defaultEnglish.put("HMCSwin_entry027t","Net change detected");
+        defaultEnglish.put("LOGentry00469exception","Exception (1000206): HolmesMCS.calculateAllAction() failed:");
+        defaultEnglish.put("HMCSwin_entry028","Starting calculations for reaction:");
+        defaultEnglish.put("HMCSwin_entry029","Transition/objR:");
+        defaultEnglish.put("HMCSwin_entry030","Minimal Cut Sets list size:");
+
         //generalPurposeTags:
+        defaultEnglish.put("add","Add");
         defaultEnglish.put("cancel","Cancel");
+        defaultEnglish.put("clean","Clean");
+        defaultEnglish.put("clear","Clear");
         defaultEnglish.put("critError","Critical error");
         defaultEnglish.put("confirm","Confirm");
         defaultEnglish.put("continue","Continue");
@@ -1929,17 +2295,27 @@ public class LangEngDafaultDB {
         defaultEnglish.put("error","Error");
         defaultEnglish.put("exit","Exit");
         defaultEnglish.put("fixed","Fixed");
+        defaultEnglish.put("information","Information");
+        defaultEnglish.put("load","Load");
+        defaultEnglish.put("next","Next");
+        defaultEnglish.put("no","No");
+        defaultEnglish.put("previous","Previous");
         defaultEnglish.put("problem","Problem");
         defaultEnglish.put("replace","Replace");
-        defaultEnglish.put("saveAndExit","Save and Exit");
+        defaultEnglish.put("replaceOnly","Replace only");
+        defaultEnglish.put("saveAndExit","Save and exit");
         defaultEnglish.put("saveAndCont","Save and continue");
         defaultEnglish.put("saveAndReplace","Save & replace");
         defaultEnglish.put("save","Save");
+        defaultEnglish.put("saveOnly","Save only");
         defaultEnglish.put("select","Select");
         defaultEnglish.put("success","Success");
+        defaultEnglish.put("question","Question");
         defaultEnglish.put("netSimWork01","Net simulator working");
         defaultEnglish.put("unimplemented","Not implemented yet.");
         defaultEnglish.put("unimplementedTitle","Subsystem offline");
+        defaultEnglish.put("yes","Yes");
+        
         
 
         return defaultEnglish;

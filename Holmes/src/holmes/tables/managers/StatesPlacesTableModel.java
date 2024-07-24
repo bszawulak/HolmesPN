@@ -8,6 +8,7 @@ import java.util.EventObject;
 import javax.swing.table.AbstractTableModel;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.windows.managers.HolmesStatesManager;
 
 /**
@@ -16,6 +17,7 @@ import holmes.windows.managers.HolmesStatesManager;
 public class StatesPlacesTableModel extends AbstractTableModel {
 	@Serial
 	private static final long serialVersionUID = 7776195572631920285L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
 	private int dataSize;
@@ -174,7 +176,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 
 			boss.changeState(row, col, newValue);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (688206518) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00425exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -187,7 +189,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 			ArrayList<String> rowVector = dataMatrix.get(row);
 			rowVector.set(col, ""+(int)newValue);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (128622084) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00426exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 }

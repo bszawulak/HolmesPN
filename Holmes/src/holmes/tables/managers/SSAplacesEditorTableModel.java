@@ -8,6 +8,8 @@ import java.util.EventObject;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
+import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.SSAplacesVector.SSAdataType;
 import holmes.windows.managers.HolmesSSAplacesEditor;
 
@@ -17,6 +19,7 @@ import holmes.windows.managers.HolmesSSAplacesEditor;
 public class SSAplacesEditorTableModel extends DefaultTableModel {
 	@Serial
 	private static final long serialVersionUID = 5334544477964813872L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<SSAdataClass> dataMatrix;
 	private int dataSize;
@@ -158,10 +161,9 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
 						dataMatrix.get(row).ssaValue = newValue;
 						boss.changeRealValue(ssaVectorIndex, row, newValue);
 					} else {
-						JOptionPane.showMessageDialog(boss, 
-								"Data type set for molecules. Expected number from a range of\n"
-								+ "1 to (usually) billions - not fractions (there is no "+newValue+" molecule!).", 
-								"Invalid value, integer number of molecules expected",JOptionPane.WARNING_MESSAGE);
+						String strB = String.format(lang.getText("SSAPETM_entry001"), newValue);
+						JOptionPane.showMessageDialog(boss,
+								strB, lang.getText("SSAPETM_entry001t"),JOptionPane.WARNING_MESSAGE);
 					}
 				} else {
 					if(newValue < 10) {
@@ -169,15 +171,12 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
 						boss.changeRealValue(ssaVectorIndex, row, newValue);
 					} else {
 						JOptionPane.showMessageDialog(boss, 
-								"Data type set for concentration. Units are moles/litre. Expected number \n"
-								+ "from a range of 0 to (usually) tiny fraction (e.g. 1e-12). This value will\n"
-								+ "be MULTIPLIED by Avogadro constant (6.022*10^23 molecules!)", 
-								"Invalid value, moles/litre expected",JOptionPane.WARNING_MESSAGE);
+								lang.getText("SSAPETM_entry002"), lang.getText("SSAPETM_entry002t"),JOptionPane.WARNING_MESSAGE);
 					}
 				}
 			}
 		} catch (Exception e) {
-			//dataMatrix.get(row).firingRate = 1.0;
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00422exception")+" "+e.getMessage(), "error", true);
 		}
 	}
 }

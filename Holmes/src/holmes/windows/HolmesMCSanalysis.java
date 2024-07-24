@@ -435,10 +435,10 @@ public class HolmesMCSanalysis extends JFrame {
                             "ships are sought. If any transition initially being in the set Y, has all its input places such that they\n" +
                             "in turn will have tokens produced by other transitions independent of M (by distance), it is removed from Y.\n" +
                             "The final ranking is based on the number of transitions remaining in Y.\n" +
-                            "\n" +
-                            "Version 1.6.9.5: [PL] Najkrócej rzecz ujmując sprawdzane jest tylko najbliższe otoczenie zbnioru M: liczność\n" +
-                            "zbiorów X oraz Y. Algorytm w tejże wersji daje więc bardzo, ale to bardzo przybliżone informacje o potencjale\n" +
-                            "wyłączającym zbioru MCS, niż algorytm z wersji 1.6.9.7 i dalej."
+                            "\n"
+                            //"Version 1.6.9.5: [PL] Najkrócej rzecz ujmując sprawdzane jest tylko najbliższe otoczenie zbnioru M: liczność\n" +
+                            //"zbiorów X oraz Y. Algorytm w tejże wersji daje więc bardzo, ale to bardzo przybliżone informacje o potencjale\n" +
+                            //"wyłączającym zbioru MCS, niż algorytm z wersji 1.6.9.7 i dalej."
                     , "Info", JOptionPane.INFORMATION_MESSAGE);
 
         });
@@ -529,11 +529,11 @@ public class HolmesMCSanalysis extends JFrame {
                             "is ranked because the more subtle its effects are on the net.\n" +
                             "Additionally: please leave Distance setting to 3, and be aware that other controls have currently no\n" +
                             "influence on this ranking. [To be adjusted soon]\n" +
-                            "\n" +
-                            "Version 1.6.9.5 and lower: [PL] ranking jest robiony tylko na podstawie drugiego opisanego kryterium, tj.\n" +
-                            "im mniej tranzycji w sumie wsparć wyłączanych t-invariantów tym lepiej, ale sama liczba t-invariantów\n" +
-                            "NIE jest brana pod uwagę. Druga uwaga: nie daję 100% pewności że algorytm jest 100% poprawny, bo nie\n" +
-                            "ja go pisałem :)"
+                            "\n"// +
+                            //"Version 1.6.9.5 and lower: [PL] ranking jest robiony tylko na podstawie drugiego opisanego kryterium, tj.\n" +
+                            //"im mniej tranzycji w sumie wsparć wyłączanych t-invariantów tym lepiej, ale sama liczba t-invariantów\n" +
+                            //"NIE jest brana pod uwagę. Druga uwaga: nie daję 100% pewności że algorytm jest 100% poprawny, bo nie\n" +
+                            //"ja go pisałem :)"
                     , "Info", JOptionPane.INFORMATION_MESSAGE);
         });
         transRankInfo.setFocusPainted(false);

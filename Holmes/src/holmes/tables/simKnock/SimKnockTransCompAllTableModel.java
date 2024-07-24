@@ -1,5 +1,8 @@
 package holmes.tables.simKnock;
 
+import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
+
 import java.io.Serial;
 import java.util.ArrayList;
 
@@ -11,6 +14,7 @@ import javax.swing.table.AbstractTableModel;
 public class SimKnockTransCompAllTableModel extends AbstractTableModel {
 	@Serial
 	private static final long serialVersionUID = -1394169736979919555L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
 	private int dataSize;
@@ -115,6 +119,7 @@ public class SimKnockTransCompAllTableModel extends AbstractTableModel {
 				return Integer.parseInt(strVal);
 				//return returnValue;
 			} catch (Exception e) {
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00431exception")+" "+e.getMessage(), "error", true);
 				return "error";
 			}
 		} else {
@@ -123,6 +128,7 @@ public class SimKnockTransCompAllTableModel extends AbstractTableModel {
 				String strVal = returnValue.toString().replace(",", ".");
 				return Double.parseDouble(strVal);
 			} catch (Exception e) {
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00432exception")+" "+e.getMessage(), "error", true);
 				return "error";
 			}
 		}

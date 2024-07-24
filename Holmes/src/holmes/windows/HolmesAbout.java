@@ -18,6 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.utilities.Tools;
 
 /**
@@ -26,6 +27,8 @@ import holmes.utilities.Tools;
 public class HolmesAbout extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 6034143130559149651L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
 	JFrame parentFrame;
 	JTextArea textArea;
 	
@@ -35,7 +38,7 @@ public class HolmesAbout extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (801625237) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00436exception")+ " "+ex.getMessage(), "error", true);
 		}
 		setTitle("About Holmes");
 		setLayout(null);
@@ -51,7 +54,7 @@ public class HolmesAbout extends JFrame {
 			BufferedImage wPic = ImageIO.read(this.getClass().getResource("/abyssHolmes2.png"));
 			((MyTextArea)textArea).setBackgroundImage(wPic);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (936370008) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00437exception")+ " "+ex.getMessage(), "error", true);
 		}
 		
 		textArea.setEditable(false);
@@ -96,7 +99,7 @@ public class HolmesAbout extends JFrame {
 			wIcon.setBounds(10, 10, 160, 160);
 			panel.add(wIcon);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (835870912) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00438exception")+ " "+ex.getMessage(), "error", true);
 		}
 		
 		JLabel nameLabel = new JLabel("Holmes v1.7.0.1"); // (Trust me, I'm an engineer edition)");

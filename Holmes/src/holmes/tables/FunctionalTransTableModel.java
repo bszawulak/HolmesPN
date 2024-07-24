@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 
 /**
@@ -14,6 +15,7 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 public class FunctionalTransTableModel extends DefaultTableModel {
 	@Serial
 	private static final long serialVersionUID = 7486251580290447103L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 
 	/**
 	 * Klasa pojemnik
@@ -145,7 +147,7 @@ public class FunctionalTransTableModel extends DefaultTableModel {
 				case 6 -> dataMatrix.get(row).enabled = (boolean) value;
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (267990506) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00433exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 }
