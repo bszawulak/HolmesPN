@@ -9,6 +9,7 @@ import javax.swing.JTable;
 import holmes.analyse.InvariantsTools;
 import holmes.analyse.TimeComputations;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
@@ -27,6 +28,8 @@ import holmes.utilities.Tools;
  * Klasa z metodami obsługującymi okno tabel programu - klasy HolmesNetTables.
  */
 public class HolmesNetTablesActions {
+	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private HolmesNetTables antWindow; 
 	public ArrayList<InvariantContainer> dataMatrix;
 	
@@ -68,7 +71,7 @@ public class HolmesNetTablesActions {
 	  	    	window.setVisible(true);
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (437771981) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00476exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -99,7 +102,7 @@ public class HolmesNetTablesActions {
 			int index = places.indexOf(p);
 			
 			if(iterIndex != index) {
-				GUIManager.getDefaultGUIManager().log("Problem with position", "warning", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00477"), "warning", true);
 				//compactTable
 			}
 			
@@ -145,7 +148,7 @@ public class HolmesNetTablesActions {
 			iterIndex++;
 			int index = transitions.indexOf(t);
 			if(iterIndex != index) {
-				GUIManager.getDefaultGUIManager().log("Problem with position", "warning", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00477"), "warning", true);
 				//compactTable
 			}
 			
@@ -230,13 +233,10 @@ public class HolmesNetTablesActions {
     				ic.sub = false;
     				ic.sur = false;
     			}
-
 				ic.canonical = canonicalVector.get(i) == 0;
-    			
     			dataMatrix.add(ic);
     		}	
     	}
-    	
     	for(InvariantContainer ic : dataMatrix) {
     		modelInvariants.addNew(ic.ID, ic.transNumber, ic.minimal, ic.feasible, ic.pureInTransitions, ic.inTransitions, 
     				ic.outTransitions, ic.readArcs, ic.inhibitors, ic.sur, ic.sub, ic.normalInv, ic.canonical, ic.name);
@@ -294,7 +294,7 @@ public class HolmesNetTablesActions {
 					}
 					
 					avg *= 100; // do 100%
-					String cell = ""+value+"("+Tools.cutValue(avg)+"%)";
+					String cell = value+"("+Tools.cutValue(avg)+"%)";
 					newRow.add(cell);
 				} else {
 					newRow.add("");
@@ -317,15 +317,15 @@ public class HolmesNetTablesActions {
 		try {
 			String name = table.getName();
 			if(!name.equals("PlacesTable") && !name.equals("TransitionsTable")) {
-				JOptionPane.showMessageDialog(null, "Swap operation allowed only for places or transitions.",
-						"Invalid table", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("HNTAwin_entry001"),
+						lang.getText("HNTAwin_entry001t"), JOptionPane.WARNING_MESSAGE);
 				return false;
 			}
 			
 			int[] selRows = table.getSelectedRows();
 			if(selRows.length != 2) {
-				JOptionPane.showMessageDialog(null, "Please select two rows (SHIFT key + mouse click).",
-						"Invalid number of rows selected", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("HNTAwin_entry002"),
+						lang.getText("HNTAwin_entry002t"), JOptionPane.WARNING_MESSAGE);
 				return false;
 			}
 			
@@ -343,7 +343,7 @@ public class HolmesNetTablesActions {
 				Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
 				
 				GUIManager.getDefaultGUIManager().log("Swapping places "+p1.getName()+" and "+p2.getName()+" successfull.", "text", true);
-			} else if(name.equals("TransitionTable")) {
+			} else if(name.equals("TransitionTable")) { //TODO coś tu jest nie tak!!!!!
 				ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 				int pos1 = selRows[0];
 				int pos2 = selRows[1];

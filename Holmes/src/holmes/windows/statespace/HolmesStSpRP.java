@@ -10,7 +10,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class HolmesStSpRP extends JFrame {
-    private GUIManager overlord;
+    private static GUIManager overlord = GUIManager.getDefaultGUIManager();
     ArrayList<Transition> transitions;
     ArrayList<Place> places;
 
@@ -21,7 +21,6 @@ public class HolmesStSpRP extends JFrame {
     private JPanel lowerPanel;
 
     public HolmesStSpRP() {
-        overlord = GUIManager.getDefaultGUIManager();
         this.setTitle("State space analysis");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));

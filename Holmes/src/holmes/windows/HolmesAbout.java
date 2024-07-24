@@ -143,11 +143,11 @@ public class HolmesAbout extends JFrame {
 		textArea.setFont(new Font("Consolas", Font.PLAIN, 15));
 
 		textArea.append("Versions and authors:\n");
-		textArea.append("Holmes version 1.7, July 2024 \n");
+		textArea.append("Holmes version 1.7, July 2024, 120k+ LOC \n");
 		textArea.append("Holmes version 1.6, February 2024 \n");
 		textArea.append("Holmes version 1.5, June 2022-December 2022, even more LOC \n");
 		textArea.append("  Marcin Radom, Ph.D.\n");
-		textArea.append("Holmes version 1.1, June 2022, 140k+ LOC \n");
+		textArea.append("Holmes version 1.1, June 2022, 100k+ LOC \n");
 		textArea.append("  Bartlomiej Szawulak, Ph.D.\n");
 		textArea.append("Holmes version 1.0, January 2017, 57k+ LOC \n");
 		textArea.append("  Radom Marcin, Ph.D.\n");
@@ -170,16 +170,12 @@ public class HolmesAbout extends JFrame {
 				+ "Poznan University of Technology, Faculty of Computing Science, Poznan, Poland.\n");
 		textArea.append("\n");
 		textArea.append("Used external libraries and software:\n");
-		textArea.append(" Sanaware JavaDocking (GNU GPL, http://www.javadocking.com/)\n");
 		textArea.append(" jXLS library (GNU LGPL, http://jxls.sourceforge.net/)\n");
 		textArea.append(" XStream (BSD License http://xstream.codehaus.org/license.html )\n");
 		textArea.append(" Simple-xml (Apache Licence, http://simple.sourceforge.net/home.php)\n");
 		textArea.append(" RCaller (GNU LGPL, https://code.google.com/p/rcaller/)\n");
 		textArea.append(" exp4J (Apache Licence, http://www.objecthunter.net/exp4j/license.html)\n");
 		textArea.append("\n");
-		//textArea.append("In addition, R environment with appropriate libraries (cluster, fpc, amap) "
-		//		+ "and INAwin32.exe are used in some of the program functions. The user must acquire "
-		//		+ "them in order to fully use Holmes software.\n");
 		textArea.setCaretPosition(0);
 	}
 	

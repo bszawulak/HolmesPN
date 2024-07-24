@@ -8,6 +8,7 @@ import javax.swing.JProgressBar;
 
 import holmes.analyse.InvariantsTools;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
@@ -20,7 +21,8 @@ import holmes.utilities.Tools;
  */
 public class HolmesNodeInfoActions {
 	private JFrame parentFrame;
-	private GUIManager overlord;
+	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	
 	public HolmesNodeInfoActions(JFrame parent) {
 		parentFrame = parent;
@@ -252,10 +254,10 @@ public class HolmesNodeInfoActions {
 		}
 		//Collections.sort(mcts);
 		String description = overlord.getWorkspace().getProject().accessT_InvDescriptions().get(invNo);
-		notepad.addTextLineNL("Invariant "+(invNo+1), "text");
-		notepad.addTextLineNL("Descrption: "+description, "text");
-		notepad.addTextLineNL("Total number of transitions: "+transNumber, "text");
-		notepad.addTextLineNL("Support structure:", "text");
+		notepad.addTextLineNL(lang.getText("HNIAwin_entry001")+" "+(invNo+1), "text");
+		notepad.addTextLineNL(lang.getText("HNIAwin_entry002")+" "+description, "text");
+		notepad.addTextLineNL(lang.getText("HNIAwin_entry003")+" "+transNumber, "text");
+		notepad.addTextLineNL(lang.getText("HNIAwin_entry004"), "text");
 		for(int mct : mcts) {
 			String MCTname = overlord.getWorkspace().getProject().getMCTname(mct);
 			notepad.addTextLineNL("  [MCT: "+(mct+1)+"]: "+MCTname, "text");
@@ -265,13 +267,12 @@ public class HolmesNodeInfoActions {
 		//END OF STRUCTURE BLOCK
 		
 		notepad.addTextLineNL("", "text");
-		notepad.addTextLineNL("All transitions of INV #" + (invNo+1)+":", "text");
+		notepad.addTextLineNL(lang.getText("HNIAwin_entry005") + (invNo+1)+":", "text");
 		
 		if(transitions.size() != invariant.size()) {
 			transitions = overlord.getWorkspace().getProject().getTransitions();
 			if(transitions == null || transitions.size() != invariant.size()) {
-				overlord.log("Critical error in invariants subwindow. "
-						+ "Invariants support size refers to non-existing transitions.", "error", true);
+				overlord.log(lang.getText("LOGentry00484critErr"), "error", true);
 				return;
 			}
 		}
@@ -290,7 +291,7 @@ public class HolmesNodeInfoActions {
 		}
 		vector = new StringBuilder(vector.substring(0, vector.length() - 1));
 		notepad.addTextLineNL("", "text");
-		notepad.addTextLineNL("Invariant vector:", "text");
+		notepad.addTextLineNL(lang.getText("HNIAwin_entry006"), "text");
 		notepad.addTextLineNL(vector.toString(), "text");
 
 		//notepad.setCaretFirstLine();
@@ -321,7 +322,8 @@ public class HolmesNodeInfoActions {
 		}
 		Collections.sort(mcts);
 		
-		notepad.addTextLineNL("Inv: "+(invNo)+" (original index in the program: "+(index+1)+")", "text");
+		String strB = String.format(lang.getText("HNIAwin_entry007"), invNo, index+1);
+		notepad.addTextLineNL(strB, "text");
 
 		for(int mct : mcts) {
 			StringBuilder transInMCT = new StringBuilder();
@@ -348,7 +350,7 @@ public class HolmesNodeInfoActions {
 		}
 		vector = new StringBuilder(vector.substring(0, vector.length() - 1));
 		notepad.addTextLineNL("", "text");
-		notepad.addTextLineNL("Invariant vector:", "text");
+		notepad.addTextLineNL(lang.getText("HNIAwin_entry008"), "text");
 		notepad.addTextLineNL(vector.toString(), "text");
 	}
 }

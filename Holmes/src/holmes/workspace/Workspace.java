@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.SelectionActionListener;
 import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.data.IdGenerator;
@@ -25,6 +26,8 @@ import holmes.petrinet.elements.MetaNode.MetaType;
  * pozostają - ku przestrodze.
  */
 public class Workspace implements SelectionActionListener {
+	private static GUIManager overlord;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private JTabbedPane tp = new JTabbedPane();
 	
 	/** Tablica zawierająca obiekty WorkspaceSheet, które z kolei zawierają SheetPanel (JPanel) oraz GraphPanel. By żyło się lepiej. */
@@ -33,7 +36,6 @@ public class Workspace implements SelectionActionListener {
 	/** Tablica identyfikatorów obiektów WorkspaceSheet przechowywanych w tablicy sheets */
 	private ArrayList<Integer> sheetsIDtable;
 	private PetriNet project;
-	private GUIManager overlord;
 
 	/**
 	 * Konstruktor obiektu klasy Workspace.
@@ -60,13 +62,10 @@ public class Workspace implements SelectionActionListener {
 	 * @return int - numer będący identyfikatorem nowej zakładki
 	 */
 	public int newTab(boolean addMetaNode, Point pos, int whichSubnet, MetaType type) {
-		int index = sheetsIDtable.size();
-		int id = index;
+        int id = sheetsIDtable.size();
 		if (sheetsIDtable.contains(id))
 			id = getMaximumSubnetID() + 1;
-
-		//Point position = new Point(0, 0);
-
+		
 		sheetsIDtable.add(id);
 
 		WorkspaceSheet ws = new WorkspaceSheet(id, this);
@@ -117,8 +116,7 @@ public class Workspace implements SelectionActionListener {
 		int sheetID = sheet.getId();
 		boolean result = getProject().removeGraphPanel(sheetID);
 		if(!result) {
-			GUIManager.getDefaultGUIManager().log("Error, removing graph panel in Workspace.deleteSheetFromArrays() failed" +
-					"for WorkspaceSheet "+sheet.getId(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00502critError")+" "+sheet.getId(), "error", true);
 		}
 		
 		int id = sheets.indexOf(sheet);
@@ -135,8 +133,7 @@ public class Workspace implements SelectionActionListener {
 			int subnetID = sheets.get(i).getId();
 			boolean result = getProject().removeGraphPanel(subnetID);
 			if (!result) {
-				GUIManager.getDefaultGUIManager().log("Error, removing graph panel in Workspace.deleteSheetFromArrays() failed" +
-						"for WorkspaceSheet "+subnetID, "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00503critError")+" "+subnetID, "error", true);
 			}
 			tp.remove(i);
 			sheets.remove(i);

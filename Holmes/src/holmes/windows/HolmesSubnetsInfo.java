@@ -1,6 +1,7 @@
 package holmes.windows;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.*;
 import holmes.utilities.Tools;
@@ -16,7 +17,8 @@ import java.util.List;
  */
 public class HolmesSubnetsInfo {
     private final GraphPanel graphPanel;
-    private final GUIManager overlord;
+    private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static LanguageManager lang = GUIManager.getLanguageManager();
 
     /**
      * Konstruktor klasy HolmesSubnetsInfo.
@@ -24,7 +26,6 @@ public class HolmesSubnetsInfo {
      */
     public HolmesSubnetsInfo(GraphPanel graphPanel) {
         this.graphPanel = graphPanel;
-        this.overlord = GUIManager.getDefaultGUIManager();
     }
 
     /**
@@ -38,10 +39,10 @@ public class HolmesSubnetsInfo {
         JPanel infoPanel = new JPanel(null);
         mainPanel.add(infoPanel);
         infoPanel.setBounds(5, 5, mainPanel.getWidth() - 25, 130);
-        infoPanel.setBorder(BorderFactory.createTitledBorder("Subnet general information:"));
+        infoPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSIwin_entry001")));
 
 
-        JLabel labelID = new JLabel("ID:");
+        JLabel labelID = new JLabel(lang.getText("HSIwin_entry002")); //ID
         infoPanel.add(labelID);
         labelID.setBounds(10, 20, 20, 20);
 
@@ -51,7 +52,7 @@ public class HolmesSubnetsInfo {
         idTextBox.setEditable(false);
 
 
-        JLabel labelName = new JLabel("Name:");
+        JLabel labelName = new JLabel(lang.getText("HSIwin_entry003"));
         infoPanel.add(labelName);
         labelName.setBounds(10, 40, 40, 20);
 
@@ -68,7 +69,7 @@ public class HolmesSubnetsInfo {
         });
 
 
-        JLabel commmentLabel = new JLabel("Description:");
+        JLabel commmentLabel = new JLabel(lang.getText("HSIwin_entry004"));
         infoPanel.add(commmentLabel);
         commmentLabel.setBounds(10, 60, 80, 20);
 
@@ -90,9 +91,9 @@ public class HolmesSubnetsInfo {
         JPanel statisticsPanel = new JPanel(null);
         mainPanel.add(statisticsPanel);
         statisticsPanel.setBounds(5, 135, 230, 300);
-        statisticsPanel.setBorder(BorderFactory.createTitledBorder("Subnet statistics:"));
+        statisticsPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSIwin_entry005"))); //Subnet statistics
 
-        JLabel nodesCountLabel = new JLabel("Number of element locations:");
+        JLabel nodesCountLabel = new JLabel(lang.getText("HSIwin_entry006")); //Number of element locations
         statisticsPanel.add(nodesCountLabel);
         nodesCountLabel.setBounds(10, 25, 200, 20);
 
@@ -108,7 +109,7 @@ public class HolmesSubnetsInfo {
                 .distinct().toList();
 
 
-        JLabel placeCountLabel = new JLabel("Number of places:");
+        JLabel placeCountLabel = new JLabel(lang.getText("HSIwin_entry007")); //Number of places
         statisticsPanel.add(placeCountLabel);
         placeCountLabel.setBounds(10, 50, 200, 20);
 
@@ -119,7 +120,7 @@ public class HolmesSubnetsInfo {
         placeCountField.setEditable(false);
 
 
-        JLabel transitionCountLabel = new JLabel("Number of transitions:");
+        JLabel transitionCountLabel = new JLabel(lang.getText("HSIwin_entry008")); //Number of transitions
         statisticsPanel.add(transitionCountLabel);
         transitionCountLabel.setBounds(10, 75, 200, 20);
 
@@ -129,7 +130,7 @@ public class HolmesSubnetsInfo {
         transitionCountField.setBounds(190, 75, 30, 20);
         transitionCountField.setEditable(false);
 
-        JLabel tokensCountLabel = new JLabel("Number of tokens:");
+        JLabel tokensCountLabel = new JLabel(lang.getText("HSIwin_entry009")); //Number of tokens
         statisticsPanel.add(tokensCountLabel);
         tokensCountLabel.setBounds(10, 100, 200, 20);
 
@@ -145,9 +146,9 @@ public class HolmesSubnetsInfo {
         JPanel connectionsPanel = new JPanel(null);
         mainPanel.add(connectionsPanel);
         connectionsPanel.setBounds(240, 135, 340, 300);
-        connectionsPanel.setBorder(BorderFactory.createTitledBorder("Connected subnets:"));
+        connectionsPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSIwin_entry010"))); //Connected subnets
 
-        JLabel parentIdLabel = new JLabel("Parent ID:");
+        JLabel parentIdLabel = new JLabel(lang.getText("HSIwin_entry011")); //Parent ID
         connectionsPanel.add(parentIdLabel);
         parentIdLabel.setBounds(10, 25, 100, 20);
 
@@ -158,7 +159,7 @@ public class HolmesSubnetsInfo {
         parentIdField.setEditable(false);
 
 
-        JLabel parentNameLabel = new JLabel("Parent name:");
+        JLabel parentNameLabel = new JLabel(lang.getText("HSIwin_entry012")); //Parent name
         connectionsPanel.add(parentNameLabel);
         parentNameLabel.setBounds(10, 50, 100, 20);
 
@@ -168,11 +169,11 @@ public class HolmesSubnetsInfo {
         parentNameField.setBounds(110, 50, 220, 20);
         parentNameField.setEditable(false);
 
-        JLabel childrenLabel = new JLabel("Subnets:");
+        JLabel childrenLabel = new JLabel(lang.getText("HSIwin_entry013")); //Subnets
         connectionsPanel.add(childrenLabel);
         childrenLabel.setBounds(10, 90, 100, 20);
 
-        JLabel tableHeader = new JLabel(" ID:     Name:");
+        JLabel tableHeader = new JLabel(" "+lang.getText("HSIwin_entry014")); //ID:     Name:
         connectionsPanel.add(tableHeader);
         tableHeader.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         tableHeader.setBounds(10, 115, 220, 25);
@@ -226,7 +227,7 @@ public class HolmesSubnetsInfo {
         GUIManager overlord = GUIManager.getDefaultGUIManager();
         GraphPanel graphPanel = overlord.subnetsHQ.getGraphPanel(subnetID);
         if (graphPanel.getSheetId() == 0) {
-            JOptionPane.showMessageDialog(null, "Current sheet is not a subnet", "Cannot proceed",
+            JOptionPane.showMessageDialog(null, lang.getText("HSIwin_entry015"), lang.getText("HSIwin_entry015t"),
                     JOptionPane.INFORMATION_MESSAGE);
             return;
         }
@@ -236,7 +237,7 @@ public class HolmesSubnetsInfo {
         try {
             targetFrame.setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            overlord.log("Error (488078573) | Exception:  " + ex.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00499exception")+" " + ex.getMessage(), "error", true);
         }
 
         mainFrame.setEnabled(false);

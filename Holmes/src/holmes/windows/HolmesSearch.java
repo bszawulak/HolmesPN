@@ -22,6 +22,7 @@ import javax.swing.JRadioButton;
 import javax.swing.text.DefaultFormatter;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
@@ -36,8 +37,9 @@ import holmes.workspace.WorkspaceSheet;
 public class HolmesSearch extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 8885161841467059860L;
-	private JFrame ego;
-	private ArrayList<Place> places = new ArrayList<Place>();
+	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static LanguageManager lang = GUIManager.getLanguageManager();
+    private ArrayList<Place> places = new ArrayList<Place>();
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
 	//private ArrayList<Node> nodes = new ArrayList<Node>();
 	private ArrayList<Integer> foundNodes = new ArrayList<Integer>();
@@ -60,12 +62,11 @@ public class HolmesSearch extends JFrame {
 	private boolean listenerAllowed = true; //jeśli true, comboBoxy działają
 	
 	public HolmesSearch() {
-		ego = this;
-		ego.setTitle("Net nodes search window");
+		this.setTitle(lang.getText("HSwin_entry001title"));
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (375431746) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00494exception")+" "+ex.getMessage(), "error", true);
 		}
 		
 		setLayout(new BorderLayout());
@@ -100,14 +101,14 @@ public class HolmesSearch extends JFrame {
 		//Panel wyboru opcji szukania
 		JPanel choicePanel = new JPanel();
 		choicePanel.setLayout(null);
-		choicePanel.setBorder(BorderFactory.createTitledBorder("Search options"));
+		choicePanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSwin_entry002"))); //Search options
 		choicePanel.setBounds(0, 0, 500, 150); // -6pikseli do rozmiaru <---> (650)
 		
 		int choiceColPx = 10;
 		int choiceRowPx = 15;
 		
 		// SIMULATION MODE
-		JLabel label1 = new JLabel("Places:");
+		JLabel label1 = new JLabel(lang.getText("HSwin_entry003")); //Places:
 		label1.setBounds(choiceColPx, choiceRowPx, 70, 20);
 		choicePanel.add(label1);
 		
@@ -133,7 +134,7 @@ public class HolmesSearch extends JFrame {
 		choiceRowPx += 25;
 		choicePanel.add(placesCombo);
 		
-		JLabel label2 = new JLabel("Transitions:");
+		JLabel label2 = new JLabel(lang.getText("HSwin_entry004")); //Transitions:
 		label2.setBounds(choiceColPx, choiceRowPx, 70, 20);
 		choicePanel.add(label2);
 		
@@ -161,7 +162,7 @@ public class HolmesSearch extends JFrame {
 		choicePanel.add(transitionsCombo);
 		
 		//Fraza do szukania:
-		JLabel label3 = new JLabel("Search for:");
+		JLabel label3 = new JLabel(lang.getText("HSwin_entry005")); //Search for:
 		label3.setBounds(choiceColPx, choiceRowPx, 80, 20);
 		choicePanel.add(label3);
 		
@@ -179,13 +180,13 @@ public class HolmesSearch extends JFrame {
 				if(!newName.isEmpty())
 					searchForString(newName);
 			} catch (ParseException ex) {
-				GUIManager.getDefaultGUIManager().log("Error (762682665) | Exception:  "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00495exception")+" "+ex.getMessage(), "error", true);
 			}
 		});
 		choicePanel.add(searchField);
 		
 		//ID do szukania:
-		JLabel label4 = new JLabel("Search ID:");
+		JLabel label4 = new JLabel("Search ID:"); //Search ID:
 		label4.setBounds(choiceColPx+350, choiceRowPx, 80, 20);
 		choicePanel.add(label4);
 		
@@ -205,13 +206,13 @@ public class HolmesSearch extends JFrame {
 				int id = Integer.parseInt(IDstr);
 				selectByID(id);
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (554893398) | Exception:  "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00496exception")+" "+ex.getMessage(), "error", true);
 			}
 		});
 		choicePanel.add(idField);	
 		choiceRowPx += 20;
 		
-		JRadioButton placesMode = new JRadioButton("Search places");
+		JRadioButton placesMode = new JRadioButton(lang.getText("HSwin_entry006")); //Search places
 		placesMode.setBounds(choiceColPx, choiceRowPx, 120, 20);
 		placesMode.setLocation(choiceColPx, choiceRowPx);
 		placesMode.setActionCommand("0");
@@ -229,7 +230,7 @@ public class HolmesSearch extends JFrame {
 		choicePanel.add(placesMode);
 		group.add(placesMode);
 		
-		transitionMode = new JRadioButton("Search transitions");
+		transitionMode = new JRadioButton(lang.getText("HSwin_entry007")); //Search transitions
 		transitionMode.setBounds(choiceColPx+140, choiceRowPx, 140, 20);
 		transitionMode.setLocation(choiceColPx+140, choiceRowPx);
 		transitionMode.setActionCommand("1");
@@ -247,7 +248,7 @@ public class HolmesSearch extends JFrame {
 		choicePanel.add(transitionMode);
 		group.add(transitionMode);
 		
-		JRadioButton bothMode = new JRadioButton("Search places and transitions");
+		JRadioButton bothMode = new JRadioButton(lang.getText("HSwin_entry008")); //Search places and transitions
 		bothMode.setBounds(choiceColPx+280, choiceRowPx, 200, 20);
 		bothMode.setLocation(choiceColPx+280, choiceRowPx);
 		bothMode.setActionCommand("2");
@@ -258,13 +259,13 @@ public class HolmesSearch extends JFrame {
 
 		choiceRowPx += 20;
 		
-		JButton prevButton = new JButton("Previous");
+		JButton prevButton = new JButton(lang.getText("previous")); //Previous
 		prevButton.setBounds(choiceColPx, choiceRowPx, 120, 32);
 		prevButton.setIcon(Tools.getResIcon32("/icons/searchWindow/prev.png"));
 		prevButton.addActionListener(actionEvent -> showFound("prev"));
 		choicePanel.add(prevButton);
 		
-		JButton nextButton = new JButton("Next");
+		JButton nextButton = new JButton(lang.getText("next")); //Next
 		nextButton.setBounds(choiceColPx + 130, choiceRowPx, 120, 32);
 		nextButton.setIcon(Tools.getResIcon32("/icons/searchWindow/next.png"));
 		nextButton.addActionListener(actionEvent -> showFound("next"));
@@ -274,12 +275,12 @@ public class HolmesSearch extends JFrame {
 		
 		JPanel infoPanel = new JPanel();
 		infoPanel.setLayout(null);
-		infoPanel.setBorder(BorderFactory.createTitledBorder("Selected node info"));
+		infoPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSwin_entry009"))); //Selected node info
 		infoPanel.setBounds(0, 150, 500, 70);
 		
 		int infoCol = 10;
 		int infoRow = 20;
-		JLabel label11 = new JLabel("Type:");
+		JLabel label11 = new JLabel(lang.getText("HSwin_entry010")); //Type:
 		label11.setBounds(infoCol, infoRow, 50, 20);
 		infoPanel.add(label11);
 		
@@ -293,7 +294,7 @@ public class HolmesSearch extends JFrame {
 		
 		infoRow += 20;
 		
-		JLabel label12 = new JLabel("Portal:");
+		JLabel label12 = new JLabel(lang.getText("HSwin_entry011")); //Portal:
 		label12.setBounds(infoCol, infoRow, 50, 20);
 		infoPanel.add(label12);
 		
@@ -301,7 +302,7 @@ public class HolmesSearch extends JFrame {
 		nodeIsPortal.setBounds(infoCol+60, infoRow, 30, 20);
 		infoPanel.add(nodeIsPortal);
 		
-		JLabel label13 = new JLabel("In-arcs:");
+		JLabel label13 = new JLabel(lang.getText("HSwin_entry012")); //In-arcs:
 		label13.setBounds(infoCol+130, infoRow, 50, 20);
 		infoPanel.add(label13);
 		
@@ -309,7 +310,7 @@ public class HolmesSearch extends JFrame {
 		nodeInArcs.setBounds(infoCol+180, infoRow, 30, 20);
 		infoPanel.add(nodeInArcs);
 		
-		JLabel label14 = new JLabel("Out-arcs:");
+		JLabel label14 = new JLabel(lang.getText("HSwin_entry013")); //Out-arcs:
 		label14.setBounds(infoCol+210, infoRow, 60, 20);
 		infoPanel.add(label14);
 		
@@ -338,12 +339,6 @@ public class HolmesSearch extends JFrame {
 	public void fillComboBoxesData() {
 		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		
-		//nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
-		//int newPlaceNumber = places.size();
-		//int newTransitionsNumber = transitions.size();
-		//fill the data:
-		//doJump = false;
 		placesCombo.removeAllItems();
 		placesCombo.addItem("---");
 		for(int p=0; p < places.size(); p++) {
@@ -360,9 +355,6 @@ public class HolmesSearch extends JFrame {
 		nodeInArcs.setText("---");
 		nodeOutArcs.setText("---");
 		nodeIsPortal.setText("---");
-		
-		//if(places.size() == 0 || transitions.size() ==0)
-		//	return; //nothing else to do here
 	}
 	
 	/**
@@ -399,9 +391,9 @@ public class HolmesSearch extends JFrame {
 				nodeInArcs.setText(x.getInputArcs().size()+"");
 				nodeOutArcs.setText(x.getOutputArcs().size()+"");
 				if(x.isPortal())
-					nodeIsPortal.setText("yes");
+					nodeIsPortal.setText(lang.getText("yes"));
 				else
-					nodeIsPortal.setText("no");
+					nodeIsPortal.setText(lang.getText("no"));
 			} else { //"transition"
 				Transition x = transitions.get(index);
 				loc1st = x.getElementLocations().get(0);
@@ -412,9 +404,9 @@ public class HolmesSearch extends JFrame {
 				nodeInArcs.setText(x.getInputArcs().size()+"");
 				nodeOutArcs.setText(x.getOutputArcs().size()+"");
 				if(x.isPortal())
-					nodeIsPortal.setText("yes");
+					nodeIsPortal.setText(lang.getText("yes"));
 				else
-					nodeIsPortal.setText("no");
+					nodeIsPortal.setText(lang.getText("no"));
 			}
 
 			//Ustawienie zoomu na normalne 100% wyświetlania
@@ -422,11 +414,6 @@ public class HolmesSearch extends JFrame {
 			ws.getGraphPanel().setZoom(100, ws.getGraphPanel().getZoom()); //zoom na normal
 			
 			ws.getGraphPanel().getSelectionManager().selectOneElementLocation(loc1st); //zaznacz element
-			
-			//Przewinięcie na zaznaczony element:
-			//CompositeTabDock xxx = GUIManager.getDefaultGUIManager().getWorkspace().getWorkspaceDock();
-			//int visibleX = xxx.getWidth(); //widocza na ekranie szerokość panelu rysowania (+24)
-			//int visibleY = xxx.getHeight(); //j.w. wysokość (+63)
 			
 			int visibleX = ws.getScrollPane().getWidth(); //03072023 dodano .getScrollPane()
 			int visibleY = ws.getScrollPane().getHeight(); //tyle pikseli dokładnie widać na ekranie//03072023 dodano .getScrollPane()
@@ -555,7 +542,7 @@ public class HolmesSearch extends JFrame {
 			}
 		}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (145588510) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00497exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -573,8 +560,7 @@ public class HolmesSearch extends JFrame {
 				transitionsCombo.setSelectedIndex(index+1);
 			}
 		} catch (Exception e) {
-			@SuppressWarnings("unused")
-			int x=1;
+			overlord.log(lang.getText("LOGentry00498exception")+" "+e.getMessage(), "error", true);
 		}
 	}
 	

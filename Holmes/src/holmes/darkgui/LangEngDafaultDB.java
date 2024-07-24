@@ -2283,6 +2283,282 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HMCSwin_entry029","Transition/objR:");
         defaultEnglish.put("HMCSwin_entry030","Minimal Cut Sets list size:");
 
+        //HolmesNetProperties:
+        defaultEnglish.put("HNPwin_entry001title","Petri net project structure data");
+        defaultEnglish.put("LOGentry00470exception","Exception (1000207): HolmesNetProperties.HolmesNetProperties() failed:");
+        defaultEnglish.put("HNPwin_entry002","Computing t-invariants types vector\n");
+        defaultEnglish.put("HNPwin_entry003","t-invariants (Cx = 0):");
+        defaultEnglish.put("HNPwin_entry004","sur-invariants (Cx > 0):");
+        defaultEnglish.put("HNPwin_entry005","sub-invariants (Cx < 0):");
+        defaultEnglish.put("HNPwin_entry006","non-invariants (Cx <=> 0):");
+        defaultEnglish.put("HNPwin_entry007","The net is covered by t-invariants (only vectors x such as Cx=0 are considered).\n");
+        defaultEnglish.put("HNPwin_entry008","Transitions not covered by the %d t-invariants:%n");
+        defaultEnglish.put("HNPwin_entry009","Transitions within %d t-invariants:%n");
+        defaultEnglish.put("LOGentry00471exception","Exception (1000208): HolmesNetProperties.createMainPanel() failed:");
+        defaultEnglish.put("HNPwin_entry010","Nodes:");
+        defaultEnglish.put("HNPwin_entry011","N/A");
+        defaultEnglish.put("HNPwin_entry012","Transitions:");
+        defaultEnglish.put("HNPwin_entry013","Places:");
+        defaultEnglish.put("HNPwin_entry014","Arcs:");
+        defaultEnglish.put("HNPwin_entry015","t-invariants:");
+        defaultEnglish.put("HNPwin_entry016","Normal arc:");
+        defaultEnglish.put("HNPwin_entry017","Read-arc:");
+        defaultEnglish.put("HNPwin_entry018","Inhibitor arc:");
+        defaultEnglish.put("HNPwin_entry019","Reset arc:");
+        defaultEnglish.put("HNPwin_entry020","Equal arc:");
+        defaultEnglish.put("HNPwin_entry021","Net static properties:");
+        defaultEnglish.put("HNPwin_entry022","Save to file");
+        defaultEnglish.put("HNPwin_entry023","Invariants details:");
+        defaultEnglish.put("HNPwin_entry024a","Petri net meaning:\n");
+        defaultEnglish.put("HNPwin_entry024b","\n\nBiological interpretation:\n");
+        defaultEnglish.put("HNPwin_entry025","Petri net name:");
+        defaultEnglish.put("HNPwin_entry026","Number of nodes:");
+        defaultEnglish.put("HNPwin_entry027","Number of transitions:");
+        defaultEnglish.put("HNPwin_entry028","Number of places:");
+        defaultEnglish.put("HNPwin_entry029","Number of arcs:");
+        defaultEnglish.put("HNPwin_entry030","Net static properties: \n");
+        defaultEnglish.put("HNPwin_entry031","Property:");
+        defaultEnglish.put("HNPwin_entry032","Meaning:");
+        defaultEnglish.put("HNPwin_entry033","Biological:");
+        defaultEnglish.put("HNPwin_entry034","Number of invariants:");
+        defaultEnglish.put("LOGentry00472exception","Exception (1000209): HolmesNetProperties.saveToFile() failed:");
+
+        //HolmesNetTables:
+        defaultEnglish.put("HNTwin_entry001title","Net data tables");
+        defaultEnglish.put("LOGentry00473exception","Exception (1000210): HolmesNetTables.HolmesNetTables() failed:");
+        defaultEnglish.put("LOGentry00474exception","Exception (1000211): HolmesNetTables.resetT_invData() failed:");
+        defaultEnglish.put("HNTwin_entry002","<html>&nbsp;&nbsp;&nbsp;&nbsp;Places&nbsp;&nbsp;&nbsp;&nbsp;</html>");
+        defaultEnglish.put("HNTwin_entry002t","Shows places table");
+        defaultEnglish.put("HNTwin_entry003","Transitions");
+        defaultEnglish.put("HNTwin_entry003t","Shows transitions table");
+        defaultEnglish.put("HNTwin_entry004","Switch P / T");
+        defaultEnglish.put("HNTwin_entry004t","Switch internal localization of two places or two transitions.");
+        defaultEnglish.put("HNTwin_entry005","t-invariants");
+        defaultEnglish.put("HNTwin_entry005t","Shows invariants information table");
+        defaultEnglish.put("HNTwin_entry006","Invariants sim.");
+        defaultEnglish.put("HNTwin_entry007","Show data");
+        defaultEnglish.put("HNTwin_entry007t","Show invariants table with transition firing rates.");
+        defaultEnglish.put("HNTwin_entry008","State simulator");
+        defaultEnglish.put("HNTwin_entry009","SimStart");
+        defaultEnglish.put("HNTwin_entry009t","Compute new transitions firing statistics.");
+        defaultEnglish.put("HNTwin_entry010","Net type:");
+        defaultEnglish.put("HNTwin_entry011op1","Petri Net");
+        defaultEnglish.put("HNTwin_entry011op2","Time Petri Net");
+        defaultEnglish.put("HNTwin_entry011op3","Hybrid mode");
+        defaultEnglish.put("LOGentry00475","Error while changing simulator mode. Set for BASIC.");
+        defaultEnglish.put("HNTwin_entry012","Submode:");
+        defaultEnglish.put("HNTwin_entry013op1","50/50 mode");
+        defaultEnglish.put("HNTwin_entry013op2","Maximum mode");
+        defaultEnglish.put("HNTwin_entry013op3","Single mode");
+        defaultEnglish.put("HNTwin_entry013t","In maximum mode each active transition fire at once, 50/50 means 50% chance for firing,\nin single mode only one transition will fire.");
+        defaultEnglish.put("HNTwin_entry014","Time & Inv.");
+        defaultEnglish.put("HNTwin_entry014t","Show time data for t-invariants");
+        defaultEnglish.put("HNTwin_entry015","Please generate T-invariants (Elementary Modes)");
+        defaultEnglish.put("HNTwin_entry016","Time & Inv.");
+
+        //HolmesNetTablesActions:
+        defaultEnglish.put("LOGentry00476exception","Exception (1000212): HolmesNetTablesActions.cellClickAction() failed:");
+        defaultEnglish.put("LOGentry00477","Problem with position");
+        defaultEnglish.put("HNTAwin_entry001","Swap operation allowed only for places or transitions.");
+        defaultEnglish.put("HNTAwin_entry001t","Invalid table");
+        defaultEnglish.put("HNTAwin_entry002","Please select two rows (SHIFT key + mouse click).");
+        defaultEnglish.put("HNTAwin_entry002t","Invalid number of rows selected");
+
+        //HolmesNodeInfo:
+        defaultEnglish.put("HNIwin_entry001title","Node:");
+        defaultEnglish.put("HNIwin_entryP002","Node data");
+        defaultEnglish.put("HNIwin_entryP002t","General information about node");
+        defaultEnglish.put("HNIwin_entryP003","Analysis");
+        defaultEnglish.put("HNIwin_entryP003t","Analysis panel");
+        defaultEnglish.put("HNIwin_entryT004","Node data");
+        defaultEnglish.put("HNIwin_entryT004t","General information about node");
+        defaultEnglish.put("HNIwin_entryT005","Analysis");
+        defaultEnglish.put("HNIwin_entryT005t","Analysis panel");
+        defaultEnglish.put("HNIwin_entryM006title","MetaNode:");
+        defaultEnglish.put("LOGentry00478exception","Exception (1000213): HolmesNodeInfo.initializeCommon() failed:");
+        defaultEnglish.put("HNIwin_entryP007","Place general information:");
+        defaultEnglish.put("HNIwin_entryP008","ID:");
+        defaultEnglish.put("HNIwin_entryP009","Portal:");
+        defaultEnglish.put("HNIwin_entryP010","Tokens:");
+        defaultEnglish.put("LOGentry00479","Negative number of tokens in");
+        defaultEnglish.put("HNIwin_entryP011","IN-Trans:");
+        defaultEnglish.put("HNIwin_entryP012","OUT-Trans:");
+        defaultEnglish.put("HNIwin_entryP013","Name:");
+        defaultEnglish.put("LOGentry00480exception","Exception (1000214): HolmesNodeInfo.initializePlaceInfo() failed:");
+        defaultEnglish.put("HNIwin_entryP014","Comm.:");
+        defaultEnglish.put("HNIwin_entryP015","Places chart");
+        defaultEnglish.put("HNIwin_entryP016","SimStart");
+        defaultEnglish.put("HNIwin_entryP016t","Compute steps from zero marking through the number of states given on the right.");
+        defaultEnglish.put("HNIwin_entryP017","Sim. Steps:");
+        defaultEnglish.put("HNIwin_entryP018","Repeated:");
+        defaultEnglish.put("HNIwin_entryP019op1","50/50 mode");
+        defaultEnglish.put("HNIwin_entryP019op2","Maximum mode");
+        defaultEnglish.put("HNIwin_entryP019op3","Single mode");
+        defaultEnglish.put("HNIwin_entryP019t","In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+        defaultEnglish.put("HNIwin_entryP020op1","Petri Net");
+        defaultEnglish.put("HNIwin_entryP020op2","Time Petri Net");
+        defaultEnglish.put("HNIwin_entryP020op3","Hybrid mode");
+        defaultEnglish.put("HNIwin_entryT021","ID:");
+        defaultEnglish.put("HNIwin_entryT022","Portal:");
+        defaultEnglish.put("HNIwin_entryT023","Avg.f.:");
+        defaultEnglish.put("HNIwin_entryT024","PRE-Place:");
+        defaultEnglish.put("HNIwin_entryT025","POST-Place:");
+        defaultEnglish.put("HNIwin_entryT026","Name:");
+        defaultEnglish.put("HNIwin_entryT027","Comm.:");
+        defaultEnglish.put("HNIwin_entryT028","Transition chart");
+        defaultEnglish.put("LOGentry00481exception","Exception (1000215): HolmesNodeInfo.initializeTransitionInfo() failed:");
+        defaultEnglish.put("HNIwin_entryT029","SimStart");
+        defaultEnglish.put("HNIwin_entryT029t","Compute steps from zero marking through the number of states given on the right.");
+        defaultEnglish.put("HNIwin_entryT030","Sim. Steps:");
+        defaultEnglish.put("LOGentry00482exception","Exception (1000216): HolmesNodeInfo.initializeMetaNodeInfo() failed. Cannot update transition interval for simulator (Transition Info Windows).");
+        defaultEnglish.put("HNIwin_entryT031","Interval:");
+        defaultEnglish.put("HNIwin_entryT032","Simulation mode:");
+        defaultEnglish.put("HNIwin_entryT033op1","50/50 mode");
+        defaultEnglish.put("HNIwin_entryT033op2","Maximum mode");
+        defaultEnglish.put("HNIwin_entryT033op3","Single mode");
+        defaultEnglish.put("HNIwin_entryT033t","In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+        defaultEnglish.put("HNIwin_entryT034op1","Petri Net");
+        defaultEnglish.put("HNIwin_entryT034op2","Time Petri Net");
+        defaultEnglish.put("HNIwin_entryT034op3","Hybrid mode");
+        defaultEnglish.put("HNIwin_entryT035","Chart unavailable, main simulator is active.");
+        defaultEnglish.put("LOGentry00483","Unable to gather %d data vectors (places) of same size. State simulator cannot proceed %d steps. First pass had: %d steps.");
+
+        //HolmesNodeInfoActions:
+        defaultEnglish.put("HNIAwin_entry001","Invariant");
+        defaultEnglish.put("HNIAwin_entry002","Descrption:");
+        defaultEnglish.put("HNIAwin_entry003","Total number of transitions:");
+        defaultEnglish.put("HNIAwin_entry004","Support structure:");
+        defaultEnglish.put("HNIAwin_entry005","All transitions of INV #");
+        defaultEnglish.put("LOGentry00484critErr","Critical error (2000031) HolmesNodeInfoActions.showInvariantNotepad() failed. Invariants support size refers to non-existing transitions.");
+        defaultEnglish.put("HNIAwin_entry006","Invariant vector:");
+        defaultEnglish.put("HNIAwin_entry007","Inv: %d (original index in the program: %d)");
+        defaultEnglish.put("HNIAwin_entry008","Invariant vector:");
+
+        //HolmesNotepad:
+        defaultEnglish.put("HNwin_entry001title","Holmes Notepad");
+        defaultEnglish.put("LOGentry00485exception","Exception (1000217): HolmesNotepad.HolmesNotepad() failed:");
+        defaultEnglish.put("LOGentry00486exception","Exception (1000218): HolmesNotepad.HolmesNotepad() failed:");
+        defaultEnglish.put("HNwin_entry002","Saves the content of notepad.");
+        defaultEnglish.put("HNwin_entry003","Load txt files.");
+        defaultEnglish.put("HNwin_entry004","Clear content");
+        defaultEnglish.put("LOGentry00487exception","Exception (1000219): HolmesNotepad.clearContent() failed:");
+        defaultEnglish.put("HNwin_entry005","Select text file");
+        defaultEnglish.put("LOGentry00488exception","Exception (1000220): HolmesNotepad.loadFile() failed:");
+        defaultEnglish.put("HNwin_entry006","Select new filename");
+        defaultEnglish.put("LOGentry00489exception","Exception (1000221): HolmesNotepad.saveContent() failed:");
+        defaultEnglish.put("LOGentry00490exception","Exception (1000222): HolmesNotepad.addText() failed:");
+        defaultEnglish.put("LOGentry00491exception","Exception (1000223): HolmesNotepad.addTextLine() failed. Couldn't insert initial text into text panel.");
+        defaultEnglish.put("LOGentry00492exception","Exception (1000224): HolmesNotepad.addTextLineNL() failed. Couldn't insert text into text panel.");
+        defaultEnglish.put("LOGentry00493exception","Exception (1000225): HolmesNotepad.addLine() failed. Couldn't insert text into text panel.");
+
+        //HolmesSearch:
+        defaultEnglish.put("HSwin_entry001title","Net nodes search window");
+        defaultEnglish.put("LOGentry00494exception","Exception (1000226): HolmesSearch.HolmesSearch() failed:");
+        defaultEnglish.put("HSwin_entry002","Search options");
+        defaultEnglish.put("HSwin_entry003","Places:");
+        defaultEnglish.put("HSwin_entry004","Transitions:");
+        defaultEnglish.put("HSwin_entry005","Search for:");
+        defaultEnglish.put("LOGentry00495exception","Exception (1000227): HolmesSearch.createMainPanel() failed:");
+        defaultEnglish.put("LOGentry00496exception","Exception (1000228): HolmesSearch.createMainPanel() failed:");
+        defaultEnglish.put("HSwin_entry006","Search places");
+        defaultEnglish.put("HSwin_entry007","Search transitions");
+        defaultEnglish.put("HSwin_entry008","Search places and transitions");
+        defaultEnglish.put("HSwin_entry009","Selected node info");
+        defaultEnglish.put("HSwin_entry010","Type:");
+        defaultEnglish.put("HSwin_entry011","Portal:");
+        defaultEnglish.put("HSwin_entry012","In-arcs:");
+        defaultEnglish.put("HSwin_entry013","Out-arcs:");
+        defaultEnglish.put("LOGentry00497exception","Exception (1000229): HolmesSearch.showFound() failed:");
+        defaultEnglish.put("LOGentry00498exception","Exception (1000230): HolmesSearch.selectedManually() failed:");
+
+        //HolmesSubnetsInfo:
+        defaultEnglish.put("HSIwin_entry001","Subnet general information:");
+        defaultEnglish.put("HSIwin_entry002","ID:");
+        defaultEnglish.put("HSIwin_entry003","Name:");
+        defaultEnglish.put("HSIwin_entry004","Description:");
+        defaultEnglish.put("HSIwin_entry005","Subnet statistics:");
+        defaultEnglish.put("HSIwin_entry006","Number of element locations:");
+        defaultEnglish.put("HSIwin_entry007","Number of places:");
+        defaultEnglish.put("HSIwin_entry008","Number of transitions:");
+        defaultEnglish.put("HSIwin_entry009","Number of tokens:");
+        defaultEnglish.put("HSIwin_entry010","Connected subnets:");
+        defaultEnglish.put("HSIwin_entry011","Parent ID:");
+        defaultEnglish.put("HSIwin_entry012","Parent name:");
+        defaultEnglish.put("HSIwin_entry013","Subnets:");
+        defaultEnglish.put("HSIwin_entry014","ID:     Name:");
+        defaultEnglish.put("HSIwin_entry015","Current sheet is not a subnet");
+        defaultEnglish.put("HSIwin_entry015t","Cannot proceed");
+        defaultEnglish.put("LOGentry00499exception","Exception (1000231): HolmesSubnetsInfo.open() failed:");
+
+        //HolmesProgramProperties:
+        defaultEnglish.put("HPPwin_entry001title","Settings");
+        defaultEnglish.put("LOGentry00500exception","Exception (1000232): HolmesProgramProperties.HolmesProgramProperties() failed:");
+        defaultEnglish.put("LOGentry00501exception","Exception (1000233): HolmesProgramProperties.HolmesProgramProperties() failed:");
+        defaultEnglish.put("HPPwin_entry002","System");
+        defaultEnglish.put("HPPwin_entry002t","Holmes main options.");
+        defaultEnglish.put("HPPwin_entry003","Editor");
+        defaultEnglish.put("HPPwin_entry003t","Editor options.");
+        defaultEnglish.put("HPPwin_entry004","Simulator");
+        defaultEnglish.put("HPPwin_entry004t","Simulator options.");
+        defaultEnglish.put("HPPwin_entry005","Analyzer");
+        defaultEnglish.put("HPPwin_entry005t","Analyzer options.");
+        defaultEnglish.put("HPPwin_entry006","Other");
+        defaultEnglish.put("HPPwin_entry006t","Other options.");
+        defaultEnglish.put("HPPwinSYS_entry007","I/O operations");
+        defaultEnglish.put("HPPwinSYS_entry008","(Snoopy) Resize net when loaded:");
+        defaultEnglish.put("HPPwinSYS_entry009","(Snoopy) Align to grid when saved");
+        defaultEnglish.put("HPPwinSYS_entry010","(Snoopy) Use Snoopy offsets for names");
+        defaultEnglish.put("HPPwinSYS_entry011","(UNSAFE) Use old Snoopy loader (PN, extPN, TPN/DPN *ONLY*)");
+        defaultEnglish.put("HPPwinSYS_entry012","Warnings concerning wrong save format");
+        defaultEnglish.put("HPPwinSYS_entry013","Use simple notepad (restart required)");
+        defaultEnglish.put("HPPwinSYS_entry014","Debug mode");
+        defaultEnglish.put("HPPwinSYS_entry015","R settings");
+        defaultEnglish.put("HPPwinSYS_entry016","R path:");
+        defaultEnglish.put("HPPwinSYS_entry017","Rx64 path:");
+        defaultEnglish.put("HPPwinSYS_entry018","Set R path");
+        defaultEnglish.put("HPPwinSYS_entry018t","Manually set path to Rscript.exe");
+        defaultEnglish.put("HPPwinSYS_entry019","Force R localization on startup");
+        defaultEnglish.put("HPPwinEDIT_entry020","Graphical settings");
+        defaultEnglish.put("HPPwinEDIT_entry021","Default arc thickness");
+        defaultEnglish.put("HPPwinEDIT_entry022","Font size:");
+        defaultEnglish.put("HPPwinEDIT_entry023","Bold");
+        defaultEnglish.put("HPPwinEDIT_entry024","MCT names");
+        defaultEnglish.put("HPPwinEDIT_entry025","(Editor) Show short default names only");
+        defaultEnglish.put("HPPwinEDIT_entry026","(Editor) Show short names with lower index");
+        defaultEnglish.put("HPPwinEDIT_entry027","(Editor) Petri net elements 3d view");
+        defaultEnglish.put("HPPwinEDIT_entry028","(Editor) Show Snoopy-styled graphics");
+        defaultEnglish.put("HPPwinEDIT_entry029","(Editor) (Editor) Show non default T/P colors");
+        defaultEnglish.put("HPPwinEDIT_entry030","(Editor) Show lines between portal locations");
+        defaultEnglish.put("HPPwinEDIT_entry031","General settings");
+        defaultEnglish.put("HPPwinEDIT_entry032","(Snoopy/Holmes) Allow only Snoopy-compatible options");
+        defaultEnglish.put("HPPwinEDIT_entry033","Use meta-arcs compression for metanodes");
+        defaultEnglish.put("HPPwinSIM_entry034","Simulator engine options");
+        defaultEnglish.put("HPPwinSIM_entry035","Transitions reserve tokens in place via read-arcs");
+        defaultEnglish.put("HPPwinSIM_entry036","Single-maximum mode (single-50/50 when unchecked)");
+        defaultEnglish.put("HPPwinSIM_entry037","TDPN transition acts like DPN when TPN internal clock = EFT");
+        defaultEnglish.put("HPPwinSIM_entry038","Places change colors during simulation");
+        defaultEnglish.put("HPPwinSIM_entry039","(XTPN) Globally use mass-action kinetics law for simulation");
+        defaultEnglish.put("HPPwinSIM_entry040","(XTPN) Read arcs preserve tokens lifetime");
+        defaultEnglish.put("HPPwinSIM_entry041","Simulator graphical options");
+        defaultEnglish.put("HPPwinSIM_entry042","Transition firing delay:");
+        defaultEnglish.put("HPPwinSIM_entry043","Arc token delay:");
+        defaultEnglish.put("HPPwinANAL_entry044","Clusters options");
+        defaultEnglish.put("HPPwinANAL_entry045","Save t-invariants in CSV as binary vectors.");
+        defaultEnglish.put("HPPwinANAL_entry046","Allow presence of self-propelled readarc regions");
+        defaultEnglish.put("HPPwinANAL_entry047","Cluster algorithms options");
+        defaultEnglish.put("HPPwinANAL_entry048","Eliminate MCS sets non directly connected with objR transition.");
+
+        //HolmesProgramPropertiesActions:
+        defaultEnglish.put("HPPAwin_entry001","Select Rscript.exe");
+        defaultEnglish.put("HPPAwin_entry001t","Please select Rscript exe, usually located in R/Rx.x.x/bin directory.");
+        defaultEnglish.put("HPPAwin_entry002","Rscript.exe location: %s. Settings file updated.");
+        defaultEnglish.put("HPPAwin_entry003","Rscript.exe location unknown. Clustering procedures will not work.");
+
+        //Workspace:
+        defaultEnglish.put("WORK_entry001","- no sentence -");
+        defaultEnglish.put("LOGentry00502critError","Critical error (2000034): Workspace.deleteSheetFromArrays() failed for worksheet #");
+        defaultEnglish.put("LOGentry00503critError","Critical error (2000035): Workspace.deleteAllSheetButFirst() failed for worksheet #");
+
         //generalPurposeTags:
         defaultEnglish.put("add","Add");
         defaultEnglish.put("cancel","Cancel");
@@ -2315,8 +2591,9 @@ public class LangEngDafaultDB {
         defaultEnglish.put("unimplemented","Not implemented yet.");
         defaultEnglish.put("unimplementedTitle","Subsystem offline");
         defaultEnglish.put("yes","Yes");
-        
-        
+
+
+
 
         return defaultEnglish;
     }

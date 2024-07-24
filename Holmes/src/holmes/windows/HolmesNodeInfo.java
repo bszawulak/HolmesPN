@@ -17,6 +17,7 @@ import javax.swing.border.Border;
 import javax.swing.text.DefaultFormatter;
 
 import holmes.analyse.XTPN.AlgorithmsXTPN;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.*;
 import org.jfree.chart.ChartFactory;
@@ -39,7 +40,8 @@ import holmes.utilities.Tools;
 public class HolmesNodeInfo extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 1476738825515760744L;
-	private GUIManager overlord;
+	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private Place place;
 	private Transition transition;
 	private JPanel mainInfoPanel;
@@ -71,7 +73,7 @@ public class HolmesNodeInfo extends JFrame {
 		overlord = GUIManager.getDefaultGUIManager();
 		parentFrame = papa;
 		this.place = place;
-		setTitle("Node: "+place.getName());
+		setTitle(lang.getText("HNIwin_entry001title")+" "+place.getName());
 
 		initializeCommon();
 		
@@ -79,9 +81,11 @@ public class HolmesNodeInfo extends JFrame {
 		add(main);
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Node data", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializePlaceInfo(), "General information about node");
+		tabbedPane.addTab(lang.getText("HNIwin_entryP002"), Tools.getResIcon16("/icons/nodeViewer/tab1.png")
+				, initializePlaceInfo(), lang.getText("HNIwin_entryP002t"));
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("Analysis", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializePlaceSecondPanel(), "Analysis panel");
+		tabbedPane.addTab(lang.getText("HNIwin_entryP003"), Tools.getResIcon16("/icons/nodeViewer/tab1.png")
+				, initializePlaceSecondPanel(), lang.getText("HNIwin_entryP003t"));
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 		
 		main.add(tabbedPane);
@@ -97,7 +101,7 @@ public class HolmesNodeInfo extends JFrame {
 		overlord = GUIManager.getDefaultGUIManager();
 		parentFrame = papa;
 		this.transition = transition;
-		setTitle("Node: "+transition.getName());
+		setTitle(lang.getText("HNIwin_entry001title")+" "+transition.getName());
 		
 		if(transition.timeExtension.isDPN() || transition.timeExtension.isTPN())
 			choosenNetType = SimulatorGlobals.SimNetType.TIME;
@@ -108,9 +112,11 @@ public class HolmesNodeInfo extends JFrame {
 		add(main);
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Node data", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializeTransitionInfo(), "General information about node");
+		tabbedPane.addTab(lang.getText("HNIwin_entryT004"), Tools.getResIcon16("/icons/nodeViewer/tab1.png")
+				, initializeTransitionInfo(), lang.getText("HNIwin_entryT004t"));
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("Analysis", Tools.getResIcon16("/icons/nodeViewer/tab1.png"), initializeTransSecondPanel(), "Analysis panel");
+		tabbedPane.addTab(lang.getText("HNIwin_entryT005"), Tools.getResIcon16("/icons/nodeViewer/tab1.png")
+				, initializeTransSecondPanel(), lang.getText("HNIwin_entryT005t"));
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
 		main.add(tabbedPane);
@@ -119,7 +125,7 @@ public class HolmesNodeInfo extends JFrame {
 	public HolmesNodeInfo(MetaNode metanode, JFrame papa) {
 		overlord = GUIManager.getDefaultGUIManager();
 		parentFrame = papa;
-		setTitle("MetaNode: "+metanode.getName());
+		setTitle(lang.getText("HNIwin_entryM006title")+" "+metanode.getName()); //MetaNode
 
 		GraphPanel graphPanel = overlord.getWorkspace().getProject().getGraphPanel(metanode.getRepresentedSheetID());
 		initializeCommon();
@@ -135,7 +141,7 @@ public class HolmesNodeInfo extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (488078573) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00478exception")+" "+ex.getMessage(), "error", true);
 		}
 		
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
@@ -150,7 +156,7 @@ public class HolmesNodeInfo extends JFrame {
 		parentFrame.setEnabled(false);
 		setResizable(false);
 		setLocation(20, 20);
-		setSize(new Dimension(600, 480));
+		setSize(new Dimension(600, 490));
 		
 		addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -174,14 +180,14 @@ public class HolmesNodeInfo extends JFrame {
 		//panel informacji podstawowych
 		JPanel infoPanel = new JPanel(null);
 		infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-10, 130);
-		infoPanel.setBorder(BorderFactory.createTitledBorder("Place general information:"));
+		infoPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNIwin_entryP007"))); //Place general information
 		
 		int infPanelX = 10;
 		int infPanelY = 20;
 		
 		//************************* NEWLINE *************************
 		
-		JLabel labelID = new JLabel("ID:");
+		JLabel labelID = new JLabel(lang.getText("HNIwin_entryP008")); //ID:
 		labelID.setBounds(infPanelX, infPanelY, 20, 20);
 		infoPanel.add(labelID);
 		
@@ -191,26 +197,26 @@ public class HolmesNodeInfo extends JFrame {
 		idTextBox.setEditable(false);
 		infoPanel.add(idTextBox);
 		
-		JLabel portalLabel = new JLabel("Portal:");
+		JLabel portalLabel = new JLabel(lang.getText("HNIwin_entryP009")); //Portal
 		portalLabel.setBounds(infPanelX+60, infPanelY, 40, 20);
 		infoPanel.add(portalLabel);
 		
-		String port = "no";
+		String port = lang.getText("no");
 		if(place.isPortal())
-			port = "yes";
+			port = lang.getText("yes");
 		
 		JLabel portalLabel2 = new JLabel(port);
 		portalLabel2.setBounds(infPanelX+100, infPanelY, 30, 20);
 		infoPanel.add(portalLabel2);
 		
-		JLabel tokenLabel = new JLabel("Tokens:", JLabel.LEFT);
+		JLabel tokenLabel = new JLabel(lang.getText("HNIwin_entryP010"), JLabel.LEFT); //Tokens
         tokenLabel.setBounds(infPanelX+130, infPanelY, 50, 20);
         infoPanel.add(tokenLabel);
         
         int tok = place.getTokensNumber();
         boolean problem = false;
         if(tok < 0) {
-        	overlord.log("Negative number of tokens in "+place.getName(), "error", true);
+        	overlord.log(lang.getText("LOGentry00479")+" "+place.getName(), "error", true);
         	tok = 0;
         	problem = true;
         }
@@ -243,7 +249,7 @@ public class HolmesNodeInfo extends JFrame {
 			outTrans += el.getOutArcs().size();
 		}
 		
-		JLabel inTransLabel = new JLabel("IN-Trans:");
+		JLabel inTransLabel = new JLabel(lang.getText("HNIwin_entryP011")); //IN-Trans:
 		inTransLabel.setBounds(infPanelX+250, infPanelY, 60, 20);
 		infoPanel.add(inTransLabel);
 		
@@ -252,7 +258,7 @@ public class HolmesNodeInfo extends JFrame {
 		inTransTextBox.setEditable(false);
 		infoPanel.add(inTransTextBox);
 		
-		JLabel outTransLabel = new JLabel("OUT-Trans:");
+		JLabel outTransLabel = new JLabel(lang.getText("HNIwin_entryP012")); //OUT-Trans:
 		outTransLabel.setBounds(infPanelX+345, infPanelY, 65, 20);
 		infoPanel.add(outTransLabel);
 		
@@ -264,7 +270,7 @@ public class HolmesNodeInfo extends JFrame {
 		infPanelY += 20;
 		//************************* NEWLINE *************************
 		
-		JLabel labelName = new JLabel("Name:");
+		JLabel labelName = new JLabel(lang.getText("HNIwin_entryP013")); //Name:
 		labelName.setBounds(infPanelX, infPanelY, 40, 20);
 		infoPanel.add(labelName);
 		
@@ -279,7 +285,7 @@ public class HolmesNodeInfo extends JFrame {
 			try {
 				field.commitEdit();
 			} catch (ParseException ex) {
-				GUIManager.getDefaultGUIManager().log("Error (611156405) | Exception:  "+ex.getMessage(), "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00480exception")+" "+ex.getMessage(), "error", true);
 			}
 			String newName = field.getText();
 
@@ -291,7 +297,7 @@ public class HolmesNodeInfo extends JFrame {
 		infPanelY += 20;
 		//************************* NEWLINE *************************
 		
-		JLabel commmentLabel = new JLabel("Comm.:", JLabel.LEFT);
+		JLabel commmentLabel = new JLabel(lang.getText("HNIwin_entryP014"), JLabel.LEFT); //Comm.:
 		commmentLabel.setBounds(infPanelX, infPanelY, 50, 20);
 		infoPanel.add(commmentLabel);
 		
@@ -319,7 +325,7 @@ public class HolmesNodeInfo extends JFrame {
 		mainInfoPanel.add(infoPanel);
 		
 		JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
-		chartMainPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
+		chartMainPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNIwin_entryP015"))); //Places chart
 		chartMainPanel.setBounds(0, infoPanel.getHeight(), mainInfoPanel.getWidth()-10, 245);
 		chartMainPanel.add(createChartPanel(place), BorderLayout.CENTER);
 		mainInfoPanel.add(chartMainPanel);
@@ -333,6 +339,10 @@ public class HolmesNodeInfo extends JFrame {
 		return mainInfoPanel;
 	}
 
+	/**
+	 * Metoda tworzy drugą zakładkę
+	 * @return JPanel - panel z wykresem
+	 */
 	private JPanel initializePlaceSecondPanel() {
 		JPanel secondaryTabMainPanel = new JPanel(null);
 		secondaryTabMainPanel.setBounds(0, 0, 600, 480);
@@ -343,14 +353,14 @@ public class HolmesNodeInfo extends JFrame {
 		//panel informacji podstawowych
 		JPanel analP_firstPanel = new JPanel(null);
 		analP_firstPanel.setBounds(mPanelX, mPanelY, secondaryTabMainPanel.getWidth()-20, 200);
-		analP_firstPanel.setBorder(BorderFactory.createTitledBorder("XTPN analysis:"));
+		analP_firstPanel.setBorder(BorderFactory.createTitledBorder("Analysis:"));
 
 		int subPanelX = 10;
 		int subPanelY = 20;
 
 		//************************* NEWLINE *************************
 
-		JLabel labelID = new JLabel("ID:");
+		JLabel labelID = new JLabel("ID:"); //ID:
 		labelID.setBounds(subPanelX, subPanelY, 20, 20);
 		analP_firstPanel.add(labelID);
 
@@ -362,7 +372,7 @@ public class HolmesNodeInfo extends JFrame {
 
 		subPanelY+=30;
 
-		JButton button1 = new JButton("Test");
+		JButton button1 = new JButton("Test"); //Test
 		button1.setBounds(subPanelX, subPanelY, 100, 32);
 		button1.setMargin(new Insets(0, 0, 0, 0));
 		button1.setIcon(Tools.getResIcon32("/icons/nodeViewer/iconInv.png"));
@@ -388,12 +398,12 @@ public class HolmesNodeInfo extends JFrame {
 
 		JPanel analP_secondPanel = new JPanel(null);
 		analP_secondPanel.setBounds(mPanelX, analP_firstPanel.getHeight(), mainInfoPanel.getWidth()-20, 130);
-		analP_secondPanel.setBorder(BorderFactory.createTitledBorder("Analysis"));
+		analP_secondPanel.setBorder(BorderFactory.createTitledBorder("Analysis")); //Analysis
 		subPanelX = 10;
 		subPanelY = 20;
 
 		final JProgressBar progressBar = new JProgressBar();
-		JButton tInvButton = new JButton("t-inv list");
+		JButton tInvButton = new JButton("t-inv list"); //t-inv list
 		tInvButton.setBounds(subPanelX, subPanelY, 120, 26);
 		tInvButton.setMargin(new Insets(0, 0, 0, 0));
 		tInvButton.setIcon(Tools.getResIcon32("/icons/nodeViewer/iconInv.png"));
@@ -429,15 +439,15 @@ public class HolmesNodeInfo extends JFrame {
 		int chartY_1st = 0;
 		int chartY_2nd = 15;
 		
-		JButton acqDataButton = new JButton("SimStart");
+		JButton acqDataButton = new JButton(lang.getText("HNIwin_entryP016")); //SimStart
 		acqDataButton.setBounds(chartX, chartY_2nd, 110, 25);
 		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-		acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
+		acqDataButton.setToolTipText(lang.getText("HNIwin_entryP016t"));
 		acqDataButton.addActionListener(actionEvent -> acquireNewPlaceData());
 		chartButtonPanel.add(acqDataButton);
 		
-		JLabel labelSteps = new JLabel("Sim. Steps:");
+		JLabel labelSteps = new JLabel(lang.getText("HNIwin_entryP017")); //Sim. Steps:
 		labelSteps.setBounds(chartX+120, chartY_1st, 70, 15);
 		chartButtonPanel.add(labelSteps);
 		
@@ -450,7 +460,7 @@ public class HolmesNodeInfo extends JFrame {
 		});
 		chartButtonPanel.add(simStepsSpinner);
 		
-		JLabel labelRep = new JLabel("Repeated:");
+		JLabel labelRep = new JLabel(lang.getText("HNIwin_entryP018")); //Repeated:
 		labelRep.setBounds(chartX+210, chartY_1st, 70, 15);
 		chartButtonPanel.add(labelRep);
 		
@@ -464,12 +474,13 @@ public class HolmesNodeInfo extends JFrame {
 		chartButtonPanel.add(simStepsRepeatedSpinner);
 		
 		
-		JLabel label1 = new JLabel("Mode:");
+		JLabel label1 = new JLabel("Mode:"); //Mode:
 		label1.setBounds(chartX+280, chartY_1st, 50, 15);
 		chartButtonPanel.add(label1);
 		
-		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
-		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+		final JComboBox<String> simMode = new JComboBox<String>(new String[] {lang.getText("HNIwin_entryP019op1")
+				, lang.getText("HNIwin_entryP019op2"), lang.getText("HNIwin_entryP019op3")}); //50/50 mode, Maximum mode, Single mode
+		simMode.setToolTipText(lang.getText("HNIwin_entryP019t"));
 		simMode.setBounds(chartX+280, chartY_2nd, 120, 25);
 		simMode.setSelectedIndex(0);
 		simMode.setMaximumRowCount(6);
@@ -487,7 +498,8 @@ public class HolmesNodeInfo extends JFrame {
 		});
 		chartButtonPanel.add(simMode);
 		
-		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
+		String[] simModeName = {lang.getText("HNIwin_entryP020op1"), lang.getText("HNIwin_entryP020op2")
+				, lang.getText("HNIwin_entryP020op3")}; //Petri Net, Timed Petri Net, Hybrid mode
 		final JComboBox<String> simNetMode = new JComboBox<String>(simModeName);
 		simNetMode.setBounds(chartX+400, chartY_2nd, 120, 25);
 		simNetMode.setSelectedIndex(0);
@@ -517,14 +529,14 @@ public class HolmesNodeInfo extends JFrame {
 		//panel informacji podstawowych
 		JPanel infoPanel = new JPanel(null);
 		infoPanel.setBounds(mPanelX, mPanelY, 580, 130);
-		infoPanel.setBorder(BorderFactory.createTitledBorder("Transition general information:"));
+		infoPanel.setBorder(BorderFactory.createTitledBorder("Transition general information:")); //Transition general information
 		
 		int infPanelX = 10;
 		int infPanelY = 20;
 		
 		//************************* NEWLINE *************************
 		
-		JLabel labelID = new JLabel("ID:");
+		JLabel labelID = new JLabel(lang.getText("HNIwin_entryT021")); //ID:
 		labelID.setBounds(infPanelX, infPanelY, 20, 20);
 		infoPanel.add(labelID);
 		
@@ -534,19 +546,19 @@ public class HolmesNodeInfo extends JFrame {
 		idTextBox.setEditable(false);
 		infoPanel.add(idTextBox);
 		
-		JLabel portalLabel = new JLabel("Portal:");
+		JLabel portalLabel = new JLabel(lang.getText("HNIwin_entryT022")); //Portal
 		portalLabel.setBounds(infPanelX+60, infPanelY, 40, 20);
 		infoPanel.add(portalLabel);
 		
-		String port = "no";
+		String port = lang.getText("no");
 		if(transition.isPortal())
-			port = "yes";
+			port = lang.getText("yes");
 		
 		JLabel portalLabel2 = new JLabel(port);
 		portalLabel2.setBounds(infPanelX+100, infPanelY, 30, 20);
 		infoPanel.add(portalLabel2);
 		
-		JLabel avgFiredLabel = new JLabel("Avg.f.:", JLabel.LEFT);
+		JLabel avgFiredLabel = new JLabel(lang.getText("HNIwin_entryT023"), JLabel.LEFT); //Avg.f.:
 		avgFiredLabel.setBounds(infPanelX+130, infPanelY, 50, 20);
         infoPanel.add(avgFiredLabel);
         
@@ -563,7 +575,7 @@ public class HolmesNodeInfo extends JFrame {
 			postP += el.getOutArcs().size();
 		}
 		
-		JLabel prePlaceLabel = new JLabel("PRE-Place:");
+		JLabel prePlaceLabel = new JLabel(lang.getText("HNIwin_entryT024")); //PRE-Place:
 		prePlaceLabel.setBounds(infPanelX+235, infPanelY, 65, 20);
 		infoPanel.add(prePlaceLabel);
 		
@@ -572,7 +584,7 @@ public class HolmesNodeInfo extends JFrame {
 		prePlaceTextBox.setEditable(false);
 		infoPanel.add(prePlaceTextBox);
 		
-		JLabel postPlaceLabel = new JLabel("POST-Place:");
+		JLabel postPlaceLabel = new JLabel(lang.getText("HNIwin_entryT025")); //POST-Place:
 		postPlaceLabel.setBounds(infPanelX+335, infPanelY, 75, 20);
 		infoPanel.add(postPlaceLabel);
 		
@@ -584,7 +596,7 @@ public class HolmesNodeInfo extends JFrame {
 		infPanelY += 20;
 		//************************* NEWLINE *************************
 		
-		JLabel labelName = new JLabel("Name:");
+		JLabel labelName = new JLabel(lang.getText("HNIwin_entryT026")); //Name:
 		labelName.setBounds(infPanelX, infPanelY, 40, 20);
 		infoPanel.add(labelName);
 		
@@ -610,7 +622,7 @@ public class HolmesNodeInfo extends JFrame {
 		infPanelY += 20;
 		//************************* NEWLINE *************************
 		
-		JLabel commmentLabel = new JLabel("Comm.:", JLabel.LEFT);
+		JLabel commmentLabel = new JLabel(lang.getText("HNIwin_entryT027"), JLabel.LEFT); //Comm.:
 		commmentLabel.setBounds(infPanelX, infPanelY, 50, 20);
 		infoPanel.add(commmentLabel);
 		
@@ -639,7 +651,7 @@ public class HolmesNodeInfo extends JFrame {
         //************************* NEWLINE *************************
         
         JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
-        chartMainPanel.setBorder(BorderFactory.createTitledBorder("Transition chart"));
+        chartMainPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNIwin_entryT028"))); //Transition chart
         chartMainPanel.setBounds(0, infoPanel.getHeight(), mainInfoPanel.getWidth()-10, 245);
         chartMainPanel.add(createChartPanel(transition), BorderLayout.CENTER);
 		mainInfoPanel.add(chartMainPanel);
@@ -652,7 +664,7 @@ public class HolmesNodeInfo extends JFrame {
 				fillTransitionDynamicData(avgFiredTextBox, chartMainPanel, chartButtonPanel);
 			}
 		} catch (Exception e) {
-			overlord.log("Error Ex: "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00481exception")+" "+e.getMessage(), "error", true);
 		}
 		return mainInfoPanel;
 	}
@@ -667,7 +679,7 @@ public class HolmesNodeInfo extends JFrame {
 		//panel informacji podstawowych
 		JPanel analT_firstPanel = new JPanel(null);
 		analT_firstPanel.setBounds(mPanelX, mPanelY, secondaryTabMainPanel.getWidth()-20, 130);
-		analT_firstPanel.setBorder(BorderFactory.createTitledBorder("XTPN analysis:"));
+		analT_firstPanel.setBorder(BorderFactory.createTitledBorder("Analysis:")); //XTPN analysis
 		int subPanelX = 10;
 		int subPanelY = 20;
 
@@ -686,7 +698,7 @@ public class HolmesNodeInfo extends JFrame {
 
 		JPanel analT_secondPanel = new JPanel(null);
 		analT_secondPanel.setBounds(mPanelX, analT_firstPanel.getHeight(), secondaryTabMainPanel.getWidth()-20, 130);
-		analT_secondPanel.setBorder(BorderFactory.createTitledBorder("Analysis:"));
+		analT_secondPanel.setBorder(BorderFactory.createTitledBorder("Analysis:")); //Analysis
 		subPanelX = 10;
 		subPanelY = 20;
 
@@ -728,15 +740,15 @@ public class HolmesNodeInfo extends JFrame {
 		int chartY_1st = 0;
 		int chartY_2nd = 15;
 		
-		JButton acqDataButton = new JButton("SimStart");
+		JButton acqDataButton = new JButton(lang.getText("HNIwin_entryT029")); //SimStart
 		acqDataButton.setBounds(chartX, chartY_2nd, 110, 25);
 		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-		acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
+		acqDataButton.setToolTipText(lang.getText("HNIwin_entryT029t"));
 		acqDataButton.addActionListener(actionEvent -> acquireNewTransitionData());
 		chartButtonPanel.add(acqDataButton);
 		
-		JLabel labelSteps = new JLabel("Sim. Steps:");
+		JLabel labelSteps = new JLabel(lang.getText("HNIwin_entryT030")); //Sim. Steps:
 		labelSteps.setBounds(chartX+120, chartY_1st, 70, 15);
 		chartButtonPanel.add(labelSteps);
 		
@@ -761,12 +773,12 @@ public class HolmesNodeInfo extends JFrame {
 				transIntervalSpinner.setModel(spinnerClustersModel);
 				transInterval = cVal;
 			} catch (Exception ex) {
-				overlord.log("Cannot update transition interval for simulator (Transition Info Windows).", "warning", true);
+				overlord.log(lang.getText("LOGentry00482exception")+ " "+ex.getMessage(), "warning", true);
 			}
 		});
 		chartButtonPanel.add(simStepsSpinner);
 
-		JLabel labelInterval = new JLabel("Interval:");
+		JLabel labelInterval = new JLabel(lang.getText("HNIwin_entryT031")); //Interval:
 		labelInterval.setBounds(chartX+210, chartY_1st, 80, 15);
 		chartButtonPanel.add(labelInterval);
 		
@@ -781,12 +793,13 @@ public class HolmesNodeInfo extends JFrame {
 		});
 		chartButtonPanel.add(transIntervalSpinner);
 		
-		JLabel labelMode = new JLabel("Simulation mode:");
+		JLabel labelMode = new JLabel(lang.getText("HNIwin_entryT032")); //Simulation mode:
 		labelMode.setBounds(chartX+280, chartY_1st, 110, 15);
 		chartButtonPanel.add(labelMode);
 		
-		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
-		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.");
+		final JComboBox<String> simMode = new JComboBox<String>(new String[] {lang.getText("HNIwin_entryT033op1")
+				, lang.getText("HNIwin_entryT033op2"), lang.getText("HNIwin_entryT033op3")}); //50/50 mode, Maximum mode, Single mode
+		simMode.setToolTipText(lang.getText("HNIwin_entryT033t"));
 		simMode.setBounds(chartX+280, chartY_2nd, 120, 25);
 		simMode.setSelectedIndex(0);
 		simMode.setMaximumRowCount(6);
@@ -804,7 +817,8 @@ public class HolmesNodeInfo extends JFrame {
 		});
 		chartButtonPanel.add(simMode);
 		
-		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
+		String[] simModeName = {lang.getText("HNIwin_entryT034op1")
+				, lang.getText("HNIwin_entryT034op2"), lang.getText("HNIwin_entryT034op3")}; //Petri Net, Timed Petri Net, Hybrid mode
 		final JComboBox<String> simNetMode = new JComboBox<String>(simModeName);
 		simNetMode.setBounds(chartX+400, chartY_2nd, 120, 25);
 		
@@ -843,7 +857,7 @@ public class HolmesNodeInfo extends JFrame {
 			title.setFont(new Font("Dialog", Font.PLAIN, 20));
 			title.setExpandToFitSpace(true);
 			title.setPaint(Color.red);
-			title.setText("Chart unavailable, main simulator is active.");
+			title.setText(lang.getText("HNIwin_entryT035"));
 		}
 	}
 
@@ -876,7 +890,7 @@ public class HolmesNodeInfo extends JFrame {
 			title.setFont(new Font("Dialog", Font.PLAIN, 20));
 			title.setExpandToFitSpace(true);
 			title.setPaint(Color.red);
-			title.setText("Chart unavailable, main simulator is active.");
+			title.setText(lang.getText("HNIwin_entryT035"));
 		}
 	}
 	
@@ -906,8 +920,8 @@ public class HolmesNodeInfo extends JFrame {
 				problemCounter++;
 				i--;
 				if(problemCounter == 10) {
-					overlord.log("Unable to gather "+repeated+" data vectors (places) of same size. "
-							+ "State simulator cannot proceed "+simSteps+ " steps. First pass had: "+ dataVector.size() +" steps.", "error", true);
+					String strB = String.format(lang.getText("LOGentry00483"), repeated, simSteps, dataVector.size());
+					overlord.log(strB, "error", true);
 					break;
 				}
 			} else { //ok, taki sam lub dłuższy

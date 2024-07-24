@@ -881,12 +881,12 @@ NPA_entry013b, do not sum to the total stored, number of nodes:
 NPA_entry013c, minus number of meta-nodes:
 
 //ProblemDetector:
-PD_entry001, IN-place
-PD_entry002, OUT-place
+PD_entry001, In-place
+PD_entry002, Out-place
 PD_entry003, Input:
 PD_entry004, / Output:
-PD_entry005, IN-trans
-PD_entry006, OUT-trans
+PD_entry005, In-trans
+PD_entry006, Out-trans
 PD_entry007, Input:
 PD_entry008, / Output:
 PD_entry009, Linear place
@@ -2268,6 +2268,282 @@ LOGentry00469exception, Exception (1000206): HolmesMCS.calculateAllAction() fail
 HMCSwin_entry028, Starting calculations for reaction:
 HMCSwin_entry029, Transition/objR:
 HMCSwin_entry030, Minimal Cut Sets list size:
+
+//HolmesNetProperties:
+HNPwin_entry001title, Petri net project structure data
+LOGentry00470exception, Exception (1000207): HolmesNetProperties.HolmesNetProperties() failed:
+HNPwin_entry002, Computing t-invariants types vector\n
+HNPwin_entry003, t-invariants (Cx = 0):
+HNPwin_entry004, sur-invariants (Cx > 0):
+HNPwin_entry005, sub-invariants (Cx < 0):
+HNPwin_entry006, non-invariants (Cx <=> 0):
+HNPwin_entry007, The net is covered by t-invariants (only vectors x such as Cx=0 are considered).\n
+HNPwin_entry008, Transitions not covered by the %d t-invariants:%n
+HNPwin_entry009, Transitions within %d t-invariants:%n
+LOGentry00471exception, Exception (1000208): HolmesNetProperties.createMainPanel() failed:
+HNPwin_entry010, Nodes:
+HNPwin_entry011, N/A
+HNPwin_entry012, Transitions:
+HNPwin_entry013, Places:
+HNPwin_entry014, Arcs:
+HNPwin_entry015, t-invariants:
+HNPwin_entry016, Normal arc:
+HNPwin_entry017, Read-arc:
+HNPwin_entry018, Inhibitor arc:
+HNPwin_entry019, Reset arc:
+HNPwin_entry020, Equal arc:
+HNPwin_entry021, Net static properties:
+HNPwin_entry022, Save to file
+HNPwin_entry023, Invariants details:
+HNPwin_entry024a, Petri net meaning:\n
+HNPwin_entry024b, \n\nBiological interpretation:\n
+HNPwin_entry025, Petri net name:
+HNPwin_entry026, Number of nodes:
+HNPwin_entry027, Number of transitions:
+HNPwin_entry028, Number of places:
+HNPwin_entry029, Number of arcs:
+HNPwin_entry030, Net static properties: \n
+HNPwin_entry031, Property:
+HNPwin_entry032, Meaning:
+HNPwin_entry033, Biological:
+HNPwin_entry034, Number of invariants:
+LOGentry00472exception, Exception (1000209): HolmesNetProperties.saveToFile() failed:
+
+//HolmesNetTables:
+HNTwin_entry001title, Net data tables
+LOGentry00473exception, Exception (1000210): HolmesNetTables.HolmesNetTables() failed:
+LOGentry00474exception, Exception (1000211): HolmesNetTables.resetT_invData() failed:
+HNTwin_entry002, <html>&nbsp;&nbsp;&nbsp;&nbsp;Places&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HNTwin_entry002t, Shows places table
+HNTwin_entry003, Transitions
+HNTwin_entry003t, Shows transitions table
+HNTwin_entry004, Switch P / T
+HNTwin_entry004t, Switch internal localization of two places or two transitions.
+HNTwin_entry005, t-invariants
+HNTwin_entry005t, Shows invariants information table
+HNTwin_entry006, Invariants sim.
+HNTwin_entry007, Show data
+HNTwin_entry007t, Show invariants table with transition firing rates.
+HNTwin_entry008, State simulator
+HNTwin_entry009, SimStart
+HNTwin_entry009t, Compute new transitions firing statistics.
+HNTwin_entry010, Net type:
+HNTwin_entry011op1, Petri Net
+HNTwin_entry011op2, Time Petri Net
+HNTwin_entry011op3, Hybrid mode
+LOGentry00475, Error while changing simulator mode. Set for BASIC.
+HNTwin_entry012, Submode:
+HNTwin_entry013op1, 50/50 mode
+HNTwin_entry013op2, Maximum mode
+HNTwin_entry013op3, Single mode
+HNTwin_entry013t, In maximum mode each active transition fire at once, 50/50 means 50% chance for firing,\nin single mode only one transition will fire.
+HNTwin_entry014, Time & Inv.
+HNTwin_entry014t, Show time data for t-invariants
+HNTwin_entry015, Please generate T-invariants (Elementary Modes)
+HNTwin_entry016, Time & Inv.
+
+//HolmesNetTablesActions:
+LOGentry00476exception, Exception (1000212): HolmesNetTablesActions.cellClickAction() failed:
+LOGentry00477, Problem with position
+HNTAwin_entry001, Swap operation allowed only for places or transitions.
+HNTAwin_entry001t, Invalid table
+HNTAwin_entry002, Please select two rows (SHIFT key + mouse click).
+HNTAwin_entry002t, Invalid number of rows selected
+
+//HolmesNodeInfo:
+HNIwin_entry001title, Node:
+HNIwin_entryP002, Node data
+HNIwin_entryP002t, General information about node
+HNIwin_entryP003, Analysis
+HNIwin_entryP003t, Analysis panel
+HNIwin_entryT004, Node data
+HNIwin_entryT004t, General information about node
+HNIwin_entryT005, Analysis
+HNIwin_entryT005t, Analysis panel
+HNIwin_entryM006title, MetaNode:
+LOGentry00478exception, Exception (1000213): HolmesNodeInfo.initializeCommon() failed:
+HNIwin_entryP007, Place general information:
+HNIwin_entryP008, ID:
+HNIwin_entryP009, Portal:
+HNIwin_entryP010, Tokens:
+LOGentry00479, Negative number of tokens in
+HNIwin_entryP011, IN-Trans:
+HNIwin_entryP012, OUT-Trans:
+HNIwin_entryP013, Name:
+LOGentry00480exception, Exception (1000214): HolmesNodeInfo.initializePlaceInfo() failed:
+HNIwin_entryP014, Comm.:
+HNIwin_entryP015, Places chart
+HNIwin_entryP016, SimStart
+HNIwin_entryP016t, Compute steps from zero marking through the number of states given on the right.
+HNIwin_entryP017, Sim. Steps:
+HNIwin_entryP018, Repeated:
+HNIwin_entryP019op1, 50/50 mode
+HNIwin_entryP019op2, Maximum mode
+HNIwin_entryP019op3, Single mode
+HNIwin_entryP019t, In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.
+HNIwin_entryP020op1, Petri Net
+HNIwin_entryP020op2, Time Petri Net
+HNIwin_entryP020op3, Hybrid mode
+HNIwin_entryT021, ID:
+HNIwin_entryT022, Portal:
+HNIwin_entryT023, Avg.f.:
+HNIwin_entryT024, PRE-Place:
+HNIwin_entryT025, POST-Place:
+HNIwin_entryT026, Name:
+HNIwin_entryT027, Comm.:
+HNIwin_entryT028, Transition chart
+LOGentry00481exception, Exception (1000215): HolmesNodeInfo.initializeTransitionInfo() failed:
+HNIwin_entryT029, SimStart
+HNIwin_entryT029t, Compute steps from zero marking through the number of states given on the right.
+HNIwin_entryT030, Sim. Steps:
+LOGentry00482exception, Exception (1000216): HolmesNodeInfo.initializeMetaNodeInfo() failed. Cannot update transition interval for simulator (Transition Info Windows).
+HNIwin_entryT031, Interval:
+HNIwin_entryT032, Simulation mode:
+HNIwin_entryT033op1, 50/50 mode
+HNIwin_entryT033op2, Maximum mode
+HNIwin_entryT033op3, Single mode
+HNIwin_entryT033t, In maximum mode each active transition fire at once, 50/50 means 50% chance for firing.
+HNIwin_entryT034op1, Petri Net
+HNIwin_entryT034op2, Time Petri Net
+HNIwin_entryT034op3, Hybrid mode
+HNIwin_entryT035, Chart unavailable, main simulator is active.
+LOGentry00483, Unable to gather %d data vectors (places) of same size. State simulator cannot proceed %d steps. First pass had: %d steps.
+
+//HolmesNodeInfoActions:
+HNIAwin_entry001, Invariant
+HNIAwin_entry002, Descrption:
+HNIAwin_entry003, Total number of transitions:
+HNIAwin_entry004, Support structure:
+HNIAwin_entry005, All transitions of INV #
+LOGentry00484critErr, Critical error (2000031) HolmesNodeInfoActions.showInvariantNotepad() failed. Invariants support size refers to non-existing transitions.
+HNIAwin_entry006, Invariant vector:
+HNIAwin_entry007, Inv: %d (original index in the program: %d)
+HNIAwin_entry008, Invariant vector:
+
+//HolmesNotepad:
+HNwin_entry001title, Holmes Notepad
+LOGentry00485exception, Exception (1000217): HolmesNotepad.HolmesNotepad() failed:
+LOGentry00486exception, Exception (1000218): HolmesNotepad.HolmesNotepad() failed:
+HNwin_entry002, Saves the content of notepad.
+HNwin_entry003, Load txt files.
+HNwin_entry004, Clear content
+LOGentry00487exception, Exception (1000219): HolmesNotepad.clearContent() failed:
+HNwin_entry005, Select text file
+LOGentry00488exception, Exception (1000220): HolmesNotepad.loadFile() failed:
+HNwin_entry006, Select new filename
+LOGentry00489exception, Exception (1000221): HolmesNotepad.saveContent() failed:
+LOGentry00490exception, Exception (1000222): HolmesNotepad.addText() failed:
+LOGentry00491exception, Exception (1000223): HolmesNotepad.addTextLine() failed. Couldn't insert initial text into text panel.
+LOGentry00492exception, Exception (1000224): HolmesNotepad.addTextLineNL() failed. Couldn't insert text into text panel.
+LOGentry00493exception, Exception (1000225): HolmesNotepad.addLine() failed. Couldn't insert text into text panel.
+
+//HolmesSearch:
+HSwin_entry001title, Net nodes search window
+LOGentry00494exception, Exception (1000226): HolmesSearch.HolmesSearch() failed:
+HSwin_entry002, Search options
+HSwin_entry003, Places:
+HSwin_entry004, Transitions:
+HSwin_entry005, Search for:
+LOGentry00495exception, Exception (1000227): HolmesSearch.createMainPanel() failed:
+LOGentry00496exception, Exception (1000228): HolmesSearch.createMainPanel() failed:
+HSwin_entry006, Search places
+HSwin_entry007, Search transitions
+HSwin_entry008, Search places and transitions
+HSwin_entry009, Selected node info
+HSwin_entry010, Type:
+HSwin_entry011, Portal:
+HSwin_entry012, In-arcs:
+HSwin_entry013, Out-arcs:
+LOGentry00497exception, Exception (1000229): HolmesSearch.showFound() failed:
+LOGentry00498exception, Exception (1000230): HolmesSearch.selectedManually() failed:
+
+//HolmesSubnetsInfo:
+HSIwin_entry001, Subnet general information:
+HSIwin_entry002, ID:
+HSIwin_entry003, Name:
+HSIwin_entry004, Description:
+HSIwin_entry005, Subnet statistics:
+HSIwin_entry006, Number of element locations:
+HSIwin_entry007, Number of places:
+HSIwin_entry008, Number of transitions:
+HSIwin_entry009, Number of tokens:
+HSIwin_entry010, Connected subnets:
+HSIwin_entry011, Parent ID:
+HSIwin_entry012, Parent name:
+HSIwin_entry013, Subnets:
+HSIwin_entry014, ID:     Name:
+HSIwin_entry015, Current sheet is not a subnet
+HSIwin_entry015t, Cannot proceed
+LOGentry00499exception, Exception (1000231): HolmesSubnetsInfo.open() failed:
+
+//HolmesProgramProperties:
+HPPwin_entry001title, Settings
+LOGentry00500exception, Exception (1000232): HolmesProgramProperties.HolmesProgramProperties() failed:
+LOGentry00501exception, Exception (1000233): HolmesProgramProperties.HolmesProgramProperties() failed:
+HPPwin_entry002, System
+HPPwin_entry002t, Holmes main options.
+HPPwin_entry003, Editor
+HPPwin_entry003t, Editor options.
+HPPwin_entry004, Simulator
+HPPwin_entry004t, Simulator options.
+HPPwin_entry005, Analyzer
+HPPwin_entry005t, Analyzer options.
+HPPwin_entry006, Other
+HPPwin_entry006t, Other options.
+HPPwinSYS_entry007, I/O operations
+HPPwinSYS_entry008, (Snoopy) Resize net when loaded:
+HPPwinSYS_entry009, (Snoopy) Align to grid when saved
+HPPwinSYS_entry010, (Snoopy) Use Snoopy offsets for names
+HPPwinSYS_entry011, (UNSAFE) Use old Snoopy loader (PN, extPN, TPN/DPN *ONLY*)
+HPPwinSYS_entry012, Warnings concerning wrong save format
+HPPwinSYS_entry013, Use simple notepad (restart required)
+HPPwinSYS_entry014, Debug mode
+HPPwinSYS_entry015, R settings
+HPPwinSYS_entry016, R path:
+HPPwinSYS_entry017, Rx64 path:
+HPPwinSYS_entry018, Set R path
+HPPwinSYS_entry018t, Manually set path to Rscript.exe
+HPPwinSYS_entry019, Force R localization on startup
+HPPwinEDIT_entry020, Graphical settings
+HPPwinEDIT_entry021, Default arc thickness
+HPPwinEDIT_entry022, Font size:
+HPPwinEDIT_entry023, Bold
+HPPwinEDIT_entry024, MCT names
+HPPwinEDIT_entry025, (Editor) Show short default names only
+HPPwinEDIT_entry026, (Editor) Show short names with lower index
+HPPwinEDIT_entry027, (Editor) Petri net elements 3d view
+HPPwinEDIT_entry028, (Editor) Show Snoopy-styled graphics
+HPPwinEDIT_entry029, (Editor) (Editor) Show non default T/P colors
+HPPwinEDIT_entry030, (Editor) Show lines between portal locations
+HPPwinEDIT_entry031, General settings
+HPPwinEDIT_entry032, (Snoopy/Holmes) Allow only Snoopy-compatible options
+HPPwinEDIT_entry033, Use meta-arcs compression for metanodes
+HPPwinSIM_entry034, Simulator engine options
+HPPwinSIM_entry035, Transitions reserve tokens in place via read-arcs
+HPPwinSIM_entry036, Single-maximum mode (single-50/50 when unchecked)
+HPPwinSIM_entry037, TDPN transition acts like DPN when TPN internal clock = EFT
+HPPwinSIM_entry038, Places change colors during simulation
+HPPwinSIM_entry039, (XTPN) Globally use mass-action kinetics law for simulation
+HPPwinSIM_entry040, (XTPN) Read arcs preserve tokens lifetime
+HPPwinSIM_entry041, Simulator graphical options
+HPPwinSIM_entry042, Transition firing delay:
+HPPwinSIM_entry043, Arc token delay:
+HPPwinANAL_entry044, Clusters options
+HPPwinANAL_entry045, Save t-invariants in CSV as binary vectors.
+HPPwinANAL_entry046, Allow presence of self-propelled readarc regions
+HPPwinANAL_entry047, Cluster algorithms options
+HPPwinANAL_entry048, Eliminate MCS sets non directly connected with objR transition.
+
+//HolmesProgramPropertiesActions:
+HPPAwin_entry001, Select Rscript.exe
+HPPAwin_entry001t, Please select Rscript exe, usually located in R/Rx.x.x/bin directory.
+HPPAwin_entry002, Rscript.exe location: %s. Settings file updated.
+HPPAwin_entry003, Rscript.exe location unknown. Clustering procedures will not work.
+
+//Workspace:
+WORK_entry001, - no sentence -
+LOGentry00502critError, Critical error (2000034): Workspace.deleteSheetFromArrays() failed for worksheet #
+LOGentry00503critError, Critical error (2000035): Workspace.deleteAllSheetButFirst() failed for worksheet #
 
 
 //generalPurposeTags:

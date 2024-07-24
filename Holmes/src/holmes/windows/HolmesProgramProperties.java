@@ -27,6 +27,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.darkgui.settings.SettingsManager;
 import holmes.utilities.Tools;
 
@@ -38,6 +39,8 @@ public class HolmesProgramProperties extends JFrame {
 	private static final long serialVersionUID = 2831478312283009975L;
 	@SuppressWarnings("unused")
 	private JFrame parentFrame;
+	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private SettingsManager sm; //= new SettingsManager();
 	private HolmesProgramPropertiesActions action;
 	private boolean noAction = false;
@@ -54,15 +57,13 @@ public class HolmesProgramProperties extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (688341781) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00500exception")+" "+ex.getMessage(), "error", true);
 		}
 		
 		try {
 			initialize_components();
-		} catch (Exception e) {
-			String msg = e.getMessage();
-			GUIManager.getDefaultGUIManager().log("Critical error, cannot create Holmes properties window:" , "error", true);
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00501exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 
@@ -72,7 +73,7 @@ public class HolmesProgramProperties extends JFrame {
 	 */
 	private void initialize_components() {
 		this.setLocation(20, 20);
-		setTitle("Settings");
+		setTitle(lang.getText("HPPwin_entry001title"));
 		setLayout(new BorderLayout());
 		setSize(new Dimension(600, 500));
 		setResizable(false);
@@ -81,20 +82,25 @@ public class HolmesProgramProperties extends JFrame {
 		tabbedPane.setBounds(0, 0, 600, 500);
 
 		//zakładka głównych opcji programu:
-		tabbedPane.addTab("System", Tools.getResIcon32("/icons/propertiesWindow/systemIcon.png"), makeSysPanel(), "Holmes main options.");
+		tabbedPane.addTab(lang.getText("HPPwin_entry002"), Tools.getResIcon32("/icons/propertiesWindow/systemIcon.png")
+				, makeSysPanel(), lang.getText("HPPwin_entry002t")); //System
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
-		tabbedPane.addTab("Editor", Tools.getResIcon32("/icons/propertiesWindow/editorIcon.png"), makeEditorPanel(), "Editor options");
+		tabbedPane.addTab(lang.getText("HPPwin_entry003"), Tools.getResIcon32("/icons/propertiesWindow/editorIcon.png")
+				, makeEditorPanel(), lang.getText("HPPwin_entry003t")); //Editor
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
-		tabbedPane.addTab("Simulator", Tools.getResIcon32("/icons/propertiesWindow/simulationIcon.png"), makeSimulatorPanel(), "Simulator options");
+		tabbedPane.addTab(lang.getText("HPPwin_entry004"), Tools.getResIcon32("/icons/propertiesWindow/simulationIcon.png")
+				, makeSimulatorPanel(), lang.getText("HPPwin_entry004t")); //Simulator
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_3);
 
-		tabbedPane.addTab("Analyzer", Tools.getResIcon32("/icons/propertiesWindow/analysisIcon.png"), makeAnalysisPanel(), "Does twice as much nothing");
+		tabbedPane.addTab(lang.getText("HPPwin_entry005"), Tools.getResIcon32("/icons/propertiesWindow/analysisIcon.png")
+				, makeAnalysisPanel(), lang.getText("HPPwin_entry005t")); //Analyzer
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_4);
 
-		JComponent panel5 = makeTextPanel("Other options.");
-		tabbedPane.addTab("Other", Tools.getResIcon32("/icons/propertiesWindow/otherIcon.png"), panel5, "Does nothing at all");
+		JComponent panel5 = makeTextPanel("Other options."); //Other
+		tabbedPane.addTab(lang.getText("HPPwin_entry006"), Tools.getResIcon32("/icons/propertiesWindow/otherIcon.png")
+				, panel5, lang.getText("HPPwin_entry006t"));
 		tabbedPane.setMnemonicAt(3, KeyEvent.VK_5);
 		
 		JPanel mainPanel = new JPanel();
@@ -141,14 +147,14 @@ public class HolmesProgramProperties extends JFrame {
 	@SuppressWarnings("SameParameterValue")
 	private JPanel createSnoopyReadSystemPanel(int x, int y, int w, int h) {
 		JPanel ioPanel = new JPanel(null);
-		ioPanel.setBorder(BorderFactory.createTitledBorder("I/O operations"));
+		ioPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSYS_entry007")));
 		ioPanel.setBounds(x, y, w, h);
 		
 		int posX = 10;
 		int posY = 15;
 		noAction = true;
 		
-		JLabel labelIO1 = new JLabel("(Snoopy) Resize net when loaded:");
+		JLabel labelIO1 = new JLabel(lang.getText("HPPwinSYS_entry008")); //label
 		labelIO1.setBounds(posX, posY, 200, 20);
 		ioPanel.add(labelIO1);
 
@@ -224,24 +230,24 @@ public class HolmesProgramProperties extends JFrame {
 			default -> group.setSelected(resize100Button.getModel(), true);
 		}
 		
-		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard("(Snoopy) Align to grid when saved", posX+200, posY-20, 240, 20, 
-				"editorGridAlignWhenSaved", true);
+		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry009"), posX+200, posY-20, 240, 20, 
+				"editorGridAlignWhenSaved", true); //(Snoopy) Align to grid when saved
 		ioPanel.add(alignGridWhenSavedCheckBox);
 		
-		JCheckBox useOffsetsCheckBox = checkboxWizard("(Snoopy) Use Snoopy offsets for names", posX+200, posY, 260, 20, 
-				"editorUseSnoopyOffsets", true);
+		JCheckBox useOffsetsCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry010"), posX+200, posY, 260, 20, 
+				"editorUseSnoopyOffsets", true); //(Snoopy) Use Snoopy offsets for names
 		ioPanel.add(useOffsetsCheckBox);
 		
-		JCheckBox useOldLoaderCheckBox = checkboxWizard("(UNSAFE) Use old Snoopy loader (PN, extPN, TPN/DPN *ONLY*)", posX, posY+=20, 400, 20, 
-				"programUseOldSnoopyLoaders", true);
+		JCheckBox useOldLoaderCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry011"), posX, posY+=20, 400, 20, 
+				"programUseOldSnoopyLoaders", true); //(UNSAFE) Use old Snoopy loader (PN, extPN, TPN/DPN *ONLY*)
 		ioPanel.add(useOldLoaderCheckBox);
 
-		JCheckBox checkSaveCheckBox = checkboxWizard("Warnings concerning wrong save format", posX, posY+=20, 300, 20, 
-				"editorExportCheckAndWarning", true);
+		JCheckBox checkSaveCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry012"), posX, posY+=20, 300, 20, 
+				"editorExportCheckAndWarning", true); //Warnings concerning wrong save format
 		ioPanel.add(checkSaveCheckBox);
 		
-		JCheckBox simpleEditorCheckBox = checkboxWizard("Use simple notepad (restart required)", posX, posY+=20, 300, 20,
-				"programUseSimpleEditor", true);
+		JCheckBox simpleEditorCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry013"), posX, posY+=20, 300, 20,
+				"programUseSimpleEditor", true); //Use simple notepad (restart required)
 		ioPanel.add(simpleEditorCheckBox);
 		
 		noAction = false;
@@ -267,8 +273,8 @@ public class HolmesProgramProperties extends JFrame {
 		int posY = 20;
 		noAction = true;
 		
-		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard("Debug mode", posX, posY, 240, 20, 
-				"programDebugMode", true);
+		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry014"), posX, posY, 240, 20, 
+				"programDebugMode", true); //Debug mode
 		ioPanel.add(alignGridWhenSavedCheckBox);
 
 		noAction = false;
@@ -286,10 +292,10 @@ public class HolmesProgramProperties extends JFrame {
 	@SuppressWarnings("SameParameterValue")
 	private JPanel createRoptionsSystemPanel(int x, int y, int w, int h) {
 		JPanel rOptionsPanel = new JPanel(null);
-		rOptionsPanel.setBorder(BorderFactory.createTitledBorder("R settings"));
+		rOptionsPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSYS_entry015"))); //R settings
 		rOptionsPanel.setBounds(x, y, w, h);
 		
-		JLabel labelR_1 = new JLabel("R path:");
+		JLabel labelR_1 = new JLabel(lang.getText("HPPwinSYS_entry016")); //label
 		labelR_1.setBounds(10, 16, 60, 20);
 		rOptionsPanel.add(labelR_1);
 		final JTextArea textR_1 = new JTextArea(sm.getValue("r_path"));
@@ -298,7 +304,7 @@ public class HolmesProgramProperties extends JFrame {
 		textR_1.setEditable(false);
 		rOptionsPanel.add(textR_1);
 		
-		JLabel labelR_2 = new JLabel("Rx64 path:");
+		JLabel labelR_2 = new JLabel(lang.getText("HPPwinSYS_entry017")); //Rx64 path
 		labelR_2.setBounds(10, 36, 60, 20);
 		rOptionsPanel.add(labelR_2);
 		final JTextArea textR_2 = new JTextArea(sm.getValue("r_path64"));
@@ -307,10 +313,10 @@ public class HolmesProgramProperties extends JFrame {
 		textR_2.setEditable(false);
 		rOptionsPanel.add(textR_2);
 		
-		JButton rSetPath = new JButton("Set R path");
+		JButton rSetPath = new JButton(lang.getText("HPPwinSYS_entry018")); //Set R path
 		rSetPath.setName("setRpath");
 		rSetPath.setBounds(10, 60, 120, 20);
-		rSetPath.setToolTipText("Manually set path to Rscript.exe");
+		rSetPath.setToolTipText(lang.getText("HPPwinSYS_entry018t"));
 		rSetPath.addActionListener(actionEvent -> {
 			action.setRPath();
 			textR_1.setText(sm.getValue("r_path"));
@@ -318,8 +324,8 @@ public class HolmesProgramProperties extends JFrame {
 		});
 		rOptionsPanel.add(rSetPath);
 		
-		JCheckBox forceRcheckBox = checkboxWizard("Force R localization on startup", 140, 60, 210, 20, "programAskForRonStartup", true);
-		rOptionsPanel.add(forceRcheckBox);
+		JCheckBox forceRcheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry019"), 140, 60, 210, 20, "programAskForRonStartup", true);
+		rOptionsPanel.add(forceRcheckBox); //Force R localization on startup
 		
 		return rOptionsPanel;
 	}
@@ -357,7 +363,7 @@ public class HolmesProgramProperties extends JFrame {
 	@SuppressWarnings("SameParameterValue")
 	private JPanel createGraphicalEditorPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Graphical settings"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinEDIT_entry020"))); //Graphical settings
 		panel.setBounds(x, y, w, h);
 		
 		int posX = 10;
@@ -365,7 +371,7 @@ public class HolmesProgramProperties extends JFrame {
 		noAction = true;
 		
 		// ARC SIZE:
-		JLabel labelIO1 = new JLabel("Default arc thickness:");
+		JLabel labelIO1 = new JLabel(lang.getText("HPPwinEDIT_entry021")); //Default arc thickness
 		labelIO1.setBounds(posX, posY, 200, 20);
 		panel.add(labelIO1);
 
@@ -411,16 +417,16 @@ public class HolmesProgramProperties extends JFrame {
 		}
 
 		//FONT SIZE:
-		JLabel labelFontSize = new JLabel("Font size:");
+		JLabel labelFontSize = new JLabel(lang.getText("HPPwinEDIT_entry022")); //Font size
 		labelFontSize.setBounds(posX+150, posY, 200, 20);
 		panel.add(labelFontSize);
 		
-		JCheckBox boldCheckBox = checkboxWizard("Bold", posX+210, posY, 60, 20, 
-				"editorGraphFontBold", true);
+		JCheckBox boldCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry023"), posX+210, posY, 60, 20, 
+				"editorGraphFontBold", true); //Bold
 		panel.add(boldCheckBox);
 		
-		JCheckBox mctNameCheckBox = checkboxWizard("MCT names", posX+270, posY, 110, 20, 
-				"mctNameShow", true);
+		JCheckBox mctNameCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry024"), posX+270, posY, 110, 20, 
+				"mctNameShow", true); //MCT names
 		panel.add(mctNameCheckBox);
 		
 		
@@ -438,28 +444,28 @@ public class HolmesProgramProperties extends JFrame {
 		});
 		panel.add(fontSizeSpinner);
 
-		JCheckBox useShortNamesCheckBox = checkboxWizard("(Editor) Show short default names only", posX, posY+=20, 260, 20, 
-				"editorShowShortNames", true);
+		JCheckBox useShortNamesCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry025"), posX, posY+=20, 260, 20, 
+				"editorShowShortNames", true); //(Editor) Show short default names only
 		panel.add(useShortNamesCheckBox);
 
-		JCheckBox useShortNamesLowerIndexCheckBox = checkboxWizard("(Editor) Show short names with lower index", posX, posY+=20, 300, 20,
-				"editorShortNameLowerIndex", true);
+		JCheckBox useShortNamesLowerIndexCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry026"), posX, posY+=20, 300, 20,
+				"editorShortNameLowerIndex", true); //(Editor) Show short names with lower index
 		panel.add(useShortNamesLowerIndexCheckBox);
 	
-		JCheckBox view3dCheckBox = checkboxWizard("(Editor) Petri net elements 3d view", posX, posY+=20, 260, 20, 
-				"editor3Dview", true);
+		JCheckBox view3dCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry027"), posX, posY+=20, 260, 20, 
+				"editor3Dview", true); //(Editor) Petri net elements 3d view
 		panel.add(view3dCheckBox);
 		
-		JCheckBox snoopyStyleCheckBox = checkboxWizard("(Editor) Show Snoopy-styled graphics", posX, posY+=20, 260, 20, 
-				"editorSnoopyStyleGraphic", true);
+		JCheckBox snoopyStyleCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry028"), posX, posY+=20, 260, 20, 
+				"editorSnoopyStyleGraphic", true); //(Editor) Show Snoopy-styled graphics
 		panel.add(snoopyStyleCheckBox);
 		
-		JCheckBox snoopyColorsBox = checkboxWizard("(Editor) Show non default T/P colors", posX+270, posY, 260, 20, 
-				"editorSnoopyColors", true);
+		JCheckBox snoopyColorsBox = checkboxWizard(lang.getText("HPPwinEDIT_entry029"), posX+270, posY, 260, 20, 
+				"editorSnoopyColors", true); //(Editor) Show non default T/P colors
 		panel.add(snoopyColorsBox);
 
-		JCheckBox portalLinesBox = checkboxWizard("(Editor) Show lines between portal locations", posX, posY+20, 300, 20,
-				"editorPortalLines", true);
+		JCheckBox portalLinesBox = checkboxWizard(lang.getText("HPPwinEDIT_entry030"), posX, posY+20, 300, 20,
+				"editorPortalLines", true); //(Editor) Show lines between portal locations
 		panel.add(portalLinesBox);
 		
 		noAction = false;
@@ -477,14 +483,14 @@ public class HolmesProgramProperties extends JFrame {
 	@SuppressWarnings("SameParameterValue")
 	private JPanel createGeneralEditorPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
-		panel.setBorder(BorderFactory.createTitledBorder("General settings"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinEDIT_entry031"))); //General settings
 		panel.setBounds(x, y, w, h);
 		
 		int posX = 10;
 		int posY = 15;
 		noAction = true;
 		
-		JCheckBox snoopyCompatibilityCheckBox = new JCheckBox("(Snoopy/Holmes) Allow only Snoopy-compatible options", true);
+		JCheckBox snoopyCompatibilityCheckBox = new JCheckBox(lang.getText("HPPwinEDIT_entry032"), true); //(Snoopy/Holmes) Allow only Snoopy-compatible options
 		snoopyCompatibilityCheckBox.setBounds(posX, posY, 400, 20);
 		snoopyCompatibilityCheckBox.addActionListener(actionEvent -> {
 			if(noAction) return;
@@ -500,8 +506,8 @@ public class HolmesProgramProperties extends JFrame {
 		snoopyCompatibilityCheckBox.setSelected(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1"));
 		panel.add(snoopyCompatibilityCheckBox);
 		
-		JCheckBox subnetCompressionCheckBox = checkboxWizard("Use meta-arcs compression for metanodes", posX, posY+=20, 350, 20, 
-				"editorSubnetCompressMode", true);
+		JCheckBox subnetCompressionCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry033"), posX, posY+=20, 350, 20, 
+				"editorSubnetCompressMode", true); //Use meta-arcs compression for metanodes
 		panel.add(subnetCompressionCheckBox);
 		
 		noAction = false;
@@ -539,34 +545,34 @@ public class HolmesProgramProperties extends JFrame {
 	@SuppressWarnings("SameParameterValue")
 	private JPanel createSimPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Simulator engine options"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSIM_entry034"))); //Simulator engine options
 		panel.setBounds(x, y, w, h);
 		int posX = 10;
 		int posY = 15;
 		noAction = true;
 
-		JCheckBox readArcReservCheckBox = checkboxWizard("Transitions reserve tokens in place via read-arcs", 
-				posX, posY, 360, 20, "simTransReadArcTokenReserv", true);
+		JCheckBox readArcReservCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry035"), 
+				posX, posY, 360, 20, "simTransReadArcTokenReserv", true); //Transitions reserve tokens in place via read-arcs
 		panel.add(readArcReservCheckBox);
 		
-		JCheckBox singleMaxModeCheckBox = checkboxWizard("Single-maximum mode (single-50/50 when unchecked)", 
-				posX, posY+=20, 360, 20, "simSingleMode", true);
+		JCheckBox singleMaxModeCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry036"), 
+				posX, posY+=20, 360, 20, "simSingleMode", true); //Single-maximum mode (single-50/50 when unchecked)
 		panel.add(singleMaxModeCheckBox);
 		
-		JCheckBox simTDPNrunTimeCheckBox = checkboxWizard("TDPN transition acts like DPN when TPN internal clock = EFT", 
-				posX, posY+=20, 380, 20, "simTDPNrunWhenEft", true);
+		JCheckBox simTDPNrunTimeCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry037"), 
+				posX, posY+=20, 380, 20, "simTDPNrunWhenEft", true); //TDPN transition acts like DPN when TPN internal clock = EFT
 		panel.add(simTDPNrunTimeCheckBox);
 
-		JCheckBox placesColorsCheckBox = checkboxWizard("Places change colors during simulation", 
-				posX, posY+=20, 360, 20, "simPlacesColors", true);
+		JCheckBox placesColorsCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry038"), 
+				posX, posY+=20, 360, 20, "simPlacesColors", true); //Places change colors during simulation
 		panel.add(placesColorsCheckBox);
 
-		JCheckBox XTPNsimMassActionCheckBox = checkboxWizard("(XTPN) Globally use mass-action kinetics law for simulation",
-				posX, posY+=20, 400, 20, "simXTPNmassAction", true);
+		JCheckBox XTPNsimMassActionCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry039"),
+				posX, posY+=20, 400, 20, "simXTPNmassAction", true); //(XTPN) Globally use mass-action kinetics law for simulation
 		panel.add(XTPNsimMassActionCheckBox);
 
-		JCheckBox XTPNsimReadArcTokenCheckBox = checkboxWizard("(XTPN) Read arcs preserve tokens lifetime",
-				posX, posY+=20, 360, 20, "simXTPNreadArcTokens", true);
+		JCheckBox XTPNsimReadArcTokenCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry040"),
+				posX, posY+=20, 360, 20, "simXTPNreadArcTokens", true); //(XTPN) Read arcs preserve tokens lifetime
 		panel.add(XTPNsimReadArcTokenCheckBox);
 
 		noAction = false;
@@ -584,17 +590,17 @@ public class HolmesProgramProperties extends JFrame {
 	@SuppressWarnings("SameParameterValue")
 	private JPanel createSimGraphic(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Simulator graphical options"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSIM_entry041"))); //Simulator graphical options
 		panel.setBounds(x, y, w, h);
 		int io_x = 10;
 		int io_y = 15;
 		noAction = true;
 
-		JLabel transDelayLabel = new JLabel("Transition firing delay:");
+		JLabel transDelayLabel = new JLabel(lang.getText("HPPwinSIM_entry042")); //Transition firing delay
 		transDelayLabel.setBounds(io_x, io_y, 200, 20);
 		panel.add(transDelayLabel);
 		
-		JLabel arcDelayLabel = new JLabel("Arc token delay:");
+		JLabel arcDelayLabel = new JLabel(lang.getText("HPPwinSIM_entry043")); //Arc token delay
 		arcDelayLabel.setBounds(io_x+280, io_y, 200, 20);
 		panel.add(arcDelayLabel);
 		
@@ -642,8 +648,6 @@ public class HolmesProgramProperties extends JFrame {
 		    }
 		}.yesWeCan(arcDelaySlider) );
 	    panel.add(transDelaySlider);
-
-		
 		
 		noAction = false;
 		return panel;
@@ -680,20 +684,20 @@ public class HolmesProgramProperties extends JFrame {
 	@SuppressWarnings("SameParameterValue")
 	private JPanel createClustersOptionsPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Clusters options"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinANAL_entry044")));
 		panel.setBounds(x, y, w, h);
 		
 		int io_x = 10;
 		int io_y = 15;
 		noAction = true;
 
-		JCheckBox binaryTinvCheckBox = checkboxWizard("Save t-invariants in CSV as binary vectors.", io_x, io_y, 360, 20, 
-				"analysisBinaryCSVInvariants", false);
+		JCheckBox binaryTinvCheckBox = checkboxWizard(lang.getText("HPPwinANAL_entry045"), io_x, io_y, 360, 20, 
+				"analysisBinaryCSVInvariants", false); //Save t-invariants in CSV as binary vectors.
 		panel.add(binaryTinvCheckBox);
 		
 		// Self-propelled read-arc regions ignored or not in feasible invariants algorith
-		JCheckBox feasInvSelfPropCheckBox = checkboxWizard("Allow presence of self-propelled readarc regions", io_x, io_y+=20, 360, 20, 
-				"analysisFeasibleSelfPropAccepted", true);
+		JCheckBox feasInvSelfPropCheckBox = checkboxWizard(lang.getText("HPPwinANAL_entry046"), io_x, io_y+=20, 360, 20, 
+				"analysisFeasibleSelfPropAccepted", true); //Allow presence of self-propelled readarc regions
 		panel.add(feasInvSelfPropCheckBox);
 		
 		noAction = false;
@@ -711,7 +715,7 @@ public class HolmesProgramProperties extends JFrame {
 	@SuppressWarnings("SameParameterValue")
 	private JPanel createClusteringPanel(int x, int y, int w, int h) {
 		JPanel panel = new JPanel(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Cluster algorithms options"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinANAL_entry047"))); //Cluster algorithms options
 		panel.setBounds(x, y, w, h);
 		
 		//int io_x = 10;
@@ -740,8 +744,8 @@ public class HolmesProgramProperties extends JFrame {
 		int io_y = 15;
 		noAction = true;
 		
-		JCheckBox cleanMCSusingStructureCheckBox = checkboxWizard("Eliminate MCS sets non directly connected with objR transition.", 
-				io_x, io_y, 400, 20, "analysisMCSReduction", true);
+		JCheckBox cleanMCSusingStructureCheckBox = checkboxWizard(lang.getText("HPPwinANAL_entry048"), 
+				io_x, io_y, 400, 20, "analysisMCSReduction", true); //Eliminate MCS sets non directly connected with objR transition.
 		panel.add(cleanMCSusingStructureCheckBox);
 		
 		
