@@ -17,7 +17,8 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class GRDFcalculator implements Runnable {
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private HolmesComparisonModule masterWindow = null;
     public GRDFcalculator() {
         masterWindow = GUIManager.getDefaultGUIManager().accessComparisonWindow();

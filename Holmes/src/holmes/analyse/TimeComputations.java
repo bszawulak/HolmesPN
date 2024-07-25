@@ -11,7 +11,8 @@ import holmes.petrinet.elements.Transition.TransitionType;
  * Klasa odpowiedzialna za działania związane z czasem w sieci Petriego.
  */
 public class TimeComputations {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Metoda zwraca wektor danych czasowych dla t-inwariantu.
 	 * @param invariant ArrayList[Integer] - t-inwariant
@@ -36,7 +37,7 @@ public class TimeComputations {
 		int dpnPureTrans = 0;
 		int tdpnTrans = 0;
 		if(invariant.size() != transitions.size()) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("TC_entry001"), "error", true);
+			overlord.log(lang.getText("TC_entry001"), "error", true);
 			return null;
 		}
 		

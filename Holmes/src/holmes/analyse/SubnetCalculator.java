@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
  * Klasa odpowiedzialna za dekompozycję PN do wybranych typów podsieci
  */
 public class SubnetCalculator implements Serializable {
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     public enum SubNetType {ZAJCEV, SNET, TNET, ADT, ADTcomp, ADP, OOSTUKI, TZ, HOU, NISHI, CYCLE, NotTzCycles, SMC, MCT, TINV, PINV, BV, Export}
 
     public static ArrayList<SubNet> functionalSubNets = new ArrayList<>();
@@ -60,12 +61,12 @@ public class SubnetCalculator implements Serializable {
      * Metoda odpowiedzialna za dekompozycję do podsieci funkcyjnych Zajcewa - nie mylić z sieciami funkcyjnymi
      */
     public static void compileElements() {
-        allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        allPlaces = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-        invMatrixT = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
-        invMatrixP = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix();
-        allNodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
-        allArcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
+        allTransitions = overlord.getWorkspace().getProject().getTransitions();
+        allPlaces = overlord.getWorkspace().getProject().getPlaces();
+        invMatrixT = overlord.getWorkspace().getProject().getT_InvMatrix();
+        invMatrixP = overlord.getWorkspace().getProject().getP_InvMatrix();
+        allNodes = overlord.getWorkspace().getProject().getNodes();
+        allArcs = overlord.getWorkspace().getProject().getArcs();
         usedNodes = new ArrayList<>();
     }
 
@@ -448,7 +449,7 @@ public class SubnetCalculator implements Serializable {
                 newConnections = false;
                 for (Integer next : newADTset) {
                     if (!local.contains(next))
-                        if (checkConnection(local, next, GUIManager.getDefaultGUIManager().getWorkspace().getProject())) {
+                        if (checkConnection(local, next, overlord.getWorkspace().getProject())) {
                             local.add(next);
                             newConnections = true;
                         }
@@ -471,7 +472,7 @@ public class SubnetCalculator implements Serializable {
     }
 
     public static void generateMCT() {
-        ArrayList<ArrayList<Transition>> mctsets = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTMatrix();
+        ArrayList<ArrayList<Transition>> mctsets = overlord.getWorkspace().getProject().getMCTMatrix();
         if (mctsets != null && !mctsets.isEmpty()) {
             for (ArrayList<Transition> mct : mctsets) {
                 mctSubNets.add(new SubNet(SubNetType.MCT, mct, null, null, null, null));
@@ -535,7 +536,7 @@ public class SubnetCalculator implements Serializable {
 
 
             if (!invMatrixT.isEmpty()) {
-                //ArrayList<ArrayList<Integer>> invMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+                //ArrayList<ArrayList<Integer>> invMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
                 ArrayList<ArrayList<Integer>> nonAssignedRows = new ArrayList<>();
 
                 for (int i = 0; i < invMatrixT.get(0).size(); i++) {
@@ -572,7 +573,7 @@ public class SubnetCalculator implements Serializable {
 
 
                     if (!newADTset.isEmpty()) {
-                        newADTset = getMaxSubConnection(newADTset, GUIManager.getDefaultGUIManager().getWorkspace().getProject());
+                        newADTset = getMaxSubConnection(newADTset, overlord.getWorkspace().getProject());
 
                         listOfusedTransitions.addAll(newADTset);
                         List<Integer> UniqueNumbers = listOfusedTransitions.stream().distinct().collect(Collectors.toList());
@@ -585,7 +586,7 @@ public class SubnetCalculator implements Serializable {
                      */
 
                     if (!newADTset.isEmpty()) {
-                        adtSubNets.add(new SubNet(SubNetType.ADTcomp, GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions(), null, null, newADTset, null));
+                        adtSubNets.add(new SubNet(SubNetType.ADTcomp, overlord.getWorkspace().getProject().getTransitions(), null, null, newADTset, null));
                         listOfusedTransitions.addAll(listOfusedTransitions);
                     }
                 }
@@ -824,7 +825,7 @@ public class SubnetCalculator implements Serializable {
 
         if (pn.getT_InvMatrix() != null) {
             if (!pn.getT_InvMatrix().isEmpty()) {
-                //ArrayList<ArrayList<Integer>> invMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+                //ArrayList<ArrayList<Integer>> invMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
                 ArrayList<ArrayList<Integer>> nonAssignedRows = new ArrayList<>();
 
                 for (int i = 0; i < pn.getT_InvMatrix().get(0).size(); i++) {
@@ -905,9 +906,9 @@ public class SubnetCalculator implements Serializable {
     public static void generateADP() {
         //cleanSubnets();
 
-        if (GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix() != null) {
-            if (!GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix().isEmpty()) {
-                ArrayList<ArrayList<Integer>> invMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix();
+        if (overlord.getWorkspace().getProject().getP_InvMatrix() != null) {
+            if (!overlord.getWorkspace().getProject().getP_InvMatrix().isEmpty()) {
+                ArrayList<ArrayList<Integer>> invMatrix = overlord.getWorkspace().getProject().getP_InvMatrix();
                 ArrayList<ArrayList<Integer>> nonAssignedRows = new ArrayList<>();
 
                 for (int i = 0; i < invMatrix.get(0).size(); i++) {
@@ -1936,7 +1937,7 @@ public class SubnetCalculator implements Serializable {
         }
 
         private ArrayList<Transition> getTransitionsForADT(ArrayList<Integer> maxADTset, ArrayList<Transition> transitions) {
-            //ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+            //ArrayList<Transition> allTransitions = overlord.getWorkspace().getProject().getTransitions();
             ArrayList<Transition> transitionsForADT = new ArrayList<>();
             for (Integer number : maxADTset) {
                 transitionsForADT.add(transitions.get(number));
@@ -1945,7 +1946,7 @@ public class SubnetCalculator implements Serializable {
         }
 
         private ArrayList<Transition> getTransitionsForADT(ArrayList<Integer> maxADTset) {
-            //ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+            //ArrayList<Transition> allTransitions = overlord.getWorkspace().getProject().getTransitions();
             ArrayList<Transition> transitionsForADT = new ArrayList<>();
             for (Integer number : maxADTset) {
                 transitionsForADT.add(allTransitions.get(number));
@@ -1954,7 +1955,7 @@ public class SubnetCalculator implements Serializable {
         }
 
         private ArrayList<Place> getTransitionsForADP(ArrayList<Integer> maxADPset) {
-            //ArrayList<Place> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+            //ArrayList<Place> allTransitions = overlord.getWorkspace().getProject().getPlaces();
             ArrayList<Place> transitionsForADT = new ArrayList<>();
             for (Integer number : maxADPset) {
                 transitionsForADT.add(allPlaces.get(number));

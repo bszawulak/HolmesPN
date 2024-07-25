@@ -2729,6 +2729,172 @@ LOGentry00525exception, Exception (1000254): HolmesSPNtransitionEditor.saveTrans
 HSPNTEwin_entry017, <html>&nbsp;Change & exit</html>
 HSPNTEwin_entry017t, One action back
 
+//HolmesSSAplacesEditor:
+HSSAwin_entry001title, Holmes SSA components editor
+LOGentry00526exception, Exception (1000255): HolmesSSAplacesEditor.HolmesSSAplacesEditor() failed:
+HSSAwin_entry002, SSA components vector data
+HSSAwin_entry003, SSA vector ID:
+HSSAwin_entry004, Data vector type:
+HSSAwin_entry005, SSA components table
+
+//HolmesSSAwindowManager:
+HSSAWMwin_entry001title, Holmes SSA vectors manager
+LOGentry00527exception, Exception (1000256): HolmesSSAwindowManager.HolmesSSAwindowManager() failed:
+HSSAWMwin_entry002, SSA vectors table
+HSSAWMwin_entry003, <html>Select SSA<br>&nbsp;&nbsp;&nbsp;&nbsp;vector&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSAWMwin_entry004op1, Set new SSA values
+HSSAWMwin_entry004op2, Keep old ones
+HSSAWMwin_entry004, Set all places of the net according to the selected\nSSA vector (table row: 
+HSSAWMwin_entry004t, Set new particles values?
+HSSAWMwin_entry005, <html>Add current<br/>SSA values</html>
+HSSAWMwin_entry006op1, Add new vector
+HSSAWMwin_entry006op2, Cancel
+HSSAWMwin_entry006, Remember current SSA particle numbers in the table?
+HSSAWMwin_entry006t, Add new SSA data vactor?
+HSSAWMwin_entry007, <html>&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>SSA values</html>
+HSSAWMwin_entry008, <html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>SSA vector</html>
+HSSAWMwin_entry009, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>SSA vector</html>
+HSSAWMwin_entry010, At least one SSA vector must remain!
+HSSAWMwin_entry011op1, Remove SSA vector
+HSSAWMwin_entry011op2, Cancel
+HSSAWMwin_entry011, Remove selected SSA vector from the table\n(table row:
+HSSAWMwin_entry011t, Remove SSA vector?
+HSSAWMwin_entry012, There are no places in the net!
+HSSAWMwin_entry013op1, Replace SSA vector
+HSSAWMwin_entry013op2, Cancel
+HSSAWMwin_entry013, Replace selected SSA vector (table row: %d)%nwith the current particle values?
+HSSAWMwin_entry013t, Replace SSA vector?
+HSSAWMwin_entry014, Others
+HSSAWMwin_entry015, State description:
+LOGentry00528exception, Exception (1000257): HolmesSSAwindowManager.cellClickAction() failed:
+
+//HolmesStatesEditor:
+HSEwin_entry001title, Holmes p-states editor
+LOGentry00529exception, Exception (1000258): HolmesStatesEditor.HolmesStatesEditor() failed:
+HSEwin_entry002, State vector data
+HSEwin_entry003, State vector ID:
+HSEwin_entry004, <html>&nbsp;Set tokens&nbsp;<br>in all places</html>
+HSEwin_entry004t, Sets same number of tokens in all places.
+HSEwin_entry005, New tokens number:
+HSEwin_entry006op1, Change all
+HSEwin_entry006op2, Cancel
+HSEwin_entry006, Change all current tokens numbers in state to the new value: 
+HSEwin_entry006t, Equalize tokens number?
+HSEwin_entry007, State vector table
+
+//HolmesStatesManager:
+HSMwin_entry001title, Holmes p-states manager
+LOGentry00530exception, Exception (1000259): HolmesStatesManager.HolmesStatesManager() failed:
+HSMwin_entry002, PN p-states
+HSMwin_entry002t, Petri net, TPN, DPN, SPN
+HSMwin_entry003, XTPN p-states
+HSMwin_entry003t, XTPN p-states manager
+HSMwin_entry004, XTPN state manager unavailable for normal nets.
+HSMwin_entry005, Normal state manager unavailable for XTPN nets.
+HSMwin_entry006, p-states table
+HSMwin_entry007, Buttons
+HSMwin_entry008, Set net state
+HSMwin_entry008t, Sets selected state as the active one and changes number of tokens in\nnet places according to values of the selected state.
+HSMwin_entry009, Please select state from the table.
+HSMwin_entry010op1, Set new state
+HSMwin_entry010op2, Keep current state
+HSMwin_entry010, Set all places of the net according to the selected (table row: %d) state?
+HSMwin_entry010t, Setting new state
+HSMwin_entry011, <html>Add current<br/>&nbsp;&nbsp;net state</html>
+HSMwin_entry011t, Create new state vector based on current net state (distribution of tokens in places)
+HSMwin_entry012op1, Add new state
+HSMwin_entry012op2, Cancel
+HSMwin_entry012, Add current net state to states table?
+HSMwin_entry012t, Adding new state
+HSMwin_entry013, <html>Create new<br/>state vector</html>
+HSMwin_entry013t, Create new and clean state vector (all tokens values set to 0).
+HSMwin_entry014op1, Add new state
+HSMwin_entry014op2, Cancel
+HSMwin_entry014, Add clean net state to states table?
+HSMwin_entry014t, Adding new clean state
+HSMwin_entry015, <html>&nbsp;&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;</html>
+HSMwin_entry015t, Replace the values of the selected state from the table with the current net places values.
+HSMwin_entry016, Please select state from the table.
+HSMwin_entry017, <html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;</html>
+HSMwin_entry017t, Removes state vector from project data.
+HSMwin_entry018, Please select state from the table.
+HSMwin_entry019, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>state vector</html>
+HSMwin_entry020, Please select state from the table.
+HSMwin_entry021, There are no places in the net!
+HSMwin_entry022, At least one net state must remain!
+HSMwin_entry023op1, Remove state
+HSMwin_entry023op2, Cancel
+HSMwin_entry023, Remove selected state (table row: %d) from the states table?
+HSMwin_entry023t, Removing state
+HSMwin_entry024op1, Replace state
+HSMwin_entry024op2, Cancel
+HSMwin_entry024, Replace selected state (table row: %d) with the current net state?
+HSMwin_entry024t, Replacing state
+HSMwin_entry025, State description:
+LOGentry00531exception, Exception (1000260): HolmesStatesManager.cellClickAction() failed:
+HSMwin_entry026title, XTPN p-states table
+HSMwin_entry027, Buttons
+HSMwin_entry028, <html><center>Restore<br>selected state</center></html>
+HSMwin_entry028t, <html>Use selected XTPN p-state as the active one and change number of tokens in<br>all net places according to values of the selected p-state.<html>
+HSMwin_entry029, Please select state from the table.
+HSMwin_entry029t, Selection problem
+HSMwin_entry030op1, Set new state
+HSMwin_entry030op2, Keep current state
+HSMwin_entry030, Set all places of the net according to the selected (table row: %d) p-state?
+HSMwin_entry030t, Setting new state
+HSMwin_entry031, Selected state corrupted, operation cancelled.
+HSMwin_entry032, <html><center>Store current<br>net state</center></html>
+HSMwin_entry032t, Store current XTPN net p-state as a state vector.
+HSMwin_entry033op1, Add new XTPN state
+HSMwin_entry033op2, Cancel
+HSMwin_entry033, Remember current XTPN p-state?
+HSMwin_entry033t, Adding new state
+HSMwin_entry034, <html><center>Create<br>clean state</center></html>
+HSMwin_entry034t, Create new clean p-state vector (no tokens, clean multisets).
+HSMwin_entry035op1, Add new XTPN state
+HSMwin_entry035op2, Cancel
+HSMwin_entry035, Add clean XTPN net state to states table?
+HSMwin_entry035t, New clean state
+HSMwin_entry036, <html><center>Overwrite<br>selected state</center></html>
+HSMwin_entry036t, <html>Replace the values of the selected XTPN p-state from the table<br>with the current XTPN net p-state.</html>
+HSMwin_entry037, Please select state from the table.
+HSMwin_entry038, <html><center>Remove<br>stored state</center></html>
+HSMwin_entry038t, Removes XTPN p-state vector from the project data.
+HSMwin_entry039, Please select p-state from the table.
+HSMwin_entry040, <html><center>XTPN<br>state editor</center></html>
+HSMwin_entry041, Opens p-state editor window based on the currently selected p-state.
+HSMwin_entry042, Please click on any XTPN p-state row.
+HSMwin_entry042t, No XTPN p-state selected
+HSMwin_entry043, There are no places in the net.
+HSMwin_entry044, At least one XTPN net state must remain.
+HSMwin_entry045op1, Remove XTPN state
+HSMwin_entry045op2, Cancel
+HSMwin_entry045, Remove selected XTPN state (table row: %d) from the states table?
+HSMwin_entry045t, Removing XTPN state
+HSMwin_entry046, Please select state from the table.
+HSMwin_entry047op1, Replace XTPN state
+HSMwin_entry047op2, Cancel
+HSMwin_entry047, Replace selected XTPN state (table row: %d) with the current XTPN net state?
+HSMwin_entry047t, Replacing XTPN state
+HSMwin_entry048, XTPN state description:
+LOGentry00532exception, Exception (1000261): HolmesStatesManager.cellClickActionXTPN() failed:
+
+//HolmesStatesEditorXTPN:
+HSEXwin_entry001title, Holmes XTPN p-states editor
+LOGentry00533exception, Exception (1000262): HolmesStatesEditorXTPN.HolmesStatesEditorXTPN() failed:
+HSEXwin_entry002, Error, state corrupted. State size: %d, places number: %d
+HSEXwin_entry003, State vector data
+HSEXwin_entry004, State vector ID:
+HSEXwin_entry005, XTPN p-state vector table
+LOGentry00534exception, Exception (1000263): HolmesStatesEditorXTPN.cellClickAction() failed:
+
+//InvariantsTools:
+LOGentry00535critError, Critical error (2000036): InvariantsTools.checkCoverability() failed. Invariants computational error. Do not trust this invariant set.
+LOGentry00536critError, Critical error (2000037): InvariantsTools.detectCovered() failed: typesVector size does not match invMatrix size.
+ITwin_entry001, The currently opened project does not match with loaded external invariants. \nPlease make sure you are loading the correct invariant file for the correct Petri net.
+ITwin_entry001t, Project mismatch error!
+ITwin_entry002, Invariants data matrix unavailable. Possible cause: invariants generation or reading from file failed.
+ITwin_entry002t, No invariants data
 
 //generalPurposeTags:
 add, Add

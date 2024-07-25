@@ -17,7 +17,8 @@ import holmes.petrinet.elements.Transition;
  * wymaga istniejących: miejsc, tranzycji oraz łuków (niepuste zbiory).
  */
 public class NetPropertiesAnalyzer {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<Arc> arcs;
 	private ArrayList<Place> places;
 	private ArrayList<Transition> transitions;
@@ -30,7 +31,7 @@ public class NetPropertiesAnalyzer {
 	 * Konstruktor domyślny obiektu klasy NetPropAnalyzer.
 	 */
 	public NetPropertiesAnalyzer() {
-		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
 		places = pn.getPlaces();
 		transitions = pn.getTransitions();
 		arcs = pn.getArcs();
@@ -294,7 +295,7 @@ public class NetPropertiesAnalyzer {
 		int mnNo = metaNodes.size();
 		int numberOfNodes = nodes.size();
 		if(tNo + pNo != numberOfNodes - mnNo) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("NPA_entry013")+ " "+pNo+ " "
+			overlord.log(lang.getText("NPA_entry013")+ " "+pNo+ " "
 					+lang.getText("NPA_entry013a")+" "+tNo+ " "+lang.getText("NPA_entry013b")+" "
 					+numberOfNodes+" "+lang.getText("NPA_entry013c")+" "+mnNo+".", "warning", true);
 		}

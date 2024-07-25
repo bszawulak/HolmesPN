@@ -32,8 +32,8 @@ import holmes.windows.HolmesNotepad;
  * @author MR (Nie chwaląc się, jam to popełnił)
  */
 public class InvariantsCalculator implements Runnable {
-    private GUIManager overlord;
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private ArrayList<Arc> arcs;
     private ArrayList<Place> places;
     private ArrayList<Transition> transitions;
@@ -65,7 +65,6 @@ public class InvariantsCalculator implements Runnable {
      * @param transCal boolean - true, jeśli liczymy T-inwarianty, false dla P-inwariantów
      */
     public InvariantsCalculator(boolean transCal) {
-        overlord = GUIManager.getDefaultGUIManager();
         masterWindow = overlord.accessInvariantsWindow();
 
         t_InvMode = transCal;
@@ -81,8 +80,6 @@ public class InvariantsCalculator implements Runnable {
      * @param pn PetriNet - sieć do analizy
      */
     public InvariantsCalculator(PetriNet pn) {
-        overlord = GUIManager.getDefaultGUIManager();
-
         t_InvMode = true;
         places = pn.getPlaces();
         transitions = pn.getTransitions();
@@ -99,8 +96,6 @@ public class InvariantsCalculator implements Runnable {
      * @param transCal boolean
      */
     public InvariantsCalculator(ArrayList<Place> places, ArrayList<Transition> transitions, ArrayList<Arc> arcs, boolean transCal) {
-        overlord = GUIManager.getDefaultGUIManager();
-
         t_InvMode = transCal;
         this.places = places;
         this.transitions = transitions;
@@ -149,7 +144,7 @@ public class InvariantsCalculator implements Runnable {
                 this.createTPIncidenceAndIdentityMatrix(false, t_InvMode);
                 this.calculateInvariants();
 
-                if (GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1")) {
+                if (overlord.getSettingsManager().getValue("analysisRemoveNonInv").equals("1")) {
                     logInternal("\n", false);
                     logInternal(lang.getText("IC_entry003") + "\n", false);
                     InvariantsCalculator minion_ic = new InvariantsCalculator(true);
@@ -165,7 +160,7 @@ public class InvariantsCalculator implements Runnable {
                     t_invariantsList = cleanInv;
                 }
 
-                if (GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1")) {
+                if (overlord.getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1")) {
                     logInternal("\n", false);
                     logInternal(lang.getText("IC_entry006") + "\n", false);
 
@@ -280,7 +275,7 @@ public class InvariantsCalculator implements Runnable {
                 this.createTPIncidenceAndIdentityMatrix(false, t_InvMode); //t_InvMode == false
                 this.calculateInvariants();
 
-                if (GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1")) {
+                if (overlord.getSettingsManager().getValue("analysisRemoveNonInv").equals("1")) {
                     logInternal("\n", false);
                     logInternal(lang.getText("IC_entry028") + "\n", false);
                     InvariantsCalculator minion_ic = new InvariantsCalculator(false);

@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.InvariantTransition;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
@@ -31,6 +32,8 @@ import holmes.petrinet.simulators.SimulationStep;
  * Klasa odpowiadzialna za symulację wykonywania inwariantów w sieci.
  */
 public class InvariantsSimulator {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private NetType simulationType;
 	private SimulatorMode mode;
 	private SimulatorMode previousMode = SimulatorMode.STOPPED;
@@ -159,8 +162,8 @@ public class InvariantsSimulator {
 		setMode(simulatorMode);
 		setSimulationActive(true);
 		ActionListener taskPerformer = new SimulationPerformer();
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
-		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
+		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
+		//overlord.getShortcutsBar().allowOnlySimulationDisruptButtons();
 		switch (getMode()) {
 			case LOOP -> taskPerformer = new StepPerformer(true, simType, stepValue);
 			case SINGLE_TRANSITION_LOOP -> taskPerformer = new SingleTransitionPerformer(true);
@@ -458,24 +461,24 @@ public class InvariantsSimulator {
 	 * Metoda obsługująca wciśnięcie przycisku zatrzymania symulacji.
 	 */
 	private void stopSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationInitiateButtons();
-		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationInitiateButtons();
+		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationInitiateButtons();
+		//overlord.getShortcutsBar().allowOnlySimulationInitiateButtons();
 		timer.stop();
 		previousMode = mode;
 		setMode(SimulatorMode.STOPPED);
 	}
 
 	private void pauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlyUnpauseButton();
-		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlyUnpauseButton();
+		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlyUnpauseButton();
+		//overlord.getShortcutsBar().allowOnlyUnpauseButton();
 		timer.stop();
 		previousMode = mode;
 		setMode(SimulatorMode.PAUSED);
 	}
 
 	private void unpauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
-		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
+		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
+		//overlord.getShortcutsBar().allowOnlySimulationDisruptButtons();
 		if (previousMode != SimulatorMode.STOPPED) {
 			timer.start();
 			setMode(previousMode);
@@ -488,7 +491,7 @@ public class InvariantsSimulator {
 
 	public void setSimulationActive(boolean simulationActive) {
 		this.simulationActive = simulationActive;
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setSimulationActive(isSimulationActive());
+		overlord.getWorkspace().getProject().setSimulationActive(isSimulationActive());
 	}
 
 	public int getNodesAmount() {
@@ -572,10 +575,10 @@ public class InvariantsSimulator {
 		protected int remainingTransitionsAmount = launchingTransitions.size();
 
 		protected void updateStep() {
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().incrementGraphicalSimulationStep();
+			overlord.getWorkspace().getProject().incrementGraphicalSimulationStep();
 
 			//tutaj nic si� nie dzieje: a chyba chodzi�o o update podokna w�a�ciwo�ci z liczb� token�w
-			//GUIManager.getDefaultGUIManager().getSimulatorBox().updateSimulatorProperties();
+			//overlord.getSimulatorBox().updateSimulatorProperties();
 		}
 
 		public void scheduleStop() {
@@ -633,7 +636,7 @@ public class InvariantsSimulator {
 					stopSimulation();
 					JOptionPane.showMessageDialog(null, "Backtracking ended", "No more available actions to backtrack!",
 							JOptionPane.INFORMATION_MESSAGE);
-					GUIManager.getDefaultGUIManager().log("Backtracking ended, no more available actions to backtrack.", "text", true);
+					overlord.log("Backtracking ended, no more available actions to backtrack.", "text", true);
 				}
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
@@ -791,7 +794,7 @@ public class InvariantsSimulator {
 							cloneTransitionArray(launchingTransitions)));
 					if (actionStack.peek().getPendingTransitions() == null) {
 						//SettingsManager.log("Yay");
-						GUIManager.getDefaultGUIManager().log("Uknown problem in actionPerformed(ActionEvent event) in InvariantsSimulator class", "error", true);
+						overlord.log("Uknown problem in actionPerformed(ActionEvent event) in InvariantsSimulator class", "error", true);
 					}
 					launchSubtractPhase(launchingTransitions, false);
 					subtractPhase = false;
@@ -801,7 +804,7 @@ public class InvariantsSimulator {
 					stopSimulation();
 					JOptionPane.showMessageDialog(null, "Simulation ended", "No more available steps!",
 							JOptionPane.INFORMATION_MESSAGE);
-					GUIManager.getDefaultGUIManager().log("Simulation ended, no more available steps.", "text", true);
+					overlord.log("Simulation ended, no more available steps.", "text", true);
 				}
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
@@ -833,7 +836,7 @@ public class InvariantsSimulator {
 						
 						invariantsWriter.write(invariants, foundInvariants);
 						
-						//GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().setEnabledInvariantSimulationInitiateButtons(true);
+						//overlord.getInvSimBox().getCurrentDockWindow().setEnabledInvariantSimulationInitiateButtons(true);
 				}
 				counter++;
 			} else {
@@ -878,7 +881,7 @@ public class InvariantsSimulator {
 					stopSimulation();
 					JOptionPane.showMessageDialog(null, "Simulation ended", "No more available steps!",
 							JOptionPane.INFORMATION_MESSAGE);
-					GUIManager.getDefaultGUIManager().log("Simulation ended, no more available steps.", "text", true);
+					overlord.log("Simulation ended, no more available steps.", "text", true);
 				}
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
@@ -931,7 +934,7 @@ public class InvariantsSimulator {
 			} catch (Exception e) {
 				System.err.println("Error: " + e.getMessage());
 				JOptionPane.showMessageDialog(null,"Program cannot write invariants into file", "Error", JOptionPane.ERROR_MESSAGE);
-				GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", true);
+				overlord.log(e.getMessage(), "error", true);
 			}
 		}
 	}

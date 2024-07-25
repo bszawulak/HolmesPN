@@ -8,7 +8,8 @@ import javax.swing.table.DefaultTableModel;
 
 public class GDDAcalculator implements Runnable {
     private HolmesComparisonModule masterWindow = null;
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
 
     public GDDAcalculator() {
         masterWindow = GUIManager.getDefaultGUIManager().accessComparisonWindow();

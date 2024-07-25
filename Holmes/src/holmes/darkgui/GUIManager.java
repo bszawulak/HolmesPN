@@ -770,8 +770,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Metoda zwraca obiekt - referencji swojej klasy.
-	 * @return GUIManager - obiekt managaera
+	 * Zwraca obiekt głównej, statycznej klasy Holmesa. Właściwie wszelka komunikacja klas ze sobą odbywa się
+	 * poprzez ten obiekt.
+	 * @return GUIManager - obiekt najwyażniejszej klasy/obiektu programu.
 	 */
 	public static GUIManager getDefaultGUIManager() {
 		return guiManager;

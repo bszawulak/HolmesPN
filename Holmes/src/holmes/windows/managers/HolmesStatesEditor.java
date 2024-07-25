@@ -25,6 +25,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.data.P_StateManager;
@@ -36,7 +37,8 @@ import holmes.utilities.Tools;
 public class HolmesStatesEditor extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -2088768019289555918L;
-	private final GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private final HolmesStatesManager parentWindow;
 	private StatesPlacesEditorTableModel tableModel;
 	private final StatePlacesVector stateVector;
@@ -53,13 +55,12 @@ public class HolmesStatesEditor extends JFrame {
 	 * @param stateIndex int - indeks powyższego wektora w tablicy
 	 */
 	public HolmesStatesEditor(HolmesStatesManager parent, StatePlacesVector stateVector, int stateIndex) {
-		setTitle("Holmes state editor");
+		setTitle(lang.getText("HSEwin_entry001title"));
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (258082266) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00529exception")+" "+ex.getMessage(), "error", true);
 		}
-    	this.overlord = GUIManager.getDefaultGUIManager();
 		PetriNet pn = overlord.getWorkspace().getProject();
     	this.parentWindow = parent;
     	this.stateVector = stateVector;
@@ -83,7 +84,6 @@ public class HolmesStatesEditor extends JFrame {
     	for(int p=0; p<size; p++) {
     		tableModel.addNew(p, places.get(p).getName(), stateVector.getTokens(p));
     	}
-    	
 		tableModel.fireTableDataChanged();
 	}
 	
@@ -109,7 +109,7 @@ public class HolmesStatesEditor extends JFrame {
 	private JPanel getTopPanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("State vector data"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSEwin_entry002"))); //State vector data
 		result.setPreferredSize(new Dimension(500, 100));
 		
 		JPanel filler = new JPanel(null);
@@ -117,7 +117,7 @@ public class HolmesStatesEditor extends JFrame {
 		int posX = 5;
 		int posY = 0;
 		
-		JLabel label0 = new JLabel("State vector ID: ");
+		JLabel label0 = new JLabel(lang.getText("HSEwin_entry003")); //State vector ID
 		label0.setBounds(posX, posY, 100, 20);
 		filler.add(label0);
 		
@@ -146,14 +146,14 @@ public class HolmesStatesEditor extends JFrame {
         CreationPanel.setBounds(posX, posY+=20, 600, 50);
         filler.add(CreationPanel);
         
-        JButton changeAllButton = new JButton("<html>&nbsp;Set tokens&nbsp;<br>in all places</html>");
+        JButton changeAllButton = new JButton(lang.getText("HSEwin_entry004")); //Set tokens in all places
         changeAllButton.setBounds(posX+620, posY, 120, 40);
         changeAllButton.setMargin(new Insets(0, 0, 0, 0));
 		changeAllButton.setFocusPainted(false);
-		changeAllButton.setToolTipText("Sets same number of tokens in all places.");
+		changeAllButton.setToolTipText(lang.getText("HSEwin_entry004t"));
 		changeAllButton.setIcon(Tools.getResIcon16("/icons/stateManager/changeAll.png"));
 		changeAllButton.addActionListener(actionEvent -> {
-			if(places.size() == 0) {
+			if(places.isEmpty()) {
 				return;
 			}
 
@@ -161,7 +161,7 @@ public class HolmesStatesEditor extends JFrame {
 		});
 		result.add(changeAllButton);
 		
-		JLabel locLabel = new JLabel("New tokens number:", JLabel.LEFT);
+		JLabel locLabel = new JLabel(lang.getText("HSEwin_entry005"), JLabel.LEFT); //New tokens number
 		locLabel.setBounds(posX+750, posY, 120, 20);
 		result.add(locLabel);
 		
@@ -182,17 +182,16 @@ public class HolmesStatesEditor extends JFrame {
 	 * Metoda zmienia liczbę tokenów w wektorze na podaną w oknie.
 	 */
 	protected void changeGlobalTokensNumber() {
-		Object[] options = {"Change all", "Cancel",};
+		Object[] options = {lang.getText("HSEwin_entry006op1"), lang.getText("HSEwin_entry006op2"),}; //Change all, Cancel
 		int n = JOptionPane.showOptionDialog(null,
-						"Change ALL current tokens in state to the new value: "+globalTokensNumber+"?",
-						"Change whole state?", JOptionPane.YES_NO_OPTION,
+						lang.getText("HSEwin_entry006")+" "+globalTokensNumber+"?",
+						lang.getText("HSEwin_entry006t"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 		if (n == 0) {
 			int size = stateVector.getSize();
 			for(int p=0; p<size; p++) {
 				stateVector.setTokens(p, globalTokensNumber);
 				tableModel.setQuietlyValueAt(globalTokensNumber, p, 2);
-
 				parentWindow.changeTableCell(stateIndex, p+2, globalTokensNumber, ( p == size - 1 ) );
 			}
 			tableModel.fireTableDataChanged();
@@ -206,7 +205,7 @@ public class HolmesStatesEditor extends JFrame {
 	public JPanel getMainTablePanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("State vector table"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSEwin_entry007"))); //State vector table
 		result.setPreferredSize(new Dimension(500, 500));
 		
 		tableModel = new StatesPlacesEditorTableModel(this, stateIndex);

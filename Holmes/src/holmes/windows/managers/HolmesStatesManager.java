@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.darkgui.GUIController;
 import holmes.petrinet.data.PetriNet;
@@ -32,7 +33,8 @@ public class HolmesStatesManager extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -4590055483268695118L;
 	private final JFrame ego;
-	private final GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private StatesPlacesTableModel tableModelPN;
 	private StatesPlacesTableModelXTPN tableModelXTPN;
 	private JTable statesTablePN;
@@ -49,13 +51,12 @@ public class HolmesStatesManager extends JFrame {
 	 * Główny konstruktor okna managera stanów początkowych.
 	 */
 	public HolmesStatesManager() {
-		setTitle("Holmes p-states states manager");
+		setTitle(lang.getText("HSMwin_entry001title"));
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (281108210) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00530exception")+" "+ex.getMessage(), "error", true);
 		}
-    	overlord = GUIManager.getDefaultGUIManager();
     	ego = this;
     	pn = overlord.getWorkspace().getProject();
     	places = pn.getPlaces();
@@ -92,7 +93,8 @@ public class HolmesStatesManager extends JFrame {
 		main.add(getButtonsPanel(), BorderLayout.EAST);
 
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("PN p-states", Tools.getResIcon22("/icons/stateManager/PNtab.png"), main, "Petri net, TPN, DPN, SPN");
+		tabbedPane.addTab(lang.getText("HSMwin_entry002"), Tools.getResIcon22("/icons/stateManager/PNtab.png"), //PN p-states 
+				main, lang.getText("HSMwin_entry002t")); //
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
 		JPanel mainXTPN = new JPanel(new BorderLayout());
@@ -104,25 +106,23 @@ public class HolmesStatesManager extends JFrame {
 		mainXTPN.add(getButtonsPanelXTPN(), BorderLayout.EAST);
 
 		//tabbedPane.addTab("XTPN", mainXTPN);
-		tabbedPane.addTab("XTPN p-states", Tools.getResIcon22("/icons/stateManager/XTPNtab.png"), mainXTPN, "XTPN p-states manager");
+		tabbedPane.addTab(lang.getText("HSMwin_entry003"), Tools.getResIcon22("/icons/stateManager/XTPNtab.png") //XTPN p-states
+				, mainXTPN, lang.getText("HSMwin_entry003t"));
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 		add(tabbedPane, BorderLayout.CENTER);
 
 		tabbedPane.addChangeListener(e -> {
 			int selected = ((JTabbedPane)e.getSource()).getSelectedIndex();
 			if(selected == 1 && GUIController.access().getCurrentNetType() != PetriNet.GlobalNetType.XTPN ) {
-				JOptionPane.showMessageDialog(null, "XTPN state manager unavailable for normal nets.",
-						"Wrong tab", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("HSMwin_entry004"),
+						lang.getText("problem"), JOptionPane.INFORMATION_MESSAGE);
 				((JTabbedPane)e.getSource()).setSelectedIndex(0);
 			} else if(selected == 0 && GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
-				JOptionPane.showMessageDialog(null, "Normal state manager unavailable for XTPN nets.",
-						"Wrong tab", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("HSMwin_entry005"),
+						lang.getText("problem"), JOptionPane.INFORMATION_MESSAGE);
 				((JTabbedPane) e.getSource()).setSelectedIndex(1);
 			}
-			//
-			//System.out.println("Tab: " + tabbedPane.getSelectedIndex());
 		});
-
 		if(GUIController.access().getCurrentNetType() == PetriNet.GlobalNetType.XTPN) {
 			tabbedPane.setSelectedIndex(1);
 		}
@@ -135,7 +135,7 @@ public class HolmesStatesManager extends JFrame {
 	public JPanel getMainTablePanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("p-states table"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSMwin_entry006"))); //p-states table
 		result.setPreferredSize(new Dimension(500, 500));
 		
 		tableModelPN = new StatesPlacesTableModel(places.size(), this);
@@ -177,7 +177,6 @@ public class HolmesStatesManager extends JFrame {
       	});
     	
     	statesTablePN.setRowSelectionAllowed(false);
-    	
     	statesTablePN.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		JScrollPane tableScrollPane = new JScrollPane(statesTablePN, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		result.add(tableScrollPane, BorderLayout.CENTER);
@@ -192,18 +191,17 @@ public class HolmesStatesManager extends JFrame {
 	@SuppressWarnings("UnusedAssignment")
 	public JPanel getButtonsPanel() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Buttons"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSMwin_entry007"))); //Buttons
 		result.setPreferredSize(new Dimension(150, 500));
 
 		int posXda = 10;
 		int posYda = 25;
 
-		JButton selectStateButton = new JButton("Set net state");
+		JButton selectStateButton = new JButton(lang.getText("HSMwin_entry008")); //Set net state
 		selectStateButton.setBounds(posXda, posYda, 130, 40);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
-		selectStateButton.setToolTipText("Sets selected state as the active one and changes number of tokens in\n"
-				+ "net places according to values of the selected state.");
+		selectStateButton.setToolTipText(lang.getText("HSMwin_entry008t"));
 		selectStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/selectStateIcon.png"));
 		selectStateButton.addActionListener(actionEvent -> {
 			if(places.isEmpty()) {
@@ -212,14 +210,14 @@ public class HolmesStatesManager extends JFrame {
 			}
 			int selected = statesTablePN.getSelectedRow();
 			if(selected == -1) {
-				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
-						JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("HSMwin_entry009")
+						, lang.getText("problem"), JOptionPane.INFORMATION_MESSAGE);
 			}
 
-			Object[] options = {"Set new state", "Keep current state",};
+			Object[] options = {lang.getText("HSMwin_entry010op1"), lang.getText("HSMwin_entry010op2"),}; //Set new state, Keep current state
+			String strB = String.format(lang.getText("HSMwin_entry010"), (selected+1));
 			int n = JOptionPane.showOptionDialog(null,
-							"Set all places of the net according to the selected (table row: "+(selected+1)+") state?",
-							"Setting new state", JOptionPane.YES_NO_OPTION,
+					strB, lang.getText("HSMwin_entry010t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				tableModelPN.setSelected(selected);
@@ -231,21 +229,21 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(selectStateButton);
 		
-		JButton addNewStateButton = new JButton("<html>Add current<br/>&nbsp;&nbsp;net state</html>");
+		JButton addNewStateButton = new JButton(lang.getText("HSMwin_entry011")); //Add new state
 		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
-		addNewStateButton.setToolTipText("Create new state vector based on current net state (distribution of tokens in places)");
+		addNewStateButton.setToolTipText(lang.getText("HSMwin_entry011t"));
 		addNewStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/addStateIcon.png"));
 		addNewStateButton.addActionListener(actionEvent -> {
 			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
-			Object[] options = {"Add new state", "Cancel",};
+			Object[] options = {lang.getText("HSMwin_entry012op1"), lang.getText("HSMwin_entry012op2"),}; //Add new state, Cancel
 			int n = JOptionPane.showOptionDialog(null,
-							"Add current net state to states table?",
-							"Adding new state", JOptionPane.YES_NO_OPTION,
+							lang.getText("HSMwin_entry012"),
+							lang.getText("HSMwin_entry012t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				statesManager.addCurrentStatePN();
@@ -255,21 +253,21 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewStateButton);
 		
-		JButton addNewCleanStateButton = new JButton("<html>Create new<br/>state vector</html>");
+		JButton addNewCleanStateButton = new JButton(lang.getText("HSMwin_entry013")); //Create new state vector
 		addNewCleanStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewCleanStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewCleanStateButton.setFocusPainted(false);
-		addNewCleanStateButton.setToolTipText("Create new and clean state vector (all tokens values set to 0).");
+		addNewCleanStateButton.setToolTipText(lang.getText("HSMwin_entry013t"));
 		addNewCleanStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/addCleanState.png"));
 		addNewCleanStateButton.addActionListener(actionEvent -> {
 			if(places.isEmpty()) {
 				noNetInfo();
 				return;
 			}
-			Object[] options = {"Add new state", "Cancel",};
+			Object[] options = {lang.getText("HSMwin_entry014op1"), lang.getText("HSMwin_entry014op2"),}; //Add new state, Cancel
 			int n = JOptionPane.showOptionDialog(null,
-							"Add clean net state to states table?",
-							"Adding new clean state", JOptionPane.YES_NO_OPTION,
+							lang.getText("HSMwin_entry014"),
+							lang.getText("HSMwin_entry014t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				statesManager.addNewCleanStatePN();
@@ -279,11 +277,11 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewCleanStateButton);
 		
-		JButton replaceStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;</html>");
+		JButton replaceStateButton = new JButton(lang.getText("HSMwin_entry015")); //Replace state
 		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
-		replaceStateButton.setToolTipText("Replace the values of the selected state from the table with the current net places values.");
+		replaceStateButton.setToolTipText(lang.getText("HSMwin_entry015t"));
 		replaceStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/replaceStateIcon.png"));
 		replaceStateButton.addActionListener(actionEvent -> {
 			if(places.isEmpty()) {
@@ -292,18 +290,18 @@ public class HolmesStatesManager extends JFrame {
 			}
 			int selected = statesTablePN.getSelectedRow();
 			if(selected == -1) {
-				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+				JOptionPane.showMessageDialog(null, lang.getText("HSMwin_entry016"), lang.getText("problem"),
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			replaceStateAction();
 		});
 		result.add(replaceStateButton);
 		
-		JButton removeStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;</html>");
+		JButton removeStateButton = new JButton(lang.getText("HSMwin_entry017")); //Remove state
 		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
-		removeStateButton.setToolTipText("Removes state vector from project data.");
+		removeStateButton.setToolTipText(lang.getText("HSMwin_entry017t"));
 		removeStateButton.setIcon(Tools.getResIcon16("/icons/stateManager/removeStateIcon.png"));
 		removeStateButton.addActionListener(actionEvent -> {
 			if(places.isEmpty()) {
@@ -312,14 +310,14 @@ public class HolmesStatesManager extends JFrame {
 			}
 			int selected = statesTablePN.getSelectedRow();
 			if(selected == -1) {
-				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+				JOptionPane.showMessageDialog(null, lang.getText("HSMwin_entry018"), lang.getText("problem"),
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			removeStateAction();
 		});
 		result.add(removeStateButton);
 		
-		JButton editStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>state vector</html>");
+		JButton editStateButton = new JButton(lang.getText("HSMwin_entry019")); //Edit state
 		editStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
@@ -333,10 +331,9 @@ public class HolmesStatesManager extends JFrame {
 			if(selected > -1) {
 				new HolmesStatesEditor((HolmesStatesManager)ego, statesManager.getStatePN(selected), selected);
 			} else {
-				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+				JOptionPane.showMessageDialog(null, lang.getText("HSMwin_entry020"), lang.getText("problem"),
 						JOptionPane.INFORMATION_MESSAGE);
 			}
-
 		});
 		result.add(editStateButton);
 		
@@ -347,8 +344,8 @@ public class HolmesStatesManager extends JFrame {
 	 * Krótki komunikat, że nie ma sieci.
 	 */
 	private void noNetInfo() {
-		JOptionPane.showMessageDialog(this, "There are no places in the net!", 
-				"No net", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(this, lang.getText("HSMwin_entry021"), 
+				lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 	}
 	
 	/**
@@ -358,16 +355,15 @@ public class HolmesStatesManager extends JFrame {
 		int selected = statesTablePN.getSelectedRow();
 		int states = statesManager.accessStateMatrix().size();
 		if(states == 1) {
-			JOptionPane.showMessageDialog(null, "At least one net state must remain!", 
-					"Warning",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("HSMwin_entry022"), 
+					lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
-		Object[] options = {"Remove state", "Cancel",};
+		Object[] options = {lang.getText("HSMwin_entry023op1"), lang.getText("HSMwin_entry023op2"),}; //Remove state, Cancel
+		String str = String.format(lang.getText("HSMwin_entry023"), (selected+1));
 		int n = JOptionPane.showOptionDialog(null,
-						"Remove selected state (table row: "+(selected+1)+") from the states table?",
-						"Removing state", JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+				str, lang.getText("HSMwin_entry023t"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
 		}
@@ -382,10 +378,10 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void replaceStateAction() {
 		int selected = statesTablePN.getSelectedRow();
-		Object[] options = {"Replace state", "Cancel",};
+		Object[] options = {lang.getText("HSMwin_entry024op1"), lang.getText("HSMwin_entry024op2"),}; //Replace state, Cancel
+		String strB = String.format(lang.getText("HSMwin_entry024"), (selected+1));
 		int n = JOptionPane.showOptionDialog(null,
-						"Replace selected state (table row: "+(selected+1)+") with the current net state?",
-						"Replacing state", JOptionPane.YES_NO_OPTION,
+				strB, lang.getText("HSMwin_entry024t"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
@@ -459,7 +455,7 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	public JPanel getBottomPanel() {
 		JPanel result = new JPanel(new BorderLayout());
-		result.setBorder(BorderFactory.createTitledBorder("State description:"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSMwin_entry025"))); //State description:
 		result.setPreferredSize(new Dimension(900, 150));
 
 		int posXda = 10;
@@ -487,8 +483,6 @@ public class HolmesStatesManager extends JFrame {
         CreationPanel.add(new JScrollPane(stateDescrTextAreaPN), BorderLayout.CENTER);
         CreationPanel.setBounds(posXda, posYda+25, 600, 100);
         result.add(CreationPanel, BorderLayout.CENTER);
-
-		
 	    return result;
 	}
 	
@@ -520,19 +514,16 @@ public class HolmesStatesManager extends JFrame {
 			selectedRow = statesTablePN.getSelectedRow();
 			fillDescriptionField();
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (581229108) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00531exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
-
-
 
 	//******************************************************************************
 	//******************************************************************************
 	//********************************    XTPN    **********************************
 	//******************************************************************************
 	//******************************************************************************
-
-
+	
 
 	/**
 	 * Tworzy panel główny tablicy stanów XTPN.
@@ -541,7 +532,7 @@ public class HolmesStatesManager extends JFrame {
 	public JPanel getMainTablePanelXTPN() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("p-states table"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSMwin_entry026title")));
 		result.setPreferredSize(new Dimension(500, 500));
 
 		tableModelXTPN = new StatesPlacesTableModelXTPN(places.size(), this);
@@ -590,19 +581,18 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	public JPanel getButtonsPanelXTPN() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Buttons"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSMwin_entry027"))); //Buttons
 		result.setPreferredSize(new Dimension(150, 500));
 
 		int posXda = 10;
 		int posYda = 25;
 
-		HolmesRoundedButton selectStateButton = new HolmesRoundedButton("<html><center>Restore<br>selected state</center></html>"
+		HolmesRoundedButton selectStateButton = new HolmesRoundedButton(lang.getText("HSMwin_entry028") //Set net state
 				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
 		selectStateButton.setBounds(posXda, posYda, 130, 40);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
-		selectStateButton.setToolTipText("<html>Use selected XTPN p-state as the active one and change number of tokens in<br>"
-				+ "all net places according to values of the selected p-state.<html>");
+		selectStateButton.setToolTipText(lang.getText("HSMwin_entry028t"));
 		selectStateButton.addActionListener(actionEvent -> {
 			if(places.isEmpty()) {
 				noNetInfoXTPN();
@@ -610,15 +600,15 @@ public class HolmesStatesManager extends JFrame {
 			}
 			int selected = statesTableXTPN.getSelectedRow();
 			if(selected == -1) {
-				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+				JOptionPane.showMessageDialog(null, lang.getText("HSMwin_entry029"), lang.getText("HSMwin_entry029t"),
 						JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 
-			Object[] options = {"Set new state", "Keep current state",};
+			Object[] options = {lang.getText("HSMwin_entry030op1"), lang.getText("HSMwin_entry030op2"),}; //Set new state, Keep current state
+			String strB = String.format(lang.getText("HSMwin_entry030"), (selected+1));
 			int n = JOptionPane.showOptionDialog(null,
-					"Set all places of the net according to the selected (table row: "+(selected+1)+") p-state?",
-					"Setting new state", JOptionPane.YES_NO_OPTION,
+					strB, lang.getText("HSMwin_entry030t"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				tableModelXTPN.setSelected(selected);
@@ -628,29 +618,29 @@ public class HolmesStatesManager extends JFrame {
 					tableModelXTPN.fireTableDataChanged();
 					overlord.markNetChange();
 				} else {
-					JOptionPane.showMessageDialog(this, "Selected state corrupted, operation cancelled.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this, lang.getText("HSMwin_entry031"),
+							lang.getText("error"), JOptionPane.ERROR_MESSAGE);
 				}
 
 			}
 		});
 		result.add(selectStateButton);
 
-		HolmesRoundedButton addNewStateButton = new HolmesRoundedButton("<html><center>Store current<br>net state</center></html>"
+		HolmesRoundedButton addNewStateButton = new HolmesRoundedButton(lang.getText("HSMwin_entry032") //Add new state
 				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
 		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
-		addNewStateButton.setToolTipText("Store current XTPN net p-state as a state vector.");
+		addNewStateButton.setToolTipText(lang.getText("HSMwin_entry032t"));
 		addNewStateButton.addActionListener(actionEvent -> {
 			if(places.isEmpty()) {
 				noNetInfoXTPN();
 				return;
 			}
-			Object[] options = {"Add new XTPN state", "Cancel",};
+			Object[] options = {lang.getText("HSMwin_entry033op1"), lang.getText("HSMwin_entry033op2"),}; //Add new XTPN state, Cancel
 			int n = JOptionPane.showOptionDialog(null,
-					"Remember current XTPN p-state?",
-					"New state", JOptionPane.YES_NO_OPTION,
+					lang.getText("HSMwin_entry033"),
+					lang.getText("HSMwin_entry033t"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				statesManager.createNewMultiset_M_basedOnNet();
@@ -660,21 +650,21 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewStateButton);
 
-		HolmesRoundedButton addNewCleanStateButton = new HolmesRoundedButton("<html><center>Create<br>clean state</center></html>"
+		HolmesRoundedButton addNewCleanStateButton = new HolmesRoundedButton(lang.getText("HSMwin_entry034") //Create new state vector
 				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
 		addNewCleanStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewCleanStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewCleanStateButton.setFocusPainted(false);
-		addNewCleanStateButton.setToolTipText("Create new clean p-state vector (no tokens, clean multisets).");
+		addNewCleanStateButton.setToolTipText(lang.getText("HSMwin_entry034t"));
 		addNewCleanStateButton.addActionListener(actionEvent -> {
 			if(places.isEmpty()) {
 				noNetInfoXTPN();
 				return;
 			}
-			Object[] options = {"Add new XTPN state", "Cancel",};
+			Object[] options = {lang.getText("HSMwin_entry035op1"), lang.getText("HSMwin_entry035op2"),}; //Add new XTPN state, Cancel
 			int n = JOptionPane.showOptionDialog(null,
-					"Add clean XTPN net state to states table?",
-					"New clean state", JOptionPane.YES_NO_OPTION,
+					lang.getText("HSMwin_entry035"),
+					lang.getText("HSMwin_entry035t"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				statesManager.addNewCleanMultiset_M();
@@ -684,12 +674,12 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(addNewCleanStateButton);
 
-		HolmesRoundedButton replaceStateButton = new HolmesRoundedButton("<html><center>Overwrite<br>selected state</center></html>"
+		HolmesRoundedButton replaceStateButton = new HolmesRoundedButton(lang.getText("HSMwin_entry036") //Overwrite selected state
 				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
 		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
-		replaceStateButton.setToolTipText("<html>Replace the values of the selected XTPN p-state from the table<br>with the current XTPN net p-state.</html>");
+		replaceStateButton.setToolTipText(lang.getText("HSMwin_entry036t"));
 		replaceStateButton.addActionListener(actionEvent -> {
 			if(places.isEmpty()) {
 				noNetInfoXTPN();
@@ -698,7 +688,7 @@ public class HolmesStatesManager extends JFrame {
 
 			int selected = statesTableXTPN.getSelectedRow();
 			if(selected == -1) {
-				JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+				JOptionPane.showMessageDialog(null, lang.getText("HSMwin_entry037"), lang.getText("problem"),
 						JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				replaceStateActionXTPN();
@@ -706,12 +696,12 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(replaceStateButton);
 
-		HolmesRoundedButton removeStateButton = new HolmesRoundedButton("<html><center>Remove<br>stored state</center></html>"
+		HolmesRoundedButton removeStateButton = new HolmesRoundedButton(lang.getText("HSMwin_entry038") //Remove stored state
 				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
 		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
-		removeStateButton.setToolTipText("Removes XTPN p-state vector from the project data.");
+		removeStateButton.setToolTipText(lang.getText("HSMwin_entry038t"));
 		removeStateButton.addActionListener(actionEvent -> {
 			if(places.isEmpty()) {
 				noNetInfoXTPN();
@@ -720,7 +710,7 @@ public class HolmesStatesManager extends JFrame {
 
 			int selected = statesTableXTPN.getSelectedRow();
 			if(selected == -1) {
-				JOptionPane.showMessageDialog(null, "Please select p-state from the table.", "Selection problem",
+				JOptionPane.showMessageDialog(null, lang.getText("HSMwin_entry039"), lang.getText("problem"),
 						JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				removeStateActionXTPN();
@@ -728,12 +718,12 @@ public class HolmesStatesManager extends JFrame {
 		});
 		result.add(removeStateButton);
 
-		HolmesRoundedButton editStateButton = new HolmesRoundedButton("<html><center>XTPN<br>state editor</center></html>"
+		HolmesRoundedButton editStateButton = new HolmesRoundedButton(lang.getText("HSMwin_entry040") //XTNP state editor
 				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
 		editStateButton.setBounds(posXda, posYda+50, 130, 40);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
-		editStateButton.setToolTipText("Opens p-state editor window based on the currently selected p-state.");
+		editStateButton.setToolTipText(lang.getText("HSMwin_entry041"));
 		editStateButton.addActionListener(actionEvent -> {
 			if(places.isEmpty()) {
 				noNetInfoXTPN();
@@ -743,8 +733,8 @@ public class HolmesStatesManager extends JFrame {
 			if(selected > -1)
 				new HolmesStatesEditorXTPN((HolmesStatesManager)ego, statesManager.getMultiset_M(selected), selected);
 			else {
-				JOptionPane.showMessageDialog(ego, "Please click on any XTPN p-state row.",
-						"No XTPN p-state selected", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(ego, lang.getText("HSMwin_entry042"),
+						lang.getText("HSMwin_entry042t"), JOptionPane.WARNING_MESSAGE);
 			}
 		});
 		result.add(editStateButton);
@@ -755,8 +745,8 @@ public class HolmesStatesManager extends JFrame {
 	 * Krótki komunikat, że nie ma sieci.
 	 */
 	private void noNetInfoXTPN() {
-		JOptionPane.showMessageDialog(this, "There are no places in the net.",
-				"No places", JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(this, lang.getText("HSMwin_entry043"),
+				lang.getText("error"), JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**
@@ -766,15 +756,15 @@ public class HolmesStatesManager extends JFrame {
 		int selected = statesTableXTPN.getSelectedRow();
 		int states = statesManager.accessStateMatrixXTPN().size();
 		if(states == 1) {
-			JOptionPane.showMessageDialog(null, "At least one XTPN net state must remain.",
-					"Warning",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("HSMwin_entry044"),
+					lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
-		Object[] options = {"Remove XTPN state", "Cancel",};
+		Object[] options = {lang.getText("HSMwin_entry045op1"), lang.getText("HSMwin_entry045op2"),}; //Remove XTPN state, Cancel
+		String str = String.format(lang.getText("HSMwin_entry045"), (selected+1));
 		int n = JOptionPane.showOptionDialog(null,
-				"Remove selected XTPN state (table row: "+(selected+1)+") from the states table?",
-				"Remove XTPN state", JOptionPane.YES_NO_OPTION,
+				str, lang.getText("HSMwin_entry045t"), JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
@@ -791,14 +781,14 @@ public class HolmesStatesManager extends JFrame {
 	private void replaceStateActionXTPN() {
 		int selected = statesTableXTPN.getSelectedRow();
 		if(selected == -1) {
-			JOptionPane.showMessageDialog(null, "Please select state from the table.", "Selection problem",
+			JOptionPane.showMessageDialog(null, lang.getText("HSMwin_entry046"), lang.getText("problem"),
 					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-		Object[] options = {"Replace XTPN state", "Cancel",};
+		Object[] options = {lang.getText("HSMwin_entry047op1"), lang.getText("HSMwin_entry047op2"),}; //Replace XTPN state, Cancel
+		String strB = String.format(lang.getText("HSMwin_entry047"), (selected+1));
 		int n = JOptionPane.showOptionDialog(null,
-				"Replace selected XTPN state (table row: "+(selected+1)+") with the current net state?",
-				"Replace XTPN state", JOptionPane.YES_NO_OPTION,
+				strB, lang.getText("HSMwin_entry047t"), JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
@@ -886,7 +876,7 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	public JPanel getBottomPanelXTPN() {
 		JPanel result = new JPanel(new BorderLayout());
-		result.setBorder(BorderFactory.createTitledBorder("XTPN state description:"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSMwin_entry048")));
 		result.setPreferredSize(new Dimension(900, 150));
 
 		int posXda = 10;
@@ -944,7 +934,7 @@ public class HolmesStatesManager extends JFrame {
 
 			fillDescriptionFieldXTPN();
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (164166738) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00532exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 

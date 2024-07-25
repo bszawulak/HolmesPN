@@ -18,6 +18,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SSAplacesManager;
 import holmes.petrinet.data.SSAplacesVector;
@@ -31,7 +32,8 @@ import holmes.utilities.Tools;
 public class HolmesSSAplacesEditor extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -6810858686209063022L;
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JFrame parentWindow;
 	private SSAplacesEditorTableModel tableModel;
 	private SSAplacesVector ssaVector;
@@ -49,13 +51,12 @@ public class HolmesSSAplacesEditor extends JFrame {
 	 * @param ssaIndex int - indeks powyższego wektora w tablicy
 	 */
 	public HolmesSSAplacesEditor(JFrame parent, SSAplacesVector ssaVector, int ssaIndex) {
-		setTitle("Holmes SSA components editor");
+		setTitle(lang.getText("HSSAwin_entry001title"));
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (343775994) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00526exception")+" "+ex.getMessage(), "error", true);
 		}
-    	this.overlord = GUIManager.getDefaultGUIManager();
 		PetriNet pn = overlord.getWorkspace().getProject();
     	this.parentWindow = parent;
     	this.ssaVector = ssaVector;
@@ -115,7 +116,7 @@ public class HolmesSSAplacesEditor extends JFrame {
 	private JPanel getTopPanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("SSA components vector data"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSSAwin_entry002"))); //SSA components vector data
 		result.setPreferredSize(new Dimension(500, 100));
 		
 		JPanel filler = new JPanel(null);
@@ -123,7 +124,7 @@ public class HolmesSSAplacesEditor extends JFrame {
 		int posX = 5;
 		int posY = 0;
 		
-		JLabel label0 = new JLabel("SSA vector ID: ");
+		JLabel label0 = new JLabel(lang.getText("HSSAwin_entry003")); //SSA vector ID:
 		label0.setBounds(posX, posY, 100, 20);
 		filler.add(label0);
 		
@@ -131,12 +132,12 @@ public class HolmesSSAplacesEditor extends JFrame {
 		labelID.setBounds(posX+110, posY, 100, 20);
 		filler.add(labelID);
 		
-		JLabel label1 = new JLabel("Data vector type:");
+		JLabel label1 = new JLabel(lang.getText("HSSAwin_entry004")); //Data vector type:
 		label1.setBounds(posX+220, posY, 100, 20);
 		filler.add(label1);
 		
 		
-		JLabel label2 = new JLabel(""+dataType+dataTypeUnits);
+		JLabel label2 = new JLabel(dataType+dataTypeUnits);
 		label2.setBounds(posX+330, posY, 230, 20);
 		filler.add(label2);
 
@@ -153,8 +154,6 @@ public class HolmesSSAplacesEditor extends JFrame {
             	}
             }
         });
-		
-		
 		
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
@@ -173,7 +172,7 @@ public class HolmesSSAplacesEditor extends JFrame {
 	public JPanel getMainTablePanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("SSA components table"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSSAwin_entry005"))); //SSA components table
 		result.setPreferredSize(new Dimension(500, 500));
 		
 		tableModel = new SSAplacesEditorTableModel(this, ssaIndex, dataType);

@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.swing.JOptionPane;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.InvariantTransition;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
@@ -52,6 +53,8 @@ import holmes.utilities.Tools;
  * isDoubleArc - zwraca informację, czy łuk jest podwójny<br>
  */
 public final class InvariantsTools {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private InvariantsTools() {} // to + final = klasa statyczna w NORMALNYM języku, jak np. C#
 
 	/**
@@ -186,9 +189,9 @@ public final class InvariantsTools {
 		
 		int elementsNumber;
 		if(t_inv)
-			elementsNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size();
+			elementsNumber = overlord.getWorkspace().getProject().getPlaces().size();
 		else
-			elementsNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+			elementsNumber = overlord.getWorkspace().getProject().getTransitions().size();
 		
 		for(int i=0; i<elementsNumber; i++) {
 			surPlacesVector.add(0);
@@ -238,8 +241,8 @@ public final class InvariantsTools {
 		results.add(markingVector);
 		
 		//inv types:
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setT_InvTypes(invTypes);
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setT_invTypesComputed(true);
+		overlord.getWorkspace().getProject().setT_InvTypes(invTypes);
+		overlord.getWorkspace().getProject().setT_invTypesComputed(true);
 		
 		return results;
 	}
@@ -273,8 +276,8 @@ public final class InvariantsTools {
 			}
 		}
 		//inv types:
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setT_InvTypes(invTypes);
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().setT_invTypesComputed(true);
+		overlord.getWorkspace().getProject().setT_InvTypes(invTypes);
+		overlord.getWorkspace().getProject().setT_invTypesComputed(true);
 	}
 	
 	public static ArrayList<ArrayList<Integer>> getOnlyRealInvariants(ArrayList<ArrayList<Integer>> CMatrix, 
@@ -565,9 +568,8 @@ public final class InvariantsTools {
 			 * na jakimś elemencie jest mniejszy, a nie tylko mniejszy/równy (CanInRefStrong > 0).
 			 */
 		} else {
-			System.out.println("checkCoverability: Niemożliwy stan został osiągnięty. Konkluzja: znajdź sobie inny zbiór inwariantów niż ten.");
-			GUIManager.getDefaultGUIManager().log("Error #5a4f7ff3d45 - please advise authors of the program. Thank you."
-					+ " P.S. Do not trust this invariant set. Use INA generator instead. Apologies again!", "warning", true);
+			//System.out.println("checkCoverability: Niemożliwy stan został osiągnięty. Konkluzja: znajdź sobie inny zbiór inwariantów niż ten.");
+			overlord.log(lang.getText("LOGentry00535critError"), "error", true);
 			return 3; //teoretycznie NIGDY nie powinniśmy się tu pojawić
 		}
 	}
@@ -905,16 +907,14 @@ public final class InvariantsTools {
 	public static ArrayList<Integer> detectCovered(ArrayList<ArrayList<Integer>> invMatrix) {
 		ArrayList<Integer> coveredTransSet = new ArrayList<Integer>();
 
-		ArrayList<Integer> typesVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessT_InvTypesVector();
+		ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
 		int invNumber = 0;
 
 		if(!invMatrix.isEmpty()) {
 			int invSize = invMatrix.get(0).size();
 			for (ArrayList<Integer> inv : invMatrix) {
 				if(typesVector.size() != invMatrix.size()) {
-					GUIManager.getDefaultGUIManager().log(
-							"Error (945439621) detectCovered method, typesVector size does not match invMatrix size.",
-							"error", true);
+					overlord.log(lang.getText("LOGentry00536critError"),"error", true);
 				}
 
 				//poprawka 29042024: ignoruj inwarianty nie będące typu Cx=0
@@ -955,7 +955,7 @@ public final class InvariantsTools {
 			}
 		} else {
 			if(t_inv) {
-				ArrayList<Transition> trans = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+				ArrayList<Transition> trans = overlord.getWorkspace().getProject().getTransitions();
 				if(trans != null && !trans.isEmpty()) {
 					int transSize = trans.size();
 					uncoveredTransSet = new ArrayList<Integer>();
@@ -964,7 +964,7 @@ public final class InvariantsTools {
 					}
 				}
 			} else {
-				ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+				ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 				if(places != null && !places.isEmpty()) {
 					int placesSize = places.size();
 					uncoveredTransSet = new ArrayList<Integer>();
@@ -986,7 +986,7 @@ public final class InvariantsTools {
 		InvariantTransition currentTransition;
 		ArrayList<ArrayList<InvariantTransition>> invariants2ndForm = null;
 		
-		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 		
 		if (invMatrix != null && !invMatrix.isEmpty()) {
 			invariants2ndForm = new ArrayList<ArrayList<InvariantTransition>>();
@@ -1007,17 +1007,16 @@ public final class InvariantsTools {
 				}
 			} else {
 				JOptionPane.showMessageDialog(null,
-					"The currently opened project does not match with loaded external invariants. \nPlease make sure you are loading the correct invariant file for the correct Petri net.",
-					"Project mismatch error!", JOptionPane.ERROR_MESSAGE);
-				GUIManager.getDefaultGUIManager().log("Error: the currently opened project does not match with loaded external invariants. Please make sure you are loading the correct invariant file for the correct Petri net.", "error", true);
+					lang.getText("ITwin_entry001"),
+					lang.getText("ITwin_entry001t"), JOptionPane.ERROR_MESSAGE);
+				overlord.log(lang.getText("ITwin_entry001"), "error", true);
 			}
 		} else {
 			JOptionPane.showMessageDialog(null,
-				"Invariants data matrix unavailable. Possible cause: invariants generation or reading from file failed.",
-				"No invariants data", JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log("Error: preparing invariants internal representation failed. 1st level invariants matrix unavailable.", "error", true);
+				lang.getText("ITwin_entry002"),
+				lang.getText("ITwin_entry002t"), JOptionPane.ERROR_MESSAGE);
+			overlord.log(lang.getText("ITwin_entry002"), "error", true);
 		}
-		
 		return invariants2ndForm;
 	}
 	
@@ -1154,7 +1153,7 @@ public final class InvariantsTools {
 			return frequency;
 		}
 		
-		ArrayList<Integer> typesVector = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessT_InvTypesVector();
+		ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
 		
 		int invNumber = invariants.size();
 		int invSize = invariants.get(0).size();
@@ -1206,7 +1205,7 @@ public final class InvariantsTools {
     public static ArrayList<ArrayList<Integer>> getExtendedT_invariantsInfo(ArrayList<ArrayList<Integer>> invMatrix,
     		boolean searchDoubleArcs) {
     	ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
-    	ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+    	ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
     	
     	//int invMatrixSize = invMatrix.size();
     	ArrayList<Integer> transIDdouble = new ArrayList<Integer>();
@@ -1275,7 +1274,7 @@ public final class InvariantsTools {
      */
     public static ArrayList<ArrayList<Integer>> getT_invInOutTransInfo(ArrayList<ArrayList<Integer>> invMatrix) {
     	ArrayList<ArrayList<Integer>> results = new ArrayList<ArrayList<Integer>>();
-    	ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+    	ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
     	
     	//int invMatrixSize = invMatrix.size();
 		for (ArrayList<Integer> invariant : invMatrix) {
@@ -1334,7 +1333,7 @@ public final class InvariantsTools {
 		//int invSize = invariants.size();
 		ArrayList<Integer> results = new ArrayList<Integer>();
 		ArrayList<Integer> readArcTransLocations = getReadArcTransitionsStatic();
-		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 
 		for (ArrayList<Integer> invariant : invariants) {
 			ArrayList<Integer> support = InvariantsTools.getSupport(invariant);
@@ -1406,8 +1405,8 @@ public final class InvariantsTools {
 	 */
 	public static ArrayList<Integer> getReadArcTransitionsStatic() {
 		ArrayList<Integer> raTrans = new ArrayList<Integer>();
-		ArrayList<Arc> arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
-		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Arc> arcs = overlord.getWorkspace().getProject().getArcs();
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 		
 		for(Arc a : arcs) {
 			if(a.getArcType() == TypeOfArc.READARC) { //tylko łuki odczytu
@@ -1445,7 +1444,7 @@ public final class InvariantsTools {
 				if(!connectedTransitions.contains(pos)) {
 					connectedTransitions.add(pos);
 				}// else {
-					//GUIManager.getDefaultGUIManager().log("Internal error, net structure not canonical.", "error", true);
+					//overlord.log("Internal error, net structure not canonical.", "error", true);
 				//}
 			}
 		}
@@ -1496,12 +1495,12 @@ public final class InvariantsTools {
 	 */
 	public static ArrayList<Integer> transInT_invariants() {
 		ArrayList<Integer> results = new ArrayList<Integer>();
-		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 		
 		for(int t=0; t<transitions.size(); t++)
 			results.add(0);
 		
-		ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+		ArrayList<ArrayList<Integer>> invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
 		if(invariantsMatrix == null || invariantsMatrix.isEmpty())
 			return results;
 

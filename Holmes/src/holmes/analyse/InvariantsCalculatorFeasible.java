@@ -23,7 +23,8 @@ import holmes.windows.HolmesInvariantsGenerator;
  * Andrea Sackmann, Monika Heiner, Ina Koch; BMC Bioinformatics, 2006, 7:482
  */
 public class InvariantsCalculatorFeasible {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private HolmesInvariantsGenerator masterWindow;
 	private String status = "";
 	private boolean success = false;
@@ -44,7 +45,7 @@ public class InvariantsCalculatorFeasible {
 	 * @param isTInv boolean - true jeśli to T-inwarianty, false jeśli P-inw.
 	 */
 	public InvariantsCalculatorFeasible(ArrayList<ArrayList<Integer>> invariants, boolean isTInv) {
-		masterWindow = GUIManager.getDefaultGUIManager().accessInvariantsWindow();
+		masterWindow = overlord.accessInvariantsWindow();
 		this.invariants = invariants;
 		this.tInv = isTInv;
 		f_invariantsCreated = new ArrayList<ArrayList<Integer>>();
@@ -63,9 +64,9 @@ public class InvariantsCalculatorFeasible {
 		}
 		
 		if(tInv) {
-			transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			transitions = overlord.getWorkspace().getProject().getTransitions();
 			readArcTransLocations = getReadArcTransitions();
-			allowSelfPropelledInvariants = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisFeasibleSelfPropAccepted").equals("1");
+			allowSelfPropelledInvariants = overlord.getSettingsManager().getValue("analysisFeasibleSelfPropAccepted").equals("1");
 			
 			if(mode == 0)
 				searchFTInvSimple();
@@ -454,7 +455,7 @@ public class InvariantsCalculatorFeasible {
 				if(!connectedTransitions.contains(pos)) {
 					connectedTransitions.add(pos);
 				} else {
-					GUIManager.getDefaultGUIManager().log("Internal error, net structure not canonical.", "error", true);
+					overlord.log("Internal error, net structure not canonical.", "error", true);
 				}
 				
 			}
@@ -487,7 +488,7 @@ public class InvariantsCalculatorFeasible {
 					if(!resultPlaces.contains(p))
 						resultPlaces.add(p);
 					else {
-						GUIManager.getDefaultGUIManager().log("Internal error, multiple readarcs, net not canonical. Place: "+p.getName(), "error", true);
+						overlord.log("Internal error, multiple readarcs, net not canonical. Place: "+p.getName(), "error", true);
 					}
 				}
 			}
@@ -517,7 +518,7 @@ public class InvariantsCalculatorFeasible {
 	 */
 	private ArrayList<Integer> getReadArcTransitions() {
 		ArrayList<Integer> raTrans = new ArrayList<Integer>();
-		ArrayList<Arc> arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs();
+		ArrayList<Arc> arcs = overlord.getWorkspace().getProject().getArcs();
 		for(Arc a : arcs) {
 			if(a.getArcType() == TypeOfArc.READARC) { //tylko łuki odczytu
 				Node node = a.getEndNode();

@@ -3,6 +3,7 @@ package holmes.analyse;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 
@@ -13,6 +14,8 @@ import holmes.petrinet.elements.Transition;
  * bazie inwariantów.
  */
 public class KnockoutCalculator {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	ArrayList<ArrayList<Integer>> calc_invariants;
 	ArrayList<Transition> calc_transitions;
 	ArrayList<Place> calc_places;
@@ -21,13 +24,13 @@ public class KnockoutCalculator {
 	 * Konstruktor klasy KnockoutCalculator
 	 */
 	public KnockoutCalculator() {
-		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix(); 
+		ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix(); 
     	if(invariants == null || invariants.isEmpty()) { //STEP 1: EM obliczono
     		return;
     	} else {
     		calc_invariants = invariants;
-    		calc_transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-    		calc_places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+    		calc_transitions = overlord.getWorkspace().getProject().getTransitions();
+    		calc_places = overlord.getWorkspace().getProject().getPlaces();
     	}
 	}
 	

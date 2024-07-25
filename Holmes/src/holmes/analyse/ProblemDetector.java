@@ -18,13 +18,12 @@ import holmes.petrinet.elements.Transition;
  * Klasa odpowiedzialna za wykrywanie potencjalnie problematycznych regionów sieci i ich kolorowanie.
  */
 public class ProblemDetector {
-	GUIManager overlord;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	PetriNet pn;
 	HolmesDockWindowsTable subwindow;
 
 	public ProblemDetector(HolmesDockWindowsTable holmesDockWindowsTable) {
-		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();
 		this.subwindow = holmesDockWindowsTable;
 	}
@@ -354,7 +353,7 @@ public class ProblemDetector {
 					"No t-invariants", JOptionPane.WARNING_MESSAGE);
 			return null;
 		}
-		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 		
 		ArrayList<Object> res_places = new ArrayList<Object>();
 		ArrayList<Object> res_descr = new ArrayList<Object>();

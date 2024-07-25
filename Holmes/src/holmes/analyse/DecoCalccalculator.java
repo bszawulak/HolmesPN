@@ -10,7 +10,8 @@ import java.awt.*;
 
 public class DecoCalccalculator implements Runnable {
     private HolmesComparisonModule masterWindow = null;
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
 
     public DecoCalccalculator() {
         masterWindow = GUIManager.getDefaultGUIManager().accessComparisonWindow();
@@ -36,7 +37,7 @@ public class DecoCalccalculator implements Runnable {
     private void tComponent() {
         if (SubnetCalculator.tinvSubNets == null || SubnetCalculator.tinvSubNets.isEmpty()) {
             JOptionPane jpo = new JOptionPane(lang.getText("DCC_entry002")); //No t-invariants sets!
-            GUIManager.getDefaultGUIManager().showDecoWindow();
+            overlord.showDecoWindow();
         } else {
             masterWindow.listOfTablesDec.clear();
             InvariantsCalculator ic = new InvariantsCalculator(masterWindow.secondNet);
@@ -62,7 +63,7 @@ public class DecoCalccalculator implements Runnable {
     private void tnetThred() {
         if (SubnetCalculator.tnetSubNets == null || SubnetCalculator.tnetSubNets.isEmpty()) {
             JOptionPane jpo = new JOptionPane(lang.getText("DCC_entry006")); //No t-nets sets!
-            GUIManager.getDefaultGUIManager().showDecoWindow();
+            overlord.showDecoWindow();
         } else {
             masterWindow.listOfTablesDec.clear();
             InvariantsCalculator ic = new InvariantsCalculator(masterWindow.secondNet);
@@ -88,7 +89,7 @@ public class DecoCalccalculator implements Runnable {
     private void adtThred() {
         if (SubnetCalculator.adtSubNets == null || SubnetCalculator.adtSubNets.isEmpty()) {
             JOptionPane jpo = new JOptionPane(lang.getText("DCC_entry009")); //No ADT sets!
-            GUIManager.getDefaultGUIManager().showDecoWindow();
+            overlord.showDecoWindow();
         } else {
             masterWindow.listOfTablesDec.clear();
             InvariantsCalculator ic = new InvariantsCalculator(masterWindow.secondNet);
@@ -114,7 +115,7 @@ public class DecoCalccalculator implements Runnable {
     private void functionalThred() {
         if (SubnetCalculator.functionalSubNets == null || SubnetCalculator.functionalSubNets.isEmpty()) {
             JOptionPane jpo = new JOptionPane(lang.getText("DCC_entry013")); //No ADT sets!
-            GUIManager.getDefaultGUIManager().showDecoWindow();
+            overlord.showDecoWindow();
         } else {
             masterWindow.listOfTablesDec.clear();
             masterWindow.seconNetList = SubnetCalculator.generateFunctionalFromSecondNet(masterWindow.secondNet);// generateADTFromSecondNet(masterWindow.secondNet);

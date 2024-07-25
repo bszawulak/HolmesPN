@@ -14,7 +14,8 @@ import holmes.petrinet.elements.Transition;
  * M. Heiner, Algorithmic Bioprocesses, Natural Computing Series, 2009, pp. 367-389
  */
 public class MDTSCalculator {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	ArrayList<ArrayList<Integer>> tmpInvariantsMatrix;
 	ArrayList<Transition> calc_transitions;
 	int invariantsNumber;
@@ -24,13 +25,13 @@ public class MDTSCalculator {
 	 * Konstruktor klasy MDTSCalculator przygotowujący podstawowe struktury danych.
 	 */
 	public MDTSCalculator() {
-		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix(); 
+		ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix(); 
     	if(invariants == null || invariants.isEmpty()) { //STEP 1: EM obliczono
-    		GUIManager.getDefaultGUIManager().log(lang.getText("MDTS_entry001"), "errer", true);
+			overlord.log(lang.getText("MDTS_entry001"), "errer", true);
     	} else {
     		invariantsNumber = invariants.size(); //wiersze w notacji pierwszej
     		tmpInvariantsMatrix = InvariantsTools.transposeMatrix(invariants); //na potrzeby algorytmu: teraz inw to kolumny
-    		calc_transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+    		calc_transitions = overlord.getWorkspace().getProject().getTransitions();
     		transitionsNumber = calc_transitions.size();
     	}
 	}

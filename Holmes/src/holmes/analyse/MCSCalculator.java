@@ -23,7 +23,8 @@ import holmes.windows.HolmesMCS;
  * Bioinformatics, 2004, 20, pp. 226-234
  */
 public class MCSCalculator implements Runnable {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
     private ArrayList<ArrayList<Integer>> em_obR;
     private ArrayList<Integer> em_obRinvID;
     private ArrayList<Integer> transitions;
@@ -102,7 +103,7 @@ public class MCSCalculator implements Runnable {
 			}
 		} catch (OutOfMemoryError e) { // pray...
 			precutsets = null;
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOG_entry0071_exception"), "error", true);
+			overlord.log(lang.getText("LOG_entry0071_exception"), "error", true);
 			addNewDataVector(mcs);
 			showMCS();
 			masterWindow.resetMCSGenerator();
@@ -391,11 +392,11 @@ public class MCSCalculator implements Runnable {
      */
     private void addNewDataVector(ArrayList<Set<Integer>> results) {
     	//TODO:
-    	ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+    	ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
     	ArrayList<ArrayList<Integer>> mcsInfoMatrix = new ArrayList<ArrayList<Integer>>();
 		ArrayList<ArrayList<Integer>> mcsDataMatrix = new ArrayList<ArrayList<Integer>>();
 		
-    	if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisMCSReduction").equals("1")) {	
+    	if(overlord.getSettingsManager().getValue("analysisMCSReduction").equals("1")) {	
     		for(Set<Integer> mcsSet : results) {
 				ArrayList<Integer> mcsSetData = new ArrayList<Integer>(mcsSet);
     			Collections.sort(mcsSetData);	
@@ -436,7 +437,7 @@ public class MCSCalculator implements Runnable {
     			mcsInfoMatrix.add(mcsInfo);
     		}
     	}
-		MCSDataMatrix mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+		MCSDataMatrix mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
 		mcsd.insertMCS(mcsDataMatrix, mcsInfoMatrix, objective_Reaction, askBeforeAdd);
 	}
 

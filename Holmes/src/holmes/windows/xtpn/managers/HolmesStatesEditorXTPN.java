@@ -17,6 +17,7 @@ import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.P_StateManager;
 import holmes.petrinet.data.MultisetM;
@@ -31,6 +32,8 @@ import holmes.windows.xtpn.HolmesXTPNtokens;
 public class HolmesStatesEditorXTPN extends JFrame {
     @Serial
     private static final long serialVersionUID = 3176765993380657329L;
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private HolmesStatesManager parentWindow;
     private RXTable multisetsTable;
     private StatesPlacesEditorTableModelXTPN tableModel;
@@ -48,11 +51,11 @@ public class HolmesStatesEditorXTPN extends JFrame {
      * @param stateIndex <b>int</b> - indeks powyższego wektora w tablicy
      */
     public HolmesStatesEditorXTPN(HolmesStatesManager parent, MultisetM stateVector, int stateIndex) {
-        setTitle("Holmes p-state editor XTPN");
+        setTitle(lang.getText("HSEXwin_entry001title"));
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log("Error (640125897) | Exception:  "+ex.getMessage(), "error", true);
+            GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00533exception")+" "+ex.getMessage(), "error", true);
         }
         doNotUpdate = true;
         GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -79,14 +82,15 @@ public class HolmesStatesEditorXTPN extends JFrame {
         tableModel.clearModel();
         int size = multisetM.getMultiset_M_Size();
         if(size != places.size()) {
-            GUIManager.getDefaultGUIManager().log("Error, state corrupted. State size: "+size+", places number:"+places.size(),"error", true);
+            String strB = String.format(lang.getText("HSEXwin_entry002"), size, places.size());
+            GUIManager.getDefaultGUIManager().log(strB,"error", true);
             return;
         }
         for(int placeIndex=0; placeIndex<size; placeIndex++) {
             ArrayList<Double> multisetK = multisetM.accessMultiset_K(placeIndex);
             boolean isXTPNplace = multisetM.isPlaceStoredAsGammaActive(placeIndex);
             StringBuilder line = new StringBuilder();
-            if(multisetK.size() == 0) { //jeśli nic nie ma w multizbiorze
+            if(multisetK.isEmpty()) { //jeśli nic nie ma w multizbiorze
                 if(isXTPNplace) {
                     line.append(" <empty> "); //puste miejsce XTPN
                 } else { //liczba tokenów miejsca klasycznego:
@@ -129,7 +133,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
     private JPanel getTopPanel() {
         JPanel result = new JPanel(new BorderLayout());
         result.setLocation(0, 0);
-        result.setBorder(BorderFactory.createTitledBorder("State vector data"));
+        result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSEXwin_entry003"))); //State vector data
         result.setPreferredSize(new Dimension(500, 100));
 
         JPanel filler = new JPanel(null);
@@ -137,7 +141,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
         int posX = 5;
         int posY = 0;
 
-        JLabel label0 = new JLabel("State vector ID: ");
+        JLabel label0 = new JLabel(lang.getText("HSEXwin_entry004")); //State vector ID:
         label0.setBounds(posX, posY, 100, 20);
         filler.add(label0);
 
@@ -177,7 +181,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
     public JPanel getMainTablePanel() {
         JPanel result = new JPanel(new BorderLayout());
         result.setLocation(0, 0);
-        result.setBorder(BorderFactory.createTitledBorder("p-state vector table"));
+        result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSEXwin_entry005"))); //XTPN p-state vector table
         result.setPreferredSize(new Dimension(500, 500));
 
         tableModel = new StatesPlacesEditorTableModelXTPN(this, stateIndex);
@@ -240,7 +244,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
                     , this, multisetM.accessMultiset_K(selectedPlace)
                     , multisetM.isPlaceStoredAsGammaActive(selectedPlace));
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log("Error (860120239) | Exception:  "+ex.getMessage(), "error", true);
+            GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00534exception")+ " "+ex.getMessage(), "error", true);
         }
     }
 
