@@ -16,11 +16,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.utilities.Tools;
 
 public class HolmesClusterConfig extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 1694133455242675169L;
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 
 	private ArrayList<String> commandsValidate;
 	private HolmesClusters boss;
@@ -96,13 +98,13 @@ public class HolmesClusterConfig extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (656756737) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00504exception")+" "+ex.getMessage(), "error", true);
 		}
 		commandsValidate = comm;
 		boss = parent;
 		
 		setVisible(false);
-		this.setTitle("Clustering config");
+		this.setTitle(lang.getText("HCCwin_entry003"));
 		
 		setLayout(new BorderLayout());
 		setSize(new Dimension(1050, 300));
@@ -144,7 +146,7 @@ public class HolmesClusterConfig extends JFrame {
 	private JPanel createUpPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Search options"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HCCwin_entry002")));
 		//panel.setBounds(x, y, width, height);
 		panel.setLocation(x, y);
 		panel.setPreferredSize(new Dimension(width, height));
@@ -152,7 +154,7 @@ public class HolmesClusterConfig extends JFrame {
 		int posX = 10;
 		int posY = 20;
 		
-		JButton cleanAllCB = new JButton("Clean All");
+		JButton cleanAllCB = new JButton(lang.getText("HCCwin_entry003")); //Clean All
 		cleanAllCB.setBounds(posX, posY, 140, 20);
 		cleanAllCB.addActionListener(actionEvent -> {
 			commandsValidate.clear();
@@ -161,7 +163,7 @@ public class HolmesClusterConfig extends JFrame {
 		cleanAllCB.setSelected(true);
 		panel.add(cleanAllCB);
 		
-		JButton setAllCB = new JButton("Set All");
+		JButton setAllCB = new JButton(lang.getText("HCCwin_entry004")); //Set All
 		setAllCB.setBounds(posX+150, posY, 140, 20);
 		setAllCB.addActionListener(actionEvent -> {
 			commandsAddAll();
@@ -170,7 +172,7 @@ public class HolmesClusterConfig extends JFrame {
 		setAllCB.setSelected(true);
 		panel.add(setAllCB);
 		
-		JButton pearsonsCB = new JButton("PearsonOnly");
+		JButton pearsonsCB = new JButton(lang.getText("HCCwin_entry005")); //PearsonOnly
 		pearsonsCB.setBounds(posX+300, posY, 140, 20);
 		pearsonsCB.addActionListener(actionEvent -> {
 			selectPearsonOnly();
@@ -194,7 +196,7 @@ public class HolmesClusterConfig extends JFrame {
 	private JPanel createBottomPanel(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Cluster options"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HCCwin_entry006"))); //Cluster options
 		//panel.setBounds(x, y, width, height);
 		panel.setLocation(x, y);
 		panel.setPreferredSize(new Dimension(width, height));
@@ -1009,8 +1011,7 @@ public class HolmesClusterConfig extends JFrame {
 		});
 		minWardCB.setSelected(true);
 		panel.add(minWardCB);
-		
-		
+
 		return panel;
 	}
 	
@@ -1028,9 +1029,9 @@ public class HolmesClusterConfig extends JFrame {
     	
     	addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		    	if(commandsValidate.size() == 0) {
-		    		JOptionPane.showMessageDialog(null, "At least one clustering method must be chosen."
-		    				+ "\nSelecting CorrelatedPearson-Average(UPGMA)","Problem", JOptionPane.WARNING_MESSAGE);
+		    	if(commandsValidate.isEmpty()) {
+		    		JOptionPane.showMessageDialog(null, lang.getText("HCCwin_entry007")
+							,lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 		    	}
 		    	commandsValidate.add("\"correlation\",\"average\"");
 		    	
@@ -1191,6 +1192,4 @@ public class HolmesClusterConfig extends JFrame {
     	commandsValidate.add("\"pearson\",\"single\"");
     	commandsValidate.add("\"pearson\",\"ward\"");
     }
-    
-    
 }

@@ -28,6 +28,7 @@ import holmes.clusters.ClusterDataPackage;
 import holmes.clusters.Clustering;
 import holmes.clusters.ClusteringExtended;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.files.clusters.ClusterReader;
 import holmes.files.clusters.ClusteringExcelWriter;
 import holmes.utilities.Tools;
@@ -40,6 +41,8 @@ import holmes.workspace.ExtensionFileFilter;
 public class HolmesClusterSubWindow extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 6818230680946396781L;
+	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private JFrame parentFrame;
 	private Clustering clusteringMetaData;
 	private String nL = "\n";
@@ -73,7 +76,7 @@ public class HolmesClusterSubWindow extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (536032607) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00510exception")+" "+ex.getMessage(), "error", true);
 		}
 		clusterPath = parent.getClusterPath();
 		this.clusteringMetaData = dataPackage;
@@ -112,20 +115,21 @@ public class HolmesClusterSubWindow extends JFrame {
 		setVisible(true);
 		
 		if(clusteringMetaData != null) {
-			area.append("Algorithm name: "+clusteringMetaData.algorithmName+nL);
-			area.append("Metric name: "+clusteringMetaData.metricName+nL);
+			area.append(lang.getText("HCSWwin_entry002")+" "+clusteringMetaData.algorithmName+nL); //Algorithm name
+			area.append(lang.getText("HCSWwin_entry003")+" "+clusteringMetaData.metricName+nL); //Metric name
 			area.append(nL);
-			area.append("Invariants number: "+clusteringMetaData.invNumber+nL);
-			area.append("Clusters number: "+clusteringMetaData.clusterNumber+nL);
-			area.append("Zero-clusters: "+clusteringMetaData.zeroClusters+nL);
-			area.append("MSS evaluation: "+clusteringMetaData.evalMSS+nL);
-			area.append("C-H evaluation: "+clusteringMetaData.evalCH+nL);
+			area.append(lang.getText("HCSWwin_entry004")+" "+clusteringMetaData.invNumber+nL); //Invariants number
+			area.append(lang.getText("HCSWwin_entry005")+" "+clusteringMetaData.clusterNumber+nL); //Clusters number
+			area.append(lang.getText("HCSWwin_entry006")+" "+clusteringMetaData.zeroClusters+nL); //Zero-clusters
+			area.append(lang.getText("HCSWwin_entry007")+" "+clusteringMetaData.evalMSS+nL); //MSS evaluation
+			area.append(lang.getText("HCSWwin_entry008")+" "+clusteringMetaData.evalCH+nL); //C-H evaluation
 			area.append(nL);
 			
 			//kolejne wiersze z MSS dla klastrów:
 			for(int i=0; i<clusteringMetaData.clusterNumber; i++) {
 				String value = getMSSFormatted(clusteringMetaData.clusterMSS.get(i));
-				area.append("Cluster "+i+" size: "+clusteringMetaData.clusterSize.get(i)+"  MSS: "+value+nL);
+				String strB = String.format(lang.getText("HCSWwin_entry009"), i, clusteringMetaData.clusterSize.get(i), value);
+				area.append(strB);
 				//area.append("Cluster "+i+" size: "+clusteringMetaData.clusterSize[i]+"  MSS: "+clusteringMetaData.clusterMSS[i]+nL);
 			}
 			area.append(nL);
@@ -160,8 +164,9 @@ public class HolmesClusterSubWindow extends JFrame {
 	 * @param dataPackage Clustering - dane do wyświetlenia
 	 */
 	private void initiateExtendedMode(HolmesClusters parent, Clustering dataPackage) {
-		this.setTitle("Details for "+dataPackage.clusterNumber + " clusters from " 
-				+dataPackage.algorithmName + "/"+dataPackage.metricName);
+		String strB = String.format(lang.getText("HCSWwin_entry001title")
+				, dataPackage.clusterNumber, dataPackage.algorithmName, dataPackage.metricName);
+		this.setTitle(strB);
 
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setMinimumSize(new Dimension(600, 600));
@@ -183,62 +188,55 @@ public class HolmesClusterSubWindow extends JFrame {
 		
 		if(clusteringMetaData != null) {
 			try {
-				doc.insertString(doc.getLength(), Tools.setToSize("Algorithm name: ",20,false), doc.getStyle("regular"));
+				doc.insertString(doc.getLength(), Tools.setToSize(lang.getText("HCSWwin_entry010")+" ",20,false), doc.getStyle("regular"));
 				doc.insertString(doc.getLength(), clusteringMetaData.algorithmName+nL, doc.getStyle("bold"));
 		    	
-				doc.insertString(doc.getLength(), Tools.setToSize("Metric name: ",20,false), doc.getStyle("regular"));
+				doc.insertString(doc.getLength(), Tools.setToSize(lang.getText("HCSWwin_entry011")+" ",20,false), doc.getStyle("regular"));
 				doc.insertString(doc.getLength(), clusteringMetaData.metricName+nL, doc.getStyle("bold"));
 				
 		    	doc.insertString(doc.getLength(), nL, doc.getStyle("regular"));
 		    	
-		    	doc.insertString(doc.getLength(), Tools.setToSize("Invariants number: ",20,false), doc.getStyle("regular"));
+		    	doc.insertString(doc.getLength(), Tools.setToSize(lang.getText("HCSWwin_entry012")+" ",20,false), doc.getStyle("regular"));
 		    	doc.insertString(doc.getLength(), clusteringMetaData.invNumber+nL, doc.getStyle("bold"));
 		    	
-		    	doc.insertString(doc.getLength(), Tools.setToSize("Clusters number: ",20,false), doc.getStyle("regular"));
+		    	doc.insertString(doc.getLength(), Tools.setToSize(lang.getText("HCSWwin_entry013")+" ",20,false), doc.getStyle("regular"));
 		    	doc.insertString(doc.getLength(), clusteringMetaData.clusterNumber+nL, doc.getStyle("bold"));
 		    	
-		    	doc.insertString(doc.getLength(), Tools.setToSize("Zero-clusters: ",20,false), doc.getStyle("regular"));
+		    	doc.insertString(doc.getLength(), Tools.setToSize(lang.getText("HCSWwin_entry014")+" ",20,false), doc.getStyle("regular"));
 		    	doc.insertString(doc.getLength(), clusteringMetaData.zeroClusters+nL, doc.getStyle("bold"));
 		    	
-		    	doc.insertString(doc.getLength(), Tools.setToSize("MSS evaluation: ",20,false), doc.getStyle("regular"));
+		    	doc.insertString(doc.getLength(), Tools.setToSize(lang.getText("HCSWwin_entry015")+" ",20,false), doc.getStyle("regular"));
 		    	String value = getMSSFormatted(clusteringMetaData.evalMSS);
 		    	doc.insertString(doc.getLength(), value+nL, doc.getStyle("bold"));
 		    	
-		    	doc.insertString(doc.getLength(), Tools.setToSize("C-H evaluation: ",20,false), doc.getStyle("regular"));
+		    	doc.insertString(doc.getLength(), Tools.setToSize(lang.getText("HCSWwin_entry016")+" ",20,false), doc.getStyle("regular"));
 		    	doc.insertString(doc.getLength(), clusteringMetaData.evalCH+nL, doc.getStyle("bold"));
 		    	
 		    	doc.insertString(doc.getLength(), nL, doc.getStyle("regular"));
 		    	
 		    	//dane o klastrach
 		    	for(int i=0; i<clusteringMetaData.clusterNumber; i++) {
-		    		doc.insertString(doc.getLength(), "Cluster "
-		    				+Tools.setToSize((i+1)+"",3,true)+" invariants: ", doc.getStyle("regular"));
-
-		    		doc.insertString(doc.getLength(), 
-		    				Tools.setToSize(clusteringMetaData.clusterSize.get(i)+"",4,true), doc.getStyle("bold"));
-		    		
-		    		doc.insertString(doc.getLength(),"  MSS: ", doc.getStyle("regular"));
+		    		doc.insertString(doc.getLength(), lang.getText("HCSWwin_entry017a")+" "
+							+Tools.setToSize((i+1)+"",3,true)+" "+lang.getText("HCSWwin_entry017b")+" ", doc.getStyle("regular"));
+		    		doc.insertString(doc.getLength(), Tools.setToSize(clusteringMetaData.clusterSize.get(i)+"",4,true), doc.getStyle("bold"));
+		    		doc.insertString(doc.getLength(),"  "+lang.getText("HCSWwin_entry018")+" ", doc.getStyle("regular"));
 		    		
 		    		value = getMSSFormatted(clusteringMetaData.clusterMSS.get(i));
-		    		
-		    		doc.insertString(doc.getLength(), value+nL,
-				    		doc.getStyle(returnStyle(clusteringMetaData.clusterMSS.get(i))));
-				    
+		    		doc.insertString(doc.getLength(), value+nL, doc.getStyle(returnStyle(clusteringMetaData.clusterMSS.get(i))));
 		    	}
 		    	doc.insertString(doc.getLength(), nL, doc.getStyle("regular"));
 		    	
 		    	String sepSpace = "";
 		    	if(clusteringMetaData.vectorMSS.get(0) < 0)
 		    		sepSpace = " ";
-		    	doc.insertString(doc.getLength(), sepSpace+" Min.  | 1st Qu.| Median |  Mean  | 3rd Qu.|  Max."+nL, doc.getStyle("bold"));
+		    	doc.insertString(doc.getLength(), sepSpace+" "+lang.getText("HCSWwin_entry019")+nL, doc.getStyle("bold"));
 		    	for(int i=0; i<6; i++) {
-		    		//doc.insertString(doc.getLength(), addSpaceRight(clusteringMetaData.vectorMSS[i]+"",6)+ " | ", doc.getStyle("bold"));
 		    		doc.insertString(doc.getLength(), Tools.setToSize(clusteringMetaData.vectorMSS.get(i)+"",6,false)+ " | ", doc.getStyle("bold"));
 		    	}
 		    	
 		    	textPane.setCaretPosition(0);
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log("Error (604785942) | Exception:  "+ex.getMessage(), "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00511exception")+" "+ex.getMessage(), "error", true);
 			}
 		}
 		setLocationRelativeTo(null);
@@ -321,14 +319,14 @@ public class HolmesClusterSubWindow extends JFrame {
 	 * @return JTextPane - obiekt edytora
 	 */
 	private JTextPane createTextPane() {
-		String initString = "Clustering details:"+newline;
+		String initString = lang.getText("HCSWwin_entry020")+newline;
 	    JTextPane txtPane = new JTextPane();
 	    doc = txtPane.getStyledDocument();
 	    addStylesToDocument(doc);
 	    try {
 	        doc.insertString(doc.getLength(), initString, doc.getStyle("regular"));
-	    } catch (BadLocationException ble) {
-	        System.err.println("Couldn't insert initial text into text pane.");
+	    } catch (Exception e) {
+	        overlord.log(lang.getText("LOGentry00512exception")+" "+e.getMessage(), "error", true);
 	    }
 	    return txtPane;
 	}
@@ -353,7 +351,7 @@ public class HolmesClusterSubWindow extends JFrame {
         paneScrollPane.setBounds(5, 5, 585, 500);
         editPanel.add(paneScrollPane);
 
-        buttonExcel = new JButton(">> Excel", Tools.getResIcon48("/icons/clustWindow/buttonExportSingleToExcel.png"));
+        buttonExcel = new JButton(lang.getText("HCSWwin_entry021"), Tools.getResIcon48("/icons/clustWindow/buttonExportSingleToExcel.png")); //>> Excel
         buttonExcel.setBounds(5, 510, 190, 50);
         //button.setBounds(new Rectangle(150, 40));
         buttonExcel.addActionListener(actionEvent -> {
@@ -365,7 +363,7 @@ public class HolmesClusterSubWindow extends JFrame {
 		});
         editPanel.add(buttonExcel);
         
-        buttonInjectCluster = new JButton(">> Net structure", Tools.getResIcon48("/icons/clustWindow/buttonSendToAbyss.png"));
+        buttonInjectCluster = new JButton(lang.getText("HCSWwin_entry022"), Tools.getResIcon48("/icons/clustWindow/buttonSendToAbyss.png"));//>> Net structure
         buttonInjectCluster.setBounds(200, 510, 190, 50);
         buttonInjectCluster.addActionListener(actionEvent -> {
 			layerUI.start();
@@ -376,7 +374,7 @@ public class HolmesClusterSubWindow extends JFrame {
 		});
         editPanel.add(buttonInjectCluster);
         
-        buttonTexTable = new JButton(">> Cluster table", Tools.getResIcon48("/icons/menu/menu_exportTex.png"));
+        buttonTexTable = new JButton(lang.getText("HCSWwin_entry023"), Tools.getResIcon48("/icons/menu/menu_exportTex.png"));//>> Cluster table
         buttonTexTable.setBounds(400, 510, 190, 50);
         buttonTexTable.addActionListener(actionEvent -> {
 			layerUI.start();
@@ -425,7 +423,7 @@ public class HolmesClusterSubWindow extends JFrame {
 			if(excelTmp.exists())
 				excelTmp.delete();
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Removing temporary files failed.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00513exception")+" "+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -467,7 +465,7 @@ public class HolmesClusterSubWindow extends JFrame {
 				Tools.copyFileByPath(files[2], excelDestinationFolder+"\\"+mcfFileName);
 		}
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("File copy error.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00514exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 		return true;
@@ -486,8 +484,9 @@ public class HolmesClusterSubWindow extends JFrame {
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Microsoft Excel 97/2000/XP/2003 (.xls)", new String[] { "XLS" });
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Save clusters as Excel document", "");
-		if(selectedFile.equals(""))
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save")
+				, lang.getText("HCSWwin_entry024t"), "");
+		if(selectedFile.isEmpty())
 			return null;
 		
 		if(!selectedFile.contains(".xls"))
@@ -495,9 +494,9 @@ public class HolmesClusterSubWindow extends JFrame {
 		//File file = new File(selectedFile);
 		try {
 			Tools.copyFileByPath("tmp//testSheets.xls", selectedFile);
-		} catch (IOException e) {
-			GUIManager.getDefaultGUIManager().log("Copying tmp\\testSheets.xls to "+selectedFile
-					+" failed." , "error", true);
+		} catch (Exception e) {
+			String strB = String.format(lang.getText("LOGentry00515exception"), selectedFile);
+			GUIManager.getDefaultGUIManager().log(strB+"\n"+e.getMessage() , "error", true);
 			return null;
 		}
 		return selectedFile;
@@ -510,8 +509,8 @@ public class HolmesClusterSubWindow extends JFrame {
 		//generowanie klastrowania:
 		String targetDir = getInvariantsCSVLocation();
 		if(targetDir == null) {
-			JOptionPane.showMessageDialog(null, "Operation failed. Unable to obtain invariants CSV file.", 
-					"Error",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("HCSWwin_entry025"),
+					lang.getText("error"),JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
@@ -526,20 +525,18 @@ public class HolmesClusterSubWindow extends JFrame {
 			// czytanie wyników:
 			fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
 			if(fullData==null) {
-				GUIManager.getDefaultGUIManager().log("Reading data files failed. Extraction to Excel cannot begin.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("HCSWwin_entry026"), "error", true);
 				return;
 			}
 		} else {
-			GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
-					+ "contacting authors about the problem please attach *all* three files mentioned in"
-					+ "this log above this message.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("HCSWwin_entry027"), "error", true);
 			return;
 		}
 		
-		Object[] options = {"Save data files and Excel file", "Make Excel file only",};
+		Object[] options = {lang.getText("HCSwin_entry028op1"), lang.getText("HCSwin_entry028op2"),};
 		int n = JOptionPane.showOptionDialog(null,
-						"Clustering data extraction succeed. What to do now?",
-						"Choose output file", JOptionPane.YES_NO_OPTION,
+						lang.getText("HCSwin_entry028"),
+						lang.getText("HCSwin_entry028t"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 		if (n == 0) { //both files
 			boolean success = saveAllFiles(fullData, resultFiles);
@@ -560,10 +557,10 @@ public class HolmesClusterSubWindow extends JFrame {
 	 */
 	protected String getInvariantsCSVLocation() {
 		String targetDir;
-		Object[] options = {"Use computed invariants", "Load CSV invariant file",};
+		Object[] options = {lang.getText("HCSwin_entry029op1"), lang.getText("HCSwin_entry029op2"),};
 		int n = JOptionPane.showOptionDialog(null,
-						"Select CSV invariants manually or export from net computed invariants?",
-						"Choose output file", JOptionPane.YES_NO_OPTION,
+						lang.getText("HCSwin_entry029"),
+						lang.getText("HCSwin_entry029t"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 		if (n == 0) {
 			targetDir = selectionOfSource();
@@ -573,22 +570,21 @@ public class HolmesClusterSubWindow extends JFrame {
 			if(!name.equals("cluster.csv")) {
 				try {
 					Tools.copyFileByPath(x.getAbsolutePath(), path+"cluster.csv");
-					
 				} catch (IOException e) {
-					e.printStackTrace();
+					overlord.log(lang.getText("LOGentry00516exception")+" "+e.getMessage(), "error", true);
 				}
 			}
 			targetDir = path;
 		} else {
-			if(clusterPath == null || clusterPath.equals("")) {
-				JOptionPane.showMessageDialog(null, "Please select csv file containing invariants.", 
-						"Selection",JOptionPane.INFORMATION_MESSAGE);
+			if(clusterPath == null || clusterPath.isEmpty()) {
+				JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry030"),
+						lang.getText("HCSwin_entry030t"),JOptionPane.INFORMATION_MESSAGE);
 				
 				FileFilter[] filters = new FileFilter[1];
 				filters[0] = new ExtensionFileFilter("Invariants csv file (.csv)", new String[] { "CSV" });
 				String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-				String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select", "", "");
-				if(selectedFile.equals(""))
+				String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("select"), "", "");
+				if(selectedFile.isEmpty())
 					return null;
 				
 				File x = new File(selectedFile);
@@ -597,9 +593,8 @@ public class HolmesClusterSubWindow extends JFrame {
 				if(!name.equals("cluster.csv")) {
 					try {
 						Tools.copyFileByPath(x.getAbsolutePath(), path+"cluster.csv");
-						
 					} catch (IOException e) {
-						e.printStackTrace();
+						overlord.log(lang.getText("LOGentry00517exception")+" "+e.getMessage(), "error", true);
 					}
 				}
 				targetDir = path;
@@ -607,21 +602,21 @@ public class HolmesClusterSubWindow extends JFrame {
 				targetDir = clusterPath;
 			}
 		}
-		
 		return targetDir;
 	}
 	
 	private String selectionOfSource() {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix() == null) { //brak inwariantów
-			JOptionPane.showMessageDialog(null, "No invariants computed! Please select CSV invariants file!", 
-					"Warning",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry031"),
+					lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
 			
 			FileFilter[] filters = new FileFilter[1];
 			filters[0] = new ExtensionFileFilter("CSV invariants file (.csv)",  new String[] { "CSV" });
-			String selectedFile = Tools.selectFileDialog(lastPath, filters, "Select CSV", "Select CSV file", "");
+			String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("HCSwin_entry032")
+					, lang.getText("HCSwin_entry032t"), "");
 			
-			if(selectedFile.equals(""))
+			if(selectedFile.isEmpty())
 				return null;
 			else
 				return selectedFile;
@@ -631,12 +626,11 @@ public class HolmesClusterSubWindow extends JFrame {
 				String CSVfilePath = GUIManager.getDefaultGUIManager().getTmpPath() + "cluster.csv";
 				int result = GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveInvariantsToCSV(CSVfilePath, true, true);
 				if(result == -1) {
-					String msg = "Exporting invariants into CSV file failed. \nCluster procedure cannot begin without invariants.";
-					JOptionPane.showMessageDialog(null,msg,	"CSV export error",JOptionPane.ERROR_MESSAGE);
-					GUIManager.getDefaultGUIManager().log(msg, "error", true);
+					JOptionPane.showMessageDialog(null,lang.getText("HCSwin_entry033")
+							,	"CSV export error",JOptionPane.ERROR_MESSAGE);
+					GUIManager.getDefaultGUIManager().log(lang.getText("HCSwin_entry033"), "error", true);
 					return null;
 				}
-				
 				return CSVfilePath;
 			} 
 		}
@@ -649,19 +643,17 @@ public class HolmesClusterSubWindow extends JFrame {
 		boolean proceed = true;
 		if(fullData != null) {
 			//ask what to do
-			Object[] options = {"Use existing data", "Create anew",};
+			Object[] options = {lang.getText("HCSwin_entry034op1"), lang.getText("HCSwin_entry034op2"),};
 			int n = JOptionPane.showOptionDialog(null,
-							"Detailed clustering data already exists. Use it or create anew?",
-							"Data package found", JOptionPane.YES_NO_OPTION,
+							lang.getText("HCSwin_entry034"),
+							lang.getText("HCSwin_entry034t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
 				int transNumber = fullData.transNames.length-1;
 				int netTransNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
 				if(transNumber != netTransNumber) {
-					JOptionPane.showMessageDialog(null, "Transition number discrepancy! \n"
-							+ "Data table transition number: "+transNumber
-							+"\nLoaded network transition number: "+netTransNumber
-							+"\nExporting cannon proceed.", "Error", JOptionPane.ERROR_MESSAGE);
+					String strB = String.format(lang.getText("HCSwin_entry035"), transNumber, netTransNumber);
+					JOptionPane.showMessageDialog(null, strB, lang.getText("error"), JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
@@ -678,8 +670,8 @@ public class HolmesClusterSubWindow extends JFrame {
 					//dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
 				}
 				GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Holmes (JFrame)
-				JOptionPane.showMessageDialog(null, "Operation successfull. Clusters are ready to show.", 
-						"Status",JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry036"),
+						lang.getText("status"),JOptionPane.INFORMATION_MESSAGE);
 				proceed = false;
 			}
 		}
@@ -689,8 +681,8 @@ public class HolmesClusterSubWindow extends JFrame {
 		
 		String targetDir = getInvariantsCSVLocation();
 		if(targetDir == null) {
-			JOptionPane.showMessageDialog(null, "Operation failed. Unable to obtain invariants CSV file.", 
-					"Error",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry037"),
+					lang.getText("error"),JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
@@ -705,17 +697,15 @@ public class HolmesClusterSubWindow extends JFrame {
 			ClusterReader reader = new ClusterReader();
 			fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
 			if(fullData==null) {
-				GUIManager.getDefaultGUIManager().log("Reading data files failed. Sending to net cannot begin.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("HCSwin_entry038"), "error", true);
 				return;
 			}
 			
 			int transNumber = fullData.transNames.length-1;
 			int netTransNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
 			if(transNumber != netTransNumber) {
-				JOptionPane.showMessageDialog(null, "Transition number discrepancy! \n"
-						+ "Data table transition number: "+transNumber
-						+"\nLoaded network transition number: "+netTransNumber
-						+"\nExporting cannot proceed.", "Error", JOptionPane.ERROR_MESSAGE);
+				String strB = String.format(lang.getText("HCSwin_entry035"), transNumber, netTransNumber);
+				JOptionPane.showMessageDialog(null, strB, lang.getText("error"), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			
@@ -735,12 +725,10 @@ public class HolmesClusterSubWindow extends JFrame {
 			GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Holmes (JFrame)
 			deleteTmpFile(resultFiles);
 			
-			JOptionPane.showMessageDialog(null, "Operation successfull. Clusters are ready to show.", 
+			JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry039"),
 					"Status",JOptionPane.INFORMATION_MESSAGE);
 		} else {
-			GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
-					+ "contacting authors about the problem please attach *all* three files mentioned in"
-					+ "log above this message.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("HCSwin_entry040"), "error", true);
 		}
 	}
 
@@ -752,25 +740,23 @@ public class HolmesClusterSubWindow extends JFrame {
 		
 		if(fullData != null) {
 			//ask what to do
-			Object[] options = {"Use existing data", "Create anew",};
+			Object[] options = {lang.getText("HCSwin_entry041op1"), lang.getText("HCSwin_entry041op2"),};
 			int n = JOptionPane.showOptionDialog(null,
-							"Detailed clustering data already exists. Use it or create anew?",
-							"Data package found", JOptionPane.YES_NO_OPTION,
+							lang.getText("HCSwin_entry041"),
+							lang.getText("HCSwin_entry041t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
 				int transNumber = fullData.transNames.length-1;
 				int netTransNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
 				if(transNumber != netTransNumber) {
-					JOptionPane.showMessageDialog(null, "Transition number discrepancy! \n"
-							+ "Data table transition number: "+transNumber
-							+"\nLoaded network transition number: "+netTransNumber
-							+"\nExporting cannot proceed.", "Error", JOptionPane.ERROR_MESSAGE);
+					String strB = String.format(lang.getText("HCSwin_entry035"), transNumber, netTransNumber);
+					JOptionPane.showMessageDialog(null, strB, lang.getText("error"), JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
 				GUIManager.getDefaultGUIManager().tex.writeCluster(fullData);
 				
-				JOptionPane.showMessageDialog(null, "Operation successfull. Clusters exportet to files", 
+				JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry042"),
 						"Status",JOptionPane.INFORMATION_MESSAGE);
 				proceed = false;
 			}
@@ -781,8 +767,8 @@ public class HolmesClusterSubWindow extends JFrame {
 		
 		String targetDir = getInvariantsCSVLocation();
 		if(targetDir == null) {
-			JOptionPane.showMessageDialog(null, "Operation failed. Unable to obtain invariants CSV file.", 
-					"Error",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry043"),
+					lang.getText("error"),JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
@@ -797,18 +783,16 @@ public class HolmesClusterSubWindow extends JFrame {
 			ClusterReader reader = new ClusterReader();
 			fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
 			if(fullData==null) {
-				GUIManager.getDefaultGUIManager().log("Reading data files failed. Extraction to tables cannot begin.", "error", true);
+				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00518"), "error", true);
 				return;
 			}
 			
 			GUIManager.getDefaultGUIManager().tex.writeCluster(fullData);
 			deleteTmpFile(resultFiles);
-			JOptionPane.showMessageDialog(null, "Operation successfull. Clusters exportet to files", 
+			JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry044"),
 					"Status",JOptionPane.INFORMATION_MESSAGE);
 		} else {
-			GUIManager.getDefaultGUIManager().log("Error accured while extracting data. While "
-					+ "contacting authors about the problem please attach *all* three files mentioned in"
-					+ "this log above this message.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("HCSwin_entry045"), "error", true);
 		}
 	}
 }

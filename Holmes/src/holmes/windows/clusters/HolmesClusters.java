@@ -39,6 +39,7 @@ import javax.swing.table.TableCellRenderer;
 import holmes.clusters.Clustering;
 import holmes.clusters.ClusteringInfoMatrix;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.files.clusters.CHmetricReader;
 import holmes.files.clusters.ClusterReader;
 import holmes.files.clusters.RClusteringParserToXLS;
@@ -54,6 +55,8 @@ import holmes.workspace.ExtensionFileFilter;
 public class HolmesClusters extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -8420712475473581772L;
+	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private JTable table = new JTable();
 	private DefaultTableModel tableModel;
 	private int mode = 0; // 0 - tryb 56 klastrowań
@@ -78,11 +81,11 @@ public class HolmesClusters extends JFrame {
      */
     public HolmesClusters() {
     	myself = this;
-    	myself.setTitle("Cluster Analyzer");
+    	myself.setTitle(lang.getText("HCwin_entry001title"));
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (390036959) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00505exception")+" "+ex.getMessage(), "error", true);
 		}
     	this.setVisible(false);
     	
@@ -143,7 +146,7 @@ public class HolmesClusters extends JFrame {
 		textPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		textPanel.setLayout(new BoxLayout(textPanel,BoxLayout.Y_AXIS));
 		
-		JLabel clLabel = new JLabel("Generate clusters:");
+		JLabel clLabel = new JLabel(lang.getText("HCwin_entry002")); //Generate clusters:
 		clLabel.setFont(new Font("Arial", Font.BOLD, 11));
 		clLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		textPanel.add(clLabel);	
@@ -155,7 +158,6 @@ public class HolmesClusters extends JFrame {
 		spinnerClusters.setPreferredSize(new Dimension(100, 30));
 		spinnerClusters.setMinimumSize(new Dimension(100, 30));
 		spinnerClusters.setMaximumSize(new Dimension(100, 30));
-		//spinnerClusters.setEnabled(false);
 		spinnerClusters.addChangeListener(e -> {
 			JSpinner spinner = (JSpinner) e.getSource();
 			clustersToGenerate = (int) spinner.getValue();
@@ -166,7 +168,7 @@ public class HolmesClusters extends JFrame {
 		// Przycisk rozpoczęcia procedury generowania klastrów na bazie inwariantów
 		JButton generateButton = createStandardButton("", 
 				Tools.getResIcon48("/icons/clustWindow/buttonGen56.png"));
-		generateButton.setToolTipText("Generate all 56 clusterings for a selected number of clusters.");
+		generateButton.setToolTipText(lang.getText("HCwin_entry003t"));
 		generateButton.addActionListener(actionEvent -> buttonGenerateClusterings(commandsValidate));
 		generateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(generateButton);
@@ -175,7 +177,7 @@ public class HolmesClusters extends JFrame {
         // Przycisk rozpoczęcia procedury generowania metryk Celińskiego-Harabasza dla tabeli klastrowań
      	JButton generateCHButton = createStandardButton("", 
      			Tools.getResIcon48("/icons/clustWindow/buttonComputeCH.png"));
-     	generateCHButton.setToolTipText("Compute Caliński-Harabasz metrics for a given number of clusters.");
+     	generateCHButton.setToolTipText(lang.getText("HCwin_entry004t"));
      	generateCHButton.addActionListener(actionEvent -> buttonComputeCHmetrics(commandsValidate));
      	generateCHButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(generateCHButton);
@@ -184,7 +186,7 @@ public class HolmesClusters extends JFrame {
         // Przycisk wczytania katalogu z 56 klastrowaniami
         JButton case56Button = createStandardButton("", 
         		Tools.getResIcon48("/icons/clustWindow/buttonLoadClusterDir.png"));
-        case56Button.setToolTipText("Load 56 clusterings into table from the selected directory.");
+        case56Button.setToolTipText(lang.getText("HCwin_entry005t"));
         case56Button.addActionListener(actionEvent -> buttonLoadClusteringDirectory());
         case56Button.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(case56Button);
@@ -193,7 +195,7 @@ public class HolmesClusters extends JFrame {
         // Przycisk wczytywania metryk C-H dla tabeli
      	JButton loadCHButton = createStandardButton("", 
      			Tools.getResIcon48("/icons/clustWindow/buttonLoadCHDir.png"));
-     	loadCHButton.setToolTipText("Load Caliński-Harabasz metrics from the selected directory.");
+     	loadCHButton.setToolTipText(lang.getText("HCwin_entry006t"));
      	loadCHButton.addActionListener(actionEvent -> buttonLoadCHmetricIntoTables());
      	loadCHButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(loadCHButton);
@@ -202,7 +204,7 @@ public class HolmesClusters extends JFrame {
         // Przycisk zapisu tabeli danych
      	JButton saveTableButton = createStandardButton("", 
      			Tools.getResIcon48("/icons/clustWindow/buttonSaveTable.png"));
-     	saveTableButton.setToolTipText("Save table data into the selected file");
+     	saveTableButton.setToolTipText(lang.getText("HCwin_entry007t"));
      	saveTableButton.addActionListener(actionEvent -> buttonSerializeDataTable());
      	saveTableButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(saveTableButton);
@@ -211,7 +213,7 @@ public class HolmesClusters extends JFrame {
         // Przycisk zapisu tabeli danych
      	JButton loadTableButton = createStandardButton("", 
      			Tools.getResIcon48("/icons/clustWindow/buttonLoadTable.png"));
-     	loadTableButton.setToolTipText("Load table data from the selected file");
+     	loadTableButton.setToolTipText(lang.getText("HCwin_entry008t"));
      	loadTableButton.addActionListener(actionEvent -> buttonDeserializeFile());
      	loadTableButton.setAlignmentX(Component.CENTER_ALIGNMENT);
      	textPanel.add(loadTableButton);
@@ -220,7 +222,7 @@ public class HolmesClusters extends JFrame {
      	// Przycisk exportu tabeli danych do excela
         JButton excelExport = createStandardButton("", 
         		Tools.getResIcon48("/icons/clustWindow/buttonExportToExcel.png"));
-        excelExport.setToolTipText("Export results files into Excel document.");
+        excelExport.setToolTipText(lang.getText("HCwin_entry009t"));
         excelExport.addActionListener(actionEvent -> buttonExportTableToExcel());
         excelExport.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(excelExport);
@@ -229,7 +231,7 @@ public class HolmesClusters extends JFrame {
         
         JButton configButton = createStandardButton("", 
         		Tools.getResIcon48("/icons/clustWindow/buttonConfig.png"));
-        configButton.setToolTipText("R scripts run configurations");
+        configButton.setToolTipText(lang.getText("HCwin_entry010t"));
         configButton.addActionListener(actionEvent -> minion.setVisible(true));
         configButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         textPanel.add(configButton);
@@ -253,14 +255,6 @@ public class HolmesClusters extends JFrame {
         tmp = new JLabel(text);
         tmp.setFont(new Font("Arial", Font.PLAIN, 8));
     	resultButton.add(tmp, BorderLayout.PAGE_END);
-        /*
-        for(int i=0; i<text.length; i++) {
-        	tmp = new JLabel(text[i]);
-        	tmp.setFont(new Font("Arial", Font.PLAIN, 8));
-        	tmp.setAlignmentX(Component.TOP_ALIGNMENT);
-        	resultButton.add(tmp);
-        }
-        */
 		   
         resultButton.setPreferredSize(new Dimension(100, 60));
         resultButton.setMinimumSize(new Dimension(100, 60));
@@ -387,8 +381,6 @@ public class HolmesClusters extends JFrame {
         		table.getColumnModel().getColumn(index+2).setPreferredWidth(50);
         		index++;
         		index++;
-        	} else {
-        		//table.getColumnModel().getColumn(index).setPreferredWidth(20);
         	}
         }
     }
@@ -417,7 +409,8 @@ public class HolmesClusters extends JFrame {
 				new HolmesClusterSubWindow(myself, omg, 1);
 				
 			 } catch (Exception ex) {
-				  GUIManager.getDefaultGUIManager().log("Critical error when recounting clicked cell.", "error", true);
+				  GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00506exception")
+						  +" "+ex.getMessage(), "error", true);
 			 }
 		 }
 	}
@@ -433,11 +426,11 @@ public class HolmesClusters extends JFrame {
     	subRowsSize = newTable.secondaryTablesMinNumber;
     	int checkSize = newTable.mainTablesNumber;
     	if(checkSize != 56) {
-    		GUIManager.getDefaultGUIManager().log("Invalid number of subtables. Operation terminated.", "error", true);
+    		overlord.log(lang.getText("HCwin_entry011"), "error", true);
     		return;
     	} 
     	
-    	GUIManager.getDefaultGUIManager().log("Clearing old clusterings data table", "text", true);
+    	GUIManager.getDefaultGUIManager().log(lang.getText("HCwin_entry012"), "text", true);
 
     	tableRenderer.setMode(mode);  // !!!
     	tableRenderer.setSubRows(subRowsSize); // !!! zła wartość i tabela idzie w ....
@@ -464,16 +457,16 @@ public class HolmesClusters extends JFrame {
         			
         			double val = dataTableCase56.getMatrix().get(tableIndex).get(rows).evalMSS;
         			String cuttedValue = cutValueMSS(val);
-        			dataRow[1+alg*3+1] = ""+cuttedValue;
+        			dataRow[1+alg*3+1] = cuttedValue;
         			
         			double val2 = dataTableCase56.getMatrix().get(tableIndex).get(rows).evalCH;
         			String cuttedValue2 = cutValueCH(val2);
-        			dataRow[1+alg*3+2] = ""+cuttedValue2;
+        			dataRow[1+alg*3+2] = cuttedValue2;
             	}
     			tableModel.addRow(dataRow);
 			}
     	}
-    	GUIManager.getDefaultGUIManager().log("New clustering data table has been successfully read.", "text", true);
+    	GUIManager.getDefaultGUIManager().log(lang.getText("HCwin_entry013"), "text", true);
     	tableModel.fireTableDataChanged();
     	table.revalidate();
     	
@@ -546,8 +539,8 @@ public class HolmesClusters extends JFrame {
 				//pathClustersDir = ""; //ścieżka do katalogu klastrowań
 				pathCSVfile = ""; //ścieżka do pliku CSV
 			} else {
-				JOptionPane.showMessageDialog(null, "Clustering procedure for all cases initiated. This make take so time to finish.", 
-						"R computation initiated", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("HCwin_entry014"),
+						lang.getText("HCwin_entry014t"), JOptionPane.INFORMATION_MESSAGE);
 				//pathClustersDir = new File(pathCSVfile).getParent(); //uzyskanie katalogu z klastrowaniami
 				//przy czym tam wciąż pewnie trwa praca (dopiero się zaczęła) tworzenia w osobnym
 				//wątku plików klastrowań poprzez skrypty R
@@ -571,16 +564,16 @@ public class HolmesClusters extends JFrame {
 			chosenPath = lastPath2;
 		 */
 		
-		String choosenDir = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
-					"Directory with 56 generated text R-clusters files.");
-		if(choosenDir.equals(""))
+		String choosenDir = Tools.selectDirectoryDialog(lastPath, lang.getText("HCwin_entry015"),
+					lang.getText("HCwin_entry015t")); //Select cluster dir
+		if(choosenDir.isEmpty())
 			return;
 		
 		ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
 		int result = clusterMatrix.readDataDirectory(choosenDir);
 		if(result == -1) {
-			JOptionPane.showMessageDialog(null, "Cluster reading failed. Possible wrong directory chosen.", 
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("HCwin_entry016"),
+					lang.getText("error"), JOptionPane.ERROR_MESSAGE);
 		} else {
 			registerDataCase56(clusterMatrix);
 			setClusterPath(choosenDir);
@@ -589,10 +582,8 @@ public class HolmesClusters extends JFrame {
 		//czy plik startowy jest na miejscu?
 		pathCSVfile = choosenDir+"/cluster.csv";
 		if(!Tools.ifExist(pathCSVfile)) {
-			String msg = "Selected directory does not contain cluster.csv file. Further calculations "
-					+ "may not be possible.";
-			JOptionPane.showMessageDialog(null, "msg", "warning",JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log(msg, "warning", true);
+			JOptionPane.showMessageDialog(null, lang.getText("HCwin_entry017"), "warning",JOptionPane.ERROR_MESSAGE);
+			GUIManager.getDefaultGUIManager().log(lang.getText("HCwin_entry017"), "warning", true);
 		}
 	}
     
@@ -604,21 +595,22 @@ public class HolmesClusters extends JFrame {
 		try{
 			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 			//String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-			GUIManager.getDefaultGUIManager().log("Attempting to export cluster table to excel","text", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("HCwin_entry018"),"text", true);
 			
-			String dirPath = Tools.selectDirectoryDialog(lastPath, "Select cluster dir",
-					"Directory with 56 generated R-clusters text files.");
-			if(dirPath.equals("")) { // czy wskazano cokolwiek
+			String dirPath = Tools.selectDirectoryDialog(lastPath, lang.getText("HCwin_entry019"),
+					lang.getText("HCwin_entry019t"));
+			if(dirPath.isEmpty()) { // czy wskazano cokolwiek
 				return;
 			} 
 			
 			//sprawdzić czy są wszystkie pliki / odtworzyć if necessary
 			ClusterReader cr = new ClusterReader();
 			if(cr.checkFiles(dirPath) == -2) { //no cluster files
-				JOptionPane.showMessageDialog(null, "Directory does not contain a single cluster file.",
-						"Error",JOptionPane.ERROR_MESSAGE);
-				GUIManager.getDefaultGUIManager().log("Directory: "+dirPath+ 
-						"does not contain even a single cluster file.", "error", true);
+				JOptionPane.showMessageDialog(null, lang.getText("HCwin_entry020"),
+						lang.getText("error"),JOptionPane.ERROR_MESSAGE);
+
+				String strB = String.format(lang.getText("HCwin_entry021"), dirPath);
+				GUIManager.getDefaultGUIManager().log(strB, "error", true);
 			}
 			
 			RClusteringParserToXLS r = new holmes.files.clusters.RClusteringParserToXLS();
@@ -629,25 +621,25 @@ public class HolmesClusters extends JFrame {
 				FileFilter[] filter = new FileFilter[1];
 				filter[0] = new ExtensionFileFilter(".xls - Excel 2003",  new String[] { "XLS" });
 				String newLocation = Tools.selectFileDialog(dirPath, filter, "Save", "", "");
-				if(newLocation.equals("")) { //czy chcemy przenieść plik w inne miejsce
+				if(newLocation.isEmpty()) { //czy chcemy przenieść plik w inne miejsce
 					//leave it in cluster folder
-					GUIManager.getDefaultGUIManager().log("Exporting table succeed. Created file: "
-							+dirPath+"//ClustersSummary.xls", "text", true);
+					String strB = String.format("Exporting table succeed. Created file: %s//ClustersSummary.xls", dirPath);
+					GUIManager.getDefaultGUIManager().log(strB, "text", true);
 				} else {
 					if(!newLocation.contains(".xls"))
 						newLocation += ".xls";
 					Tools.copyFileByPath(dirPath+"//ClustersSummary.xls", newLocation);
 					test.delete(); //kasujemy oryginalny
-					GUIManager.getDefaultGUIManager().log("Exporting table succeed. Created file: "
+					GUIManager.getDefaultGUIManager().log(lang.getText("HCwin_entry023")+" "
 							+newLocation, "text", true);
 				}
 				
 			} else {
-				String msg = "Unknown error, excel file does not exist.";
+				String msg = lang.getText("HCwin_entry024");
 				GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			}
 		} catch (Exception e){
-			String msg = "Excel export procedure failed for directory: "+getClusterPath();
+			String msg = lang.getText("HCwin_entry025")+getClusterPath();
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 			GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", true);
 		}
@@ -672,16 +664,17 @@ public class HolmesClusters extends JFrame {
 	private void buttonLoadCHmetricIntoTables() {
 		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
 		if(dataTableCase56 == null) {
-			JOptionPane.showMessageDialog(null,"There is no table to fill.","Warning",JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null,lang.getText("HCwin_entry026")
+					,lang.getText("warning"),JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
 		
 		//String dirPath = Tools.selectDirectoryDialog(pathCHmetricsDir, "Select directory",
 		//		"Directory with 56 R-generated files containing Celiński-Harabasz metrics");
-		String dirPath = Tools.selectDirectoryDialog(lastPath, "Select directory",
-				"Directory with 56 R-generated files containing Celiński-Harabasz metrics");
+		String dirPath = Tools.selectDirectoryDialog(lastPath, lang.getText("HCwin_entry027"),
+				lang.getText("HCwin_entry027t"));
 		
-		if(dirPath.equals("")) { // czy wskazano cokolwiek
+		if(dirPath.isEmpty()) { // czy wskazano cokolwiek
 			return;
 		} 
 		CHmetricReader chReader = new CHmetricReader();
@@ -711,12 +704,12 @@ public class HolmesClusters extends JFrame {
 				try {
 					dataTableCase56.getMatrix().get(i).get(cl).evalCH = chDataCore.get(i).get(cl);
 				} catch (Exception e) {
-					GUIManager.getDefaultGUIManager().log("Filling CH metric failed for subtable "+i+" row: "+cl, "error", true);
+					String strB = String.format(lang.getText("LOGentry00507exception"), i, cl);
+					GUIManager.getDefaultGUIManager().log(strB + " " +e.getMessage(), "error", true);
 					dataTableCase56.getMatrix().get(i).get(cl).evalCH = 0.0;
 				}
 			}
 		}
-		
 		registerDataCase56(dataTableCase56);
 	}
 
@@ -730,8 +723,8 @@ public class HolmesClusters extends JFrame {
 			
 			FileFilter[] filter = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Holmes CLustering file (.hcl)",  new String[] { "hcl", "acl" });
-			String newLocation = Tools.selectFileDialog(lastPath, filter, "Save table", "", "");
-			if(newLocation.equals(""))
+			String newLocation = Tools.selectFileDialog(lastPath, filter, lang.getText("HCwin_entry028"), "", "");
+			if(newLocation.isEmpty())
 				return;
 			
 			if(!newLocation.contains(".hcl"))
@@ -743,7 +736,7 @@ public class HolmesClusters extends JFrame {
 			oos.close();
 			fos.close();
 		} catch(IOException ioe){
-			GUIManager.getDefaultGUIManager().log("Saving data table failed.", "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00508exception")+" "+ioe.getMessage(), "error", true);
 		}
 	}
 	
@@ -760,8 +753,8 @@ public class HolmesClusters extends JFrame {
 		{
 			FileFilter[] filter = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Holmes CLustering file (.hcl)",  new String[] { "hcl", "acl" });
-			newLocation = Tools.selectFileDialog(lastPath, filter, "Load table", "", "");
-			if(newLocation.equals("")) 
+			newLocation = Tools.selectFileDialog(lastPath, filter, lang.getText("HCwin_entry029"), "", "");
+			if(newLocation.isEmpty())
 				return;
 			
 			File test = new File(newLocation);
@@ -775,7 +768,7 @@ public class HolmesClusters extends JFrame {
 			fis.close();
 			registerDataCase56(clusterMatrix);
 		} catch(Exception ioe){
-			String msg = "Program was unable to load data table from "+newLocation;
+			String msg = lang.getText("LOGentry00509exception")+" "+newLocation;
 			GUIManager.getDefaultGUIManager().log(msg, "error", true);
 		} 
 	}
@@ -1075,5 +1068,4 @@ public class HolmesClusters extends JFrame {
 		    return result;
 		}
     } // END CLASS MyRenderer IMPLEMENTS TableCellRenderer
-    
 }

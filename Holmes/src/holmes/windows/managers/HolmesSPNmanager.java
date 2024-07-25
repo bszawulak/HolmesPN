@@ -21,6 +21,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.SPNdataVectorManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
@@ -35,7 +36,8 @@ import holmes.utilities.Tools;
 public class HolmesSPNmanager extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 8184934957669150556L;
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JFrame parentWindow;
 	private JFrame ego;
 	//private boolean doNotUpdate = false;
@@ -52,13 +54,12 @@ public class HolmesSPNmanager extends JFrame {
 	 * Główny konstruktor okna menagera danych SPN.
 	 */
 	public HolmesSPNmanager(JFrame parent) {
-		setTitle("Holmes SPN transitions data manager");
+		setTitle(lang.getText("HSPNMwin_entry001title"));
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (634466444) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00520exception")+" "+ex.getMessage(), "error", true);
 		}
-    	this.overlord = GUIManager.getDefaultGUIManager();
 		PetriNet pn = overlord.getWorkspace().getProject();
     	this.ego = this;
     	this.parentWindow = parent;
@@ -82,7 +83,7 @@ public class HolmesSPNmanager extends JFrame {
 	public JPanel getMainTablePanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("SPN vectors table"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSPNMwin_entry002"))); //SPN vectors table
 		result.setPreferredSize(new Dimension(500, 500));
 		
 		tableModel = new SPNdataVectorsTableModel(this);
@@ -118,9 +119,7 @@ public class HolmesSPNmanager extends JFrame {
           	    }
           	 }
       	});
-    	
 		table.setRowSelectionAllowed(false);
-    	
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		JScrollPane tableScrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		result.add(tableScrollPane, BorderLayout.CENTER);
@@ -168,13 +167,13 @@ public class HolmesSPNmanager extends JFrame {
 	 */
 	public JPanel getButtonsPanel() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Buttons"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSPNMwin_entry003"))); //Buttons
 		result.setPreferredSize(new Dimension(150, 500));
 
 		int posXda = 10;
 		int posYda = 25;
 		
-		JButton selectStateButton = new JButton("<html>Select this<br>SPN vector</html>");
+		JButton selectStateButton = new JButton(lang.getText("HSPNMwin_entry004")); //Select this SPN vector
 		selectStateButton.setBounds(posXda, posYda, 130, 40);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
@@ -188,11 +187,11 @@ public class HolmesSPNmanager extends JFrame {
 			if(selected == -1)
 				return;
 
-			Object[] options = {"Set new rates", "Keep old ones",};
+			Object[] options = {lang.getText("HSPNMwin_entry005op1"), lang.getText("HSPNMwin_entry005op2"),};
+			
 			int n = JOptionPane.showOptionDialog(null,
-							"Set all transitions of the net according to the selected\n"
-							+ "SPN data vector (table row: "+selected+") ?",
-							"Set new firing rates?", JOptionPane.YES_NO_OPTION,
+							lang.getText("HSPNMwin_entry005")+" "+selected+") ?",
+							lang.getText("HSPNMwin_entry005t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				tableModel.setSelected(selected);
@@ -203,7 +202,7 @@ public class HolmesSPNmanager extends JFrame {
 		});
 		result.add(selectStateButton);
 		
-		JButton addNewStateButton = new JButton("<html>Save current<br/>&nbsp;&nbsp;SPN vector</html>");
+		JButton addNewStateButton = new JButton(lang.getText("HSPNMwin_entry006")); //Save current SPN vector
 		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
@@ -213,10 +212,10 @@ public class HolmesSPNmanager extends JFrame {
 				noNetInfo();
 				return;
 			}
-			Object[] options = {"Add new vector", "Cancel",};
+			Object[] options = {lang.getText("HSPNMwin_entry007op1"), lang.getText("HSPNMwin_entry007op2"),};
 			int n = JOptionPane.showOptionDialog(null,
-							"Remember current net firing rates in the table?",
-							"Add new SPN data vactor?", JOptionPane.YES_NO_OPTION,
+							lang.getText("HSPNMwin_entry007"),
+							lang.getText("HSPNMwin_entry007t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				spnManager.addCurrentFRasSPNdataVector();
@@ -227,7 +226,7 @@ public class HolmesSPNmanager extends JFrame {
 		});
 		result.add(addNewStateButton);
 		
-		JButton replaceStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>SPN vector</html>");
+		JButton replaceStateButton = new JButton(lang.getText("HSPNMwin_entry008")); //Replace SPN vector
 		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
@@ -241,7 +240,7 @@ public class HolmesSPNmanager extends JFrame {
 		});
 		result.add(replaceStateButton);
 		
-		JButton removeStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>SPN vector</html>");
+		JButton removeStateButton = new JButton(lang.getText("HSPNMwin_entry009")); //Remove SPN vector
 		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
@@ -255,7 +254,7 @@ public class HolmesSPNmanager extends JFrame {
 		});
 		result.add(removeStateButton);
 		
-		JButton editStateButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>SPN vector</html>");
+		JButton editStateButton = new JButton(lang.getText("HSPNMwin_entry010")); //Edit SPN vector
 		editStateButton.setBounds(posXda, posYda+=50, 130, 40);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
@@ -280,16 +279,15 @@ public class HolmesSPNmanager extends JFrame {
 		int selected = table.getSelectedRow();
 		int states = spnManager.accessSPNmatrix().size();
 		if(states == 1) {
-			JOptionPane.showMessageDialog(null, "At least one net SPN data vector must remain!", 
-					"Cannot delete!",JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("At least one net SPN data vector must remain!"), 
+					"problem",JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
-		Object[] options = {"Remove vector", "Cancel",};
+		Object[] options = {lang.getText("HSPNMwin_entry012op1"), lang.getText("HSPNMwin_entry012op2"),};
 		int n = JOptionPane.showOptionDialog(null,
-						"Remove selected SPN data vector from the table\n"
-						+ "(table row: "+selected+") ?",
-						"Remove SPN data vector?", JOptionPane.YES_NO_OPTION,
+						lang.getText("HSPNMwin_entry012")+selected+") ?",
+						lang.getText("HSPNMwin_entry012t"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
@@ -304,8 +302,8 @@ public class HolmesSPNmanager extends JFrame {
 	 * Krótki komunikat, że nie ma sieci.
 	 */
 	private void noNetInfo() {
-		JOptionPane.showMessageDialog(this, "There are no transitions in the net!", 
-				"No net", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(this, lang.getText("HSPNMwin_entry013"), 
+				lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 	}
 	
 	/**
@@ -313,11 +311,10 @@ public class HolmesSPNmanager extends JFrame {
 	 */
 	private void replaceStateAction() {
 		int selected = table.getSelectedRow();
-		Object[] options = {"Replace vector", "Cancel",};
+		Object[] options = {lang.getText("HSPNMwin_entry014op1"), lang.getText("HSPNMwin_entry014op2"),};
+		String strB = String.format(lang.getText("HSPNMwin_entry014"), selected);
 		int n = JOptionPane.showOptionDialog(null,
-						"Replace selected SPN data vector (table row: "+selected+")\n"
-								+ "with the currently set net firing rates?",
-						"Replace SPN data vector?", JOptionPane.YES_NO_OPTION,
+						strB,lang.getText("HSPNMwin_entry014t"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
@@ -343,13 +340,13 @@ public class HolmesSPNmanager extends JFrame {
 	 */
 	public JPanel getBottomPanel() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Others"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSPNMwin_entry015"))); //Others
 		result.setPreferredSize(new Dimension(900, 150));
 
 		int posXda = 10;
 		int posYda = 15;
 		
-		JLabel label0 = new JLabel("State description:");
+		JLabel label0 = new JLabel(lang.getText("HSPNMwin_entry016")); //State description
 		label0.setBounds(posXda, posYda, 140, 20);
 		result.add(label0);
 		
@@ -375,7 +372,6 @@ public class HolmesSPNmanager extends JFrame {
         CreationPanel.add(new JScrollPane(vectorDescrTextArea), BorderLayout.CENTER);
         CreationPanel.setBounds(posXda, posYda+=25, 600, 100);
         result.add(CreationPanel);
-
 		
 	    return result;
 	}
@@ -401,7 +397,7 @@ public class HolmesSPNmanager extends JFrame {
 			fillDescriptionField();
 			//doNotUpdate = false;
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (502046909) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00521exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	

@@ -20,6 +20,7 @@ import javax.swing.JTextArea;
 import javax.swing.table.TableCellRenderer;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.SPNdataVectorManager;
 import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.data.PetriNet;
@@ -36,7 +37,8 @@ import holmes.utilities.Tools;
 public class HolmesSPNeditor extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -6810858686209063022L;
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JFrame parentWindow;
 	private JFrame ego;
 	private SPNsingleVectorTableModel tableModel;
@@ -54,13 +56,12 @@ public class HolmesSPNeditor extends JFrame {
 	 * @param frIndex int - indeks powyższego wektora w tablicy
 	 */
 	public HolmesSPNeditor(JFrame parent, SPNdataVector frData, int frIndex) {
-		setTitle("Holmes SPN data editor");
+		setTitle(lang.getText("HSPNwin_entry001title"));
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (567384259) | Exception:  "+ex.getMessage(), "error", true);
+			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00519exception")+" "+ex.getMessage(), "error", true);
 		}
-    	this.overlord = GUIManager.getDefaultGUIManager();
 		PetriNet pn = overlord.getWorkspace().getProject();
     	this.ego = this;
     	this.parentWindow = parent;
@@ -111,7 +112,7 @@ public class HolmesSPNeditor extends JFrame {
 				case IM ->
 						tableModel.addNew(row, postFix + transitions.get(row).getName(), "" + frBox.IM_priority, frBox.sType);
 				case SchT ->
-						tableModel.addNew(row, postFix + transitions.get(row).getName(), "" + frBox.SCH_start + "; " + frBox.SCH_rep + "; " + frBox.SCH_end, frBox.sType);
+						tableModel.addNew(row, postFix + transitions.get(row).getName(), frBox.SCH_start + "; " + frBox.SCH_rep + "; " + frBox.SCH_end, frBox.sType);
 			}
 		}
 		tableModel.fireTableDataChanged();
@@ -139,7 +140,7 @@ public class HolmesSPNeditor extends JFrame {
 	private JPanel getTopPanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("SPN transitions data"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSPNwin_entry002"))); //SPN transitions data
 		result.setPreferredSize(new Dimension(500, 100));
 		
 		JPanel filler = new JPanel(null);
@@ -147,7 +148,7 @@ public class HolmesSPNeditor extends JFrame {
 		int posX = 5;
 		int posY = 0;
 		
-		JLabel label0 = new JLabel("SPN data vector ID: ");
+		JLabel label0 = new JLabel(lang.getText("HSPNwin_entry003")); //SPN data vector ID:
 		label0.setBounds(posX, posY, 120, 20);
 		filler.add(label0);
 		
@@ -186,7 +187,7 @@ public class HolmesSPNeditor extends JFrame {
 	public JPanel getMainTablePanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("SPN data vector transitions table"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSPNwin_entry004"))); //SPN data vector transitions table
 		result.setPreferredSize(new Dimension(500, 500));
 		
 		tableModel = new SPNsingleVectorTableModel(this, frIndex);

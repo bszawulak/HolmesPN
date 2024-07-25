@@ -2545,6 +2545,190 @@ WORK_entry001, - no sentence -
 LOGentry00502critError, Critical error (2000034): Workspace.deleteSheetFromArrays() failed for worksheet #
 LOGentry00503critError, Critical error (2000035): Workspace.deleteAllSheetButFirst() failed for worksheet #
 
+//HolmesClusterConfig:
+HCCwin_entry001title, Cluster options
+LOGentry00504exception, Exception (1000234): HolmesClusterConfig.HolmesClusterConfig() failed:
+HCCwin_entry002, Search options
+HCCwin_entry003, Clean All
+HCCwin_entry004, Set All
+HCCwin_entry005, PearsonOnly
+HCCwin_entry006, Cluster options
+HCCwin_entry007, At least one clustering method must be chosen.\nSelecting CorrelatedPearson-Average(UPGMA)
+
+//HolmesClusters:
+HCwin_entry001title, Cluster Analyzer
+LOGentry00505exception, Exception (1000235): HolmesClusters.HolmesClusters() failed:
+HCwin_entry002, Generate clusters:
+HCwin_entry003t, Generate all 56 clusterings for a selected number of clusters.
+HCwin_entry004t, Compute Caliński-Harabasz metrics for a given number of clusters.
+HCwin_entry005t, Load 56 clusterings into table from the selected directory.
+HCwin_entry006t, Load Caliński-Harabasz metrics from the selected directory.
+HCwin_entry007t, Save table data into the selected file
+HCwin_entry008t, Load table data from the selected file
+HCwin_entry009t, Export results files into Excel document.
+HCwin_entry010t, R scripts run configurations
+LOGentry00506exception, Exception (1000236): HolmesClusters.cellClickedEvent() failed:
+HCwin_entry011, Invalid number of subtables. Operation terminated.
+HCwin_entry012, Clearing old clusterings data table
+HCwin_entry013, New clustering data table has been successfully read.
+HCwin_entry014, Clustering procedure for all cases initiated. This make take so time to finish.
+HCwin_entry014t, R computation initiated
+HCwin_entry015, Select cluster dir
+HCwin_entry015t, Directory with 56 generated text R-clusters files.
+HCwin_entry016, Cluster reading failed. Possible wrong directory chosen.
+HCwin_entry017, Selected directory does not contain cluster.csv file. Further calculations may not be possible.
+HCwin_entry018, Attempting to export cluster table to excel
+HCwin_entry019, Select cluster dir
+HCwin_entry019t, Directory with 56 generated R-clusters text files.
+HCwin_entry020, Directory does not contain a single cluster file.
+HCwin_entry021, Directory: %s does not contain any cluster files.
+HCwin_entry022, Exporting table succeed. Created file: %s//ClustersSummary.xls
+HCwin_entry023, Exporting table succeed. Created file:
+HCwin_entry024, Unknown error, excel file does not exist.
+HCwin_entry025, Excel export procedure failed for directory:
+HCwin_entry026, There is no table to fill.
+HCwin_entry027, Select directory
+HCwin_entry027t, Directory with 56 R-generated files containing Celiński-Harabasz metrics
+LOGentry00507exception, Exception (1000237): HolmesClusters.integrateCHIntoDatabase() failed. Filling CH metric failed for subtable %d row: %d
+HCwin_entry028, Save table
+LOGentry00508exception, Exception (1000238): HolmesClusters.buttonSerializeDataTable() failed:
+HCwin_entry029, Load table
+LOGentry00509exception, Exception (1000239): HolmesClusters.buttonDeserializeFile() failed. Program was unable to load data table from
+
+//HolmesClusterSubWindow:
+HCSWwin_entry001title, Details for %d clusters from %s/%s
+LOGentry00510exception, Exception (1000240): HolmesClusterSubWindow.HolmesClusterSubWindow() failed:
+HCSWwin_entry002, Algorithm name:
+HCSWwin_entry003, Metric name:
+HCSWwin_entry004, Invariants number:
+HCSWwin_entry005, Clusters number:
+HCSWwin_entry006, Zero-clusters:
+HCSWwin_entry007, MSS evaluation:
+HCSWwin_entry008, C-H evaluation:
+HCSWwin_entry009, Cluster %d size: %d  MSS: %s%n
+HCSWwin_entry010, Algorithm name:
+HCSWwin_entry011, Metric name:
+HCSWwin_entry012, Invariants number:
+HCSWwin_entry013, Clusters number:
+HCSWwin_entry014, Zero-clusters:
+HCSWwin_entry015, MSS evaluation:
+HCSWwin_entry016, C-H evaluation:
+HCSWwin_entry017a, Cluster
+HCSWwin_entry017b, invariants:
+HCSWwin_entry018, MSS:
+HCSWwin_entry019, Min.  | 1st Qu.| Median |  Mean  | 3rd Qu.|  Max.
+LOGentry00511exception, Exception (1000241): HolmesClusterSubWindow.initiateExtendedMode() failed:
+HCSWwin_entry020, Clustering details:
+LOGentry00512exception, Exception (1000242): HolmesClusterSubWindow.createTextPane() failed:
+HCSWwin_entry021, >> Excel
+HCSWwin_entry022, >> Net structure
+HCSWwin_entry023, >> Cluster table
+LOGentry00513exception, Exception (1000243): HolmesClusterSubWindow.deleteTmpFile() Removing temporary files failed:
+LOGentry00514exception, Exception (1000244): HolmesClusterSubWindow.saveAllFiles() File copy error:
+HCSWwin_entry024t, Save clusters as Excel document
+LOGentry00515exception, Exception (1000245): HolmesClusterSubWindow.saveExcelOnly() Copying tmp\testSheets.xls to %s failed.
+HCSWwin_entry025, Operation failed. Unable to obtain invariants CSV file.
+HCSWwin_entry026, Reading data files failed. Extraction to Excel cannot begin.
+HCSWwin_entry027, Error accured while extracting data. While contacting authors about the problem please attach *all* three files mentioned inthis log above this message.
+HCSwin_entry028op1, Save data files and Excel file
+HCSwin_entry028op2, Make Excel file only
+HCSwin_entry028, Clustering data extraction succeed. What to do now?
+HCSwin_entry028t, Choose output file
+HCSwin_entry029op1, Use computed invariants
+HCSwin_entry029op2, Load CSV invariants file
+HCSwin_entry029, Select CSV invariants manually or export from net computed invariants?
+HCSwin_entry029t, Choose output file
+LOGentry00516exception, Exception (1000246): HolmesClusterSubWindow.getInvariantsCSVLocation() failed:
+HCSwin_entry030, Please select csv file containing invariants.
+HCSwin_entry030t, Choose csv file file
+LOGentry00517exception, Exception (1000247): HolmesClusterSubWindow.getInvariantsCSVLocation() failed:
+HCSwin_entry031, No invariants computed! Please select CSV invariants file!
+HCSwin_entry032, Select CSV
+HCSwin_entry032t, Choose csv file
+HCSwin_entry033, Exporting invariants into CSV file failed.\nCluster procedure cannot begin without invariants.
+HCSwin_entry034op1, Use existing data
+HCSwin_entry034op2, Create new
+HCSwin_entry034, Detailed clustering data already exists. Use it or create new?
+HCSwin_entry034t, Data package found
+HCSwin_entry035, Transition number discrepancy! %nData table transition number: %d%nLoaded network transition number: %d%nExporting cannot proceed.
+HCSwin_entry036, Operation successfull. Clusters are ready to show.
+HCSwin_entry037, Operation failed. Unable to obtain invariants CSV file.
+HCSwin_entry038, Reading data files failed. Sending to net cannot begin.
+HCSwin_entry039, Operation successfull. Clusters are ready to show.
+HCSwin_entry040, Error accured while extracting data. While contacting authors about the problem please attach *all* three files mentioned in log above this message.
+HCSwin_entry041op1, Use existing data
+HCSwin_entry041op2, Create new
+HCSwin_entry041, Detailed clustering data already exists. Use it or create new?
+HCSwin_entry041t, Data package found
+HCSwin_entry042, Operation successfull. Clusters exportet to files
+HCSwin_entry043, Operation failed. Unable to obtain invariants CSV file.
+LOGentry00518, Reading data files failed. Extraction to tables cannot begin.
+HCSwin_entry044, Operation successfull. Clusters exportet to files
+HCSwin_entry045, Error accured while extracting data. While contacting authors about the problem please attach *all* three files mentioned in log above this message.
+
+//HolmesSPNeditor:
+HSPNwin_entry001title, Holmes SPN data editor
+LOGentry00519exception, Exception (1000248): HolmesSPNeditor.HolmesSPNeditor() failed:
+HSPNwin_entry002, SPN transitions data
+HSPNwin_entry003, SPN data vector ID: 
+HSPNwin_entry004, SPN data vector transitions table
+
+//HolmesSPNmanager:
+HSPNMwin_entry001title, Holmes SPN transitions data manager
+LOGentry00520exception, Exception (1000249): HolmesSPNmanager.HolmesSPNmanager() failed:
+HSPNMwin_entry002, SPN vectors table
+HSPNMwin_entry003, Buttons
+HSPNMwin_entry004, <html>Select this<br>SPN vector</html>
+HSPNMwin_entry005op1, Set new rates
+HSPNMwin_entry005op2, Keep old ones
+HSPNMwin_entry005, Set all transitions of the net according to the selected\nSPN data vector (table row:
+HSPNMwin_entry005t, set new firing rates?
+HSPNMwin_entry006, <html>Save current<br/>&nbsp;&nbsp;SPN vector</html>
+HSPNMwin_entry007op1, Add new vector
+HSPNMwin_entry007op2, Cancel
+HSPNMwin_entry007, Remember current net firing rates in the table?
+HSPNMwin_entry007t, Add new SPN data vactor?
+HSPNMwin_entry008, <html>&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>SPN vector</html>
+HSPNMwin_entry009, <html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>SPN vector</html>
+HSPNMwin_entry010, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>SPN vector</html>
+HSPNMwin_entry011, At least one net SPN data vector must remain!
+HSPNMwin_entry012op1, Remove vector
+HSPNMwin_entry012op2, Cancel
+HSPNMwin_entry012, Remove selected SPN data vector from the table\n(table row: 
+HSPNMwin_entry012t, Remove SPN data vector?
+HSPNMwin_entry013, There are no transitions in the net!
+HSPNMwin_entry014op1, Replace vector
+HSPNMwin_entry014op2, Cancel
+HSPNMwin_entry014, Replace selected SPN data vector (table row: %d)%nwith the currently set net firing rates?
+HSPNMwin_entry014t, Replace SPN data vector?
+HSPNMwin_entry015, Others
+HSPNMwin_entry016, State description:
+LOGentry00521exception, Exception (1000250): HolmesSPNmanager.cellClickAction() failed:
+
+//HolmesSPNtransitionEditor:
+HSPNTEwin_entry001title, Holmes SPN transition editor
+LOGentry00522exception, Exception (1000251): HolmesSPNtransitionEditor.HolmesSPNtransitionEditor() failed:
+HSPNTEwin_entry002, SPN transition data vector
+HSPNTEwin_entry003, SPN data vector:
+HSPNTEwin_entry004, Transition:
+HSPNTEwin_entry005, SPN transition type:
+HSPNTEwin_entry006, Stochastic Transition
+HSPNTEwin_entry007, Immediate Transition
+HSPNTEwin_entry008, Deterministic Transition
+HSPNTEwin_entry009, Scheduled Transition
+HSPNTEwin_entry010, Function / value:
+LOGentry00523exception, Exception (1000252): HolmesSPNtransitionEditor.initializeComponents() failed:
+HSPNTEwin_entry011, Priority:
+HSPNTEwin_entry012, Invalid value, priority must be an integer.
+HSPNTEwin_entry013, Delay:
+HSPNTEwin_entry014, Invalid value, delay must be a positive integer.
+HSPNTEwin_entry015, Start / Rep. / Stop:
+LOGentry00524exception, Exception (1000253): HolmesSPNtransitionEditor.saveTransitionData() failed. Invalid value, either start text of non-negative value expected.
+HSPNTEwin_entry016, Invalid value, delay must be a non-negatice integer.
+LOGentry00525exception, Exception (1000254): HolmesSPNtransitionEditor.saveTransitionData() failed. Invalid value, either end text of non-negative value expected.
+HSPNTEwin_entry017, <html>&nbsp;Change & exit</html>
+HSPNTEwin_entry017t, One action back
+
 
 //generalPurposeTags:
 add, Add
@@ -2572,6 +2756,7 @@ saveAndReplace, Save & replace
 save, Save
 saveOnly, Save only
 select, Select
+status, Status
 success, Success
 question, Question
 netSimWork01, Net simulator working

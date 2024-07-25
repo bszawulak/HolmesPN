@@ -2559,6 +2559,190 @@ public class LangEngDafaultDB {
         defaultEnglish.put("LOGentry00502critError","Critical error (2000034): Workspace.deleteSheetFromArrays() failed for worksheet #");
         defaultEnglish.put("LOGentry00503critError","Critical error (2000035): Workspace.deleteAllSheetButFirst() failed for worksheet #");
 
+        //HolmesClusterConfig:
+        defaultEnglish.put("HCCwin_entry001title","Cluster options");
+        defaultEnglish.put("LOGentry00504exception","Exception (1000234): HolmesClusterConfig.HolmesClusterConfig() failed:");
+        defaultEnglish.put("HCCwin_entry002","Search options");
+        defaultEnglish.put("HCCwin_entry003","Clean All");
+        defaultEnglish.put("HCCwin_entry004","Set All");
+        defaultEnglish.put("HCCwin_entry005","PearsonOnly");
+        defaultEnglish.put("HCCwin_entry006","Cluster options");
+        defaultEnglish.put("HCCwin_entry007","At least one clustering method must be chosen.\nSelecting CorrelatedPearson-Average(UPGMA)");
+
+        //HolmesClusters:
+        defaultEnglish.put("HCwin_entry001title","Cluster Analyzer");
+        defaultEnglish.put("LOGentry00505exception","Exception (1000235): HolmesClusters.HolmesClusters() failed:");
+        defaultEnglish.put("HCwin_entry002","Generate clusters:");
+        defaultEnglish.put("HCwin_entry003t","Generate all 56 clusterings for a selected number of clusters.");
+        defaultEnglish.put("HCwin_entry004t","Compute Caliński-Harabasz metrics for a given number of clusters.");
+        defaultEnglish.put("HCwin_entry005t","Load 56 clusterings into table from the selected directory.");
+        defaultEnglish.put("HCwin_entry006t","Load Caliński-Harabasz metrics from the selected directory.");
+        defaultEnglish.put("HCwin_entry007t","Save table data into the selected file");
+        defaultEnglish.put("HCwin_entry008t","Load table data from the selected file");
+        defaultEnglish.put("HCwin_entry009t","Export results files into Excel document.");
+        defaultEnglish.put("HCwin_entry010t","R scripts run configurations");
+        defaultEnglish.put("LOGentry00506exception","Exception (1000236): HolmesClusters.cellClickedEvent() failed:");
+        defaultEnglish.put("HCwin_entry011","Invalid number of subtables. Operation terminated.");
+        defaultEnglish.put("HCwin_entry012","Clearing old clusterings data table");
+        defaultEnglish.put("HCwin_entry013","New clustering data table has been successfully read.");
+        defaultEnglish.put("HCwin_entry014","Clustering procedure for all cases initiated. This make take so time to finish.");
+        defaultEnglish.put("HCwin_entry014t","R computation initiated");
+        defaultEnglish.put("HCwin_entry015","Select cluster dir");
+        defaultEnglish.put("HCwin_entry015t","Directory with 56 generated text R-clusters files.");
+        defaultEnglish.put("HCwin_entry016","Cluster reading failed. Possible wrong directory chosen.");
+        defaultEnglish.put("HCwin_entry017","Selected directory does not contain cluster.csv file. Further calculations may not be possible.");
+        defaultEnglish.put("HCwin_entry018","Attempting to export cluster table to excel");
+        defaultEnglish.put("HCwin_entry019","Select cluster dir");
+        defaultEnglish.put("HCwin_entry019t","Directory with 56 generated R-clusters text files.");
+        defaultEnglish.put("HCwin_entry020","Directory does not contain a single cluster file.");
+        defaultEnglish.put("HCwin_entry021","Directory: %s does not contain any cluster files.");
+        defaultEnglish.put("HCwin_entry022","Exporting table succeed. Created file: %s//ClustersSummary.xls");
+        defaultEnglish.put("HCwin_entry023","Exporting table succeed. Created file:");
+        defaultEnglish.put("HCwin_entry024","Unknown error, excel file does not exist.");
+        defaultEnglish.put("HCwin_entry025","Excel export procedure failed for directory:");
+        defaultEnglish.put("HCwin_entry026","There is no table to fill.");
+        defaultEnglish.put("HCwin_entry027","Select directory");
+        defaultEnglish.put("HCwin_entry027t","Directory with 56 R-generated files containing Celiński-Harabasz metrics");
+        defaultEnglish.put("LOGentry00507exception","Exception (1000237): HolmesClusters.integrateCHIntoDatabase() failed. Filling CH metric failed for subtable %d row: %d");
+        defaultEnglish.put("HCwin_entry028","Save table");
+        defaultEnglish.put("LOGentry00508exception","Exception (1000238): HolmesClusters.buttonSerializeDataTable() failed:");
+        defaultEnglish.put("HCwin_entry029","Load table");
+        defaultEnglish.put("LOGentry00509exception","Exception (1000239): HolmesClusters.buttonDeserializeFile() failed. Program was unable to load data table from");
+
+        //HolmesClusterSubWindow:
+        defaultEnglish.put("HCSWwin_entry001title","Details for %d clusters from %s/%s");
+        defaultEnglish.put("LOGentry00510exception","Exception (1000240): HolmesClusterSubWindow.HolmesClusterSubWindow() failed:");
+        defaultEnglish.put("HCSWwin_entry002","Algorithm name:");
+        defaultEnglish.put("HCSWwin_entry003","Metric name:");
+        defaultEnglish.put("HCSWwin_entry004","Invariants number:");
+        defaultEnglish.put("HCSWwin_entry005","Clusters number:");
+        defaultEnglish.put("HCSWwin_entry006","Zero-clusters:");
+        defaultEnglish.put("HCSWwin_entry007","MSS evaluation:");
+        defaultEnglish.put("HCSWwin_entry008","C-H evaluation:");
+        defaultEnglish.put("HCSWwin_entry009","Cluster %d size: %d  MSS: %s%n");
+        defaultEnglish.put("HCSWwin_entry010","Algorithm name:");
+        defaultEnglish.put("HCSWwin_entry011","Metric name:");
+        defaultEnglish.put("HCSWwin_entry012","Invariants number:");
+        defaultEnglish.put("HCSWwin_entry013","Clusters number:");
+        defaultEnglish.put("HCSWwin_entry014","Zero-clusters:");
+        defaultEnglish.put("HCSWwin_entry015","MSS evaluation:");
+        defaultEnglish.put("HCSWwin_entry016","C-H evaluation:");
+        defaultEnglish.put("HCSWwin_entry017a","Cluster");
+        defaultEnglish.put("HCSWwin_entry017b","invariants:");
+        defaultEnglish.put("HCSWwin_entry018","MSS:");
+        defaultEnglish.put("HCSWwin_entry019","Min.  | 1st Qu.| Median |  Mean  | 3rd Qu.|  Max.");
+        defaultEnglish.put("LOGentry00511exception","Exception (1000241): HolmesClusterSubWindow.initiateExtendedMode() failed:");
+        defaultEnglish.put("HCSWwin_entry020","Clustering details:");
+        defaultEnglish.put("LOGentry00512exception","Exception (1000242): HolmesClusterSubWindow.createTextPane() failed:");
+        defaultEnglish.put("HCSWwin_entry021",">> Excel");
+        defaultEnglish.put("HCSWwin_entry022",">> Net structure");
+        defaultEnglish.put("HCSWwin_entry023",">> Cluster table");
+        defaultEnglish.put("LOGentry00513exception","Exception (1000243): HolmesClusterSubWindow.deleteTmpFile() Removing temporary files failed:");
+        defaultEnglish.put("LOGentry00514exception","Exception (1000244): HolmesClusterSubWindow.saveAllFiles() File copy error:");
+        defaultEnglish.put("HCSWwin_entry024t","Save clusters as Excel document");
+        defaultEnglish.put("LOGentry00515exception","Exception (1000245): HolmesClusterSubWindow.saveExcelOnly() Copying tmp\testSheets.xls to %s failed.");
+        defaultEnglish.put("HCSWwin_entry025","Operation failed. Unable to obtain invariants CSV file.");
+        defaultEnglish.put("HCSWwin_entry026","Reading data files failed. Extraction to Excel cannot begin.");
+        defaultEnglish.put("HCSWwin_entry027","Error accured while extracting data. While contacting authors about the problem please attach *all* three files mentioned inthis log above this message.");
+        defaultEnglish.put("HCSwin_entry028op1","Save data files and Excel file");
+        defaultEnglish.put("HCSwin_entry028op2","Make Excel file only");
+        defaultEnglish.put("HCSwin_entry028","Clustering data extraction succeed. What to do now?");
+        defaultEnglish.put("HCSwin_entry028t","Choose output file");
+        defaultEnglish.put("HCSwin_entry029op1","Use computed invariants");
+        defaultEnglish.put("HCSwin_entry029op2","Load CSV invariants file");
+        defaultEnglish.put("HCSwin_entry029","Select CSV invariants manually or export from net computed invariants?");
+        defaultEnglish.put("HCSwin_entry029t","Choose output file");
+        defaultEnglish.put("LOGentry00516exception","Exception (1000246): HolmesClusterSubWindow.getInvariantsCSVLocation() failed:");
+        defaultEnglish.put("HCSwin_entry030","Please select csv file containing invariants.");
+        defaultEnglish.put("HCSwin_entry030t","Choose csv file file");
+        defaultEnglish.put("LOGentry00517exception","Exception (1000247): HolmesClusterSubWindow.getInvariantsCSVLocation() failed:");
+        defaultEnglish.put("HCSwin_entry031","No invariants computed! Please select CSV invariants file!");
+        defaultEnglish.put("HCSwin_entry032","Select CSV");
+        defaultEnglish.put("HCSwin_entry032t","Choose csv file");
+        defaultEnglish.put("HCSwin_entry033","Exporting invariants into CSV file failed.\nCluster procedure cannot begin without invariants.");
+        defaultEnglish.put("HCSwin_entry034op1","Use existing data");
+        defaultEnglish.put("HCSwin_entry034op2","Create new");
+        defaultEnglish.put("HCSwin_entry034","Detailed clustering data already exists. Use it or create new?");
+        defaultEnglish.put("HCSwin_entry034t","Data package found");
+        defaultEnglish.put("HCSwin_entry035","Transition number discrepancy! %nData table transition number: %d%nLoaded network transition number: %d%nExporting cannot proceed.");
+        defaultEnglish.put("HCSwin_entry036","Operation successfull. Clusters are ready to show.");
+        defaultEnglish.put("HCSwin_entry037","Operation failed. Unable to obtain invariants CSV file.");
+        defaultEnglish.put("HCSwin_entry038","Reading data files failed. Sending to net cannot begin.");
+        defaultEnglish.put("HCSwin_entry039","Operation successfull. Clusters are ready to show.");
+        defaultEnglish.put("HCSwin_entry040","Error accured while extracting data. While contacting authors about the problem please attach *all* three files mentioned in log above this message.");
+        defaultEnglish.put("HCSwin_entry041op1","Use existing data");
+        defaultEnglish.put("HCSwin_entry041op2","Create new");
+        defaultEnglish.put("HCSwin_entry041","Detailed clustering data already exists. Use it or create new?");
+        defaultEnglish.put("HCSwin_entry041t","Data package found");
+        defaultEnglish.put("HCSwin_entry042","Operation successfull. Clusters exportet to files");
+        defaultEnglish.put("HCSwin_entry043","Operation failed. Unable to obtain invariants CSV file.");
+        defaultEnglish.put("LOGentry00518","Reading data files failed. Extraction to tables cannot begin.");
+        defaultEnglish.put("HCSwin_entry044","Operation successfull. Clusters exportet to files");
+        defaultEnglish.put("HCSwin_entry045","Error accured while extracting data. While contacting authors about the problem please attach *all* three files mentioned in log above this message.");
+
+        //HolmesSPNeditor:
+        defaultEnglish.put("HSPNwin_entry001title","Holmes SPN data editor");
+        defaultEnglish.put("LOGentry00519exception","Exception (1000248): HolmesSPNeditor.HolmesSPNeditor() failed:");
+        defaultEnglish.put("HSPNwin_entry002","SPN transitions data");
+        defaultEnglish.put("HSPNwin_entry003","SPN data vector ID: ");
+        defaultEnglish.put("HSPNwin_entry004","SPN data vector transitions table");
+
+        //HolmesSPNmanager:
+        defaultEnglish.put("HSPNMwin_entry001title","Holmes SPN transitions data manager");
+        defaultEnglish.put("LOGentry00520exception","Exception (1000249): HolmesSPNmanager.HolmesSPNmanager() failed:");
+        defaultEnglish.put("HSPNMwin_entry002","SPN vectors table");
+        defaultEnglish.put("HSPNMwin_entry003","Buttons");
+        defaultEnglish.put("HSPNMwin_entry004","<html>Select this<br>SPN vector</html>");
+        defaultEnglish.put("HSPNMwin_entry005op1","Set new rates");
+        defaultEnglish.put("HSPNMwin_entry005op2","Keep old ones");
+        defaultEnglish.put("HSPNMwin_entry005","Set all transitions of the net according to the selected\nSPN data vector (table row:");
+        defaultEnglish.put("HSPNMwin_entry005t","set new firing rates?");
+        defaultEnglish.put("HSPNMwin_entry006","<html>Save current<br/>&nbsp;&nbsp;SPN vector</html>");
+        defaultEnglish.put("HSPNMwin_entry007op1","Add new vector");
+        defaultEnglish.put("HSPNMwin_entry007op2","Cancel");
+        defaultEnglish.put("HSPNMwin_entry007","Remember current net firing rates in the table?");
+        defaultEnglish.put("HSPNMwin_entry007t","Add new SPN data vactor?");
+        defaultEnglish.put("HSPNMwin_entry008","<html>&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>SPN vector</html>");
+        defaultEnglish.put("HSPNMwin_entry009","<html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>SPN vector</html>");
+        defaultEnglish.put("HSPNMwin_entry010","<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>SPN vector</html>");
+        defaultEnglish.put("HSPNMwin_entry011","At least one net SPN data vector must remain!");
+        defaultEnglish.put("HSPNMwin_entry012op1","Remove vector");
+        defaultEnglish.put("HSPNMwin_entry012op2","Cancel");
+        defaultEnglish.put("HSPNMwin_entry012","Remove selected SPN data vector from the table\n(table row: ");
+        defaultEnglish.put("HSPNMwin_entry012t","Remove SPN data vector?");
+        defaultEnglish.put("HSPNMwin_entry013","There are no transitions in the net!");
+        defaultEnglish.put("HSPNMwin_entry014op1","Replace vector");
+        defaultEnglish.put("HSPNMwin_entry014op2","Cancel");
+        defaultEnglish.put("HSPNMwin_entry014","Replace selected SPN data vector (table row: %d)%nwith the currently set net firing rates?");
+        defaultEnglish.put("HSPNMwin_entry014t","Replace SPN data vector?");
+        defaultEnglish.put("HSPNMwin_entry015","Others");
+        defaultEnglish.put("HSPNMwin_entry016","State description:");
+        defaultEnglish.put("LOGentry00521exception","Exception (1000250): HolmesSPNmanager.cellClickAction() failed:");
+
+        //HolmesSPNtransitionEditor:
+        defaultEnglish.put("HSPNTEwin_entry001title","Holmes SPN transition editor");
+        defaultEnglish.put("LOGentry00522exception","Exception (1000251): HolmesSPNtransitionEditor.HolmesSPNtransitionEditor() failed:");
+        defaultEnglish.put("HSPNTEwin_entry002","SPN transition data vector");
+        defaultEnglish.put("HSPNTEwin_entry003","SPN data vector:");
+        defaultEnglish.put("HSPNTEwin_entry004","Transition:");
+        defaultEnglish.put("HSPNTEwin_entry005","SPN transition type:");
+        defaultEnglish.put("HSPNTEwin_entry006","Stochastic Transition");
+        defaultEnglish.put("HSPNTEwin_entry007","Immediate Transition");
+        defaultEnglish.put("HSPNTEwin_entry008","Deterministic Transition");
+        defaultEnglish.put("HSPNTEwin_entry009","Scheduled Transition");
+        defaultEnglish.put("HSPNTEwin_entry010","Function / value:");
+        defaultEnglish.put("LOGentry00523exception","Exception (1000252): HolmesSPNtransitionEditor.initializeComponents() failed:");
+        defaultEnglish.put("HSPNTEwin_entry011","Priority:");
+        defaultEnglish.put("HSPNTEwin_entry012","Invalid value, priority must be an integer.");
+        defaultEnglish.put("HSPNTEwin_entry013","Delay:");
+        defaultEnglish.put("HSPNTEwin_entry014","Invalid value, delay must be a positive integer.");
+        defaultEnglish.put("HSPNTEwin_entry015","Start / Rep. / Stop:");
+        defaultEnglish.put("LOGentry00524exception","Exception (1000253): HolmesSPNtransitionEditor.saveTransitionData() failed. Invalid value, either start text of non-negative value expected.");
+        defaultEnglish.put("HSPNTEwin_entry016","Invalid value, delay must be a non-negatice integer.");
+        defaultEnglish.put("LOGentry00525exception","Exception (1000254): HolmesSPNtransitionEditor.saveTransitionData() failed. Invalid value, either end text of non-negative value expected.");
+        defaultEnglish.put("HSPNTEwin_entry017","<html>&nbsp;Change & exit</html>");
+        defaultEnglish.put("HSPNTEwin_entry017t","One action back");
+
         //generalPurposeTags:
         defaultEnglish.put("add","Add");
         defaultEnglish.put("cancel","Cancel");
@@ -2585,14 +2769,13 @@ public class LangEngDafaultDB {
         defaultEnglish.put("save","Save");
         defaultEnglish.put("saveOnly","Save only");
         defaultEnglish.put("select","Select");
+        defaultEnglish.put("status","Status");
         defaultEnglish.put("success","Success");
         defaultEnglish.put("question","Question");
         defaultEnglish.put("netSimWork01","Net simulator working");
         defaultEnglish.put("unimplemented","Not implemented yet.");
         defaultEnglish.put("unimplementedTitle","Subsystem offline");
         defaultEnglish.put("yes","Yes");
-
-
 
 
         return defaultEnglish;
