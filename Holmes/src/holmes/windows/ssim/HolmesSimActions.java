@@ -35,7 +35,7 @@ public class HolmesSimActions {
 		try {
 			result = Integer.parseInt(name);
 		} catch (Exception e) {
-			overlord.log("System malfunction: unable to extract transition ID", "error", true);
+			overlord.log(lang.getText("LOGentry00554exception"), "error", true);
 			return -1;
 		}
 		return result;

@@ -1,7 +1,9 @@
 package holmes.windows;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Place;
+import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.utilities.Tools;
 
@@ -14,20 +16,17 @@ import java.util.ArrayList;
 
 public class HolmesWindowTemplateEx extends JFrame {
     private JFrame ego;
-    private GUIManager overlord;
-    private ArrayList<Double> multisetK = new ArrayList<Double>();
-    private Place place = null;
-    private boolean mainSimulatorActive;
-    private boolean listenerAllowed = true; //jeśli true, comboBoxy działają
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
+    ArrayList<Transition> transitions;
+    ArrayList<Place> places;
 
     //komponenty:
     private JPanel mainPanel;
-    private JComboBox tokensComboBox;
+    private JPanel upperPanel;
+    private JPanel lowerPanel;
 
     public HolmesWindowTemplateEx(Place placeObj) {
-        overlord = GUIManager.getDefaultGUIManager();
-        place = placeObj;
-        ego = this;
         ego.setTitle("XPTN place tokens manager");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
@@ -35,27 +34,21 @@ public class HolmesWindowTemplateEx extends JFrame {
             GUIManager.getDefaultGUIManager().log("Error (533315487) | Exception:  "+ex.getMessage(), "error", true);
         }
 
-        if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)
-            mainSimulatorActive = true;
+        //pobiera listę tranzycji i miejsc z projektu
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        places = overlord.getWorkspace().getProject().getPlaces();
 
-        //oblokowuje główne okno
+
+        //oblokowuje główne okno po zamknięciu tego
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 overlord.getFrame().setEnabled(true);
             }
         });
-
-        if(mainSimulatorActive) {
-            JOptionPane.showMessageDialog(null,
-                    "Window unavailable when simulator is working.",
-                    "Error: simulation in progress", JOptionPane.ERROR_MESSAGE);
-            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-        } else {
-            overlord.getFrame().setEnabled(false);
-            setResizable(false);
-            initializeComponents();
-            setVisible(true);
-        }
+        overlord.getFrame().setEnabled(false); //blokuj główne okno
+        setResizable(false);
+        initializeComponents();
+        setVisible(true);
     }
 
     /**
@@ -65,72 +58,40 @@ public class HolmesWindowTemplateEx extends JFrame {
         this.setLocation(20, 20);
 
         setLayout(new BorderLayout());
-        setSize(new Dimension(640, 450));
+        setSize(new Dimension(1024, 768));
         setLocation(50, 50);
-        //setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setResizable(false);
 
         mainPanel = new JPanel();
         mainPanel.setLayout(null);
-        mainPanel.setBounds(0, 0, 640, 450);
+        mainPanel.setBounds(0, 0, 1024, 768);
         mainPanel.setLocation(0, 0);
-        mainPanel.add(getComboTopPanel());
-        mainPanel.add(getDockPanel());
+        mainPanel.add(uppedPanel());
+        mainPanel.add(lowerPanel());
         add(mainPanel, BorderLayout.CENTER);
     }
 
-    private JPanel getComboTopPanel() {
-        JPanel comboPanel = new JPanel();
-        comboPanel.setLayout(null);
-        comboPanel.setBounds(0, 0, 640, 150);
-        //comboPanel.setPreferredSize(new Dimension(640, 150));
-        comboPanel.setLocation(0, 0);
-        comboPanel.setBorder(BorderFactory.createTitledBorder("Token selected:"));
+    private JPanel uppedPanel() {
+        upperPanel = new JPanel();
+        upperPanel.setLayout(null);
+        upperPanel.setBounds(0, 0, mainPanel.getWidth()-20, 200);
+        upperPanel.setLocation(0, 0);
+        upperPanel.setBorder(BorderFactory.createTitledBorder("First panel:"));
 
         int comboPanelX = 0;
         int comboPanelY = 0;
 
-        String[] dataP = { "---" };
-        tokensComboBox = new JComboBox<String>(dataP); //final, aby listener przycisku odczytał wartość
-        tokensComboBox.setLocation(comboPanelX +=15, comboPanelY+=15);
-        tokensComboBox.setSize(400, 20);
-        tokensComboBox.setSelectedIndex(0);
-        tokensComboBox.setMaximumRowCount(10);
-        tokensComboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                if(listenerAllowed == false)
-                    return;
-                int selected = tokensComboBox.getSelectedIndex();
-                if(selected > 0) {
-
-                } else {
-                    // clearSubPanel();
-                }
-            }
-        });
-        comboPanelX += 25;
-        comboPanel.add(tokensComboBox);
-
-        //multisetK.addAll(place.accessMultiset());
-
-        tokensComboBox.removeAllItems();
-        tokensComboBox.addItem("---");
-        for(int p=0; p < multisetK.size(); p++) {
-            tokensComboBox.addItem("\u03BA"+(p)+"."+multisetK.get(p));
-        }
-
-        return comboPanel;
+        return upperPanel;
     }
 
-    private JPanel getDockPanel() {
-        JPanel dockPanel = new JPanel(new BorderLayout());
-        dockPanel.setLayout(null);
-        dockPanel.setBounds(0, 0, 640, 300);
-        //dockPanel.setPreferredSize(new Dimension(640, 150));
-        dockPanel.setLocation(0, 150);
+    private JPanel lowerPanel() {
+        lowerPanel = new JPanel(new BorderLayout());
+        lowerPanel.setLayout(null);
+        lowerPanel.setBounds(0, 0, mainPanel.getWidth()-20, 550);;
+        lowerPanel.setLocation(0, upperPanel.getHeight());
 
-        dockPanel.setBorder(BorderFactory.createTitledBorder("Options:"));
+        lowerPanel.setBorder(BorderFactory.createTitledBorder("Second panel:"));
 
-        return dockPanel;
+        return lowerPanel;
     }
 }

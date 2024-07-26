@@ -1,6 +1,7 @@
 package holmes.analyse.comparison;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.files.io.IOprotocols;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
@@ -13,7 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class KnockoutInvariantComparison {
-    private GUIManager overlord;
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private IOprotocols communicationProtocol;
 
     private ArrayList<Integer> nodesList1;
@@ -26,7 +28,6 @@ public class KnockoutInvariantComparison {
     private ArrayList<ArrayList<Integer>> onlySecondInvariantsList = new ArrayList<>();
 
     public KnockoutInvariantComparison() {
-        overlord = GUIManager.getDefaultGUIManager();
         resetComponents();
 
         communicationProtocol = new IOprotocols();
@@ -278,7 +279,7 @@ public class KnockoutInvariantComparison {
                 listOFFoundInvariants.add(lnv_2);
             }
 
-            ArrayList< ArrayList<Integer>> inv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+            ArrayList< ArrayList<Integer>> inv = overlord.getWorkspace().getProject().getT_InvMatrix();
             ArrayList< ArrayList<Integer>> result_Inv = new ArrayList<>();
             for(int i = 0 ; i < inv.size() ; i++)
             {
@@ -290,9 +291,9 @@ public class KnockoutInvariantComparison {
             }
 
 
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().setT_InvMatrix(result_Inv,false);
+            overlord.getWorkspace().getProject().setT_InvMatrix(result_Inv,false);
             IOprotocols io = new IOprotocols();
-            io.writeT_invINA("/home/Szavislav/SARS-Cov-2/covidoveInvarianty.inv",result_Inv,GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions());
+            io.writeT_invINA("/home/Szavislav/SARS-Cov-2/covidoveInvarianty.inv",result_Inv,overlord.getWorkspace().getProject().getTransitions());
 
 
             System.out.println("Done " );
@@ -579,14 +580,14 @@ public class KnockoutInvariantComparison {
         readT_invariants1("/home/Szavislav/SARS-Cov-2/bez.inv");
         IOprotocols io = new IOprotocols();
         io.readPNT("/home/Szavislav/SARS-Cov-2/0-6-8-bez-sarsa.pnt");
-        PetriNet pn1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+        PetriNet pn1 = overlord.getWorkspace().getProject();
         System.out.println("Wczytywanie I sieci zakońćzone - liczba inwariantów = " + invariantsList1.size());
 
         ArrayList<Transition> pn1T = pn1.getTransitions();
 
         readT_invariants2("/home/Szavislav/SARS-Cov-2/z.inv");
         io.readPNT("/home/Szavislav/SARS-Cov-2/sars-cov-2_v-0-6-8_2021-01-06_DF_PF_KG.pnt");
-        PetriNet pn2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+        PetriNet pn2 = overlord.getWorkspace().getProject();
         ArrayList<SimilarityInvarianStructure> ikl = new ArrayList<>();
 
         System.out.println("Wczytywanie II sieci zakońćzone - liczba inwariantów = " + invariantsList2.size());

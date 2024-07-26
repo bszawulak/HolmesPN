@@ -8,7 +8,7 @@ import holmes.petrinet.elements.TransitionXTPN;
 import java.util.ArrayList;
 
 public class AlgorithmsXTPN {
-    private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 
     public class ResultTokensAvg {
         public double avg;

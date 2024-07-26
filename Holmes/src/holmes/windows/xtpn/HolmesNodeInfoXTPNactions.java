@@ -1,6 +1,7 @@
 package holmes.windows.xtpn;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
@@ -12,12 +13,12 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class HolmesNodeInfoXTPNactions {
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private JFrame parentFrame;
-    private GUIManager overlord;
 
     public HolmesNodeInfoXTPNactions(JFrame parent) {
         parentFrame = parent;
-        overlord = GUIManager.getDefaultGUIManager();
     }
 
 
@@ -37,7 +38,7 @@ public class HolmesNodeInfoXTPNactions {
                 button.setNewText("<html>Gamma: OFF</html>");
                 button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 place.transformXTPNintoPNpace();
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
                 button.setFocusPainted(false);
                 tokensWindowButton.setEnabled(false);
                 gammaVisibilityButton.setEnabled(false);
@@ -55,7 +56,7 @@ public class HolmesNodeInfoXTPNactions {
                 button.setNewText("<html>Gamma: ON</html>");
                 button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 place.transformIntoXTPNplace();
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
                 button.setFocusPainted(false);
                 tokensWindowButton.setEnabled(true);
                 gammaVisibilityButton.setEnabled(true);
@@ -69,16 +70,16 @@ public class HolmesNodeInfoXTPNactions {
             place.setGammaRangeVisibility(false);
             button.setNewText("<html>\u03B3: Hidden<html>");
             button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
         } else {
             place.setGammaRangeVisibility(true);
             button.setNewText("<html>\u03B3: Visible<html>");
             button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
         }
-        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
         button.setFocusPainted(false);
     }
 
@@ -86,15 +87,13 @@ public class HolmesNodeInfoXTPNactions {
      * Metoda odpowiedzialna za przerysowanie grafu obrazu w arkuszu sieci.
      */
     public void repaintGraphPanel(Node node) {
-        int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(node.getElementLocations().get(0).getSheetID());
-        GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+        int sheetIndex = overlord.IDtoIndex(node.getElementLocations().get(0).getSheetID());
+        GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
         graphPanel.repaint();
     }
 
     public void reselectElement(ElementLocation elementLocation) {
-        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
     }
-
-
 }

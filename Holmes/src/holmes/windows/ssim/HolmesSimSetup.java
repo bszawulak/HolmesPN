@@ -22,6 +22,7 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.utilities.Tools;
 import holmes.windows.managers.HolmesSPNmanager;
@@ -35,7 +36,8 @@ import holmes.windows.managers.HolmesStatesManager;
 public class HolmesSimSetup extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -240275069200534886L;
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JFrame parentWindow;
 	private JFrame ego;
 	private boolean doNotUpdate = false;
@@ -69,7 +71,6 @@ public class HolmesSimSetup extends JFrame {
 	 * @param parent JFrame - okno wywołujące
 	 */
 	public HolmesSimSetup(JFrame parent) {
-		this.overlord = GUIManager.getDefaultGUIManager();
 		this.ego = this;
 		this.parentWindow = parent;
 		this.settings = overlord.simSettings;
@@ -89,7 +90,7 @@ public class HolmesSimSetup extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (766220006) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log("Error (766220006) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		setSize(new Dimension(620, 490));
 		

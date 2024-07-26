@@ -2,6 +2,7 @@ package holmes.windows.xtpn;
 
 import holmes.analyse.XTPN.AlgorithmsXTPN;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.darkgui.dockwindows.SharedActionsXTPN;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.elements.*;
@@ -32,7 +33,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 public class HolmesNodeInfoXTPN extends JFrame {
-    private GUIManager overlord;
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private PlaceXTPN thePlace;
     private ElementLocation eLocation;
     private HolmesNodeInfoXTPNactions action = new HolmesNodeInfoXTPNactions(this);
@@ -121,7 +123,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
      * @param parent JFrame - okno wywołujące
      */
     public HolmesNodeInfoXTPN(PlaceXTPN place, ElementLocation eloc, JFrame parent) {
-        overlord = GUIManager.getDefaultGUIManager();
         parentFrame = parent;
         this.thePlace = place;
         this.eLocation = eloc;
@@ -152,7 +153,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
      * @param parent JFrame - okno wywołujące
      */
     public HolmesNodeInfoXTPN(TransitionXTPN transition, ElementLocation eloc, JFrame parent) {
-        overlord = GUIManager.getDefaultGUIManager();
         parentFrame = parent;
         this.theTransition = transition;
         this.eLocation = eloc;
@@ -196,7 +196,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log("Error (181278513) | Exception:  "+ex.getMessage(), "error", true);
+            overlord.log("Error (181278513) | Exception:  "+ex.getMessage(), "error", true);
         }
 
         if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)
@@ -269,7 +269,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                GUIManager.getDefaultGUIManager().log("Error (611156405) | Exception:  "+ex.getMessage(), "error", true);
+                overlord.log("Error (611156405) | Exception:  "+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             thePlace.setName(newName);
@@ -438,7 +438,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             doNotUpdate = true;
             gammaMaxTextField.setValue(thePlace.getGammaMaxValue());
             doNotUpdate = false;
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
         });
 
@@ -465,7 +465,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             doNotUpdate = true;
             gammaMinTextField.setValue(thePlace.getGammaMinValue());
             doNotUpdate = false;
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
         });
 
@@ -968,7 +968,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                GUIManager.getDefaultGUIManager().log("Error (212156495) | Exception:  "+ex.getMessage(), "error", true);
+                overlord.log("Error (212156495) | Exception:  "+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             theTransition.setName(newName);
@@ -1110,7 +1110,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 button.setNewText("<html>\u03B1: Visible<html>");
                 button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             }
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
 
             action.reselectElement(eLocation);
@@ -1180,7 +1180,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 button.setNewText("<html>\u03B2: Visible<html>");
                 button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             }
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
 
             action.reselectElement(eLocation);
@@ -1255,7 +1255,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
                 overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
             }
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
 
             action.reselectElement(eLocation);
@@ -1304,7 +1304,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             overlord.markNetChange();
             setFieldStatus(false);
 
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
 
         });
@@ -1333,7 +1333,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             overlord.markNetChange();
             setFieldStatus(false);
 
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
         });
 
@@ -1383,7 +1383,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             overlord.markNetChange();
             setFieldStatus(false);
 
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
         });
 
@@ -1410,7 +1410,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             overlord.markNetChange();
             setFieldStatus(false);
 
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(eLocation);
         });
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import holmes.analyse.InvariantsTools;
 import holmes.analyse.MCTCalculator;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Transition;
 
 /**
@@ -14,6 +15,8 @@ import holmes.petrinet.elements.Transition;
  * BioSystems, 2008, 92, pp.189-205
  */
 public class MauritiusMap {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	BTNode root;
 	ArrayList<Transition> transitions;
 	ArrayList<String> transMCTNames;
@@ -33,7 +36,7 @@ public class MauritiusMap {
 	public MauritiusMap(ArrayList<ArrayList<Integer>> invariants, int rootTransition, int coverageVal, int mode) {
 		root = new BTNode();
 		root.type = NodeType.ROOT;
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		transitions = overlord.getWorkspace().getProject().getTransitions();
 		transMCTNames = getMCTNamesVector();
 		invariants = addIndexToInvariants(invariants);
 		
@@ -85,7 +88,7 @@ public class MauritiusMap {
 						antiVector.set(j, 0); //udawajmy, że jej tam w ogóle nie ma, na potrzeby bloku niżej
 					}
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (251316489) | Exception:  "+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00544exception")+" "+ex.getMessage(), "error", true);
 				} //divide by zero - ignore
 			}
 			
@@ -128,7 +131,7 @@ public class MauritiusMap {
 	 * @return ArrayList[String] - wektor nazw tranzycji
 	 */
 	private ArrayList<String> getMCTNamesVector() {
-		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTanalyzer();
+		MCTCalculator analyzer = overlord.getWorkspace().getProject().getMCTanalyzer();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
 		ArrayList<String> resultNames = new ArrayList<String>();
 		
@@ -378,7 +381,7 @@ public class MauritiusMap {
 	public MauritiusMap(ArrayList<ArrayList<Integer>> invariants) {
 		root = new BTNode();
 		root.type = NodeType.ROOT;
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		transitions = overlord.getWorkspace().getProject().getTransitions();
 		//tu wstaw MCT
 		transMCTNames = getMCTNamesVector();
 		createMTree(invariants, -1, root, null);

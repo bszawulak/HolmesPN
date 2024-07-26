@@ -15,7 +15,8 @@ import java.util.Map;
 public class TransitionXTPN extends Transition {
     @Serial
     private static final long serialVersionUID = 4766270474155264671L;
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private boolean alphaMode_xTPN = true;
     private boolean alphaRangeVisibility_XTPN = true;
     private double alphaMin_xTPN = 0.0;
@@ -507,7 +508,7 @@ public class TransitionXTPN extends Transition {
 
         for (Arc arc : getInputArcs()) { //jeśli brak, to aktywna wejściowa
             if( !(arc.getStartNode() instanceof PlaceXTPN) ) {
-                GUIManager.getDefaultGUIManager().log("Error, non-XTPN place found! Place: "+arc.getStartNode().getName(), "error", true);
+                overlord.log("Error, non-XTPN place found! Place: "+arc.getStartNode().getName(), "error", true);
                 break;
             }
 

@@ -2908,6 +2908,227 @@ ITwin_entry001t, Project mismatch error!
 ITwin_entry002, Invariants data matrix unavailable. Possible cause: invariants generation or reading from file failed.
 ITwin_entry002t, No invariants data
 
+//Runner:
+RUNwin_entry001, Holmes is running. Please wait.
+LOGentry00537, Error in format of common transition threshold value (-scatt arg.):
+LOGentry00538exception, Exception (1000264): Runner.ProgramSettings() failed. Wrong parameter:
+LOGentry00539exception, Exception (1000265): Runner.ProgramSettings() failed. Error in cluster range format:
+LOGentry00540exception, Exception (1000266): Runner.ProgramSettings() failed:
+LOGentry00541, MCT Generator: input file read.
+LOGentry00542, MCT Generator: invariants section written.
+LOGentry00543, MCT Generator: properMCTsets section finished.
+
+//MauritiusMap:
+MMwin_entry001, - no sentence -
+LOGentry00544exception, Exception (1000267): MauritiusMap.MauritiusMap() failed:
+
+//HolmesSim: (Holmes State Simulator)
+HSSwin_entry001title, State Simulator
+LOGentry00545exception, Exception (1000268): HolmesSim.initializeComponents() failed:
+HSSwin_entry002, Places dynamics
+HSSwin_entry002t, Places dynamics
+HSSwin_entry003, Transitions dynamics
+HSSwin_entry003t, Transitions dynamics
+HSSwin_entry004, Simple mode
+HSSwin_entry004t, Standard fast simulation (non graphical)
+HSSwin_entry005, Knockout simulation
+HSSwin_entry005t, Knockout simulation
+HSSwin_entry006, Data acquisition
+HSSwin_entry007, SimStart
+HSSwin_entry007t, Compute steps from zero marking through the number of states given on the right.
+HSSwin_entry008, <html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>
+HSSwin_entry009, SimSettings
+HSSwin_entry009t, Set simulator options.
+HSSwin_entry010, <html>States<br>Manager</html>
+HSSwin_entry010t, Open states manager window.
+HSSwin_entry011, Selected m0 state ID:
+HSSwin_entry012, Clear
+HSSwin_entry012t, Clear all charts and data vectors. Reset simulator.
+HSSwin_entry013, Progress
+HSSwin_entry014, Places chart options
+HSSwin_entry015, <html>&nbsp;&nbsp;&nbsp;&nbsp;Show all&nbsp;&nbsp;&nbsp;&nbsp;</htm>
+HSSwin_entry015t, Show average numbers of token in places through simulation steps.
+HSSwin_entry016, Show notepad
+HSSwin_entry016t, Show notepad with average numbers of token in places through simulation steps.
+HSSwin_entry017, Interval:
+HSSwin_entry018, Sorted by tokens
+HSSwin_entry019, Places:
+HSSwin_entry020, Add to chart
+HSSwin_entry021, Add data about place tokens to the chart.
+LOGentry00546exception, Exception (1000269): HolmesSim.createPlacesTabPanel() failed:
+HSSwin_entry022, Remove
+HSSwin_entry022t, Remove data about place tokens from the chart.
+LOGentry00547exception, Exception (1000270): HolmesSim.createPlacesTabPanel() failed:
+HSSwin_entry023, Clear chart
+HSSwin_entry023t, Clear chart data.
+LOGentry00548exception, Exception (1000271): HolmesSim.createPlacesTabPanel() failed:
+HSSwin_entry024, Chart graphic
+HSSwin_entry025, Thin
+HSSwin_entry026, Normal
+HSSwin_entry027, Thick
+HSSwin_entry028, Places chart
+HSSwin_entry029, Transitions chart options
+HSSwin_entry030, <html>&nbsp;&nbsp;&nbsp;&nbsp;Show all&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSwin_entry030t, Show average numbers of firings of transitions through simulation steps.
+HSSwin_entry031, Show notepad
+HSSwin_entry031t, Show notepad with average numbers of firings of transitions through simulation steps.
+HSSwin_entry032, Interval:
+HSSwin_entry033, Sorted by firing
+HSSwin_entry034, Transitions:
+HSSwin_entry035, Add to chart
+HSSwin_entry035t, Add data about transition firing to the chart.
+LOGentry00549exception, Exception (1000272): HolmesSim.createTransitionsTabPanel() failed:
+HSSwin_entry036, Remove
+HSSwin_entry036t, Remove data about transition firing from the chart.
+LOGentry00550exception, Exception (1000273): HolmesSim.createTransitionsTabPanel() failed:
+HSSwin_entry037, Clear chart
+HSSwin_entry037t, Clears the transitions chart.
+HSSwin_entry038, Save Image
+HSSwin_entry038t, Saves chart as image file.
+HSSwin_entry039, Find trans.
+HSSwin_entry039t, Find selected transition within the net.
+LOGentry00551exception, Exception (1000274): HolmesSim.createTransitionsTabPanel() failed:
+HSSwin_entry040, Chart graphic
+HSSwin_entry041, Thin
+HSSwin_entry042, Normal
+HSSwin_entry043, Thick
+HSSwin_entry044, Transitions chart
+HSSwin_entry045, Places dynamics
+HSSwin_entry046, Step
+HSSwin_entry047, Tokens
+HSSwin_entry048, toMax
+HSSwin_entry049, ZeroTokens
+HSSwin_entry050, Place ID
+HSSwin_entry051, Average tokens
+HSSwin_entry052, Places average tokens data
+HSSwin_entry053, Places:
+HSSwin_entry054, p_%d %s : Avg. tokens: %.2f Total: %d
+HSSwin_entry055, NO_TOKENS: p_%d %s : %.2f
+HSSwin_entry056, Transitions dynamics
+HSSwin_entry057, Step
+HSSwin_entry058, Firing
+LOGentry00552exception, Exception (1000275): HolmesSim.addNewTransitionSeries() failed:
+HSSwin_entry059, Transition ID
+HSSwin_entry060, Total firing value
+HSSwin_entry061, Transitions statistical data
+HSSwin_entry062, Transitions: (sum of all firing:
+HSSwin_entry063, t_%d %s : Fired: %f (max: %f)
+HSSwin_entry064, MANUALLY DISABLED: t_%d %s : %f
+HSSwin_entry065, OFFLINE: t_%d %s : %f
+LOGentry00553exception, Exception (1000276): HolmesSim.saveChartImage() failed:
+HSSwin_entry066, Main simulator active. Please turn if off before starting state simulator process
+HSSwin_entry066t, Main simulator active
+HSSwin_entry067, Fired: %d   (maximum in this simulation: %d)
+HSSwin_entry068, Tokens: %s   (maximum in this simulation: %s)
+
+//HolmesSimActions:
+HSimAwin_entry001, - no sentence -
+LOGentry00554exception, Exception (1000277): HolmesSimActions.getRealNodeID() failed.  Unable to extract transition ID:
+
+//HolmesSimKnock:
+HSKwin_entry001, SimStart
+HSKwin_entry001t, Compute steps from zero marking through the number of states given on the right.
+HSKwin_entry002, <html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>
+HSKwin_entry002t, Stop the currently working simulation process.
+HSKwin_entry003, Progress
+HSKwin_entry004, Show results in notepad
+HSKwin_entry005, Reference data details panel
+HSKwin_entry006, Ref. sets:
+HSKwin_entry007, Remove
+HSKwin_entry007t, Remove selected reference data set.
+HSKwin_entry008, Date:
+HSKwin_entry009, Net mode:
+HSKwin_entry010, Max mode:
+HSKwin_entry011, Sim. steps:
+HSKwin_entry012, Repetitions:
+HSKwin_entry013, Knockout data acquisition setup
+HSKwin_entry014, Transitions:
+HSKwin_entry015, Add
+HSKwin_entry015t, Sets transition for offline in the incoming simulation sesssion.
+HSKwin_entry016, Remove
+HSKwin_entry016t, Remove transitions from offline set.
+HSKwin_entry017, MCT set:
+HSKwin_entry018, Add
+HSKwin_entry018t, Sets whole MCT for offline in the incoming simulation sesssion.
+HSKwin_entry019, Remove
+HSKwin_entry019t, Remove MCT set from offline set.
+HSKwin_entry020, Clear
+HSKwin_entry020t, Clear transitions and MCT field indicating offline simulation elements.
+HSKwin_entry021, SimStart
+HSKwin_entry021t, Compute steps from zero marking through the number of states given on the right.
+HSKwin_entry022, Simulation for manually disabled transition and for all transition are mutually\nexclusive. Please choose one.
+HSKwin_entry023, <html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>
+HSKwin_entry023op1, Stop and remove
+HSKwin_entry023op2, Proceed with simulation
+HSKwin_entry023msg, WARNING: This will cancel the whole-net knockout simulation and DELETE\nall previously computed datased in this simulation session. Proceed?
+HSKwin_entry023t, Please confirm
+HSKwin_entry024, Simulation terminated. Currently processed transitions data rejected.
+HSKwin_entry024t, Simulation terminated
+HSKwin_entry025, Special options
+HSKwin_entry026, Manually disabled transitions
+HSKwin_entry027, All transitions (one by one)
+HSKwin_entry028, Show results in notepad
+HSKwin_entry029, Progress
+HSKwin_entry030, Knockout data details panel
+HSKwin_entry031, Data sets:
+HSKwin_entry032, Remove
+HSKwin_entry032t, Remove selected knockout simulation dataset.
+HSKwin_entry033, Date:
+HSKwin_entry034, Net mode:
+HSKwin_entry035, Max mode:
+HSKwin_entry036, Sim. steps:
+HSKwin_entry037, Repetitions:
+HSKwin_entry038, Disabled:
+HSKwin_entry039, General options panel
+HSKwin_entry040, Load all
+HSKwin_entry040t, Load all simulation data from file (will overwrite old data in memory!).
+HSKwin_entry041, Save all
+HSKwin_entry041t, Saves all simulation data to single file.
+HSKwin_entry042, Analyse
+HSKwin_entry042t, Open window where detailed analysis of gathered data is possible.
+HSKwin_entry043, SimSettings
+HSKwin_entry043t, Open simulator options window.
+HSKwin_entry044, <html>States<br>Manager</html>
+HSKwin_entry044t, Opens States Manager window where initial net states can be selected.
+HSKwin_entry045, Selected m0 state ID:
+HSKwin_entry046, Ref:%d Date: %s NetMode: %s MaxMode: %s
+HSKwin_entry047, Disabled:
+HSKwin_entry048, Data set:%d:    %s     NetMode:%s   MaxMode:%s
+HSKwin_entry049, TRUE
+HSKwin_entry050, FALSE
+
+//HolmesSimKnockActions:
+HSKAwin_entry001, Main simulator active. Please turn if off before starting state simulator process
+HSKAwin_entry001t, Main simulator active
+HSKAwin_entry002, At least single place and transition required for simulation.
+HSKAwin_entry003, State simulator initialization failed.
+HSKAwin_entry004, Transitions:
+HSKAwin_entry005, t%d_%s : %s min: %s max: %s
+HSKAwin_entry006, Places:
+HSKAwin_entry007, p%d_%s : %s min: %s max: %s
+HSKAwin_entry008, t%d_%s : %s min: %s max: %s
+HSKAwin_entry009, p%s_%s : %s min: %s max: %s
+HSKAwin_entry010, Progress:
+HSKAwin_entry011op1, Remove ref. set
+HSKAwin_entry011op2, Keep it
+HSKAwin_entry011, This is the only available reference set. Without it, comparing knockout data will be impossible.
+HSKAwin_entry011t, Remove last reference set?
+HSKAwin_entry012op1, Remove ref. set
+HSKAwin_entry012op2, Keep it
+HSKAwin_entry012, Remove this reference set?
+HSKAwin_entry012t, Please confirm
+HSKAwin_entry013op1, Remove ALL data series
+HSKAwin_entry013op2, Keep them
+HSKAwin_entry013, WARNING! This dataset belongs to data series (e.g. single transition knockout\nsimulation for the whole net.\nTHIS WILL REMOVE ALL THE DATASETS, NOT ONLY THE SELECTED ONE. Proceed?
+HSKAwin_entry013t, Datasets series remove
+HSKAwin_entry014op1, Remove selected set
+HSKAwin_entry014op2, Keep it
+HSKAwin_entry014, Remove this knockout dataset?
+HSKAwin_entry014t, Please confirm
+
+
+
+
 //generalPurposeTags:
 add, Add
 cancel, Cancel

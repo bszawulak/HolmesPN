@@ -17,8 +17,8 @@ import java.util.List;
  */
 public class HolmesSubnetsInfo {
     private final GraphPanel graphPanel;
-    private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
 
     /**
      * Konstruktor klasy HolmesSubnetsInfo.
@@ -214,7 +214,6 @@ public class HolmesSubnetsInfo {
      * Metoda otwiera panel właściwości aktualnie wybranej podsieci.
      */
     public static void open() {
-        GUIManager overlord = GUIManager.getDefaultGUIManager();
         int subnetID = overlord.getWorkspace().getSelectedSheet().getId();
         open(subnetID);
     }
@@ -224,7 +223,6 @@ public class HolmesSubnetsInfo {
      * @param subnetID int - id podsieci
      */
     public static void open(int subnetID) {
-        GUIManager overlord = GUIManager.getDefaultGUIManager();
         GraphPanel graphPanel = overlord.subnetsHQ.getGraphPanel(subnetID);
         if (graphPanel.getSheetId() == 0) {
             JOptionPane.showMessageDialog(null, lang.getText("HSIwin_entry015"), lang.getText("HSIwin_entry015t"),

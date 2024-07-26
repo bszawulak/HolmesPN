@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
  * dowolna wcześniej przekazana akcja.
  */
 public class OnSubnetAction extends BaseDialog {
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private JComboBox<ComboBoxItem<Integer>> comboBox;
     private JButton button;
 

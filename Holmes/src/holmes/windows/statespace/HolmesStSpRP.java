@@ -10,7 +10,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class HolmesStSpRP extends JFrame {
-    private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
     ArrayList<Transition> transitions;
     ArrayList<Place> places;
 
@@ -70,7 +70,7 @@ public class HolmesStSpRP extends JFrame {
         upperPanel.setLayout(null);
         upperPanel.setBounds(0, 0, mainPanel.getWidth()-20, 200);
         upperPanel.setLocation(0, 0);
-        upperPanel.setBorder(BorderFactory.createTitledBorder("Token selected:"));
+        upperPanel.setBorder(BorderFactory.createTitledBorder("First panel:"));
 
         int comboPanelX = 0;
         int comboPanelY = 0;
@@ -84,7 +84,7 @@ public class HolmesStSpRP extends JFrame {
         lowerPanel.setBounds(0, 0, mainPanel.getWidth()-20, 550);;
         lowerPanel.setLocation(0, upperPanel.getHeight());
 
-        lowerPanel.setBorder(BorderFactory.createTitledBorder("Options:"));
+        lowerPanel.setBorder(BorderFactory.createTitledBorder("Second panel:"));
 
         return lowerPanel;
     }

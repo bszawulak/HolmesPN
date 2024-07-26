@@ -32,6 +32,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import holmes.darkgui.LanguageManager;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -75,7 +76,8 @@ import holmes.windows.HolmesNotepad;
 public class HolmesSimKnockVis extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 3020186160500907678L;
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private PetriNet pn;
 	private static final DecimalFormat formatter1 = new DecimalFormat( "#.#" );
 	private static final DecimalFormat formatter2 = new DecimalFormat( "#.##" );
@@ -112,7 +114,6 @@ public class HolmesSimKnockVis extends JFrame {
 	 * @param boss HolmesStateSim - główne okno symulatora
 	 */
 	public HolmesSimKnockVis(HolmesSim boss) {
-		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();
 		this.boss = boss;
 		
@@ -133,7 +134,7 @@ public class HolmesSimKnockVis extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (210930262) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log("Error (210930262) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		setSize(new Dimension(1200, 920));
 		
@@ -165,7 +166,7 @@ public class HolmesSimKnockVis extends JFrame {
 		main.add(mainTabbedPanel, BorderLayout.CENTER);
 		
 		//this.boss.setEnabled(false);
-		GUIManager.getDefaultGUIManager().getFrame().setEnabled(false);
+		overlord.getFrame().setEnabled(false);
 	}
 	
 	/**
@@ -860,7 +861,7 @@ public class HolmesSimKnockVis extends JFrame {
             	}
         	}
     	} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (704284698) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log("Error (704284698) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	
         //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
@@ -948,7 +949,7 @@ public class HolmesSimKnockVis extends JFrame {
             	}
         	}
     	} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (656544812) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log("Error (656544812) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	
         //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
@@ -1071,7 +1072,7 @@ public class HolmesSimKnockVis extends JFrame {
             	}
         	}
     	} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (391946877) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log("Error (391946877) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	
         //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
@@ -1160,7 +1161,7 @@ public class HolmesSimKnockVis extends JFrame {
             	}
         	}
     	} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (121688445) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log("Error (121688445) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	
         //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
@@ -1750,7 +1751,7 @@ public class HolmesSimKnockVis extends JFrame {
     	addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 		    	boss.setEnabled(true);
-		    	GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
+				overlord.getFrame().setEnabled(true);
 		    }
 		});
     }
@@ -1875,18 +1876,18 @@ public class HolmesSimKnockVis extends JFrame {
 	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
 	  	    	
 	  	    	HolmesNodeInfo window = new HolmesNodeInfo(
-	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(index), this);
+						overlord.getWorkspace().getProject().getPlaces().get(index), this);
 	  	    	window.setVisible(true);
 			} else if(name.contains("Transitions")){
 				int row = table.getSelectedRow();
 	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
 	  	    	
 	  	    	HolmesNodeInfo window = new HolmesNodeInfo(
-	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(index), this);
+						overlord.getWorkspace().getProject().getTransitions().get(index), this);
 	  	    	window.setVisible(true);
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (905683345) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log("Error (905683345) | Exception:  "+ex.getMessage(), "error", true);
 		}
 	}
 	

@@ -11,12 +11,14 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 
 public class Runner {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private PrintWriter out = null;
 
-	private void print(String s) throws FileNotFoundException
-	{
+	private void print(String s) throws FileNotFoundException {
 		if (out == null)
 			out = new PrintWriter("output/output.txt");
 		//System.out.print(s);
@@ -24,16 +26,14 @@ public class Runner {
 		out.flush();
 	}
 	
-	private void print(PrintWriter pw, String s)
-	{
+	private void print(PrintWriter pw, String s) {
 		if (pw == null)
 			return;
 		pw.print(s);
 		pw.flush();
 	}
 	
-	private void println(String s) throws FileNotFoundException
-	{
+	private void println(String s) throws FileNotFoundException {
 		if (out == null)
 			out = new PrintWriter("output/output.txt");
 		//System.out.println(s);
@@ -41,8 +41,7 @@ public class Runner {
 		out.flush();
 	}
 	
-	private void println(PrintWriter pw, String s)
-	{
+	private void println(PrintWriter pw, String s) {
 		if (pw == null)
 			return;
 		print(pw, s);
@@ -127,10 +126,10 @@ public class Runner {
 						try {
 							showAsCommonTransitionThreshold = Double.parseDouble(threshold);
 						} catch (NumberFormatException nfe) {
-							throw new NumberFormatException("Error in format of common transition threshold value (-scatt arg.): " + threshold);
+							throw new NumberFormatException(lang.getText("LOGentry00537")+" " + threshold);
 						}
 					}
-					default -> throw new IllegalArgumentException("Wrong parameter: " + param);
+					default -> throw new IllegalArgumentException(lang.getText("LOGentry00538exception")+" " + param);
 				}
 			}
 		}
@@ -162,7 +161,7 @@ public class Runner {
 							ss.add(String.valueOf(index));
 						}
 					} catch (NumberFormatException nfe) {
-						throw new NumberFormatException("Error in cluster range format: " + range);
+						throw new NumberFormatException(lang.getText("LOGentry00539exception")+" " + range);
 					}
 				}
 				clusters.add(ss);
@@ -179,7 +178,7 @@ public class Runner {
 				//}
 				br.close();
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Error (915059067) | Ex: "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00540exception")+" "+e.getMessage(), "error", true);
 			}
 		}
 	}
@@ -212,8 +211,8 @@ public class Runner {
 		else
 			tInvariants = Utils.readTInvariants(is, true, petriNet);
 		Map <String, String> renameMap = ps.mctRenameFile != null ? Utils.readMCTNameMap(ps.mctRenameFile) : null;
-		
-		GUIManager.getDefaultGUIManager().log("MCT Generator: input file read.", "text", true);
+
+		overlord.log(lang.getText("LOGentry00541"), "text", true);
 		
 		SortedSet<MCTSet> mctSets = Utils.buildMCT(tInvariants, renameMap);
 		SortedSet<MCTSet> properMctSets = new TreeSet<MCTSet>();
@@ -228,8 +227,8 @@ public class Runner {
 			println("---Invariants---------------------------");
 			println(Utils.invariantsToString(tInvariants));
 		}
-		
-		GUIManager.getDefaultGUIManager().log("MCT Generator: invariants section written.", "text", true);
+
+		overlord.log(lang.getText("LOGentry00542"), "text", true);
 		
 		println("---Invariants[VECTORS]---------------------------");
 		StringBuilder header = new StringBuilder(";");
@@ -256,8 +255,8 @@ public class Runner {
 			else 
 				println((mct.getPrintName(false)) + " [" + mct.getTransitionSet().size() + "]. " + mct);
 		}
-		
-		GUIManager.getDefaultGUIManager().log("MCT Generator: properMCTsets section finished.", "text", true);
+
+		overlord.log(lang.getText("LOGentry00543"), "text", true);
 		
 		println("Single MCT sets (size = 1): ");
 		for (MCTSet mct : single)
@@ -345,7 +344,6 @@ public class Runner {
 				}
 			}
 		}
-		
 		if(out != null)
 			out.close();
 	}

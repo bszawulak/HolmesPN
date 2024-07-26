@@ -1,6 +1,7 @@
 package holmes.windows.xtpn;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.darkgui.holmesInterface.HolmesRoundedButton;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.PlaceXTPN;
@@ -26,7 +27,8 @@ import java.util.Collections;
  * dla takiego miejsca gdy multizbiór zawiera element 8.0, to znaczy, że miejsca ma 8 klasycznych tokenów.
  */
 public class HolmesXTPNtokens extends JFrame {
-    private final GUIManager overlord;
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     //private HolmesStatesEditorXTPN parentWindow;
     private JFrame parentWindow;
     private PlaceXTPN place;
@@ -51,7 +53,6 @@ public class HolmesXTPNtokens extends JFrame {
      *               że wywołanie nastąpiło w głównego okna Holmesa.
      */
     public HolmesXTPNtokens(PlaceXTPN placeObj, JFrame parent, ArrayList<Double> multK, boolean isGammaPlace) {
-        overlord = GUIManager.getDefaultGUIManager();
         parentWindow = parent;
         places = overlord.getWorkspace().getProject().getPlaces();
         place = placeObj;
@@ -62,10 +63,10 @@ public class HolmesXTPNtokens extends JFrame {
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log("Error (310108837) | Exception:  "+ex.getMessage(), "error", true);
+            overlord.log("Error (310108837) | Exception:  "+ex.getMessage(), "error", true);
         }
 
-        if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)
+        if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)
             mainSimulatorActive = true;
 
         //odblokowuje okno wywoławcze
@@ -235,7 +236,7 @@ public class HolmesXTPNtokens extends JFrame {
 
                 if(parentWindow == null) { //to znaczy, że modyfikujemy bezpośrednio miejsca
                     place.updateToken_XTPN(selected, val);
-                    GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                    overlord.getWorkspace().getProject().repaintAllGraphPanels();
                 } else { // modyfikujemy tylko przechowywany p-stan
                     if(parentWindow instanceof HolmesStatesEditorXTPN) {
                         //int location = places.indexOf(place);
@@ -275,7 +276,7 @@ public class HolmesXTPNtokens extends JFrame {
                 if(isGammaPlace) {
                     if(parentWindow == null) { //to znaczy, że usuwamy bezpośrednio z miejsca
                         place.removeTokenByID_XTPN(selected); //poprzez metodę, a nie bezpośrednio z multisetK!
-                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                        overlord.getWorkspace().getProject().repaintAllGraphPanels();
                     } else { // usuwamy token tylko z przechowywanego p-stanu
                         if(parentWindow instanceof HolmesStatesEditorXTPN) {
                             if(selected > -1 && selected < multisetK.size()) {
@@ -290,7 +291,7 @@ public class HolmesXTPNtokens extends JFrame {
                 } else { //miejsca klasyczne
                     if(parentWindow == null) { //to znaczy, że usuwamy bezpośrednio z miejsca
                         place.addTokensNumber(-1); //poprzez metodę, a nie bezpośrednio z multisetK!
-                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                        overlord.getWorkspace().getProject().repaintAllGraphPanels();
                     } else {
                         if(parentWindow instanceof HolmesStatesEditorXTPN) { // usuwamy token tylko z przechowywanego p-stanu z managera:
                             if(selected > -1 && selected < multisetK.size()) {
@@ -366,7 +367,7 @@ public class HolmesXTPNtokens extends JFrame {
 
                     if(parentWindow == null) { //to znaczy, że dodajemy bezpośrednio do miejsca
                         place.addTokens_XTPN(1, val);
-                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                        overlord.getWorkspace().getProject().repaintAllGraphPanels();
                     } else { // dodajemy token tylko do przechowywanego p-stanu
                         if(parentWindow instanceof HolmesStatesEditorXTPN) {
                             multisetK.add(val);
@@ -385,7 +386,7 @@ public class HolmesXTPNtokens extends JFrame {
                 } else { //miejsce klasyczne
                     if(parentWindow == null) { //to znaczy, że dodajemy bezpośrednio do miejsca
                         place.addTokens_XTPN(1, 0.0);
-                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                        overlord.getWorkspace().getProject().repaintAllGraphPanels();
                     } else { // dodajemy token tylko do przechowywanego p-stanu
                         if(parentWindow instanceof HolmesStatesEditorXTPN) {
                             double tokensNumber = multisetK.get(0);
@@ -420,7 +421,7 @@ public class HolmesXTPNtokens extends JFrame {
                 if(parentWindow == null) { //to znaczy, że czyścimy bezpośrednio z miejsca
                     place.accessMultiset().clear();
                     place.setTokensNumber(0);
-                    GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                    overlord.getWorkspace().getProject().repaintAllGraphPanels();
                 } else { // czyścimy tylko przechowywany p-stan
                     if(parentWindow instanceof HolmesStatesEditorXTPN) {
                         multisetK.clear();
@@ -453,7 +454,7 @@ public class HolmesXTPNtokens extends JFrame {
                 if(isGammaPlace) {
                     if(parentWindow == null) { //to znaczy, że dodajemy bezpośrednio do miejsca
                         place.addTokens_XTPN((int)val, 0.0);
-                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                        overlord.getWorkspace().getProject().repaintAllGraphPanels();
                     } else { // dodajemy token tylko do przechowywanego p-stanu
                         if(parentWindow instanceof HolmesStatesEditorXTPN) {
                             for(int i=0; i<val; i++) {
@@ -470,7 +471,7 @@ public class HolmesXTPNtokens extends JFrame {
                 } else { //miejsce klasyczne
                     if(parentWindow == null) { //to znaczy, że dodajemy bezpośrednio do miejsca
                         place.addTokens_XTPN((int)val, 0.0);
-                        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                        overlord.getWorkspace().getProject().repaintAllGraphPanels();
                     } else { // dodajemy token tylko do przechowywanego p-stanu
                         if(parentWindow instanceof HolmesStatesEditorXTPN) {
                             double tokensNumber = multisetK.get(0);

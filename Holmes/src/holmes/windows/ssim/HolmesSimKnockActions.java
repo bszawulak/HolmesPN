@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.NetSimulationData;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Place;
@@ -22,11 +23,12 @@ import holmes.windows.HolmesNotepad;
  * Klasa metod pomocniczych klasy HolmesStateSimulatorKnockout.
  */
 public class HolmesSimKnockActions {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	HolmesSimKnock boss;
 	private int pingPongSimTransLimit;
 	private int pingPongSimCurrentTrans;
 	private long pingPongSimSeries;
-	private GUIManager overlord;
 	private PetriNet pn;
 	
 	/**
@@ -35,7 +37,6 @@ public class HolmesSimKnockActions {
 	 */
 	public HolmesSimKnockActions(HolmesSimKnock window) {
 		this.boss = window;
-		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();
 	}
 	
@@ -49,22 +50,20 @@ public class HolmesSimKnockActions {
 	public void acquireDataForRefSet() {
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 			JOptionPane.showMessageDialog(null,
-					"Main simulator active. Please turn if off before starting state simulator process", 
-					"Main simulator active", JOptionPane.ERROR_MESSAGE);
+					lang.getText("HSKAwin_entry001"), lang.getText("HSKAwin_entry001t"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
 		ArrayList<Transition> transitions = pn.getTransitions();
 		if(transitions == null || transitions.isEmpty()) {
 			JOptionPane.showMessageDialog(null,
-					"At least single place and transition required for simulation.", 
-					"Net not found", JOptionPane.WARNING_MESSAGE);
+					lang.getText("HSKAwin_entry002"), lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
 		boolean success =  boss.ssimKnock.initiateSim(true, null);
 		if(!success) {
-			GUIManager.getDefaultGUIManager().log("State simulator initialization failed.", "error", true);
+			overlord.log(lang.getText("HSKAwin_entry003"), "error", true);
 			return;
 		}
 		
@@ -100,7 +99,7 @@ public class HolmesSimKnockActions {
 			notePad.setVisible(true);
 
 			notePad.addTextLineNL("", "text");
-			notePad.addTextLineNL("Transitions: ", "text");
+			notePad.addTextLineNL(lang.getText("HSKAwin_entry004"), "text");
 			notePad.addTextLineNL("", "text");
 			for(int t = 0; t< netSimData.transFiringsAvg.size(); t++) {
 				String t_name = transitions.get(t).getName();
@@ -108,13 +107,14 @@ public class HolmesSimKnockActions {
 				double valMin = netSimData.transFiringsMin.get(t);
 				double valMax = netSimData.transFiringsMax.get(t);
 
-				notePad.addTextLineNL("  t"+t+"_"+t_name+" : "+Tools.cutValueExt(valAvg,4)+" min: "+Tools.cutValueExt(valMin,4)+
-						" max: "+Tools.cutValueExt(valMax,4), "text");
+				String strB = String.format("  "+lang.getText("HSKAwin_entry005"), t, t_name
+						, Tools.cutValueExt(valAvg,4), Tools.cutValueExt(valMin,4), Tools.cutValueExt(valMax,4));
+				notePad.addTextLineNL(strB, "text");
 
 			}
 			
 			notePad.addTextLineNL("", "text");
-			notePad.addTextLineNL("Places: ", "text");
+			notePad.addTextLineNL("Places:", "text");
 			notePad.addTextLineNL("", "text");
 			for(int t = 0; t< netSimData.placeTokensAvg.size(); t++) {
 				String t_name = places.get(t).getName();
@@ -122,8 +122,9 @@ public class HolmesSimKnockActions {
 				double valMin = netSimData.placeTokensMin.get(t);
 				double valMax = netSimData.placeTokensMax.get(t);
 
-				notePad.addTextLineNL("  p"+t+"_"+t_name+" : "+Tools.cutValueExt(valAvg,4)+" min: "+Tools.cutValueExt(valMin,4)+
-						" max: "+Tools.cutValueExt(valMax,4), "text");
+				String strB = String.format("  "+lang.getText("HSKAwin_entry007"), t, t_name, Tools.cutValueExt(valAvg,4), 
+						Tools.cutValueExt(valMin,4), Tools.cutValueExt(valMax,4));
+				notePad.addTextLineNL(strB, "text");
 			}
 		}
 		boss.refSimInProgress = false;
@@ -144,34 +145,30 @@ public class HolmesSimKnockActions {
 	public void acquireDataForKnockoutSet(JTextArea dataSelectedTransTextArea, boolean manualSelection) {
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 			JOptionPane.showMessageDialog(null,
-					"Main simulator active. Please turn if off before starting state simulator process", 
-					"Main simulator active", JOptionPane.ERROR_MESSAGE);
+					lang.getText("HSKAwin_entry001"), lang.getText("HSKAwin_entry001t"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
 		ArrayList<Transition> transitions = pn.getTransitions();
 		if(transitions == null || transitions.isEmpty()) {
 			JOptionPane.showMessageDialog(null,
-					"At least single place and transition required for simulation.", 
-					"Net not found", JOptionPane.WARNING_MESSAGE);
+					lang.getText("HSKAwin_entry002"), lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
 		boolean success =  boss.ssimKnock.initiateSim(true, null);
 		if(!success) {
-			GUIManager.getDefaultGUIManager().log("State simulator initialization failed.", "error", true);
+			overlord.log(lang.getText("HSKAwin_entry003"), "error", true);
 			return;
 		}
 
 		boss.setSimWindowComponentsStatus(false);
 		boss.mainSimWindow.setWorkInProgress(true);
 		
-		
 		NetSimulationData currentDataPackage = new NetSimulationData();
 		updateNetOfflineStatus(dataSelectedTransTextArea, transitions, manualSelection, currentDataPackage);
 		
-		boss.ssimKnock.setThreadDetails(3, boss.mainSimWindow, boss.dataProgressBarKnockout, 
-				currentDataPackage);
+		boss.ssimKnock.setThreadDetails(3, boss.mainSimWindow, boss.dataProgressBarKnockout, currentDataPackage);
 		Thread myThread = new Thread(boss.ssimKnock);
 		boss.dataSimInProgress = true;
 		myThread.start();
@@ -194,7 +191,7 @@ public class HolmesSimKnockActions {
 			HolmesNotepad notePad = new HolmesNotepad(900,600);
 			notePad.setVisible(true);
 			notePad.addTextLineNL("", "text");
-			notePad.addTextLineNL("Transitions: ", "text");
+			notePad.addTextLineNL(lang.getText("HSKAwin_entry004"), "text");
 			notePad.addTextLineNL("", "text");
 			for(int t = 0; t< netSimData.transFiringsAvg.size(); t++) {
 				String t_name = transitions.get(t).getName();
@@ -202,13 +199,14 @@ public class HolmesSimKnockActions {
 				double valMin = netSimData.transFiringsMin.get(t);
 				double valMax = netSimData.transFiringsMax.get(t);
 
-				notePad.addTextLineNL("  t"+t+"_"+t_name+" : "+Tools.cutValueExt(valAvg,4)+" min: "+Tools.cutValueExt(valMin,4)+
-						" max: "+Tools.cutValueExt(valMax,4), "text");
+				String strB = String.format("  "+lang.getText("HSKAwin_entry008"), t, t_name
+						, Tools.cutValueExt(valAvg,4), Tools.cutValueExt(valMin,4), Tools.cutValueExt(valMax,4));
+				notePad.addTextLineNL(strB, "text");
 
 			}
 
 			notePad.addTextLineNL("", "text");
-			notePad.addTextLineNL("Places: ", "text");
+			notePad.addTextLineNL(lang.getText("HSKAwin_entry006"), "text");
 			notePad.addTextLineNL("", "text");
 			for(int t = 0; t< netSimData.placeTokensAvg.size(); t++) {
 				String t_name = places.get(t).getName();
@@ -216,8 +214,9 @@ public class HolmesSimKnockActions {
 				double valMin = netSimData.placeTokensMin.get(t);
 				double valMax = netSimData.placeTokensMax.get(t);
 
-				notePad.addTextLineNL("  p"+t+"_"+t_name+" : "+Tools.cutValueExt(valAvg,4)+" min: "+Tools.cutValueExt(valMin,4)+
-						" max: "+Tools.cutValueExt(valMax,4), "text");
+				String strB = String.format("  "+lang.getText("HSKAwin_entry009"), t, t_name, Tools.cutValueExt(valAvg,4), 
+						Tools.cutValueExt(valMin,4), Tools.cutValueExt(valMax,4));
+				notePad.addTextLineNL(strB, "text");
 			}
 		}
 		boss.dataSimInProgress = false;
@@ -236,22 +235,20 @@ public class HolmesSimKnockActions {
 	public void acquireAll() {
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 			JOptionPane.showMessageDialog(null,
-					"Main simulator active. Please turn if off before starting state simulator process", 
-					"Main simulator active", JOptionPane.ERROR_MESSAGE);
+					lang.getText("HSKAwin_entry001"), lang.getText("HSKAwin_entry001t"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
 		ArrayList<Transition> transitions = pn.getTransitions();
 		if(transitions == null || transitions.isEmpty()) {
 			JOptionPane.showMessageDialog(null,
-					"At least single place and transition required for simulation.", 
-					"Net not found", JOptionPane.WARNING_MESSAGE);
+					lang.getText("HSKAwin_entry002"), lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
 		boolean success =  boss.ssimKnock.initiateSim(true, null);
 		if(!success) {
-			GUIManager.getDefaultGUIManager().log("State simulator initialization failed.", "error", true);
+			overlord.log(lang.getText("HSKAwin_entry003"), "error", true);
 			return;
 		}
 
@@ -282,7 +279,7 @@ public class HolmesSimKnockActions {
 			
 			pingPongSimCurrentTrans++;
 			boss.dataProgressBarKnockout.setBorder(
-					BorderFactory.createTitledBorder("Progress: "+(pingPongSimCurrentTrans+1)+"/"+pingPongSimTransLimit));
+					BorderFactory.createTitledBorder(lang.getText("HSKAwin_entry010")+" "+(pingPongSimCurrentTrans+1)+"/"+pingPongSimTransLimit)); //pierwsza tranzycja
 			
 			pn.getTransitions().get(pingPongSimCurrentTrans).setKnockout(true);
 		    
@@ -322,7 +319,7 @@ public class HolmesSimKnockActions {
 			transitions.get(pingPongSimCurrentTrans).setKnockout(true); //następna do analizy
 			
 			boss.dataProgressBarKnockout.setBorder(
-					BorderFactory.createTitledBorder("Progress: "+(pingPongSimCurrentTrans+1)+"/"+pingPongSimTransLimit));
+					BorderFactory.createTitledBorder(lang.getText("HSKAwin_entry010")+" "+(pingPongSimCurrentTrans+1)+"/"+pingPongSimTransLimit));
 
 			NetSimulationData currentDataPackage = new NetSimulationData();
 			boss.ssimKnock.setThreadDetails(4, boss.mainSimWindow, boss.dataProgressBarKnockout, 
@@ -484,20 +481,18 @@ public class HolmesSimKnockActions {
 	public boolean removeRedDataSet(int i) {
 		ArrayList<NetSimulationData> references = pn.accessSimKnockoutData().accessReferenceSets();
 		if(references.size() == 1) {
-			Object[] options = {"Remove ref. set", "Keep it",};
+			Object[] options = {lang.getText("HSKAwin_entry011op1"), lang.getText("HSKAwin_entry011op2"),}; //Remove ref. set / Keep it
 			int n = JOptionPane.showOptionDialog(null,
-							"This is the only available reference set. Without it,\ncomparing knockout data will be impossible.",
-							"Remove last reference set?", JOptionPane.YES_NO_OPTION,
+							lang.getText("HSKAwin_entry011"), lang.getText("HSKAwin_entry011t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				references.remove(i);
 				return true;
 			}
 		} else {
-			Object[] options = {"Remove ref. set", "Keep it",};
+			Object[] options = {lang.getText("HSKAwin_entry012op1"), lang.getText("HSKAwin_entry012op2"),};
 			int n = JOptionPane.showOptionDialog(null,
-							"Remove this reference set?",
-							"Please confirm", JOptionPane.YES_NO_OPTION,
+							lang.getText("HSKAwin_entry012"), lang.getText("HSKAwin_entry012t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				references.remove(i);
@@ -516,12 +511,10 @@ public class HolmesSimKnockActions {
 		ArrayList<NetSimulationData> knockouts = pn.accessSimKnockoutData().accessKnockoutDataSets();
 
 		if(knockouts.get(i).getIDseries() != -1) {
-			Object[] options = {"Remove ALL data series", "Keep them",};
+			Object[] options = {lang.getText("HSKAwin_entry013op1"), lang.getText("HSKAwin_entry013op2"),}; //Remove ALL data series / Keep them
 			int n = JOptionPane.showOptionDialog(null,
-							"WARNING! This dataset belongs to data series (e.g. single transition knockout\n"
-							+ "simulation for the whole net.\n"
-							+ "THIS WILL REMOVE ALL THE DATASETS, NOT ONLY THE SELECTED ONE. Proceed?",
-							"Datasets series remove", JOptionPane.YES_NO_OPTION,
+							lang.getText("HSKAwin_entry013"),
+							lang.getText("HSKAwin_entry013t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.ERROR_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				pn.accessSimKnockoutData().removeSeries(knockouts.get(i).getIDseries());
@@ -530,10 +523,10 @@ public class HolmesSimKnockActions {
 			
 		} else {
 		
-			Object[] options = {"Remove selected set", "Keep it",};
+			Object[] options = {lang.getText("HSKAwin_entry014op1"), lang.getText("HSKAwin_entry014op2"),}; //Remove selected set / Keep it
 			int n = JOptionPane.showOptionDialog(null,
-							"Remove this knockout dataset?",
-							"Please confirm", JOptionPane.YES_NO_OPTION,
+							lang.getText("HSKAwin_entry014"),
+							lang.getText("HSKAwin_entry014t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
 				knockouts.remove(i);

@@ -245,7 +245,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		// create workspace
 		createSimLogWindow(); // okno logów symulatora
 
-		setWorkspace(new Workspace(this));
+		setWorkspace(new Workspace());
 		getWorkspace().newTab(false, new Point(0,0), 1, MetaNode.MetaType.SUBNET);
 		getTabbedWorkspace().setPreferredSize(new Dimension(1300,400));
 
@@ -281,35 +281,35 @@ public class GUIManager extends JPanel implements ComponentListener {
 		getFrame().add(getWorkspace().getSelectedSheet(),  BorderLayout.CENTER); //03072023 old code
 		
 		// create tools
-		propericeTMPBox = GUIManager.getDefaultGUIManager().getPropertiesBox().getCurrentDockWindow();
+		propericeTMPBox = getPropertiesBox().getCurrentDockWindow();
 		propericeTMPBox.setPreferredSize(new Dimension(200, 400));
 
 		//getFrame().add(propericeTMPBox,BorderLayout.LINE_END);
 		JTabbedPane leftCentralPanel = new JTabbedPane();
 		leftCentralPanel.add(getToolBox().getTree());
 		leftCentralPanel.setTabComponentAt(0, new JLabel("Toolbox"));
-		leftCentralPanel.add(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getPanel());
+		leftCentralPanel.add(getSimulatorBox().getCurrentDockWindow().getPanel());
 		leftCentralPanel.setTabComponentAt(1, new JLabel("Simulator"));
 		leftCentralPanel.setPreferredSize(new Dimension(200,400));
 
 		analysisTabs = new JTabbedPane();
-		analysisTabs.add(GUIManager.getDefaultGUIManager().getQuickSimBox().getCurrentDockWindow().getPanel());
+		analysisTabs.add(getQuickSimBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(0, new JLabel(lang.getText("GUIM_quicksimTabName")));
-		analysisTabs.add(GUIManager.getDefaultGUIManager().getT_invBox().getCurrentDockWindow().getPanel());
+		analysisTabs.add(getT_invBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(1, new JLabel(lang.getText("GUIM_tinvTabName")));
-		analysisTabs.add(GUIManager.getDefaultGUIManager().getP_invBox().getCurrentDockWindow().getPanel());
+		analysisTabs.add(getP_invBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(2, new JLabel(lang.getText("GUIM_pinvTabName")));
-		analysisTabs.add(GUIManager.getDefaultGUIManager().getMctBox().getCurrentDockWindow().getPanel());
+		analysisTabs.add(getMctBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(3, new JLabel(lang.getText("GUIM_mctTabName")));
-		analysisTabs.add(GUIManager.getDefaultGUIManager().getMCSBox().getCurrentDockWindow().getPanel());
+		analysisTabs.add(getMCSBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(4, new JLabel(lang.getText("GUIM_mcsTabName")));
 		
-		//analysisTabs.add(GUIManager.getDefaultGUIManager().getKnockoutBox().getCurrentDockWindow().getPanel());
+		//analysisTabs.add(getKnockoutBox().getCurrentDockWindow().getPanel());
 		//analysisTabs.setTabComponentAt(5, new JLabel(lang.getText("GUIM_KnockoutTabName")));
 		
-		analysisTabs.add(GUIManager.getDefaultGUIManager().getFixBox().getCurrentDockWindow().getPanel());
+		analysisTabs.add(getFixBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(5, new JLabel(lang.getText("GUIM_fixTabName")));
-		analysisTabs.add(GUIManager.getDefaultGUIManager().getClusterSelectionBox().getCurrentDockWindow().getPanel());
+		analysisTabs.add(getClusterSelectionBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(6, new JLabel(lang.getText("GUIM_clustersTabName")));
 		analysisTabs.setPreferredSize(new Dimension(200,200));
 
@@ -336,7 +336,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		    	boolean status = GUIManager.getDefaultGUIManager().getNetChangeStatus();
+		    	boolean status = getNetChangeStatus();
 				if(status) {
 					Object[] options = {lang.getText("exit"), lang.getText("saveAndExit"), lang.getText("cancel"),};
 					String tmp = lang.getText("GUIM_closingQuestion001");
@@ -944,7 +944,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void showClusterSelectionBox(ClusterDataPackage data){
 		getClusterSelectionBox().showClusterSelector(data);
-		GUIManager.getDefaultGUIManager().reset.setClustersStatus(true); //status klastrów: wczytane
+		reset.setClustersStatus(true); //status klastrów: wczytane
 	}
 	
 	/**
@@ -1467,7 +1467,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	public JTabbedPane getTabbedWorkspace() {
-		return GUIManager.getDefaultGUIManager().getWorkspace().getTablePane();
+		return getWorkspace().getTablePane();
 	}
 
 	public void setTabbedWorkspace(JTabbedPane tabbedWorkspace) {

@@ -62,7 +62,7 @@ public class NetGenerator {
         //io.writePNT(tmpdir + ".pnt", nsn.getSubPlaces(), nsn.getSubTransitions(), nsn.getSubArcs());
         DGDV = new ArrayList<>();
 
-        SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs());
+        SubnetCalculator.SubNet sn = new SubnetCalculator.SubNet(overlord.getWorkspace().getProject().getArcs());
         //------ P6 VARIANT ------
         SubnetCalculator.SubNet nsn = addParallel3(cloneSubNet(sn));
 

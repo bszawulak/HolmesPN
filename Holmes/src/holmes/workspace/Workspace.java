@@ -26,8 +26,8 @@ import holmes.petrinet.elements.MetaNode.MetaType;
  * pozostają - ku przestrodze.
  */
 public class Workspace implements SelectionActionListener {
-	private static GUIManager overlord;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JTabbedPane tp = new JTabbedPane();
 	
 	/** Tablica zawierająca obiekty WorkspaceSheet, które z kolei zawierają SheetPanel (JPanel) oraz GraphPanel. By żyło się lepiej. */
@@ -39,20 +39,15 @@ public class Workspace implements SelectionActionListener {
 
 	/**
 	 * Konstruktor obiektu klasy Workspace.
-	 * @param gui GUIManager - obiekt managera środowiska graficznego programu
 	 */
-	public Workspace(GUIManager gui) {
-		overlord = gui;
+	public Workspace() {
 		sheets = new ArrayList<WorkspaceSheet>();
 		sheetsIDtable = new ArrayList<Integer>();
 
 		Point position = new Point(0, 0);
-
 		setProject(new PetriNet(this, "default"));
-
 		setTablePane(new JTabbedPane());
-		gui.setTabbedWorkspace(getTablePane());
-
+		overlord.setTabbedWorkspace(getTablePane());
 		this.getProject().addActionListener(this);
 	}
 
@@ -94,8 +89,8 @@ public class Workspace implements SelectionActionListener {
 		MetaNode metanode = new MetaNode(whichSubnet, IdGenerator.getNextId(), pos, type);
 		metanode.setName("Subnet" + representedSubnet);
 		metanode.setRepresentedSheetID(representedSubnet);
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().add(metanode);
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+		overlord.getWorkspace().getProject().getNodes().add(metanode);
+		overlord.getWorkspace().getProject().repaintAllGraphPanels();
 	}
 
 	/**
@@ -116,7 +111,7 @@ public class Workspace implements SelectionActionListener {
 		int sheetID = sheet.getId();
 		boolean result = getProject().removeGraphPanel(sheetID);
 		if(!result) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00502critError")+" "+sheet.getId(), "error", true);
+			overlord.log(lang.getText("LOGentry00502critError")+" "+sheet.getId(), "error", true);
 		}
 		
 		int id = sheets.indexOf(sheet);
@@ -133,7 +128,7 @@ public class Workspace implements SelectionActionListener {
 			int subnetID = sheets.get(i).getId();
 			boolean result = getProject().removeGraphPanel(subnetID);
 			if (!result) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00503critError")+" "+subnetID, "error", true);
+				overlord.log(lang.getText("LOGentry00503critError")+" "+subnetID, "error", true);
 			}
 			tp.remove(i);
 			sheets.remove(i);

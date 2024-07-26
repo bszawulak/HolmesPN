@@ -10,6 +10,7 @@ import holmes.darkgui.settings.SettingsManager;
  * metody drawPetriNet w GraphPanel, i posyłana do odpowiednich metod rysujących.
  */
 public class ElementDrawSettings {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 	public boolean view3d = false;
 	public boolean snoopyMode = false;
 	public boolean color = false;
@@ -33,12 +34,12 @@ public class ElementDrawSettings {
 	 * Matoda ustawia odpowiednie flagi w zależności od ustawień programu.
 	 */
 	private void checkSettings() {
-		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
+		SettingsManager sm = overlord.getSettingsManager();
 		view3d = sm.getValue("editor3Dview").equals("1");
 		snoopyMode = sm.getValue("editorSnoopyStyleGraphic").equals("1");
 		crazyColors = sm.getValue("simPlacesColors").equals("1");
 		nonDefColors = sm.getValue("editorSnoopyColors").equals("1");
-		quickSimMode = GUIManager.getDefaultGUIManager().simSettings.quickSimToken;
-		arcSize = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
+		quickSimMode = overlord.simSettings.quickSimToken;
+		arcSize = Integer.parseInt(overlord.getSettingsManager().getValue("editorGraphArcLineSize"));
 	}
 }

@@ -37,7 +37,6 @@ public class PetriNetTools implements TreeSelectionListener {
 	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JPanel panel;
 	private Point position;
-	private GUIManager guiManager;
 	private JTree toolTree;
 	private DefaultMutableTreeNode pointerNode;
 
@@ -45,7 +44,6 @@ public class PetriNetTools implements TreeSelectionListener {
 	 * Konstruktor domyślny obiektu klasy Tools.
 	 */
 	public PetriNetTools() {
-		guiManager = GUIManager.getDefaultGUIManager();
 		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		JLabel label = new JLabel("Tools");
@@ -156,14 +154,14 @@ public class PetriNetTools implements TreeSelectionListener {
 			return;
 		
 		if(!node.getUserObject().toString().equals("Pointer")) {
-			if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+			if(overlord.reset.isSimulatorActiveWarning(
 					lang.getText("PNNT_toolTip_entry001"), lang.getText("warning"))) {
-				guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
+				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
 				return;
 			}
-			if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
+			if(overlord.reset.isXTPNSimulatorActiveWarning(
 					lang.getText("PNNT_toolTip_entry002"), lang.getText("warning"))) {
-				guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
+				overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
 				return;
 			}
 		}
@@ -172,32 +170,32 @@ public class PetriNetTools implements TreeSelectionListener {
 		if (node.isLeaf()) {
 			String description = (String) nodeInfo;
 			switch (description) {
-				case "Pointer" -> guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
-				case "Eraser" -> guiManager.getWorkspace().setGraphMode(DrawModes.ERASER);
-				case "Place" -> guiManager.getWorkspace().setGraphMode(DrawModes.PLACE);
-				case "Transition" -> guiManager.getWorkspace().setGraphMode(DrawModes.TRANSITION);
-				case "(TPN) Time" -> guiManager.getWorkspace().setGraphMode(DrawModes.TIMETRANSITION);
-				//case "(FPN) Functional" -> guiManager.getWorkspace().setGraphMode(DrawModes.FUNCTIONALTRANS);
-				case "(SPN) Stochastic" -> guiManager.getWorkspace().setGraphMode(DrawModes.STOCHASTICTRANS);
-				case "(SPN) Immediate" -> guiManager.getWorkspace().setGraphMode(DrawModes.IMMEDIATETRANS);
-				case "(SPN) Deterministic" -> guiManager.getWorkspace().setGraphMode(DrawModes.DETERMINISTICTRANS);
-				case "(SPN) Scheduled" -> guiManager.getWorkspace().setGraphMode(DrawModes.SCHEDULEDTRANS);
-				case "Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.ARC);
-				case "Read Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.READARC);
-				case "Inhibitor Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.ARC_INHIBITOR);
-				case "Reset Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.ARC_RESET);
-				case "Equal Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.ARC_EQUAL);
-				case "Modifier Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.ARC_MODIFIER);
-				case "xPlace" -> guiManager.getWorkspace().setGraphMode(DrawModes.XPLACE);
-				case "xArc" -> guiManager.getWorkspace().setGraphMode(DrawModes.XARC);
-				case "xInhibitor" -> guiManager.getWorkspace().setGraphMode(DrawModes.XINHIBITOR);
-				case "xTransition" -> guiManager.getWorkspace().setGraphMode(DrawModes.XTRANSITION);
-				case "Subnet T-type" -> guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_T);
-				case "Subnet P-type" -> guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_P);
-				case "Subnet" -> guiManager.getWorkspace().setGraphMode(DrawModes.SUBNET_PT);
-				case "C-Place" -> guiManager.getWorkspace().setGraphMode(DrawModes.CPLACE);
-				case "C-Transition" -> guiManager.getWorkspace().setGraphMode(DrawModes.CTRANSITION);
-				case "C-Arc" -> guiManager.getWorkspace().setGraphMode(DrawModes.CARC);
+				case "Pointer" -> overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+				case "Eraser" -> overlord.getWorkspace().setGraphMode(DrawModes.ERASER);
+				case "Place" -> overlord.getWorkspace().setGraphMode(DrawModes.PLACE);
+				case "Transition" -> overlord.getWorkspace().setGraphMode(DrawModes.TRANSITION);
+				case "(TPN) Time" -> overlord.getWorkspace().setGraphMode(DrawModes.TIMETRANSITION);
+				//case "(FPN) Functional" -> overlord.getWorkspace().setGraphMode(DrawModes.FUNCTIONALTRANS);
+				case "(SPN) Stochastic" -> overlord.getWorkspace().setGraphMode(DrawModes.STOCHASTICTRANS);
+				case "(SPN) Immediate" -> overlord.getWorkspace().setGraphMode(DrawModes.IMMEDIATETRANS);
+				case "(SPN) Deterministic" -> overlord.getWorkspace().setGraphMode(DrawModes.DETERMINISTICTRANS);
+				case "(SPN) Scheduled" -> overlord.getWorkspace().setGraphMode(DrawModes.SCHEDULEDTRANS);
+				case "Arc" -> overlord.getWorkspace().setGraphMode(DrawModes.ARC);
+				case "Read Arc" -> overlord.getWorkspace().setGraphMode(DrawModes.READARC);
+				case "Inhibitor Arc" -> overlord.getWorkspace().setGraphMode(DrawModes.ARC_INHIBITOR);
+				case "Reset Arc" -> overlord.getWorkspace().setGraphMode(DrawModes.ARC_RESET);
+				case "Equal Arc" -> overlord.getWorkspace().setGraphMode(DrawModes.ARC_EQUAL);
+				case "Modifier Arc" -> overlord.getWorkspace().setGraphMode(DrawModes.ARC_MODIFIER);
+				case "xPlace" -> overlord.getWorkspace().setGraphMode(DrawModes.XPLACE);
+				case "xArc" -> overlord.getWorkspace().setGraphMode(DrawModes.XARC);
+				case "xInhibitor" -> overlord.getWorkspace().setGraphMode(DrawModes.XINHIBITOR);
+				case "xTransition" -> overlord.getWorkspace().setGraphMode(DrawModes.XTRANSITION);
+				case "Subnet T-type" -> overlord.getWorkspace().setGraphMode(DrawModes.SUBNET_T);
+				case "Subnet P-type" -> overlord.getWorkspace().setGraphMode(DrawModes.SUBNET_P);
+				case "Subnet" -> overlord.getWorkspace().setGraphMode(DrawModes.SUBNET_PT);
+				case "C-Place" -> overlord.getWorkspace().setGraphMode(DrawModes.CPLACE);
+				case "C-Transition" -> overlord.getWorkspace().setGraphMode(DrawModes.CTRANSITION);
+				case "C-Arc" -> overlord.getWorkspace().setGraphMode(DrawModes.CARC);
 			}
 		}
 	}
