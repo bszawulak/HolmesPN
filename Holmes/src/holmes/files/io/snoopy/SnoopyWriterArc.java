@@ -17,7 +17,8 @@ import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.subnets.SubnetsTools;
 
 public class SnoopyWriterArc {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<Place> places;
 	private ArrayList<Transition> transitions;
 	private ArrayList<MetaNode> metanodes;
@@ -151,7 +152,7 @@ public class SnoopyWriterArc {
 					
 					if(startN instanceof Place) {
 						if(metanode.getMetaType() != MetaType.SUBNETTRANS) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00117critErr"), "error", true);
+							overlord.log(lang.getText("LOGentry00117critErr"), "error", true);
 						}
 						
 						boolean holmes = weNeedToGoDeeper(metanode, startN, true);
@@ -173,7 +174,7 @@ public class SnoopyWriterArc {
 						}
 						boolean ok = metaArcs.remove(metaInArc);
 						if(!ok) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00118critErr"), "error", true);
+							overlord.log(lang.getText("LOGentry00118critErr"), "error", true);
 						}
 
 						//metaInArc to łuk wejściowy, z niego wyciągamy ElementLocation startNode'a
@@ -219,7 +220,7 @@ public class SnoopyWriterArc {
 						
 					} else { //(startN instanceof Transition)
 						if(metanode.getMetaType() != MetaType.SUBNETPLACE) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00119critErr"), "error", true);
+							overlord.log(lang.getText("LOGentry00119critErr"), "error", true);
 						}
 						
 						boolean deepSh = weNeedToGoDeeper(metanode, startN, true);
@@ -241,7 +242,7 @@ public class SnoopyWriterArc {
 						}
 						boolean ok = metaArcs.remove(metaInArc);
 						if(!ok) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00120critErr"), "error", true);
+							overlord.log(lang.getText("LOGentry00120critErr"), "error", true);
 						}	
 						
 						//metaInArc to łuk wejściowy, z niego wyciągamy ElementLocation startNode'a
@@ -370,7 +371,7 @@ public class SnoopyWriterArc {
 				
 					if(endN instanceof Place) {
 						if(metanode.getMetaType() != MetaType.SUBNETTRANS) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00121critErr"), "error", true);
+							overlord.log(lang.getText("LOGentry00121critErr"), "error", true);
 						}
 						
 						boolean deepSh = weNeedToGoDeeper(metanode, startN, false);
@@ -392,7 +393,7 @@ public class SnoopyWriterArc {
 						}
 						boolean ok = metaArcs.remove(metaOutArc);
 						if(!ok) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00122critErr"), "error", true);
+							overlord.log(lang.getText("LOGentry00122critErr"), "error", true);
 						}
 						
 						//metaOutArc to łuk wyjściowy, z niego wyciągamy ElementLocation startNode'a
@@ -438,7 +439,7 @@ public class SnoopyWriterArc {
 						NET1halfY = (NET1realTargetY + NET1realSourceY) / 2;
 					} else { //(endN instanceof Transition)
 						if(metanode.getMetaType() != MetaType.SUBNETPLACE) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00123critErr"), "error", true);
+							overlord.log(lang.getText("LOGentry00123critErr"), "error", true);
 						}
 						
 						boolean deepSh = weNeedToGoDeeper(metanode, startN, false);
@@ -460,7 +461,7 @@ public class SnoopyWriterArc {
 						}
 						boolean ok = metaArcs.remove(metaOutArc);
 						if(!ok) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00124critErr"), "error", true);
+							overlord.log(lang.getText("LOGentry00124critErr"), "error", true);
 						}
 
 						//metaInArc to łuk wejściowy, z niego wyciągamy ElementLocation startNode'a
@@ -585,7 +586,7 @@ public class SnoopyWriterArc {
 
 					
 				} else if(interfacesIN.contains(startN) && interfacesOUT.contains(endN) && arcStartElLocation.getSheetID() == 0) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00125"), "error", true);
+					overlord.log(lang.getText("LOGentry00125"), "error", true);
 				} else { 
 					if(startN instanceof Place) {
 						int addToSPPEDAsSource = holmesPlacesID.lastIndexOf(startN.getID()); //który to był
@@ -692,22 +693,22 @@ public class SnoopyWriterArc {
 				}	
 			} catch (Exception e) {
 				baseIDforNode += 100; //TODO: ?
-				GUIManager.getDefaultGUIManager().log("Unable to create arc: "+arc.toString(), "error", true);
+				overlord.log("Unable to create arc: "+arc.toString(), "error", true);
 			}
 		}
 
 		//metaArcsTotal;		
-		//int arcNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().size() - metaArcsTotal;
+		//int arcNumber = overlord.getWorkspace().getProject().getArcs().size() - metaArcsTotal;
 		int arcNumber = normalArcs.size() - metaArcsTotal;
 		
 		if(howMany != arcNumber) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00126"),
+			overlord.log(lang.getText("LOGentry00126"),
 					 "error", true);
 			
-			if(howMany > arcNumber) 
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00127"), "error", true);
+			if(howMany > arcNumber)
+				overlord.log(lang.getText("LOGentry00127"), "error", true);
 			else
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00128"), "error", true);
+				overlord.log(lang.getText("LOGentry00128"), "error", true);
 		}
 		
 		return baseIDforNode + 1;
@@ -800,7 +801,7 @@ public class SnoopyWriterArc {
 					subSourcePoint.add(source.grParentsLocation.get(0));
 				} else {
 					if(sMetaNode.getMetaType() != MetaType.SUBNETTRANS) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00129a")+" "+arcus.toString()
+						overlord.log(lang.getText("LOGentry00129a")+" "+arcus.toString()
 								+" "+lang.getText("LOGentry00129b")+sMetaNode.getMetaType(), "error", true);
 						return IDbackup+1+spaceBetweenIDs;
 					}
@@ -810,7 +811,7 @@ public class SnoopyWriterArc {
 					subSourcePoint.add(source.grParentsLocation.get(0));
 				}
 			} else {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00130a")+" "+arcus.toString()+" "
+				overlord.log(lang.getText("LOGentry00130a")+" "+arcus.toString()+" "
 						+lang.getText("LOGentry00130b")+sourceNode, "error", true);
 				return IDbackup+1+spaceBetweenIDs;
 			}
@@ -836,7 +837,7 @@ public class SnoopyWriterArc {
 					subTargetPoint.add(source.grParentsLocation.get(0));
 				} else {
 					if(sMetaNode.getMetaType() != MetaType.SUBNETTRANS) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00131a")+" "+arcus.toString()
+						overlord.log(lang.getText("LOGentry00131a")+" "+arcus.toString()
 								+" "+lang.getText("LOGentry00131b")+sMetaNode.getMetaType(), "error", true);
 						return IDbackup+1+spaceBetweenIDs;
 					}
@@ -846,7 +847,7 @@ public class SnoopyWriterArc {
 					subTargetPoint.add(source.grParentsLocation.get(0));
 				}
 			} else {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00132a")+" "+arcus.toString()+" "
+				overlord.log(lang.getText("LOGentry00132a")+" "+arcus.toString()+" "
 						+lang.getText("LOGentry00132b")+sourceNode, "error", true);
 				return IDbackup+1+spaceBetweenIDs;
 			}
@@ -1188,7 +1189,7 @@ public class SnoopyWriterArc {
 						
 						howMany++;
 					} catch (Exception e) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00133a")+" "
+						overlord.log(lang.getText("LOGentry00133a")+" "
 								+a.getStartNode().getName()+" "+lang.getText("LOGentry00133b")+" "
 								+ a.getEndNode().getName(), "error", true);
 					}
@@ -1309,7 +1310,7 @@ public class SnoopyWriterArc {
 
 						howMany++;
 					} catch (Exception e) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00134a")+" "
+						overlord.log(lang.getText("LOGentry00134a")+" "
 								+a.getStartNode().getName()+" "+lang.getText("LOGentry00134b")+" "
 								+ a.getEndNode().getName(), "error", true);
 					}
@@ -1317,13 +1318,13 @@ public class SnoopyWriterArc {
 			} //dla wszystkich lokalizacji
 			//iteracja++;
 		} //dla wszystkich tranzycji
-		int arcNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().size();
+		int arcNumber = overlord.getWorkspace().getProject().getArcs().size();
 		if(howMany != arcNumber) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00135"), "error", true);
-			if(howMany > arcNumber) 
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00136"), "error", true);
+			overlord.log(lang.getText("LOGentry00135"), "error", true);
+			if(howMany > arcNumber)
+				overlord.log(lang.getText("LOGentry00136"), "error", true);
 			else
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00137"), "error", true);
+				overlord.log(lang.getText("LOGentry00137"), "error", true);
 		}
 	}
 	
@@ -1464,7 +1465,7 @@ public class SnoopyWriterArc {
 						
 						howManySaved++;
 					} catch (Exception e) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00138a")+" "
+						overlord.log(lang.getText("LOGentry00138a")+" "
 								+a.getStartNode().getName()+" "+lang.getText("LOGentry00138b")+" "
 								+ a.getEndNode().getName(), "error", true);
 					}
@@ -1597,7 +1598,7 @@ public class SnoopyWriterArc {
 
 						howManySaved++;
 					} catch (Exception e) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00139a")+" "
+						overlord.log(lang.getText("LOGentry00139a")+" "
 								+a.getStartNode().getName()+" "+lang.getText("LOGentry00139b")+" "
 								+ a.getEndNode().getName(), "error", true);
 					}
@@ -1607,11 +1608,11 @@ public class SnoopyWriterArc {
 		} //dla wszystkich tranzycji
 		
 		if(howManySaved != howManyToSave && arcClass != TypeOfArc.READARC) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00140"), "error", true);
-			if(howManySaved > howManyToSave) 
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00141"), "error", true);
+			overlord.log(lang.getText("LOGentry00140"), "error", true);
+			if(howManySaved > howManyToSave)
+				overlord.log(lang.getText("LOGentry00141"), "error", true);
 			else
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00142"), "error", true);
+				overlord.log(lang.getText("LOGentry00142"), "error", true);
 		}
 		
 		return nextID;

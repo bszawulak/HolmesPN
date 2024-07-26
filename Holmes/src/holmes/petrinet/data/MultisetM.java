@@ -17,7 +17,8 @@ import holmes.petrinet.elements.PlaceXTPN;
 public class MultisetM implements Serializable {
     @Serial
     private static final long serialVersionUID = 2161649872359143583L;
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private final ArrayList<ArrayList<Double>> multisetM_ArrayLists;
     private final ArrayList<Integer> placesGammasVector;
     private String stateType;
@@ -147,11 +148,11 @@ public class MultisetM implements Serializable {
      * Uaktualnia cały multizbiór M aktualnym stanem sieci (multizbiorami K tokenów)
      */
     public void overwriteMultiset_M_withNetState() {
-        ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+        ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
         int placesNumber = places.size();
         for(int p=0; p<placesNumber; p++) {
             if( !(places.get(p) instanceof PlaceXTPN) ) {
-                GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00337critErr"), "error", true);
+                overlord.log(lang.getText("LOGentry00337critErr"), "error", true);
                 return;
             }
 

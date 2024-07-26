@@ -33,7 +33,7 @@ import holmes.utilities.ByExt;
  *
  */
 public class RClusteringParserToXLS{
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	// czcionka i formatowanie komorki tabeli
 	private static WritableCellFormat getCellFormat(Colour colour, boolean header) throws WriteException {
 	  WritableFont cellFont;

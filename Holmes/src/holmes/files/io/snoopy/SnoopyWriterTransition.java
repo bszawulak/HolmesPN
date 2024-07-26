@@ -18,7 +18,8 @@ import static holmes.graphpanel.EditorResources.transDefColor;
  * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie Sparta, tylko o wiele gorzej...
  */
 public class SnoopyWriterTransition {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	protected Transition holmesTransition;
 	/** Identyfikator podstawowy tranzycji  */
 	protected int snoopyStartingID;
@@ -106,7 +107,7 @@ public class SnoopyWriterTransition {
 			grParents.add(currID);
 			Point pxy = el.getPosition();
 			
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGridAlignWhenSaved").equals("1"))
+			if(overlord.getSettingsManager().getValue("editorGridAlignWhenSaved").equals("1"))
 				pxy = NetworkTransformations.alignToGrid(pxy);
 			
 			grParentsLocation.add(pxy);
@@ -242,13 +243,13 @@ public class SnoopyWriterTransition {
 		//JEGO ELEMENTÓW NIE WIADOMO ILE RAZY...
 		currID++; //365 == grParent(0)
 		if(currID != grParents.get(0)) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00150critErr"), "errer", true);
+			overlord.log(lang.getText("LOGentry00150critErr"), "errer", true);
 		}
 		
 		write(bw, "        <graphics count=\""+locations+"\">");
 		
 		if(currID != grParents.get(0)) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00151critErr"), "error", true);
+			overlord.log(lang.getText("LOGentry00151critErr"), "error", true);
 		}
 		
 		Color snoopyColor = transDefColor;
@@ -280,13 +281,13 @@ public class SnoopyWriterTransition {
 		try {
 			bw.write(text+"\n");
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00152exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00152exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	
 	public String toString() {
 		StringBuilder txt = new StringBuilder();
-		int tPos = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(holmesTransition);
+		int tPos = overlord.getWorkspace().getProject().getTransitions().indexOf(holmesTransition);
 		txt.append("T").append(tPos).append(" [gTransID:").append(globalTransID).append("]");
 		txt.append(" [SnoopyStartID: ").append(snoopyStartingID).append("]");
 		if(!grParents.isEmpty()) {

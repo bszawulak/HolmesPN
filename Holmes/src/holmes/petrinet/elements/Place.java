@@ -20,7 +20,8 @@ import holmes.petrinet.elements.containers.PlaceQSimContainer;
 public class Place extends Node {
 	@Serial
 	private static final long serialVersionUID = 2346995422046987174L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	/** PN, CPN, XTPN */
 	public enum PlaceType {PN, CPN, XTPN}
 	protected PlaceType placeType = PlaceType.PN; //default
@@ -139,7 +140,7 @@ public class Place extends Node {
 		this.tokensNumber = tokensNumber;
 		if(tokensNumber < 0) {
 			String strB = String.format(lang.getText("LOGentry00389"), this.getName(), this.getTokensNumber());
-			GUIManager.getDefaultGUIManager().log(strB, "error", true);
+			overlord.log(strB, "error", true);
 		}
 	}
 
@@ -150,8 +151,8 @@ public class Place extends Node {
 	public void addTokensNumber(int delta) {
 		if((tokensNumber + delta) < 0) {
 			this.tokensNumber = 0;
-			
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00390")+" "
+
+			overlord.log(lang.getText("LOGentry00390")+" "
 					+this.getName(), "error", true);
 		} else {
 			this.tokensNumber += delta;
@@ -217,7 +218,7 @@ public class Place extends Node {
 			return "(P)null";
 		} else {
 			//return "(P)" + getName();
-			return "(P" + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().indexOf(this)+")";
+			return "(P" + overlord.getWorkspace().getProject().getPlaces().indexOf(this)+")";
 		}
 	}
 	

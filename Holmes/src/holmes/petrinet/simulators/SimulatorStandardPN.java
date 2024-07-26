@@ -15,8 +15,8 @@ import holmes.petrinet.elements.TransitionColored;
  * listy tranzycji które mają odpalić w kolejnym kroku symulacji.
  */
 public class SimulatorStandardPN implements IEngine {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private SimulatorGlobals.SimNetType netSimType = SimulatorGlobals.SimNetType.BASIC;
 	private ArrayList<Transition> transitions = null;
 	private ArrayList<Transition> time_transitions = null;
@@ -35,7 +35,6 @@ public class SimulatorStandardPN implements IEngine {
 	 * Konstruktor obiektu klasy SimulatorEngine.
 	 */
 	public SimulatorStandardPN() {
-		this.overlord = GUIManager.getDefaultGUIManager();
 		generator = new StandardRandom(System.currentTimeMillis());
 	}
 	
@@ -103,7 +102,7 @@ public class SimulatorStandardPN implements IEngine {
 		this.singleMode = value;
 		
 		if(singleMode)
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
+			if(overlord.getSettingsManager().getValue("simSingleMode").equals("1")) {
 				maxMode = true;
 			}
 	}
@@ -141,7 +140,7 @@ public class SimulatorStandardPN implements IEngine {
 					safetyCounter++;
 					if(safetyCounter == 9) { // safety measure
 						if(!isPossibleStep(transitions)) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00413"), "error", true);
+							overlord.log(lang.getText("LOGentry00413"), "error", true);
 							generated = true; 
 							//return launchableTransitions; 
 						}

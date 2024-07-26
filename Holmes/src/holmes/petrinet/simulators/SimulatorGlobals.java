@@ -15,12 +15,12 @@ import holmes.petrinet.elements.Transition.TransitionType;
  * Globalne ustawienia symulatora.
  */
 public class SimulatorGlobals {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	/** BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func */
 	public enum SimNetType {
 		BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func
 	}
-	private GUIManager overlord;
 	private int ARC_STEP_DELAY = 25;
 	private int TRANS_FIRING_DELAY = 25;
 	
@@ -60,7 +60,6 @@ public class SimulatorGlobals {
 	 * Konstruktor obiektu SimulatorGlobals.
 	 */
 	public SimulatorGlobals() {
-		this.overlord = GUIManager.getDefaultGUIManager();
 	}
 	
 	/**
@@ -107,7 +106,7 @@ public class SimulatorGlobals {
 		//	this.maxMode = false;
 		
 		if(singleMode)
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
+			if(overlord.getSettingsManager().getValue("simSingleMode").equals("1")) {
 				setMaxMode(true);
 			}
 	}
@@ -197,7 +196,7 @@ public class SimulatorGlobals {
 					if(!(((Transition)n).getTransType() == TransitionType.TPN)) {
 						JOptionPane.showMessageDialog(null, lang.getText("SG_entry001"),
 								lang.getText("SG_entry001t"), JOptionPane.ERROR_MESSAGE);
-						GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
+						overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
 						return 2;
 					}
 				}
@@ -480,7 +479,7 @@ public class SimulatorGlobals {
 
 	/**
 	 * Ustawia status częściowego rejestrowania kroków.
-	 * @param (<b>boolean</b>) true, jeżeli tylko niektóre (co getRecordedSteps() ) kroki mają być rejestrowane
+	 * @param value (<b>boolean<b>) true, jeżeli tylko niektóre (co getRecordedSteps() ) kroki mają być rejestrowane
 	 */
 	public void setPartialRecordingStetsStatus(boolean value) {
 		recordSomeSteps = value;
@@ -520,7 +519,6 @@ public class SimulatorGlobals {
 
 	/**
 	 * Zwraca status rejestrowania statystyk.
-	 * @param (<b>boolean</b>) - true, jeżeli statystyki mają być liczone.
 	 */
 	public boolean isStatsRecorded() {
 		return recordStatictis;
@@ -536,7 +534,6 @@ public class SimulatorGlobals {
 
 	/**
 	 * Zwraca status czasowego łuku odczytu.
-	 * @param (<b>boolean</b>) - true, jeżeli łuk odczytu zachowywuje czas tokenu.
 	 */
 	public boolean isXTPNreadArcActive() {
 		return readArcXTPNactive;

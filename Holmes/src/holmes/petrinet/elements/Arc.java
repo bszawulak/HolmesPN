@@ -26,6 +26,7 @@ import holmes.varia.NetworkTransformations;
 public class Arc extends PetriNetElement {
     @Serial
     private static final long serialVersionUID = 5365625190238686098L;
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
     private TypeOfArc arcType;
     private ElementLocation locationStart;
     private ElementLocation locationEnd = null;
@@ -297,7 +298,7 @@ public class Arc extends PetriNetElement {
         if (!this.isTransportingTokens)
             return;
 
-        int GRAPHICAL_STEPS_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getArcGraphicDelay();
+        int GRAPHICAL_STEPS_COUNTER = overlord.simSettings.getArcGraphicDelay();
         this.graphicalSimulationSteps++;
 
         if (this.getGraphicalSimulationSteps() > GRAPHICAL_STEPS_COUNTER) {
@@ -715,7 +716,7 @@ public class Arc extends PetriNetElement {
      * @return (<>String</>) - łańcuch znaków informacji o łuku sieci.
      */
     public String toString() {
-        PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+        PetriNet pn = overlord.getWorkspace().getProject();
         String startNode = "";
         int startNodeLoc = -1;
         int startELLoc = -1;

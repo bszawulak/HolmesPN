@@ -29,7 +29,8 @@ import holmes.workspace.ExtensionFileFilter;
  * w GUIManager przy starcie programu.
  */
 public class TexExporter {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	String newline = "\n";
 	public TexExporter() {
 		
@@ -40,16 +41,16 @@ public class TexExporter {
 	 * i tranzycjami.
 	 */
 	public void writePlacesTransitions() {
-		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 
 		if(places.isEmpty() || transitions.isEmpty()) {
-			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), lang.getText("TEX_entry001"), 
+			JOptionPane.showMessageDialog(overlord, lang.getText("TEX_entry001"), 
 					lang.getText("TEX_entry001t"), JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"), "", "");
@@ -110,8 +111,8 @@ public class TexExporter {
 			}
 			bw.write("\\end{longtable}"+newline);
 			bw.write("}"+newline);
-			bw.write(""+newline);
-			bw.write(""+newline);
+			bw.write(newline);
+			bw.write(newline);
 			
 			bw.write("{\\footnotesize"+newline);
 			bw.write("\\begin{longtable}{| p{1.1cm} | p{6cm} | p{1.1cm} |  p{6cm} |}"+newline);
@@ -129,7 +130,7 @@ public class TexExporter {
 			bw.write("\\end{longtable}"+newline);
 			bw.write("}"+newline);
 			
-			bw.write(""+newline);
+			bw.write(newline);
 			bw.close();
 			
 			//a teraz coś z zupełnie innej beczki, zapis do SPPED w znormalizowanej formie
@@ -157,9 +158,9 @@ public class TexExporter {
 			}
 		} catch (Exception e) {
 			String msg = lang.getText("LOGentry00211exception")+" "+selectedFile;
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			overlord.log(msg, "error", true);
 			msg = msg.replace(": ", ":\n");
-			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
+			JOptionPane.showMessageDialog(overlord, msg, 
 					lang.getText("TEX_entry002"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -171,8 +172,8 @@ public class TexExporter {
 		String mctFile = invMCTSubroutines();
 		if(mctFile == null) {
 			String msg = lang.getText("LOGentry00212");
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
-			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
+			overlord.log(msg, "error", true);
+			JOptionPane.showMessageDialog(overlord, msg, 
 					lang.getText("TEX_entry003"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -185,7 +186,7 @@ public class TexExporter {
 				; //przewijanie do sekcji ze zbiorami MCT
 			
 			line = br.readLine(); //nazwy tranzycji
-			while((line = br.readLine()) != null && !line.equals("")) {
+			while((line = br.readLine()) != null && !line.isEmpty()) {
 				//parsowanie linii
 				ArrayList<String> invTableRow = new ArrayList<String>();
 				line = line.replace(" ", "");
@@ -228,15 +229,15 @@ public class TexExporter {
 			}
 	        br.close();
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00213exception")+" "+mctFile, "error", true);
+			overlord.log(lang.getText("LOGentry00213exception")+" "+mctFile, "error", true);
 		}
 		
 		//TERAZ ZAPIS DO PLIKU:
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"), "", "");
-		if(selectedFile.equals(""))
+		if(selectedFile.isEmpty())
 			return;
 		if(!selectedFile.contains(".txt"))
 			selectedFile += ".txt";
@@ -261,13 +262,13 @@ public class TexExporter {
 			bw.write("\\end{longtable}"+newline);
 			bw.write("}"+newline);
 			
-			bw.write(""+newline);
+			bw.write(newline);
 			bw.close();
 		} catch (Exception e) {
 			String msg = lang.getText("LOGentry00214")+" "+selectedFile;
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			overlord.log(msg, "error", true);
 			msg = msg.replace(": ", ":\n");
-			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
+			JOptionPane.showMessageDialog(overlord, msg, 
 					lang.getText("TEX_entry002"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -278,16 +279,16 @@ public class TexExporter {
 	 * @return Stri
 	 */
 	private String invMCTSubroutines() {
-		String filePath = GUIManager.getDefaultGUIManager().getTmpPath() + "input.csv";
-		int result = GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveInvariantsToCSV(filePath, true, true);
+		String filePath = overlord.getTmpPath() + "input.csv";
+		int result = overlord.getWorkspace().getProject().saveInvariantsToCSV(filePath, true, true);
 		if(result == -1) {
 			String msg = lang.getText("LOGentry00215");
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			overlord.log(msg, "error", true);
 			return null;
 		}
 		
 		try {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00216"),"text",true);
+			overlord.log(lang.getText("LOGentry00216"),"text",true);
 			Runner mctRunner = new Runner();
 			String[] args = new String[1];
 			args[0] = filePath;
@@ -296,13 +297,13 @@ public class TexExporter {
 			File csvFile = new File(filePath);
 			String path = Tools.getFilePath(csvFile);
 			csvFile.delete();
-			
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00217")+ " " + path 
+
+			overlord.log(lang.getText("LOGentry00217")+ " " + path 
 					+ "input.csv.analysed.txt", "text", true);
 		
 			return path+"input.csv.analysed.txt";
 		} catch (IOException e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00218exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00218exception")+" "+e.getMessage(), "error", true);
 			return null;
 		}
 	}
@@ -313,17 +314,17 @@ public class TexExporter {
 	 * (i zawartym w pakiecie holmes.adam.mct)
 	 */
 	public void writeMCT() {
-		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTanalyzer();
+		MCTCalculator analyzer = overlord.getWorkspace().getProject().getMCTanalyzer();
 		ArrayList<ArrayList<Transition>> mctSet = analyzer.generateMCT();
 		if(mctSet == null) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00219"), "error", true);
+			overlord.log(lang.getText("LOGentry00219"), "error", true);
 			return;
 		}
 		
 		if(mctSet.isEmpty()) {
 			String msg = lang.getText("LOGentry00220");
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
-			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
+			overlord.log(msg, "error", true);
+			JOptionPane.showMessageDialog(overlord, msg, 
 					lang.getText("TEX_entry004"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -361,7 +362,7 @@ public class TexExporter {
 		}
 		
 		//TERAZ ZAPIS DO PLIKU:
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"), "", "");
@@ -370,7 +371,7 @@ public class TexExporter {
 		if(!selectedFile.contains(".txt"))
 			selectedFile += ".txt";
 		
-		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
@@ -403,19 +404,19 @@ public class TexExporter {
 			bw.write("\\end{longtable}"+newline);
 			bw.write("}"+newline);
 			
-			bw.write(""+newline);
+			bw.write(newline);
 			bw.close();
 		} catch (Exception e) {
 			String msg = lang.getText("LOGentry00221")+" "+selectedFile;
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			overlord.log(msg, "error", true);
 			msg = msg.replace(": ", ":\n");
-			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
+			JOptionPane.showMessageDialog(overlord, msg, 
 					lang.getText("TEX_entry002"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	public void writeCluster(ClusteringExtended data) {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"), "", "");
@@ -481,13 +482,13 @@ public class TexExporter {
 			bw.write("\\end{longtable}"+newline);
 			bw.write("}"+newline);
 			
-			bw.write(""+newline);
+			bw.write(newline);
 			bw.close();
 		} catch (Exception e) {
 			String msg = lang.getText("LOGentry00222")+" "+selectedFile;
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			overlord.log(msg, "error", true);
 			msg = msg.replace(": ", ":\n");
-			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
+			JOptionPane.showMessageDialog(overlord, msg, 
 					lang.getText("TEX_entry002"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -523,7 +524,7 @@ public class TexExporter {
 							oldValue++;
 							mctRow.set(mctNumber, oldValue); //występuje
 						} catch (Exception ex) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00223exception")+" "
+							overlord.log(lang.getText("LOGentry00223exception")+" "
 									+ex.getMessage(), "error", true);
 						}
 					}
@@ -537,7 +538,7 @@ public class TexExporter {
 						oldValue++;
 						transRow.set(tranNumber, oldValue); //występuje
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00224exception")+ " "
+						overlord.log(lang.getText("LOGentry00224exception")+ " "
 								+ex.getMessage(), "error", true);
 					}
 				}
@@ -545,7 +546,7 @@ public class TexExporter {
 			clustersMCT.add(mctRow);
 			clustersTransitions.add(transRow);
 		}
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Normal Text File (.txt)", new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"), "", "");
@@ -585,13 +586,13 @@ public class TexExporter {
 			bw.write("\\end{longtable}"+newline);
 			bw.write("}"+newline);
 			
-			bw.write(""+newline);
+			bw.write(newline);
 			bw.close();
 		} catch (Exception e) {
 			String msg = lang.getText("LOGentry00225")+" "+selectedFile;
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			overlord.log(msg, "error", true);
 			msg = msg.replace(": ", ":\n");
-			JOptionPane.showMessageDialog(GUIManager.getDefaultGUIManager(), msg, 
+			JOptionPane.showMessageDialog(overlord, msg, 
 					lang.getText("TEX_entry002"), JOptionPane.ERROR_MESSAGE);
 		}
 	}

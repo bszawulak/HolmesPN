@@ -15,7 +15,7 @@ import java.awt.event.MouseEvent;
  * które wyświetlają się w górnej części panelu sieci głównej
  */
 public class SubnetIconPopupMenu extends JPopupMenu {
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     /**
      * Prywatny konstruktor klasy SubnetIconPopupMenu. Jedynym sposobem na tworzenie obiektów tej klasy
      * jest wykorzystanie statycznej metody "createAndShow"

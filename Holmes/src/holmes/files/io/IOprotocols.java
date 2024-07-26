@@ -28,8 +28,8 @@ import holmes.windows.decompositions.HolmesBranchVerticesPrototype;
  * @author MR - integracja w jedną klasę, writeINV - przeróbka, aby w ogóle działało
  */
 public class IOprotocols {
-    private static LanguageManager lang = GUIManager.getLanguageManager();
-    private GUIManager overlord;
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private ArrayList<ArrayList<Integer>> invariantsList; // = new ArrayList<ArrayList<Integer>>();
     private ArrayList<Integer> nodesList; // = new ArrayList<Integer>();
     private ArrayList<Node> nodeArray; // = new ArrayList<Node>();
@@ -51,7 +51,6 @@ public class IOprotocols {
      * Konstruktor obiektu klasy IOprotocols.
      */
     public IOprotocols() {
-        overlord = GUIManager.getDefaultGUIManager();
         resetComponents();
     }
 
@@ -1827,7 +1826,7 @@ public class IOprotocols {
             sn = (ArrayList<HolmesBranchVerticesPrototype.BranchStructure>) in.readObject();// b.bsl;
 
             //[MR] poniższe było unused:
-            //ArrayList<StatePlacesVector>  spv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().accessStateMatrix();
+            //ArrayList<StatePlacesVector>  spv = overlord.getWorkspace().getProject().accessStatesManager().accessStateMatrix();
 
             in.close();
             file.close();
@@ -1895,18 +1894,18 @@ public class IOprotocols {
                     el.getPosition().y += y;
                     el.setSelected(false);
                 }
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().add(n);
+                overlord.getWorkspace().getProject().getNodes().add(n);
 
                 if (n.getType() == PetriNetElementType.PLACE) {
-                    GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().addPlace((Place)n);
+                    overlord.getWorkspace().getProject().accessStatesManager().addPlace((Place)n);
                 }
-                for (Place p : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces()) {
+                for (Place p : overlord.getWorkspace().getProject().getPlaces()) {
                     p.setTokensNumber(0);
                 }
             }
             for (Arc n : sn.getSubArcs()) {
                 n.setSelected(false);
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().add(n);
+                overlord.getWorkspace().getProject().getArcs().add(n);
             }
 
             in.close();

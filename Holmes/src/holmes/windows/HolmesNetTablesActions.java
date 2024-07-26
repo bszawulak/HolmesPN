@@ -28,8 +28,8 @@ import holmes.utilities.Tools;
  * Klasa z metodami obsługującymi okno tabel programu - klasy HolmesNetTables.
  */
 public class HolmesNetTablesActions {
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private HolmesNetTables antWindow; 
 	public ArrayList<InvariantContainer> dataMatrix;
 	
@@ -56,7 +56,7 @@ public class HolmesNetTablesActions {
 	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
 	  	    	
 	  	    	HolmesNodeInfo window = new HolmesNodeInfo(
-	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(index), antWindow);
+	  	    			overlord.getWorkspace().getProject().getPlaces().get(index), antWindow);
 	  	    	window.setVisible(true);
 	  	    	//int column = table.getSelectedColumn();
 	  	    	//cellClickedEvent(row, column);
@@ -66,12 +66,12 @@ public class HolmesNetTablesActions {
 	  	    	//int index = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
 	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
 	  	    	HolmesNodeInfo window = new HolmesNodeInfo(
-	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(index), 
+						overlord.getWorkspace().getProject().getTransitions().get(index), 
 	  	    			antWindow);
 	  	    	window.setVisible(true);
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00476exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00476exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -80,7 +80,7 @@ public class HolmesNetTablesActions {
 	 * @param modelPlaces PlacesTableModel - obiekt danych
 	 */
 	public void addPlacesToModel(PlacesTableModel modelPlaces) {
-		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 		if(places.isEmpty()) {
 			return;
 		}
@@ -102,7 +102,7 @@ public class HolmesNetTablesActions {
 			int index = places.indexOf(p);
 			
 			if(iterIndex != index) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00477"), "warning", true);
+				overlord.log(lang.getText("LOGentry00477"), "warning", true);
 				//compactTable
 			}
 			
@@ -129,7 +129,7 @@ public class HolmesNetTablesActions {
 	 * @param modelTransitions DefaultTableModel - obiekt danych
 	 */
 	public void addTransitionsToModel(TransitionsTableModel modelTransitions) {
-		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 		if(transitions.isEmpty()) {
 			return;
 		}
@@ -148,7 +148,7 @@ public class HolmesNetTablesActions {
 			iterIndex++;
 			int index = transitions.indexOf(t);
 			if(iterIndex != index) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00477"), "warning", true);
+				overlord.log(lang.getText("LOGentry00477"), "warning", true);
 				//compactTable
 			}
 			
@@ -177,7 +177,7 @@ public class HolmesNetTablesActions {
 	 */
 	public void addBasicInvDataToModel(InvariantsTableModel modelInvariants) {
 		//TODO:
-		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
 		ArrayList<Transition> transitions = pn.getTransitions();
 		if(transitions.isEmpty()) return;
 		
@@ -267,7 +267,7 @@ public class HolmesNetTablesActions {
 		
 		ArrayList<Integer> rowsWithZero = new ArrayList<Integer>();
 		ArrayList<Integer> zeroDeadTrans = new ArrayList<Integer>();
-		int transNo = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+		int transNo = overlord.getWorkspace().getProject().getTransitions().size();
 		for(int i=0; i<transNo; i++)
 			zeroDeadTrans.add(0); //to co pozostanie zerem jest niepokrytą żadnym inwariantem tranzycją
 
@@ -328,32 +328,32 @@ public class HolmesNetTablesActions {
 						lang.getText("HNTAwin_entry002t"), JOptionPane.WARNING_MESSAGE);
 				return false;
 			}
-			
-			GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
+
+			overlord.reset.reset2ndOrderData(true);
 			
 			if(name.equals("PlacesTable")) {
-				ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+				ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 				int pos1 = selRows[0];
 				int pos2 = selRows[1];
 				Place p1 = places.get(pos1);
 				Place p2 = places.get(pos2);
 				
-				pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p1); 
-				pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p2);
-				Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
-				
-				GUIManager.getDefaultGUIManager().log("Swapping places "+p1.getName()+" and "+p2.getName()+" successfull.", "text", true);
+				pos1 = overlord.getWorkspace().getProject().getNodes().indexOf(p1); 
+				pos2 = overlord.getWorkspace().getProject().getNodes().indexOf(p2);
+				Collections.swap(overlord.getWorkspace().getProject().getNodes(), pos1, pos2);
+
+				overlord.log("Swapping places "+p1.getName()+" and "+p2.getName()+" successfull.", "text", true);
 			} else if(name.equals("TransitionTable")) { //TODO coś tu jest nie tak!!!!!
-				ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+				ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 				int pos1 = selRows[0];
 				int pos2 = selRows[1];
 				Transition t1 = transitions.get(pos1);
 				Transition t2 = transitions.get(pos2);
 				
-				pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t1); 
-				pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t2);
-				Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
-				GUIManager.getDefaultGUIManager().log("Swapping transitions "+t1.getName()+" and "+t2.getName()+" successfull.", "text", true);
+				pos1 = overlord.getWorkspace().getProject().getNodes().indexOf(t1); 
+				pos2 = overlord.getWorkspace().getProject().getNodes().indexOf(t2);
+				Collections.swap(overlord.getWorkspace().getProject().getNodes(), pos1, pos2);
+				overlord.log("Swapping transitions "+t1.getName()+" and "+t2.getName()+" successfull.", "text", true);
 			}
 		} catch (Exception e) {
 			return false;
@@ -365,7 +365,7 @@ public class HolmesNetTablesActions {
 	 * Metoda pokazuje dane czasowe inwariantów.
 	 */
 	public void showTimeDataNotepad() {
-		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
 		ArrayList<Transition> transitions = pn.getTransitions();
 		ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
 		if(invMatrix == null || invMatrix.isEmpty())

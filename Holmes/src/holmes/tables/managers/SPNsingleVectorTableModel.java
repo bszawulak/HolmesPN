@@ -16,9 +16,10 @@ import holmes.windows.managers.HolmesSPNeditor;
  * Model tabeli tranzycji dla jednego wektora danych SPN.
  */
 public class SPNsingleVectorTableModel extends DefaultTableModel {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
 	@Serial
 	private static final long serialVersionUID = -6898959322396110431L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<FRDataClass> dataMatrix;
 	private int dataSize;
@@ -162,7 +163,7 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 				dataMatrix.get(row).subType = (TransitionSPNExtension.StochaticsType)value;
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00421exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00421exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 }

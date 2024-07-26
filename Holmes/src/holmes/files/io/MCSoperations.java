@@ -17,7 +17,8 @@ import holmes.utilities.Tools;
 import holmes.workspace.ExtensionFileFilter;
 
 public class MCSoperations {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	
 	/**
 	 * Metoda służąca do zapisu listy zbiorów MCS wybranej tranzycji.
@@ -27,7 +28,7 @@ public class MCSoperations {
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
 	public static boolean saveSingleMCS(MCSDataMatrix data, int pos, String name) {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("ObjR single MCS data file (.objR)",  new String[] { "OBJR" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("MCS_entry001a")
@@ -75,7 +76,7 @@ public class MCSoperations {
 				pw.close();
 				return true;
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00205exception")
+				overlord.log(lang.getText("LOGentry00205exception")
 						+" "+e.getMessage(), "error", true);
 				return false;
 			}
@@ -89,7 +90,7 @@ public class MCSoperations {
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
 	public static boolean saveAllMCS(MCSDataMatrix data) {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("MCS full data file (.mcs)",  new String[] { "MCS" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("MCS_entry004a"), lang.getText("MCS_entry004b"), "");
@@ -137,7 +138,7 @@ public class MCSoperations {
 				pw.close();
 				return true;
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00206exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00206exception")+" "+e.getMessage(), "error", true);
 				return false;
 			}
 		}
@@ -149,7 +150,7 @@ public class MCSoperations {
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
 	public static boolean loadSingleMCS() {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("ObjR single MCS data file (.objr)",  new String[] { "OBJR" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("MCS_entry005a"), lang.getText("MCS_entry005b"), "");
@@ -159,7 +160,7 @@ public class MCSoperations {
 					JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
-			MCSDataMatrix dataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+			MCSDataMatrix dataCore = overlord.getWorkspace().getProject().getMCSdataCore();
 	
 			try {
 				DataInputStream dis = new DataInputStream(new FileInputStream(selectedFile));
@@ -169,14 +170,14 @@ public class MCSoperations {
 				line = buffer.readLine();
 				
 				line = line.substring(line.indexOf(":")+1);
-				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append("Read line:"+line+"\n");
+				overlord.accessMCSWindow().accessLogField().append("Read line:"+line+"\n");
 				
 				line = buffer.readLine();
 				int index = line.indexOf(":");
 				line = line.substring(index+1);
 				int insertPos = Integer.parseInt(line);
 				
-				int transSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+				int transSize = overlord.getWorkspace().getProject().getTransitions().size();
 				int dataSize = dataCore.getSize();
 				
 				if(dataSize == 0) {
@@ -190,9 +191,9 @@ public class MCSoperations {
 					buffer.close();
 					return false;
 				}
-				
-				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append(lang.getText("MCS_entry009")+" "+
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(insertPos).getName()+"\n");
+
+				overlord.accessMCSWindow().accessLogField().append(lang.getText("MCS_entry009")+" "+
+						overlord.getWorkspace().getProject().getTransitions().get(insertPos).getName()+"\n");
 				
 				ArrayList<ArrayList<Integer>> dataMatrix = new ArrayList<ArrayList<Integer>>();
 				ArrayList<ArrayList<Integer>> infoMatrix = new ArrayList<ArrayList<Integer>>();
@@ -219,7 +220,7 @@ public class MCSoperations {
 							JOptionPane.showMessageDialog(null, lang.getText("MCS_entry010"), 
 									lang.getText("MCS_entry007"), JOptionPane.ERROR_MESSAGE);
 							buffer.close();
-							GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append(lang.getText("LOGentry00207"));
+							overlord.accessMCSWindow().accessLogField().append(lang.getText("LOGentry00207"));
 							return false;
 						}
 						set.add(t);
@@ -245,13 +246,13 @@ public class MCSoperations {
 				}
 				dataCore.insertMCS(dataMatrix, infoMatrix, insertPos, true);
 
-				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append(lang.getText("LOGentry00208"));
+				overlord.accessMCSWindow().accessLogField().append(lang.getText("LOGentry00208"));
 				
 				buffer.close();
 				return true;
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00209exception")+" "+e.getMessage(), "error", true);
-				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append(lang.getText("LOGentry00209exception")+" "+e.getMessage()+"\n");
+				overlord.log(lang.getText("LOGentry00209exception")+" "+e.getMessage(), "error", true);
+				overlord.accessMCSWindow().accessLogField().append(lang.getText("LOGentry00209exception")+" "+e.getMessage()+"\n");
 				return false;
 			}
 		}
@@ -262,7 +263,7 @@ public class MCSoperations {
 	 * @return boolean - true, jeśli operacja się powiodła
 	 */
 	public static boolean loadAllMCS() {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("MCS full data file (.mcs)",  new String[] { "MCS" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("MCS_entry011a"), lang.getText("MCS_entry011b"), "");
@@ -271,7 +272,7 @@ public class MCSoperations {
 			JOptionPane.showMessageDialog(null,lang.getText("MCSC_entry012"),lang.getText("MCSC_entry007"),JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else {
-			MCSDataMatrix dataCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+			MCSDataMatrix dataCore = overlord.getWorkspace().getProject().getMCSdataCore();
 		
 			try {
 				DataInputStream dis = new DataInputStream(new FileInputStream(selectedFile));
@@ -283,7 +284,7 @@ public class MCSoperations {
 				line = line.substring(index+1);
 				int dataSize = Integer.parseInt(line);
 				
-				int transSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+				int transSize = overlord.getWorkspace().getProject().getTransitions().size();
 				if(dataSize != transSize) {
 					JOptionPane.showMessageDialog(null, lang.getText("MCSC_entry013"), 
 							lang.getText("MCSC_entry007"), JOptionPane.ERROR_MESSAGE);
@@ -291,7 +292,7 @@ public class MCSoperations {
 					return false;
 				}
 				
-				if(dataCore.checkDataReplacing() == false) {
+				if(!dataCore.checkDataReplacing()) {
 					buffer.close();
 					return false;
 				}
@@ -363,12 +364,12 @@ public class MCSoperations {
 				}
 				
 				int dataMCSsize = dataCore.getCalculatedMCSnumber();
-				GUIManager.getDefaultGUIManager().accessMCSWindow().accessLogField().append(lang.getText("MCSC_entry016a")+ " "+dataMCSsize+" "+lang.getText("MCSC_entry016b"));
+				overlord.accessMCSWindow().accessLogField().append(lang.getText("MCSC_entry016a")+ " "+dataMCSsize+" "+lang.getText("MCSC_entry016b"));
 				
 				buffer.close();
 				return true;
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00210exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00210exception")+" "+e.getMessage(), "error", true);
 				return false;
 			}
 		}

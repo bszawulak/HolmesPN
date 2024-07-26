@@ -24,7 +24,8 @@ import holmes.petrinet.elements.MetaNode.MetaType;
  * Parser sieci rozszerzonych (Snoopy)
  */
 public class NetHandler_Extended extends NetHandler {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	public boolean Snoopy = false;
 	public boolean node = false;
 	public boolean atribute = false;
@@ -159,7 +160,7 @@ public class NetHandler_Extended extends NetHandler {
 			xoff_name = 0;
 			yoff_name = 0;
 			
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
+			if(overlord.getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
 				try {
 					xoff_name = (int)Float.parseFloat(xoff);
 					yoff_name = (int)Float.parseFloat(yoff);
@@ -169,7 +170,7 @@ public class NetHandler_Extended extends NetHandler {
 					if(yoff_name < -8)
 						yoff_name = -55; //nad node, uwzględnia różnicę
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00103_1exception")+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00103_1exception")+ex.getMessage(), "error", true);
 				}
 			}
 			graphicNamesXYLocationsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
@@ -192,13 +193,13 @@ public class NetHandler_Extended extends NetHandler {
 				
 				double resizeFactor = 1;
 				try {
-					int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
+					int addF = Integer.parseInt(overlord.getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
 					resizeFactor = ((double)addF/(double)100);
 					
 					if(resizeFactor==0)
 						resizeFactor=1;
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00104exception")+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00104exception")+ex.getMessage(), "error", true);
 				}
 				
 				xPos *= resizeFactor;
@@ -334,16 +335,16 @@ public class NetHandler_Extended extends NetHandler {
 			int wid = Toolkit.getDefaultToolkit().getScreenSize().width - 20;
 			int hei = Toolkit.getDefaultToolkit().getScreenSize().height - 20;
 
-			int sheetsNumber = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().size();
+			int sheetsNumber = overlord.getWorkspace().getSheets().size();
 			for(int s = sheetsNumber; s<globalNetsCounted; s++) {
-				GUIManager.getDefaultGUIManager().getWorkspace().newTab(false, new Point(0,0), 1, MetaType.SUBNET);
+				overlord.getWorkspace().newTab(false, new Point(0,0), 1, MetaType.SUBNET);
 			}
 			for(int net=0; net<sheetsNumber; net++) {
 				int tmpX = 0;
 				int tmpY = 0;
 				boolean xFound = false;
 				boolean yFound = false;
-				GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(net).getGraphPanel();
+				GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(net).getGraphPanel();
 				for (int l = 0; l < globalElementLocationList.size(); l++) {
 					if(globalElementLocationList.get(l).getSheetID() != net)
 						continue;
@@ -385,7 +386,7 @@ public class NetHandler_Extended extends NetHandler {
 
 			if(!coarseCatcher) {
 				if(graphicPointsXYLocationsList.size() != graphicNamesXYLocationsList.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00105a")+" "+nodeName+
+					overlord.log(lang.getText("LOGentry00105a")+" "+nodeName+
 							lang.getText("LOGentry00105b"), "warning", true);
 					
 					graphicNamesXYLocationsList.clear();

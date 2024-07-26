@@ -30,7 +30,8 @@ import holmes.varia.Check;
  * wczytującego tenże plik (np. punkty startu i końca dla łuków).
  */
 public class SnoopyWriter {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<Place> places;
 	private ArrayList<Transition> transitions;
 	private ArrayList<MetaNode> metanodes;
@@ -51,9 +52,9 @@ public class SnoopyWriter {
 	 * Konstruktor obiektu klasy SnoopyWriter uzyskujący dostęp do zasobów sieci.
 	 */
 	public SnoopyWriter() {
-		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		metanodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes();
+		places = overlord.getWorkspace().getProject().getPlaces();
+		transitions = overlord.getWorkspace().getProject().getTransitions();
+		metanodes = overlord.getWorkspace().getProject().getMetaNodes();
 		for(MetaNode meta : metanodes) {
 			if(meta.getMetaType() == MetaType.SUBNETPLACE)
 				coarsePlaces.add(meta);
@@ -61,7 +62,7 @@ public class SnoopyWriter {
 				coarseTransitions.add(meta);
 		}
 		
-		arcs = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs(); 
+		arcs = overlord.getWorkspace().getProject().getArcs(); 
 
 		snoopyWriterPlaces = new ArrayList<SnoopyWriterPlace>();
 		snoopyWriterTransitions = new ArrayList<SnoopyWriterTransition>();
@@ -74,7 +75,7 @@ public class SnoopyWriter {
 	 * @return boolean - status operacji: true jeśli nie było problemów  (buahahahahahaha)
 	 */
 	public boolean writeSPPED(String filePath) {
-		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
+		boolean status = overlord.subnetsHQ.checkSnoopyCompatibility();
 		if(!status) {
 			JOptionPane.showMessageDialog(null, lang.getText("SW_entry001"), 
 					lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
@@ -200,13 +201,13 @@ public class SnoopyWriter {
 			writeEnding(bw);
 			bw.write("</Snoopy>\n");
 			bw.close();
-			
-			GUIManager.getDefaultGUIManager().log(lang.getText("SW_entry002")+" "+filePath, "text", true);
-			GUIManager.getDefaultGUIManager().markNetSaved();
+
+			overlord.log(lang.getText("SW_entry002")+" "+filePath, "text", true);
+			overlord.markNetSaved();
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00113_1exception")+" "+filePath, "error", true);
-			GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", false);
+			overlord.log(lang.getText("LOGentry00113_1exception")+" "+filePath, "error", true);
+			overlord.log(e.getMessage(), "error", false);
 			return false;
 		}
 	}
@@ -216,7 +217,7 @@ public class SnoopyWriter {
 	 * @return boolean - status operacji: true jeśli nie było problemów  (buachachachachachacha)
 	 */
 	public boolean writeSPEPT(String filePath) {
-		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
+		boolean status = overlord.subnetsHQ.checkSnoopyCompatibility();
 		if(!status) {
 			JOptionPane.showMessageDialog(null, lang.getText("SW_entry003"), 
 					lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
@@ -376,13 +377,13 @@ public class SnoopyWriter {
 			writeEnding(bw);
 			bw.write("</Snoopy>\n");
 			bw.close();
-			
-			GUIManager.getDefaultGUIManager().log(lang.getText("SW_entry004")+" "+filePath, "text", true);
-			GUIManager.getDefaultGUIManager().markNetSaved();
+
+			overlord.log(lang.getText("SW_entry004")+" "+filePath, "text", true);
+			overlord.markNetSaved();
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00114exception")+" "+filePath, "error", true);
-			GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", false);
+			overlord.log(lang.getText("LOGentry00114exception")+" "+filePath, "error", true);
+			overlord.log(e.getMessage(), "error", false);
 			return false;
 		}
 	}
@@ -392,7 +393,7 @@ public class SnoopyWriter {
 	 * @return boolean - status operacji: true jeśli nie było problemów
 	 */
 	public boolean writeSPTPT(String filePath) {
-		boolean status = GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility();
+		boolean status = overlord.subnetsHQ.checkSnoopyCompatibility();
 		if(!status) {
 			JOptionPane.showMessageDialog(null, lang.getText("SW_entry005"), 
 					lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
@@ -515,13 +516,13 @@ public class SnoopyWriter {
 			writeEnding(bw);
 			bw.write("</Snoopy>\n");
 			bw.close();
-			
-			GUIManager.getDefaultGUIManager().log(lang.getText("SW_entry006")+" "+filePath, "text", true);
-			GUIManager.getDefaultGUIManager().markNetSaved();
+
+			overlord.log(lang.getText("SW_entry006")+" "+filePath, "text", true);
+			overlord.markNetSaved();
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00115exception")+" "+filePath, "error", true);
-			GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", false);
+			overlord.log(lang.getText("LOGentry00115exception")+" "+filePath, "error", true);
+			overlord.log(e.getMessage(), "error", false);
 			return false;
 		}
 	}
@@ -598,7 +599,7 @@ public class SnoopyWriter {
 			write(bw, "    <metadataclass count=\"0\" name=\"Constant Class\"/>");
 			write(bw, "  </metadataclasses>");
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00116exception"), "error", true);
+			overlord.log(lang.getText("LOGentry00116exception"), "error", true);
 		}
 	}
 }

@@ -49,10 +49,10 @@ import javax.swing.filechooser.FileFilter;
 public class GUIManager extends JPanel implements ComponentListener {
 	@Serial
 	private static final long serialVersionUID = -817072868916096442L;
-	// Static fields.
-	private static GUIManager guiManager;
-	private static LanguageManager lang;
-	public boolean debug = false;
+	// Static fields:
+	private static GUIManager guiManager; //our holy overlord, uber object to rule them all
+	private static LanguageManager lang; //his holy servant, the language manager
+	public boolean debug = false; //don't know this guy, never heard of him
 	public Random randGen = new Random(System.currentTimeMillis());
 	public GUIOperations io;
 	public TexExporter tex;
@@ -171,11 +171,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 		createHiddenConsole(); // okno konsoli logowania zdarzeń
 		lang = new LanguageManager();
 
-		io = new GUIOperations(this); //obiekt klasy operacji głównych
+		io = new GUIOperations(); //obiekt klasy operacji głównych
 		tex = new TexExporter(); //obiekt zarządzający eksportem tabel do formatu latex
 		reset = new GUIReset(); //obiekt odpowiadający za resetowanie danych / kasowanie / czyszczenie
 		subnetsGraphics = new SubnetsGraphics(); //obiekt z metodami graficznymi dla sieci hierarchicznych
-		subnetsHQ = new SubnetsControl(this); //obiekt z metodami zarządzania sieciami hierarchicznymi
+		subnetsHQ = new SubnetsControl(); //obiekt z metodami zarządzania sieciami hierarchicznymi
 		simSettings = new SimulatorGlobals(); //opcje symulatora
 		
 		setFrame(frejm);
@@ -1055,7 +1055,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda tworzy nowe okno symulatora stanów programu.
 	 */
 	private void createStateSimulatorWindow() {
-		windowStateSim = new HolmesSim(this);
+		windowStateSim = new HolmesSim();
 	}
 	
 	/**

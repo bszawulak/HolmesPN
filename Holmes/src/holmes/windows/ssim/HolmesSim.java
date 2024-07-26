@@ -40,6 +40,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileFilter;
 
+import holmes.darkgui.LanguageManager;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
@@ -77,7 +78,8 @@ public class HolmesSim extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 5287992734385359453L;
 	private JFrame ego;
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private HolmesSimActions action = new HolmesSimActions();
 	private StateSimulator ssim;
 	public boolean doNotUpdate = false;
@@ -124,8 +126,7 @@ public class HolmesSim extends JFrame {
 	/**
 	 * Konstruktor domyślny obiektu klasy StateSimulator (podokna Holmes)
 	 */
-	public HolmesSim(GUIManager overlord) {
-		this.overlord = overlord;
+	public HolmesSim() {
 		ego = this;
 		ssim = new StateSimulator();
 		chartDetails = new ChartProperties();
@@ -156,7 +157,7 @@ public class HolmesSim extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (418594315) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log("Error (418594315) | Exception:  "+ex.getMessage(), "error", true);
 		}
 		setSize(new Dimension(1000, 750));
 		
@@ -425,8 +426,8 @@ public class HolmesSim extends JFrame {
 				int sel = action.getRealNodeID(name);
 				if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 
-				GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
-				GUIManager.getDefaultGUIManager().getSearchWindow().selectedManually(true, sel);
+				overlord.getSearchWindow().fillComboBoxesData();
+				overlord.getSearchWindow().selectedManually(true, sel);
 			}
 		});
 		placesChartOptionsPanel.add(showPlaceButton);
@@ -642,8 +643,8 @@ public class HolmesSim extends JFrame {
 				int sel = action.getRealNodeID(transitionsCombo.getSelectedItem().toString());
 				if(sel == -1) return; //komunikat błędu podany już z metody getRealTransID
 
-				GUIManager.getDefaultGUIManager().getSearchWindow().fillComboBoxesData();
-				GUIManager.getDefaultGUIManager().getSearchWindow().selectedManually(false, sel);
+				overlord.getSearchWindow().fillComboBoxesData();
+				overlord.getSearchWindow().selectedManually(false, sel);
 			}
 		});
 		transChartOptionsPanel.add(showTransButton);
@@ -807,7 +808,7 @@ public class HolmesSim extends JFrame {
 		placesSeriesDataSet.removeAllSeries();
 		placesInChart = new ArrayList<Integer>();
 		placesInChartStr  = new ArrayList<String>();
-		for(int i=0; i<GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size(); i++) {
+		for(int i=0; i<overlord.getWorkspace().getProject().getPlaces().size(); i++) {
 			placesInChart.add(-1);
 			placesInChartStr.add("");
 		}
@@ -831,7 +832,7 @@ public class HolmesSim extends JFrame {
 		
 	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 	    for(int p=0; p<placesAvgData.size(); p++) {
-			String tName = "p"+p;//+"_"+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(p).getName();
+			String tName = "p"+p;//+"_"+overlord.getWorkspace().getProject().getPlaces().get(p).getName();
 			double value = placesAvgData.get(p);
 			
 			//dataset.addValue(value, "Firing", tName);
@@ -911,7 +912,7 @@ public class HolmesSim extends JFrame {
 		
 		HolmesNotepad notePad = new HolmesNotepad(900,600);
 		notePad.setVisible(true);
-		ArrayList<Place> places_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		ArrayList<Place> places_tmp = overlord.getWorkspace().getProject().getPlaces();
 		notePad.addTextLineNL("", "text");
 		notePad.addTextLineNL("Places: ", "text");
 		notePad.addTextLineNL("", "text");
@@ -987,7 +988,7 @@ public class HolmesSim extends JFrame {
 				try {
 					value += transitionsRawData.get(step+i).get(selTransID);
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (906615096) | Exception:  "+ex.getMessage(), "error", true);
+					overlord.log("Error (906615096) | Exception:  "+ex.getMessage(), "error", true);
 				}
 			}
 			
@@ -1046,7 +1047,7 @@ public class HolmesSim extends JFrame {
 		
 	    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 	    for(int t=0; t<transitionsCompactData.size(); t++) {
-			String tName = "t"+t; //+"_"+GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(t).getName();
+			String tName = "t"+t; //+"_"+overlord.getWorkspace().getProject().getTransitions().get(t).getName();
 			int value = transitionsCompactData.get(t);
 			dataset.addValue(value, "Firing", tName);
 			//dataset.addValue(max-value, "NotFiring", tName);
@@ -1130,7 +1131,7 @@ public class HolmesSim extends JFrame {
 		
 		HolmesNotepad notePad = new HolmesNotepad(900,600);
  		notePad.setVisible(true);
- 		ArrayList<Transition> trans_tmp = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+ 		ArrayList<Transition> trans_tmp = overlord.getWorkspace().getProject().getTransitions();
  		notePad.addTextLineNL("", "text");
  		notePad.addTextLineNL("Transitions: (sum of all firing: "+total+")", "text");
  		notePad.addTextLineNL("", "text");
@@ -1160,7 +1161,7 @@ public class HolmesSim extends JFrame {
 	 */
 	@SuppressWarnings("SameParameterValue")
 	private void saveChartImage(String chartType, int w, int h) {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Portable Network Graphics (.png)", new String[] { "PNG" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
@@ -1188,7 +1189,7 @@ public class HolmesSim extends JFrame {
 	private void fillPlacesAndTransitionsData() {
 		selStateLabel.setText(""+overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN);
 		
-		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 		if(places== null || places.isEmpty()) {
 			placesCombo.removeAllItems();
 			placesCombo.addItem("---");
@@ -1224,7 +1225,7 @@ public class HolmesSim extends JFrame {
 			}
 		}
 		
-		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 		if(transitions== null || transitions.isEmpty())
 			return;
 		
@@ -1264,14 +1265,14 @@ public class HolmesSim extends JFrame {
      * obiektu klasy HolmesStateSimulator - czyli podokna programu głównego.
      */
 	private void acquireDataFromSimulation() {
-		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 			JOptionPane.showMessageDialog(ego,
 					"Main simulator active. Please turn if off before starting state simulator process", 
 					"Main simulator active", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
-		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 		if(places == null || places.isEmpty())
 			return;
 		
@@ -1317,7 +1318,7 @@ public class HolmesSim extends JFrame {
 		
 		placesInChart = new ArrayList<Integer>();
 		placesInChartStr  = new ArrayList<String>();
-		for(int i=0; i<GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().size(); i++) {
+		for(int i=0; i<overlord.getWorkspace().getProject().getPlaces().size(); i++) {
 			placesInChart.add(-1);
 			placesInChartStr.add("");
 		}

@@ -40,14 +40,13 @@ import static holmes.graphpanel.EditorResources.*;
  * Wciąż z resztą jest.
  */
 public class GUIOperations {
-	private GUIManager overlord;
-	private LanguageManager lang;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Konstruktor domyślny obiektu klasy GUIOperations. A nóż do czegoś się przyda...
 	 */
 	public GUIOperations() {
-		overlord = GUIManager.getDefaultGUIManager();
-		lang = GUIManager.getLanguageManager();
+
 	}
 	
 	/**
@@ -56,7 +55,6 @@ public class GUIOperations {
 	 */
 	public GUIOperations(GUIManager mastah) {
 		this();
-		overlord = mastah;
 	}
 	
 	/**
@@ -84,8 +82,8 @@ public class GUIOperations {
 		if(status) {
 			overlord.setLastPath(file.getParentFile().getPath());
 			overlord.getSimulatorBox().createSimulatorProperties(false);
-			GUIManager.getDefaultGUIManager().getFrame().setTitle(
-					"Holmes "+GUIManager.getDefaultGUIManager().getSettingsManager().getValue("holmes_version")+
+			overlord.getFrame().setTitle(
+					"Holmes "+overlord.getSettingsManager().getValue("holmes_version")+
 					"  "+Tools.getFileName(file));
 		}
 	}
@@ -144,8 +142,8 @@ public class GUIOperations {
 			
 			if(status) {
 				overlord.log(lang.getText("GUIO_openProject001"), "text", true);
-				GUIManager.getDefaultGUIManager().getFrame().setTitle(
-						"Holmes "+GUIManager.getDefaultGUIManager().getSettingsManager().getValue("holmes_version")+
+				overlord.getFrame().setTitle(
+						"Holmes "+overlord.getSettingsManager().getValue("holmes_version")+
 						"  "+Tools.getFileName(file));
 			}
 		}

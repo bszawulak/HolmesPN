@@ -20,7 +20,8 @@ import holmes.utilities.Tools;
  *
  */
 public class ClusterReader {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] fileInfo;
 
 	/**
@@ -42,7 +43,7 @@ public class ClusterReader {
 		}
 		
 		if(checkFiles(path) == -1) { //no cluster files
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00058a")+" "+path+" "+lang.getText("LOGentry00058b"), "error", true);
+			overlord.log(lang.getText("LOGentry00058a")+" "+path+" "+lang.getText("LOGentry00058b"), "error", true);
 		}
 		
 		int tableLocation;
@@ -53,10 +54,10 @@ public class ClusterReader {
 				String fileName = fileInfo[tableLocation];
 				String[] splited = fileName.split("_");
 				ArrayList<Clustering> table = readClusterFile(path+"\\"+fileName, splited[0], splited[1]);
-				GUIManager.getDefaultGUIManager().logNoEnter(lang.getText("CR_entry001") + " ", "text", true); //"Processing data for:
-				GUIManager.getDefaultGUIManager().log(splited[0] + " " + splited[1], "italic",false);
+				overlord.logNoEnter(lang.getText("CR_entry001") + " ", "text", true); //"Processing data for:
+				overlord.log(splited[0] + " " + splited[1], "italic",false);
 				if(table == null) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00059")+" "+splited[0]+"/"+splited[1], "error", true);
+					overlord.log(lang.getText("LOGentry00059")+" "+splited[0]+"/"+splited[1], "error", true);
 				}
 				bigTable.add(table);
 			}
@@ -88,7 +89,7 @@ public class ClusterReader {
 		
 		if(!firstFound) { //ERROR: not a single file		
 			result = -2;
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00060a")+" "+path+" "+lang.getText("LOGentry00060b"), "error", true);
+			overlord.log(lang.getText("LOGentry00060a")+" "+path+" "+lang.getText("LOGentry00060b"), "error", true);
 			return result;
 		}
 		
@@ -96,13 +97,13 @@ public class ClusterReader {
 			if(checkList[i] == 0) { //dla każdego brakującego pliku
 				//stwórz kopię:
 				try {
-					GUIManager.getDefaultGUIManager().logNoEnter(lang.getText("LOGentry00061")+" "+fileInfo[i], "warning", true);
+					overlord.logNoEnter(lang.getText("LOGentry00061")+" "+fileInfo[i], "warning", true);
 					Tools.copyFileByPath(path+"\\"+foundTemplateName, path+"\\"+fileInfo[i]+".tmp");
 					nullFile(path+"\\"+fileInfo[i]+".tmp", path);
-					GUIManager.getDefaultGUIManager().log(" "+lang.getText("LOGentry00062"), "text", false);
+					overlord.log(" "+lang.getText("LOGentry00062"), "text", false);
 				} catch (IOException e) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00063"), "error", true);
-					GUIManager.getDefaultGUIManager().log(lang.getText("error")+": "+e.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00063"), "error", true);
+					overlord.log(lang.getText("error")+": "+e.getMessage(), "error", true);
 					result = -1;
 				}
 			}
@@ -131,7 +132,7 @@ public class ClusterReader {
 	        br.close();
 	        bw.close();
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00064a")+" "+filePath+" "
+			overlord.log(lang.getText("LOGentry00064a")+" "+filePath+" "
 					+lang.getText("LOGentry00064b"), "error", true);
 		}
 		
@@ -144,7 +145,7 @@ public class ClusterReader {
 	        d = new File(filePath);
 	        d.delete();
 		} catch (IOException e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00065a")+" "+filePath+" "
+			overlord.log(lang.getText("LOGentry00065a")+" "+filePath+" "
 					+lang.getText("LOGentry00065b"), "error", true);
 		}
 	}
@@ -221,7 +222,7 @@ public class ClusterReader {
 	        	} //if(line.contains("Output:Silhouette of"))
 	        } //while
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00066")+ " "+path, "error", true);
+			overlord.log(lang.getText("LOGentry00066")+ " "+path, "error", true);
 		}
 		return resTable;
 	}
@@ -249,19 +250,19 @@ public class ClusterReader {
 		File csvFile = new File(filePaths[0]);
 		File mctFile = new File(filePaths[2]);
 		File clustersFile = new File(filePaths[1]);
-		
-		GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00067"), "text", true);
-		GUIManager.getDefaultGUIManager().logNoEnter(lang.getText("LOGentry00068")+"  ", "text", false);
-		GUIManager.getDefaultGUIManager().log(csvFile.getAbsolutePath(), "italic", false);
-		GUIManager.getDefaultGUIManager().logNoEnter(lang.getText("LOGentry00069")+" ", "text", false);
-		GUIManager.getDefaultGUIManager().log(mctFile.getAbsolutePath(), "italic", false);
-		GUIManager.getDefaultGUIManager().logNoEnter(lang.getText("LOGentry00070")+ " ", "text", false);
-		GUIManager.getDefaultGUIManager().log(clustersFile.getAbsolutePath(), "italic", false);
+
+		overlord.log(lang.getText("LOGentry00067"), "text", true);
+		overlord.logNoEnter(lang.getText("LOGentry00068")+"  ", "text", false);
+		overlord.log(csvFile.getAbsolutePath(), "italic", false);
+		overlord.logNoEnter(lang.getText("LOGentry00069")+" ", "text", false);
+		overlord.log(mctFile.getAbsolutePath(), "italic", false);
+		overlord.logNoEnter(lang.getText("LOGentry00070")+ " ", "text", false);
+		overlord.log(clustersFile.getAbsolutePath(), "italic", false);
 		
 		// SEKCJA I: CZYTANIE PLIKU CSV - tranzycje i inwarianty
 		
 		if(!csvFile.exists()) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00071")+" "+filePaths[0], "error", true);
+			overlord.log(lang.getText("LOGentry00071")+" "+filePaths[0], "error", true);
 			return null;
 		} else {
 			try {
@@ -292,15 +293,15 @@ public class ClusterReader {
 		        br.close();
 		            
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00072")+" "+filePaths[0], "error", true);
+				overlord.log(lang.getText("LOGentry00072")+" "+filePaths[0], "error", true);
 				return null;
 			}
 		}
-		GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00073"), "text",true);
+		overlord.log(lang.getText("LOGentry00073"), "text",true);
 		// SEKCJA II: CZYTANIE PLIKU MCT
 		
 		if(!mctFile.exists()) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00074")+" "+filePaths[2], "error", true);
+			overlord.log(lang.getText("LOGentry00074")+" "+filePaths[2], "error", true);
 			return null;
 		} else {
 			try {
@@ -339,7 +340,7 @@ public class ClusterReader {
 							}
 							if (transIndex == -1) {
 								transIndex = -1;
-								GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00075")+ " " + filePaths[2], "error", true);
+								overlord.log(lang.getText("LOGentry00075")+ " " + filePaths[2], "error", true);
 								lastFound = 0; //nie zaszkodzi, choć już raczej nie pomoże...
 							}
 							newMctList.add(transIndex); //dodajemy nr porządkowy tranzycji
@@ -349,22 +350,22 @@ public class ClusterReader {
 					data.metaData.MCTnumber = data.mctSets.size(); //ile nietrywalnych MCT
 
 				} else {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00076")+ " "+filePaths[2], "error", true);
+					overlord.log(lang.getText("LOGentry00076")+ " "+filePaths[2], "error", true);
 					br.close();
 					return null;
 				}
 				
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00077")+" "+filePaths[2], "error", true);
+				overlord.log(lang.getText("LOGentry00077")+" "+filePaths[2], "error", true);
 				return null;
 			}
 		}
-		
-		GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00078"), "text",true);
+
+		overlord.log(lang.getText("LOGentry00078"), "text",true);
 		//SEKCJA III: ODCZYT PLIKU KLASTROWANIA
 		
 		if(!clustersFile.exists()) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00079")+ " "+filePaths[1], "error", true);
+			overlord.log(lang.getText("LOGentry00079")+ " "+filePaths[1], "error", true);
 			return null;
 		} else {
 			try {
@@ -374,14 +375,14 @@ public class ClusterReader {
 					; //przewijanie do linii z liczbą tranzycji
 				
 				if(!line.contains(data.metaData.invNumber+"")) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00080a")+" "+filePaths[1]+
+					overlord.log(lang.getText("LOGentry00080a")+" "+filePaths[1]+
 							lang.getText("LOGentry00080b")+ " "+filePaths[1], "error", true);
 					br.close();
 					return null;
 				}
 				line = line.substring(line.indexOf(data.metaData.invNumber+"")+(data.metaData.invNumber+"").length());
 				if(!line.contains(data.metaData.clusterNumber+"")) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00081a")+ " "+filePaths[1]+
+					overlord.log(lang.getText("LOGentry00081a")+ " "+filePaths[1]+
 							lang.getText("LOGentry00081b"), "error", true);
 					br.close();
 					return null;
@@ -438,16 +439,16 @@ public class ClusterReader {
 				
 				//final check:
 				if(data.metaData.clusterNumber != data.clustersInv.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00082")+" "+filePaths[1], "error", true);
+					overlord.log(lang.getText("LOGentry00082")+" "+filePaths[1], "error", true);
 					return null;
 				} 
 				
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00083")+" "+filePaths[1], "error", true);
+				overlord.log(lang.getText("LOGentry00083")+" "+filePaths[1], "error", true);
 				return null;
 			}
 		}
-		GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00084"), "text",true);
+		overlord.log(lang.getText("LOGentry00084"), "text",true);
 		return data;
 	}
 	

@@ -23,8 +23,8 @@ import holmes.petrinet.simulators.*;
  * Z resztą nieważne. Chyba wystarczająco nakreśliłem poziom zaawansowania poniższego kodu.
  */
 public class SimulatorEngineXTPN implements IEngineXTPN {
-    private GUIManager overlord;
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private SimulatorGlobals sg;
     private SimulatorGlobals.SimNetType netSimTypeXTPN = SimulatorGlobals.SimNetType.XTPN;
     private ArrayList<TransitionXTPN> transitions;
@@ -61,10 +61,9 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
      * Konstruktor obiektu klasy SimulatorXTPN.
      */
     public SimulatorEngineXTPN() {
-        this.overlord = GUIManager.getDefaultGUIManager();
         generator = new StandardRandom(System.currentTimeMillis());
         this.sg = overlord.simSettings;
-        globalMAK = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simXTPNmassAction").equals("1");
+        globalMAK = overlord.getSettingsManager().getValue("simXTPNmassAction").equals("1");
 
         transitions = new ArrayList<>();
         places = new ArrayList<>();
@@ -83,7 +82,7 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
         this.transitions = transitions;
         this.places = places;
 
-        globalMAK = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simXTPNmassAction").equals("1");
+        globalMAK = overlord.getSettingsManager().getValue("simXTPNmassAction").equals("1");
 
         boolean readArcPreserveTime = overlord.getSettingsManager().getValue("simXTPNreadArcTokens").equals("1");
         sg.setXTPNreadArcActive(readArcPreserveTime);

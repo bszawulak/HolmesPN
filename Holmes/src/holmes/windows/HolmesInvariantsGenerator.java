@@ -45,8 +45,8 @@ import holmes.workspace.ExtensionFileFilter;
 public class HolmesInvariantsGenerator extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 5805567123988000425L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JFrame ego;
 	private JTextArea logFieldTinv;
 	private JTextArea logFieldPinv;
@@ -66,8 +66,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00440exception")+" "+ex.getMessage(), "error", true);
-
+			overlord.log(lang.getText("LOGentry00440exception")+" "+ex.getMessage(), "error", true);
 		}
 		this.ego = this;
 		setVisible(false);
@@ -273,14 +272,14 @@ public class HolmesInvariantsGenerator extends JFrame {
 		invPurityCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			if (abstractButton.getModel().isSelected()) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveNonInv", "1", true);
+				overlord.getSettingsManager().setValue("analysisRemoveNonInv", "1", true);
 				//cleanNonInvariant = true;//TODO:
 			} else {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveNonInv", "0", true);
+				overlord.getSettingsManager().setValue("analysisRemoveNonInv", "0", true);
 				//cleanNonInvariant = false;
 			}
 		});
-		invPurityCheckBox.setSelected(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1"));
+		invPurityCheckBox.setSelected(overlord.getSettingsManager().getValue("analysisRemoveNonInv").equals("1"));
 		panel.add(invPurityCheckBox);
 		
 		JCheckBox removeSingleInvCheckBox = new JCheckBox(lang.getText("HIGwin_entry015")); //Remove 1-element invariant
@@ -288,12 +287,12 @@ public class HolmesInvariantsGenerator extends JFrame {
 		removeSingleInvCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			if (abstractButton.getModel().isSelected()) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveSingleElementInv", "1", true);
+				overlord.getSettingsManager().setValue("analysisRemoveSingleElementInv", "1", true);
 			} else {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveSingleElementInv", "0", true);
+				overlord.getSettingsManager().setValue("analysisRemoveSingleElementInv", "0", true);
 			}
 		});
-		removeSingleInvCheckBox.setSelected(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1"));
+		removeSingleInvCheckBox.setSelected(overlord.getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1"));
 		panel.add(removeSingleInvCheckBox);
 
 		return panel;
@@ -626,14 +625,14 @@ public class HolmesInvariantsGenerator extends JFrame {
 		invPurityCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			if (abstractButton.getModel().isSelected()) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveNonInv", "1", true);
+				overlord.getSettingsManager().setValue("analysisRemoveNonInv", "1", true);
 				//cleanNonInvariant = true;//TODO:
 			} else {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveNonInv", "0", true);
+				overlord.getSettingsManager().setValue("analysisRemoveNonInv", "0", true);
 				//cleanNonInvariant = false;
 			}
 		});
-		invPurityCheckBox.setSelected(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1"));
+		invPurityCheckBox.setSelected(overlord.getSettingsManager().getValue("analysisRemoveNonInv").equals("1"));
 		panel.add(invPurityCheckBox);
 
 		JCheckBox removeSingleInvCheckBox = new JCheckBox(lang.getText("HIGwin_entry045")); //Remove 1-element invariant
@@ -641,12 +640,12 @@ public class HolmesInvariantsGenerator extends JFrame {
 		removeSingleInvCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			if (abstractButton.getModel().isSelected()) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveSingleElementInv", "1", true);
+				overlord.getSettingsManager().setValue("analysisRemoveSingleElementInv", "1", true);
 			} else {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveSingleElementInv", "0", true);
+				overlord.getSettingsManager().setValue("analysisRemoveSingleElementInv", "0", true);
 			}
 		});
-		removeSingleInvCheckBox.setSelected(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1"));
+		removeSingleInvCheckBox.setSelected(overlord.getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1"));
 		panel.add(removeSingleInvCheckBox);
 
 		return panel;
@@ -1171,7 +1170,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 				overlord.getWorkspace().getProject().setT_InvMatrix(invariants, false);
 				overlord.io.exportGeneratedInvariants(true);
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("HIGwin_entry102exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("HIGwin_entry102exception")+" "+ex.getMessage(), "error", true);
 			}
 			finally {
 				overlord.getWorkspace().getProject().setT_InvMatrix(invBackup, false);

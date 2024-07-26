@@ -24,7 +24,7 @@ import holmes.utilities.Tools;
 public class GraphPanelPopupMenu extends JPopupMenu {
 	@Serial
 	private static final long serialVersionUID = 2192129184059718857L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private GraphPanel graphPanel;
 	protected JMenuItem cutMenuItem;
 	protected JMenuItem copyMenuItem;

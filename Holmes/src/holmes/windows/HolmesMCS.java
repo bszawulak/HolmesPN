@@ -40,8 +40,8 @@ import holmes.utilities.Tools;
 public class HolmesMCS extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -5765964470006303431L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private MCSCalculator mcsGenerator = null;
 	private ArrayList<Transition> transitions;
 	private int maxCutSize = 3; //wybrana kardynalność zbiorów
@@ -67,9 +67,9 @@ public class HolmesMCS extends JFrame {
 	public HolmesMCS() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-			transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			transitions = overlord.getWorkspace().getProject().getTransitions();
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00468exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00468exception")+" "+ex.getMessage(), "error", true);
 		}
 		setVisible(false);
 		this.setTitle(lang.getText("HMCSwin_entry001title"));
@@ -187,12 +187,12 @@ public class HolmesMCS extends JFrame {
 		cleanMCSusingStructureCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			if (abstractButton.getModel().isSelected()) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisMCSReduction", "1", true);
+				overlord.getSettingsManager().setValue("analysisMCSReduction", "1", true);
 			} else {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisMCSReduction", "0", true);
+				overlord.getSettingsManager().setValue("analysisMCSReduction", "0", true);
 			}
 		});
-		cleanMCSusingStructureCheckBox.setSelected(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisMCSReduction").equals("1"));
+		cleanMCSusingStructureCheckBox.setSelected(overlord.getSettingsManager().getValue("analysisMCSReduction").equals("1"));
 		
 		panel.add(cleanMCSusingStructureCheckBox);
 
@@ -204,7 +204,7 @@ public class HolmesMCS extends JFrame {
 		generateButton.setIcon(Tools.getResIcon32("/icons/mcsWindow/computeData.png"));
 		generateButton.addActionListener(actionEvent -> {
 			launchMCSanalysis();
-			GUIManager.getDefaultGUIManager().showMCS();
+			overlord.showMCS();
 		});
 		generateButton.setFocusPainted(false);
 		panel.add(generateButton);
@@ -228,7 +228,7 @@ public class HolmesMCS extends JFrame {
 		loadButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/loadMCS.png"));
 		loadButton.addActionListener(actionEvent -> {
 			MCSoperations.loadSingleMCS();
-			GUIManager.getDefaultGUIManager().showMCS();
+			overlord.showMCS();
 		});
 		loadButton.setFocusPainted(false);
 		panel.add(loadButton);
@@ -240,7 +240,7 @@ public class HolmesMCS extends JFrame {
 		loadAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/loadAllMCS.png"));
 		loadAllButton.addActionListener(actionEvent -> {
 			MCSoperations.loadAllMCS();
-			GUIManager.getDefaultGUIManager().showMCS();
+			overlord.showMCS();
 		});
 		loadAllButton.setFocusPainted(false);
 		panel.add(loadAllButton);
@@ -251,7 +251,7 @@ public class HolmesMCS extends JFrame {
 		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
 		saveAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveAllMCS.png"));
 		saveAllButton.addActionListener(actionEvent -> {
-			MCSoperations.saveAllMCS(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore());
+			MCSoperations.saveAllMCS(overlord.getWorkspace().getProject().getMCSdataCore());
 			//fillData();
 		});
 		saveAllButton.setFocusPainted(false);
@@ -428,7 +428,7 @@ public class HolmesMCS extends JFrame {
 			}
 			selected--;
 			String name = (String) transitionsResultsCombo.getSelectedItem();
-			MCSoperations.saveSingleMCS(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore(), selected, name);
+			MCSoperations.saveSingleMCS(overlord.getWorkspace().getProject().getMCSdataCore(), selected, name);
 		});
 		saveButton.setFocusPainted(false);
 		panel.add(saveButton);
@@ -493,14 +493,14 @@ public class HolmesMCS extends JFrame {
 			JOptionPane.showMessageDialog(null, lang.getText("HMCSwin_entry022"), 
 					lang.getText("HMCSwin_entry022t"), JOptionPane.WARNING_MESSAGE);
 		} else {
-			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 			if(transitions == null || transitions.size() < 2) {
 				JOptionPane.showMessageDialog(null, lang.getText("HMCSwin_entry023"), 
 						lang.getText("warning"), JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 			
-			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+			ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
 			if(invariants == null || invariants.isEmpty()) {
 				JOptionPane.showMessageDialog(null, lang.getText("HMCSwin_entry024"), 
 						lang.getText("warning"), JOptionPane.INFORMATION_MESSAGE);
@@ -524,11 +524,11 @@ public class HolmesMCS extends JFrame {
 				return;
 			}
 			
-			int MCSdatacoreSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().getSize();
+			int MCSdatacoreSize = overlord.getWorkspace().getProject().getMCSdataCore().getSize();
 			
 			if(transitions.size() != MCSdatacoreSize) {
 				if(MCSdatacoreSize == 0) {
-					GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().initiateMCS();
+					overlord.getWorkspace().getProject().getMCSdataCore().initiateMCS();
 				} else {
 					//co dalej?
 					Object[] options = {lang.getText("yes"), lang.getText("no")};
@@ -539,7 +539,7 @@ public class HolmesMCS extends JFrame {
 					if (decision == 1) {
 						return;
 					} else {
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().initiateMCS();
+						overlord.getWorkspace().getProject().getMCSdataCore().initiateMCS();
 					}
 				}
 			}
@@ -557,7 +557,7 @@ public class HolmesMCS extends JFrame {
 	protected void calculateAllAction() {
 		ArrayList<Integer> objReactions = new ArrayList<Integer>();
 		if(generateAll) {
-			int transSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+			int transSize = overlord.getWorkspace().getProject().getTransitions().size();
 			
 			for(int t=0; t<transSize; t++) {
 				objReactions.add(t);
@@ -575,7 +575,7 @@ public class HolmesMCS extends JFrame {
 							int next = Integer.parseInt(s);
 							objReactions.add(next);
 						} catch (Exception ex) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00469exception")+" "+ex.getMessage(), "error", true);
+							overlord.log(lang.getText("LOGentry00469exception")+" "+ex.getMessage(), "error", true);
 						}
 					}
 				}
@@ -596,14 +596,14 @@ public class HolmesMCS extends JFrame {
 			JOptionPane.showMessageDialog(null, lang.getText("HMCSwin_entry022"), 
 					lang.getText("HMCSwin_entry022t"), JOptionPane.WARNING_MESSAGE);
 		} else {
-			ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+			ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 			if(transitions == null || transitions.size() < 2) {
 				JOptionPane.showMessageDialog(null, lang.getText("HMCSwin_entry023"), 
 						lang.getText("warning"), JOptionPane.INFORMATION_MESSAGE);
 				return;
 			}
 			
-			ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+			ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
 			if(invariants == null || invariants.isEmpty()) {
 				JOptionPane.showMessageDialog(null, lang.getText("HMCSwin_entry024"), 
 						"warning", JOptionPane.INFORMATION_MESSAGE);
@@ -618,11 +618,11 @@ public class HolmesMCS extends JFrame {
 				return;
 			}
 			
-			int MCSdatacoreSize = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().getSize();
+			int MCSdatacoreSize = overlord.getWorkspace().getProject().getMCSdataCore().getSize();
 			
 			if(transitions.size() != MCSdatacoreSize) {
 				if(MCSdatacoreSize == 0) {
-					GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().initiateMCS();
+					overlord.getWorkspace().getProject().getMCSdataCore().initiateMCS();
 				} else {
 					//co dalej?
 					Object[] options = {lang.getText("yes"), lang.getText("no")};
@@ -633,7 +633,7 @@ public class HolmesMCS extends JFrame {
 					if (decision == 1) {
 						return;
 					} else {
-						GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore().initiateMCS();
+						overlord.getWorkspace().getProject().getMCSdataCore().initiateMCS();
 					}
 				}
 			}
@@ -657,7 +657,7 @@ public class HolmesMCS extends JFrame {
 	 * @param selected int - wybrana reakcja
 	 */
 	protected void showMCSData(int selected) {	
-		MCSDataMatrix mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+		MCSDataMatrix mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
 		if(mcsd.getSize() == 0)
 			return;
 		
@@ -707,7 +707,7 @@ public class HolmesMCS extends JFrame {
 	 * @param selected int - numer tramzycji / reakcji
 	 */
 	protected void calculateFragility(int selected) {
-		MCSDataMatrix mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+		MCSDataMatrix mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
 		if(mcsd.getSize() == 0)
 			return;
 		ArrayList<ArrayList<Integer>> dataVector = mcsd.getMCSlist(selected);
@@ -770,7 +770,7 @@ public class HolmesMCS extends JFrame {
 	 * Metoda ustawia odpowiednie wartości komponentów okna za każdym razem gdy okno jest aktywowane.
 	 */
 	protected void fillComboBoxData() {
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		transitions = overlord.getWorkspace().getProject().getTransitions();
 		int selection = transitionsCombo.getSelectedIndex();
 		transitionsCombo.removeAllItems();
 		transitionsCombo.addItem("---");

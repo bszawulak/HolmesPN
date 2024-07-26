@@ -270,6 +270,8 @@ PNTT_toolTipSubnetPT, Allows you to create subnet with P/T interfaces.
 PNTT_toolTipCplace, Allows you to create colored place.
 PNTT_toolTipCtrans, Allows you to create colored transition.
 PNTT_toolTipCarc, Allows you to create arc for colored net.
+PNNT_toolTip_entry001, Only Pointer is available when simulator is working.
+PNNT_toolTip_entry002, Only Pointer is available when XTPN simulator is working.
 
 //SharedActionsXTPN:
 SAXTPN_entry001, Input or output XTPN transitions cannot be immediate. This transition\nis not in Beta-mode or Beta time values are zero. Change impossible.
@@ -334,6 +336,16 @@ SAXTPN_entry011_1, Proposed value γ-max =
 SAXTPN_entry011_2, cannot be lower than current γ-min = 
 SAXTPN_entry011_3, Increase proposed γ-max or decrease current γ-min (default action)?
 SAXTPN_entry011t, Gamma range problem: γ-maximum too low
+
+//SettingsManager:
+SetMan_entry001, For some reason, settings could not be saved.
+SetMan_entry002, Settings file read:
+SetMan_entry003, The file holmes.cfg, which normally contains the settings for this application,\nhas not been found or contains invalid values. Restoring default file.
+SetMan_entry004, Settings file not found or damaged
+SetMan_entry005, Settings file not found or damaged. The file holmes.cfg, which normally contains the settings for this application, has not been found or contains invalid values. Restoring default file.
+SetMan_entry006, The file holmes.cfg, which normally contains the settings for this application, is corrupt. Unable to load settings.
+SetMan_entry007, Settings corrupt, converting line has failed.
+SetMan_entry008, Settings corrupt! The file holmes.cfg, which normally contains the settings for this application, is corrupt. Unable to load setting line: 
 
 //SelectionPanel:
 SP_toolTip001, No elements selected.
@@ -2928,6 +2940,7 @@ question, Question
 netSimWork01, Net simulator working
 unimplemented, Not implemented yet.
 unimplementedTitle, Subsystem offline
+unwrap, Unwrap
 yes, Yes
 
 

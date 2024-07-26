@@ -49,8 +49,8 @@ import holmes.workspace.ExtensionFileFilter;
 public class HolmesNetProperties extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -4382182770445745847L;
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JFrame ego;
 	
 	//Wiemy wszystko o wszystkim:
@@ -86,7 +86,7 @@ public class HolmesNetProperties extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00470exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00470exception")+" "+ex.getMessage(), "error", true);
 		}
 		this.setTitle(lang.getText("HNPwin_entry001title"));
 
@@ -281,7 +281,7 @@ public class HolmesNetProperties extends JFrame {
 			try {
 				field.commitEdit();
 			} catch (ParseException ex) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00471exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00471exception")+" "+ex.getMessage(), "error", true);
 			}
 			String newName = field.getText();
 			overlord.getWorkspace().getProject().setName(newName);
@@ -490,7 +490,7 @@ public class HolmesNetProperties extends JFrame {
 				}
 				bw.close();
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00472exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00472exception")+" "+ex.getMessage(), "error", true);
 			}
 		}
 	}

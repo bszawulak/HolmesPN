@@ -27,7 +27,8 @@ import holmes.petrinet.functions.FunctionsTools;
 public class Transition extends Node {
     @Serial
     private static final long serialVersionUID = -4981812911464514746L;
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     /** PN, TPN, SPN, XTPN, CPN */
     public enum TransitionType {PN, TPN, SPN, XTPN, CPN}
     protected TransitionType transType;
@@ -280,11 +281,11 @@ public class Transition extends Node {
                     ((PlaceColored)origin).reserveColorTokens(arc.getColorWeight(4), 4);
                     ((PlaceColored)origin).reserveColorTokens(arc.getColorWeight(5), 5);
                 } catch (Exception ex) {
-                    GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00393exception"), "error", true);
+                    overlord.log(lang.getText("LOGentry00393exception"), "error", true);
                 }
             } else { //read arc / normal
                 if (arc.getArcType() == TypeOfArc.READARC) {
-                    if (GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simTransReadArcTokenReserv").equals("0")) {
+                    if (overlord.getSettingsManager().getValue("simTransReadArcTokenReserv").equals("0")) {
                         continue; //nie rezerwuj przez read-arc
                     } else {
                         origin.reserveTokens(arc.getWeight());
@@ -378,7 +379,7 @@ public class Transition extends Node {
         if (name == null) {
             return "(T)null";
         } else {
-            return "(T" + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(this) + ")";
+            return "(T" + overlord.getWorkspace().getProject().getTransitions().indexOf(this) + ")";
         }
     }
 

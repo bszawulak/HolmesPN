@@ -17,7 +17,8 @@ import holmes.windows.xtpn.HolmesNodeInfoXTPN;
 public class NodePopupMenu extends GraphPanelPopupMenu {
 	@Serial
 	private static final long serialVersionUID = -8988739887642243733L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ElementLocation elocation;
 
 	/**
@@ -36,22 +37,22 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 				Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
 				if(n instanceof Place) {
 					if(n instanceof PlaceXTPN) {
-						HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((PlaceXTPN) n, elocation, GUIManager.getDefaultGUIManager().getFrame());
+						HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((PlaceXTPN) n, elocation, overlord.getFrame());
 						ani.setVisible(true);
 					} else {
-						HolmesNodeInfo ani = new HolmesNodeInfo((Place)n, GUIManager.getDefaultGUIManager().getFrame());
+						HolmesNodeInfo ani = new HolmesNodeInfo((Place)n, overlord.getFrame());
 						ani.setVisible(true);
 					}
 				} else if(n instanceof Transition) {
 					if(n instanceof TransitionXTPN) {
-						HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((TransitionXTPN) n, elocation, GUIManager.getDefaultGUIManager().getFrame());
+						HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((TransitionXTPN) n, elocation, overlord.getFrame());
 						ani.setVisible(true);
 					} else {
-						HolmesNodeInfo ani = new HolmesNodeInfo((Transition)n, GUIManager.getDefaultGUIManager().getFrame());
+						HolmesNodeInfo ani = new HolmesNodeInfo((Transition)n, overlord.getFrame());
 						ani.setVisible(true);
 					}
 				} else if(n instanceof MetaNode) {
-					HolmesNodeInfo ani = new HolmesNodeInfo((MetaNode)n, GUIManager.getDefaultGUIManager().getFrame());
+					HolmesNodeInfo ani = new HolmesNodeInfo((MetaNode)n, overlord.getFrame());
 					ani.setVisible(true);
 				}
 
@@ -64,10 +65,10 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 		
 		if(pne != PetriNetElementType.META) {
 			this.addMenuItem(lang.getText("delete"), "cross.png", e -> {
-				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+				if(overlord.reset.isSimulatorActiveWarning(
 						lang.getText("NPM_entry002"), "Warning"))
 					return;
-				if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
+				if(overlord.reset.isXTPNSimulatorActiveWarning(
 						lang.getText("NPM_entry003"), "Warning"))
 					return;
 
@@ -76,10 +77,10 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 						lang.getText("NPM_entry004"), lang.getText("NPM_entry004t"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 				if (n == 0) {
-					//GUIManager.getDefaultGUIManager().getWorkspace().getProject().restoreMarkingZero();
+					//overlord.getWorkspace().getProject().restoreMarkingZero();
 					getGraphPanel().getSelectionManager().deleteAllSelectedElements();
 					getGraphPanel().getSelectionManager().deselectAllElementLocations();
-					GUIManager.getDefaultGUIManager().markNetChange();
+					overlord.markNetChange();
 				}
 			});
 		}
@@ -94,7 +95,7 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 		if (graphPanel.getSelectionManager().getSelectedElementLocations().size() > 1 && graphPanel.getSelectionManager().getSelectedElementLocations().stream()
 				.allMatch(location -> eloc.getParentNode() == location.getParentNode())) {
 			this.addMenuItem(lang.getText("NPM_entry005"), "", e ->
-					GUIManager.getDefaultGUIManager().subnetsHQ.mergePortals(eloc, graphPanel.getSelectionManager().getSelectedElementLocations())
+					overlord.subnetsHQ.mergePortals(eloc, graphPanel.getSelectionManager().getSelectedElementLocations())
 			);
 		}
 
@@ -106,10 +107,10 @@ public class NodePopupMenu extends GraphPanelPopupMenu {
 			this.addSeparator();
 
 			this.addMenuItem(lang.getText("NPM_entry006"), "", e ->
-					GUIManager.getDefaultGUIManager().subnetsHQ.createSubnetFromSelectedElements(graphPanel)
+					overlord.subnetsHQ.createSubnetFromSelectedElements(graphPanel)
 			);
 
-			if (GUIManager.getDefaultGUIManager().subnetsHQ.getSubnetElementLocations(graphPanel.getSheetId()).stream()
+			if (overlord.subnetsHQ.getSubnetElementLocations(graphPanel.getSheetId()).stream()
 					.anyMatch(location -> location.getParentNode() instanceof MetaNode)) {
 				this.addMenuItem(lang.getText("NPM_entry007"), "", e ->
 						SubnetsActions.openTransferElementsToSubnet(graphPanel, true)

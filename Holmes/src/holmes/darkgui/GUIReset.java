@@ -23,8 +23,8 @@ import holmes.workspace.Workspace;
  * @author MR
  */
 public class GUIReset {
-	private GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private boolean t_invGenerated = false;
 	private boolean p_invGenerated = false;
 	private boolean mctGenerated = false;
@@ -91,7 +91,7 @@ public class GUIReset {
 	 * się nad wodami a Kukiz zostanie premierem.
 	 */
 	private void clearAll() {
-		PetriNet pNet = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		PetriNet pNet = overlord.getWorkspace().getProject();
 		overlord.log(lang.getText("GUIR_reset005"), "text", true);
 		
 		//CLEAR PETRI NET DATA, kolejność MA ZNACZENIE JAK CHOLERA!!! Nie zmieniać bo coś j...tj. "się" zepsuje.
@@ -129,10 +129,7 @@ public class GUIReset {
 		
 		reset2ndOrderData(false);
 		IdGenerator.resetIDgenerator();
-		
-		GUIManager.getDefaultGUIManager().getFrame().setTitle(
-				"Holmes "+GUIManager.getDefaultGUIManager().getSettingsManager().getValue("holmes_version"));
-
+		overlord.getFrame().setTitle("Holmes "+overlord.getSettingsManager().getValue("holmes_version"));
 		overlord.markNetSaved();
 	}
 	
@@ -272,7 +269,7 @@ public class GUIReset {
 	 * @return (<b>boolean</b>) - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isSimulatorActiveWarning(String msg, String msgTitle) {
-		GraphicalSimulator obj = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();// GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
+		GraphicalSimulator obj = overlord.getWorkspace().getProject().getSimulator();// overlord.getSimulatorBox().getCurrentDockWindow().getSimulator();
 		if(obj != null) {
 			if(obj.getSimulatorStatus() == SimulatorMode.STOPPED) {
 				return false;
@@ -291,7 +288,7 @@ public class GUIReset {
 	 * @return boolean - true, jeśli symulator jest włączony, false w przeciwnym wypadku
 	 */
 	public boolean isXTPNSimulatorActiveWarning(String msg, String msgTitle) {
-		GraphicalSimulatorXTPN obj = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
+		GraphicalSimulatorXTPN obj = overlord.getWorkspace().getProject().getSimulatorXTPN();
 		if(obj != null) {
 			if(obj.getsimulatorStatusXTPN() == GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
 				return false;

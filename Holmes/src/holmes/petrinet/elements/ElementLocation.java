@@ -16,6 +16,7 @@ import holmes.workspace.Workspace;
 public class ElementLocation implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 2775375770782696276L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 	private int sheetId;
 	private Point position;
 	private Point notSnappedPosition;
@@ -72,7 +73,7 @@ public class ElementLocation implements Serializable {
 	 * @param position (<b>Point</b>) punkt lokalizacji.
 	 */
 	public void setPosition(Point position) {
-		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
+		Workspace workspace = overlord.getWorkspace();
 		int sheetIndex = workspace.getIndexOfId(sheetId);
 		if (workspace.getSheets().get(sheetIndex).getGraphPanel().isLegalLocation(position)) {
 			this.position = position;
@@ -109,7 +110,7 @@ public class ElementLocation implements Serializable {
 	 */
 	public void updateLocation(Point delta) {
 		Point tempPosition = new Point(position.x + delta.x, position.y + delta.y);
-		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
+		Workspace workspace = overlord.getWorkspace();
 		int sheetIndex = workspace.getIndexOfId(sheetId);
 		if (workspace.getSheets().get(sheetIndex).getGraphPanel().isLegalLocation(tempPosition)) {
 			position = tempPosition;
@@ -134,7 +135,7 @@ public class ElementLocation implements Serializable {
 		Point notSnPos = notSnappedPosition;
 		notSnappedPosition.setLocation(notSnPos.x + delta.x, notSnPos.y + delta.y);
 		Point tempPosition = new Point((notSnappedPosition.x + delta.x) / meshSize * meshSize, (notSnappedPosition.y + delta.y) / meshSize * meshSize);
-		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
+		Workspace workspace = overlord.getWorkspace();
 		int sheetIndex = workspace.getIndexOfId(sheetId);
 		if (workspace.getSheets().get(sheetIndex).getGraphPanel().isLegalLocation(tempPosition)) {
 			position = tempPosition;

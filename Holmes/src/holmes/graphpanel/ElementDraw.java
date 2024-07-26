@@ -27,7 +27,8 @@ import static holmes.graphpanel.EditorResources.*;
 public final class ElementDraw {
 	private static final Font f_plain = new Font("TimesRoman", Font.PLAIN, 10);
 	private static final Font f_bold = new Font("TimesRoman", Font.BOLD, 12);
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
 	 */
@@ -172,7 +173,7 @@ public final class ElementDraw {
 						try { //kliknięty element
 							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), lightSky, false);
 						} catch (Exception ex) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00322exception")+" "+ex.getMessage(), "error", true);
+							overlord.log(lang.getText("LOGentry00322exception")+" "+ex.getMessage(), "error", true);
 						}
 					}
 				} else { //if (!trans.isLaunching())
@@ -231,7 +232,7 @@ public final class ElementDraw {
 								g.drawLine(nodeBounds.x+13, nodeBounds.y+15, nodeBounds.x+16, nodeBounds.y+14);
 								g.drawLine(nodeBounds.x+16, nodeBounds.y+14, nodeBounds.x+14, nodeBounds.y+19);
 							} catch (Exception ex) {
-								GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00323exception")+" "+ex.getMessage(), "error", true);
+								overlord.log(lang.getText("LOGentry00323exception")+" "+ex.getMessage(), "error", true);
 							}
 						}
 						g.setColor(trans.qSimBoxT.qSimOvalColor);
@@ -320,7 +321,7 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/offlineTransition2.png")));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), nodeBounds.y-(trans.getRadius()+2));
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00324exception")+" "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00324exception")+" "+ex.getMessage(), "error", true);
 					}
 				}
 				
@@ -329,7 +330,7 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility2.png")));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()-10), nodeBounds.y-(trans.getRadius()-8));
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00325exception")+" "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00325exception")+" "+ex.getMessage(), "error", true);
 					}
 				}
 				
@@ -397,7 +398,7 @@ public final class ElementDraw {
 						assert trans instanceof TransitionColored;
 						coloredTransitionDemo(g, (TransitionColored) trans, nodeBounds);
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00326exception")+" "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00326exception")+" "+ex.getMessage(), "error", true);
 					}
 				}
 			}
@@ -466,7 +467,7 @@ public final class ElementDraw {
 					try {
 						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), lightSky, false);
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00327exception")+" "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00327exception")+" "+ex.getMessage(), "error", true);
 					}
 				} else if (el.isPortalSelected()) { //jeżeli kliknięto portal, ale nie ten ElementLocation
 					//błękitna poświata:
@@ -524,7 +525,7 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility2.png")));
 						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-15), nodeBounds.y-(place.getRadius()-13));
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00328exception")+" "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00328exception")+" "+ex.getMessage(), "error", true);
 					}
 				}
 
@@ -669,7 +670,7 @@ public final class ElementDraw {
                         assert place instanceof PlaceColored;
                         coloredPlaceDemo(g, (PlaceColored) place, nodeBounds);
 					} catch (Exception ex) {
-						GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00329exception")+" "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00329exception")+" "+ex.getMessage(), "error", true);
 					}
 				}
 			}
@@ -913,7 +914,7 @@ public final class ElementDraw {
 				g.drawLine(startP.x, startP.y, (int) xp, (int) yp);
 				g.setStroke(backup);
 			} else {
-				//int sizeS = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
+				//int sizeS = Integer.parseInt(overlord.getSettingsManager().getValue("editorGraphArcLineSize"));
 				if(arc.arcXTPNbox.isXTPN() || arc.arcXTPNbox.isXTPNinhibitor()) {
 					g.setStroke(new BasicStroke(2));
 				} else {
@@ -1677,7 +1678,7 @@ public final class ElementDraw {
 	}
 	
 	private static Color getColor(int tokens) {
-		long steps = GUIManager.getDefaultGUIManager().simSettings.currentStep;
+		long steps = overlord.simSettings.currentStep;
 		if(steps>10) {
 			if(tokens < 10)
 				return Color.white;
@@ -1711,13 +1712,13 @@ public final class ElementDraw {
 	/**
 	 * Rysowanie tokenów w ruchu podczas symulacji. Odpalane przez symulator (time trigger) tyle razy, aż wartość
 	 * z getGraphicalSimulationSteps() przekroczy maksymalną. Sprawdzane to jest w Arc.incrementSimulationStep(), wartość
-	 * maksymalna to: GRAPHICAL_STEPS_COUNTER = GUIManager.getDefaultGUIManager().simSettings.getArcDelay();
+	 * maksymalna to: GRAPHICAL_STEPS_COUNTER = overlord.simSettings.getArcDelay();
 	 * @param g (<b>Graphics2D</b>) obiekt rysujący.
 	 * @param sheetId (<b>int</b>) indeks arkusza.
 	 * @param arc (<b>Arc</b>) łuk sieci, po którym rusza się token.
 	 */
 	public static void drawMovingToken(Graphics2D g, int sheetId, Arc arc) {
-		int STEP_COUNT = GUIManager.getDefaultGUIManager().simSettings.getArcGraphicDelay();
+		int STEP_COUNT = overlord.simSettings.getArcGraphicDelay();
 		int step = arc.getGraphicalSimulationSteps();
 		int weight; //arc.getWeight();
 		
@@ -1756,7 +1757,7 @@ public final class ElementDraw {
 					BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/tokenV2.png"));
 					g.drawImage(img, null, (int) a - 5, (int) b - 5);
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log("Error (371587114) | Exception:  "+ex.getMessage(), "error", true);
+					overlord.log("Error (371587114) | Exception:  "+ex.getMessage(), "error", true);
 				}
 			} else {
 				g.fillOval((int) a - 5, (int) b - 5, 10, 10);
@@ -1793,7 +1794,7 @@ public final class ElementDraw {
 	 * @param g (<b>Graphics2D</b>) obiekt rysujący.
 	 */
 	public static void drawSubnetsIcons(Graphics2D g) {
-		GUIManager overlord = GUIManager.getDefaultGUIManager();
+		//GUIManager overlord = GUIManager.getDefaultGUIManager();
 		if (overlord.getWorkspace().getSelectedSheet().getId() != 0) {
 			return;
 		}

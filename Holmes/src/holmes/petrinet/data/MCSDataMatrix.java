@@ -13,7 +13,8 @@ import holmes.petrinet.elements.Transition;
  * Klasa odpowiedzialna za zarządzanie informacjami o przechowywanych zbiorach MCS.
  */
 public class MCSDataMatrix {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<ArrayList<ArrayList<Integer>>> mcsDataCore;
 	private ArrayList<ArrayList<ArrayList<Integer>>> mcsSetsInfo;
 	private ArrayList<String> transNames;
@@ -41,7 +42,7 @@ public class MCSDataMatrix {
 	 * każdej tranzycji sieci.
 	 */
 	public void initiateMCS() {
-		ArrayList<Transition> transitions =  GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Transition> transitions =  overlord.getWorkspace().getProject().getTransitions();
 		matrixSize = transitions.size();
 		mcsDataCore = new ArrayList<ArrayList<ArrayList<Integer>>>();
 		for(int i=0; i<matrixSize; i++) {
@@ -91,7 +92,7 @@ public class MCSDataMatrix {
 				}
 			}
 		} else {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry003340")+" "+matrixSize, "error", true);
+			overlord.log(lang.getText("LOGentry003340")+" "+matrixSize, "error", true);
 		}
 	}
 	
@@ -118,7 +119,7 @@ public class MCSDataMatrix {
 		if(pos < matrixSize) {
 			return mcsDataCore.get(pos); 
 		} else {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00335")+" "+matrixSize, "warning", true);
+			overlord.log(lang.getText("LOGentry00335")+" "+matrixSize, "warning", true);
 			return null;
 		}
 	}
@@ -132,7 +133,7 @@ public class MCSDataMatrix {
 		if(pos < matrixSize) {
 			return mcsSetsInfo.get(pos); 
 		} else {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00336")+" "+matrixSize, "warning", true);
+			overlord.log(lang.getText("LOGentry00336")+" "+matrixSize, "warning", true);
 			return null;
 		}
 	}

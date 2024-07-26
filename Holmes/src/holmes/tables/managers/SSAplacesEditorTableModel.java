@@ -19,7 +19,8 @@ import holmes.windows.managers.HolmesSSAplacesEditor;
 public class SSAplacesEditorTableModel extends DefaultTableModel {
 	@Serial
 	private static final long serialVersionUID = 5334544477964813872L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<SSAdataClass> dataMatrix;
 	private int dataSize;
@@ -176,7 +177,7 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
 				}
 			}
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00422exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00422exception")+" "+e.getMessage(), "error", true);
 		}
 	}
 }

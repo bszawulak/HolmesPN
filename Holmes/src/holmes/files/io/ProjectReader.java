@@ -27,8 +27,8 @@ import holmes.windows.HolmesNotepad;
  * Metoda czytająca plik danych projektu.
  */
 public class ProjectReader {
-	private final GUIManager overlord;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private final PetriNet projectCore;
 	private final ArrayList<Node> nodes;
 	private ArrayList<MetaNode> metanodes = null;
@@ -72,7 +72,6 @@ public class ProjectReader {
 	 * Konstruktor obiektu klasy odczytywania projektu.
 	 */
 	public ProjectReader() {
-		overlord = GUIManager.getDefaultGUIManager();
 		projectCore = overlord.getWorkspace().getProject();
 		projectCore.setProjectType(PetriNet.GlobalNetType.PN); //default
 		nodes = projectCore.getNodes();
@@ -91,7 +90,6 @@ public class ProjectReader {
 	 * @param isLabelCompariso (<b>boolean</b>) unused, ale co ja tam wiem [MR]
 	 */
 	public ProjectReader(boolean isLabelCompariso) { //[MR] compariso? caramba!
-		overlord = GUIManager.getDefaultGUIManager();
 		projectCore = new PetriNet(null,"test");
 		projectCore.setProjectType(PetriNet.GlobalNetType.PN); //default
 		nodes = new ArrayList<>();
@@ -1520,7 +1518,7 @@ public class ProjectReader {
 					}
 				}
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00291exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00291exception")+" "+ex.getMessage(), "error", true);
 			}
 			
 			if(placeFirst) { //pierwsze jest miejsce
@@ -2027,7 +2025,7 @@ public class ProjectReader {
 					statesMngr.accessStateMatrix().add(pVector);
 				}
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00304exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00304exception")+" "+ex.getMessage(), "error", true);
 			}
 			
 			if((readedLine /3) > statesMngr.accessStateMatrix().size()) {
@@ -2286,15 +2284,15 @@ public class ProjectReader {
 				SPNtransitionData box = frVector.newContainer();
 				box.ST_function = dataVectorTable[i*7];
 				try { box.IM_priority = Integer.parseInt(dataVectorTable[(i*7)+1]); } catch(Exception ex) {
-					
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00316exception")+" "+ex.getMessage(), "error", true);
+
+					overlord.log(lang.getText("LOGentry00316exception")+" "+ex.getMessage(), "error", true);
 				}
 				try { box.DET_delay = Integer.parseInt(dataVectorTable[(i*7)+2]); } catch(Exception ex) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00317exception")+" "+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00317exception")+" "+ex.getMessage(), "error", true);
 				}
 				box.SCH_start = dataVectorTable[(i*7)+3];
 				try { box.SCH_rep = Integer.parseInt(dataVectorTable[(i*7)+4]); } catch(Exception ex) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00318exception")+" "+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00318exception")+" "+ex.getMessage(), "error", true);
 				}
 				box.SCH_end = dataVectorTable[(i*7)+5];
 
@@ -2366,8 +2364,7 @@ public class ProjectReader {
 					ssaMngr.accessSSAmatrix().add(pVector);
 				}
 			} catch (Exception ex) {
-				
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00319exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00319exception")+" "+ex.getMessage(), "error", true);
 			}
 			
 			if((readedLine /3) > ssaMngr.accessSSAmatrix().size()) {

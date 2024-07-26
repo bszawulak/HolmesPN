@@ -21,7 +21,8 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
  * Klasa odpowiedzialna za odczyt plików projektu.
  */
 public class AbyssReader {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<Node> nodeArray = new ArrayList<Node>();
 	private ArrayList<Arc> arcArray = new ArrayList<Arc>();
 	private String pnName;
@@ -36,7 +37,7 @@ public class AbyssReader {
 			XStream xstream = new XStream(new StaxDriver());
 			xstream.alias("petriNet", PetriNetData.class);
 			PetriNetData PND = (PetriNetData) xstream.fromXML(source);
-			int SID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();
+			int SID = overlord.getWorkspace().getProject().returnCleanSheetID();
 			
 			int maxPlaceId = 0;
 			int maxTransitionId = 0;
@@ -70,15 +71,15 @@ public class AbyssReader {
 			IdGenerator.setTransitionId(maxTransitionId+1);
 			IdGenerator.setPlaceId(maxPlaceId+1);
 			IdGenerator.setStartId(maxGlobalId+1);
-			
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().createCleanStatePN();
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessSSAmanager().createCleanSSAvector();
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager().createCleanSPNdataVector();
+
+			overlord.getWorkspace().getProject().accessStatesManager().createCleanStatePN();
+			overlord.getWorkspace().getProject().accessSSAmanager().createCleanSSAvector();
+			overlord.getWorkspace().getProject().accessFiringRatesManager().createCleanSPNdataVector();
 			
 			xstream.fromXML(source);
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00153")+" "+path, "text", true);
+			overlord.log(lang.getText("LOGentry00153")+" "+path, "text", true);
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00154exception")+" " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00154exception")+" " + e.getMessage(), "error", true);
 		}
 	}
 	
@@ -100,7 +101,7 @@ public class AbyssReader {
 			}
 		}
 		
-		GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0).getGraphPanel();
+		GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(0).getGraphPanel();
 		graphPanel.setSize(new Dimension(x + 90, y + 90));
 		
 		graphPanel.setOriginSize(graphPanel.getSize());

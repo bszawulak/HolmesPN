@@ -17,7 +17,8 @@ import holmes.varia.NetworkTransformations;
  * Cthulhu fhtagn!
  */
 public class SnoopyWriterCoarse {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private MetaNode coarseNode;
 	/** Identyfikator podstawowy coarseNode  */
 	public int snoopyStartingID = -1;
@@ -71,7 +72,7 @@ public class SnoopyWriterCoarse {
 		
 		grParents.add(currID+5);
 		Point pxy = alphaAndOmega.getPosition();
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGridAlignWhenSaved").equals("1"))
+		if(overlord.getSettingsManager().getValue("editorGridAlignWhenSaved").equals("1"))
 			pxy = NetworkTransformations.alignToGrid(pxy);
 		grParentsLocation.add(pxy);
 		
@@ -121,7 +122,7 @@ public class SnoopyWriterCoarse {
 		currID++;
 		write(bw, "        <graphics count=\"1\">");
 		if(currID != grParents.get(0)) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00144critErr"), "error", true);
+			overlord.log(lang.getText("LOGentry00144critErr"), "error", true);
 		}
 		write(bw, "          <graphic x=\""+grParentsLocation.get(0).x+".00\""
 				+ " y=\""+grParentsLocation.get(0).y+".00\""
@@ -142,7 +143,7 @@ public class SnoopyWriterCoarse {
 		try {
 			bw.write(text+"\n");
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00145exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00145exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -154,7 +155,7 @@ public class SnoopyWriterCoarse {
 		else
 			type = "[cTrans]";
 		
-		int mPos = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes().indexOf(coarseNode);
+		int mPos = overlord.getWorkspace().getProject().getMetaNodes().indexOf(coarseNode);
 		txt += "M"+mPos + " [gcID:"+globalCoarseID+"]";
 		txt += " [SnoopyStartID: "+snoopyStartingID+"]";
 		txt += " "+type;

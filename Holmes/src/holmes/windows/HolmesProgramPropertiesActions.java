@@ -14,8 +14,8 @@ import holmes.workspace.ExtensionFileFilter;
  * Klasa operacji możliwych do wykonania w ramach okna ustawień programu.
  */
 public class HolmesProgramPropertiesActions {
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	SettingsManager sm;
 	
 	/**
@@ -49,14 +49,14 @@ public class HolmesProgramPropertiesActions {
 			
 			if(Tools.ifExist(selectedFile)) {
 				sm.setValue("r_path", selectedFile, true);
-				GUIManager.getDefaultGUIManager().setRStatus(true);
+				overlord.setRStatus(true);
 				String strB = String.format(lang.getText("HPPAwin_entry002"), selectedFile);
-				GUIManager.getDefaultGUIManager().log(strB, "text", true);
+				overlord.log(strB, "text", true);
 			
 			} else {
 				sm.setValue("r_path", "", true);
-				GUIManager.getDefaultGUIManager().setRStatus(false);
-				GUIManager.getDefaultGUIManager().log(lang.getText("HPPAwin_entry003"), "warning", true);	
+				overlord.setRStatus(false);
+				overlord.log(lang.getText("HPPAwin_entry003"), "warning", true);	
 			}
 		}
 	}

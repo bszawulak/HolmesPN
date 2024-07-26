@@ -19,7 +19,8 @@ import rcaller.RCode;
  *
  */
 public class Rprotocols implements Runnable {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	String pathToR;
 	String pathOutput;
 	String fileNameCSV;
@@ -53,7 +54,7 @@ public class Rprotocols implements Runnable {
 				executeCHmetricScripts();
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error: 579016465 (Rprotocols) | Exception "+ex, "error", true);
+			overlord.log("Error: 579016465 (Rprotocols) | Exception "+ex, "error", true);
 		}
 	}
 	
@@ -143,8 +144,8 @@ public class Rprotocols implements Runnable {
 			rcaller.setRscriptExecutable(pathToR);
 			rcaller.cleanRCode();
 			code.addRCode(str);
-			
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00085")+ " "+line, "text", true);
+
+			overlord.log(lang.getText("LOGentry00085")+ " "+line, "text", true);
 			
 			//int reallyToCompute = nrClusters + 1; //don't ask (MR)
 			
@@ -158,7 +159,7 @@ public class Rprotocols implements Runnable {
 			rcaller.runOnly();
 		}
 		br.close();
-		GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00086"), "text", true);
+		overlord.log(lang.getText("LOGentry00086"), "text", true);
 	}
 	
 	/**
@@ -189,8 +190,8 @@ public class Rprotocols implements Runnable {
 			rcaller.setRscriptExecutable(pathToR);
 			rcaller.cleanRCode();
 			code.addRCode(str);
-			
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00087")+ " "+line, "text", true);
+
+			overlord.log(lang.getText("LOGentry00087")+ " "+line, "text", true);
 			//tu wstawić logi w zależności od 'line'
 			String function = "veni1(" + line + ", \"" + pathOutput + "\",\"" + fileNameCSV + "\"," + nrClusters + ")";
 			code.addRCode(function);
@@ -202,7 +203,7 @@ public class Rprotocols implements Runnable {
 			rcaller.runOnly();
 		}
 		br.close();
-		GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00088"), "text", true);
+		overlord.log(lang.getText("LOGentry00088"), "text", true);
 	}
 	
 	public String generateSingleClustering(String pathToR, String pathOutput, String fileNameCSV, 

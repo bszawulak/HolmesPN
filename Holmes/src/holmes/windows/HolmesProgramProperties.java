@@ -39,8 +39,8 @@ public class HolmesProgramProperties extends JFrame {
 	private static final long serialVersionUID = 2831478312283009975L;
 	@SuppressWarnings("unused")
 	private JFrame parentFrame;
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private SettingsManager sm; //= new SettingsManager();
 	private HolmesProgramPropertiesActions action;
 	private boolean noAction = false;
@@ -51,7 +51,7 @@ public class HolmesProgramProperties extends JFrame {
 	 */
 	public HolmesProgramProperties(JFrame parent) {
 		parentFrame = parent;
-		sm = GUIManager.getDefaultGUIManager().getSettingsManager();
+		sm = overlord.getSettingsManager();
 		action = new HolmesProgramPropertiesActions(sm);
 		
 		try {
@@ -164,7 +164,7 @@ public class HolmesProgramProperties extends JFrame {
 		resize80Button.setActionCommand("0");
 		resize80Button.addActionListener(actionEvent -> {
 			if(noAction) return;
-			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "80", false);
+			overlord.getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "80", false);
 		});
 		group.add(resize80Button);
 		ioPanel.add(resize80Button);
@@ -175,7 +175,7 @@ public class HolmesProgramProperties extends JFrame {
 		resize100Button.setActionCommand("1");
 		resize100Button.addActionListener(actionEvent -> {
 			if(noAction) return;
-			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "100", true);
+			overlord.getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "100", true);
 		});
 		group.add(resize100Button);
 		ioPanel.add(resize100Button);
@@ -185,7 +185,7 @@ public class HolmesProgramProperties extends JFrame {
 		resize120Button.setActionCommand("2");
 		resize120Button.addActionListener(actionEvent -> {
 			if(noAction) return;
-			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "120", false);
+			overlord.getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "120", false);
 		});
 		group.add(resize120Button);
 		ioPanel.add(resize120Button);
@@ -195,7 +195,7 @@ public class HolmesProgramProperties extends JFrame {
 		resize140Button.setActionCommand("3");
 		resize140Button.addActionListener(actionEvent -> {
 			if(noAction) return;
-			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "140", false);
+			overlord.getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "140", false);
 		});
 		group.add(resize140Button);
 		ioPanel.add(resize140Button);
@@ -205,7 +205,7 @@ public class HolmesProgramProperties extends JFrame {
 		resize160Button.setActionCommand("4");
 		resize160Button.addActionListener(actionEvent -> {
 			if(noAction) return;
-			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "160", false);
+			overlord.getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "160", false);
 		});
 		group.add(resize160Button);
 		ioPanel.add(resize160Button);
@@ -215,12 +215,12 @@ public class HolmesProgramProperties extends JFrame {
 		resize180Button.setActionCommand("5");
 		resize180Button.addActionListener(actionEvent -> {
 			if(noAction) return;
-			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "180", false);
+			overlord.getSettingsManager().setValue("programSnoopyLoaderNetExtFactor", "180", false);
 		});
 		group.add(resize180Button);
 		ioPanel.add(resize180Button);
 		
-		String netExtFactorValue = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor");
+		String netExtFactorValue = overlord.getSettingsManager().getValue("programSnoopyLoaderNetExtFactor");
 		switch (netExtFactorValue) {
 			case "80" -> group.setSelected(resize80Button.getModel(), true);
 			case "120" -> group.setSelected(resize120Button.getModel(), true);
@@ -381,8 +381,8 @@ public class HolmesProgramProperties extends JFrame {
 		size1Button.setActionCommand("0");
 		size1Button.addActionListener(actionEvent -> {
 			if(noAction) return;
-			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphArcLineSize", "1", true);
-			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			overlord.getSettingsManager().setValue("editorGraphArcLineSize", "1", true);
+			overlord.getWorkspace().repaintAllGraphPanels();
 		});
 		group.add(size1Button);
 		panel.add(size1Button);
@@ -392,8 +392,8 @@ public class HolmesProgramProperties extends JFrame {
 		size2Button.setActionCommand("1");
 		size2Button.addActionListener(actionEvent -> {
 			if(noAction) return;
-			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphArcLineSize", "2", true);
-			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			overlord.getSettingsManager().setValue("editorGraphArcLineSize", "2", true);
+			overlord.getWorkspace().repaintAllGraphPanels();
 		});
 		group.add(size2Button);
 		panel.add(size2Button);
@@ -403,13 +403,13 @@ public class HolmesProgramProperties extends JFrame {
 		size3Button.setActionCommand("2");
 		size3Button.addActionListener(actionEvent -> {
 			if(noAction) return;
-			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphArcLineSize", "3", true);
-			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			overlord.getSettingsManager().setValue("editorGraphArcLineSize", "3", true);
+			overlord.getWorkspace().repaintAllGraphPanels();
 		});
 		group.add(size3Button);
 		panel.add(size3Button);
 		
-		String thickValue = GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize");
+		String thickValue = overlord.getSettingsManager().getValue("editorGraphArcLineSize");
 		switch (thickValue) {
 			case "1" -> group.setSelected(size1Button.getModel(), true);
 			case "2" -> group.setSelected(size2Button.getModel(), true);
@@ -431,7 +431,7 @@ public class HolmesProgramProperties extends JFrame {
 		
 		
 		SpinnerModel fontSizeSpinnerModel = new SpinnerNumberModel(
-				Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphFontSize")), 7, 30, 1);
+				Integer.parseInt(overlord.getSettingsManager().getValue("editorGraphFontSize")), 7, 30, 1);
 		JSpinner fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
 		fontSizeSpinner.setBounds(posX+150, posY+=20, 80, 20);
 		fontSizeSpinner.addChangeListener(e -> {
@@ -439,8 +439,8 @@ public class HolmesProgramProperties extends JFrame {
 			JSpinner spinner = (JSpinner) e.getSource();
 			int val = (int) spinner.getValue();
 
-			GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorGraphFontSize", ""+val, true);
-			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			overlord.getSettingsManager().setValue("editorGraphFontSize", ""+val, true);
+			overlord.getWorkspace().repaintAllGraphPanels();
 		});
 		panel.add(fontSizeSpinner);
 
@@ -497,13 +497,13 @@ public class HolmesProgramProperties extends JFrame {
 
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			if (abstractButton.getModel().isSelected()) {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorSnoopyCompatibleMode", "1", true);
+				overlord.getSettingsManager().setValue("editorSnoopyCompatibleMode", "1", true);
 			} else {
-				GUIManager.getDefaultGUIManager().getSettingsManager().setValue("editorSnoopyCompatibleMode", "0", true);
+				overlord.getSettingsManager().setValue("editorSnoopyCompatibleMode", "0", true);
 			}
-			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			overlord.getWorkspace().repaintAllGraphPanels();
 		});
-		snoopyCompatibilityCheckBox.setSelected(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1"));
+		snoopyCompatibilityCheckBox.setSelected(overlord.getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1"));
 		panel.add(snoopyCompatibilityCheckBox);
 		
 		JCheckBox subnetCompressionCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry033"), posX, posY+=20, 350, 20, 
@@ -614,10 +614,10 @@ public class HolmesProgramProperties extends JFrame {
 		arcDelaySlider.addChangeListener(e -> {
 			JSlider s = (JSlider) e.getSource();
 			int val = s.getValue();
-			int reference = GUIManager.getDefaultGUIManager().simSettings.getTransitionGraphicDelay();
+			int reference = overlord.simSettings.getTransitionGraphicDelay();
 			if(val <= reference) {
 				arcDelaySlider.setValue(val);
-				GUIManager.getDefaultGUIManager().simSettings.setArcGraphicDelay(val);
+				overlord.simSettings.setArcGraphicDelay(val);
 			} else {
 				s.setValue(reference);
 			}
@@ -637,8 +637,8 @@ public class HolmesProgramProperties extends JFrame {
             	JSlider s = (JSlider) e.getSource();
             	int value = s.getValue();
                 transDelaySlider.setValue(value);
-                GUIManager.getDefaultGUIManager().simSettings.setTransitionGraphicDelay(value);
-                if(value <  GUIManager.getDefaultGUIManager().simSettings.getArcGraphicDelay()) {
+				overlord.simSettings.setTransitionGraphicDelay(value);
+                if(value <  overlord.simSettings.getArcGraphicDelay()) {
                 	anotherSlider.setValue(value);
                 }
             }
@@ -799,11 +799,11 @@ public class HolmesProgramProperties extends JFrame {
 				
 				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue(propName, "1", autoSave);
+					overlord.getSettingsManager().setValue(propName, "1", autoSave);
 				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue(propName, "0", autoSave);
+					overlord.getSettingsManager().setValue(propName, "0", autoSave);
 				}
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+				overlord.getWorkspace().repaintAllGraphPanels();
 			}
 			private ActionListener yesWeCan(String name, boolean autosave) {
 				this.propName = name;
@@ -812,7 +812,7 @@ public class HolmesProgramProperties extends JFrame {
 		    }
 		}.yesWeCan(propName, autosave));
 
-		view3dCheckBox.setSelected(GUIManager.getDefaultGUIManager().getSettingsManager().getValue(propName).equals("1"));
+		view3dCheckBox.setSelected(overlord.getSettingsManager().getValue(propName).equals("1"));
 		return view3dCheckBox;
 	}
 }

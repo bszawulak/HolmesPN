@@ -33,6 +33,7 @@ import holmes.utilities.Tools;
 public class HolmesConsole extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -2286636544180010192L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 	private String newline = "\n";
 	private StyledDocument doc; //
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
@@ -51,7 +52,7 @@ public class HolmesConsole extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log("Error (316619924) | Exception:  "+ex.getMessage(), "error", true);
+			overlord.log("Error (316619924) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	setVisible(false);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

@@ -15,8 +15,8 @@ import java.awt.event.ActionEvent;
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class SharedActionsXTPN {
     private static final SharedActionsXTPN singleton = new SharedActionsXTPN();
-    private GUIManager overlord = GUIManager.getDefaultGUIManager();
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private SharedActionsXTPN() {
     }
 
@@ -84,9 +84,9 @@ public class SharedActionsXTPN {
                 transition.setTauTimersVisibility(true);
             }
         }
-        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
         button.setFocusPainted(false);
-        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
     }
 
@@ -145,9 +145,9 @@ public class SharedActionsXTPN {
                 transition.setTauTimersVisibility(true);
             }
         }
-        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
         button.setFocusPainted(false);
-        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
     }
 
@@ -202,9 +202,9 @@ public class SharedActionsXTPN {
                 betaMaxTextField.setValue(0.0);
             }
         }
-        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
         button.setFocusPainted(false);
-        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
     }
 
@@ -238,9 +238,9 @@ public class SharedActionsXTPN {
 
                 place.transformXTPNintoPNpace();
 
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
                 button.setFocusPainted(false);
-                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
 
                 gammaVisibilityButton.setEnabled(false);
@@ -259,9 +259,9 @@ public class SharedActionsXTPN {
 
                 place.transformIntoXTPNplace();
 
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
                 button.setFocusPainted(false);
-                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
 
                 gammaVisibilityButton.setEnabled(true);
@@ -294,9 +294,9 @@ public class SharedActionsXTPN {
             alphaLocChangeMode = false;
             overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
         }
-        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
         button.setFocusPainted(false);
-        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
 
         return alphaLocChangeMode;
@@ -328,9 +328,9 @@ public class SharedActionsXTPN {
             betaLocChangeMode = false;
             overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
         }
-        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
         button.setFocusPainted(false);
-        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
 
         return betaLocChangeMode;
@@ -360,9 +360,9 @@ public class SharedActionsXTPN {
             tauLocChangeMode = false;
             overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
         }
-        GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+        overlord.getWorkspace().getProject().repaintAllGraphPanels();
         button.setFocusPainted(false);
-        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
 
         return tauLocChangeMode;

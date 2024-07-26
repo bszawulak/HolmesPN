@@ -53,11 +53,9 @@ import holmes.workspace.WorkspaceSheet;
 /**
  * [MR]Klasa zawierająca szczegóły interfejsu podokien programu. Jest to najlepiej napisana klasa w całym programie.
  * Nasi profesorowie inżynierii oprogramowania byliby dumni.
- * 
  * Aby wprawić się w odpowiedni nastrój do jej przeglądania, zacznijmy od dowcipu:
- * Jedziesz na koniu. Żyrafa zapierdala popierdala przed tobą, z tyłu goni cię lew. Co robisz?
+ * Jedziesz na koniu. Żyrafa popierdala przed tobą, z tyłu goni cię lew. Co robisz?
  * Obrzygujesz lwa, mówisz sobie, że więcej nie pijesz i schodzisz z karuzeli.
- * 
  * Absolute positioning. Of absolute everything here. It's like a 90s website.
  * Nie obchodzi mnie, co o tym myślicie (╯゜Д゜）╯︵ ┻━┻) . Idźcie w layout i nie wracajcie. ┌∩┐(◣_◢)┌∩┐
  */
@@ -65,8 +63,8 @@ import holmes.workspace.WorkspaceSheet;
 public class HolmesDockWindowsTable extends JPanel {
     @Serial
     private static final long serialVersionUID = 4510802239873443705L;
-    private final GUIManager overlord;
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private ArrayList<JComponent> components;
     private int mode;
 
@@ -269,7 +267,6 @@ public class HolmesDockWindowsTable extends JPanel {
      */
     @SuppressWarnings("unchecked")
     public HolmesDockWindowsTable(SubWindow subType, Object... blackBox) {
-        overlord = GUIManager.getDefaultGUIManager();
         //System.out.println("HolmesDockWindowsTable constructor called by: "+subType);  //What are you creating
         switch (subType) {
             case SIMULATOR -> createSimulatorSubWindow((GraphicalSimulator) blackBox[0], (GraphicalSimulatorXTPN) blackBox[1]);
@@ -299,7 +296,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private void createEmpty() {
         // wiem że tworzy nowe okno w evencie, ale czy dodaje gdzie trzeba? Test z zwenetrznym oknem?
         initiateContainers();
-        createSheetSubWindow(GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet());
+        createSheetSubWindow(overlord.getWorkspace().getSelectedSheet());
         //mode = PLACE;
         //panel=new JPanel();
         add(panel);
@@ -820,10 +817,10 @@ public class HolmesDockWindowsTable extends JPanel {
             arcDelaySlider.addChangeListener(e -> {
                 JSlider s = (JSlider) e.getSource();
                 int val = s.getValue();
-                int reference = GUIManager.getDefaultGUIManager().simSettings.getTransitionGraphicDelay();
+                int reference = overlord.simSettings.getTransitionGraphicDelay();
                 if (val <= reference) {
                     arcDelaySlider.setValue(val);
-                    GUIManager.getDefaultGUIManager().simSettings.setArcGraphicDelay(val);
+                    overlord.simSettings.setArcGraphicDelay(val);
                 } else {
                     s.setValue(reference);
                 }
@@ -852,8 +849,8 @@ public class HolmesDockWindowsTable extends JPanel {
                     JSlider s = (JSlider) e.getSource();
                     int value = s.getValue();
                     transDelaySlider.setValue(value);
-                    GUIManager.getDefaultGUIManager().simSettings.setTransitionGraphicDelay(value);
-                    if (value < GUIManager.getDefaultGUIManager().simSettings.getArcGraphicDelay()) {
+                    overlord.simSettings.setTransitionGraphicDelay(value);
+                    if (value < overlord.simSettings.getArcGraphicDelay()) {
                         anotherSlider.setValue(value);
                     }
                 }
@@ -888,10 +885,10 @@ public class HolmesDockWindowsTable extends JPanel {
                     alphaValuesVisible = true;
                     button.setNewText("<html><center>\u03B1:ON</center></html>");
                 }
-                for (Transition trans : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
+                for (Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
                     ((TransitionXTPN) trans).setAlphaRangeVisibility(alphaValuesVisible);
                 }
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
             });
             components.add(showAlfaSwitchButton);
 
@@ -911,10 +908,10 @@ public class HolmesDockWindowsTable extends JPanel {
                     betaValuesVisible = true;
                     button.setNewText("<html><center>\u03B2:ON</center></html>");
                 }
-                for (Transition trans : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
+                for (Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
                     ((TransitionXTPN) trans).setBetaRangeVisibility(betaValuesVisible);
                 }
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
             });
             components.add(showBetaSwitchButton);
 
@@ -936,10 +933,10 @@ public class HolmesDockWindowsTable extends JPanel {
                     gammaValuesVisible = true;
                     button.setNewText("<html><center>\u03B3:ON</center></html>");
                 }
-                for (Place place : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces()) {
+                for (Place place : overlord.getWorkspace().getProject().getPlaces()) {
                     ((PlaceXTPN) place).setGammaRangeVisibility(gammaValuesVisible);
                 }
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
             });
             components.add(showGammaSwitchButton);
 
@@ -959,10 +956,10 @@ public class HolmesDockWindowsTable extends JPanel {
                     tauValuesVisible = true;
                     button.setNewText("<html><center>\u03C4:ON</center></html>");
                 }
-                for (Transition trans : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
+                for (Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
                     ((TransitionXTPN) trans).setTauTimersVisibility(tauValuesVisible);
                 }
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
             });
             components.add(showTauSwitchButton);
             quickSim = new QuickSimTools(this);
@@ -1282,7 +1279,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
@@ -1535,7 +1532,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 try {
                     int id = Integer.parseInt(newFR);
 
-                    ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+                    ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
                     if (id >= 0 && id < places.size()) {
 
                         Place p1 = (Place) element;
@@ -1543,12 +1540,12 @@ public class HolmesDockWindowsTable extends JPanel {
                         if (places.indexOf(p1) == id)
                             return;
 
-                        int pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p1);
-                        int pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p2);
-                        Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
-                        GUIManager.getDefaultGUIManager().log("Swapping places " + p1.getName() + " and " + p2.getName() + " successfull.", "text", true);
+                        int pos1 = overlord.getWorkspace().getProject().getNodes().indexOf(p1);
+                        int pos2 = overlord.getWorkspace().getProject().getNodes().indexOf(p2);
+                        Collections.swap(overlord.getWorkspace().getProject().getNodes(), pos1, pos2);
+                        overlord.log("Swapping places " + p1.getName() + " and " + p2.getName() + " successfull.", "text", true);
 
-                        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                         //ElementLocation loc1st = ((Transition)element).getElementLocations().get(0);
                         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
                     }
@@ -1728,9 +1725,9 @@ public class HolmesDockWindowsTable extends JPanel {
                 button.setNewText(lang.getText("HDWT_entry061XTPNplaceG_vis"));
                 button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             }
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(gammaVisibilityButton);
@@ -1817,7 +1814,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 doNotUpdate = false;
                 overlord.markNetChange();
             }
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
 
@@ -1842,7 +1839,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 doNotUpdate = false;
                 overlord.markNetChange();
             }
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
 
@@ -1949,9 +1946,9 @@ public class HolmesDockWindowsTable extends JPanel {
 
             place.addTokens_XTPN(1, 0.0);
 
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(add0tokenButton);
@@ -1987,9 +1984,9 @@ public class HolmesDockWindowsTable extends JPanel {
                     place.addTokensNumber(-1);
             }
 
-            GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(remove0tokenButton);
@@ -2044,7 +2041,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
@@ -2203,7 +2200,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 try {
                     int id = Integer.parseInt(newFR);
 
-                    ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+                    ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
                     if (id >= 0 && id < places.size()) {
 
                         Place p1 = (Place) element;
@@ -2211,12 +2208,12 @@ public class HolmesDockWindowsTable extends JPanel {
                         if (places.indexOf(p1) == id)
                             return;
 
-                        int pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p1);
-                        int pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p2);
-                        Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
-                        GUIManager.getDefaultGUIManager().log("Swapping places " + p1.getName() + " and " + p2.getName() + " successfull.", "text", true);
+                        int pos1 = overlord.getWorkspace().getProject().getNodes().indexOf(p1);
+                        int pos2 = overlord.getWorkspace().getProject().getNodes().indexOf(p2);
+                        Collections.swap(overlord.getWorkspace().getProject().getNodes(), pos1, pos2);
+                        overlord.log("Swapping places " + p1.getName() + " and " + p2.getName() + " successfull.", "text", true);
 
-                        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                         //ElementLocation loc1st = ((Transition)element).getElementLocations().get(0);
                         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
                     }
@@ -2359,8 +2356,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 timeTransitionCheckBox.setSelected(false);
                 stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -2379,8 +2376,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 classicalTransitionCheckBox.setSelected(false);
                 stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -2399,8 +2396,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 classicalTransitionCheckBox.setSelected(false);
                 timeTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -2482,7 +2479,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
@@ -2499,7 +2496,7 @@ public class HolmesDockWindowsTable extends JPanel {
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             ((Transition) element).fpnExtension.setFunctional(box.isSelected());
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(functionalCheckBox);
@@ -2633,7 +2630,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 try {
                     int id = Integer.parseInt(newFR);
 
-                    ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+                    ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
                     if (id >= 0 && id < transitions.size()) {
 
                         Transition t1 = (Transition) element;
@@ -2641,12 +2638,12 @@ public class HolmesDockWindowsTable extends JPanel {
                         if (transitions.indexOf(t1) == id)
                             return;
 
-                        int pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t1);
-                        int pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t2);
-                        Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
-                        GUIManager.getDefaultGUIManager().log("Swapping transitions " + t1.getName() + " and " + t2.getName() + " successfull.", "text", true);
+                        int pos1 = overlord.getWorkspace().getProject().getNodes().indexOf(t1);
+                        int pos2 = overlord.getWorkspace().getProject().getNodes().indexOf(t2);
+                        Collections.swap(overlord.getWorkspace().getProject().getNodes(), pos1, pos2);
+                        overlord.log("Swapping transitions " + t1.getName() + " and " + t2.getName() + " successfull.", "text", true);
 
-                        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                         //ElementLocation loc1st = ((Transition)element).getElementLocations().get(0);
                         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
                     }
@@ -2827,7 +2824,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
@@ -3170,8 +3167,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 timeTransitionCheckBox.setSelected(false);
                 stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -3190,8 +3187,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 classicalTransitionCheckBox.setSelected(false);
                 stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -3210,8 +3207,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 classicalTransitionCheckBox.setSelected(false);
                 timeTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -3234,7 +3231,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 try {
                     double newVal = Double.parseDouble(newFR);
 
-                    SPNtransitionData xxx = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager()
+                    SPNtransitionData xxx = overlord.getWorkspace().getProject().accessFiringRatesManager()
                             .getCurrentSPNdataVector().accessVector().get(gID);
                     ((Transition) element).spnExtension.setFiringRate(newVal);
                     xxx.ST_function = newFR;
@@ -3321,7 +3318,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
@@ -3338,7 +3335,7 @@ public class HolmesDockWindowsTable extends JPanel {
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             ((Transition) element).fpnExtension.setFunctional(box.isSelected());
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(functionalCheckBox);
@@ -3473,7 +3470,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 try {
                     int id = Integer.parseInt(newFR);
 
-                    ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+                    ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
                     if (id >= 0 && id < transitions.size()) {
 
                         Transition t1 = (Transition) element;
@@ -3481,12 +3478,12 @@ public class HolmesDockWindowsTable extends JPanel {
                         if (transitions.indexOf(t1) == id)
                             return;
 
-                        int pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t1);
-                        int pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t2);
-                        Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
-                        GUIManager.getDefaultGUIManager().log("Swapping transitions " + t1.getName() + " and " + t2.getName() + " successfull.", "text", true);
+                        int pos1 = overlord.getWorkspace().getProject().getNodes().indexOf(t1);
+                        int pos2 = overlord.getWorkspace().getProject().getNodes().indexOf(t2);
+                        Collections.swap(overlord.getWorkspace().getProject().getNodes(), pos1, pos2);
+                        overlord.log("Swapping transitions " + t1.getName() + " and " + t2.getName() + " successfull.", "text", true);
 
-                        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                         //ElementLocation loc1st = ((Transition)element).getElementLocations().get(0);
                         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
                     }
@@ -3628,8 +3625,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 timeTransitionCheckBox.setSelected(false);
                 stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -3648,8 +3645,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 classicalTransitionCheckBox.setSelected(false);
                 stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -3668,8 +3665,8 @@ public class HolmesDockWindowsTable extends JPanel {
                 classicalTransitionCheckBox.setSelected(false);
                 timeTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
-                WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                 ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
@@ -4417,7 +4414,7 @@ public class HolmesDockWindowsTable extends JPanel {
             doNotUpdate = false;
             overlord.markNetChange();
 
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
 
@@ -4444,7 +4441,7 @@ public class HolmesDockWindowsTable extends JPanel {
             doNotUpdate = false;
             overlord.markNetChange();
 
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
 
@@ -4489,7 +4486,7 @@ public class HolmesDockWindowsTable extends JPanel {
             doNotUpdate = false;
             overlord.markNetChange();
 
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
 
@@ -4515,7 +4512,7 @@ public class HolmesDockWindowsTable extends JPanel {
             doNotUpdate = false;
             overlord.markNetChange();
 
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
 
@@ -4563,7 +4560,7 @@ public class HolmesDockWindowsTable extends JPanel {
             JCheckBox box = (JCheckBox) e.getSource();
             ((Transition) element).fpnExtension.setFunctional(box.isSelected());
             overlord.markNetChange();
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         functionalCheckBox.setEnabled(false);
@@ -4595,7 +4592,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     overlord.markNetChange();
                 }
             }
-            WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
             ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
@@ -7210,10 +7207,10 @@ public class HolmesDockWindowsTable extends JPanel {
         if (selectedClusterIndex == -1)
             return;
 
-        PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+        PetriNet pn = overlord.getWorkspace().getProject();
         ArrayList<Transition> transitions = pn.getTransitions();
         ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
-        if (invMatrix == null || invMatrix.size() == 0)
+        if (invMatrix == null || invMatrix.isEmpty())
             return;
 
         ArrayList<Integer> clInvariants = clusterColorsData.clustersInvariants.get(selectedClusterIndex);
@@ -7287,9 +7284,9 @@ public class HolmesDockWindowsTable extends JPanel {
 
     //TODO
     private void showClustersData() {
-        PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+        PetriNet pn = overlord.getWorkspace().getProject();
         ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
-        if (invMatrix == null || invMatrix.size() == 0)
+        if (invMatrix == null || invMatrix.isEmpty())
             return;
 
         HolmesNotepad note = new HolmesNotepad(800, 600);
@@ -7412,7 +7409,7 @@ public class HolmesDockWindowsTable extends JPanel {
         String lastPath = overlord.getLastPath();
         String dirPath = Tools.selectDirectoryDialog(lastPath, lang.getText("HDWT_entry272ClusterPanel"),
                 lang.getText("HDWT_entry273ClusterPanel"));
-        if (dirPath.equals("")) { // czy wskazano cokolwiek
+        if (dirPath.isEmpty()) { // czy wskazano cokolwiek
             return;
         }
 
@@ -7858,11 +7855,11 @@ public class HolmesDockWindowsTable extends JPanel {
         textAreaPanel.setBounds(colA_posX, positionY, w - 30, h - 60);
         components.add(textAreaPanel);
 
-        GUIManager.getDefaultGUIManager().getKnockoutBox().getCurrentDockWindow().getPanel().setLayout(null);
-        for (JComponent component : components) GUIManager.getDefaultGUIManager().getKnockoutBox().getCurrentDockWindow().getPanel().add(component);
-        GUIManager.getDefaultGUIManager().getKnockoutBox().getCurrentDockWindow().getPanel().setOpaque(true);
-        GUIManager.getDefaultGUIManager().getKnockoutBox().getCurrentDockWindow().getPanel().revalidate();
-        GUIManager.getDefaultGUIManager().getKnockoutBox().getCurrentDockWindow().getPanel().repaint();
+        overlord.getKnockoutBox().getCurrentDockWindow().getPanel().setLayout(null);
+        for (JComponent component : components) overlord.getKnockoutBox().getCurrentDockWindow().getPanel().add(component);
+        overlord.getKnockoutBox().getCurrentDockWindow().getPanel().setOpaque(true);
+        overlord.getKnockoutBox().getCurrentDockWindow().getPanel().revalidate();
+        overlord.getKnockoutBox().getCurrentDockWindow().getPanel().repaint();
         panel.setVisible(true);
         add(panel);
     }
@@ -8047,7 +8044,7 @@ public class HolmesDockWindowsTable extends JPanel {
         simSettingsButton.setFocusPainted(false);
         simSettingsButton.setIcon(Tools.getResIcon32("/icons/simSettings/setupIcon.png"));
         simSettingsButton.setToolTipText(lang.getText("HDWT_entry300QuickSim")); //Set simulator options.
-        simSettingsButton.addActionListener(actionEvent -> new HolmesSimSetup(GUIManager.getDefaultGUIManager().getFrame()));
+        simSettingsButton.addActionListener(actionEvent -> new HolmesSimSetup(overlord.getFrame()));
         components.add(simSettingsButton);
 
         internalY += 45;

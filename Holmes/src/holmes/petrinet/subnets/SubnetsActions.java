@@ -16,7 +16,8 @@ import java.util.Optional;
  * Klasa użytkowa grupująca metody, które wywołują dialogi powiązane z podsieciami.
  */
 public class SubnetsActions {
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     /**
      * Konstruktor prywatny, ponieważ klasa składa się wyłącznie z metod statycznych.
      */
@@ -29,8 +30,6 @@ public class SubnetsActions {
      * @param createMetaArcs boolean - czy tworzyć meta-łuki pomiędzy otoczeniem przenoszonych elementów a meta-węzłem
      */
     public static void openTransferElementsToSubnet(GraphPanel graphPanel, boolean createMetaArcs) {
-        GUIManager overlord = GUIManager.getDefaultGUIManager();
-
         String title = createMetaArcs ? lang.getText("SA_entry001") : lang.getText("SA_entry002"); //Transfer to subnet (with M-Arcs) ; Transfer to subnet (no M-Arcs)
         OnSubnetAction onSubnetActionDialog = new OnSubnetAction(graphPanel, title, 400, 240);
         onSubnetActionDialog.setAction(e -> {
@@ -56,8 +55,6 @@ public class SubnetsActions {
      * @param graphPanel GraphPanel - aktualnie wybrany arkusz
      */
     public static void openCopyElementsToSubnet(GraphPanel graphPanel) {
-        GUIManager overlord = GUIManager.getDefaultGUIManager();
-
         OnSubnetAction onSubnetActionDialog = new OnSubnetAction(graphPanel, lang.getText("SA_entry003"), 400, 240); //Copy into subnet
         onSubnetActionDialog.setAction(e -> {
             ComboBoxItem<Integer> selectedItem = onSubnetActionDialog.getComboBoxValue();
@@ -82,8 +79,6 @@ public class SubnetsActions {
      * @param graphPanel GraphPanel - aktualnie wybrany arkusz
      */
     public static void addExistingElement(GraphPanel graphPanel) {
-        GUIManager overlord = GUIManager.getDefaultGUIManager();
-
         OnNodeAction onNodeActionDialog = new OnNodeAction(graphPanel, lang.getText("SA_entry004"), 540, 340); //Add node to subnet
         onNodeActionDialog.setAction(e -> {
             ComboBoxItem<Place> selectedPlace = onNodeActionDialog.getPlaceComboBoxValue();
@@ -110,8 +105,8 @@ public class SubnetsActions {
                 }
             });
 
-            GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
-            GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
+            overlord.getWorkspace().repaintAllGraphPanels();
+            overlord.getFrame().setEnabled(true);
             onNodeActionDialog.getDialog().dispose();
         });
         onNodeActionDialog.open();

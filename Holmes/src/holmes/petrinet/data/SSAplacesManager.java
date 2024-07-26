@@ -10,8 +10,8 @@ import holmes.petrinet.elements.Place;
  * Klasa zarządzająca danymi do eksperymentów SSA.
  */
 public class SSAplacesManager {
-	private GUIManager overlord;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private PetriNet pn;
 	
 	private ArrayList<SSAplacesVector> ssaMatrix;
@@ -22,9 +22,7 @@ public class SSAplacesManager {
 	 * @param net PetriNet - główny obiekt sieci
 	 */
 	public SSAplacesManager(PetriNet net) {
-		overlord = GUIManager.getDefaultGUIManager();
 		this.pn = net;
-		
 		this.ssaMatrix = new ArrayList<SSAplacesVector>();
 		ssaMatrix.add(new SSAplacesVector());
 	}

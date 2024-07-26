@@ -16,7 +16,6 @@ import java.awt.image.BufferedImage;
  * @version 23 December 2018
  */
 public class OvalButton extends JButton implements MouseListener, MouseMotionListener {
-
     /** Specify that the button has oval shape (default). */
     public static final int SHAPE_OVAL = 0;
     /** Specify that the button has capsule-like shape. */

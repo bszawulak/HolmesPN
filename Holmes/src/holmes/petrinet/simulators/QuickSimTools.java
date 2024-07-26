@@ -23,8 +23,8 @@ import holmes.windows.HolmesNotepad;
  * Nakładka na symulator stanów odpowiedzialna za wyświetlanie informacji statystycznych na obrazie sieci.
  */
 public class QuickSimTools {
-	private GUIManager overlord;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private StateSimulator stateSimulatorPN;
 	private StateSimulatorXTPN stateSimulatorXTPN;
 	private boolean scanTransitions = true;
@@ -38,7 +38,7 @@ public class QuickSimTools {
 	 * @param holmesDockWindowsTable HolmesDockWindowsTable - panel zarządzający sekcji 6 okna głównego
 	 */
 	public QuickSimTools(HolmesDockWindowsTable holmesDockWindowsTable) {
-		this.overlord = GUIManager.getDefaultGUIManager();
+
 	}
 
 	/**

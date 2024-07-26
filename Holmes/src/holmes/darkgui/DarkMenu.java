@@ -31,8 +31,8 @@ public class DarkMenu extends JMenuBar {
 	@Serial
 	private static final long serialVersionUID = -1671996309149490657L;
 	// GUI
-	private GUIManager guiManager;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JMenu sheetsMenu;
 	private ArrayList<DockableMenuItem> sheetItems;
 
@@ -40,7 +40,6 @@ public class DarkMenu extends JMenuBar {
 	 * Konstruktor domyślny obiektu klasy DarkMenu.
 	 */
 	public DarkMenu() {
-		guiManager = GUIManager.getDefaultGUIManager();
 		sheetItems = new ArrayList<DockableMenuItem>();
 		
 		JMenu xMenu = new JMenu(" ");
@@ -66,7 +65,7 @@ public class DarkMenu extends JMenuBar {
 		projectMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_newProject.png"));
 		projectMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));
 		//projectMenuItem.getAccessibleContext().setAccessibleDescription("Create new project");
-		projectMenuItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().reset.newProjectInitiated());
+		projectMenuItem.addActionListener(arg0 -> overlord.reset.newProjectInitiated());
 		fileMenu.add(projectMenuItem);
 		
 		fileMenu.addSeparator();
@@ -76,7 +75,7 @@ public class DarkMenu extends JMenuBar {
 		openMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_open.png"));
 		openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
 		//openMenuItem.getAccessibleContext().setAccessibleDescription("Open project");
-		openMenuItem.addActionListener(arg0 -> guiManager.io.selectAndOpenHolmesProject());
+		openMenuItem.addActionListener(arg0 -> overlord.io.selectAndOpenHolmesProject());
 		fileMenu.add(openMenuItem);
 		
 		// import from file
@@ -84,7 +83,7 @@ public class DarkMenu extends JMenuBar {
 		importMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_importNet.png"));
 		importMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK+InputEvent.SHIFT_DOWN_MASK));
 		//importMenuItem.getAccessibleContext().setAccessibleDescription("Import project");
-		importMenuItem.addActionListener(arg0 -> guiManager.io.importNetwork());
+		importMenuItem.addActionListener(arg0 -> overlord.io.importNetwork());
 		fileMenu.add(importMenuItem);
 		
 		// merge from file
@@ -102,7 +101,7 @@ public class DarkMenu extends JMenuBar {
 		saveMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_save.png"));
 		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 		//saveMenuItem.getAccessibleContext().setAccessibleDescription("Save project");
-		saveMenuItem.addActionListener(arg0 -> guiManager.io.saveAsAbyssFile());
+		saveMenuItem.addActionListener(arg0 -> overlord.io.saveAsAbyssFile());
 		fileMenu.add(saveMenuItem);
 		
 		// saveAs file
@@ -110,14 +109,14 @@ public class DarkMenu extends JMenuBar {
 		saveAsMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_saveAs.png"));
 		saveAsMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK));
 		//saveAsMenuItem.getAccessibleContext().setAccessibleDescription("Save project");
-		saveAsMenuItem.addActionListener(arg0 -> guiManager.io.saveAsGlobal());
+		saveAsMenuItem.addActionListener(arg0 -> overlord.io.saveAsGlobal());
 		fileMenu.add(saveAsMenuItem);
 
 		// Export net as .pnt file
 		JMenuItem exportMenuItem = new JMenuItem(lang.getText("DM_menuFileExportPNT"));
 		exportMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportNet.png"));
 		//exportMenuItem.getAccessibleContext().setAccessibleDescription("Export project to PNT file");
-		exportMenuItem.addActionListener(arg0 -> guiManager.io.exportAsPNT());
+		exportMenuItem.addActionListener(arg0 -> overlord.io.exportAsPNT());
 		fileMenu.add(exportMenuItem);
 
 		// Export image file
@@ -125,7 +124,7 @@ public class DarkMenu extends JMenuBar {
 		expImgMenuItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportPicture.png"));
 		expImgMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK+InputEvent.SHIFT_DOWN_MASK));
 		//expImgMenuItem.getAccessibleContext().setAccessibleDescription("Export project to image");
-		expImgMenuItem.addActionListener(arg0 -> guiManager.io.exportProjectToImage());
+		expImgMenuItem.addActionListener(arg0 -> overlord.io.exportProjectToImage());
 		fileMenu.add(expImgMenuItem);
 		
 		JMenu texSubMenu = new JMenu(lang.getText("DM_menuFileExportTex"));
@@ -136,19 +135,19 @@ public class DarkMenu extends JMenuBar {
 		JMenuItem exportTexPTItem = new JMenuItem(lang.getText("DM_menuFileExportTexPT"), KeyEvent.VK_1);
 		exportTexPTItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
 		//exportTexPTItem.getAccessibleContext().setAccessibleDescription("Export places and transitions tables");
-		exportTexPTItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().tex.writePlacesTransitions());
+		exportTexPTItem.addActionListener(arg0 -> overlord.tex.writePlacesTransitions());
 		texSubMenu.add(exportTexPTItem);	
 		
 		JMenuItem exportTexInvItem = new JMenuItem(lang.getText("DM_menuFileExportTexInv"), KeyEvent.VK_2);
 		exportTexInvItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
 		//exportTexInvItem.getAccessibleContext().setAccessibleDescription("Export invariants into table");
-		exportTexInvItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().tex.writeInvariants());
+		exportTexInvItem.addActionListener(arg0 -> overlord.tex.writeInvariants());
 		texSubMenu.add(exportTexInvItem);	
 		
 		JMenuItem exportTexMCTItem = new JMenuItem(lang.getText("DM_menuFileExportTexMCT"), KeyEvent.VK_3);
 		exportTexMCTItem.setIcon(Tools.getResIcon32("/icons/menu/menu_exportTex.png"));
 		//exportTexMCTItem.getAccessibleContext().setAccessibleDescription("Export MCT table");
-		exportTexMCTItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().tex.writeMCT());
+		exportTexMCTItem.addActionListener(arg0 -> overlord.tex.writeMCT());
 		texSubMenu.add(exportTexMCTItem);	
 		
 		fileMenu.addSeparator();
@@ -161,7 +160,7 @@ public class DarkMenu extends JMenuBar {
 			if (JOptionPane.showConfirmDialog(null, lang.getText("DM_menuFileExitQ1"), lang.getText("DM_menuFileExitQ2"),
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
 					{
-						GUIManager.getDefaultGUIManager().getConsoleWindow().saveLogToFile(null);
+						overlord.getConsoleWindow().saveLogToFile(null);
 						System.exit(0);
 					}
 		});
@@ -184,7 +183,7 @@ public class DarkMenu extends JMenuBar {
 		resetZoomItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F10, InputEvent.CTRL_DOWN_MASK));
 		//resetZoomItem.getAccessibleContext().setAccessibleDescription("Reset zoom to 100%");
 		resetZoomItem.addActionListener(arg0 -> {
-			for(GraphPanel gp : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels()) {
+			for(GraphPanel gp : overlord.getWorkspace().getProject().getGraphPanels()) {
 				gp.setZoom(100, gp.getZoom());
 			}
 		});
@@ -195,7 +194,7 @@ public class DarkMenu extends JMenuBar {
 		incZoomItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, InputEvent.CTRL_DOWN_MASK));
 		//incZoomItem.getAccessibleContext().setAccessibleDescription("Increase zoom 10%");
 		incZoomItem.addActionListener(arg0 -> {
-			for(GraphPanel gp : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels()) {
+			for(GraphPanel gp : overlord.getWorkspace().getProject().getGraphPanels()) {
 				gp.setZoom((int)(gp.getZoom() * 1.1), gp.getZoom());
 			}
 		});
@@ -206,7 +205,7 @@ public class DarkMenu extends JMenuBar {
 		decZoomItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F12, InputEvent.CTRL_DOWN_MASK));
 		//decZoomItem.getAccessibleContext().setAccessibleDescription("Decrease zoom 10%");
 		decZoomItem.addActionListener(arg0 -> {
-			for(GraphPanel gp : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getGraphPanels()) {
+			for(GraphPanel gp : overlord.getWorkspace().getProject().getGraphPanels()) {
 				gp.setZoom((int)(gp.getZoom() * 0.9), gp.getZoom());
 			}
 		});
@@ -252,14 +251,14 @@ public class DarkMenu extends JMenuBar {
 		consoleItem.setIcon(Tools.getResIcon32("/icons/menu/menu_console.png"));
 		consoleItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK));
 		//consoleItem.getAccessibleContext().setAccessibleDescription("Show Holmes log window");
-		consoleItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showConsole(true));
+		consoleItem.addActionListener(arg0 -> overlord.showConsole(true));
 		windowMenu.add(consoleItem);
 		
 		JMenuItem propertiesItem = new JMenuItem(lang.getText("DM_menuWindowsProperties"), KeyEvent.VK_1);
 		propertiesItem.setIcon(Tools.getResIcon32("/icons/menu/menu_properties.png"));
 		propertiesItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK));
 		//propertiesItem.getAccessibleContext().setAccessibleDescription("Show Holmes properties window");
-		propertiesItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showPropertiesWindow());
+		propertiesItem.addActionListener(arg0 -> overlord.showPropertiesWindow());
 		windowMenu.add(propertiesItem);
 		
 		//*********************************************************************************************
@@ -278,21 +277,21 @@ public class DarkMenu extends JMenuBar {
 		propItem.setIcon(Tools.getResIcon32("/icons/menu/menu_NetProp.png"));
 		propItem.setAccelerator(KeyStroke.getKeyStroke('P', InputEvent.CTRL_DOWN_MASK));
 		//propItem.getAccessibleContext().setAccessibleDescription("Show net properties");
-		propItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showNetPropertiesWindow());
+		propItem.addActionListener(arg0 -> overlord.showNetPropertiesWindow());
 		netMenu.add(propItem);
 		
 		JMenuItem searchItem = new JMenuItem(lang.getText("DM_menuNetDataSearch"), KeyEvent.VK_2);
 		searchItem.setIcon(Tools.getResIcon32("/icons/menu/menu_search.png"));
 		searchItem.setAccelerator(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK));
 		//searchItem.getAccessibleContext().setAccessibleDescription("Show net properties");
-		searchItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showSearchWindow());
+		searchItem.addActionListener(arg0 -> overlord.showSearchWindow());
 		netMenu.add(searchItem);
 		
 		JMenuItem netTablesItem = new JMenuItem(lang.getText("DM_menuNetDataTable"), KeyEvent.VK_4);
 		netTablesItem.setIcon(Tools.getResIcon32("/icons/menu/menu_netTables.png"));
 		//netTablesItem.setAccelerator(KeyStroke.getKeyStroke('A', InputEvent.CTRL_DOWN_MASK));
 		//netTablesItem.getAccessibleContext().setAccessibleDescription("Show net data tables window");
-		netTablesItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showNetTablesWindow());
+		netTablesItem.addActionListener(arg0 -> overlord.showNetTablesWindow());
 		netMenu.add(netTablesItem);
 		
 		JMenuItem invViewItem = new JMenuItem(lang.getText("DM_menuNetDataInvariants"), KeyEvent.VK_5);
@@ -307,7 +306,7 @@ public class DarkMenu extends JMenuBar {
 		netStatessItem.setAccelerator(KeyStroke.getKeyStroke('T', InputEvent.CTRL_DOWN_MASK));
 		//netStatessItem.getAccessibleContext().setAccessibleDescription("Show net data states tables window");
 		netStatessItem.addActionListener(arg0 -> {
-			if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+			if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 				JOptionPane.showMessageDialog(null, lang.getText("DM_menuNetDataPStateMQ1"),
 						lang.getText("DM_menuNetDataPStateMQ2"), JOptionPane.WARNING_MESSAGE);
 			} else {
@@ -322,11 +321,11 @@ public class DarkMenu extends JMenuBar {
 		netTransFreqItem.setAccelerator(KeyStroke.getKeyStroke('Y', InputEvent.CTRL_DOWN_MASK));
 		//netTransFreqItem.getAccessibleContext().setAccessibleDescription("Show transitions firing rates manager window");
 		netTransFreqItem.addActionListener(arg0 -> {
-			if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+			if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 				JOptionPane.showMessageDialog(null, lang.getText("DM_menuNetDataPStateMQ1"),
 						lang.getText("DM_menuNetDataPStateMQ2"), JOptionPane.WARNING_MESSAGE);
 			} else {
-				new HolmesSPNmanager(GUIManager.getDefaultGUIManager().getFrame());
+				new HolmesSPNmanager(overlord.getFrame());
 				//new HolmesStatesManager();
 			}
 		});
@@ -338,11 +337,11 @@ public class DarkMenu extends JMenuBar {
 		netSSAmanagerItem.setAccelerator(KeyStroke.getKeyStroke('U', InputEvent.CTRL_DOWN_MASK));
 		//netSSAmanagerItem.getAccessibleContext().setAccessibleDescription("Show SSA values for places manager window");
 		netSSAmanagerItem.addActionListener(arg0 -> {
-			if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+			if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 				JOptionPane.showMessageDialog(null, lang.getText("DM_menuNetDataPStateMQ1"),
 						lang.getText("DM_menuNetDataPStateMQ2"), JOptionPane.WARNING_MESSAGE);
 			} else {
-				new HolmesSSAwindowManager(GUIManager.getDefaultGUIManager().getFrame());
+				new HolmesSSAwindowManager(overlord.getFrame());
 			}
 		});
 		netMenu.add(netSSAmanagerItem);
@@ -364,8 +363,8 @@ public class DarkMenu extends JMenuBar {
 		//collapseNetItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
 		//collapseNetItem.getAccessibleContext().setAccessibleDescription("Compress subnets (remove all empty sheets)");
 		collapseNetItem.addActionListener(arg0 -> {
-			GUIManager.getDefaultGUIManager().subnetsGraphics.collapseSubnets();
-			GUIManager.getDefaultGUIManager().subnetsGraphics.resizePanels();
+			overlord.subnetsGraphics.collapseSubnets();
+			overlord.subnetsGraphics.resizePanels();
 		});
 		hierachyMenu.add(collapseNetItem);
 		
@@ -373,14 +372,14 @@ public class DarkMenu extends JMenuBar {
 		alignElementsItem.setIcon(Tools.getResIcon32("/icons/menu/menu_subnetAlignUpLeft.png"));
 		//alignElementsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
 		//alignElementsItem.getAccessibleContext().setAccessibleDescription("All net elements will be aligned to left upper corner");
-		alignElementsItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().subnetsGraphics.realignElements());
+		alignElementsItem.addActionListener(arg0 -> overlord.subnetsGraphics.realignElements());
 		hierachyMenu.add(alignElementsItem);
 		
 		JMenuItem resizePanelsItem = new JMenuItem(lang.getText("DM_menuSubnetsResize"), KeyEvent.VK_1);
 		resizePanelsItem.setIcon(Tools.getResIcon32("/icons/menu/menu_subnetResize.png"));
 		//alignElementsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionEvent.CTRL_MASK));
 		//resizePanelsItem.getAccessibleContext().setAccessibleDescription("Resize all panels to better fit the contained subnet");
-		resizePanelsItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().subnetsGraphics.resizePanels());
+		resizePanelsItem.addActionListener(arg0 -> overlord.subnetsGraphics.resizePanels());
 		hierachyMenu.add(resizePanelsItem);
 
 		JMenuItem showDetailsItem = new JMenuItem(lang.getText("DM_menuSubnetsShowDet"), KeyEvent.VK_1);
@@ -413,7 +412,7 @@ public class DarkMenu extends JMenuBar {
 		invWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_analysis_invariants.png"));
 		invWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_DOWN_MASK));
 		//invWindowItem.getAccessibleContext().setAccessibleDescription("Invariants generator and tools");
-		invWindowItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showInvariantsWindow());
+		invWindowItem.addActionListener(arg0 -> overlord.showInvariantsWindow());
 		invSubMenu.add(invWindowItem);
 		
 		// MCS window
@@ -421,7 +420,7 @@ public class DarkMenu extends JMenuBar {
 		mcsWindowItem.setIcon(Tools.getResIcon32("/icons/menu/menu_analysis_MCS.png"));
 		mcsWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK));
 		//mcsWindowItem.getAccessibleContext().setAccessibleDescription("MCS generator and tools");
-		mcsWindowItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showMCSWindow());
+		mcsWindowItem.addActionListener(arg0 -> overlord.showMCSWindow());
 		invSubMenu.add(mcsWindowItem);
 		
 		// Knockout window
@@ -430,8 +429,8 @@ public class DarkMenu extends JMenuBar {
 		knockoutWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_DOWN_MASK));
 		//knockoutWindowItem.getAccessibleContext().setAccessibleDescription("Knockout analysis tools");
 		knockoutWindowItem.addActionListener(arg0 -> {
-			GUIManager.getDefaultGUIManager().createKnockoutWindow();
-			GUIManager.getDefaultGUIManager().showKnockoutWindow();
+			overlord.createKnockoutWindow();
+			overlord.showKnockoutWindow();
 		});
 		invSubMenu.add(knockoutWindowItem);
 		
@@ -439,7 +438,7 @@ public class DarkMenu extends JMenuBar {
 		showClustersItem.setIcon(Tools.getResIcon32("/icons/menu/menu_ClustersAnalysis.png"));
 		showClustersItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
 		//showClustersItem.getAccessibleContext().setAccessibleDescription("Show clusters window");
-		showClustersItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showClusterWindow());
+		showClustersItem.addActionListener(arg0 -> overlord.showClusterWindow());
 		invSubMenu.add(showClustersItem);
 
 		JMenu simulatorSubMenu = new JMenu(lang.getText("DM_menuAnalysisSim"));
@@ -451,14 +450,14 @@ public class DarkMenu extends JMenuBar {
 		netSimItem.setIcon(Tools.getResIcon32("/icons/menu/menu_stateSim.png"));
 		netSimItem.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK));
 		//netSimItem.getAccessibleContext().setAccessibleDescription("Show state simulator window");
-		netSimItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showStateSimulatorWindow());
+		netSimItem.addActionListener(arg0 -> overlord.showStateSimulatorWindow());
 		simulatorSubMenu.add(netSimItem);
 
 		JMenuItem netSimXTPNItem = new JMenuItem(lang.getText("DM_menuAnalysisXTPNSim"), KeyEvent.VK_5);
 		netSimXTPNItem.setIcon(Tools.getResIcon32("/icons/menu/menu_XTPNsimulator.png"));
 		netSimXTPNItem.setAccelerator(KeyStroke.getKeyStroke('X', InputEvent.CTRL_DOWN_MASK));
 		//netSimXTPNItem.getAccessibleContext().setAccessibleDescription("Show state simulator window");
-		netSimXTPNItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().showStateSimulatorWindowXTPN());
+		netSimXTPNItem.addActionListener(arg0 -> overlord.showStateSimulatorWindowXTPN());
 		simulatorSubMenu.add(netSimXTPNItem);
 
 		JMenu decompSubMenu = new JMenu(lang.getText("DM_menuAnalysisNetDeco"));
@@ -472,8 +471,8 @@ public class DarkMenu extends JMenuBar {
 		decoWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_DOWN_MASK));
 		//decoWindowItem.getAccessibleContext().setAccessibleDescription("Decomposition analysis tools");
 		decoWindowItem.addActionListener(arg0 -> {
-			GUIManager.getDefaultGUIManager().createDecompositionWindow();
-			GUIManager.getDefaultGUIManager().showDecoWindow();
+			overlord.createDecompositionWindow();
+			overlord.showDecoWindow();
 		});
 		decompSubMenu.add(decoWindowItem);
 
@@ -483,8 +482,8 @@ public class DarkMenu extends JMenuBar {
 		branchWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK));
 		//branchWindowItem.getAccessibleContext().setAccessibleDescription("Branch prototype");
 		branchWindowItem.addActionListener(arg0 -> {
-			GUIManager.getDefaultGUIManager().createBranchWindow();
-			GUIManager.getDefaultGUIManager().showBranchWindow();
+			overlord.createBranchWindow();
+			overlord.showBranchWindow();
 		});
 		decompSubMenu.add(branchWindowItem);
 
@@ -494,8 +493,8 @@ public class DarkMenu extends JMenuBar {
 		compWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK));
 		compWindowItem.getAccessibleContext().setAccessibleDescription("Comparison prototype");
 		compWindowItem.addActionListener(arg0 -> {
-			GUIManager.getDefaultGUIManager().createComparisonnWindow();
-			GUIManager.getDefaultGUIManager().showCompWindow();
+			overlord.createComparisonnWindow();
+			overlord.showCompWindow();
 		});
 		decompSubMenu.add(compWindowItem);
 
@@ -505,8 +504,8 @@ public class DarkMenu extends JMenuBar {
 		graphletWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
 		//graphletWindowItem.getAccessibleContext().setAccessibleDescription("Decomposition analysis tools");
 		graphletWindowItem.addActionListener(arg0 -> {
-			GUIManager.getDefaultGUIManager().createGraphletsWindow();
-			GUIManager.getDefaultGUIManager().showGraphletsWindow();
+			overlord.createGraphletsWindow();
+			overlord.showGraphletsWindow();
 		});
 		decompSubMenu.add(graphletWindowItem);
 
@@ -517,8 +516,8 @@ public class DarkMenu extends JMenuBar {
 		reductionWindowItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
 		//reductionWindowItem.getAccessibleContext().setAccessibleDescription("Decomposition analysis tools");
 		reductionWindowItem.addActionListener(arg0 -> {
-			GUIManager.getDefaultGUIManager().createReductionWindow();
-			GUIManager.getDefaultGUIManager().showReductionsWindow();
+			overlord.createReductionWindow();
+			overlord.showReductionsWindow();
 		});
 		decompSubMenu.add(reductionWindowItem);
 
@@ -545,7 +544,7 @@ public class DarkMenu extends JMenuBar {
 		genMCTGroups.setIcon(Tools.getResIcon32("/icons/menu/menu_genMCT.png"));
 		//genMCTGroups.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M,ActionEvent.CTRL_MASK));
 		//genMCTGroups.getAccessibleContext().setAccessibleDescription("Generate MCT Groups");
-		genMCTGroups.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().generateMCT());
+		genMCTGroups.addActionListener(arg0 -> overlord.generateMCT());
 		mctOperationsMenu.add(genMCTGroups);
 		
 		// The JMenuItem for simple MCT file
@@ -553,7 +552,7 @@ public class DarkMenu extends JMenuBar {
 		createMCTFile.setIcon(Tools.getResIcon32("/icons/menu/menu_genMCT.png"));
 		//createMCTFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.ALT_MASK));
 		//createMCTFile.getAccessibleContext().setAccessibleDescription("Create simple MCT file");
-		createMCTFile.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().io.generateSimpleMCTFile());
+		createMCTFile.addActionListener(arg0 -> overlord.io.generateSimpleMCTFile());
 		mctOperationsMenu.add(createMCTFile);
 
 		//mct sub menu
@@ -584,9 +583,9 @@ public class DarkMenu extends JMenuBar {
 			try {
 				// poniższa 'linia':   ╯°□°）╯︵  ┻━━┻
 				/*
-				GUIManager.getDefaultGUIManager().startInvariantsSimulation(
-					Integer.valueOf(GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().group.getSelection().getActionCommand())
-					,(Integer)GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().spiner.getValue());
+				overlord.startInvariantsSimulation(
+					Integer.valueOf(overlord.getInvSimBox().getCurrentDockWindow().group.getSelection().getActionCommand())
+					,(Integer)overlord.getInvSimBox().getCurrentDockWindow().spiner.getValue());
 				*/
 				JOptionPane.showMessageDialog(null, lang.getText("unimplemented"),
 						lang.getText("unimplementedTitle"), JOptionPane.INFORMATION_MESSAGE);
@@ -602,9 +601,9 @@ public class DarkMenu extends JMenuBar {
 		fixNet.addActionListener(arg0 -> {
 			try {
 				// poniższa 'linia':   ╯°□°）╯︵  ┻━━┻
-				GUIManager.getDefaultGUIManager().io.fixArcsProblem();
+				overlord.io.fixArcsProblem();
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
+				overlord.log("Error: " + e.getMessage(), "error", true);
 			}
 		});
 		otherMenu.add(fixNet);
@@ -622,7 +621,7 @@ public class DarkMenu extends JMenuBar {
 		showClustersItem.getAccessibleContext().setAccessibleDescription("Show clusters window");
 		showClustersItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				GUIManager.getDefaultGUIManager().showClusterWindow(); 
+				overlord.showClusterWindow(); 
 			}
 		});
 		clustersOperationsMenu.add(showClustersItem);
@@ -636,7 +635,7 @@ public class DarkMenu extends JMenuBar {
 		JMenuItem aboutItem = new JMenuItem(lang.getText("DM_menuHelpAbout"));
 		aboutItem.setIcon(Tools.getResIcon32("/icons/menu/menu_about.png"));
 		aboutItem.getAccessibleContext().setAccessibleDescription(lang.getText("DM_menuHelpAbout"));
-		aboutItem.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().createAboutWindow());
+		aboutItem.addActionListener(arg0 -> overlord.createAboutWindow());
 		aboutMenu.add(aboutItem);
 	}
 }

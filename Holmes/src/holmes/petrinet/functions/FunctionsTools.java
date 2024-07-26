@@ -20,8 +20,8 @@ import holmes.windows.HolmesNotepad;
  * Klasa metod zarządzania tranzycjami funkcyjnymi.
  */
 public class FunctionsTools {
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Konstruktor obiektów klasy FunctionsTools.
 	 */
@@ -96,7 +96,6 @@ public class FunctionsTools {
 	 * @return boolean - true, jeśli metoda napotkała jakiekolwiek problemy
 	 */
 	public static boolean validateFunctionNet(HolmesNotepad notepad, ArrayList<Place> places) {
-		GUIManager overlord = GUIManager.getDefaultGUIManager();
 		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 		boolean logErrors = false;
 		boolean errorsFlag = false;
@@ -260,7 +259,7 @@ public class FunctionsTools {
 			myParser.parseExpression(fc.simpleExpression);
             return myParser.getValue();
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00396exception")+" "
+			overlord.log(lang.getText("LOGentry00396exception")+" "
 					+fc.simpleExpression+"\n"+e.getMessage(), "error", true);
 			return -1;
 		}

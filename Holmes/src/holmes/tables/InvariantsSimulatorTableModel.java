@@ -13,7 +13,7 @@ import holmes.darkgui.GUIManager;
 public class InvariantsSimulatorTableModel extends AbstractTableModel {
 	@Serial
 	private static final long serialVersionUID = -1557850148390063580L;
-	
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 	private ArrayList<Integer> infeasibleInvariants;
 	private ArrayList<Integer> zeroDeadTransitions;
 	private String[] columnNames;
@@ -99,7 +99,7 @@ public class InvariantsSimulatorTableModel extends AbstractTableModel {
 				//int value = Integer.parseInt(returnValue.toString());
 				return returnValue;
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Invariants table malfunction: non-numerical value in 1st or 2nd column.", "error", true);
+				overlord.log("Invariants table malfunction: non-numerical value in 1st or 2nd column.", "error", true);
 			}
 		} else {
 			returnValue = dataMatrix.get(rowIndex).get(columnIndex);

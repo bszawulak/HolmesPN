@@ -36,9 +36,9 @@ import holmes.workspace.WorkspaceSheet;
 public class GraphPanel extends JComponent {
 	@Serial
 	private static final long serialVersionUID = -5746225670483573975L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private static final int meshSize = 20;
-	private GUIManager overlord;
 	private PetriNet petriNet;
 	private ArrayList<Node> nodes = new ArrayList<>();
 	private ArrayList<Arc> arcs = new ArrayList<>();
@@ -74,7 +74,6 @@ public class GraphPanel extends JComponent {
 	 * @param arcsList ArrayList[<b>Arc</b>]- lista łuków
 	 */
 	public GraphPanel(int sheetId, PetriNet petriNet, ArrayList<Node> nodesList, ArrayList<Arc> arcsList) {
-		this.overlord = GUIManager.getDefaultGUIManager();
 		this.petriNet = petriNet;
 		this.sheetId = sheetId;
 		this.setNodesAndArcs(nodesList, arcsList);
@@ -291,7 +290,7 @@ public class GraphPanel extends JComponent {
 		ElementDraw.drawSubnetsIcons(g2d);
 		
 		ElementDrawSettings eds = new ElementDrawSettings();
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator().getSimNetType() == SimulatorGlobals.SimNetType.COLOR) {
+		if(overlord.getWorkspace().getProject().getSimulator().getSimNetType() == SimulatorGlobals.SimNetType.COLOR) {
 			eds.color = true;
 		}
 		

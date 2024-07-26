@@ -15,7 +15,8 @@ import holmes.petrinet.elements.Arc.TypeOfArc;
 public class FunctionalTransTableModel extends DefaultTableModel {
 	@Serial
 	private static final long serialVersionUID = 7486251580290447103L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 
 	/**
 	 * Klasa pojemnik
@@ -147,7 +148,7 @@ public class FunctionalTransTableModel extends DefaultTableModel {
 				case 6 -> dataMatrix.get(row).enabled = (boolean) value;
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00433exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00433exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 }

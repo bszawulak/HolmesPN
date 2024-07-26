@@ -16,8 +16,7 @@ import java.io.Serial;
 public class SelectionPanel extends JPanel {
 	@Serial
 	private static final long serialVersionUID = -7388729615923711657L;
-	private GUIManager guiManager = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private DefaultListModel<String> selectedElementLocationList;
 	private DefaultListModel<String> selectedArcList;
 

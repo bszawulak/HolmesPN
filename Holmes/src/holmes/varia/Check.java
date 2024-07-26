@@ -14,7 +14,8 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
 
 public final class Check {
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	
 	private Check() {}
 
 	/**
@@ -25,9 +26,9 @@ public final class Check {
     public static ArrayList<ArrayList<Integer>> invExists(boolean t_inv) {
     	ArrayList<ArrayList<Integer>> invariants;
     	if(t_inv)
-    		invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+    		invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
     	else
-    		invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix();
+    		invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
 		if(invariants == null || invariants.isEmpty())
     		return null;
     	else

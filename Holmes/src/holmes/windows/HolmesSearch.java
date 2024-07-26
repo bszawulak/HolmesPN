@@ -37,8 +37,8 @@ import holmes.workspace.WorkspaceSheet;
 public class HolmesSearch extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 8885161841467059860L;
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
     private ArrayList<Place> places = new ArrayList<Place>();
 	private ArrayList<Transition> transitions = new ArrayList<Transition>();
 	//private ArrayList<Node> nodes = new ArrayList<Node>();
@@ -337,8 +337,8 @@ public class HolmesSearch extends JFrame {
 	 * wypełniając je aktualnymi nazwami miejsc i trazycji
 	 */
 	public void fillComboBoxesData() {
-		places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		places = overlord.getWorkspace().getProject().getPlaces();
+		transitions = overlord.getWorkspace().getProject().getTransitions();
 		placesCombo.removeAllItems();
 		placesCombo.addItem("---");
 		for(int p=0; p < places.size(); p++) {
@@ -365,11 +365,11 @@ public class HolmesSearch extends JFrame {
 	protected void centerOnElement(String type, int index, ElementLocation portalLoc) {
 		/*
 		// THE HOLY CODE, ZOSTAWIĆ JAKO KOMENTARZ, NIERAZ SIĘ JESZCZE PRZYDA
-		ArrayList<Node> nod = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
+		ArrayList<Node> nod = overlord.getWorkspace().getProject().getNodes();
 		if(nod.size() > 0) {
 		ArrayList<ElementLocation> el = nod.get(0).getElementLocations();
 		ElementLocation clicked = el.get(0);
-		WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet();
+		WorkspaceSheet ws = overlord.getWorkspace().getSelectedSheet();
 		ws.getGraphPanel().getSelectionManager().selectOneElementLocation(clicked);
 						
 		JScrollBar barHor =  ws.getHorizontalScrollBar();
@@ -410,7 +410,7 @@ public class HolmesSearch extends JFrame {
 			}
 
 			//Ustawienie zoomu na normalne 100% wyświetlania
-			WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(sheetID);
+			WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(sheetID);
 			ws.getGraphPanel().setZoom(100, ws.getGraphPanel().getZoom()); //zoom na normal
 			
 			ws.getGraphPanel().getSelectionManager().selectOneElementLocation(loc1st); //zaznacz element

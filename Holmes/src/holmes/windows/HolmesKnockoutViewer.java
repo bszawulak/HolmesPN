@@ -27,8 +27,8 @@ import holmes.utilities.Tools;
 public class HolmesKnockoutViewer extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -6944527110471274930L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private PetriNet pn;
 	private MapElement data;
 	private ArrayList<Transition> transitions;
@@ -52,7 +52,7 @@ public class HolmesKnockoutViewer extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00466exception")+ " "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00466exception")+ " "+ex.getMessage(), "error", true);
 		}
 		setLayout(new BorderLayout());
 		setSize(new Dimension(640, 400));
@@ -198,7 +198,7 @@ public class HolmesKnockoutViewer extends JFrame {
 				new HolmesInvariantsViewer(invID);
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00467exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00467exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	

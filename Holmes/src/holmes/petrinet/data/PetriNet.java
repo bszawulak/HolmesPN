@@ -49,7 +49,8 @@ import org.simpleframework.xml.Root;
  */
 @Root
 public class PetriNet implements SelectionActionListener, Cloneable {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<>();
 	private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //macierz t-inwariantów
 	private ArrayList<String> t_invariantsDescriptions;
@@ -80,7 +81,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private PetriNetMethods methods;
 	private boolean isSimulationActive = false;
 	public boolean anythingChanged = false;
-	public GUIManager overlord;
 
 
 	/** [<b>ext - inhibitor, reset or equal Arcs present</b>]
@@ -107,7 +107,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param ar ArrayList[Arc] - lista łuków sieci
 	 */
 	public PetriNet(ArrayList<Node> nod, ArrayList<Arc> ar) {
-		overlord = GUIManager.getDefaultGUIManager();
 		setProjectType(GlobalNetType.PN);
 		getDataCore().nodes = nod;
 		getDataCore().arcs = ar;
@@ -126,7 +125,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param workspace Workspace - obiekt obszaru roboczego dla sieci
 	 */
 	public PetriNet(Workspace workspace, String name) {
-		this.overlord = GUIManager.getDefaultGUIManager();
 		this.setGraphPanels(new ArrayList<>());
 		this.workspace = workspace;
 		this.setSimulator(new GraphicalSimulator(SimulatorGlobals.SimNetType.BASIC, this));

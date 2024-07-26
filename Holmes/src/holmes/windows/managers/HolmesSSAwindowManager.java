@@ -64,7 +64,7 @@ public class HolmesSSAwindowManager extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00527exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00527exception")+" "+ex.getMessage(), "error", true);
 		}
 		PetriNet pn = overlord.getWorkspace().getProject();
     	this.ego = this;
@@ -443,7 +443,7 @@ public class HolmesSSAwindowManager extends JFrame {
 			
 			doNotUpdate = false;
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00528exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00528exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	

@@ -16,7 +16,8 @@ import java.util.EventObject;
 public class StatesPlacesTableModelXTPN extends AbstractTableModel {
     @Serial
     private static final long serialVersionUID = -318971819221435499L;
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private String[] columnNames;
     private ArrayList<ArrayList<String>> dataMatrix;
     private int dataSize;
@@ -177,7 +178,7 @@ public class StatesPlacesTableModelXTPN extends AbstractTableModel {
 
             //boss.changeStateXTPN(row, col, newValue);
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00427exception")+" "+ex.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00427exception")+" "+ex.getMessage(), "error", true);
         }
     }
 
@@ -190,7 +191,7 @@ public class StatesPlacesTableModelXTPN extends AbstractTableModel {
             ArrayList<String> rowVector = dataMatrix.get(row);
             rowVector.set(col, ""+(int)newValue);
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00428exception")+" "+ex.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00428exception")+" "+ex.getMessage(), "error", true);
         }
     }
 }

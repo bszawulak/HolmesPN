@@ -19,7 +19,9 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 public class TransitionPopupMenu extends NodePopupMenu {
 	@Serial
 	private static final long serialVersionUID = 1268637178521514216L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
+	
 	/**
 	 * Konstruktor obiektu klasy TransitionPopupMenu.
 	 * @param graphPanel GraphPanel - arkusz dla którego powstaje menu
@@ -42,8 +44,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 					((Transition) n).setKnockout(!((Transition) n).isKnockedOut());
 				}
 			}
-
-			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			overlord.getWorkspace().repaintAllGraphPanels();
 		});
 		
 		this.addMenuItem(lang.getText("TPM_entry002"), "smallInvisibility.png", e -> {
@@ -61,7 +62,7 @@ public class TransitionPopupMenu extends NodePopupMenu {
 					n.setInvisibility( !(n.isInvisible()) ); //odwrotność isInvisible, czyli switcher
 				}
 			}
-			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			overlord.getWorkspace().repaintAllGraphPanels();
 		});
 
 		this.addMenuItem(lang.getText("TPM_entry003"), "functionalWindowIcon.png", e -> {
@@ -78,13 +79,13 @@ public class TransitionPopupMenu extends NodePopupMenu {
 		this.addMenuItem("Change selected Transitions into same Portals", "portal.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
-					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+					if(overlord.reset.isSimulatorActiveWarning(
 							"Operation impossible when simulator is working."
 							, "Warning") == true)
 						return;
 					
 					//getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
-					//GUIManager.getDefaultGUIManager().markNetChange();
+					//overlord.markNetChange();
 				} else {
 					JOptionPane.showMessageDialog(null, "Option possible if more than one transition is selected.", "Too few selections", 
 							JOptionPane.INFORMATION_MESSAGE);
@@ -94,18 +95,16 @@ public class TransitionPopupMenu extends NodePopupMenu {
 		*/
 		this.addMenuItem(lang.getText("TPM_entry004"), "portal.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
-				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-						lang.getText("TPM_entry005")
-						, lang.getText("Warning")))
+				if(overlord.reset.isSimulatorActiveWarning(
+						lang.getText("TPM_entry005"), lang.getText("Warning")))
 					return;
-				if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
-						lang.getText("TPM_entry006")
-						, lang.getText("Warning")))
+				if(overlord.reset.isXTPNSimulatorActiveWarning(
+						lang.getText("TPM_entry006"), lang.getText("Warning")))
 					return;
 
 				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
 				getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
-				GUIManager.getDefaultGUIManager().markNetChange();
+				overlord.markNetChange();
 			} else {
 				JOptionPane.showMessageDialog(null, lang.getText("TPM_entry007"), lang.getText("TPM_entry008"),
 						JOptionPane.INFORMATION_MESSAGE);
@@ -115,18 +114,16 @@ public class TransitionPopupMenu extends NodePopupMenu {
 
 		this.addMenuItem(lang.getText("TPM_entry008"), "cut.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
-				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-						lang.getText("TPM_entry005")
-						, lang.getText("Warning")))
+				if(overlord.reset.isSimulatorActiveWarning(
+						lang.getText("TPM_entry005"), lang.getText("Warning")))
 					return;
-				if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
-						lang.getText("TPM_entry006")
-						, lang.getText("Warning")))
+				if(overlord.reset.isXTPNSimulatorActiveWarning(
+						lang.getText("TPM_entry006"), lang.getText("Warning")))
 					return;
 
 				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
 				getGraphPanel().getSelectionManager().saveSubnet();
-				GUIManager.getDefaultGUIManager().markNetChange();
+				overlord.markNetChange();
 			} else {
 				JOptionPane.showMessageDialog(null, lang.getText("TPM_entry007"), lang.getText("TPM_entry007t"),
 						JOptionPane.INFORMATION_MESSAGE);

@@ -35,8 +35,8 @@ import holmes.workspace.ExtensionFileFilter;
 public class HolmesNotepad extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 1694133455242675169L;
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String newline = "\r\n";
 	private StyledDocument doc; //
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
@@ -55,7 +55,7 @@ public class HolmesNotepad extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00485exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00485exception")+" "+ex.getMessage(), "error", true);
 		}
     	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
@@ -69,10 +69,10 @@ public class HolmesNotepad extends JFrame {
 		this();
 		
 		try {
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programUseSimpleEditor").equals("1"))
+			if(overlord.getSettingsManager().getValue("programUseSimpleEditor").equals("1"))
 				simpleMode = true;
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00486exception")+ " "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00486exception")+ " "+ex.getMessage(), "error", true);
 		}
 		setPreferredSize(new Dimension(width, height));
 		setLocation(50,50);
@@ -180,7 +180,7 @@ public class HolmesNotepad extends JFrame {
 			try {
 				doc.remove(0, len);
 			} catch (BadLocationException ex) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00487exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00487exception")+" "+ex.getMessage(), "error", true);
 			}
 		}
 	}
@@ -189,7 +189,7 @@ public class HolmesNotepad extends JFrame {
 	 * Obsługa wczytywania pliku tekstowego
 	 */
 	protected void loadContent() {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Holmes notepad text file (.txt)",  new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("load"), lang.getText("HNwin_entry005"), "");
@@ -217,7 +217,7 @@ public class HolmesNotepad extends JFrame {
 	 * Zapisuje zawartość notatnika do pliku.
 	 */
 	protected void saveContent() {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Holmes notepad text file (.txt)",  new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("load"), lang.getText("HNwin_entry006"), "");

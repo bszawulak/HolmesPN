@@ -14,7 +14,7 @@ import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 public class SPNengine implements IEngine {
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 	/** Tylko tranzycje WYJŚCIOWE dla miejsca */
 	private Map<Place, ArrayList<Transition>> involvedTransitionsMap;
 	/** Mapa miejsc WEJŚCIOWYCH i WYJŚCIOWYCH dla tranzycji */
@@ -55,7 +55,6 @@ public class SPNengine implements IEngine {
 	public void setEngine(SimulatorGlobals.SimNetType simulationType, boolean maxMode, boolean singleMode,
 			ArrayList<Transition> transitions, ArrayList<Transition> time_transitions, ArrayList<Place> places) {
 		
-		this.overlord = GUIManager.getDefaultGUIManager();
 		this.lastFired = null;
 		this.launchableTransitions = new ArrayList<Transition>();
 		this.transitionSTtypeUpdateList = new ArrayList<Transition>();
@@ -356,8 +355,7 @@ public class SPNengine implements IEngine {
 			for(int j=i+1; j<size; j++) {
 				if(immTransitions.get(i).spnExtension.getSPNbox().IM_priority == immTransitions.get(j).spnExtension.getSPNbox().IM_priority) {
 					rangeJ++;
-				} else 
-					continue; //ważne! szybciej.
+				}
 			}
 			if(rangeJ != i) {//w tym zakresie mieszamy
 				int diff = rangeJ - i;

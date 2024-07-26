@@ -17,7 +17,9 @@ import holmes.workspace.Workspace;
  * Klasa odpowiedzialna za niektóre operacje graficzne związane z sieciami hierachicznymi.
  */
 public class SubnetsGraphics {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
+	
 	/**
 	 * Konstruktor klasy HierarchicalGraphics;
 	 */
@@ -29,7 +31,7 @@ public class SubnetsGraphics {
 	 * Metoda dodaje brakujące panele graficzne sieci.
 	 */
 	public void addRequiredSheets() {
-		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
+		Workspace workspace = overlord.getWorkspace();
 		int sheetsNumber = workspace.getSheets().size();
 		ArrayList<Node> nodes = workspace.getProject().getNodes();
 		
@@ -54,7 +56,7 @@ public class SubnetsGraphics {
 			subNets = metaNodesNumber;
 		
 		for(int s = sheetsNumber; s<subNets; s++) {
-			GUIManager.getDefaultGUIManager().getWorkspace().newTab(false, new Point(0,0), 1, MetaType.SUBNET);
+			overlord.getWorkspace().newTab(false, new Point(0,0), 1, MetaType.SUBNET);
 		}
 	}
 	
@@ -62,7 +64,7 @@ public class SubnetsGraphics {
 	 * Metoda usuwająca zbędne zakładki sieci (puste).
 	 */
 	public void collapseSubnets() {
-		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
+		Workspace workspace = overlord.getWorkspace();
 		ArrayList<Node> nodes = workspace.getProject().getNodes();
 		ArrayList<Integer> subnetsVector = new ArrayList<Integer>();
 		subnetsVector.add(0);
@@ -179,7 +181,7 @@ public class SubnetsGraphics {
 			//dockableSize++;
 			
 			if(dockable.getDock().getParentDock().equals(parentOfFirst))
-				GUIManager.getDefaultGUIManager().globalSheetsList.remove(dockable);
+				overlord.globalSheetsList.remove(dockable);
 		}
 		 */
 	}
@@ -188,7 +190,7 @@ public class SubnetsGraphics {
 	 * Metoda przesuwa wszystkie elementy o odpowiednią odległość do lewego górnego rogu panelu.
 	 */
 	public void realignElements() {
-		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
+		Workspace workspace = overlord.getWorkspace();
 		ArrayList<Node> nodes = workspace.getProject().getNodes();
 		ArrayList<Integer> vectorW = new ArrayList<Integer>();
 		ArrayList<Integer> vectorH = new ArrayList<Integer>();
@@ -226,7 +228,7 @@ public class SubnetsGraphics {
 	 * Metoda odpowiedzialna za dostosowanie rozmiarów paneli sieci do zawartości.
 	 */
 	public void resizePanels() {
-		Workspace workspace = GUIManager.getDefaultGUIManager().getWorkspace();
+		Workspace workspace = overlord.getWorkspace();
 		int sheetsNumber = workspace.getSheets().size();
 		ArrayList<Node> nodes = workspace.getProject().getNodes();
 		
@@ -256,9 +258,8 @@ public class SubnetsGraphics {
 				graphPanel.setSize(new Dimension(width+200, height+100));
 				graphPanel.setOriginSize(new Dimension(width+200, height+100));
 			}
-				
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00419exception"), "error", true);	
+			overlord.log(lang.getText("LOGentry00419exception"), "error", true);	
 		}
 	}
 	

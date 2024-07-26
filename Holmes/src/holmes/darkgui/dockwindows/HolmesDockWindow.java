@@ -9,6 +9,7 @@ import holmes.analyse.InvariantsCalculator;
 import holmes.analyse.InvariantsTools;
 import holmes.clusters.ClusterDataPackage;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable.SubWindow;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent.SelectionActionType;
@@ -30,7 +31,8 @@ import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 public class HolmesDockWindow {//extends SingleDock {
     //private static final long serialVersionUID = -1966643269924197502L;
     //private Dockable dockable;
-    private GUIManager guiManager;
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private HolmesDockWindowsTable dockWindowPanel;
     private SelectionPanel selectionPanel;
     private JScrollPane scrollPane;
@@ -54,12 +56,11 @@ public class HolmesDockWindow {//extends SingleDock {
     public HolmesDockWindow(DockWindowType propertiesType) {
         type = propertiesType;
         scrollPane = new JScrollPane();
-        guiManager = GUIManager.getDefaultGUIManager();
 
         switch (type) {
             case SIMULATOR -> {
-                GraphicalSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
-                GraphicalSimulatorXTPN netSimXTPN = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
+                GraphicalSimulator netSim = overlord.getWorkspace().getProject().getSimulator();
+                GraphicalSimulatorXTPN netSimXTPN = overlord.getWorkspace().getProject().getSimulatorXTPN();
                 setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SIMULATOR, netSim, netSimXTPN));
                 scrollPane.getViewport().add(getCurrentDockWindow());
             }
@@ -84,15 +85,15 @@ public class HolmesDockWindow {//extends SingleDock {
                 scrollPane.getViewport().add(getCurrentDockWindow());
             }
             case T_INVARIANTS -> {
-                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix()));
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.T_INVARIANTS, overlord.getWorkspace().getProject().getT_InvMatrix()));
                 scrollPane.getViewport().add(getCurrentDockWindow());
             }
             case P_INVARIANTS -> {
-                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, GUIManager.getDefaultGUIManager().getWorkspace().getProject().getP_InvMatrix()));
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.P_INVARIANTS, overlord.getWorkspace().getProject().getP_InvMatrix()));
                 scrollPane.getViewport().add(getCurrentDockWindow());
             }
             case MctANALYZER -> {
-                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCT, GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTMatrix()));
+                setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCT, overlord.getWorkspace().getProject().getMCTMatrix()));
                 scrollPane.getViewport().add(getCurrentDockWindow());
             }
             case MCSselector -> {
@@ -115,8 +116,8 @@ public class HolmesDockWindow {//extends SingleDock {
      */
     public void createSimulatorProperties(boolean XTPN) {
         if (type == DockWindowType.SIMULATOR) {
-            GraphicalSimulator netSim = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulator();
-            GraphicalSimulatorXTPN netSimXTPN = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getSimulatorXTPN();
+            GraphicalSimulator netSim = overlord.getWorkspace().getProject().getSimulator();
+            GraphicalSimulatorXTPN netSimXTPN = overlord.getWorkspace().getProject().getSimulatorXTPN();
 
             //29062023: wywołanie tej metody powoduje problemy z panelami symulatorów (obu!)
             //a kiedy działała, odpowiadzalna jest za reset paneli symulatorów. Tylko ze jak je teraz zresetujemy
@@ -144,10 +145,10 @@ public class HolmesDockWindow {//extends SingleDock {
                 InvariantsCalculator ic = new InvariantsCalculator(true);
                 InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), t_invariants, true);
             }
-            guiManager.getT_invBox().getCurrentDockWindow().cleanTINVsubwindowFields();
-            guiManager.getT_invBox().getCurrentDockWindow().setT_invariants(t_invariants);
-            guiManager.getT_invBox().getCurrentDockWindow().refreshInvariantsComboBox();
-            guiManager.getT_invBox().getCurrentDockWindow().refreshSubSurCombos();
+            overlord.getT_invBox().getCurrentDockWindow().cleanTINVsubwindowFields();
+            overlord.getT_invBox().getCurrentDockWindow().setT_invariants(t_invariants);
+            overlord.getT_invBox().getCurrentDockWindow().refreshInvariantsComboBox();
+            overlord.getT_invBox().getCurrentDockWindow().refreshSubSurCombos();
         }
     }
 
@@ -157,8 +158,8 @@ public class HolmesDockWindow {//extends SingleDock {
      */
     public void showMCT(ArrayList<ArrayList<Transition>> mctGroups) {
         if (type == DockWindowType.MctANALYZER) {
-            guiManager.getMctBox().getCurrentDockWindow().cleanMCtsubwindowFields();
-            guiManager.getMctBox().getCurrentDockWindow().refreshMCTComboBox(mctGroups);
+            overlord.getMctBox().getCurrentDockWindow().cleanMCtsubwindowFields();
+            overlord.getMctBox().getCurrentDockWindow().refreshMCTComboBox(mctGroups);
         }
     }
 
@@ -169,9 +170,9 @@ public class HolmesDockWindow {//extends SingleDock {
      */
     public void showP_invBoxWindow(ArrayList<ArrayList<Integer>> p_invariants) {
         if (type == DockWindowType.P_INVARIANTS) {
-            guiManager.getP_invBox().getCurrentDockWindow().cleanPINVsubwindowFields();
-            guiManager.getP_invBox().getCurrentDockWindow().setP_invariants(p_invariants);
-            guiManager.getP_invBox().getCurrentDockWindow().refreshP_invComboBox();
+            overlord.getP_invBox().getCurrentDockWindow().cleanPINVsubwindowFields();
+            overlord.getP_invBox().getCurrentDockWindow().setP_invariants(p_invariants);
+            overlord.getP_invBox().getCurrentDockWindow().refreshP_invComboBox();
         }
     }
 
@@ -201,9 +202,9 @@ public class HolmesDockWindow {//extends SingleDock {
      */
     public void showMCS() {
         if (type == DockWindowType.MCSselector) {
-            guiManager.getMCSBox().getCurrentDockWindow().cleanMCScomboBoxes();
+            overlord.getMCSBox().getCurrentDockWindow().cleanMCScomboBoxes();
 
-            //MCSDataMatrix mcsData = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+            //MCSDataMatrix mcsData = overlord.getWorkspace().getProject().getMCSdataCore();
             //setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.MCS, mcsData));
             //scrollPane.getViewport().add(getCurrentDockWindow());
         }
@@ -244,7 +245,7 @@ public class HolmesDockWindow {//extends SingleDock {
                 if (n.getType() == PetriNetElementType.PLACE) {
                     if( n instanceof PlaceXTPN ) {
                         setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.XTPNPLACE, n, e.getElementLocation()));
-                        //GUIManager.getDefaultGUIManager().setPropertiesBox(this);
+                        //overlord.setPropertiesBox(this);
                     } else {
                         setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.PLACE, n, e.getElementLocation()));
                     }
@@ -264,10 +265,10 @@ public class HolmesDockWindow {//extends SingleDock {
                             setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.CTRANSITION, n, e.getElementLocation()));
                         }
 
-                        GUIManager.getDefaultGUIManager().propericeTMPBox.removeAll();
-                        GUIManager.getDefaultGUIManager().propericeTMPBox.add(dockWindowPanel.getPanel());
-                        GUIManager.getDefaultGUIManager().getFrame().revalidate();
-                        GUIManager.getDefaultGUIManager().getFrame().repaint();
+                        overlord.propericeTMPBox.removeAll();
+                        overlord.propericeTMPBox.add(dockWindowPanel.getPanel());
+                        overlord.getFrame().revalidate();
+                        overlord.getFrame().repaint();
                     }
                 }
                 scrollPane.getViewport().add(getCurrentDockWindow());
@@ -276,20 +277,20 @@ public class HolmesDockWindow {//extends SingleDock {
                 scrollPane.getViewport().add(getCurrentDockWindow());
             }
 
-            GUIManager.getDefaultGUIManager().propericeTMPBox.removeAll();
-            GUIManager.getDefaultGUIManager().propericeTMPBox.add(dockWindowPanel.getPanel());
-            GUIManager.getDefaultGUIManager().getFrame().revalidate();
-            GUIManager.getDefaultGUIManager().getFrame().repaint();
+            overlord.propericeTMPBox.removeAll();
+            overlord.propericeTMPBox.add(dockWindowPanel.getPanel());
+            overlord.getFrame().revalidate();
+            overlord.getFrame().repaint();
 
         } else if (e.getActionType() == SelectionActionType.SELECTED_SHEET) {
-            GUIManager.getDefaultGUIManager().getPropertiesBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SHEET,
-                    guiManager.getWorkspace().getSheets().get(guiManager.getWorkspace().getIndexOfId(e.getSheetId()))));
+            overlord.getPropertiesBox().setCurrentDockWindow(new HolmesDockWindowsTable(SubWindow.SHEET,
+                    overlord.getWorkspace().getSheets().get(overlord.getWorkspace().getIndexOfId(e.getSheetId()))));
             scrollPane.getViewport().add(getCurrentDockWindow());
-            
-            GUIManager.getDefaultGUIManager().propericeTMPBox.removeAll();
-            GUIManager.getDefaultGUIManager().propericeTMPBox.add(dockWindowPanel.getPanel());
-            GUIManager.getDefaultGUIManager().getFrame().revalidate();
-            GUIManager.getDefaultGUIManager().getFrame().repaint();
+
+            overlord.propericeTMPBox.removeAll();
+            overlord.propericeTMPBox.add(dockWindowPanel.getPanel());
+            overlord.getFrame().revalidate();
+            overlord.getFrame().repaint();
             dockWindowPanel.setBackground(Color.BLUE);
         }
     }

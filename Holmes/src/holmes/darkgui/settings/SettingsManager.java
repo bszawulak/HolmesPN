@@ -12,11 +12,14 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 
 /**
  * Klasa zarządzająca plikiem konfiguracyjnym programu.
  */
 public class SettingsManager {
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private ArrayList<Setting> settings;
 
     /**
@@ -211,9 +214,9 @@ public class SettingsManager {
             }
             cfgFileWriter.close();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "For some reason, settings could not be saved.", "Unknown error",
+            JOptionPane.showMessageDialog(null, lang.getText("SetMan_entry001"), lang.getText("error"),
                     JOptionPane.ERROR_MESSAGE);
-            GUIManager.getDefaultGUIManager().log("Unknown error, for some reason, settings could not be saved.", "error", true);
+            GUIManager.getDefaultGUIManager().log(lang.getText("SetMan_entry001"), "error", true);
         }
     }
 
@@ -234,7 +237,7 @@ public class SettingsManager {
 
             checkAndRestoreSetting();
 
-            GUIManager.getDefaultGUIManager().log("Settings file read:", "text", true);
+            GUIManager.getDefaultGUIManager().log(lang.getText("SetMan_entry002"), "text", true);
             for (Setting s : settings) {
                 GUIManager.getDefaultGUIManager().logNoEnter("ID: ", "bold", false);
                 GUIManager.getDefaultGUIManager().logNoEnter(s.getID(), "italic", false);
@@ -243,12 +246,10 @@ public class SettingsManager {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    "The file \"holmes\".cfg, which normally contains the settings for this application,\n"
-                            + "has not been found or contains invalid values. Restoring default file.",
-                    "Settings file not found or damaged",
+                    lang.getText("SetMan_entry003"),
+                    lang.getText("SetMan_entry004"),
                     JOptionPane.ERROR_MESSAGE);
-            GUIManager.getDefaultGUIManager().log("Settings file not found or damaged. The file \"holmes\".cfg, which normally "
-                    + "contains the settings for this application, has not been found or contains invalid values. Restoring default file.", "error", true);
+            GUIManager.getDefaultGUIManager().log(lang.getText("SetMan_entry005"), "error", true);
 
             if (error)
                 return;
@@ -281,11 +282,10 @@ public class SettingsManager {
             return new Setting(ID, value);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    "The file \"holmes\".cfg, which normally contains the settings for this application, is corrupt. Unable to load settings.",
-                    "Settings corrupt, converting line has failed.",
+                    lang.getText("SetMan_entry006"),
+                    lang.getText("SetMan_entry007"),
                     JOptionPane.ERROR_MESSAGE);
-            GUIManager.getDefaultGUIManager().log("Settings corrupt! The file \"holmes\".cfg, which normally contains the "
-                    + "settings for this application, is corrupt. Unable to load setting line: ", "error", true);
+            GUIManager.getDefaultGUIManager().log(lang.getText("SetMan_entry008"), "error", true);
             GUIManager.getDefaultGUIManager().log(line, "italic", false);
             return null;
         }

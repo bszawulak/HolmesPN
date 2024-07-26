@@ -55,7 +55,7 @@ public class HolmesStatesManager extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00530exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00530exception")+" "+ex.getMessage(), "error", true);
 		}
     	ego = this;
     	pn = overlord.getWorkspace().getProject();
@@ -514,7 +514,7 @@ public class HolmesStatesManager extends JFrame {
 			selectedRow = statesTablePN.getSelectedRow();
 			fillDescriptionField();
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00531exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00531exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 
@@ -934,7 +934,7 @@ public class HolmesStatesManager extends JFrame {
 
 			fillDescriptionFieldXTPN();
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00532exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00532exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 

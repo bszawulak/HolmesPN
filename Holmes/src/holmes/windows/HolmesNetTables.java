@@ -50,8 +50,8 @@ import holmes.utilities.Tools;
 public class HolmesNetTables extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 8429744762731301629L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JComboBox<String> invSimNetModeCombo;
 	private SimulatorGlobals.SimNetType invSimNetType = SimulatorGlobals.SimNetType.BASIC;
 	private boolean doNotUpdate = false;
@@ -75,7 +75,7 @@ public class HolmesNetTables extends JFrame {
 			initialize_components();
 			setVisible(false);
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00473exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00473exception")+" "+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -93,7 +93,7 @@ public class HolmesNetTables extends JFrame {
 		setTitle(lang.getText("HNTwin_entry001title"));
     	try { setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png")); } 
     	catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00474exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00474exception")+" "+ex.getMessage(), "error", true);
 		}
     	
     	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -290,7 +290,7 @@ public class HolmesNetTables extends JFrame {
 				return;
 
 			int selectedModeIndex = invSimNetModeCombo.getSelectedIndex();
-			selectedModeIndex = GUIManager.getDefaultGUIManager().simSettings.checkSimulatorNetType(selectedModeIndex);
+			selectedModeIndex = overlord.simSettings.checkSimulatorNetType(selectedModeIndex);
 			doNotUpdate = true;
 			switch (selectedModeIndex) {
 				case 0 -> {
@@ -308,7 +308,7 @@ public class HolmesNetTables extends JFrame {
 				case -1 -> {
 					invSimNetType = SimulatorGlobals.SimNetType.BASIC;
 					invSimNetModeCombo.setSelectedIndex(1);
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00475"), "error", true);
+					overlord.log(lang.getText("LOGentry00475"), "error", true);
 				}
 			}
 			doNotUpdate = false;
@@ -524,14 +524,14 @@ public class HolmesNetTables extends JFrame {
      * Metoda tworząca tablicę inwariantów.
      */
 	private void createInvariantsTable() {
-    	ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+    	ArrayList<ArrayList<Integer>> invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
     	if(invariantsMatrix == null || invariantsMatrix.isEmpty()) {
     		JOptionPane.showMessageDialog(this, lang.getText("HNTwin_entry015"), lang.getText("HNTwin_entry016"), JOptionPane.INFORMATION_MESSAGE);
     			return;
     	}
     	//if(invariantsMatrix == null || invariantsMatrix.size() == 0) return; //final check
     	
-    	int transNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+    	int transNumber = overlord.getWorkspace().getProject().getTransitions().size();
 
 		InvariantsSimulatorTableModel modelInvariantsSimData = new InvariantsSimulatorTableModel(transNumber);
         table.setModel(modelInvariantsSimData);
@@ -560,7 +560,7 @@ public class HolmesNetTables extends JFrame {
 		//ustawianie komentarzy dla kolumn:
 		ColumnHeaderToolTips tips = new ColumnHeaderToolTips();
 		JTableHeader header = table.getTableHeader();
-		ArrayList<Transition> transition = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Transition> transition = overlord.getWorkspace().getProject().getTransitions();
 	    for (int c = 2; c < table.getColumnCount(); c++) {
 	    	TableColumn col = table.getColumnModel().getColumn(c);
 	    	tips.setToolTip(col, "t"+(c-2)+"_"+transition.get(c-2).getName());

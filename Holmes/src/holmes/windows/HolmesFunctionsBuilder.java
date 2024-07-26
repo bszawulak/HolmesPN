@@ -48,8 +48,8 @@ import static java.lang.Double.valueOf;
 public class HolmesFunctionsBuilder extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 1235426932930026597L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private static final DecimalFormat formatter = new DecimalFormat( "#.###" );
 	private Transition transition;
 	private ArrayList<Place> places;
@@ -83,7 +83,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 			overlord.log(lang.getText("LOGentry00439exception")+" "+ex.getMessage(), "error", true);
 		}
 		
-		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
+		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
 			mainSimulatorActive = true;
 
 		addWindowListener(new java.awt.event.WindowAdapter() {

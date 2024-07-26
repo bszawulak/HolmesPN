@@ -15,6 +15,7 @@ import holmes.graphpanel.ElementDrawSettings;
 public class MetaNode extends Node {
 	@Serial
 	private static final long serialVersionUID = -1463839771476569949L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 
 	/** SUBNETTRANS, SUBNETPLACE, SUBNET, UNKNOWN */
 	public enum MetaType { SUBNETTRANS, SUBNETPLACE, SUBNET, UNKNOWN }
@@ -105,7 +106,7 @@ public class MetaNode extends Node {
 				Arc arc = metaIns.get(i);
 				metaIns.remove(arc);
 				arc.getStartLocation().accessMetaOutArcs().remove(arc);
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().remove(arc);
+				overlord.getWorkspace().getProject().getArcs().remove(arc);
 				
 				i--;
 				size--;
@@ -125,7 +126,7 @@ public class MetaNode extends Node {
 				Arc arc = metaOuts.get(i);
 				metaOuts.remove(arc);
 				arc.getEndLocation().accessMetaInArcs().remove(arc);
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().remove(arc);
+				overlord.getWorkspace().getProject().getArcs().remove(arc);
 				
 				i--;
 				size--;
@@ -155,7 +156,7 @@ public class MetaNode extends Node {
 			return "(Meta) -- ";
 		} else {
 			//text = "(Meta)" + getName();
-			text += "(M" + GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMetaNodes().indexOf(this)+")";
+			text += "(M" + overlord.getWorkspace().getProject().getMetaNodes().indexOf(this)+")";
 		}
 		
 		return text;

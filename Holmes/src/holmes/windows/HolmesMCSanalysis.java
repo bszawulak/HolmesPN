@@ -2,6 +2,7 @@ package holmes.windows;
 
 import holmes.analyse.InvariantsTools;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
@@ -18,7 +19,8 @@ import java.util.*;
 
 
 public class HolmesMCSanalysis extends JFrame {
-    private GUIManager overlord;
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private JFrame ego;
 
     private JTextArea logField1stTab;
@@ -53,13 +55,11 @@ public class HolmesMCSanalysis extends JFrame {
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log("Error (691193817) | Exception:  " + ex.getMessage(), "error", true);
-
+            overlord.log("Error (691193817) | Exception:  " + ex.getMessage(), "error", true);
         }
         this.ego = this;
         setVisible(false);
         this.setTitle("MCS detailed analysis");
-        this.overlord = GUIManager.getDefaultGUIManager();
         //ego = this;
 
         setLayout(new BorderLayout());
@@ -102,8 +102,8 @@ public class HolmesMCSanalysis extends JFrame {
     }
 
     public void fillTComboBox(){
-        transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
         mcsBox.removeAllItems();
         mcsBox.addItem("---");
         mcsBox.setSelectedIndex(0);
@@ -113,7 +113,7 @@ public class HolmesMCSanalysis extends JFrame {
         if(mcsd.getSize() == 0) {
             return;
         }
-        transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+        transitions = overlord.getWorkspace().getProject().getTransitions();
         if(transitions != null && !transitions.isEmpty()) {
             for(int t=0; t < transitions.size(); t++) {
                 transBox.addItem("t"+(t)+"."+transitions.get(t).getName());
@@ -122,9 +122,9 @@ public class HolmesMCSanalysis extends JFrame {
     }
 
     private void showMCS(Integer transitionIndex, Integer mcsIndex){
-        places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-        transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+        places = overlord.getWorkspace().getProject().getPlaces();
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
         ArrayList<ArrayList<Integer>> dataVector = mcsd.getMCSlist(transitionIndex);
         ArrayList<Integer> MCS = dataVector.get(mcsIndex);
         HolmesNotepad notePad = new HolmesNotepad(800,500);
@@ -205,9 +205,9 @@ public class HolmesMCSanalysis extends JFrame {
      * algorytmu studenta, stąd niektóre dziwniejsze nazwy zmiennych.
      */
     private void rankingByInvariantsThenTransitions(){
-        mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-        transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+        mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
         int selectedTrans = transBox.getSelectedIndex();
 
         for(int transitionIndex = 0; transitionIndex<mcsd.getSize(); transitionIndex++) {
@@ -393,9 +393,9 @@ public class HolmesMCSanalysis extends JFrame {
         button1.setMargin(new Insets(0, 0, 0, 0));
         button1.setIcon(Tools.getResIcon32("/icons/stateSim/simpleSimTab.png"));
         button1.addActionListener(actionEvent -> {
-            places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-            transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-            mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+            places = overlord.getWorkspace().getProject().getPlaces();
+            transitions = overlord.getWorkspace().getProject().getTransitions();
+            mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
             if(mcsd.getSize() == 0) {
                 logField1stTab.append(" *** No MCS data! \n");
                 return;
@@ -561,7 +561,7 @@ public class HolmesMCSanalysis extends JFrame {
         transBox.addActionListener(actionEvent -> {//uzupelnianie combobox z mcsami dla wybranej tranzycji
             mcsBox.removeAllItems();
             mcsBox.addItem("---");
-            mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+            mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
             if(mcsd.getSize() == 0) {
 //                logField1stTab.append(" *** BRAK DANYCH MCS! \n");
                 return;
@@ -693,9 +693,9 @@ public class HolmesMCSanalysis extends JFrame {
      * Naciągamy tutaj ogólną teorię MCS (powstają z t-invariantów), ale może on pełnić funkcję pomocniczą.
      */
     private void checkStarvedTransitions(){
-        mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-        transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+        mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
 
         int selectedTrans = transBox.getSelectedIndex();
         int Distance = distanceVar;
@@ -1023,9 +1023,9 @@ public class HolmesMCSanalysis extends JFrame {
      * "element sieci (tranzycję docelową), nie powinno skutkować wyłączaniem innych elementów sieci.
      */
     private void jeden(){
-        places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-        transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+        places = overlord.getWorkspace().getProject().getPlaces();
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
 
         boolean deniedTransParseFailed = false;
         int selectedTrans = transBox.getSelectedIndex();
@@ -1367,9 +1367,9 @@ public class HolmesMCSanalysis extends JFrame {
      *jaki stanowi zbiór T_x.
      */
     private void orgInvTransRankingAlg(){
-        mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
-        transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
+        mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
 
         //for(int transitionIndex : il_trans){
         int selectedTrans = transBox.getSelectedIndex();
@@ -1524,9 +1524,9 @@ public class HolmesMCSanalysis extends JFrame {
      * jest najlepszy zbiór."
      */
     void trzy(){
-        places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-        transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-        mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+        places = overlord.getWorkspace().getProject().getPlaces();
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
 
         //for(int transitionIndex : il_trans){
         for(int transitionIndex = 0; transitionIndex<mcsd.getSize(); transitionIndex++) {

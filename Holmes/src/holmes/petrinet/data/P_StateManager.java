@@ -12,8 +12,8 @@ import holmes.petrinet.elements.PlaceXTPN;
  * Klasa zarządzająca listą stanów sieci.
  */
 public class P_StateManager {
-	private final GUIManager overlord;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private final PetriNet pn;
 	private ArrayList<StatePlacesVector> statesMatrix;
 	private ArrayList<MultisetM> statesMatrixXTPN;
@@ -25,7 +25,6 @@ public class P_StateManager {
 	 * @param net PetriNet - główny obiekt sieci
 	 */
 	public P_StateManager(PetriNet net) {
-		overlord = GUIManager.getDefaultGUIManager();
 		this.pn = net;
 		
 		this.statesMatrix = new ArrayList<>();

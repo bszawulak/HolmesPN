@@ -11,7 +11,8 @@ import java.util.ArrayList;
  * Nic tu nie ma, proszę się rozejść. Nazwanie tego eksperymentalnym prototypem (2017, 2022) to niedopowiedzenie.
  */
 public class TransitionColored extends Transition {
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     protected int reqT0red = 1;
     protected int reqT1green = 0;
     protected int reqT2blue = 0;
@@ -123,7 +124,7 @@ public class TransitionColored extends Transition {
                 tokens4grey += ((PlaceColored)arcStartPlace).getNonReservedColorTokensNumber(4);
                 tokens5black += ((PlaceColored)arcStartPlace).getNonReservedColorTokensNumber(5);
             } catch (Exception ex) {
-                GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00394"), "error", false);
+                overlord.log(lang.getText("LOGentry00394"), "error", false);
             }
         }
         return req0red > tokens0red || req1green > tokens1green || req2blue > tokens2blue || req3yellow > tokens3yellow ||

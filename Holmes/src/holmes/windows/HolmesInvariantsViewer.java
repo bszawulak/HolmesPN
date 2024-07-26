@@ -49,8 +49,8 @@ import holmes.utilities.Tools;
 public class HolmesInvariantsViewer extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 7735367902562553555L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private PetriNet pn;
 	private static final DecimalFormat formatter = new DecimalFormat( "#.##" );
 	
@@ -162,7 +162,7 @@ public class HolmesInvariantsViewer extends JFrame {
 			}
 			
 			//simulator part:
-			if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+			if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 				JOptionPane.showMessageDialog(null, lang.getText("HIVwin_entry002"), 
 						lang.getText("HIVwin_entry002t"), JOptionPane.ERROR_MESSAGE);
 				transStats = null;
@@ -451,7 +451,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		calcButton.setIcon(Tools.getResIcon16("/icons/invViewer/recalculateInvStats.png"));
 		calcButton.setToolTipText(lang.getText("HIVwin_entry28t"));
 		calcButton.addActionListener(actionEvent -> {
-			if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+			if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
 				JOptionPane.showMessageDialog(null, lang.getText("HIVwin_entry002"),
 						lang.getText("HIVwin_entry002t"), JOptionPane.ERROR_MESSAGE);
 				transStats = null;
@@ -873,7 +873,7 @@ public class HolmesInvariantsViewer extends JFrame {
 				new HolmesNodeInfo(transitions.get(transId), this);
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00452exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00452exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 

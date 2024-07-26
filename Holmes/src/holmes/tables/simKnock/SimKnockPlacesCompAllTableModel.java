@@ -14,7 +14,8 @@ import javax.swing.table.AbstractTableModel;
 public class SimKnockPlacesCompAllTableModel extends AbstractTableModel {
 	@Serial
 	private static final long serialVersionUID = 2403086900970134182L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
 	private int dataSize;
@@ -121,7 +122,7 @@ public class SimKnockPlacesCompAllTableModel extends AbstractTableModel {
 				return Integer.parseInt(strVal);
 				//return returnValue;
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00429exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00429exception")+" "+e.getMessage(), "error", true);
 				return "error";
 			}
 		} else {
@@ -130,7 +131,7 @@ public class SimKnockPlacesCompAllTableModel extends AbstractTableModel {
 				String strVal = returnValue.toString().replace(",", ".");
 				return Double.parseDouble(strVal);
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00430exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00430exception")+" "+e.getMessage(), "error", true);
 				return "error";
 			}
 		}

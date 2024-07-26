@@ -33,6 +33,7 @@ import holmes.windows.HolmesKnockoutViewer;
 public class MauritiusMapPanel extends JPanel {
 	@Serial
 	private static final long serialVersionUID = 1028800481995974984L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 	private MauritiusMap mmbt;
 	private Map<Point, MapElement> mapLocations;
 	private int currentVerticalLevel = 0; //AKTUALNY poziom
@@ -576,7 +577,7 @@ public class MauritiusMapPanel extends JPanel {
 
 		public void mousePressed(MouseEvent e) {
 			//reset trybu przesuwania napisu:
-			GUIManager.getDefaultGUIManager().setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+			overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
 			
 			Point mousePt = e.getPoint();
 			mousePt.setLocation(e.getPoint().getX() * 100 / zoom, e.getPoint().getY() * 100 / zoom);

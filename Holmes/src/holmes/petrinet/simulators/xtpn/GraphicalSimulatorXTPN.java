@@ -22,7 +22,8 @@ import holmes.windows.HolmesNotepad;
  * i chwycę się linii trakcyjnej, to pojadę jak tramwaj?
  */
 public class GraphicalSimulatorXTPN {
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private SimulatorGlobals.SimNetType netSimTypeXTPN;
     private SimulatorModeXTPN simulatorStatusXTPN = SimulatorModeXTPN.STOPPED;
     private SimulatorModeXTPN previousSimStatusXTPN = SimulatorModeXTPN.STOPPED;
@@ -43,7 +44,6 @@ public class GraphicalSimulatorXTPN {
     SimulatorEngineXTPN.NextXTPNstep infoNode;
 
     private SimulatorEngineXTPN engineXTPN;
-    private GUIManager overlord;
 
     public enum SimulatorModeXTPN {
         XTPNLOOP, SINGLE_STEP, STOPPED, PAUSED,
@@ -62,7 +62,6 @@ public class GraphicalSimulatorXTPN {
         producingTokensTransitionsAll = new ArrayList<TransitionXTPN>();
         engineXTPN = new SimulatorEngineXTPN();
         nextXTPNsteps = new ArrayList<>();
-        overlord = GUIManager.getDefaultGUIManager();
     }
 
     /**

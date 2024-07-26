@@ -16,14 +16,15 @@ import holmes.windows.HolmesNotepad;
  * głównego symulatora sieci.
  */
 public class GraphicalSimulatorLogger {
-	private HolmesNotepad log; // = GUIManager.getDefaultGUIManager().getSimLog();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private HolmesNotepad log;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 
 	/**
 	 * Konstruktor domyślny obiektu klasy GraphicalSimulatorLogger.
 	 */
 	public GraphicalSimulatorLogger() {
-		log = GUIManager.getDefaultGUIManager().getSimLog();
+		log = overlord.getSimLog();
 	}
 	
 	/**

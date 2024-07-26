@@ -22,8 +22,8 @@ import holmes.windows.ssim.HolmesSim;
  * dziesiątki tysięcy stanów na sekundę.
  */
 public class StateSimulator implements Runnable {
-	private GUIManager overlord;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<Transition> transitions;
     private ArrayList<Place> places;
 	private boolean readyToSimulate = false;
@@ -56,7 +56,6 @@ public class StateSimulator implements Runnable {
 	 */
 	public StateSimulator() {
 		engine = new SimulatorStandardPN();
-		overlord = GUIManager.getDefaultGUIManager();
 	}
 
 	/**

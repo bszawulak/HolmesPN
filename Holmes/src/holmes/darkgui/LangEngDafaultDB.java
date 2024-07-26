@@ -283,6 +283,8 @@ public class LangEngDafaultDB {
         defaultEnglish.put("PNTT_toolTipCplace","Allows you to create colored place.");
         defaultEnglish.put("PNTT_toolTipCtrans","Allows you to create colored transition.");
         defaultEnglish.put("PNTT_toolTipCarc","Allows you to create arc for colored net.");
+        defaultEnglish.put("PNNT_toolTip_entry001","Only Pointer is available when simulator is working.");
+        defaultEnglish.put("PNNT_toolTip_entry002","Only Pointer is available when XTPN simulator is working.");
 
         //SharedActionsXTPN:
         defaultEnglish.put("SAXTPN_entry001","Input or output XTPN transitions cannot be immediate. This transition\nis not in Beta-mode or Beta time values are zero. Change impossible.");
@@ -348,6 +350,16 @@ public class LangEngDafaultDB {
         defaultEnglish.put("SAXTPN_entry011_3","Increase proposed γ-max or decrease current γ-min (default action)?");
         defaultEnglish.put("SAXTPN_entry011t","Gamma range problem: γ-maximum too low");
 
+        //SettingsManager:
+        defaultEnglish.put("SetMan_entry001","For some reason, settings could not be saved.");
+        defaultEnglish.put("SetMan_entry002","Settings file read:");
+        defaultEnglish.put("SetMan_entry003","The file holmes.cfg, which normally contains the settings for this application,\nhas not been found or contains invalid values. Restoring default file.");
+        defaultEnglish.put("SetMan_entry004","Settings file not found or damaged");
+        defaultEnglish.put("SetMan_entry005","Settings file not found or damaged. The file holmes.cfg, which normally contains the settings for this application, has not been found or contains invalid values. Restoring default file.");
+        defaultEnglish.put("SetMan_entry006","The file holmes.cfg, which normally contains the settings for this application, is corrupt. Unable to load settings.");
+        defaultEnglish.put("SetMan_entry007","Settings corrupt, converting line has failed.");
+        defaultEnglish.put("SetMan_entry008","Settings corrupt! The file holmes.cfg, which normally contains the settings for this application, is corrupt. Unable to load setting line: ");
+        
         //SelectionPanel:
         defaultEnglish.put("SP_toolTip001","No elements selected.");
 
@@ -2943,6 +2955,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("netSimWork01","Net simulator working");
         defaultEnglish.put("unimplemented","Not implemented yet.");
         defaultEnglish.put("unimplementedTitle","Subsystem offline");
+        defaultEnglish.put("unwrap","Unwrap");
         defaultEnglish.put("yes","Yes");
 
 

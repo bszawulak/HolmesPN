@@ -27,7 +27,8 @@ import static holmes.graphpanel.EditorResources.*;
 public abstract class Node extends PetriNetElement {
 	@Serial
 	private static final long serialVersionUID = -8569201372990876149L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<ElementLocation> elementLocations = new ArrayList<>();
 	//lokalizacje napisów do oddzielnego przesuwania
 	private ArrayList<ElementLocation> namesLocations = new ArrayList<>();
@@ -236,7 +237,7 @@ public abstract class Node extends PetriNetElement {
 	@SuppressWarnings("all")
 	public void drawName(Graphics2D g, int sheetId, ArrayList<Node> places, ArrayList<Node> transitions, ArrayList<Node> timeTransitions,
 			 ArrayList<Node> metanodes) {
-		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
+		SettingsManager sm = overlord.getSettingsManager();
 
 		boolean lowerIndexID = sm.getValue("editorShortNameLowerIndex").equals("1");
 
@@ -358,7 +359,7 @@ public abstract class Node extends PetriNetElement {
 
 				if(alphaLocations.size() + betaLocations.size() - tauLocations.size() - namesLocations.size() != 0) {
 					//error, impossible
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00377critErr"), "error", true);
+					overlord.log(lang.getText("LOGentry00377critErr"), "error", true);
 					return;
 				}
 				if(transXTPN.qSimXTPN.showQSimXTPN) {
@@ -693,7 +694,7 @@ public abstract class Node extends PetriNetElement {
 				}
 			}
 			if(!found) {
-				GUIManager.getDefaultGUIManager().subnetsHQ.clearAllMetaArcs(this, subNet);
+				overlord.subnetsHQ.clearAllMetaArcs(this, subNet);
 			}
 		}
 		return (!this.getNodeLocations().isEmpty());
@@ -836,42 +837,42 @@ public abstract class Node extends PetriNetElement {
 		switch (nameType) {
 			case NAME -> {
 				if (index >= namesLocations.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00378critErr")+" " + getName(), "error", true);
+					overlord.log(lang.getText("LOGentry00378critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return namesLocations.get(index).getPosition().x;
 			}
 			case ALPHA -> {
 				if (index >= alphaLocations.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00379critErr")+" " + getName(), "error", true);
+					overlord.log(lang.getText("LOGentry00379critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return alphaLocations.get(index).getPosition().x;
 			}
 			case BETA -> {
 				if (index >= betaLocations.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00380critErr")+" " + getName(), "error", true);
+					overlord.log(lang.getText("LOGentry00380critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return betaLocations.get(index).getPosition().x;
 			}
 			case GAMMA -> {
 				if (index >= gammaLocations.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00381critErr")+" " + getName(), "error", true);
+					overlord.log(lang.getText("LOGentry00381critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return gammaLocations.get(index).getPosition().x;
 			}
 			case TAU -> {
 				if (index >= tauLocations.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00382critErr")+" " + getName(), "error", true);
+					overlord.log(lang.getText("LOGentry00382critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return tauLocations.get(index).getPosition().x;
 			}
 			default -> {
 				if (index >= namesLocations.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00383critErr")+" " + getName(), "error", true);
+					overlord.log(lang.getText("LOGentry00383critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return namesLocations.get(index).getPosition().x;
@@ -889,35 +890,35 @@ public abstract class Node extends PetriNetElement {
 		switch (nameType) {
             case ALPHA -> {
 				if (index >= alphaLocations.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00384critErr")+" " + getName(), "error", true);
+					overlord.log(lang.getText("LOGentry00384critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return alphaLocations.get(index).getPosition().y;
 			}
 			case BETA -> {
 				if (index >= betaLocations.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00385critErr")+" " + getName(), "error", true);
+					overlord.log(lang.getText("LOGentry00385critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return betaLocations.get(index).getPosition().y;
 			}
 			case GAMMA -> {
 				if (index >= gammaLocations.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00386critErr")+" " + getName(), "error", true);
+					overlord.log(lang.getText("LOGentry00386critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return gammaLocations.get(index).getPosition().y;
 			}
 			case TAU -> {
 				if (index >= tauLocations.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00387critErr")+" " + getName(), "error", true);
+					overlord.log(lang.getText("LOGentry00387critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return tauLocations.get(index).getPosition().y;
 			}
 			default -> {
 				if (index >= namesLocations.size()) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00388critErr")+" " + getName(), "error", true);
+					overlord.log(lang.getText("LOGentry00388critErr")+" " + getName(), "error", true);
 					return 0;
 				}
 				return namesLocations.get(index).getPosition().y;

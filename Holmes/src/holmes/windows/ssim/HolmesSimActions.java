@@ -7,11 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 
 /**
  * Metoda pomocnicze klasy HolmesStateSimulator.
  */
 public class HolmesSimActions {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	
 	/**
 	 * Konstruktor klasy HolmesStateSimulatorActions.
@@ -32,7 +35,7 @@ public class HolmesSimActions {
 		try {
 			result = Integer.parseInt(name);
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("System malfunction: unable to extract transition ID", "error", true);
+			overlord.log("System malfunction: unable to extract transition ID", "error", true);
 			return -1;
 		}
 		return result;

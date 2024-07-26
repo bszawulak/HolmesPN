@@ -24,7 +24,8 @@ import holmes.petrinet.elements.Transition.TransitionType;
  * Parser sieci czasowych (Snoopy)
  */
 public class NetHandler_Time extends NetHandler {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	// Zmienne boolowskie parsera
 	public boolean Snoopy = false;
 	public boolean node = false;
@@ -99,7 +100,7 @@ public class NetHandler_Time extends NetHandler {
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			Snoopy = true;
-			nodeSID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().returnCleanSheetID();//GUIManager.getDefaultGUIManager().getWorkspace().newTab();
+			nodeSID = overlord.getWorkspace().getProject().returnCleanSheetID();//overlord.getWorkspace().newTab();
 		}
 		// Ustawianie typu noda
 		if (qName.equalsIgnoreCase("nodeclass")) {
@@ -121,7 +122,7 @@ public class NetHandler_Time extends NetHandler {
 		if (qName.equalsIgnoreCase("metadataclass")) {
 			if(anyProblems) {
 				anyProblems = false;
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00106"), "error", true);
+				overlord.log(lang.getText("LOGentry00106"), "error", true);
 			}
 		}
 		
@@ -166,7 +167,7 @@ public class NetHandler_Time extends NetHandler {
 			} catch (Exception e) {
 				duration = 0.0;
 				anyProblems = true;
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00107_1a")+nodeName+" "
+				overlord.log(lang.getText("LOGentry00107_1a")+nodeName+" "
 						+lang.getText("LOGentry00107_1b"), "warning", true);
 			}
 			
@@ -189,7 +190,7 @@ public class NetHandler_Time extends NetHandler {
 			} catch (Exception e) {
 				nodeLFT = 0.0;
 				anyProblems = true;
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00108a")+" "+nodeName+" "
+				overlord.log(lang.getText("LOGentry00108a")+" "+nodeName+" "
 						+lang.getText("LOGentry00108b"), "warning", true);
 			}
 			readLFT = false;
@@ -204,7 +205,7 @@ public class NetHandler_Time extends NetHandler {
 			} catch (Exception e) {
 				nodeEFT = 0.0;
 				anyProblems = true;
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00109_1a")+" "+nodeName+" "
+				overlord.log(lang.getText("LOGentry00109_1a")+" "+nodeName+" "
 						+lang.getText("LOGentry00109_1b"), "warning", true);
 			}
 			
@@ -234,10 +235,10 @@ public class NetHandler_Time extends NetHandler {
 				//TODO:
 				double resizeFactor = 1;
 				try {
-					int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
+					int addF = Integer.parseInt(overlord.getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
 					resizeFactor += ((double)addF/(double)100);
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00110exception")+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00110exception")+ex.getMessage(), "error", true);
 				}
 				
 				xPos *= resizeFactor;
@@ -288,7 +289,7 @@ public class NetHandler_Time extends NetHandler {
 			
 			xoff_name = 0;
 			yoff_name = 0;
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
+			if(overlord.getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
 				try {
 					xoff_name = (int)Float.parseFloat(xoff);
 					yoff_name = (int)Float.parseFloat(yoff);
@@ -298,7 +299,7 @@ public class NetHandler_Time extends NetHandler {
 					if(yoff_name < -8)
 						yoff_name = -55; //nad node, uwzględnia różnicę
 				} catch (Exception ex) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00111_1exception")+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00111_1exception")+ex.getMessage(), "error", true);
 				}
 			}
 			graphicNamesPointsList.add(new Point(xoff_name, yoff_name)); //dodanie do listy (portal)
@@ -401,12 +402,12 @@ public class NetHandler_Time extends NetHandler {
 		if (qName.equalsIgnoreCase("Snoopy")) {
 			int wid = Toolkit.getDefaultToolkit().getScreenSize().width - 20;
 			int hei = Toolkit.getDefaultToolkit().getScreenSize().height - 20;
-			int SIN = GUIManager.getDefaultGUIManager().IDtoIndex(nodeSID);
+			int SIN = overlord.IDtoIndex(nodeSID);
 			int tmpX = 0;
 			int tmpY = 0;
 			boolean xFound = false;
 			boolean yFound = false;
-			GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(SIN).getGraphPanel();
+			GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(SIN).getGraphPanel();
 			for (int l = 0; l < globalElementLocationList.size(); l++) {
 				if (globalElementLocationList.get(l).getPosition().x > wid) {
 					tmpX = l;
@@ -444,7 +445,7 @@ public class NetHandler_Time extends NetHandler {
 			ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
 
 			if(graphicPointsList.size() != graphicNamesPointsList.size()) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00112"), "error", true);
+				overlord.log(lang.getText("LOGentry00112"), "error", true);
 			}
 			
 			for (int k = 0; k < graphicPointsList.size(); k++) {

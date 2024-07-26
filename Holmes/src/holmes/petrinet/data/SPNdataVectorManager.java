@@ -12,8 +12,8 @@ import holmes.petrinet.elements.extensions.TransitionSPNExtension;
  * Klasa zarządzająca wektorami danych SPN.
  */
 public class SPNdataVectorManager {
-	private GUIManager overlord;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private PetriNet pn;
 	
 	private ArrayList<SPNdataVector> SPNdataMatrix;
@@ -24,9 +24,7 @@ public class SPNdataVectorManager {
 	 * @param net PetriNet - główny obiekt sieci
 	 */
 	public SPNdataVectorManager(PetriNet net) {
-		overlord = GUIManager.getDefaultGUIManager();
 		this.pn = net;
-		
 		this.SPNdataMatrix = new ArrayList<SPNdataVector>();
 		SPNdataMatrix.add(new SPNdataVector());
 	}

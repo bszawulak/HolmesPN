@@ -15,7 +15,8 @@ import java.util.List;
  * dowolna wcześniej przekazana akcja.
  */
 public class OnNodeAction extends BaseDialog {
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private JComboBox<ComboBoxItem<Place>> placeComboBox;
     private JComboBox<ComboBoxItem<Transition>> transitionComboBox;
     private JButton button;
@@ -109,11 +110,11 @@ public class OnNodeAction extends BaseDialog {
                 typeLabel.setText(lang.getText("ONA_entry003")); //Type:   Place
                 ComboBoxItem<Place> item = (ComboBoxItem) e.getItem();
                 int gID = item.getValue().getID();
-                int arrID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().indexOf(item.getValue());
+                int arrID = overlord.getWorkspace().getProject().getPlaces().indexOf(item.getValue());
                 idLabel.setText(String.format("gID:  %d, ID:  %d", gID, arrID));
                 List<String> subnets = item.getValue().getElementLocations().stream()
                         .map(ElementLocation::getSheetID)
-                        .map(integer -> GUIManager.getDefaultGUIManager().subnetsHQ.getMetanode(integer)
+                        .map(integer -> overlord.subnetsHQ.getMetanode(integer)
                                 .map(PetriNetElement::getName).orElse("Subnet0"))
                         .sorted().distinct().toList();
                 subnetsLabel.setText(String.format(lang.getText("ONA_entry004"), String.join(", ", subnets))); //Portals in subnets:
@@ -128,11 +129,11 @@ public class OnNodeAction extends BaseDialog {
                 typeLabel.setText(lang.getText("ONA_entry005")); //Type:   Transition
                 ComboBoxItem<Transition> item = (ComboBoxItem) e.getItem();
                 int gID = item.getValue().getID();
-                int arrID = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().indexOf(item.getValue());
+                int arrID = overlord.getWorkspace().getProject().getTransitions().indexOf(item.getValue());
                 idLabel.setText(String.format("gID:  %d, ID:  %d", gID, arrID));
                 List<String> subnets = item.getValue().getElementLocations().stream()
                         .map(ElementLocation::getSheetID)
-                        .map(integer -> GUIManager.getDefaultGUIManager().subnetsHQ.getMetanode(integer)
+                        .map(integer -> overlord.subnetsHQ.getMetanode(integer)
                                 .map(PetriNetElement::getName).orElse("Subnet0"))
                         .sorted().distinct().toList();
                 subnetsLabel.setText(String.format(lang.getText("ONA_entry006"), String.join(", ", subnets))); //Portals in subnets:

@@ -21,12 +21,11 @@ import holmes.utilities.Tools;
  */
 public class HolmesNodeInfoActions {
 	private JFrame parentFrame;
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	
 	public HolmesNodeInfoActions(JFrame parent) {
 		parentFrame = parent;
-		overlord = GUIManager.getDefaultGUIManager();
 	}
 
 	/**
@@ -62,8 +61,8 @@ public class HolmesNodeInfoActions {
 	 * Metoda odpowiedzialna za przerysowanie grafu obrazu w arkuszu sieci.
 	 */
 	private void repaintGraphPanel(Node node) {
-		int sheetIndex = GUIManager.getDefaultGUIManager().IDtoIndex(node.getElementLocations().get(0).getSheetID());
-		GraphPanel graphPanel = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+		int sheetIndex = overlord.IDtoIndex(node.getElementLocations().get(0).getSheetID());
+		GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 		graphPanel.repaint();
 	}
 

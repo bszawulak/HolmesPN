@@ -8,14 +8,14 @@ import holmes.petrinet.elements.Transition;
  * Klasa wewnętrznych, pomocniczych metod klasy PetriNet.
  */
 public class PetriNetMethods {
-	PetriNet overlord;
+	PetriNet pnCore;
 	
 	/**
 	 * Konstruktor obiektu klasy PetriNetMethods.
 	 * @param overlord PetriNet - obiekt sieci
 	 */
 	public PetriNetMethods(PetriNet overlord) {
-		this.overlord = overlord;
+		this.pnCore = overlord;
 	}
 
 	/**
@@ -23,8 +23,8 @@ public class PetriNetMethods {
 	 * @return ArrayList[Integer] - wektor wynikowy
 	 */
 	public ArrayList<Integer> getTransMCTindicesVector() {
-		ArrayList<Transition> transitions = overlord.getTransitions();
-		ArrayList<ArrayList<Transition>> mcts = overlord.getMCTMatrix();
+		ArrayList<Transition> transitions = pnCore.getTransitions();
+		ArrayList<ArrayList<Transition>> mcts = pnCore.getMCTMatrix();
 		
 		ArrayList<Integer> result = new ArrayList<Integer>();
 		for(int i=0; i<transitions.size(); i++)

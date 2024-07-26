@@ -11,7 +11,8 @@ import java.util.Collections;
 import java.util.Iterator;
 
 public class PlaceXTPN extends Place {
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private double gammaMin_xTPN = 0.0;
     private double gammaMax_xTPN = 99;
     private boolean gammaMode_xTPN = true;
@@ -204,7 +205,7 @@ public class PlaceXTPN extends Place {
                     removed++;
                     continue;
                 }
-                if (Math.abs(gammaMax_xTPN - kappa) < GUIManager.getDefaultGUIManager().simSettings.getCalculationsAccuracy()) {
+                if (Math.abs(gammaMax_xTPN - kappa) < overlord.simSettings.getCalculationsAccuracy()) {
                     iterator.remove(); //close enough, brakuje 1e-9 lub mniej
                     removed++;
                     continue;
@@ -220,7 +221,7 @@ public class PlaceXTPN extends Place {
 					removed++;
 					continue;
 				}
-				if (Math.abs(gammaMax_xTPN - kappa) < GUIManager.getDefaultGUIManager().simSettings.getCalculationsAccuracy()) {
+				if (Math.abs(gammaMax_xTPN - kappa) < overlord.simSettings.getCalculationsAccuracy()) {
 					multisetK.remove(kappa); //close enough, brakuje 1e-9 lub mniej
 					removed++;
 					continue;
@@ -253,7 +254,7 @@ public class PlaceXTPN extends Place {
         int counter = howMany;
         if(howMany > multisetK.size()) {
             String strB = String.format(lang.getText("LOGentry00391"), howMany, multisetK.size());
-            GUIManager.getDefaultGUIManager().log(strB, "error", true);
+            overlord.log(strB, "error", true);
             removedTokens.addAll(multisetK);
             multisetK.clear();
             return removedTokens;
@@ -309,7 +310,7 @@ public class PlaceXTPN extends Place {
             multisetK.replaceAll(aDouble -> aDouble + tau);
         } else {
             String strB = String.format(lang.getText("LOGentry00392"), this.getName());
-            GUIManager.getDefaultGUIManager().log(strB, "error", true);
+            overlord.log(strB, "error", true);
         }
     }
 

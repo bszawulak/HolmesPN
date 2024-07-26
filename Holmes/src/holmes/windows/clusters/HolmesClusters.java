@@ -55,8 +55,8 @@ import holmes.workspace.ExtensionFileFilter;
 public class HolmesClusters extends JFrame {
 	@Serial
 	private static final long serialVersionUID = -8420712475473581772L;
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JTable table = new JTable();
 	private DefaultTableModel tableModel;
 	private int mode = 0; // 0 - tryb 56 klastrowań
@@ -85,7 +85,7 @@ public class HolmesClusters extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00505exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00505exception")+" "+ex.getMessage(), "error", true);
 		}
     	this.setVisible(false);
     	
@@ -409,7 +409,7 @@ public class HolmesClusters extends JFrame {
 				new HolmesClusterSubWindow(myself, omg, 1);
 				
 			 } catch (Exception ex) {
-				  GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00506exception")
+				overlord.log(lang.getText("LOGentry00506exception")
 						  +" "+ex.getMessage(), "error", true);
 			 }
 		 }
@@ -428,9 +428,9 @@ public class HolmesClusters extends JFrame {
     	if(checkSize != 56) {
     		overlord.log(lang.getText("HCwin_entry011"), "error", true);
     		return;
-    	} 
-    	
-    	GUIManager.getDefaultGUIManager().log(lang.getText("HCwin_entry012"), "text", true);
+    	}
+
+		overlord.log(lang.getText("HCwin_entry012"), "text", true);
 
     	tableRenderer.setMode(mode);  // !!!
     	tableRenderer.setSubRows(subRowsSize); // !!! zła wartość i tabela idzie w ....
@@ -466,7 +466,7 @@ public class HolmesClusters extends JFrame {
     			tableModel.addRow(dataRow);
 			}
     	}
-    	GUIManager.getDefaultGUIManager().log(lang.getText("HCwin_entry013"), "text", true);
+		overlord.log(lang.getText("HCwin_entry013"), "text", true);
     	tableModel.fireTableDataChanged();
     	table.revalidate();
     	
@@ -534,7 +534,7 @@ public class HolmesClusters extends JFrame {
      */
     private void buttonGenerateClusterings(ArrayList<String> commandsValidate) {
 		if(clustersToGenerate > 1) {
-			pathCSVfile = GUIManager.getDefaultGUIManager().io.generateClustersCase56(clustersToGenerate, commandsValidate);
+			pathCSVfile = overlord.io.generateClustersCase56(clustersToGenerate, commandsValidate);
 			if(pathCSVfile == null) { //jeśli coś się nie udało
 				//pathClustersDir = ""; //ścieżka do katalogu klastrowań
 				pathCSVfile = ""; //ścieżka do pliku CSV
@@ -554,7 +554,7 @@ public class HolmesClusters extends JFrame {
      * klastrowań.
      */
     private void buttonLoadClusteringDirectory() {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		/*
 		String lastPath2 = getClusterPath();
 		String chosenPath="";
@@ -583,7 +583,7 @@ public class HolmesClusters extends JFrame {
 		pathCSVfile = choosenDir+"/cluster.csv";
 		if(!Tools.ifExist(pathCSVfile)) {
 			JOptionPane.showMessageDialog(null, lang.getText("HCwin_entry017"), "warning",JOptionPane.ERROR_MESSAGE);
-			GUIManager.getDefaultGUIManager().log(lang.getText("HCwin_entry017"), "warning", true);
+			overlord.log(lang.getText("HCwin_entry017"), "warning", true);
 		}
 	}
     
@@ -593,9 +593,9 @@ public class HolmesClusters extends JFrame {
      */
     private void buttonExportTableToExcel() {
 		try{
-			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-			//String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-			GUIManager.getDefaultGUIManager().log(lang.getText("HCwin_entry018"),"text", true);
+			String lastPath = overlord.getLastPath();
+			//String lastPath = overlord.getLastPath();
+			overlord.log(lang.getText("HCwin_entry018"),"text", true);
 			
 			String dirPath = Tools.selectDirectoryDialog(lastPath, lang.getText("HCwin_entry019"),
 					lang.getText("HCwin_entry019t"));
@@ -610,7 +610,7 @@ public class HolmesClusters extends JFrame {
 						lang.getText("error"),JOptionPane.ERROR_MESSAGE);
 
 				String strB = String.format(lang.getText("HCwin_entry021"), dirPath);
-				GUIManager.getDefaultGUIManager().log(strB, "error", true);
+				overlord.log(strB, "error", true);
 			}
 			
 			RClusteringParserToXLS r = new holmes.files.clusters.RClusteringParserToXLS();
@@ -624,24 +624,24 @@ public class HolmesClusters extends JFrame {
 				if(newLocation.isEmpty()) { //czy chcemy przenieść plik w inne miejsce
 					//leave it in cluster folder
 					String strB = String.format("Exporting table succeed. Created file: %s//ClustersSummary.xls", dirPath);
-					GUIManager.getDefaultGUIManager().log(strB, "text", true);
+					overlord.log(strB, "text", true);
 				} else {
 					if(!newLocation.contains(".xls"))
 						newLocation += ".xls";
 					Tools.copyFileByPath(dirPath+"//ClustersSummary.xls", newLocation);
 					test.delete(); //kasujemy oryginalny
-					GUIManager.getDefaultGUIManager().log(lang.getText("HCwin_entry023")+" "
+					overlord.log(lang.getText("HCwin_entry023")+" "
 							+newLocation, "text", true);
 				}
 				
 			} else {
 				String msg = lang.getText("HCwin_entry024");
-				GUIManager.getDefaultGUIManager().log(msg, "error", true);
+				overlord.log(msg, "error", true);
 			}
 		} catch (Exception e){
 			String msg = lang.getText("HCwin_entry025")+getClusterPath();
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
-			GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", true);
+			overlord.log(msg, "error", true);
+			overlord.log(e.getMessage(), "error", true);
 		}
 	}
     
@@ -653,7 +653,7 @@ public class HolmesClusters extends JFrame {
     private void buttonComputeCHmetrics(ArrayList<String> commandsValidate) {
 		if(clustersToGenerate > 1) {
 			@SuppressWarnings("unused")
-			String newCHpath = GUIManager.getDefaultGUIManager().io.generateAllCHindexes(clustersToGenerate, commandsValidate);
+			String newCHpath = overlord.io.generateAllCHindexes(clustersToGenerate, commandsValidate);
 			//uwaga! w powyższym katalogu miary dopiero powstają!
 		}
 	}
@@ -662,7 +662,7 @@ public class HolmesClusters extends JFrame {
      * Obsługa wczytywania miar Celińskiego-Harabasz do tabeli głównej.
      */
 	private void buttonLoadCHmetricIntoTables() {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		if(dataTableCase56 == null) {
 			JOptionPane.showMessageDialog(null,lang.getText("HCwin_entry026")
 					,lang.getText("warning"),JOptionPane.INFORMATION_MESSAGE);
@@ -705,7 +705,7 @@ public class HolmesClusters extends JFrame {
 					dataTableCase56.getMatrix().get(i).get(cl).evalCH = chDataCore.get(i).get(cl);
 				} catch (Exception e) {
 					String strB = String.format(lang.getText("LOGentry00507exception"), i, cl);
-					GUIManager.getDefaultGUIManager().log(strB + " " +e.getMessage(), "error", true);
+					overlord.log(strB + " " +e.getMessage(), "error", true);
 					dataTableCase56.getMatrix().get(i).get(cl).evalCH = 0.0;
 				}
 			}
@@ -719,7 +719,7 @@ public class HolmesClusters extends JFrame {
 	 */
 	private void buttonSerializeDataTable() {
 		try{
-			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+			String lastPath = overlord.getLastPath();
 			
 			FileFilter[] filter = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Holmes CLustering file (.hcl)",  new String[] { "hcl", "acl" });
@@ -736,7 +736,7 @@ public class HolmesClusters extends JFrame {
 			oos.close();
 			fos.close();
 		} catch(IOException ioe){
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00508exception")+" "+ioe.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00508exception")+" "+ioe.getMessage(), "error", true);
 		}
 	}
 	
@@ -746,7 +746,7 @@ public class HolmesClusters extends JFrame {
 	 */
 	private void buttonDeserializeFile() {
 		ClusteringInfoMatrix clusterMatrix = new ClusteringInfoMatrix();
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		
 		String newLocation = "";
 		try
@@ -769,7 +769,7 @@ public class HolmesClusters extends JFrame {
 			registerDataCase56(clusterMatrix);
 		} catch(Exception ioe){
 			String msg = lang.getText("LOGentry00509exception")+" "+newLocation;
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
+			overlord.log(msg, "error", true);
 		} 
 	}
     
@@ -794,14 +794,14 @@ public class HolmesClusters extends JFrame {
   	  	    public void windowActivated(WindowEvent e) {
   	  	    /*
   	  	    	try {
-  	  	    		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix() != null) {
+  	  	    		if(overlord.getWorkspace().getProject().getInvariantsMatrix() != null) {
   	  	    			
   	  	    			if(spinnerBlocked) {
   	  	    				spinnerBlocked=false;
   	  	    			} else {
   	  	    				return;
   	  	    			}
-  	  	    			int invNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getInvariantsMatrix().size();
+  	  	    			int invNumber = overlord.getWorkspace().getProject().getInvariantsMatrix().size();
   	  	    			int currentValue = 20;
   	  	    			if(invNumber < currentValue)
   	  	    				currentValue = invNumber;
@@ -1036,7 +1036,7 @@ public class HolmesClusters extends JFrame {
 		    					 }
 		    				 }	    				 
 		    			 } catch (Exception ex) {
-							 GUIManager.getDefaultGUIManager().log("Error (747155147) | Exception:  "+ex.getMessage(), "error", true);
+							 overlord.log("Error (747155147) | Exception:  "+ex.getMessage(), "error", true);
 		    			 } 
 		    		}
 		    	}

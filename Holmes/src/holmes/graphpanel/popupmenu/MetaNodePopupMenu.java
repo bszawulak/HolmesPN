@@ -17,19 +17,18 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 public class MetaNodePopupMenu extends NodePopupMenu {
 	@Serial
 	private static final long serialVersionUID = 8356818331350683029L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 
 	public MetaNodePopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
 		super(graphPanel, el, pne, el.getParentNode());
-		final GUIManager gui = GUIManager.getDefaultGUIManager();
-
 		if(graphPanel.getSelectionManager().getSelectedElementLocations().size() == 1) {
 			this.addMenuItem(lang.getText("MNPM_entry001"), "cross.png", e -> {
 						Object[] options = {lang.getText("delete"), lang.getText("cancel"),};
 
 						MetaNode metaNode = (MetaNode) el.getParentNode();
 						int id = metaNode.getRepresentedSheetID();
-						long uniquePlaces = GUIManager.getDefaultGUIManager().subnetsHQ.getSubnetElementLocations(id).stream()
+						long uniquePlaces = overlord.subnetsHQ.getSubnetElementLocations(id).stream()
 								.map(ElementLocation::getParentNode)
 								.filter(Place.class::isInstance)
 								.collect(Collectors.toSet()).stream()
@@ -37,7 +36,7 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 										.allMatch(location -> location.getSheetID() == id))
 								.count();
 
-						long uniqueTransitions = GUIManager.getDefaultGUIManager().subnetsHQ.getSubnetElementLocations(id).stream()
+						long uniqueTransitions = overlord.subnetsHQ.getSubnetElementLocations(id).stream()
 								.map(ElementLocation::getParentNode)
 								.filter(Transition.class::isInstance)
 								.collect(Collectors.toSet()).stream()
@@ -52,12 +51,12 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 						);
 						builder.append(String.format(lang.getText("MNPM_entry003")));
 
-						String parentName = GUIManager.getDefaultGUIManager().subnetsHQ.getMetanode(metaNode.getMySheetID())
+						String parentName = overlord.subnetsHQ.getMetanode(metaNode.getMySheetID())
 										.map(PetriNetElement::getName).orElse("Subnet0");
 
 						builder.append(parentName).append(String.format("%n"));
 
-						List<String> childrenNames = GUIManager.getDefaultGUIManager().subnetsHQ.getSubnetElementLocations(id).stream()
+						List<String> childrenNames = overlord.subnetsHQ.getSubnetElementLocations(id).stream()
 								.map(ElementLocation::getParentNode)
 								.filter(MetaNode.class::isInstance)
 								.map(MetaNode.class::cast)
@@ -70,8 +69,8 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 								builder.toString(), lang.getText("MNPM_entry004"), JOptionPane.YES_NO_OPTION,
 								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 						if (n == 0) {
-							GUIManager.getDefaultGUIManager().subnetsHQ.deleteSubnet(graphPanel.getSelectionManager().getSelectedMetanode());
-							GUIManager.getDefaultGUIManager().markNetChange();
+							overlord.subnetsHQ.deleteSubnet(graphPanel.getSelectionManager().getSelectedMetanode());
+							overlord.markNetChange();
 						}
 					}
 			);
@@ -82,8 +81,8 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 								lang.getText("MNPM_entry005"), lang.getText("MNPM_entry005t"), JOptionPane.YES_NO_OPTION,
 								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 						if (n == 0) {
-							GUIManager.getDefaultGUIManager().subnetsHQ.unwrapSubnet(graphPanel);
-							GUIManager.getDefaultGUIManager().markNetChange();
+							overlord.subnetsHQ.unwrapSubnet(graphPanel);
+							overlord.markNetChange();
 						}
 					}
 			);
@@ -94,9 +93,9 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 								lang.getText("MNPM_entry007"), lang.getText("MNPM_entry007t"), JOptionPane.YES_NO_OPTION,
 								JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 						if (n == 0) {
-							GUIManager.getDefaultGUIManager().subnetsHQ.clearMetaArcs(List.of(el));
+							overlord.subnetsHQ.clearMetaArcs(List.of(el));
 							getGraphPanel().repaint();
-							GUIManager.getDefaultGUIManager().markNetChange();
+							overlord.markNetChange();
 						}
 					}
 			);
@@ -112,9 +111,9 @@ public class MetaNodePopupMenu extends NodePopupMenu {
 //				ArrayList<Integer> sheetModified = new ArrayList<Integer>();
 //				sheetModified.add(((MetaNode)elMeta.getParentNode()).getRepresentedSheetID());
 //				gui.subnetsHQ.validateMetaArcs(sheetModified, true, false);
-				gui.subnetsHQ.fixMetaArcsNumber((MetaNode)elMeta.getParentNode());
+				overlord.subnetsHQ.fixMetaArcsNumber((MetaNode)elMeta.getParentNode());
 				getGraphPanel().repaint();
-				GUIManager.getDefaultGUIManager().markNetChange();
+				overlord.markNetChange();
 			}
 			private ActionListener yesWeCan(ElementLocation inLoc){
 				elMeta = inLoc;

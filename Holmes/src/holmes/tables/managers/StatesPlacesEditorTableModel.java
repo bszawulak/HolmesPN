@@ -14,7 +14,8 @@ import holmes.windows.managers.HolmesStatesEditor;
 public class StatesPlacesEditorTableModel extends DefaultTableModel {
 	@Serial
 	private static final long serialVersionUID = -7416704094839931505L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<PlaceEditContainer> dataMatrix;
 	private int dataSize;
@@ -155,7 +156,7 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
 				boss.changeRealValue(stateVectorIndex, row, newValue);
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00423exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00423exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -167,7 +168,7 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
 				dataMatrix.get(row).tokens = newValue;
 			}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00424exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00424exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 }

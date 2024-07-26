@@ -17,16 +17,15 @@ import holmes.windows.HolmesNotepad;
  * w rozumieniu twórców Snoopiego czy nie, oraz do przywrócenia takiej kompatybilności.
  */
 public class SubnetsSnoopyCompatibility {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
-	GUIManager gui = null;
-	PetriNet pn = null;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
+	PetriNet pn;
 	
 	/**
 	 * Zwykły konstruktor, nie ma tu nic ciekawego do oglądania, proszę przechodzić dalej...
 	 */
 	public SubnetsSnoopyCompatibility() {
-		gui = GUIManager.getDefaultGUIManager();
-		pn = gui.getWorkspace().getProject();
+		pn = overlord.getWorkspace().getProject();
 	}
 	
 	/**
@@ -97,7 +96,7 @@ public class SubnetsSnoopyCompatibility {
 				//IN / OUT W STOSUNKU DO METANODE!!! CZYLI ILE NP. IN-METAARCS TRZEBA DODAĆ DO METANODE DANEJ SIECI
 				ArrayList<Integer> requiredINmArcs = new ArrayList<Integer>();
 				ArrayList<Integer> requiredOUTmArcs = new ArrayList<Integer>();
-				int maxID = GUIManager.getDefaultGUIManager().getWorkspace().getMaximumSubnetID();
+				int maxID = overlord.getWorkspace().getMaximumSubnetID();
 				for(int i=0; i<maxID+1; i++) {
 					requiredINmArcs.add(0);
 					requiredOUTmArcs.add(0);
@@ -144,14 +143,14 @@ public class SubnetsSnoopyCompatibility {
 				boolean outFix = false;
 				int totalINadded = 0;
 				int totalOUTadded = 0;
-				if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorSubnetCompressMode").equals("1")) {
+				if(overlord.getSettingsManager().getValue("editorSubnetCompressMode").equals("1")) {
 					for(int net=0; net<requiredINmArcs.size(); net++) {
 						int howMany = requiredINmArcs.get(net);
 						if(howMany < 0) { //tyle brakuje
 							MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, net);
 							ElementLocation pattern = getAnyELfromSubnet(node, meta.getFirstELoc().getSheetID());
-							
-							gui.subnetsHQ.addAllMissingInMetaArcsCompression(meta.getFirstELoc(), pattern, -howMany, arcs);
+
+							overlord.subnetsHQ.addAllMissingInMetaArcsCompression(meta.getFirstELoc(), pattern, -howMany, arcs);
 							inFix = true;
 							totalINadded += (-howMany);
 						}
@@ -161,8 +160,8 @@ public class SubnetsSnoopyCompatibility {
 						if(howMany < 0) { //tyle brakuje
 							MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, net);
 							ElementLocation pattern = getAnyELfromSubnet(node, meta.getFirstELoc().getSheetID());
-							
-							gui.subnetsHQ.addAllMissingOutMetaArcs(meta.getFirstELoc(), pattern, -howMany, arcs);
+
+							overlord.subnetsHQ.addAllMissingOutMetaArcs(meta.getFirstELoc(), pattern, -howMany, arcs);
 							outFix = true;
 							totalOUTadded += (-howMany);
 						}
@@ -173,8 +172,8 @@ public class SubnetsSnoopyCompatibility {
 						if(howMany < 0) { //tyle brakuje
 							MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, net);
 							ElementLocation pattern = getAnyELfromSubnet(node, meta.getFirstELoc().getSheetID());
-							
-							gui.subnetsHQ.addAllMissingInMetaArcs(meta.getFirstELoc(), pattern, -howMany, arcs);
+
+							overlord.subnetsHQ.addAllMissingInMetaArcs(meta.getFirstELoc(), pattern, -howMany, arcs);
 							inFix = true;
 							totalINadded += (-howMany);
 						}
@@ -184,8 +183,8 @@ public class SubnetsSnoopyCompatibility {
 						if(howMany < 0) { //tyle brakuje
 							MetaNode meta = SubnetsTools.getMetaForSubnet(metanodes, net);
 							ElementLocation pattern = getAnyELfromSubnet(node, meta.getFirstELoc().getSheetID());
-							
-							gui.subnetsHQ.addAllMissingOutMetaArcsCompression(meta.getFirstELoc(), pattern, -howMany, arcs);
+
+							overlord.subnetsHQ.addAllMissingOutMetaArcsCompression(meta.getFirstELoc(), pattern, -howMany, arcs);
 							outFix = true;
 							totalOUTadded += (-howMany);
 						}
@@ -199,7 +198,7 @@ public class SubnetsSnoopyCompatibility {
 					notePad.addTextLineNL(strB, "text");
 				}
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00420exception")+" "
+				overlord.log(lang.getText("LOGentry00420exception")+" "
 						+node.getName()+"\n"+e.getMessage(), "error", true);
 				fixedAll = false;
 			}

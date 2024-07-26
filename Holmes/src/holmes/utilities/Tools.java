@@ -28,8 +28,8 @@ import holmes.darkgui.LanguageManager;
  */
 public final class Tools {
 	public static String lastExtension = "";
-	private static LanguageManager lang = GUIManager.getLanguageManager();
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
@@ -393,7 +393,7 @@ public final class Tools {
 	 * @return String - reprezentacja liczby
 	 */
 	public static String cutValue(double value) {
-    	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(GUIManager.getDefaultGUIManager().getLocale());
+    	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(overlord.getLocale());
     	otherSymbols.setDecimalSeparator('.');
     	DecimalFormat df = new DecimalFormat("#.##", otherSymbols);
 		return df.format(value);
@@ -425,7 +425,7 @@ public final class Tools {
 		if(howMany > 8)
 			format = "#.########";
 		
-    	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(GUIManager.getDefaultGUIManager().getLocale());
+    	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(overlord.getLocale());
     	otherSymbols.setDecimalSeparator('.');
     	DecimalFormat df = new DecimalFormat(format, otherSymbols);
 		return df.format(value);

@@ -17,7 +17,8 @@ import holmes.windows.managers.HolmesStatesManager;
 public class StatesPlacesTableModel extends AbstractTableModel {
 	@Serial
 	private static final long serialVersionUID = 7776195572631920285L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
 	private int dataSize;
@@ -176,7 +177,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 
 			boss.changeState(row, col, newValue);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00425exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00425exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -189,7 +190,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 			ArrayList<String> rowVector = dataMatrix.get(row);
 			rowVector.set(col, ""+(int)newValue);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00426exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00426exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 }

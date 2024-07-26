@@ -41,8 +41,8 @@ import holmes.workspace.ExtensionFileFilter;
 public class HolmesClusterSubWindow extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 6818230680946396781L;
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JFrame parentFrame;
 	private Clustering clusteringMetaData;
 	private String nL = "\n";
@@ -76,7 +76,7 @@ public class HolmesClusterSubWindow extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00510exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00510exception")+" "+ex.getMessage(), "error", true);
 		}
 		clusterPath = parent.getClusterPath();
 		this.clusteringMetaData = dataPackage;
@@ -236,7 +236,7 @@ public class HolmesClusterSubWindow extends JFrame {
 		    	
 		    	textPane.setCaretPosition(0);
 			} catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00511exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00511exception")+" "+ex.getMessage(), "error", true);
 			}
 		}
 		setLocationRelativeTo(null);
@@ -423,7 +423,7 @@ public class HolmesClusterSubWindow extends JFrame {
 			if(excelTmp.exists())
 				excelTmp.delete();
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00513exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00513exception")+" "+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -465,7 +465,7 @@ public class HolmesClusterSubWindow extends JFrame {
 				Tools.copyFileByPath(files[2], excelDestinationFolder+"\\"+mcfFileName);
 		}
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00514exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00514exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 		return true;
@@ -483,7 +483,7 @@ public class HolmesClusterSubWindow extends JFrame {
 		
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Microsoft Excel 97/2000/XP/2003 (.xls)", new String[] { "XLS" });
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save")
 				, lang.getText("HCSWwin_entry024t"), "");
 		if(selectedFile.isEmpty())
@@ -496,7 +496,7 @@ public class HolmesClusterSubWindow extends JFrame {
 			Tools.copyFileByPath("tmp//testSheets.xls", selectedFile);
 		} catch (Exception e) {
 			String strB = String.format(lang.getText("LOGentry00515exception"), selectedFile);
-			GUIManager.getDefaultGUIManager().log(strB+"\n"+e.getMessage() , "error", true);
+			overlord.log(strB+"\n"+e.getMessage() , "error", true);
 			return null;
 		}
 		return selectedFile;
@@ -518,18 +518,18 @@ public class HolmesClusterSubWindow extends JFrame {
 		if(alg.equals("UPGMA"))
 			alg = "average";
 		
-		String[] resultFiles = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
+		String[] resultFiles = overlord.io.generateSingleClustering(
 				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
 		if(resultFiles != null) {
 			ClusterReader reader = new ClusterReader();
 			// czytanie wyników:
 			fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
 			if(fullData==null) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("HCSWwin_entry026"), "error", true);
+				overlord.log(lang.getText("HCSWwin_entry026"), "error", true);
 				return;
 			}
 		} else {
-			GUIManager.getDefaultGUIManager().log(lang.getText("HCSWwin_entry027"), "error", true);
+			overlord.log(lang.getText("HCSWwin_entry027"), "error", true);
 			return;
 		}
 		
@@ -582,7 +582,7 @@ public class HolmesClusterSubWindow extends JFrame {
 				
 				FileFilter[] filters = new FileFilter[1];
 				filters[0] = new ExtensionFileFilter("Invariants csv file (.csv)", new String[] { "CSV" });
-				String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+				String lastPath = overlord.getLastPath();
 				String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("select"), "", "");
 				if(selectedFile.isEmpty())
 					return null;
@@ -606,8 +606,8 @@ public class HolmesClusterSubWindow extends JFrame {
 	}
 	
 	private String selectionOfSource() {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix() == null) { //brak inwariantów
+		String lastPath = overlord.getLastPath();
+		if(overlord.getWorkspace().getProject().getT_InvMatrix() == null) { //brak inwariantów
 			JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry031"),
 					lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
 			
@@ -623,12 +623,12 @@ public class HolmesClusterSubWindow extends JFrame {
 		} else {
 			{
 				//generowanie CSV, uda się, jeśli inwarianty istnieją
-				String CSVfilePath = GUIManager.getDefaultGUIManager().getTmpPath() + "cluster.csv";
-				int result = GUIManager.getDefaultGUIManager().getWorkspace().getProject().saveInvariantsToCSV(CSVfilePath, true, true);
+				String CSVfilePath = overlord.getTmpPath() + "cluster.csv";
+				int result = overlord.getWorkspace().getProject().saveInvariantsToCSV(CSVfilePath, true, true);
 				if(result == -1) {
 					JOptionPane.showMessageDialog(null,lang.getText("HCSwin_entry033")
 							,	"CSV export error",JOptionPane.ERROR_MESSAGE);
-					GUIManager.getDefaultGUIManager().log(lang.getText("HCSwin_entry033"), "error", true);
+					overlord.log(lang.getText("HCSwin_entry033"), "error", true);
 					return null;
 				}
 				return CSVfilePath;
@@ -650,7 +650,7 @@ public class HolmesClusterSubWindow extends JFrame {
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
 				int transNumber = fullData.transNames.length-1;
-				int netTransNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+				int netTransNumber = overlord.getWorkspace().getProject().getTransitions().size();
 				if(transNumber != netTransNumber) {
 					String strB = String.format(lang.getText("HCSwin_entry035"), transNumber, netTransNumber);
 					JOptionPane.showMessageDialog(null, strB, lang.getText("error"), JOptionPane.ERROR_MESSAGE);
@@ -669,7 +669,7 @@ public class HolmesClusterSubWindow extends JFrame {
 				for(int cl=0; cl<dataCore.clSize.size(); cl++) {
 					//dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
 				}
-				GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Holmes (JFrame)
+				overlord.showClusterSelectionBox(dataCore); //wyślij do Holmes (JFrame)
 				JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry036"),
 						lang.getText("status"),JOptionPane.INFORMATION_MESSAGE);
 				proceed = false;
@@ -691,18 +691,18 @@ public class HolmesClusterSubWindow extends JFrame {
 			alg = "average";
 		
 		//generowanie klastrowania:
-		String[] resultFiles = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
+		String[] resultFiles = overlord.io.generateSingleClustering(
 				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
 		if(resultFiles != null) {
 			ClusterReader reader = new ClusterReader();
 			fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
 			if(fullData==null) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("HCSwin_entry038"), "error", true);
+				overlord.log(lang.getText("HCSwin_entry038"), "error", true);
 				return;
 			}
 			
 			int transNumber = fullData.transNames.length-1;
-			int netTransNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+			int netTransNumber = overlord.getWorkspace().getProject().getTransitions().size();
 			if(transNumber != netTransNumber) {
 				String strB = String.format(lang.getText("HCSwin_entry035"), transNumber, netTransNumber);
 				JOptionPane.showMessageDialog(null, strB, lang.getText("error"), JOptionPane.ERROR_MESSAGE);
@@ -721,14 +721,14 @@ public class HolmesClusterSubWindow extends JFrame {
 			for(int cl=0; cl<dataCore.clSize.size(); cl++) {
 				//dataCore.clSize.set(cl, fullData.clustersInv.get(cl).size());
 			}
-			
-			GUIManager.getDefaultGUIManager().showClusterSelectionBox(dataCore); //wyślij do Holmes (JFrame)
+
+			overlord.showClusterSelectionBox(dataCore); //wyślij do Holmes (JFrame)
 			deleteTmpFile(resultFiles);
 			
 			JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry039"),
 					"Status",JOptionPane.INFORMATION_MESSAGE);
 		} else {
-			GUIManager.getDefaultGUIManager().log(lang.getText("HCSwin_entry040"), "error", true);
+			overlord.log(lang.getText("HCSwin_entry040"), "error", true);
 		}
 	}
 
@@ -747,14 +747,14 @@ public class HolmesClusterSubWindow extends JFrame {
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (n == 0) {
 				int transNumber = fullData.transNames.length-1;
-				int netTransNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+				int netTransNumber = overlord.getWorkspace().getProject().getTransitions().size();
 				if(transNumber != netTransNumber) {
 					String strB = String.format(lang.getText("HCSwin_entry035"), transNumber, netTransNumber);
 					JOptionPane.showMessageDialog(null, strB, lang.getText("error"), JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
-				GUIManager.getDefaultGUIManager().tex.writeCluster(fullData);
+				overlord.tex.writeCluster(fullData);
 				
 				JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry042"),
 						"Status",JOptionPane.INFORMATION_MESSAGE);
@@ -777,22 +777,22 @@ public class HolmesClusterSubWindow extends JFrame {
 			alg = "average";
 		
 		//generowanie klastrowania:
-		String[] resultFiles = GUIManager.getDefaultGUIManager().io.generateSingleClustering(
+		String[] resultFiles = overlord.io.generateSingleClustering(
 				targetDir, alg, clusteringMetaData.metricName, clusteringMetaData.clusterNumber);
 		if(resultFiles != null) {
 			ClusterReader reader = new ClusterReader();
 			fullData = reader.readSingleClustering(resultFiles, clusteringMetaData);
 			if(fullData==null) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00518"), "error", true);
+				overlord.log(lang.getText("LOGentry00518"), "error", true);
 				return;
 			}
-			
-			GUIManager.getDefaultGUIManager().tex.writeCluster(fullData);
+
+			overlord.tex.writeCluster(fullData);
 			deleteTmpFile(resultFiles);
 			JOptionPane.showMessageDialog(null, lang.getText("HCSwin_entry044"),
 					"Status",JOptionPane.INFORMATION_MESSAGE);
 		} else {
-			GUIManager.getDefaultGUIManager().log(lang.getText("HCSwin_entry045"), "error", true);
+			overlord.log(lang.getText("HCSwin_entry045"), "error", true);
 		}
 	}
 }

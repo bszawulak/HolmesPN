@@ -19,7 +19,7 @@ import javax.swing.*;
 public class ArcPopupMenu extends NodePopupMenu {
 	@Serial
 	private static final long serialVersionUID = 6531877302888917900L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	
 	/**
 	 * Konstruktor obiektu klasy ArcPopupMenu.

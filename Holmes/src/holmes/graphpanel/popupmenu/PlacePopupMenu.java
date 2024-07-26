@@ -18,7 +18,8 @@ import holmes.petrinet.elements.Place;
 public class PlacePopupMenu extends NodePopupMenu {
 	@Serial
 	private static final long serialVersionUID = -5062389148117837851L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	
 	/**
 	 * Konstruktor obiektu klasy PlacePopupMenu.
@@ -35,25 +36,25 @@ public class PlacePopupMenu extends NodePopupMenu {
 			if(n instanceof Place) {
 				n.setInvisibility(!n.isInvisible());
 			}
-			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			overlord.getWorkspace().repaintAllGraphPanels();
 		});
 		
 		if(pne == PetriNetElementType.TRANSITION || pne == PetriNetElementType.PLACE) {
 			this.addMenuItem(lang.getText("PPM_entry002"), "portal.png", e -> {
 				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
-					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+					if(overlord.reset.isSimulatorActiveWarning(
 							lang.getText("PPM_entry003")
 							, lang.getText("warning")))
 						return;
 
-					if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
+					if(overlord.reset.isXTPNSimulatorActiveWarning(
 							lang.getText("PPM_entry004")
 							, lang.getText("warning")))
 						return;
 
 					//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
 					getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
-					GUIManager.getDefaultGUIManager().markNetChange();
+					overlord.markNetChange();
 				} else {
 					JOptionPane.showMessageDialog(null, lang.getText("PPM_entry005"), lang.getText("PPM_entry006"),
 							JOptionPane.INFORMATION_MESSAGE);
@@ -63,17 +64,15 @@ public class PlacePopupMenu extends NodePopupMenu {
 
 		this.addMenuItem(lang.getText("PPM_entry007"), "cut.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
-				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-						lang.getText("PPM_entry003")
-						, lang.getText("warning")))
+				if(overlord.reset.isSimulatorActiveWarning(
+						lang.getText("PPM_entry003"), lang.getText("warning")))
 					return;
-				if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
-						lang.getText("PPM_entry004")
-						, lang.getText("warning")))
+				if(overlord.reset.isXTPNSimulatorActiveWarning(
+						lang.getText("PPM_entry004"), lang.getText("warning")))
 					return;
 
 				getGraphPanel().getSelectionManager().saveSubnet();
-				GUIManager.getDefaultGUIManager().markNetChange();
+				overlord.markNetChange();
 			} else {
 				JOptionPane.showMessageDialog(null, lang.getText("PPM_entry008"), lang.getText("PPM_entry009"),
 						JOptionPane.INFORMATION_MESSAGE);

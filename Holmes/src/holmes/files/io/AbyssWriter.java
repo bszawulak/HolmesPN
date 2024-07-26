@@ -14,7 +14,8 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
  * Wymaga XStream 1.4.7
  */
 public class AbyssWriter {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Główna i jedyna metoda, zapisująca plik sieci.
 	 * @param path String - ścieżka do pliku
@@ -31,18 +32,18 @@ public class AbyssWriter {
 		xstream.alias("petriNet", PetriNetData.class);
 
 		try {
-			PetriNetData dataModule = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getDataCore();
+			PetriNetData dataModule = overlord.getWorkspace().getProject().getDataCore();
 			String xml = xstream.toXML(dataModule);
 			
 			PrintWriter zapis = new PrintWriter(path);
 			zapis.println(xml);
 			zapis.close();
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00155")+" "+path + ".abyss", "text", true);
-			GUIManager.getDefaultGUIManager().markNetSaved();
+			overlord.log(lang.getText("LOGentry00155")+" "+path + ".abyss", "text", true);
+			overlord.markNetSaved();
 			return true;
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00156exception")+" " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00156exception")+" " + e.getMessage(), "error", true);
 			return false;
 		}
 	}

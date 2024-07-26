@@ -27,7 +27,8 @@ import holmes.workspace.ExtensionFileFilter;
 public class SheetPopupMenu extends GraphPanelPopupMenu {
     @Serial
     private static final long serialVersionUID = 3206422633820189233L;
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     public int x;
     public int y;
 
@@ -41,8 +42,8 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         super(graphPanel, pne);
         sheetID = graphPanel.getSheetId();
 
-        //x = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet().getMousePosition().x;
-        //y = GUIManager.getDefaultGUIManager().getWorkspace().getSelectedSheet().getMousePosition().y;
+        //x = overlord.getWorkspace().getSelectedSheet().getMousePosition().x;
+        //y = overlord.getWorkspace().getSelectedSheet().getMousePosition().y;
 
         this.addMenuItem(lang.getText("SPM_entry001"), "", e -> getGraphPanel().getSelectionManager().selectAllElementLocations());
 
@@ -57,7 +58,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
             getGraphPanel().repaint();
         });
 
-        this.addMenuItem(lang.getText("SPM_entry003"), "clearColors.png", e -> GUIManager.getDefaultGUIManager().reset.clearGraphColors());
+        this.addMenuItem(lang.getText("SPM_entry003"), "clearColors.png", e -> overlord.reset.clearGraphColors());
 
         this.addMenuItem(lang.getText("SPM_entry004"), "picture_save.png", //Save to image file
             new ActionListener() {
@@ -67,7 +68,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
 
                 private void exportToPicture() {
                     //String lastPath = getGraphPanel().getPetriNet().getWorkspace().getGUI().getLastPath();
-                    String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+                    String lastPath = overlord.getLastPath();
                     JFileChooser fc;
                     if (lastPath == null)
                         fc = new JFileChooser();
@@ -103,9 +104,9 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
                             if (ext.equals(".jpeg") && !file.getPath().contains(".jpg")) ext2 = ".jpg";
 
                             ImageIO.write(image, ext.substring(1), new File(file.getPath() + ext2));
-                            GUIManager.getDefaultGUIManager().setLastPath(file.getParentFile().getPath());
+                            overlord.setLastPath(file.getParentFile().getPath());
                         } catch (IOException ex) {
-                            GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00371exception")+ "\n" + ex.getMessage(), "error", true);
+                            overlord.log(lang.getText("LOGentry00371exception")+ "\n" + ex.getMessage(), "error", true);
                         }
                     }
                 }
@@ -135,62 +136,62 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
             if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
                 return;
 
-            for(Transition trans : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
+            for(Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
                 trans.setInvisibility(false);
             }
-            for(Place place : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces()) {
+            for(Place place : overlord.getWorkspace().getProject().getPlaces()) {
                 place.setInvisibility(false);
             }
-            GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+            overlord.getWorkspace().repaintAllGraphPanels();
         });
 
         this.addMenuItem(lang.getText("SPM_entry008"), "offlineSmall.png", e -> {
             if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
                 return;
 
-            for(Transition trans : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions()) {
+            for(Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
                 trans.setKnockout(false);
             }
 
-            GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+            overlord.getWorkspace().repaintAllGraphPanels();
         });
 
         this.addSeparator();
 
         JMenu analMenu = new JMenu(lang.getText("SPM_entry009")); // (⌐■_■) //Network Analysis
         this.add(analMenu);
-        analMenu.add(createMenuItem(lang.getText("SPM_entry010"), "invImportPopup.png", null, arg0 -> GUIManager.getDefaultGUIManager().io.loadExternalAnalysis(true)));
-        analMenu.add(createMenuItem(lang.getText("SPM_entry011"), "generateINA.png", null, arg0 -> GUIManager.getDefaultGUIManager().io.fastGenerateTinvariants()));
+        analMenu.add(createMenuItem(lang.getText("SPM_entry010"), "invImportPopup.png", null, arg0 -> overlord.io.loadExternalAnalysis(true)));
+        analMenu.add(createMenuItem(lang.getText("SPM_entry011"), "generateINA.png", null, arg0 -> overlord.io.fastGenerateTinvariants()));
 
-        analMenu.add(createMenuItem(lang.getText("SPM_entry012"), "generateMCT.png", null, arg0 -> GUIManager.getDefaultGUIManager().generateMCT()));
+        analMenu.add(createMenuItem(lang.getText("SPM_entry012"), "generateMCT.png", null, arg0 -> overlord.generateMCT()));
 
         JMenu mctSubMenu = new JMenu(lang.getText("SPM_entry013"));    //MCT Options
         analMenu.add(mctSubMenu);
 
-        JMenuItem mct1 = createMenuItem(lang.getText("SPM_entry014"), "", null, arg0 -> GUIManager.getDefaultGUIManager().io.generateSimpleMCTFile()); //Simple MCT file
+        JMenuItem mct1 = createMenuItem(lang.getText("SPM_entry014"), "", null, arg0 -> overlord.io.generateSimpleMCTFile()); //Simple MCT file
         mctSubMenu.add(mct1);
 
         JMenuItem mct2 = createMenuItem(lang.getText("SPM_entry015"), "", null, arg0 -> { //Tex output file
-            //GUIManager.getDefaultGUIManager().generateMCT();
+            //overlord.generateMCT();
         });
         mct2.setEnabled(false);
         mctSubMenu.add(mct2);
 
         JMenuItem mct3 = createMenuItem(lang.getText("SPM_entry016"), "", null, arg0 -> { //Other files
-            //GUIManager.getDefaultGUIManager().generateMCT();
+            //overlord.generateMCT();
         });
         mct3.setEnabled(false);
         mctSubMenu.add(mct3);
 
         JMenu netMenu = new JMenu(lang.getText("SPM_entry017")); //Network Tools
         this.add(netMenu);
-        netMenu.add(createMenuItem(lang.getText("SPM_entry018"), "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(0))); //Show TPN transitions
-        netMenu.add(createMenuItem(lang.getText("SPM_entry019"), "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(1))); //Show DPN transitions
-        netMenu.add(createMenuItem(lang.getText("SPM_entry020"), "", null, arg0 -> GUIManager.getDefaultGUIManager().io.markTransitions(2))); //Show TPN/DPN transitions
-        netMenu.add(createMenuItem(lang.getText("SPM_entry021"), "", null, arg0 -> GUIManager.getDefaultGUIManager().subnetsHQ.checkSnoopyCompatibility())); //Fix Snoopy compatibility
+        netMenu.add(createMenuItem(lang.getText("SPM_entry018"), "", null, arg0 -> overlord.io.markTransitions(0))); //Show TPN transitions
+        netMenu.add(createMenuItem(lang.getText("SPM_entry019"), "", null, arg0 -> overlord.io.markTransitions(1))); //Show DPN transitions
+        netMenu.add(createMenuItem(lang.getText("SPM_entry020"), "", null, arg0 -> overlord.io.markTransitions(2))); //Show TPN/DPN transitions
+        netMenu.add(createMenuItem(lang.getText("SPM_entry021"), "", null, arg0 -> overlord.subnetsHQ.checkSnoopyCompatibility())); //Fix Snoopy compatibility
 
         if(sheetID != 0) {
-            netMenu.add(createMenuItem(lang.getText("SPM_entry022"), "", null, arg0 -> GUIManager.getDefaultGUIManager().testRemovePanel(sheetID)  ) ); //Remove panel
+            netMenu.add(createMenuItem(lang.getText("SPM_entry022"), "", null, arg0 -> overlord.testRemovePanel(sheetID)  ) ); //Remove panel
         }
 
         //SUBNET IMPORT PROTOTYP
@@ -261,9 +262,9 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
             BufferedImage image = getGraphPanel().createImageFromSheet();
             try {
                 ImageIO.write(image, ext.substring(1), new File(file.getPath() + ext));
-                GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00372")+ " " + file.getPath() + ext, "text", true);
+                overlord.log(lang.getText("LOGentry00372")+ " " + file.getPath() + ext, "text", true);
             } catch (IOException ex) {
-                GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00373exception")+ " " + ex.getMessage(), "error", true);
+                overlord.log(lang.getText("LOGentry00373exception")+ " " + ex.getMessage(), "error", true);
             }
         }
     }

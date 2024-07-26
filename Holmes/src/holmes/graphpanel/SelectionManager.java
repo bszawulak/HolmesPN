@@ -27,8 +27,8 @@ import holmes.windows.xtpn.HolmesNodeInfoXTPN;
  * GraphPanel, którego obiektami zarządza nie wpływając nigdy na obiekty pozostałych arkuszy.
  */
 public class SelectionManager {
-	private final GUIManager overlord;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private GraphPanel graphPanel;
 	private ArrayList<Node> graphPanelNodes;
 	private ArrayList<Arc> graphPanelArcs;
@@ -44,7 +44,6 @@ public class SelectionManager {
 		this.setGraphPanel(parentGraphPanel);
 		this.graphPanelNodes = parentGraphPanel.getNodes();
 		this.graphPanelArcs = parentGraphPanel.getArcs();
-		this.overlord = GUIManager.getDefaultGUIManager();
 	}
 
 	/**
@@ -849,7 +848,7 @@ public class SelectionManager {
 				Place place = (Place) el.getParentNode();
 
 				if(place instanceof PlaceXTPN) {
-					HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((PlaceXTPN) place, el, GUIManager.getDefaultGUIManager().getFrame());
+					HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((PlaceXTPN) place, el, overlord.getFrame());
 					ani.setVisible(true);
 					return;
 				}
@@ -865,7 +864,7 @@ public class SelectionManager {
 				safetyNodesList.add(el.getParentNode());
 				Transition trans = (Transition) el.getParentNode();
 				if(trans instanceof TransitionXTPN) {
-					HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((TransitionXTPN) trans, el, GUIManager.getDefaultGUIManager().getFrame());
+					HolmesNodeInfoXTPN ani = new HolmesNodeInfoXTPN((TransitionXTPN) trans, el, overlord.getFrame());
 					ani.setVisible(true);
 					return;
 				}

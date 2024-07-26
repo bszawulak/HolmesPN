@@ -26,7 +26,8 @@ import holmes.petrinet.elements.Transition.TransitionType;
  * (baczność!) Snoopy (spocznij!).
  */
 public class SnoopyReader {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	//private boolean classPN = false;
 	//private boolean TPN = false;
 	//private boolean extPN = false;
@@ -51,7 +52,7 @@ public class SnoopyReader {
 		coreReader(path);
 		
 		if(warnings)
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00089"), "error", true);
+			overlord.log(lang.getText("LOGentry00089"), "error", true);
 	}
 	
 	/**
@@ -64,12 +65,12 @@ public class SnoopyReader {
 		try {
 			DataInputStream dis = new DataInputStream(new FileInputStream(filepath));
 			buffer = new BufferedReader(new InputStreamReader(dis));
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00090")+ " "+filepath, "text", true);	
+			overlord.log(lang.getText("LOGentry00090")+ " "+filepath, "text", true);	
 			
 			readNodesBlock(buffer);
 			readArcsBlock(buffer);
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00091exception"), "error", true);
+			overlord.log(lang.getText("LOGentry00091exception"), "error", true);
 		} finally {
 			try {
 				try {
@@ -78,7 +79,7 @@ public class SnoopyReader {
 				} catch (Exception ignored) {}
 			}
 			catch (Exception ex) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00092exception")+ex, "error", true);
+				overlord.log(lang.getText("LOGentry00092exception")+ex, "error", true);
 			}
 		}
 	}
@@ -167,7 +168,7 @@ public class SnoopyReader {
 				
 				int nodeSnoopyID = (int) getAttributeValue(line, " id=\"", -1);
 				if(nodeSnoopyID == -1) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00093")+ " "+backFirstLine, "error", true);
+					overlord.log(lang.getText("LOGentry00093")+ " "+backFirstLine, "error", true);
 					break;
 				} else {
 					snoopyNodesIdList.add(nodeSnoopyID);
@@ -232,7 +233,7 @@ public class SnoopyReader {
 								if(yOff < -8)
 									yOff = -55; //nad node, uwzględnia różnicę
 								
-								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
+								if(!overlord.getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
 									xOff = 0;
 									yOff = 0;
 								}
@@ -321,13 +322,13 @@ public class SnoopyReader {
 								
 								double resizeFactor = 1;
 								try {
-									int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
+									int addF = Integer.parseInt(overlord.getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
 									resizeFactor = ((double)addF/(double)100);
 									
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00094exception")+" "+ex.getMessage(), "error", true);
+									overlord.log(lang.getText("LOGentry00094exception")+" "+ex.getMessage(), "error", true);
 								}
 								
 								x = (int)(x * resizeFactor);
@@ -352,9 +353,9 @@ public class SnoopyReader {
 				
 				if(logicalELNumber_graphics != logicalELNumber_names) {
 					warnings = true;
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00095")+ " "
+					overlord.log(lang.getText("LOGentry00095")+ " "
 							+place.getName(), "warning", true);
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00096"), "warning", true);
+					overlord.log(lang.getText("LOGentry00096"), "warning", true);
 					
 					place.getTextsLocations(GUIManager.locationMoveType.NAME).clear();
 					place.getTextsLocations(GUIManager.locationMoveType.ALPHA).clear();
@@ -374,13 +375,13 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00097"), "error", true);
-			GUIManager.getDefaultGUIManager().log(line, "error", true);
+			overlord.log(lang.getText("LOGentry00097"), "error", true);
+			overlord.log(line, "error", true);
 		}
 		
 		if(placesCounter != placesLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00098a")+ " "+(placesCounter+1)+
+			overlord.log(lang.getText("LOGentry00098a")+ " "+(placesCounter+1)+
 					lang.getText("LOGentry00098b")+ " "+(placesLimit+1), "warning", true);
 		}
 	}
@@ -406,7 +407,7 @@ public class SnoopyReader {
 			//	((Transition)node).defColor = new Color(r,g,b);
 			//}
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00099_1exception")+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00099_1exception")+ex.getMessage(), "error", true);
 		}
 	}
 
@@ -447,7 +448,7 @@ public class SnoopyReader {
 				
 				int nodeSnoopyID = (int) getAttributeValue(line, " id=\"", -1);
 				if(nodeSnoopyID == -1) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00100")+ " "+backFirstLine, "error", true);
+					overlord.log(lang.getText("LOGentry00100")+ " "+backFirstLine, "error", true);
 					break;
 				} else {
 					snoopyNodesIdList.add(nodeSnoopyID);
@@ -511,7 +512,7 @@ public class SnoopyReader {
 								if(yOff < -8)
 									yOff = -55; //nad node, uwzględnia różnicę
 								
-								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
+								if(!overlord.getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
 									xOff = 0;
 									yOff = 0;
 								}
@@ -610,13 +611,13 @@ public class SnoopyReader {
 								
 								double resizeFactor = 1;
 								try {
-									int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
+									int addF = Integer.parseInt(overlord.getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
 									resizeFactor = ((double)addF/(double)100);
 									
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00143exception")+ex.getMessage(), "error", true);
+									overlord.log(lang.getText("LOGentry00143exception")+ex.getMessage(), "error", true);
 								}
 								x = (int)(x * resizeFactor);
 								y = (int)(y * resizeFactor);
@@ -643,9 +644,9 @@ public class SnoopyReader {
 				
 				if(logicalELNumber_graphics != logicalELNumber_names) {
 					warnings = true;
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00101")+ " "
+					overlord.log(lang.getText("LOGentry00101")+ " "
 							+transition.getName(), "warning", true);
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00102"), "warning", true);
+					overlord.log(lang.getText("LOGentry00102"), "warning", true);
 					
 					transition.getTextsLocations(GUIManager.locationMoveType.NAME).clear();
 					transition.getTextsLocations(GUIManager.locationMoveType.ALPHA).clear();
@@ -664,13 +665,13 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00103exception"), "error", true);
-			GUIManager.getDefaultGUIManager().log(line, "error", true);
+			overlord.log(lang.getText("LOGentry00103exception"), "error", true);
+			overlord.log(line, "error", true);
 		}
 		
 		if(transitionsCounter != transitionsLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00104a")+ " "+(transitionsCounter+1)+
+			overlord.log(lang.getText("LOGentry00104a")+ " "+(transitionsCounter+1)+
 					lang.getText("LOGentry00104b")+" "+(transitionsLimit+1), "warning", true);
 		}
 	}
@@ -738,7 +739,7 @@ public class SnoopyReader {
 				int nodeSnoopyID = (int) getAttributeValue(line, " id=\"", -1);
 				int nodeCoarseNumber = (int) getAttributeValue(line, " coarse=\"", -1);
 				if(nodeSnoopyID == -1) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00105")+" "+backFirstLine, "error", true);
+					overlord.log(lang.getText("LOGentry00105")+" "+backFirstLine, "error", true);
 					break;
 				} else {
 					snoopyNodesIdList.add(nodeSnoopyID);
@@ -805,7 +806,7 @@ public class SnoopyReader {
 								if(yOff < -8)
 									yOff = -55; //nad node, uwzględnia różnicę
 								
-								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
+								if(!overlord.getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
 									xOff = 0;
 									yOff = 0;
 								}
@@ -858,13 +859,13 @@ public class SnoopyReader {
 								
 								double resizeFactor = 1;
 								try {
-									int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
+									int addF = Integer.parseInt(overlord.getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
 									resizeFactor = ((double)addF/(double)100);
 									
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00106exception")+ex.getMessage(), "error", true);
+									overlord.log(lang.getText("LOGentry00106exception")+ex.getMessage(), "error", true);
 								}
 								
 								x = (int)(x * resizeFactor);
@@ -887,9 +888,8 @@ public class SnoopyReader {
 				
 				if(logicalELNumber_graphics != logicalELNumber_names) {
 					warnings = true;
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00107a")+ " "
-							+metaNode.getName(), "warning", true);
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00107b"), "warning", true);
+					overlord.log(lang.getText("LOGentry00107a")+ " " +metaNode.getName(), "warning", true);
+					overlord.log(lang.getText("LOGentry00107b"), "warning", true);
 					
 					metaNode.getTextsLocations(GUIManager.locationMoveType.NAME).clear();
 					metaNode.getTextsLocations(GUIManager.locationMoveType.ALPHA).clear();
@@ -908,13 +908,13 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00108exception"), "error", true);
-			GUIManager.getDefaultGUIManager().log(line, "error", true);
+			overlord.log(lang.getText("LOGentry00108exception"), "error", true);
+			overlord.log(line, "error", true);
 		}
 		
 		if(coarsePlacesCounter != coarsePlacesLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00109a")+ " "+(coarsePlacesCounter+1)+
+			overlord.log(lang.getText("LOGentry00109a")+ " "+(coarsePlacesCounter+1)+
 					lang.getText("LOGentry00109b")+ " "+(coarsePlacesLimit+1), "warning", true);
 		}
 	}
@@ -958,7 +958,7 @@ public class SnoopyReader {
 				int nodeSnoopyID = (int) getAttributeValue(line, " id=\"", -1);
 				int nodeCoarseNumber = (int) getAttributeValue(line, " coarse=\"", -1);
 				if(nodeSnoopyID == -1) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00110")+ " "+backFirstLine, "error", true);
+					overlord.log(lang.getText("LOGentry00110")+ " "+backFirstLine, "error", true);
 					break;
 				} else {
 					snoopyNodesIdList.add(nodeSnoopyID);
@@ -1024,7 +1024,7 @@ public class SnoopyReader {
 								if(yOff < -8)
 									yOff = -55; //nad node, uwzględnia różnicę
 								
-								if(!GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
+								if(!overlord.getSettingsManager().getValue("editorUseSnoopyOffsets").equals("1")) {
 									xOff = 0;
 									yOff = 0;
 								}
@@ -1077,13 +1077,13 @@ public class SnoopyReader {
 								
 								double resizeFactor = 1;
 								try {
-									int addF = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
+									int addF = Integer.parseInt(overlord.getSettingsManager().getValue("programSnoopyLoaderNetExtFactor"));
 									resizeFactor = ((double)addF/(double)100);
 									
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00111exception")+ex.getMessage(), "error", true);
+									overlord.log(lang.getText("LOGentry00111exception")+ex.getMessage(), "error", true);
 								}
 
 								x = (int)(x * resizeFactor);
@@ -1106,9 +1106,8 @@ public class SnoopyReader {
 				
 				if(logicalELNumber_graphics != logicalELNumber_names) {
 					warnings = true;
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00112a")+ " "
-							+metaNode.getName(), "warning", true);
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00112b"), "warning", true);
+					overlord.log(lang.getText("LOGentry00112a")+ " " +metaNode.getName(), "warning", true);
+					overlord.log(lang.getText("LOGentry00112b"), "warning", true);
 					
 					metaNode.getTextsLocations(GUIManager.locationMoveType.NAME).clear();
 					metaNode.getTextsLocations(GUIManager.locationMoveType.ALPHA).clear();
@@ -1127,13 +1126,13 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00113exception"), "error", true);
-			GUIManager.getDefaultGUIManager().log(line, "error", true);
+			overlord.log(lang.getText("LOGentry00113exception"), "error", true);
+			overlord.log(line, "error", true);
 		}
 		
 		if(coarseTransitionsCounter != coarseTransitionsLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00114a")+" "+(coarseTransitionsCounter+1)+
+			overlord.log(lang.getText("LOGentry00114a")+" "+(coarseTransitionsCounter+1)+
 					lang.getText("LOGentry00114b")+ " "+(coarseTransitionsLimit+1), "warning", true);
 		}
 	}
@@ -1245,7 +1244,7 @@ public class SnoopyReader {
 				int nodeSourceID = (int) getAttributeValue(line, " source=\"", -1);
 				int nodeTargetID = (int) getAttributeValue(line, " target=\"", -1);
 				if(nodeSourceID == -1 || nodeTargetID == -1) {
-					GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00115")+" "+backFirstLine, "error", true);
+					overlord.log(lang.getText("LOGentry00115")+" "+backFirstLine, "error", true);
 					break;
 				}
 				
@@ -1358,10 +1357,10 @@ public class SnoopyReader {
 												sourceEL = nodesList.get(counter).getElementLocations().get(location);
 												//currentType = TypesOfArcs.META_ARC;
 												snoopyErrorFixed = false; //aby nie weszło poniżej
-												GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00116a")+ " "+sourceID+
+												overlord.log(lang.getText("LOGentry00116a")+ " "+sourceID+
 														lang.getText("LOGentry00116b")+" "+targetID+lang.getText("LOGentry00116c"), "error", true);
 											} else {
-												GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00117a")+" "+sourceID+
+												overlord.log(lang.getText("LOGentry00117a")+" "+sourceID+
 														lang.getText("LOGentry00117b")+ " "+targetID+")", "error", true);
 											}
 										}
@@ -1409,10 +1408,10 @@ public class SnoopyReader {
 												sourceEL = nodesList.get(counter).getElementLocations().get(location);
 												//currentType = TypesOfArcs.META_ARC;
 												snoopyErrorFixed = false; //aby nie weszło poniżej
-												GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00118a")+" "+sourceID+
+												overlord.log(lang.getText("LOGentry00118a")+" "+sourceID+
 														lang.getText("LOGentry00118b")+" "+targetID+lang.getText("LOGentry00118c"), "error", true);
 											} else {
-												GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00119a")+ " "+sourceID+
+												overlord.log(lang.getText("LOGentry00119a")+ " "+sourceID+
 														lang.getText("LOGentry00119b")+" "+targetID+")", "error", true);
 											}
 										}
@@ -1432,7 +1431,7 @@ public class SnoopyReader {
 										arcList.add(nArc);
 										edgesCounter++;
 									} else {
-										GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00120a")+" "+sourceID+
+										overlord.log(lang.getText("LOGentry00120a")+" "+sourceID+
 												lang.getText("LOGentry00120b")+" "+targetID+").", "error", true);
 									}
 								} catch (Exception e) {
@@ -1444,10 +1443,10 @@ public class SnoopyReader {
 										}
 									}
 									if(!foundCoarse)
-										GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00121a")+" "+sourceID+
+										overlord.log(lang.getText("LOGentry00121a")+" "+sourceID+
 												lang.getText("LOGentry00121b")+" "+targetID+")", "error", true);
 									else {
-										GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00122"), "warning", true);
+										overlord.log(lang.getText("LOGentry00122"), "warning", true);
 										warnings = true;
 									}
 								}
@@ -1474,13 +1473,13 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00123exception")+" ", "error", true);
-			GUIManager.getDefaultGUIManager().log(line, "error", true);
+			overlord.log(lang.getText("LOGentry00123exception")+" ", "error", true);
+			overlord.log(line, "error", true);
 		}
 		
 		if(edgesCounter != edgesLimit) {
 			warnings = true;
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00124a")
+			overlord.log(lang.getText("LOGentry00124a")
 					+arcType+lang.getText("LOGentry00124b")+ " "+(edgesCounter+1)+
 					lang.getText("LOGentry00124c")+ " "+(edgesLimit+1), "warning", true);
 		}
@@ -1505,7 +1504,7 @@ public class SnoopyReader {
 			tmp = tmp.substring(0, location);
 			result = Double.parseDouble(tmp);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00125exception")+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00125exception")+ex.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1525,7 +1524,7 @@ public class SnoopyReader {
 			location = tmp.indexOf("\"");
 			result = tmp.substring(0, location);
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00126exception")+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00126exception")+ex.getMessage(), "error", true);
 		}
 		return result;
 	}

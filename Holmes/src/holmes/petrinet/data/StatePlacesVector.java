@@ -14,7 +14,8 @@ import holmes.petrinet.elements.Place;
 public class StatePlacesVector implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 6652562026923360610L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<Double> stateVector;
 	private String stateType;
 	private String stateDescription;
@@ -97,7 +98,7 @@ public class StatePlacesVector implements Serializable {
 	 */
 	@SuppressWarnings("unused")
 	public void updateWholeVector() {
-		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 		int placesNumber = places.size();
 		for(int p=0; p<placesNumber; p++) {
 			stateVector.set(p, (double) places.get(p).getTokensNumber());

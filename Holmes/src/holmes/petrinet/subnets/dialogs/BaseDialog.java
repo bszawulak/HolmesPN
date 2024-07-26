@@ -10,7 +10,8 @@ import javax.swing.*;
  * Klasa abstrakcyjna będąca podstawą dla pozostałych klas tworzących dialogi powiązane z podsiecami.
  */
 public abstract class BaseDialog {
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private JDialog dialog;
 
     /**
@@ -30,7 +31,6 @@ public abstract class BaseDialog {
      * @param height int - wysokość okna dialogu
      */
     private void initDialog(String title, int width, int height) {
-        GUIManager overlord = GUIManager.getDefaultGUIManager();
         dialog = new JDialog(overlord.getFrame(), title);
         dialog.setSize(width, height);
         dialog.setLocationRelativeTo(dialog.getParent());
@@ -52,7 +52,7 @@ public abstract class BaseDialog {
      * Metoda otwierająca dialog.
      */
     public void open() {
-        JFrame frame = GUIManager.getDefaultGUIManager().getFrame();
+        JFrame frame = overlord.getFrame();
         frame.setEnabled(false);
         dialog.setVisible(true);
     }

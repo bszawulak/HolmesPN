@@ -35,8 +35,8 @@ import holmes.windows.managers.HolmesSPNmanager;
 public class Toolbar extends JPanel {
     @Serial
     private static final long serialVersionUID = 640320332920131092L;
-    private GUIManager overlord;
-    private LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private boolean buttonsDraggable = false;
 
     // simulator buttons
@@ -48,7 +48,6 @@ public class Toolbar extends JPanel {
      * Konstruktor domyślny obiektu klasy Toolbar.
      */
     public Toolbar() {
-        overlord = GUIManager.getDefaultGUIManager();
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         createIObuttons();
         createNetTransformBar();
@@ -61,7 +60,7 @@ public class Toolbar extends JPanel {
     private void createIObuttons() {
         JButton addButton = new JButton("", Tools.getResIcon48("/icons/toolbar/add_panel.png"));
         addButton.setPreferredSize(new Dimension(50,50));
-        addButton.addActionListener(arg0 -> GUIManager.getDefaultGUIManager().reset.newProjectInitiated());
+        addButton.addActionListener(arg0 -> overlord.reset.newProjectInitiated());
         addButton.setBorderPainted(false);
         addButton.setContentAreaFilled(false);
         addButton.setFocusPainted(false);
@@ -188,7 +187,7 @@ public class Toolbar extends JPanel {
 
         JButton fireRatesButton = new JButton("", Tools.getResIcon48("/icons/toolbar/firingRates.png"));
         fireRatesButton.setPreferredSize(new Dimension(50,50));
-        fireRatesButton.addActionListener(arg0 -> new HolmesSPNmanager(GUIManager.getDefaultGUIManager().getFrame()));
+        fireRatesButton.addActionListener(arg0 -> new HolmesSPNmanager(overlord.getFrame()));
         fireRatesButton.setBorderPainted(false);
         fireRatesButton.setContentAreaFilled(false);
         fireRatesButton.setFocusPainted(false);
@@ -282,18 +281,18 @@ public class Toolbar extends JPanel {
                 boolean test = false;
 
                 if (test) {
-                    System.out.println(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(1));
-                    int[] vectorOrbit = GraphletsCalculator.vectorOrbit(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(1), test);
+                    System.out.println(overlord.getWorkspace().getProject().getNodes().get(1));
+                    int[] vectorOrbit = GraphletsCalculator.vectorOrbit(overlord.getWorkspace().getProject().getNodes().get(1), test);
                 } else {
 
-                    for (Node startNode : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes()) {
+                    for (Node startNode : overlord.getWorkspace().getProject().getNodes()) {
                         int[] vectorOrbit = GraphletsCalculator.vectorOrbit(startNode, test);
                         GDV.add(vectorOrbit);
                     }
 
 
                     for (int j = 0; j < GDV.size(); j++) {
-                        System.out.print(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().get(j).getName() + " - ");
+                        System.out.print(overlord.getWorkspace().getProject().getNodes().get(j).getName() + " - ");
                         int[] vector = GDV.get(j);
                         for (int i = 0; i < vector.length; i++) {
                             if (vector[i] < 0) {

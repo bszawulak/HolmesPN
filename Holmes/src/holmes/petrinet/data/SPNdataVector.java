@@ -10,7 +10,8 @@ import holmes.petrinet.elements.extensions.TransitionSPNExtension;
  * Klasa zarządzająca wektorem danych tranzycji SPN.
  */
 public class SPNdataVector {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<SPNtransitionData> dataVector;
 	private SPNvectorSuperType SPNvectorType;
 	private String SPNvectorDescription;
@@ -102,7 +103,7 @@ public class SPNdataVector {
 				return Double.parseDouble(dataVector.get(index).ST_function);
 			} catch(Exception e) {
 				String strB = String.format(lang.getText("LOGentry00374exception"), index);
-				GUIManager.getDefaultGUIManager().log(strB, "warning", true);
+				overlord.log(strB, "warning", true);
 				return 1.0;
 			}
 		}

@@ -24,6 +24,7 @@ public class LanguageManager {
         overlord.log("Holmes language processing started.", "text", true);
 
         defaultDictionary = LangEngDafaultDB.getDefaultEnglish();
+        currentDictionary = defaultDictionary;
 
         overlord.logNoEnter("Language: ", "bold", false);
         overlord.logNoEnter("default english", "italic", false);

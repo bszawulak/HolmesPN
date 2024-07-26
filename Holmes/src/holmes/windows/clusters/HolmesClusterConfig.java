@@ -22,7 +22,8 @@ import holmes.utilities.Tools;
 public class HolmesClusterConfig extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 1694133455242675169L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 
 	private ArrayList<String> commandsValidate;
 	private HolmesClusters boss;
@@ -98,7 +99,7 @@ public class HolmesClusterConfig extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00504exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00504exception")+" "+ex.getMessage(), "error", true);
 		}
 		commandsValidate = comm;
 		boss = parent;
@@ -1022,7 +1023,7 @@ public class HolmesClusterConfig extends JFrame {
     	addWindowListener(new WindowAdapter() {
   	  	    public void windowActivated(WindowEvent e) {
   	  	    	boss.setEnabled(false);
-  	  	    	GUIManager.getDefaultGUIManager().getFrame().setEnabled(false);
+				overlord.getFrame().setEnabled(false);
   	  	    	updateComponents();
   	  	    }  
     	});
@@ -1036,7 +1037,7 @@ public class HolmesClusterConfig extends JFrame {
 		    	commandsValidate.add("\"correlation\",\"average\"");
 		    	
 		    	boss.setEnabled(true);
-		    	GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
+				overlord.getFrame().setEnabled(true);
 		    }
 		});
     }

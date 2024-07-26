@@ -21,7 +21,8 @@ import holmes.windows.HolmesNotepad;
  * Klasa zajmująca się zarządzaniem całym procesem symulacji. Kiedyś nazywała się NetSimulator
  */
 public class GraphicalSimulator {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private SimulatorGlobals.SimNetType netSimType;
 	private SimulatorMode simulatorStatus = SimulatorMode.STOPPED;
 	private SimulatorMode previousSimStatus = SimulatorMode.STOPPED;
@@ -42,7 +43,6 @@ public class GraphicalSimulator {
 	private SimulatorStandardPN engine;
 	private boolean emptySteps = false; 
 	
-	private GUIManager overlord;
 	/**
 	 * Enumeracja przechowująca tryb pracy symulatora. Dostępne wartości:<br><br>
 	 * ACTION_BACK - tryb cofnięcia pojedynczej akcji<br>
@@ -70,7 +70,6 @@ public class GraphicalSimulator {
 		launchingTransitions = new ArrayList<Transition>();
 		actionStack = new Stack<SimulationStep>(); //historia kroków
 		engine = new SimulatorStandardPN();
-		overlord = GUIManager.getDefaultGUIManager();
 	}
 	
 	/**

@@ -40,8 +40,8 @@ import holmes.utilities.Tools;
 public class HolmesNodeInfo extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 1476738825515760744L;
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private Place place;
 	private Transition transition;
 	private JPanel mainInfoPanel;
@@ -70,7 +70,6 @@ public class HolmesNodeInfo extends JFrame {
 	 * @param papa JFrame - okno wywołujące
 	 */
 	public HolmesNodeInfo(Place place, JFrame papa) {
-		overlord = GUIManager.getDefaultGUIManager();
 		parentFrame = papa;
 		this.place = place;
 		setTitle(lang.getText("HNIwin_entry001title")+" "+place.getName());
@@ -98,7 +97,6 @@ public class HolmesNodeInfo extends JFrame {
 	 * @param papa JFrame - okno wywołujące
 	 */
 	public HolmesNodeInfo(Transition transition, JFrame papa) {
-		overlord = GUIManager.getDefaultGUIManager();
 		parentFrame = papa;
 		this.transition = transition;
 		setTitle(lang.getText("HNIwin_entry001title")+" "+transition.getName());
@@ -123,7 +121,6 @@ public class HolmesNodeInfo extends JFrame {
 	}
 	
 	public HolmesNodeInfo(MetaNode metanode, JFrame papa) {
-		overlord = GUIManager.getDefaultGUIManager();
 		parentFrame = papa;
 		setTitle(lang.getText("HNIwin_entryM006title")+" "+metanode.getName()); //MetaNode
 
@@ -141,7 +138,7 @@ public class HolmesNodeInfo extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00478exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00478exception")+" "+ex.getMessage(), "error", true);
 		}
 		
 		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
@@ -285,7 +282,7 @@ public class HolmesNodeInfo extends JFrame {
 			try {
 				field.commitEdit();
 			} catch (ParseException ex) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00480exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00480exception")+" "+ex.getMessage(), "error", true);
 			}
 			String newName = field.getText();
 

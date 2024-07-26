@@ -20,8 +20,8 @@ import java.util.Iterator;
  * Klasa symulatora XTPN.
  */
 public class StateSimulatorXTPN implements Runnable {
-    private GUIManager overlord;
-    private static LanguageManager lang = GUIManager.getLanguageManager();
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private SimulatorEngineXTPN engineXTPN;
     private SimulatorGlobals sg;
 
@@ -54,7 +54,6 @@ public class StateSimulatorXTPN implements Runnable {
      */
     public StateSimulatorXTPN() {
         engineXTPN = new SimulatorEngineXTPN();
-        overlord = GUIManager.getDefaultGUIManager();
         sg = overlord.simSettings;
     }
 

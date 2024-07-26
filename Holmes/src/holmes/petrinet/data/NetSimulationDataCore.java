@@ -16,7 +16,8 @@ import holmes.workspace.ExtensionFileFilter;
 public class NetSimulationDataCore implements Serializable {
 	@Serial
 	private static final long serialVersionUID = -2180386709205258057L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<NetSimulationData> referenceSets = new ArrayList<NetSimulationData>();
 	private ArrayList<NetSimulationData> knockoutSets = new ArrayList<NetSimulationData>();
 	private ArrayList<Long> seriesData = new ArrayList<Long>();
@@ -153,7 +154,7 @@ public class NetSimulationDataCore implements Serializable {
 			}
 		}
 		if(result.size() != transSize) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00338"), "error", true);
+			overlord.log(lang.getText("LOGentry00338"), "error", true);
 			return null;
 		}
 		return result;
@@ -169,7 +170,7 @@ public class NetSimulationDataCore implements Serializable {
 	 */
 	public boolean loadDataSets() {
 		NetSimulationDataCore core = new NetSimulationDataCore();
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		
 		String newLocation = "";
 		try
@@ -189,14 +190,14 @@ public class NetSimulationDataCore implements Serializable {
 			core = (NetSimulationDataCore) ois.readObject();
 			ois.close();
 			fis.close();
-			
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setNewKnockoutData(core);
+
+			overlord.getWorkspace().getProject().setNewKnockoutData(core);
 			
 			return true;
 		} catch(Exception ioe){
 			String msg = lang.getText("LOGentry00339exception")+" "+newLocation;
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
-			GUIManager.getDefaultGUIManager().log(ioe.getMessage(), "error", false);
+			overlord.log(msg, "error", true);
+			overlord.log(ioe.getMessage(), "error", false);
 			return false;
 		}
 	}
@@ -207,7 +208,7 @@ public class NetSimulationDataCore implements Serializable {
 	 */
 	public boolean saveDataSets() {
 		try{
-			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+			String lastPath = overlord.getLastPath();
 			
 			FileFilter[] filter = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Simulation Data (.sim)",  new String[] { "sim" });
@@ -220,14 +221,13 @@ public class NetSimulationDataCore implements Serializable {
 
 			FileOutputStream fos= new FileOutputStream(newLocation);
 			ObjectOutputStream oos= new ObjectOutputStream(fos);
-			NetSimulationDataCore core = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessSimKnockoutData();
+			NetSimulationDataCore core = overlord.getWorkspace().getProject().accessSimKnockoutData();
 			oos.writeObject(core);
 			oos.close();
 			fos.close();
 			return true;
 		} catch(IOException ioe){
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00340exception")
-					+" "+ioe.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00340exception") +" "+ioe.getMessage(), "error", true);
 			return false;
 		}
 	}

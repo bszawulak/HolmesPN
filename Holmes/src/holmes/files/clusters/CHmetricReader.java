@@ -18,7 +18,8 @@ import holmes.utilities.ByExt;
  *
  */
 public class CHmetricReader {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Dość niezwykły sposób przeprowadzania elementarnej operacji konwersji :)
 	 * @param strNumber String - łańcuch znaków, który z pietyzmem zmieniamy w Double
@@ -82,7 +83,7 @@ public class CHmetricReader {
 			String[] tempList = fp1.list(only); // metoda list z filtrem
 			if(tempList.length != 56) {
 				String msg = lang.getText("LOGentry00056a")+" "+CHmetricsPath+" "+lang.getText("LOGentry00056b");
-				GUIManager.getDefaultGUIManager().log(msg, "warning", true);
+				overlord.log(msg, "warning", true);
 			}
 			
 			String[] dirList = ClusterReader.fillFileInfo();
@@ -96,7 +97,7 @@ public class CHmetricReader {
 				//.out.println("");
 			}
 		} catch (IOException e){
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00057")+" "+currentFile, "error", true);
+			overlord.log(lang.getText("LOGentry00057")+" "+currentFile, "error", true);
 		}
 		return chData;
 	}

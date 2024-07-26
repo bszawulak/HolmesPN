@@ -24,15 +24,13 @@ import java.util.stream.Collectors;
  * sprytnym udawaniu że taka kontrola w ogóle istnieje.
  */
 public class SubnetsControl {
-	GUIManager overlord;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 
 	/**
 	 * Konstruktor obiektu klasy SubnetsControl.
-	 * @param boss GUIManager - obiekt okna głównego
 	 */
-	public SubnetsControl(GUIManager boss) {
-		this.overlord = boss;
+	public SubnetsControl() {
 	}
 	
 	/**

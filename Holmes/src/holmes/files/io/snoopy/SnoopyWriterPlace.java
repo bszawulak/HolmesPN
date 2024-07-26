@@ -17,7 +17,8 @@ import static holmes.graphpanel.EditorResources.placeDefColor;
  * Klasa symuluje szaleństwo zapisu miejsc w programie Snoopy. To już nawet nie jest Sparta...
  */
 public class SnoopyWriterPlace {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private Place holmesPlace;
 	/** Identyfikator podstawowy miejsca (pierwsze miejsce w sieci ma nr 226, kolejne to już zależy)  */
 	public int snoopyStartingID = -1;
@@ -104,7 +105,7 @@ public class SnoopyWriterPlace {
 			grParents.add(currID);
 			Point pxy = el.getPosition(); //Bogom dzięki, to to samo w Holmes i Snoopy...
 			
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGridAlignWhenSaved").equals("1"))
+			if(overlord.getSettingsManager().getValue("editorGridAlignWhenSaved").equals("1"))
 				pxy = NetworkTransformations.alignToGrid(pxy);
 			
 			grParentsLocation.add(pxy);
@@ -266,7 +267,7 @@ public class SnoopyWriterPlace {
 		write(bw, "        <graphics count=\""+locations+"\">");
 		
 		if(currID != grParents.get(0)) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00146critErr"), "error", true);
+			overlord.log(lang.getText("LOGentry00146critErr"), "error", true);
 		}
 		
 		Color snoopyColor = placeDefColor;
@@ -297,13 +298,13 @@ public class SnoopyWriterPlace {
 		try {
 			bw.write(text+"\n");
 		} catch (Exception ex) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00147exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00147exception")+" "+ex.getMessage(), "error", true);
 		}
 	}
 	
 	public String toString() {
 		StringBuilder txt = new StringBuilder();
-		int pPos = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().indexOf(holmesPlace);
+		int pPos = overlord.getWorkspace().getProject().getPlaces().indexOf(holmesPlace);
 		txt.append("P").append(pPos).append(" [gPlaceID:").append(globalPlaceID).append("]");
 		txt.append(" [SnoopyStartID: ").append(snoopyStartingID).append("]");
 		if(!grParents.isEmpty()) {

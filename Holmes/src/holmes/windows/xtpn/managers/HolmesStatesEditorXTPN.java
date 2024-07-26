@@ -55,10 +55,9 @@ public class HolmesStatesEditorXTPN extends JFrame {
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00533exception")+" "+ex.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00533exception")+" "+ex.getMessage(), "error", true);
         }
         doNotUpdate = true;
-        GUIManager overlord = GUIManager.getDefaultGUIManager();
         PetriNet pn = overlord.getWorkspace().getProject();
         this.parentWindow = parent;
         this.multisetM = stateVector;
@@ -83,7 +82,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
         int size = multisetM.getMultiset_M_Size();
         if(size != places.size()) {
             String strB = String.format(lang.getText("HSEXwin_entry002"), size, places.size());
-            GUIManager.getDefaultGUIManager().log(strB,"error", true);
+            overlord.log(strB,"error", true);
             return;
         }
         for(int placeIndex=0; placeIndex<size; placeIndex++) {
@@ -244,7 +243,7 @@ public class HolmesStatesEditorXTPN extends JFrame {
                     , this, multisetM.accessMultiset_K(selectedPlace)
                     , multisetM.isPlaceStoredAsGammaActive(selectedPlace));
         } catch (Exception ex) {
-            GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00534exception")+ " "+ex.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00534exception")+ " "+ex.getMessage(), "error", true);
         }
     }
 

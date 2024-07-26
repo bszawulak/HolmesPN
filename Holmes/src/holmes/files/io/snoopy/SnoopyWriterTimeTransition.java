@@ -14,7 +14,8 @@ import holmes.varia.NetworkTransformations;
 import static holmes.graphpanel.EditorResources.transDefColor;
 
 public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	public SnoopyWriterTimeTransition() {
 		super();
 	}
@@ -80,7 +81,7 @@ public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 			grParents.add(currID);
 			Point pxy = el.getPosition();
 			
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGridAlignWhenSaved").equals("1"))
+			if(overlord.getSettingsManager().getValue("editorGridAlignWhenSaved").equals("1"))
 				pxy = NetworkTransformations.alignToGrid(pxy);
 			
 			grParentsLocation.add(pxy);
@@ -234,13 +235,13 @@ public class SnoopyWriterTimeTransition extends SnoopyWriterTransition {
 		//JEGO ELEMENTÓW NIE WIADOMO ILE RAZY...
 		currID++; //365 == grParent(0)
 		if(currID != grParents.get(0)) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00148critErr"), "errer", true);
+			overlord.log(lang.getText("LOGentry00148critErr"), "errer", true);
 		}
 		
 		write(bw, "        <graphics count=\""+locations+"\">");
 		
 		if(currID != grParents.get(0)) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00149critErr"), "error", true);
+			overlord.log(lang.getText("LOGentry00149critErr"), "error", true);
 		}
 		
 		Color snoopyColor = transDefColor;

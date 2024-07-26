@@ -33,10 +33,11 @@ import holmes.utilities.Tools;
 public class PetriNetTools implements TreeSelectionListener {
 	@Serial
 	private static final long serialVersionUID = 5385847227073467035L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JPanel panel;
 	private Point position;
 	private GUIManager guiManager;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
 	private JTree toolTree;
 	private DefaultMutableTreeNode pointerNode;
 
@@ -156,12 +157,12 @@ public class PetriNetTools implements TreeSelectionListener {
 		
 		if(!node.getUserObject().toString().equals("Pointer")) {
 			if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-					"Only Pointer is available when simulator is working.", "Warning")) {
+					lang.getText("PNNT_toolTip_entry001"), lang.getText("warning"))) {
 				guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
 				return;
 			}
 			if(GUIManager.getDefaultGUIManager().reset.isXTPNSimulatorActiveWarning(
-					"Only Pointer is available when XTPN simulator is working.", "Warning")) {
+					lang.getText("PNNT_toolTip_entry002"), lang.getText("warning"))) {
 				guiManager.getWorkspace().setGraphMode(DrawModes.POINTER);
 				return;
 			}

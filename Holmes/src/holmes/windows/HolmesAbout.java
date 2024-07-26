@@ -27,8 +27,8 @@ import holmes.utilities.Tools;
 public class HolmesAbout extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 6034143130559149651L;
-	private static LanguageManager lang = GUIManager.getLanguageManager();
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	JFrame parentFrame;
 	JTextArea textArea;
 	

@@ -22,7 +22,8 @@ import holmes.varia.Check;
  * oraz łuki), inwarianty, zbiory MCT i inne.
  */
 public class ProjectWriter {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private final PetriNet projectCore;
 	private final ArrayList<Place> places ;
 	private final ArrayList<Transition> transitions;
@@ -47,7 +48,7 @@ public class ProjectWriter {
 	 * Konstruktor obiektu klasy ProjectWriter.
 	 */
 	public ProjectWriter() {
-		projectCore = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		projectCore = overlord.getWorkspace().getProject();
 		places = projectCore.getPlaces();
 		transitions = projectCore.getTransitions();
 		metaNodes = projectCore.getMetaNodes();
@@ -136,21 +137,21 @@ public class ProjectWriter {
 			boolean statusSSA = saveSSAvectors(bw);
 			bw.write("<SSA vectors data end>"+newline);
 
-			GUIManager.getDefaultGUIManager().log("*******************************************************","text", true);
-			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry001")+" "+statusNet, "text", true);
-			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry002")+" "+statusInv, "text", true);
-			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry003")+" "+statusPInv, "text", true);
-			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry004")+" "+statusMCT, "text", true);
-			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry005")+" "+statusStates, "text", true);
-			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry006")+" "+statusXTPNStates, "text", true);
-			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry007")+" "+statusFR, "text", true);
-			GUIManager.getDefaultGUIManager().log(lang.getText("PW_entry008")+" "+statusSSA, "text", true);
-			GUIManager.getDefaultGUIManager().log("*******************************************************","text", true);
+			overlord.log("*******************************************************","text", true);
+			overlord.log(lang.getText("PW_entry001")+" "+statusNet, "text", true);
+			overlord.log(lang.getText("PW_entry002")+" "+statusInv, "text", true);
+			overlord.log(lang.getText("PW_entry003")+" "+statusPInv, "text", true);
+			overlord.log(lang.getText("PW_entry004")+" "+statusMCT, "text", true);
+			overlord.log(lang.getText("PW_entry005")+" "+statusStates, "text", true);
+			overlord.log(lang.getText("PW_entry006")+" "+statusXTPNStates, "text", true);
+			overlord.log(lang.getText("PW_entry007")+" "+statusFR, "text", true);
+			overlord.log(lang.getText("PW_entry008")+" "+statusSSA, "text", true);
+			overlord.log("*******************************************************","text", true);
 
 			bw.close();
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00226exception")+" "+e.getMessage(), "text", true);
+			overlord.log(lang.getText("LOGentry00226exception")+" "+e.getMessage(), "text", true);
 			return false;
 		}
 	}
@@ -232,7 +233,7 @@ public class ProjectWriter {
 							pointY = gammaLoc.getPosition().y;
 							bw.write(spaces(sp) + "<Place gamma offset data sheet/x/y/elIndex:" + sheetId + ";" + pointX + ";" + pointY + ";" + e + ">" + newline); //sheetID/x/y
 						} catch (Exception exc) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00227exception_1")+" "
+							overlord.log(lang.getText("LOGentry00227exception_1")+" "
 									+place.getName()+ " "+lang.getText("LOGentry00227exception_2"), "error", true);
 						}
 					}
@@ -319,7 +320,7 @@ public class ProjectWriter {
 							pointY = alphaLoc.getPosition().y;
 							bw.write(spaces(sp)+"<Transition alpha offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 						} catch (Exception exc) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00228exception_1")+" "+trans.getName()
+							overlord.log(lang.getText("LOGentry00228exception_1")+" "+trans.getName()
 									+" "+lang.getText("LOGentry00228exception_2"), "error", true);
 						}
 
@@ -330,7 +331,7 @@ public class ProjectWriter {
 							pointY = betaLoc.getPosition().y;
 							bw.write(spaces(sp)+"<Transition beta offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 						} catch (Exception exc) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00229exception_1")+ " "+trans.getName()
+							overlord.log(lang.getText("LOGentry00229exception_1")+ " "+trans.getName()
 									+ lang.getText("LOGentry00229exception_2"), "error", true);
 						}
 
@@ -341,7 +342,7 @@ public class ProjectWriter {
 							pointY = betaLoc.getPosition().y;
 							bw.write(spaces(sp)+"<Transition tau offset data sheet/x/y/elIndex:"+sheetId+";"+pointX+";"+pointY+";"+e+">"+newline); //sheetID/x/y
 						} catch (Exception exc) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00230exception_1")+ " "+trans.getName()+ " "
+							overlord.log(lang.getText("LOGentry00230exception_1")+ " "+trans.getName()+ " "
 									+lang.getText("LOGentry00230exception_2"), "error", true);
 						}
 					}
@@ -622,7 +623,7 @@ public class ProjectWriter {
 			int doubleArc = arcClasses.get(5) / 2;
 			int totalArcs = arcs.size();
 			if(savedArcs != totalArcs) {
-				GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00231a")+" "
+				overlord.log(lang.getText("LOGentry00231a")+" "
 						+savedArcs+" "+lang.getText("LOGentry00231b")+ " "+totalArcs+" "+lang.getText("LOGentry00231c"), "error", true);
 			}
 			
@@ -644,7 +645,7 @@ public class ProjectWriter {
 
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00232exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00232exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -695,7 +696,7 @@ public class ProjectWriter {
 			bw.write(spaces(2)+"<EOIN>"+newline);
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00233exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00233exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -747,7 +748,7 @@ public class ProjectWriter {
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00234exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00234exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -801,7 +802,7 @@ public class ProjectWriter {
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00235exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00235exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -839,7 +840,7 @@ public class ProjectWriter {
 			
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00236exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00236exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -872,7 +873,7 @@ public class ProjectWriter {
 						placeIndex++;
 
 						if(placeIndex + 1 > places.size()) {
-							GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00237a")+stateProcessed
+							overlord.log(lang.getText("LOGentry00237a")+stateProcessed
 									+lang.getText("LOGentry00237b"), "error", true);
 							int placeError = 0;
 							for(ArrayList<Double> multisetKK : multisetMobject.accessArrayListSOfMultiset_M()) {
@@ -880,7 +881,7 @@ public class ProjectWriter {
 								for(double d : multisetKK) {
 									mTxt += d + " | ";
 								}
-								GUIManager.getDefaultGUIManager().log("p_"+placeError+":=  (" +mTxt+")", "error", true);
+								overlord.log("p_"+placeError+":=  (" +mTxt+")", "error", true);
 							}
 							break;
 						} else {
@@ -920,7 +921,7 @@ public class ProjectWriter {
 
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00238exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00238exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -956,7 +957,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<EOFRv>"+newline);		
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00239exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00239exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -995,7 +996,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<EOSSA>"+newline);
 			return true;
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log(lang.getText("LOGentry00240exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00240exception")+" "+e.getMessage(), "error", true);
 			return false;
 		}
 	}

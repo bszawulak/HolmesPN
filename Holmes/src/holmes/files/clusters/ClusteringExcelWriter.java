@@ -32,7 +32,7 @@ import jxl.write.biff.RowsExceededException;
  *
  */
 public class ClusteringExcelWriter {
-	private static LanguageManager lang = GUIManager.getLanguageManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private WritableCellFormat defCellFormat; //standardowe formatowanie
 	private WritableCellFormat defCellFormatBold;
 	private WritableCellFormat defCellFormatItalic;
