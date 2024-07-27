@@ -177,7 +177,7 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
 				}
 			}
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00422exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00422exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 }

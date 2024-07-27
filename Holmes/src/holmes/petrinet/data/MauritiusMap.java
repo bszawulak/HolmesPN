@@ -88,7 +88,7 @@ public class MauritiusMap {
 						antiVector.set(j, 0); //udawajmy, że jej tam w ogóle nie ma, na potrzeby bloku niżej
 					}
 				} catch (Exception ex) {
-					overlord.log(lang.getText("LOGentry00544exception")+" "+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00544exception")+"\n"+ex.getMessage(), "error", true);
 				} //divide by zero - ignore
 			}
 			

@@ -148,7 +148,7 @@ public class FunctionalTransTableModel extends DefaultTableModel {
 				case 6 -> dataMatrix.get(row).enabled = (boolean) value;
 			}
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00433exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00433exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 }

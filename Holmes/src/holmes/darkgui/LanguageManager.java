@@ -48,19 +48,27 @@ public class LanguageManager {
             }
         }
     }
+    
+    public String getSelectedLanguage() {
+        return selectedLanguage;
+    }
 
     /**
      * Metoda ustawia język w programie.
      * @param language <b>String</b>, nazwa języka
      */
-    public void setLanguage(String language) {
+    public void setLanguage(String language, boolean startup) {
         if(loadedLanguages.containsKey(language)) {
             selectedLanguage = language;
             currentDictionary = loadedLanguages.get(language);
+            
+            overlord.getSettingsManager().setValue("selected_language", language, !startup);
         } else {
             overlord.log("Language not found: " + language, "error", true);
             selectedLanguage = "English";
             currentDictionary = defaultDictionary;
+
+            overlord.getSettingsManager().setValue("selected_language", "English", !startup);
         }
     }
 
@@ -112,9 +120,8 @@ public class LanguageManager {
             for (HashMap.Entry<String, String> entry : availableLanguagesFromCfg.entrySet()) {
                 String key = entry.getKey();
                 overlord.logNoEnter(key + " | ", "text", false);
-                overlord.log("", "text", false);
             }
-
+            overlord.log("", "text", false);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
                     "Error reading language config file",

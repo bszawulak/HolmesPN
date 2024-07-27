@@ -94,13 +94,20 @@ public class SettingsManager {
     @SuppressWarnings("unused")
     private void checkAndRestoreSetting() {
         ArrayList<Setting> settingsNew = new ArrayList<Setting>();
-
-        //checkAndFix(settingsNew, "abyss_version", "1.30 release 30-3-2015");
-        //settingsNew.add(new Setting("abyss_version", "1.31 release 7-4-2015"));
-        //settingsNew.add(new Setting("abyss_version", "1.37 release 19-4-2015")); //always add new
-        settingsNew.add(new Setting("holmes_version", "1.7.0.1 (Harry Du Bois edition)"));
+        settingsNew.add(new Setting("holmes_version", "1.7.1 (Harry Du Bois edition)"));
         //2.0 Tequila Sunset
-        settingsNew.add(new Setting("selected_language", "English"));
+        
+        ArrayList<String> confiredDictionaries = new ArrayList<String>();
+        confiredDictionaries.add("English");
+        confiredDictionaries.add("Polish");
+        confiredDictionaries.add("YourLanguage");
+        if(!confiredDictionaries.contains(getValue("selected_language"))) {
+            settingsNew.add(new Setting("selected_language", "English"));
+        } else {
+            checkAndFix(settingsNew, "selected_language", getValue("selected_language"));
+        }
+        
+        //checkAndFix(settingsNew, "selected_language", "English");
         checkAndFix(settingsNew, "r_path", "c://Program Files//R//R-3.1.2//bin//Rscript.exe");
         checkAndFix(settingsNew, "r_path64", "c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
         checkAndFix(settingsNew, "lastOpenedPath", "");
@@ -237,7 +244,7 @@ public class SettingsManager {
 
             checkAndRestoreSetting();
 
-            GUIManager.getDefaultGUIManager().log(lang.getText("SetMan_entry002"), "text", true);
+            GUIManager.getDefaultGUIManager().log(lang.getText("SetMan_entry002"), "text", true); //Settings file read:
             for (Setting s : settings) {
                 GUIManager.getDefaultGUIManager().logNoEnter("ID: ", "bold", false);
                 GUIManager.getDefaultGUIManager().logNoEnter(s.getID(), "italic", false);
@@ -246,9 +253,11 @@ public class SettingsManager {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    lang.getText("SetMan_entry003"),
-                    lang.getText("SetMan_entry004"),
+                    lang.getText("SetMan_entry003"), //The file holmes.cfg, which normally contains the settings for this application,\nhas not been found or contains invalid values. Restoring default file.
+                    lang.getText("SetMan_entry004"), //Settings file not found or damaged
                     JOptionPane.ERROR_MESSAGE);
+            //Settings file not found or damaged. The file holmes.cfg, which normally contains the settings for this application,
+            // has not been found or contains invalid values. Restoring default file.
             GUIManager.getDefaultGUIManager().log(lang.getText("SetMan_entry005"), "error", true);
 
             if (error)
@@ -282,9 +291,10 @@ public class SettingsManager {
             return new Setting(ID, value);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    lang.getText("SetMan_entry006"),
-                    lang.getText("SetMan_entry007"),
+                    lang.getText("SetMan_entry006"), //The file holmes.cfg, which normally contains the settings for this application, is corrupt. Unable to load settings.
+                    lang.getText("SetMan_entry007"), //Settings corrupt, converting line has failed.
                     JOptionPane.ERROR_MESSAGE);
+            //Settings corrupt! The file holmes.cfg, which normally contains the settings for this application, is corrupt. Unable to load setting line: 
             GUIManager.getDefaultGUIManager().log(lang.getText("SetMan_entry008"), "error", true);
             GUIManager.getDefaultGUIManager().log(line, "italic", false);
             return null;

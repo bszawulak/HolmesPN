@@ -191,7 +191,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 		settingsManager = new SettingsManager();
 		settingsManager.loadSettings();
 		frame.setTitle("Holmes "+settingsManager.getValue("holmes_version"));
-		lang.setLanguage(settingsManager.getValue("selected_language"));
+		lang.setLanguage(settingsManager.getValue("selected_language"), true);
 		
 		createClusterWindow(); // okno tabeli klastrów
 		createNetPropertiesWindow(); // okno właściwości sieci

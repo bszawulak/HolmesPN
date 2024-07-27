@@ -259,7 +259,7 @@ public class SubnetsGraphics {
 				graphPanel.setOriginSize(new Dimension(width+200, height+100));
 			}
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00419exception"), "error", true);	
+			overlord.log(lang.getText("LOGentry00419exception")+"\n"+e.getMessage(), "error", true);	
 		}
 	}
 	

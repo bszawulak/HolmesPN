@@ -27,15 +27,14 @@ public class HolmesNodeInfoXTPNactions {
         int tokensNum = place.getTokensNumber();
         if (place.isGammaModeActive()) {
             //zapytać czy wyłączyć, konwersja kasowanie arrayListy
-            String[] options = {"Reduce to classical place", "Stay as XTPN"}; //Reduce to classical place, Stay as XTPN
-            int answer = JOptionPane.showOptionDialog(null, "Turning \u03B3-mode off will clear " +
-                            "all times of tokens ("+tokensNum+") and \nas a result place will have classical PN features."  +
-                            "\nTransform XTPN place into classical place?",
-                    "Transformation into classical place",
+            String[] options = {lang.getText("HNIXTPNAwin_entry001op1"), lang.getText("HNIXTPNAwin_entry001op2")}; //Reduce to classical place, Stay as XTPN
+            int answer = JOptionPane.showOptionDialog(null, lang.getText("HNIXTPNAwin_entry001a")+tokensNum
+                            +lang.getText("HNIXTPNAwin_entry001b"),
+                    lang.getText("HNIXTPNAwin_entry001t"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
             if (answer == 0) { //redukcja do klasycznego miejsca
-                button.setNewText("<html>Gamma: OFF</html>"); //Gamma: OFF
+                button.setNewText(lang.getText("HNIXTPNAwin_entry002")); //Gamma: OFF
                 button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 place.transformXTPNintoPNpace();
                 overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -45,15 +44,14 @@ public class HolmesNodeInfoXTPNactions {
             }
         } else {
             //zapytać czy wyłączyć, konwersja kasowanie arrayListy
-            String[] options = {"Transform into XTPN", "Stay as classical PN place"}; //Transform into XTPN, Stay as classical PN place
-            int answer = JOptionPane.showOptionDialog(null, "This will transform classical " +
-                            "PN place into XTPN.\nAll tokens ("+tokensNum+") will be assigned 0.0 time values."  +
-                            "\nTransform into XTPN place?",
-                    "Conversion into XTPN place",
+            String[] options = {lang.getText("HNIXTPNAwin_entry003op1"), lang.getText("HNIXTPNAwin_entry003op2")}; //Transform into XTPN, Stay as classical PN place
+            int answer = JOptionPane.showOptionDialog(null, lang.getText("HNIXTPNAwin_entry003a")
+                            +tokensNum+lang.getText("HNIXTPNAwin_entry003b"),
+                    lang.getText("HNIXTPNAwin_entry003t"),
                     JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
             //cancel
             if (answer == 0) { //transformacja PN -> XTPN
-                button.setNewText("<html>Gamma: ON</html>"); //Gamma: ON
+                button.setNewText(lang.getText("HNIXTPNAwin_entry004")); //Gamma: ON
                 button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 place.transformIntoXTPNplace();
                 overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -68,13 +66,13 @@ public class HolmesNodeInfoXTPNactions {
         HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
         if (place.isGammaRangeVisible()) {
             place.setGammaRangeVisibility(false);
-            button.setNewText("<html>\u03B3: Hidden<html>"); //\u03B3: Hidden
+            button.setNewText(lang.getText("HNIXTPNAwin_entry005invis")); //\u03B3: Hidden
             button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             overlord.getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);
         } else {
             place.setGammaRangeVisibility(true);
-            button.setNewText("<html>\u03B3: Visible<html>"); //\u03B3: Visible
+            button.setNewText(lang.getText("HNIXTPNAwin_entry005vis")); //\u03B3: Visible
             button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             overlord.getWorkspace().getProject().repaintAllGraphPanels();
             button.setFocusPainted(false);

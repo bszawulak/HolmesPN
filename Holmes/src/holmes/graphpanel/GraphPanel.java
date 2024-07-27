@@ -143,7 +143,7 @@ public class GraphPanel extends JComponent {
 				image = Tools.getImageFromIcon("/cursors/"+ modeName + ".gif");
 			} catch (Exception e ) {
 				String strB = String.format(lang.getText("LOGentry00330exception"), modeName);
-				overlord.log(strB, "error", true);
+				overlord.log(strB+"\n"+e.getMessage(), "error", true);
 				//i tak nic nie pomoże, jak powyższe się wywali. Taka nasza Java piękna i wesoła.
 			}
 			Point hotSpot = new Point(0, 0);
@@ -242,7 +242,7 @@ public class GraphPanel extends JComponent {
 			drawPetriNet(g2d);
 		} catch (Exception e) {
 			//e.printStackTrace();
-			overlord.log(lang.getText("LOGentry00331critErr"), "error", true);
+			overlord.log(lang.getText("LOGentry00331critErr")+"\n"+e.getMessage(), "error", true);
 			overlord.reset.emergencyRestart();
 		}
 	}

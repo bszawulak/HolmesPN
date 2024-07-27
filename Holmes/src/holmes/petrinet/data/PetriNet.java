@@ -921,7 +921,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					}
 				}
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00348exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00348exception")+"\n"+e.getMessage(), "error", true);
 			}
 		} else {
 			if(simulatorType == 1) { //wybrany jest XTPN, przełaczamy na normalne
@@ -1362,7 +1362,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				}
 			}
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00359exception")+" " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00359exception")+"\n" + e.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1404,7 +1404,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			}
 			
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00364exception")+" " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00364exception")+"\n" + e.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1444,7 +1444,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				}
 			}
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00369exception")+" " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00369exception")+"\n" + e.getMessage(), "error", true);
 		}
 		return result;
 	}

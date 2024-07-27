@@ -122,7 +122,7 @@ public class SimKnockPlacesCompAllTableModel extends AbstractTableModel {
 				return Integer.parseInt(strVal);
 				//return returnValue;
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00429exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00429exception")+"\n"+e.getMessage(), "error", true);
 				return "error";
 			}
 		} else {
@@ -131,7 +131,7 @@ public class SimKnockPlacesCompAllTableModel extends AbstractTableModel {
 				String strVal = returnValue.toString().replace(",", ".");
 				return Double.parseDouble(strVal);
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00430exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00430exception")+"\n"+e.getMessage(), "error", true);
 				return "error";
 			}
 		}

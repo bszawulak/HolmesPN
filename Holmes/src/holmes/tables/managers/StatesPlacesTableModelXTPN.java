@@ -178,7 +178,7 @@ public class StatesPlacesTableModelXTPN extends AbstractTableModel {
 
             //boss.changeStateXTPN(row, col, newValue);
         } catch (Exception ex) {
-            overlord.log(lang.getText("LOGentry00427exception")+" "+ex.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00427exception")+"\n"+ex.getMessage(), "error", true);
         }
     }
 
@@ -191,7 +191,7 @@ public class StatesPlacesTableModelXTPN extends AbstractTableModel {
             ArrayList<String> rowVector = dataMatrix.get(row);
             rowVector.set(col, ""+(int)newValue);
         } catch (Exception ex) {
-            overlord.log(lang.getText("LOGentry00428exception")+" "+ex.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00428exception")+"\n"+ex.getMessage(), "error", true);
         }
     }
 }

@@ -227,7 +227,7 @@ public class NetSimulationDataCore implements Serializable {
 			fos.close();
 			return true;
 		} catch(IOException ioe){
-			overlord.log(lang.getText("LOGentry00340exception") +" "+ioe.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00340exception") +"\n"+ioe.getMessage(), "error", true);
 			return false;
 		}
 	}

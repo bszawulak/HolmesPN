@@ -103,7 +103,7 @@ public class SPNdataVector {
 				return Double.parseDouble(dataVector.get(index).ST_function);
 			} catch(Exception e) {
 				String strB = String.format(lang.getText("LOGentry00374exception"), index);
-				overlord.log(strB, "warning", true);
+				overlord.log(strB+"\n"+e.getMessage(), "warning", true);
 				return 1.0;
 			}
 		}

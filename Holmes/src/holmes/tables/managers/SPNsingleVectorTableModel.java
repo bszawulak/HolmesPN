@@ -163,7 +163,7 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 				dataMatrix.get(row).subType = (TransitionSPNExtension.StochaticsType)value;
 			}
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00421exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00421exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 }

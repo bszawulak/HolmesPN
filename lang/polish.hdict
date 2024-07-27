@@ -1,7 +1,7 @@
 //english dictionary 27.07.2024 for 1.7.1, without Decompositions windows
 //GUIManager:
-GUIM_toolboxTabName, Toolbox
-GUIM_simulatorTabName, Simulator
+GUIM_toolboxTabName, Narzędzia
+GUIM_simulatorTabName, Symulator
 GUIM_quicksimTabName, QuickSim
 GUIM_tinvTabName, T-inv
 GUIM_pinvTabName, P-inv
@@ -9,39 +9,40 @@ GUIM_mctTabName, MCT
 GUIM_mcsTabName, MCS
 GUIM_KnockoutTabName, Knockout
 GUIM_fixTabName, NetFix
-GUIM_clustersTabName, Clusters
-GUIM_closingQuestion001, Net or its data have been changed since last save. Exit, save&exit or do not exit now?
-GUIM_closeWindowTitle001, Project has been modified
-LOGentry00001, Exiting program
-GUIM_closingQuestion002, Are you sure you want to close the program?
-LOGentry00002, Tools directory does not exist:
-LOGentry00003, File COMMAND.ina does not exist or is corrupted.
-GUI_inaProblem001, Unable to recreate COMMAND.ina.
-GUI_inaProblem002, Error - COMMAND.ina
-LOGentry00004, Unable to recreate COMMAND.ina. Invariants generator will work in Holmes mode only.
-LOGentry00005, File COMMANDp.ina does not exist or is corrupted.
-GUI_inaProblem003, Error - COMMANDp.ina
-LOGentry00006, File ina.bat did not exist or was corrupted:
-GUI_inaProblem004, Unable to recreate ina.bat. This is a critical error, possible write protection issues in program directory. Invariants generation using INAwin32 will most likely fail.
-GUI_inaProblem005, Critical error - writing
-LOGentry00007, Critical error, unable to recreate ina.bat file. Invariants generator will not work.
-LOGentry00008R, Invalid path (
-LOGentry00009R, ) to Rscript executable file.
-GUI_RscriptProblem001, Manually locate Rscript.exe
-GUI_RscriptProblem002, R not installed
-GUI_RscriptProblem003, Rscript.exe missing in path
-GUI_RscriptProblem004, Missing executable
-GUI_RscriptButton001, Select Rscript.exe
-GUI_RscriptButton002tip, Please select Rscript exe, usually located in R/Rx.x.x/bin directory.
-LOGentry00010R, Rscript executable file inaccessible. Some features (clusters operations) will be disabled.
-LOGentry00011R, Rscript.exe manually located in
-LOGentry00012R, . Settings file updated.
-LOGentry00013R, Rscript.exe location unknown. Clustering procedures will not work.
-GUI_simulator0001warn, Warning: simulator active. Cannot proceed until manually stopped.
-GUI_simulator0002warn, Warning: XTPN simulator active. Cannot proceed until manually stopped.
+GUIM_clustersTabName, Klastry
+GUIM_closingQuestion001, Sieć lub jej dane zostały zmienione od ostatniego zapisu. Wyjść, zapisać i wyjść czy jeszcze nie wychodzić?
+GUIM_closeWindowTitle001, Projekt został zmodyfikowany
+LOGentry00001, Zamykanie programu
+GUIM_closingQuestion002, Czy na pewno chcesz zamknąć program?
+LOGentry00002, Katalog narzędzi nie istnieje:
+LOGentry00003, Plik COMMAND.ina nie istnieje lub jest uszkodzony.
+GUI_inaProblem001, Nie można odtworzyć pliku COMMAND.ina.
+GUI_inaProblem002, Błąd - COMMAND.ina
+LOGentry00004, Nie można odtworzyć pliku COMMAND.ina. Generator inwariantów będzie działał tylko w trybie Holmesa.
+LOGentry00005, Plik COMMANDp.ina nie istnieje lub jest uszkodzony.
+GUI_inaProblem003, Błąd - COMMANDp.ina
+LOGentry00006, Plik ina.bat nie istniał lub był uszkodzony:
+GUI_inaProblem004, Nie można odtworzyć pliku ina.bat. To krytyczny błąd, możliwe problemy z uprawnieniami do zapisu w katalogu programu. Generowanie inwariantów za pomocą INAwin32 prawdopodobnie zakończy się niepowodzeniem.
+GUI_inaProblem005, Błąd krytyczny - zapis
+LOGentry00007, Błąd krytyczny, nie można odtworzyć pliku ina.bat. Generator inwariantów nie będzie działał.
+LOGentry00008R, Nieprawidłowa ścieżka (
+LOGentry00009R, ) do pliku wykonywalnego Rscript.
+GUI_RscriptProblem001, Ręczne zlokalizowanie Rscript.exe
+GUI_RscriptProblem002, R niezainstalowane
+GUI_RscriptProblem003, Brak pliku Rscript.exe w ścieżce
+GUI_RscriptProblem004, Brak pliku wykonywalnego
+GUI_RscriptButton001, Wybierz Rscript.exe
+GUI_RscriptButton002tip, Proszę wybrać plik Rscript.exe, zazwyczaj znajduje się w katalogu R/Rx.x.x/bin.
+LOGentry00010R, Plik wykonywalny Rscript jest niedostępny. Niektóre funkcje (operacje klastrów) zostaną wyłączone.
+LOGentry00011R, Rscript.exe ręcznie zlokalizowane w
+LOGentry00012R, . Plik ustawień zaktualizowany.
+LOGentry00013R, Lokalizacja pliku Rscript.exe nieznana. Procedury klastrów nie będą działać.
+GUI_simulator0001warn, Ostrzeżenie: symulator jest aktywny. Nie można kontynuować, dopóki nie zostanie ręcznie zatrzymany.
+GUI_simulator0002warn, Ostrzeżenie: symulator XTPN jest aktywny. Nie można kontynuować, dopóki nie zostanie ręcznie zatrzymany.
+
 //GUIOperations:
-GUIO_openProject001, Reading project file succcessful.
-LOGentry00014, Unable to extract net as image. Cannot save to file:
+GUIO_openProject001, Reading project file succcessful. | Odczyt pliku projektu zakończony sukcesem.
+LOGentry00014, Unable to extract net as image. Cannot save to file: | Nie można zapisać sieci jako obraz. Nie można zapisać do pliku:
 GUIO_messageBox001, File choosing error. Cannot proceed.
 LOGentry00015, File choosing error. No extension:
 GUIO_warning001, \nWarning: hierarchical net structure detected. Using Holmes project is strongly advised.\nOther save format will most probably fail.\n
@@ -142,71 +143,71 @@ GUIO_fix005, , processed arcs:
 GUIO_fix006, , removed ghost-arcs:
 
 //DarkMenu:
-DM_menuFile, File
-DM_menuFileDesc, The File Menu
-DM_menuFileProject, New Project
-DM_menuFileOpenProject, Open project...
-DM_menuFileImportNet, Import network...
-DM_menuFileMerge, Merge nets...
-DM_menuFileSavePr, Save project...
-DM_menuFileExport, Export network...
-DM_menuFileExportPNT, Export as PNT...
-DM_menuFileExportImg, Export to image...
-DM_menuFileExportTex, Tex Export
-DM_menuFileExportTexPT, Places and transitions table...
-DM_menuFileExportTexInv, Invariants table...
-DM_menuFileExportTexMCT, MCT table...
-DM_menuFileExit, Exit
-DM_menuFileExitQ1, Are you sure you want to close the program?
-DM_menuFileExitQ2, Close Holmes
-DM_menuView, View
+DM_menuFile, Plik
+DM_menuFileDesc, Menu Plik
+DM_menuFileProject, Nowy projekt
+DM_menuFileOpenProject, Otwórz projekt
+DM_menuFileImportNet, Importuj sieć
+DM_menuFileMerge, Scal sieci
+DM_menuFileSavePr, Zapisz projekt
+DM_menuFileExport, Eksportuj sieć
+DM_menuFileExportPNT, Eksportuj jako PNT
+DM_menuFileExportImg, Eksportuj do obrazu
+DM_menuFileExportTex, Eksport Tex
+DM_menuFileExportTexPT, Tabela miejsc i tranzycji
+DM_menuFileExportTexInv, Tabela inwariantów
+DM_menuFileExportTexMCT, Tabela MCT
+DM_menuFileExit, Wyjście
+DM_menuFileExitQ1, Czy na pewno chcesz zamknąć program?
+DM_menuFileExitQ2, Zamknij Holmesa
+DM_menuView, Widok
 DM_menuViewZoom100, Zoom 100%
-DM_menuViewZoomIn, Increase zoom 10%
-DM_menuViewZoomOut, Decrease zoom 10%
-DM_menuWindows, Windows
-DM_menuWindowsProject, Project
-DM_menuWindowsConsole, Log Console
-DM_menuWindowsProperties, Properties
-DM_menuNetData, Net Data
-DM_menuNetDataProperties, Net properties...
-DM_menuNetDataSearch, Search node...
-DM_menuNetDataTable, Net data tables...
-DM_menuNetDataInvariants, Invariants Viewer...
-DM_menuNetDataPStateM, Initial p-states manager...
-DM_menuNetDataPStateMQ1, Net simulator must be stopped in order to access state manager.
-DM_menuNetDataPStateMQ2, Simulator working
-DM_menuNetDataSPNM, SPN firing rates manager...
-DM_menuNetDataSSA, SSA p-states manager...
-DM_menuSubnets, Subnets
-DM_menuSubnetsCompr, Compress subnets
-DM_menuSubnetsAlign, Align to upper left
-DM_menuSubnetsResize, Resize panels
-DM_menuSubnetsShowDet, Show details
-DM_menuAnalysis, Analysis
-DM_menuAnalysisInvariants, Invariants
-DM_menuAnalysisInvGen, Invariants generator...
-DM_menuAnalysisMCS, Minimal Cutting Sets...
-DM_menuAnalysisKnockout, Knockout analysis...
-DM_menuAnalysisClusters, Cluster analysis...
-DM_menuAnalysisSim, Simulation
-DM_menuAnalysisStateSim, State Simulator...
-DM_menuAnalysisXTPNSim, XTPN Simulator...
-DM_menuAnalysisNetDeco, Net decomposition
-DM_menuAnalysisNetDecoA, Decomposition analysis...
-DM_menuAnalysisNetDecoB, Branch analysis...
-DM_menuAnalysisNetDecoC, Net comparison
-DM_menuAnalysisNetDecoD, Graphlets
-DM_menuAnalysisNetDecoE, Reduction
-DM_menuOther, Other
+DM_menuViewZoomIn, Zwiększ zoom 10%
+DM_menuViewZoomOut, Zmniejsz zoom 10%
+DM_menuWindows, Okna
+DM_menuWindowsProject, Projekt
+DM_menuWindowsConsole, Konsola logów
+DM_menuWindowsProperties, Właściwości
+DM_menuNetData, Dane sieci
+DM_menuNetDataProperties, Właściwości sieci
+DM_menuNetDataSearch, Szukaj węzła
+DM_menuNetDataTable, Tabele danych sieci
+DM_menuNetDataInvariants, Przeglądarka inwariantów
+DM_menuNetDataPStateM, Zarządzanie stanami początkowymi
+DM_menuNetDataPStateMQ1, Symulator musi być zatrzymany aby uzyskać dostęp do zarządzania stanami. 
+DM_menuNetDataPStateMQ2, Symulator pracuje
+DM_menuNetDataSPNM, Zarządzanie częstotliwościami SPN
+DM_menuNetDataSSA, Zarządzanie p-stanami SSA
+DM_menuSubnets, Podsieci
+DM_menuSubnetsCompr, Kompresuj podsieci
+DM_menuSubnetsAlign, Wyrównaj do lewego górnego rogu
+DM_menuSubnetsResize, Zmień rozmiar paneli
+DM_menuSubnetsShowDet, Pokaż szczegóły
+DM_menuAnalysis, Analiza
+DM_menuAnalysisInvariants, Inwarianty
+DM_menuAnalysisInvGen, Generator inwariantów
+DM_menuAnalysisMCS, Minimalne zbiory cięć MCS
+DM_menuAnalysisKnockout, Analiza knockout
+DM_menuAnalysisClusters, Analiza klastrów
+DM_menuAnalysisSim, Symulacja
+DM_menuAnalysisStateSim, Symulator stanów
+DM_menuAnalysisXTPNSim, Symulator XTPN
+DM_menuAnalysisNetDeco, Dekompozycja sieci
+DM_menuAnalysisNetDecoA, Analiza dekompozycji
+DM_menuAnalysisNetDecoB, Analiza gałęzi
+DM_menuAnalysisNetDecoC, Porównanie sieci
+DM_menuAnalysisNetDecoD, Graflety
+DM_menuAnalysisNetDecoE, Redukcja
+DM_menuOther, Inne
 DM_menuOtherMCT, MCT
-DM_menuOtherMCTGen, Generate MCT Groups
-DM_menuOtherMCTCre, Create simple MCT file
-DM_menuOtherMCTFiles, MCT Files
+DM_menuOtherMCTGen, Generuj grupy MCT
+DM_menuOtherMCTCre, Utwórz prosty plik MCT
+DM_menuOtherMCTFiles, Pliki MCT
 DM_menuOtherMCTFilesA, MCT
-DM_menuOtherInvGen, Invariants Simulation
-DM_menuOtherFixArcs, FixArcs
-DM_menuHelp, Help
-DM_menuHelpAbout, About Holmes
+DM_menuOtherInvGen, Symulacja inwariantów
+DM_menuOtherFixArcs, Naprawa łuków
+DM_menuHelp, Pomoc
+DM_menuHelpAbout, O Holmesie
 
 //GUIReset:
 GUIR_reset001, Please stop simulation completely before continuing.
@@ -2547,11 +2548,11 @@ HPPwinANAL_entry046, Allow presence of self-propelled readarc regions
 HPPwinANAL_entry047, Cluster algorithms options
 HPPwinANAL_entry048, Eliminate MCS sets non directly connected with objR transition.
 
-HPPwinSYS_entry049, Other options
-HPPwinSYS_entry050, Language
-HPPwinSYS_entry051, English
-HPPwinSYS_entry052, Polish
-HPPwinSYS_entry053, Language set to: %s (from %s). In order for changes to take effect, restart the program.
+HPPwinSYS_entry049, Inne opcje
+HPPwinSYS_entry050, Język
+HPPwinSYS_entry051, Angielski
+HPPwinSYS_entry052, Polski
+HPPwinSYS_entry053, Język ustawiony na: %s (z %s). Aby zmiany zaczęły obowiązywać, zrestartuj program.
 HPPwinSYS_entry054, YourLang
 
 //HolmesProgramPropertiesActions:
@@ -3583,7 +3584,6 @@ HXTwin_entry019, Cannot convert %s into Double (e4)
 HXTwin_entry020, Tokens:
 HXTwin_entry021, Error, multiset size and variable tokenNumber missmatch for place p_
 HXTwin_entry022, Error, classical place tokens number in a multiset at .get(0) and variable tokenNumber missmatch for place p_
-
 
 //generalPurposeTags:
 add, Add

@@ -1,28 +1,15 @@
 package holmes.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.Serial;
 
-import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -147,14 +134,14 @@ public class HolmesProgramProperties extends JFrame {
 	@SuppressWarnings("SameParameterValue")
 	private JPanel createSnoopyReadSystemPanel(int x, int y, int w, int h) {
 		JPanel ioPanel = new JPanel(null);
-		ioPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSYS_entry007")));
+		ioPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSYS_entry007"))); //I/O operations
 		ioPanel.setBounds(x, y, w, h);
 		
 		int posX = 10;
 		int posY = 15;
 		noAction = true;
 		
-		JLabel labelIO1 = new JLabel(lang.getText("HPPwinSYS_entry008")); //label
+		JLabel labelIO1 = new JLabel(lang.getText("HPPwinSYS_entry008")); //(Snoopy) Resize net when loaded:
 		labelIO1.setBounds(posX, posY, 200, 20);
 		ioPanel.add(labelIO1);
 
@@ -266,14 +253,104 @@ public class HolmesProgramProperties extends JFrame {
 	@SuppressWarnings("SameParameterValue")
 	private JPanel createOtherOptionsPanel(int x, int y, int w, int h) {
 		JPanel ioPanel = new JPanel(null);
-		ioPanel.setBorder(BorderFactory.createTitledBorder("Other options"));
+		ioPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSYS_entry049"))); //Other options
 		ioPanel.setBounds(x, y, w, h);
 		
 		int posX = 10;
 		int posY = 20;
 		noAction = true;
+
+		JPanel langPanel = new JPanel(null);
+		langPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSYS_entry050"))); //Language:
+		langPanel.setBounds(10, 20, 200, 110);
+		ioPanel.add(langPanel);
+
+		ButtonGroup group = new ButtonGroup();
+		JRadioButton englishRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry051")); //English
+		englishRadioButton.setBounds(50, 20, 100, 20);
+		englishRadioButton.setActionCommand("0");
+		englishRadioButton.addActionListener(actionEvent -> {
+			if(noAction) return;
+			
+			String oldLang = lang.getSelectedLanguage();
+			String strB = String.format(lang.getText("HPPwinSYS_entry053"), "English", oldLang);
+			lang.setLanguage("English", false);
+			JOptionPane.showMessageDialog(null, strB, lang.getText("information"),
+					JOptionPane.INFORMATION_MESSAGE);
+		});
+		group.add(englishRadioButton);
+		langPanel.add(englishRadioButton);
 		
-		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry014"), posX, posY, 240, 20, 
+		try {
+			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/english.png"));
+			JLabel flagLabelEN = new JLabel(new ImageIcon(image));
+			flagLabelEN.setBounds(10, 20, 38, 20);
+			langPanel.add(flagLabelEN);
+		} catch (Exception ex) {
+			overlord.log(ex.getMessage(), "error", true);
+		}
+		
+		JRadioButton polishRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry052")); //Polish
+		polishRadioButton.setBounds(50, 50, 100, 20);
+		polishRadioButton.setActionCommand("1");
+		polishRadioButton.addActionListener(actionEvent -> {
+			if(noAction) return;
+
+			String oldLang = lang.getSelectedLanguage();
+			String strB = String.format(lang.getText("HPPwinSYS_entry053"), "Polish", oldLang);
+			lang.setLanguage("Polish", false);
+			JOptionPane.showMessageDialog(null, strB, lang.getText("information"),
+					JOptionPane.INFORMATION_MESSAGE);
+		});
+		group.add(polishRadioButton);
+		langPanel.add(polishRadioButton);
+
+		try {
+			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/poland.png"));
+			JLabel flagLabelPL = new JLabel(new ImageIcon(image));
+			flagLabelPL.setBounds(10, 50, 38, 20);
+			langPanel.add(flagLabelPL);
+		} catch (Exception ex) {
+			overlord.log(ex.getMessage(), "error", true);
+		}
+
+		JRadioButton yourLangRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry054")); //YourLanguage
+		yourLangRadioButton.setBounds(50, 80, 100, 20);
+		yourLangRadioButton.setActionCommand("1");
+		yourLangRadioButton.addActionListener(actionEvent -> {
+			if(noAction) return;
+
+			String oldLang = lang.getSelectedLanguage();
+			String strB = String.format(lang.getText("HPPwinSYS_entry053"), "YourLanguage", oldLang);
+			lang.setLanguage("Your", false);
+			JOptionPane.showMessageDialog(null, strB, lang.getText("information"),
+					JOptionPane.INFORMATION_MESSAGE);
+		});
+		group.add(yourLangRadioButton);
+		langPanel.add(yourLangRadioButton);
+
+		try {
+			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/yourlang.png"));
+			JLabel flagLabelMNT = new JLabel(new ImageIcon(image));
+			flagLabelMNT.setBounds(10, 80, 38, 20);
+			langPanel.add(flagLabelMNT);
+		} catch (Exception ex) {
+			overlord.log(ex.getMessage(), "error", true);
+		}
+
+		String current = lang.getSelectedLanguage();
+		if(current.equals("English")) {
+			group.setSelected(englishRadioButton.getModel(), true);
+		} else if(current.equals("Polish")) {
+			group.setSelected(polishRadioButton.getModel(), true);
+		} else {
+			group.setSelected(yourLangRadioButton.getModel(), true);
+		}
+		
+		
+		posY+=120;
+		
+		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry014"), posX, posY, 240, 20,  
 				"programDebugMode", true); //Debug mode
 		ioPanel.add(alignGridWhenSavedCheckBox);
 

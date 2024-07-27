@@ -126,7 +126,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         parentFrame = parent;
         this.thePlace = place;
         this.eLocation = eloc;
-        setTitle("Node:"+" "+place.getName()); //Node: 
+        setTitle(lang.getText("HNXTPN_entry001title")+" "+place.getName()); //Node: 
         setBackground(Color.WHITE);
         initiateSimGlobals();
         initializeCommon(place);
@@ -135,11 +135,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
         add(main);
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("XTPN place data", Tools.getResIcon16("/icons/nodeViewer/tab1.png") //XTPN place data
-                , initializePlaceInfo(), "General information about XTPN place");
+        tabbedPane.addTab(lang.getText("HNXTPN_entry002"), Tools.getResIcon16("/icons/nodeViewer/tab1.png") //XTPN place data
+                , initializePlaceInfo(), lang.getText("HNXTPN_entry002t"));
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-        tabbedPane.addTab("Analysis", Tools.getResIcon16("/icons/nodeViewer/tab3.png") //Analysis
-                , initializePlaceSecondPanel(), "Additional data");
+        tabbedPane.addTab(lang.getText("HNXTPN_entry003"), Tools.getResIcon16("/icons/nodeViewer/tab3.png") //Analysis
+                , initializePlaceSecondPanel(), lang.getText("HNXTPN_entry003t"));
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
         tabbedPane.setBackgroundAt(0, Color.WHITE);
@@ -167,11 +167,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
         add(main);
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("XTPN transition data", Tools.getResIcon16("/icons/nodeViewer/tab1.png") //XTPN transition data
-                , initializeTransitionInfo(), "General information about XTPN transition");
+        tabbedPane.addTab(lang.getText("HNXTPN_entry004"), Tools.getResIcon16("/icons/nodeViewer/tab1.png") //XTPN transition data
+                , initializeTransitionInfo(), lang.getText("HNXTPN_entry004t"));
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-        tabbedPane.addTab("Analysis", Tools.getResIcon16("/icons/nodeViewer/tab3.png") //Analysis
-                , initializeTransSecondPanel(), "Analysis panel");
+        tabbedPane.addTab(lang.getText("HNXTPN_entry005"), Tools.getResIcon16("/icons/nodeViewer/tab3.png") //Analysis
+                , initializeTransSecondPanel(), lang.getText("HNXTPN_entry005t"));
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
         tabbedPane.setBackgroundAt(0, Color.WHITE);
@@ -200,7 +200,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            overlord.log("Error (181278513) | Exception:  "+ex.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00593exception")+"\n"+ex.getMessage(), "error", true);
         }
 
         if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)
@@ -241,14 +241,14 @@ public class HolmesNodeInfoXTPN extends JFrame {
         JPanel infoPanel = new JPanel(null);
         infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-18, 160);
         infoPanel.setBackground(Color.WHITE);
-        infoPanel.setBorder(BorderFactory.createTitledBorder("Structural data:")); //Structural data:
+        infoPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNXTPN_entry006"))); //Structural data:
 
         int infPanelX = 10;
         int infPanelY = 20;
 
         //************************* NEWLINE *************************
 
-        JLabel labelID = new JLabel("ID:"); //ID:
+        JLabel labelID = new JLabel(lang.getText("HNXTPN_entry007")); //ID:
         labelID.setBounds(infPanelX, infPanelY, 20, 20);
         infoPanel.add(labelID);
 
@@ -258,7 +258,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         idTextBox.setEditable(false);
         infoPanel.add(idTextBox);
 
-        JLabel labelName = new JLabel("Name:"); //Name:
+        JLabel labelName = new JLabel(lang.getText("HNXTPN_entry008")); //Name:
         labelName.setBounds(infPanelX+60, infPanelY, 40, 20);
         infoPanel.add(labelName);
 
@@ -273,7 +273,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                overlord.log("Error (611156405) | Exception:  "+ex.getMessage(), "error", true);
+                overlord.log(lang.getText("LOGentry00594exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             thePlace.setName(newName);
@@ -281,7 +281,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         infoPanel.add(nameField);
 
-        JLabel commmentLabel = new JLabel("Comments:", JLabel.LEFT); //Comments:
+        JLabel commmentLabel = new JLabel(lang.getText("HNXTPN_entry009"), JLabel.LEFT); //Comments:
         commmentLabel.setBounds(infPanelX+460, infPanelY-22, 100, 20);
         infoPanel.add(commmentLabel);
 
@@ -308,13 +308,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infPanelY += 25;
         //************************* NEWLINE *************************
 
-        JLabel portalLabel = new JLabel("Portal:"); //Portal:
+        JLabel portalLabel = new JLabel(lang.getText("HNXTPN_entry010")); //Portal:
         portalLabel.setBounds(infPanelX, infPanelY, 40, 20);
         infoPanel.add(portalLabel);
 
-        String port = "no";
+        String port = lang.getText("no");
         if(thePlace.isPortal())
-            port = "yes";
+            port = lang.getText("yes");
 
         JLabel portalLabel2 = new JLabel(port);
         portalLabel2.setBounds(infPanelX+40, infPanelY, 30, 20);
@@ -327,7 +327,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             outTrans += el.getOutArcs().size();
         }
 
-        JLabel inTransLabel = new JLabel("Input transitions:"); //Input transitions:
+        JLabel inTransLabel = new JLabel(lang.getText("HNXTPN_entry011")); //Input transitions:
         inTransLabel.setBounds(infPanelX+60, infPanelY, 120, 20);
         infoPanel.add(inTransLabel);
 
@@ -336,7 +336,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         inTransTextBox.setEditable(false);
         infoPanel.add(inTransTextBox);
 
-        JLabel outTransLabel = new JLabel("Output transitions:"); //Output transitions:
+        JLabel outTransLabel = new JLabel(lang.getText("HNXTPN_entry012")); //Output transitions:
         outTransLabel.setBounds(infPanelX+190, infPanelY, 120, 20);
         infoPanel.add(outTransLabel);
 
@@ -349,21 +349,21 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infPanelY += 25;
         //************************* NEWLINE *************************
 
-        JLabel gammaModeInfoLabel = new JLabel("Time mode:"); //Time mode:
+        JLabel gammaModeInfoLabel = new JLabel(lang.getText("HNXTPN_entry013")); //Time mode:
         gammaModeInfoLabel.setBounds(infPanelX, infPanelY, 80, 20);
         infoPanel.add(gammaModeInfoLabel);
 
-        buttonGammaMode = new HolmesRoundedButton("<html>Gamma: ON</html>" //Gamma: ON
+        buttonGammaMode = new HolmesRoundedButton(lang.getText("HNXTPN_entry014on") //Gamma: ON
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         buttonGammaMode.setMargin(new Insets(0, 0, 0, 0));
         buttonGammaMode.setName("gammaButton1");
         buttonGammaMode.setBounds(infPanelX+80, infPanelY, 100, 25);
         buttonGammaMode.setFocusPainted(false);
         if(thePlace.isGammaModeActive()) {
-            buttonGammaMode.setNewText("<html>Gamma: ON</html>"); //Gamma: ON
+            buttonGammaMode.setNewText(lang.getText("HNXTPN_entry014on")); //Gamma: ON
             buttonGammaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         } else {
-            buttonGammaMode.setNewText("<html>Gamma: OFF</html>");
+            buttonGammaMode.setNewText(lang.getText("HNXTPN_entry014off")); //Gamma: OFF
             buttonGammaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
         }
         buttonGammaMode.addActionListener(e -> {
@@ -372,11 +372,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         infoPanel.add(buttonGammaMode);
 
-        JLabel gammaVisInfoLabel = new JLabel("Visibility:"); //Visibility:
+        JLabel gammaVisInfoLabel = new JLabel(lang.getText("HNXTPN_entry015")); //Visibility:
         gammaVisInfoLabel.setBounds(infPanelX+190, infPanelY, 70, 20);
         infoPanel.add(gammaVisInfoLabel);
 
-        gammaVisibilityButton = new HolmesRoundedButton("<html>\u03B3:visible</html>" //\u03B3:visible
+        gammaVisibilityButton = new HolmesRoundedButton(lang.getText("HNXTPN_entry016vis") //\u03B3:visible
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         gammaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         gammaVisibilityButton.setName("gammaVisButton1");
@@ -384,10 +384,10 @@ public class HolmesNodeInfoXTPN extends JFrame {
         gammaVisibilityButton.setFocusPainted(false);
         if(thePlace.isGammaModeActive()) {
             if (thePlace.isGammaRangeVisible()) {
-                gammaVisibilityButton.setNewText("<html>\u03B3:visible<html>"); //\u03B3:visible
+                gammaVisibilityButton.setNewText(lang.getText("HNXTPN_entry016vis")); //\u03B3:visible
                 gammaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             } else {
-                gammaVisibilityButton.setNewText("<html>\u03B3:hidden<html>");  //\u03B3:hidden
+                gammaVisibilityButton.setNewText(lang.getText("HNXTPN_entry016invis"));  //\u03B3:hidden
                 gammaVisibilityButton.repaintBackground("amber_bH3_press_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
@@ -407,7 +407,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         //************************* NEWLINE *************************
 
         // XTPN-place  Zakresy gamma:
-        JLabel minMaxLabel = new JLabel("\u03B3 (min/max): ", JLabel.LEFT); //\u03B3 (min/max):
+        JLabel minMaxLabel = new JLabel(lang.getText("HNXTPN_entry017"), JLabel.LEFT); //\u03B3 (min/max):
         minMaxLabel.setBounds(infPanelX, infPanelY, 80, 20);
         infoPanel.add(minMaxLabel);
 
@@ -426,7 +426,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00598exception")+"\n"+ex.getMessage(), "error", true);
             }
             if (doNotUpdate)
                 return;
@@ -454,7 +454,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00599exception")+"\n"+ex.getMessage(), "error", true);
             }
             if (doNotUpdate)
                 return;
@@ -490,11 +490,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infPanelY += 25;
         //************************* NEWLINE *************************
 
-        JLabel tokenInfoLabel = new JLabel("Tokens:");
+        JLabel tokenInfoLabel = new JLabel(lang.getText("HNXTPN_entry018"));
         tokenInfoLabel.setBounds(infPanelX, infPanelY, 90, 20);
         infoPanel.add(tokenInfoLabel);
 
-        tokensWindowButton = new HolmesRoundedButton("<html>Token window</html>" //Token window
+        tokensWindowButton = new HolmesRoundedButton(lang.getText("HNXTPN_entry019") //Token window
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         tokensWindowButton.setMargin(new Insets(0, 0, 0, 0));
         tokensWindowButton.setBounds(infPanelX+80, infPanelY, 100, 25);
@@ -505,7 +505,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infoPanel.add(tokensWindowButton);
 
 
-        JLabel tokenNumberInfoLabel = new JLabel("Current number:"); //Current number:
+        JLabel tokenNumberInfoLabel = new JLabel(lang.getText("HNXTPN_entry020")); //Current number:
         tokenNumberInfoLabel.setBounds(infPanelX+190, infPanelY, 120, 20);
         infoPanel.add(tokenNumberInfoLabel);
 
@@ -516,7 +516,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         printTokenNumber();
 
         JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
-        chartMainPanel.setBorder(BorderFactory.createTitledBorder("Places chart")); //Places chart
+        chartMainPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNXTPN_entry021"))); //Places chart
         chartMainPanel.setBounds(0, infoPanel.getHeight(), mainInfoPanel.getWidth()-18, 295);
         chartMainPanel.add(createChartPanel(thePlace), BorderLayout.CENTER);
         chartMainPanel.setBackground(Color.WHITE);
@@ -532,7 +532,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 fillPlaceDynamicData(chartMainPanel);
             }
         } catch (Exception ex) {
-            overlord.log("Error while trying to simulate and compute place data.", "error", true);
+            overlord.log(lang.getText("LOGentry00595exception")+"\n"+ex.getMessage(), "error", true);
         }
         return mainInfoPanel;
     }
@@ -549,7 +549,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         JPanel analP_firstPanel = new JPanel(null);
         analP_firstPanel.setBackground(Color.WHITE);
         analP_firstPanel.setBounds(mPanelX, mPanelY, secondTabPanel.getWidth()-24, 320);
-        analP_firstPanel.setBorder(BorderFactory.createTitledBorder("XTPN analysis:")); //XTPN analysis:
+        analP_firstPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNXTPN_entry022"))); //XTPN analysis:
 
         int subPanelX = 10;
         int subPanelY = 20;
@@ -623,20 +623,20 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JPanel panelButtonsPlace(int y) {
         JPanel chartButtonPanel = new JPanel(null);
         chartButtonPanel.setBounds(0, y, mainInfoPanel.getWidth()-18, 60);
-        chartButtonPanel.setBorder(BorderFactory.createTitledBorder("Simulation options:")); //Simulation options:
+        chartButtonPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNXTPN_entry023"))); //Simulation options:
         chartButtonPanel.setBackground(Color.WHITE);
 
         int positionX = 5;
         int positionY = 30;
 
-        acqDataButton = new HolmesRoundedButton("<html>Simulate</html>" //Simulate
+        acqDataButton = new HolmesRoundedButton(lang.getText("HNXTPN_entry024") //Simulate
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         acqDataButton.setBounds(positionX, positionY-10, 110, 35);
         acqDataButton.setMargin(new Insets(0, 0, 0, 0));
-        acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
+        acqDataButton.setToolTipText(lang.getText("HNXTPN_entry024t"));
         acqDataButton.addActionListener(actionEvent -> {
             if(overlord.getWorkspace().getProject().isSimulationActive()) {
-                JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
+                JOptionPane.showMessageDialog(null, lang.getText("HNXTPN_entry025"), lang.getText("HNXTPN_entry025t"),
                         JOptionPane.WARNING_MESSAGE);
             } else {
                 acqDataButton.setEnabled(false);
@@ -647,7 +647,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         //chartY_2nd += 20;
 
-        JLabel simPlaceStepLabel = new JLabel("Steps:"); //Steps:
+        JLabel simPlaceStepLabel = new JLabel(lang.getText("HNXTPN_entry026")); //Steps:
         simPlaceStepLabel.setBounds(positionX+120, positionY-15, 60, 15);
         chartButtonPanel.add(simPlaceStepLabel);
 
@@ -660,11 +660,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         chartButtonPanel.add(simStepsSpinner);
 
-        JLabel label1 = new JLabel("Show:"); //Show:
+        JLabel label1 = new JLabel(lang.getText("HNXTPN_entry027")); //Show:
         label1.setBounds(positionX+210, positionY-15, 50, 15);
         chartButtonPanel.add(label1);
 
-        final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Steps", "Time"});
+        final JComboBox<String> simMode = new JComboBox<String>(new String[] {lang.getText("HNXTPN_entry028op1")
+                , lang.getText("HNXTPN_entry028op2")}); //Steps, Time
         simMode.setBounds(positionX+210, positionY, 80, 25);
         simMode.setSelectedIndex(0);
         simMode.setMaximumRowCount(6);
@@ -674,7 +675,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         chartButtonPanel.add(simMode);
 
-        JCheckBox simPlaceRepsCheckbox = new JCheckBox("Reps:"); //Reps:
+        JCheckBox simPlaceRepsCheckbox = new JCheckBox(lang.getText("HNXTPN_entry028")); //Reps:
         simPlaceRepsCheckbox.setBounds(positionX+295, positionY-15, 70, 15);
         simPlaceRepsCheckbox.setSelected(simulateTime);
         simPlaceRepsCheckbox.setBackground(Color.WHITE);
@@ -696,7 +697,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         chartButtonPanel.add(simStepsRepeatedSpinner);
 
 
-        JLabel simPlaceIntervalLabel = new JLabel("Interval:"); //Interval:
+        JLabel simPlaceIntervalLabel = new JLabel(lang.getText("HNXTPN_entry029")); //Interval:
         simPlaceIntervalLabel.setBounds(positionX+380, positionY-15, 80, 15);
         chartButtonPanel.add(simPlaceIntervalLabel);
 
@@ -730,7 +731,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             title.setFont(new Font("Dialog", Font.PLAIN, 20));
             title.setExpandToFitSpace(true);
             title.setPaint(Color.red);
-            title.setText("Chart unavailable, main simulator is active.");
+            title.setText(lang.getText("HNXTPN_entry030")); //Chart unavailable, main simulator is active.
         }
     }
 
@@ -766,12 +767,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
      */
     private void showPlaceChart() {
         dynamicsSeriesDataSet.removeAllSeries();
-        XYSeries series = new XYSeries("Number of tokens");
+        XYSeries series = new XYSeries(lang.getText("HNXTPN_entry031")); //Liczba tokenów
 
         int maxInterval = simPlaceInterval;
         if(10*simPlaceInterval > stepsVectorPlaces.size()) {
             maxInterval = 1;
-            overlord.log("Warning: place node window interval too big, reduced to 1.", "warning", true);
+            overlord.log(lang.getText("HNXTPN_entry032"), "warning", true);
         }
 
         if(stepsVectorPlaces != null) {
@@ -802,7 +803,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
      * @return JPanel - panel komponentów
      */
     JPanel createChartPanel(Node node) {
-        String chartTitle = node.getName()+ " dynamics";
+        String chartTitle = node.getName()+ " "+lang.getText("HNXTPN_entry033");
         String xAxisLabel = "Simulation steps";
         String yAxisLabel = "Tokens";
         if(node instanceof Transition)
@@ -832,19 +833,14 @@ public class HolmesNodeInfoXTPN extends JFrame {
         } else {
             tokens = thePlace.getTokensNumber();
         }
-
         tokensTextBox.setText(""+tokens);
     }
+    
 
-
-
-
-    //********************************************************************************************
     //********************************************************************************************
     //************************************               *****************************************
     //************************************   TRANZYCJE   *****************************************
     //************************************               *****************************************
-    //********************************************************************************************
     //********************************************************************************************
 
     private JPanel initializeTransSecondPanel() {
@@ -939,7 +935,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         //panel informacji podstawowych
         JPanel infoPanel = new JPanel(null);
         infoPanel.setBounds(mPanelX, mPanelY, mainInfoPanel.getWidth()-18, 185);
-        infoPanel.setBorder(BorderFactory.createTitledBorder("Structural data:")); //Structural data:
+        infoPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNXTPN_entry034"))); //Structural data:
         infoPanel.setBackground(Color.WHITE);
 
         int infPanelX = 10;
@@ -947,7 +943,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         //************************* NEWLINE *************************
 
-        JLabel labelID = new JLabel("ID:"); //ID:
+        JLabel labelID = new JLabel(lang.getText("HNXTPN_entry035")); //ID:
         labelID.setBounds(infPanelX, infPanelY, 20, 20);
         infoPanel.add(labelID);
 
@@ -957,7 +953,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         idTextBox.setEditable(false);
         infoPanel.add(idTextBox);
         
-        JLabel labelName = new JLabel("Name:"); //Name:
+        JLabel labelName = new JLabel(lang.getText("HNXTPN_entry036")); //Name:
         labelName.setBounds(infPanelX+60, infPanelY, 40, 20);
         infoPanel.add(labelName);
 
@@ -972,7 +968,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                overlord.log("Error (212156495) | Exception:  "+ex.getMessage(), "error", true);
+                overlord.log(lang.getText("LOGentry00596exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             theTransition.setName(newName);
@@ -982,7 +978,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         infoPanel.add(nameField);
 
-        JLabel commmentLabel = new JLabel("Comments:", JLabel.LEFT); //Comments:
+        JLabel commmentLabel = new JLabel(lang.getText("HNXTPN_entry037"), JLabel.LEFT); //Comments:
         commmentLabel.setBounds(infPanelX+460, infPanelY-22, 100, 20);
         infoPanel.add(commmentLabel);
 
@@ -1010,13 +1006,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infPanelY += 25;
         //************************* NEWLINE *************************
 
-        JLabel portalLabel = new JLabel("Portal:"); //Portal:
+        JLabel portalLabel = new JLabel(lang.getText("HNXTPN_entry038")); //Portal:
         portalLabel.setBounds(infPanelX, infPanelY, 40, 20);
         infoPanel.add(portalLabel);
 
-        String port = "no";
+        String port = lang.getText("no"); //no
         if(theTransition.isPortal())
-            port = "yes";
+            port = lang.getText("yes"); //yes
 
         JLabel portalLabel2 = new JLabel(port);
         portalLabel2.setBounds(infPanelX+40, infPanelY, 30, 20);
@@ -1029,7 +1025,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             postP += el.getOutArcs().size();
         }
 
-        JLabel prePlaceLabel = new JLabel("Input places:"); //Input places:
+        JLabel prePlaceLabel = new JLabel(lang.getText("HNXTPN_entry039")); //Input places:
         prePlaceLabel.setBounds(infPanelX+60, infPanelY, 120, 20);
         infoPanel.add(prePlaceLabel);
 
@@ -1038,7 +1034,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         prePlaceTextBox.setEditable(false);
         infoPanel.add(prePlaceTextBox);
 
-        JLabel postPlaceLabel = new JLabel("Output places:"); //Output places:
+        JLabel postPlaceLabel = new JLabel(lang.getText("HNXTPN_entry040")); //Output places:
         postPlaceLabel.setBounds(infPanelX+190, infPanelY, 120, 20);
         infoPanel.add(postPlaceLabel);
 
@@ -1051,21 +1047,21 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infPanelY += 25;
         //************************* NEWLINE *************************
 
-        JLabel timeModesInfoLabel = new JLabel("Time modes:"); //Time modes:
+        JLabel timeModesInfoLabel = new JLabel(lang.getText("HNXTPN_entry041")); //Time modes:
         timeModesInfoLabel.setBounds(infPanelX, infPanelY, 80, 20);
         infoPanel.add(timeModesInfoLabel);
 
-        buttonAlphaMode = new HolmesRoundedButton("<html>Alpha: ON</html>" //Alpha: ON
+        buttonAlphaMode = new HolmesRoundedButton(lang.getText("HNXTPN_entry042on") //Alpha: ON
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         buttonAlphaMode.setMargin(new Insets(0, 0, 0, 0));
         buttonAlphaMode.setName("alphaButton1");
         buttonAlphaMode.setBounds(infPanelX+80, infPanelY, 100, 25);
         buttonAlphaMode.setFocusPainted(false);
         if(theTransition.isAlphaModeActive()) {
-            buttonAlphaMode.setNewText("<html>Alpha: ON</html>"); //Alpha: ON
+            buttonAlphaMode.setNewText(lang.getText("HNXTPN_entry042on")); //Alpha: ON
             buttonAlphaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         } else {
-            buttonAlphaMode.setNewText("<html>Alpha: OFF</html>");
+            buttonAlphaMode.setNewText(lang.getText("HNXTPN_entry042off"));
             buttonAlphaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
         }
         buttonAlphaMode.addActionListener(e -> {
@@ -1079,11 +1075,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         infoPanel.add(buttonAlphaMode);
 
-        JLabel alphaVisInfoLabel = new JLabel("Visibility:"); //Visibility:
+        JLabel alphaVisInfoLabel = new JLabel(lang.getText("HNXTPN_entry043")); //Visibility:
         alphaVisInfoLabel.setBounds(infPanelX+190, infPanelY, 70, 20);
         infoPanel.add(alphaVisInfoLabel);
 
-        alphaVisibilityButton = new HolmesRoundedButton("<html>\u03B1: Visible</html>" //Alpha: Visible
+        alphaVisibilityButton = new HolmesRoundedButton(lang.getText("HNXTPN_entry044vis") //Alpha: Visible
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         alphaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         alphaVisibilityButton.setName("gammaVisButton1");
@@ -1091,14 +1087,14 @@ public class HolmesNodeInfoXTPN extends JFrame {
         alphaVisibilityButton.setFocusPainted(false);
         if(theTransition.isAlphaModeActive()) {
             if (theTransition.isAlphaRangeVisible()) {
-                alphaVisibilityButton.setNewText("<html>\u03B1: Visible<html>"); //Alpha: Visible
+                alphaVisibilityButton.setNewText(lang.getText("HNXTPN_entry044vis")); //Alpha: Visible
                 alphaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             } else {
-                alphaVisibilityButton.setNewText("<html>\u03B1: Hidden<html>"); //Alpha: Hidden
+                alphaVisibilityButton.setNewText(lang.getText("HNXTPN_entry044invis")); //Alpha: Hidden
                 alphaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
-            alphaVisibilityButton.setNewText("<html>\u03B1: Hidden<html>"); //Alpha: Hidden
+            alphaVisibilityButton.setNewText(lang.getText("HNXTPN_entry044invis")); //Alpha: Hidden
             alphaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             alphaVisibilityButton.setEnabled(false);
         }
@@ -1106,12 +1102,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
             HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
             if (theTransition.isAlphaRangeVisible()) { //wyłączamy
                 theTransition.setAlphaRangeVisibility(false);
-                button.setNewText("<html>\u03B1: Hidden<html>"); //Alpha: Hidden
+                button.setNewText(lang.getText("HNXTPN_entry044invis")); //Alpha: Hidden
                 button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
-
             } else { // włączamy
                 theTransition.setAlphaRangeVisibility(true);
-                button.setNewText("<html>\u03B1: Visible<html>"); //Alpha: Visible
+                button.setNewText(lang.getText("HNXTPN_entry044vis")); //Alpha: Visible
                 button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             }
             overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -1126,17 +1121,17 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infPanelY += 30;
         //************************* NEWLINE *************************
 
-        buttonBetaMode = new HolmesRoundedButton("<html>Beta: ON</html>" //Beta: ON
+        buttonBetaMode = new HolmesRoundedButton(lang.getText("HNXTPN_entry045on") //Beta: ON
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         buttonBetaMode.setMargin(new Insets(0, 0, 0, 0));
         buttonBetaMode.setName("alphaButton1");
         buttonBetaMode.setBounds(infPanelX+80, infPanelY, 100, 25);
         buttonBetaMode.setFocusPainted(false);
         if(theTransition.isAlphaModeActive()) {
-            buttonBetaMode.setNewText("<html>Beta: ON</html>"); //Beta: ON
+            buttonBetaMode.setNewText(lang.getText("HNXTPN_entry045on")); //Beta: ON
             buttonBetaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         } else {
-            buttonBetaMode.setNewText("<html>Beta: OFF</html>"); //Beta: OFF
+            buttonBetaMode.setNewText(lang.getText("HNXTPN_entry045off")); //Beta: OFF
             buttonBetaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
         }
         buttonBetaMode.addActionListener(e -> {
@@ -1149,11 +1144,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         infoPanel.add(buttonBetaMode);
 
-        JLabel betaVisInfoLabel = new JLabel("Visibility:"); //Visibility:
+        JLabel betaVisInfoLabel = new JLabel(lang.getText("HNXTPN_entry046")); //Visibility:
         betaVisInfoLabel.setBounds(infPanelX+190, infPanelY, 70, 20);
         infoPanel.add(betaVisInfoLabel);
 
-        betaVisibilityButton = new HolmesRoundedButton("<html>\u03B2: Visible</html>"   //Beta: Visible
+        betaVisibilityButton = new HolmesRoundedButton(lang.getText("HNXTPN_entry047vis")   //Beta: Visible
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         betaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         betaVisibilityButton.setName("gammaVisButton1");
@@ -1161,14 +1156,14 @@ public class HolmesNodeInfoXTPN extends JFrame {
         betaVisibilityButton.setFocusPainted(false);
         if(theTransition.isBetaModeActive()) {
             if (theTransition.isBetaRangeVisible()) {
-                betaVisibilityButton.setNewText("<html>\u03B2: Visible<html>"); //Beta: Visible
+                betaVisibilityButton.setNewText(lang.getText("HNXTPN_entry047vis")); //Beta: Visible
                 betaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             } else {
-                betaVisibilityButton.setNewText("<html>\u03B2: Hidden<html>"); //Beta: Hidden
+                betaVisibilityButton.setNewText(lang.getText("HNXTPN_entry047invis")); //Beta: Hidden
                 betaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
-            betaVisibilityButton.setNewText("<html>\u03B2: Hidden<html>"); //Beta: Hidden
+            betaVisibilityButton.setNewText(lang.getText("HNXTPN_entry047invis")); //Beta: Hidden
             betaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             betaVisibilityButton.setEnabled(false);
         }
@@ -1176,12 +1171,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
             HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
             if (theTransition.isBetaRangeVisible()) { //wyłączamy
                 theTransition.setBetaRangeVisibility(false);
-                button.setNewText("<html>\u03B2: Hidden<html>"); //Beta: Hidden
+                button.setNewText(lang.getText("HNXTPN_entry047invis")); //Beta: Hidden
                 button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
             } else { // włączamy
                 theTransition.setBetaRangeVisibility(true);
-                button.setNewText("<html>\u03B2: Visible<html>"); //Beta: Visible
+                button.setNewText(lang.getText("HNXTPN_entry047vis")); //Beta: Visible
                 button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             }
             overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -1193,21 +1188,21 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infoPanel.add(betaVisibilityButton);
 
 
-        JLabel classXTPNInfoLabel = new JLabel("Classical/XTPN:"); //Classical/XTPN:
+        JLabel classXTPNInfoLabel = new JLabel(lang.getText("HNXTPN_entry048")); //Classical/XTPN:
         classXTPNInfoLabel.setBounds(infPanelX+360, infPanelY, 120, 20);
         infoPanel.add(classXTPNInfoLabel);
 
-        buttonClassXTPNmode = new HolmesRoundedButton("<html>XTPN</html>" //XTPN
+        buttonClassXTPNmode = new HolmesRoundedButton(lang.getText("HNXTPN_entry049") //XTPN
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         buttonClassXTPNmode.setMargin(new Insets(0, 0, 0, 0));
         buttonClassXTPNmode.setName("alphaButton1");
         buttonClassXTPNmode.setBounds(infPanelX+460, infPanelY, 100, 25);
         buttonClassXTPNmode.setFocusPainted(false);
         if(!theTransition.isAlphaModeActive() && !theTransition.isBetaModeActive()) {
-            buttonClassXTPNmode.setNewText("<html>Classical<html>"); //Classical
+            buttonClassXTPNmode.setNewText(lang.getText("HNXTPN_entry050")); //Classical
             buttonClassXTPNmode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
         } else { //gdy jeden z trybów włączony
-            buttonClassXTPNmode.setNewText("<html>XTPN<html>"); //XTPN
+            buttonClassXTPNmode.setNewText(lang.getText("HNXTPN_entry049")); //XTPN
             buttonClassXTPNmode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         }
         buttonClassXTPNmode.addActionListener(e -> {
@@ -1222,11 +1217,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         infoPanel.add(buttonClassXTPNmode);
 
-        JLabel tauVisInfoLabel = new JLabel("Tau:");
+        JLabel tauVisInfoLabel = new JLabel(lang.getText("HNXTPN_entry051"));
         tauVisInfoLabel.setBounds(infPanelX+570, infPanelY, 50, 20);
         infoPanel.add(tauVisInfoLabel);
 
-        tauVisibilityButton = new HolmesRoundedButton("<html>\u03C4: Visible</html>" //Tau: Visible
+        tauVisibilityButton = new HolmesRoundedButton(lang.getText("HNXTPN_entry052vis") //Tau: Visible
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         tauVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
         tauVisibilityButton.setName("gammaVisButton1");
@@ -1234,10 +1229,10 @@ public class HolmesNodeInfoXTPN extends JFrame {
         tauVisibilityButton.setFocusPainted(false);
         if(theTransition.isAlphaModeActive() || theTransition.isBetaModeActive()) {
             if (theTransition.isTauTimerVisible()) {
-                tauVisibilityButton.setNewText("<html>\u03C4: Visible<html>"); //Tau: Visible
+                tauVisibilityButton.setNewText(lang.getText("HNXTPN_entry052vis")); //Tau: Visible
                 tauVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
             } else {
-                tauVisibilityButton.setNewText("<html>\u03C4: Hidden<html>"); //Tau: Hidden
+                tauVisibilityButton.setNewText(lang.getText("HNXTPN_entry052invis")); //Tau: Hidden
                 tauVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
             }
         } else {
@@ -1249,12 +1244,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
             HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
             if (theTransition.isTauTimerVisible()) { //wyłączamy
                 theTransition.setTauTimersVisibility(false);
-                button.setNewText("<html>\u03C4: Hidden<html>"); //Tau: Hidden
+                button.setNewText(lang.getText("HNXTPN_entry052invis")); //Tau: Hidden
                 button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
             } else { //włączamy
                 theTransition.setTauTimersVisibility(true);
-                button.setNewText("<html>\u03C4: Visible<html>"); //Tau: Visible
+                button.setNewText(lang.getText("HNXTPN_entry052vis")); //Tau: Visible
                 button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
                 overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
@@ -1273,7 +1268,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
 
         // XTPN-transition Zakresy alfa:
-        JLabel minMaxLabel = new JLabel("\u03B1 (min/max): ", JLabel.LEFT); //Alpha (min/max):
+        JLabel minMaxLabel = new JLabel(lang.getText("HNXTPN_entry053"), JLabel.LEFT); //Alpha (min/max):
         minMaxLabel.setBounds(infPanelX, infPanelY, 80, 20);
         infoPanel.add(minMaxLabel);
 
@@ -1295,7 +1290,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00600exception")+"\n"+ex.getMessage(), "error", true);
             }
 
             double min = Double.parseDouble(""+field.getValue());
@@ -1324,7 +1319,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00601exception")+"\n"+ex.getMessage(), "error", true);
             }
 
             double max = Double.parseDouble(""+field.getValue());
@@ -1359,7 +1354,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         //************************* NEWLINE *************************
 
         // XTPN-transition zakresy beta:
-        JLabel betaLabel = new JLabel("\u03B2 (min/max): ", JLabel.LEFT);
+        JLabel betaLabel = new JLabel(lang.getText("HNXTPN_entry054"), JLabel.LEFT);
         betaLabel.setBounds(infPanelX, infPanelY, 80, 20);
         infoPanel.add(betaLabel);
 
@@ -1374,7 +1369,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00602exception")+"\n"+ex.getMessage(), "error", true);
             }
 
             double min = Double.parseDouble(""+field.getValue());
@@ -1402,7 +1397,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00603exception")+"\n"+ex.getMessage(), "error", true);
             }
             double max = Double.parseDouble(""+field.getValue());
             SharedActionsXTPN.access().setBetaMaxTime(max, theTransition, eLocation);
@@ -1432,7 +1427,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         infoPanel.add(betaMaxTextField);
 
         JPanel chartMainPanel = new JPanel(new BorderLayout()); //panel wykresów, globalny, bo musimy
-        chartMainPanel.setBorder(BorderFactory.createTitledBorder("Transition chart")); //Transition chart
+        chartMainPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNXTPN_entry055"))); //Transition chart
         chartMainPanel.setBounds(0, infoPanel.getHeight(), mainInfoPanel.getWidth()-18, 280);
         chartMainPanel.add(createChartPanel(theTransition), BorderLayout.CENTER);
         chartMainPanel.setBackground(Color.WHITE);
@@ -1450,7 +1445,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 fillTransitionDynamicData(transStatsFiringStepsTextBox, chartMainPanel, chartButtonPanel);
             }
         } catch (Exception ex) {
-            overlord.log("Error while trying to simulate and compute transition data.", "error", true);
+            overlord.log(lang.getText("LOGentry00597exception")+"\n"+ex.getMessage(), "error", true);
         }
         return mainInfoPanel;
     }
@@ -1463,21 +1458,22 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JPanel panelButtonsTransition(int y) {
         JPanel chartButtonPanel = new JPanel(null);
         chartButtonPanel.setBounds(0, y, mainInfoPanel.getWidth()-18, 60);
-        chartButtonPanel.setBorder(BorderFactory.createTitledBorder("Simulation options:"));
+        chartButtonPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNXTPN_entry056"))); //Chart options
         chartButtonPanel.setBackground(Color.WHITE);
 
         int positionX = 5;
         int positionY = 30;
 
-        acqDataButton = new HolmesRoundedButton("<html>Simulate</html>" //Simulate
+        acqDataButton = new HolmesRoundedButton(lang.getText("HNXTPN_entry057") //Simulate
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         acqDataButton.setBounds(positionX, positionY-10, 110, 35);
         acqDataButton.setMargin(new Insets(0, 0, 0, 0));
         acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        acqDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
+        acqDataButton.setToolTipText(lang.getText("HNXTPN_entry057t"));
         acqDataButton.addActionListener(actionEvent -> {
             if(overlord.getWorkspace().getProject().isSimulationActive()) {
-                JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
+                JOptionPane.showMessageDialog(null, lang.getText("HNXTPN_entry058")
+                        , lang.getText("HNXTPN_entry058t"),
                         JOptionPane.WARNING_MESSAGE);
             } else {
                 acqDataButton.setEnabled(false);
@@ -1486,7 +1482,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         chartButtonPanel.add(acqDataButton);
 
-        JLabel labelSteps = new JLabel("Steps:"); //Steps:
+        JLabel labelSteps = new JLabel(lang.getText("HNXTPN_entry059")); //Steps:
         labelSteps.setBounds(positionX+120, positionY-15, 70, 15);
         chartButtonPanel.add(labelSteps);
 
@@ -1499,11 +1495,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         chartButtonPanel.add(simStepsSpinner);
 
-        JLabel labelMode = new JLabel("Show:"); //Show:
+        JLabel labelMode = new JLabel(lang.getText("HNXTPN_entry060")); //Show:
         labelMode.setBounds(positionX+210, positionY-15, 80, 15);
         chartButtonPanel.add(labelMode);
 
-        final JComboBox<String> simMode = new JComboBox<String>(new String[] {"Steps", "Time"});
+        final JComboBox<String> simMode = new JComboBox<String>(new String[] {lang.getText("HNXTPN_entry061op1"), lang.getText("HNXTPN_entry061op2")}); //Steps, Time
         simMode.setBounds(positionX+210, positionY, 80, 25);
         simMode.setSelectedIndex(0);
         simMode.setMaximumRowCount(6);
@@ -1515,7 +1511,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         chartButtonPanel.add(simMode);
 
-        JCheckBox simTransRepsCheckbox = new JCheckBox("Reps:"); //Reps:
+        JCheckBox simTransRepsCheckbox = new JCheckBox(lang.getText("HNXTPN_entry061")); //Reps:
         simTransRepsCheckbox.setBounds(positionX+295, positionY-15, 70, 15);
         simTransRepsCheckbox.setSelected(simulateTime);
         simTransRepsCheckbox.setBackground(Color.WHITE);
@@ -1536,7 +1532,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         });
         chartButtonPanel.add(simTransStepsRepeatedSpinner);
 
-        JLabel simTransIntervalLabel = new JLabel("Interval:"); //Interval:
+        JLabel simTransIntervalLabel = new JLabel(lang.getText("HNXTPN_entry062")); //Interval:
         simTransIntervalLabel.setBounds(positionX+380, positionY-15, 80, 15);
         chartButtonPanel.add(simTransIntervalLabel);
 
@@ -1561,43 +1557,44 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private JPanel panelSimStatsTransition(int y) {
         JPanel resultPanel = new JPanel(null);
         resultPanel.setBounds(0, y, mainInfoPanel.getWidth()-18, 130);
-        resultPanel.setBorder(BorderFactory.createTitledBorder("Simulation data:"));
+        resultPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNXTPN_entry063")));
         resultPanel.setBackground(Color.WHITE);
 
         int positionX = 10;
         int positionY = 30;
 
-        transStatsStepLabel = new JLabel("Steps:", JLabel.LEFT); //Steps:
+        transStatsStepLabel = new JLabel(lang.getText("HNXTPN_entry064"), JLabel.LEFT); //Steps:
         transStatsStepLabel.setBounds(positionX+80, positionY-20, 140, 20);
         resultPanel.add(transStatsStepLabel);
 
-        transStatsTimeLabel = new JLabel("Time:", JLabel.LEFT); //Time:
+        transStatsTimeLabel = new JLabel(lang.getText("HNXTPN_entry065"), JLabel.LEFT); //Time:
         transStatsTimeLabel.setBounds(positionX+185, positionY-20, 140, 20);
         resultPanel.add(transStatsTimeLabel);
 
-        JLabel inactiveStepsLabel = new JLabel("Inactive:", JLabel.LEFT); //Inactive:
+        JLabel inactiveStepsLabel = new JLabel(lang.getText("HNXTPN_entry066"), JLabel.LEFT); //Inactive:
         inactiveStepsLabel.setBounds(positionX, positionY, 70, 20);
         resultPanel.add(inactiveStepsLabel);
 
-        transStatsInactiveStepsTextBox = new JFormattedTextField("n/a");
+        transStatsInactiveStepsTextBox = new JFormattedTextField(lang.getText("na")); //n/a
         transStatsInactiveStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
         transStatsInactiveStepsTextBox.setEditable(false);
         resultPanel.add(transStatsInactiveStepsTextBox);
 
-        transStatsInactiveTimeTextBox = new JFormattedTextField("n/a");
+        transStatsInactiveTimeTextBox = new JFormattedTextField(lang.getText("na")); //n/a
         transStatsInactiveTimeTextBox.setBounds(positionX+185, positionY, 110, 20);
         transStatsInactiveTimeTextBox.setEditable(false);
         resultPanel.add(transStatsInactiveTimeTextBox);
 
-        HolmesRoundedButton acqTransSimDataButton = new HolmesRoundedButton("<html>Simulate</html>" //Simulate
+        HolmesRoundedButton acqTransSimDataButton = new HolmesRoundedButton(lang.getText("HNXTPN_entry067") //Simulate
                 , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
         acqTransSimDataButton.setBounds(positionX+300, positionY, 110, 20);
         acqTransSimDataButton.setMargin(new Insets(0, 0, 0, 0));
         acqTransSimDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        acqTransSimDataButton.setToolTipText("Compute steps from zero marking through the number of states given on the right.");
+        acqTransSimDataButton.setToolTipText(lang.getText("HNXTPN_entry067t"));
         acqTransSimDataButton.addActionListener(actionEvent -> {
             if(overlord.getWorkspace().getProject().isSimulationActive()) {
-                JOptionPane.showMessageDialog(null, "Holmes simulator is running. Please wait or stop it manually first.", "Simulator active",
+                JOptionPane.showMessageDialog(null, lang.getText("HNXTPN_entry068")
+                        , lang.getText("HNXTPN_entry068t"),
                         JOptionPane.WARNING_MESSAGE);
             } else {
                 getMultipleTransitionData();
@@ -1607,21 +1604,21 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         positionY+=23;
 
-        JLabel activeStepsLabel = new JLabel("Active:", JLabel.LEFT); //Active:
+        JLabel activeStepsLabel = new JLabel(lang.getText("HNXTPN_entry069"), JLabel.LEFT); //Active:
         activeStepsLabel.setBounds(positionX, positionY, 70, 20);
         resultPanel.add(activeStepsLabel);
 
-        transStatsActiveStepsTextBox = new JFormattedTextField("n/a");
+        transStatsActiveStepsTextBox = new JFormattedTextField(lang.getText("na")); //n/a
         transStatsActiveStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
         transStatsActiveStepsTextBox.setEditable(false);
         resultPanel.add(transStatsActiveStepsTextBox);
 
-        transStatsActiveTimeTextBox = new JFormattedTextField("n/a");
+        transStatsActiveTimeTextBox = new JFormattedTextField(lang.getText("na")); //n/a
         transStatsActiveTimeTextBox.setBounds(positionX+185, positionY, 110, 20);
         transStatsActiveTimeTextBox.setEditable(false);
         resultPanel.add(transStatsActiveTimeTextBox);
 
-        transStatsStepsCheckbox = new JCheckBox("Steps"); //Steps
+        transStatsStepsCheckbox = new JCheckBox(lang.getText("HNXTPN_entry070")); //Steps
         transStatsStepsCheckbox.setBounds(positionX+300, positionY, 70, 20);
         transStatsStepsCheckbox.setSelected(simulateTime);
         transStatsStepsCheckbox.setBackground(Color.WHITE);
@@ -1647,21 +1644,21 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         positionY+=23;
 
-        JLabel producingStepsLabel = new JLabel("Producing:", JLabel.LEFT); //Producing:
+        JLabel producingStepsLabel = new JLabel(lang.getText("HNXTPN_entry071"), JLabel.LEFT); //Producing:
         producingStepsLabel.setBounds(positionX, positionY, 70, 20);
         resultPanel.add(producingStepsLabel);
 
-        transStatsProductionStepsTextBox = new JFormattedTextField("n/a");
+        transStatsProductionStepsTextBox = new JFormattedTextField(lang.getText("na")); //n/a
         transStatsProductionStepsTextBox.setBounds(positionX+80, positionY, 100, 20);
         transStatsProductionStepsTextBox.setEditable(false);
         resultPanel.add(transStatsProductionStepsTextBox);
 
-        transStatsProductionTimeTextBox = new JFormattedTextField("n/a");
+        transStatsProductionTimeTextBox = new JFormattedTextField(lang.getText("na")); //n/a
         transStatsProductionTimeTextBox.setBounds(positionX+185, positionY, 110, 20);
         transStatsProductionTimeTextBox.setEditable(false);
         resultPanel.add(transStatsProductionTimeTextBox);
 
-        transStatsTimeCheckbox = new JCheckBox("Time"); //Time
+        transStatsTimeCheckbox = new JCheckBox(lang.getText("HNXTPN_entry072")); //Time
         transStatsTimeCheckbox.setBounds(positionX+300, positionY, 70, 20);
         transStatsTimeCheckbox.setSelected(simulateTime);
         transStatsTimeCheckbox.setBackground(Color.WHITE);
@@ -1687,7 +1684,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         positionY+=23;
 
-        JLabel producedStepsLabel = new JLabel("Fired:", JLabel.LEFT); //Fired:
+        JLabel producedStepsLabel = new JLabel(lang.getText("HNXTPN_entry073"), JLabel.LEFT); //Fired:
         producedStepsLabel.setBounds(positionX, positionY, 70, 20);
         resultPanel.add(producedStepsLabel);
 
@@ -1696,7 +1693,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         transStatsFiringStepsTextBox.setEditable(false);
         resultPanel.add(transStatsFiringStepsTextBox);
 
-        JCheckBox transRepsCheckbox = new JCheckBox("Repetitions:"); //Repetitions:
+        JCheckBox transRepsCheckbox = new JCheckBox(lang.getText("HNXTPN_entry074")); //Repetitions:
         transRepsCheckbox.setBounds(positionX+300, positionY, 100, 20);
         transRepsCheckbox.setSelected(transStatsReps);
         transRepsCheckbox.setBackground(Color.WHITE);
@@ -1747,7 +1744,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             title.setFont(new Font("Dialog", Font.PLAIN, 20));
             title.setExpandToFitSpace(true);
             title.setPaint(Color.red);
-            title.setText("Chart unavailable, main simulator is active.");
+            title.setText(lang.getText("HNXTPN_entry075"));
         }
     }
 
@@ -1827,7 +1824,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         int maxInterval = simTransInterval;
         if(10*simTransInterval > statusVectorTransition.get(0).size()) {
             maxInterval = 1;
-            overlord.log("Warning: transition node window interval too big, reduced to 1.", "warning", true);
+            overlord.log(lang.getText("HNXTPN_entry076"), "warning", true);
         }
 
         if(statusVectorTransition != null) {
@@ -1899,7 +1896,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
     private void setFieldStatus(boolean isPlace) {
         if(isPlace) {
             if(thePlace.isGammaModeActive()) {
-                buttonGammaMode.setNewText("<html>Gamma: ON</html>"); //Gamma: ON
+                buttonGammaMode.setNewText(lang.getText("HNXTPN_entry077on")); //Gamma: ON
                 buttonGammaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
                 gammaVisibilityButton.setEnabled(true);
@@ -1907,14 +1904,14 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 gammaMaxTextField.setEnabled(true);
 
                 if(thePlace.isGammaRangeVisible()) {
-                    gammaVisibilityButton.setNewText("<html>\u03B3:visible<html>"); //Gamma: visible
+                    gammaVisibilityButton.setNewText(lang.getText("HNXTPN_entry078vis")); //Gamma: visible
                     gammaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 } else {
-                    gammaVisibilityButton.setNewText("<html>\u03B3:hidden<html>"); //Gamma: hidden
+                    gammaVisibilityButton.setNewText(lang.getText("HNXTPN_entry078invis")); //Gamma: hidden
                     gammaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 }
             } else { //GAMMA OFFLINE
-                buttonGammaMode.setNewText("<html>Gamma: OFF</html>"); //Gamma: OFF
+                buttonGammaMode.setNewText(lang.getText("HNXTPN_entry077off")); //Gamma: OFF
                 buttonGammaMode.repaintBackground("pearl_bH1_neutr.png", "paerl_bH2_hover.png", "paerl_bH3_press.png");
 
                 gammaVisibilityButton.setEnabled(false);
@@ -1930,10 +1927,10 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         } else { //dla tranzycji
             if(theTransition.isAlphaModeActive()) {
-                buttonAlphaMode.setNewText("<html>Alpha: ON</html>"); //Alpha: ON
+                buttonAlphaMode.setNewText(lang.getText("HNXTPN_entry042on")); //Alpha: ON
                 buttonAlphaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
-                buttonClassXTPNmode.setNewText("<html>XTPN<html>"); //XTPN
+                buttonClassXTPNmode.setNewText(lang.getText("HNXTPN_entry049")); //XTPN
                 buttonClassXTPNmode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
                 alphaMinTextField.setEnabled(true);
@@ -1943,22 +1940,22 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 tauVisibilityButton.setEnabled(true);
 
                 if(theTransition.isAlphaRangeVisible()) {
-                    alphaVisibilityButton.setNewText("<html>\u03B1: Visible<html>");    //Alpha: Visible
+                    alphaVisibilityButton.setNewText(lang.getText("HNXTPN_entry044vis"));    //Alpha: Visible
                     alphaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 } else {
-                    alphaVisibilityButton.setNewText("<html>\u03B1: Hidden<html>");   //Alpha: Hidden
+                    alphaVisibilityButton.setNewText(lang.getText("HNXTPN_entry044invis"));   //Alpha: Hidden
                     alphaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 }
 
                 if(theTransition.isTauTimerVisible()) {
-                    tauVisibilityButton.setNewText("<html>\u03C4: Visible<html>"); //Tau: Visible
+                    tauVisibilityButton.setNewText(lang.getText("HNXTPN_entry079vis")); //Tau: Visible
                     tauVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 } else {
-                    tauVisibilityButton.setNewText("<html>\u03C4: Hidden<html>"); //Tau: Hidden
+                    tauVisibilityButton.setNewText(lang.getText("HNXTPN_entry079invis")); //Tau: Hidden
                     tauVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 }
             } else { //ALFA OFFLINE
-                buttonAlphaMode.setNewText("<html>Alpha: OFF</html>"); //Alpha: OFF
+                buttonAlphaMode.setNewText(lang.getText("HNXTPN_entry042off")); //Alpha: OFF
                 buttonAlphaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
                 alphaMinTextField.setEnabled(false);
@@ -1968,10 +1965,10 @@ public class HolmesNodeInfoXTPN extends JFrame {
             }
 
             if(theTransition.isBetaModeActive()) {
-                buttonBetaMode.setNewText("<html>Beta: ON</html>"); //Beta: ON
+                buttonBetaMode.setNewText(lang.getText("HNXTPN_entry045on")); //Beta: ON
                 buttonBetaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
-                buttonClassXTPNmode.setNewText("<html>XTPN<html>"); //XTPN
+                buttonClassXTPNmode.setNewText(lang.getText("HNXTPN_entry049")); //XTPN
                 buttonClassXTPNmode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
 
                 betaMinTextField.setEnabled(true);
@@ -1981,21 +1978,21 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 tauVisibilityButton.setEnabled(true);
 
                 if(theTransition.isBetaRangeVisible()) {
-                    betaVisibilityButton.setNewText("<html>\u03B2: Visible<html>"); //Beta: Visible
+                    betaVisibilityButton.setNewText(lang.getText("HNXTPN_entry047vis")); //Beta: Visible
                     betaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 } else {
-                    betaVisibilityButton.setNewText("<html>\u03B2: Hidden<html>"); //Beta: Hidden
+                    betaVisibilityButton.setNewText(lang.getText("HNXTPN_entry047invis")); //Beta: Hidden
                     betaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 }
                 if(theTransition.isTauTimerVisible()) {
-                    tauVisibilityButton.setNewText("<html>\u03C4: Visible<html>"); //Tau: Visible
+                    tauVisibilityButton.setNewText(lang.getText("HNXTPN_entry079vis")); //Tau: Visible
                     tauVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                 } else {
-                    tauVisibilityButton.setNewText("<html>\u03C4: Hidden<html>"); //Tau: Hidden
+                    tauVisibilityButton.setNewText(lang.getText("HNXTPN_entry079invis")); //Tau: Hidden
                     tauVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                 }
             } else { //BETA OFFLINE
-                buttonBetaMode.setNewText("<html>Beta: OFF</html>"); //Beta: OFF
+                buttonBetaMode.setNewText(lang.getText("HNXTPN_entry045off")); //Beta: OFF
                 buttonBetaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
                 betaMinTextField.setEnabled(false);
@@ -2005,7 +2002,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             }
 
             if(!theTransition.isAlphaModeActive() && !theTransition.isBetaModeActive()) { //both offline
-                buttonClassXTPNmode.setNewText("<html>Classical<html>"); //Classical
+                buttonClassXTPNmode.setNewText(lang.getText("HNXTPN_entry050")); //Classical
                 buttonClassXTPNmode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
 
                 tauVisibilityButton.setEnabled(false);
@@ -2024,8 +2021,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
             , double activeSteps, double producingSteps, double fireSteps, double inactiveTime
             , double activeTime, double producingTime) {
 
-        transStatsStepLabel.setText("Steps:"+" "+Tools.cutValue(realSimulationSteps) ); //Steps:
-        transStatsTimeLabel.setText("Time:"+" "+Tools.cutValue(realSimulationTime) ); //Time:
+        transStatsStepLabel.setText(lang.getText("HNXTPN_entry064")+" "+Tools.cutValue(realSimulationSteps) ); //Steps:
+        transStatsTimeLabel.setText(lang.getText("HNXTPN_entry065")+" "+Tools.cutValue(realSimulationTime) ); //Time:
 
         double tmp = (inactiveSteps / realSimulationSteps) * 100;
         transStatsInactiveStepsTextBox.setText((int)inactiveSteps + " ("+Tools.cutValue(tmp)+"%)");

@@ -173,7 +173,7 @@ public final class ElementDraw {
 						try { //kliknięty element
 							drawCrossHair(g, nodeBounds.x-(trans.getRadius()), nodeBounds.y-(trans.getRadius()), lightSky, false);
 						} catch (Exception ex) {
-							overlord.log(lang.getText("LOGentry00322exception")+" "+ex.getMessage(), "error", true);
+							overlord.log(lang.getText("LOGentry00322exception")+"\n"+ex.getMessage(), "error", true);
 						}
 					}
 				} else { //if (!trans.isLaunching())
@@ -232,7 +232,7 @@ public final class ElementDraw {
 								g.drawLine(nodeBounds.x+13, nodeBounds.y+15, nodeBounds.x+16, nodeBounds.y+14);
 								g.drawLine(nodeBounds.x+16, nodeBounds.y+14, nodeBounds.x+14, nodeBounds.y+19);
 							} catch (Exception ex) {
-								overlord.log(lang.getText("LOGentry00323exception")+" "+ex.getMessage(), "error", true);
+								overlord.log(lang.getText("LOGentry00323exception")+"\n"+ex.getMessage(), "error", true);
 							}
 						}
 						g.setColor(trans.qSimBoxT.qSimOvalColor);
@@ -321,7 +321,7 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/offlineTransition2.png")));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()+2), nodeBounds.y-(trans.getRadius()+2));
 					} catch (Exception ex) {
-						overlord.log(lang.getText("LOGentry00324exception")+" "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00324exception")+"\n"+ex.getMessage(), "error", true);
 					}
 				}
 				
@@ -330,7 +330,7 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility2.png")));
 						g.drawImage(img, null, nodeBounds.x-(trans.getRadius()-10), nodeBounds.y-(trans.getRadius()-8));
 					} catch (Exception ex) {
-						overlord.log(lang.getText("LOGentry00325exception")+" "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00325exception")+"\n"+ex.getMessage(), "error", true);
 					}
 				}
 				
@@ -398,7 +398,7 @@ public final class ElementDraw {
 						assert trans instanceof TransitionColored;
 						coloredTransitionDemo(g, (TransitionColored) trans, nodeBounds);
 					} catch (Exception ex) {
-						overlord.log(lang.getText("LOGentry00326exception")+" "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00326exception")+"\n"+ex.getMessage(), "error", true);
 					}
 				}
 			}
@@ -467,7 +467,7 @@ public final class ElementDraw {
 					try {
 						drawCrossHair(g, nodeBounds.x-(place.getRadius()-6), nodeBounds.y-(place.getRadius()-6), lightSky, false);
 					} catch (Exception ex) {
-						overlord.log(lang.getText("LOGentry00327exception")+" "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00327exception")+"\n"+ex.getMessage(), "error", true);
 					}
 				} else if (el.isPortalSelected()) { //jeżeli kliknięto portal, ale nie ten ElementLocation
 					//błękitna poświata:
@@ -525,7 +525,7 @@ public final class ElementDraw {
 						BufferedImage img = ImageIO.read(Objects.requireNonNull(ElementDraw.class.getResource("/icons/invisibility2.png")));
 						g.drawImage(img, null, nodeBounds.x-(place.getRadius()-15), nodeBounds.y-(place.getRadius()-13));
 					} catch (Exception ex) {
-						overlord.log(lang.getText("LOGentry00328exception")+" "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00328exception")+"\n"+ex.getMessage(), "error", true);
 					}
 				}
 
@@ -670,7 +670,7 @@ public final class ElementDraw {
                         assert place instanceof PlaceColored;
                         coloredPlaceDemo(g, (PlaceColored) place, nodeBounds);
 					} catch (Exception ex) {
-						overlord.log(lang.getText("LOGentry00329exception")+" "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00329exception")+"\n"+ex.getMessage(), "error", true);
 					}
 				}
 			}
@@ -1757,7 +1757,7 @@ public final class ElementDraw {
 					BufferedImage img = ImageIO.read(ElementDraw.class.getResource("/icons/tokenV2.png"));
 					g.drawImage(img, null, (int) a - 5, (int) b - 5);
 				} catch (Exception ex) {
-					overlord.log("Error (371587114) | Exception:  "+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00604exception")+"\n"+ex.getMessage(), "error", true);
 				}
 			} else {
 				g.fillOval((int) a - 5, (int) b - 5, 10, 10);

@@ -281,7 +281,7 @@ public class Transition extends Node {
                     ((PlaceColored)origin).reserveColorTokens(arc.getColorWeight(4), 4);
                     ((PlaceColored)origin).reserveColorTokens(arc.getColorWeight(5), 5);
                 } catch (Exception ex) {
-                    overlord.log(lang.getText("LOGentry00393exception"), "error", true);
+                    overlord.log(lang.getText("LOGentry00393exception")+"\n"+ex.getMessage(), "error", true);
                 }
             } else { //read arc / normal
                 if (arc.getArcType() == TypeOfArc.READARC) {

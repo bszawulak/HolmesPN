@@ -59,11 +59,11 @@ public class HolmesXTPNtokens extends JFrame {
         multisetK = multK;
         this.isGammaPlace = isGammaPlace;
 
-        setTitle("XPTN-place tokens options"); //XTPN-place tokens options
+        setTitle(lang.getText("HXTwin_entry001title")); //XTPN-place tokens options
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
-            overlord.log("Error (310108837) | Exception:  "+ex.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00615exception")+"\n"+ex.getMessage(), "error", true);
         }
 
         if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED)
@@ -88,8 +88,8 @@ public class HolmesXTPNtokens extends JFrame {
 
         if(mainSimulatorActive) {
             JOptionPane.showMessageDialog(null,
-                    "Window unavailable when simulator is working.",
-                    "Error: simulation in progress", JOptionPane.ERROR_MESSAGE);
+                    lang.getText("HXTwin_entry002"),
+                    lang.getText("problem"), JOptionPane.ERROR_MESSAGE);
             this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         } else {
             if(parentWindow == null) {
@@ -162,7 +162,7 @@ public class HolmesXTPNtokens extends JFrame {
                 return;
 
             int selected = tokensComboBox.getSelectedIndex();
-            idTokenLabel.setText("ID: "+selected);
+            idTokenLabel.setText(lang.getText("HXTwin_entry003")+" "+selected);
 
             if(selected >= 0) {
                 if(parentWindow == null) {
@@ -181,13 +181,13 @@ public class HolmesXTPNtokens extends JFrame {
 
         recreateComboBox();
 
-        tokensNoLabel = new JLabel("Tokens:"+place.getTokensNumber(), JLabel.LEFT); //Tokens:
+        tokensNoLabel = new JLabel(lang.getText("HXTwin_entry005")+place.getTokensNumber(), JLabel.LEFT); //Tokens:
         tokensNoLabel.setLocation(comboPanelX +200, comboPanelY);
         tokensNoLabel.setSize(90, 20);
         comboPanel.add(tokensNoLabel);
 
         //ID tokenu
-        idTokenLabel = new JLabel("ID: "+tokensComboBox.getSelectedIndex(), JLabel.LEFT);
+        idTokenLabel = new JLabel(lang.getText("HXTwin_entry006")+" "+tokensComboBox.getSelectedIndex(), JLabel.LEFT); //ID:
         idTokenLabel.setLocation(comboPanelX+10, comboPanelY+=30);
         idTokenLabel.setSize(50, 20);
         comboPanel.add(idTokenLabel);
@@ -208,14 +208,14 @@ public class HolmesXTPNtokens extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                overlord.log("Exception: "+ex, "error", true);
+                overlord.log(lang.getText("LOGentry00616exception")+"\n"+ex.getMessage(), "error", true);
                 System.out.println(ex.getMessage());
             }
         });
         comboPanel.add(tokenValueTextField);
 
         //potwierdzenie zmiany wartości tokenu
-        changeTokenValueButton = new HolmesRoundedButton("Change value" //Change value
+        changeTokenValueButton = new HolmesRoundedButton(lang.getText("HXTwin_entry007") //Change value
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         changeTokenValueButton.setMargin(new Insets(0, 0, 0, 0));
         changeTokenValueButton.setBounds(comboPanelX+150, comboPanelY-5, 100, 30);
@@ -251,14 +251,15 @@ public class HolmesXTPNtokens extends JFrame {
                 tokensComboBox.setSelectedIndex(selected);
                 doNotUpdate =true;
             } catch (Exception exc) {
-                JOptionPane.showMessageDialog(null, "Cannot convert "+tokenValueTextField.getValue()+ " into Double",
-                        "Conversion eror", JOptionPane.ERROR_MESSAGE);
+                String strB = String.format(lang.getText("HXTwin_entry008"), tokenValueTextField.getValue());
+                JOptionPane.showMessageDialog(null, strB,
+                        lang.getText("HXTwin_entry008t"), JOptionPane.ERROR_MESSAGE);
             }
         });
         comboPanel.add(changeTokenValueButton);
 
         //usunięcie tokenu
-        removeTokenValueButton = new HolmesRoundedButton("Remove" //Remove
+        removeTokenValueButton = new HolmesRoundedButton(lang.getText("HXTwin_entry009") //Remove
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         removeTokenValueButton.setMargin(new Insets(0, 0, 0, 0));
         removeTokenValueButton.setBounds(comboPanelX+250, comboPanelY-5, 100, 30);
@@ -282,7 +283,8 @@ public class HolmesXTPNtokens extends JFrame {
                             if(selected > -1 && selected < multisetK.size()) {
                                 multisetK.remove(selected);
                             } else {
-                                overlord.log("Error while removing token no. "+selected+"from state for place "+places.indexOf(place), "error", true);
+                                String strB = String.format(lang.getText("HXTwin_entry010"), selected, places.indexOf(place));
+                                overlord.log(strB, "error", true);
                             }
                         } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
                             ((HolmesNodeInfoXTPN)parentWindow).printTokenNumber();
@@ -302,7 +304,8 @@ public class HolmesXTPNtokens extends JFrame {
                                     multisetK.set(0, tokensNumber);
                                 }
                             } else {
-                                overlord.log("Error while removing token no. "+selected+"from state for place "+places.indexOf(place), "error", true);
+                                String strB = String.format(lang.getText("HXTwin_entry011"), selected, places.indexOf(place));
+                                overlord.log(strB, "error", true);
                             }
                         } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
                             ((HolmesNodeInfoXTPN)parentWindow).printTokenNumber();
@@ -318,15 +321,15 @@ public class HolmesXTPNtokens extends JFrame {
                     if(!multisetK.isEmpty())
                         tokensComboBox.setSelectedIndex(0);
                 }
-
             } catch (Exception exc) {
-                JOptionPane.showMessageDialog(null, "Cannot convert "+tokenValueTextField.getValue()+ " into Double",
-                        "Conversion eror", JOptionPane.ERROR_MESSAGE);
+                String strB = String.format(lang.getText("HXTwin_entry012"), tokenValueTextField.getValue());
+                JOptionPane.showMessageDialog(null, strB,
+                        lang.getText("HXTwin_entry008t"), JOptionPane.ERROR_MESSAGE);
             }
         });
         comboPanel.add(removeTokenValueButton);
 
-        JLabel addNewLabel = new JLabel("New:", JLabel.LEFT); //New:
+        JLabel addNewLabel = new JLabel(lang.getText("HXTwin_entry013"), JLabel.LEFT); //New:
         addNewLabel.setBounds(comboPanelX+10, comboPanelY+=30, 50, 20);
         comboPanel.add(addNewLabel);
 
@@ -342,7 +345,7 @@ public class HolmesXTPNtokens extends JFrame {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                overlord.log("Exception: "+ex, "error", true);
+                overlord.log(lang.getText("LOGentry00617exception")+"\n"+ex.getMessage(), "error", true);
                 System.out.println(ex.getMessage());
             }
         });
@@ -350,7 +353,7 @@ public class HolmesXTPNtokens extends JFrame {
 
         //potwierdzenie dodania nowego tokenu
         //przycisk dodania tokeny z nową wartością
-        HolmesRoundedButton addNewTokenButton = new HolmesRoundedButton("Add new token" //Add new token
+        HolmesRoundedButton addNewTokenButton = new HolmesRoundedButton(lang.getText("HXTwin_entry014") //Add new token
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         addNewTokenButton.setBounds(comboPanelX+150, comboPanelY-5, 100, 30);
         addNewTokenButton.setMargin(new Insets(0, 0, 0, 0));
@@ -400,13 +403,14 @@ public class HolmesXTPNtokens extends JFrame {
                     writeTokensNumberInLabel();
                 }
             } catch (Exception exc) {
-                JOptionPane.showMessageDialog(null, "Cannot convert "+tokenValueTextField.getValue()+ " into Double",
-                        "Conversion eror", JOptionPane.ERROR_MESSAGE);
+                String strB = String.format(lang.getText("HXTwin_entry015"), addNewTextField.getValue());
+                JOptionPane.showMessageDialog(null, strB,
+                        lang.getText("HXTwin_entry008t"), JOptionPane.ERROR_MESSAGE);
             }
         });
         comboPanel.add(addNewTokenButton);
 
-        clearAllButton = new HolmesRoundedButton("Clear all" //Clear all
+        clearAllButton = new HolmesRoundedButton(lang.getText("HXTwin_entry016") //Clear all
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         clearAllButton.setMargin(new Insets(0, 0, 0, 0));
         clearAllButton.setBounds(comboPanelX+10, comboPanelY+25, 120, 30);
@@ -414,8 +418,8 @@ public class HolmesXTPNtokens extends JFrame {
             if (!doNotUpdate)
                 return;
 
-            int n = JOptionPane.showConfirmDialog(null, "This will clear all the tokens data. Continue?", "Clean warning",
-                    JOptionPane.YES_NO_OPTION);
+            int n = JOptionPane.showConfirmDialog(null, lang.getText("HXTwin_entry017")
+                    , lang.getText("warning"), JOptionPane.YES_NO_OPTION);
             if(n == 0){
                 doNotUpdate =false;
                 if(parentWindow == null) { //to znaczy, że czyścimy bezpośrednio z miejsca
@@ -437,7 +441,7 @@ public class HolmesXTPNtokens extends JFrame {
         });
         comboPanel.add(clearAllButton);
 
-        HolmesRoundedButton addMultipleTokensButton = new HolmesRoundedButton("Add #[New] tokens" //Add #[New] tokens
+        HolmesRoundedButton addMultipleTokensButton = new HolmesRoundedButton(lang.getText("HXTwin_entry018") //Add #[New] tokens
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         addMultipleTokensButton.setBounds(comboPanelX+130, comboPanelY+25, 120, 30);
         addMultipleTokensButton.setMargin(new Insets(0, 0, 0, 0));
@@ -485,8 +489,9 @@ public class HolmesXTPNtokens extends JFrame {
                     writeTokensNumberInLabel();
                 }
             } catch (Exception exc) {
-                JOptionPane.showMessageDialog(null, "Cannot convert "+tokenValueTextField.getValue()+ " into Double",
-                        "Conversion eror", JOptionPane.ERROR_MESSAGE);
+                String strB = String.format(lang.getText("HXTwin_entry019"), addNewTextField.getValue());
+                JOptionPane.showMessageDialog(null, strB,
+                        lang.getText("HXTwin_entry008t"), JOptionPane.ERROR_MESSAGE);
             }
         });
         comboPanel.add(addMultipleTokensButton);
@@ -522,9 +527,7 @@ public class HolmesXTPNtokens extends JFrame {
             tokenValueTextField.setEnabled(false);
             changeTokenValueButton.setEnabled(false);
             clearAllButton.setEnabled(false);
-
             removeTokenValueButton.setEnabled(true);
-
             tokensComboBox.setEnabled(false);
             addNewTextField.setEnabled(false);
         }
@@ -536,12 +539,11 @@ public class HolmesXTPNtokens extends JFrame {
     private void writeTokensNumberInLabel() {
         if(isGammaPlace) {
             int tokensNo = multisetK.size();
-            tokensNoLabel.setText("Tokens:"+" " + tokensNo ); //Tokens:
+            tokensNoLabel.setText(lang.getText("HXTwin_entry020")+" " + tokensNo ); //Tokens:
 
             if(parentWindow == null) { //tylko dla głównego okna odwołujemy się do miejsca
                 if(tokensNo != place.getTokensNumber()) {
-                    overlord.log("Error, multiset size and variable tokenNumber missmatch for place p_"+place.getID(),
-                            "error", true);
+                    overlord.log(lang.getText("HXTwin_entry021")+place.getID(), "error", true);
                 }
             }
         } else { //classical place
@@ -550,8 +552,7 @@ public class HolmesXTPNtokens extends JFrame {
 
             if(parentWindow == null) { //tylko dla głównego okna odwołujemy się do miejsca
                 if(tokensNo != place.getTokensNumber()) {
-                    overlord.log("Error, classical place tokens number in a multiset at .get(0) and variable tokenNumber missmatch for place p_"+place.getID(),
-                            "error", true);
+                    overlord.log(lang.getText("HXTwin_entry022")+place.getID(), "error", true);
                 }
             }
         }

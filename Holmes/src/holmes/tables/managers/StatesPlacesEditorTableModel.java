@@ -156,7 +156,7 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
 				boss.changeRealValue(stateVectorIndex, row, newValue);
 			}
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00423exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00423exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -168,7 +168,7 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
 				dataMatrix.get(row).tokens = newValue;
 			}
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00424exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00424exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 }

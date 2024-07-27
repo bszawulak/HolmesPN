@@ -264,7 +264,7 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
                 ImageIO.write(image, ext.substring(1), new File(file.getPath() + ext));
                 overlord.log(lang.getText("LOGentry00372")+ " " + file.getPath() + ext, "text", true);
             } catch (IOException ex) {
-                overlord.log(lang.getText("LOGentry00373exception")+ " " + ex.getMessage(), "error", true);
+                overlord.log(lang.getText("LOGentry00373exception")+ "\n" + ex.getMessage(), "error", true);
             }
         }
     }

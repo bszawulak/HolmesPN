@@ -879,8 +879,8 @@ public class SelectionManager {
 					invokeActionListener();
 					break;
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Wrong sheet number linked to this meta-node.", 
-							"Serious problem", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("SM_entry002"), // Wrong sheet number linked to this meta-node.
+							lang.getText("error"), JOptionPane.WARNING_MESSAGE);
 					invokeActionListener();
 					break;
 				}

@@ -124,7 +124,7 @@ public class TransitionColored extends Transition {
                 tokens4grey += ((PlaceColored)arcStartPlace).getNonReservedColorTokensNumber(4);
                 tokens5black += ((PlaceColored)arcStartPlace).getNonReservedColorTokensNumber(5);
             } catch (Exception ex) {
-                overlord.log(lang.getText("LOGentry00394"), "error", false);
+                overlord.log(lang.getText("LOGentry00394")+"\n"+ex.getMessage(), "error", false);
             }
         }
         return req0red > tokens0red || req1green > tokens1green || req2blue > tokens2blue || req3yellow > tokens3yellow ||

@@ -316,7 +316,7 @@ public class GraphicalSimulator {
 							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(4), 4);
 							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(5), 5);
 						} catch (Exception ex) {
-							overlord.log(lang.getText("LOGentry00403exception"), "error", true);
+							overlord.log(lang.getText("LOGentry00403exception")+"\n"+ex.getMessage(), "error", true);
 						}
 
 					} else {
@@ -344,7 +344,7 @@ public class GraphicalSimulator {
 							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(4), 4);
 							((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(5), 5);
 						} catch (Exception ex) {
-							overlord.log(lang.getText("LOGentry00404exception"), "error", true);
+							overlord.log(lang.getText("LOGentry00404exception")+"\n"+ex.getMessage(), "error", true);
 						}
 					} else {
 						FunctionsTools.functionalExtraction(transition, arc, place);
@@ -405,7 +405,7 @@ public class GraphicalSimulator {
 						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(4), 4);
 						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(5), 5);
 					} catch (Exception ex) {
-						overlord.log(lang.getText("LOGentry00405exception"), "error", true);
+						overlord.log(lang.getText("LOGentry00405exception")+"\n"+ex.getMessage(), "error", true);
 					}
 				} else {
 					FunctionsTools.functionalExtraction(transition, arc, place);
@@ -433,7 +433,7 @@ public class GraphicalSimulator {
 						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(4), 4);
 						((PlaceColored)place).modifyColorTokensNumber(-arc.getColorWeight(5), 5);
 					} catch (Exception ex) {
-						overlord.log(lang.getText("LOGentry00406exception"), "error", true);
+						overlord.log(lang.getText("LOGentry00406exception")+"\n"+ex.getMessage(), "error", true);
 					}
 				} else {
 					FunctionsTools.functionalExtraction(transition, arc, place);
@@ -544,7 +544,7 @@ public class GraphicalSimulator {
 						((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(4), 4);
 						((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(5), 5);
 					} catch (Exception ex) {
-						overlord.log(lang.getText("LOGentry00408exception"), "error", true);
+						overlord.log(lang.getText("LOGentry00408exception")+"\n"+ex.getMessage(), "error", true);
 					}
 				} else {
 					//tylko zwykły łuk
@@ -602,7 +602,7 @@ public class GraphicalSimulator {
 					((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(4), 4);
 					((PlaceColored)place).modifyColorTokensNumber(arc.getColorWeight(5), 5);
 				} catch (Exception ex) {
-					overlord.log(lang.getText("LOGentry00410exception"), "error", true);
+					overlord.log(lang.getText("LOGentry00410exception")+"\n"+ex.getMessage(), "error", true);
 				}
 			} else {
 				//tylko zwykły łuk
