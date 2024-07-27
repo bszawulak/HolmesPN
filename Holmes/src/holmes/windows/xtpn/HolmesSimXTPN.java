@@ -138,7 +138,7 @@ public class HolmesSimXTPN extends JFrame {
      */
     private void initializeComponents() {
         setVisible(false);
-        setTitle("State Simulator");
+        setTitle("XTPN State Simulator"); //XTPN State Simulator
         setLocation(30,30);
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
@@ -151,9 +151,11 @@ public class HolmesSimXTPN extends JFrame {
         add(main);
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Places dynamics", Tools.getResIcon16("/icons/stateSim/placesDyn.png"), createPlacesTabPanel(), "Places dynamics");
+        tabbedPane.addTab("Places dynamics", Tools.getResIcon16("/icons/stateSim/placesDyn.png") //Places dynamics
+                , createPlacesTabPanel(), "Places dynamics");
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-        tabbedPane.addTab("Transitions dynamics", Tools.getResIcon16("/icons/stateSim/transDyn.png"), createTransitionsTabPanel(), "Transistions dynamics");
+        tabbedPane.addTab("Transitions dynamics", Tools.getResIcon16("/icons/stateSim/transDyn.png") //Transitions dynamics
+                , createTransitionsTabPanel(), "Transistions dynamics");
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
         mainTabPanel = new JTabbedPane();
@@ -161,10 +163,12 @@ public class HolmesSimXTPN extends JFrame {
         firstTab.add(craeteDataAcquisitionPanel(), BorderLayout.NORTH);
         firstTab.add(tabbedPane, BorderLayout.CENTER);
 
-        mainTabPanel.addTab("Standard mode", Tools.getResIcon16("/icons/stateSim/simpleSimTab.png"), firstTab, "Simple mode");
+        mainTabPanel.addTab("Standard mode", Tools.getResIcon16("/icons/stateSim/simpleSimTab.png") //Simple mode
+                , firstTab, "Simple mode");
 
         knockoutTab = new JPanel();
-        mainTabPanel.addTab("KnockoutSim", Tools.getResIcon16("/icons/stateSim/knockSimTab.png"), knockoutTab, "KnockoutSim");
+        mainTabPanel.addTab("KnockoutSim", Tools.getResIcon16("/icons/stateSim/knockSimTab.png") //KnockoutSim
+                , knockoutTab, "KnockoutSim");
 
         main.add(mainTabPanel, BorderLayout.CENTER);
 
@@ -178,13 +182,13 @@ public class HolmesSimXTPN extends JFrame {
     private JPanel craeteDataAcquisitionPanel() {
         JPanel dataAcquisitionPanel = new JPanel(null);
         dataAcquisitionPanel.setBackground(Color.WHITE);
-        dataAcquisitionPanel.setBorder(BorderFactory.createTitledBorder("Data acquisition"));
+        dataAcquisitionPanel.setBorder(BorderFactory.createTitledBorder("Data acquisition")); //Data acquisition
         dataAcquisitionPanel.setPreferredSize(new Dimension(670, 110));
 
         int posXda = 10;
         int posYda = 20;
 
-        acqDataButton = new HolmesRoundedButton("<html><center>Simulation<br>start</center></html>"
+        acqDataButton = new HolmesRoundedButton("<html><center>Simulation<br>start</center></html>" //Simulation start
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         acqDataButton.setBounds(posXda, posYda, 110, 40);
         acqDataButton.setMargin(new Insets(0, 0, 0, 0));
@@ -194,7 +198,7 @@ public class HolmesSimXTPN extends JFrame {
         acqDataButton.addActionListener(actionEvent -> acquireDataFromSimulation());
         dataAcquisitionPanel.add(acqDataButton);
 
-        HolmesRoundedButton cancelButton = new HolmesRoundedButton("<html><center>Cancel</center></html>"
+        HolmesRoundedButton cancelButton = new HolmesRoundedButton("<html><center>Cancel</center></html>" //Cancel
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         cancelButton.setText("<html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>");
         cancelButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/stopIcon.png"));
@@ -205,7 +209,7 @@ public class HolmesSimXTPN extends JFrame {
         cancelButton.setFocusPainted(false);
         dataAcquisitionPanel.add(cancelButton);
 
-        JButton simSettingsButton = new HolmesRoundedButton("<html><center>Simulation<br>Settings</center></html>"
+        JButton simSettingsButton = new HolmesRoundedButton("<html><center>Simulation<br>Settings</center></html>" //Simulation Settings
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         simSettingsButton.setBounds(posXda+120, posYda, 130, 40);
         simSettingsButton.setMargin(new Insets(0, 0, 0, 0));
@@ -218,7 +222,7 @@ public class HolmesSimXTPN extends JFrame {
         simSettingsButton.setEnabled(false);
         dataAcquisitionPanel.add(simSettingsButton);
 
-        stateManagerButton = new HolmesRoundedButton("<html><center>States<br>Manager</center></html>"
+        stateManagerButton = new HolmesRoundedButton("<html><center>States<br>Manager</center></html>" //States Manager
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         stateManagerButton.setIcon(Tools.getResIcon32("/icons/stateManager/stManIcon.png"));
         stateManagerButton.setBounds(posXda+260, posYda, 130, 40);
@@ -227,7 +231,7 @@ public class HolmesSimXTPN extends JFrame {
         stateManagerButton.addActionListener(actionEvent -> new HolmesStatesManager());
         dataAcquisitionPanel.add(stateManagerButton);
 
-        JLabel stateLabel0 = new JLabel("Selected m0 state ID: ");
+        JLabel stateLabel0 = new JLabel("Selected m0 state ID: "); //Selected m0 state ID:
         stateLabel0.setBounds(posXda+400, posYda, 130, 20);
         dataAcquisitionPanel.add(stateLabel0);
 
@@ -235,7 +239,7 @@ public class HolmesSimXTPN extends JFrame {
         selStateLabel.setBounds(posXda+530, posYda, 40, 20);
         dataAcquisitionPanel.add(selStateLabel);
 
-        JButton clearDataButton = new HolmesRoundedButton("<html><center>Clear all<br>data</center></html>"
+        JButton clearDataButton = new HolmesRoundedButton("<html><center>Clear all<br>data</center></html>" //Clear all data
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         clearDataButton.setBounds(posXda+550, posYda, 110, 40);
         clearDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/clearData.png"));
@@ -255,7 +259,7 @@ public class HolmesSimXTPN extends JFrame {
         progressBar.setMinimum(0);
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
-        Border border = BorderFactory.createTitledBorder("Progress");
+        Border border = BorderFactory.createTitledBorder("Progress"); //Progress
         progressBar.setBorder(border);
         progressBar.setBackground(Color.WHITE);
         dataAcquisitionPanel.add(progressBar);
@@ -263,14 +267,14 @@ public class HolmesSimXTPN extends JFrame {
 
         JPanel XTPNoptionsPanel = new JPanel(null);
         XTPNoptionsPanel.setBackground(Color.WHITE);
-        XTPNoptionsPanel.setBorder(BorderFactory.createTitledBorder("XTPN sim options"));
+        XTPNoptionsPanel.setBorder(BorderFactory.createTitledBorder("XTPN sim options")); //XTPN sim options
         XTPNoptionsPanel.setBounds(posXda+670, posYda-20, 380, 110);
         dataAcquisitionPanel.add(XTPNoptionsPanel);
 
         int internalX = 10;
         int internalY = 20;
 
-        JLabel labelReps = new JLabel("Repetitions:");
+        JLabel labelReps = new JLabel("Repetitions:"); //Repetitions:
         labelReps.setBounds(internalX, internalY, 70, 20);
         XTPNoptionsPanel.add(labelReps);
 
@@ -288,7 +292,7 @@ public class HolmesSimXTPN extends JFrame {
         });
         XTPNoptionsPanel.add(placesRepsSpinner);
 
-        qSimXTPNRecordStepsCheckbox = new JCheckBox("Sel. steps");
+        qSimXTPNRecordStepsCheckbox = new JCheckBox("Sel. steps"); //Sel. steps
         qSimXTPNRecordStepsCheckbox.setBackground(Color.WHITE);
         qSimXTPNRecordStepsCheckbox.setBounds(internalX+130, internalY, 90, 20);
         qSimXTPNRecordStepsCheckbox.setSelected(overlord.simSettings.isTimeSimulation_XTPN());
@@ -314,7 +318,7 @@ public class HolmesSimXTPN extends JFrame {
         });
         XTPNoptionsPanel.add(selStepsSpinner);
 
-        qSimXTPNCompStatsCheckbox = new JCheckBox("Comp. stats");
+        qSimXTPNCompStatsCheckbox = new JCheckBox("Comp. stats"); //Comp. stats
         qSimXTPNCompStatsCheckbox.setBackground(Color.WHITE);
         qSimXTPNCompStatsCheckbox.setBounds(internalX+130, internalY, 90, 20);
         qSimXTPNCompStatsCheckbox.setSelected(overlord.simSettings.isTimeSimulation_XTPN());
@@ -329,7 +333,7 @@ public class HolmesSimXTPN extends JFrame {
 
         internalY += 20;
 
-        JLabel labelSteps = new JLabel("Steps:");
+        JLabel labelSteps = new JLabel("Steps:"); //Steps:
         labelSteps.setBounds(internalX, internalY, 40, 20);
         XTPNoptionsPanel.add(labelSteps);
 
@@ -344,7 +348,7 @@ public class HolmesSimXTPN extends JFrame {
         });
         XTPNoptionsPanel.add(placesStepsSpinner);
 
-        JLabel labelPInterval = new JLabel("Interval:");
+        JLabel labelPInterval = new JLabel("Interval:"); //Interval:
         labelPInterval.setBounds(internalX+140, internalY, 50, 20);
         XTPNoptionsPanel.add(labelPInterval);
 
@@ -365,7 +369,7 @@ public class HolmesSimXTPN extends JFrame {
 
         internalY += 20;
 
-        qSimXTPNStatsTimeCheckbox = new JCheckBox("Time simulation");
+        qSimXTPNStatsTimeCheckbox = new JCheckBox("Time simulation"); //Time simulation
         qSimXTPNStatsTimeCheckbox.setBackground(Color.WHITE);
         qSimXTPNStatsTimeCheckbox.setBounds(internalX, internalY, 120, 20);
         qSimXTPNStatsTimeCheckbox.setSelected(overlord.simSettings.isTimeSimulation_XTPN());
@@ -380,7 +384,7 @@ public class HolmesSimXTPN extends JFrame {
 
         internalY += 20;
 
-        JLabel labelTime = new JLabel("Time:");
+        JLabel labelTime = new JLabel("Time:"); //Time:
         labelTime.setBounds(internalX, internalY, 40, 20);
         XTPNoptionsPanel.add(labelTime);
 
@@ -395,7 +399,7 @@ public class HolmesSimXTPN extends JFrame {
         });
         XTPNoptionsPanel.add(placesTimeSpinner);
 
-        JLabel labelPTimeInterval = new JLabel("Interval:");
+        JLabel labelPTimeInterval = new JLabel("Interval:"); //Interval:
         labelPTimeInterval.setBounds(internalX+140, internalY, 50, 20);
         XTPNoptionsPanel.add(labelPTimeInterval);
 
@@ -430,13 +434,13 @@ public class HolmesSimXTPN extends JFrame {
 
         JPanel placesChartOptionsPanel = new JPanel(null);
         placesChartOptionsPanel.setBackground(Color.WHITE);
-        placesChartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Places chart options"));
+        placesChartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Places chart options")); //Places chart options
         placesChartOptionsPanel.setPreferredSize(new Dimension(500, 120));
 
         int posXchart = 10;
         int posYchart = 20;
 
-        JButton showAllButton = new HolmesRoundedButton("<html><center>Show all</center></html>"
+        JButton showAllButton = new HolmesRoundedButton("<html><center>Show all</center></html>" //Show all
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         showAllButton.setBounds(posXchart, posYchart, 120, 24);
         showAllButton.setMargin(new Insets(0, 0, 0, 0));
@@ -446,7 +450,7 @@ public class HolmesSimXTPN extends JFrame {
         showAllButton.addActionListener(actionEvent -> showAllPlacesData());
         placesChartOptionsPanel.add(showAllButton);
 
-        JButton showNotepadButton = new HolmesRoundedButton("<html><center>Show notepad</center></html>"
+        JButton showNotepadButton = new HolmesRoundedButton("<html><center>Show notepad</center></html>" //Show notepad
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         showNotepadButton.setBounds(posXchart+130, posYchart, 120, 24);
         showNotepadButton.setMargin(new Insets(0, 0, 0, 0));
@@ -457,7 +461,7 @@ public class HolmesSimXTPN extends JFrame {
         placesChartOptionsPanel.add(showNotepadButton);
         placesChartOptionsPanel.setEnabled(false);
 
-        JCheckBox sortedCheckBox = new JCheckBox("Sorted by tokens");
+        JCheckBox sortedCheckBox = new JCheckBox("Sorted by tokens"); //Sorted by tokens
         sortedCheckBox.setBounds(posXchart+460, posYchart+10, 130, 20);
         sortedCheckBox.setBackground(Color.WHITE);
         sortedCheckBox.addActionListener(actionEvent -> {
@@ -468,7 +472,7 @@ public class HolmesSimXTPN extends JFrame {
         placesChartOptionsPanel.add(sortedCheckBox);
         posYchart += 30;
 
-        JLabel label1 = new JLabel("Places:");
+        JLabel label1 = new JLabel("Places:");  //Places:
         label1.setBounds(posXchart, posYchart, 70, 20);
         placesChartOptionsPanel.add(label1);
 
@@ -485,7 +489,7 @@ public class HolmesSimXTPN extends JFrame {
 
         posYchart += 30;
 
-        JButton addPlaceButton = new HolmesRoundedButton("<html><center>Add to chart</center></html>"
+        JButton addPlaceButton = new HolmesRoundedButton("<html><center>Add to chart</center></html>" //Add to chart
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         addPlaceButton.setBounds(posXchart, posYchart+2, 110, 24);
         addPlaceButton.setMargin(new Insets(0, 0, 0, 0));
@@ -512,7 +516,7 @@ public class HolmesSimXTPN extends JFrame {
         });
         placesChartOptionsPanel.add(addPlaceButton);
 
-        JButton removePlaceButton = new HolmesRoundedButton("<html><center>Remove</center></html>"
+        JButton removePlaceButton = new HolmesRoundedButton("<html><center>Remove</center></html>" //Remove
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         removePlaceButton.setBounds(posXchart+120, posYchart+2, 110, 24);
         removePlaceButton.setMargin(new Insets(0, 0, 0, 0));
@@ -537,7 +541,7 @@ public class HolmesSimXTPN extends JFrame {
         });
         placesChartOptionsPanel.add(removePlaceButton);
 
-        JButton clearPlacesChartButton = new HolmesRoundedButton("<html><center>Clear chart</center></html>"
+        JButton clearPlacesChartButton = new HolmesRoundedButton("<html><center>Clear chart</center></html>" //Clear chart
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         clearPlacesChartButton.setBounds(posXchart+240, posYchart+2, 110, 24);
         clearPlacesChartButton.setMargin(new Insets(0, 0, 0, 0));
@@ -547,7 +551,7 @@ public class HolmesSimXTPN extends JFrame {
         clearPlacesChartButton.addActionListener(actionEvent -> clearPlacesChart());
         placesChartOptionsPanel.add(clearPlacesChartButton);
 
-        JButton savePlacesChartButton = new HolmesRoundedButton("<html><center>Save image</center></html>"
+        JButton savePlacesChartButton = new HolmesRoundedButton("<html><center>Save image</center></html>" //Save image
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         savePlacesChartButton.setBounds(posXchart+360, posYchart+2, 110, 24);
         savePlacesChartButton.setMargin(new Insets(0, 0, 0, 0));
@@ -557,7 +561,7 @@ public class HolmesSimXTPN extends JFrame {
         savePlacesChartButton.addActionListener(actionEvent -> saveChartImage("places", 1200, 1024));
         placesChartOptionsPanel.add(savePlacesChartButton);
 
-        JButton showPlaceButton = new HolmesRoundedButton("<html><center>Find place</center></html>"
+        JButton showPlaceButton = new HolmesRoundedButton("<html><center>Find place</center></html>" //Find place
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         showPlaceButton.setBounds(posXchart+480, posYchart+2, 110, 24);
         showPlaceButton.setMargin(new Insets(0, 0, 0, 0));
@@ -579,15 +583,15 @@ public class HolmesSimXTPN extends JFrame {
         topPanel.add(placesChartOptionsPanel, BorderLayout.CENTER);
 
 
-        placeSimSteps = new JLabel("Place simulation steps: 0");
+        placeSimSteps = new JLabel("Place simulation steps: 0"); //Place simulation steps:
         placeSimSteps.setBounds(posXchart+620, posYchart-60, 200, 20);
         placesChartOptionsPanel.add(placeSimSteps);
 
-        placeSimTime = new JLabel("Place simulation time: 0");
+        placeSimTime = new JLabel("Place simulation time: 0"); //Place simulation time:
         placeSimTime.setBounds(posXchart+620, posYchart-40, 200, 20);
         placesChartOptionsPanel.add(placeSimTime);
 
-        placeSimCompTime = new JLabel("Simulation computing time: 0");
+        placeSimCompTime = new JLabel("Simulation computing time: 0"); //Simulation computing time:
         placeSimCompTime.setBounds(posXchart+620, posYchart-20, 230, 20);
         placesChartOptionsPanel.add(placeSimCompTime);
 
@@ -596,14 +600,14 @@ public class HolmesSimXTPN extends JFrame {
 
         JPanel placesChartGraphicPanel = new JPanel(null);
         placesChartGraphicPanel.setBackground(Color.WHITE);
-        placesChartGraphicPanel.setBorder(BorderFactory.createTitledBorder("Chart graphic"));
+        placesChartGraphicPanel.setBorder(BorderFactory.createTitledBorder("Chart graphic")); //Chart graphic
         placesChartGraphicPanel.setPreferredSize(new Dimension(200, 100));
 
         int posXGchart = 10;
         int posYGchart = 20;
 
         ButtonGroup groupWidth = new ButtonGroup();
-        JRadioButton width1 = new JRadioButton("Thin line");
+        JRadioButton width1 = new JRadioButton("Thin line"); //Thin line
         width1.setBackground(Color.WHITE);
         width1.setBounds(posXGchart, posYGchart, 90, 20);
         width1.setActionCommand("0");
@@ -617,7 +621,7 @@ public class HolmesSimXTPN extends JFrame {
         groupWidth.add(width1);
         groupWidth.setSelected(width1.getModel(), true);
 
-        JRadioButton width2 = new JRadioButton("Normal line");
+        JRadioButton width2 = new JRadioButton("Normal line"); //Normal line
         width2.setBackground(Color.WHITE);
         width2.setBounds(posXGchart, posYGchart+20, 90, 20);
         width2.setActionCommand("1");
@@ -630,7 +634,7 @@ public class HolmesSimXTPN extends JFrame {
         placesChartGraphicPanel.add(width2);
         groupWidth.add(width2);
 
-        JRadioButton width3 = new JRadioButton("Thick line");
+        JRadioButton width3 = new JRadioButton("Thick line"); //Thick line
         width3.setBackground(Color.WHITE);
         width3.setBounds(posXGchart, posYGchart+40, 90, 20);
         width3.setActionCommand("2");
@@ -648,7 +652,7 @@ public class HolmesSimXTPN extends JFrame {
         //************************************************************************************************************
 
         placesJPanel = new JPanel(new BorderLayout());
-        placesJPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
+        placesJPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));   //Places chart
         placesJPanel.add(createPlacesChartPanel(), BorderLayout.CENTER);
         result.add(placesJPanel, BorderLayout.CENTER);
 
@@ -667,14 +671,14 @@ public class HolmesSimXTPN extends JFrame {
 
         JPanel transChartOptionsPanel = new JPanel(null);
         transChartOptionsPanel.setBackground(Color.WHITE);
-        transChartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Transitions chart options"));
+        transChartOptionsPanel.setBorder(BorderFactory.createTitledBorder("Transitions chart options")); //Transitions chart options
         transChartOptionsPanel.setPreferredSize(new Dimension(500, 120));
 
         int posXchart = 10;
         int posYchart = 20;
 
 
-        JButton showAllButton = new HolmesRoundedButton("<html><center>Show all</center></html>"
+        JButton showAllButton = new HolmesRoundedButton("<html><center>Show all</center></html>" //Show all
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         showAllButton.setBounds(posXchart, posYchart, 120, 24);
         showAllButton.setMargin(new Insets(0, 0, 0, 0));
@@ -686,7 +690,7 @@ public class HolmesSimXTPN extends JFrame {
         showAllButton.setEnabled(false);
         transChartOptionsPanel.add(showAllButton);
 
-        JButton showNotepadButton = new HolmesRoundedButton("<html><center>Show notepad</center></html>"
+        JButton showNotepadButton = new HolmesRoundedButton("<html><center>Show notepad</center></html>" //Show notepad
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         showNotepadButton.setBounds(posXchart+130, posYchart, 120, 24);
         showNotepadButton.setMargin(new Insets(0, 0, 0, 0));
@@ -698,7 +702,7 @@ public class HolmesSimXTPN extends JFrame {
         showNotepadButton.setEnabled(false);
         transChartOptionsPanel.add(showNotepadButton);
 
-        JLabel label1 = new JLabel("Interval:");
+        JLabel label1 = new JLabel("Interval:"); //Interval:
         label1.setBounds(posXchart+280, posYchart+2, 70, 20);
         transChartOptionsPanel.add(label1);
 
@@ -713,7 +717,7 @@ public class HolmesSimXTPN extends JFrame {
         });
         transChartOptionsPanel.add(transIntervalSpinner);
 
-        JCheckBox sortedCheckBox = new JCheckBox("Sorted by firing");
+        JCheckBox sortedCheckBox = new JCheckBox("Sorted by firing"); //Sorted by firing 
         sortedCheckBox.setBounds(posXchart+460, posYchart+10, 130, 20);
         sortedCheckBox.setBackground(Color.WHITE);
         sortedCheckBox.addActionListener(actionEvent -> {
@@ -724,7 +728,7 @@ public class HolmesSimXTPN extends JFrame {
         transChartOptionsPanel.add(sortedCheckBox);
         posYchart += 30;
 
-        JLabel label2 = new JLabel("Transition:");
+        JLabel label2 = new JLabel("Transition:"); //Transition:
         label2.setBounds(posXchart, posYchart, 70, 20);
         transChartOptionsPanel.add(label2);
 
@@ -738,7 +742,7 @@ public class HolmesSimXTPN extends JFrame {
 
         posYchart += 30;
 
-        JButton addTransitionButton = new HolmesRoundedButton("<html><center>Add to chart</center></html>"
+        JButton addTransitionButton = new HolmesRoundedButton("<html><center>Add to chart</center></html>" //Add to chart
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         addTransitionButton.setBounds(posXchart, posYchart+2, 110, 24);
         addTransitionButton.setMargin(new Insets(0, 0, 0, 0));
@@ -765,7 +769,7 @@ public class HolmesSimXTPN extends JFrame {
         });
         transChartOptionsPanel.add(addTransitionButton);
 
-        JButton removeTransitionButton = new HolmesRoundedButton("<html><center>Remove</center></html>"
+        JButton removeTransitionButton = new HolmesRoundedButton("<html><center>Remove</center></html>" //Remove
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         removeTransitionButton.setBounds(posXchart+120, posYchart+2, 110, 24);
         removeTransitionButton.setMargin(new Insets(0, 0, 0, 0));
@@ -791,7 +795,7 @@ public class HolmesSimXTPN extends JFrame {
         });
         transChartOptionsPanel.add(removeTransitionButton);
 
-        JButton clearTransChartButton = new HolmesRoundedButton("<html><center>Clear chart</center></html>"
+        JButton clearTransChartButton = new HolmesRoundedButton("<html><center>Clear chart</center></html>" //Clear chart
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         clearTransChartButton.setBounds(posXchart+240, posYchart+2, 110, 24);
         clearTransChartButton.setMargin(new Insets(0, 0, 0, 0));
@@ -801,7 +805,7 @@ public class HolmesSimXTPN extends JFrame {
         clearTransChartButton.addActionListener(actionEvent -> clearTransitionsChart());
         transChartOptionsPanel.add(clearTransChartButton);
 
-        JButton saveTransitionsChartButton = new HolmesRoundedButton("<html><center>Save image</center></html>"
+        JButton saveTransitionsChartButton = new HolmesRoundedButton("<html><center>Save image</center></html>" //Save image
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         saveTransitionsChartButton.setBounds(posXchart+360, posYchart+2, 110, 24);
         saveTransitionsChartButton.setMargin(new Insets(0, 0, 0, 0));
@@ -811,7 +815,7 @@ public class HolmesSimXTPN extends JFrame {
         saveTransitionsChartButton.addActionListener(actionEvent -> saveChartImage("transitions", 1200, 1024));
         transChartOptionsPanel.add(saveTransitionsChartButton);
 
-        JButton showTransButton = new HolmesRoundedButton("<html><center>Find place</center></html>"
+        JButton showTransButton = new HolmesRoundedButton("<html><center>Find place</center></html>" //Find place
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         showTransButton.setBounds(posXchart+480, posYchart+2, 110, 24);
         showTransButton.setMargin(new Insets(0, 0, 0, 0));
@@ -837,14 +841,14 @@ public class HolmesSimXTPN extends JFrame {
 
         JPanel transChartGraphicPanel = new JPanel(null);
         transChartGraphicPanel.setBackground(Color.WHITE);
-        transChartGraphicPanel.setBorder(BorderFactory.createTitledBorder("Chart graphic"));
+        transChartGraphicPanel.setBorder(BorderFactory.createTitledBorder("Chart graphic")); //Chart graphic
         transChartGraphicPanel.setPreferredSize(new Dimension(200, 100));
 
         int posXGchart = 10;
         int posYGchart = 20;
 
         ButtonGroup groupWidth = new ButtonGroup();
-        JRadioButton width1 = new JRadioButton("Thin");
+        JRadioButton width1 = new JRadioButton("Thin"); //Thin
         width1.setBackground(Color.WHITE);
         width1.setBounds(posXGchart, posYGchart, 70, 20);
         width1.setActionCommand("0");
@@ -858,7 +862,7 @@ public class HolmesSimXTPN extends JFrame {
         groupWidth.add(width1);
         groupWidth.setSelected(width1.getModel(), true);
 
-        JRadioButton width2 = new JRadioButton("Normal");
+        JRadioButton width2 = new JRadioButton("Normal"); //Normal
         width2.setBackground(Color.WHITE);
         width2.setBounds(posXGchart, posYGchart+20, 70, 20);
         width2.setActionCommand("1");
@@ -871,7 +875,7 @@ public class HolmesSimXTPN extends JFrame {
         transChartGraphicPanel.add(width2);
         groupWidth.add(width2);
 
-        JRadioButton width3 = new JRadioButton("Thick");
+        JRadioButton width3 = new JRadioButton("Thick"); //Thick
         width3.setBackground(Color.WHITE);
         width3.setBounds(posXGchart, posYGchart+40, 70, 20);
         width3.setActionCommand("2");
@@ -908,9 +912,9 @@ public class HolmesSimXTPN extends JFrame {
      * @return JPanel - panel z wykresem
      */
     private JPanel createPlacesChartPanel() {
-        String chartTitle = "Places dynamics";
-        String xAxisLabel = "Step";
-        String yAxisLabel = "Tokens";
+        String chartTitle = "Places dynamics"; //Places dynamics
+        String xAxisLabel = "Step"; //Step
+        String yAxisLabel = "Tokens"; //Tokens
         boolean showLegend = true;
         boolean createTooltip = true;
         boolean createURL = false;
@@ -1117,13 +1121,6 @@ public class HolmesSimXTPN extends JFrame {
     }
 
 
-
-
-
-
-
-
-
     public static double calculateSD(Double numArray[]) {
         double sum = 0.0;
         double standardDeviation = 0.0;
@@ -1196,9 +1193,9 @@ public class HolmesSimXTPN extends JFrame {
      * @return JPanel - panel z wykresem
      */
     private JPanel createTransChartPanel() {
-        String chartTitle = "Transitions dynamics";
-        String xAxisLabel = "Transition";
-        String yAxisLabel = "Firing";
+        String chartTitle = "Transitions dynamics";  //Transitions dynamics
+        String xAxisLabel = "Transition";  //Transition
+        String yAxisLabel = "Firing"; //Firing
         boolean showLegend = true;
         boolean createTooltip = true;
         boolean createURL = false;

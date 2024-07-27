@@ -75,7 +75,7 @@ public class HolmesNetTables extends JFrame {
 			initialize_components();
 			setVisible(false);
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00473exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00473exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -93,7 +93,7 @@ public class HolmesNetTables extends JFrame {
 		setTitle(lang.getText("HNTwin_entry001title"));
     	try { setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png")); } 
     	catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00474exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00474exception")+"\n"+ex.getMessage(), "error", true);
 		}
     	
     	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

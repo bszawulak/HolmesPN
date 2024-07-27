@@ -59,7 +59,7 @@ public class HolmesXTPNtokens extends JFrame {
         multisetK = multK;
         this.isGammaPlace = isGammaPlace;
 
-        setTitle("XPTN-place tokens options");
+        setTitle("XPTN-place tokens options"); //XTPN-place tokens options
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
@@ -181,7 +181,7 @@ public class HolmesXTPNtokens extends JFrame {
 
         recreateComboBox();
 
-        tokensNoLabel = new JLabel("Tokens:"+place.getTokensNumber(), JLabel.LEFT);
+        tokensNoLabel = new JLabel("Tokens:"+place.getTokensNumber(), JLabel.LEFT); //Tokens:
         tokensNoLabel.setLocation(comboPanelX +200, comboPanelY);
         tokensNoLabel.setSize(90, 20);
         comboPanel.add(tokensNoLabel);
@@ -215,7 +215,7 @@ public class HolmesXTPNtokens extends JFrame {
         comboPanel.add(tokenValueTextField);
 
         //potwierdzenie zmiany wartości tokenu
-        changeTokenValueButton = new HolmesRoundedButton("Change value"
+        changeTokenValueButton = new HolmesRoundedButton("Change value" //Change value
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         changeTokenValueButton.setMargin(new Insets(0, 0, 0, 0));
         changeTokenValueButton.setBounds(comboPanelX+150, comboPanelY-5, 100, 30);
@@ -258,7 +258,7 @@ public class HolmesXTPNtokens extends JFrame {
         comboPanel.add(changeTokenValueButton);
 
         //usunięcie tokenu
-        removeTokenValueButton = new HolmesRoundedButton("Remove"
+        removeTokenValueButton = new HolmesRoundedButton("Remove" //Remove
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         removeTokenValueButton.setMargin(new Insets(0, 0, 0, 0));
         removeTokenValueButton.setBounds(comboPanelX+250, comboPanelY-5, 100, 30);
@@ -326,7 +326,7 @@ public class HolmesXTPNtokens extends JFrame {
         });
         comboPanel.add(removeTokenValueButton);
 
-        JLabel addNewLabel = new JLabel("New:", JLabel.LEFT);
+        JLabel addNewLabel = new JLabel("New:", JLabel.LEFT); //New:
         addNewLabel.setBounds(comboPanelX+10, comboPanelY+=30, 50, 20);
         comboPanel.add(addNewLabel);
 
@@ -350,7 +350,7 @@ public class HolmesXTPNtokens extends JFrame {
 
         //potwierdzenie dodania nowego tokenu
         //przycisk dodania tokeny z nową wartością
-        HolmesRoundedButton addNewTokenButton = new HolmesRoundedButton("Add new token"
+        HolmesRoundedButton addNewTokenButton = new HolmesRoundedButton("Add new token" //Add new token
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         addNewTokenButton.setBounds(comboPanelX+150, comboPanelY-5, 100, 30);
         addNewTokenButton.setMargin(new Insets(0, 0, 0, 0));
@@ -406,7 +406,7 @@ public class HolmesXTPNtokens extends JFrame {
         });
         comboPanel.add(addNewTokenButton);
 
-        clearAllButton = new HolmesRoundedButton("Clear all"
+        clearAllButton = new HolmesRoundedButton("Clear all" //Clear all
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         clearAllButton.setMargin(new Insets(0, 0, 0, 0));
         clearAllButton.setBounds(comboPanelX+10, comboPanelY+25, 120, 30);
@@ -437,7 +437,7 @@ public class HolmesXTPNtokens extends JFrame {
         });
         comboPanel.add(clearAllButton);
 
-        HolmesRoundedButton addMultipleTokensButton = new HolmesRoundedButton("Add #[New] tokens"
+        HolmesRoundedButton addMultipleTokensButton = new HolmesRoundedButton("Add #[New] tokens" //Add #[New] tokens
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         addMultipleTokensButton.setBounds(comboPanelX+130, comboPanelY+25, 120, 30);
         addMultipleTokensButton.setMargin(new Insets(0, 0, 0, 0));
@@ -536,7 +536,7 @@ public class HolmesXTPNtokens extends JFrame {
     private void writeTokensNumberInLabel() {
         if(isGammaPlace) {
             int tokensNo = multisetK.size();
-            tokensNoLabel.setText("Tokens: " + tokensNo );
+            tokensNoLabel.setText("Tokens:"+" " + tokensNo ); //Tokens:
 
             if(parentWindow == null) { //tylko dla głównego okna odwołujemy się do miejsca
                 if(tokensNo != place.getTokensNumber()) {
@@ -546,7 +546,7 @@ public class HolmesXTPNtokens extends JFrame {
             }
         } else { //classical place
             double tokensNo = multisetK.get(0);
-            tokensNoLabel.setText("Tokens: " + (int)tokensNo );
+            tokensNoLabel.setText("Tokens:"+" " + (int)tokensNo );
 
             if(parentWindow == null) { //tylko dla głównego okna odwołujemy się do miejsca
                 if(tokensNo != place.getTokensNumber()) {

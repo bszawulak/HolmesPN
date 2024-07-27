@@ -58,7 +58,7 @@ public class HolmesSPNmanager extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00520exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00520exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		PetriNet pn = overlord.getWorkspace().getProject();
     	this.ego = this;
@@ -397,7 +397,7 @@ public class HolmesSPNmanager extends JFrame {
 			fillDescriptionField();
 			//doNotUpdate = false;
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00521exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00521exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	

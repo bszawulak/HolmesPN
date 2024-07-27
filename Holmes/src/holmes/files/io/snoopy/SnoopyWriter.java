@@ -599,7 +599,7 @@ public class SnoopyWriter {
 			write(bw, "    <metadataclass count=\"0\" name=\"Constant Class\"/>");
 			write(bw, "  </metadataclasses>");
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00116exception"), "error", true);
+			overlord.log(lang.getText("LOGentry00116exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 }

@@ -76,7 +76,7 @@ public class HolmesClusterSubWindow extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00510exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00510exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		clusterPath = parent.getClusterPath();
 		this.clusteringMetaData = dataPackage;
@@ -236,7 +236,7 @@ public class HolmesClusterSubWindow extends JFrame {
 		    	
 		    	textPane.setCaretPosition(0);
 			} catch (Exception ex) {
-				overlord.log(lang.getText("LOGentry00511exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00511exception")+"\n"+ex.getMessage(), "error", true);
 			}
 		}
 		setLocationRelativeTo(null);
@@ -326,7 +326,7 @@ public class HolmesClusterSubWindow extends JFrame {
 	    try {
 	        doc.insertString(doc.getLength(), initString, doc.getStyle("regular"));
 	    } catch (Exception e) {
-	        overlord.log(lang.getText("LOGentry00512exception")+" "+e.getMessage(), "error", true);
+	        overlord.log(lang.getText("LOGentry00512exception")+"\n"+e.getMessage(), "error", true);
 	    }
 	    return txtPane;
 	}
@@ -423,7 +423,7 @@ public class HolmesClusterSubWindow extends JFrame {
 			if(excelTmp.exists())
 				excelTmp.delete();
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00513exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00513exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -465,7 +465,7 @@ public class HolmesClusterSubWindow extends JFrame {
 				Tools.copyFileByPath(files[2], excelDestinationFolder+"\\"+mcfFileName);
 		}
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00514exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00514exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 		return true;
@@ -571,7 +571,7 @@ public class HolmesClusterSubWindow extends JFrame {
 				try {
 					Tools.copyFileByPath(x.getAbsolutePath(), path+"cluster.csv");
 				} catch (IOException e) {
-					overlord.log(lang.getText("LOGentry00516exception")+" "+e.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00516exception")+"\n"+e.getMessage(), "error", true);
 				}
 			}
 			targetDir = path;
@@ -594,7 +594,7 @@ public class HolmesClusterSubWindow extends JFrame {
 					try {
 						Tools.copyFileByPath(x.getAbsolutePath(), path+"cluster.csv");
 					} catch (IOException e) {
-						overlord.log(lang.getText("LOGentry00517exception")+" "+e.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00517exception")+"\n"+e.getMessage(), "error", true);
 					}
 				}
 				targetDir = path;

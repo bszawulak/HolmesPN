@@ -143,7 +143,7 @@ public class SnoopyWriterCoarse {
 		try {
 			bw.write(text+"\n");
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00145exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00145exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	

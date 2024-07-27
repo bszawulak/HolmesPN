@@ -57,13 +57,13 @@ public class HolmesProgramProperties extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00500exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00500exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		
 		try {
 			initialize_components();
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00501exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00501exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 

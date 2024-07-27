@@ -281,7 +281,7 @@ public class SnoopyWriterTransition {
 		try {
 			bw.write(text+"\n");
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00152exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00152exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	

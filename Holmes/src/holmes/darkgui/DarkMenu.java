@@ -603,7 +603,7 @@ public class DarkMenu extends JMenuBar {
 				// poniższa 'linia':   ╯°□°）╯︵  ┻━━┻
 				overlord.io.fixArcsProblem();
 			} catch (Exception e) {
-				overlord.log("Error: " + e.getMessage(), "error", true);
+				overlord.log("Error: (437454427)" + e.getMessage(), "error", true);
 			}
 		});
 		otherMenu.add(fixNet);

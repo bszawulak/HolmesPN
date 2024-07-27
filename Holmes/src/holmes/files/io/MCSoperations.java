@@ -77,7 +77,7 @@ public class MCSoperations {
 				return true;
 			} catch (Exception e) {
 				overlord.log(lang.getText("LOGentry00205exception")
-						+" "+e.getMessage(), "error", true);
+						+"\n"+e.getMessage(), "error", true);
 				return false;
 			}
 		}
@@ -138,7 +138,7 @@ public class MCSoperations {
 				pw.close();
 				return true;
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00206exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00206exception")+"\n"+e.getMessage(), "error", true);
 				return false;
 			}
 		}
@@ -251,8 +251,8 @@ public class MCSoperations {
 				buffer.close();
 				return true;
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00209exception")+" "+e.getMessage(), "error", true);
-				overlord.accessMCSWindow().accessLogField().append(lang.getText("LOGentry00209exception")+" "+e.getMessage()+"\n");
+				overlord.log(lang.getText("LOGentry00209exception")+"\n"+e.getMessage(), "error", true);
+				overlord.accessMCSWindow().accessLogField().append(lang.getText("LOGentry00209exception")+"\n"+e.getMessage()+"\n");
 				return false;
 			}
 		}
@@ -369,7 +369,7 @@ public class MCSoperations {
 				buffer.close();
 				return true;
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00210exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00210exception")+"\n"+e.getMessage(), "error", true);
 				return false;
 			}
 		}

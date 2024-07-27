@@ -66,7 +66,7 @@ public class HolmesSearch extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00494exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00494exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		
 		setLayout(new BorderLayout());
@@ -180,7 +180,7 @@ public class HolmesSearch extends JFrame {
 				if(!newName.isEmpty())
 					searchForString(newName);
 			} catch (ParseException ex) {
-				overlord.log(lang.getText("LOGentry00495exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00495exception")+"\n"+ex.getMessage(), "error", true);
 			}
 		});
 		choicePanel.add(searchField);
@@ -206,7 +206,7 @@ public class HolmesSearch extends JFrame {
 				int id = Integer.parseInt(IDstr);
 				selectByID(id);
 			} catch (Exception ex) {
-				overlord.log(lang.getText("LOGentry00496exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00496exception")+"\n"+ex.getMessage(), "error", true);
 			}
 		});
 		choicePanel.add(idField);	
@@ -542,7 +542,7 @@ public class HolmesSearch extends JFrame {
 			}
 		}
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00497exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00497exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -560,7 +560,7 @@ public class HolmesSearch extends JFrame {
 				transitionsCombo.setSelectedIndex(index+1);
 			}
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00498exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00498exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	

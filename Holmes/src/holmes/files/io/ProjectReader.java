@@ -119,7 +119,7 @@ public class ProjectReader {
 				return false;
 			}
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00244exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00244exception")+"\n"+e.getMessage(), "error", true);
 		}
 		return status;
 	}
@@ -156,7 +156,7 @@ public class ProjectReader {
 					return false;
 				}
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00245exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00245exception")+"\n"+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -169,11 +169,11 @@ public class ProjectReader {
 						overlord.getT_invBox().showT_invBoxWindow(projectCore.getT_InvMatrix());
 						overlord.reset.setT_invariantsStatus(true);
 					} catch (Exception e) {
-						overlord.log(lang.getText("LOGentry00246exception")+" "+e.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00246exception")+"\n"+e.getMessage(), "error", true);
 					}
 				}
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00247exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00247exception")+"\n"+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -186,12 +186,12 @@ public class ProjectReader {
 						try{
 							overlord.getP_invBox().showP_invBoxWindow(projectCore.getP_InvMatrix());
 						} catch (Exception e) {
-							overlord.log(lang.getText("LOGentry00248exception")+" "+e.getMessage(), "error", true);
+							overlord.log(lang.getText("LOGentry00248exception")+"\n"+e.getMessage(), "error", true);
 						}
 					}
 				}
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00249exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00249exception")+"\n"+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -204,11 +204,11 @@ public class ProjectReader {
 						overlord.getMctBox().showMCT(projectCore.getMCTMatrix());
 						overlord.reset.setMCTStatus(true);
 					} catch (Exception e) {
-						overlord.log(lang.getText("LOGentry00250exception")+" "+e.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00250exception")+"\n"+e.getMessage(), "error", true);
 					}
 				}
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00251exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00251exception")+"\n"+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -222,7 +222,7 @@ public class ProjectReader {
 					projectCore.accessStatesManager().createCleanStatePN();
 				}
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00252exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00252exception")+"\n"+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -238,7 +238,7 @@ public class ProjectReader {
 					}
 				}
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00253exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00253exception")+"\n"+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -252,7 +252,7 @@ public class ProjectReader {
 					projectCore.accessFiringRatesManager().createCleanSPNdataVector();
 				}
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00254exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00254exception")+"\n"+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -266,7 +266,7 @@ public class ProjectReader {
 					projectCore.accessSSAmanager().createCleanSSAvector();
 				}
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00255exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00255exception")+"\n"+e.getMessage(), "error", true);
 				return false;
 			}
 
@@ -275,7 +275,7 @@ public class ProjectReader {
 			buffer.close();
 			return true;
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00256exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00256exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -300,7 +300,7 @@ public class ProjectReader {
 			} 
 			return true;
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00257exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00257exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -557,7 +557,7 @@ public class ProjectReader {
 			overlord.log(lang.getText("LOGentry00263a")+" "+placesProcessed+" "+lang.getText("LOGentry00263b")
 					+" "+transitionsProcessed+ " "+lang.getText("LOGentry00263c")
 					+" "+arcsProcessed+" "+lang.getText("LOGentry00263d"), "error", false);
-			overlord.log(lang.getText("LOGentry00263exception")+" "+e.getMessage(), "error", false);
+			overlord.log(lang.getText("LOGentry00263exception")+"\n"+e.getMessage(), "error", false);
 			status = false;
 		}
 		return status;
@@ -588,7 +588,7 @@ public class ProjectReader {
 			return transition.fpnExtension.updateFunctionString(table[1], table[2], correct, enabled);
 		} catch (Exception e) {
 			overlord.log(lang.getText("LOGentry00264exception")+" "+functionLine, "warning", true);
-			overlord.log(lang.getText("LOGentry00264exception")+" "+e.getMessage(), "warning", false);
+			overlord.log(lang.getText("LOGentry00264exception")+"\n"+e.getMessage(), "warning", false);
 			return false;
 		}
 	}
@@ -1518,7 +1518,7 @@ public class ProjectReader {
 					}
 				}
 			} catch (Exception ex) {
-				overlord.log(lang.getText("LOGentry00291exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00291exception")+"\n"+ex.getMessage(), "error", true);
 			}
 			
 			if(placeFirst) { //pierwsze jest miejsce
@@ -1704,7 +1704,7 @@ public class ProjectReader {
 
 				newArc.addBreakPoint(new Point(x, y));
 			} catch (Exception ex) {
-				overlord.log(lang.getText("LOGentry00294exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00294exception")+"\n"+ex.getMessage(), "error", true);
 			}
 		}
 	}
@@ -2025,7 +2025,7 @@ public class ProjectReader {
 					statesMngr.accessStateMatrix().add(pVector);
 				}
 			} catch (Exception ex) {
-				overlord.log(lang.getText("LOGentry00304exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00304exception")+"\n"+ex.getMessage(), "error", true);
 			}
 			
 			if((readedLine /3) > statesMngr.accessStateMatrix().size()) {
@@ -2285,14 +2285,14 @@ public class ProjectReader {
 				box.ST_function = dataVectorTable[i*7];
 				try { box.IM_priority = Integer.parseInt(dataVectorTable[(i*7)+1]); } catch(Exception ex) {
 
-					overlord.log(lang.getText("LOGentry00316exception")+" "+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00316exception")+"\n"+ex.getMessage(), "error", true);
 				}
 				try { box.DET_delay = Integer.parseInt(dataVectorTable[(i*7)+2]); } catch(Exception ex) {
-					overlord.log(lang.getText("LOGentry00317exception")+" "+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00317exception")+"\n"+ex.getMessage(), "error", true);
 				}
 				box.SCH_start = dataVectorTable[(i*7)+3];
 				try { box.SCH_rep = Integer.parseInt(dataVectorTable[(i*7)+4]); } catch(Exception ex) {
-					overlord.log(lang.getText("LOGentry00318exception")+" "+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00318exception")+"\n"+ex.getMessage(), "error", true);
 				}
 				box.SCH_end = dataVectorTable[(i*7)+5];
 
@@ -2364,7 +2364,7 @@ public class ProjectReader {
 					ssaMngr.accessSSAmatrix().add(pVector);
 				}
 			} catch (Exception ex) {
-				overlord.log(lang.getText("LOGentry00319exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00319exception")+"\n"+ex.getMessage(), "error", true);
 			}
 			
 			if((readedLine /3) > ssaMngr.accessSSAmatrix().size()) {

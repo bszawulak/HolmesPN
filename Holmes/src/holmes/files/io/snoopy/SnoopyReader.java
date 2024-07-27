@@ -70,7 +70,7 @@ public class SnoopyReader {
 			readNodesBlock(buffer);
 			readArcsBlock(buffer);
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00091exception"), "error", true);
+			overlord.log(lang.getText("LOGentry00091exception")+"\n"+e.getMessage(), "error", true);
 		} finally {
 			try {
 				try {
@@ -79,7 +79,7 @@ public class SnoopyReader {
 				} catch (Exception ignored) {}
 			}
 			catch (Exception ex) {
-				overlord.log(lang.getText("LOGentry00092exception")+ex, "error", true);
+				overlord.log(lang.getText("LOGentry00092exception")+"\n"+ex.getMessage(), "error", true);
 			}
 		}
 	}
@@ -328,7 +328,7 @@ public class SnoopyReader {
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									overlord.log(lang.getText("LOGentry00094exception")+" "+ex.getMessage(), "error", true);
+									overlord.log(lang.getText("LOGentry00094exception")+"\n"+ex.getMessage(), "error", true);
 								}
 								
 								x = (int)(x * resizeFactor);
@@ -407,7 +407,7 @@ public class SnoopyReader {
 			//	((Transition)node).defColor = new Color(r,g,b);
 			//}
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00099_1exception")+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00099_1exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 
@@ -617,7 +617,7 @@ public class SnoopyReader {
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									overlord.log(lang.getText("LOGentry00143exception")+ex.getMessage(), "error", true);
+									overlord.log(lang.getText("LOGentry00143exception")+"\n"+ex.getMessage(), "error", true);
 								}
 								x = (int)(x * resizeFactor);
 								y = (int)(y * resizeFactor);
@@ -865,7 +865,7 @@ public class SnoopyReader {
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									overlord.log(lang.getText("LOGentry00106exception")+ex.getMessage(), "error", true);
+									overlord.log(lang.getText("LOGentry00106exception")+"\n"+ex.getMessage(), "error", true);
 								}
 								
 								x = (int)(x * resizeFactor);
@@ -908,7 +908,7 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00108exception"), "error", true);
+			overlord.log(lang.getText("LOGentry00108exception")+"\n"+e.getMessage(), "error", true);
 			overlord.log(line, "error", true);
 		}
 		
@@ -1083,7 +1083,7 @@ public class SnoopyReader {
 									if(resizeFactor==0)
 										resizeFactor=1;
 								} catch (Exception ex) {
-									overlord.log(lang.getText("LOGentry00111exception")+ex.getMessage(), "error", true);
+									overlord.log(lang.getText("LOGentry00111exception")+"\n"+ex.getMessage(), "error", true);
 								}
 
 								x = (int)(x * resizeFactor);
@@ -1126,7 +1126,7 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00113exception"), "error", true);
+			overlord.log(lang.getText("LOGentry00113exception")+"\n"+e.getMessage(), "error", true);
 			overlord.log(line, "error", true);
 		}
 		
@@ -1473,7 +1473,7 @@ public class SnoopyReader {
 			}
 			
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00123exception")+" ", "error", true);
+			overlord.log(lang.getText("LOGentry00123exception")+"\n"+e.getMessage(), "error", true);
 			overlord.log(line, "error", true);
 		}
 		
@@ -1504,7 +1504,7 @@ public class SnoopyReader {
 			tmp = tmp.substring(0, location);
 			result = Double.parseDouble(tmp);
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00125exception")+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00125exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1524,7 +1524,7 @@ public class SnoopyReader {
 			location = tmp.indexOf("\"");
 			result = tmp.substring(0, location);
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00126exception")+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00126exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		return result;
 	}

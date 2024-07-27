@@ -303,7 +303,7 @@ public class TexExporter {
 		
 			return path+"input.csv.analysed.txt";
 		} catch (IOException e) {
-			overlord.log(lang.getText("LOGentry00218exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00218exception")+"\n"+e.getMessage(), "error", true);
 			return null;
 		}
 	}
@@ -524,7 +524,7 @@ public class TexExporter {
 							oldValue++;
 							mctRow.set(mctNumber, oldValue); //występuje
 						} catch (Exception ex) {
-							overlord.log(lang.getText("LOGentry00223exception")+" "
+							overlord.log(lang.getText("LOGentry00223exception")+"\n"
 									+ex.getMessage(), "error", true);
 						}
 					}
@@ -538,7 +538,7 @@ public class TexExporter {
 						oldValue++;
 						transRow.set(tranNumber, oldValue); //występuje
 					} catch (Exception ex) {
-						overlord.log(lang.getText("LOGentry00224exception")+ " "
+						overlord.log(lang.getText("LOGentry00224exception")+ "\n"
 								+ex.getMessage(), "error", true);
 					}
 				}

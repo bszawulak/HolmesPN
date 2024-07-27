@@ -38,7 +38,7 @@ public class HolmesAbout extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00436exception")+ " "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00436exception")+ "\n"+ex.getMessage(), "error", true);
 		}
 		setTitle("About Holmes");
 		setLayout(null);
@@ -54,7 +54,7 @@ public class HolmesAbout extends JFrame {
 			BufferedImage wPic = ImageIO.read(this.getClass().getResource("/abyssHolmes2.png"));
 			((MyTextArea)textArea).setBackgroundImage(wPic);
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00437exception")+ " "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00437exception")+ "\n"+ex.getMessage(), "error", true);
 		}
 		
 		textArea.setEditable(false);
@@ -99,7 +99,7 @@ public class HolmesAbout extends JFrame {
 			wIcon.setBounds(10, 10, 160, 160);
 			panel.add(wIcon);
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00438exception")+ " "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00438exception")+ "\n"+ex.getMessage(), "error", true);
 		}
 		
 		JLabel nameLabel = new JLabel("Holmes v1.7.0.1"); // (Trust me, I'm an engineer edition)");

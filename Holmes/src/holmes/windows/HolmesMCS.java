@@ -69,7 +69,7 @@ public class HolmesMCS extends JFrame {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 			transitions = overlord.getWorkspace().getProject().getTransitions();
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00468exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00468exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		setVisible(false);
 		this.setTitle(lang.getText("HMCSwin_entry001title"));
@@ -575,7 +575,7 @@ public class HolmesMCS extends JFrame {
 							int next = Integer.parseInt(s);
 							objReactions.add(next);
 						} catch (Exception ex) {
-							overlord.log(lang.getText("LOGentry00469exception")+" "+ex.getMessage(), "error", true);
+							overlord.log(lang.getText("LOGentry00469exception")+"\n"+ex.getMessage(), "error", true);
 						}
 					}
 				}
@@ -643,7 +643,7 @@ public class HolmesMCS extends JFrame {
 					try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
 				}
 				
-				logField.append(lang.getText("HMCSwin_entry028")+" "+el+"\n");
+				logField.append(lang.getText("HMCSwin_entry028")+"\n"+el+"\n");
 				mcsGenerator = new MCSCalculator(el, invariants, transitions, minCutSize, maxSetsNumber, this, false);
 				Thread myThread = new Thread(mcsGenerator);
 				setGeneratorStatus(true);

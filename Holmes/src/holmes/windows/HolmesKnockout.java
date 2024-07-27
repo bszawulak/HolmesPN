@@ -79,7 +79,7 @@ public class HolmesKnockout extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00453exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00453exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		setVisible(false);
 		this.setTitle(lang.getText("HKwin_entry001title"));
@@ -521,7 +521,7 @@ public class HolmesKnockout extends JFrame {
 				line = buffer.readLine();
 			}
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00458exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00458exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		overlord.showKnockout(knockoutMatrix);
 	}
@@ -607,7 +607,7 @@ public class HolmesKnockout extends JFrame {
 				line = buffer.readLine();
 			}
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00459exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00459exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		
 		notePad.addTextLineNL("", "text");
@@ -644,7 +644,7 @@ public class HolmesKnockout extends JFrame {
 						invPercent = (float)transInInvVector.get(ident)/(float)invNumber;
 						invPercent *= 100;
 					} catch (Exception ex) {
-						overlord.log(lang.getText("LOGentry00460exception")+ " "+ex.getMessage(), "error", true);
+						overlord.log(lang.getText("LOGentry00460exception")+ "\n"+ex.getMessage(), "error", true);
 					}
 					
 					line = line.substring(line.indexOf("_")+1);
@@ -666,7 +666,7 @@ public class HolmesKnockout extends JFrame {
 					invPercent = (float)transInInvVector.get(ident)/(float)invNumber;
 					invPercent *= 100;
 				} catch (Exception ex) {
-					overlord.log(lang.getText("LOGentry00461exception")+" "+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00461exception")+"\n"+ex.getMessage(), "error", true);
 				}
 						
 				line = line.substring(line.indexOf("_")+1);
@@ -724,7 +724,7 @@ public class HolmesKnockout extends JFrame {
 					secondResultLines.set(nextMax, tmpLine);
 				}
 			} catch (Exception ex) {
-				overlord.log(lang.getText("LOGentry00462exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00462exception")+"\n"+ex.getMessage(), "error", true);
 			}
 		}
 		
@@ -785,7 +785,7 @@ public class HolmesKnockout extends JFrame {
 
 			overlord.getWorkspace().getProject().repaintAllGraphPanels();
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00463exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00463exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	

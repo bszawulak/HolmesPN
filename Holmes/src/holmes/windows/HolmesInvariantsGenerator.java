@@ -66,7 +66,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00440exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00440exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		this.ego = this;
 		setVisible(false);
@@ -1170,7 +1170,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 				overlord.getWorkspace().getProject().setT_InvMatrix(invariants, false);
 				overlord.io.exportGeneratedInvariants(true);
 			} catch (Exception ex) {
-				overlord.log(lang.getText("HIGwin_entry102exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("HIGwin_entry102exception")+"\n"+ex.getMessage(), "error", true);
 			}
 			finally {
 				overlord.getWorkspace().getProject().setT_InvMatrix(invBackup, false);

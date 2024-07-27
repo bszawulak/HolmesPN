@@ -55,7 +55,7 @@ public class HolmesNotepad extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00485exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00485exception")+"\n"+ex.getMessage(), "error", true);
 		}
     	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
@@ -72,7 +72,7 @@ public class HolmesNotepad extends JFrame {
 			if(overlord.getSettingsManager().getValue("programUseSimpleEditor").equals("1"))
 				simpleMode = true;
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00486exception")+ " "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00486exception")+ "\n"+ex.getMessage(), "error", true);
 		}
 		setPreferredSize(new Dimension(width, height));
 		setLocation(50,50);
@@ -180,7 +180,7 @@ public class HolmesNotepad extends JFrame {
 			try {
 				doc.remove(0, len);
 			} catch (BadLocationException ex) {
-				overlord.log(lang.getText("LOGentry00487exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00487exception")+"\n"+ex.getMessage(), "error", true);
 			}
 		}
 	}
@@ -208,7 +208,7 @@ public class HolmesNotepad extends JFrame {
 				buffer.close();
 				setCaretFirstLine();
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00488exception")+ " "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00488exception")+ "\n"+e.getMessage(), "error", true);
 			}
 		}
 	}
@@ -237,7 +237,7 @@ public class HolmesNotepad extends JFrame {
 				}
 				pw.close();
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00489exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00489exception")+"\n"+e.getMessage(), "error", true);
 			}
 		}
 	}
@@ -283,7 +283,7 @@ public class HolmesNotepad extends JFrame {
 				}
 		        doc.insertString(doc.getLength(), text+nL, doc.getStyle(initStyles[style]));
 		    } catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00490exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00490exception")+"\n"+e.getMessage(), "error", true);
 		    }
 			
 			int len = textPane.getDocument().getLength();
@@ -304,7 +304,7 @@ public class HolmesNotepad extends JFrame {
 			try {
 		        doc.insertString(doc.getLength(), text, doc.getStyle(initStyles[style]));
 		    } catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00491exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00491exception")+"\n"+e.getMessage(), "error", true);
 		    }
 			int len = textPane.getDocument().getLength();
 			textPane.setCaretPosition(len);
@@ -324,7 +324,7 @@ public class HolmesNotepad extends JFrame {
 			try {
 		        doc.insertString(doc.getLength(), text+newline, doc.getStyle(initStyles[style]));
 		    } catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00492exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00492exception")+"\n"+e.getMessage(), "error", true);
 		    }
 			int len = textPane.getDocument().getLength();
 			textPane.setCaretPosition(len);
@@ -344,7 +344,7 @@ public class HolmesNotepad extends JFrame {
 			try {
 		        doc.insertString(doc.getLength(), text, doc.getStyle(initStyles[style]));
 		    } catch (Exception e) {
-				overlord.log(lang.getText("LOGentry00493exception")+" "+e.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00493exception")+"\n"+e.getMessage(), "error", true);
 		    }
 			int len = textPane.getDocument().getLength();
 			textPane.setCaretPosition(len);

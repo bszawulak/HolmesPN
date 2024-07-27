@@ -85,7 +85,7 @@ public class HolmesClusters extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00505exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00505exception")+"\n"+ex.getMessage(), "error", true);
 		}
     	this.setVisible(false);
     	
@@ -410,7 +410,7 @@ public class HolmesClusters extends JFrame {
 				
 			 } catch (Exception ex) {
 				overlord.log(lang.getText("LOGentry00506exception")
-						  +" "+ex.getMessage(), "error", true);
+						  +"\n"+ex.getMessage(), "error", true);
 			 }
 		 }
 	}

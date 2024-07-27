@@ -1,4 +1,4 @@
-//english dictionary 20.07.2024
+//english dictionary 27.07.2024
 //GUIManager:
 GUIM_toolboxTabName, Toolbox
 GUIM_simulatorTabName, Simulator
@@ -641,7 +641,7 @@ HDWT_entry232PinvPanel, p-invariant:
 HDWT_entry233PinvPanel, null places
 HDWT_entry234PinvPanel, inv/place frequency
 HDWT_entry235PinvPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>
-LOGentry00050exception, Exception (1000003) : probably not implemented features for p-invariants in the t-invariants code window.
+LOGentry00050exception, Exception (1000003) : probably not implemented features for p-invariants in the t-invariants code window:
 LOGentry00051, Critical error in p-invariants subwindow.\np-invariants size differ from transition set cardinality!
 HWDT_entry236, p-invariants data unavailable.
 HDWT_entry236_t, No p-invariants
@@ -3126,7 +3126,181 @@ HSKAwin_entry014op2, Keep it
 HSKAwin_entry014, Remove this knockout dataset?
 HSKAwin_entry014t, Please confirm
 
+//HolmesSimKnockVis:
+HSKVwin_entry001title,Knockout data visualisation
+LOGentry00555exception, Exception (1000278): HolmesSimKnockVis.HolmesSimKnockVis() failed:
+HSKVwin_entry002, Charts
+HSKVwin_entry002t, <html>Show charts comparing difference in places na transitions<br>behaviour between reference and data sets</html>
+HSKVwin_entry003, Places
+HSKVwin_entry003t, <html>Show places behaviour for selected dataset OR<br>comparison between reference and data sets</html>
+HSKVwin_entry004, Transitions
+HSKVwin_entry004t, <html>Show transitions behaviour for selected dataset OR<br>comparison between reference and data sets</html>
+HSKVwin_entry005, Places (series)
+HSKVwin_entry005t, <html>Show places table for knockout series.</html>
+HSKVwin_entry006, Transitions (series)
+HSKVwin_entry006t, <html>Show transitions table for knockout series.</html>
+HSKVwin_entry007, Main options panel
+HSKVwin_entry008, Ref sets:
+HSKVwin_entry009t, Select reference data (presumably dataset without any transition knockout)
+HSKVwin_entry010, Sim. series:
+HSKVwin_entry011t, Select dataset series (presumably with every transition disable one per dataset)
+HSKVwin_entry012, Data sets:
+HSKVwin_entry013t, Select dataset (presumably with some transition(s) knocked out)
+HSKVwin_entry014, <html>Show reference<br/>&nbsp; &nbsp; &nbsp; &nbsp; dataset</html>
+HSKVwin_entry015, <html>Show knockout<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataset</html>
+HSKVwin_entry016, <html>Compare reference<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and knockout</html>
+HSKVwin_entry016msg, Please select reference and knockout set!
+HSKVwin_entry016t, Selection needed
+HSKVwin_entry017, <html>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;Full series&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;datatables</html>
+HSKVwin_entry018, <html>&nbsp; &nbsp;Show notepad<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;summary</html>
+HSKVwin_entry019, Notepad
+HSKVwin_entry020, Charts
+HSKVwin_entry021, Places dynamics
+HSKVwin_entry022, Step
+HSKVwin_entry023, Tokens
+HSKVwin_entry024, Places chart
+HSKVwin_entry025, Charts
+HSKVwin_entry026, Transitions dynamics
+HSKVwin_entry027, Transition
+HSKVwin_entry028, Firing
+HSKVwin_entry029, Transitions chart
+HSKVwin_entry030, Type
+HSKVwin_entry031, Places statistical data
+HSKVwin_entry032, Type
+HSKVwin_entry033, Transitions statistical data
+LOGentry00556critError, Critical error (2000038): HolmesSimKnockVis.getCorrectSet() failed. No data to show.
+LOGentry00557critError, Critical error (2000039): HolmesSimKnockVis.showCompareCharts() failed. No data to show.
+LOGentry00558critError, Critical error (2000040): HolmesSimKnockVis.createPlacesDataset() failed. Reference set and knockout set have different number of places.
+LOGentry00559critError, Critical error (2000041): HolmesSimKnockVis.createTransitionsDataset() failed. Reference set and knockout set have different number of transitions.
+LOGentry00560critError, Critical error (2000042): HolmesSimKnockVis.createTransitionsDataset() failed. Reference set and knockout set have different number of transitions.
+HSKVwin_entry034, Place single knockout data table:
+HSKVwin_entry035, Places comparison single knockout data table:
+HSKVwin_entry036, Transition single knockout data table:
+HSKVwin_entry037, Transition comparison single knockout data table:
+HSKVwin_entry038, Place name
+LOGentry00561exception, Exception (1000279): HolmesSimKnockVis.createPlacesTable() failed:
+HSKVwin_entry039, Place name
+LOGentry00562exception, Exception (1000280): HolmesSimKnockVis.createPlacesCompTable() failed:
+HSKVwin_entry040, PLACES
+HSKVwin_entry041, Transition name
+LOGentry00563exception, Exception (1000281): HolmesSimKnockVis.createTransTable() failed:
+HSKVwin_entry042, Transition name
+LOGentry00564exception, Exception (1000282): HolmesSimKnockVis.createTransCompTable() failed:
+HSKVwin_entry043, TRANSITIONS\n
+HSKVwin_entry044, Please select reference set.
+HSKVwin_entry044t, Reference set selection
+HSKVwin_entry045, Transition name
+HSKVwin_entry046, Knocked
+HSKVwin_entry047, Transition name
+HSKVwin_entry048, Disabled
+HSKVwin_entry049, Data series %d analysis:
+HSKVwin_entry050, +/-20% treshold for increased/decreased firing of transitions
+HSKVwin_entry051, *** t%d_%s    disabled manually. Impact on the net:
+HSKVwin_entry052, (DEAD IN REF & SERIES SETS!) t%d_%s
+HSKVwin_entry053, (DEAD IN REF, ALIVE IN SERIES) [avg fire chance: %s%%]  t%d_%s
+HSKVwin_entry054, (KNOCKED OUT IN SERIES SET) [avg fired chance in reference:
+HSKVwin_entry055, [firing chance refSet: %s%% dataSet: %s%%]
+HSKVwin_entry056, (DECREASED) [change -
+HSKVwin_entry057, (INCREASED) [change +
+HSKVwin_entry058, +/-20% treshold for increased/decreased tokens in places
+HSKVwin_entry059, disabled manually. Impact on the net:
+HSKVwin_entry060, (DEAD IN REF & SERIES SETS!) p
+HSKVwin_entry061, (DEAD IN REF, ALIVE IN SERIES) [avg tokens:
+HSKVwin_entry062, (KNOCKED OUT IN SERIES SET) [avg tokens reference:
+HSKVwin_entry063, (DECREASED) [tokens change: -
+HSKVwin_entry064, (INCREASED) [tokens change: +
+HSKVwin_entry065, Disabled:
+HSKVwin_entry066, Data set:%d:    %s     NetMode:%s   MaxMode:%s
+HSKVwin_entry067, (multiple transitions
+HSKVwin_entry068, Data set:%d:    %s     NetMode:%s   MaxMode:%s  %s
+HSKVwin_entry069, Package: %d Steps: %d Reps: %d
+LOGentry00565exception, Exception (1000283): HolmesSimKnockVis.cellClickAction() failed:
+HSKVwin_entry070, Simulation steps: <b>%d</b> Repetitions: <b>%d</b><br>
+HSKVwin_entry071, Place: p
+HSKVwin_entry072, <br>Reference tokens: <b>
+HSKVwin_entry073, </b> StdDev: <b>
+HSKVwin_entry074, <br>Knockout tokens: <b>
+HSKVwin_entry075, Transition: t
+HSKVwin_entry076, <br>Reference firing: <b>
+HSKVwin_entry077, <br>Knockout firing: <b>
+HSKVwin_entry078, <br><font color="green">Transition disabled manually in simulation</font>
+HSKVwin_entry079, <br><font color="red">Transition starved because of other disabled transition(s)</font><br><b>
+HSKVwin_entry080, <br>Tokens: <b>
+HSKVwin_entry081, <br><font color="green">Transition disabled manually in simulation</font> 
+HSKVwin_entry082, <br><font color="red">Transition starved because of other disabled transition(s):</font><br><b>
 
+//HolmesSimSetup:
+HSSetwin_entry001title, Simulator settings
+LOGentry00566exception, Exception (1000284): HolmesSimSetup.initializeComponents() failed:
+HSSetwin_entry002, Global settings
+HSSetwin_entry003, Steps:
+HSSetwin_entry004, Repetitions
+HSSetwin_entry005, Random number generator:
+HSSetwin_entry006op1, Random (Java default)
+HSSetwin_entry006op2, HighQualityRandom (slower)
+HSSetwin_entry006, <html>States<br>Manager</html>
+HSSetwin_entry007, Simulator selection:
+HSSetwin_entry008op1, Standard token simulator
+HSSetwin_entry008op2, Stochastics simulation for SPN
+HSSetwin_entry008op3, Gillespie SSA (test version)
+HSSetwin_entry008op4, Gillespie SSA (fast version)
+HSSetwin_entry009, This feature is not yet implemented.
+HSSetwin_entry010, Standard simulator settings
+HSSetwin_entry011, Net type mode:
+HSSetwin_entry012, Classical Petri Net
+HSSetwin_entry013, Time(d) Petri Net
+HSSetwin_entry014, Hybrid Net
+HSSetwin_entry015, Simulator sub-mode:
+HSSetwin_entry016, 50/50 mode (async.)
+HSSetwin_entry017, Maximum mode (sync.)
+HSSetwin_entry018, Single fire mode
+HSSetwin_entry019, Allow empty steps
+HSSetwin_entry020, Stochastic simulation settings for SPN
+HSSetwin_entry021, <html>Fire rate<br>Manager</html>
+HSSetwin_entry021t, Loop single transition simulation
+HSSetwin_entry022, Mass action kinetics enabled
+HSSetwin_entry023, Remove deactivated deterministic SPN transitions
+HSSetwin_entry023t, When this mode is selected, deterministic SPN transition which after its delay time\nis no longer active, will be remove from the firing sequence. Otherwise, it will fire\nas soon as it become activated again = will act as immediate in that moment.
+HSSetwin_entry024, Immediate-transition SPN mode:
+HSSetwin_entry025, Only one with the highest priority fire
+HSSetwin_entry025t, Only one transition with the highest priority will fire, then all will be evaluated from the beginning.
+HSSetwin_entry026, Sequenced firing by priority
+HSSetwin_entry026t, Sequenced firing of active immediate transition by priority.
+HSSetwin_entry027, Priority - probability mode
+HSSetwin_entry027t, One from active IM transition will fire, probability depends on priority set for transition.
+HSSetwin_entry028, Gillespie SSA (Stochastic Simulation Algorithm) settings
+HSSetwin_entry029, <html>Fire rate<br>Manager</html>
+HSSetwin_entry029t, Set transition firing rates for SSA.
+HSSetwin_entry030, <html>Components<br>&nbsp;&nbsp;Manager&nbsp;</html>
+HSSetwin_entry030t, Component vectors managaer for SSA.
+
+//HolmesDockWindowsTableExceptions:
+LOGentry00567exception, Exception (1000285): HolmesDockWindowsTable.createPlaceSubWindow() failed:
+LOGentry00568exception, Exception (1000286): HolmesDockWindowsTable.createXTPNPPlaceSubWindow() failed:
+LOGentry00569exception, Exception (1000287): HolmesDockWindowsTable.createXTPNPPlaceSubWindow() failed:
+LOGentry00570exception, Exception (1000288): HolmesDockWindowsTable.createXTPNPPlaceSubWindow() failed:
+LOGentry00571exception, Exception (1000289): HolmesDockWindowsTable.createTransitionSubWindow() failed:
+LOGentry00572exception, Exception (1000290): HolmesDockWindowsTable.createTransitionSubWindow() failed:
+LOGentry00573exception, Exception (1000291): HolmesDockWindowsTable.createColorTransitionSubWindow() failed:
+LOGentry00574exception, Exception (1000292): HolmesDockWindowsTable.createSPNTransitionSubWindow() failed:
+LOGentry00575exception, Exception (1000293): HolmesDockWindowsTable.createSPNTransitionSubWindow() failed:
+LOGentry00576exception, Exception (1000294): HolmesDockWindowsTable.createTimeTransitionSubWindow() failed:
+LOGentry00577exception, Exception (1000295): HolmesDockWindowsTable.createTimeTransitionSubWindow() failed:
+LOGentry00578exception, Exception (1000296): HolmesDockWindowsTable.createTimeTransitionSubWindow() failed:
+LOGentry00579exception, Exception (1000297): HolmesDockWindowsTable.createTimeTransitionSubWindow() failed:
+LOGentry00580exception, Exception (1000298): HolmesDockWindowsTable.createXTPNTransitionSubWindow() failed:
+LOGentry00581exception, Exception (1000299): HolmesDockWindowsTable.createXTPNTransitionSubWindow() failed:
+LOGentry00582exception, Exception (1000300): HolmesDockWindowsTable.createXTPNTransitionSubWindow() failed:
+LOGentry00583exception, Exception (1000301): HolmesDockWindowsTable.createXTPNTransitionSubWindow() failed:
+LOGentry00584exception, Exception (1000302): HolmesDockWindowsTable.createMetaNodeSubWindow() failed:
+LOGentry00585exception, Exception (1000303): HolmesDockWindowsTable.createSheetSubWindow() failed:
+LOGentry00586exception, Exception (1000304): HolmesDockWindowsTable.createT_invSubWindow() failed:
+LOGentry00587exception, Exception (1000305): HolmesDockWindowsTable.createT_invSubWindow() failed:
+LOGentry00588exception, Exception (1000306): HolmesDockWindowsTable.createT_invSubWindow() failed:
+LOGentry00589exception, Exception (1000307): HolmesDockWindowsTable.createT_invSubWindow() failed:
+LOGentry00590exception, Exception (1000308): HolmesDockWindowsTable.createT_invSubWindow() failed:
+LOGentry00591exception, Exception (1000309): HolmesDockWindowsTable.fillClustInvCombo() failed:
+LOGentry00592exception, Exception (1000310): HolmesDockWindowsTable.showMCSDataInSet() failed:
 
 
 //generalPurposeTags:
@@ -3162,6 +3336,7 @@ netSimWork01, Net simulator working
 unimplemented, Not implemented yet.
 unimplementedTitle, Subsystem offline
 unwrap, Unwrap
+warning, Warning
 yes, Yes
 
 

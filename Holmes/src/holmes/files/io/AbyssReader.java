@@ -79,7 +79,7 @@ public class AbyssReader {
 			xstream.fromXML(source);
 			overlord.log(lang.getText("LOGentry00153")+" "+path, "text", true);
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00154exception")+" " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00154exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	

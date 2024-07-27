@@ -71,7 +71,7 @@ public class HolmesNetTablesActions {
 	  	    	window.setVisible(true);
 			}
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00476exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00476exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	

@@ -86,7 +86,7 @@ public class HolmesNetProperties extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00470exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00470exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		this.setTitle(lang.getText("HNPwin_entry001title"));
 
@@ -281,7 +281,7 @@ public class HolmesNetProperties extends JFrame {
 			try {
 				field.commitEdit();
 			} catch (ParseException ex) {
-				overlord.log(lang.getText("LOGentry00471exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00471exception")+"\n"+ex.getMessage(), "error", true);
 			}
 			String newName = field.getText();
 			overlord.getWorkspace().getProject().setName(newName);
@@ -490,7 +490,7 @@ public class HolmesNetProperties extends JFrame {
 				}
 				bw.close();
 			} catch (Exception ex) {
-				overlord.log(lang.getText("LOGentry00472exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00472exception")+"\n"+ex.getMessage(), "error", true);
 			}
 		}
 	}

@@ -151,7 +151,7 @@ public class ProjectWriter {
 			bw.close();
 			return true;
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00226exception")+" "+e.getMessage(), "text", true);
+			overlord.log(lang.getText("LOGentry00226exception")+"\n"+e.getMessage(), "text", true);
 			return false;
 		}
 	}
@@ -645,7 +645,7 @@ public class ProjectWriter {
 
 			return true;
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00232exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00232exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -696,7 +696,7 @@ public class ProjectWriter {
 			bw.write(spaces(2)+"<EOIN>"+newline);
 			return true;
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00233exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00233exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -748,7 +748,7 @@ public class ProjectWriter {
 			
 			return true;
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00234exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00234exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -802,7 +802,7 @@ public class ProjectWriter {
 			
 			return true;
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00235exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00235exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -840,7 +840,7 @@ public class ProjectWriter {
 			
 			return true;
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00236exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00236exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -921,7 +921,7 @@ public class ProjectWriter {
 
 			return true;
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00238exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00238exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -957,7 +957,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<EOFRv>"+newline);		
 			return true;
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00239exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00239exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -996,7 +996,7 @@ public class ProjectWriter {
 			bw.write(spaces(sp)+"<EOSSA>"+newline);
 			return true;
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00240exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00240exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}

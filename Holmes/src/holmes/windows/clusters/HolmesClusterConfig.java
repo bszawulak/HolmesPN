@@ -99,7 +99,7 @@ public class HolmesClusterConfig extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00504exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00504exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		commandsValidate = comm;
 		boss = parent;

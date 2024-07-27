@@ -103,7 +103,7 @@ public class ClusterReader {
 					overlord.log(" "+lang.getText("LOGentry00062"), "text", false);
 				} catch (IOException e) {
 					overlord.log(lang.getText("LOGentry00063"), "error", true);
-					overlord.log(lang.getText("error")+": "+e.getMessage(), "error", true);
+					overlord.log(lang.getText("error")+":\n"+e.getMessage(), "error", true);
 					result = -1;
 				}
 			}

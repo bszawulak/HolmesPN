@@ -43,7 +43,7 @@ public class AbyssWriter {
 			return true;
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
-			overlord.log(lang.getText("LOGentry00156exception")+" " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00156exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}

@@ -61,7 +61,7 @@ public class HolmesSPNtransitionEditor extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00522exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00522exception")+"\n"+ex.getMessage(), "error", true);
 		}
     	
     	this.ego = this;
@@ -150,7 +150,7 @@ public class HolmesSPNtransitionEditor extends JFrame {
 			try {
 				myData.ST_function = field.getText();
 			} catch (Exception ex) {
-				overlord.log(lang.getText("LOGentry00523exception")+" "+ex.getMessage(), "error", true);
+				overlord.log(lang.getText("LOGentry00523exception")+"\n"+ex.getMessage(), "error", true);
 			}
 		});
 		main.add(STfunctionValueEdit);

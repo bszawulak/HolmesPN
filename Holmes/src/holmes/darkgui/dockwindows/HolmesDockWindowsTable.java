@@ -788,7 +788,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 int selected = 0;
                 Object[] options = {lang.getText("HDWT_entry028XTPNsim_op1"), lang.getText("cancel"),};
                 int n = JOptionPane.showOptionDialog(null,
-                        lang.getText("HDWT_entry028XTPNsim_msg1"), lang.getText("HDWT_entry028XTPNsim_1t"), JOptionPane.YES_NO_OPTION,
+                        lang.getText("HDWT_entry028XTPNsim_1"), lang.getText("HDWT_entry028XTPNsim_1t"), JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
                 if (n == 1) {
                     return;
@@ -1171,7 +1171,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00567exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -1633,7 +1633,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00568exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -1804,7 +1804,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00569exception")+"\n"+ex.getMessage(), "error", true);
             }
             double min = Double.parseDouble("" + field.getValue());
 
@@ -1828,7 +1828,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00570exception")+"\n"+ex.getMessage(), "error", true);
             }
 
             double max = Double.parseDouble("" + field.getValue());
@@ -2304,7 +2304,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00571exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -2648,7 +2648,7 @@ public class HolmesDockWindowsTable extends JPanel {
                         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
                     }
                 } catch (Exception ee) {
-                    System.out.println(ee.getMessage());
+                    overlord.log(lang.getText("LOGentry00572exception")+"\n"+ee.getMessage(), "error", true);
                 }
             }
         });
@@ -2738,7 +2738,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00573exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -3115,7 +3115,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00574exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -3236,7 +3236,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     ((Transition) element).spnExtension.setFiringRate(newVal);
                     xxx.ST_function = newFR;
                 } catch (Exception ee) {
-                    System.out.println(ee.getMessage());
+                    overlord.log(lang.getText("LOGentry00575exception")+"\n"+ee.getMessage(), "error", true);
                 }
             }
         });
@@ -3573,7 +3573,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00576exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -3683,7 +3683,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00577exception")+"\n"+ex.getMessage(), "error", true);
             }
             double min = (double) field.getValue();
             setMinFireTime(min);
@@ -3697,7 +3697,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00578exception")+"\n"+ex.getMessage(), "error", true);
             }
             double max = (double) field.getValue();
             setMaxFireTime(max);
@@ -3727,7 +3727,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 setDurationTime(time);
                 overlord.markNetChange();
             } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00579exception")+"\n"+ex.getMessage(), "error", true);
             }
         });
         components.add(durationField);
@@ -4030,7 +4030,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00580exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -4402,7 +4402,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00581exception")+"\n"+ex.getMessage(), "error", true);
             }
 
             double min = Double.parseDouble("" + field.getValue());
@@ -4429,7 +4429,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00582exception")+"\n"+ex.getMessage(), "error", true);
             }
 
             double max = Double.parseDouble("" + field.getValue());
@@ -4474,7 +4474,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00583exception")+"\n"+ex.getMessage(), "error", true);
             }
 
             double min = Double.parseDouble("" + field.getValue());
@@ -4501,7 +4501,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00584exception")+"\n"+ex.getMessage(), "error", true);
             }
             double max = Double.parseDouble("" + field.getValue());
             SharedActionsXTPN.access().setBetaMaxTime(max, transition, elementLocation);
@@ -4878,7 +4878,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00584exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -5652,7 +5652,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00585exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             overlord.getWorkspace().getProject().setName(newName);
@@ -5878,7 +5878,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 refreshTINVwindowData();
                 refreshSubSurCombos();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                overlord.log(lang.getText("LOGentry00586exception"), "error", true);
             }
         });
         components.add(recalculateTypesButton);
@@ -5896,7 +5896,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 }
                 refreshSubSurCombos();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                overlord.log(lang.getText("LOGentry00587exception"), "error", true);
             }
         });
         components.add(recalculateInvTypesButton);
@@ -5934,7 +5934,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     selectedT_invIndex = index - 1;
                     showT_invariant();
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    overlord.log(lang.getText("LOGentry00588exception"), "error", true);
                 }
             }
         });
@@ -5964,7 +5964,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     selectedT_invIndex = index - 1;
                     showT_invariant();
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    overlord.log(lang.getText("LOGentry00589exception"), "error", true);
                 }
             }
         });
@@ -5994,7 +5994,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     selectedT_invIndex = index - 1;
                     showT_invariant();
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    overlord.log(lang.getText("LOGentry00590exception"), "error", true);
                 }
             }
         });
@@ -6569,7 +6569,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 new HolmesInvariantsViewer(selectedT_invIndex);
             } catch (Exception ex) {
-                overlord.log(lang.getText("LOGentry00050exception") +  "Exception: " + ex.getMessage(), "error", true);
+                overlord.log(lang.getText("LOGentry00050exception")+"\n"+ex.getMessage(), "error", true);
             }
         });
         components.add(showDetailsButton);
@@ -7365,7 +7365,7 @@ public class HolmesDockWindowsTable extends JPanel {
             }
             chooseClusterInv.setModel(new DefaultComboBoxModel<>(clustersInvHeaders));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            overlord.log(lang.getText("LOGentry00591exception"), "error", true);
         }
         doNotUpdate = false;
     }
@@ -7447,7 +7447,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 ImageIO.write(image2, "png", new File(fileName));
             }
         } catch (Exception e) {
-            overlord.log(lang.getText("HDWT_entry275ClusterPanel"), "error", true);
+            overlord.log(lang.getText("HDWT_entry275ClusterPanel")+":\n"+e.getMessage(), "error", true);
             progressBar.setVisible(false);
         } finally {
             selectedClusterIndex = oldSelected;
@@ -7765,7 +7765,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             overlord.getWorkspace().getProject().repaintAllGraphPanels();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            overlord.log(lang.getText("LOGentry00592exception"), "error", true);
         }
     }
 

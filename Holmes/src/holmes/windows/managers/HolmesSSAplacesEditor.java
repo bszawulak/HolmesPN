@@ -55,7 +55,7 @@ public class HolmesSSAplacesEditor extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00526exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00526exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		PetriNet pn = overlord.getWorkspace().getProject();
     	this.parentWindow = parent;

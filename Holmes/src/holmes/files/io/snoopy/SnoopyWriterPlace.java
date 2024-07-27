@@ -298,7 +298,7 @@ public class SnoopyWriterPlace {
 		try {
 			bw.write(text+"\n");
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00147exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00147exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	

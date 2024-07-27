@@ -151,7 +151,7 @@ public class IOprotocols {
                         try {
                             nodesList.add(Integer.parseInt(s));
                         } catch (NumberFormatException e) {
-                            overlord.log(lang.getText("LOGentry00157exception"), "text", true);
+                            overlord.log(lang.getText("LOGentry00157exception")+"\n"+e.getMessage(), "text", true);
                         }
                     }
                 }
@@ -179,7 +179,7 @@ public class IOprotocols {
             overlord.log(lang.getText("LOGentry00157"), "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00158exception"), "error", true);
+            overlord.log(lang.getText("LOGentry00158exception")+"\n"+e.getMessage(), "error", true);
             return false;
         }
     }
@@ -218,7 +218,7 @@ public class IOprotocols {
                         try {
                             nodesListTmp.add(Integer.parseInt(s));
                         } catch (NumberFormatException e) {
-                            overlord.log(lang.getText("LOGentry00159exception"), "text", true);
+                            overlord.log(lang.getText("LOGentry00159exception")+"\n"+e.getMessage(), "text", true);
                         }
                     }
                 }
@@ -247,7 +247,7 @@ public class IOprotocols {
             overlord.log(lang.getText("LOGentry00160"), "text", true);
             return invariantsListOut;
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00161exception")+ " ", "error", true);
+            overlord.log(lang.getText("LOGentry00161exception")+"\n"+e.getMessage(), "error", true);
             return new ArrayList<>();
         }
     }
@@ -284,7 +284,7 @@ public class IOprotocols {
                         try {
                             nodesListTmp.add(Integer.parseInt(s));
                         } catch (NumberFormatException e) {
-                            overlord.log(lang.getText("LOGentry00162exception")+" ", "text", true);
+                            overlord.log(lang.getText("LOGentry00162exception")+"\n"+e.getMessage(), "text", true);
                         }
                     }
                 }
@@ -313,7 +313,7 @@ public class IOprotocols {
             overlord.log(lang.getText("LOGentry00163"), "text", true);
             return invariantsListOut;
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00164exception"), "error", true);
+            overlord.log(lang.getText("LOGentry00164exception")+"\n"+e.getMessage(), "error", true);
             return new ArrayList<>();
         }
     }
@@ -383,7 +383,7 @@ public class IOprotocols {
                         try {
                             nodesList.add(Integer.parseInt(s));
                         } catch (NumberFormatException e) {
-                            overlord.log(lang.getText("LOGentry00166exception"), "text", true);
+                            overlord.log(lang.getText("LOGentry00166exception")+"\n"+e.getMessage(), "text", true);
                         }
                     }
                 }
@@ -411,7 +411,7 @@ public class IOprotocols {
             overlord.log(lang.getText("LOGentry00167"), "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00168exception")+" ", "error", true);
+            overlord.log(lang.getText("LOGentry00168exception")+"\n"+e.getMessage(), "error", true);
             return false;
         }
     }
@@ -504,7 +504,7 @@ public class IOprotocols {
             overlord.log(lang.getText("LOGentry00171"), "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00172exception")+ " ", "text", true);
+            overlord.log(lang.getText("LOGentry00172exception")+"\n"+e.getMessage(), "text", true);
             return false;
         }
     }
@@ -598,7 +598,7 @@ public class IOprotocols {
             overlord.log(lang.getText("LOGentry00174"), "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00175exception"), "text", true);
+            overlord.log(lang.getText("LOGentry00175exception")+"\n"+e.getMessage(), "text", true);
             return false;
         }
     }
@@ -664,7 +664,7 @@ public class IOprotocols {
                     invariantsList.add(tmpInvariant);
                     line = buffer.readLine();
                 } catch (Exception e) {
-                    overlord.log( lang.getText("LOGentry00176exception")+" #" + lineNumber, "error", true);
+                    overlord.log( lang.getText("LOGentry00176exception")+" #" + lineNumber+"\n"+e.getMessage(), "error", true);
                     line = buffer.readLine();
                 }
             }
@@ -672,7 +672,7 @@ public class IOprotocols {
             overlord.log(lang.getText("LOGentry00177"), "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00178exception"), "text", true);
+            overlord.log(lang.getText("LOGentry00178exception")+"\n"+e.getMessage(), "text", true);
             return false;
         }
     }
@@ -738,7 +738,7 @@ public class IOprotocols {
                     invariantsList.add(tmpInvariant);
                     line = buffer.readLine();
                 } catch (Exception e) {
-                    overlord.log(lang.getText("LOGentry00179exception")+" #" + lineNumber, "error", true);
+                    overlord.log(lang.getText("LOGentry00179exception")+" #" + lineNumber+"\n"+e.getMessage(), "error", true);
                     line = buffer.readLine();
                 }
             }
@@ -746,7 +746,7 @@ public class IOprotocols {
             overlord.log(lang.getText("LOGentry00180"), "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00181exception"), "text", true);
+            overlord.log(lang.getText("LOGentry00181exception")+"\n"+e.getMessage(), "text", true);
             return false;
         }
     }
@@ -823,9 +823,9 @@ public class IOprotocols {
             pw.close();
             overlord.log(lang.getText("LOGentry00182")+" " + path, "text", true);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, lang.getText("LOGentry00183exception")+" "
+            JOptionPane.showMessageDialog(null, lang.getText("LOGentry00183exception")+"\n"
                     +e.getMessage(), lang.getText("error"), JOptionPane.ERROR_MESSAGE);
-            overlord.log(lang.getText("LOGentry00183exception")+" "
+            overlord.log(lang.getText("LOGentry00183exception")+"\n"
                     +e.getMessage(), "error", true);
         }
     }
@@ -902,9 +902,9 @@ public class IOprotocols {
             pw.close();
             overlord.log(lang.getText("LOGentry00184")+" " + path, "text", true);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, lang.getText("LOGentry00185exception")+" "
+            JOptionPane.showMessageDialog(null, lang.getText("LOGentry00185exception")+"\n"
                     +e.getMessage(), lang.getText("error"), JOptionPane.ERROR_MESSAGE);
-            overlord.log(lang.getText("LOGentry00185exception")+" "
+            overlord.log(lang.getText("LOGentry00185exception")+"\n"
                     +e.getMessage(), "error", true);
         }
     }
@@ -1189,7 +1189,7 @@ public class IOprotocols {
             in.close();
             overlord.log(lang.getText("LOGentry00186"), "text", true);
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00187exception")+" " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00187exception")+"\n"+e.getMessage(), "error", true);
         }
         return new PetriNet(nodeArray, arcArray);
     }
@@ -1461,7 +1461,7 @@ public class IOprotocols {
             in.close();
             overlord.log(lang.getText("LOGentry00188"), "text", true);
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00189exception")+" " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00189exception")+"\n"+e.getMessage(), "error", true);
         }
     }
 
@@ -1584,7 +1584,7 @@ public class IOprotocols {
             overlord.log(lang.getText("LOGentry00190")+": "+path, "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00191exception")+" " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00191exception")+"\n"+e.getMessage(), "error", true);
             return false;
         }
     }
@@ -1627,7 +1627,7 @@ public class IOprotocols {
             pw.close();
             overlord.log(lang.getText("LOGentry00192")+ " " + path, "text", true);
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00193exception")+" " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00193exception")+"\n"+e.getMessage(), "error", true);
         }
     }
 
@@ -1669,7 +1669,7 @@ public class IOprotocols {
             overlord.log(lang.getText("LOGentry00194")+ " " + path, "text", true);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR: writeP_invCharlie", JOptionPane.ERROR_MESSAGE);
-            overlord.log(lang.getText("LOGentry00195exception") + " " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00195exception") +"\n"+e.getMessage(), "error", true);
         }
     }
 
@@ -1723,7 +1723,7 @@ public class IOprotocols {
             pw.close();
             overlord.log(lang.getText("LOGentry00196")+ " " + path, "text", true);
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00197exception")+" " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00197exception")+"\n"+e.getMessage(), "error", true);
         }
     }
 
@@ -1756,7 +1756,7 @@ public class IOprotocols {
             pw.close();
             overlord.log(lang.getText("LOGentry00198")+" " + path, "text", true);
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00199exception") +" "+ e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00199exception")+"\n"+e.getMessage(), "error", true);
         }
     }
 
@@ -1791,7 +1791,7 @@ public class IOprotocols {
             oos.writeObject(sn);
             oos.flush();
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00200exception") +" "+ e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00200exception")+"\n"+e.getMessage(), "error", true);
         }
 
     }
@@ -1808,7 +1808,7 @@ public class IOprotocols {
             oos.writeObject(bsl);
             oos.flush();
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00201exception") +" "+ e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00201exception")+"\n"+e.getMessage(), "error", true);
         }
     }
 
@@ -1834,7 +1834,7 @@ public class IOprotocols {
             System.out.println("Object has been deserialized ");
 
         } catch (IOException | ClassNotFoundException e) {
-            overlord.log(lang.getText("LOGentry00202exception") +" "+ e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00202exception")+"\n"+e.getMessage(), "error", true);
         }
         return sn;
     }
@@ -1871,7 +1871,7 @@ public class IOprotocols {
             oos.writeObject(sn);
             oos.flush();
         } catch (Exception e) {
-            overlord.log(lang.getText("LOGentry00203exception") +" "+ e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00203exception")+"\n"+e.getMessage(), "error", true);
         }
     }
 
@@ -1913,7 +1913,7 @@ public class IOprotocols {
 
             System.out.println("Object has been deserialized ");
         } catch (ClassNotFoundException | IOException e) {
-            overlord.log(lang.getText("LOGentry00204exception") +" "+ e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00204exception")+"\n"+e.getMessage(), "error", true);
         }
     }
 }

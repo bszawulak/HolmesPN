@@ -179,7 +179,7 @@ public class HolmesInvariantsViewer extends JFrame {
 				problem = ( transStats == null );
 			}
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00449exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00449exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 
@@ -190,7 +190,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00449exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00449exception")+"\n"+e.getMessage(), "error", true);
 		}
 		setLayout(new BorderLayout());
 		setSize(new Dimension(800, 650));
@@ -710,7 +710,7 @@ public class HolmesInvariantsViewer extends JFrame {
 			labelTDPNtrans.setText(""+timeVector.get(7).intValue());
 			labelPNtrans.setText(""+timeVector.get(4).intValue());
 		} catch (Exception e) {
-			overlord.log(lang.getText("LOGentry00451exception")+" "+e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00451exception")+"\n"+e.getMessage(), "error", true);
 		}
 
 	}
@@ -873,7 +873,7 @@ public class HolmesInvariantsViewer extends JFrame {
 				new HolmesNodeInfo(transitions.get(transId), this);
 			}
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00452exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00452exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 

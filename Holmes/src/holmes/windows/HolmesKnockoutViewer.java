@@ -52,7 +52,7 @@ public class HolmesKnockoutViewer extends JFrame {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00466exception")+ " "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00466exception")+ "\n"+ex.getMessage(), "error", true);
 		}
 		setLayout(new BorderLayout());
 		setSize(new Dimension(640, 400));
@@ -198,7 +198,7 @@ public class HolmesKnockoutViewer extends JFrame {
 				new HolmesInvariantsViewer(invID);
 			}
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00467exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00467exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	

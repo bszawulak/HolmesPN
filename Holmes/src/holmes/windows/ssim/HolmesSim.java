@@ -154,7 +154,7 @@ public class HolmesSim extends JFrame {
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
 		} catch (Exception ex) {
-			overlord.log(lang.getText("LOGentry00545exception")+" "+ex.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00545exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		setSize(new Dimension(1000, 750));
 		
@@ -371,7 +371,7 @@ public class HolmesSim extends JFrame {
 					addNewPlaceSeries(sel, name);
 					updatePlacesGraphicChart("places");
 				} catch (Exception e) {
-					overlord.log(lang.getText("LOGentry00546exception")+" "+e.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00546exception")+"\n"+e.getMessage(), "error", true);
 				}
 			}
 		});
@@ -399,7 +399,7 @@ public class HolmesSim extends JFrame {
 					placesInChartStr.set(sel, "");
 					removePlaceSeries(name);
 				} catch (Exception e) {
-					overlord.log(lang.getText("LOGentry00547exception")+" "+e.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00547exception")+"\n"+e.getMessage(), "error", true);
 				}
 			}
 		});
@@ -440,7 +440,7 @@ public class HolmesSim extends JFrame {
 					overlord.getSearchWindow().fillComboBoxesData();
 					overlord.getSearchWindow().selectedManually(true, sel);
 				} catch (Exception e) {
-					overlord.log(lang.getText("LOGentry00548exception")+" "+e.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00548exception")+"\n"+e.getMessage(), "error", true);
 				}
 			}
 		});
@@ -602,7 +602,7 @@ public class HolmesSim extends JFrame {
 					addNewTransitionSeries(sel, name);
 					//updateTransitionsGraphicChart();
 				} catch (Exception e) {
-					overlord.log(lang.getText("LOGentry00549exception")+" "+e.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00549exception")+"\n"+e.getMessage(), "error", true);
 				}
 			}
 		});
@@ -625,7 +625,7 @@ public class HolmesSim extends JFrame {
 					name = trimNodeName(name);
 					removeTransitionSeries(name);
 				} catch (Exception e) {
-					overlord.log(lang.getText("LOGentry00550exception")+" "+e.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00550exception")+"\n"+e.getMessage(), "error", true);
 				}
 				
 			}
@@ -667,7 +667,7 @@ public class HolmesSim extends JFrame {
 					overlord.getSearchWindow().fillComboBoxesData();
 					overlord.getSearchWindow().selectedManually(false, sel);
 				} catch (Exception e) {
-					overlord.log(lang.getText("LOGentry00551exception")+" "+e.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00551exception")+"\n"+e.getMessage(), "error", true);
 				}
 			}
 		});
@@ -1012,7 +1012,7 @@ public class HolmesSim extends JFrame {
 				try {
 					value += transitionsRawData.get(step+i).get(selTransID);
 				} catch (Exception ex) {
-					overlord.log(lang.getText("LOGentry00552exception")+" "+ex.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00552exception")+"\n"+ex.getMessage(), "error", true);
 				}
 			}
 			
@@ -1206,7 +1206,7 @@ public class HolmesSim extends JFrame {
 				ChartUtilities.saveChartAsPNG(imageFile, transitionsChart, w, h);
 			}
 		} catch (IOException ex) {
-			overlord.log(lang.getText("LOGentry00553exception")+" "+ex, "error", true);
+			overlord.log(lang.getText("LOGentry00553exception")+"\n"+ex, "error", true);
 		}
 	}
 	
