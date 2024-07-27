@@ -41,106 +41,106 @@ GUI_simulator0001warn, Ostrzeżenie: symulator jest aktywny. Nie można kontynuo
 GUI_simulator0002warn, Ostrzeżenie: symulator XTPN jest aktywny. Nie można kontynuować, dopóki nie zostanie ręcznie zatrzymany.
 
 //GUIOperations:
-GUIO_openProject001, Reading project file succcessful. | Odczyt pliku projektu zakończony sukcesem.
-LOGentry00014, Unable to extract net as image. Cannot save to file: | Nie można zapisać sieci jako obraz. Nie można zapisać do pliku:
-GUIO_messageBox001, File choosing error. Cannot proceed.
-LOGentry00015, File choosing error. No extension:
-GUIO_warning001, \nWarning: hierarchical net structure detected. Using Holmes project is strongly advised.\nOther save format will most probably fail.\n
-GUIO_warning002, Warning. There has been a problem detecting type of the Petri net.\nHolmes project file as save is highly recommended.
-GUIO_warning003, Selected net file format %s%nNet real type: %s%nSuggested file format: %s%n%nSelected format will not contain all features of the current Petri Net. Resulting file will %ncontain reduced net or will be corrupted.%n
-GUIO_warning003title, Invalid out net file format
-GUIO_button001, Load invariants
-GUIO_button001b, Select invariant file
-GUIO_inaInv001, Net saving as .pnt file failed. There may be problems with file:
-GUIO_inaInv002,  or there is no network yet.
-GUIO_inaInv003, Missing net or file
-GUIO_inaInv004, INAwin32.exe will now start. This may take a while. Click OK and please wait.\nWhen console shows in, please type Y, then N after invariants are computed.
-GUIO_inaInv005, Please wait
-LOGentry00016, Activating INAwin32.exe. Please wait, this may take a few seconds due to OS delays.
-LOGentry00017, INAwin32.exe process finished. Reading results...
-GUIO_inaInv006, I/O operation: activating INAwin32.exe failed.
-GUIO_inaInv007, No invariants file - using INAwin32.exe failed.
-GUIO_inaInv008, Save .inv file
-GUIO_inaInv009, No, thanks
-GUIO_inaInv010, Do you want to save generated .inv file?
-GUIO_inaInv011, Save the invariants?
-GUIO_inaInv012, Select invariants target path
-LOGentry00018, Invariants generation successful.
-GUIO_inaInv013, Missing executables in the tools directory. Required: INAwin32.exe, ina.bat and COMMAND.ina
-GUIO_inaInv014, Missing files
-GUIO_invariants001, Invariants generation already in progress.
-GUIO_invariants002, Generator working
-GUIO_mct001, Exporting net into CSV file failed.
-GUIO_mct002, Write error
-LOGentry00019, Starting MCT generator.
-GUIO_mct003, Select MCT target path
-GUIO_mct004, MCT file created
-GUIO_mct005, Operation successful.
-LOGentry00020, MCT file saved. Path:
-GUIO_mct006, MCT file created
-GUIO_mct007, File operation failed when creating MCT sets.
-GUIO_mct008, MCT generator error
-LOGentry00021, MCT generator failed:
-LOGentry00022, Warning: unable to check if given clusters number (
-LOGentry00023, ) exceeds invariants number. If so, the procedure may fail.
-GUIO_clusters001, Select CH metric directory
-GUIO_clusters002, Use temporary directory
-GUIO_clusters003, Multiple CH metric files can we written into default temporary directory (inadvised) or into\nthe selected one.
-GUIO_clusters004, Directory selection
-GUIO_clusters005, Select CH metric dir
-GUIO_clusters006, Target directory for CH metric results
-LOGentry00024, CH metric files will be put into the
-LOGentry00025, Cluster files will be put into the
-LOGentry00026, Cluster files will be put into the
-LOGentry00027, Warning: Celinski-Harabasz metric computation in 32bit mode for large number of invariants can cause R/OS failure.
-GUIO_clusters007, CH metric computation failed for
-GUIO_clusters008,  clusters.\nPath:
-LOGentry00028, Warning: unable to check if a given number of clusters (
-LOGentry00029, ) exceeds invariants number. If so, the procedure may fail.
-GUIO_clusters009, Select cluster directory
-GUIO_clusters009b, Use temporary directory
-GUIO_clusters009c, Cancel operation
-GUIO_clusters010, Multiple cluster files can we written into default temporary directory (not advised) or into\nthe selected one.
-GUIO_clusters011, Select cluster dir
-GUIO_clusters012, Target directory for cluster results
-LOGentry00030, Cluster files will be put into the
-GUIO_clusters013, Clustering generation failed for
-GUIO_clusters014,  clusters.\nPath:
-GUIO_csv001, CSV invariants file (.csv)
-GUIO_csv002, Select CSV
-GUIO_csv003, Select CSV file
-GUIO_csv004, Select invariants file manually
-GUIO_csv004b, Use computed invariants
-LOGentry00031, Please select invariant file (.CSV) for the clustering manually or use invariants\nfrom the current network (they must be computed/loaded already!).
-GUIO_inv001, Invariants source
-GUIO_inv002, Exporting invariants into CSV file failed.\nCluster procedure cannot begin.
-GUIO_inv003, CSV export error
-GUIO_clusters015, Manually locate file
-GUIO_clusters015b, Cancel procedure
-GUIO_clusters016, No input.csv file in:\n
-GUIO_clusters017, \nDo you want to select location manually?
-GUIO_clusters018, No CSV invariants file
-GUIO_clusters019, Select CSV invariants file
-GUIO_clusters020, CSV invariants file:
-GUIO_clusters021,  located. Starting single clustering procedure.
-GUIO_clusters022, Starting MCT generator for file:
-GUIO_clusters023, MCT generation (file) failed for:
-LOGentry00032, R function failed for parameters:
-LOGentry00032b, File name:
-LOGentry00032c, Output dir:
-LOGentry00032d, Algorithm:
-LOGentry00032e, Metric:
-LOGentry00032f, No. of clusters:
-GUIO_clusters024, Clustering failed. Check log.
-LOGentry00033, Unable to update simulator fields: (XTPN=
+GUIO_openProject001, Odczyt pliku projektu zakończony sukcesem.
+LOGentry00014, Nie można zapisać sieci jako obraz. Nie można zapisać do pliku:
+GUIO_messageBox001, Błąd wyboru pliku. Nie można kontynuować.
+LOGentry00015, Błąd wyboru pliku. Brak rozszerzenia:
+GUIO_warning001, \nOstrzeżenie: wykryto strukturę sieci hierarchicznej. Zalecane jest zapisanie projektu Holmesa.\nInny format zapisu prawdopodobnie zakończy się niepowodzeniem.
+GUIO_warning002, Ostrzeżenie. Wykryto problem z typem sieci Petriego.\nZapisanie projektu Holmesa jest wysoce zalecane.
+GUIO_warning003, Wybrany format pliku sieci %s%nRzeczywisty typ sieci: %s%nZalecany format pliku: %s%n%nWybrany format nie będzie zawierał wszystkich funkcji bieżącej sieci Petriego. Wynikowy plik %nbędzie zawierał zredukowaną sieć lub będzie uszkodzony.%n
+GUIO_warning003title, Nieprawidłowy format pliku wyjściowego sieci
+GUIO_button001, Wczytaj inwarianty
+GUIO_button001b, Wybierz plik inwariantów
+GUIO_inaInv001, Zapisywanie sieci jako pliku .pnt zakończyło się niepowodzeniem. Mogą wystąpić problemy z plikiem:
+GUIO_inaInv002,  lub sieć nie istnieje.
+GUIO_inaInv003, Brak sieci lub pliku
+GUIO_inaInv004, INAwin32.exe zostanie teraz uruchomiony. Może to chwilę potrwać. Kliknij OK i poczekaj.\nKiedy konsola pokaże in, wpisz Y, a następnie N po obliczeniu inwariantów.
+GUIO_inaInv005, Proszę czekać
+LOGentry00016, Aktywacja INAwin32.exe. Proszę czekać, to może potrwać kilka sekund z powodu opóźnień systemu operacyjnego.
+LOGentry00017, Proces INAwin32.exe zakończony. Odczyt wyników...
+GUIO_inaInv006, Operacja wejścia/wyjścia: aktywacja INAwin32.exe nie powiodła się.
+GUIO_inaInv007, Brak pliku inwariantów - użycie INAwin32.exe nie powiodło się.
+GUIO_inaInv008, Zapisz plik .inv
+GUIO_inaInv009, Nie, dziękuję
+GUIO_inaInv010, Czy chcesz zapisać wygenerowany plik .inv?
+GUIO_inaInv011, Zapisać inwarianty?
+GUIO_inaInv012, Wybierz ścieżkę docelową inwariantów
+LOGentry00018, Generowanie inwariantów zakończone sukcesem.
+GUIO_inaInv013, Brak plików wykonywalnych w katalogu narzędzi. Wymagane: INAwin32.exe, ina.bat i COMMAND.ina
+GUIO_inaInv014, Brak plików
+GUIO_invariants001, Generowanie inwariantów jest już w toku.
+GUIO_invariants002, Generator działa
+GUIO_mct001, Eksportowanie sieci do pliku CSV zakończyło się niepowodzeniem.
+GUIO_mct002, Błąd zapisu
+LOGentry00019, Rozpoczęcie generowania MCT.
+GUIO_mct003, Wybierz ścieżkę docelową MCT
+GUIO_mct004, Plik MCT utworzony
+GUIO_mct005, Operacja zakończona sukcesem.
+LOGentry00020, Plik MCT zapisany. Ścieżka:
+GUIO_mct006, Plik MCT utworzony
+GUIO_mct007, Operacja pliku zakończyła się niepowodzeniem podczas tworzenia zestawów MCT.
+GUIO_mct008, Błąd generatora MCT
+LOGentry00021, Generator MCT zakończył niepowodzeniem:
+LOGentry00022, Ostrzeżenie: nie można sprawdzić, czy podana liczba klastrów (
+LOGentry00023, ) przekracza liczbę inwariantów. W takim przypadku procedura może zakończyć się niepowodzeniem.
+GUIO_clusters001, Wybierz katalog metryki CH
+GUIO_clusters002, Użyj katalogu tymczasowego
+GUIO_clusters003, Wiele plików metryki CH można zapisać w domyślnym katalogu tymczasowym (niezalecane) lub w wybranym.
+GUIO_clusters004, Wybór katalogu
+GUIO_clusters005, Wybierz katalog metryki CH
+GUIO_clusters006, Katalog docelowy dla wyników metryki CH
+LOGentry00024, Pliki metryki CH zostaną umieszczone w
+LOGentry00025, Pliki klastrów zostaną umieszczone w
+LOGentry00026, Pliki klastrów zostaną umieszczone w
+LOGentry00027, Ostrzeżenie: obliczenia metryki Calińskiego-Harabasza w trybie 32-bitowym dla dużej liczby inwariantów mogą spowodować awarię R/OS.
+GUIO_clusters007, Obliczenia metryki CH zakończyły się niepowodzeniem dla
+GUIO_clusters008,  klastrów.\nŚcieżka:
+LOGentry00028, Ostrzeżenie: nie można sprawdzić, czy podana liczba klastrów (
+LOGentry00029, ) przekracza liczbę inwariantów. W takim przypadku procedura może zakończyć się niepowodzeniem.
+GUIO_clusters009, Wybierz katalog klastrów
+GUIO_clusters009b, Użyj katalogu tymczasowego
+GUIO_clusters009c, Anuluj operację
+GUIO_clusters010, Wiele plików klastrów można zapisać w domyślnym katalogu tymczasowym (niezalecane) lub w wybranym.
+GUIO_clusters011, Wybierz katalog klastrów
+GUIO_clusters012, Katalog docelowy dla wyników klastrów
+LOGentry00030, Pliki klastrów zostaną umieszczone w
+GUIO_clusters013, Generowanie klastrów zakończyło się niepowodzeniem dla
+GUIO_clusters014,  klastrów.\nŚcieżka:
+GUIO_csv001, Plik inwariantów CSV (.csv)
+GUIO_csv002, Wybierz plik CSV
+GUIO_csv003, Wybierz plik CSV
+GUIO_csv004, Wybierz plik inwariantów ręcznie
+GUIO_csv004b, Użyj obliczonych inwariantów
+LOGentry00031, Proszę wybrać plik inwariantów (.CSV) dla klastrów ręcznie lub użyć inwariantów\nz bieżącej sieci (muszą być już obliczone/załadowane!).
+GUIO_inv001, Plik źródłowy inw.
+GUIO_inv002, Eksportowanie inwariantów do pliku CSV zakończyło się niepowodzeniem.\nProcedura klastrów nie może się rozpocząć.
+GUIO_inv003, Błąd eksportu CSV
+GUIO_clusters015, Ręczne zlokalizowanie pliku
+GUIO_clusters015b, Anuluj procedurę
+GUIO_clusters016, Brak pliku input.csv w:\n
+GUIO_clusters017, \nCzy chcesz wybrać lokalizację ręcznie?
+GUIO_clusters018, Nie znaleziono pliku inwariantów CSV.
+GUIO_clusters019, Wybierz plik inwariantów CSV
+GUIO_clusters020, Plik inwariantów CSV:
+GUIO_clusters021,  zlokalizowany. Rozpoczęcie pojedynczej procedury klastrów.
+GUIO_clusters022, Rozpoczęcie generowania MCT dla pliku:
+GUIO_clusters023, Generowanie MCT (pliku) zakończyło się niepowodzeniem dla:
+LOGentry00032, Funkcja R zakończyła się niepowodzeniem dla parametrów:
+LOGentry00032b, Nazwa pliku:
+LOGentry00032c, Katalog wyjściowy:
+LOGentry00032d, Algorytm:
+LOGentry00032e, Metryka:
+LOGentry00032f, Liczba klastrów:
+GUIO_clusters024, Klastry zakończyły się niepowodzeniem. Sprawdź log.
+LOGentry00033, Nie można zaktualizować pól symulatora: (XTPN=
 LOGentry00033b, ; stepsValue=
 LOGentry00033c, ; stepsValue=
-GUIO_fix001, Invisible arc: p
-GUIO_fix002, . Removing...
-GUIO_fix003, Invisible arc: t
-GUIO_fix004, Arc list:
-GUIO_fix005, , processed arcs:
-GUIO_fix006, , removed ghost-arcs:
+GUIO_fix001, Niewidoczny łuk: p
+GUIO_fix002, . Usuwanie...
+GUIO_fix003, Niewidoczny łuk: t
+GUIO_fix004, Lista łuków:
+GUIO_fix005, , przetworzone łuki:
+GUIO_fix006, , usunięte niewidoczne łuki:
 
 //DarkMenu:
 DM_menuFile, Plik
