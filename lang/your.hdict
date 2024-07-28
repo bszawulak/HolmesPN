@@ -3135,7 +3135,7 @@ HSKAwin_entry014, Remove this knockout dataset?
 HSKAwin_entry014t, Please confirm
 
 //HolmesSimKnockVis:
-HSKVwin_entry001title,Knockout data visualisation
+HSKVwin_entry001title, Knockout data visualisation
 LOGentry00555exception, Exception (1000278): HolmesSimKnockVis.HolmesSimKnockVis() failed:
 HSKVwin_entry002, Charts
 HSKVwin_entry002t, <html>Show charts comparing difference in places na transitions<br>behaviour between reference and data sets</html>
@@ -3343,7 +3343,7 @@ HNXTPN_entry021, Places chart
 LOGentry00595exception, Exception (1000313): HolmesNodeInfoXTPN.initializePlaceInfo() failed:
 HNXTPN_entry022, XTPN analysis:
 HNXTPN_entry023, Simulation options:
-HNXTPN_entry024, <html>Simulate</html> | <html>Symulacja</html>
+HNXTPN_entry024, <html>Simulate</html>
 HNXTPN_entry024t, Compute steps from zero marking through the number of states given on the right.
 HNXTPN_entry025, Holmes simulator is running. Please wait or stop it manually first.
 HNXTPN_entry025t, Simulator active

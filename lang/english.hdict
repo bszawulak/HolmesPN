@@ -91,7 +91,7 @@ GUIO_clusters006, Target directory for CH metric results
 LOGentry00024, CH metric files will be put into the
 LOGentry00025, Cluster files will be put into the
 LOGentry00026, Cluster files will be put into the
-LOGentry00027, Warning: Celinski-Harabasz metric computation in 32bit mode for large number of invariants can cause R/OS failure.
+LOGentry00027, Warning: Calinski-Harabasz metric computation in 32bit mode for large number of invariants can cause R/OS failure.
 GUIO_clusters007, CH metric computation failed for
 GUIO_clusters008,  clusters.\nPath:
 LOGentry00028, Warning: unable to check if a given number of clusters (
@@ -917,7 +917,7 @@ TC_entry001, Error: t-invariant and transition set sizes do not match!
 CHM_entry001, -no sentence-
 LOGentry00056a, Warning. Directory
 LOGentry00056b, may not contain all necessary files. Operation will continue, but may fail.
-LOGentry00057, Reading failed for Celiński-Harabasz metric in file
+LOGentry00057, Reading failed for Caliński-Harabasz metric in file
 
 //ClusteringExcelWriter:
 CEW_entry001a, Cannot access file:
@@ -2608,7 +2608,7 @@ HCwin_entry024, Unknown error, excel file does not exist.
 HCwin_entry025, Excel export procedure failed for directory:
 HCwin_entry026, There is no table to fill.
 HCwin_entry027, Select directory
-HCwin_entry027t, Directory with 56 R-generated files containing Celiński-Harabasz metrics
+HCwin_entry027t, Directory with 56 R-generated files containing Caliński-Harabasz metrics
 LOGentry00507exception, Exception (1000237): HolmesClusters.integrateCHIntoDatabase() failed. Filling CH metric failed for subtable %d row: %d
 HCwin_entry028, Save table
 LOGentry00508exception, Exception (1000238): HolmesClusters.buttonSerializeDataTable() failed:
@@ -3135,7 +3135,7 @@ HSKAwin_entry014, Remove this knockout dataset?
 HSKAwin_entry014t, Please confirm
 
 //HolmesSimKnockVis:
-HSKVwin_entry001title,Knockout data visualisation
+HSKVwin_entry001title, Knockout data visualisation
 LOGentry00555exception, Exception (1000278): HolmesSimKnockVis.HolmesSimKnockVis() failed:
 HSKVwin_entry002, Charts
 HSKVwin_entry002t, <html>Show charts comparing difference in places na transitions<br>behaviour between reference and data sets</html>
@@ -3343,7 +3343,7 @@ HNXTPN_entry021, Places chart
 LOGentry00595exception, Exception (1000313): HolmesNodeInfoXTPN.initializePlaceInfo() failed:
 HNXTPN_entry022, XTPN analysis:
 HNXTPN_entry023, Simulation options:
-HNXTPN_entry024, <html>Simulate</html> | <html>Symulacja</html>
+HNXTPN_entry024, <html>Simulate</html>
 HNXTPN_entry024t, Compute steps from zero marking through the number of states given on the right.
 HNXTPN_entry025, Holmes simulator is running. Please wait or stop it manually first.
 HNXTPN_entry025t, Simulator active

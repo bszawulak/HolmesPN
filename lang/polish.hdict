@@ -2609,7 +2609,7 @@ HCwin_entry024, Unknown error, excel file does not exist. | Nieznany błąd, pli
 HCwin_entry025, Excel export procedure failed for directory: | Procedura eksportu do Excela nie powiodła się dla katalogu:
 HCwin_entry026, There is no table to fill. | Nie ma tabeli do wypełnienia.
 HCwin_entry027, Select directory | Wybierz katalog
-HCwin_entry027t, Directory with 56 R-generated files containing Celiński-Harabasz metrics | Katalog z 56 plikami wygenerowanymi przez R zawierającymi metryki Celiński-Harabasz
+HCwin_entry027t, Directory with 56 R-generated files containing Celiński-Harabasz metrics | Katalog z 56 plikami wygenerowanymi przez R zawierającymi metryki Calińskiego-Harabasza
 LOGentry00507exception, Exception (1000237): HolmesClusters.integrateCHIntoDatabase() failed. Filling CH metric failed for subtable %d row: %d | Wyjątek (1000237): HolmesClusters.integrateCHIntoDatabase() nie powiodło się. Wypełnianie metryki CH nie powiodło się dla podtabeli %d wiersz: %d
 HCwin_entry028, Save table | Zapisz tabelę
 LOGentry00508exception, Exception (1000238): HolmesClusters.buttonSerializeDataTable() failed: | Wyjątek (1000238): HolmesClusters.buttonSerializeDataTable() nie powiodło się:
@@ -3136,7 +3136,7 @@ HSKAwin_entry014, Remove this knockout dataset? | Usunąć ten zestaw danych kno
 HSKAwin_entry014t, Please confirm | Proszę potwierdzić
 
 //HolmesSimKnockVis:
-HSKVwin_entry001title,Knockout data visualisation | Wizualizacja danych knockout
+HSKVwin_entry001title, Knockout data visualisation | Wizualizacja danych knockout
 LOGentry00555exception, Exception (1000278): HolmesSimKnockVis.HolmesSimKnockVis() failed: | Wyjątek (1000278): HolmesSimKnockVis.HolmesSimKnockVis() nie powiodło się:
 HSKVwin_entry002, Charts | Wykresy
 HSKVwin_entry002t, <html>Show charts comparing difference in places na transitions<br>behaviour between reference and data sets</html> | <html>Pokaż wykresy porównujące różnice w zachowaniu miejsc i tranzycji<br>pomiędzy zestawem referencyjnym a zestawem danych</html>
