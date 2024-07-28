@@ -224,7 +224,7 @@ public class HolmesSimKnockVis extends JFrame {
 		result.add(dataCombo);
 		
 		JButton showRefDataButton = new JButton(lang.getText("HSKVwin_entry014")); //Show reference dataset
-		showRefDataButton.setBounds(posXda, posYda+=25, 175, 36);
+		showRefDataButton.setBounds(posXda, posYda+=25, 175, 42);
 		showRefDataButton.setMargin(new Insets(0, 0, 0, 0));
 		showRefDataButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/visShowRefButton.png"));
 		showRefDataButton.addActionListener(actionEvent -> {
@@ -238,7 +238,7 @@ public class HolmesSimKnockVis extends JFrame {
 		result.add(showRefDataButton);
 		
 		JButton showKnockDataButton = new JButton(lang.getText("HSKVwin_entry015")); //Show knockout dataset
-		showKnockDataButton.setBounds(posXda+180, posYda, 175, 36);
+		showKnockDataButton.setBounds(posXda+180, posYda, 175, 42);
 		showKnockDataButton.setMargin(new Insets(0, 0, 0, 0));
 		showKnockDataButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visShowDataSetButton.png"));
 		showKnockDataButton.addActionListener(actionEvent -> {
@@ -252,7 +252,7 @@ public class HolmesSimKnockVis extends JFrame {
 		result.add(showKnockDataButton);
 		
 		JButton showChartKnockButton = new JButton(lang.getText("HSKVwin_entry016")); //Compare reference and knockout
-		showChartKnockButton.setBounds(posXda+360, posYda, 175, 36);
+		showChartKnockButton.setBounds(posXda+360, posYda, 175, 42);
 		showChartKnockButton.setMargin(new Insets(0, 0, 0, 0));
 		showChartKnockButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visCompRefDataButton.png"));
 		showChartKnockButton.addActionListener(actionEvent -> {
@@ -270,7 +270,7 @@ public class HolmesSimKnockVis extends JFrame {
 		result.add(showChartKnockButton);
 		
 		JButton showSeriesButton = new JButton(lang.getText("HSKVwin_entry017")); //Full series datatables
-		showSeriesButton.setBounds(posXda+600, posYda, 175, 36);
+		showSeriesButton.setBounds(posXda+600, posYda, 175, 42);
 		showSeriesButton.setMargin(new Insets(0, 0, 0, 0));
 		showSeriesButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visRefDataSeriesButton.png"));
 		showSeriesButton.addActionListener(actionEvent -> {
@@ -282,7 +282,7 @@ public class HolmesSimKnockVis extends JFrame {
 		result.add(showSeriesButton);
 		
 		JButton showNotepadButton = new JButton(lang.getText("HSKVwin_entry018")); //Show notepad summary
-		showNotepadButton.setBounds(posXda+780, posYda, 175, 36);
+		showNotepadButton.setBounds(posXda+780, posYda, 175, 42);
 		showNotepadButton.setMargin(new Insets(0, 0, 0, 0));
 		showNotepadButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visRefDataSeriesNotepadButton.png"));
 		showNotepadButton.addActionListener(actionEvent -> {
@@ -1442,7 +1442,12 @@ public class HolmesSimKnockVis extends JFrame {
     	
     	HolmesNotepad notePad = new HolmesNotepad(900,600);
 		notePad.setVisible(true);
-		String strB = String.format(lang.getText("HSKVwin_entry049"), selected);
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HSKVwin_entry049"), selected);
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry049", "error", true);
+		}
 		notePad.addTextLineNL(strB, "text");
 		notePad.addTextLineNL(" "+lang.getText("HSKVwin_entry050"), "text");
 		notePad.addTextLineNL("===============================================================================", "text");
@@ -1450,8 +1455,13 @@ public class HolmesSimKnockVis extends JFrame {
 
     	for(int t=0; t<transNumber; t++) {
     		NetSimulationData dataSet = dataPackage.get(t);
-
-			strB = String.format(lang.getText("HSKVwin_entry051"), t, transitions.get(t).getName());
+			strB = "err.";
+			try {
+				strB = String.format(lang.getText("HSKVwin_entry051"), t, transitions.get(t).getName());
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry051", "error", true);
+			}
+			
     		notePad.addTextLineNL(strB, "text");
     		ArrayList<Integer> transVector = new ArrayList<>();
     		for(int t1=0; t1<transNumber; t1++) {
@@ -1466,7 +1476,13 @@ public class HolmesSimKnockVis extends JFrame {
     				continue;
 
     			if(refSet.transFiringsAvg.get(t1) == 0 && dataSet.transFiringsAvg.get(t1) == 0) {
-					strB = String.format("      "+lang.getText("HSKVwin_entry052"), t1, transitions.get(t1).getName());
+					strB = "err.";
+					try {
+						strB = String.format("      "+lang.getText("HSKVwin_entry052"), t1, transitions.get(t1).getName());
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry052", "error", true);
+					}
+					
     				notePad.addTextLineNL(strB, "text");
     				transVector.set(t1, 0);
     				continue;
@@ -1474,15 +1490,26 @@ public class HolmesSimKnockVis extends JFrame {
     			
     			if(refSet.transFiringsAvg.get(t1) == 0 && dataSet.transFiringsAvg.get(t1) > 0) {
     				double value = dataSet.transFiringsAvg.get(t1) * 100;
-					strB = String.format("      "+lang.getText("HSKVwin_entry053"), formatter2.format(value), t1, transitions.get(t1).getName());
+					strB = "err.";
+					try {
+						strB = String.format("      "+lang.getText("HSKVwin_entry053"), formatter2.format(value), t1, transitions.get(t1).getName());
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry053", "error", true);
+					}
+					
     				notePad.addTextLineNL(strB, "text");
     				transVector.set(t1, 0);
     				continue;
     			}
     			if(refSet.transFiringsAvg.get(t1) > 0 && dataSet.transFiringsAvg.get(t1) == 0) {
     				double value = refSet.transFiringsAvg.get(t1) * 100;
-					strB = String.format("      "+lang.getText("HSKVwin_entry054")+" "
-							+formatter2.format(value)+"%]  t%d_%s", t1, transitions.get(t1).getName());
+					strB = "err.";
+					try {
+						strB = String.format("      "+lang.getText("HSKVwin_entry054")+" " +formatter2.format(value)+"%]  t%d_%s", t1, transitions.get(t1).getName());
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry054", "error", true);
+					}
+					
     				notePad.addTextLineNL(strB, "text");
     				transVector.set(t1, 0);
     				continue;
@@ -1497,18 +1524,23 @@ public class HolmesSimKnockVis extends JFrame {
     			double diff = refSet.transFiringsAvg.get(t1) - dataSet.transFiringsAvg.get(t1);
     			diff = (diff / refSet.transFiringsAvg.get(t1));
 
-    			String txt = String.format(lang.getText("HSKVwin_entry055")+" "
-						,formatter2.format(refSet.transFiringsAvg.get(t1)*100), formatter2.format(dataSet.transFiringsAvg.get(t1)*100));
+				strB = "err.";
+				try {
+					strB = String.format(lang.getText("HSKVwin_entry055")+" "
+							,formatter2.format(refSet.transFiringsAvg.get(t1)*100), formatter2.format(dataSet.transFiringsAvg.get(t1)*100));
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry055", "error", true);
+				}
 				if(diff < 0) { //wzrosło w stos. do ref		
     				diff *= -1;
     				double value = diff * 100;
-					data.put(value, txt+"t"+t1+"_"+transitions.get(t1).getName());
+					data.put(value, strB+"t"+t1+"_"+transitions.get(t1).getName());
     				transVector.set(t1, 0);
     				continue;
     			} else {
     				diff *= -1;
     				double value = diff * 100;
-					data.put(value, txt+"t"+t1+"_"+transitions.get(t1).getName());
+					data.put(value, strB+"t"+t1+"_"+transitions.get(t1).getName());
     				transVector.set(t1, 0);
     				continue;
     			}
@@ -1582,8 +1614,12 @@ public class HolmesSimKnockVis extends JFrame {
 
     	for(int t=0; t<transNumber; t++) {
     		NetSimulationData dataSet = dataPackage.get(t);
-
-			strB = String.format("*** t%d_%s    "+lang.getText("HSKVwin_entry059"), t, transitions.get(t).getName());
+			strB = "err.";
+			try {
+				strB = String.format("*** t%d_%s    "+lang.getText("HSKVwin_entry059"), t, transitions.get(t).getName());
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry059", "error", true);
+			}
     		notePad.addTextLineNL(strB, "text");
     		ArrayList<Integer> placesVector = new ArrayList<>();
     		for(int p=0; p<placesNumber; p++) {
@@ -1766,10 +1802,15 @@ public class HolmesSimKnockVis extends JFrame {
 					disTxt.append("MCT").append(t + 1).append(", ");
 				}
 				disTxt = new StringBuilder(disTxt.toString().replace(", ", " "));
+
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HSKVwin_entry066"), r, disTxt, references.get(r).netSimType, references.get(r).maxMode);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry066", "error", true);
+				}
 				
-				String name = String.format(lang.getText("HSKVwin_entry066"), r, disTxt, references.get(r).netSimType, references.get(r).maxMode);
-				
-				referencesCombo.addItem(name);
+				referencesCombo.addItem(strB);
 			}
 			
 			if(oldSelected < referencesCombo.getItemCount())
@@ -1804,10 +1845,13 @@ public class HolmesSimKnockVis extends JFrame {
 					transName = "("+transitions.get(knockout.get(r).disabledTransitionsIDs.get(0)).getName();
 				}
 				transName += ")";
-				
-				String name = String.format(lang.getText("HSKVwin_entry068"), r, disTxt, knockout.get(r).netSimType, knockout.get(r).maxMode, transName);
-				
-				dataCombo.addItem(name);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HSKVwin_entry068"), r, disTxt, knockout.get(r).netSimType, knockout.get(r).maxMode, transName);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry068", "error", true);
+				}
+				dataCombo.addItem(strB);
 			}
 	
 			if(oldKnockSelected < dataCombo.getItemCount())
@@ -1827,8 +1871,13 @@ public class HolmesSimKnockVis extends JFrame {
 			for(int s=0; s<seriesSize; s++) {
 				long IDseries = series.get(s);
 				NetSimulationData representant = pn.accessSimKnockoutData().returnSeriesFirst(IDseries);
-				String disTxt = String.format(lang.getText("HSKVwin_entry069"), s, representant.steps, representant.reps);
-				seriesCombo.addItem(disTxt);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HSKVwin_entry069"), s, representant.steps, representant.reps);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry069", "error", true);
+				}
+				seriesCombo.addItem(strB);
 			}
 	
 			if(oldSeriesSelected < seriesCombo.getItemCount())
@@ -1914,8 +1963,12 @@ public class HolmesSimKnockVis extends JFrame {
 		@Override
 	    public String generateToolTip(CategoryDataset dataset, int bar, int nodeIndex)   {
 	    	StringBuilder text = new StringBuilder("<html><font size=\"5\">");
-			
-			String strB = String.format(lang.getText("HSKVwin_entry070"), refData.steps, refData.reps);
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HSKVwin_entry070"), refData.steps, refData.reps);
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry070", "error", true);
+			}
 	    	text.append(strB);
 	    	if(compareMode) { //compare ref and knockout:
 	    		if(isPlaces) {

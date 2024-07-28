@@ -252,8 +252,13 @@ public class StateSimulator implements Runnable {
 		String max = lang.getText("SS_entry002");
 		if(overlord.simSettings.isMaxMode())
 			max = lang.getText("SS_entry003");
-		
-		String strB = String.format(lang.getText("SS_entry004"), stepsLimit, max);
+
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("SS_entry004"), stepsLimit, max);
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"SS_entry004", "error", true);
+		}
 		overlord.log(strB, "text", true);
 		
 		int trueSteps = 0;
@@ -678,7 +683,12 @@ public class StateSimulator implements Runnable {
 	 */
 	public ArrayList<Integer> simulateNetSinglePlace(int steps, Place place, boolean emptySteps) {
 		if(!readyToSimulate) {
-			String strB = String.format(lang.getText("SS_entry005"), place.getName());
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("SS_entry005"), place.getName());
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"SS_entry005", "error", true);
+			}
 			overlord.log(strB, "warning", true);
 			return null;
 		}
@@ -714,7 +724,12 @@ public class StateSimulator implements Runnable {
 	 */
 	public ArrayList<Integer> simulateNetSingleTransition(int steps, Transition trans, boolean emptySteps) {
 		if(!readyToSimulate) {
-			String strB = String.format(lang.getText("SS_entry006"), trans.getName());
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("SS_entry006"), trans.getName());
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"SS_entry006", "error", true);
+			}
 			overlord.log(strB, "warning", true);
 			return null;
 		}

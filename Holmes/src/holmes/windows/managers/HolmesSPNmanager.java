@@ -312,7 +312,12 @@ public class HolmesSPNmanager extends JFrame {
 	private void replaceStateAction() {
 		int selected = table.getSelectedRow();
 		Object[] options = {lang.getText("HSPNMwin_entry014op1"), lang.getText("HSPNMwin_entry014op2"),};
-		String strB = String.format(lang.getText("HSPNMwin_entry014"), selected);
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HSPNMwin_entry014"), selected);
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSPNMwin_entry014", "error", true);
+		}
 		int n = JOptionPane.showOptionDialog(null,
 						strB,lang.getText("HSPNMwin_entry014t"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, options, options[1]);

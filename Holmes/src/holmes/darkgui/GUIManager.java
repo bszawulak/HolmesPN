@@ -88,9 +88,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesDockWindow quickSimBox;  //szybki symulator
 	//-//private HolmesDockWindow decompositionBox;
 	
-	//UNUSED
-	// docking listener
-	//private DarkDockingListener dockingListener;
 	private Toolbar shortcutsBar;
 
 	// main frame

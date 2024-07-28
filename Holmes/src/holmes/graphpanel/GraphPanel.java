@@ -142,7 +142,12 @@ public class GraphPanel extends JComponent {
 				modeName = this.getDrawMode().toString();
 				image = Tools.getImageFromIcon("/cursors/"+ modeName + ".gif");
 			} catch (Exception e ) {
-				String strB = String.format(lang.getText("LOGentry00330exception"), modeName);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("LOGentry00330exception"), modeName);
+				} catch (Exception ex2) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00330exception", "error", true);
+				}
 				overlord.log(strB+"\n"+e.getMessage(), "error", true);
 				//i tak nic nie pomoże, jak powyższe się wywali. Taka nasza Java piękna i wesoła.
 			}

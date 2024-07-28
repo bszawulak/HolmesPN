@@ -163,7 +163,7 @@ public class HolmesSimKnock extends JPanel {
 	    result.add(refProgressBarKnockout);
 	    
 	    JCheckBox showdataCheckBox = new JCheckBox(lang.getText("HSKwin_entry004")); //Show results in notepad
-	    showdataCheckBox.setBounds(posXda+120, posYda+50, 170, 20);
+	    showdataCheckBox.setBounds(posXda+120, posYda+50, 220, 20);
 	    showdataCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			refShowNotepad = abstractButton.getModel().isSelected();
@@ -443,7 +443,7 @@ public class HolmesSimKnock extends JPanel {
 		special.add(dataSimComputeForAllTransitions);
 		
 		JCheckBox showdataCheckBox = new JCheckBox(lang.getText("HSKwin_entry028")); //Show results in notepad
-	    showdataCheckBox.setBounds(400, 15, 170, 20);
+	    showdataCheckBox.setBounds(400, 15, 240, 20);
 	    showdataCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			dataShowNotepad = abstractButton.getModel().isSelected();
@@ -620,17 +620,17 @@ public class HolmesSimKnock extends JPanel {
 	    result.add(stateManagerButton);
 		
 		JLabel stateLabel0 = new JLabel(lang.getText("HSKwin_entry045")); //Selected m0 state ID:
-		stateLabel0.setBounds(posXda+280, posYda+45, 130, 20);
+		stateLabel0.setBounds(posXda+280, posYda+45, 200, 20);
 		result.add(stateLabel0);
 		    
 		int selState = overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN;
 		selStateLabel = new JLabel(""+selState);
-	    selStateLabel.setBounds(posXda+405, posYda+45, 60, 20);
+	    selStateLabel.setBounds(posXda+475, posYda+45, 60, 20);
 	    result.add(selStateLabel);
 
 		//TODO: XTPN
 	    selStateDescrLabel = new JLabel(overlord.getWorkspace().getProject().accessStatesManager().getStateDescriptionPN(selState));
-	    selStateDescrLabel.setBounds(posXda+280, posYda+65, 200, 20);
+	    selStateDescrLabel.setBounds(posXda+280, posYda+65, 400, 20);
 	    result.add(selStateDescrLabel);
 		
 		return result;
@@ -685,9 +685,13 @@ public class HolmesSimKnock extends JPanel {
 		referencesCombo.addItem(" ----- ");
 		if(refSize > 0) {
 			for(int r=0; r<refSize; r++) {
-                String name = String.format(lang.getText("HSKwin_entry046"), r, references.get(r).date,
-						references.get(r).netSimType, references.get(r).maxMode);
-				referencesCombo.addItem(name);
+				String strB = "err.";
+				try {
+                    strB = String.format(lang.getText("HSKwin_entry046"), r, references.get(r).date, references.get(r).netSimType, references.get(r).maxMode);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKwin_entry046", "error", true);
+				}
+				referencesCombo.addItem(strB);
 			}
 			
 			refLabelDate.setText("---");
@@ -722,9 +726,14 @@ public class HolmesSimKnock extends JPanel {
 					disTxt.append("MCT").append(t + 1).append(", ");
 				}
 				disTxt = new StringBuilder(disTxt.toString().replace(", ", " "));
-				
-				String name = String.format(lang.getText("HSKwin_entry048"), r, disTxt, knockout.get(r).netSimType, knockout.get(r).maxMode);
-				dataCombo.addItem(name);
+
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HSKwin_entry048"), r, disTxt, knockout.get(r).netSimType, knockout.get(r).maxMode);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKwin_entry048", "error", true);
+				}
+				dataCombo.addItem(strB);
 			}
 			
 			dataLabelDate.setText("---");

@@ -759,9 +759,13 @@ public class HolmesInvariantsViewer extends JFrame {
 		note.addTextLineNL(lang.getText("HIVwin_entry36")+" "+String.format("%.2f", timeVector.get(1)+timeVector.get(3)), "text"); //Maximum firing time
 		note.addTextLineNL(lang.getText("HIVwin_entry37")+" "+String.format("%.2f", timeVector.get(2)+timeVector.get(3)), "text"); //Average firing time
 
-		String str = String.format(lang.getText("HIVwin_entry38")
-				, timeVector.get(5).intValue(), timeVector.get(6).intValue(), timeVector.get(7).intValue(), timeVector.get(4).intValue());
-		note.addTextLineNL(str, "text");
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HIVwin_entry38"), timeVector.get(5).intValue(), timeVector.get(6).intValue(), timeVector.get(7).intValue(), timeVector.get(4).intValue());
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIVwin_entry38", "error", true);
+		}
+		note.addTextLineNL(strB, "text");
 		note.addTextLineNL(" ", "text");
 		
 		

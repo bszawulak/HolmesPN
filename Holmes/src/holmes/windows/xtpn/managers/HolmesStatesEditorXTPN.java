@@ -81,7 +81,12 @@ public class HolmesStatesEditorXTPN extends JFrame {
         tableModel.clearModel();
         int size = multisetM.getMultiset_M_Size();
         if(size != places.size()) {
-            String strB = String.format(lang.getText("HSEXwin_entry002"), size, places.size());
+            String strB = "err.";
+            try {
+                strB = String.format(lang.getText("HSEXwin_entry002"), size, places.size());
+            } catch (Exception e) {
+                overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSEXwin_entry002", "error", true);
+            }
             overlord.log(strB,"error", true);
             return;
         }

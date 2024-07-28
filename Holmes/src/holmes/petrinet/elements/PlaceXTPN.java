@@ -253,7 +253,12 @@ public class PlaceXTPN extends Place {
 
         int counter = howMany;
         if(howMany > multisetK.size()) {
-            String strB = String.format(lang.getText("LOGentry00391"), howMany, multisetK.size());
+            String strB = "err.";
+            try {
+                strB = String.format(lang.getText("LOGentry00391"), howMany, multisetK.size());
+            } catch (Exception e) {
+                overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00391", "error", true);
+            }
             overlord.log(strB, "error", true);
             removedTokens.addAll(multisetK);
             multisetK.clear();
@@ -309,7 +314,12 @@ public class PlaceXTPN extends Place {
         if(isGammaModeActive()) {
             multisetK.replaceAll(aDouble -> aDouble + tau);
         } else {
-            String strB = String.format(lang.getText("LOGentry00392"), this.getName());
+            String strB = "err.";
+            try {
+                strB = String.format(lang.getText("LOGentry00392"), this.getName());
+            } catch (Exception e) {
+                overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00392", "error", true);
+            }
             overlord.log(strB, "error", true);
         }
     }

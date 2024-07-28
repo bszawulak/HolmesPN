@@ -65,7 +65,14 @@ public class SubnetsControl {
 			addIdAlready = true;
 		} else if(howManyExists > 0 && askStupidQuestions) { //jeśli jest, pytaj
 			Object[] options = {lang.getText("SC_entry001a"), lang.getText("SC_entry001b"),}; //Add another portal ; Don't add new arc/portal
-			String strB = String.format(lang.getText(("SC_entry002")), subnetID, howManyExists, startNode.getName());
+			
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText(("SC_entry002")), subnetID, howManyExists, startNode.getName());
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"SC_entry002", "error", true);
+			}
+			
 			int n = JOptionPane.showOptionDialog(null,
 					strB,lang.getText("SC_entry002t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
@@ -139,7 +146,12 @@ public class SubnetsControl {
 			addIdAlready = true;
 		} else if(howManyExists > 0) {
 			Object[] options = {lang.getText("SC_entry003a"), lang.getText("SC_entry003b"),}; //Add another portal ; Don't add new arc/portal
-			String strB = String.format(lang.getText("SC_entry004"), subnetID, howManyExists, endNode.getName());
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("SC_entry004"), subnetID, howManyExists, endNode.getName());
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"SC_entry004", "error", true);
+			}
 			int n = JOptionPane.showOptionDialog(null,
 					strB,lang.getText("SC_entry004t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
@@ -521,10 +533,20 @@ public class SubnetsControl {
 			}
 		}
 		if(!found) {
-			String strB = String.format(lang.getText("SC_entry008"), sheetID);
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("SC_entry008"), sheetID);
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"SC_entry008", "error", true);
+			}
 			overlord.log(strB, "warning", true);
 		} else if(!removed) {
-			String strB = String.format(lang.getText("SC_entry009"), sheetID);
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("SC_entry009"), sheetID);
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"SC_entry009", "error", true);
+			}
 			overlord.log(strB, "error", true);
 		}
 	}
@@ -988,17 +1010,27 @@ public class SubnetsControl {
 			notePad.addTextLineNL(lang.getText("SC_entry010"), "text");
 			for(int i=0; i<size; i++) {
 				if(problemMultiEL.get(i) != 0) {
-					String str = String.format(lang.getText("SC_entry011"), metanodes.get(i).getName(), metanodes.get(i).getRepresentedSheetID());
-					notePad.addTextLineNL(str, "text");
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("SC_entry011"), metanodes.get(i).getName(), metanodes.get(i).getRepresentedSheetID());
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"SC_entry011", "error", true);
+					}
+					notePad.addTextLineNL(strB, "text");
 				}
 			}
 			notePad.addTextLineNL(" ------ ", "text");
 			notePad.addTextLineNL(lang.getText("SC_entry012"), "text");
 			for(int i=0; i<size; i++) {
 				if(problemWrongType.get(i) != 0) {
-					String str = String.format(lang.getText("SC_entry013")
-							, metanodes.get(i).getName(), metanodes.get(i).getRepresentedSheetID(), metanodes.get(i).getMetaType());
-					notePad.addTextLineNL(str, "text");
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("SC_entry013")
+								, metanodes.get(i).getName(), metanodes.get(i).getRepresentedSheetID(), metanodes.get(i).getMetaType());
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"SC_entry013", "error", true);
+					}
+					notePad.addTextLineNL(strB, "text");
 				}
 			}
 			notePad.addTextLineNL(" ------ ", "text");

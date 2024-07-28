@@ -477,11 +477,17 @@ public class GUIOperations {
 			if(fileFormat.equals(".project"))
 				fileFormat = "Holmes project file (.project)";
 
-			String sB = String.format(lang.getText("GUIO_warning003x"), extension, netRealName, fileFormat, additionalWhining);
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("GUIO_warning003"), extension, netRealName, fileFormat, additionalWhining);
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"GUIO_warning003", "error", true);
+			}
 
-			Object[] options = {"Use selected anyway", "Use suggested format", "Save as project", "Cancel save",};
+			Object[] options = {lang.getText("GUIO_entry101op1"), lang.getText("GUIO_entry101op2")
+					, lang.getText("GUIO_entry101op3"), lang.getText("GUIO_entry101op4"),};
 			int n = JOptionPane.showOptionDialog(null,
-					sB, lang.getText("GUIO_warning003title"), JOptionPane.YES_NO_OPTION,
+					strB, lang.getText("GUIO_warning003title"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
 			if (n == 0) {

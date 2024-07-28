@@ -50,7 +50,12 @@ public class HolmesProgramPropertiesActions {
 			if(Tools.ifExist(selectedFile)) {
 				sm.setValue("r_path", selectedFile, true);
 				overlord.setRStatus(true);
-				String strB = String.format(lang.getText("HPPAwin_entry002"), selectedFile);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HPPAwin_entry002"), selectedFile);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HPPAwin_entry002", "error", true);
+				}
 				overlord.log(strB, "text", true);
 			
 			} else {

@@ -107,10 +107,13 @@ public class HolmesSimKnockActions {
 				double valMin = netSimData.transFiringsMin.get(t);
 				double valMax = netSimData.transFiringsMax.get(t);
 
-				String strB = String.format("  "+lang.getText("HSKAwin_entry005"), t, t_name
-						, Tools.cutValueExt(valAvg,4), Tools.cutValueExt(valMin,4), Tools.cutValueExt(valMax,4));
+				String strB = "err.";
+				try {
+					strB = String.format("  "+lang.getText("HSKAwin_entry005"), t, t_name, Tools.cutValueExt(valAvg,4), Tools.cutValueExt(valMin,4), Tools.cutValueExt(valMax,4));
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKAwin_entry005", "error", true);
+				}
 				notePad.addTextLineNL(strB, "text");
-
 			}
 			
 			notePad.addTextLineNL("", "text");
@@ -121,9 +124,12 @@ public class HolmesSimKnockActions {
 				double valAvg = netSimData.placeTokensAvg.get(t);
 				double valMin = netSimData.placeTokensMin.get(t);
 				double valMax = netSimData.placeTokensMax.get(t);
-
-				String strB = String.format("  "+lang.getText("HSKAwin_entry007"), t, t_name, Tools.cutValueExt(valAvg,4), 
-						Tools.cutValueExt(valMin,4), Tools.cutValueExt(valMax,4));
+				String strB = "err.";
+				try {
+					strB = String.format("  "+lang.getText("HSKAwin_entry007"), t, t_name, Tools.cutValueExt(valAvg,4), Tools.cutValueExt(valMin,4), Tools.cutValueExt(valMax,4));
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKAwin_entry007", "error", true);
+				}
 				notePad.addTextLineNL(strB, "text");
 			}
 		}
@@ -198,9 +204,12 @@ public class HolmesSimKnockActions {
 				double valAvg = netSimData.transFiringsAvg.get(t);
 				double valMin = netSimData.transFiringsMin.get(t);
 				double valMax = netSimData.transFiringsMax.get(t);
-
-				String strB = String.format("  "+lang.getText("HSKAwin_entry008"), t, t_name
-						, Tools.cutValueExt(valAvg,4), Tools.cutValueExt(valMin,4), Tools.cutValueExt(valMax,4));
+				String strB = "err.";
+				try {
+					strB = String.format("  "+lang.getText("HSKAwin_entry008"), t, t_name, Tools.cutValueExt(valAvg,4), Tools.cutValueExt(valMin,4), Tools.cutValueExt(valMax,4));
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKAwin_entry008", "error", true);
+				}
 				notePad.addTextLineNL(strB, "text");
 
 			}
@@ -213,9 +222,12 @@ public class HolmesSimKnockActions {
 				double valAvg = netSimData.placeTokensAvg.get(t);
 				double valMin = netSimData.placeTokensMin.get(t);
 				double valMax = netSimData.placeTokensMax.get(t);
-
-				String strB = String.format("  "+lang.getText("HSKAwin_entry009"), t, t_name, Tools.cutValueExt(valAvg,4), 
-						Tools.cutValueExt(valMin,4), Tools.cutValueExt(valMax,4));
+				String strB = "err.";
+				try {
+					strB = String.format("  "+lang.getText("HSKAwin_entry009"), t, t_name, Tools.cutValueExt(valAvg,4), Tools.cutValueExt(valMin,4), Tools.cutValueExt(valMax,4));
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKAwin_entry009", "error", true);
+				}
 				notePad.addTextLineNL(strB, "text");
 			}
 		}

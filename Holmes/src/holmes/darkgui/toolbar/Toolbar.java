@@ -37,7 +37,6 @@ public class Toolbar extends JPanel {
     private static final long serialVersionUID = 640320332920131092L;
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
     private static final LanguageManager lang = GUIManager.getLanguageManager();
-    private boolean buttonsDraggable = false;
 
     // simulator buttons
     ToolbarButtonAction reverseLoopButton, reverseStepButton, loopSimButton,
@@ -50,7 +49,19 @@ public class Toolbar extends JPanel {
     public Toolbar() {
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         createIObuttons();
+
+        JSeparator s1 = new JSeparator();
+        s1.setOrientation(SwingConstants.VERTICAL);
+        s1.setPreferredSize(new Dimension(15,45));
+        this.add(s1);
+        
         createNetTransformBar();
+
+        JSeparator s2 = new JSeparator();
+        s2.setOrientation(SwingConstants.VERTICAL);
+        s2.setPreferredSize(new Dimension(15,45));
+        this.add(s2);
+        
         createAnalysisBar();
     }
 
@@ -65,6 +76,7 @@ public class Toolbar extends JPanel {
         addButton.setContentAreaFilled(false);
         addButton.setFocusPainted(false);
         addButton.setOpaque(false);
+        addButton.setToolTipText(lang.getText("TB_entry001t"));
         this.add(addButton);
 
         JButton openButton = new JButton("", Tools.getResIcon48("/icons/toolbar/open.png"));
@@ -74,6 +86,7 @@ public class Toolbar extends JPanel {
         openButton.setContentAreaFilled(false);
         openButton.setFocusPainted(false);
         openButton.setOpaque(false);
+        openButton.setToolTipText(lang.getText("TB_entry002t"));
         this.add(openButton);
 
         //import projektu ze snoopiego
@@ -84,6 +97,7 @@ public class Toolbar extends JPanel {
         importButton.setContentAreaFilled(false);
         importButton.setFocusPainted(false);
         importButton.setOpaque(false);
+        importButton.setToolTipText(lang.getText("TB_entry003t"));
         this.add(importButton);
 
         //zapis jako projekt
@@ -94,6 +108,7 @@ public class Toolbar extends JPanel {
         saveProjectButton.setContentAreaFilled(false);
         saveProjectButton.setFocusPainted(false);
         saveProjectButton.setOpaque(false);
+        saveProjectButton.setToolTipText(lang.getText("TB_entry004t"));
         this.add(saveProjectButton);
 
         //export projektu do snoopiego
@@ -104,6 +119,7 @@ public class Toolbar extends JPanel {
         exportButton.setContentAreaFilled(false);
         exportButton.setFocusPainted(false);
         exportButton.setOpaque(false);
+        exportButton.setToolTipText(lang.getText("TB_entry005t"));
         this.add(exportButton);
 
         //zapis obrazu sieci do pliku
@@ -114,6 +130,7 @@ public class Toolbar extends JPanel {
         pictureButton.setContentAreaFilled(false);
         pictureButton.setFocusPainted(false);
         pictureButton.setOpaque(false);
+        pictureButton.setToolTipText(lang.getText("TB_entry006t"));
         this.add(pictureButton);
 
         JButton refreshButton = new JButton("", Tools.getResIcon48("/icons/toolbar/refresh.png"));
@@ -123,16 +140,17 @@ public class Toolbar extends JPanel {
         refreshButton.setContentAreaFilled(false);
         refreshButton.setFocusPainted(false);
         refreshButton.setOpaque(false);
+        refreshButton.setToolTipText(lang.getText("TB_entry007t"));
         this.add(refreshButton);
 
-        JButton clearProject = new JButton("", Tools.getResIcon48("/icons/toolbar/clear_project.png"));
-        clearProject.setPreferredSize(new Dimension(50,50));
-        clearProject.addActionListener(arg0 -> overlord.reset.newProjectInitiated());
-        clearProject.setBorderPainted(false);
-        clearProject.setContentAreaFilled(false);
-        clearProject.setFocusPainted(false);
-        clearProject.setOpaque(false);
-        this.add(clearProject);
+        //JButton clearProject = new JButton("", Tools.getResIcon48("/icons/toolbar/clear_project.png"));
+        //clearProject.setPreferredSize(new Dimension(50,50));
+        //clearProject.addActionListener(arg0 -> overlord.reset.newProjectInitiated());
+        //clearProject.setBorderPainted(false);
+        //clearProject.setContentAreaFilled(false);
+        //clearProject.setFocusPainted(false);
+        //clearProject.setOpaque(false);
+        //this.add(clearProject);
     }
 
     /**
@@ -147,6 +165,7 @@ public class Toolbar extends JPanel {
         clusterButton.setContentAreaFilled(false);
         clusterButton.setFocusPainted(false);
         clusterButton.setOpaque(false);
+        clusterButton.setToolTipText(lang.getText("TB_entry041t"));
         this.add(clusterButton);
 
         JButton netTablesButton = new JButton("", Tools.getResIcon48("/icons/toolbar/netTables.png"));
@@ -156,6 +175,7 @@ public class Toolbar extends JPanel {
         netTablesButton.setContentAreaFilled(false);
         netTablesButton.setFocusPainted(false);
         netTablesButton.setOpaque(false);
+        netTablesButton.setToolTipText(lang.getText("TB_entry042t"));
         this.add(netTablesButton);
 
         JButton netSimLogButton = new JButton("", Tools.getResIcon48("/icons/toolbar/simLog.png"));
@@ -165,6 +185,7 @@ public class Toolbar extends JPanel {
         netSimLogButton.setContentAreaFilled(false);
         netSimLogButton.setFocusPainted(false);
         netSimLogButton.setOpaque(false);
+        netSimLogButton.setToolTipText(lang.getText("TB_entry043t"));
         this.add(netSimLogButton);
 
         JButton consoleButton = new JButton("", Tools.getResIcon48("/icons/toolbar/terminal2.png"));
@@ -174,6 +195,7 @@ public class Toolbar extends JPanel {
         consoleButton.setContentAreaFilled(false);
         consoleButton.setFocusPainted(false);
         consoleButton.setOpaque(false);
+        consoleButton.setToolTipText(lang.getText("TB_entry044t"));
         this.add(consoleButton);
 
         JButton cleanButton = new JButton("", Tools.getResIcon48("/icons/toolbar/cleanGraphColors.png"));
@@ -183,6 +205,7 @@ public class Toolbar extends JPanel {
         cleanButton.setContentAreaFilled(false);
         cleanButton.setFocusPainted(false);
         cleanButton.setOpaque(false);
+        cleanButton.setToolTipText(lang.getText("TB_entry045t"));
         this.add(cleanButton);
 
         JButton fireRatesButton = new JButton("", Tools.getResIcon48("/icons/toolbar/firingRates.png"));
@@ -192,9 +215,14 @@ public class Toolbar extends JPanel {
         fireRatesButton.setContentAreaFilled(false);
         fireRatesButton.setFocusPainted(false);
         fireRatesButton.setOpaque(false);
+        fireRatesButton.setToolTipText(lang.getText("TB_entry046t"));
         this.add(fireRatesButton);
 
-        //TODO:
+        JSeparator s = new JSeparator();
+        s.setOrientation(SwingConstants.VERTICAL);
+        s.setPreferredSize(new Dimension(15,45));
+        this.add(s);
+        
         JButton ssButtonUNF = new JButton("", Tools.getResIcon48("/icons/toolbar/ssUNF.png"));
         ssButtonUNF.setPreferredSize(new Dimension(50,50));
         ssButtonUNF.setBorderPainted(false);
@@ -216,6 +244,17 @@ public class Toolbar extends JPanel {
             HolmesStSpRG stateSpaceWindow = new HolmesStSpRG();
         });
         this.add(ssButtonRG);
+        
+        JButton ssButtonRP = new JButton("", Tools.getResIcon48("/icons/toolbar/ssRP.png"));
+        ssButtonRP.setPreferredSize(new Dimension(50,50));
+        ssButtonRP.setBorderPainted(false);
+        ssButtonRP.setContentAreaFilled(false);
+        ssButtonRP.setFocusPainted(false);
+        ssButtonRP.setOpaque(false);
+        ssButtonRP.addActionListener(e -> {
+            HolmesStSpRP stateSpaceWindow = new HolmesStSpRP();
+        });
+        this.add(ssButtonRP);
 
         JButton ssButtonRGtpn = new JButton("", Tools.getResIcon48("/icons/toolbar/ssRGtpn.png"));
         ssButtonRGtpn.setPreferredSize(new Dimension(50,50));
@@ -227,17 +266,6 @@ public class Toolbar extends JPanel {
             HolmesStSpRGtpn stateSpaceWindow = new HolmesStSpRGtpn();
         });
         this.add(ssButtonRGtpn);
-
-        JButton ssButtonRP = new JButton("", Tools.getResIcon48("/icons/toolbar/ssRP.png"));
-        ssButtonRP.setPreferredSize(new Dimension(50,50));
-        ssButtonRP.setBorderPainted(false);
-        ssButtonRP.setContentAreaFilled(false);
-        ssButtonRP.setFocusPainted(false);
-        ssButtonRP.setOpaque(false);
-        ssButtonRP.addActionListener(e -> {
-            HolmesStSpRP stateSpaceWindow = new HolmesStSpRP();
-        });
-        this.add(ssButtonRP);
         
 
         //TODO:
@@ -307,8 +335,7 @@ public class Toolbar extends JPanel {
             }
         };
     }
-
-    //TODO przyciski
+    
     private void createNetTransformBar() {
         JButton extendNetButton = new JButton("", Tools.getResIcon48("/icons/toolbar/resizeMax.png"));
         extendNetButton.setPreferredSize(new Dimension(50,50));
@@ -320,6 +347,7 @@ public class Toolbar extends JPanel {
         extendNetButton.setContentAreaFilled(false);
         extendNetButton.setFocusPainted(false);
         extendNetButton.setOpaque(false);
+        extendNetButton.setToolTipText(lang.getText("TB_entry021t"));
         this.add(extendNetButton);
 
         JButton shrinkNetButton = new JButton("", Tools.getResIcon48("/icons/toolbar/resizeMin.png"));
@@ -332,6 +360,7 @@ public class Toolbar extends JPanel {
         shrinkNetButton.setContentAreaFilled(false);
         shrinkNetButton.setFocusPainted(false);
         shrinkNetButton.setOpaque(false);
+        shrinkNetButton.setToolTipText(lang.getText("TB_entry022t"));
         this.add(shrinkNetButton);
 
         JButton gridButton = new JButton("", Tools.getResIcon48("/icons/toolbar/grid.png"));
@@ -348,6 +377,7 @@ public class Toolbar extends JPanel {
         gridButton.setContentAreaFilled(false);
         gridButton.setFocusPainted(false);
         gridButton.setOpaque(false);
+        gridButton.setToolTipText(lang.getText("TB_entry023t"));
         this.add(gridButton);
 
         JButton gridAlignButton = new JButton("", Tools.getResIcon48("/icons/toolbar/gridAlign.png"));
@@ -361,6 +391,7 @@ public class Toolbar extends JPanel {
         gridAlignButton.setContentAreaFilled(false);
         gridAlignButton.setFocusPainted(false);
         gridAlignButton.setOpaque(false);
+        gridAlignButton.setToolTipText(lang.getText("TB_entry024t"));
         this.add(gridAlignButton);
     }
 
@@ -415,7 +446,7 @@ public class Toolbar extends JPanel {
 
     /**
      * Metoda odpowiedzialna za tworzenie tablicy przycisków symulatora.
-     *///TODO przyciski
+     */
     private void createSimulationBar() {
         reverseLoopButton = new ToolbarButtonAction(this, lang.getText("lang"), lang.getText("TB_toolTip001d"),
                 Tools.getResIcon48("/icons/toolbar/sim_back.png")) {

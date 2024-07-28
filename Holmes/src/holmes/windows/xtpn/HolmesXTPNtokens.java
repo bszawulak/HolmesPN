@@ -251,7 +251,12 @@ public class HolmesXTPNtokens extends JFrame {
                 tokensComboBox.setSelectedIndex(selected);
                 doNotUpdate =true;
             } catch (Exception exc) {
-                String strB = String.format(lang.getText("HXTwin_entry008"), tokenValueTextField.getValue());
+                String strB = "err.";
+                try {
+                    strB = String.format(lang.getText("HXTwin_entry008"), tokenValueTextField.getValue());
+                } catch (Exception ex2) {
+                    overlord.log(lang.getText("LOGentryLNGexc")+" "+"HXTwin_entry008", "error", true);
+                }
                 JOptionPane.showMessageDialog(null, strB,
                         lang.getText("HXTwin_entry008t"), JOptionPane.ERROR_MESSAGE);
             }
@@ -283,7 +288,12 @@ public class HolmesXTPNtokens extends JFrame {
                             if(selected > -1 && selected < multisetK.size()) {
                                 multisetK.remove(selected);
                             } else {
-                                String strB = String.format(lang.getText("HXTwin_entry010"), selected, places.indexOf(place));
+                                String strB = "err.";
+                                try {
+                                    strB = String.format(lang.getText("HXTwin_entry010"), selected, places.indexOf(place));
+                                } catch (Exception ex) {
+                                    overlord.log(lang.getText("LOGentryLNGexc")+" "+"HXTwin_entry010", "error", true);
+                                }
                                 overlord.log(strB, "error", true);
                             }
                         } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
@@ -304,7 +314,12 @@ public class HolmesXTPNtokens extends JFrame {
                                     multisetK.set(0, tokensNumber);
                                 }
                             } else {
-                                String strB = String.format(lang.getText("HXTwin_entry011"), selected, places.indexOf(place));
+                                String strB = "err.";
+                                try {
+                                    strB = String.format(lang.getText("HXTwin_entry011"), selected, places.indexOf(place));
+                                } catch (Exception ex2) {
+                                    overlord.log(lang.getText("LOGentryLNGexc")+" "+"HXTwin_entry011", "error", true);
+                                }
                                 overlord.log(strB, "error", true);
                             }
                         } else if(parentWindow instanceof HolmesNodeInfoXTPN) {
@@ -322,7 +337,12 @@ public class HolmesXTPNtokens extends JFrame {
                         tokensComboBox.setSelectedIndex(0);
                 }
             } catch (Exception exc) {
-                String strB = String.format(lang.getText("HXTwin_entry012"), tokenValueTextField.getValue());
+                String strB = "err.";
+                try {
+                    strB = String.format(lang.getText("HXTwin_entry012"), tokenValueTextField.getValue());
+                } catch (Exception ex2) {
+                    overlord.log(lang.getText("LOGentryLNGexc")+" "+"HXTwin_entry012", "error", true);
+                }
                 JOptionPane.showMessageDialog(null, strB,
                         lang.getText("HXTwin_entry008t"), JOptionPane.ERROR_MESSAGE);
             }
@@ -403,7 +423,12 @@ public class HolmesXTPNtokens extends JFrame {
                     writeTokensNumberInLabel();
                 }
             } catch (Exception exc) {
-                String strB = String.format(lang.getText("HXTwin_entry015"), addNewTextField.getValue());
+                String strB = "err.";
+                try {
+                    strB = String.format(lang.getText("HXTwin_entry015"), addNewTextField.getValue());
+                } catch (Exception ex2) {
+                    overlord.log(lang.getText("LOGentryLNGexc")+" "+"HXTwin_entry015", "error", true);
+                }
                 JOptionPane.showMessageDialog(null, strB,
                         lang.getText("HXTwin_entry008t"), JOptionPane.ERROR_MESSAGE);
             }
@@ -489,7 +514,12 @@ public class HolmesXTPNtokens extends JFrame {
                     writeTokensNumberInLabel();
                 }
             } catch (Exception exc) {
-                String strB = String.format(lang.getText("HXTwin_entry019"), addNewTextField.getValue());
+                String strB = "err.";
+                try {
+                    strB = String.format(lang.getText("HXTwin_entry019"), addNewTextField.getValue());
+                } catch (Exception ex2) {
+                    overlord.log(lang.getText("LOGentryLNGexc")+" "+"HXTwin_entry019", "error", true);
+                }
                 JOptionPane.showMessageDialog(null, strB,
                         lang.getText("HXTwin_entry008t"), JOptionPane.ERROR_MESSAGE);
             }

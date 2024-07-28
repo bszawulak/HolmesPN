@@ -102,7 +102,12 @@ public class SPNdataVector {
 				//TODO: moduł obliczania z funkcji:
 				return Double.parseDouble(dataVector.get(index).ST_function);
 			} catch(Exception e) {
-				String strB = String.format(lang.getText("LOGentry00374exception"), index);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("LOGentry00374exception"), index);
+				} catch (Exception ex2) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00374exception", "error", true);
+				}
 				overlord.log(strB+"\n"+e.getMessage(), "warning", true);
 				return 1.0;
 			}

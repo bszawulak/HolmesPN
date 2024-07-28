@@ -93,7 +93,12 @@ public class GraphicalSimulatorLogger {
 				if(!prePlaces.contains(p))
 					prePlaces.add(p);
 				else {
-					String strB = String.format(lang.getText("GSL_entry005"), transition.getName(), p.getName());
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("GSL_entry005"), transition.getName(), p.getName());
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"GSL_entry005", "error", true);
+					}
 					log.addText(strB, "warning", true, true);
 				}
 					
@@ -107,7 +112,12 @@ public class GraphicalSimulatorLogger {
 				if(!postPlaces.contains(p))
 					postPlaces.add(p);
 				else {
-					String strB = String.format(lang.getText("GSL_entry005"), transition.getName(), p.getName());
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("GSL_entry005"), transition.getName(), p.getName());
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"GSL_entry005", "error", true);
+					}
 					log.addText(strB, "warning", true, true);
 				}
 				

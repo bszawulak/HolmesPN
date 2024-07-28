@@ -237,11 +237,11 @@ public class HolmesSim extends JFrame {
 		dataAcquisitionPanel.add(stateManagerButton);
 		
 		JLabel stateLabel0 = new JLabel(lang.getText("HSSwin_entry011")); //Selected m0 state ID:
-	    stateLabel0.setBounds(posXda+400, posYda, 130, 20);
+	    stateLabel0.setBounds(posXda+400, posYda, 200, 20);
 	    dataAcquisitionPanel.add(stateLabel0);
 	    
 	    selStateLabel = new JLabel(""+overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN);
-	    selStateLabel.setBounds(posXda+400, posYda+20, 60, 20);
+	    selStateLabel.setBounds(posXda+400, posYda+20, 160, 20);
 	    dataAcquisitionPanel.add(selStateLabel);
 		
 		JButton clearDataButton = new JButton(lang.getText("HSSwin_entry012")); //Clear
@@ -942,10 +942,20 @@ public class HolmesSim extends JFrame {
 			double val = placesAvgData.get(p);
 			long total = placesTotalData.get(p);
 			if(val > 0) {
-				String strB = String.format(" "+lang.getText("HSSwin_entry054"), p, p_name, val, total);
+				String strB = "err.";
+				try {
+					strB = String.format(" "+lang.getText("HSSwin_entry054"), p, p_name, val, total);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSSwin_entry054", "error", true);
+				}
 				notePad.addTextLineNL(strB, "text");
 			} else {
-				String strB = String.format(lang.getText("HSSwin_entry055"), p, p_name, val);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HSSwin_entry055"), p, p_name, val);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSSwin_entry055", "error", true);
+				}
 				notePad.addTextLineNL(strB, "text");
 			}
 		}
@@ -1163,15 +1173,30 @@ public class HolmesSim extends JFrame {
  			String t_name = trans_tmp.get(t).getName();
  			double val = transitionsCompactData.get(t);
  			if(val > 0) {
-				 String strB = String.format("  "+lang.getText("HSSwin_entry063"), t, t_name, val, max);
+				String strB = "err.";
+				try {
+					strB = String.format("  "+lang.getText("HSSwin_entry063"), t, t_name, val, max);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSSwin_entry063", "error", true);
+				}
 				 notePad.addTextLineNL(strB, "text");
 			} else {
  				if(trans_tmp.get(t).isKnockedOut()) {
-					 String strB = String.format(lang.getText("HSSwin_entry064"), t, t_name, val);
-					 notePad.addTextLineNL(strB, "text");
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("HSSwin_entry064"), t, t_name, val);
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSSwin_entry064", "error", true);
+					}
+					notePad.addTextLineNL(strB, "text");
  				} else {
-					 String strB = String.format(lang.getText("HSSwin_entry065"), t, t_name, val);
-					 notePad.addTextLineNL(strB, "text");
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("HSSwin_entry065"), t, t_name, val);
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSSwin_entry065", "error", true);
+					}
+					notePad.addTextLineNL(strB, "text");
  				}
  			}
  		}
@@ -1552,7 +1577,12 @@ public class HolmesSim extends JFrame {
 	    public String generateToolTip(CategoryDataset dataset, int bar, int nodeIndex)   {
 	    	String text = "<html><font size=\"5\">";
 	    	text += "t"+nodeIndex+"_"+transitions.get(nodeIndex).getName()+"<br>";
-			String strB = String.format(lang.getText("HSSwin_entry067"), dataVector.get(nodeIndex), (int)max);
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HSSwin_entry067"), dataVector.get(nodeIndex), (int)max);
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSSwin_entry067", "error", true);
+			}
 	    	text += strB;
 	    	text += "</font></html>";
 	    	return text;
@@ -1576,7 +1606,12 @@ public class HolmesSim extends JFrame {
 	    public String generateToolTip(CategoryDataset dataset, int bar, int nodeIndex)   {
 	    	String text = "<html><font size=\"5\">";
 	    	text += "p"+nodeIndex+"_"+places.get(nodeIndex).getName()+"<br>";
-			String strB = String.format(lang.getText("HSSwin_entry068"), formatter.format(dataVector.get(nodeIndex)), formatter.format(max));
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HSSwin_entry068"), formatter.format(dataVector.get(nodeIndex)), formatter.format(max));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSSwin_entry068", "error", true);
+			}
 	    	text += strB;
 	    	text += "</font></html>";
 	    	return text;

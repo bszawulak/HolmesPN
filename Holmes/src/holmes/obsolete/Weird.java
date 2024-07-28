@@ -9,10 +9,13 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.Timer;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 
 public class Weird {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	public boolean forceSimulatorStop() {
 		//final boolean success = true;
 		GraphicalSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
@@ -107,28 +110,18 @@ public class Weird {
     }
 
 	public static void testStr() {
-		int xxx = 1;
-		long yyy = 1;
-		String zzz = "1";
+		int yyyy = 1;
+		
+		String strB = "err.";
+		try {
+			
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"xxxx", "error", true);
+		}
 
-        String strB = String.format("xxxxxxxxxxxxxxxxxxxx %d xxxxxxx", xxx);
-
-		//  String strB = String.format(lang.getText("LOGentry00330exception"), modeName);
-		//overlord.log(strB, "error", true);
+		strB = String.format("xxxxxxxxxxxxxxxxxxxx %d xxxxxxx", yyyy);
 	}
-
-	public static void testBuilder() {
-		int xxx = 1;
-		long yyy = 1;
-		String zzz = "1";
-		StringBuilder builder = new StringBuilder();
-		builder.append(String.format(
-				"xxxxxxxxxxxxxxxxxxxx %s xxxxxxxxxxxxxxxxx %d xxxxxxxxxxxxxxxxxxxx %s  xxxxxxxxxxxxxx %n",
-				xxx, yyy, zzz)
-		);
-
-		String s = builder.toString();
-	}
+	
 }
 
 

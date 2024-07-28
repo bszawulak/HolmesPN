@@ -609,7 +609,12 @@ public class HolmesClusters extends JFrame {
 				JOptionPane.showMessageDialog(null, lang.getText("HCwin_entry020"),
 						lang.getText("error"),JOptionPane.ERROR_MESSAGE);
 
-				String strB = String.format(lang.getText("HCwin_entry021"), dirPath);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HCwin_entry021"), dirPath);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HCwin_entry021", "error", true);
+				}
 				overlord.log(strB, "error", true);
 			}
 			
@@ -623,7 +628,12 @@ public class HolmesClusters extends JFrame {
 				String newLocation = Tools.selectFileDialog(dirPath, filter, "Save", "", "");
 				if(newLocation.isEmpty()) { //czy chcemy przenieść plik w inne miejsce
 					//leave it in cluster folder
-					String strB = String.format("Exporting table succeed. Created file: %s//ClustersSummary.xls", dirPath);
+					String strB = "err.";
+					try {
+						strB = String.format("Exporting table succeed. Created file: %s//ClustersSummary.xls", dirPath);
+					} catch (Exception e) {
+						overlord.log(lang.getText("in-code")+" "+"code", "error", true);
+					}
 					overlord.log(strB, "text", true);
 				} else {
 					if(!newLocation.contains(".xls"))
@@ -704,7 +714,12 @@ public class HolmesClusters extends JFrame {
 				try {
 					dataTableCase56.getMatrix().get(i).get(cl).evalCH = chDataCore.get(i).get(cl);
 				} catch (Exception e) {
-					String strB = String.format(lang.getText("LOGentry00507exception"), i, cl);
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("LOGentry00507exception"), i, cl);
+					} catch (Exception ex) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00507exception", "error", true);
+					}
 					overlord.log(strB + " " +e.getMessage(), "error", true);
 					dataTableCase56.getMatrix().get(i).get(cl).evalCH = 0.0;
 				}

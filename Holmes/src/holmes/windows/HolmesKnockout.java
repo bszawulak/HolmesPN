@@ -405,7 +405,12 @@ public class HolmesKnockout extends JFrame {
 			notePad.addTextLineNL(lang.getText("HKwin_entry023")+" "+invIndices.size() , "text"); //t-invariants disabled
 			
 			String name = transitions.get(rootTransition).getName();
-			String strB = String.format(lang.getText("HKwin_entry024"), invIndices.size(), rootTransition, name);
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HKwin_entry024"), invIndices.size(), rootTransition, name);
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HKwin_entry024", "error", true);
+			}
 			notePad.addTextLineNL(strB, "text"); //t-ivariants (disabled t-inv.)
 			notePad.addTextLineNL("", "text");
 			for(int element : invIndices) {
@@ -446,16 +451,24 @@ public class HolmesKnockout extends JFrame {
 			transFailDependency.add(dataMatrix.get(0).size());
 			transCommonSetSize.add(dataMatrix.get(1).size());
 		}
-
-		String strB = String.format(lang.getText("HKwin_entry026"), transNumber);
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HKwin_entry026"), transNumber);
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HKwin_entry026", "error", true);
+		}
 		notePad.addTextLineNL(strB, "text"); //Data collected for transitions
 		notePad.addTextLineNL("", "text");
 		
 		for(int t=0; t<transNumber; t++) {
 			notePad.addTextLine("[t_"+t+ "]|"+transitions.get(t).getName()+":", "text");
 			int kn = transFailDependency.get(t) + transCommonSetSize.get(t) - 1;
-			
-			strB = String.format(lang.getText("HKwin_entry027"), kn, transCommonSetSize.get(t));
+			strB = "err.";
+			try {
+				strB = String.format(lang.getText("HKwin_entry027"), kn, transCommonSetSize.get(t));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HKwin_entry027", "error", true);
+			}
 			notePad.addTextLineNL(strB, "text"); //Knocked-out: | Common:
 		}
 		//knockOutData

@@ -43,7 +43,12 @@ public class FunctionsTools {
 			for(FunctionContainer fc : transition.fpnExtension.accessFunctionsList()) {
 				if(fc.involvedPlaces.containsKey("p"+placeIndex)) {
 					int transIndex = transitions.indexOf(transition);
-					String strB = String.format(lang.getText("LOGentry00395"), fc.simpleExpression, fc.fID, transIndex, placeIndex);
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("LOGentry00395"), fc.simpleExpression, fc.fID, transIndex, placeIndex);
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00395", "error", true);
+					}
 					overlord.log(strB, "warning", true);
 					
 					fc.enabled = false;

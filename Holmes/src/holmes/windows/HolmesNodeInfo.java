@@ -917,7 +917,12 @@ public class HolmesNodeInfo extends JFrame {
 				problemCounter++;
 				i--;
 				if(problemCounter == 10) {
-					String strB = String.format(lang.getText("LOGentry00483"), repeated, simSteps, dataVector.size());
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("LOGentry00483"), repeated, simSteps, dataVector.size());
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00483", "error", true);
+					}
 					overlord.log(strB, "error", true);
 					break;
 				}

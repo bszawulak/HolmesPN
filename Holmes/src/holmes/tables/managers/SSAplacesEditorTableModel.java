@@ -162,7 +162,12 @@ public class SSAplacesEditorTableModel extends DefaultTableModel {
 						dataMatrix.get(row).ssaValue = newValue;
 						boss.changeRealValue(ssaVectorIndex, row, newValue);
 					} else {
-						String strB = String.format(lang.getText("SSAPETM_entry001"), newValue);
+						String strB = "err.";
+						try {
+							strB = String.format(lang.getText("SSAPETM_entry001"), newValue);
+						} catch (Exception e) {
+							overlord.log(lang.getText("LOGentryLNGexc")+" "+"SSAPETM_entry001", "error", true);
+						}
 						JOptionPane.showMessageDialog(boss,
 								strB, lang.getText("SSAPETM_entry001t"),JOptionPane.WARNING_MESSAGE);
 					}

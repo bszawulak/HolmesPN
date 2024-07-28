@@ -531,7 +531,12 @@ public class GraphicalSimulator {
 					place = (Place) arc.getStartNode();
 				
 				if(arc.getArcType() != TypeOfArc.NORMAL && arc.getArcType() != TypeOfArc.COLOR && arc.getArcType() != TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
-					String strB = String.format(lang.getText("LOGentry00407"), place.getName(), arc);
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("LOGentry00407"), place.getName(), arc);
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00407", "error", true);
+					}
 					overlord.log(strB, "warning", true);
 				}
 				
@@ -589,7 +594,12 @@ public class GraphicalSimulator {
 				place = (Place) arc.getStartNode();
 
 			if(arc.getArcType() != TypeOfArc.NORMAL && arc.getArcType() != TypeOfArc.COLOR && arc.getArcType() != TypeOfArc.READARC) { //!!!!!! było bez drugiego członu po ||
-				String strB = String.format(lang.getText("LOGentry00409"), place.getName(), arc);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("LOGentry00409"), place.getName(), arc);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00409", "error", true);
+				}
 				overlord.log(strB, "warning", true);
 			}
 

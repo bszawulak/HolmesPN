@@ -140,6 +140,10 @@ GUIO_fix003, Invisible arc: t
 GUIO_fix004, Arc list:
 GUIO_fix005, , processed arcs:
 GUIO_fix006, , removed ghost-arcs:
+GUIO_entry101op1, Use selected anyway
+GUIO_entry101op2, Use suggested format
+GUIO_entry101op3, Save as project
+GUIO_entry101op4, Cancel save
 
 //DarkMenu:
 DM_menuFile, File
@@ -243,6 +247,23 @@ TB_toolTip009, Reset
 TB_toolTip009d, Reset simulator
 TB_toolTip010, Ext.Net
 TB_toolTip010d, Extend net elements
+TB_entry001t, New project button will clear the current project and create a new one.
+TB_entry002t, Open project button will open a project file.
+TB_entry003t, Import network button will import a network from Snoopy file.
+TB_entry004t, Save as project button will save the current project to a file.
+TB_entry005t, Export network button will export the current network to Snoopy file.
+TB_entry006t, Export to image button will export the current network to an image file.
+TB_entry007t, This button will force repaint of the current network in graph panels.
+TB_entry021t, This button will extend the net elements, by adding 10% to x and y coordinates.
+TB_entry022t, This button will shrink the net elements, by subtracting 10% from x and y coordinates.
+TB_entry023t, Shows the grid on the sheet.
+TB_entry024t, This will align the net elements to the grid, by rounding their x and y coordinates to nearest modulo 20.
+TB_entry041t, Shows the clusters analysis window.
+TB_entry042t, Shows the net data tables window: for places, transitions and invariants.
+TB_entry043t, Shows simulation log.
+TB_entry044t, Shows the Holmes console log window.
+TB_entry045t, Clears all colors from the net graphical representation - reset colors to default.
+TB_entry046t, Firing rates manager for SPN transitions.
 
 //PetriNetTools:
 PNTT_toolTipPointer, Allows to point at and move net components on the sheet.
@@ -2553,6 +2574,7 @@ HPPwinSYS_entry051, English
 HPPwinSYS_entry052, Polish
 HPPwinSYS_entry053, Language set to: %s (from %s). In order for changes to take effect, restart the program.
 HPPwinSYS_entry054, YourLang
+HPPwinSYS_entry055, German
 
 //HolmesProgramPropertiesActions:
 HPPAwin_entry001, Select Rscript.exe
@@ -3621,6 +3643,6 @@ unimplementedTitle, Subsystem offline
 unwrap, Unwrap
 warning, Warning
 yes, Yes
-
+LOGentryLNGexc, Exception (1099999): String.format(...) failed for language entry:
 
 

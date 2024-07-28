@@ -139,7 +139,12 @@ public class Place extends Node {
 	public void setTokensNumber(int tokensNumber) {
 		this.tokensNumber = tokensNumber;
 		if(tokensNumber < 0) {
-			String strB = String.format(lang.getText("LOGentry00389"), this.getName(), this.getTokensNumber());
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("LOGentry00389"), this.getName(), this.getTokensNumber());
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00389", "error", true);
+			}
 			overlord.log(strB, "error", true);
 		}
 	}

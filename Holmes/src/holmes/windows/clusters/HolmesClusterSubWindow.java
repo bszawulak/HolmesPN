@@ -128,7 +128,12 @@ public class HolmesClusterSubWindow extends JFrame {
 			//kolejne wiersze z MSS dla klastrów:
 			for(int i=0; i<clusteringMetaData.clusterNumber; i++) {
 				String value = getMSSFormatted(clusteringMetaData.clusterMSS.get(i));
-				String strB = String.format(lang.getText("HCSWwin_entry009"), i, clusteringMetaData.clusterSize.get(i), value);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HCSWwin_entry009"), i, clusteringMetaData.clusterSize.get(i), value);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HCSWwin_entry009", "error", true);
+				}
 				area.append(strB);
 				//area.append("Cluster "+i+" size: "+clusteringMetaData.clusterSize[i]+"  MSS: "+clusteringMetaData.clusterMSS[i]+nL);
 			}
@@ -164,8 +169,12 @@ public class HolmesClusterSubWindow extends JFrame {
 	 * @param dataPackage Clustering - dane do wyświetlenia
 	 */
 	private void initiateExtendedMode(HolmesClusters parent, Clustering dataPackage) {
-		String strB = String.format(lang.getText("HCSWwin_entry001title")
-				, dataPackage.clusterNumber, dataPackage.algorithmName, dataPackage.metricName);
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HCSWwin_entry001title"), dataPackage.clusterNumber, dataPackage.algorithmName, dataPackage.metricName);
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HCSWwin_entry001title", "error", true);
+		}
 		this.setTitle(strB);
 
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -495,7 +504,12 @@ public class HolmesClusterSubWindow extends JFrame {
 		try {
 			Tools.copyFileByPath("tmp//testSheets.xls", selectedFile);
 		} catch (Exception e) {
-			String strB = String.format(lang.getText("LOGentry00515exception"), selectedFile);
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("LOGentry00515exception"), selectedFile);
+			} catch (Exception ex2) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00515exception", "error", true);
+			}
 			overlord.log(strB+"\n"+e.getMessage() , "error", true);
 			return null;
 		}
@@ -652,7 +666,12 @@ public class HolmesClusterSubWindow extends JFrame {
 				int transNumber = fullData.transNames.length-1;
 				int netTransNumber = overlord.getWorkspace().getProject().getTransitions().size();
 				if(transNumber != netTransNumber) {
-					String strB = String.format(lang.getText("HCSwin_entry035"), transNumber, netTransNumber);
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("HCSwin_entry035"), transNumber, netTransNumber);
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HCSwin_entry035", "error", true);
+					}
 					JOptionPane.showMessageDialog(null, strB, lang.getText("error"), JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -704,7 +723,12 @@ public class HolmesClusterSubWindow extends JFrame {
 			int transNumber = fullData.transNames.length-1;
 			int netTransNumber = overlord.getWorkspace().getProject().getTransitions().size();
 			if(transNumber != netTransNumber) {
-				String strB = String.format(lang.getText("HCSwin_entry035"), transNumber, netTransNumber);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HCSwin_entry035"), transNumber, netTransNumber);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HCSwin_entry035", "error", true);
+				}
 				JOptionPane.showMessageDialog(null, strB, lang.getText("error"), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -749,7 +773,12 @@ public class HolmesClusterSubWindow extends JFrame {
 				int transNumber = fullData.transNames.length-1;
 				int netTransNumber = overlord.getWorkspace().getProject().getTransitions().size();
 				if(transNumber != netTransNumber) {
-					String strB = String.format(lang.getText("HCSwin_entry035"), transNumber, netTransNumber);
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("HCSwin_entry035"), transNumber, netTransNumber);
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HCSwin_entry035", "error", true);
+					}
 					JOptionPane.showMessageDialog(null, strB, lang.getText("error"), JOptionPane.ERROR_MESSAGE);
 					return;
 				}

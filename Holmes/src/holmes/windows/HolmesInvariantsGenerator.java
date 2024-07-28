@@ -255,7 +255,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		panel.add(makeFeasibleButton);
 		
 		JCheckBox feasModeCheckBox = new JCheckBox(lang.getText("HIGwin_entry013")); //Feasible advanced mode
-		feasModeCheckBox.setBounds(posX+380, posY+36, 140, 20); //505
+		feasModeCheckBox.setBounds(posX+380, posY+36, 240, 20); //505
 		feasModeCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			if (abstractButton.getModel().isSelected()) {
@@ -407,7 +407,12 @@ public class HolmesInvariantsGenerator extends JFrame {
 			} else {
 				logFieldTinv.append("\n");
 				logFieldTinv.append("=====================================================================\n");
-				String strB = String.format(lang.getText("HIGwin_entry022"), invariants.size());
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HIGwin_entry022"), invariants.size());
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIGwin_entry022", "error", true);
+				}
 				logFieldTinv.append(strB); //Checking canonicality for
 				int card = InvariantsTools.checkCanonity(invariants);
 				logFieldTinv.append(lang.getText("HIGwin_entry023")+" "+card+"\n"); //Non canonical t-invariants:
@@ -430,7 +435,12 @@ public class HolmesInvariantsGenerator extends JFrame {
 			} else {
 				logFieldTinv.append("\n");
 				logFieldTinv.append("=====================================================================\n");
-				String strB = String.format(lang.getText("HIGwin_entry025"), invariants.size());
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HIGwin_entry025"), invariants.size());
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIGwin_entry025", "error", true);
+				}
 				logFieldTinv.append(strB); //Checking support minimality for
 				int value = InvariantsTools.checkSupportMinimality(invariants);
 				logFieldTinv.append(lang.getText("HIGwin_entry026")+" "+value+"\n");	//Non support-minimal t-invariants:
@@ -453,8 +463,13 @@ public class HolmesInvariantsGenerator extends JFrame {
 			} else {
 				logFieldTinv.append("\n");
 				logFieldTinv.append("=====================================================================\n");
-				String str = String.format(lang.getText("HIGwin_entry028"), invariants.size());
-				logFieldTinv.append(str); //Checking t0invariants correctness for
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HIGwin_entry028"), invariants.size());
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIGwin_entry028", "error", true);
+				}
+				logFieldTinv.append(strB); //Checking t0invariants correctness for
 				InvariantsCalculator ic = new InvariantsCalculator(true);
 				ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(
 						ic.getCMatrix(), invariants, true);
@@ -712,7 +727,12 @@ public class HolmesInvariantsGenerator extends JFrame {
 			} else {
 				logFieldPinv.append("\n");
 				logFieldPinv.append("=====================================================================\n");
-				String strB = String.format(lang.getText("HIGwin_entry049"), p_invariants.size());
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HIGwin_entry049"), p_invariants.size());
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIGwin_entry049", "error", true);
+				}
 				logFieldPinv.append(strB); //Checking canonicality for
 				int card = InvariantsTools.checkCanonity(p_invariants); 
 				logFieldPinv.append(lang.getText("HIGwin_entry050")+" "+card+"\n"); //Non canonical p-invariants:
@@ -735,7 +755,12 @@ public class HolmesInvariantsGenerator extends JFrame {
 			} else {
 				logFieldPinv.append("\n");
 				logFieldPinv.append("=====================================================================\n");
-				String strB = String.format(lang.getText("HIGwin_entry052"), p_invariants.size());
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HIGwin_entry052"), p_invariants.size());
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIGwin_entry052", "error", true);
+				}
 				logFieldPinv.append(strB); //Checking support minimality for
 				int value = InvariantsTools.checkSupportMinimality(p_invariants);
 				logFieldPinv.append(lang.getText("HIGwin_entry053")+" "+value+"\n"); //Non support-minimal p-invariants:
@@ -758,8 +783,13 @@ public class HolmesInvariantsGenerator extends JFrame {
 			} else {
 				logFieldPinv.append("\n");
 				logFieldPinv.append("=====================================================================\n");
-				String str = String.format(lang.getText("HIGwin_entry055"), p_invariants.size());
-				logFieldPinv.append(str); //Checking invariants correctness for
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HIGwin_entry055"), p_invariants.size());
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIGwin_entry055", "error", true);
+				}
+				logFieldPinv.append(strB); //Checking invariants correctness for
 				InvariantsCalculator ic = new InvariantsCalculator(true);
 				ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(
 						ic.getCMatrix(), p_invariants, false);

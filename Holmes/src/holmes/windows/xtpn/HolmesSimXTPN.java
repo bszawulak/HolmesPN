@@ -1838,7 +1838,13 @@ public class HolmesSimXTPN extends JFrame {
         public String generateToolTip(CategoryDataset dataset, int bar, int nodeIndex)   {
             String text = "<html><font size=\"5\">";
             text += "t"+nodeIndex+"_"+transitions.get(nodeIndex).getName()+"<br>";
-            text += String.format(lang.getText("HSXTPNwin_entry069"), dataVector.get(nodeIndex), max);
+            String strB = "err.";
+            try {
+                strB = String.format(lang.getText("HSXTPNwin_entry069"), dataVector.get(nodeIndex), max);
+            } catch (Exception e) {
+                overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSXTPNwin_entry069", "error", true);
+            }
+            text += strB;
             text += "</font></html>";
             return text;
         }
@@ -1861,7 +1867,13 @@ public class HolmesSimXTPN extends JFrame {
         public String generateToolTip(CategoryDataset dataset, int bar, int nodeIndex)   {
             String text = "<html><font size=\"5\">";
             text += "p"+nodeIndex+"_"+places.get(nodeIndex).getName()+"<br>";
-            text += String.format(lang.getText("HSXTPNwin_entry070"), dataVector.get(nodeIndex), max);
+            String strB = "err.";
+            try {
+                strB = String.format(lang.getText("HSXTPNwin_entry070"), dataVector.get(nodeIndex), max);
+            } catch (Exception e) {
+                overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSXTPNwin_entry070", "error", true);
+            }
+            text += strB;
             text += "</font></html>";
             return text;
         }

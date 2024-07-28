@@ -154,6 +154,11 @@ public class LangEngDafaultDB {
         defaultEnglish.put("GUIO_fix004","Arc list:");
         defaultEnglish.put("GUIO_fix005",", processed arcs:");
         defaultEnglish.put("GUIO_fix006",", removed ghost-arcs:");
+        defaultEnglish.put("GUIO_entry101op1","Use selected anyway");
+        defaultEnglish.put("GUIO_entry101op2","Use suggested format");
+        defaultEnglish.put("GUIO_entry101op3","Save as project");
+        defaultEnglish.put("GUIO_entry101op4","Cancel save");
+
 
         defaultEnglish.put("DM_menuFile","File");
         defaultEnglish.put("DM_menuFileDesc","The File Menu");
@@ -256,7 +261,24 @@ public class LangEngDafaultDB {
         defaultEnglish.put("TB_toolTip009d","Reset simulator");
         defaultEnglish.put("TB_toolTip010","Ext.Net");
         defaultEnglish.put("TB_toolTip010d","Extend net elements");
-
+        defaultEnglish.put("TB_entry001t","New project button will clear the current project and create a new one.");
+        defaultEnglish.put("TB_entry002t","Open project button will open a project file.");
+        defaultEnglish.put("TB_entry003t","Import network button will import a network from Snoopy file.");
+        defaultEnglish.put("TB_entry004t","Save as project button will save the current project to a file.");
+        defaultEnglish.put("TB_entry005t","Export network button will export the current network to Snoopy file.");
+        defaultEnglish.put("TB_entry006t","Export to image button will export the current network to an image file.");
+        defaultEnglish.put("TB_entry007t","This button will force repaint of the current network in graph panels.");
+        defaultEnglish.put("TB_entry021t","This button will extend the net elements, by adding 10% to x and y coordinates.");
+        defaultEnglish.put("TB_entry022t","This button will shrink the net elements, by subtracting 10% from x and y coordinates.");
+        defaultEnglish.put("TB_entry023t","Shows the grid on the sheet.");
+        defaultEnglish.put("TB_entry024t","This will align the net elements to the grid, by rounding their x and y coordinates to nearest modulo 20.");
+        defaultEnglish.put("TB_entry041t","Shows the clusters analysis window.");
+        defaultEnglish.put("TB_entry042t","Shows the net data tables window: for places, transitions and invariants.");
+        defaultEnglish.put("TB_entry043t","Shows simulation log.");
+        defaultEnglish.put("TB_entry044t","Shows the Holmes console log window.");
+        defaultEnglish.put("TB_entry045t","Clears all colors from the net graphical representation - reset colors to default.");
+        defaultEnglish.put("TB_entry046t","Firing rates manager for SPN transitions.");
+        
         //PetriNetTools:
         defaultEnglish.put("PNTT_toolTipPointer","Allows to point at and move net components on the sheet.");
         defaultEnglish.put("PNTT_toolTipEraser","Allows to delete net components.");
@@ -2566,7 +2588,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HPPwinSYS_entry052","Polish");
         defaultEnglish.put("HPPwinSYS_entry053","Language set to: %s (from %s). In order for changes to take effect, restart the program.");
         defaultEnglish.put("HPPwinSYS_entry054","YourLang");
-
+        defaultEnglish.put("HPPwinSYS_entry055","German");
 
         //HolmesProgramPropertiesActions:
         defaultEnglish.put("HPPAwin_entry001","Select Rscript.exe");
@@ -3634,6 +3656,8 @@ public class LangEngDafaultDB {
         defaultEnglish.put("unwrap","Unwrap");
         defaultEnglish.put("warning","Warning");
         defaultEnglish.put("yes","Yes");
+        
+        defaultEnglish.put("LOGentryLNGexc", "Exception (1099999): String.format(...) failed for language entry:");
 
         
         return defaultEnglish;

@@ -63,7 +63,12 @@ public class P_StateManager {
 		for(StatePlacesVector pVector: statesMatrix) {
 			boolean status = pVector.removePlace(index);
 			if(!status) {
-				String strB = String.format(lang.getText("LOGentry00341critError"), index);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("LOGentry00341critError"), index);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00341critError", "error", true);
+				}
 				overlord.log(strB, "error", true);
 			}
 		}
@@ -71,7 +76,12 @@ public class P_StateManager {
 			for(MultisetM multisetM: statesMatrixXTPN) {
 				boolean status = multisetM.removePlaceFromMultiset_M(index);
 				if(!status) {
-					String strB = String.format(lang.getText("LOGentry00342critErr"), index);
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("LOGentry00342critErr"), index);
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00342critErr", "error", true);
+					}
 					overlord.log(strB, "error", true);
 				}
 			}

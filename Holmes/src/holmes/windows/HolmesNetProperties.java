@@ -221,7 +221,12 @@ public class HolmesNetProperties extends JFrame {
 			} else {
 				textField.append("\n");
 				textField.append(lang.getText("HNPwin_entry008"));
-				String strB = String.format(lang.getText("HNPwin_entry008"), normal);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HNPwin_entry008"), normal);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HNPwin_entry008", "error", true);
+				}
 				textField.append(strB);
 				textField.append("\n");
 				for (int tNumber : idTransNoInv) {
@@ -230,8 +235,12 @@ public class HolmesNetProperties extends JFrame {
 				}
 				textField.append("\n");
 			}
-			
-			String strB = String.format(lang.getText("HNPwin_entry009"), normal);
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HNPwin_entry009"), normal);
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HNPwin_entry009", "error", true);
+			}
 			textField.append(strB);
 			for(int i=0; i<transitions.size(); i++) {
 				if(transInInv.get(i) > 0) { //dla tranz. w inwariantach

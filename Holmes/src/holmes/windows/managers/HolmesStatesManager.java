@@ -215,7 +215,12 @@ public class HolmesStatesManager extends JFrame {
 			}
 
 			Object[] options = {lang.getText("HSMwin_entry010op1"), lang.getText("HSMwin_entry010op2"),}; //Set new state, Keep current state
-			String strB = String.format(lang.getText("HSMwin_entry010"), (selected+1));
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HSMwin_entry010"), (selected+1));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSMwin_entry010", "error", true);
+			}
 			int n = JOptionPane.showOptionDialog(null,
 					strB, lang.getText("HSMwin_entry010t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
@@ -361,9 +366,14 @@ public class HolmesStatesManager extends JFrame {
 		}
 		
 		Object[] options = {lang.getText("HSMwin_entry023op1"), lang.getText("HSMwin_entry023op2"),}; //Remove state, Cancel
-		String str = String.format(lang.getText("HSMwin_entry023"), (selected+1));
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HSMwin_entry023"), (selected+1));
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSMwin_entry023", "error", true);
+		}
 		int n = JOptionPane.showOptionDialog(null,
-				str, lang.getText("HSMwin_entry023t"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+				strB, lang.getText("HSMwin_entry023t"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
 		}
@@ -379,7 +389,12 @@ public class HolmesStatesManager extends JFrame {
 	private void replaceStateAction() {
 		int selected = statesTablePN.getSelectedRow();
 		Object[] options = {lang.getText("HSMwin_entry024op1"), lang.getText("HSMwin_entry024op2"),}; //Replace state, Cancel
-		String strB = String.format(lang.getText("HSMwin_entry024"), (selected+1));
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HSMwin_entry024"), (selected+1));
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSMwin_entry024", "error", true);
+		}
 		int n = JOptionPane.showOptionDialog(null,
 				strB, lang.getText("HSMwin_entry024t"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
@@ -606,7 +621,12 @@ public class HolmesStatesManager extends JFrame {
 			}
 
 			Object[] options = {lang.getText("HSMwin_entry030op1"), lang.getText("HSMwin_entry030op2"),}; //Set new state, Keep current state
-			String strB = String.format(lang.getText("HSMwin_entry030"), (selected+1));
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HSMwin_entry030"), (selected+1));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSMwin_entry030", "error", true);
+			}
 			int n = JOptionPane.showOptionDialog(null,
 					strB, lang.getText("HSMwin_entry030t"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
@@ -762,9 +782,14 @@ public class HolmesStatesManager extends JFrame {
 		}
 
 		Object[] options = {lang.getText("HSMwin_entry045op1"), lang.getText("HSMwin_entry045op2"),}; //Remove XTPN state, Cancel
-		String str = String.format(lang.getText("HSMwin_entry045"), (selected+1));
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HSMwin_entry045"), (selected+1));
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSMwin_entry045", "error", true);
+		}
 		int n = JOptionPane.showOptionDialog(null,
-				str, lang.getText("HSMwin_entry045t"), JOptionPane.YES_NO_OPTION,
+				strB, lang.getText("HSMwin_entry045t"), JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 		if (n == 1) {
 			return;
@@ -786,7 +811,12 @@ public class HolmesStatesManager extends JFrame {
 			return;
 		}
 		Object[] options = {lang.getText("HSMwin_entry047op1"), lang.getText("HSMwin_entry047op2"),}; //Replace XTPN state, Cancel
-		String strB = String.format(lang.getText("HSMwin_entry047"), (selected+1));
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HSMwin_entry047"), (selected+1));
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSMwin_entry047", "error", true);
+		}
 		int n = JOptionPane.showOptionDialog(null,
 				strB, lang.getText("HSMwin_entry047t"), JOptionPane.YES_NO_OPTION,
 				JOptionPane.QUESTION_MESSAGE, null, options, options[1]);

@@ -330,30 +330,53 @@ public class QuickSimTools {
 			note.addTextLine(" "+lang.getText("QST_entry012")+" ", "text");
 			note.addTextLineNL(getTransType(trans), "bold");
 
-			String strB = String.format(lang.getText("QST_entry013"), (int)tmpSteps, Tools.cutValue((tmpSteps*100)/simSteps)
-					, Tools.cutValue(tmpTime), Tools.cutValue((tmpTime * 100)/simTime));
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("QST_entry013"), (int)tmpSteps, Tools.cutValue((tmpSteps*100)/simSteps)
+						, Tools.cutValue(tmpTime), Tools.cutValue((tmpTime * 100)/simTime));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry013", "error", true);
+			}
 			//String text = "   "+"Inactive (#):"+"  "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
 			//		"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
 			note.addTextLineNL(strB, "text");
 
 			tmpSteps = result.transitionsStatistics.get(transIndex).get(1); //trans.simActiveState
 			tmpTime = result.transitionsStatistics.get(transIndex).get(5); //trans.simActiveTime
-			strB = String.format(lang.getText("QST_entry014"), (int)tmpSteps, Tools.cutValue((tmpSteps*100)/simSteps)
-					, Tools.cutValue(tmpTime), Tools.cutValue((tmpTime * 100)/simTime));
+			strB = "err.";
+			try {
+				strB = String.format(lang.getText("QST_entry014"), (int)tmpSteps, Tools.cutValue((tmpSteps*100)/simSteps)
+						, Tools.cutValue(tmpTime), Tools.cutValue((tmpTime * 100)/simTime));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry014", "error", true);
+			}
+			
 			//String text = "   Active (#):    "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
 			//		"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
 			note.addTextLineNL(strB, "text");
 
 			tmpSteps = result.transitionsStatistics.get(transIndex).get(2); //trans.simProductionState
 			tmpTime = result.transitionsStatistics.get(transIndex).get(6); //trans.simProductionTime
-			strB = String.format(lang.getText("QST_entry015"), (int)tmpSteps, Tools.cutValue((tmpSteps*100)/simSteps)
-					, Tools.cutValue(tmpTime), Tools.cutValue((tmpTime * 100)/simTime));
+			strB = "err.";
+			try {
+				strB = String.format(lang.getText("QST_entry015"), (int)tmpSteps, Tools.cutValue((tmpSteps*100)/simSteps)
+						, Tools.cutValue(tmpTime), Tools.cutValue((tmpTime * 100)/simTime));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry015", "error", true);
+			}
+			
 			//String text = "   Production (#): "+(int)tmpSteps + " ("+Tools.cutValue((tmpSteps*100)/simSteps) +
 			//		"%) | \u03C4: "+ Tools.cutValue(tmpTime) + " ("+Tools.cutValue((tmpTime * 100)/simTime)+"%)" ;
 			note.addTextLineNL(strB, "text");
 
 			tmpSteps = result.transitionsStatistics.get(transIndex).get(3); //trans.simFiredState
-			strB = String.format(lang.getText("QST_entry016"), (int)tmpSteps);
+			strB = "err.";
+			try {
+				strB = String.format(lang.getText("QST_entry016"), (int)tmpSteps);
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry016", "error", true);
+			}
+			
 			//text = "   Fired (#): "+(int)tmpSteps ;
 			note.addTextLineNL(strB, "text");
 
@@ -465,14 +488,24 @@ public class QuickSimTools {
 			note.addTextLine(lang.getText("QST_entry033")+" ", "text"); // Type:
 			note.addTextLineNL(getTransType(trans), "bold");
 
-			String strB = String.format(lang.getText("QST_entry034"), (int)tmpStepsRef, Tools.cutValue(tmpStepsPercentRef)
-					, Tools.cutValue(tmpTimeRef), Tools.cutValue(tmpTimePercentRef));
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("QST_entry034"), (int)tmpStepsRef, Tools.cutValue(tmpStepsPercentRef)
+						, Tools.cutValue(tmpTimeRef), Tools.cutValue(tmpTimePercentRef));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry034", "error", true);
+			}
 			//String text = " R Inactive (#):  "+(int)tmpStepsRef + " ("+Tools.cutValue(tmpStepsPercentRef) +
 			//		"%) | \u03C4: "+ Tools.cutValue(tmpTimeRef) + " ("+Tools.cutValue(tmpTimePercentRef)+"%)" ;
 			note.addTextLineNL(strB, "text");
-
-			strB = String.format(lang.getText("QST_entry035"), (int)tmpStepsKnock, Tools.cutValue(tmpStepsPercentKnock)
-					, Tools.cutValue(tmpTimeKnock), Tools.cutValue(tmpTimePercentKnock));
+			strB = "err.";
+			try {
+				strB = String.format(lang.getText("QST_entry035"), (int)tmpStepsKnock, Tools.cutValue(tmpStepsPercentKnock)
+						, Tools.cutValue(tmpTimeKnock), Tools.cutValue(tmpTimePercentKnock));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry035", "error", true);
+			}
+			
 			//String text = " K Inactive (#):  "+(int)tmpStepsKnock + " ("+Tools.cutValue(tmpStepsPercentKnock) +
 			//		"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
 			note.addTextLineNL(strB, "text");
@@ -487,9 +520,15 @@ public class QuickSimTools {
 			if(diffTime > 0)
 				signT = "-";
 
-			String textDeltaInactive = String.format(lang.getText("QST_entry036")
-					, signS, (int)(Math.abs(tmpStepsRef - tmpStepsKnock)), signS, Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock))
-					, signT, Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)), signT, Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock)));
+			strB = "err.";
+			try {
+                strB = String.format(lang.getText("QST_entry036")
+						, signS, (int)(Math.abs(tmpStepsRef - tmpStepsKnock)), signS, Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock))
+						, signT, Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)), signT, Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock)));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry036", "error", true);
+			}
+			String textDeltaInactive = strB;
 			
 			//String textDeltaInactive = "   \u0394Inact.:  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+signS+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
 			//		"%) | \u0394\u03C4: "+signT+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+signT+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
@@ -509,14 +548,25 @@ public class QuickSimTools {
 			tmpStepsPercentKnock = (tmpStepsKnock*100)/simStepsKnock;
 			tmpTimePercentKnock = (tmpTimeKnock * 100)/simTimeKnock;
 
-			strB = String.format(lang.getText("QST_entry037"), (int)tmpStepsRef, Tools.cutValue(tmpStepsPercentRef)
-					, Tools.cutValue(tmpTimeRef), Tools.cutValue(tmpTimePercentRef));
+			strB = "err.";
+			try {
+				strB = String.format(lang.getText("QST_entry037"), (int)tmpStepsRef, Tools.cutValue(tmpStepsPercentRef)
+						, Tools.cutValue(tmpTimeRef), Tools.cutValue(tmpTimePercentRef));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry037", "error", true);
+			}
+			
 			//String text = " R Active (#):    "+(int)tmpStepsRef + " ("+Tools.cutValue(tmpStepsPercentRef) +
 			//		"%) | \u03C4: "+ Tools.cutValue(tmpTimeRef) + " ("+Tools.cutValue(tmpTimePercentRef)+"%)" ;
 			note.addTextLineNL(strB, "text");
-
-			strB = String.format(lang.getText("QST_entry038"), (int)tmpStepsKnock, Tools.cutValue(tmpStepsPercentKnock)
-					, Tools.cutValue(tmpTimeKnock), Tools.cutValue(tmpTimePercentKnock));
+			strB = "err.";
+			try {
+				strB = String.format(lang.getText("QST_entry038"), (int)tmpStepsKnock, Tools.cutValue(tmpStepsPercentKnock)
+						, Tools.cutValue(tmpTimeKnock), Tools.cutValue(tmpTimePercentKnock));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry038", "error", true);
+			}
+			
 			//String text = " K Active (#):    "+(int)tmpStepsKnock + " ("+Tools.cutValue(tmpStepsPercentKnock) +
 			//		"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
 			note.addTextLineNL(strB, "text");
@@ -531,9 +581,15 @@ public class QuickSimTools {
 			if(diffTime > 0)
 				signT = "-";
 
-			String textDeltaActive = String.format("   \u0394Act.  :  %s%d (%s%s%%) | \u0394\u03C4: %s%s (%s%s%%)"
-					, signS, (int)(Math.abs(tmpStepsRef - tmpStepsKnock)), signS, Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock))
-					, signT, Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)), signT, Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock)));
+			strB = "err.";
+			try {
+                strB = String.format("   \u0394Act.  :  %s%d (%s%s%%) | \u0394\u03C4: %s%s (%s%s%%)"
+						, signS, (int)(Math.abs(tmpStepsRef - tmpStepsKnock)), signS, Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock))
+						, signT, Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)), signT, Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock)));
+			} catch (Exception e) {
+				overlord.log(lang.getText("in-code")+" "+"incode", "error", true);
+			}
+			String textDeltaActive = strB; 
 			//String textDeltaActive = "   \u0394Act.  :  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+signS+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
 			//		"%) | \u0394\u03C4: "+signT+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+signT+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
 
@@ -551,14 +607,26 @@ public class QuickSimTools {
 			tmpStepsPercentKnock = (tmpStepsKnock*100)/simStepsKnock;
 			tmpTimePercentKnock = (tmpTimeKnock * 100)/simTimeKnock;
 
-			strB = String.format(lang.getText("QST_entry040")
-					, (int)tmpStepsRef, Tools.cutValue(tmpStepsPercentRef), Tools.cutValue(tmpTimeRef), Tools.cutValue(tmpTimePercentRef));
+			strB = "err.";
+			try {
+				strB = String.format(lang.getText("QST_entry040")
+						, (int)tmpStepsRef, Tools.cutValue(tmpStepsPercentRef), Tools.cutValue(tmpTimeRef), Tools.cutValue(tmpTimePercentRef));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry040", "error", true);
+			}
+			
 			//String text = " R Production (#): "+(int)tmpStepsRef + " ("+Tools.cutValue(tmpStepsPercentRef) +
 			//		"%) | \u03C4: "+ Tools.cutValue(tmpTimeRef) + " ("+Tools.cutValue(tmpTimePercentRef)+"%)" ;
 			note.addTextLineNL(strB, "text");
 
-			strB = String.format(lang.getText("QST_entry041")
-					, (int)tmpStepsKnock, Tools.cutValue(tmpStepsPercentKnock), Tools.cutValue(tmpTimeKnock), Tools.cutValue(tmpTimePercentKnock));
+			strB = "err.";
+			try {
+				strB = String.format(lang.getText("QST_entry041")
+						, (int)tmpStepsKnock, Tools.cutValue(tmpStepsPercentKnock), Tools.cutValue(tmpTimeKnock), Tools.cutValue(tmpTimePercentKnock));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry041", "error", true);
+			}
+			
 			//String text = " K Production (#): "+(int)tmpStepsKnock + " ("+Tools.cutValue(tmpStepsPercentKnock) +
 			//		"%) | \u03C4: "+ Tools.cutValue(tmpTimeKnock) + " ("+Tools.cutValue(tmpTimePercentKnock)+"%)" ;
 			note.addTextLineNL(strB, "text");
@@ -573,9 +641,15 @@ public class QuickSimTools {
 			if(diffTime > 0)
 				signT = "-";
 
-			String textDeltaProduction = String.format(lang.getText("QST_entry042")
-					, signS, (int)(Math.abs(tmpStepsRef - tmpStepsKnock)), signS, Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock))
-					, signT, Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)), signT, Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock)));
+			strB = "err.";
+			try {
+                strB = String.format(lang.getText("QST_entry042")
+						, signS, (int)(Math.abs(tmpStepsRef - tmpStepsKnock)), signS, Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock))
+						, signT, Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)), signT, Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock)));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry042", "error", true);
+			}
+			String textDeltaProduction = strB;
 			//String textDeltaProduction = "   \u0394Prod. :  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock)) + " ("+signS+Tools.cutValue(Math.abs(tmpStepsPercentRef - tmpStepsPercentKnock)) +
 			//		"%) | \u0394\u03C4: "+signT+ Tools.cutValue(Math.abs(tmpTimeRef - tmpTimeKnock)) + " ("+signT+Tools.cutValue(Math.abs(tmpTimePercentRef - tmpTimePercentKnock))+"%)" ;
 
@@ -585,8 +659,14 @@ public class QuickSimTools {
 
 			tmpStepsRef = result.get(0).transitionsStatistics.get(transIndex).get(3);
 			tmpStepsKnock = result.get(1).transitionsStatistics.get(transIndex).get(3);
+
+			strB = "err.";
+			try {
+				strB = String.format(lang.getText("QST_entry043"), (int)tmpStepsRef, (int)tmpStepsKnock);
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry043", "error", true);
+			}
 			
-			strB = String.format(lang.getText("QST_entry043"), (int)tmpStepsRef, (int)tmpStepsKnock);
 			//String text = " R Fired (#): "+(int)tmpStepsRef + "  |  " + " K Fired (#): "+(int)tmpStepsKnock;
 			note.addTextLineNL(strB, "text");
 
@@ -595,7 +675,13 @@ public class QuickSimTools {
 			if(diffSteps > 0)
 				signS = "-";
 
-			String textDeltaFire = String.format(lang.getText("QST_entry044"), signS, (int)(Math.abs(tmpStepsRef - tmpStepsKnock)));
+			strB = "err.";
+			try {
+                strB = String.format(lang.getText("QST_entry044"), signS, (int)(Math.abs(tmpStepsRef - tmpStepsKnock)));
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"QST_entry044", "error", true);
+			}
+			String textDeltaFire = strB;
 			//String textDeltaFire = "   \u0394Fired :  "+signS+(int)(Math.abs(tmpStepsRef - tmpStepsKnock));
 
 			note.addTextLineNL(textDeltaInactive, "text");

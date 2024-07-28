@@ -320,8 +320,12 @@ public class HolmesNodeInfoActions {
 			}
 		}
 		Collections.sort(mcts);
-		
-		String strB = String.format(lang.getText("HNIAwin_entry007"), invNo, index+1);
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HNIAwin_entry007"), invNo, index+1);
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HNIAwin_entry007", "error", true);
+		}
 		notepad.addTextLineNL(strB, "text");
 
 		for(int mct : mcts) {

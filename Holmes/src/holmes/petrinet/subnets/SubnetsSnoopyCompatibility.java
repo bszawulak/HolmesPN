@@ -194,7 +194,12 @@ public class SubnetsSnoopyCompatibility {
 				if(inFix || outFix) {
 					
 					notePad.addTextLineNL(lang.getText("SSC_entry001")+" "+node.getName(), "text");
-					String strB = String.format(lang.getText("SSC_entry002"), totalINadded, totalOUTadded);
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("SSC_entry002"), totalINadded, totalOUTadded);
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"SSC_entry002", "error", true);
+					}
 					notePad.addTextLineNL(strB, "text");
 				}
 			} catch (Exception e) {

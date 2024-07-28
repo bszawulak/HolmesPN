@@ -322,7 +322,12 @@ public class HolmesSSAwindowManager extends JFrame {
 	private void replaceStateAction() {
 		int selected = table.getSelectedRow();
 		Object[] options = {lang.getText("HSSAWMwin_entry013op1"), lang.getText("HSSAWMwin_entry013op2"),}; //
-		String strB = String.format(lang.getText("HSSAWMwin_entry013"), selected);
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HSSAWMwin_entry013"), selected);
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSSAWMwin_entry013", "error", true);
+		}
 		int n = JOptionPane.showOptionDialog(null,
 				strB,lang.getText("HSSAWMwin_entry013t"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, options, options[1]);

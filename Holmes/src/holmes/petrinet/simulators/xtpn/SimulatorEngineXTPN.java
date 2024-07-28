@@ -529,7 +529,12 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                 }
                 PlaceXTPN place = (PlaceXTPN) arc.getEndNode();
                 if(!(arc.getArcType() == Arc.TypeOfArc.NORMAL || arc.getArcType() == Arc.TypeOfArc.READARC)) {
-                    String strB = String.format(lang.getText("LOGentry00400"), place.getName(), arc);
+                    String strB = "err.";
+                    try {
+                        strB = String.format(lang.getText("LOGentry00400"), place.getName(), arc);
+                    } catch (Exception e) {
+                        overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00400", "error", true);
+                    }
                     overlord.log(strB, "warning", true);
                 }
 

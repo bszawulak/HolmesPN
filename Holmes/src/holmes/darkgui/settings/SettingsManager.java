@@ -100,6 +100,7 @@ public class SettingsManager {
         ArrayList<String> confiredDictionaries = new ArrayList<String>();
         confiredDictionaries.add("English");
         confiredDictionaries.add("Polish");
+        confiredDictionaries.add("German");
         confiredDictionaries.add("YourLanguage");
         if(!confiredDictionaries.contains(getValue("selected_language"))) {
             settingsNew.add(new Setting("selected_language", "English"));
