@@ -282,12 +282,12 @@ public class HolmesProgramProperties extends JFrame {
 		englishRadioButton.addActionListener(actionEvent -> {
 			if(noAction) return;
 			
-			String oldLang = lang.getSelectedLanguage();
+			String oldLang = changeKeyWordIntoLangWord(lang.getSelectedLanguage());
 			String strB = "err.";
 			try {
-				strB = String.format(lang.getText("HPPwinSYS_entry053"), "English", oldLang);
+				strB = String.format(lang.getText("HPPwinSYS_entry053"), lang.getText("HPPwinSYS_entry051"), oldLang);
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HPPwinSYS_entry053", "error", true);
+				overlord.log(lang.getText("LOGentryLNGexc")+" HPPwinSYS_entry053", "error", true);
 			}
 			lang.setLanguage("English", false);
 			JOptionPane.showMessageDialog(null, strB, lang.getText("information"),
@@ -312,12 +312,12 @@ public class HolmesProgramProperties extends JFrame {
 		polishRadioButton.addActionListener(actionEvent -> {
 			if(noAction) return;
 
-			String oldLang = lang.getSelectedLanguage();
+			String oldLang = changeKeyWordIntoLangWord(lang.getSelectedLanguage());
 			String strB	= "err.";
 			try {
-				strB = String.format(lang.getText("HPPwinSYS_entry053"), "Polish", oldLang);
+				strB = String.format(lang.getText("HPPwinSYS_entry053"), lang.getText("HPPwinSYS_entry052"), oldLang);
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HPPwinSYS_entry053", "error", true);
+				overlord.log(lang.getText("LOGentryLNGexc")+" HPPwinSYS_entry053", "error", true); //Polish
 			}
 			lang.setLanguage("Polish", false);
 			JOptionPane.showMessageDialog(null, strB, lang.getText("information"),
@@ -336,18 +336,18 @@ public class HolmesProgramProperties extends JFrame {
 			overlord.log(ex.getMessage(), "error", true);
 		}
 
-		JRadioButton germanRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry055")); //YourLanguage
+		JRadioButton germanRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry055")); //German
 		germanRadioButton.setBounds(posX+=40, posY, 90, 20);
 		germanRadioButton.setActionCommand("1");
 		germanRadioButton.addActionListener(actionEvent -> {
 			if(noAction) return;
 
-			String oldLang = lang.getSelectedLanguage();
+			String oldLang = changeKeyWordIntoLangWord(lang.getSelectedLanguage());
 			String strB = "err.";
 			try {
-				strB = String.format(lang.getText("HPPwinSYS_entry053"), "German", oldLang);
+				strB = String.format(lang.getText("HPPwinSYS_entry053"), lang.getText("HPPwinSYS_entry055"), oldLang); //German
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HPPwinSYS_entry053", "error", true);
+				overlord.log(lang.getText("LOGentryLNGexc")+" HPPwinSYS_entry053", "error", true);
 			}
 			lang.setLanguage("German", false);
 			JOptionPane.showMessageDialog(null, strB, lang.getText("information"),
@@ -355,6 +355,69 @@ public class HolmesProgramProperties extends JFrame {
 		});
 		group.add(germanRadioButton);
 		ioPanel.add(germanRadioButton);
+
+		//PRZYCISK HISZPANSKI:
+		try {
+			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/spain.png"));
+			JLabel flagLabelMNT = new JLabel(new ImageIcon(image));
+			flagLabelMNT.setBounds(posX+=100, posY, 38, 20);
+			ioPanel.add(flagLabelMNT);
+		} catch (Exception ex) {
+			overlord.log(ex.getMessage(), "error", true);
+		}
+
+		JRadioButton spainRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry056")); //Spanish
+		spainRadioButton.setBounds(posX+=40, posY, 90, 20);
+		spainRadioButton.setActionCommand("1");
+		spainRadioButton.addActionListener(actionEvent -> {
+			if(noAction) return;
+
+			String oldLang = changeKeyWordIntoLangWord(lang.getSelectedLanguage());
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HPPwinSYS_entry053"), lang.getText("HPPwinSYS_entry056"), oldLang); //Spanish
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" HPPwinSYS_entry053", "error", true);
+			}
+			lang.setLanguage("Spanish", false);
+			JOptionPane.showMessageDialog(null, strB, lang.getText("information"),
+					JOptionPane.INFORMATION_MESSAGE);
+		});
+		group.add(spainRadioButton);
+		ioPanel.add(spainRadioButton);
+
+		posX = 10;
+		posY+=40;
+
+		//PRZYCISK UKRAINSKI:
+		try {
+			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/ukraine.png"));
+			JLabel flagLabelMNT = new JLabel(new ImageIcon(image));
+			flagLabelMNT.setBounds(posX, posY, 38, 20);
+			ioPanel.add(flagLabelMNT);
+		} catch (Exception ex) {
+			overlord.log(ex.getMessage(), "error", true);
+		}
+
+		JRadioButton ukrainianRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry057")); //Ukrainian
+		ukrainianRadioButton.setBounds(posX+=40, posY, 90, 20);
+		ukrainianRadioButton.setActionCommand("1");
+		ukrainianRadioButton.addActionListener(actionEvent -> {
+			if(noAction) return;
+
+			String oldLang = changeKeyWordIntoLangWord(lang.getSelectedLanguage());
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HPPwinSYS_entry053"), lang.getText("HPPwinSYS_entry057"), oldLang); //Ukrainian
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" HPPwinSYS_entry053", "error", true);
+			}
+			lang.setLanguage("Ukrainian", false);
+			JOptionPane.showMessageDialog(null, strB, lang.getText("information"),
+					JOptionPane.INFORMATION_MESSAGE);
+		});
+		group.add(ukrainianRadioButton);
+		ioPanel.add(ukrainianRadioButton);
 
 		//PRZYCISK TWOJ JEZYK:
 		try {
@@ -372,21 +435,21 @@ public class HolmesProgramProperties extends JFrame {
 		yourLangRadioButton.addActionListener(actionEvent -> {
 			if(noAction) return;
 
-			String oldLang = lang.getSelectedLanguage();
+			String oldLang = changeKeyWordIntoLangWord(lang.getSelectedLanguage());
 			String strB = "err.";
 			try {
-				strB = String.format(lang.getText("HPPwinSYS_entry053"), "YourLanguage", oldLang);
+				strB = String.format(lang.getText("HPPwinSYS_entry053"), lang.getText("HPPwinSYS_entry054"), oldLang); //YourLanguage
 			} catch (Exception e) {
-				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HPPwinSYS_entry053", "error", true);
+				overlord.log(lang.getText("LOGentryLNGexc")+" HPPwinSYS_entry053", "error", true);
 			}
-			lang.setLanguage("Your", false);
+			lang.setLanguage("YourLanguage", false);
 			JOptionPane.showMessageDialog(null, strB, lang.getText("information"),
 					JOptionPane.INFORMATION_MESSAGE);
 		});
 		group.add(yourLangRadioButton);
 		ioPanel.add(yourLangRadioButton);
-
-		posX = 10;
+		
+		
 		
 		String current = lang.getSelectedLanguage();
 		if(current.equals("English")) {
@@ -395,15 +458,38 @@ public class HolmesProgramProperties extends JFrame {
 			group.setSelected(polishRadioButton.getModel(), true);
 		} else if(current.equals("German")) {
 			group.setSelected(germanRadioButton.getModel(), true);
+		} else if(current.equals("Spanish")) {
+			group.setSelected(spainRadioButton.getModel(), true);
+		} else if(current.equals("Ukrainian")) {
+			group.setSelected(ukrainianRadioButton.getModel(), true);
 		} else {
 			group.setSelected(yourLangRadioButton.getModel(), true);
 		}
 		
-		
-		posY+=120;
-		
 		noAction = false;
 		return ioPanel;
+	}
+
+	/**
+	 * 	Metoda dostaje na wejściu nazwę języka w takiej postaci jak wartości zmiennych programu, zwraca
+	 * 	nazwę języka z aktualnego słownika.
+	 * @param selectedLanguage String - nazwa języka w postaci zmiennej programu
+	 * @return String - nazwa języka w postaci z aktualnego słownika
+	 */
+	private String changeKeyWordIntoLangWord(String selectedLanguage) {
+		if(selectedLanguage.equals("English")) {
+			return lang.getText("HPPwinSYS_entry051");
+		} else if(selectedLanguage.equals("Polish")) {
+			return lang.getText("HPPwinSYS_entry052");
+		} else if(selectedLanguage.equals("German")) {
+			return lang.getText("HPPwinSYS_entry055");
+		} else if(selectedLanguage.equals("Spanish")) {
+			return lang.getText("HPPwinSYS_entry056");
+		} else if(selectedLanguage.equals("Ukrainian")) {
+			return lang.getText("HPPwinSYS_entry057");
+		} else {
+			return lang.getText("HPPwinSYS_entry054");
+		}
 	}
 
 	private Component createOtherOptionsPanel(int x, int y, int w, int h) {

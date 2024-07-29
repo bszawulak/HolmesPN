@@ -2575,6 +2575,8 @@ HPPwinSYS_entry052, Польська
 HPPwinSYS_entry053, Мова встановлена на: %s (з %s). Для застосування змін перезапустіть програму.
 HPPwinSYS_entry054, Ваша мова
 HPPwinSYS_entry055, Німецька
+HPPwinSYS_entry056, Іспанська
+HPPwinSYS_entry057, Українська
 
 //HolmesProgramPropertiesActions:
 HPPAwin_entry001, Виберіть Rscript.exe

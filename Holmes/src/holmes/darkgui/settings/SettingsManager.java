@@ -101,6 +101,8 @@ public class SettingsManager {
         confiredDictionaries.add("English");
         confiredDictionaries.add("Polish");
         confiredDictionaries.add("German");
+        confiredDictionaries.add("Ukrainian");
+        confiredDictionaries.add("Spanish");
         confiredDictionaries.add("YourLanguage");
         if(!confiredDictionaries.contains(getValue("selected_language"))) {
             settingsNew.add(new Setting("selected_language", "English"));

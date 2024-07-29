@@ -2589,6 +2589,8 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HPPwinSYS_entry053","Language set to: %s (from %s). In order for changes to take effect, restart the program.");
         defaultEnglish.put("HPPwinSYS_entry054","YourLang");
         defaultEnglish.put("HPPwinSYS_entry055","German");
+        defaultEnglish.put("HPPwinSYS_entry056","Spanish");
+        defaultEnglish.put("HPPwinSYS_entry057","Ukrainian");
 
         //HolmesProgramPropertiesActions:
         defaultEnglish.put("HPPAwin_entry001","Select Rscript.exe");

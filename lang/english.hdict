@@ -2575,6 +2575,8 @@ HPPwinSYS_entry052, Polish
 HPPwinSYS_entry053, Language set to: %s (from %s). In order for changes to take effect, restart the program.
 HPPwinSYS_entry054, YourLang
 HPPwinSYS_entry055, German
+HPPwinSYS_entry056, Spanish
+HPPwinSYS_entry057, Ukrainian
 
 //HolmesProgramPropertiesActions:
 HPPAwin_entry001, Select Rscript.exe
