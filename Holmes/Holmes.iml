@@ -102,5 +102,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="gs-core-2.0" level="project" />
+    <orderEntry type="library" name="gs-algo-2.0" level="project" />
   </component>
 </module>
