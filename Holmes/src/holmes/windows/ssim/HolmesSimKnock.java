@@ -163,7 +163,7 @@ public class HolmesSimKnock extends JPanel {
 	    result.add(refProgressBarKnockout);
 	    
 	    JCheckBox showdataCheckBox = new JCheckBox(lang.getText("HSKwin_entry004")); //Show results in notepad
-	    showdataCheckBox.setBounds(posXda+120, posYda+50, 220, 20);
+	    showdataCheckBox.setBounds(posXda+120, posYda+50, 300, 20);
 	    showdataCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			refShowNotepad = abstractButton.getModel().isSelected();
@@ -196,7 +196,7 @@ public class HolmesSimKnock extends JPanel {
 		
 		String[] data = { " ----- " };
 		referencesCombo = new JComboBox<String>(data); //final, aby listener przycisku odczytał wartość
-		referencesCombo.setBounds(posXda+80, posYda, 400, 20);
+		referencesCombo.setBounds(posXda+80, posYda, 420, 20);
 		referencesCombo.setMaximumRowCount(12);
 		referencesCombo.addActionListener(actionEvent -> {
 			if(mainSimWindow.doNotUpdate)
@@ -210,7 +210,7 @@ public class HolmesSimKnock extends JPanel {
 		result.add(referencesCombo);
 		
 		JButton removeRefButton = new JButton(lang.getText("HSKwin_entry007")); //Remove
-		removeRefButton.setBounds(posXda+485, posYda, 85, 20);
+		removeRefButton.setBounds(posXda+505, posYda, 100, 20);
 		removeRefButton.setMargin(new Insets(0, 0, 0, 0));
 		removeRefButton.setFocusPainted(false);
 		removeRefButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
@@ -225,38 +225,38 @@ public class HolmesSimKnock extends JPanel {
 		result.add(removeRefButton);
 
 		JLabel dateTxtLabel = new JLabel(lang.getText("HSKwin_entry008")); //Date:
-		dateTxtLabel.setBounds(posXda, posYda+20, 70, 20);
+		dateTxtLabel.setBounds(posXda, posYda+20, 90, 20);
 		result.add(dateTxtLabel);
 		refLabelDate = new JLabel("---");
-		refLabelDate.setBounds(posXda+80, posYda+20, 120, 20);
+		refLabelDate.setBounds(posXda+100, posYda+20, 120, 20);
 		result.add(refLabelDate);
 		
 		JLabel modeTxtLabel = new JLabel(lang.getText("HSKwin_entry009")); //Net mode:
-		modeTxtLabel.setBounds(posXda+210, posYda+20, 70, 20);
+		modeTxtLabel.setBounds(posXda+250, posYda+20, 110, 20);
 		result.add(modeTxtLabel);
 		refLabelSimNetMode = new JLabel("---");
-		refLabelSimNetMode.setBounds(posXda+290, posYda+20, 70, 20);
+		refLabelSimNetMode.setBounds(posXda+370, posYda+20, 70, 20);
 		result.add(refLabelSimNetMode);
 		
 		JLabel maxModeTxtLabel = new JLabel(lang.getText("HSKwin_entry010")); //Max mode:
-		maxModeTxtLabel.setBounds(posXda+360, posYda+20, 70, 20);
+		maxModeTxtLabel.setBounds(posXda+450, posYda+20, 90, 20);
 		result.add(maxModeTxtLabel);
 		refLabelMaxMode = new JLabel("---");
-		refLabelMaxMode.setBounds(posXda+430, posYda+20, 90, 20);
+		refLabelMaxMode.setBounds(posXda+550, posYda+20, 90, 20);
 		result.add(refLabelMaxMode);
 		
 		JLabel stepsTxtLabel = new JLabel(lang.getText("HSKwin_entry011")); //Sim. steps:
-		stepsTxtLabel.setBounds(posXda, posYda+40, 70, 20);
+		stepsTxtLabel.setBounds(posXda, posYda+40, 90, 20);
 		result.add(stepsTxtLabel);
 		refLabelSteps = new JLabel("---");
-		refLabelSteps.setBounds(posXda+80, posYda+40, 80, 20);
+		refLabelSteps.setBounds(posXda+100, posYda+40, 80, 20);
 		result.add(refLabelSteps);
 		
 		JLabel repsTxtLabel = new JLabel(lang.getText("HSKwin_entry012")); //Repetitions:
-		repsTxtLabel.setBounds(posXda+210, posYda+40, 70, 20);
+		repsTxtLabel.setBounds(posXda+250, posYda+40, 110, 20);
 		result.add(repsTxtLabel);
 		refLabelReps = new JLabel("---");
-		refLabelReps.setBounds(posXda+290, posYda+40, 90, 20);
+		refLabelReps.setBounds(posXda+370, posYda+40, 90, 20);
 		result.add(refLabelReps);
 		
 		mainSimWindow.doNotUpdate = false;
@@ -289,7 +289,7 @@ public class HolmesSimKnock extends JPanel {
 		result.add(dataTransitionsCombo);
 		
 		JButton addTransButton = new JButton(lang.getText("HSKwin_entry015")); //Add
-		addTransButton.setBounds(posXda+485, posYda, 70, 20);
+		addTransButton.setBounds(posXda+485, posYda, 100, 20);
 		addTransButton.setMargin(new Insets(0, 0, 0, 0));
 		addTransButton.setFocusPainted(false);
 		addTransButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/addIcon.png"));
@@ -302,7 +302,7 @@ public class HolmesSimKnock extends JPanel {
 		result.add(addTransButton);
 		
 		JButton removeTransButton = new JButton(lang.getText("HSKwin_entry016")); //Remove
-		removeTransButton.setBounds(posXda+560, posYda, 85, 20);
+		removeTransButton.setBounds(posXda+590, posYda, 100, 20);
 		removeTransButton.setMargin(new Insets(0, 0, 0, 0));
 		removeTransButton.setFocusPainted(false);
 		removeTransButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
@@ -328,7 +328,7 @@ public class HolmesSimKnock extends JPanel {
 		result.add(dataMctCombo);
 		
 		JButton addMCTButton = new JButton(lang.getText("HSKwin_entry018")); //Add
-		addMCTButton.setBounds(posXda+485, posYda+25, 70, 20);
+		addMCTButton.setBounds(posXda+485, posYda+25, 100, 20);
 		addMCTButton.setMargin(new Insets(0, 0, 0, 0));
 		addMCTButton.setFocusPainted(false);
 		addMCTButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/addIcon.png"));
@@ -341,7 +341,7 @@ public class HolmesSimKnock extends JPanel {
 		result.add(addMCTButton);
 		
 		JButton removeMCTButton = new JButton(lang.getText("HSKwin_entry019")); //Remove
-		removeMCTButton.setBounds(posXda+560, posYda+25, 85, 20);
+		removeMCTButton.setBounds(posXda+590, posYda+25, 100, 20);
 		removeMCTButton.setMargin(new Insets(0, 0, 0, 0));
 		removeMCTButton.setFocusPainted(false);
 		removeMCTButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/removeIcon.png"));
@@ -359,7 +359,7 @@ public class HolmesSimKnock extends JPanel {
         JPanel dataFieldPanel = new JPanel();
         dataFieldPanel.setLayout(new BorderLayout());
         dataFieldPanel.add(new JScrollPane(dataSelectedTransTextArea), BorderLayout.CENTER);
-        dataFieldPanel.setBounds(posXda+650, posYda, 230, 45);
+        dataFieldPanel.setBounds(posXda+700, posYda, 165, 45);
         result.add(dataFieldPanel);
         
         JButton clearButton = new JButton(lang.getText("HSKwin_entry020")); //Clear
@@ -422,11 +422,11 @@ public class HolmesSimKnock extends JPanel {
 		
 		JPanel special = new JPanel(null);
 		special.setBorder(BorderFactory.createTitledBorder(lang.getText("HSKwin_entry025"))); //Special options
-		special.setBounds(posXda+120, posYda, 650, 40);
+		special.setBounds(posXda+120, posYda, 770, 40);
 		result.add(special);
 		
 		dataSimUseEditorOfflineCheckBox = new JCheckBox(lang.getText("HSKwin_entry026")); //Manually disabled transitions
-		dataSimUseEditorOfflineCheckBox.setBounds(10, 15, 190, 20);
+		dataSimUseEditorOfflineCheckBox.setBounds(10, 15, 240, 20);
 		//dataSimUseEditorOfflineCheckBox.setEnabled(false);
 		dataSimUseEditorOfflineCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -435,7 +435,7 @@ public class HolmesSimKnock extends JPanel {
 		special.add(dataSimUseEditorOfflineCheckBox);
 		
 		dataSimComputeForAllTransitions = new JCheckBox(lang.getText("HSKwin_entry027")); //All transitions (one by one)
-		dataSimComputeForAllTransitions.setBounds(210, 15, 180, 20);
+		dataSimComputeForAllTransitions.setBounds(260, 15, 200, 20);
 		dataSimComputeForAllTransitions.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			dataSimComputeAll = abstractButton.getModel().isSelected();
@@ -443,7 +443,7 @@ public class HolmesSimKnock extends JPanel {
 		special.add(dataSimComputeForAllTransitions);
 		
 		JCheckBox showdataCheckBox = new JCheckBox(lang.getText("HSKwin_entry028")); //Show results in notepad
-	    showdataCheckBox.setBounds(400, 15, 240, 20);
+	    showdataCheckBox.setBounds(480, 15, 260, 20);
 	    showdataCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			dataShowNotepad = abstractButton.getModel().isSelected();
@@ -515,45 +515,45 @@ public class HolmesSimKnock extends JPanel {
 		result.add(removeDataButton);
 
 		JLabel dateTxtLabel = new JLabel(lang.getText("HSKwin_entry033")); //Date:
-		dateTxtLabel.setBounds(posXda, posYda+20, 70, 20);
+		dateTxtLabel.setBounds(posXda, posYda+20, 90, 20);
 		result.add(dateTxtLabel);
 		dataLabelDate = new JLabel("---");
-		dataLabelDate.setBounds(posXda+80, posYda+20, 120, 20);
+		dataLabelDate.setBounds(posXda+100, posYda+20, 120, 20);
 		result.add(dataLabelDate);
 		
 		JLabel modeTxtLabel = new JLabel(lang.getText("HSKwin_entry034")); //Net mode:
-		modeTxtLabel.setBounds(posXda+210, posYda+20, 70, 20);
+		modeTxtLabel.setBounds(posXda+250, posYda+20, 110, 20);
 		result.add(modeTxtLabel);
 		dataLabelSimNetMode = new JLabel("---");
-		dataLabelSimNetMode.setBounds(posXda+290, posYda+20, 70, 20);
+		dataLabelSimNetMode.setBounds(posXda+370, posYda+20, 70, 20);
 		result.add(dataLabelSimNetMode);
 		
 		JLabel maxModeTxtLabel = new JLabel(lang.getText("HSKwin_entry035")); //Max mode:
-		maxModeTxtLabel.setBounds(posXda+360, posYda+20, 70, 20);
+		maxModeTxtLabel.setBounds(posXda+450, posYda+20, 90, 20);
 		result.add(maxModeTxtLabel);
 		dataLabelMaxMode = new JLabel("---");
-		dataLabelMaxMode.setBounds(posXda+430, posYda+20, 90, 20);
+		dataLabelMaxMode.setBounds(posXda+550, posYda+20, 90, 20);
 		result.add(dataLabelMaxMode);
 		
 		JLabel stepsTxtLabel = new JLabel(lang.getText("HSKwin_entry036")); //Sim. steps:
-		stepsTxtLabel.setBounds(posXda, posYda+40, 70, 20);
+		stepsTxtLabel.setBounds(posXda, posYda+40, 90, 20);
 		result.add(stepsTxtLabel);
 		dataLabelSteps = new JLabel("---");
-		dataLabelSteps.setBounds(posXda+80, posYda+40, 80, 20);
+		dataLabelSteps.setBounds(posXda+100, posYda+40, 80, 20);
 		result.add(dataLabelSteps);
 		
 		JLabel repsTxtLabel = new JLabel(lang.getText("HSKwin_entry037")); //Repetitions:
-		repsTxtLabel.setBounds(posXda+210, posYda+40, 70, 20);
+		repsTxtLabel.setBounds(posXda+250, posYda+40, 110, 20);
 		result.add(repsTxtLabel);
 		dataLabelReps = new JLabel("---");
-		dataLabelReps.setBounds(posXda+290, posYda+40, 90, 20);
+		dataLabelReps.setBounds(posXda+370, posYda+40, 90, 20);
 		result.add(dataLabelReps);
 		
 		JLabel disabledTxtLabel = new JLabel(lang.getText("HSKwin_entry038")); //Disabled:
-		disabledTxtLabel.setBounds(posXda, posYda+60, 70, 20);
+		disabledTxtLabel.setBounds(posXda, posYda+60, 90, 20);
 		result.add(disabledTxtLabel);
 		dataLabelDisabled = new JLabel("----- ----- -----");
-		dataLabelDisabled.setBounds(posXda+80, posYda+60, 350, 20);
+		dataLabelDisabled.setBounds(posXda+100, posYda+60, 350, 20);
 		result.add(dataLabelDisabled);
 		
 		mainSimWindow.doNotUpdate = false;
@@ -620,17 +620,17 @@ public class HolmesSimKnock extends JPanel {
 	    result.add(stateManagerButton);
 		
 		JLabel stateLabel0 = new JLabel(lang.getText("HSKwin_entry045")); //Selected m0 state ID:
-		stateLabel0.setBounds(posXda+280, posYda+45, 200, 20);
+		stateLabel0.setBounds(posXda+280, posYda+45, 220, 20);
 		result.add(stateLabel0);
 		    
 		int selState = overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN;
 		selStateLabel = new JLabel(""+selState);
-	    selStateLabel.setBounds(posXda+475, posYda+45, 60, 20);
+	    selStateLabel.setBounds(posXda+510, posYda+45, 60, 20);
 	    result.add(selStateLabel);
 
 		//TODO: XTPN
 	    selStateDescrLabel = new JLabel(overlord.getWorkspace().getProject().accessStatesManager().getStateDescriptionPN(selState));
-	    selStateDescrLabel.setBounds(posXda+280, posYda+65, 400, 20);
+	    selStateDescrLabel.setBounds(posXda+280, posYda+65, 650, 20);
 	    result.add(selStateDescrLabel);
 		
 		return result;

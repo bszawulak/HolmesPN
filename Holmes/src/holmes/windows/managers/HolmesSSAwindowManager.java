@@ -186,7 +186,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		int posYda = 25;
 		
 		JButton selectStateButton = new JButton(lang.getText("HSSAWMwin_entry003")); //Select SSA vector
-		selectStateButton.setBounds(posXda, posYda, 130, 40);
+		selectStateButton.setBounds(posXda, posYda, 130, 50);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
 		selectStateButton.setIcon(Tools.getResIcon16("/icons/ssaWindow/selectSSAVectorIcon.png"));
@@ -213,7 +213,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		result.add(selectStateButton);
 		
 		JButton addNewStateButton = new JButton(lang.getText("HSSAWMwin_entry005")); //Add current SSA values
-		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		addNewStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
 		addNewStateButton.setIcon(Tools.getResIcon16("/icons/ssaWindow/addSSAVectorIcon.png"));
@@ -236,7 +236,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		result.add(addNewStateButton);
 		
 		JButton replaceStateButton = new JButton(lang.getText("HSSAWMwin_entry007")); //Replace SSA vector
-		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		replaceStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
 		replaceStateButton.setIcon(Tools.getResIcon16("/icons/ssaWindow/replaceSSAVectorIcon.png"));
@@ -250,7 +250,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		result.add(replaceStateButton);
 		
 		JButton removeStateButton = new JButton(lang.getText("HSSAWMwin_entry008")); //Remove SSA vector
-		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		removeStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
 		removeStateButton.setIcon(Tools.getResIcon16("/icons/ssaWindow/removeSSAVectorIcon.png"));
@@ -264,7 +264,7 @@ public class HolmesSSAwindowManager extends JFrame {
 		result.add(removeStateButton);
 		
 		JButton editStateButton = new JButton(lang.getText("HSSAWMwin_entry009")); //Edit SSA vector
-		editStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		editStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
 		editStateButton.setIcon(Tools.getResIcon32("/icons/ssaWindow/ssaEditor.png"));

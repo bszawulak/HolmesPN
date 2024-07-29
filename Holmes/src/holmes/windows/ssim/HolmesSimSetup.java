@@ -144,12 +144,12 @@ public class HolmesSimSetup extends JFrame {
 		panel.add(simStepsSpinner);
 
 		JLabel repetLabel = new JLabel(lang.getText("HSSetwin_entry004")); //Repetitions
-		repetLabel.setBounds(posX+85, posY, 80, 20);
+		repetLabel.setBounds(posX+85, posY, 105, 20);
 		panel.add(repetLabel);
 		
 		SpinnerModel simRepetsSpinnerModel = new SpinnerNumberModel(settings.getRepetitions(), 1, 100000, 10);
 		JSpinner simRepsSpinner = new JSpinner(simRepetsSpinnerModel);
-		simRepsSpinner.setBounds(posX+85, posY+20, 80, 20);
+		simRepsSpinner.setBounds(posX+110, posY+20, 70, 20);
 		simRepsSpinner.addChangeListener(e -> {
 			if(doNotUpdate)
 				return;
@@ -161,12 +161,12 @@ public class HolmesSimSetup extends JFrame {
 		panel.add(simRepsSpinner);
 
 		JLabel generatorLabel = new JLabel(lang.getText("HSSetwin_entry005")); //Random number generator
-		generatorLabel.setBounds(posX+170, posY, 180, 20);
+		generatorLabel.setBounds(posX+190, posY, 180, 20);
 		panel.add(generatorLabel);
 		
 		String[] simulator = {lang.getText("HSSetwin_entry006op1"), lang.getText("HSSetwin_entry006op2")}; //Random (Java default), HighQualityRandom (slower)
 		generatorType = new JComboBox<String>(simulator);
-		generatorType.setBounds(posX+170, posY+20, 200, 20);
+		generatorType.setBounds(posX+190, posY+20, 180, 20);
 		generatorType.setSelectedIndex(0);
 		generatorType.addActionListener(actionEvent -> {
 			if(doNotUpdate)
@@ -186,7 +186,7 @@ public class HolmesSimSetup extends JFrame {
 		JButton stateManagerButton = new JButton();
 	    stateManagerButton.setText(lang.getText("HSSetwin_entry006")); //States Manager
 	    stateManagerButton.setIcon(Tools.getResIcon32("/icons/stateManager/stManIcon.png"));
-	    stateManagerButton.setBounds(posX+380, posY, 130, 40);
+	    stateManagerButton.setBounds(posX+380, posY, 140, 40);
 	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
 	    stateManagerButton.setFocusPainted(false);
 	    stateManagerButton.addActionListener(actionEvent -> new HolmesStatesManager());
@@ -242,12 +242,12 @@ public class HolmesSimSetup extends JFrame {
 		
 		//NET TYPE MODE:
 		JPanel netTypeModePanel = new JPanel(null);
-		netTypeModePanel.setBounds(posX, posY, 150, 90);
+		netTypeModePanel.setBounds(posX, posY, 180, 90);
 		netTypeModePanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSSetwin_entry011"))); //Net type mode
 		panel.add(netTypeModePanel);
 		
 		classPNRadioButton = new JRadioButton(lang.getText("HSSetwin_entry012")); //Classical Petri Net
-		classPNRadioButton.setBounds(5, 20, 130, 20);
+		classPNRadioButton.setBounds(5, 20, 160, 20);
 		classPNRadioButton.setActionCommand("0");
 		classPNRadioButton.addActionListener(actionEvent -> {
 			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
@@ -261,7 +261,7 @@ public class HolmesSimSetup extends JFrame {
 		groupNetType.add(classPNRadioButton);
 
 		timeNetRadioButtion = new JRadioButton(lang.getText("HSSetwin_entry013")); //Time(d) Petri Net
-		timeNetRadioButtion.setBounds(5, 40, 130, 20);
+		timeNetRadioButtion.setBounds(5, 40, 160, 20);
 		timeNetRadioButtion.setActionCommand("1");
 		timeNetRadioButtion.addActionListener(actionEvent -> {
 			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
@@ -284,7 +284,7 @@ public class HolmesSimSetup extends JFrame {
 		groupNetType.add(timeNetRadioButtion);
 		
 		hybridNetRadioButton = new JRadioButton(lang.getText("HSSetwin_entry014")); //Hybrid Net
-		hybridNetRadioButton.setBounds(5, 60, 130, 20);
+		hybridNetRadioButton.setBounds(5, 60, 160, 20);
 		hybridNetRadioButton.setActionCommand("2");
 		hybridNetRadioButton.addActionListener(actionEvent -> {
 			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
@@ -300,12 +300,12 @@ public class HolmesSimSetup extends JFrame {
 		
 		//SUB-MODE:
 		JPanel subModeModePanel = new JPanel(null);
-		subModeModePanel.setBounds(posX+150, posY, 170, 90);
+		subModeModePanel.setBounds(posX+180, posY, 190, 90);
 		subModeModePanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSSetwin_entry015"))); //Simulator sub-mode
 		panel.add(subModeModePanel);
 		
 		fiftyModeRadioButton = new JRadioButton(lang.getText("HSSetwin_entry016")); //50/50 mode (async.)
-		fiftyModeRadioButton.setBounds(5, 20, 140, 20);
+		fiftyModeRadioButton.setBounds(5, 20, 170, 20);
 		fiftyModeRadioButton.setActionCommand("0");
 		fiftyModeRadioButton.addActionListener(actionEvent -> {
 			if(doNotUpdate)
@@ -321,7 +321,7 @@ public class HolmesSimSetup extends JFrame {
 		groupSimMode.add(fiftyModeRadioButton);
 
 		maxModeRadioButton = new JRadioButton(lang.getText("HSSetwin_entry017")); //Maximum mode (sync.)
-		maxModeRadioButton.setBounds(5, 40, 160, 20);
+		maxModeRadioButton.setBounds(5, 40, 170, 20);
 		maxModeRadioButton.setActionCommand("1");
 		maxModeRadioButton.addActionListener(actionEvent -> {
 			if(doNotUpdate)
@@ -337,7 +337,7 @@ public class HolmesSimSetup extends JFrame {
 		groupSimMode.add(maxModeRadioButton);
 		
 		singleModeRadioButton = new JRadioButton(lang.getText("HSSetwin_entry018")); //Single fire mode
-		singleModeRadioButton.setBounds(5, 60, 140, 20);
+		singleModeRadioButton.setBounds(5, 60, 170, 20);
 		singleModeRadioButton.setActionCommand("2");
 		singleModeRadioButton.addActionListener(actionEvent -> {
 			if(doNotUpdate)
@@ -353,7 +353,8 @@ public class HolmesSimSetup extends JFrame {
 
 		
 		allowEmptySteps = new JCheckBox(lang.getText("HSSetwin_entry019")); //Allow empty steps
-		allowEmptySteps.setBounds(posX+325, posY, 150, 20);
+		allowEmptySteps.setBounds(posX+375, posY, 180, 20);
+		allowEmptySteps.setToolTipText(lang.getText("HSSetwin_entry019t"));
 		allowEmptySteps.addActionListener(actionEvent -> {
 			if(doNotUpdate)
 				return;
@@ -392,7 +393,8 @@ public class HolmesSimSetup extends JFrame {
 		panel.add(createFRWindowButton);
 		
 		useMassActionKinetics = new JCheckBox(lang.getText("HSSetwin_entry022")); //Mass action kinetics enabled
-		useMassActionKinetics.setBounds(posX+130, posY, 200, 20);
+		useMassActionKinetics.setToolTipText(lang.getText("HSSetwin_entry022t"));
+		useMassActionKinetics.setBounds(posX+130, posY, 370, 20);
 		useMassActionKinetics.addActionListener(actionEvent -> {
 			if(doNotUpdate)
 				return;
@@ -404,7 +406,7 @@ public class HolmesSimSetup extends JFrame {
 		
 		detRemoveMode = new JCheckBox(lang.getText("HSSetwin_entry023")); //Remove deactivated deterministic SPN transitions
 		detRemoveMode.setToolTipText(lang.getText("HSSetwin_entry023t"));
-		detRemoveMode.setBounds(posX+130, posY+20, 350, 20);
+		detRemoveMode.setBounds(posX+130, posY+20, 370, 20);
 		detRemoveMode.addActionListener(actionEvent -> {
 			if(doNotUpdate)
 				return;
@@ -416,12 +418,12 @@ public class HolmesSimSetup extends JFrame {
 		
 		
 		JPanel immSPNModePanel = new JPanel(null);
-		immSPNModePanel.setBounds(posX, posY+45, 260, 90);
+		immSPNModePanel.setBounds(posX, posY+45, 300, 90);
 		immSPNModePanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSSetwin_entry024"))); //Immediate-transition SPN mode
 		panel.add(immSPNModePanel);
 		
 		immOnly1RadioButton = new JRadioButton(lang.getText("HSSetwin_entry025")); //Only 1 with the highest priority fire
-		immOnly1RadioButton.setBounds(5, 20, 240, 20);
+		immOnly1RadioButton.setBounds(5, 20, 280, 20);
 		immOnly1RadioButton.setToolTipText(lang.getText("HSSetwin_entry025t"));
 		immOnly1RadioButton.setActionCommand("0");
 		immOnly1RadioButton.addActionListener(actionEvent -> {
@@ -437,9 +439,10 @@ public class HolmesSimSetup extends JFrame {
 		immSPNmode.add(immOnly1RadioButton);
 
 		immSchedRadioButton = new JRadioButton(lang.getText("HSSetwin_entry026")); //Sequenced firing by priority
-		immSchedRadioButton.setBounds(5, 40, 220, 20);
+		immSchedRadioButton.setBounds(5, 40, 280, 20);
 		immOnly1RadioButton.setToolTipText(lang.getText("HSSetwin_entry026t"));
 		immSchedRadioButton.setActionCommand("1");
+		immSchedRadioButton.setToolTipText(lang.getText("HSSetwin_entry026t"));
 		immSchedRadioButton.addActionListener(actionEvent -> {
 			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
 			if(aButton.isSelected()) {
@@ -453,7 +456,7 @@ public class HolmesSimSetup extends JFrame {
 		immSPNmode.add(immSchedRadioButton);
 		
 		immProbRadioButton = new JRadioButton(lang.getText("HSSetwin_entry027")); //Priority - probability mode
-		immProbRadioButton.setBounds(5, 60, 220, 20);
+		immProbRadioButton.setBounds(5, 60, 280, 20);
 		immProbRadioButton.setToolTipText(lang.getText("HSSetwin_entry027t"));
 		immProbRadioButton.setActionCommand("2");
 		immProbRadioButton.addActionListener(actionEvent -> {

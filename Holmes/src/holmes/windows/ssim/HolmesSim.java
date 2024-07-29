@@ -199,7 +199,7 @@ public class HolmesSim extends JFrame {
 		int posYda = 20;
 		
 		acqDataButton = new JButton(lang.getText("HSSwin_entry007")); //SimStart
-		acqDataButton.setBounds(posXda, posYda, 110, 40);
+		acqDataButton.setBounds(posXda, posYda, 130, 40);
 		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
 		acqDataButton.setFocusPainted(false);
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
@@ -210,7 +210,7 @@ public class HolmesSim extends JFrame {
 		JButton cancelButton = new JButton();
 		cancelButton.setText(lang.getText("HSSwin_entry008")); //STOP
 		cancelButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/stopIcon.png"));
-		cancelButton.setBounds(posXda, posYda+45, 110, 30);
+		cancelButton.setBounds(posXda, posYda+45, 130, 35);
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		cancelButton.setFocusPainted(false);
 		cancelButton.addActionListener(actionEvent -> ssim.setCancelStatus(true));
@@ -218,7 +218,7 @@ public class HolmesSim extends JFrame {
 		dataAcquisitionPanel.add(cancelButton);
 
 		JButton simSettingsButton = new JButton(lang.getText("HSSwin_entry009")); //SimSettings
-		simSettingsButton.setBounds(posXda+120, posYda, 130, 40);
+		simSettingsButton.setBounds(posXda+140, posYda, 130, 40);
 		simSettingsButton.setMargin(new Insets(0, 0, 0, 0));
 		simSettingsButton.setFocusPainted(false);
 		simSettingsButton.setIcon(Tools.getResIcon32("/icons/simSettings/setupIcon.png"));
@@ -230,22 +230,22 @@ public class HolmesSim extends JFrame {
 	    stateManagerButton.setText(lang.getText("HSSwin_entry010")); //StatesManager
 	    stateManagerButton.setIcon(Tools.getResIcon32("/icons/stateManager/stManIcon.png"));
 		stateManagerButton.setToolTipText(lang.getText("HSSwin_entry010t"));
-	    stateManagerButton.setBounds(posXda+260, posYda, 130, 40);
+	    stateManagerButton.setBounds(posXda+280, posYda, 130, 40);
 	    stateManagerButton.setMargin(new Insets(0, 0, 0, 0));
 	    stateManagerButton.setFocusPainted(false);
 	    stateManagerButton.addActionListener(actionEvent -> new HolmesStatesManager());
 		dataAcquisitionPanel.add(stateManagerButton);
 		
 		JLabel stateLabel0 = new JLabel(lang.getText("HSSwin_entry011")); //Selected m0 state ID:
-	    stateLabel0.setBounds(posXda+400, posYda, 200, 20);
+	    stateLabel0.setBounds(posXda+420, posYda, 200, 20);
 	    dataAcquisitionPanel.add(stateLabel0);
 	    
 	    selStateLabel = new JLabel(""+overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN);
-	    selStateLabel.setBounds(posXda+400, posYda+20, 160, 20);
+	    selStateLabel.setBounds(posXda+420, posYda+20, 160, 20);
 	    dataAcquisitionPanel.add(selStateLabel);
 		
 		JButton clearDataButton = new JButton(lang.getText("HSSwin_entry012")); //Clear
-		clearDataButton.setBounds(posXda+840, posYda, 110, 40);
+		clearDataButton.setBounds(posXda+800, posYda, 150, 40);
 		clearDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/clearData.png"));
 		clearDataButton.setToolTipText(lang.getText("HSSwin_entry012t"));
 		clearDataButton.setFocusPainted(false);
@@ -258,7 +258,7 @@ public class HolmesSim extends JFrame {
 		
 
 		progressBar = new JProgressBar();
-		progressBar.setBounds(posXda+120, posYda+40, 840, 40);
+		progressBar.setBounds(posXda+140, posYda+40, 810, 40);
 		progressBar.setMaximum(100);
 		progressBar.setMinimum(0);
 	    progressBar.setValue(0);
@@ -288,7 +288,7 @@ public class HolmesSim extends JFrame {
 		int posYchart = 20;
 		
 		JButton showAllButton = new JButton(lang.getText("HSSwin_entry015")); //Show all
-		showAllButton.setBounds(posXchart, posYchart, 120, 24);
+		showAllButton.setBounds(posXchart, posYchart, 150, 24);
 		showAllButton.setMargin(new Insets(0, 0, 0, 0));
 		showAllButton.setFocusPainted(false);
 		showAllButton.setIcon(Tools.getResIcon16("/icons/stateSim/showAll.png"));
@@ -296,8 +296,8 @@ public class HolmesSim extends JFrame {
 		showAllButton.addActionListener(actionEvent -> showAllPlacesData());
 		placesChartOptionsPanel.add(showAllButton);
 		
-		JButton showNotepadButton = new JButton("Show notepad"); //Show notepad
-		showNotepadButton.setBounds(posXchart+130, posYchart, 120, 24);
+		JButton showNotepadButton = new JButton(lang.getText("HSSwin_entry016")); //Show notepad
+		showNotepadButton.setBounds(posXchart+160, posYchart, 150, 24);
 		showNotepadButton.setMargin(new Insets(0, 0, 0, 0));
 		showNotepadButton.setFocusPainted(false);
 		showNotepadButton.setIcon(Tools.getResIcon16("/icons/stateSim/showNotepad.png"));
@@ -306,13 +306,13 @@ public class HolmesSim extends JFrame {
 		placesChartOptionsPanel.add(showNotepadButton);
 		
 		JLabel labelInt = new JLabel(lang.getText("HSSwin_entry017")); //Interval:
-		labelInt.setBounds(posXchart+280, posYchart+2, 70, 20);
+		labelInt.setBounds(posXchart+350, posYchart+2, 80, 20);
 		placesChartOptionsPanel.add(labelInt);
 		
 		int mValue = overlord.simSettings.getSimSteps()/10;
 		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(placesInterval, 0, mValue, 10);
 		placesIntervalSpinner = new JSpinner(intervSpinnerModel);
-		placesIntervalSpinner.setBounds(posXchart+330, posYchart+3, 60, 20);
+		placesIntervalSpinner.setBounds(posXchart+430, posYchart+3, 60, 20);
 		placesIntervalSpinner.addChangeListener(e -> {
 			JSpinner spinner = (JSpinner) e.getSource();
 			placesInterval = (int) spinner.getValue();
@@ -321,7 +321,7 @@ public class HolmesSim extends JFrame {
 		placesChartOptionsPanel.add(placesIntervalSpinner);
 		
 		JCheckBox sortedCheckBox = new JCheckBox(lang.getText("HSSwin_entry018")); //Sorted by tokens
-		sortedCheckBox.setBounds(posXchart+460, posYchart+10, 130, 20);
+		sortedCheckBox.setBounds(posXchart+500, posYchart+10, 200, 20);
 		sortedCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			sortedP = abstractButton.getModel().isSelected();
@@ -337,7 +337,7 @@ public class HolmesSim extends JFrame {
 		String[] dataP = { "---" };
 		placesCombo = new JComboBox<String>(dataP); //final, aby listener przycisku odczytał wartość
 		placesCombo.setLocation(posXchart + 75, posYchart+2);
-		placesCombo.setSize(500, 20);
+		placesCombo.setSize(580, 20);
 		placesCombo.setSelectedIndex(0);
 		placesCombo.setMaximumRowCount(12);
 		placesCombo.addActionListener(actionEvent -> {
@@ -348,7 +348,7 @@ public class HolmesSim extends JFrame {
 		posYchart += 30;
 		
 		JButton addPlaceButton = new JButton(lang.getText("HSSwin_entry020")); //Add to chart
-		addPlaceButton.setBounds(posXchart, posYchart+2, 110, 24);
+		addPlaceButton.setBounds(posXchart, posYchart+2, 140, 24);
 		addPlaceButton.setMargin(new Insets(0, 0, 0, 0));
 		addPlaceButton.setFocusPainted(false);
 		addPlaceButton.setIcon(Tools.getResIcon16("/icons/stateSim/addChart.png"));
@@ -378,7 +378,7 @@ public class HolmesSim extends JFrame {
 		placesChartOptionsPanel.add(addPlaceButton);
 		
 		JButton removePlaceButton = new JButton(lang.getText("HSSwin_entry022")); //Remove
-		removePlaceButton.setBounds(posXchart+120, posYchart+2, 110, 24);
+		removePlaceButton.setBounds(posXchart+150, posYchart+2, 140, 24);
 		removePlaceButton.setMargin(new Insets(0, 0, 0, 0));
 		removePlaceButton.setFocusPainted(false);
 		removePlaceButton.setIcon(Tools.getResIcon16("/icons/stateSim/removeChart.png"));
@@ -406,7 +406,7 @@ public class HolmesSim extends JFrame {
 		placesChartOptionsPanel.add(removePlaceButton);
 		
 		JButton clearPlacesChartButton = new JButton(lang.getText("HSSwin_entry023")); //Clear chart
-		clearPlacesChartButton.setBounds(posXchart+240, posYchart+2, 110, 24);
+		clearPlacesChartButton.setBounds(posXchart+300, posYchart+2, 140, 24);
 		clearPlacesChartButton.setMargin(new Insets(0, 0, 0, 0));
 		clearPlacesChartButton.setFocusPainted(false);
 		clearPlacesChartButton.setIcon(Tools.getResIcon16("/icons/stateSim/clearChart.png"));
@@ -414,21 +414,21 @@ public class HolmesSim extends JFrame {
 		clearPlacesChartButton.addActionListener(actionEvent -> clearPlacesChart());
 		placesChartOptionsPanel.add(clearPlacesChartButton);
 		
-		JButton savePlacesChartButton = new JButton("Save Image"); //Save Image
-		savePlacesChartButton.setBounds(posXchart+360, posYchart+2, 110, 24);
+		JButton savePlacesChartButton = new JButton(lang.getText("HSSwin_entry038")); //Save Image
+		savePlacesChartButton.setBounds(posXchart+450, posYchart+2, 140, 24);
 		savePlacesChartButton.setMargin(new Insets(0, 0, 0, 0));
 		savePlacesChartButton.setFocusPainted(false);
 		savePlacesChartButton.setIcon(Tools.getResIcon16("/icons/stateSim/saveImage.png"));
-		savePlacesChartButton.setToolTipText("Saves the chart as image file.");
+		savePlacesChartButton.setToolTipText(lang.getText("HSSwin_entry038t"));
 		savePlacesChartButton.addActionListener(actionEvent -> saveChartImage("places", 1200, 1024));
 		placesChartOptionsPanel.add(savePlacesChartButton);
 		
-		JButton showPlaceButton = new JButton("Find place"); //Find place
-		showPlaceButton.setBounds(posXchart+480, posYchart+2, 110, 24);
+		JButton showPlaceButton = new JButton(lang.getText("HSSwin_entry039")); //Find place
+		showPlaceButton.setBounds(posXchart+600, posYchart+2, 140, 24);
 		showPlaceButton.setMargin(new Insets(0, 0, 0, 0));
 		showPlaceButton.setFocusPainted(false);
 		showPlaceButton.setIcon(Tools.getResIcon16("/icons/stateSim/findNode.png"));
-		showPlaceButton.setToolTipText("Find selected place within the net.");
+		showPlaceButton.setToolTipText(lang.getText("HSSwin_entry039t"));
 		showPlaceButton.addActionListener(actionEvent -> {
 			int selected = placesCombo.getSelectedIndex();
 			if(selected>0) {
@@ -524,7 +524,7 @@ public class HolmesSim extends JFrame {
 		int posYchart = 20;
 		
 		JButton showAllButton = new JButton(lang.getText("HSSwin_entry030")); //Show all
-		showAllButton.setBounds(posXchart, posYchart, 120, 24);
+		showAllButton.setBounds(posXchart, posYchart, 150, 24);
 		showAllButton.setMargin(new Insets(0, 0, 0, 0));
 		showAllButton.setFocusPainted(false);
 		showAllButton.setIcon(Tools.getResIcon16("/icons/stateSim/showAll.png"));
@@ -533,7 +533,7 @@ public class HolmesSim extends JFrame {
 		transChartOptionsPanel.add(showAllButton);
 		
 		JButton showNotepadButton = new JButton(lang.getText("HSSwin_entry031")); //Show notepad
-		showNotepadButton.setBounds(posXchart+130, posYchart, 120, 24);
+		showNotepadButton.setBounds(posXchart+160, posYchart, 150, 24);
 		showNotepadButton.setMargin(new Insets(0, 0, 0, 0));
 		showNotepadButton.setFocusPainted(false);
 		showNotepadButton.setIcon(Tools.getResIcon16("/icons/stateSim/showNotepad.png"));
@@ -542,13 +542,13 @@ public class HolmesSim extends JFrame {
 		transChartOptionsPanel.add(showNotepadButton);
 		
 		JLabel label1 = new JLabel(lang.getText("HSSwin_entry032")); //Interval:
-		label1.setBounds(posXchart+280, posYchart+2, 70, 20);
+		label1.setBounds(posXchart+350, posYchart+2, 80, 20);
 		transChartOptionsPanel.add(label1);
 		
 		int mValue = overlord.simSettings.getSimSteps()/10;
 		SpinnerModel intervSpinnerModel = new SpinnerNumberModel(transInterval, 0, mValue, 10);
 		transIntervalSpinner = new JSpinner(intervSpinnerModel);
-		transIntervalSpinner.setBounds(posXchart+330, posYchart+3, 60, 20);
+		transIntervalSpinner.setBounds(posXchart+430, posYchart+3, 60, 20);
 		transIntervalSpinner.addChangeListener(e -> {
 			JSpinner spinner = (JSpinner) e.getSource();
 			transInterval = (int) spinner.getValue();
@@ -557,7 +557,7 @@ public class HolmesSim extends JFrame {
 		transChartOptionsPanel.add(transIntervalSpinner);
 
 		JCheckBox sortedCheckBox = new JCheckBox(lang.getText("HSSwin_entry033")); //Sorted by firing
-		sortedCheckBox.setBounds(posXchart+460, posYchart+10, 130, 20);
+		sortedCheckBox.setBounds(posXchart+500, posYchart+10, 200, 20);
 		sortedCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			sortedT = abstractButton.getModel().isSelected();
@@ -573,7 +573,7 @@ public class HolmesSim extends JFrame {
 		String[] dataP = { "---" };
 		transitionsCombo = new JComboBox<String>(dataP); //final, aby listener przycisku odczytał wartość
 		transitionsCombo.setLocation(posXchart + 75, posYchart+2);
-		transitionsCombo.setSize(500, 20);
+		transitionsCombo.setSize(580, 20);
 		transitionsCombo.setSelectedIndex(0);
 		transitionsCombo.setMaximumRowCount(12);
 		transChartOptionsPanel.add(transitionsCombo);
@@ -581,7 +581,7 @@ public class HolmesSim extends JFrame {
 		posYchart += 30;
 		
 		JButton addTransitionButton = new JButton(lang.getText("HSSwin_entry035")); //Add to chart
-		addTransitionButton.setBounds(posXchart, posYchart+2, 110, 24);
+		addTransitionButton.setBounds(posXchart, posYchart+2, 140, 24);
 		addTransitionButton.setMargin(new Insets(0, 0, 0, 0));
 		addTransitionButton.setFocusPainted(false);
 		addTransitionButton.setIcon(Tools.getResIcon16("/icons/stateSim/addChart.png"));
@@ -609,7 +609,7 @@ public class HolmesSim extends JFrame {
 		transChartOptionsPanel.add(addTransitionButton);
 		
 		JButton removeTransitionButton = new JButton(lang.getText("HSSwin_entry036")); //Remove
-		removeTransitionButton.setBounds(posXchart+120, posYchart+2, 110, 24);
+		removeTransitionButton.setBounds(posXchart+150, posYchart+2, 140, 24);
 		removeTransitionButton.setMargin(new Insets(0, 0, 0, 0));
 		removeTransitionButton.setFocusPainted(false);
 		removeTransitionButton.setIcon(Tools.getResIcon16("/icons/stateSim/removeChart.png"));
@@ -633,7 +633,7 @@ public class HolmesSim extends JFrame {
 		transChartOptionsPanel.add(removeTransitionButton);
 		
 		JButton clearTransChartButton = new JButton(lang.getText("HSSwin_entry037")); //Clear chart
-		clearTransChartButton.setBounds(posXchart+240, posYchart+2, 110, 24);
+		clearTransChartButton.setBounds(posXchart+300, posYchart+2, 140, 24);
 		clearTransChartButton.setMargin(new Insets(0, 0, 0, 0));
 		clearTransChartButton.setFocusPainted(false);
 		clearTransChartButton.setIcon(Tools.getResIcon16("/icons/stateSim/clearChart.png"));
@@ -642,7 +642,7 @@ public class HolmesSim extends JFrame {
 		transChartOptionsPanel.add(clearTransChartButton);
 		
 		JButton saveTransitionsChartButton = new JButton(lang.getText("HSSwin_entry038")); //Save Image
-		saveTransitionsChartButton.setBounds(posXchart+360, posYchart+2, 110, 24);
+		saveTransitionsChartButton.setBounds(posXchart+450, posYchart+2, 140, 24);
 		saveTransitionsChartButton.setMargin(new Insets(0, 0, 0, 0));
 		saveTransitionsChartButton.setFocusPainted(false);
 		saveTransitionsChartButton.setIcon(Tools.getResIcon16("/icons/stateSim/saveImage.png"));
@@ -651,7 +651,7 @@ public class HolmesSim extends JFrame {
 		transChartOptionsPanel.add(saveTransitionsChartButton);
 		
 		JButton showTransButton = new JButton(lang.getText("HSSwin_entry039")); //Find trans.
-		showTransButton.setBounds(posXchart+480, posYchart+2, 110, 24);
+		showTransButton.setBounds(posXchart+600, posYchart+2, 140, 24);
 		showTransButton.setMargin(new Insets(0, 0, 0, 0));
 		showTransButton.setFocusPainted(false);
 		showTransButton.setIcon(Tools.getResIcon16("/icons/stateSim/findNode.png"));

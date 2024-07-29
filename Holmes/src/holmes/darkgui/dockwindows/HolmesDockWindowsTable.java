@@ -2615,7 +2615,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JLabel debugModeLabel1 = new JLabel("Debug1:", JLabel.LEFT);
         debugModeLabel1.setBounds(columnA_posX, columnA_Y += 45, colACompLength, 20);
-        components.add(debugModeLabel1);
+        //components.add(debugModeLabel1);
 
         JTextArea debugChangeID = new JTextArea("");
         debugChangeID.setBounds(columnB_posX, columnB_Y += 70, 60, 20);
@@ -2652,7 +2652,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 }
             }
         });
-        components.add(debugChangeID);
+        //components.add(debugChangeID);
 
         JButton aaa = new JButton();
         aaa.setName("ChangeID");
@@ -2661,7 +2661,7 @@ public class HolmesDockWindowsTable extends JPanel {
         aaa.setBounds(columnB_posX + 70, columnB_Y, 80, 20);
         aaa.addActionListener(actionEvent -> {
         });
-        components.add(aaa);
+        //components.add(aaa);
 
         panel.setLayout(null);
         for (JComponent component : components) {
@@ -6022,7 +6022,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(markMCTcheckBox);
 
         JCheckBox glowINVcheckBox = new JCheckBox(lang.getText("HDWT_entry224TinvPanel")); //Transitions glow
-        glowINVcheckBox.setBounds(colA_posX + 130, positionY + 15, 120, 20);
+        glowINVcheckBox.setBounds(colA_posX + 130, positionY + 15, 150, 20);
         glowINVcheckBox.setSelected(true);
         glowINVcheckBox.addActionListener(actionEvent -> {
             AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -6059,31 +6059,31 @@ public class HolmesDockWindowsTable extends JPanel {
 
         //TPN:
         JLabel labelTime1 = new JLabel(lang.getText("HDWT_entry226TinvPanel"));  //Min. time: 
-        labelTime1.setBounds(colA_posX, positionY += 20, 80, 20);
+        labelTime1.setBounds(colA_posX, positionY += 20, 100, 20);
         components.add(labelTime1);
         minTimeLabel = new JLabel("---");
-        minTimeLabel.setBounds(colB_posX, positionY, 80, 20);
+        minTimeLabel.setBounds(colB_posX+20, positionY, 80, 20);
         components.add(minTimeLabel);
 
         JLabel labelTime2 = new JLabel(lang.getText("HDWT_entry228TinvPanel")); //Avg. time: 
-        labelTime2.setBounds(colA_posX, positionY += 20, 80, 20);
+        labelTime2.setBounds(colA_posX, positionY += 20, 100, 20);
         components.add(labelTime2);
         avgTimeLabel = new JLabel("---");
-        avgTimeLabel.setBounds(colB_posX, positionY, 80, 20);
+        avgTimeLabel.setBounds(colB_posX+20, positionY, 80, 20);
         components.add(avgTimeLabel);
 
         JLabel labelTime3 = new JLabel(lang.getText("HDWT_entry227TinvPanel")); //Max. time: 
-        labelTime3.setBounds(colA_posX, positionY += 20, 80, 20);
+        labelTime3.setBounds(colA_posX, positionY += 20, 100, 20);
         components.add(labelTime3);
         maxTimeLabel = new JLabel("---");
-        maxTimeLabel.setBounds(colB_posX, positionY, 80, 20);
+        maxTimeLabel.setBounds(colB_posX+20, positionY, 80, 20);
         components.add(maxTimeLabel);
 
         JLabel labelTime4 = new JLabel(lang.getText("HDWT_entry229TinvPanel")); //Structure:
-        labelTime4.setBounds(colA_posX, positionY += 20, 80, 20);
+        labelTime4.setBounds(colA_posX, positionY += 20, 100, 20);
         components.add(labelTime4);
         structureLabel = new JLabel("---");
-        structureLabel.setBounds(colB_posX, positionY, 200, 20);
+        structureLabel.setBounds(colB_posX+20, positionY, 200, 20);
         components.add(structureLabel);
 
         doNotUpdate = false;
@@ -6799,11 +6799,11 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // getting the data
         JLabel chooseMctLabel = new JLabel(lang.getText("HDWT_entry239MCTPanel")); //Choose MCT:
-        chooseMctLabel.setBounds(colA_posX, positionY, 80, 20);
+        chooseMctLabel.setBounds(colA_posX, positionY, 100, 20);
         components.add(chooseMctLabel);
 
         chooseMctBox = new JComboBox<>(mctHeaders);
-        chooseMctBox.setBounds(colB_posX, positionY, 150, 20);
+        chooseMctBox.setBounds(colB_posX+15, positionY, 150, 20);
         chooseMctBox.addActionListener(actionEvent -> {
             if(mctGroups.isEmpty())
                 return;
@@ -7674,7 +7674,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JButton refreshButton = new JButton();
         refreshButton.setText(lang.getText("HDWT_entry282MCSPanel")); //Refresh data
-        refreshButton.setBounds(posX, posY + 30, 120, 30);
+        refreshButton.setBounds(posX, posY + 30, 150, 30);
         refreshButton.addActionListener(actionEvent -> {
             transitions = overlord.getWorkspace().getProject().getTransitions();
             if (transitions.isEmpty())
@@ -7934,7 +7934,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JButton markInvButton = new JButton();
         markInvButton.setText(lang.getText("HDWT_entry289FixPanel")); //Show inv.
-        markInvButton.setBounds(internalX + 185, internalY - 18, 100, 32);
+        markInvButton.setBounds(internalX + 185, internalY - 18, 110, 32);
         markInvButton.setMargin(new Insets(0, 0, 0, 0));
         markInvButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
         markInvButton.addActionListener(actionEvent -> detector.markSubSurNonInvariantsPlaces());
@@ -7955,7 +7955,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JButton markIOPlacesButton = new JButton();
         markIOPlacesButton.setText(lang.getText("HDWT_entry292FixPanel")); //Show places
-        markIOPlacesButton.setBounds(internalX + 185, internalY - 16, 100, 32);
+        markIOPlacesButton.setBounds(internalX + 185, internalY - 16, 110, 32);
         markIOPlacesButton.setMargin(new Insets(0, 0, 0, 0));
         markIOPlacesButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
         markIOPlacesButton.addActionListener(actionEvent -> detector.markIOPlaces());
@@ -7976,7 +7976,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JButton markIOTransButton = new JButton();
         markIOTransButton.setText(lang.getText("HDWT_entry295FixPanel")); //Show trans.
-        markIOTransButton.setBounds(internalX + 185, internalY - 14, 100, 32);
+        markIOTransButton.setBounds(internalX + 185, internalY - 14, 110, 32);
         markIOTransButton.setMargin(new Insets(0, 0, 0, 0));
         markIOTransButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
         markIOTransButton.addActionListener(actionEvent -> detector.markIOTransitions());
@@ -7995,7 +7995,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JButton markLinearTPButton = new JButton();
         markLinearTPButton.setText(lang.getText("HDWT_entry298FixPanel")); //Show T & P
-        markLinearTPButton.setBounds(internalX + 185, internalY - 12, 100, 32);
+        markLinearTPButton.setBounds(internalX + 185, internalY - 12, 110, 32);
         markLinearTPButton.setMargin(new Insets(0, 0, 0, 0));
         markLinearTPButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
         markLinearTPButton.addActionListener(actionEvent -> detector.markLinearRegions());
@@ -8061,12 +8061,12 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JPanel borderPanel = new JPanel(null);
         //borderPanel.setLayout(new BorderLayout());
-        borderPanel.setBounds(internalX, internalY, 280, 80);
+        borderPanel.setBounds(internalX, internalY, 280, 110);
         borderPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HDWT_entry301QuickSim"))); //Data type simulated
         components.add(borderPanel);
 
         JCheckBox transBox = new JCheckBox(lang.getText("HDWT_entry302QuickSim"), scanTransitions); //Transitions firing data
-        transBox.setBounds(5, 15, 160, 20);
+        transBox.setBounds(5, 20, 240, 20);
         transBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             scanTransitions = box.isSelected();
@@ -8075,7 +8075,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
 
         JCheckBox placesBox = new JCheckBox(lang.getText("HDWT_entry303QuickSim"), scanPlaces); //Places tokens data
-        placesBox.setBounds(5, 35, 160, 20);
+        placesBox.setBounds(5, 40, 240, 20);
         placesBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             scanPlaces = box.isSelected();
@@ -8083,7 +8083,7 @@ public class HolmesDockWindowsTable extends JPanel {
         borderPanel.add(placesBox);
 
         JCheckBox arcsBox = new JCheckBox(lang.getText("HDWT_entry304QuickSim"), markArcs); //Color arcs
-        arcsBox.setBounds(5, 55, 140, 20);
+        arcsBox.setBounds(5, 60, 240, 20);
         arcsBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             markArcs = box.isSelected();
@@ -8091,7 +8091,7 @@ public class HolmesDockWindowsTable extends JPanel {
         borderPanel.add(arcsBox);
 
         JCheckBox repsBox = new JCheckBox(lang.getText("HDWT_entry305QuickSim"), repetitions); //Repetitions
-        repsBox.setBounds(165, 15, 100, 20);
+        repsBox.setBounds(5, 80, 240, 20);
         repsBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             repetitions = box.isSelected();

@@ -181,6 +181,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 			}
 		});
 		INAgenerateButton.setFocusPainted(false);
+		INAgenerateButton.setEnabled(false);
 		panel.add(INAgenerateButton);
 		
 		JButton loadInvariantsButton = new JButton();
@@ -188,6 +189,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		loadInvariantsButton.setBounds(posX+255, posY, 120, 36);
 		loadInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		loadInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/loadInvariants.png"));
+		loadInvariantsButton.setToolTipText(lang.getText("HIGwin_entry008info")); //Load t-invariants from file
 		loadInvariantsButton.addActionListener(actionEvent -> {
 			overlord.accessNetTablesWindow().resetT_invData();
 			boolean status = overlord.io.loadExternalAnalysis(true);
@@ -210,6 +212,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		saveInvariantsButton.setBounds(posX+380, posY, 120, 36);
 		saveInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		saveInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/saveInvariants.png"));
+		saveInvariantsButton.setToolTipText(lang.getText("HIGwin_entry009info")); //Save t-invariants to file
 		saveInvariantsButton.addActionListener(actionEvent -> {
 			boolean status = overlord.io.exportGeneratedInvariants(true);
 			if(status) {
@@ -233,6 +236,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		showInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		showInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
 		showInvariantsButton.addActionListener(actionEvent -> showNotepadInvariants(true));
+		showInvariantsButton.setToolTipText(lang.getText("HIGwin_entry010info")); //Show t-invariants in notepad
 		showInvariantsButton.setFocusPainted(false);
 		panel.add(showInvariantsButton);
 
@@ -242,6 +246,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		saveInvButton.setMargin(new Insets(0, 0, 0, 0));
 		saveInvButton.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
 		saveInvButton.addActionListener(actionEvent -> saveInvKajaType(true));
+		saveInvButton.setToolTipText(lang.getText("HIGwin_entry011info"));
 		saveInvButton.setFocusPainted(false);
 		panel.add(saveInvButton);
 
@@ -252,10 +257,12 @@ public class HolmesInvariantsGenerator extends JFrame {
 		makeFeasibleButton.setIcon(Tools.getResIcon22("/icons/invWindow/makeFeasible.png"));
 		makeFeasibleButton.addActionListener(actionEvent -> checkAndMakeFeasible());
 		makeFeasibleButton.setFocusPainted(false);
+		makeFeasibleButton.setToolTipText(lang.getText("HIGwin_entry012info")); //Make t-invariants feasible
 		panel.add(makeFeasibleButton);
 		
 		JCheckBox feasModeCheckBox = new JCheckBox(lang.getText("HIGwin_entry013")); //Feasible advanced mode
 		feasModeCheckBox.setBounds(posX+380, posY+36, 240, 20); //505
+		feasModeCheckBox.setToolTipText(lang.getText("HIGwin_entry013info")); //Advanced mode for feasible t-invariants
 		feasModeCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			if (abstractButton.getModel().isSelected()) {
@@ -269,6 +276,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		
 		JCheckBox invPurityCheckBox = new JCheckBox(lang.getText("HIGwin_entry014")); //Clean non-invariant
 		invPurityCheckBox.setBounds(posX+380, posY+56, 120, 20);
+		invPurityCheckBox.setToolTipText(lang.getText("HIGwin_entry014info")); //Remove non-invariant t-invariants
 		invPurityCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			if (abstractButton.getModel().isSelected()) {
@@ -284,6 +292,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		
 		JCheckBox removeSingleInvCheckBox = new JCheckBox(lang.getText("HIGwin_entry015")); //Remove 1-element invariant
 		removeSingleInvCheckBox.setBounds(posX+510, posY+56, 120, 20);
+		removeSingleInvCheckBox.setToolTipText(lang.getText("HIGwin_entry015info")); //Remove 1-element t-invariants
 		removeSingleInvCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			if (abstractButton.getModel().isSelected()) {
@@ -396,9 +405,10 @@ public class HolmesInvariantsGenerator extends JFrame {
 		
 		JButton cardinalityButton = new JButton();
 		cardinalityButton.setText(lang.getText("HIGwin_entry020")); //Check canonity
-		cardinalityButton.setBounds(posX, posY, 110, 32);
+		cardinalityButton.setBounds(posX, posY, 110, 48);
 		cardinalityButton.setMargin(new Insets(0, 0, 0, 0));
 		cardinalityButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_canon.png"));
+		cardinalityButton.setToolTipText(lang.getText("HIGwin_entry020info")); //Check t-invariants canonity
 		cardinalityButton.addActionListener(actionEvent -> {
 			ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
 			if(invariants == null || invariants.isEmpty()) {
@@ -424,9 +434,10 @@ public class HolmesInvariantsGenerator extends JFrame {
 		
 		JButton minSuppButton = new JButton();
 		minSuppButton.setText(lang.getText("HIGwin_entry024")); //Check support minimality
-		minSuppButton.setBounds(posX, posY+38, 110, 32);
+		minSuppButton.setBounds(posX, posY+54, 110, 48);
 		minSuppButton.setMargin(new Insets(0, 0, 0, 0));
 		minSuppButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_minsup.png"));
+		minSuppButton.setToolTipText(lang.getText("HIGwin_entry024info")); //Check t-invariants support minimality
 		minSuppButton.addActionListener(actionEvent -> {
 			ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
 			if(invariants == null || invariants.isEmpty()) {
@@ -452,9 +463,10 @@ public class HolmesInvariantsGenerator extends JFrame {
 		
 		JButton checkMatrixZeroButton = new JButton();
 		checkMatrixZeroButton.setText(lang.getText("HIGwin_entry027")); //Check Cx = 0
-		checkMatrixZeroButton.setBounds(posX, posY+76, 110, 32);
+		checkMatrixZeroButton.setBounds(posX, posY+108, 110, 48);
 		checkMatrixZeroButton.setMargin(new Insets(0, 0, 0, 0));
 		checkMatrixZeroButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_invC.png"));
+		checkMatrixZeroButton.setToolTipText(lang.getText("HIGwin_entry027info")); //Check t-invariants correctness
 		checkMatrixZeroButton.addActionListener(actionEvent -> {
 			ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
 			if(invariants == null || invariants.isEmpty()) {
@@ -485,27 +497,10 @@ public class HolmesInvariantsGenerator extends JFrame {
 		});
 		checkMatrixZeroButton.setFocusPainted(false);
 		panel.add(checkMatrixZeroButton);
-		
-		JButton loadRefButton = new JButton();
-		loadRefButton.setText(lang.getText("HIGwin_entry033")); //Reference set compare
-		loadRefButton.setBounds(posX, posY+114, 110, 32);
-		loadRefButton.setMargin(new Insets(0, 0, 0, 0));
-		loadRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
-		loadRefButton.addActionListener(actionEvent -> testReference(true));
-		loadRefButton.setFocusPainted(false);
-		panel.add(loadRefButton);
-		
-		JButton testRefButton = new JButton();
-		testRefButton.setText(lang.getText("HIGwin_entry034")); //Incidence matrix
-		testRefButton.setBounds(posX, posY+180, 110, 32);
-		testRefButton.setMargin(new Insets(0, 0, 0, 0));
-		testRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
-		testRefButton.addActionListener(actionEvent -> getIncMatrix(true));
-		testRefButton.setFocusPainted(false);
-		panel.add(testRefButton);
-		
+
 		JCheckBox detailsCheckBox = new JCheckBox(lang.getText("HIGwin_entry035")); //Details
-		detailsCheckBox.setBounds(posX, posY+144, 110, 20);
+		detailsCheckBox.setBounds(posX, posY+160, 110, 20);
+		detailsCheckBox.setToolTipText(lang.getText("HIGwin_entry035info")); //Show details of t-invariants
 		detailsCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			detailsTinv = abstractButton.getModel().isSelected();
@@ -513,9 +508,32 @@ public class HolmesInvariantsGenerator extends JFrame {
 		detailsCheckBox.setSelected(true);
 		panel.add(detailsCheckBox);
 		
-		//TODO:
+		JButton loadRefButton = new JButton();
+		loadRefButton.setText(lang.getText("HIGwin_entry033")); //Reference set compare
+		loadRefButton.setBounds(posX, posY+192, 110, 48);
+		loadRefButton.setMargin(new Insets(0, 0, 0, 0));
+		loadRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
+		loadRefButton.setToolTipText(lang.getText("HIGwin_entry033info")); //Compare t-invariants with reference set
+		loadRefButton.addActionListener(actionEvent -> testReference(true));
+		loadRefButton.setFocusPainted(false);
+		panel.add(loadRefButton);
+
+		
+		
+		JButton testRefButton = new JButton();
+		testRefButton.setText(lang.getText("HIGwin_entry034")); //Incidence matrix
+		testRefButton.setBounds(posX, posY+246, 110, 48);
+		testRefButton.setMargin(new Insets(0, 0, 0, 0));
+		testRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
+		testRefButton.setToolTipText(lang.getText("HIGwin_entry034info")); //Test incidence matrix
+		testRefButton.addActionListener(actionEvent -> getIncMatrix(true));
+		testRefButton.setFocusPainted(false);
+		panel.add(testRefButton);
+		
+
 		JCheckBox showDiffCheckBox = new JCheckBox(lang.getText("HIGwin_entry036")); //Show difference
-		showDiffCheckBox.setBounds(posX, posY+220, 130, 20);
+		showDiffCheckBox.setBounds(posX, posY+300, 130, 20);
+		showDiffCheckBox.setToolTipText(lang.getText("HIGwin_entry036info")); //Show difference between t-invariants
 		showDiffCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			showInvDiff = abstractButton.getModel().isSelected();
@@ -581,6 +599,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 			}
 		});
 		INAgenerateButton.setFocusPainted(false);
+		INAgenerateButton.setEnabled(false);
 		panel.add(INAgenerateButton);
 		
 		JButton loadInvariantsButton = new JButton();
@@ -588,6 +607,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		loadInvariantsButton.setBounds(posX+255, posY, 120, 36);
 		loadInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		loadInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/loadInvariants.png"));
+		loadInvariantsButton.setToolTipText(lang.getText("HIGwin_entry041info")); //Load p-invariants from file
 		loadInvariantsButton.addActionListener(actionEvent -> {
 			boolean status = overlord.io.loadExternalAnalysis(false);
 			if(status) {
@@ -609,6 +629,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		saveInvariantsButton.setBounds(posX+380, posY, 120, 36);
 		saveInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		saveInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/saveInvariants.png"));
+		saveInvariantsButton.setToolTipText(lang.getText("HIGwin_entry042info")); //Save p-invariants to file
 		saveInvariantsButton.addActionListener(actionEvent -> {
 			boolean status = overlord.io.exportGeneratedInvariants(false);
 			if(status) {
@@ -632,11 +653,13 @@ public class HolmesInvariantsGenerator extends JFrame {
 		showInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		showInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
 		showInvariantsButton.addActionListener(actionEvent -> showNotepadInvariants(false));
+		showInvariantsButton.setToolTipText(lang.getText("HIGwin_entry043info")); //Show p-invariants in notepad
 		showInvariantsButton.setFocusPainted(false);
 		panel.add(showInvariantsButton);
 		
 		JCheckBox invPurityCheckBox = new JCheckBox(lang.getText("HIGwin_entry044")); //Clean non-invariant
 		invPurityCheckBox.setBounds(posX+380, posY+56, 120, 20);
+		invPurityCheckBox.setToolTipText(lang.getText("HIGwin_entry044info")); //Remove non-invariant p-invariants
 		invPurityCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			if (abstractButton.getModel().isSelected()) {
@@ -652,6 +675,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 
 		JCheckBox removeSingleInvCheckBox = new JCheckBox(lang.getText("HIGwin_entry045")); //Remove 1-element invariant
 		removeSingleInvCheckBox.setBounds(posX+510, posY+56, 120, 20);
+		removeSingleInvCheckBox.setToolTipText(lang.getText("HIGwin_entry045info")); //Remove 1-element p-invariants
+		removeSingleInvCheckBox.setToolTipText(lang.getText("HIGwin_entry045info")); //Remove 1-element p-invariants
 		removeSingleInvCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			if (abstractButton.getModel().isSelected()) {
@@ -708,7 +733,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 	private JPanel createRightButtonPanelPinv(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Tools"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HIGwin_entry019")));
 		panel.setBounds(x, y, width, height);
 		
 		int posX = 10;
@@ -716,9 +741,10 @@ public class HolmesInvariantsGenerator extends JFrame {
 		
 		JButton cardinalityButton = new JButton();
 		cardinalityButton.setText(lang.getText("HIGwin_entry047")); //Check canonity
-		cardinalityButton.setBounds(posX, posY, 110, 32);
+		cardinalityButton.setBounds(posX, posY, 110, 48);
 		cardinalityButton.setMargin(new Insets(0, 0, 0, 0));
 		cardinalityButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_canon.png"));
+		cardinalityButton.setToolTipText(lang.getText("HIGwin_entry047info")); //Check p-invariants canonity
 		cardinalityButton.addActionListener(actionEvent -> {
 			ArrayList<ArrayList<Integer>> p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
 			if(p_invariants == null || p_invariants.isEmpty()) {
@@ -744,9 +770,10 @@ public class HolmesInvariantsGenerator extends JFrame {
 		
 		JButton minSuppButton = new JButton();
 		minSuppButton.setText(lang.getText("HIGwin_entry051")); //Check support minimality
-		minSuppButton.setBounds(posX, posY+38, 110, 32);
+		minSuppButton.setBounds(posX, posY+54, 110, 48);
 		minSuppButton.setMargin(new Insets(0, 0, 0, 0));
 		minSuppButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_minsup.png"));
+		minSuppButton.setToolTipText(lang.getText("HIGwin_entry051info")); //Check p-invariants support minimality
 		minSuppButton.addActionListener(actionEvent -> {
 			ArrayList<ArrayList<Integer>> p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
 			if(p_invariants == null || p_invariants.isEmpty()) {
@@ -772,9 +799,10 @@ public class HolmesInvariantsGenerator extends JFrame {
 		
 		JButton checkMatrixZeroButton = new JButton();
 		checkMatrixZeroButton.setText(lang.getText("HIGwin_entry054")); //Check Cx = 0
-		checkMatrixZeroButton.setBounds(posX, posY+76, 110, 32);
+		checkMatrixZeroButton.setBounds(posX, posY+108, 110, 48);
 		checkMatrixZeroButton.setMargin(new Insets(0, 0, 0, 0));
 		checkMatrixZeroButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_invC.png"));
+		checkMatrixZeroButton.setToolTipText(lang.getText("HIGwin_entry054info")); //Check p-invariants correctness
 		checkMatrixZeroButton.addActionListener(actionEvent -> {
 			ArrayList<ArrayList<Integer>> p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
 			if(p_invariants == null || p_invariants.isEmpty()) {
@@ -805,33 +833,39 @@ public class HolmesInvariantsGenerator extends JFrame {
 		});
 		checkMatrixZeroButton.setFocusPainted(false);
 		panel.add(checkMatrixZeroButton);
-		
-		JButton loadRefButton = new JButton();
-		loadRefButton.setText(lang.getText("HIGwin_entry060")); //Reference set compare
-		loadRefButton.setBounds(posX, posY+114, 110, 32);
-		loadRefButton.setMargin(new Insets(0, 0, 0, 0));
-		loadRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
-		loadRefButton.addActionListener(actionEvent -> testReference(false));
-		loadRefButton.setFocusPainted(false);
-		panel.add(loadRefButton);
-		
-		JButton testRefButton = new JButton();
-		testRefButton.setText(lang.getText("HIGwin_entry061")); //Incidence matrix
-		testRefButton.setBounds(posX, posY+180, 110, 32);
-		testRefButton.setMargin(new Insets(0, 0, 0, 0));
-		testRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
-		testRefButton.addActionListener(actionEvent -> getIncMatrix(false));
-		testRefButton.setFocusPainted(false);
-		panel.add(testRefButton);
-		
+
 		JCheckBox detailsCheckBox = new JCheckBox(lang.getText("HIGwin_entry062")); //Details
-		detailsCheckBox.setBounds(posX, posY+144, 110, 20);
+		detailsCheckBox.setBounds(posX, posY+160, 110, 20);
+		detailsCheckBox.setToolTipText(lang.getText("HIGwin_entry062info")); //Show details of p-invariants
 		detailsCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			detailsPinv = abstractButton.getModel().isSelected();
 		});
 		detailsCheckBox.setSelected(true);
 		panel.add(detailsCheckBox);
+		
+		JButton loadRefButton = new JButton();
+		loadRefButton.setText(lang.getText("HIGwin_entry060")); //Reference set compare
+		loadRefButton.setBounds(posX, posY+192, 110, 48);
+		loadRefButton.setMargin(new Insets(0, 0, 0, 0));
+		loadRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
+		loadRefButton.setToolTipText(lang.getText("HIGwin_entry060info")); //Compare p-invariants with reference set
+		loadRefButton.addActionListener(actionEvent -> testReference(false));
+		loadRefButton.setFocusPainted(false);
+		panel.add(loadRefButton);
+		
+		
+		JButton testRefButton = new JButton();
+		testRefButton.setText(lang.getText("HIGwin_entry061")); //Incidence matrix
+		testRefButton.setBounds(posX, posY+246, 110, 48);
+		testRefButton.setMargin(new Insets(0, 0, 0, 0));
+		testRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
+		testRefButton.setToolTipText(lang.getText("HIGwin_entry061info")); //Test incidence matrix
+		testRefButton.addActionListener(actionEvent -> getIncMatrix(false));
+		testRefButton.setFocusPainted(false);
+		panel.add(testRefButton);
+		
+		
 
 		return panel;
 	}

@@ -118,11 +118,11 @@ public class HolmesStatesEditor extends JFrame {
 		int posY = 0;
 		
 		JLabel label0 = new JLabel(lang.getText("HSEwin_entry003")); //State vector ID
-		label0.setBounds(posX, posY, 100, 20);
+		label0.setBounds(posX, posY, 160, 20);
 		filler.add(label0);
 		
 		JLabel labelID = new JLabel(stateIndex+"");
-		labelID.setBounds(posX+110, posY, 100, 20);
+		labelID.setBounds(posX+170, posY, 100, 20);
 		filler.add(labelID);
 
 		JTextArea vectorDescrTextArea = new JTextArea(statesManager.accessStateMatrix().get(stateIndex).getDescription());
@@ -145,9 +145,22 @@ public class HolmesStatesEditor extends JFrame {
         CreationPanel.add(new JScrollPane(vectorDescrTextArea), BorderLayout.CENTER);
         CreationPanel.setBounds(posX, posY+=20, 600, 50);
         filler.add(CreationPanel);
+
+		JLabel locLabel = new JLabel(lang.getText("HSEwin_entry005"), JLabel.LEFT); //New tokens number
+		locLabel.setBounds(posX+620, posY-10, 150, 20);
+		result.add(locLabel);
+
+		SpinnerModel tokensSpinnerModel = new SpinnerNumberModel(0, 0, Long.MAX_VALUE, 1);
+		JSpinner tokensSpinner = new JSpinner(tokensSpinnerModel);
+		tokensSpinner.setBounds(posX+620, posY+10, 60, 20);
+		tokensSpinner.addChangeListener(e -> {
+			double tokens = (double) ((JSpinner) e.getSource()).getValue();
+			globalTokensNumber = (int) tokens;
+		});
+		result.add(tokensSpinner);
         
         JButton changeAllButton = new JButton(lang.getText("HSEwin_entry004")); //Set tokens in all places
-        changeAllButton.setBounds(posX+620, posY, 120, 40);
+        changeAllButton.setBounds(posX+690, posY+10, 120, 40);
         changeAllButton.setMargin(new Insets(0, 0, 0, 0));
 		changeAllButton.setFocusPainted(false);
 		changeAllButton.setToolTipText(lang.getText("HSEwin_entry004t"));
@@ -161,18 +174,7 @@ public class HolmesStatesEditor extends JFrame {
 		});
 		result.add(changeAllButton);
 		
-		JLabel locLabel = new JLabel(lang.getText("HSEwin_entry005"), JLabel.LEFT); //New tokens number
-		locLabel.setBounds(posX+750, posY, 120, 20);
-		result.add(locLabel);
 		
-		SpinnerModel tokensSpinnerModel = new SpinnerNumberModel(0, 0, Long.MAX_VALUE, 1);
-		JSpinner tokensSpinner = new JSpinner(tokensSpinnerModel);
-		tokensSpinner.setBounds(posX+750, posY+20, 120, 20);
-		tokensSpinner.addChangeListener(e -> {
-			double tokens = (double) ((JSpinner) e.getSource()).getValue();
-			globalTokensNumber = (int) tokens;
-		});
-		result.add(tokensSpinner);
 		
         result.add(filler, BorderLayout.CENTER);
 		return result;

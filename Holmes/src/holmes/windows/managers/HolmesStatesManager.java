@@ -198,7 +198,7 @@ public class HolmesStatesManager extends JFrame {
 		int posYda = 25;
 
 		JButton selectStateButton = new JButton(lang.getText("HSMwin_entry008")); //Set net state
-		selectStateButton.setBounds(posXda, posYda, 130, 40);
+		selectStateButton.setBounds(posXda, posYda, 130, 50);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
 		selectStateButton.setToolTipText(lang.getText("HSMwin_entry008t"));
@@ -235,7 +235,7 @@ public class HolmesStatesManager extends JFrame {
 		result.add(selectStateButton);
 		
 		JButton addNewStateButton = new JButton(lang.getText("HSMwin_entry011")); //Add new state
-		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		addNewStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
 		addNewStateButton.setToolTipText(lang.getText("HSMwin_entry011t"));
@@ -259,7 +259,7 @@ public class HolmesStatesManager extends JFrame {
 		result.add(addNewStateButton);
 		
 		JButton addNewCleanStateButton = new JButton(lang.getText("HSMwin_entry013")); //Create new state vector
-		addNewCleanStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		addNewCleanStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		addNewCleanStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewCleanStateButton.setFocusPainted(false);
 		addNewCleanStateButton.setToolTipText(lang.getText("HSMwin_entry013t"));
@@ -283,7 +283,7 @@ public class HolmesStatesManager extends JFrame {
 		result.add(addNewCleanStateButton);
 		
 		JButton replaceStateButton = new JButton(lang.getText("HSMwin_entry015")); //Replace state
-		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		replaceStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
 		replaceStateButton.setToolTipText(lang.getText("HSMwin_entry015t"));
@@ -303,7 +303,7 @@ public class HolmesStatesManager extends JFrame {
 		result.add(replaceStateButton);
 		
 		JButton removeStateButton = new JButton(lang.getText("HSMwin_entry017")); //Remove state
-		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		removeStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
 		removeStateButton.setToolTipText(lang.getText("HSMwin_entry017t"));
@@ -323,7 +323,7 @@ public class HolmesStatesManager extends JFrame {
 		result.add(removeStateButton);
 		
 		JButton editStateButton = new JButton(lang.getText("HSMwin_entry019")); //Edit state
-		editStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		editStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
 		editStateButton.setIcon(Tools.getResIcon32("/icons/stateManager/stateEdit.png"));
@@ -604,7 +604,7 @@ public class HolmesStatesManager extends JFrame {
 
 		HolmesRoundedButton selectStateButton = new HolmesRoundedButton(lang.getText("HSMwin_entry028") //Set net state
 				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
-		selectStateButton.setBounds(posXda, posYda, 130, 40);
+		selectStateButton.setBounds(posXda, posYda, 130, 55);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
 		selectStateButton.setToolTipText(lang.getText("HSMwin_entry028t"));
@@ -648,7 +648,7 @@ public class HolmesStatesManager extends JFrame {
 
 		HolmesRoundedButton addNewStateButton = new HolmesRoundedButton(lang.getText("HSMwin_entry032") //Add new state
 				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
-		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		addNewStateButton.setBounds(posXda, posYda+=60, 130, 55);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
 		addNewStateButton.setToolTipText(lang.getText("HSMwin_entry032t"));
@@ -672,7 +672,7 @@ public class HolmesStatesManager extends JFrame {
 
 		HolmesRoundedButton addNewCleanStateButton = new HolmesRoundedButton(lang.getText("HSMwin_entry034") //Create new state vector
 				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
-		addNewCleanStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		addNewCleanStateButton.setBounds(posXda, posYda+=60, 130, 55);
 		addNewCleanStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewCleanStateButton.setFocusPainted(false);
 		addNewCleanStateButton.setToolTipText(lang.getText("HSMwin_entry034t"));
@@ -696,7 +696,7 @@ public class HolmesStatesManager extends JFrame {
 
 		HolmesRoundedButton replaceStateButton = new HolmesRoundedButton(lang.getText("HSMwin_entry036") //Overwrite selected state
 				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
-		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		replaceStateButton.setBounds(posXda, posYda+=60, 130, 55);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
 		replaceStateButton.setToolTipText(lang.getText("HSMwin_entry036t"));
@@ -718,7 +718,7 @@ public class HolmesStatesManager extends JFrame {
 
 		HolmesRoundedButton removeStateButton = new HolmesRoundedButton(lang.getText("HSMwin_entry038") //Remove stored state
 				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
-		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		removeStateButton.setBounds(posXda, posYda+=60, 130, 55);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
 		removeStateButton.setToolTipText(lang.getText("HSMwin_entry038t"));
@@ -740,7 +740,7 @@ public class HolmesStatesManager extends JFrame {
 
 		HolmesRoundedButton editStateButton = new HolmesRoundedButton(lang.getText("HSMwin_entry040") //XTNP state editor
 				, "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
-		editStateButton.setBounds(posXda, posYda+50, 130, 40);
+		editStateButton.setBounds(posXda, posYda+60, 130, 55);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
 		editStateButton.setToolTipText(lang.getText("HSMwin_entry041"));

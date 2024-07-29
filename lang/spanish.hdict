@@ -501,7 +501,7 @@ HDWT_entry092trans, Portal:
 HDWT_entry092trans_1, ¡La transición contiene más de una ubicación!
 HDWT_entry092trans_1t, No se puede proceder
 HDWT_entry093trans, Funcional:
-HDWT_entry094trans, <html>Funciones<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>
+HDWT_entry094trans, <html>Funciones<br>editor</html>
 HDWT_entry095trans, Desplazamiento del nombre:
 HDWT_entry096trans, Rueda del ratón - arriba/abajo ; SHIFT+Rueda del ratón - izquierda/derecha
 HDWT_entry097Ctrans, Datos de transición coloreada:
@@ -533,7 +533,7 @@ HDWT_entry120SPNtrans, Portal:
 HDWT_entry120SPNtrans_1, ¡La transición contiene más de una ubicación!
 HDWT_entry120SPNtrans_1t, No se puede proceder
 HDWT_entry121SPNtrans, Funcional:
-HDWT_entry122SPNtrans, <html>Funciones<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>
+HDWT_entry122SPNtrans, <html>Funciones<br>editor</html>
 HDWT_entry123SPNtrans, Desplazamiento del nombre:
 HDWT_entry124SPNtrans, Rueda del ratón - arriba/abajo ; SHIFT+Rueda del ratón - izquierda/derecha
 HDWT_entry125TPNtrans, Nombre:
@@ -549,7 +549,7 @@ HDWT_entry134TPNtrans, Portal:
 HDWT_entry134TPNtrans_1, ¡La transición contiene más de una ubicación!
 HDWT_entry134TPNtrans_1t, No se puede proceder
 HDWT_entry135TPNtrans, Funcional:
-HDWT_entry136TPNtrans, <html>Funciones<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>
+HDWT_entry136TPNtrans, <html>Funciones<br>editor</html>
 HDWT_entry137TPNtrans, Desplazamiento del nombre:
 HDWT_entry138TPNtrans, Rueda del ratón - arriba/abajo ; SHIFT+Rueda del ratón - izquierda/derecha
 HDWT_entry139XTPNtrans, Nombre:
@@ -581,7 +581,7 @@ HDWT_entry159XTPNtrans, β (min/máx):
 HDWT_entry160XTPNtrans, Cinética de acción de masas
 HDWT_entry161XTPNtrans, Inmediato
 HDWT_entry162XTPNtrans, Funcional
-HDWT_entry163XTPNtrans, <html>Funciones<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>
+HDWT_entry163XTPNtrans, <html>Funciones<br>editor</html>
 HDWT_entry164XTPNtrans, Portal:
 HDWT_entry164XTPNtrans_1, ¡La transición XTPN contiene más de una ubicación!
 HDWT_entry164XTPNtrans_1t, No se puede proceder
@@ -639,13 +639,13 @@ HDWT_entry215TinvPanel, frecuencia inv/trans
 LOGentry00046exception, Excepción (1000001): createT_invSubWindow
 HDWT_entry216TinvPanel, Anterior
 HDWT_entry217TinvPanel, Mostrar datos del invariante anterior.
-HDWT_entry218TinvPanel, <html>&nbsp;&nbsp;&nbsp;Siguiente&nbsp;</html>
+HDWT_entry218TinvPanel, <html>Siguiente</html>
 HDWT_entry219TinvPanel, Mostrar datos del siguiente invariante.
 HDWT_entry220TinvPanel, Actualizar
 HDWT_entry220TinvPanel_1, Si se han determinado los tipos de t-inv, este botón actualizará el contenido de los tres cuadros combinados a continuación:
 HDWT_entry221TinvPanel, Recalcular
 HDWT_entry221TinvPanel_1, Esto obligará al programa a determinar el tipo de t-invariantes (puede tardar) y actualizar los cuadros combinados a continuación:
-HDWT_entry222TinvPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mostrar<br>&nbsp;&nbsp;&nbsp;&nbsp;detalles</html>
+HDWT_entry222TinvPanel, <html>Mostrar<br>detalles</html>
 HDWT_entry223TinvPanel, Color MCT
 HDWT_entry224TinvPanel, Transiciones brillan
 HDWT_entry225TinvPanel, Estructura de red invariante pintada
@@ -662,7 +662,7 @@ HDWT_entry231TinvPanel_t, No hay t-invariantes
 HDWT_entry232PinvPanel, p-invariante:
 HDWT_entry233PinvPanel, lugares nulos
 HDWT_entry234PinvPanel, frecuencia inv/lugar
-HDWT_entry235PinvPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mostrar<br>&nbsp;&nbsp;&nbsp;&nbsp;detalles</html>
+HDWT_entry235PinvPanel, <html>Mostrar<br>detalles</html>
 LOGentry00050exception, Excepción (1000003): probablemente características no implementadas para p-invariantes en la ventana de código de t-invariantes:
 LOGentry00051, Error crítico en la subventana de p-invariantes.\n¡El tamaño de los p-invariantes difiere de la cardinalidad del conjunto de transiciones!
 HWDT_entry236, datos de p-invariantes no disponibles.
@@ -672,7 +672,7 @@ HDWT_entry237PinvPanel_1, datos de p-invariantes no disponibles.
 HDWT_entry237PinvPanel_1t, No hay p-invariantes
 HDWT_entry238PinvPanel, (tamaño:
 HDWT_entry239MCTPanel, Elegir MCT:
-HDWT_entry240MCTPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mostrar<br>&nbsp;&nbsp;&nbsp;&nbsp;detalles</html>
+HDWT_entry240MCTPanel, <html>Mostrar<br>detalles</html>
 HDWT_entry241MCTPanel, Colores diferentes
 HDWT_entry242MCTPanel, (tamaño:
 HDWT_entry243MCTPanel, Transiciones sin MCT
@@ -690,12 +690,12 @@ HDWT_entry254ClusterPanel, Valor MSS:
 HDWT_entry255ClusterPanel, Mostrar disparo promedio de transición
 HDWT_entry256ClusterPanel, Mostrar colores escalados
 HDWT_entry257ClusterPanel, Mostrar conjuntos MCT
-HDWT_entry258ClusterPanel, <html>&nbsp;Mostrar&nbsp;<br>detalles</html>
-HDWT_entry259ClusterPanel, <html>&nbsp;Exportar&nbsp;<br>imágenes</html>
+HDWT_entry258ClusterPanel, <html>Mostrar<br>detalles</html>
+HDWT_entry259ClusterPanel, <html>Exportar<br>imágenes</html>
 HDWT_entry260ClusterPanel, Completado
 HDWT_entry261ClusterPanel, Cluster inv.:
-HDWT_entry262ClusterPanel, <html>&nbsp;Detalles&nbsp;<br>de tiempo</html>
-HDWT_entry263ClusterPanel, <html>&nbsp;Detalles&nbsp;<br>de clusters</html>
+HDWT_entry262ClusterPanel, <html>Detalles<br>de tiempo</html>
+HDWT_entry263ClusterPanel, <html>Detalles<br>de clusters</html>
 HDWT_entry264ClusterPanel, Cluster:
 HDWT_entry265ClusterPanel, inv.) alg.:
 HDWT_entry266ClusterPanel, métrica:
@@ -723,7 +723,7 @@ HDWT_entry285KnockPanel, * * * También eliminado: \n
 HDWT_entry286FixPanel, t-invariantes:
 HDWT_entry287FixPanel, Normal: 0 / No inv.: 0
 HDWT_entry288FixPanel, Sub-inv.: 0 / Sur-inv: 0
-HDWT_entry289FixPanel, <html>Mostrar<br>&nbsp;&nbsp;&nbsp;inv.</html>
+HDWT_entry289FixPanel, <html>Mostrar<br>inv.</html>
 HDWT_entry290FixPanel, Lugares de entrada y salida:
 HDWT_entry291FixPanel, Entrada: 0 / Salida: 0
 HDWT_entry292FixPanel, <html>Mostrar<br>lugares</html>
@@ -2012,7 +2012,7 @@ HFBwin_entry009, Verificar y agregar
 HFBwin_entry009t, Validar la ecuación y agregarla a la lista de funciones de transición
 HFBwin_entry010, Borrar función
 HFBwin_entry010t, Borrar la ecuación de la lista
-HFBwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ayuda&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HFBwin_entry011, <html>Ayuda</html>
 HFBwin_entry011t, Mostrar lista de operaciones y funciones
 HFBwin_entry012, Transición funcional
 HFBwin_entry013, Registro de errores:
@@ -2031,76 +2031,102 @@ HIGwin_entry003t, p-invariantes
 HIGwin_entry004, Generar
 HIGwin_entry005, Generación de invariantes ya en progreso.
 HIGwin_entry005t, Generador trabajando
-HIGwin_entry006, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Generador<br>INA</html>
+HIGwin_entry006, <html>Generador<br>INA</html>
 HIGwin_entry007, Estado de INAwin32.exe establecido como no listo. Por favor, lea las advertencias iniciales\nen las ventanas de registro de Holmes para más información.
 HIGwin_entry007t, Problema con INAwin32.exe
-HIGwin_entry008, <html>&nbsp;&nbsp;&nbsp;&nbsp;Cargar<br>t-invariantes</html>
+HIGwin_entry008, <html>Cargar<br>t-invariantes</html>
+HIGwin_entry008info, Cargar t-invariantes desde archivo
 LOGentry00441, t-invariantes cargados:
 LOGentry00442, La carga de t-invariantes desde el archivo ha sido fallida.\n
-HIGwin_entry009, <html>&nbsp;&nbsp;&nbsp;Exportar<br>t-invariantes</html>
+HIGwin_entry009, <html>Exportar<br>t-invariantes</html>
+HIGwin_entry009info, Exportar t-invariantes a un archivo en formato INa
 LOGentry00443, t-invariantes guardados:
 LOGentry00444, El guardado de t-invariantes en el archivo ha sido fallido.\n
-HIGwin_entry010, <html>&nbsp;&nbsp;&nbsp;&nbsp;Mostrar<br>t-invariantes</html>
-HIGwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;Guardar<br>t-invariantes</html>
-HIGwin_entry012, <html>&nbsp;&nbsp;&nbsp;&nbsp;Hacer<br>&nbsp;&nbsp;factible</html>
+HIGwin_entry010, <html>Mostrar<br>t-invariantes</html>
+HIGwin_entry010info, Mostrar t-invariantes en la ventana de notas como vectores matemáticos
+HIGwin_entry011, <html>Mostrar<br>soporte</html>
+HIGwin_entry011info, Mostrar soporte de t-invariantes (todas las transiciones) en la ventana de notas
+HIGwin_entry012, <html>Hacer<br>factible</html>
+HIGwin_entry012info, Recalcular t-invariantes para hacerlos factibles (leer arcos/tokens algoritmo de análisis)
 HIGwin_entry013, Modo avanzado factible
+HIGwin_entry013info, Modo avanzado para recálculo de factibilidad
 HIGwin_entry014, Limpiar no-inv.
+HIGwin_entry014info, Eliminación automática de t-invariantes no canónicos durante la generación
 HIGwin_entry015, Eliminar 1-el. inv.
+HIGwin_entry015info, Eliminación automática de t-invariantes de 1 elemento (bucles) durante la generación
 HIGwin_entry016, t-invariantes - Estilo Kaja:
 HIGwin_entry017, p-invariantes - Estilo Kaja:
 HIGwin_entry018, Ventana de registro de t-invariantes
 HIGwin_entry019, Herramientas
-HIGwin_entry020, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Verificar<br />&nbsp;&nbsp;&nbsp;canonicidad</html>
+HIGwin_entry020, <html>Verificar<br>canonicidad</html>
+HIGwin_entry020info, Comprobar t-invariantes para canonicidad 
 HIGwin_entry021, No hay t-invariantes para analizar.
 HIGwin_entry021t, No hay t-invariantes
 HIGwin_entry022, Verificando canonicidad para %d t-invariantes.%n
 HIGwin_entry023, t-invariantes no canónicos:
-HIGwin_entry024, <html>Verificar sup.<br />&nbsp;minimalidad</html>
+HIGwin_entry024, <html>Verificar sup.<br>minimalidad</html>
+HIGwin_entry024info, Comprobar t-invariantes para minimalidad de soporte
 HIGwin_entry025, Verificando minimalidad de soporte para %d t-invariantes.%n
 HIGwin_entry026, t-invariantes no minimalistas de soporte:
-HIGwin_entry027, <html>&nbsp;&nbsp;&nbsp;&nbsp;Verificar<br />&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>
+HIGwin_entry027, <html>Verificar<br>C&middot;x = 0</html>
+HIGwin_entry027info, Comprobar t-invariantes para corrección
 HIGwin_entry028, Verificando corrección de t-invariantes para %d invariantes.%n
 HIGwin_entry029, t-invariantes (Cx = 0):
 HIGwin_entry030, sur-invariantes (Cx > 0):
 HIGwin_entry031, sub-invariantes (Cx < 0):
 HIGwin_entry032, no-invariantes (Cx <=> 0):
-HIGwin_entry033, <html>&nbsp;&nbsp;&nbsp;Conjunto de ref.<br />&nbsp;&nbsp;&nbsp;comparar</html>
-HIGwin_entry034, <html>&nbsp;&nbsp;Matriz de<br />&nbsp;&nbsp;&nbsp;incidencia</html>
+HIGwin_entry033, <html>Conjunto de ref.<br />comparar</html>
+HIGwin_entry033info, Cargar invariantes desde archivo (conjunto de referencia) y comparar con el conjunto actualmente generado en la memoria de Holmes
+HIGwin_entry034, <html>Matriz de<br />incidencia</html>
+HIGwin_entry034info, Monstrando la matriz de incidencia de la red actual
 HIGwin_entry035, Detalles
+HIGwin_entry035info, Si está marcado, el botón de Verificar corrección también incluirá información sobre sub- y sur-invariantes (si están disponibles) 
 HIGwin_entry036, Mostrar diferencia
+HIGwin_entry036info, Si está marcado, el botón de Generar mostrará la diferencia entre el conjunto antiguo y el nuevo en el registro de Holmes
 HIGwin_entry037, <html>Generar<br>p-inv.</html>
 HIGwin_entry038, Generación de invariantes ya en progreso.
 HIGwin_entry038t, Generador trabajando
-HIGwin_entry039, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Generador<br>INA</html>
+HIGwin_entry039, <html>Generador<br>INA</html>
 HIGwin_entry040, Estado de INAwin32.exe establecido como no listo. Por favor, lea las advertencias iniciales\nen las ventanas de registro de Holmes para más información.
 HIGwin_entry040t, Problema con INAwin32.exe
-HIGwin_entry041, <html>&nbsp;&nbsp;&nbsp;&nbsp;Cargar<br>p-invariantes</html>
+HIGwin_entry041, <html>Cargar<br>p-invariantes</html>
+HIGwin_entry041info, Seleccionar archivo de p-invariantes
 LOGentry00445, p-invariantes cargados:
 LOGentry00446, La lectura de p-invariantes ha sido fallida.\n
-HIGwin_entry042, <html>&nbsp;&nbsp;&nbsp;Exportar<br>p-invariantes</html>
+HIGwin_entry042, <html>Exportar<br>p-invariantes</html>
+HIGwin_entry042info, Exportar p-invariantes a un archivo en formato INa
 LOGentry00447, p-invariantes guardados:
 LOGentry00448, El guardado de p-invariantes ha sido fallido.\n
-HIGwin_entry043, <html>&nbsp;&nbsp;&nbsp;&nbsp;Mostrar<br>p-invariantes</html>
+HIGwin_entry043, <html>Mostrar<br>p-invariantes</html>
+HIGwin_entry043info, Mostrar p-invariantes en la ventana de notas como vectores matemáticos
 HIGwin_entry044, Limpiar no-inv.
+HIGwin_entry044info, Eliminación automática de p-invariantes no canónicos durante la generación
 HIGwin_entry045, Eliminar 1-el. inv.
+HIGwin_entry045info, Eliminación automática de p-invariantes de 1 elemento (bucles) durante la generación
 HIGwin_entry046, Ventana de registro de p-invariantes
-HIGwin_entry047, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Verificar<br />&nbsp;&nbsp;&nbsp;canonicidad</html>
+HIGwin_entry047, <html>Verificar<br />canonicidad</html>
+HIGwin_entry047info, Comprobar p-invariantes para canonicidad
 HIGwin_entry048, No hay p-invariantes para analizar.
 HIGwin_entry048t, No hay p-invariantes
 HIGwin_entry049, Verificando canonicidad para %d p-invariantes.%n
 HIGwin_entry050, p-invariantes no canónicos:
-HIGwin_entry051, <html>Verificar sup.<br>&nbsp;minimalidad</html>
+HIGwin_entry051, <html>Verificar sup.<br>minimalidad</html>
+HIGwin_entry051info, Comprobar p-invariantes para minimalidad de soporte
 HIGwin_entry052, Verificando minimalidad de soporte para %d p-invariantes.%n
 HIGwin_entry053, p-invariantes no minimalistas de soporte:
-HIGwin_entry054, <html>&nbsp;&nbsp;&nbsp;&nbsp;Verificar<br>&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>
+HIGwin_entry054, <html>Verificar<br>C&middot;x = 0</html>
+HIGwin_entry054info, Comprobar p-invariantes para corrección
 HIGwin_entry055, Verificando corrección de p-invariantes para %d invariantes.%n
 HIGwin_entry056, p-invariantes (xC = 0):
 HIGwin_entry057, sur-invariantes (xC > 0):
 HIGwin_entry058, sub-invariantes (xC < 0):
 HIGwin_entry059, no-invariantes (xC <=> 0):
-HIGwin_entry060, <html>&nbsp;&nbsp;&nbsp;Conjunto de ref.<br>&nbsp;&nbsp;&nbsp;comparar</html>
-HIGwin_entry061, <html>&nbsp;&nbsp;Matriz de<br>&nbsp;&nbsp;&nbsp;incidencia</html>
+HIGwin_entry060, <html>Conjunto de ref.<br>comparar</html>
+HIGwin_entry060info, Cargar invariantes desde archivo (conjunto de referencia) y comparar con el conjunto actualmente generado en la memoria de Holmes
+HIGwin_entry061, <html>Matriz de<br>incidencia</html>
+HIGwin_entry061info, Mostrar la matriz de incidencia de la red actual
 HIGwin_entry062, Detalles
+HIGwin_entry062info, Si está marcado, el botón de Verificar corrección también incluirá información sobre sub- y sur-invariantes (si están disponibles)
 HIGwin_entry063, Cargar invariantes
 HIGwin_entry063t, Seleccionar archivo de invariantes
 HIGwin_entry064, Tamaño del conjunto calculado previamente:
@@ -2162,7 +2188,7 @@ HIVwin_entry05, Información general
 HIVwin_entry06, Invariante:
 HIVwin_entry07, Invariante
 HIVwin_entry08, Mostrar datos del invariante anterior.
-HIVwin_entry09, <html>&nbsp;&nbsp;&nbsp;Siguiente&nbsp;</html>
+HIVwin_entry09, <html>Siguiente</html>
 HIVwin_entry09t, Mostrar datos del siguiente invariante.
 HIVwin_entry10, Mínimo:
 HIVwin_entry11, Factible:
@@ -2182,9 +2208,9 @@ HIVwin_entry24, Transiciones DPN:
 HIVwin_entry25, Transiciones TDPN:
 HIVwin_entry26, Transiciones PN:
 HIVwin_entry27, Descripción:
-HIVwin_entry28, <html>&nbsp;&nbsp;&nbsp;Recalcular estadísticas</html>
+HIVwin_entry28, <html>Recalcular estadísticas</html>
 HIVwin_entry28t, Mostrar datos del invariante anterior.
-HIVwin_entry29, <html>&nbsp;&nbsp;&nbsp;Mostrar datos en el bloc de notas</html>
+HIVwin_entry29, <html>Mostrar datos en el bloc de notas</html>
 HIVwin_entry29t, Mostrar datos de invariantes en el bloc de notas interno.
 HIVwin_entry30, Tabla de MCT/transiciones
 HIVwin_entry31, MCT/transiciones
@@ -2212,17 +2238,17 @@ HKwin_entry004, Mostrar árbol para transiciones restantes
 HKwin_entry005, Mostrar árbol para transiciones eliminadas
 HKwin_entry006, Mostrar árbol para transiciones eliminadas (umbral)
 HKwin_entry007, Contraído
-HKwin_entry008, <html>&nbsp;Generar</html>
+HKwin_entry008, <html>Generar</html>
 HKwin_entry008t, Generar mapa de knockout para la transición seleccionada.
-HKwin_entry009, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mostrar<br>&nbsp;&nbsp;bloc de notas</html>
+HKwin_entry009, <html>Mostrar<br>bloc de notas</html>
 HKwin_entry009t, Para la transición seleccionada mostrar datos detallados de knockout en el bloc de notas.
 LOGentry00454exception, Excepción (1000191): HolmesKnockout.createUpperButtonPanel() falló:
 LOGentry00455exception, Excepción (1000192): HolmesKnockout.createLowerButtonPanel() falló. Error en la sección de invariantes.
 HKwin_entry010, <html>Knockout<br>de toda la red</html>
-HKwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;Colorear&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;red&nbsp;&nbsp;&nbsp;</html>
+HKwin_entry011, <html>Colorear<br>red</html>
 HKwin_entry012, <html>Cargar datos<br>de Mona Lisa</html>
-HKwin_entry013, <html>&nbsp;&nbsp;Mona Lisa<br>-> Colorear red</html>
-HKwin_entry014, <html>&nbsp;Guardar imagen</html>
+HKwin_entry013, <html>Mona Lisa<br>Colorear red</html>
+HKwin_entry014, <html>Guardar imagen</html>
 HKwin_entry015, <html>Knockout de inv.</html>
 HKwin_entry016, Mostrar nombres completos
 HKwin_entry017, Reacción objetivo (reacción de knockout):
@@ -2348,7 +2374,7 @@ LOGentry00472exception, Excepción (1000209): HolmesNetProperties.saveToFile() f
 HNTwin_entry001title, Tablas de datos de red
 LOGentry00473exception, Excepción (1000210): HolmesNetTables.HolmesNetTables() falló:
 LOGentry00474exception, Excepción (1000211): HolmesNetTables.resetT_invData() falló:
-HNTwin_entry002, <html>&nbsp;&nbsp;&nbsp;&nbsp;Lugares&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HNTwin_entry002, <html>Lugares</html>
 HNTwin_entry002t, Muestra la tabla de lugares
 HNTwin_entry003, Transiciones
 HNTwin_entry003t, Muestra la tabla de transiciones
@@ -2572,7 +2598,7 @@ HPPwinSYS_entry049, Otras opciones
 HPPwinSYS_entry050, Idioma
 HPPwinSYS_entry051, Inglés
 HPPwinSYS_entry052, Polaco
-HPPwinSYS_entry053, Idioma configurado a: %s (de %s). Para que los cambios surtan efecto, reinicie el programa.
+HPPwinSYS_entry053, Idioma configurado a: %s (de %s).%n%nPara que los cambios surtan efecto, reinicie el programa.
 HPPwinSYS_entry054, SuIdioma
 HPPwinSYS_entry055, Alemán
 HPPwinSYS_entry056, Español
@@ -2722,19 +2748,19 @@ HSPNMwin_entry001title, Administrador de datos de transiciones SPN de Holmes
 LOGentry00520exception, Excepción (1000249): HolmesSPNmanager.HolmesSPNmanager() falló:
 HSPNMwin_entry002, Tabla de vectores SPN
 HSPNMwin_entry003, Botones
-HSPNMwin_entry004, <html>Seleccionar este<br>vector SPN</html>
+HSPNMwin_entry004, <html>Seleccionar<br>este vector SPN</html>
 HSPNMwin_entry005op1, Establecer nuevas tasas
 HSPNMwin_entry005op2, Mantener las antiguas
 HSPNMwin_entry005, Establecer todas las transiciones de la red según el vector de datos SPN seleccionado (fila de la tabla:
 HSPNMwin_entry005t, ¿establecer nuevas tasas de disparo?
-HSPNMwin_entry006, <html>Guardar actual<br/>&nbsp;&nbsp;vector SPN</html>
+HSPNMwin_entry006, <html>Guardar actual<br/>vector SPN</html>
 HSPNMwin_entry007op1, Agregar nuevo vector
 HSPNMwin_entry007op2, Cancelar
 HSPNMwin_entry007, ¿Recordar las tasas de disparo actuales de la red en la tabla?
 HSPNMwin_entry007t, ¿Agregar nuevo vector de datos SPN?
-HSPNMwin_entry008, <html>&nbsp;&nbsp;&nbsp;Reemplazar&nbsp;<br/>vector SPN</html>
-HSPNMwin_entry009, <html>&nbsp;&nbsp;&nbsp;Eliminar&nbsp;&nbsp;<br/>vector SPN</html>
-HSPNMwin_entry010, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Editar&nbsp;&nbsp;&nbsp;&nbsp;<br/>vector SPN</html>
+HSPNMwin_entry008, <html>Reemplazar<br/>vector SPN</html>
+HSPNMwin_entry009, <html>Eliminar<br/>vector SPN</html>
+HSPNMwin_entry010, <html>Editar<br/>vector SPN</html>
 HSPNMwin_entry011, ¡Debe permanecer al menos un vector de datos SPN de la red!
 HSPNMwin_entry012op1, Eliminar vector
 HSPNMwin_entry012op2, Cancelar
@@ -2770,7 +2796,7 @@ HSPNTEwin_entry015, Inicio / Rep. / Detener:
 LOGentry00524exception, Excepción (1000253): HolmesSPNtransitionEditor.saveTransitionData() falló. Valor inválido, se esperaba texto de inicio o valor no negativo.
 HSPNTEwin_entry016, Valor inválido, el retraso debe ser un entero no negativo.
 LOGentry00525exception, Excepción (1000254): HolmesSPNtransitionEditor.saveTransitionData() falló. Valor inválido, se esperaba texto de finalización o valor no negativo.
-HSPNTEwin_entry017, <html>&nbsp;Cambiar y salir</html>
+HSPNTEwin_entry017, <html>Cambiar y salir</html>
 HSPNTEwin_entry017t, Una acción atrás
 
 //HolmesSSAplacesEditor:
@@ -2785,19 +2811,19 @@ HSSAwin_entry005, Tabla de componentes SSA
 HSSAWMwin_entry001title, Administrador de vectores SSA de Holmes
 LOGentry00527exception, Excepción (1000256): HolmesSSAwindowManager.HolmesSSAwindowManager() falló:
 HSSAWMwin_entry002, Tabla de vectores SSA
-HSSAWMwin_entry003, <html>Seleccionar vector<br>&nbsp;&nbsp;&nbsp;&nbsp;SSA&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSAWMwin_entry003, <html>Seleccionar<br>vector SSA</html>
 HSSAWMwin_entry004op1, Establecer nuevos valores SSA
 HSSAWMwin_entry004op2, Mantener los antiguos
 HSSAWMwin_entry004, Establecer todos los lugares de la red según el vector SSA seleccionado (fila de la tabla:
 HSSAWMwin_entry004t, ¿Establecer nuevos valores de partículas?
-HSSAWMwin_entry005, <html>Agregar valores<br/>SSA actuales</html>
+HSSAWMwin_entry005, <html>Agregar valores SSA<br>actuales</html>
 HSSAWMwin_entry006op1, Agregar nuevo vector
 HSSAWMwin_entry006op2, Cancelar
 HSSAWMwin_entry006, ¿Recordar los números actuales de partículas SSA en la tabla?
 HSSAWMwin_entry006t, ¿Agregar nuevo vector de datos SSA?
-HSSAWMwin_entry007, <html>&nbsp;&nbsp;&nbsp;Reemplazar&nbsp;<br/>valores SSA</html>
-HSSAWMwin_entry008, <html>&nbsp;&nbsp;&nbsp;Eliminar&nbsp;&nbsp;<br/>vector SSA</html>
-HSSAWMwin_entry009, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Editar&nbsp;&nbsp;&nbsp;&nbsp;<br/>vector SSA</html>
+HSSAWMwin_entry007, <html>Reemplazar<br/>valores SSA</html>
+HSSAWMwin_entry008, <html>Eliminar<br/>vector SSA</html>
+HSSAWMwin_entry009, <html>Editar<br/>vector SSA</html>
 HSSAWMwin_entry010, ¡Debe permanecer al menos un vector SSA!
 HSSAWMwin_entry011op1, Eliminar vector SSA
 HSSAWMwin_entry011op2, Cancelar
@@ -2817,7 +2843,7 @@ HSEwin_entry001title, Editor de estados p de Holmes
 LOGentry00529exception, Excepción (1000258): HolmesStatesEditor.HolmesStatesEditor() falló:
 HSEwin_entry002, Datos del vector de estado
 HSEwin_entry003, ID del vector de estado:
-HSEwin_entry004, <html>&nbsp;Establecer tokens&nbsp;<br>en todos los lugares</html>
+HSEwin_entry004, <html>Establecer tokens<br>en todos los lugares</html>
 HSEwin_entry004t, Establece el mismo número de tokens en todos los lugares.
 HSEwin_entry005, Nuevo número de tokens:
 HSEwin_entry006op1, Cambiar todo
@@ -2837,14 +2863,14 @@ HSMwin_entry004, Administrador de estados de XTPN no disponible para redes norma
 HSMwin_entry005, Administrador de estados normal no disponible para redes XTPN.
 HSMwin_entry006, Tabla de estados p
 HSMwin_entry007, Botones
-HSMwin_entry008, Establecer estado de la red
+HSMwin_entry008, <html>Establecer<br>estado de la red</html>
 HSMwin_entry008t, Establece el estado seleccionado como el activo y cambia el número de tokens en\nlos lugares de la red según los valores del estado seleccionado.
 HSMwin_entry009, Por favor seleccione un estado de la tabla.
 HSMwin_entry010op1, Establecer nuevo estado
 HSMwin_entry010op2, Mantener estado actual
 HSMwin_entry010, Establecer todos los lugares de la red según el estado seleccionado (fila de la tabla: %d)?
 HSMwin_entry010t, Estableciendo nuevo estado
-HSMwin_entry011, <html>Agregar estado<br/>&nbsp;&nbsp;actual de la red</html>
+HSMwin_entry011, <html>Agregar estado<br/>actual de la red</html>
 HSMwin_entry011t, Crear nuevo vector de estado basado en el estado actual de la red (distribución de tokens en los lugares)
 HSMwin_entry012op1, Agregar nuevo estado
 HSMwin_entry012op2, Cancelar
@@ -2856,13 +2882,13 @@ HSMwin_entry014op1, Agregar nuevo estado
 HSMwin_entry014op2, Cancelar
 HSMwin_entry014, ¿Agregar estado limpio a la tabla de estados?
 HSMwin_entry014t, Agregando nuevo estado limpio
-HSMwin_entry015, <html>&nbsp;&nbsp;&nbsp;&nbsp;Reemplazar&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;estado&nbsp;</html>
+HSMwin_entry015, <html>Reemplazar<br/>estado</html>
 HSMwin_entry015t, Reemplazar los valores del estado seleccionado de la tabla con los valores actuales de los lugares de la red.
 HSMwin_entry016, Por favor seleccione un estado de la tabla.
-HSMwin_entry017, <html>&nbsp;&nbsp;&nbsp;Eliminar&nbsp;&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;estado&nbsp;&nbsp;</html>
+HSMwin_entry017, <html>Eliminar<br/>estado</html>
 HSMwin_entry017t, Elimina el vector de estado de los datos del proyecto.
 HSMwin_entry018, Por favor seleccione un estado de la tabla.
-HSMwin_entry019, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Editar&nbsp;&nbsp;&nbsp;&nbsp;<br/>vector de estado</html>
+HSMwin_entry019, <html>Editar<br/>vector de estado</html>
 HSMwin_entry020, Por favor seleccione un estado de la tabla.
 HSMwin_entry021, ¡No hay lugares en la red!
 HSMwin_entry022, ¡Debe permanecer al menos un estado de la red!
@@ -2968,8 +2994,8 @@ HSSwin_entry005t, Simulación knockout
 HSSwin_entry006, Adquisición de datos
 HSSwin_entry007, IniciarSim
 HSSwin_entry007t, Calcular pasos desde el marcado cero hasta el número de estados dado a la derecha.
-HSSwin_entry008, <html>&nbsp;&nbsp;&nbsp;DETENER&nbsp;&nbsp;&nbsp;</html>
-HSSwin_entry009, ConfigSim
+HSSwin_entry008, <html>DETENER</html>
+HSSwin_entry009, Configuración
 HSSwin_entry009t, Establecer opciones del simulador.
 HSSwin_entry010, <html>Administrador<br>de Estados</html>
 HSSwin_entry010t, Abrir ventana del administrador de estados.
@@ -2978,7 +3004,7 @@ HSSwin_entry012, Limpiar
 HSSwin_entry012t, Limpiar todos los gráficos y vectores de datos. Reiniciar simulador.
 HSSwin_entry013, Progreso
 HSSwin_entry014, Opciones de gráfico de lugares
-HSSwin_entry015, <html>&nbsp;&nbsp;&nbsp;&nbsp;Mostrar todo&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSwin_entry015, <html>Mostrar todo</html>
 HSSwin_entry015t, Mostrar números promedio de tokens en lugares a través de los pasos de simulación.
 HSSwin_entry016, Mostrar bloc de notas
 HSSwin_entry016t, Mostrar bloc de notas con números promedio de tokens en lugares a través de los pasos de simulación.
@@ -3000,7 +3026,7 @@ HSSwin_entry026, Normal
 HSSwin_entry027, Grueso
 HSSwin_entry028, Gráfico de lugares
 HSSwin_entry029, Opciones de gráfico de transiciones
-HSSwin_entry030, <html>&nbsp;&nbsp;&nbsp;&nbsp;Mostrar todo&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSwin_entry030, <html>Mostrar todo</html>
 HSSwin_entry030t, Mostrar números promedio de disparos de transiciones a través de los pasos de simulación.
 HSSwin_entry031, Mostrar bloc de notas
 HSSwin_entry031t, Mostrar bloc de notas con números promedio de disparos de transiciones a través de los pasos de simulación.
@@ -3060,7 +3086,7 @@ LOGentry00554exception, Excepción (1000277): HolmesSimActions.getRealNodeID() f
 //HolmesSimKnock:
 HSKwin_entry001, SimStart
 HSKwin_entry001t, Calcular pasos desde el marcado cero hasta el número de estados dado a la derecha.
-HSKwin_entry002, <html>&nbsp;&nbsp;&nbsp;DETENER&nbsp;&nbsp;&nbsp;</html>
+HSKwin_entry002, <html>DETENER</html>
 HSKwin_entry002t, Detener el proceso de simulación en curso.
 HSKwin_entry003, Progreso
 HSKwin_entry004, Mostrar resultados en bloc de notas
@@ -3089,7 +3115,7 @@ HSKwin_entry020t, Limpiar el campo de transiciones y MCT que indica los elemento
 HSKwin_entry021, SimStart
 HSKwin_entry021t, Calcular pasos desde el marcado cero hasta el número de estados dado a la derecha.
 HSKwin_entry022, La simulación para la transición deshabilitada manualmente y para todas las transiciones son mutuamente excluyentes. Por favor elija una.
-HSKwin_entry023, <html>&nbsp;&nbsp;&nbsp;DETENER&nbsp;&nbsp;&nbsp;</html>
+HSKwin_entry023, <html>DETENER</html>
 HSKwin_entry023op1, Detener y eliminar
 HSKwin_entry023op2, Continuar con la simulación
 HSKwin_entry023msg, ADVERTENCIA: Esto cancelará la simulación de knockout de toda la red y ELIMINARÁ\n todos los datos previamente calculados en esta sesión de simulación. ¿Continuar?
@@ -3118,7 +3144,7 @@ HSKwin_entry041, Guardar todo
 HSKwin_entry041t, Guardar todos los datos de simulación en un solo archivo.
 HSKwin_entry042, Analizar
 HSKwin_entry042t, Abrir ventana donde es posible un análisis detallado de los datos recopilados.
-HSKwin_entry043, Configuración de simulación
+HSKwin_entry043, <html>Configuración<br>de simulación<html>
 HSKwin_entry043t, Abrir ventana de opciones del simulador.
 HSKwin_entry044, <html>Administrador<br>de Estados</html>
 HSKwin_entry044t, Abre la ventana del Administrador de Estados donde se pueden seleccionar los estados iniciales de la red.
@@ -3178,13 +3204,13 @@ HSKVwin_entry010, Series de sim.:
 HSKVwin_entry011t, Seleccionar serie de datos (presumiblemente con cada transición deshabilitada una por conjunto de datos)
 HSKVwin_entry012, Conjuntos de datos:
 HSKVwin_entry013t, Seleccionar conjunto de datos (presumiblemente con alguna(s) transición(es) deshabilitada(s))
-HSKVwin_entry014, <html>Mostrar conjunto<br/>&nbsp; &nbsp; &nbsp; &nbsp; de referencia</html>
-HSKVwin_entry015, <html>Mostrar conjunto<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;de knockout</html>
-HSKVwin_entry016, <html>Comparar referencia<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y knockout</html>
+HSKVwin_entry014, <html>Mostrar conjunto<br/>    de referencia</html>
+HSKVwin_entry015, <html>Mostrar conjunto<br/>de knockout</html>
+HSKVwin_entry016, <html>Comparar referencia<br/>y knockout</html>
 HSKVwin_entry016msg, ¡Por favor seleccione conjunto de referencia y de knockout!
 HSKVwin_entry016t, Selección necesaria
-HSKVwin_entry017, <html>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;Series completas&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tablas de datos</html>
-HSKVwin_entry018, <html>&nbsp; &nbsp;Mostrar resumen<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;en bloc de notas</html>
+HSKVwin_entry017, <html> Series completas<br/>tablas de datos</html>
+HSKVwin_entry018, <html> Mostrar resumen<br/>en bloc de notas</html>
 HSKVwin_entry019, Bloc de notas
 HSKVwin_entry020, Gráficos
 HSKVwin_entry021, Dinámica de lugares
@@ -3266,7 +3292,7 @@ HSSetwin_entry001title, Configuración del simulador
 LOGentry00566exception, Excepción (1000284): HolmesSimSetup.initializeComponents() falló:
 HSSetwin_entry002, Configuración global
 HSSetwin_entry003, Pasos:
-HSSetwin_entry004, Repeticiones
+HSSetwin_entry004, Repeticiones:
 HSSetwin_entry005, Generador de números aleatorios:
 HSSetwin_entry006op1, Aleatorio (Java por defecto)
 HSSetwin_entry006op2, HighQualityRandom (más lento)
@@ -3287,10 +3313,12 @@ HSSetwin_entry016, Modo 50/50 (asíncrono)
 HSSetwin_entry017, Modo máximo (sincrónico)
 HSSetwin_entry018, Modo de disparo único
 HSSetwin_entry019, Permitir pasos vacíos
+HSSetwin_entry019t, Si se selecciona este modo, el simulador permitirá pasos vacíos (sin disparo de transición, por ejemplo, para redes temporales) en el proceso de simulación.
 HSSetwin_entry020, Configuración de simulación estocástica para SPN
 HSSetwin_entry021, <html>Administrador de<br>tasa de disparo</html>
 HSSetwin_entry021t, Simulación de transición única en bucle
 HSSetwin_entry022, Cinética de acción de masas habilitada
+HSSetwin_entry022t, Si se marca, el simulador considera el número de tokens en el lugar como una concentración de la sustancia.\nCuanto mayor sea la concentración, mayor será la probabilidad de que la transición se dispare.
 HSSetwin_entry023, Eliminar transiciones SPN determinísticas desactivadas
 HSSetwin_entry023t, Cuando se selecciona este modo, la transición SPN determinística que después de su tiempo de retraso\nya no está activa, será eliminada de la secuencia de disparo. De lo contrario, se disparará\ntan pronto como vuelva a activarse = actuará como inmediata en ese momento.
 HSSetwin_entry024, Modo de transición inmediata SPN:
@@ -3486,7 +3514,7 @@ HSXTPNwin_entry006, Adquisición de datos
 HSXTPNwin_entry007, <html><center>Inicio<br>de simulación</center></html>
 HSXTPNwin_entry007t, Calcular pasos desde el marcado cero hasta el número de estados dado a la derecha.
 HSXTPNwin_entry008, <html><center>Cancelar</center></html>
-HSXTPNwin_entry008t, <html>&nbsp;&nbsp;&nbsp;DETENER&nbsp;&nbsp;&nbsp;</html>
+HSXTPNwin_entry008t, <html>DETENER</html>
 HSXTPNwin_entry009, <html><center>Configuración<br>de simulación</center></html>
 HSXTPNwin_entry009t, Establecer opciones del simulador.
 HSXTPNwin_entry010, <html><center>Administrador<br>de estados</center></html>
@@ -3646,4 +3674,3 @@ unwrap, Desempaquetar
 warning, Advertencia
 yes, Sí
 LOGentryLNGexc, Excepción (1099999): String.format(...) falló para la entrada de idioma:
-

@@ -174,7 +174,7 @@ public class HolmesSPNmanager extends JFrame {
 		int posYda = 25;
 		
 		JButton selectStateButton = new JButton(lang.getText("HSPNMwin_entry004")); //Select this SPN vector
-		selectStateButton.setBounds(posXda, posYda, 130, 40);
+		selectStateButton.setBounds(posXda, posYda, 130, 50);
 		selectStateButton.setMargin(new Insets(0, 0, 0, 0));
 		selectStateButton.setFocusPainted(false);
 		selectStateButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/selectVectorIcon.png"));
@@ -203,7 +203,7 @@ public class HolmesSPNmanager extends JFrame {
 		result.add(selectStateButton);
 		
 		JButton addNewStateButton = new JButton(lang.getText("HSPNMwin_entry006")); //Save current SPN vector
-		addNewStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		addNewStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		addNewStateButton.setMargin(new Insets(0, 0, 0, 0));
 		addNewStateButton.setFocusPainted(false);
 		addNewStateButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/addVectorIcon.png"));
@@ -227,7 +227,7 @@ public class HolmesSPNmanager extends JFrame {
 		result.add(addNewStateButton);
 		
 		JButton replaceStateButton = new JButton(lang.getText("HSPNMwin_entry008")); //Replace SPN vector
-		replaceStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		replaceStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		replaceStateButton.setMargin(new Insets(0, 0, 0, 0));
 		replaceStateButton.setFocusPainted(false);
 		replaceStateButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/replaceVectorIcon.png"));
@@ -241,7 +241,7 @@ public class HolmesSPNmanager extends JFrame {
 		result.add(replaceStateButton);
 		
 		JButton removeStateButton = new JButton(lang.getText("HSPNMwin_entry009")); //Remove SPN vector
-		removeStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		removeStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		removeStateButton.setMargin(new Insets(0, 0, 0, 0));
 		removeStateButton.setFocusPainted(false);
 		removeStateButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/removeVectorIcon.png"));
@@ -255,7 +255,7 @@ public class HolmesSPNmanager extends JFrame {
 		result.add(removeStateButton);
 		
 		JButton editStateButton = new JButton(lang.getText("HSPNMwin_entry010")); //Edit SPN vector
-		editStateButton.setBounds(posXda, posYda+=50, 130, 40);
+		editStateButton.setBounds(posXda, posYda+=60, 130, 50);
 		editStateButton.setMargin(new Insets(0, 0, 0, 0));
 		editStateButton.setFocusPainted(false);
 		editStateButton.setIcon(Tools.getResIcon32("/icons/fRatesManager/fireRateEdit.png"));

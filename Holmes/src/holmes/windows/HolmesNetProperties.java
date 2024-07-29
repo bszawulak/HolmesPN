@@ -335,38 +335,38 @@ public class HolmesNetProperties extends JFrame {
 		
 		//II KOLUMNA:
 		JLabel label11 = new JLabel(lang.getText("HNPwin_entry016")); //Normal arc
-		label11.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		label11.setBounds(xPos+150, yPosB+=spacing, 110, 20);
 		panel.add(label11);
 		label_arcNormal = new JLabel("0");
-		label_arcNormal.setBounds(xPos+240, yPosB, 60, 20);
+		label_arcNormal.setBounds(xPos+265, yPosB, 60, 20);
 		panel.add(label_arcNormal);
 		
 		JLabel label12 = new JLabel(lang.getText("HNPwin_entry017")); //Read arc
-		label12.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		label12.setBounds(xPos+150, yPosB+=spacing, 110, 20);
 		panel.add(label12);
 		label_arcReadarc = new JLabel("0");
-		label_arcReadarc.setBounds(xPos+240, yPosB, 60, 20);
+		label_arcReadarc.setBounds(xPos+265, yPosB, 60, 20);
 		panel.add(label_arcReadarc);
 		
 		JLabel label13 = new JLabel(lang.getText("HNPwin_entry018")); //Inhibitor arc
-		label13.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		label13.setBounds(xPos+150, yPosB+=spacing, 110, 20);
 		panel.add(label13);
 		label_arcInhibitor = new JLabel("0");
-		label_arcInhibitor.setBounds(xPos+240, yPosB, 60, 20);
+		label_arcInhibitor.setBounds(xPos+265, yPosB, 60, 20);
 		panel.add(label_arcInhibitor);
 		
 		JLabel label14 = new JLabel(lang.getText("HNPwin_entry019")); //Reset arc
-		label14.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		label14.setBounds(xPos+150, yPosB+=spacing, 110, 20);
 		panel.add(label14);
 		label_arcReset = new JLabel("0");
-		label_arcReset.setBounds(xPos+240, yPosB, 60, 20);
+		label_arcReset.setBounds(xPos+265, yPosB, 60, 20);
 		panel.add(label_arcReset);
 		
 		JLabel label15 = new JLabel(lang.getText("HNPwin_entry020")); //Equal arc
-		label15.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		label15.setBounds(xPos+150, yPosB+=spacing, 110, 20);
 		panel.add(label15);
 		label_arcEqual = new JLabel("0");
-		label_arcEqual.setBounds(xPos+240, yPosB, 60, 20);
+		label_arcEqual.setBounds(xPos+265, yPosB, 60, 20);
 		panel.add(label_arcEqual);
 		
 		//Panel właściwości
@@ -380,7 +380,7 @@ public class HolmesNetProperties extends JFrame {
 		JButton saveButton = new JButton(lang.getText("HNPwin_entry022")); //Save to file
 		saveButton.setMargin(new Insets(0, 0, 0, 0));
 		saveButton.setIcon(Tools.getResIcon22("/icons/quickSave.png"));
-		saveButton.setBounds(xPos, yPosA, 130, 30);
+		saveButton.setBounds(xPos, yPosA, 150, 30);
 		saveButton.addActionListener(actionEvent -> saveToFile());
 		panel.add(saveButton);
 		

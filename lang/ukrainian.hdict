@@ -501,7 +501,7 @@ HDWT_entry092trans, Портал:
 HDWT_entry092trans_1, Транзиція містить більше однієї локації!
 HDWT_entry092trans_1t, Неможливо продовжити
 HDWT_entry093trans, Функціональна:
-HDWT_entry094trans, <html>Редактор<br>&nbsp;&nbsp;&nbsp;функцій&nbsp;</html>
+HDWT_entry094trans, <html>Редактор<br>функцій</html>
 HDWT_entry095trans, Зсув назви:
 HDWT_entry096trans, Коліщатко миші - вгору/вниз; SHIFT+Коліщатко миші - вліво/вправо
 HDWT_entry097Ctrans, Дані кольорової транзиції:
@@ -533,7 +533,7 @@ HDWT_entry120SPNtrans, Портал:
 HDWT_entry120SPNtrans_1, Транзиція містить більше однієї локації!
 HDWT_entry120SPNtrans_1t, Неможливо продовжити
 HDWT_entry121SPNtrans, Функціональна:
-HDWT_entry122SPNtrans, <html>Редактор<br>&nbsp;&nbsp;&nbsp;функцій&nbsp;</html>
+HDWT_entry122SPNtrans, <html>Редактор<br>функцій</html>
 HDWT_entry123SPNtrans, Зсув назви:
 HDWT_entry124SPNtrans, Коліщатко миші - вгору/вниз; SHIFT+Коліщатко миші - вліво/вправо
 HDWT_entry125TPNtrans, Назва:
@@ -549,7 +549,7 @@ HDWT_entry134TPNtrans, Портал:
 HDWT_entry134TPNtrans_1, Транзиція містить більше однієї локації!
 HDWT_entry134TPNtrans_1t, Неможливо продовжити
 HDWT_entry135TPNtrans, Функціональна:
-HDWT_entry136TPNtrans, <html>Редактор<br>&nbsp;&nbsp;&nbsp;функцій&nbsp;</html>
+HDWT_entry136TPNtrans, <html>Редактор<br>функцій</html>
 HDWT_entry137TPNtrans, Зсув назви:
 HDWT_entry138TPNtrans, Коліщатко миші - вгору/вниз; SHIFT+Коліщатко миші - вліво/вправо
 HDWT_entry139XTPNtrans, Назва:
@@ -581,7 +581,7 @@ HDWT_entry159XTPNtrans, β (мін/макс):
 HDWT_entry160XTPNtrans, Кінетика масової дії
 HDWT_entry161XTPNtrans, Негайна
 HDWT_entry162XTPNtrans, Функціональна
-HDWT_entry163XTPNtrans, <html>Редактор<br>&nbsp;&nbsp;&nbsp;функцій&nbsp;</html>
+HDWT_entry163XTPNtrans, <html>Редактор<br>функцій</html>
 HDWT_entry164XTPNtrans, Портал:
 HDWT_entry164XTPNtrans_1, Транзиція XTPN містить більше однієї локації!
 HDWT_entry164XTPNtrans_1t, Неможливо продовжити
@@ -639,13 +639,13 @@ HDWT_entry215TinvPanel, частота інваріантів/транзицій
 LOGentry00046exception, Виняток (1000001): createT_invSubWindow
 HDWT_entry216TinvPanel, Попередній
 HDWT_entry217TinvPanel, Показати попередні дані інваріанта.
-HDWT_entry218TinvPanel, <html>&nbsp;&nbsp;&nbsp;Наступний&nbsp;</html>
+HDWT_entry218TinvPanel, <html>Наступний</html>
 HDWT_entry219TinvPanel, Показати наступні дані інваріанта.
 HDWT_entry220TinvPanel, Оновити
 HDWT_entry220TinvPanel_1, If t-inv types have been determined, this button will refresh the content of the three comboboxes below:
 HDWT_entry221TinvPanel, Перерахувати
 HDWT_entry221TinvPanel_1, Це змусить програму визначити тип t-інваріантів (це може зайняти час) і оновити вміст трьох комбобоксів нижче:
-HDWT_entry222TinvPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Показати<br>&nbsp;&nbsp;&nbsp;&nbsp;деталі</html>
+HDWT_entry222TinvPanel, <html>Показати<br>деталі</html>
 HDWT_entry223TinvPanel, Колір MCT
 HDWT_entry224TinvPanel, Підсвічування транзицій
 HDWT_entry225TinvPanel, Структура інваріантної мережі намальована
@@ -662,7 +662,7 @@ HDWT_entry231TinvPanel_t, Немає t-інваріантів
 HDWT_entry232PinvPanel, p-інваріант:
 HDWT_entry233PinvPanel, нульові місця
 HDWT_entry234PinvPanel, частота інваріантів/місць
-HDWT_entry235PinvPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Показати<br>&nbsp;&nbsp;&nbsp;&nbsp;деталі</html>
+HDWT_entry235PinvPanel, <html>Показати<br>деталі</html>
 LOGentry00050exception, Виняток (1000003): ймовірно, не реалізовані функції для p-інваріантів у вікні коду t-інваріантів:
 LOGentry00051, Критична помилка у підвікні p-інваріантів.\nРозмір p-інваріантів відрізняється від кардинальності набору транзицій!
 HWDT_entry236, Дані p-інваріантів недоступні.
@@ -672,7 +672,7 @@ HDWT_entry237PinvPanel_1, Дані p-інваріантів недоступні
 HDWT_entry237PinvPanel_1t, Немає p-інваріантів
 HDWT_entry238PinvPanel, (розмір:
 HDWT_entry239MCTPanel, Виберіть MCT:
-HDWT_entry240MCTPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Показати<br>&nbsp;&nbsp;&nbsp;&nbsp;деталі</html>
+HDWT_entry240MCTPanel, <html>Показати<br>деталі</html>
 HDWT_entry241MCTPanel, Різні кольори
 HDWT_entry242MCTPanel, (розмір:
 HDWT_entry243MCTPanel, Транзиції без MCT
@@ -690,12 +690,12 @@ HDWT_entry254ClusterPanel, Значення MSS:
 HDWT_entry255ClusterPanel, Показати середній час спрацьовування транзицій
 HDWT_entry256ClusterPanel, Показати масштабовані кольори
 HDWT_entry257ClusterPanel, Показати набори MCT
-HDWT_entry258ClusterPanel, <html>&nbsp;Показати&nbsp;<br>деталі</html>
-HDWT_entry259ClusterPanel, <html>&nbsp;Експорт&nbsp;<br>зображень</html>
+HDWT_entry258ClusterPanel, <html>Показати<br>деталі</html>
+HDWT_entry259ClusterPanel, <html>Експорт<br>зображень</html>
 HDWT_entry260ClusterPanel, Завершено
 HDWT_entry261ClusterPanel, Кластер інв.:
-HDWT_entry262ClusterPanel, <html>&nbsp;Час&nbsp;<br>деталі</html>
-HDWT_entry263ClusterPanel, <html>&nbsp;Кластери&nbsp;<br>деталі</html>
+HDWT_entry262ClusterPanel, <html>Час<br>деталі</html>
+HDWT_entry263ClusterPanel, <html>Кластери<br>деталі</html>
 HDWT_entry264ClusterPanel, Кластер:
 HDWT_entry265ClusterPanel, інв.) алг.:
 HDWT_entry266ClusterPanel, метричний:
@@ -723,7 +723,7 @@ HDWT_entry285KnockPanel, * * * Також вибито: \n
 HDWT_entry286FixPanel, t-інваріанти:
 HDWT_entry287FixPanel, Нормальні: 0 / Не-інв.: 0
 HDWT_entry288FixPanel, Під-інв.: 0 / Над-інв.: 0
-HDWT_entry289FixPanel, <html>Показати<br>&nbsp;&nbsp;&nbsp;інв.</html>
+HDWT_entry289FixPanel, <html>Показати<br>інв.</html>
 HDWT_entry290FixPanel, Вхідні та вихідні місця:
 HDWT_entry291FixPanel, Вхідні: 0 / Вихідні: 0
 HDWT_entry292FixPanel, <html>Показати<br>місця</html>
@@ -2012,7 +2012,7 @@ HFBwin_entry009, Перевірити та додати
 HFBwin_entry009t, Перевірте рівняння та додайте його до списку функцій переходу
 HFBwin_entry010, Очистити функцію
 HFBwin_entry010t, Очистити рівняння зі списку
-HFBwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Допомога&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HFBwin_entry011, <html>Допомога</html>
 HFBwin_entry011t, Показати список операцій та функцій
 HFBwin_entry012, Функціональний перехід
 HFBwin_entry013, Журнал помилок:
@@ -2031,76 +2031,102 @@ HIGwin_entry003t, p-інваріанти
 HIGwin_entry004, Генерувати
 HIGwin_entry005, Генерація інваріантів вже триває.
 HIGwin_entry005t, Генератор працює
-HIGwin_entry006, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA<br>генератор</html>
+HIGwin_entry006, <html>INA<br>генератор</html>
 HIGwin_entry007, Статус INAwin32.exe встановлено як не готовий. Будь ласка, прочитайте початкові попередження\nу вікнах журналу Holmes для отримання додаткової інформації.
 HIGwin_entry007t, Проблема з INAwin32.exe
-HIGwin_entry008, <html>&nbsp;&nbsp;&nbsp;&nbsp;Завантажити<br>t-інваріанти</html>
+HIGwin_entry008, <html>Завантажити<br>t-інваріанти</html>
+HIGwin_entry008info, Завантажити t-інваріанти з файлу
 LOGentry00441, Завантажено t-інваріанти:
 LOGentry00442, Завантаження t-інваріантів з файлу не вдалося.\n
-HIGwin_entry009, <html>&nbsp;&nbsp;&nbsp;Експортувати<br>t-інваріанти</html>
+HIGwin_entry009, <html>Експортувати<br>t-інваріанти</html>
+HIGwin_entry009info, Експорт t-інваріантів у файл у форматі INa
 LOGentry00443, Збережено t-інваріанти:
 LOGentry00444, Збереження t-інваріантів у файл не вдалося.\n
-HIGwin_entry010, <html>&nbsp;&nbsp;&nbsp;&nbsp;Показати<br>t-інваріанти</html>
-HIGwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;Зберегти<br>t-інваріанти</html>
-HIGwin_entry012, <html>&nbsp;&nbsp;&nbsp;&nbsp;Зробити<br>&nbsp;&nbsp;можливим</html>
+HIGwin_entry010, <html>Показати<br>t-інваріанти</html>
+HIGwin_entry010info, Показати t-інваріанти у вікні журналу як математичні вектори
+HIGwin_entry011, <html>Показати<br>підтримку</html>
+HIGwin_entry011info, Показати підтримку t-інваріантів (всі переходи) у вікні журналу
+HIGwin_entry012, <html>Зробити<br>можливим</html>
+HIGwin_entry012info, Перерахувати t-інваріанти для забезпечення їх можливості (алгоритм аналізу дуг/токенів)
 HIGwin_entry013, Режим розширеної можливості
+HIGwin_entry013info, Розширений режим для перерахунку можливості
 HIGwin_entry014, Очистити не-інваріанти
+HIGwin_entry014info, Автоматично видалені не-канонічні t-інваріанти під час генерації
 HIGwin_entry015, Видалити 1-ел. інваріанти
+HIGwin_entry015info, Автоматично видалені 1-елементні t-інваріанти (самопетлі) під час генерації
 HIGwin_entry016, t-інваріанти - Стиль Kaja:
 HIGwin_entry017, p-інваріанти - Стиль Kaja:
 HIGwin_entry018, Вікно журналу t-інваріантів
 HIGwin_entry019, Інструменти
-HIGwin_entry020, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Перевірити<br />&nbsp;&nbsp;&nbsp;канонічність</html>
+HIGwin_entry020, <html>Перевірити<br />канонічність</html>
+HIGwin_entry020info, Перевірка канонічності t-інваріантів
 HIGwin_entry021, Немає t-інваріантів для аналізу.
 HIGwin_entry021t, Немає t-інваріантів
 HIGwin_entry022, Перевірка канонічності для %d t-інваріантів.%n
 HIGwin_entry023, Неканонічні t-інваріанти:
-HIGwin_entry024, <html>Перевірити<br />&nbsp;мінімальність</html>
+HIGwin_entry024, <html>Перевірити<br />мінімальність</html>
+HIGwin_entry024info, Перевірка мінімальності підтримки
 HIGwin_entry025, Перевірка мінімальності підтримки для %d t-інваріантів.%n
 HIGwin_entry026, Не мінімальні t-інваріанти:
-HIGwin_entry027, <html>&nbsp;&nbsp;&nbsp;&nbsp;Перевірити<br />&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>
+HIGwin_entry027, <html>Перевірити<br />C&middot;x = 0</html>
+HIGwin_entry027info, Перевірка правильності t-інваріантів
 HIGwin_entry028, Перевірка правильності t-інваріантів для %d інваріантів.%n
 HIGwin_entry029, t-інваріанти (Cx = 0):
 HIGwin_entry030, sur-інваріанти (Cx > 0):
 HIGwin_entry031, sub-інваріанти (Cx < 0):
 HIGwin_entry032, не-інваріанти (Cx <=> 0):
-HIGwin_entry033, <html>&nbsp;&nbsp;&nbsp;Порівняти<br />&nbsp;&nbsp;&nbsp;реф. набір</html>
-HIGwin_entry034, <html>&nbsp;&nbsp;Матриця<br />&nbsp;&nbsp;&nbsp;інцидентності</html>
+HIGwin_entry033, <html>Порівняти<br />реф. набір</html>
+HIGwin_entry033info, Порівняти t-інваріанти з файлом (референсний набір) та порівняти з поточними t-інваріантами в пам'яті Holmes
+HIGwin_entry034, <html>Матриця<br />інцидентності</html>
+HIGwin_entry034info, Показує матрицю інцидентності для поточної мережі
 HIGwin_entry035, Деталі
+HIGwin_entry035info, Якщо вибрано, то вище кнопки Перевірити правильність буде також включена інформація про sub- та sur-інваріанти (якщо доступно)
 HIGwin_entry036, Показати різницю
+HIGwin_entry036info, Якщо нові t-інваріанти згенеровані (кнопка Генерувати), показати різницю між старим та новим набором в журналі
 HIGwin_entry037, <html>Генерувати<br>p-інв.</html>
 HIGwin_entry038, Генерація інваріантів вже триває.
 HIGwin_entry038t, Генератор працює
-HIGwin_entry039, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA<br>генератор</html>
+HIGwin_entry039, <html>INA<br>генератор</html>
 HIGwin_entry040, Статус INAwin32.exe встановлено як не готовий. Будь ласка, прочитайте початкові попередження\nу вікнах журналу Holmes для отримання додаткової інформації.
 HIGwin_entry040t, Проблема з INAwin32.exe
-HIGwin_entry041, <html>&nbsp;&nbsp;&nbsp;&nbsp;Завантажити<br>p-інваріанти</html>
+HIGwin_entry041, <html>Завантажити<br>p-інваріанти</html>
+HIGwin_entry041info, Завантажити p-інваріанти з файлу
 LOGentry00445, Завантажено p-інваріанти:
 LOGentry00446, Читання p-інваріантів не вдалося.\n
-HIGwin_entry042, <html>&nbsp;&nbsp;&nbsp;Експортувати<br>p-інваріанти</html>
+HIGwin_entry042, <html>Експортувати<br>p-інваріанти</html>
+HIGwin_entry042info, Експорт p-інваріантів у файл у форматі INa
 LOGentry00447, Збережено p-інваріанти:
 LOGentry00448, Збереження p-інваріантів у файл не вдалося.\n
-HIGwin_entry043, <html>&nbsp;&nbsp;&nbsp;&nbsp;Показати<br>p-інваріанти</html>
+HIGwin_entry043, <html>Показати<br>p-інваріанти</html>
+HIGwin_entry043info, Показати p-інваріанти у вікні журналу як математичні вектори
 HIGwin_entry044, Очистити не-інваріанти
+HIGwin_entry044info, Автоматично видалені не-канонічні p-інваріанти під час генерації
 HIGwin_entry045, Видалити 1-ел. інваріанти
+HIGwin_entry045info, Автоматично видалені 1-елементні p-інваріанти (самопетлі) під час генерації
 HIGwin_entry046, Вікно журналу p-інваріантів
-HIGwin_entry047, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Перевірити<br />&nbsp;&nbsp;&nbsp;канонічність</html>
+HIGwin_entry047, <html>Перевірити<br />канонічність</html>
+HIGwin_entry047info, Перевірка канонічності p-інваріантів
 HIGwin_entry048, Немає p-інваріантів для аналізу.
 HIGwin_entry048t, Немає p-інваріантів
 HIGwin_entry049, Перевірка канонічності для %d p-інваріантів.%n
 HIGwin_entry050, Неканонічні p-інваріанти:
-HIGwin_entry051, <html>Перевірити<br>&nbsp;мінімальність</html>
+HIGwin_entry051, <html>Перевірити<br>мінімальність</html>
+HIGwin_entry051info, Перевірка мінімальності підтримки
 HIGwin_entry052, Перевірка мінімальності підтримки для %d p-інваріантів.%n
 HIGwin_entry053, Не мінімальні p-інваріанти:
-HIGwin_entry054, <html>&nbsp;&nbsp;&nbsp;&nbsp;Перевірити<br>&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>
+HIGwin_entry054, <html>Перевірити<br>C&middot;x = 0</html>
+HIGwin_entry054info, Перевірка правильності p-інваріантів
 HIGwin_entry055, Перевірка правильності p-інваріантів для %d інваріантів.%n
 HIGwin_entry056, p-інваріанти (xC = 0):
 HIGwin_entry057, sur-інваріанти (xC > 0):
 HIGwin_entry058, sub-інваріанти (xC < 0):
 HIGwin_entry059, не-інваріанти (xC <=> 0):
-HIGwin_entry060, <html>&nbsp;&nbsp;&nbsp;Порівняти<br>&nbsp;&nbsp;&nbsp;реф. набір</html>
-HIGwin_entry061, <html>&nbsp;&nbsp;Матриця<br>&nbsp;&nbsp;&nbsp;інцидентності</html>
+HIGwin_entry060, <html>Порівняти<br>реф. набір</html>
+HIGwin_entry060info, Порівняти p-інваріанти з файлом (референсний набір) та порівняти з поточними p-інваріантами в пам'яті Holmes
+HIGwin_entry061, <html>Матриця<br>інцидентності</html>
+HIGwin_entry061info, Показує матрицю інцидентності для поточної мережі
 HIGwin_entry062, Деталі
+HIGwin_entry062info, Якщо вибрано, то вище кнопки Перевірити правильність буде також включена інформація про sub- та sur-інваріанти (якщо доступно)
 HIGwin_entry063, Завантажити інваріанти
 HIGwin_entry063t, Виберіть файл інваріантів
 HIGwin_entry064, Розмір попередньо обчисленого набору:
@@ -2162,7 +2188,7 @@ HIVwin_entry05, Загальна інформація
 HIVwin_entry06, Інваріант:
 HIVwin_entry07, Інваріант
 HIVwin_entry08, Показати попередні дані інваріанта.
-HIVwin_entry09, <html>&nbsp;&nbsp;&nbsp;Наступний&nbsp;</html>
+HIVwin_entry09, <html>Наступний</html>
 HIVwin_entry09t, Показати наступні дані інваріанта.
 HIVwin_entry10, Мінімальний:
 HIVwin_entry11, Можливий:
@@ -2182,9 +2208,9 @@ HIVwin_entry24, DPN перехід:
 HIVwin_entry25, TDPN перехід:
 HIVwin_entry26, PN перехід:
 HIVwin_entry27, Опис:
-HIVwin_entry28, <html>&nbsp;&nbsp;&nbsp;Перерахувати статистику</html>
+HIVwin_entry28, <html>Перерахувати статистику</html>
 HIVwin_entry28t, Показати попередні дані інваріанта.
-HIVwin_entry29, <html>&nbsp;&nbsp;&nbsp;Показати дані в блокноті</html>
+HIVwin_entry29, <html>Показати дані в блокноті</html>
 HIVwin_entry29t, Показати дані інваріантів у внутрішньому блокноті.
 HIVwin_entry30, Таблиця MCT/переходів
 HIVwin_entry31, MCT/переходи
@@ -2212,17 +2238,17 @@ HKwin_entry004, Показати дерево для залишкових пер
 HKwin_entry005, Показати дерево для вибитих переходів
 HKwin_entry006, Показати дерево для вибитих переходів (поріг)
 HKwin_entry007, Стиснутий
-HKwin_entry008, <html>&nbsp;Генерувати</html>
+HKwin_entry008, <html>Генерувати</html>
 HKwin_entry008t, Генерувати карту нокауту для поточно вибраного переходу.
-HKwin_entry009, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Показати<br>&nbsp;&nbsp;блокнот</html>
+HKwin_entry009, <html>Показати<br>блокнот</html>
 HKwin_entry009t, Для вибраного переходу показати детальні дані нокауту в блокноті.
 LOGentry00454exception, Виняток (1000191): HolmesKnockout.createUpperButtonPanel() не вдалося:
 LOGentry00455exception, Виняток (1000192): HolmesKnockout.createLowerButtonPanel() не вдалося. Помилка у секції інваріантів.
 HKwin_entry010, <html>Нокаут всієї<br>мережі</html>
-HKwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;Колір&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;мережі&nbsp;&nbsp;&nbsp;</html>
+HKwin_entry011, <html>Колір<br>мережі</html>
 HKwin_entry012, <html>Завантажити дані<br>Мона Ліза</html>
-HKwin_entry013, <html>&nbsp;&nbsp;Мона Ліза<br>-> Колір мережі</html>
-HKwin_entry014, <html>&nbsp;Зберегти зображення</html>
+HKwin_entry013, <html>Мона Ліза<br>-> Колір мережі</html>
+HKwin_entry014, <html>Зберегти зображення</html>
 HKwin_entry015, <html>Нокаут інваріантів</html>
 HKwin_entry016, Показати повні імена
 HKwin_entry017, Об'єктивна реакція (реакція нокауту):
@@ -2348,7 +2374,7 @@ LOGentry00472exception, Виняток (1000209): HolmesNetProperties.saveToFile
 HNTwin_entry001title, Таблиці даних мережі
 LOGentry00473exception, Виняток (1000210): HolmesNetTables.HolmesNetTables() не вдалося:
 LOGentry00474exception, Виняток (1000211): HolmesNetTables.resetT_invData() не вдалося:
-HNTwin_entry002, <html>&nbsp;&nbsp;&nbsp;&nbsp;Місця&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HNTwin_entry002, <html>Місця</html>
 HNTwin_entry002t, Показати таблицю місць
 HNTwin_entry003, Переходи
 HNTwin_entry003t, Показати таблицю переходів
@@ -2572,7 +2598,7 @@ HPPwinSYS_entry049, Інші параметри
 HPPwinSYS_entry050, Мова
 HPPwinSYS_entry051, Англійська
 HPPwinSYS_entry052, Польська
-HPPwinSYS_entry053, Мова встановлена на: %s (з %s). Для застосування змін перезапустіть програму.
+HPPwinSYS_entry053, Мова встановлена на: %s (з %s).%n%nДля застосування змін перезапустіть програму.
 HPPwinSYS_entry054, Ваша мова
 HPPwinSYS_entry055, Німецька
 HPPwinSYS_entry056, Іспанська
@@ -2727,14 +2753,14 @@ HSPNMwin_entry005op1, Встановити нові ставки
 HSPNMwin_entry005op2, Залишити старі
 HSPNMwin_entry005, Встановити всі переходи мережі відповідно до вибраного\nвектора даних SPN (рядок таблиці:
 HSPNMwin_entry005t, встановити нові ставки спрацьовування?
-HSPNMwin_entry006, <html>Зберегти поточний<br/>&nbsp;&nbsp;вектор SPN</html>
+HSPNMwin_entry006, <html>Зберегти поточний<br/>вектор SPN</html>
 HSPNMwin_entry007op1, Додати новий вектор
 HSPNMwin_entry007op2, Скасувати
 HSPNMwin_entry007, Запам'ятати поточні ставки спрацьовування мережі в таблиці?
 HSPNMwin_entry007t, Додати новий вектор даних SPN?
-HSPNMwin_entry008, <html>&nbsp;&nbsp;&nbsp;Замінити&nbsp;<br/>вектор SPN</html>
-HSPNMwin_entry009, <html>&nbsp;&nbsp;&nbsp;Видалити&nbsp;&nbsp;<br/>вектор SPN</html>
-HSPNMwin_entry010, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Редагувати&nbsp;&nbsp;&nbsp;&nbsp;<br/>вектор SPN</html>
+HSPNMwin_entry008, <html>Замінити<br/>вектор SPN</html>
+HSPNMwin_entry009, <html>Видалити<br/>вектор SPN</html>
+HSPNMwin_entry010, <html>Редагувати<br/>вектор SPN</html>
 HSPNMwin_entry011, Принаймні один вектор даних SPN мережі повинен залишитися!
 HSPNMwin_entry012op1, Видалити вектор
 HSPNMwin_entry012op2, Скасувати
@@ -2770,7 +2796,7 @@ HSPNTEwin_entry015, Початок / Повтор / Зупинка:
 LOGentry00524exception, Виняток (1000253): HolmesSPNtransitionEditor.saveTransitionData() не вдалося. Неправильне значення, очікується текст початку або невід'ємне значення.
 HSPNTEwin_entry016, Неправильне значення, затримка повинна бути невід'ємним цілим числом.
 LOGentry00525exception, Виняток (1000254): HolmesSPNtransitionEditor.saveTransitionData() не вдалося. Неправильне значення, очікується текст завершення або невід'ємне значення.
-HSPNTEwin_entry017, <html>&nbsp;Змінити & вийти</html>
+HSPNTEwin_entry017, <html>Змінити & вийти</html>
 HSPNTEwin_entry017t, Один крок назад
 
 //HolmesSSAplacesEditor:
@@ -2785,7 +2811,7 @@ HSSAwin_entry005, Таблиця компонентів SSA
 HSSAWMwin_entry001title, Менеджер векторів Holmes SSA
 LOGentry00527exception, Виняток (1000256): HolmesSSAwindowManager.HolmesSSAwindowManager() не вдалося:
 HSSAWMwin_entry002, Таблиця векторів SSA
-HSSAWMwin_entry003, <html>Виберіть SSA<br>&nbsp;&nbsp;&nbsp;&nbsp;вектор&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSAWMwin_entry003, <html>Виберіть SSA<br>вектор</html>
 HSSAWMwin_entry004op1, Встановити нові значення SSA
 HSSAWMwin_entry004op2, Залишити старі
 HSSAWMwin_entry004, Встановити всі місця мережі відповідно до вибраного\nвектора SSA (рядок таблиці: 
@@ -2795,9 +2821,9 @@ HSSAWMwin_entry006op1, Додати новий вектор
 HSSAWMwin_entry006op2, Скасувати
 HSSAWMwin_entry006, Запам'ятати поточну кількість частинок SSA в таблиці?
 HSSAWMwin_entry006t, Додати новий вектор даних SSA?
-HSSAWMwin_entry007, <html>&nbsp;&nbsp;&nbsp;Замінити&nbsp;<br/>значення SSA</html>
-HSSAWMwin_entry008, <html>&nbsp;&nbsp;&nbsp;Видалити&nbsp;&nbsp;<br/>вектор SSA</html>
-HSSAWMwin_entry009, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Редагувати&nbsp;&nbsp;&nbsp;&nbsp;<br/>вектор SSA</html>
+HSSAWMwin_entry007, <html>Замінити<br/>значення SSA</html>
+HSSAWMwin_entry008, <html>Видалити<br/>вектор SSA</html>
+HSSAWMwin_entry009, <html>Редагувати<br/>вектор SSA</html>
 HSSAWMwin_entry010, Принаймні один вектор SSA повинен залишитися!
 HSSAWMwin_entry011op1, Видалити вектор SSA
 HSSAWMwin_entry011op2, Скасувати
@@ -2817,7 +2843,7 @@ HSEwin_entry001title, Редактор станів Holmes
 LOGentry00529exception, Виняток (1000258): HolmesStatesEditor.HolmesStatesEditor() не вдалося:
 HSEwin_entry002, Вектор даних стану
 HSEwin_entry003, Ідентифікатор вектора стану:
-HSEwin_entry004, <html>&nbsp;Встановити токени&nbsp;<br>у всіх місцях</html>
+HSEwin_entry004, <html>Встановити токени<br>у всіх місцях</html>
 HSEwin_entry004t, Встановлює однакову кількість токенів у всіх місцях.
 HSEwin_entry005, Нова кількість токенів:
 HSEwin_entry006op1, Змінити все
@@ -2844,7 +2870,7 @@ HSMwin_entry010op1, Встановити новий стан
 HSMwin_entry010op2, Залишити поточний стан
 HSMwin_entry010, Встановити всі місця мережі відповідно до вибраного (рядок таблиці: %d) стану?
 HSMwin_entry010t, Встановлення нового стану
-HSMwin_entry011, <html>Додати поточний<br/>&nbsp;&nbsp;стан мережі</html>
+HSMwin_entry011, <html>Додати поточний<br/>стан мережі</html>
 HSMwin_entry011t, Створити новий вектор стану на основі поточного стану мережі (розподіл токенів у місцях)
 HSMwin_entry012op1, Додати новий стан
 HSMwin_entry012op2, Скасувати
@@ -2856,13 +2882,13 @@ HSMwin_entry014op1, Додати новий стан
 HSMwin_entry014op2, Скасувати
 HSMwin_entry014, Додати чистий стан мережі до таблиці станів?
 HSMwin_entry014t, Додавання нового чистого стану
-HSMwin_entry015, <html>&nbsp;&nbsp;&nbsp;&nbsp;Замінити&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;стан&nbsp;</html>
+HSMwin_entry015, <html>Замінити<br/>стан</html>
 HSMwin_entry015t, Замінити значення вибраного стану з таблиці на поточні значення місць мережі.
 HSMwin_entry016, Будь ласка, виберіть стан з таблиці.
-HSMwin_entry017, <html>&nbsp;&nbsp;&nbsp;Видалити&nbsp;&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;стан&nbsp;&nbsp;</html>
+HSMwin_entry017, <html>Видалити<br/>стан</html>
 HSMwin_entry017t, Видаляє вектор стану з даних проекту.
 HSMwin_entry018, Будь ласка, виберіть стан з таблиці.
-HSMwin_entry019, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Редагувати&nbsp;&nbsp;&nbsp;&nbsp;<br/>вектор стану</html>
+HSMwin_entry019, <html>Редагувати<br/>вектор стану</html>
 HSMwin_entry020, Будь ласка, виберіть стан з таблиці.
 HSMwin_entry021, У мережі немає місць!
 HSMwin_entry022, Принаймні один стан мережі повинен залишитися!
@@ -2968,8 +2994,8 @@ HSSwin_entry005t, Нокаут симуляція
 HSSwin_entry006, Збір даних
 HSSwin_entry007, SimStart
 HSSwin_entry007t, Обчислити кроки від нульової розмітки до кількості станів, вказаних праворуч.
-HSSwin_entry008, <html>&nbsp;&nbsp;&nbsp;СТОП&nbsp;&nbsp;&nbsp;</html>
-HSSwin_entry009, SimSettings
+HSSwin_entry008, <html>СТОП</html>
+HSSwin_entry009, Налаштування
 HSSwin_entry009t, Встановити параметри симулятора.
 HSSwin_entry010, <html>Менеджер<br>станів</html>
 HSSwin_entry010t, Відкрити вікно менеджера станів.
@@ -2978,7 +3004,7 @@ HSSwin_entry012, Очистити
 HSSwin_entry012t, Очистити всі графіки та вектори даних. Скинути симулятор.
 HSSwin_entry013, Прогрес
 HSSwin_entry014, Опції графіка місць
-HSSwin_entry015, <html>&nbsp;&nbsp;&nbsp;&nbsp;Показати все&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSwin_entry015, <html>Показати все</html>
 HSSwin_entry015t, Показати середню кількість токенів у місцях протягом кроків симуляції.
 HSSwin_entry016, Показати блокнот
 HSSwin_entry016t, Показати блокнот із середньою кількістю токенів у місцях протягом кроків симуляції.
@@ -3000,7 +3026,7 @@ HSSwin_entry026, Нормальний
 HSSwin_entry027, Товстий
 HSSwin_entry028, Графік місць
 HSSwin_entry029, Опції графіка переходів
-HSSwin_entry030, <html>&nbsp;&nbsp;&nbsp;&nbsp;Показати все&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSwin_entry030, <html>Показати все</html>
 HSSwin_entry030t, Показати середню кількість спрацьовувань переходів протягом кроків симуляції.
 HSSwin_entry031, Показати блокнот
 HSSwin_entry031t, Показати блокнот із середньою кількістю спрацьовувань переходів протягом кроків симуляції.
@@ -3060,7 +3086,7 @@ LOGentry00554exception, Виняток (1000277): HolmesSimActions.getRealNodeID
 //HolmesSimKnock:
 HSKwin_entry001, SimStart
 HSKwin_entry001t, Обчислити кроки від нульової розмітки до кількості станів, вказаних праворуч.
-HSKwin_entry002, <html>&nbsp;&nbsp;&nbsp;СТОП&nbsp;&nbsp;&nbsp;</html>
+HSKwin_entry002, <html>СТОП</html>
 HSKwin_entry002t, Зупинити поточний процес симуляції.
 HSKwin_entry003, Прогрес
 HSKwin_entry004, Показати результати в блокноті
@@ -3089,7 +3115,7 @@ HSKwin_entry020t, Очистити переходи та поле MCT, що вк
 HSKwin_entry021, SimStart
 HSKwin_entry021t, Обчислити кроки від нульової розмітки до кількості станів, вказаних праворуч.
 HSKwin_entry022, Симуляція для вручну відключеного переходу та для всіх переходів є взаємовиключними. Будь ласка, виберіть один.
-HSKwin_entry023, <html>&nbsp;&nbsp;&nbsp;СТОП&nbsp;&nbsp;&nbsp;</html>
+HSKwin_entry023, <html>СТОП</html>
 HSKwin_entry023op1, Зупинити та видалити
 HSKwin_entry023op2, Продовжити симуляцію
 HSKwin_entry023msg, ПОПЕРЕДЖЕННЯ: Це скасує симуляцію нокауту всієї мережі та ВИДАЛИТЬ\nвсі раніше обчислені дані в цій сесії симуляції. Продовжити?
@@ -3112,13 +3138,13 @@ HSKwin_entry036, Кроки симуляції:
 HSKwin_entry037, Повторення:
 HSKwin_entry038, Відключено:
 HSKwin_entry039, Панель загальних опцій
-HSKwin_entry040, Завантажити все
+HSKwin_entry040, <html>Завантажити<br>все</html>
 HSKwin_entry040t, Завантажити всі дані симуляції з файлу (перезапише старі дані в пам'яті!).
 HSKwin_entry041, Зберегти все
 HSKwin_entry041t, Зберегти всі дані симуляції в один файл.
 HSKwin_entry042, Аналізувати
 HSKwin_entry042t, Відкрити вікно, де можливо детально аналізувати зібрані дані.
-HSKwin_entry043, Налаштування симулятора
+HSKwin_entry043, <html>Налаштування<br>симулятора</html>
 HSKwin_entry043t, Відкрити вікно опцій симулятора.
 HSKwin_entry044, <html>Менеджер<br>станів</html>
 HSKwin_entry044t, Відкрити вікно менеджера станів, де можна вибрати початкові стани мережі.
@@ -3178,13 +3204,13 @@ HSKVwin_entry010, Серії симуляцій:
 HSKVwin_entry011t, Виберіть серію наборів даних (ймовірно, з кожним переходом, відключеним по одному на набір даних)
 HSKVwin_entry012, Набори даних:
 HSKVwin_entry013t, Виберіть набір даних (ймовірно, з деякими відключеними переходами)
-HSKVwin_entry014, <html>Показати довідковий<br/>&nbsp; &nbsp; &nbsp; &nbsp; набір даних</html>
-HSKVwin_entry015, <html>Показати нокаут<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;набір даних</html>
-HSKVwin_entry016, <html>Порівняти довідковий<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;та нокаут</html>
+HSKVwin_entry014, <html>Показати довідковий<br/>    набір даних</html>
+HSKVwin_entry015, <html>Показати нокаут<br/>набір даних</html>
+HSKVwin_entry016, <html>Порівняти довідковий<br/>та нокаут</html>
 HSKVwin_entry016msg, Будь ласка, виберіть довідковий та нокаут набір!
 HSKVwin_entry016t, Потрібен вибір
-HSKVwin_entry017, <html>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;Повна серія&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;таблиць даних</html>
-HSKVwin_entry018, <html>&nbsp; &nbsp;Показати блокнот<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;резюме</html>
+HSKVwin_entry017, <html> Повна серія<br/>таблиць даних</html>
+HSKVwin_entry018, <html> Показати блокнот<br/>резюме</html>
 HSKVwin_entry019, Блокнот
 HSKVwin_entry020, Графіки
 HSKVwin_entry021, Динаміка місць
@@ -3266,7 +3292,7 @@ HSSetwin_entry001title, Налаштування симулятора
 LOGentry00566exception, Виняток (1000284): HolmesSimSetup.initializeComponents() не вдалося:
 HSSetwin_entry002, Глобальні налаштування
 HSSetwin_entry003, Кроки:
-HSSetwin_entry004, Повторення
+HSSetwin_entry004, Повторення:
 HSSetwin_entry005, Генератор випадкових чисел:
 HSSetwin_entry006op1, Випадковий (Java за замовчуванням)
 HSSetwin_entry006op2, HighQualityRandom (повільніше)
@@ -3287,10 +3313,12 @@ HSSetwin_entry016, Режим 50/50 (асинхронний)
 HSSetwin_entry017, Максимальний режим (синхронний)
 HSSetwin_entry018, Режим одиночного спрацьовування
 HSSetwin_entry019, Дозволити порожні кроки
+HSSetwin_entry019t, Коли цей режим вибрано, симулятор дозволить порожні кроки (без спрацьовування переходів, наприклад, для часових мереж) в процесі симуляції.
 HSSetwin_entry020, Налаштування стохастичного моделювання для SPN
 HSSetwin_entry021, <html>Менеджер<br>швидкості спрацьовування</html>
 HSSetwin_entry021t, Циклічне моделювання одиночного переходу
 HSSetwin_entry022, Включено кінетику масової дії
+HSSetwin_entry022t, Коли цей режим вибрано, симулятор вважає кількість токенів у місці як концентрацію речовини.\nЧим вища концентрація, тим вища ймовірність спрацьовування переходу.
 HSSetwin_entry023, Видалити деактивовані детерміновані переходи SPN
 HSSetwin_entry023t, Коли цей режим вибрано, детермінований перехід SPN, який після свого часу затримки\nбільше не активний, буде видалено з послідовності спрацьовування. В іншому випадку, він спрацює\nяк тільки знову стане активним = буде діяти як негайний у цей момент.
 HSSetwin_entry024, Режим негайного переходу SPN:
@@ -3486,7 +3514,7 @@ HSXTPNwin_entry006, Збір даних
 HSXTPNwin_entry007, <html><center>Початок<br>симуляції</center></html>
 HSXTPNwin_entry007t, Обчислити кроки від нульової розмітки до кількості станів, вказаних праворуч.
 HSXTPNwin_entry008, <html><center>Скасувати</center></html>
-HSXTPNwin_entry008t, <html>&nbsp;&nbsp;&nbsp;СТОП&nbsp;&nbsp;&nbsp;</html>
+HSXTPNwin_entry008t, <html>СТОП</html>
 HSXTPNwin_entry009, <html><center>Налаштування<br>симуляції</center></html>
 HSXTPNwin_entry009t, Встановити опції симулятора.
 HSXTPNwin_entry010, <html><center>Менеджер<br>станів</center></html>
@@ -3646,4 +3674,3 @@ unwrap, Розгорнути
 warning, Попередження
 yes, Так
 LOGentryLNGexc, Виняток (1099999): String.format(...) не вдалося для мовного запису:
-

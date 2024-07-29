@@ -156,7 +156,7 @@ public class HolmesKnockout extends JFrame {
 		
 		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(currentTreshold, 0, 100, 1);
 		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
-		tokenSpinner.setBounds(posX+620, posY, 70, 20);
+		tokenSpinner.setBounds(posX+680, posY, 70, 20);
 		tokenSpinner.addChangeListener(e -> {
 			JSpinner spinner = (JSpinner) e.getSource();
 			currentTreshold = (int) spinner.getValue();
@@ -164,7 +164,7 @@ public class HolmesKnockout extends JFrame {
 		panel.add(tokenSpinner);
 
 		final JComboBox<String> modeCombo = new JComboBox<String>(dataT);
-		modeCombo.setBounds(posX+560, posY+20, 270, 20);
+		modeCombo.setBounds(posX+530, posY+25, 300, 20);
 		modeCombo.setSelectedIndex(0);
 		modeCombo.setMaximumRowCount(6);
 		modeCombo.removeAllItems();
@@ -187,7 +187,7 @@ public class HolmesKnockout extends JFrame {
 		panel.add(modeCombo);
 		
 		JCheckBox contractedModeBox = new JCheckBox(lang.getText("HKwin_entry007")); //Contracted mode
-		contractedModeBox.setBounds(posX+690, posY, 90, 20);
+		contractedModeBox.setBounds(posX+755, posY, 90, 20);
 		contractedModeBox.setSelected(true);
 		contractedModeBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -305,7 +305,7 @@ public class HolmesKnockout extends JFrame {
 		panel.add(expInvKnockButton);
 		
 		JCheckBox shortTextCheckBox = new JCheckBox(lang.getText("HKwin_entry016")); //Show full names
-		shortTextCheckBox.setBounds(posX+490, posY, 130, 20);
+		shortTextCheckBox.setBounds(posX+490, posY, 180, 20);
 		shortTextCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			mmp.setFullName(abstractButton.getModel().isSelected());

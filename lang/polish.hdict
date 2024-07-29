@@ -501,7 +501,7 @@ HDWT_entry092trans, Portal:
 HDWT_entry092trans_1, Tranzycja zawiera więcej niż jedną lokalizację!
 HDWT_entry092trans_1t, Nie można kontynuować
 HDWT_entry093trans, Funkcjonalna:
-HDWT_entry094trans, <html>Edytor<br>&nbsp;&nbsp;&nbsp;funkcji&nbsp;</html>
+HDWT_entry094trans, <html>Edytor<br>funkcji</html>
 HDWT_entry095trans, Przesunięcie nazwy:
 HDWT_entry096trans, Kółko myszy - góra/dół ; SHIFT+kółko myszy - lewo/prawo
 HDWT_entry097Ctrans, Dane tranzycji kolorowej:
@@ -533,7 +533,7 @@ HDWT_entry120SPNtrans, Portal:
 HDWT_entry120SPNtrans_1, Tranzycja zawiera więcej niż jedną lokalizację!
 HDWT_entry120SPNtrans_1t, Nie można kontynuować
 HDWT_entry121SPNtrans, Funkcjonalna:
-HDWT_entry122SPNtrans, <html>Edytor<br>&nbsp;&nbsp;&nbsp;funkcji&nbsp;</html>
+HDWT_entry122SPNtrans, <html>Edytor<br>funkcji</html>
 HDWT_entry123SPNtrans, Przesunięcie nazwy:
 HDWT_entry124SPNtrans, Kółko myszy - góra/dół ; SHIFT+kółko myszy - lewo/prawo
 HDWT_entry125TPNtrans, Nazwa:
@@ -549,7 +549,7 @@ HDWT_entry134TPNtrans, Portal:
 HDWT_entry134TPNtrans_1, Tranzycja zawiera więcej niż jedną lokalizację!
 HDWT_entry134TPNtrans_1t, Nie można kontynuować
 HDWT_entry135TPNtrans, Funkcjonalna:
-HDWT_entry136TPNtrans, <html>Edytor<br>&nbsp;&nbsp;&nbsp;funkcji&nbsp;</html>
+HDWT_entry136TPNtrans, <html>Edytor<br>funkcji</html>
 HDWT_entry137TPNtrans, Przesunięcie nazwy:
 HDWT_entry138TPNtrans, Kółko myszy - góra/dół ; SHIFT+kółko myszy - lewo/prawo
 HDWT_entry139XTPNtrans, Nazwa:
@@ -581,7 +581,7 @@ HDWT_entry159XTPNtrans, β (min/max):
 HDWT_entry160XTPNtrans, Kinetyka Masa-Akcja
 HDWT_entry161XTPNtrans, Natychmiastowa
 HDWT_entry162XTPNtrans, Funkcjonalna
-HDWT_entry163XTPNtrans, <html>Edytor<br>&nbsp;&nbsp;&nbsp;funkcji&nbsp;</html>
+HDWT_entry163XTPNtrans, <html>Edytor<br>funkcji</html>
 HDWT_entry164XTPNtrans, Portal:
 HDWT_entry164XTPNtrans_1, Tranzycja XTPN zawiera więcej niż jedną lokalizację!
 HDWT_entry164XTPNtrans_1t, Nie można kontynuować
@@ -639,13 +639,13 @@ HDWT_entry215TinvPanel, częstotliwość inw/tranz
 LOGentry00046exception, Wyjątek (1000001): createT_invSubWindow
 HDWT_entry216TinvPanel, Poprzedni
 HDWT_entry217TinvPanel, Pokaż poprzednie dane inwariantów.
-HDWT_entry218TinvPanel, <html>&nbsp;&nbsp;&nbsp;Następny&nbsp;</html>
+HDWT_entry218TinvPanel, <html>Następny</html>
 HDWT_entry219TinvPanel, Pokaż następne dane inwariantów.
 HDWT_entry220TinvPanel, Odśwież
 HDWT_entry220TinvPanel_1, Jeśli typy t-invariantów zostały określone, ten przycisk odświeży zawartość trzech poniższych comboboxów:
 HDWT_entry221TinvPanel, Przelicz
 HDWT_entry221TinvPanel_1, To zmusi program do określenia typu t-invariantów (może to zająć trochę czasu) i odświeży zawartość poniższych comboboxów:
-HDWT_entry222TinvPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pokaż<br>&nbsp;&nbsp;&nbsp;&nbsp;szczegóły</html>
+HDWT_entry222TinvPanel, <html>Pokaż<br>szczegóły</html>
 HDWT_entry223TinvPanel, Kolor MCT
 HDWT_entry224TinvPanel, Tranzycje świecą
 HDWT_entry225TinvPanel, Struktura sieci inwariantów pomalowana
@@ -662,7 +662,7 @@ HDWT_entry231TinvPanel_t, Brak t-invariantów
 HDWT_entry232PinvPanel, p-inwariant:
 HDWT_entry233PinvPanel, miejsca niepokryte
 HDWT_entry234PinvPanel, częstotliwość inw/miejsce
-HDWT_entry235PinvPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pokaż<br>&nbsp;&nbsp;&nbsp;&nbsp;szczegóły</html>
+HDWT_entry235PinvPanel, <html>Pokaż<br>szczegóły</html>
 LOGentry00050exception, Wyjątek (1000003) : prawdopodobnie niezaimplementowane funkcje dla p-invariantów w oknie kodu t-invariantów:
 LOGentry00051, Krytyczny błąd w podoknie p-invariantów.\nRozmiar p-invariantów różni się od kardynalności zbioru tranzycji!
 HWDT_entry236, Dane p-invariantów niedostępne.
@@ -672,7 +672,7 @@ HDWT_entry237PinvPanel_1, Dane p-invariantów niedostępne.
 HDWT_entry237PinvPanel_1t, Brak p-invariantów
 HDWT_entry238PinvPanel, (rozmiar:
 HDWT_entry239MCTPanel, Wybierz MCT:
-HDWT_entry240MCTPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pokaż<br>&nbsp;&nbsp;&nbsp;&nbsp;szczegóły</html>
+HDWT_entry240MCTPanel, <html>Pokaż<br>szczegóły</html>
 HDWT_entry241MCTPanel, Różne kolory
 HDWT_entry242MCTPanel, (rozmiar:
 HDWT_entry243MCTPanel, Tranzycje bez MCT
@@ -690,12 +690,12 @@ HDWT_entry254ClusterPanel, Wartość MSS:
 HDWT_entry255ClusterPanel, Pokaż średnią częstotliwość odpalania
 HDWT_entry256ClusterPanel, Pokaż skalowane kolory
 HDWT_entry257ClusterPanel, Pokaż zbiory MCT
-HDWT_entry258ClusterPanel, <html>&nbsp;Pokaż&nbsp;<br>szczegóły</html>
-HDWT_entry259ClusterPanel, <html>&nbsp;Eksport&nbsp;<br>obrazów</html>
+HDWT_entry258ClusterPanel, <html>Pokaż<br>szczegóły</html>
+HDWT_entry259ClusterPanel, <html>Eksport<br>obrazów</html>
 HDWT_entry260ClusterPanel, Zakończono
 HDWT_entry261ClusterPanel, Klaster inw.:
-HDWT_entry262ClusterPanel, <html>&nbsp;Szczegóły&nbsp;<br>czasu</html>
-HDWT_entry263ClusterPanel, <html>&nbsp;Szczegóły&nbsp;<br>klasterów</html>
+HDWT_entry262ClusterPanel, <html>Szczegóły<br>czasu</html>
+HDWT_entry263ClusterPanel, <html>Szczegóły<br>klasterów</html>
 HDWT_entry264ClusterPanel, Klaster:
 HDWT_entry265ClusterPanel, inw.) alg.:
 HDWT_entry266ClusterPanel, metryka:
@@ -723,7 +723,7 @@ HDWT_entry285KnockPanel, * * * Również wyłączone: \n
 HDWT_entry286FixPanel, t-inwarianty:
 HDWT_entry287FixPanel, Normalne: 0 / Nie-inw.: 0
 HDWT_entry288FixPanel, Sub-inw.: 0 / Sur-inw.: 0
-HDWT_entry289FixPanel, <html>Pokaż<br>&nbsp;&nbsp;&nbsp;inw.</html>
+HDWT_entry289FixPanel, <html>Pokaż<br>inw.</html>
 HDWT_entry290FixPanel, Miejsca wejściowe i wyjściowe:
 HDWT_entry291FixPanel, Wejście: 0 / Wyjście: 0
 HDWT_entry292FixPanel, <html>Pokaż<br>miejsca</html>
@@ -2012,7 +2012,7 @@ HFBwin_entry009, Sprawdź i dodaj
 HFBwin_entry009t, Sprawdź równanie i dodaj je do listy funkcji tranzycji
 HFBwin_entry010, Wyczyść funkcję
 HFBwin_entry010t, Wyczyść równanie z listy
-HFBwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pomoc&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HFBwin_entry011, <html>Pomoc</html>
 HFBwin_entry011t, Pokaż listę operacji i funkcji
 HFBwin_entry012, Lista funkcji tranzycji:
 HFBwin_entry013, Log błędów:
@@ -2031,76 +2031,102 @@ HIGwin_entry003t, p-inwarianty
 HIGwin_entry004, Generuj
 HIGwin_entry005, Generator już pracuje
 HIGwin_entry005t, Generator pracuje
-HIGwin_entry006, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA<br>generator</html>
+HIGwin_entry006, <html>INA<br>generator</html>
 HIGwin_entry007, Status INAwin32.exe ustawiony na niegotowy. Proszę przeczytać początkowe ostrzeżenia\nw oknach logów Holmesa dla więcej informacji.
 HIGwin_entry007t, Problem z INAwin32.exe
-HIGwin_entry008, <html>&nbsp;&nbsp;&nbsp;&nbsp;Wczytaj<br>t-inwarianty</html>
+HIGwin_entry008, <html>Wczytaj<br>t-inwarianty</html>
+HIGwin_entry008info, Wczytaj t-inwarianty z pliku
 LOGentry00441, Wczytane t-inwarianty:
 LOGentry00442, Wczytywanie t-inwariantów z pliku nie powiodło się.\n
-HIGwin_entry009, <html>&nbsp;&nbsp;&nbsp;Eksportuj<br>t-inwarianty</html>
+HIGwin_entry009, <html>Eksportuj<br>t-inwarianty</html>
+HIGwin_entry009info, Eksportuj t-inwarianty do pliku w formacie INA
 LOGentry00443, Zapisane t-inwarianty:
 LOGentry00444, Zapisywanie t-inwariantów do pliku nie powiodło się.\n
-HIGwin_entry010, <html>&nbsp;&nbsp;&nbsp;&nbsp;Pokaż<br>t-inwarianty</html>
-HIGwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;Zapisz<br>t-inwarianty</html>
-HIGwin_entry012, <html>&nbsp;&nbsp;&nbsp;&nbsp;Uczyń<br>&nbsp;&nbsp;wykonalnymi</html>
+HIGwin_entry010, <html>Pokaż<br>t-inwarianty</html>
+HIGwin_entry010info, Pokaż t-inwarianty w oknie notatnika jako wektory matematyczne
+HIGwin_entry011, <html>Pokaż<br>wsparcia</html>
+HIGwin_entry011info, Show t-invariants support (all transitions) in the notebook window
+HIGwin_entry012, <html>Uczyń<br>wykonalnymi</html>
+HIGwin_entry012info, Przelicz t-inwarianty, aby były wykonalne (analiza łuków/tokenów)
 HIGwin_entry013, Tryb zaawansowany wykonalności
+HIGwin_entry013info, Włącza tryb zaawansowany dla przeliczania wykonalności
 HIGwin_entry014, Usuń nie-inwarianty
+HIGwin_entry014info, Automatically removed non canonical t-invariants during generation
 HIGwin_entry015, Usuń 1-el. inw.
+HIGwin_entry015info, Automatycznie usuwa 1-elementowe t-inwarianty (pętle) podczas generacji
 HIGwin_entry016, t-inwarianty - Styl Kaja:
 HIGwin_entry017, p-inwarianty - Styl Kaja:
 HIGwin_entry018, Log t-inwariantów
 HIGwin_entry019, Narzędzia
-HIGwin_entry020, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sprawdź<br />&nbsp;&nbsp;&nbsp;kanoniczn.</html>
+HIGwin_entry020, <html>Sprawdź<br />kanoniczn.</html>
+HIGwin_entry020info, Sprawdź t-inwarianty pod kątem kanoniczności
 HIGwin_entry021, Brak t-inwariantów do analizy.
 HIGwin_entry021t, Brak t-inwariantów
 HIGwin_entry022, Sprawdzanie kanoniczności dla %d t-inwariantów.%n
 HIGwin_entry023, Niekanoniczne t-inwarianty:
 HIGwin_entry024, <html>Sprawdź<br/>m. wsparcia</html>
+HIGwin_entry024info, Sprawdź minimalność wsparcia dla t-inwariantów
 HIGwin_entry025, Sprawdzanie minimalności wsparcia dla %d t-inwariantów.%n
 HIGwin_entry026, Nie minimalne wsparcie t-inwariantów:
-HIGwin_entry027, <html>&nbsp;&nbsp;&nbsp;&nbsp;Sprawdź<br />&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>
+HIGwin_entry027, <html>Sprawdź<br />C&middot;x = 0</html>
+HIGwin_entry027info, Sprawdź poprawność t-inwariantów
 HIGwin_entry028, Sprawdzanie poprawności t-inwariantów dla %d inwariantów.%n
 HIGwin_entry029, t-inwarianty (Cx = 0):
 HIGwin_entry030, sur-inwarianty (Cx > 0):
 HIGwin_entry031, sub-inwarianty (Cx < 0):
 HIGwin_entry032, nie-inwarianty (Cx <=> 0):
-HIGwin_entry033, <html>&nbsp;&nbsp;&nbsp;Porównaj<br />&nbsp;&nbsp;&nbsp;zestaw</html>
-HIGwin_entry034, <html>&nbsp;&nbsp;Macierz<br />&nbsp;&nbsp;incydencji</html>
+HIGwin_entry033, <html>Porównaj<br />zestaw</html>
+HIGwin_entry033info, Załaduj t-inwarianty z pliku (zestaw referencyjny) i porównaj z obecnie wygenerowanym zbiorem w pamięci programu
+HIGwin_entry034, <html>Macierz<br />incydencji</html>
+HIGwin_entry034info, Pokazuje macierz incydencji dla obecnej sieci
 HIGwin_entry035, Szczegóły
+HIGwin_entry035info, Jeżeli zaznaczone, to powyższy przycisk Sprawdź poprawność będzie również zawierał informacje o sub- i sur- inwariantach (jeśli dostępne)
 HIGwin_entry036, Pokaż różnice
+HIGwin_entry036info, Kiedy nowe t-inwarianty są generowane (przycisk Generuj), pokaż różnicę między starym i nowym zestawem w logach
 HIGwin_entry037, <html>Generuj<br>p-inw.</html>
 HIGwin_entry038, Generator już pracuje
 HIGwin_entry038t, Generator pracuje
-HIGwin_entry039, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA<br>generator</html>
+HIGwin_entry039, <html>INA<br>generator</html>
 HIGwin_entry040, Status INAwin32.exe ustawiony na niegotowy. Proszę przeczytać początkowe ostrzeżenia\nw oknach logów Holmesa dla więcej informacji.
 HIGwin_entry040t, Problem z INAwin32.exe
-HIGwin_entry041, <html>&nbsp;&nbsp;&nbsp;&nbsp;Wczytaj<br>p-inwarianty</html>
+HIGwin_entry041, <html>Wczytaj<br>p-inwarianty</html>
+HIGwin_entry041info, Wczytaj p-inwarianty z pliku
 LOGentry00445, Wczytane p-inwarianty:
 LOGentry00446, Wczytywanie p-inwariantów nie powiodło się.\n
-HIGwin_entry042, <html>&nbsp;&nbsp;&nbsp;Eksportuj<br>p-inwarianty</html>
+HIGwin_entry042, <html>Eksportuj<br>p-inwarianty</html>
+HIGwin_entry042info, Eksportuj p-inwarianty do pliku w formacie INA
 LOGentry00447, Zapisane p-inwarianty:
 LOGentry00448, Zapisywanie p-inwariantów nie powiodło się.\n
-HIGwin_entry043, <html>&nbsp;&nbsp;&nbsp;&nbsp;Pokaż<br>p-inwarianty</html>
+HIGwin_entry043, <html>Pokaż<br>p-inwarianty</html>
+HIGwin_entry043info, Pokaż p-inwarianty w oknie notatnika jako wektory matematyczne
 HIGwin_entry044, Usuń nie-invarianty
+HIGwin_entry044info, Automatycznie usuwa niekanoniczne p-inwarianty podczas generacji
 HIGwin_entry045, Usuń 1-el. inw.
+HIGwin_entry045info, Automatycznie usuwa 1-elementowe p-inwarianty (pętle) podczas generacji
 HIGwin_entry046, Log p-inwariantów
-HIGwin_entry047, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sprawdź<br />&nbsp;&nbsp;&nbsp;kanoniczność</html>
+HIGwin_entry047, <html>Sprawdź<br />kanoniczność</html>
+HIGwin_entry047info, Sprawdź p-inwarianty pod kątem kanoniczności
 HIGwin_entry048, Brak p-inwariantów do analizy.
 HIGwin_entry048t, Brak p-inwariantów
 HIGwin_entry049, Sprawdzanie kanoniczności dla %d p-inwariantów.%n
 HIGwin_entry050, niekanoniczne p-inwarianty:
 HIGwin_entry051, <html>Sprawdź<br>minimalność<br>wsparcia</html>
+HIGwin_entry051info, Sprawdź minimalność wsparcia dla p-inwariantów
 HIGwin_entry052, Sprawdzanie minimalności wsparcia dla %d p-inwariantów.%n
 HIGwin_entry053, Nie minimalne wsparcie p-inwariantów:
-HIGwin_entry054, <html>&nbsp;&nbsp;&nbsp;&nbsp;Sprawdź<br>&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>
+HIGwin_entry054, <html>Sprawdź<br>C&middot;x = 0</html>
+HIGwin_entry054info, Sprawdź poprawność p-inwariantów
 HIGwin_entry055, Sprawdzanie poprawności p-inwariantów dla %d inwariantów.%n
 HIGwin_entry056, p-inwarianty (xC = 0):
 HIGwin_entry057, sur-inwarianty (xC > 0):
 HIGwin_entry058, sub-inwarianty (xC < 0):
 HIGwin_entry059, nie-inwarianty (xC <=> 0):
-HIGwin_entry060, <html>&nbsp;&nbsp;&nbsp;Porównaj<br>&nbsp;&nbsp;&nbsp;zestaw</html>
-HIGwin_entry061, <html>&nbsp;&nbsp;Macierz<br>&nbsp;&nbsp;incydencji</html>
+HIGwin_entry060, <html>Porównaj<br>zestaw</html>
+HIGwin_entry060info, Załaduj p-inwarianty z pliku (zestaw referencyjny) i porównaj z obecnie wygenerowanym zbiorem w pamięci programu
+HIGwin_entry061, <html>Macierz<br>incydencji</html>
+HIGwin_entry061info, Pokazuje macierz incydencji dla obecnej sieci
 HIGwin_entry062, Szczegóły
+HIGwin_entry062info, Jeżeli zaznaczone, to powyższy przycisk Sprawdź poprawność będzie również zawierał informacje o sub- i sur- inwariantach (jeśli dostępne)
 HIGwin_entry063, Wczytaj inwarianty
 HIGwin_entry063t, Wybierz plik inwariantów
 HIGwin_entry064, Poprzedni rozmiar obliczonego zestawu:
@@ -2162,7 +2188,7 @@ HIVwin_entry05, Informacje ogólne
 HIVwin_entry06, Inwariant:
 HIVwin_entry07, Dane inwariantów
 HIVwin_entry08, Pokaż poprzednie dane inwariantu.
-HIVwin_entry09, <html>&nbsp;&nbsp;&nbsp;Następny&nbsp;</html>
+HIVwin_entry09, <html>Następny</html>
 HIVwin_entry09t, Pokaż następny inwariant.
 HIVwin_entry10, Minimalny:
 HIVwin_entry11, Wykonalny:
@@ -2182,9 +2208,9 @@ HIVwin_entry24, Tranz. DPN:
 HIVwin_entry25, Tranz. TDPN:
 HIVwin_entry26, Tranz. PN:
 HIVwin_entry27, Opis:
-HIVwin_entry28, <html>&nbsp;&nbsp;&nbsp;Przelicz statystyki</html>
+HIVwin_entry28, <html>Przelicz statystyki</html>
 HIVwin_entry28t, Pokaż poprzednie dane inwariantu.
-HIVwin_entry29, <html>&nbsp;&nbsp;&nbsp;Pokaż dane w notatniku</html>
+HIVwin_entry29, <html>Pokaż dane w notatniku</html>
 HIVwin_entry29t, Pokaż dane inwariantów w wewnętrznym notatniku.
 HIVwin_entry30, Tabela MCT/tranzycji
 HIVwin_entry31, MCT/tranzycje
@@ -2212,17 +2238,17 @@ HKwin_entry004, Pokaż drzewo dla pozostałych tranzycji
 HKwin_entry005, Pokaż drzewo dla wyłączonych tranzycji
 HKwin_entry006, Pokaż drzewo dla wyłączonych tranzycji (progowa)
 HKwin_entry007, Zwinięte
-HKwin_entry008, <html>&nbsp;knockout map</html>
+HKwin_entry008, <html>knockout map</html>
 HKwin_entry008t, Generuj mapę knockout dla obecnie wybranej tranzycji.
-HKwin_entry009, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pokaż<br>&nbsp;&nbsp;notatnik</html>
+HKwin_entry009, <html>Pokaż<br>notatnik</html>
 HKwin_entry009t, Dla wybranej tranzycji pokaż szczegółowe dane knockout w notatniku.
 LOGentry00454exception, Wyjątek (1000191): HolmesKnockout.createUpperButtonPanel() nie powiodło się:
 LOGentry00455exception, Wyjątek (1000192): HolmesKnockout.createLowerButtonPanel() nie powiodło się. Błąd w sekcji inwariantów.
 HKwin_entry010, <html>Cała sieć<br>knockout</html>
-HKwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;Kolorowa&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sieć&nbsp;&nbsp;&nbsp;</html>
+HKwin_entry011, <html>Kolorowa<br>sieć</html>
 HKwin_entry012, <html>Wczytaj dane<br>Mona Lisa</html>
-HKwin_entry013, <html>&nbsp;&nbsp;Mona Lisa<br>-> Kolorowa sieć</html>
-HKwin_entry014, <html>&nbsp;Zapisz obraz</html>
+HKwin_entry013, <html>Mona Lisa<br>-> Kolorowa sieć</html>
+HKwin_entry014, <html>Zapisz obraz</html>
 HKwin_entry015, <html>Inw. knockout</html>
 HKwin_entry016, Pokaż pełne nazwy
 HKwin_entry017, Reakcja obiektowa (reakcja wyłączenia):
@@ -2348,7 +2374,7 @@ LOGentry00472exception, Wyjątek (1000209): HolmesNetProperties.saveToFile() nie
 HNTwin_entry001title, Tabele danych sieci
 LOGentry00473exception, Wyjątek (1000210): HolmesNetTables.HolmesNetTables() nie powiodło się:
 LOGentry00474exception, Wyjątek (1000211): HolmesNetTables.resetT_invData() nie powiodło się:
-HNTwin_entry002, <html>&nbsp;&nbsp;&nbsp;&nbsp;Miejsca&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HNTwin_entry002, <html>Miejsca</html>
 HNTwin_entry002t, Pokazuje tabelę miejsc
 HNTwin_entry003, Tranzycje
 HNTwin_entry003t, Pokazuje tabelę tranzycji
@@ -2573,7 +2599,7 @@ HPPwinSYS_entry049, Inne opcje
 HPPwinSYS_entry050, Język
 HPPwinSYS_entry051, Angielski
 HPPwinSYS_entry052, Polski
-HPPwinSYS_entry053, Język ustawiony na: %s (z %s). Aby zmiany zaczęły obowiązywać, zrestartuj program.
+HPPwinSYS_entry053, Język ustawiony na: %s (z %s).%n%nAby zmiany zaczęły obowiązywać, zrestartuj program.
 HPPwinSYS_entry054, YourLang
 HPPwinSYS_entry055, Niemiecki
 HPPwinSYS_entry056, Hiszpański
@@ -2728,14 +2754,14 @@ HSPNMwin_entry005op1, Ustaw nowe stawki
 HSPNMwin_entry005op2, Zachowaj stare
 HSPNMwin_entry005, Ustaw wszystkie tranzycje sieci zgodnie z wybranym\nwektorem danych SPN (wiersz tabeli:
 HSPNMwin_entry005t, ustaw nowe stawki wystrzałów?
-HSPNMwin_entry006, <html>Zapisz obecny<br/>&nbsp;&nbsp;wektor SPN</html>
+HSPNMwin_entry006, <html>Zapisz obecny<br/>wektor SPN</html>
 HSPNMwin_entry007op1, Dodaj nowy wektor
 HSPNMwin_entry007op2, Anuluj
 HSPNMwin_entry007, Zapamiętaj obecne stawki wystrzałów sieci w tabeli?
 HSPNMwin_entry007t, Dodaj nowy wektor danych SPN?
-HSPNMwin_entry008, <html>&nbsp;&nbsp;&nbsp;Zastąp&nbsp;<br/>wektor SPN</html>
-HSPNMwin_entry009, <html>&nbsp;&nbsp;&nbsp;Usuń&nbsp;&nbsp;<br/>wektor SPN</html>
-HSPNMwin_entry010, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edytuj&nbsp;&nbsp;&nbsp;&nbsp;<br/>wektor SPN</html>
+HSPNMwin_entry008, <html>Zastąp<br/>wektor SPN</html>
+HSPNMwin_entry009, <html>Usuń<br/>wektor SPN</html>
+HSPNMwin_entry010, <html>Edytuj<br/>wektor SPN</html>
 HSPNMwin_entry011, Musi pozostać co najmniej jeden wektor danych SPN sieci!
 HSPNMwin_entry012op1, Usuń wektor
 HSPNMwin_entry012op2, Anuluj
@@ -2771,7 +2797,7 @@ HSPNTEwin_entry015, Start / Powt. / Stop:
 LOGentry00524exception, Wyjątek (1000253): HolmesSPNtransitionEditor.saveTransitionData() nie powiodło się. Nieprawidłowa wartość, oczekiwany tekst początkowy lub nieujemna wartość.
 HSPNTEwin_entry016, Nieprawidłowa wartość, opóźnienie musi być nieujemną liczbą całkowitą.
 LOGentry00525exception, Wyjątek (1000254): HolmesSPNtransitionEditor.saveTransitionData() nie powiodło się. Nieprawidłowa wartość, oczekiwany tekst końcowy lub nieujemna wartość.
-HSPNTEwin_entry017, <html>&nbsp;Zmień & wyjdź</html>
+HSPNTEwin_entry017, <html>Zmień & wyjdź</html>
 HSPNTEwin_entry017t, Jeden krok wstecz
 
 //HolmesSSAplacesEditor:
@@ -2786,7 +2812,7 @@ HSSAwin_entry005, Tabela komponentów SSA
 HSSAWMwin_entry001title, Menedżer wektorów SSA
 LOGentry00527exception, Wyjątek (1000256): HolmesSSAwindowManager.HolmesSSAwindowManager() nie powiodło się:
 HSSAWMwin_entry002, Tabela wektorów SSA
-HSSAWMwin_entry003, <html>Wybierz wektor<br>&nbsp;&nbsp;&nbsp;&nbsp;SSA&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSAWMwin_entry003, <html>Wybierz wektor<br>SSA</html>
 HSSAWMwin_entry004op1, Ustaw nowe wartości SSA
 HSSAWMwin_entry004op2, Zachowaj stare
 HSSAWMwin_entry004, Ustaw wszystkie miejsca sieci zgodnie z wybranym\nwektorem SSA (wiersz tabeli:
@@ -2796,9 +2822,9 @@ HSSAWMwin_entry006op1, Dodaj nowy wektor
 HSSAWMwin_entry006op2, Anuluj
 HSSAWMwin_entry006, Zapamiętaj obecne liczby cząstek SSA w tabeli?
 HSSAWMwin_entry006t, Dodaj nowy wektor danych SSA?
-HSSAWMwin_entry007, <html>&nbsp;&nbsp;&nbsp;Zastąp&nbsp;<br/>wartości SSA</html>
-HSSAWMwin_entry008, <html>&nbsp;&nbsp;&nbsp;Usuń&nbsp;&nbsp;<br/>wektor SSA</html>
-HSSAWMwin_entry009, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edytuj&nbsp;&nbsp;&nbsp;&nbsp;<br/>wektor SSA</html>
+HSSAWMwin_entry007, <html>Zastąp<br/>wartości SSA</html>
+HSSAWMwin_entry008, <html>Usuń<br/>wektor SSA</html>
+HSSAWMwin_entry009, <html>Edytuj<br/>wektor SSA</html>
 HSSAWMwin_entry010, Musi pozostać co najmniej jeden wektor SSA!
 HSSAWMwin_entry011op1, Usuń wektor SSA
 HSSAWMwin_entry011op2, Anuluj
@@ -2818,7 +2844,7 @@ HSEwin_entry001title, Edytor p-stanów
 LOGentry00529exception, Wyjątek (1000258): HolmesStatesEditor.HolmesStatesEditor() nie powiodło się:
 HSEwin_entry002, Dane wektora stanu
 HSEwin_entry003, ID wektora stanu:
-HSEwin_entry004, <html>&nbsp;Ustaw żetony&nbsp;<br>w wszystkich miejscach</html>
+HSEwin_entry004, <html>Ustaw żetony<br>w wszystkich miejscach</html>
 HSEwin_entry004t, Ustawia tę samą liczbę żetonów we wszystkich miejscach.
 HSEwin_entry005, Nowa liczba żetonów:
 HSEwin_entry006op1, Zmień wszystkie
@@ -2845,7 +2871,7 @@ HSMwin_entry010op1, Ustaw nowy stan
 HSMwin_entry010op2, Zachowaj obecny stan
 HSMwin_entry010, Ustaw wszystkie miejsca sieci zgodnie z wybranym (wiersz tabeli: %d) stanem?
 HSMwin_entry010t, Ustawianie nowego stanu
-HSMwin_entry011, <html>Dodaj obecny<br/>&nbsp;&nbsp;stan sieci</html>
+HSMwin_entry011, <html>Dodaj obecny<br/>stan sieci</html>
 HSMwin_entry011t, Utwórz nowy wektor stanu na podstawie obecnego stanu sieci (rozkład żetonów w miejscach)
 HSMwin_entry012op1, Dodaj nowy stan
 HSMwin_entry012op2, Anuluj
@@ -2857,13 +2883,13 @@ HSMwin_entry014op1, Dodaj nowy stan
 HSMwin_entry014op2, Anuluj
 HSMwin_entry014, Dodaj czysty stan sieci do tabeli stanów?
 HSMwin_entry014t, Dodawanie nowego czystego stanu
-HSMwin_entry015, <html>&nbsp;&nbsp;&nbsp;&nbsp;Zastąp&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stan&nbsp;</html>
+HSMwin_entry015, <html>Zastąp<br/>stan</html>
 HSMwin_entry015t, Zastąp wartości wybranego stanu z tabeli z obecnymi wartościami miejsc sieci.
 HSMwin_entry016, Proszę wybrać stan z tabeli.
-HSMwin_entry017, <html>&nbsp;&nbsp;&nbsp;Usuń&nbsp;&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stan&nbsp;&nbsp;</html>
+HSMwin_entry017, <html>Usuń<br/>stan</html>
 HSMwin_entry017t, Usuwa wektor stanu z danych projektu.
 HSMwin_entry018, Proszę wybrać stan z tabeli.
-HSMwin_entry019, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edytuj&nbsp;&nbsp;&nbsp;&nbsp;<br/>wektor stanu</html>
+HSMwin_entry019, <html>Edytuj<br/>wektor stanu</html>
 HSMwin_entry020, Proszę wybrać stan z tabeli.
 HSMwin_entry021, Nie ma miejsc w sieci!
 HSMwin_entry022, Musi pozostać co najmniej jeden stan sieci!
@@ -2969,8 +2995,8 @@ HSSwin_entry005t, Symulacja knockout
 HSSwin_entry006, Akwizycja danych
 HSSwin_entry007, SimStart
 HSSwin_entry007t, Oblicz kroki od znakowania zerowego przez liczbę stanów podaną po prawej stronie.
-HSSwin_entry008, <html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>
-HSSwin_entry009, Ustawienia sym.
+HSSwin_entry008, <html>STOP</html>
+HSSwin_entry009, <html>Ustawienia<br>sym.</html>
 HSSwin_entry009t, Ustaw opcje symulatora.
 HSSwin_entry010, <html>Menedżer<br>stanów</html>
 HSSwin_entry010t, Otwórz okno menedżera stanów.
@@ -2979,7 +3005,7 @@ HSSwin_entry012, Wyczyść
 HSSwin_entry012t, Wyczyść wszystkie wykresy i wektory danych. Zresetuj symulator.
 HSSwin_entry013, Postęp
 HSSwin_entry014, Opcje wykresu miejsc
-HSSwin_entry015, <html>&nbsp;&nbsp;&nbsp;&nbsp;Pokaż wszystkie&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSwin_entry015, <html>Pokaż wszystkie</html>
 HSSwin_entry015t, Pokaż średnie liczby żetonów w miejscach w kolejnych krokach symulacji.
 HSSwin_entry016, Pokaż notatnik
 HSSwin_entry016t, Pokaż notatnik z średnimi liczbami żetonów w miejscach w kolejnych krokach symulacji.
@@ -3001,7 +3027,7 @@ HSSwin_entry026, Normalny
 HSSwin_entry027, Gruby
 HSSwin_entry028, Wykres miejsc
 HSSwin_entry029, Opcje wykresu tranzycji
-HSSwin_entry030, <html>&nbsp;&nbsp;&nbsp;&nbsp;Pokaż wszystkie&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSwin_entry030, <html>Pokaż wszystkie</html>
 HSSwin_entry030t, Pokaż średnie liczby wyzwalania tranzycji w kolejnych krokach symulacji.
 HSSwin_entry031, Pokaż notatnik
 HSSwin_entry031t, Pokaż notatnik z średnimi liczbami wyzwalania tranzycji w kolejnych krokach symulacji.
@@ -3061,7 +3087,7 @@ LOGentry00554exception, Wyjątek (1000277): HolmesSimActions.getRealNodeID() nie
 //HolmesSimKnock:
 HSKwin_entry001, SimStart
 HSKwin_entry001t, Oblicz kroki od znakowania zerowego przez liczbę stanów podaną po prawej stronie.
-HSKwin_entry002, <html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>
+HSKwin_entry002, <html>STOP</html>
 HSKwin_entry002t, Zatrzymaj obecnie pracujący proces symulacji.
 HSKwin_entry003, Postęp
 HSKwin_entry004, Pokaż wyniki w notatniku
@@ -3090,7 +3116,7 @@ HSKwin_entry020t, Czyści tranzycje i pole MCT wskazujące elementy symulacji of
 HSKwin_entry021, SimStart
 HSKwin_entry021t, Oblicz kroki od znakowania zerowego przez liczbę stanów podaną po prawej stronie.
 HSKwin_entry022, Symulacja dla ręcznie wyłączonej tranzycji i dla wszystkich tranzycji są wzajemnie\nwykluczające się. Proszę wybrać jedno.
-HSKwin_entry023, <html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>
+HSKwin_entry023, <html>STOP</html>
 HSKwin_entry023op1, Zatrzymaj i usuń
 HSKwin_entry023op2, Kontynuuj symulację
 HSKwin_entry023msg, UWAGA: To spowoduje anulowanie symulacji knockout dla całej sieci i USUNIE\nwszystkie wcześniej obliczone zestawy danych w tej sesji symulacji. Kontynuować?
@@ -3113,13 +3139,13 @@ HSKwin_entry036, Krok sym.:
 HSKwin_entry037, Powtórzenia
 HSKwin_entry038, Wyłączone:
 HSKwin_entry039, Panel opcji ogólnych
-HSKwin_entry040, Wczytaj wszystko
+HSKwin_entry040, <html>Wczytaj<br>wszystko</html>
 HSKwin_entry040t, Wczytuje wszystkie dane symulacji z pliku (nadpisze stare dane w pamięci!).
-HSKwin_entry041, Zapisz wszystko
+HSKwin_entry041, <html>Zapisz<br>wszystko</html>
 HSKwin_entry041t, Zapisuje wszystkie dane symulacji do jednego pliku.
 HSKwin_entry042, Analiza
 HSKwin_entry042t, Otwiera okno, w którym możliwa jest szczegółowa analiza zebranych danych.
-HSKwin_entry043, Ustawienia sym.
+HSKwin_entry043, <html>Ustawienia<br>sym.</html>
 HSKwin_entry043t, Otwiera okno opcji symulatora.
 HSKwin_entry044, <html>Menedżer<br>stanów</html>
 HSKwin_entry044t, Otwiera okno Menedżera Stanów, w którym można wybrać początkowe stany sieci.
@@ -3179,13 +3205,13 @@ HSKVwin_entry010, Seria sym.:
 HSKVwin_entry011t, Wybierz serię zestawów danych (prawdopodobnie z każdą tranzycją wyłączoną jedną na zestaw danych)
 HSKVwin_entry012, Zestawy danych:
 HSKVwin_entry013t, Wybierz zestaw danych (prawdopodobnie z wyłączoną tranzycją/tranzycjami)
-HSKVwin_entry014, <html>Pokaż zestaw<br/>&nbsp; &nbsp; &nbsp; &nbsp; referencyjny</html>
-HSKVwin_entry015, <html>Pokaż zestaw<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;knockout</html>
-HSKVwin_entry016, <html>Porównaj zestaw<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;referencyjny i knockout</html>
+HSKVwin_entry014, <html>Pokaż zestaw<br/>    referencyjny</html>
+HSKVwin_entry015, <html>Pokaż zestaw<br/>knockout</html>
+HSKVwin_entry016, <html>Porównaj zestaw<br/>referencyjny i knockout</html>
 HSKVwin_entry016msg, Proszę wybrać zestaw referencyjny i knockout!
 HSKVwin_entry016t, Wymagane wybranie
-HSKVwin_entry017, <html>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;Pełne serie&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tabelek</html>
-HSKVwin_entry018, <html>&nbsp; &nbsp;Pokaż notatnik<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;podsumowanie</html>
+HSKVwin_entry017, <html> Pełne serie<br/>tabelek</html>
+HSKVwin_entry018, <html> Pokaż notatnik<br/>podsumowanie</html>
 HSKVwin_entry019, Notatnik
 HSKVwin_entry020, Wykresy
 HSKVwin_entry021, Dynamika miejsc
@@ -3267,7 +3293,7 @@ HSSetwin_entry001title, Ustawienia symulatora
 LOGentry00566exception, Wyjątek (1000284): HolmesSimSetup.initializeComponents() nie powiodło się:
 HSSetwin_entry002, Ustawienia globalne
 HSSetwin_entry003, Kroków:
-HSSetwin_entry004, Powtórzeń
+HSSetwin_entry004, Powtórzenia:
 HSSetwin_entry005, Generator liczb losowych:
 HSSetwin_entry006op1, Losowy (domyślny Java)
 HSSetwin_entry006op2, HighQualityRandom (wolniejszy)
@@ -3288,10 +3314,12 @@ HSSetwin_entry016, Tryb 50/50 (async.)
 HSSetwin_entry017, Tryb maksymalny (sync.)
 HSSetwin_entry018, Tryb pojedynczego uruchomienia
 HSSetwin_entry019, Pozwól na puste kroki
+HSSetwin_entry019t, Gdy ten tryb jest wybrany, symulator pozwoli na puste kroki (brak uruchomienia tranzycji, np. dla sieci czasowych) w procesie symulacji.
 HSSetwin_entry020, Ustawienia symulacji stochastycznej dla SPN
 HSSetwin_entry021, <html>Manager<br>częstości uruchomień</html>
 HSSetwin_entry021t, Pętla pojedynczej symulacji tranzycji
 HSSetwin_entry022, Kinetyka reakcji masowych włączona
+HSSetwin_entry022t, Kiedy załączony, symulator bierze pod uwagę liczbę tokenów w miejscu jako stężenie substancji.\nIm wyższe stężenie, tym większe prawdopodobieństwo uruchomienia tranzycji.
 HSSetwin_entry023, Usuń dezaktywowane deterministyczne tranzycje SPN
 HSSetwin_entry023t, Gdy ten tryb jest wybrany, deterministyczna tranzycja SPN, która po upływie czasu opóźnienia\njuż nie jest aktywna, zostanie usunięta z sekwencji uruchomień. W przeciwnym razie, uruchomi się\ntak szybko, jak tylko zostanie ponownie aktywowana = będzie działać jako natychmiastowa w tym momencie.
 HSSetwin_entry024, Tryb SPN tranzycji natychmiastowych:
@@ -3304,7 +3332,7 @@ HSSetwin_entry027t, Jedna z aktywnych tranzycji natychmiastowych uruchomi się, 
 HSSetwin_entry028, Ustawienia Gillespie SSA (Stochastic Simulation Algorithm)
 HSSetwin_entry029, <html>Manager<br>częstości uruchomień</html>
 HSSetwin_entry029t, Ustaw częstości uruchomień tranzycji dla SSA.
-HSSetwin_entry030, <html>Menedżer<br>&nbsp;&nbsp;komponentów&nbsp;</html>
+HSSetwin_entry030, <html>Menedżer<br>komponentów</html>
 HSSetwin_entry030t, Menedżer wektorów komponentów dla SSA.
 
 //HolmesDockWindowsTableExceptions:
@@ -3487,7 +3515,7 @@ HSXTPNwin_entry006, Akwizycja danych
 HSXTPNwin_entry007, <html><center>Start<br>symulacji</center></html>
 HSXTPNwin_entry007t, Oblicz kroki od znakowania zerowego przez liczbę stanów podaną po prawej.
 HSXTPNwin_entry008, <html><center>Anuluj</center></html>
-HSXTPNwin_entry008t, <html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>
+HSXTPNwin_entry008t, <html>STOP</html>
 HSXTPNwin_entry009, <html><center>Ustawienia<br>symulacji</center></html>
 HSXTPNwin_entry009t, Ustaw opcje symulatora.
 HSXTPNwin_entry010, <html><center>Menedżer<br>stanów</center></html>
