@@ -2316,7 +2316,7 @@ HMCSwin_entry017, Vollständige Informationen anzeigen
 HMCSwin_entry018, <html>Speichere dieses<br />objR MCS</html>
 HMCSwin_entry019, Zeige MCS
 HMCSwin_entry020, Fragilität
-HMCSwin_entry021, <html><center>MCS<br />Bewertung<center></html>
+HMCSwin_entry021, <html><center>MCS<br>Bewertung<br>(Rankings)<center></html>
 HMCSwin_entry022, MCS-Berechnung bereits im Gange.
 HMCSwin_entry022t, MCS-Berechnung im Gange
 HMCSwin_entry023, Nicht genügend Übergänge im Netz. Operation kann nicht gestartet werden.
@@ -2570,6 +2570,7 @@ HPPwinEDIT_entry021, Standardbogendicke:
 HPPwinEDIT_entry022, Schriftgröße:
 HPPwinEDIT_entry023, Fett
 HPPwinEDIT_entry024, MCT-Namen
+HPPwinEDIT_entry024t, Anzeigen von MCT-Namen in der grafischen Ansicht des PN
 HPPwinEDIT_entry025, (Editor) Zeige nur kurze Standardnamen
 HPPwinEDIT_entry026, (Editor) Zeige kurze Namen mit niedrigerem Index
 HPPwinEDIT_entry027, (Editor) 3D-Ansicht der Petri-Netz-Elemente
@@ -2589,6 +2590,7 @@ HPPwinSIM_entry040, (XTPN) Lesebögen erhalten die Lebensdauer der Tokens
 HPPwinSIM_entry041, Simulator-Grafikoptionen
 HPPwinSIM_entry042, Übergangsfeuerungsverzögerung:
 HPPwinSIM_entry043, Bogen-Token-Verzögerung:
+HPPwinSIM_entry044, Simulationsprotokoll aktiviert
 HPPwinANAL_entry044, Cluster-Optionen
 HPPwinANAL_entry045, Speichern Sie t-Invarianten in CSV als binäre Vektoren.
 HPPwinANAL_entry046, Erlauben Sie das Vorhandensein von selbstfahrenden Lesebogenregionen.

@@ -1,4 +1,4 @@
-//english dictionary 27.07.2024 for 1.7.1, without Decompositions windows
+//custom dictionary 29.07.2024 for 1.7.1
 //GUIManager:
 GUIM_toolboxTabName, Toolbox
 GUIM_simulatorTabName, Simulator
@@ -39,6 +39,7 @@ LOGentry00012R, . Settings file updated.
 LOGentry00013R, Rscript.exe location unknown. Clustering procedures will not work.
 GUI_simulator0001warn, Warning: simulator active. Cannot proceed until manually stopped.
 GUI_simulator0002warn, Warning: XTPN simulator active. Cannot proceed until manually stopped.
+
 //GUIOperations:
 GUIO_openProject001, Reading project file succcessful.
 LOGentry00014, Unable to extract net as image. Cannot save to file:
@@ -91,7 +92,7 @@ GUIO_clusters006, Target directory for CH metric results
 LOGentry00024, CH metric files will be put into the
 LOGentry00025, Cluster files will be put into the
 LOGentry00026, Cluster files will be put into the
-LOGentry00027, Warning: Celinski-Harabasz metric computation in 32bit mode for large number of invariants can cause R/OS failure.
+LOGentry00027, Warning: Calinski-Harabasz metric computation in 32bit mode for large number of invariants can cause R/OS failure.
 GUIO_clusters007, CH metric computation failed for
 GUIO_clusters008,  clusters.\nPath:
 LOGentry00028, Warning: unable to check if a given number of clusters (
@@ -248,9 +249,9 @@ TB_toolTip009d, Reset simulator
 TB_toolTip010, Ext.Net
 TB_toolTip010d, Extend net elements
 TB_entry001t, New project button will clear the current project and create a new one.
-TB_entry002t, Open project button will open a project file.
+TB_entry002t, Open project button will open a project Holmes file.
 TB_entry003t, Import network button will import a network from Snoopy file.
-TB_entry004t, Save as project button will save the current project to a file.
+TB_entry004t, Save as project button will save the current project to Holmes a file.
 TB_entry005t, Export network button will export the current network to Snoopy file.
 TB_entry006t, Export to image button will export the current network to an image file.
 TB_entry007t, This button will force repaint of the current network in graph panels.
@@ -938,7 +939,7 @@ TC_entry001, Error: t-invariant and transition set sizes do not match!
 CHM_entry001, -no sentence-
 LOGentry00056a, Warning. Directory
 LOGentry00056b, may not contain all necessary files. Operation will continue, but may fail.
-LOGentry00057, Reading failed for Celiński-Harabasz metric in file
+LOGentry00057, Reading failed for Caliński-Harabasz metric in file
 
 //ClusteringExcelWriter:
 CEW_entry001a, Cannot access file:
@@ -2034,39 +2035,54 @@ HIGwin_entry006, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA<br>generator</html>
 HIGwin_entry007, INAwin32.exe status set to non ready. Please read initial warnings\nin the Holmes log windows for more information.
 HIGwin_entry007t, INAwin32.exe problem
 HIGwin_entry008, <html>&nbsp;&nbsp;&nbsp;&nbsp;Load<br>t-invariants</html>
+HIGwin_entry008info, Load t-invariants from file
 LOGentry00441, Loaded t-invariants:
 LOGentry00442, Loading t-invariants from file has been unsuccessfull.\n
 HIGwin_entry009, <html>&nbsp;&nbsp;&nbsp;Export<br>t-invariants</html>
+HIGwin_entry009info, Export t-invariants to file in INa format
 LOGentry00443, Saved t-invariants:
 LOGentry00444, Saving t-invariants to file has been unsuccessfull.\n
 HIGwin_entry010, <html>&nbsp;&nbsp;&nbsp;&nbsp;Show<br>t-invariants</html>
-HIGwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;Save<br>t-invariants</html>
+HIGwin_entry010info, Show t-invariants in the notebook window as mathematical vectors
+HIGwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;Show<br>support</html>
+HIGwin_entry011info, Show t-invariants support (all transitions) in the notebook window
 HIGwin_entry012, <html>&nbsp;&nbsp;&nbsp;&nbsp;Make<br>&nbsp;&nbsp;feasible</html>
+HIGwin_entry012info, Recalculate t-invariants to make them feasible (read arcs/tokens analysis algorithm)
 HIGwin_entry013, Feasible adv. mode
+HIGwin_entry013info, Advanced mode for feasability recalculation
 HIGwin_entry014, Clean non-inv.
+HIGwin_entry014info, Automatically removed non canonical t-invariants during generation
 HIGwin_entry015, Remove 1-el. inv.
+HIGwin_entry015info, Automatically remove 1-element t-invariants (self loops) during generation
 HIGwin_entry016, t-invariants - Kaja Style:
 HIGwin_entry017, p-invariants - Kaja Style:
 HIGwin_entry018, t-invariants log window
 HIGwin_entry019, Tools
-HIGwin_entry020, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;canonity</html>
+HIGwin_entry020, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;canonicality</html>
+HIGwin_entry020info, Check t-invariants for canonicality
 HIGwin_entry021, No t-invariants to analyze.
 HIGwin_entry021t, No t-invariants
 HIGwin_entry022, Checking canonicality for %d t-invariants.%n
 HIGwin_entry023, Non canonical t-invariants:
 HIGwin_entry024, <html>Check sup.<br />&nbsp;minimality</html>
+HIGwin_entry024info, Check t-invariants for support minimality
 HIGwin_entry025, Checking support minimality for %d t-invariants.%n
 HIGwin_entry026, Non support-minimal t-invariants:
 HIGwin_entry027, <html>&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>
+HIGwin_entry027info, Check t-invariants for correctness
 HIGwin_entry028, Checking t-invariants correctness for %d invariants.%n
 HIGwin_entry029, t-invariants (Cx = 0):
 HIGwin_entry030, sur-invariants (Cx > 0):
 HIGwin_entry031, sub-invariants (Cx < 0):
 HIGwin_entry032, non-invariants (Cx <=> 0):
 HIGwin_entry033, <html>&nbsp;&nbsp;&nbsp;Ref. set<br />&nbsp;&nbsp;&nbsp;compare</html>
+HIGwin_entry033info, Load t-invariants from file (reference set) and compare with the currently generated set in Holmes memory
 HIGwin_entry034, <html>&nbsp;&nbsp;Incidence<br />&nbsp;&nbsp;&nbsp;matrix</html>
+HIGwin_entry034info, Shows the incidence matrix for the current net
 HIGwin_entry035, Details
+HIGwin_entry035info, If checked, then above Check for Correctness button will also include info about sub- and sur- invariants (if available)
 HIGwin_entry036, Show difference
+HIGwin_entry036info, When new t-invariants are generated (Generate button), show the difference between the old and new set in log
 HIGwin_entry037, <html>Generate<br>p-inv.</html>
 HIGwin_entry038, Invariants generation already in progress.
 HIGwin_entry038t, Generator working
@@ -2074,32 +2090,43 @@ HIGwin_entry039, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA<br>generator</html>
 HIGwin_entry040, INAwin32.exe status set to non ready. Please read initial warnings\nin the Holmes log windows for more information.
 HIGwin_entry040t, INAwin32.exe problem
 HIGwin_entry041, <html>&nbsp;&nbsp;&nbsp;&nbsp;Load<br>p-invariants</html>
+HIGwin_entry041info, Load t-invariants from file
 LOGentry00445, Loaded p-invariants:
 LOGentry00446, p-invariants reading has been unsuccessfull.\n
 HIGwin_entry042, <html>&nbsp;&nbsp;&nbsp;Export<br>p-invariants</html>
+HIGwin_entry042info, Export p-invariants to file in INa format
 LOGentry00447, Saved p-invariants:
 LOGentry00448, p-invariants saving has been unsuccessfull.\n
 HIGwin_entry043, <html>&nbsp;&nbsp;&nbsp;&nbsp;Show<br>p-invariants</html>
+HIGwin_entry043info, Show p-invariants in the notebook window as mathematical vectors
 HIGwin_entry044, Clean non-inv.
+HIGwin_entry044info, Automatically removed non canonical p-invariants during generation
 HIGwin_entry045, Remove 1-el. inv.
+HIGwin_entry045info, Automatically remove 1-element p-invariants (self loops) during generation
 HIGwin_entry046, p-invariants log window
 HIGwin_entry047, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;canonity</html>
+HIGwin_entry047info, Check p-invariants for canonicality
 HIGwin_entry048, No p-invariants to analyze.
 HIGwin_entry048t, No p-invariants
 HIGwin_entry049, Checking canonicality for %d p-invariants.%n
 HIGwin_entry050, non canonical p-invariants:
 HIGwin_entry051, <html>Check sup.<br>&nbsp;minimality</html>
+HIGwin_entry051info, Check p-invariants for support minimality
 HIGwin_entry052, Checking support minimality for %d p-invariants.%n
 HIGwin_entry053, Non support-minimal p-invariants:
 HIGwin_entry054, <html>&nbsp;&nbsp;&nbsp;&nbsp;Check<br>&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>
+HIGwin_entry054info, Check p-invariants for correctness
 HIGwin_entry055, Checking p-invariants correctness for %d invariants.%n
 HIGwin_entry056, p-invariants (xC = 0):
 HIGwin_entry057, sur-invariants (xC > 0):
 HIGwin_entry058, sub-invariants (xC < 0):
 HIGwin_entry059, non-invariants (xC <=> 0):
 HIGwin_entry060, <html>&nbsp;&nbsp;&nbsp;Ref. set<br>&nbsp;&nbsp;&nbsp;compare</html>
+HIGwin_entry060info, Load p-invariants from file (reference set) and compare with the currently generated set in Holmes memory
 HIGwin_entry061, <html>&nbsp;&nbsp;Incidence<br>&nbsp;&nbsp;&nbsp;matrix</html>
+HIGwin_entry061info, Shows the incidence matrix for the current net
 HIGwin_entry062, Details
+HIGwin_entry062info, If checked, then above Check for Correctness button will also include info about sub- and sur- invariants (if available)
 HIGwin_entry063, Load invariants
 HIGwin_entry063t, Select invariant file
 HIGwin_entry064, Prev. computed set size:
@@ -2289,7 +2316,7 @@ HMCSwin_entry017, Show full info
 HMCSwin_entry018, <html>Save this<br />objR MCS</html>
 HMCSwin_entry019, Show MCS
 HMCSwin_entry020, Fragility
-HMCSwin_entry021, <html><center>MCS<br />evaluation<center></html>
+HMCSwin_entry021, <html><center>MCS<br>evaluation<br>(rankings)<center></html>
 HMCSwin_entry022, MCS calculation already in progress.
 HMCSwin_entry022t, MCS calculation in progress
 HMCSwin_entry023, Not enough transitions in net. Operation cannot start.
@@ -2543,6 +2570,7 @@ HPPwinEDIT_entry021, Default arc thickness
 HPPwinEDIT_entry022, Font size:
 HPPwinEDIT_entry023, Bold
 HPPwinEDIT_entry024, MCT names
+HPPwinEDIT_entry024t, Show MCT names in the PN graphical view
 HPPwinEDIT_entry025, (Editor) Show short default names only
 HPPwinEDIT_entry026, (Editor) Show short names with lower index
 HPPwinEDIT_entry027, (Editor) Petri net elements 3d view
@@ -2562,17 +2590,17 @@ HPPwinSIM_entry040, (XTPN) Read arcs preserve tokens lifetime
 HPPwinSIM_entry041, Simulator graphical options
 HPPwinSIM_entry042, Transition firing delay:
 HPPwinSIM_entry043, Arc token delay:
+HPPwinSIM_entry044, Simulation log enabled
 HPPwinANAL_entry044, Clusters options
 HPPwinANAL_entry045, Save t-invariants in CSV as binary vectors.
 HPPwinANAL_entry046, Allow presence of self-propelled readarc regions
 HPPwinANAL_entry047, Cluster algorithms options
 HPPwinANAL_entry048, Eliminate MCS sets non directly connected with objR transition.
-
 HPPwinSYS_entry049, Other options
 HPPwinSYS_entry050, Language
 HPPwinSYS_entry051, English
 HPPwinSYS_entry052, Polish
-HPPwinSYS_entry053, Language set to: %s (from %s). In order for changes to take effect, restart the program.
+HPPwinSYS_entry053, Language set to: %s (from %s).%n%nIn order for changes to take effect, restart the program.
 HPPwinSYS_entry054, YourLang
 HPPwinSYS_entry055, German
 HPPwinSYS_entry056, Spanish
@@ -2632,7 +2660,7 @@ HCwin_entry024, Unknown error, excel file does not exist.
 HCwin_entry025, Excel export procedure failed for directory:
 HCwin_entry026, There is no table to fill.
 HCwin_entry027, Select directory
-HCwin_entry027t, Directory with 56 R-generated files containing Celiński-Harabasz metrics
+HCwin_entry027t, Directory with 56 R-generated files containing Caliński-Harabasz metrics
 LOGentry00507exception, Exception (1000237): HolmesClusters.integrateCHIntoDatabase() failed. Filling CH metric failed for subtable %d row: %d
 HCwin_entry028, Save table
 LOGentry00508exception, Exception (1000238): HolmesClusters.buttonSerializeDataTable() failed:
@@ -3287,10 +3315,12 @@ HSSetwin_entry016, 50/50 mode (async.)
 HSSetwin_entry017, Maximum mode (sync.)
 HSSetwin_entry018, Single fire mode
 HSSetwin_entry019, Allow empty steps
+HSSetwin_entry019t, When this mode is selected, simulator will allow empty steps (no transition firing, e.g. for time nets) in the simulation process.
 HSSetwin_entry020, Stochastic simulation settings for SPN
 HSSetwin_entry021, <html>Fire rate<br>Manager</html>
 HSSetwin_entry021t, Loop single transition simulation
 HSSetwin_entry022, Mass action kinetics enabled
+HSSetwin_entry022t, When check, simulator considers the number of tokens in the place as a concentration of the substance. The higher the concentration, the higher the probability of the transition firing.
 HSSetwin_entry023, Remove deactivated deterministic SPN transitions
 HSSetwin_entry023t, When this mode is selected, deterministic SPN transition which after its delay time\nis no longer active, will be remove from the firing sequence. Otherwise, it will fire\nas soon as it become activated again = will act as immediate in that moment.
 HSSetwin_entry024, Immediate-transition SPN mode:
@@ -3646,5 +3676,3 @@ unwrap, Unwrap
 warning, Warning
 yes, Yes
 LOGentryLNGexc, Exception (1099999): String.format(...) failed for language entry:
-
-

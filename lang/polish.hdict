@@ -2570,6 +2570,7 @@ HPPwinEDIT_entry021, Domyślna grubość łuku:
 HPPwinEDIT_entry022, Rozmiar czcionki:
 HPPwinEDIT_entry023, Pogrubienie
 HPPwinEDIT_entry024, Nazwy MCT
+HPPwinEDIT_entry024t, Pokaż nazwy MCT w graficznej reprezentacji sieci Petriego
 HPPwinEDIT_entry025, Pokaż tylko krótkie domyślne nazwy
 HPPwinEDIT_entry026, Pokaż krótkie nazwy z niższym indeksem
 HPPwinEDIT_entry027, Widok 3d elementów sieci Petriego
@@ -2589,6 +2590,7 @@ HPPwinSIM_entry040, (XTPN) Łuki odczytu zachowują czas życia tokenów
 HPPwinSIM_entry041, Opcje graficzne symulatora
 HPPwinSIM_entry042, Opóźnienie wyzwalania tranzycji:
 HPPwinSIM_entry043, Opóźnienie tokenów łuku:
+HPPwinSIM_entry044, Log symulacji włączony
 HPPwinANAL_entry044, Opcje klastrów
 HPPwinANAL_entry045, Zapisz t-inwarianty w CSV jako wektory binarne.
 HPPwinANAL_entry046, Pozwól na obecność regionów z łukami odczytu napędzanymi przez siebie

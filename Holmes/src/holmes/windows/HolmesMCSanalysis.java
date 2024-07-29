@@ -33,7 +33,7 @@ public class HolmesMCSanalysis extends JFrame {
     JCheckBox description;
     JCheckBox ID;
     //JCheckBox rankByTrans;
-    JCheckBox oldRanking;
+    //JCheckBox oldRanking;
     JSpinner distanceSpinner;
     private int distanceVar = 3;
     JComboBox<String> transBox;
@@ -198,6 +198,629 @@ public class HolmesMCSanalysis extends JFrame {
         Toff.clear();
     }
 
+    private JPanel createMainPanel() {
+        JPanel main = new JPanel(new BorderLayout());
+
+        JTabbedPane tabbedPane = new JTabbedPane();
+
+        JPanel mainPanel1stTab = new JPanel();
+        mainPanel1stTab.setLayout(null); //  ╯°□°）╯︵  ┻━┻
+        JPanel buttonPanelT = createUpperButtonPanel1stTab(0, 0, windowWidth-20, 125);
+        JPanel logMainPanelT = createLogMainPanel1stTab(0, 125, windowWidth, windowHeight-120);
+
+        mainPanel1stTab.add(buttonPanelT);
+        mainPanel1stTab.add(logMainPanelT);
+        mainPanel1stTab.repaint();
+
+        tabbedPane.addTab("MCS", Tools.getResIcon22("/icons/invWindow/tInvIcon.png"), mainPanel1stTab, "T-invariants");
+        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+
+        main.add(tabbedPane, BorderLayout.CENTER);
+
+        return main;
+    }
+
+    private JPanel createUpperButtonPanel1stTab(int x, int y, int width, int height) {
+        JPanel panel = new JPanel();
+        panel.setLayout(null);
+        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        panel.setBounds(x, y, width, height);
+
+        int posX = 10;
+        int posY = 10;
+
+        //oldRanking = new JCheckBox("Old v1.6.9.5");
+        //oldRanking.setBounds(posX+190,posY+85, 100,15);
+        //panel.add(oldRanking);
+
+
+        JButton button1 = new JButton("TokensRanking");
+        button1.setText("<html>Tokens<br />ranking</html>");
+        button1.setBounds(posX, posY, 150, 45);
+        button1.setMargin(new Insets(0, 0, 0, 0));
+        button1.setIcon(Tools.getResIcon32("/icons/stateSim/simpleSimTab.png"));
+        button1.addActionListener(actionEvent -> {
+            places = overlord.getWorkspace().getProject().getPlaces();
+            transitions = overlord.getWorkspace().getProject().getTransitions();
+            mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
+            if(mcsd.getSize() == 0) {
+                logField1stTab.append(" *** No MCS data! \n");
+                return;
+            }
+
+            /*
+            if(oldRanking.isSelected())  {
+                jeden();
+            } else {
+                checkStarvedTransitions();
+            }
+             */
+
+            //jeżeli transBox jest ustawione na zero, pytamy (JOptionPane.showOptionDialog) czy generować
+            //dla wszystkich, czy może użytkownik zapomniał w transBox wybrać konkretną tranzycję
+            
+            if(transBox.getSelectedIndex() == 0) {
+                Object[] options = {"All", "Cancel"};
+                int n = JOptionPane.showOptionDialog(null,
+                        "You have not selected a transition (in Transition selector list)\n" +
+                                "for which you want to generate a ranking (an objective reaction).\n\n" +
+                                "Do you want to generate rankings for all transitions?",
+                        "Warning",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                if(n == 0) {
+                    checkStarvedTransitions();
+                }
+            } else {
+                checkStarvedTransitions();
+            }
+        });
+        button1.setFocusPainted(false);
+        panel.add(button1);
+
+        /*info*/
+        JButton button1Info = new JButton("TKInfo");
+        button1Info.setText("<html>Explanations</html>");
+        button1Info.setBounds(posX, posY+46, 150, 15);
+        button1Info.setMargin(new Insets(0, 0, 0, 0));
+        button1Info.setIcon(Tools.getResIcon32(""));
+        button1Info.addActionListener(actionEvent -> {
+            JOptionPane.showMessageDialog(null,
+                    "When you press the button \"Tokens ranking\", make sure that you have selected the transition for which\n" +
+                            "you want to create a ranking of its MCS sets in the list to the right of the \"Clear Window\" button.\n" +
+                            "If \"---\" is selected, the rankings will be created (independently) for the MCS sets of each single\n" +
+                            "transition for which they were generated in the previous window.\n" +
+                            "\n" +
+                            "The \"Tokens ranking\" button creates a ranking of MCS sets based on how many transitions will potentially\n" +
+                            "be starved if we consider MCS transitions to be permanently excluded in the simulation. Note: the algo-\n" +
+                            "rithm is more complicated than the following description, but this one gives an idea of how it works. Let's\n" +
+                            "assume that the transitions in MCS are a set of M. The set X is all the output places of the transitions \n" +
+                            "from M. The set Y, is all the output transitions of the places from X. The algorithm checks whether in the\n" +
+                            "set Y (the set of potentially starved transitions) there are some for which *all* input places have *at \n" +
+                            "least one* transition that will provide tokens. Such a transition, in order to sustain token production at\n" +
+                            "the input places of those in Y, must meet the conditions: not be in the M set (obviously), not be in the Y\n" +
+                            "set. In addition, the distance variable (2 or 3) periodizes how far in the net structure the above relation-\n" +
+                            "ships are sought. If any transition initially being in the set Y, has all its input places such that they\n" +
+                            "in turn will have tokens produced by other transitions independent of M (by distance), it is removed from Y.\n" +
+                            "The final ranking is based on the number of transitions remaining in Y.\n" +
+                            "\n"
+                            //"Version 1.6.9.5: [PL] Najkrócej rzecz ujmując sprawdzane jest tylko najbliższe otoczenie zbnioru M: liczność\n" +
+                            //"zbiorów X oraz Y. Algorytm w tejże wersji daje więc bardzo, ale to bardzo przybliżone informacje o potencjale\n" +
+                            //"wyłączającym zbioru MCS, niż algorytm z wersji 1.6.9.7 i dalej."
+                    , "Info", JOptionPane.INFORMATION_MESSAGE);
+
+        });
+        button1Info.setFocusPainted(false);
+        panel.add(button1Info);
+
+        description  = new JCheckBox("Full trans/places names");
+        description.setBounds(posX-5,posY+65, 170,20);
+        panel.add(description);
+
+        ID = new JCheckBox("ID of transitions/places");
+        ID.setBounds(posX-5,posY+90, 160,15);
+        panel.add(ID);
+
+        JLabel comboDesc = new JLabel("Sort by:");
+        comboDesc.setBounds(posX+180,posY-10, 150,20);
+        comboDesc.setEnabled(false);
+        panel.add(comboDesc);
+        TorP = new JComboBox<String>();
+        TorP.addItem("T_off");
+        TorP.addItem("P_off");
+        TorP.setBounds(posX+180, posY+10, 70, 20);
+        TorP.setSelectedIndex(0);
+        TorP.setEnabled(false);
+        panel.add(TorP);
+
+        JLabel transDesc = new JLabel("Important trans.:");
+        transDesc.setBounds(posX+180, posY+30, 120,20);
+        transDesc.setEnabled(false);
+        panel.add(transDesc);
+
+        importantTrans = new JTextField();
+        importantTrans.setBounds(posX+180, posY+50, 100, 20);
+        importantTrans.setEnabled(false);
+        panel.add(importantTrans);
+
+        //iFeelCourageous = new JCheckBox("I feel courageous");
+        //iFeelCourageous.setBounds(posX+165,posY+70, 130,15);
+        //panel.add(iFeelCourageous);
+
+        JLabel distLabel = new JLabel("Distance");
+        distLabel.setBounds(posX+180,posY+70, 80,20);
+        panel.add(distLabel);
+
+        SpinnerModel distSpinnerModel = new SpinnerNumberModel(3, 2, 3, 1);
+        distanceSpinner = new JSpinner(distSpinnerModel);
+        distanceSpinner.setBounds(posX+180, posY+90, 60, 20);
+        distanceSpinner.addChangeListener(e -> {
+            JSpinner spinner = (JSpinner) e.getSource();
+            distanceVar = (int) spinner.getValue();
+        });
+        panel.add(distanceSpinner);
+        
+        JSeparator separator101 = new JSeparator();
+        separator101.setOrientation(SwingConstants.VERTICAL);
+        separator101.setBounds(posX+295, posY, 2, 110);
+        //separator101.setPreferredSize(new Dimension(15,45));
+        panel.add(separator101);
+
+        //**************************************************************************
+
+        //rankByTrans = new JCheckBox("Ranking by disabled transitions");
+        //rankByTrans.setBounds(posX+471,posY+55, 220,15);
+        //panel.add(rankByTrans);
+
+        JButton transRank = new JButton("T-inv rank");
+        transRank.setText("<html><center>Invariants<br />ranking</center></html>");
+        transRank.setBounds(posX + 310, posY, 135, 45);
+        transRank.setMargin(new Insets(0, 0, 0, 0));
+        transRank.setIcon(Tools.getResIcon22("/icons/menu/menu_analysis_invariants.png"));
+        transRank.addActionListener(actionEvent -> {
+            /*
+            if(oldRanking.isSelected())  {
+                orgInvTransRankingAlg();
+            } else {
+                rankingByInvariantsThenTransitions();
+            }
+            */
+            if(transBox.getSelectedIndex() == 0) {
+                Object[] options = {"All", "Cancel"};
+                int n = JOptionPane.showOptionDialog(null,
+                        "You have not selected a transition (in Transition selector list)\n" +
+                                "for which you want to generate a ranking (an objective reaction).\n\n" +
+                                "Do you want to generate rankings for all transitions?",
+                        "Warning",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                if(n == 0) {
+                    rankingByInvariantsThenTransitions();
+                }
+            } else {
+                rankingByInvariantsThenTransitions();
+            }
+        });
+        transRank.setFocusPainted(false);
+        panel.add(transRank);
+
+        JButton transRankInfo = new JButton("Jenson");
+        transRankInfo.setText("<html>Explanations</html>");
+        transRankInfo.setBounds(posX+310, posY+46, 135, 15);
+        transRankInfo.setMargin(new Insets(0, 0, 0, 0));
+        transRankInfo.setIcon(Tools.getResIcon32(""));
+        transRankInfo.addActionListener(actionEvent -> {
+            JOptionPane.showMessageDialog(null,
+                    "When you press the button \"Invariants ranking\", make sure that you have selected the transition for \n" +
+                            "which you want to create a ranking of its MCS sets in the dropdown list to the right of the \n" +
+                            "\"Clear Window\" button. If \"---\" is selected, the rankings will be created (independently) for the MCS\n" +
+                            "sets of each single transition for which they were generated in the previous window.\n" +
+                            "\n" +
+                            "The \"Invariants ranking\" button creates a ranking of MCS sets according to two criteria. The most \n" +
+                            "important on is the number of t-invariants disabled by a given MCS (i.e., t-invariant is considered\n" +
+                            "disabled, if it contains in its support at least one transition from an MCS). If the same number of \n" +
+                            "t-invariants is disabled for several different MCS sets, then the order is further determined by the \n" +
+                            "number of transitions found in the supports of all excluded t-invariants. The fewer, the higher the MCS\n" +
+                            "is ranked because the more subtle its effects are on the net.\n" +
+                            "Additionally: please leave Distance setting to 3, and be aware that other controls have currently no\n" +
+                            "influence on this ranking. [To be adjusted soon]\n" +
+                            "\n"// +
+                            //"Version 1.6.9.5 and lower: [PL] ranking jest robiony tylko na podstawie drugiego opisanego kryterium, tj.\n" +
+                            //"im mniej tranzycji w sumie wsparć wyłączanych t-invariantów tym lepiej, ale sama liczba t-invariantów\n" +
+                            //"NIE jest brana pod uwagę. Druga uwaga: nie daję 100% pewności że algorytm jest 100% poprawny, bo nie\n" +
+                            //"ja go pisałem :)"
+                    , "Info", JOptionPane.INFORMATION_MESSAGE);
+        });
+        transRankInfo.setFocusPainted(false);
+        panel.add(transRankInfo);
+
+        JButton buttonData = new JButton("ButtonClearAll");
+        buttonData.setText("<html><center>Clear<br>log</center></html>");
+        buttonData.setBounds(posX + 320, posY+70, 110, 38);
+        buttonData.setMargin(new Insets(0, 0, 0, 0));
+        buttonData.setIcon(Tools.getResIcon22("/icons/toolbar/cleanGraphColors.png"));
+        buttonData.addActionListener(actionEvent -> {
+            logField1stTab.setText("");
+
+        });
+        buttonData.setFocusPainted(false);
+        panel.add(buttonData);
+
+        JSeparator separator201 = new JSeparator();
+        separator201.setOrientation(SwingConstants.VERTICAL);
+        separator201.setBounds(posX+460, posY, 2, 110);
+        //separator201.setPreferredSize(new Dimension(15,45));
+        panel.add(separator201);
+        
+        JLabel transLabel = new JLabel("Transitions selector (objective reactions with MCSs:");
+        transLabel.setBounds(posX+475, posY-10, 300, 20);
+        panel.add(transLabel);
+
+        String[] dataT = { "---" };//combobox z tranzycjami
+        transBox = new JComboBox<String>(dataT);
+        transBox.setBounds(posX+475, posY+10, 330, 20);
+        transBox.setSelectedIndex(0);
+        transBox.setMaximumRowCount(6);
+        transBox.removeAllItems();
+        transBox.addItem("---");
+        transBox.addActionListener(actionEvent -> {//uzupelnianie combobox z mcsami dla wybranej tranzycji
+            mcsBox.removeAllItems();
+            mcsBox.addItem("---");
+            mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
+            if(mcsd.getSize() == 0) {
+//                logField1stTab.append(" *** BRAK DANYCH MCS! \n");
+                return;
+            }
+            int selected = transBox.getSelectedIndex();
+            if(selected <= 0)
+                return;
+            selected--;
+            ArrayList<ArrayList<Integer>> dataVector = mcsd.getMCSlist(selected);
+            int counter = 0;
+            for(ArrayList<Integer>MCS : dataVector){
+                StringBuilder msg;
+                msg = new StringBuilder("MCS#");
+                msg.append(counter).append(" ").append("[");
+                for (int el : MCS) {
+                    msg.append(el).append(", ");
+                }
+                msg.append("]");
+                msg = new StringBuilder(msg.toString().replace(", ]", "]"));
+                mcsBox.addItem(msg.toString());
+                counter++;
+            }
+        });
+        panel.add(transBox);
+
+        
+        JLabel showMCSLabel = new JLabel("Show MCS:");
+        showMCSLabel.setBounds(posX+475, posY+30, 100, 20);
+        panel.add(showMCSLabel);
+        
+        mcsBox = new JComboBox<String>(dataT);
+        mcsBox.setBounds(posX+475, posY+50, 200, 20);
+        mcsBox.setSelectedIndex(0);
+        mcsBox.setMaximumRowCount(6);
+        mcsBox.removeAllItems();
+        mcsBox.addItem("---");
+        mcsBox.addActionListener(actionEvent -> {});
+        panel.add(mcsBox);
+
+        JButton showMCS = new JButton("Button 888");
+        showMCS.setText("Show MCS");
+        showMCS.setBounds(posX + 475, posY+74, 130, 36);
+        showMCS.setMargin(new Insets(0, 0, 0, 0));
+        showMCS.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
+        showMCS.addActionListener(actionEvent -> {
+            int selectedTrans = transBox.getSelectedIndex();
+            if(selectedTrans == 0)
+                return;
+            selectedTrans--;
+            int selectedMCS = mcsBox.getSelectedIndex();
+            if(selectedMCS == 0)
+                return;
+            selectedMCS--;
+            showMCS(selectedTrans,selectedMCS);
+        });
+        showMCS.setFocusPainted(false);
+        panel.add(showMCS);
+
+        JSeparator separator301 = new JSeparator();
+        separator301.setOrientation(SwingConstants.VERTICAL);
+        separator301.setBounds(posX+815, posY, 2, 110);
+        panel.add(separator301);
+
+        JButton mcsOffRank = new JButton("Off Rank");
+        mcsOffRank.setText("<html><center>Minimum offline<br />P/T ranking</center></html>");
+        mcsOffRank.setBounds(posX + 825, posY, 160, 50);
+        mcsOffRank.setMargin(new Insets(0, 0, 0, 0));
+        mcsOffRank.setIcon(Tools.getResIcon22("/icons/toolbar/simLog.png"));
+        mcsOffRank.addActionListener(actionEvent -> {
+            trzy();
+        });
+        mcsOffRank.setFocusPainted(false);
+        panel.add(mcsOffRank);
+
+        JButton mcsOffRankInfo = new JButton("Jenson");
+        mcsOffRankInfo.setText("<html>Explanation</html>");
+        mcsOffRankInfo.setBounds(posX+825, posY+51, 160, 15);
+        mcsOffRankInfo.setMargin(new Insets(0, 0, 0, 0));
+        mcsOffRankInfo.setIcon(Tools.getResIcon32(""));
+        mcsOffRankInfo.addActionListener(actionEvent -> {
+            JOptionPane.showMessageDialog(null,
+                    "The task is to select the best MCS set for each transition of the analyzed model.\n" +
+                            "This algorithm is essentially an extension of the first algorithm, as it also creates\n" +
+                            "the P_off and T_off sets, but instead of creating a ranking of minimal cut sets, it\n" +
+                            "selects the theoretically best set for a given transition. According to the algorithm's\n" +
+                            "criteria, the best set is the one whose transitions directly disable the fewest places\n" +
+                            "and transitions in the network, meaning the P_off and T_off sets are the smallest.\n" +
+                            "Additionally, if one or more sets have the same result, the number of transitions in\n" +
+                            "each MCS set is checked. The smaller the MCS set, the better. Of course, this algorithm\n" +
+                            "also allows for marking important transitions that should remain enabled. If the\n" +
+                            "potentially best MCS set disables such a transition, another best set that does not\n" +
+                            "disable such a transition will appear next to it. Furthermore, where possible, the\n" +
+                            "algorithm tries not to select a trivial case as the best set, where the MCS is a\n" +
+                            "single-element set consisting of the transition for which the best set is being sought."
+                    , "Info", JOptionPane.INFORMATION_MESSAGE);
+
+        });
+        mcsOffRankInfo.setFocusPainted(false);
+        panel.add(mcsOffRankInfo);
+
+        return panel;
+    }
+
+    private JPanel createLogMainPanel1stTab(int x, int y, int width, int height) {
+        JPanel panel = new JPanel();
+        panel.setLayout(null);
+        panel.setBorder(BorderFactory.createTitledBorder("Log window"));
+        panel.setBounds(x, y, width-20, height-50);
+
+        logField1stTab = new JTextArea();
+        logField1stTab.setLineWrap(true);
+        logField1stTab.setEditable(true);
+        logField1stTab.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        DefaultCaret caret = (DefaultCaret)logField1stTab.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+        JPanel logFieldPanel = new JPanel();
+        logFieldPanel.setLayout(new BorderLayout());
+        logFieldPanel.add(new JScrollPane(logField1stTab), BorderLayout.CENTER);
+        logFieldPanel.setBounds(10, 20, width-35, height-110);
+        panel.add(logFieldPanel);
+
+
+        return panel;
+    }
+    private void initiateListeners() { //HAIL SITHIS
+        addWindowListener(new WindowAdapter() {
+            public void windowActivated(WindowEvent e) {
+                fillTComboBox();
+            }
+        });
+    }
+
+    /**
+     * Algorytm znajdowania tranzycji które nie będą mogły się uruchomić z powodu braku tokenów
+     * spowołanego przez wyłączenie tranzycji z MCS oraz bezpośredniego otoczenia tychże.
+     * Naciągamy tutaj ogólną teorię MCS (powstają z t-invariantów), ale może on pełnić funkcję pomocniczą.
+     */
+    private void checkStarvedTransitions(){
+        mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
+
+        int selectedTrans = transBox.getSelectedIndex();
+        int Distance = distanceVar;
+
+        if (invariantsMatrix == null || invariantsMatrix.isEmpty()) {
+            logField1stTab.append(" *** t-invariants set empty! ***\n");
+            return;
+        }
+        logField1stTab.append(" *******************************************************************\n");
+        logField1stTab.append("                TRANSITION STARVATION MCS RANKING\n");
+        logField1stTab.append(" *******************************************************************\n\n");
+        
+        for(int objReaction = 0; objReaction<mcsd.getSize(); objReaction++) {
+            //tranzycja to wyznacznik zbiorów
+            if(selectedTrans > 0) {
+                if(selectedTrans-1 != objReaction) {
+                    continue;
+                }
+            }
+            ArrayList<ArrayList<Integer>> MCSsForObjReaction = mcsd.getMCSlist(objReaction);
+            if (MCSsForObjReaction == null || MCSsForObjReaction.isEmpty()) {
+                logField1stTab.append("\n XXXXXXXXX no MCSs for trans. ID: " + objReaction + " XXXXXXXXX\n\n");
+                continue;
+            }
+
+            logField1stTab.append("\n ********* MCS sets ranking for trans. ID: " + objReaction + " *********\n\n");
+
+            Map<String, tokensRankDatabox> MCSrank  =  new  HashMap<String, tokensRankDatabox>();
+
+            int counter = -1;
+            for(ArrayList<Integer> MCS : MCSsForObjReaction) {
+                counter++;
+
+                //Dane wejściowe dla danego zbioru MCS dla danej tranzycji:
+                HashSet<Transition> hashSetMCS = new HashSet<Transition>(); //zbior tranzycji w MCS, a nie tylko numerki ID
+                for (Integer MCStransitionID : MCS) {
+                    hashSetMCS.add(transitions.get(MCStransitionID));
+                }
+
+                //dołącz do zbioru MCS te trazycje, które na pewno nie będą w stanie działać, ponieważ
+                //ich miejsca wejściowe są zaopatrywane w tokeny tylko przez tranzycje z MCS:
+                hashSetMCS = redefineMCS(hashSetMCS);
+                HashSet<Place> outputPlacesOfMCS = createOutputPlacesOfMCS(hashSetMCS);
+                HashSet<Place> safeOutputPlacesOfMCS = new HashSet<Place>();
+
+                for (Integer MCStransition : MCS) {
+                    Transition transition = transitions.get(MCStransition);
+                    //outputPlacesOfMCS.addAll(transition.getPostPlaces());
+                }
+                HashSet<Transition> T_dng = new HashSet<Transition>();
+                for (Place place : outputPlacesOfMCS) {
+                    T_dng.addAll(place.getOutputTransitions());
+                }
+
+
+                boolean stop = false;
+                //ArrayList<Transition> transPotentiallyDeadOfTdng = new ArrayList<Transition>(); //miejsce wejściowe ma trans w T_dng
+                ArrayList<Transition> transDeadDirectlyBecauseOfMCS = new ArrayList<Transition>(); //miejsce wejściowe ma TYLKO trans z MCS
+                boolean triggerFoundReallyDeadTransitionInTdng = false;
+
+                while (true) { //tak długo, aż wewnętrzna pętla niczego nie usunie
+                    if (stop) break;
+
+                    Transition transToRemove = null;
+                    for (Transition currentTrans : T_dng) { //dla kazdej potencjalnie zaglodzonej
+                        stop = true; //zostanie tak, jeżeli niczego nie usuniemy
+                        boolean removeTransitionFromEndangeredSet = false;
+                        boolean potentiallyRemoveTransAsStarved = false;
+
+                        //tworzy zbiór miejsc wejściowych, które karmią tranzycję T_dng tokenami:
+                        HashSet<Place> inputPlacesForTransFormT_dng = new HashSet<Place>(currentTrans.getInputPlaces()); //pobierz miejsca wejściowe
+
+                        for(Place place : inputPlacesForTransFormT_dng) { //sprawdzamy czy miejsce może mieć tokeny
+                            triggerFoundReallyDeadTransitionInTdng = false;
+                            HashSet<Transition> inputTransToInputPlacesForT_dng = new HashSet<Transition>(place.getInputTransitions()); //pobierz t wejściowe
+                            inputTransToInputPlacesForT_dng.removeIf(hashSetMCS::contains); //usuwamy te, które są w MCS
+                            if(inputTransToInputPlacesForT_dng.isEmpty()) { //miejsce martwe, bo nie ma tokenów
+                                for(Transition t_tmp : place.getOutputTransitions()) {
+                                    if(T_dng.contains(t_tmp)) {
+                                        transDeadDirectlyBecauseOfMCS.add(t_tmp);
+                                    }
+                                }
+                                stop = false;
+                                triggerFoundReallyDeadTransitionInTdng = true;
+                                break;
+                            }
+                            //jeżeli tranzycja jest w zbiorze T_dng:
+                            inputTransToInputPlacesForT_dng.removeIf(T_dng::contains); //TU JEST TRICKY! KOLEJNOSC!!!
+                            if(inputTransToInputPlacesForT_dng.isEmpty()) {
+                                //właśnie znaleziono miejsce, które nie ma tokenów, bo nie ma tranzycji wejściowych, które nie są w MCS i T_dng
+                                break; //break, a nie continue, bo po co sprawdzać pozostałe miejsca jak jedno i tak nie ma tokenów?
+                            }
+
+                            boolean unstarvedPlaceFound = false; //jesli jeszcze zostaly do sprawdzania te tranzycje, których nie ma w MCS i T_dng:
+                            for(Transition toCheckTrans : inputTransToInputPlacesForT_dng) {
+                                boolean canTransitionFire = canFire(toCheckTrans,  T_dng, Distance);
+                                if(canTransitionFire) {
+                                    unstarvedPlaceFound = true; //znaleziono jedna niezagrożoną tranzycję więc miejsce wejściowe będzie miało tokeny
+                                    break; //wystarczy jedna
+                                }
+                            }
+                            if(unstarvedPlaceFound) { //miejsce wejsciowe ma tokeny
+                                if(outputPlacesOfMCS.contains(place)) { //jeśli wyjściowe z MCS, to dodaj do bezpiecznych:
+                                    safeOutputPlacesOfMCS.add(place);
+                                }
+
+                                potentiallyRemoveTransAsStarved = true;
+                                continue; //dla kolejnego miejsca wejsciowego tej tranzycji trans
+                            } else { //jedno z miejsc wejsciowych nie ma tokenów:
+                                potentiallyRemoveTransAsStarved = false;
+                                //for(Transition t_tmp : place.getPostTransitions()) {
+                                //    if(T_dng.contains(t_tmp)) {
+                                //         transPotentiallyDeadOfTdng.add(t_tmp);
+                                //    }
+                                //}
+                                //wszystkie inne tranzycje wyjściowe tego miejsca - można już sobie podarować sprawdzanie:
+                                break; //nie ma tokenów w miejscu wejściowym, więc tranzycja jest zagłodzona
+                            }
+                        } //for(Place place : inputPlacesForTransFormT_dng)
+
+                        if(triggerFoundReallyDeadTransitionInTdng) { //usuwamy z Tdng na stałe bo jest MARTWA
+                            break;  //i to się już nie zmieni, bo ten trigger oznacza, że tylko tranzycje z MCS
+                            //produkują tokeny do jednego z miejsc wejściowych tej tranzycji.
+                        }
+
+                        if(potentiallyRemoveTransAsStarved) {
+                            //jeżeli wciąż true, to znaczy, że tranzycja nie jest zagłodzona bo każde jej miejsce wejściowe ma tokeny
+                            //jezeli usyniemy tranzycję z T_dng to musimy sprawdzić jeszcze raz dla nowego zbioru T_dng
+                            stop = false; //usunęliśmy coś, więc musimy sprawdzić jeszcze raz
+                            transToRemove = currentTrans;
+                            break;
+                        }
+                    } //for (Transition t : T_dng)
+                    if(triggerFoundReallyDeadTransitionInTdng) { //usuwamy z Tdng na stałe bo jest MARTWA
+                        T_dng.removeIf(transDeadDirectlyBecauseOfMCS::contains);
+                        break;
+                    }
+                    if(!stop) {
+                        T_dng.remove(transToRemove);
+                    }
+                    if(T_dng.isEmpty()) {
+                        stop = true;
+                    }
+                }  //while(true)
+
+                //usuń miejsca wyjściowe z MCS, które są bezpieczne:
+                outputPlacesOfMCS.removeAll(safeOutputPlacesOfMCS);
+
+                //przywróć do T_dng te, które są na pewno zagłodzone bezpośrednio przez MCS:
+                T_dng.addAll(transDeadDirectlyBecauseOfMCS);
+
+                //dodawanie informacji o MCS do rankingu:
+                StringBuilder rankmsg = new StringBuilder("MCS#");
+                rankmsg.append(counter).append(" ").append("[");
+                for (int el : MCS) {
+                    rankmsg.append("t").append(el).append(", ");
+                }
+                rankmsg.append("]");
+                rankmsg = new StringBuilder(rankmsg.toString().replace(", ]", "]"));
+
+                tokensRankDatabox obj = new tokensRankDatabox();
+                obj.starvedTransitions = T_dng.size();
+                obj.outputPlacesOfMCS = outputPlacesOfMCS;
+
+                MCSrank.put(rankmsg.toString(), obj); //dodaj do rankingu
+
+            } //dla wszystkich MCSów
+
+            LinkedHashMap<String, tokensRankDatabox> lhm = new LinkedHashMap<String, tokensRankDatabox>();
+            int lim = MCSrank.size();
+            for (int i = 0; i <lim; i++) {
+                int min = transitions.size()+1;
+                String rem = "";
+                tokensRankDatabox newObject = new tokensRankDatabox();
+
+                for (Map.Entry<String, tokensRankDatabox> entry : MCSrank.entrySet()) {
+                    if(entry.getValue().starvedTransitions < min){
+                        newObject = entry.getValue();
+                        rem = entry.getKey();
+                        min = entry.getValue().starvedTransitions;
+                    }
+                }
+                lhm.put(rem, newObject);
+                MCSrank.remove(rem);
+            }
+            ArrayList<Integer> ImportantTrans = new ArrayList<>();
+            if(!importantTrans.getText().isEmpty()) {
+                if(importantTrans.getText().contains(",")){
+                    String[] parseImportantTrans = importantTrans.getText().split(",");
+                    for (String elem : parseImportantTrans) {
+                        ImportantTrans.add(Integer.parseInt(elem));
+                    }
+                }
+                else{
+                    ImportantTrans.add(Integer.parseInt(importantTrans.getText()));
+                }
+            }
+            int liczba_wynikow = 20;
+            for (Map.Entry<String, tokensRankDatabox> mapElement : lhm.entrySet()) {
+                //if(liczba_wynikow==0){break;}
+                String[] mcs = mapElement.getKey().split("\\[");
+                float percStarvedTransitions = (float) (mapElement.getValue().starvedTransitions * 100) / transitions.size();
+                float percStarvedPlaces = (float) (mapElement.getValue().outputPlacesOfMCS.size() * 100) / places.size();
+                String pSign = "%";
+                logField1stTab.append(String.format("%-8s %-30s%s%d, %.2f%s, %s%d, %.2f%s)", mcs[0],"["+mcs[1],
+                        "( Tx:", mapElement.getValue().starvedTransitions, percStarvedTransitions, pSign, "Px: ",
+                        mapElement.getValue().outputPlacesOfMCS.size(), percStarvedPlaces, pSign));
+                logField1stTab.append("\n");
+                liczba_wynikow--;
+            }
+            lhm.clear();
+            MCSrank.clear();
+        }
+    }
 
     /**
      * Algorytm robiący ranking MCS według tego ile t-invariantów wyłączają, a w ramach tej samej liczby
@@ -210,23 +833,29 @@ public class HolmesMCSanalysis extends JFrame {
         invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
         int selectedTrans = transBox.getSelectedIndex();
 
+        if (invariantsMatrix == null || invariantsMatrix.isEmpty()) {
+            logField1stTab.append(" *** t-invariants set empty! ***\n");
+            return;
+        }
+
+        logField1stTab.append(" *******************************************************************\n");
+        logField1stTab.append("                T-INVARIANTS IMPACT MCS RANKING\n");
+        logField1stTab.append(" *******************************************************************\n\n");
+
         for(int transitionIndex = 0; transitionIndex<mcsd.getSize(); transitionIndex++) {
             if(selectedTrans > 0) {
                 if(selectedTrans-1 != transitionIndex) {
                     continue;
                 }
             }
-
+            
             ArrayList<ArrayList<Integer>> dataVector = mcsd.getMCSlist(transitionIndex);
             if (dataVector == null || dataVector.isEmpty()) {
-                //logField1stTab.append(" *** Brak zbiorów MCS dla tranzycji o numerze: " + transitionIndex + "\n");
+                logField1stTab.append("\n XXXXXXXXX no MCSs for trans. ID: " + transitionIndex + " XXXXXXXXX\n\n");
                 continue;
             }
-            if (invariantsMatrix == null || invariantsMatrix.isEmpty()) {
-                logField1stTab.append(" *** t-invariants set empty! ***\n");
-            }
 
-            logField1stTab.append(" *** MCS sets for transition ID: " + transitionIndex + " ***\n");
+            logField1stTab.append("\n ********* MCS sets ranking for trans. ID: " + transitionIndex + " *********\n\n");
 
             Map<Integer,ArrayList<Integer>> B  =  new  HashMap<Integer,ArrayList<Integer>>();//t-inwarianty,które pozostały, bo nie zawierają we wsparciach ani jednej tranzycji z danego MCS
             Map<Integer,ArrayList<Integer>> A  =  new  HashMap<Integer,ArrayList<Integer>>();//t-inwarianty, których wsparcie zawiera choć jedną tranzycję z danego zbioru MCS
@@ -348,559 +977,6 @@ public class HolmesMCSanalysis extends JFrame {
             lhm.clear();
             MCSrank.clear();
             MCSsets.clear();
-        }
-    }
-
-    private JPanel createMainPanel() {
-        JPanel main = new JPanel(new BorderLayout());
-
-        JTabbedPane tabbedPane = new JTabbedPane();
-
-        JPanel mainPanel1stTab = new JPanel();
-        mainPanel1stTab.setLayout(null); //  ╯°□°）╯︵  ┻━┻
-        JPanel buttonPanelT = createUpperButtonPanel1stTab(0, 0, windowWidth-20, 125);
-        JPanel logMainPanelT = createLogMainPanel1stTab(0, 125, windowWidth, windowHeight-120);
-
-        mainPanel1stTab.add(buttonPanelT);
-        mainPanel1stTab.add(logMainPanelT);
-        mainPanel1stTab.repaint();
-
-        tabbedPane.addTab("MCS", Tools.getResIcon22("/icons/invWindow/tInvIcon.png"), mainPanel1stTab, "T-invariants");
-        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-
-        main.add(tabbedPane, BorderLayout.CENTER);
-
-        return main;
-    }
-
-    private JPanel createUpperButtonPanel1stTab(int x, int y, int width, int height) {
-        JPanel panel = new JPanel();
-        panel.setLayout(null);
-        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        panel.setBounds(x, y, width, height);
-
-        int posX = 10;
-        int posY = 10;
-
-        oldRanking = new JCheckBox("Old v1.6.9.5");
-        oldRanking.setBounds(posX+190,posY+85, 100,15);
-        panel.add(oldRanking);
-
-
-        JButton button1 = new JButton("TokensRanking");
-        button1.setText("<html>Tokens<br />ranking</html>");
-        button1.setBounds(posX, posY, 150, 40);
-        button1.setMargin(new Insets(0, 0, 0, 0));
-        button1.setIcon(Tools.getResIcon32("/icons/stateSim/simpleSimTab.png"));
-        button1.addActionListener(actionEvent -> {
-            places = overlord.getWorkspace().getProject().getPlaces();
-            transitions = overlord.getWorkspace().getProject().getTransitions();
-            mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
-            if(mcsd.getSize() == 0) {
-                logField1stTab.append(" *** No MCS data! \n");
-                return;
-            }
-
-            if(oldRanking.isSelected())  {
-                jeden();
-            } else {
-                checkStarvedTransitions();
-            }
-        });
-        button1.setFocusPainted(false);
-        panel.add(button1);
-
-        /*info*/
-        JButton button1Info = new JButton("TKInfo");
-        button1Info.setText("<html>Explanations</html>");
-        button1Info.setBounds(posX, posY+40, 120, 15);
-        button1Info.setMargin(new Insets(0, 0, 0, 0));
-        button1Info.setIcon(Tools.getResIcon32(""));
-        button1Info.addActionListener(actionEvent -> {
-            JOptionPane.showMessageDialog(null,
-                    "When you press the button \"Tokens ranking\", make sure that you have selected the transition for which\n" +
-                            "you want to create a ranking of its MCS sets in the list to the right of the \"Clear Window\" button.\n" +
-                            "If \"---\" is selected, the rankings will be created (independently) for the MCS sets of each single\n" +
-                            "transition for which they were generated in the previous window.\n" +
-                            "\n" +
-                            "The \"Tokens ranking\" button creates a ranking of MCS sets based on how many transitions will potentially\n" +
-                            "be starved if we consider MCS transitions to be permanently excluded in the simulation. Note: the algo-\n" +
-                            "rithm is more complicated than the following description, but this one gives an idea of how it works. Let's\n" +
-                            "assume that the transitions in MCS are a set of M. The set X is all the output places of the transitions \n" +
-                            "from M. The set Y, is all the output transitions of the places from X. The algorithm checks whether in the\n" +
-                            "set Y (the set of potentially starved transitions) there are some for which *all* input places have *at \n" +
-                            "least one* transition that will provide tokens. Such a transition, in order to sustain token production at\n" +
-                            "the input places of those in Y, must meet the conditions: not be in the M set (obviously), not be in the Y\n" +
-                            "set. In addition, the distance variable (2 or 3) periodizes how far in the net structure the above relation-\n" +
-                            "ships are sought. If any transition initially being in the set Y, has all its input places such that they\n" +
-                            "in turn will have tokens produced by other transitions independent of M (by distance), it is removed from Y.\n" +
-                            "The final ranking is based on the number of transitions remaining in Y.\n" +
-                            "\n"
-                            //"Version 1.6.9.5: [PL] Najkrócej rzecz ujmując sprawdzane jest tylko najbliższe otoczenie zbnioru M: liczność\n" +
-                            //"zbiorów X oraz Y. Algorytm w tejże wersji daje więc bardzo, ale to bardzo przybliżone informacje o potencjale\n" +
-                            //"wyłączającym zbioru MCS, niż algorytm z wersji 1.6.9.7 i dalej."
-                    , "Info", JOptionPane.INFORMATION_MESSAGE);
-
-        });
-        button1Info.setFocusPainted(false);
-        panel.add(button1Info);
-
-        description  = new JCheckBox("Full trans/places names");
-        description.setBounds(posX-5,posY+60, 170,20);
-        panel.add(description);
-
-        ID = new JCheckBox("ID of transitions/places");
-        ID.setBounds(posX-5,posY+85, 160,15);
-        panel.add(ID);
-
-        JLabel comboDesc = new JLabel("Sort by:");
-        comboDesc.setBounds(posX+155,posY, 150,20);
-        panel.add(comboDesc);
-        TorP = new JComboBox<String>();
-        TorP.addItem("T_off");
-        TorP.addItem("P_off");
-        TorP.setBounds(posX+155, posY+20, 70, 20);
-        TorP.setSelectedIndex(0);
-        panel.add(TorP);
-
-        JLabel transDesc = new JLabel("Important trans.:");
-        transDesc.setBounds(posX+230, posY, 150,20);
-        panel.add(transDesc);
-
-        importantTrans = new JTextField();
-        importantTrans.setBounds(posX+230, posY+20, 100, 20);
-        panel.add(importantTrans);
-
-        //iFeelCourageous = new JCheckBox("I feel courageous");
-        //iFeelCourageous.setBounds(posX+165,posY+70, 130,15);
-        //panel.add(iFeelCourageous);
-
-        JLabel distLabel = new JLabel("Dist:");
-        distLabel.setBounds(posX+160,posY+45, 40,20);
-        panel.add(distLabel);
-
-        SpinnerModel distSpinnerModel = new SpinnerNumberModel(3, 2, 3, 1);
-        distanceSpinner = new JSpinner(distSpinnerModel);
-        distanceSpinner.setBounds(posX+190, posY+45, 60, 20);
-        distanceSpinner.addChangeListener(e -> {
-            JSpinner spinner = (JSpinner) e.getSource();
-            distanceVar = (int) spinner.getValue();
-        });
-        panel.add(distanceSpinner);
-
-        //**************************************************************************
-
-        //rankByTrans = new JCheckBox("Ranking by disabled transitions");
-        //rankByTrans.setBounds(posX+471,posY+55, 220,15);
-        //panel.add(rankByTrans);
-
-        JButton transRank = new JButton("T-inv rank");
-        transRank.setText("<html><center>Invariants<br />ranking</center></html>");
-        transRank.setBounds(posX + 340, posY+48, 130, 43);
-        transRank.setMargin(new Insets(0, 0, 0, 0));
-        transRank.setIcon(Tools.getResIcon22("/icons/menu/menu_analysis_invariants.png"));
-        transRank.addActionListener(actionEvent -> {
-            if(oldRanking.isSelected())  {
-                orgInvTransRankingAlg();
-            } else {
-                rankingByInvariantsThenTransitions();
-            }
-        });
-        transRank.setFocusPainted(false);
-        panel.add(transRank);
-
-        JButton transRankInfo = new JButton("Jenson");
-        transRankInfo.setText("<html>Explanations</html>");
-        transRankInfo.setBounds(posX+340, posY+92, 120, 15);
-        transRankInfo.setMargin(new Insets(0, 0, 0, 0));
-        transRankInfo.setIcon(Tools.getResIcon32(""));
-        transRankInfo.addActionListener(actionEvent -> {
-            JOptionPane.showMessageDialog(null,
-                    "When you press the button \"Invariants ranking\", make sure that you have selected the transition for \n" +
-                            "which you want to create a ranking of its MCS sets in the dropdown list to the right of the \n" +
-                            "\"Clear Window\" button. If \"---\" is selected, the rankings will be created (independently) for the MCS\n" +
-                            "sets of each single transition for which they were generated in the previous window.\n" +
-                            "\n" +
-                            "The \"Invariants ranking\" button creates a ranking of MCS sets according to two criteria. The most \n" +
-                            "important on is the number of t-invariants disabled by a given MCS (i.e., t-invariant is considered\n" +
-                            "disabled, if it contains in its support at least one transition from an MCS). If the same number of \n" +
-                            "t-invariants is disabled for several different MCS sets, then the order is further determined by the \n" +
-                            "number of transitions found in the supports of all excluded t-invariants. The fewer, the higher the MCS\n" +
-                            "is ranked because the more subtle its effects are on the net.\n" +
-                            "Additionally: please leave Distance setting to 3, and be aware that other controls have currently no\n" +
-                            "influence on this ranking. [To be adjusted soon]\n" +
-                            "\n"// +
-                            //"Version 1.6.9.5 and lower: [PL] ranking jest robiony tylko na podstawie drugiego opisanego kryterium, tj.\n" +
-                            //"im mniej tranzycji w sumie wsparć wyłączanych t-invariantów tym lepiej, ale sama liczba t-invariantów\n" +
-                            //"NIE jest brana pod uwagę. Druga uwaga: nie daję 100% pewności że algorytm jest 100% poprawny, bo nie\n" +
-                            //"ja go pisałem :)"
-                    , "Info", JOptionPane.INFORMATION_MESSAGE);
-        });
-        transRankInfo.setFocusPainted(false);
-        panel.add(transRankInfo);
-
-        JButton buttonData = new JButton("Button 4");
-        buttonData.setText("<html><center>Clear<br />window</center></html>");
-        buttonData.setBounds(posX + 340, posY, 130, 45);
-        buttonData.setMargin(new Insets(0, 0, 0, 0));
-        buttonData.setIcon(Tools.getResIcon22("/icons/toolbar/refresh.png"));
-        buttonData.addActionListener(actionEvent -> {
-            logField1stTab.setText("");
-
-        });
-        buttonData.setFocusPainted(false);
-        panel.add(buttonData);
-
-        String[] dataT = { "---" };//combobox z tranzycjami
-        transBox = new JComboBox<String>(dataT);
-        transBox.setBounds(posX+480, posY, 350, 20);
-        transBox.setSelectedIndex(0);
-        transBox.setMaximumRowCount(6);
-        transBox.removeAllItems();
-        transBox.addItem("---");
-        transBox.addActionListener(actionEvent -> {//uzupelnianie combobox z mcsami dla wybranej tranzycji
-            mcsBox.removeAllItems();
-            mcsBox.addItem("---");
-            mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
-            if(mcsd.getSize() == 0) {
-//                logField1stTab.append(" *** BRAK DANYCH MCS! \n");
-                return;
-            }
-            int selected = transBox.getSelectedIndex();
-            if(selected <= 0)
-                return;
-            selected--;
-            ArrayList<ArrayList<Integer>> dataVector = mcsd.getMCSlist(selected);
-            int counter = 0;
-            for(ArrayList<Integer>MCS : dataVector){
-                StringBuilder msg;
-                msg = new StringBuilder("MCS#");
-                msg.append(counter).append(" ").append("[");
-                for (int el : MCS) {
-                    msg.append(el).append(", ");
-                }
-                msg.append("]");
-                msg = new StringBuilder(msg.toString().replace(", ]", "]"));
-                mcsBox.addItem(msg.toString());
-                counter++;
-            }
-        });
-        panel.add(transBox);
-
-        mcsBox = new JComboBox<String>(dataT);
-        mcsBox.setBounds(posX+480, posY+30, 200, 20);
-        mcsBox.setSelectedIndex(0);
-        mcsBox.setMaximumRowCount(6);
-        mcsBox.removeAllItems();
-        mcsBox.addItem("---");
-        mcsBox.addActionListener(actionEvent -> {});
-        panel.add(mcsBox);
-
-        JButton showMCS = new JButton("Button 888");
-        showMCS.setText("Show MCS");
-        showMCS.setBounds(posX + 700, posY+30, 130, 40);
-        showMCS.setMargin(new Insets(0, 0, 0, 0));
-        showMCS.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
-        showMCS.addActionListener(actionEvent -> {
-            int selectedTrans = transBox.getSelectedIndex();
-            if(selectedTrans == 0)
-                return;
-            selectedTrans--;
-            int selectedMCS = mcsBox.getSelectedIndex();
-            if(selectedMCS == 0)
-                return;
-            selectedMCS--;
-            showMCS(selectedTrans,selectedMCS);
-        });
-        showMCS.setFocusPainted(false);
-        panel.add(showMCS);
-
-
-
-        JButton mcsOffRank = new JButton("Off Rank");
-        mcsOffRank.setText("<html><center>Minimum offline<br />places and transitions<br />ranking</center></html>");
-        mcsOffRank.setBounds(posX + 840, posY, 190, 70);
-        mcsOffRank.setMargin(new Insets(0, 0, 0, 0));
-        mcsOffRank.setIcon(Tools.getResIcon22("/icons/toolbar/simLog.png"));
-        mcsOffRank.addActionListener(actionEvent -> {
-            trzy();
-        });
-        mcsOffRank.setFocusPainted(false);
-        panel.add(mcsOffRank);
-
-        JButton mcsOffRankInfo = new JButton("Jenson");
-        mcsOffRankInfo.setText("<html>Info</html>");
-        mcsOffRankInfo.setBounds(posX+840, posY+71, 40, 15);
-        mcsOffRankInfo.setMargin(new Insets(0, 0, 0, 0));
-        mcsOffRankInfo.setIcon(Tools.getResIcon32(""));
-        mcsOffRankInfo.addActionListener(actionEvent -> {
-            JOptionPane.showMessageDialog(null,
-                    "Zadaniem jest wybranie jednego najlepszego zbioru MCS dla każdej tranzycji badanego\n" +
-                            "modelu. Ten algorytm jest w zasadzie rozwinięciem pierwszego algorytmu, ponieważ również\n" +
-                            "tworzy zbiory P_off oraz T_off , ale zamiast tworzyć ranking minimalnych zbiorów odcinających to\n" +
-                            "wybiera teoretycznie najlepszy zbiór dla danej tranzycji. Według kryteriów algorytmu, najlepszy\n" +
-                            "zbiór to taki, którego tranzycje bezpośrednio wyłączają najmniej miejsc i tranzycji w sieci, czyli\n" +
-                            "zbiory P_off i T_off są najmniejsze. Ponadto, w sytuacji kiedy trafi się jeden lub więcej zbiorów o\n" +
-                            "takim samym wyniku to sprawdzana jest liczba tranzycji w każdym ze zbiorów MCS. Im mniejszy\n" +
-                            "jest zbiór MCS tym lepiej. Oczywiście w tym algorytmie również istnieje możliwość oznaczenia\n" +
-                            "ważnych tranzycji, które mają pozostać włączone. Jeśli potencjalnie najlepszy zbiór MCS wyłącza\n" +
-                            "taką tranzycję, to obok niego pojawi się kolejny najlepszy zbiór, który takiej tranzycji nie wyłącza.\n" +
-                            "Dodatkowo, tam gdzie to możliwe, algorytm stara się nie wybierać jako najlepszy zbiór trywialnego\n" +
-                            "przypadku, gdzie MCS to jedno-elementowy zbiór składający się z tranzycji, dla której szukany\n" +
-                            "jest najlepszy zbiór."
-                    , "Info", JOptionPane.INFORMATION_MESSAGE);
-
-        });
-        mcsOffRankInfo.setFocusPainted(false);
-        panel.add(mcsOffRankInfo);
-
-        return panel;
-    }
-
-    private JPanel createLogMainPanel1stTab(int x, int y, int width, int height) {
-        JPanel panel = new JPanel();
-        panel.setLayout(null);
-        panel.setBorder(BorderFactory.createTitledBorder("Log window"));
-        panel.setBounds(x, y, width-20, height-50);
-
-        logField1stTab = new JTextArea();
-        logField1stTab.setLineWrap(true);
-        logField1stTab.setEditable(true);
-        logField1stTab.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        DefaultCaret caret = (DefaultCaret)logField1stTab.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-
-        JPanel logFieldPanel = new JPanel();
-        logFieldPanel.setLayout(new BorderLayout());
-        logFieldPanel.add(new JScrollPane(logField1stTab), BorderLayout.CENTER);
-        logFieldPanel.setBounds(10, 20, width-35, height-110);
-        panel.add(logFieldPanel);
-
-
-        return panel;
-    }
-    private void initiateListeners() { //HAIL SITHIS
-        addWindowListener(new WindowAdapter() {
-            public void windowActivated(WindowEvent e) {
-                fillTComboBox();
-            }
-        });
-    }
-
-    /**
-     * Algorytm znajdowania tranzycji które nie będą mogły się uruchomić z powodu braku tokenów
-     * spowołanego przez wyłączenie tranzycji z MCS oraz bezpośredniego otoczenia tychże.
-     * Naciągamy tutaj ogólną teorię MCS (powstają z t-invariantów), ale może on pełnić funkcję pomocniczą.
-     */
-    private void checkStarvedTransitions(){
-        mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
-        transitions = overlord.getWorkspace().getProject().getTransitions();
-        invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
-
-        int selectedTrans = transBox.getSelectedIndex();
-        int Distance = distanceVar;
-
-        for(int objReaction = 0; objReaction<mcsd.getSize(); objReaction++) {
-            //tranzycja to wyznacznik zbiorów
-            if(selectedTrans > 0) {
-                if(selectedTrans-1 != objReaction) {
-                    continue;
-                }
-            }
-            ArrayList<ArrayList<Integer>> MCSsForObjReaction = mcsd.getMCSlist(objReaction);
-            if (MCSsForObjReaction == null || MCSsForObjReaction.isEmpty()) {
-                continue;
-            }
-            if (invariantsMatrix == null || invariantsMatrix.isEmpty()) {
-                logField1stTab.append(" *** t-invariants set empty! ***\n");
-            }
-            logField1stTab.append(" *** MCS sets for transition ID: " + objReaction + " ***\n");
-
-            Map<String, tokensRankDatabox> MCSrank  =  new  HashMap<String, tokensRankDatabox>();
-
-            int counter = -1;
-            for(ArrayList<Integer> MCS : MCSsForObjReaction) {
-                counter++;
-
-                //Dane wejściowe dla danego zbioru MCS dla danej tranzycji:
-                HashSet<Transition> hashSetMCS = new HashSet<Transition>(); //zbior tranzycji w MCS, a nie tylko numerki ID
-                for (Integer MCStransitionID : MCS) {
-                    hashSetMCS.add(transitions.get(MCStransitionID));
-                }
-
-                //dołącz do zbioru MCS te trazycje, które na pewno nie będą w stanie działać, ponieważ
-                //ich miejsca wejściowe są zaopatrywane w tokeny tylko przez tranzycje z MCS:
-                hashSetMCS = redefineMCS(hashSetMCS);
-                HashSet<Place> outputPlacesOfMCS = createOutputPlacesOfMCS(hashSetMCS);
-                HashSet<Place> safeOutputPlacesOfMCS = new HashSet<Place>();
-
-                for (Integer MCStransition : MCS) {
-                    Transition transition = transitions.get(MCStransition);
-                    //outputPlacesOfMCS.addAll(transition.getPostPlaces());
-                }
-                HashSet<Transition> T_dng = new HashSet<Transition>();
-                for (Place place : outputPlacesOfMCS) {
-                    T_dng.addAll(place.getOutputTransitions());
-                }
-
-
-                boolean stop = false;
-                //ArrayList<Transition> transPotentiallyDeadOfTdng = new ArrayList<Transition>(); //miejsce wejściowe ma trans w T_dng
-                ArrayList<Transition> transDeadDirectlyBecauseOfMCS = new ArrayList<Transition>(); //miejsce wejściowe ma TYLKO trans z MCS
-                boolean triggerFoundReallyDeadTransitionInTdng = false;
-
-                while (true) { //tak długo, aż wewnętrzna pętla niczego nie usunie
-                    if (stop) break;
-
-                    Transition transToRemove = null;
-                    for (Transition currentTrans : T_dng) { //dla kazdej potencjalnie zaglodzonej
-                        stop = true; //zostanie tak, jeżeli niczego nie usuniemy
-                        boolean removeTransitionFromEndangeredSet = false;
-                        boolean potentiallyRemoveTransAsStarved = false;
-
-                        //tworzy zbiór miejsc wejściowych, które karmią tranzycję T_dng tokenami:
-                        HashSet<Place> inputPlacesForTransFormT_dng = new HashSet<Place>(currentTrans.getInputPlaces()); //pobierz miejsca wejściowe
-
-                        for(Place place : inputPlacesForTransFormT_dng) { //sprawdzamy czy miejsce może mieć tokeny
-                            triggerFoundReallyDeadTransitionInTdng = false;
-                            HashSet<Transition> inputTransToInputPlacesForT_dng = new HashSet<Transition>(place.getInputTransitions()); //pobierz t wejściowe
-                            inputTransToInputPlacesForT_dng.removeIf(hashSetMCS::contains); //usuwamy te, które są w MCS
-                            if(inputTransToInputPlacesForT_dng.isEmpty()) { //miejsce martwe, bo nie ma tokenów
-                                for(Transition t_tmp : place.getOutputTransitions()) {
-                                    if(T_dng.contains(t_tmp)) {
-                                        transDeadDirectlyBecauseOfMCS.add(t_tmp);
-                                    }
-                                }
-                                stop = false;
-                                triggerFoundReallyDeadTransitionInTdng = true;
-                                break;
-                            }
-                            //jeżeli tranzycja jest w zbiorze T_dng:
-                            inputTransToInputPlacesForT_dng.removeIf(T_dng::contains); //TU JEST TRICKY! KOLEJNOSC!!!
-                            if(inputTransToInputPlacesForT_dng.isEmpty()) {
-                                //właśnie znaleziono miejsce, które nie ma tokenów, bo nie ma tranzycji wejściowych, które nie są w MCS i T_dng
-                                break; //break, a nie continue, bo po co sprawdzać pozostałe miejsca jak jedno i tak nie ma tokenów?
-                            }
-
-                            boolean unstarvedPlaceFound = false; //jesli jeszcze zostaly do sprawdzania te tranzycje, których nie ma w MCS i T_dng:
-                            for(Transition toCheckTrans : inputTransToInputPlacesForT_dng) {
-                                boolean canTransitionFire = canFire(toCheckTrans,  T_dng, Distance);
-                                if(canTransitionFire) {
-                                    unstarvedPlaceFound = true; //znaleziono jedna niezagrożoną tranzycję więc miejsce wejściowe będzie miało tokeny
-                                    break; //wystarczy jedna
-                                }
-                            }
-                            if(unstarvedPlaceFound) { //miejsce wejsciowe ma tokeny
-                                if(outputPlacesOfMCS.contains(place)) { //jeśli wyjściowe z MCS, to dodaj do bezpiecznych:
-                                    safeOutputPlacesOfMCS.add(place);
-                                }
-
-                                potentiallyRemoveTransAsStarved = true;
-                                continue; //dla kolejnego miejsca wejsciowego tej tranzycji trans
-                            } else { //jedno z miejsc wejsciowych nie ma tokenów:
-                                potentiallyRemoveTransAsStarved = false;
-                                //for(Transition t_tmp : place.getPostTransitions()) {
-                                //    if(T_dng.contains(t_tmp)) {
-                                //         transPotentiallyDeadOfTdng.add(t_tmp);
-                                //    }
-                                //}
-                                //wszystkie inne tranzycje wyjściowe tego miejsca - można już sobie podarować sprawdzanie:
-                                break; //nie ma tokenów w miejscu wejściowym, więc tranzycja jest zagłodzona
-                            }
-                        } //for(Place place : inputPlacesForTransFormT_dng)
-
-                        if(triggerFoundReallyDeadTransitionInTdng) { //usuwamy z Tdng na stałe bo jest MARTWA
-                            break;  //i to się już nie zmieni, bo ten trigger oznacza, że tylko tranzycje z MCS
-                            //produkują tokeny do jednego z miejsc wejściowych tej tranzycji.
-                        }
-
-                        if(potentiallyRemoveTransAsStarved) {
-                            //jeżeli wciąż true, to znaczy, że tranzycja nie jest zagłodzona bo każde jej miejsce wejściowe ma tokeny
-                            //jezeli usyniemy tranzycję z T_dng to musimy sprawdzić jeszcze raz dla nowego zbioru T_dng
-                            stop = false; //usunęliśmy coś, więc musimy sprawdzić jeszcze raz
-                            transToRemove = currentTrans;
-                            break;
-                        }
-                    } //for (Transition t : T_dng)
-                    if(triggerFoundReallyDeadTransitionInTdng) { //usuwamy z Tdng na stałe bo jest MARTWA
-                        T_dng.removeIf(transDeadDirectlyBecauseOfMCS::contains);
-                        break;
-                    }
-                    if(stop == false) {
-                        T_dng.remove(transToRemove);
-                    }
-                    if(T_dng.isEmpty()) {
-                        stop = true;
-                    }
-                }  //while(true)
-
-                //usuń miejsca wyjściowe z MCS, które są bezpieczne:
-                outputPlacesOfMCS.removeAll(safeOutputPlacesOfMCS);
-
-                //przywróć do T_dng te, które są na pewno zagłodzone bezpośrednio przez MCS:
-                T_dng.addAll(transDeadDirectlyBecauseOfMCS);
-
-                //dodawanie informacji o MCS do rankingu:
-                StringBuilder rankmsg = new StringBuilder("MCS#");
-                rankmsg.append(counter).append(" ").append("[");
-                for (int el : MCS) {
-                    rankmsg.append("t").append(el).append(", ");
-                }
-                rankmsg.append("]");
-                rankmsg = new StringBuilder(rankmsg.toString().replace(", ]", "]"));
-
-                tokensRankDatabox obj = new tokensRankDatabox();
-                obj.starvedTransitions = T_dng.size();
-                obj.outputPlacesOfMCS = outputPlacesOfMCS;
-
-                MCSrank.put(rankmsg.toString(), obj); //dodaj do rankingu
-
-            } //dla wszystkich MCSów
-
-            LinkedHashMap<String, tokensRankDatabox> lhm = new LinkedHashMap<String, tokensRankDatabox>();
-            int lim = MCSrank.size();
-            for (int i = 0; i <lim; i++) {
-                Integer min = transitions.size()+1;
-                String rem = "";
-                tokensRankDatabox newObject = new tokensRankDatabox();
-
-                for (Map.Entry<String, tokensRankDatabox> entry : MCSrank.entrySet()) {
-                    if(entry.getValue().starvedTransitions < min){
-                        newObject = entry.getValue();
-                        rem = entry.getKey();
-                        min = entry.getValue().starvedTransitions;
-                    }
-                }
-                lhm.put(rem, newObject);
-                MCSrank.remove(rem);
-            }
-            ArrayList<Integer> ImportantTrans = new ArrayList<>();
-            if(importantTrans.getText().length()>0) {
-                if(importantTrans.getText().contains(",")){
-                    String[] parseImportantTrans = importantTrans.getText().split(",");
-                    for (String elem : parseImportantTrans) {
-                        ImportantTrans.add(Integer.parseInt(elem));
-                    }
-                }
-                else{
-                    ImportantTrans.add(Integer.parseInt(importantTrans.getText()));
-                }
-            }
-            int liczba_wynikow = 20;
-            for (Map.Entry<String, tokensRankDatabox> mapElement : lhm.entrySet()) {
-                //if(liczba_wynikow==0){break;}
-                String[] mcs = mapElement.getKey().split("\\[");
-                float percStarvedTransitions = (float) (mapElement.getValue().starvedTransitions * 100) / transitions.size();
-                float percStarvedPlaces = (float) (mapElement.getValue().outputPlacesOfMCS.size() * 100) / places.size();
-                String pSign = "%";
-                logField1stTab.append(String.format("%-8s %-30s%s%d, %.2f%s, %s%d, %.2f%s)", mcs[0],"["+mcs[1],
-                        "( Tx:", mapElement.getValue().starvedTransitions, percStarvedTransitions, pSign, "Px: ",
-                        mapElement.getValue().outputPlacesOfMCS.size(), percStarvedPlaces, pSign));
-                logField1stTab.append("\n");
-                liczba_wynikow--;
-            }
-            lhm.clear();
-            MCSrank.clear();
         }
     }
 

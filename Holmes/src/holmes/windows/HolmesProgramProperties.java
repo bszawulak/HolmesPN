@@ -600,7 +600,7 @@ public class HolmesProgramProperties extends JFrame {
 		
 		// ARC SIZE:
 		JLabel labelIO1 = new JLabel(lang.getText("HPPwinEDIT_entry021")); //Default arc thickness
-		labelIO1.setBounds(posX, posY, 200, 20);
+		labelIO1.setBounds(posX, posY, 240, 20);
 		panel.add(labelIO1);
 
 		ButtonGroup group = new ButtonGroup();
@@ -646,22 +646,23 @@ public class HolmesProgramProperties extends JFrame {
 
 		//FONT SIZE:
 		JLabel labelFontSize = new JLabel(lang.getText("HPPwinEDIT_entry022")); //Font size
-		labelFontSize.setBounds(posX+150, posY, 200, 20);
+		labelFontSize.setBounds(posX+210, posY, 100, 20);
 		panel.add(labelFontSize);
 		
-		JCheckBox boldCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry023"), posX+210, posY, 60, 20, 
+		JCheckBox boldCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry023"), posX+320, posY, 110, 20, 
 				"editorGraphFontBold", true); //Bold
 		panel.add(boldCheckBox);
 		
-		JCheckBox mctNameCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry024"), posX+270, posY, 110, 20, 
+		JCheckBox mctNameCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry024"), posX+320, posY+20, 110, 20, 
 				"mctNameShow", true); //MCT names
+		mctNameCheckBox.setToolTipText(lang.getText("HPPwinEDIT_entry024t"));
 		panel.add(mctNameCheckBox);
 		
 		
 		SpinnerModel fontSizeSpinnerModel = new SpinnerNumberModel(
 				Integer.parseInt(overlord.getSettingsManager().getValue("editorGraphFontSize")), 7, 30, 1);
 		JSpinner fontSizeSpinner = new JSpinner(fontSizeSpinnerModel);
-		fontSizeSpinner.setBounds(posX+150, posY+=20, 80, 20);
+		fontSizeSpinner.setBounds(posX+210, posY+=20, 80, 20);
 		fontSizeSpinner.addChangeListener(e -> {
 			if(noAction) return;
 			JSpinner spinner = (JSpinner) e.getSource();
@@ -672,29 +673,29 @@ public class HolmesProgramProperties extends JFrame {
 		});
 		panel.add(fontSizeSpinner);
 
-		JCheckBox useShortNamesCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry025"), posX, posY+=20, 300, 20, 
+		JCheckBox useShortNamesCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry025"), posX, posY+=20, 420, 20, 
 				"editorShowShortNames", true); //(Editor) Show short default names only
 		panel.add(useShortNamesCheckBox);
 
-		JCheckBox useShortNamesLowerIndexCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry026"), posX, posY+=20, 360, 20,
+		JCheckBox useShortNamesLowerIndexCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry026"), posX, posY+=20, 420, 20,
 				"editorShortNameLowerIndex", true); //(Editor) Show short names with lower index
 		panel.add(useShortNamesLowerIndexCheckBox);
 	
-		JCheckBox view3dCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry027"), posX, posY+=20, 330, 20, 
+		JCheckBox view3dCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry027"), posX, posY+=20, 420, 20, 
 				"editor3Dview", true); //(Editor) Petri net elements 3d view
 		panel.add(view3dCheckBox);
 		
-		JCheckBox snoopyStyleCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry028"), posX, posY+=20, 260, 20, 
+		JCheckBox snoopyStyleCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry028"), posX, posY+=20, 420, 20, 
 				"editorSnoopyStyleGraphic", true); //(Editor) Show Snoopy-styled graphics
 		panel.add(snoopyStyleCheckBox);
-		
-		JCheckBox snoopyColorsBox = checkboxWizard(lang.getText("HPPwinEDIT_entry029"), posX+300, posY, 260, 20, 
-				"editorSnoopyColors", true); //(Editor) Show non default T/P colors
-		panel.add(snoopyColorsBox);
 
-		JCheckBox portalLinesBox = checkboxWizard(lang.getText("HPPwinEDIT_entry030"), posX, posY+20, 300, 20,
+		JCheckBox portalLinesBox = checkboxWizard(lang.getText("HPPwinEDIT_entry030"), posX, posY+=20, 420, 20,
 				"editorPortalLines", true); //(Editor) Show lines between portal locations
 		panel.add(portalLinesBox);
+
+		JCheckBox snoopyColorsBox = checkboxWizard(lang.getText("HPPwinEDIT_entry029"), posX, posY+=20, 420, 20,
+				"editorSnoopyColors", true); //(Editor) Show non default T/P colors
+		panel.add(snoopyColorsBox);
 		
 		noAction = false;
 		return panel;
@@ -734,7 +735,7 @@ public class HolmesProgramProperties extends JFrame {
 		snoopyCompatibilityCheckBox.setSelected(overlord.getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1"));
 		panel.add(snoopyCompatibilityCheckBox);
 		
-		JCheckBox subnetCompressionCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry033"), posX, posY+=20, 350, 20, 
+		JCheckBox subnetCompressionCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry033"), posX, posY+=20, 400, 20, 
 				"editorSubnetCompressMode", true); //Use meta-arcs compression for metanodes
 		panel.add(subnetCompressionCheckBox);
 		
@@ -802,6 +803,10 @@ public class HolmesProgramProperties extends JFrame {
 		JCheckBox XTPNsimReadArcTokenCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry040"),
 				posX, posY+=20, 440, 20, "simXTPNreadArcTokens", true); //(XTPN) Read arcs preserve tokens lifetime
 		panel.add(XTPNsimReadArcTokenCheckBox);
+
+		JCheckBox isSimulatorLoggedCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry044"),
+				posX, posY+=20, 440, 20, "simLogEnabled", true); //(XTPN) Read arcs preserve tokens lifetime
+		panel.add(isSimulatorLoggedCheckBox);
 
 		noAction = false;
 		return panel;

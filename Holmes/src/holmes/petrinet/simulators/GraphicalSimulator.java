@@ -38,6 +38,7 @@ public class GraphicalSimulator {
 	
 	private boolean writeHistory = true;
 	private long timeCounter = -1;
+	private boolean simLogEnabled = true;
 	private GraphicalSimulatorLogger nsl = new GraphicalSimulatorLogger();
 	
 	private SimulatorStandardPN engine;
@@ -100,6 +101,12 @@ public class GraphicalSimulator {
 		ArrayList<Transition> transitions = petriNet.getTransitions();
 		ArrayList<Transition> time_transitions = petriNet.getTimeTransitions();
 		ArrayList<Place> places = petriNet.getPlaces();
+
+		try {
+			simLogEnabled = overlord.getSettingsManager().getValue("simLogEnabled").equals("1");
+		} catch (Exception e) {
+			simLogEnabled = false;
+		}
 		nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode());
 
 		//setMaxMode(isSingleMode() && overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
@@ -113,7 +120,10 @@ public class GraphicalSimulator {
 
 		engine.setEngine(netSimType, isMaxMode(), isSingleMode(), transitions, time_transitions, places);
 
-		nsl.logBackupCreated();
+		if(simLogEnabled) {
+			nsl.logBackupCreated();
+		}
+		
 
 		previousSimStatus = getSimulatorStatus();
 		setSimulatorStatus(simulatorMode);
@@ -671,8 +681,10 @@ public class GraphicalSimulator {
 		timer.stop();
 		previousSimStatus = simulatorStatus;
 		setSimulatorStatus(SimulatorMode.PAUSED);
-		
-		nsl.logSimPause(true);
+
+		if(simLogEnabled) {
+			nsl.logSimPause(true);
+		}
 	}
 
 	/**
@@ -685,8 +697,9 @@ public class GraphicalSimulator {
 			timer.start();
 			setSimulatorStatus(previousSimStatus);
 		}
-		
-		nsl.logSimPause(false);
+		if(simLogEnabled) {
+			nsl.logSimPause(false);
+		}
 	}
 
 	/**
@@ -771,6 +784,22 @@ public class GraphicalSimulator {
 	 */
 	public boolean isHistoryMode() {
 		return writeHistory;
+	}
+
+	/**
+	 * Metoda pozwala ustawić, czy symulator ma zapisywać logi symulacji.
+	 * @param status boolean - true, jeśli symulator ma zapisywać logi
+	 */
+	public void setSimLogging(boolean status) {
+		this.simLogEnabled = status;
+	}
+	
+	/**
+	 * Metoda pozwala określić, czy symulator zapisuje logi symulacji.
+	 * @return boolean - true, jeśli symulator zapisuje logi, false w przeciwnym wypadku
+	 */
+	public boolean isSimLogging() {
+		return simLogEnabled;
 	}
 	
 	/**
@@ -963,7 +992,9 @@ public class GraphicalSimulator {
 				transitionDelay = 0;
 			} else if (transitionDelay >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
 				boolean detailedLogging = true;
-				nsl.logSimStepFinished(launchingTransitions, detailedLogging);
+				if(simLogEnabled) {
+					nsl.logSimStepFinished(launchingTransitions, detailedLogging);
+				}
 				
 				// koniec fazy przepływu tokenów, tutaj uaktualniane są wartości tokenów dla miejsc wyjściowych
 				launchAddPhase(launchingTransitions, false);
@@ -1058,8 +1089,9 @@ public class GraphicalSimulator {
 				finishedAddPhase = false;
 				transitionDelay = 0;
 			} else if (transitionDelay >= DEFAULT_COUNTER - 5 && !finishedAddPhase) {
-				//nsl.logSimStepFinished(launchingTransitions, detailedLogging);
-				
+				//if(simLogEnabled) {
+				//	nsl.logSimStepFinished(launchingTransitions, detailedLogging);
+				//}
 				// ending add phase
 				launchSingleAddPhase(launchingTransitions, false, null);
 				remainingTransitionsAmount = launchingTransitions.size();

@@ -242,12 +242,12 @@ public class HolmesSimSetup extends JFrame {
 		
 		//NET TYPE MODE:
 		JPanel netTypeModePanel = new JPanel(null);
-		netTypeModePanel.setBounds(posX, posY, 180, 90);
+		netTypeModePanel.setBounds(posX, posY, 195, 90);
 		netTypeModePanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSSetwin_entry011"))); //Net type mode
 		panel.add(netTypeModePanel);
 		
 		classPNRadioButton = new JRadioButton(lang.getText("HSSetwin_entry012")); //Classical Petri Net
-		classPNRadioButton.setBounds(5, 20, 160, 20);
+		classPNRadioButton.setBounds(5, 20, 180, 20);
 		classPNRadioButton.setActionCommand("0");
 		classPNRadioButton.addActionListener(actionEvent -> {
 			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
@@ -261,7 +261,7 @@ public class HolmesSimSetup extends JFrame {
 		groupNetType.add(classPNRadioButton);
 
 		timeNetRadioButtion = new JRadioButton(lang.getText("HSSetwin_entry013")); //Time(d) Petri Net
-		timeNetRadioButtion.setBounds(5, 40, 160, 20);
+		timeNetRadioButtion.setBounds(5, 40, 180, 20);
 		timeNetRadioButtion.setActionCommand("1");
 		timeNetRadioButtion.addActionListener(actionEvent -> {
 			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
@@ -284,7 +284,7 @@ public class HolmesSimSetup extends JFrame {
 		groupNetType.add(timeNetRadioButtion);
 		
 		hybridNetRadioButton = new JRadioButton(lang.getText("HSSetwin_entry014")); //Hybrid Net
-		hybridNetRadioButton.setBounds(5, 60, 160, 20);
+		hybridNetRadioButton.setBounds(5, 60, 180, 20);
 		hybridNetRadioButton.setActionCommand("2");
 		hybridNetRadioButton.addActionListener(actionEvent -> {
 			AbstractButton aButton = (AbstractButton) actionEvent.getSource();
@@ -300,12 +300,12 @@ public class HolmesSimSetup extends JFrame {
 		
 		//SUB-MODE:
 		JPanel subModeModePanel = new JPanel(null);
-		subModeModePanel.setBounds(posX+180, posY, 190, 90);
+		subModeModePanel.setBounds(posX+195, posY, 210, 90);
 		subModeModePanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSSetwin_entry015"))); //Simulator sub-mode
 		panel.add(subModeModePanel);
 		
 		fiftyModeRadioButton = new JRadioButton(lang.getText("HSSetwin_entry016")); //50/50 mode (async.)
-		fiftyModeRadioButton.setBounds(5, 20, 170, 20);
+		fiftyModeRadioButton.setBounds(5, 20, 200, 20);
 		fiftyModeRadioButton.setActionCommand("0");
 		fiftyModeRadioButton.addActionListener(actionEvent -> {
 			if(doNotUpdate)
@@ -321,7 +321,7 @@ public class HolmesSimSetup extends JFrame {
 		groupSimMode.add(fiftyModeRadioButton);
 
 		maxModeRadioButton = new JRadioButton(lang.getText("HSSetwin_entry017")); //Maximum mode (sync.)
-		maxModeRadioButton.setBounds(5, 40, 170, 20);
+		maxModeRadioButton.setBounds(5, 40, 200, 20);
 		maxModeRadioButton.setActionCommand("1");
 		maxModeRadioButton.addActionListener(actionEvent -> {
 			if(doNotUpdate)
@@ -337,7 +337,7 @@ public class HolmesSimSetup extends JFrame {
 		groupSimMode.add(maxModeRadioButton);
 		
 		singleModeRadioButton = new JRadioButton(lang.getText("HSSetwin_entry018")); //Single fire mode
-		singleModeRadioButton.setBounds(5, 60, 170, 20);
+		singleModeRadioButton.setBounds(5, 60, 200, 20);
 		singleModeRadioButton.setActionCommand("2");
 		singleModeRadioButton.addActionListener(actionEvent -> {
 			if(doNotUpdate)
@@ -353,7 +353,7 @@ public class HolmesSimSetup extends JFrame {
 
 		
 		allowEmptySteps = new JCheckBox(lang.getText("HSSetwin_entry019")); //Allow empty steps
-		allowEmptySteps.setBounds(posX+375, posY, 180, 20);
+		allowEmptySteps.setBounds(posX+410, posY, 180, 20);
 		allowEmptySteps.setToolTipText(lang.getText("HSSetwin_entry019t"));
 		allowEmptySteps.addActionListener(actionEvent -> {
 			if(doNotUpdate)
@@ -386,7 +386,7 @@ public class HolmesSimSetup extends JFrame {
 		
 		JButton createFRWindowButton = new JButton(lang.getText("HSSetwin_entry021")); //Fire rate Manager
 		createFRWindowButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/fireRateIcon.png"));
-		createFRWindowButton.setBounds(posX, posY, 120, 40);
+		createFRWindowButton.setBounds(posX, posY, 120, 45);
 		createFRWindowButton.setFocusPainted(false);
 		createFRWindowButton.setToolTipText(lang.getText("HSSetwin_entry021t"));
 		createFRWindowButton.addActionListener(actionEvent -> new HolmesSPNmanager(ego));
@@ -492,7 +492,7 @@ public class HolmesSimSetup extends JFrame {
 		
 		JButton createFRWindowButton = new JButton(lang.getText("HSSetwin_entry029")); //Fire rate Manager
 		createFRWindowButton.setIcon(Tools.getResIcon16("/icons/fRatesManager/fireRateIcon.png"));
-		createFRWindowButton.setBounds(posX, posY, 120, 40);
+		createFRWindowButton.setBounds(posX, posY, 120, 45);
 		createFRWindowButton.setFocusPainted(false);
 		createFRWindowButton.setToolTipText(lang.getText("HSSetwin_entry029t"));
 		createFRWindowButton.addActionListener(actionEvent -> new HolmesSPNmanager(ego));
@@ -502,7 +502,7 @@ public class HolmesSimSetup extends JFrame {
 		createCompoundsEditorWindowButton.setIcon(Tools.getResIcon16("/icons/componentsManager/compIcon.png"));
 		createCompoundsEditorWindowButton.setMargin(new Insets(0, 0, 0, 0));
 		createCompoundsEditorWindowButton.setFocusPainted(false);
-		createCompoundsEditorWindowButton.setBounds(posX+130, posY, 120, 40);
+		createCompoundsEditorWindowButton.setBounds(posX+130, posY, 120, 45);
 		createCompoundsEditorWindowButton.setToolTipText(lang.getText("HSSetwin_entry030t"));
 		createCompoundsEditorWindowButton.addActionListener(actionEvent -> new HolmesSSAwindowManager(ego));
 		panel.add(createCompoundsEditorWindowButton);

@@ -2316,7 +2316,7 @@ HMCSwin_entry017, Mostrar información completa
 HMCSwin_entry018, <html>Guardar este<br />objR MCS</html>
 HMCSwin_entry019, Mostrar MCS
 HMCSwin_entry020, Fragilidad
-HMCSwin_entry021, <html><center>Evaluación<br />de MCS<center></html>
+HMCSwin_entry021, <html><center>Evaluación<br>de MCS<br>(clasificaciones)<center></html>
 HMCSwin_entry022, Cálculo de MCS ya en progreso.
 HMCSwin_entry022t, Cálculo de MCS en progreso
 HMCSwin_entry023, No hay suficientes transiciones en la red. La operación no puede comenzar.
@@ -2570,6 +2570,7 @@ HPPwinEDIT_entry021, Grosor de arco predeterminado
 HPPwinEDIT_entry022, Tamaño de fuente:
 HPPwinEDIT_entry023, Negrita
 HPPwinEDIT_entry024, Nombres de MCT
+HPPwinEDIT_entry024t, Mostrar nombres de MCT en la vista gráfica de la PN
 HPPwinEDIT_entry025, (Editor) Mostrar solo nombres predeterminados cortos
 HPPwinEDIT_entry026, (Editor) Mostrar nombres cortos con índice inferior
 HPPwinEDIT_entry027, (Editor) Vista 3D de elementos de red de Petri
@@ -2589,6 +2590,7 @@ HPPwinSIM_entry040, (XTPN) Los arcos de lectura preservan la vida útil de los t
 HPPwinSIM_entry041, Opciones gráficas del simulador
 HPPwinSIM_entry042, Retraso de disparo de transición:
 HPPwinSIM_entry043, Retraso de token de arco:
+HPPwinSIM_entry044, Registro de simulación habilitado
 HPPwinANAL_entry044, Opciones de clústeres
 HPPwinANAL_entry045, Guardar t-invariantes en CSV como vectores binarios.
 HPPwinANAL_entry046, Permitir la presencia de regiones de arco de lectura autoimpulsadas

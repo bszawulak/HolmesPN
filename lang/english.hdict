@@ -2316,7 +2316,7 @@ HMCSwin_entry017, Show full info
 HMCSwin_entry018, <html>Save this<br />objR MCS</html>
 HMCSwin_entry019, Show MCS
 HMCSwin_entry020, Fragility
-HMCSwin_entry021, <html><center>MCS<br />evaluation<center></html>
+HMCSwin_entry021, <html><center>MCS<br>evaluation<br>(rankings)<center></html>
 HMCSwin_entry022, MCS calculation already in progress.
 HMCSwin_entry022t, MCS calculation in progress
 HMCSwin_entry023, Not enough transitions in net. Operation cannot start.
@@ -2570,6 +2570,7 @@ HPPwinEDIT_entry021, Default arc thickness
 HPPwinEDIT_entry022, Font size:
 HPPwinEDIT_entry023, Bold
 HPPwinEDIT_entry024, MCT names
+HPPwinEDIT_entry024t, Show MCT names in the PN graphical view
 HPPwinEDIT_entry025, (Editor) Show short default names only
 HPPwinEDIT_entry026, (Editor) Show short names with lower index
 HPPwinEDIT_entry027, (Editor) Petri net elements 3d view
@@ -2589,6 +2590,7 @@ HPPwinSIM_entry040, (XTPN) Read arcs preserve tokens lifetime
 HPPwinSIM_entry041, Simulator graphical options
 HPPwinSIM_entry042, Transition firing delay:
 HPPwinSIM_entry043, Arc token delay:
+HPPwinSIM_entry044, Simulation log enabled
 HPPwinANAL_entry044, Clusters options
 HPPwinANAL_entry045, Save t-invariants in CSV as binary vectors.
 HPPwinANAL_entry046, Allow presence of self-propelled readarc regions

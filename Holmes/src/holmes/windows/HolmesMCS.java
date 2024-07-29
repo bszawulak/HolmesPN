@@ -144,7 +144,7 @@ public class HolmesMCS extends JFrame {
 		
 		String[] dataT = { "---" };
 		transitionsCombo = new JComboBox<String>(dataT);
-		transitionsCombo.setBounds(posX+90, posY, 400, 20);
+		transitionsCombo.setBounds(posX+90, posY, 370, 20);
 		transitionsCombo.setSelectedIndex(0);
 		transitionsCombo.setMaximumRowCount(6);
 		transitionsCombo.removeAllItems();
@@ -199,7 +199,7 @@ public class HolmesMCS extends JFrame {
 		//Generowanie zbiorów
 		JButton generateButton = new JButton();
 		generateButton.setText(lang.getText("HMCSwin_entry006")); //Generate MCS
-		generateButton.setBounds(posX, posY+55, 110, 32);
+		generateButton.setBounds(posX, posY+50, 110, 40);
 		generateButton.setMargin(new Insets(0, 0, 0, 0));
 		generateButton.setIcon(Tools.getResIcon32("/icons/mcsWindow/computeData.png"));
 		generateButton.addActionListener(actionEvent -> {
@@ -210,8 +210,8 @@ public class HolmesMCS extends JFrame {
 		panel.add(generateButton);
 		
 		JButton cancelButton = new JButton();
-		cancelButton.setText(lang.getText("HMCSwin_entry007"));
-		cancelButton.setBounds(posX+110, posY+55, 50, 32);
+		cancelButton.setText(lang.getText("HMCSwin_entry007")); //Stop
+		cancelButton.setBounds(posX+110, posY+50, 50, 40);
 		cancelButton.setMargin(new Insets(0, 0, 0, 0));
 		//cancelButton.setIcon(Tools.getResIcon32("/icons/mcsWindow/a.png"));
 		cancelButton.addActionListener(actionEvent -> {
@@ -223,7 +223,7 @@ public class HolmesMCS extends JFrame {
 		
 		JButton loadButton = new JButton();
 		loadButton.setText(lang.getText("HMCSwin_entry008")); //Load one objR MCS
-		loadButton.setBounds(posX+170, posY+55, 110, 32);
+		loadButton.setBounds(posX+170, posY+50, 120, 40);
 		loadButton.setMargin(new Insets(0, 0, 0, 0));
 		loadButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/loadMCS.png"));
 		loadButton.addActionListener(actionEvent -> {
@@ -235,7 +235,7 @@ public class HolmesMCS extends JFrame {
 		
 		JButton loadAllButton = new JButton();
 		loadAllButton.setText(lang.getText("HMCSwin_entry009")); //Load all MCS
-		loadAllButton.setBounds(posX+290, posY+55, 110, 32);
+		loadAllButton.setBounds(posX+295, posY+50, 120, 40);
 		loadAllButton.setMargin(new Insets(0, 0, 0, 0));
 		loadAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/loadAllMCS.png"));
 		loadAllButton.addActionListener(actionEvent -> {
@@ -247,7 +247,7 @@ public class HolmesMCS extends JFrame {
 		
 		JButton saveAllButton = new JButton();
 		saveAllButton.setText(lang.getText("HMCSwin_entry010")); //Save all MCS
-		saveAllButton.setBounds(posX+410, posY+55, 110, 32);
+		saveAllButton.setBounds(posX+420, posY+50, 120, 40);
 		saveAllButton.setMargin(new Insets(0, 0, 0, 0));
 		saveAllButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveAllMCS.png"));
 		saveAllButton.addActionListener(actionEvent -> {
@@ -261,7 +261,7 @@ public class HolmesMCS extends JFrame {
 		
 		JButton addToButton = new JButton();
 		addToButton.setText(lang.getText("add")); //Add
-		addToButton.setBounds(posX+500, posY, 65, 20);
+		addToButton.setBounds(posX+470, posY, 80, 20);
 		addToButton.setMargin(new Insets(0, 0, 0, 0));
 		addToButton.setIcon(Tools.getResIcon16("/icons/mcsWindow/add.png"));
 		addToButton.addActionListener(actionEvent -> {
@@ -279,7 +279,7 @@ public class HolmesMCS extends JFrame {
 		
 		JButton removeButton = new JButton();
 		removeButton.setText(lang.getText("HMCSwin_entry011")); //Remove
-		removeButton.setBounds(posX+575, posY, 65, 20);
+		removeButton.setBounds(posX+555, posY, 80, 20);
 		removeButton.setMargin(new Insets(0, 0, 0, 0));
 		removeButton.setIcon(Tools.getResIcon16("/icons/mcsWindow/remove.png"));
 		removeButton.addActionListener(actionEvent -> {
@@ -297,7 +297,7 @@ public class HolmesMCS extends JFrame {
 		
 		JButton clearButton = new JButton();
 		clearButton.setText(lang.getText("clear")); //Clear
-		clearButton.setBounds(posX+650, posY, 65, 20);
+		clearButton.setBounds(posX+640, posY, 80, 20);
 		clearButton.setMargin(new Insets(0, 0, 0, 0));
 		clearButton.setIcon(Tools.getResIcon16("/icons/mcsWindow/clear.png"));
 		clearButton.addActionListener(actionEvent -> reactionSetsTextField.setText(""));
@@ -310,7 +310,7 @@ public class HolmesMCS extends JFrame {
         JPanel logFieldPanel = new JPanel();
         logFieldPanel.setLayout(new BorderLayout());
         logFieldPanel.add(new JScrollPane(reactionSetsTextField),BorderLayout.CENTER);
-        logFieldPanel.setBounds(posX+500, posY+22, 215, 30);
+        logFieldPanel.setBounds(posX+485, posY+22, 235, 26);
         panel.add(logFieldPanel);
         
         JCheckBox allCheckBox = new JCheckBox(lang.getText("HMCSwin_entry012"), true); //Compute all MCS
@@ -393,7 +393,7 @@ public class HolmesMCS extends JFrame {
 		
 		String[] dataT = { "---" };
 		transitionsResultsCombo = new JComboBox<String>(dataT);
-		transitionsResultsCombo.setBounds(posX+90, posY, 400, 20);
+		transitionsResultsCombo.setBounds(posX+90, posY, 370, 20);
 		transitionsResultsCombo.setSelectedIndex(0);
 		transitionsResultsCombo.setMaximumRowCount(6);
 		transitionsResultsCombo.removeAllItems();
@@ -409,7 +409,7 @@ public class HolmesMCS extends JFrame {
 		panel.add(transitionsResultsCombo);
 		
 		JCheckBox showAllCheckBox = new JCheckBox(lang.getText("HMCSwin_entry017"), true); //Show full info
-		showAllCheckBox.setBounds(posX+490, posY, 110, 20);
+		showAllCheckBox.setBounds(posX+460, posY, 145, 20);
 		showAllCheckBox.addActionListener(actionEvent -> {
 			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
 			showFullInfo = abstractButton.getModel().isSelected();
@@ -418,7 +418,7 @@ public class HolmesMCS extends JFrame {
 		
 		JButton saveButton = new JButton();
 		saveButton.setText(lang.getText("HMCSwin_entry018")); //Save this objR MCS
-		saveButton.setBounds(posX, posY+25, 110, 32);
+		saveButton.setBounds(posX, posY+25, 110, 40);
 		saveButton.setMargin(new Insets(0, 0, 0, 0));
 		saveButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/saveMCS.png"));
 		saveButton.addActionListener(actionEvent -> {
@@ -435,7 +435,7 @@ public class HolmesMCS extends JFrame {
 		
 		JButton showMCSButton = new JButton();
 		showMCSButton.setText(lang.getText("HMCSwin_entry019")); //Show MCS
-		showMCSButton.setBounds(posX+120, posY+25, 110, 32);
+		showMCSButton.setBounds(posX+120, posY+25, 110, 40);
 		showMCSButton.setMargin(new Insets(0, 0, 0, 0));
 		showMCSButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/showData.png"));
 		showMCSButton.addActionListener(actionEvent -> {
@@ -449,7 +449,7 @@ public class HolmesMCS extends JFrame {
 		
 		JButton calculateFragilityButton = new JButton();
 		calculateFragilityButton.setText(lang.getText("HMCSwin_entry020")); //Fragility
-		calculateFragilityButton.setBounds(posX+240, posY+25, 110, 32);
+		calculateFragilityButton.setBounds(posX+240, posY+25, 110, 40);
 		calculateFragilityButton.setMargin(new Insets(0, 0, 0, 0));
 		calculateFragilityButton.setIcon(Tools.getResIcon22("/icons/mcsWindow/fragility.png"));
 		calculateFragilityButton.addActionListener(actionEvent -> {
@@ -463,7 +463,7 @@ public class HolmesMCS extends JFrame {
 
 		JButton cleanButton = new JButton("", Tools.getResIcon48("/icons/mcsWindow/cleanLogArea.png"));
 		cleanButton.setText(lang.getText("clean")); //Clean
-		cleanButton.setBounds(posX+360, posY+25, 110, 31);
+		cleanButton.setBounds(posX+360, posY+25, 110, 40);
 		cleanButton.setMargin(new Insets(0, 0, 0, 0));
 		cleanButton.addActionListener(actionEvent -> {
 			logField.setText("");
@@ -473,7 +473,7 @@ public class HolmesMCS extends JFrame {
 		
 		JButton doSmthButtonMk1 = new JButton();
 		doSmthButtonMk1.setText(lang.getText("HMCSwin_entry021")); //MCS evaluation
-		doSmthButtonMk1.setBounds(posX+600, posY, 110, 60);
+		doSmthButtonMk1.setBounds(posX+650, posY, 130, 60);
 		doSmthButtonMk1.setMargin(new Insets(0, 0, 0, 0));
 		doSmthButtonMk1.setIcon(Tools.getResIcon22("/icons/mcsWindow/computeData.png"));
 		doSmthButtonMk1.addActionListener(actionEvent -> {

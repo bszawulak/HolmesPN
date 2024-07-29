@@ -759,8 +759,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HDWT_entry309QuickSim","<html><center>Reset<br>p-state</center></html>");
         defaultEnglish.put("HDWT_entry310QuickSim","<html><center>Store<br>p-state</center></html>");
         defaultEnglish.put("HDWT_entry311QuickSim","Tokens delay:");
-
-
+        
         //DecoCalccalculator:
         defaultEnglish.put("DCC_entry001","Please choose comparison type");
         defaultEnglish.put("DCC_entry002","No t-invariants sets!");
@@ -2106,6 +2105,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HIGwin_entry041","<html>&nbsp;&nbsp;&nbsp;&nbsp;Load<br>p-invariants</html>");
         defaultEnglish.put("HIGwin_entry041info","Load t-invariants from file");
         defaultEnglish.put("LOGentry00445","Loaded p-invariants:");
+        defaultEnglish.put("HIGwin_entry045info","Automatically remove 1-element p-invariants (self loops) during generation");
         defaultEnglish.put("LOGentry00446","p-invariants reading has been unsuccessfull.\n");
         defaultEnglish.put("HIGwin_entry042","<html>&nbsp;&nbsp;&nbsp;Export<br>p-invariants</html>");
         defaultEnglish.put("HIGwin_entry042info","Export p-invariants to file in INa format");
@@ -2329,7 +2329,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HMCSwin_entry018","<html>Save this<br />objR MCS</html>");
         defaultEnglish.put("HMCSwin_entry019","Show MCS");
         defaultEnglish.put("HMCSwin_entry020","Fragility");
-        defaultEnglish.put("HMCSwin_entry021","<html><center>MCS<br />evaluation<center></html>");
+        defaultEnglish.put("HMCSwin_entry021","<html><center>MCS<br>evaluation<br>(rankings)<center></html>");
         defaultEnglish.put("HMCSwin_entry022","MCS calculation already in progress.");
         defaultEnglish.put("HMCSwin_entry022t","MCS calculation in progress");
         defaultEnglish.put("HMCSwin_entry023","Not enough transitions in net. Operation cannot start.");
@@ -2583,6 +2583,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HPPwinEDIT_entry022","Font size:");
         defaultEnglish.put("HPPwinEDIT_entry023","Bold");
         defaultEnglish.put("HPPwinEDIT_entry024","MCT names");
+        defaultEnglish.put("HPPwinEDIT_entry024t","Show MCT names in the PN graphical view");
         defaultEnglish.put("HPPwinEDIT_entry025","(Editor) Show short default names only");
         defaultEnglish.put("HPPwinEDIT_entry026","(Editor) Show short names with lower index");
         defaultEnglish.put("HPPwinEDIT_entry027","(Editor) Petri net elements 3d view");
@@ -2602,6 +2603,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HPPwinSIM_entry041","Simulator graphical options");
         defaultEnglish.put("HPPwinSIM_entry042","Transition firing delay:");
         defaultEnglish.put("HPPwinSIM_entry043","Arc token delay:");
+        defaultEnglish.put("HPPwinSIM_entry044","Simulation log enabled");
         defaultEnglish.put("HPPwinANAL_entry044","Clusters options");
         defaultEnglish.put("HPPwinANAL_entry045","Save t-invariants in CSV as binary vectors.");
         defaultEnglish.put("HPPwinANAL_entry046","Allow presence of self-propelled readarc regions");

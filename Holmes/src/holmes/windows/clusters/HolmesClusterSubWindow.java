@@ -384,7 +384,7 @@ public class HolmesClusterSubWindow extends JFrame {
         editPanel.add(buttonInjectCluster);
         
         buttonTexTable = new JButton(lang.getText("HCSWwin_entry023"), Tools.getResIcon48("/icons/menu/menu_exportTex.png"));//>> Cluster table
-        buttonTexTable.setBounds(400, 510, 190, 50);
+        buttonTexTable.setBounds(395, 510, 190, 50);
         buttonTexTable.addActionListener(actionEvent -> {
 			layerUI.start();
 			turnOffButtons();
