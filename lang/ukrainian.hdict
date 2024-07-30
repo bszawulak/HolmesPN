@@ -2384,11 +2384,11 @@ HNTwin_entry004, Перемикання P / T
 HNTwin_entry004t, Перемикання внутрішньої локалізації двох місць або двох переходів.
 HNTwin_entry005, t-інваріанти
 HNTwin_entry005t, Показати таблицю інформації про інваріанти
-HNTwin_entry006, Імітація інваріантів
+HNTwin_entry006, Cимуляція інваріантів
 HNTwin_entry007, Показати дані
 HNTwin_entry007t, Показати таблицю інваріантів з частотами спрацьовування переходів.
-HNTwin_entry008, Симулятор станів
-HNTwin_entry009, Почати імітацію
+HNTwin_entry008, Cимулятор станів
+HNTwin_entry009, Почати симуляцію
 HNTwin_entry009t, Обчислити нову статистику спрацьовування переходів.
 HNTwin_entry010, Тип мережі:
 HNTwin_entry011op1, Мережа Петрі
@@ -2436,9 +2436,9 @@ HNIwin_entryP013, Назва:
 LOGentry00480exception, Виняток (1000214): HolmesNodeInfo.initializePlaceInfo() не вдалося:
 HNIwin_entryP014, Коментар:
 HNIwin_entryP015, Графік місць
-HNIwin_entryP016, Почати імітацію
+HNIwin_entryP016, Почати симуляцію
 HNIwin_entryP016t, Обчислити кроки від нульової розмітки до кількості станів, вказаних праворуч.
-HNIwin_entryP017, Кроки імітації:
+HNIwin_entryP017, Кроки симуляції:
 HNIwin_entryP018, Повторено:
 HNIwin_entryP019op1, Режим 50/50
 HNIwin_entryP019op2, Максимальний режим
@@ -2456,9 +2456,9 @@ HNIwin_entryT026, Назва:
 HNIwin_entryT027, Коментар:
 HNIwin_entryT028, Графік переходів
 LOGentry00481exception, Виняток (1000215): HolmesNodeInfo.initializeTransitionInfo() не вдалося:
-HNIwin_entryT029, Почати імітацію
+HNIwin_entryT029, Почати симуляцію
 HNIwin_entryT029t, Обчислити кроки від нульової розмітки до кількості станів, вказаних праворуч.
-HNIwin_entryT030, Кроки імітації:
+HNIwin_entryT030, Кроки симуляції:
 LOGentry00482exception, Виняток (1000216): HolmesNodeInfo.initializeMetaNodeInfo() не вдалося. Не вдалося оновити інтервал переходу для симулятора (Вікно інформації про перехід).
 HNIwin_entryT031, Інтервал:
 HNIwin_entryT032, Режим симуляції:
@@ -2587,8 +2587,8 @@ HPPwinSIM_entry034, Параметри двигуна симулятора
 HPPwinSIM_entry035, Переходи резервують токени у місці через дуги читання
 HPPwinSIM_entry036, Режим одного максимуму (один-50/50, якщо не встановлено)
 HPPwinSIM_entry037, Перехід TDPN діє як DPN, коли внутрішній годинник TPN = EFT
-HPPwinSIM_entry038, Місця змінюють кольори під час імітації
-HPPwinSIM_entry039, (XTPN) Глобально використовувати закон кінетики масової дії для імітації
+HPPwinSIM_entry038, Місця змінюють кольори під час симуляції
+HPPwinSIM_entry039, (XTPN) Глобально використовувати закон кінетики масової дії для симуляції
 HPPwinSIM_entry040, (XTPN) Дуги читання зберігають тривалість життя токенів
 HPPwinSIM_entry041, Графічні параметри симулятора
 HPPwinSIM_entry042, Затримка спрацьовування переходу:

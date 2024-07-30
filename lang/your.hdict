@@ -501,7 +501,7 @@ HDWT_entry092trans, Portal:
 HDWT_entry092trans_1, Transition contains more than one location!
 HDWT_entry092trans_1t, Cannot proceed
 HDWT_entry093trans, Functional:
-HDWT_entry094trans, <html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>
+HDWT_entry094trans, <html>Functions<br>editor</html>
 HDWT_entry095trans, Name offset:
 HDWT_entry096trans, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
 HDWT_entry097Ctrans, Colored transition data:
@@ -533,7 +533,7 @@ HDWT_entry120SPNtrans, Portal:
 HDWT_entry120SPNtrans_1, Transition contains more than one location!
 HDWT_entry120SPNtrans_1t, Cannot proceed
 HDWT_entry121SPNtrans, Functional:
-HDWT_entry122SPNtrans, <html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>
+HDWT_entry122SPNtrans, <html>Functions<br>editor</html>
 HDWT_entry123SPNtrans, Name offset:
 HDWT_entry124SPNtrans, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
 HDWT_entry125TPNtrans, Name:
@@ -549,7 +549,7 @@ HDWT_entry134TPNtrans, Portal:
 HDWT_entry134TPNtrans_1, Transition contains more than one location!
 HDWT_entry134TPNtrans_1t, Cannot proceed
 HDWT_entry135TPNtrans, Functional:
-HDWT_entry136TPNtrans, <html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>
+HDWT_entry136TPNtrans, <html>Functions<br>editor</html>
 HDWT_entry137TPNtrans, Name offset:
 HDWT_entry138TPNtrans, MouseWheel - up/down ; SHIFT+MouseWheel - left/right
 HDWT_entry139XTPNtrans, Name:
@@ -581,7 +581,7 @@ HDWT_entry159XTPNtrans, β (min/max):
 HDWT_entry160XTPNtrans, Mass-Action kinetics
 HDWT_entry161XTPNtrans, Immediate
 HDWT_entry162XTPNtrans, Functional
-HDWT_entry163XTPNtrans, <html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>
+HDWT_entry163XTPNtrans, <html>Functions<br>editor</html>
 HDWT_entry164XTPNtrans, Portal:
 HDWT_entry164XTPNtrans_1, XTPN Transition contains more than one location!
 HDWT_entry164XTPNtrans_1t, Cannot proceed
@@ -639,13 +639,13 @@ HDWT_entry215TinvPanel, inv/trans frequency
 LOGentry00046exception, Exception (1000001): createT_invSubWindow
 HDWT_entry216TinvPanel, Previous
 HDWT_entry217TinvPanel, Show previous invariant data.
-HDWT_entry218TinvPanel, <html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>
+HDWT_entry218TinvPanel, <html>Next</html>
 HDWT_entry219TinvPanel, Show next invariant data.
 HDWT_entry220TinvPanel, Refresh
 HDWT_entry220TinvPanel_1, If t-inv types have been determined, this button will refresh the content of the three comboboxes below:
 HDWT_entry221TinvPanel, Recalculate
 HDWT_entry221TinvPanel_1, This will force the program to determine the type of t-invariants (it may take time) and refresh the comboboxes below:
-HDWT_entry222TinvPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>
+HDWT_entry222TinvPanel, <html>Show<br>details</html>
 HDWT_entry223TinvPanel, Color MCT
 HDWT_entry224TinvPanel, Transitions glow
 HDWT_entry225TinvPanel, Invariant-net structure painted
@@ -662,7 +662,7 @@ HDWT_entry231TinvPanel_t, No t-invariants
 HDWT_entry232PinvPanel, p-invariant:
 HDWT_entry233PinvPanel, null places
 HDWT_entry234PinvPanel, inv/place frequency
-HDWT_entry235PinvPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>
+HDWT_entry235PinvPanel, <html>Show<br>details</html>
 LOGentry00050exception, Exception (1000003) : probably not implemented features for p-invariants in the t-invariants code window:
 LOGentry00051, Critical error in p-invariants subwindow.\np-invariants size differ from transition set cardinality!
 HWDT_entry236, p-invariants data unavailable.
@@ -672,7 +672,7 @@ HDWT_entry237PinvPanel_1, p-invariants data unavailable.
 HDWT_entry237PinvPanel_1t, No p-invariants
 HDWT_entry238PinvPanel, (size: 
 HDWT_entry239MCTPanel, Choose MCT:
-HDWT_entry240MCTPanel, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>
+HDWT_entry240MCTPanel, <html>Show<br>details</html>
 HDWT_entry241MCTPanel, Different colors
 HDWT_entry242MCTPanel, (size:
 HDWT_entry243MCTPanel, No-MCT transitions
@@ -690,12 +690,12 @@ HDWT_entry254ClusterPanel, MSS value:
 HDWT_entry255ClusterPanel, Show transition average firing
 HDWT_entry256ClusterPanel, Show scaled colors
 HDWT_entry257ClusterPanel, Show MCT sets
-HDWT_entry258ClusterPanel, <html>&nbsp;Show&nbsp;<br>details</html>
-HDWT_entry259ClusterPanel, <html>&nbsp;Export&nbsp;<br>pictures</html>
+HDWT_entry258ClusterPanel, <html>Show<br>details</html>
+HDWT_entry259ClusterPanel, <html>Export<br>pictures</html>
 HDWT_entry260ClusterPanel, Completed
 HDWT_entry261ClusterPanel, Cluster inv.:
-HDWT_entry262ClusterPanel, <html>&nbsp;Time&nbsp;<br>details</html>
-HDWT_entry263ClusterPanel, <html>&nbsp;Clusters&nbsp;<br>details</html>
+HDWT_entry262ClusterPanel, <html>Time<br>details</html>
+HDWT_entry263ClusterPanel, <html>Clusters<br>details</html>
 HDWT_entry264ClusterPanel, Cluster:
 HDWT_entry265ClusterPanel, inv.) alg.:
 HDWT_entry266ClusterPanel, metric:
@@ -723,7 +723,7 @@ HDWT_entry285KnockPanel, * * * Also knocked out: \n
 HDWT_entry286FixPanel, t-invariants:
 HDWT_entry287FixPanel, Normal: 0 / Non-inv.: 0
 HDWT_entry288FixPanel, Sub-inv.: 0 / Sur-inv: 0
-HDWT_entry289FixPanel, <html>Show<br>&nbsp;&nbsp;&nbsp;inv.</html>
+HDWT_entry289FixPanel, <html>Show<br>inv.</html>
 HDWT_entry290FixPanel, Input and output places:
 HDWT_entry291FixPanel, Input: 0 / Output: 0
 HDWT_entry292FixPanel, <html>Show<br>places</html>
@@ -2014,7 +2014,7 @@ HFBwin_entry009, Check and add
 HFBwin_entry009t, Validate the equation and add it to transition functions list
 HFBwin_entry010, Clear function
 HFBwin_entry010t, Clear the equation from the list
-HFBwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HFBwin_entry011, <html>Help</html>
 HFBwin_entry011t, Show list of operations and functions
 HFBwin_entry012, Functional transition
 HFBwin_entry013, Error log:
@@ -2033,22 +2033,22 @@ HIGwin_entry003t, p-invariants
 HIGwin_entry004, Generate
 HIGwin_entry005, Invariants generation already in progress.
 HIGwin_entry005t, Generator working
-HIGwin_entry006, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA<br>generator</html>
+HIGwin_entry006, <html>INA<br>generator</html>
 HIGwin_entry007, INAwin32.exe status set to non ready. Please read initial warnings\nin the Holmes log windows for more information.
 HIGwin_entry007t, INAwin32.exe problem
-HIGwin_entry008, <html>&nbsp;&nbsp;&nbsp;&nbsp;Load<br>t-invariants</html>
+HIGwin_entry008, <html>Load<br>t-invariants</html>
 HIGwin_entry008info, Load t-invariants from file
 LOGentry00441, Loaded t-invariants:
 LOGentry00442, Loading t-invariants from file has been unsuccessfull.\n
-HIGwin_entry009, <html>&nbsp;&nbsp;&nbsp;Export<br>t-invariants</html>
+HIGwin_entry009, <html>Export<br>t-invariants</html>
 HIGwin_entry009info, Export t-invariants to file in INa format
 LOGentry00443, Saved t-invariants:
 LOGentry00444, Saving t-invariants to file has been unsuccessfull.\n
-HIGwin_entry010, <html>&nbsp;&nbsp;&nbsp;&nbsp;Show<br>t-invariants</html>
+HIGwin_entry010, <html>Show<br>t-invariants</html>
 HIGwin_entry010info, Show t-invariants in the notebook window as mathematical vectors
-HIGwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;Show<br>support</html>
+HIGwin_entry011, <html>Show<br>support</html>
 HIGwin_entry011info, Show t-invariants support (all transitions) in the notebook window
-HIGwin_entry012, <html>&nbsp;&nbsp;&nbsp;&nbsp;Make<br>&nbsp;&nbsp;feasible</html>
+HIGwin_entry012, <html>Make<br>feasible</html>
 HIGwin_entry012info, Recalculate t-invariants to make them feasible (read arcs/tokens analysis algorithm)
 HIGwin_entry013, Feasible adv. mode
 HIGwin_entry013info, Advanced mode for feasability recalculation
@@ -2060,26 +2060,26 @@ HIGwin_entry016, t-invariants - Kaja Style:
 HIGwin_entry017, p-invariants - Kaja Style:
 HIGwin_entry018, t-invariants log window
 HIGwin_entry019, Tools
-HIGwin_entry020, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;canonicality</html>
+HIGwin_entry020, <html>Check<br />canonicality</html>
 HIGwin_entry020info, Check t-invariants for canonicality
 HIGwin_entry021, No t-invariants to analyze.
 HIGwin_entry021t, No t-invariants
 HIGwin_entry022, Checking canonicality for %d t-invariants.%n
 HIGwin_entry023, Non canonical t-invariants:
-HIGwin_entry024, <html>Check sup.<br />&nbsp;minimality</html>
+HIGwin_entry024, <html>Check sup.<br />minimality</html>
 HIGwin_entry024info, Check t-invariants for support minimality
 HIGwin_entry025, Checking support minimality for %d t-invariants.%n
 HIGwin_entry026, Non support-minimal t-invariants:
-HIGwin_entry027, <html>&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>
+HIGwin_entry027, <html>Check<br />C&middot;x = 0</html>
 HIGwin_entry027info, Check t-invariants for correctness
 HIGwin_entry028, Checking t-invariants correctness for %d invariants.%n
 HIGwin_entry029, t-invariants (Cx = 0):
 HIGwin_entry030, sur-invariants (Cx > 0):
 HIGwin_entry031, sub-invariants (Cx < 0):
 HIGwin_entry032, non-invariants (Cx <=> 0):
-HIGwin_entry033, <html>&nbsp;&nbsp;&nbsp;Ref. set<br />&nbsp;&nbsp;&nbsp;compare</html>
+HIGwin_entry033, <html>Ref. set<br />compare</html>
 HIGwin_entry033info, Load t-invariants from file (reference set) and compare with the currently generated set in Holmes memory
-HIGwin_entry034, <html>&nbsp;&nbsp;Incidence<br />&nbsp;&nbsp;&nbsp;matrix</html>
+HIGwin_entry034, <html>Incidence<br />matrix</html>
 HIGwin_entry034info, Shows the incidence matrix for the current net
 HIGwin_entry035, Details
 HIGwin_entry035info, If checked, then above Check for Correctness button will also include info about sub- and sur- invariants (if available)
@@ -2088,44 +2088,44 @@ HIGwin_entry036info, When new t-invariants are generated (Generate button), show
 HIGwin_entry037, <html>Generate<br>p-inv.</html>
 HIGwin_entry038, Invariants generation already in progress.
 HIGwin_entry038t, Generator working
-HIGwin_entry039, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA<br>generator</html>
+HIGwin_entry039, <html>INA<br>generator</html>
 HIGwin_entry040, INAwin32.exe status set to non ready. Please read initial warnings\nin the Holmes log windows for more information.
 HIGwin_entry040t, INAwin32.exe problem
-HIGwin_entry041, <html>&nbsp;&nbsp;&nbsp;&nbsp;Load<br>p-invariants</html>
+HIGwin_entry041, <html>Load<br>p-invariants</html>
 HIGwin_entry041info, Load t-invariants from file
 LOGentry00445, Loaded p-invariants:
 LOGentry00446, p-invariants reading has been unsuccessfull.\n
-HIGwin_entry042, <html>&nbsp;&nbsp;&nbsp;Export<br>p-invariants</html>
+HIGwin_entry042, <html>Export<br>p-invariants</html>
 HIGwin_entry042info, Export p-invariants to file in INa format
 LOGentry00447, Saved p-invariants:
 LOGentry00448, p-invariants saving has been unsuccessfull.\n
-HIGwin_entry043, <html>&nbsp;&nbsp;&nbsp;&nbsp;Show<br>p-invariants</html>
+HIGwin_entry043, <html>Show<br>p-invariants</html>
 HIGwin_entry043info, Show p-invariants in the notebook window as mathematical vectors
 HIGwin_entry044, Clean non-inv.
 HIGwin_entry044info, Automatically removed non canonical p-invariants during generation
 HIGwin_entry045, Remove 1-el. inv.
 HIGwin_entry045info, Automatically remove 1-element p-invariants (self loops) during generation
 HIGwin_entry046, p-invariants log window
-HIGwin_entry047, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;canonity</html>
+HIGwin_entry047, <html>Check<br />canonity</html>
 HIGwin_entry047info, Check p-invariants for canonicality
 HIGwin_entry048, No p-invariants to analyze.
 HIGwin_entry048t, No p-invariants
 HIGwin_entry049, Checking canonicality for %d p-invariants.%n
 HIGwin_entry050, non canonical p-invariants:
-HIGwin_entry051, <html>Check sup.<br>&nbsp;minimality</html>
+HIGwin_entry051, <html>Check sup.<br>minimality</html>
 HIGwin_entry051info, Check p-invariants for support minimality
 HIGwin_entry052, Checking support minimality for %d p-invariants.%n
 HIGwin_entry053, Non support-minimal p-invariants:
-HIGwin_entry054, <html>&nbsp;&nbsp;&nbsp;&nbsp;Check<br>&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>
+HIGwin_entry054, <html>Check<br>C&middot;x = 0</html>
 HIGwin_entry054info, Check p-invariants for correctness
 HIGwin_entry055, Checking p-invariants correctness for %d invariants.%n
 HIGwin_entry056, p-invariants (xC = 0):
 HIGwin_entry057, sur-invariants (xC > 0):
 HIGwin_entry058, sub-invariants (xC < 0):
 HIGwin_entry059, non-invariants (xC <=> 0):
-HIGwin_entry060, <html>&nbsp;&nbsp;&nbsp;Ref. set<br>&nbsp;&nbsp;&nbsp;compare</html>
+HIGwin_entry060, <html>Ref. set<br>compare</html>
 HIGwin_entry060info, Load p-invariants from file (reference set) and compare with the currently generated set in Holmes memory
-HIGwin_entry061, <html>&nbsp;&nbsp;Incidence<br>&nbsp;&nbsp;&nbsp;matrix</html>
+HIGwin_entry061, <html>Incidence<br>matrix</html>
 HIGwin_entry061info, Shows the incidence matrix for the current net
 HIGwin_entry062, Details
 HIGwin_entry062info, If checked, then above Check for Correctness button will also include info about sub- and sur- invariants (if available)
@@ -2190,7 +2190,7 @@ HIVwin_entry05, General information
 HIVwin_entry06, Invariant:
 HIVwin_entry07, Invariant
 HIVwin_entry08, Show previous invariant data.
-HIVwin_entry09, <html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>
+HIVwin_entry09, <html>Next</html>
 HIVwin_entry09t, Show next invariant data.
 HIVwin_entry10, Minimal:
 HIVwin_entry11, Feasible:
@@ -2210,9 +2210,9 @@ HIVwin_entry24, DPN trans:
 HIVwin_entry25, TDPN trans:
 HIVwin_entry26, PN trans:
 HIVwin_entry27, Description:
-HIVwin_entry28, <html>&nbsp;&nbsp;&nbsp;Recalculate statistics</html>
+HIVwin_entry28, <html>Recalculate statistics</html>
 HIVwin_entry28t, Show previous invariant data.
-HIVwin_entry29, <html>&nbsp;&nbsp;&nbsp;Show data in notepad</html>
+HIVwin_entry29, <html>Show data in notepad</html>
 HIVwin_entry29t, Show invariants data in internal notepad.
 HIVwin_entry30, MCT/transitions table
 HIVwin_entry31, MCT/transitions
@@ -2240,17 +2240,17 @@ HKwin_entry004, Show tree for ramaining transitions
 HKwin_entry005, Show tree for knocked transitions
 HKwin_entry006, Show tree for knocked transitions (threshold)
 HKwin_entry007, Contracted
-HKwin_entry008, <html>&nbsp;Generate</html>
+HKwin_entry008, <html>Generate</html>
 HKwin_entry008t, Generate knockout map for the currently selected transition.
-HKwin_entry009, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;notepad</html>
+HKwin_entry009, <html>Show<br>notepad</html>
 HKwin_entry009t, For the selected transition show knockout detailed data in the notepad.
 LOGentry00454exception, Exception (1000191): HolmesKnockout.createUpperButtonPanel() failed:
 LOGentry00455exception, Exception (1000192): HolmesKnockout.createLowerButtonPanel() failed. Error in invariant section.
 HKwin_entry010, <html>Whole net<br>knockout</html>
-HKwin_entry011, <html>&nbsp;&nbsp;&nbsp;&nbsp;Color&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;net&nbsp;&nbsp;&nbsp;</html>
+HKwin_entry011, <html>Color<br>net</html>
 HKwin_entry012, <html>Load Mona<br>Lisa data</html>
-HKwin_entry013, <html>&nbsp;&nbsp;Mona Lisa<br>-> Color net</html>
-HKwin_entry014, <html>&nbsp;Save image</html>
+HKwin_entry013, <html>Mona Lisa<br>-> Color net</html>
+HKwin_entry014, <html>Save image</html>
 HKwin_entry015, <html>Inv. knockout</html>
 HKwin_entry016, Show full names
 HKwin_entry017, Objective reaction (knock-out reaction):
@@ -2376,7 +2376,7 @@ LOGentry00472exception, Exception (1000209): HolmesNetProperties.saveToFile() fa
 HNTwin_entry001title, Net data tables
 LOGentry00473exception, Exception (1000210): HolmesNetTables.HolmesNetTables() failed:
 LOGentry00474exception, Exception (1000211): HolmesNetTables.resetT_invData() failed:
-HNTwin_entry002, <html>&nbsp;&nbsp;&nbsp;&nbsp;Places&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HNTwin_entry002, <html>Places</html>
 HNTwin_entry002t, Shows places table
 HNTwin_entry003, Transitions
 HNTwin_entry003t, Shows transitions table
@@ -2760,14 +2760,14 @@ HSPNMwin_entry005op1, Set new rates
 HSPNMwin_entry005op2, Keep old ones
 HSPNMwin_entry005, Set all transitions of the net according to the selected\nSPN data vector (table row:
 HSPNMwin_entry005t, set new firing rates?
-HSPNMwin_entry006, <html>Save current<br/>&nbsp;&nbsp;SPN vector</html>
+HSPNMwin_entry006, <html>Save current<br/>SPN vector</html>
 HSPNMwin_entry007op1, Add new vector
 HSPNMwin_entry007op2, Cancel
 HSPNMwin_entry007, Remember current net firing rates in the table?
 HSPNMwin_entry007t, Add new SPN data vactor?
-HSPNMwin_entry008, <html>&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>SPN vector</html>
-HSPNMwin_entry009, <html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>SPN vector</html>
-HSPNMwin_entry010, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>SPN vector</html>
+HSPNMwin_entry008, <html>Replace<br/>SPN vector</html>
+HSPNMwin_entry009, <html>Remove<br/>SPN vector</html>
+HSPNMwin_entry010, <html>Edit<br/>SPN vector</html>
 HSPNMwin_entry011, At least one net SPN data vector must remain!
 HSPNMwin_entry012op1, Remove vector
 HSPNMwin_entry012op2, Cancel
@@ -2803,7 +2803,7 @@ HSPNTEwin_entry015, Start / Rep. / Stop:
 LOGentry00524exception, Exception (1000253): HolmesSPNtransitionEditor.saveTransitionData() failed. Invalid value, either start text of non-negative value expected.
 HSPNTEwin_entry016, Invalid value, delay must be a non-negatice integer.
 LOGentry00525exception, Exception (1000254): HolmesSPNtransitionEditor.saveTransitionData() failed. Invalid value, either end text of non-negative value expected.
-HSPNTEwin_entry017, <html>&nbsp;Change & exit</html>
+HSPNTEwin_entry017, <html>Change & exit</html>
 HSPNTEwin_entry017t, One action back
 
 //HolmesSSAplacesEditor:
@@ -2818,7 +2818,7 @@ HSSAwin_entry005, SSA components table
 HSSAWMwin_entry001title, Holmes SSA vectors manager
 LOGentry00527exception, Exception (1000256): HolmesSSAwindowManager.HolmesSSAwindowManager() failed:
 HSSAWMwin_entry002, SSA vectors table
-HSSAWMwin_entry003, <html>Select SSA<br>&nbsp;&nbsp;&nbsp;&nbsp;vector&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSAWMwin_entry003, <html>Select SSA<br>vector</html>
 HSSAWMwin_entry004op1, Set new SSA values
 HSSAWMwin_entry004op2, Keep old ones
 HSSAWMwin_entry004, Set all places of the net according to the selected\nSSA vector (table row: 
@@ -2828,9 +2828,9 @@ HSSAWMwin_entry006op1, Add new vector
 HSSAWMwin_entry006op2, Cancel
 HSSAWMwin_entry006, Remember current SSA particle numbers in the table?
 HSSAWMwin_entry006t, Add new SSA data vactor?
-HSSAWMwin_entry007, <html>&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>SSA values</html>
-HSSAWMwin_entry008, <html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>SSA vector</html>
-HSSAWMwin_entry009, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>SSA vector</html>
+HSSAWMwin_entry007, <html>Replace<br/>SSA values</html>
+HSSAWMwin_entry008, <html>Remove<br/>SSA vector</html>
+HSSAWMwin_entry009, <html>Edit<br/>SSA vector</html>
 HSSAWMwin_entry010, At least one SSA vector must remain!
 HSSAWMwin_entry011op1, Remove SSA vector
 HSSAWMwin_entry011op2, Cancel
@@ -2850,7 +2850,7 @@ HSEwin_entry001title, Holmes p-states editor
 LOGentry00529exception, Exception (1000258): HolmesStatesEditor.HolmesStatesEditor() failed:
 HSEwin_entry002, State vector data
 HSEwin_entry003, State vector ID:
-HSEwin_entry004, <html>&nbsp;Set tokens&nbsp;<br>in all places</html>
+HSEwin_entry004, <html>Set tokens<br>in all places</html>
 HSEwin_entry004t, Sets same number of tokens in all places.
 HSEwin_entry005, New tokens number:
 HSEwin_entry006op1, Change all
@@ -2877,7 +2877,7 @@ HSMwin_entry010op1, Set new state
 HSMwin_entry010op2, Keep current state
 HSMwin_entry010, Set all places of the net according to the selected (table row: %d) state?
 HSMwin_entry010t, Setting new state
-HSMwin_entry011, <html>Add current<br/>&nbsp;&nbsp;net state</html>
+HSMwin_entry011, <html>Add current<br/>net state</html>
 HSMwin_entry011t, Create new state vector based on current net state (distribution of tokens in places)
 HSMwin_entry012op1, Add new state
 HSMwin_entry012op2, Cancel
@@ -2889,13 +2889,13 @@ HSMwin_entry014op1, Add new state
 HSMwin_entry014op2, Cancel
 HSMwin_entry014, Add clean net state to states table?
 HSMwin_entry014t, Adding new clean state
-HSMwin_entry015, <html>&nbsp;&nbsp;&nbsp;&nbsp;Replace&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;</html>
+HSMwin_entry015, <html>Replace<br/>state</html>
 HSMwin_entry015t, Replace the values of the selected state from the table with the current net places values.
 HSMwin_entry016, Please select state from the table.
-HSMwin_entry017, <html>&nbsp;&nbsp;&nbsp;Remove&nbsp;&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;</html>
+HSMwin_entry017, <html>Remove<br/>state</html>
 HSMwin_entry017t, Removes state vector from project data.
 HSMwin_entry018, Please select state from the table.
-HSMwin_entry019, <html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;&nbsp;&nbsp;&nbsp;<br/>state vector</html>
+HSMwin_entry019, <html>Edit<br/>state vector</html>
 HSMwin_entry020, Please select state from the table.
 HSMwin_entry021, There are no places in the net!
 HSMwin_entry022, At least one net state must remain!
@@ -3001,7 +3001,7 @@ HSSwin_entry005t, Knockout simulation
 HSSwin_entry006, Data acquisition
 HSSwin_entry007, SimStart
 HSSwin_entry007t, Compute steps from zero marking through the number of states given on the right.
-HSSwin_entry008, <html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>
+HSSwin_entry008, <html>STOP</html>
 HSSwin_entry009, SimSettings
 HSSwin_entry009t, Set simulator options.
 HSSwin_entry010, <html>States<br>Manager</html>
@@ -3011,7 +3011,7 @@ HSSwin_entry012, Clear
 HSSwin_entry012t, Clear all charts and data vectors. Reset simulator.
 HSSwin_entry013, Progress
 HSSwin_entry014, Places chart options
-HSSwin_entry015, <html>&nbsp;&nbsp;&nbsp;&nbsp;Show all&nbsp;&nbsp;&nbsp;&nbsp;</htm>
+HSSwin_entry015, <html>Show all</htm>
 HSSwin_entry015t, Show average numbers of token in places through simulation steps.
 HSSwin_entry016, Show notepad
 HSSwin_entry016t, Show notepad with average numbers of token in places through simulation steps.
@@ -3033,7 +3033,7 @@ HSSwin_entry026, Normal
 HSSwin_entry027, Thick
 HSSwin_entry028, Places chart
 HSSwin_entry029, Transitions chart options
-HSSwin_entry030, <html>&nbsp;&nbsp;&nbsp;&nbsp;Show all&nbsp;&nbsp;&nbsp;&nbsp;</html>
+HSSwin_entry030, <html>Show all</html>
 HSSwin_entry030t, Show average numbers of firings of transitions through simulation steps.
 HSSwin_entry031, Show notepad
 HSSwin_entry031t, Show notepad with average numbers of firings of transitions through simulation steps.
@@ -3093,7 +3093,7 @@ LOGentry00554exception, Exception (1000277): HolmesSimActions.getRealNodeID() fa
 //HolmesSimKnock:
 HSKwin_entry001, SimStart
 HSKwin_entry001t, Compute steps from zero marking through the number of states given on the right.
-HSKwin_entry002, <html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>
+HSKwin_entry002, <html>STOP</html>
 HSKwin_entry002t, Stop the currently working simulation process.
 HSKwin_entry003, Progress
 HSKwin_entry004, Show results in notepad
@@ -3122,7 +3122,7 @@ HSKwin_entry020t, Clear transitions and MCT field indicating offline simulation 
 HSKwin_entry021, SimStart
 HSKwin_entry021t, Compute steps from zero marking through the number of states given on the right.
 HSKwin_entry022, Simulation for manually disabled transition and for all transition are mutually\nexclusive. Please choose one.
-HSKwin_entry023, <html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>
+HSKwin_entry023, <html>STOP</html>
 HSKwin_entry023op1, Stop and remove
 HSKwin_entry023op2, Proceed with simulation
 HSKwin_entry023msg, WARNING: This will cancel the whole-net knockout simulation and DELETE\nall previously computed datased in this simulation session. Proceed?
@@ -3211,13 +3211,13 @@ HSKVwin_entry010, Sim. series:
 HSKVwin_entry011t, Select dataset series (presumably with every transition disable one per dataset)
 HSKVwin_entry012, Data sets:
 HSKVwin_entry013t, Select dataset (presumably with some transition(s) knocked out)
-HSKVwin_entry014, <html>Show reference<br/>&nbsp; &nbsp; &nbsp; &nbsp; dataset</html>
-HSKVwin_entry015, <html>Show knockout<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataset</html>
-HSKVwin_entry016, <html>Compare reference<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and knockout</html>
+HSKVwin_entry014, <html>Show reference<br/>    dataset</html>
+HSKVwin_entry015, <html>Show knockout<br/>dataset</html>
+HSKVwin_entry016, <html>Compare reference<br/>and knockout</html>
 HSKVwin_entry016msg, Please select reference and knockout set!
 HSKVwin_entry016t, Selection needed
-HSKVwin_entry017, <html>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;Full series&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;datatables</html>
-HSKVwin_entry018, <html>&nbsp; &nbsp;Show notepad<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;summary</html>
+HSKVwin_entry017, <html> Full series<br/>datatables</html>
+HSKVwin_entry018, <html> Show notepad<br/>summary</html>
 HSKVwin_entry019, Notepad
 HSKVwin_entry020, Charts
 HSKVwin_entry021, Places dynamics
@@ -3338,7 +3338,7 @@ HSSetwin_entry027t, One from active IM transition will fire, probability depends
 HSSetwin_entry028, Gillespie SSA (Stochastic Simulation Algorithm) settings
 HSSetwin_entry029, <html>Fire rate<br>Manager</html>
 HSSetwin_entry029t, Set transition firing rates for SSA.
-HSSetwin_entry030, <html>Components<br>&nbsp;&nbsp;Manager&nbsp;</html>
+HSSetwin_entry030, <html>Components<br>Manager</html>
 HSSetwin_entry030t, Component vectors managaer for SSA.
 
 //HolmesDockWindowsTableExceptions:
@@ -3521,7 +3521,7 @@ HSXTPNwin_entry006, Data acquisition
 HSXTPNwin_entry007, <html><center>Simulation<br>start</center></html>
 HSXTPNwin_entry007t, Compute steps from zero marking through the number of states given on the right.
 HSXTPNwin_entry008, <html><center>Cancel</center></html>
-HSXTPNwin_entry008t, <html>&nbsp;&nbsp;&nbsp;STOP&nbsp;&nbsp;&nbsp;</html>
+HSXTPNwin_entry008t, <html>STOP</html>
 HSXTPNwin_entry009, <html><center>Simulation<br>Settings</center></html>
 HSXTPNwin_entry009t, Set simulator options.
 HSXTPNwin_entry010, <html><center>States<br>Manager</center></html>

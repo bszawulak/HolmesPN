@@ -1,6 +1,7 @@
 package holmes.windows.statespace;
 
 import holmes.darkgui.GUIManager;
+import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.utilities.Tools;
@@ -134,7 +135,7 @@ public class HolmesStSpUNF extends JFrame {
         ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 
         if(transitions.size() > 1) {
-            Transition t1 = overlord.getWorkspace().getProject().getTransitions().get(0);
+            Transition t1 = transitions.get(0);
             logField1stTab.append("Transition 1: "+t1.getName()+"\n");
             // pobierz miejsca wejściowe:
             ArrayList<Place> inputPlaces = t1.getInputPlaces();
@@ -151,7 +152,7 @@ public class HolmesStSpUNF extends JFrame {
         }
 
         if(places.size() > 1) {
-            Place p1 = overlord.getWorkspace().getProject().getPlaces().get(0);
+            Place p1 = places.get(0);
             logField1stTab.append("Place 1: "+p1.getName()+"\n");
             // pobierz tranzycje wejściowe:
             ArrayList<Transition> inputTransitions = p1.getInputTransitions();

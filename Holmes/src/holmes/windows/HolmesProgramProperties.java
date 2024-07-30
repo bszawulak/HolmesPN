@@ -478,7 +478,6 @@ public class HolmesProgramProperties extends JFrame {
 					JOptionPane.INFORMATION_MESSAGE);
 		});
 		group.add(italianRadioButton);
-		italianRadioButton.setEnabled(false);
 		ioPanel.add(italianRadioButton);
 
 
