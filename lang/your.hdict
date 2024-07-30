@@ -168,7 +168,7 @@ DM_menuView, View
 DM_menuViewZoom100, Zoom 100%
 DM_menuViewZoomIn, Increase zoom 10%
 DM_menuViewZoomOut, Decrease zoom 10%
-DM_menuWindows, Windows
+DM_menuWindows, Settings
 DM_menuWindowsProject, Project
 DM_menuWindowsConsole, Log Console
 DM_menuWindowsProperties, Properties
@@ -746,6 +746,8 @@ HDWT_entry308QuickSim, State manager
 HDWT_entry309QuickSim, <html><center>Reset<br>p-state</center></html>
 HDWT_entry310QuickSim, <html><center>Store<br>p-state</center></html>
 HDWT_entry311QuickSim, Tokens delay:
+HDWT_entry312QuickSim, Settings
+HDWT_entry313QuickSim, Sim Start
 
 //DecoCalccalculator:
 DCC_entry001, Please choose comparison type
@@ -2469,6 +2471,7 @@ HNIwin_entryT034op2, Time Petri Net
 HNIwin_entryT034op3, Hybrid mode
 HNIwin_entryT035, Chart unavailable, main simulator is active.
 LOGentry00483, Unable to gather %d data vectors (places) of same size. State simulator cannot proceed %d steps. First pass had: %d steps.
+HNIwin_entryT036, Transition general information
 
 //HolmesNodeInfoActions:
 HNIAwin_entry001, Invariant
@@ -2605,6 +2608,8 @@ HPPwinSYS_entry054, YourLang
 HPPwinSYS_entry055, German
 HPPwinSYS_entry056, Spanish
 HPPwinSYS_entry057, Ukrainian
+HPPwinSYS_entry058, French
+HPPwinSYS_entry059, Italian
 
 //HolmesProgramPropertiesActions:
 HPPAwin_entry001, Select Rscript.exe
@@ -3391,7 +3396,7 @@ HNXTPN_entry016vis, <html>γ:visible</html>
 HNXTPN_entry016invis, <html>γ:hidden</html>
 HNXTPN_entry017, γ (min/max):
 HNXTPN_entry018, Tokens:
-HNXTPN_entry019, <html>Token window</html>
+HNXTPN_entry019, <html>Tokens</html>
 HNXTPN_entry020, Current number:
 HNXTPN_entry021, Places chart
 LOGentry00595exception, Exception (1000313): HolmesNodeInfoXTPN.initializePlaceInfo() failed:

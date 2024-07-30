@@ -181,7 +181,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("DM_menuViewZoom100","Zoom 100%");
         defaultEnglish.put("DM_menuViewZoomIn","Increase zoom 10%");
         defaultEnglish.put("DM_menuViewZoomOut","Decrease zoom 10%");
-        defaultEnglish.put("DM_menuWindows","Windows");
+        defaultEnglish.put("DM_menuWindows","Settings");
         defaultEnglish.put("DM_menuWindowsProject","Project");
         defaultEnglish.put("DM_menuWindowsConsole","Log Console");
         defaultEnglish.put("DM_menuWindowsProperties","Properties");
@@ -759,7 +759,9 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HDWT_entry309QuickSim","<html><center>Reset<br>p-state</center></html>");
         defaultEnglish.put("HDWT_entry310QuickSim","<html><center>Store<br>p-state</center></html>");
         defaultEnglish.put("HDWT_entry311QuickSim","Tokens delay:");
-        
+        defaultEnglish.put("HDWT_entry312QuickSim","Sim Settings");
+        defaultEnglish.put("HDWT_entry313QuickSim","Sim Start");
+
         //DecoCalccalculator:
         defaultEnglish.put("DCC_entry001","Please choose comparison type");
         defaultEnglish.put("DCC_entry002","No t-invariants sets!");
@@ -2121,7 +2123,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HIGwin_entry047info","Check p-invariants for canonicality");
         defaultEnglish.put("HIGwin_entry048","No p-invariants to analyze.");
         defaultEnglish.put("HIGwin_entry048t","No p-invariants");
-        defaultEnglish.put("HIGwin_entry049info","Check p-invariants for canonicality");
+        defaultEnglish.put("HIGwin_entry049","Check p-invariants for canonicality");
         defaultEnglish.put("HIGwin_entry050","non canonical p-invariants:");
         defaultEnglish.put("HIGwin_entry051","<html>Check sup.<br>&nbsp;minimality</html>");
         defaultEnglish.put("HIGwin_entry051info","Check p-invariants for support minimality");
@@ -2436,7 +2438,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HNIwin_entryT005t","Analysis panel");
         defaultEnglish.put("HNIwin_entryM006title","MetaNode:");
         defaultEnglish.put("LOGentry00478exception","Exception (1000213): HolmesNodeInfo.initializeCommon() failed:");
-        defaultEnglish.put("HNIwin_entryP007","Place general information:");
+        defaultEnglish.put("HNIwin_entryP007","Place general information");
         defaultEnglish.put("HNIwin_entryP008","ID:");
         defaultEnglish.put("HNIwin_entryP009","Portal:");
         defaultEnglish.put("HNIwin_entryP010","Tokens:");
@@ -2482,6 +2484,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HNIwin_entryT034op3","Hybrid mode");
         defaultEnglish.put("HNIwin_entryT035","Chart unavailable, main simulator is active.");
         defaultEnglish.put("LOGentry00483","Unable to gather %d data vectors (places) of same size. State simulator cannot proceed %d steps. First pass had: %d steps.");
+        defaultEnglish.put("HNIwin_entryT036","Transition general information");
 
         //HolmesNodeInfoActions:
         defaultEnglish.put("HNIAwin_entry001","Invariant");
@@ -2618,6 +2621,8 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HPPwinSYS_entry055","German");
         defaultEnglish.put("HPPwinSYS_entry056","Spanish");
         defaultEnglish.put("HPPwinSYS_entry057","Ukrainian");
+        defaultEnglish.put("HPPwinSYS_entry058","French");
+        defaultEnglish.put("HPPwinSYS_entry059","Italian");
 
         //HolmesProgramPropertiesActions:
         defaultEnglish.put("HPPAwin_entry001","Select Rscript.exe");

@@ -94,7 +94,7 @@ public class SettingsManager {
     @SuppressWarnings("unused")
     private void checkAndRestoreSetting() {
         ArrayList<Setting> settingsNew = new ArrayList<Setting>();
-        settingsNew.add(new Setting("holmes_version", "1.7.1 (Harry Du Bois edition)"));
+        settingsNew.add(new Setting("holmes_version", "1.7.1 (Harrier Du Bois edition)"));
         //2.0 Tequila Sunset
         
         ArrayList<String> confiredDictionaries = new ArrayList<String>();
@@ -103,6 +103,8 @@ public class SettingsManager {
         confiredDictionaries.add("German");
         confiredDictionaries.add("Ukrainian");
         confiredDictionaries.add("Spanish");
+        confiredDictionaries.add("French");
+        confiredDictionaries.add("Italian");
         confiredDictionaries.add("YourLanguage");
         if(!confiredDictionaries.contains(getValue("selected_language"))) {
             settingsNew.add(new Setting("selected_language", "English"));

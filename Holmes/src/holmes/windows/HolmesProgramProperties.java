@@ -218,23 +218,23 @@ public class HolmesProgramProperties extends JFrame {
 			default -> group.setSelected(resize100Button.getModel(), true);
 		}
 		
-		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry009"), posX+200, posY-20, 300, 20, 
+		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry009"), posX+220, posY-20, 350, 20, 
 				"editorGridAlignWhenSaved", true); //(Snoopy) Align to grid when saved
 		ioPanel.add(alignGridWhenSavedCheckBox);
 		
-		JCheckBox useOffsetsCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry010"), posX+200, posY, 330, 20, 
+		JCheckBox useOffsetsCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry010"), posX+220, posY, 350, 20, 
 				"editorUseSnoopyOffsets", true); //(Snoopy) Use Snoopy offsets for names
 		ioPanel.add(useOffsetsCheckBox);
 		
-		JCheckBox useOldLoaderCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry011"), posX, posY+=20, 500, 20, 
+		JCheckBox useOldLoaderCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry011"), posX, posY+=20, 560, 20, 
 				"programUseOldSnoopyLoaders", true); //(UNSAFE) Use old Snoopy loader (PN, extPN, TPN/DPN *ONLY*)
 		ioPanel.add(useOldLoaderCheckBox);
 
-		JCheckBox checkSaveCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry012"), posX, posY+=20, 400, 20, 
+		JCheckBox checkSaveCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry012"), posX, posY+=20, 500, 20, 
 				"editorExportCheckAndWarning", true); //Warnings concerning wrong save format
 		ioPanel.add(checkSaveCheckBox);
 		
-		JCheckBox simpleEditorCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry013"), posX, posY+=20, 400, 20,
+		JCheckBox simpleEditorCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry013"), posX, posY+=20, 500, 20,
 				"programUseSimpleEditor", true); //Use simple notepad (restart required)
 		ioPanel.add(simpleEditorCheckBox);
 		
@@ -277,7 +277,7 @@ public class HolmesProgramProperties extends JFrame {
 		
 		ButtonGroup group = new ButtonGroup();
 		JRadioButton englishRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry051")); //English
-		englishRadioButton.setBounds(posX+=40, posY, 90, 20);
+		englishRadioButton.setBounds(posX+=40, posY, 95, 20);
 		englishRadioButton.setActionCommand("0");
 		englishRadioButton.addActionListener(actionEvent -> {
 			if(noAction) return;
@@ -307,7 +307,7 @@ public class HolmesProgramProperties extends JFrame {
 		}
 		
 		JRadioButton polishRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry052")); //Polish
-		polishRadioButton.setBounds(posX+=40, posY, 90, 20);
+		polishRadioButton.setBounds(posX+=40, posY, 95, 20);
 		polishRadioButton.setActionCommand("1");
 		polishRadioButton.addActionListener(actionEvent -> {
 			if(noAction) return;
@@ -337,7 +337,7 @@ public class HolmesProgramProperties extends JFrame {
 		}
 
 		JRadioButton germanRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry055")); //German
-		germanRadioButton.setBounds(posX+=40, posY, 90, 20);
+		germanRadioButton.setBounds(posX+=40, posY, 95, 20);
 		germanRadioButton.setActionCommand("1");
 		germanRadioButton.addActionListener(actionEvent -> {
 			if(noAction) return;
@@ -367,7 +367,7 @@ public class HolmesProgramProperties extends JFrame {
 		}
 
 		JRadioButton spainRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry056")); //Spanish
-		spainRadioButton.setBounds(posX+=40, posY, 90, 20);
+		spainRadioButton.setBounds(posX+=40, posY, 95, 20);
 		spainRadioButton.setActionCommand("1");
 		spainRadioButton.addActionListener(actionEvent -> {
 			if(noAction) return;
@@ -400,7 +400,7 @@ public class HolmesProgramProperties extends JFrame {
 		}
 
 		JRadioButton ukrainianRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry057")); //Ukrainian
-		ukrainianRadioButton.setBounds(posX+=40, posY, 90, 20);
+		ukrainianRadioButton.setBounds(posX+=40, posY, 95, 20);
 		ukrainianRadioButton.setActionCommand("1");
 		ukrainianRadioButton.addActionListener(actionEvent -> {
 			if(noAction) return;
@@ -419,6 +419,69 @@ public class HolmesProgramProperties extends JFrame {
 		group.add(ukrainianRadioButton);
 		ioPanel.add(ukrainianRadioButton);
 
+		//PRZYCISK FRANCUSKI:
+		try {
+			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/france.png"));
+			JLabel flagLabelMNT = new JLabel(new ImageIcon(image));
+			flagLabelMNT.setBounds(posX+=100, posY, 38, 20);
+			ioPanel.add(flagLabelMNT);
+		} catch (Exception ex) {
+			overlord.log(ex.getMessage(), "error", true);
+		}
+
+		JRadioButton frenchRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry058")); //French
+		frenchRadioButton.setBounds(posX+=40, posY, 95, 20);
+		frenchRadioButton.setActionCommand("1");
+		frenchRadioButton.addActionListener(actionEvent -> {
+			if(noAction) return;
+
+			String oldLang = changeKeyWordIntoLangWord(lang.getSelectedLanguage());
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HPPwinSYS_entry053"), lang.getText("HPPwinSYS_entry058"), oldLang); //French
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" HPPwinSYS_entry053", "error", true);
+			}
+			lang.setLanguage("French", false);
+			JOptionPane.showMessageDialog(null, strB, lang.getText("information"),
+					JOptionPane.INFORMATION_MESSAGE);
+		});
+		group.add(frenchRadioButton);
+		ioPanel.add(frenchRadioButton);
+
+
+		//PRZYCISK WŁOSKI
+		try {
+			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/Italy.png"));
+			JLabel flagLabelMNT = new JLabel(new ImageIcon(image));
+			flagLabelMNT.setBounds(posX+=100, posY, 38, 20);
+			ioPanel.add(flagLabelMNT);
+		} catch (Exception ex) {
+			overlord.log(ex.getMessage(), "error", true);
+		}
+
+		JRadioButton italianRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry059")); //Italian
+		italianRadioButton.setBounds(posX+=40, posY, 95, 20);
+		italianRadioButton.setActionCommand("1");
+		italianRadioButton.addActionListener(actionEvent -> {
+			if(noAction) return;
+
+			String oldLang = changeKeyWordIntoLangWord(lang.getSelectedLanguage());
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HPPwinSYS_entry053"), lang.getText("HPPwinSYS_entry059"), oldLang); //Italian
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" HPPwinSYS_entry053", "error", true);
+			}
+			lang.setLanguage("Italian", false);
+			JOptionPane.showMessageDialog(null, strB, lang.getText("information"),
+					JOptionPane.INFORMATION_MESSAGE);
+		});
+		group.add(italianRadioButton);
+		italianRadioButton.setEnabled(false);
+		ioPanel.add(italianRadioButton);
+
+
 		//PRZYCISK TWOJ JEZYK:
 		try {
 			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/yourlang.png"));
@@ -430,7 +493,7 @@ public class HolmesProgramProperties extends JFrame {
 		}
 
 		JRadioButton yourLangRadioButton = new JRadioButton(lang.getText("HPPwinSYS_entry054")); //YourLanguage
-		yourLangRadioButton.setBounds(posX+=40, posY, 90, 20);
+		yourLangRadioButton.setBounds(posX+=40, posY, 95, 20);
 		yourLangRadioButton.setActionCommand("1");
 		yourLangRadioButton.addActionListener(actionEvent -> {
 			if(noAction) return;
@@ -462,6 +525,10 @@ public class HolmesProgramProperties extends JFrame {
 			group.setSelected(spainRadioButton.getModel(), true);
 		} else if(current.equals("Ukrainian")) {
 			group.setSelected(ukrainianRadioButton.getModel(), true);
+		} else if(current.equals("French")) {
+			group.setSelected(frenchRadioButton.getModel(), true);
+		} else if(current.equals("Italian")) {
+			group.setSelected(italianRadioButton.getModel(), true);
 		} else {
 			group.setSelected(yourLangRadioButton.getModel(), true);
 		}
@@ -487,6 +554,10 @@ public class HolmesProgramProperties extends JFrame {
 			return lang.getText("HPPwinSYS_entry056");
 		} else if(selectedLanguage.equals("Ukrainian")) {
 			return lang.getText("HPPwinSYS_entry057");
+		} else if(selectedLanguage.equals("France")) {
+			return lang.getText("HPPwinSYS_entry058");
+		} else if(selectedLanguage.equals("Italian")) {
+			return lang.getText("HPPwinSYS_entry059");
 		} else {
 			return lang.getText("HPPwinSYS_entry054");
 		}
@@ -524,26 +595,26 @@ public class HolmesProgramProperties extends JFrame {
 		rOptionsPanel.setBounds(x, y, w, h);
 		
 		JLabel labelR_1 = new JLabel(lang.getText("HPPwinSYS_entry016")); //label
-		labelR_1.setBounds(10, 16, 60, 20);
+		labelR_1.setBounds(10, 16, 90, 20);
 		rOptionsPanel.add(labelR_1);
 		final JTextArea textR_1 = new JTextArea(sm.getValue("r_path"));
-		textR_1.setBounds(75, 18, 300, 20);
+		textR_1.setBounds(105, 18, 360, 20);
 		textR_1.setOpaque(false);
 		textR_1.setEditable(false);
 		rOptionsPanel.add(textR_1);
 		
 		JLabel labelR_2 = new JLabel(lang.getText("HPPwinSYS_entry017")); //Rx64 path
-		labelR_2.setBounds(10, 36, 60, 20);
+		labelR_2.setBounds(10, 36, 90, 20);
 		rOptionsPanel.add(labelR_2);
 		final JTextArea textR_2 = new JTextArea(sm.getValue("r_path64"));
-		textR_2.setBounds(75, 38, 300, 20);
+		textR_2.setBounds(105, 38, 360, 20);
 		textR_2.setOpaque(false);
 		textR_2.setEditable(false);
 		rOptionsPanel.add(textR_2);
 		
 		JButton rSetPath = new JButton(lang.getText("HPPwinSYS_entry018")); //Set R path
 		rSetPath.setName("setRpath");
-		rSetPath.setBounds(10, 60, 120, 20);
+		rSetPath.setBounds(10, 60, 140, 20);
 		rSetPath.setToolTipText(lang.getText("HPPwinSYS_entry018t"));
 		rSetPath.addActionListener(actionEvent -> {
 			action.setRPath();
@@ -552,7 +623,7 @@ public class HolmesProgramProperties extends JFrame {
 		});
 		rOptionsPanel.add(rSetPath);
 		
-		JCheckBox forceRcheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry019"), 140, 60, 250, 20, "programAskForRonStartup", true);
+		JCheckBox forceRcheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry019"), 160, 60, 300, 20, "programAskForRonStartup", true);
 		rOptionsPanel.add(forceRcheckBox); //Force R localization on startup
 		
 		return rOptionsPanel;
@@ -720,7 +791,7 @@ public class HolmesProgramProperties extends JFrame {
 		noAction = true;
 		
 		JCheckBox snoopyCompatibilityCheckBox = new JCheckBox(lang.getText("HPPwinEDIT_entry032"), true); //(Snoopy/Holmes) Allow only Snoopy-compatible options
-		snoopyCompatibilityCheckBox.setBounds(posX, posY, 400, 20);
+		snoopyCompatibilityCheckBox.setBounds(posX, posY, 500, 20);
 		snoopyCompatibilityCheckBox.addActionListener(actionEvent -> {
 			if(noAction) return;
 
@@ -735,7 +806,7 @@ public class HolmesProgramProperties extends JFrame {
 		snoopyCompatibilityCheckBox.setSelected(overlord.getSettingsManager().getValue("editorSnoopyCompatibleMode").equals("1"));
 		panel.add(snoopyCompatibilityCheckBox);
 		
-		JCheckBox subnetCompressionCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry033"), posX, posY+=20, 400, 20, 
+		JCheckBox subnetCompressionCheckBox = checkboxWizard(lang.getText("HPPwinEDIT_entry033"), posX, posY+=20, 500, 20, 
 				"editorSubnetCompressMode", true); //Use meta-arcs compression for metanodes
 		panel.add(subnetCompressionCheckBox);
 		
@@ -781,31 +852,31 @@ public class HolmesProgramProperties extends JFrame {
 		noAction = true;
 
 		JCheckBox readArcReservCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry035"), 
-				posX, posY, 440, 20, "simTransReadArcTokenReserv", true); //Transitions reserve tokens in place via read-arcs
+				posX, posY, 500, 20, "simTransReadArcTokenReserv", true); //Transitions reserve tokens in place via read-arcs
 		panel.add(readArcReservCheckBox);
 		
 		JCheckBox singleMaxModeCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry036"), 
-				posX, posY+=20, 440, 20, "simSingleMode", true); //Single-maximum mode (single-50/50 when unchecked)
+				posX, posY+=20, 500, 20, "simSingleMode", true); //Single-maximum mode (single-50/50 when unchecked)
 		panel.add(singleMaxModeCheckBox);
 		
 		JCheckBox simTDPNrunTimeCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry037"), 
-				posX, posY+=20, 440, 20, "simTDPNrunWhenEft", true); //TDPN transition acts like DPN when TPN internal clock = EFT
+				posX, posY+=20, 500, 20, "simTDPNrunWhenEft", true); //TDPN transition acts like DPN when TPN internal clock = EFT
 		panel.add(simTDPNrunTimeCheckBox);
 
 		JCheckBox placesColorsCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry038"), 
-				posX, posY+=20, 440, 20, "simPlacesColors", true); //Places change colors during simulation
+				posX, posY+=20, 500, 20, "simPlacesColors", true); //Places change colors during simulation
 		panel.add(placesColorsCheckBox);
 
 		JCheckBox XTPNsimMassActionCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry039"),
-				posX, posY+=20, 460, 20, "simXTPNmassAction", true); //(XTPN) Globally use mass-action kinetics law for simulation
+				posX, posY+=20, 500, 20, "simXTPNmassAction", true); //(XTPN) Globally use mass-action kinetics law for simulation
 		panel.add(XTPNsimMassActionCheckBox);
 
 		JCheckBox XTPNsimReadArcTokenCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry040"),
-				posX, posY+=20, 440, 20, "simXTPNreadArcTokens", true); //(XTPN) Read arcs preserve tokens lifetime
+				posX, posY+=20, 500, 20, "simXTPNreadArcTokens", true); //(XTPN) Read arcs preserve tokens lifetime
 		panel.add(XTPNsimReadArcTokenCheckBox);
 
 		JCheckBox isSimulatorLoggedCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry044"),
-				posX, posY+=20, 440, 20, "simLogEnabled", true); //(XTPN) Read arcs preserve tokens lifetime
+				posX, posY+=20, 500, 20, "simLogEnabled", true); //(XTPN) Read arcs preserve tokens lifetime
 		panel.add(isSimulatorLoggedCheckBox);
 
 		noAction = false;

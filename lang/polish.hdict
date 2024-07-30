@@ -168,7 +168,7 @@ DM_menuView, Widok
 DM_menuViewZoom100, Zoom 100%
 DM_menuViewZoomIn, Zwiększ zoom 10%
 DM_menuViewZoomOut, Zmniejsz zoom 10%
-DM_menuWindows, Okna
+DM_menuWindows, Ustawienia
 DM_menuWindowsProject, Projekt
 DM_menuWindowsConsole, Konsola logów
 DM_menuWindowsProperties, Właściwości
@@ -746,6 +746,8 @@ HDWT_entry308QuickSim, Menedżer stanów
 HDWT_entry309QuickSim, <html><center>Resetuj<br>p-state</center></html>
 HDWT_entry310QuickSim, <html><center>Zapisz<br>p-state</center></html>
 HDWT_entry311QuickSim, Opóźnienie tokenów:
+HDWT_entry312QuickSim, Ustawienia
+HDWT_entry313QuickSim, Start Sym.
 
 //DecoCalccalculator:
 DCC_entry001, Proszę wybrać typ porównania
@@ -2423,7 +2425,7 @@ HNIwin_entryT005, Analiza
 HNIwin_entryT005t, Panel analizy
 HNIwin_entryM006title, MetaWęzeł:
 LOGentry00478exception, Wyjątek (1000213): HolmesNodeInfo.initializeCommon() nie powiodło się:
-HNIwin_entryP007, Ogólne informacje o miejscu:
+HNIwin_entryP007, Ogólne informacje o miejscu
 HNIwin_entryP008, ID:
 HNIwin_entryP009, Portal:
 HNIwin_entryP010, Tokeny:
@@ -2469,6 +2471,7 @@ HNIwin_entryT034op2, Czasowa sieć Petriego
 HNIwin_entryT034op3, Tryb hybrydowy
 HNIwin_entryT035, Wykres niedostępny, aktywny jest główny symulator.
 LOGentry00483, Nie można zebrać %d wektorów danych (miejsca) o tej samej wielkości. Symulator stanu nie może kontynuować %d kroków. Pierwszy przebieg miał: %d kroków.
+HNIwin_entryT036, Ogólne informacje o tranzycji
 
 //HolmesNodeInfoActions:
 HNIAwin_entry001, Inwariant
@@ -2606,6 +2609,8 @@ HPPwinSYS_entry054, YourLang
 HPPwinSYS_entry055, Niemiecki
 HPPwinSYS_entry056, Hiszpański
 HPPwinSYS_entry057, Ukraiński
+HPPwinSYS_entry058, Francuski
+HPPwinSYS_entry059, Włoski
 
 //HolmesProgramPropertiesActions:
 HPPAwin_entry001, Wybierz Rscript.exe
@@ -3392,7 +3397,7 @@ HNXTPN_entry016vis, <html>γ:widoczny</html>
 HNXTPN_entry016invis, <html>γ:ukryty</html>
 HNXTPN_entry017, γ (min/max):
 HNXTPN_entry018, Tokeny:
-HNXTPN_entry019, <html>Okno tokenów</html>
+HNXTPN_entry019, <html>Tokeny</html>
 HNXTPN_entry020, Aktualna liczba:
 HNXTPN_entry021, Wykres miejsc
 LOGentry00595exception, Wyjątek (1000313): HolmesNodeInfoXTPN.initializePlaceInfo() nie powiodło się:

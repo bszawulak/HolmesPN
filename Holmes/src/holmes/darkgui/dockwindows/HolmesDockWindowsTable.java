@@ -6003,7 +6003,7 @@ public class HolmesDockWindowsTable extends JPanel {
         JButton showDetailsButton = new JButton();
         showDetailsButton.setText(lang.getText("HDWT_entry222TinvPanel")); //Show details
         showDetailsButton.setIcon(Tools.getResIcon32("/icons/menu/menu_invViewer.png"));
-        showDetailsButton.setBounds(colA_posX, positionY += 30, 120, 32);
+        showDetailsButton.setBounds(colA_posX, positionY += 25, 120, 40);
         showDetailsButton.addActionListener(actionEvent -> {
             if (selectedT_invIndex == -1)
                 return;
@@ -6012,7 +6012,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(showDetailsButton);
 
         JCheckBox markMCTcheckBox = new JCheckBox(lang.getText("HDWT_entry223TinvPanel")); //Color MCT
-        markMCTcheckBox.setBounds(colA_posX + 130, positionY - 5, 120, 20);
+        markMCTcheckBox.setBounds(colA_posX + 120, positionY, 120, 20);
         markMCTcheckBox.setSelected(false);
         markMCTcheckBox.addActionListener(actionEvent -> {
             AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -6022,7 +6022,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(markMCTcheckBox);
 
         JCheckBox glowINVcheckBox = new JCheckBox(lang.getText("HDWT_entry224TinvPanel")); //Transitions glow
-        glowINVcheckBox.setBounds(colA_posX + 130, positionY + 15, 150, 20);
+        glowINVcheckBox.setBounds(colA_posX + 120, positionY + 20, 160, 20);
         glowINVcheckBox.setSelected(true);
         glowINVcheckBox.addActionListener(actionEvent -> {
             AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -6044,11 +6044,11 @@ public class HolmesDockWindowsTable extends JPanel {
         JPanel descPanel = new JPanel();
         descPanel.setLayout(new BorderLayout());
         descPanel.add(new JScrollPane(t_invNameField), BorderLayout.CENTER);
-        descPanel.setBounds(colA_posX, positionY += 40, 250, 80);
+        descPanel.setBounds(colA_posX, positionY += 45, 250, 80);
         components.add(descPanel);
 
         JCheckBox markAreaCheckBox = new JCheckBox(lang.getText("HDWT_entry225TinvPanel")); //Invariant-net structure painted
-        markAreaCheckBox.setBounds(colA_posX, positionY += 85, 200, 20);
+        markAreaCheckBox.setBounds(colA_posX, positionY += 85, 260, 20);
         markAreaCheckBox.setSelected(true);
         markAreaCheckBox.addActionListener(actionEvent -> {
             AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -6556,7 +6556,7 @@ public class HolmesDockWindowsTable extends JPanel {
         JButton showDetailsButton = new JButton();
         showDetailsButton.setText(lang.getText("HDWT_entry235PinvPanel")); //Show details
         showDetailsButton.setIcon(Tools.getResIcon32("/icons/menu/menu_invViewer.png"));
-        showDetailsButton.setBounds(colA_posX, positionY += 30, 120, 32);
+        showDetailsButton.setBounds(colA_posX, positionY += 30, 120, 40);
         showDetailsButton.addActionListener(actionEvent -> {
             if(p_invariantsMatrix == null)
                 return;
@@ -6587,7 +6587,7 @@ public class HolmesDockWindowsTable extends JPanel {
         JPanel descPanel = new JPanel();
         descPanel.setLayout(new BorderLayout());
         descPanel.add(new JScrollPane(p_invNameField), BorderLayout.CENTER);
-        descPanel.setBounds(colA_posX, positionY += 40, 250, 80);
+        descPanel.setBounds(colA_posX, positionY += 50, 250, 80);
         components.add(descPanel);
 
         doNotUpdate = false;
@@ -8027,8 +8027,8 @@ public class HolmesDockWindowsTable extends JPanel {
 
         quickSim = new QuickSimTools(this);
 
-        JButton acqDataButton = new JButton("SimStart");
-        acqDataButton.setBounds(internalX, internalY, 110, 40);
+        JButton acqDataButton = new JButton(lang.getText("HDWT_entry313QuickSim"));
+        acqDataButton.setBounds(internalX, internalY, 130, 40);
         acqDataButton.setMargin(new Insets(0, 0, 0, 0));
         acqDataButton.setFocusPainted(false);
         acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
@@ -8038,8 +8038,8 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(acqDataButton);
 
-        JButton simSettingsButton = new JButton("SimSettings");
-        simSettingsButton.setBounds(internalX + 120, internalY, 130, 40);
+        JButton simSettingsButton = new JButton(lang.getText("HDWT_entry312QuickSim"));
+        simSettingsButton.setBounds(internalX + 140, internalY, 130, 40);
         simSettingsButton.setMargin(new Insets(0, 0, 0, 0));
         simSettingsButton.setFocusPainted(false);
         simSettingsButton.setIcon(Tools.getResIcon32("/icons/simSettings/setupIcon.png"));

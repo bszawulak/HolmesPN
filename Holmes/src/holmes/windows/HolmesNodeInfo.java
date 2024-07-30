@@ -195,7 +195,7 @@ public class HolmesNodeInfo extends JFrame {
 		infoPanel.add(idTextBox);
 		
 		JLabel portalLabel = new JLabel(lang.getText("HNIwin_entryP009")); //Portal
-		portalLabel.setBounds(infPanelX+60, infPanelY, 40, 20);
+		portalLabel.setBounds(infPanelX+60, infPanelY, 50, 20);
 		infoPanel.add(portalLabel);
 		
 		String port = lang.getText("no");
@@ -203,11 +203,11 @@ public class HolmesNodeInfo extends JFrame {
 			port = lang.getText("yes");
 		
 		JLabel portalLabel2 = new JLabel(port);
-		portalLabel2.setBounds(infPanelX+100, infPanelY, 30, 20);
+		portalLabel2.setBounds(infPanelX+110, infPanelY, 40, 20);
 		infoPanel.add(portalLabel2);
 		
 		JLabel tokenLabel = new JLabel(lang.getText("HNIwin_entryP010"), JLabel.LEFT); //Tokens
-        tokenLabel.setBounds(infPanelX+130, infPanelY, 50, 20);
+        tokenLabel.setBounds(infPanelX+160, infPanelY, 50, 20);
         infoPanel.add(tokenLabel);
         
         int tok = place.getTokensNumber();
@@ -219,8 +219,8 @@ public class HolmesNodeInfo extends JFrame {
         }
 		SpinnerModel tokenSpinnerModel = new SpinnerNumberModel(tok, 0, Integer.MAX_VALUE, 1);
 		JSpinner tokenSpinner = new JSpinner(tokenSpinnerModel);
-		tokenSpinner.setLocation(infPanelX+180, infPanelY);
-		tokenSpinner.setSize(60, 20);
+		tokenSpinner.setLocation(infPanelX+215, infPanelY);
+		tokenSpinner.setSize(45, 20);
 		tokenSpinner.setMaximumSize(new Dimension(60,20));
 		tokenSpinner.setMinimumSize(new Dimension(60,20));
 		if(mainSimulatorActive || problem) {
@@ -247,20 +247,20 @@ public class HolmesNodeInfo extends JFrame {
 		}
 		
 		JLabel inTransLabel = new JLabel(lang.getText("HNIwin_entryP011")); //IN-Trans:
-		inTransLabel.setBounds(infPanelX+250, infPanelY, 60, 20);
+		inTransLabel.setBounds(infPanelX+270, infPanelY, 75, 20);
 		infoPanel.add(inTransLabel);
 		
 		JFormattedTextField inTransTextBox = new JFormattedTextField(inTrans);
-		inTransTextBox.setBounds(infPanelX+310, infPanelY, 30, 20);
+		inTransTextBox.setBounds(infPanelX+345, infPanelY, 30, 20);
 		inTransTextBox.setEditable(false);
 		infoPanel.add(inTransTextBox);
 		
 		JLabel outTransLabel = new JLabel(lang.getText("HNIwin_entryP012")); //OUT-Trans:
-		outTransLabel.setBounds(infPanelX+345, infPanelY, 65, 20);
+		outTransLabel.setBounds(infPanelX+380, infPanelY, 75, 20);
 		infoPanel.add(outTransLabel);
 		
 		JFormattedTextField outTransTextBox = new JFormattedTextField(outTrans);
-		outTransTextBox.setBounds(infPanelX+420, infPanelY, 30, 20);
+		outTransTextBox.setBounds(infPanelX+465, infPanelY, 30, 20);
 		outTransTextBox.setEditable(false);
 		infoPanel.add(outTransTextBox);
 		
@@ -526,7 +526,7 @@ public class HolmesNodeInfo extends JFrame {
 		//panel informacji podstawowych
 		JPanel infoPanel = new JPanel(null);
 		infoPanel.setBounds(mPanelX, mPanelY, 580, 130);
-		infoPanel.setBorder(BorderFactory.createTitledBorder("Transition general information:")); //Transition general information
+		infoPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNIwin_entryT036"))); //Transition general information
 		
 		int infPanelX = 10;
 		int infPanelY = 20;
@@ -544,7 +544,7 @@ public class HolmesNodeInfo extends JFrame {
 		infoPanel.add(idTextBox);
 		
 		JLabel portalLabel = new JLabel(lang.getText("HNIwin_entryT022")); //Portal
-		portalLabel.setBounds(infPanelX+60, infPanelY, 40, 20);
+		portalLabel.setBounds(infPanelX+60, infPanelY, 50, 20);
 		infoPanel.add(portalLabel);
 		
 		String port = lang.getText("no");
@@ -552,16 +552,16 @@ public class HolmesNodeInfo extends JFrame {
 			port = lang.getText("yes");
 		
 		JLabel portalLabel2 = new JLabel(port);
-		portalLabel2.setBounds(infPanelX+100, infPanelY, 30, 20);
+		portalLabel2.setBounds(infPanelX+110, infPanelY, 40, 20);
 		infoPanel.add(portalLabel2);
 		
 		JLabel avgFiredLabel = new JLabel(lang.getText("HNIwin_entryT023"), JLabel.LEFT); //Avg.f.:
-		avgFiredLabel.setBounds(infPanelX+130, infPanelY, 50, 20);
+		avgFiredLabel.setBounds(infPanelX+160, infPanelY, 50, 20);
         infoPanel.add(avgFiredLabel);
         
         avgFiredTextBox = new JFormattedTextField(id);
         //wypełnianie niżej
-        avgFiredTextBox.setBounds(infPanelX+180, infPanelY, 50, 20);
+        avgFiredTextBox.setBounds(infPanelX+215, infPanelY, 50, 20);
         avgFiredTextBox.setEditable(false);
 		infoPanel.add(avgFiredTextBox);
 		
@@ -573,20 +573,20 @@ public class HolmesNodeInfo extends JFrame {
 		}
 		
 		JLabel prePlaceLabel = new JLabel(lang.getText("HNIwin_entryT024")); //PRE-Place:
-		prePlaceLabel.setBounds(infPanelX+235, infPanelY, 65, 20);
+		prePlaceLabel.setBounds(infPanelX+270, infPanelY, 75, 20);
 		infoPanel.add(prePlaceLabel);
 		
 		JFormattedTextField prePlaceTextBox = new JFormattedTextField(preP);
-		prePlaceTextBox.setBounds(infPanelX+300, infPanelY, 30, 20);
+		prePlaceTextBox.setBounds(infPanelX+345, infPanelY, 30, 20);
 		prePlaceTextBox.setEditable(false);
 		infoPanel.add(prePlaceTextBox);
 		
 		JLabel postPlaceLabel = new JLabel(lang.getText("HNIwin_entryT025")); //POST-Place:
-		postPlaceLabel.setBounds(infPanelX+335, infPanelY, 75, 20);
+		postPlaceLabel.setBounds(infPanelX+380, infPanelY, 75, 20);
 		infoPanel.add(postPlaceLabel);
 		
 		JFormattedTextField postPlaceTextBox = new JFormattedTextField(postP);
-		postPlaceTextBox.setBounds(infPanelX+420, infPanelY, 30, 20);
+		postPlaceTextBox.setBounds(infPanelX+465, infPanelY, 30, 20);
 		postPlaceTextBox.setEditable(false);
 		infoPanel.add(postPlaceTextBox);
 		

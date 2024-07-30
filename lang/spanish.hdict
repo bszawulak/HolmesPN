@@ -168,7 +168,7 @@ DM_menuView, Ver
 DM_menuViewZoom100, Zoom 100%
 DM_menuViewZoomIn, Aumentar zoom 10%
 DM_menuViewZoomOut, Disminuir zoom 10%
-DM_menuWindows, Ventanas
+DM_menuWindows, Ajustes
 DM_menuWindowsProject, Proyecto
 DM_menuWindowsConsole, Consola de registro
 DM_menuWindowsProperties, Propiedades
@@ -746,6 +746,8 @@ HDWT_entry308QuickSim, Administrador de estados
 HDWT_entry309QuickSim, <html><center>Restablecer<br>estado p</center></html>
 HDWT_entry310QuickSim, <html><center>Guardar<br>estado p</center></html>
 HDWT_entry311QuickSim, Retraso de tokens:
+HDWT_entry312QuickSim, Ajustes
+HDWT_entry313QuickSim, Inicio Sim
 
 //DecoCalccalculator:
 DCC_entry001, Por favor elija el tipo de comparación
@@ -2423,7 +2425,7 @@ HNIwin_entryT005, Análisis
 HNIwin_entryT005t, Panel de análisis
 HNIwin_entryM006title, MetaNodo:
 LOGentry00478exception, Excepción (1000213): HolmesNodeInfo.initializeCommon() falló:
-HNIwin_entryP007, Información general del lugar:
+HNIwin_entryP007, Información general del lugar
 HNIwin_entryP008, ID:
 HNIwin_entryP009, Portal:
 HNIwin_entryP010, Tokens:
@@ -2469,6 +2471,7 @@ HNIwin_entryT034op2, Red de Petri Temporal
 HNIwin_entryT034op3, Modo Híbrido
 HNIwin_entryT035, Gráfico no disponible, el simulador principal está activo.
 LOGentry00483, No se pueden reunir %d vectores de datos (lugares) del mismo tamaño. El simulador de estado no puede proceder %d pasos. El primer pase tuvo: %d pasos.
+HNIwin_entryT036, Información general del transición
 
 //HolmesNodeInfoActions:
 HNIAwin_entry001, Invariante
@@ -2605,6 +2608,8 @@ HPPwinSYS_entry054, SuIdioma
 HPPwinSYS_entry055, Alemán
 HPPwinSYS_entry056, Español
 HPPwinSYS_entry057, Ukraniano
+HPPwinSYS_entry058, Francés
+HPPwinSYS_entry059, Italiano
 
 //HolmesProgramPropertiesActions:
 HPPAwin_entry001, Seleccionar Rscript.exe
@@ -3391,7 +3396,7 @@ HNXTPN_entry016vis, <html>γ:visible</html>
 HNXTPN_entry016invis, <html>γ:oculto</html>
 HNXTPN_entry017, γ (min/máx):
 HNXTPN_entry018, Tokens:
-HNXTPN_entry019, <html>Ventana de tokens</html>
+HNXTPN_entry019, <html>Tokens</html>
 HNXTPN_entry020, Número actual:
 HNXTPN_entry021, Gráfico de lugares
 LOGentry00595exception, Excepción (1000313): HolmesNodeInfoXTPN.initializePlaceInfo() falló:

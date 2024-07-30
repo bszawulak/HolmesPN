@@ -309,7 +309,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         //************************* NEWLINE *************************
 
         JLabel portalLabel = new JLabel(lang.getText("HNXTPN_entry010")); //Portal:
-        portalLabel.setBounds(infPanelX, infPanelY, 40, 20);
+        portalLabel.setBounds(infPanelX, infPanelY, 50, 20);
         infoPanel.add(portalLabel);
 
         String port = lang.getText("no");
@@ -317,7 +317,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             port = lang.getText("yes");
 
         JLabel portalLabel2 = new JLabel(port);
-        portalLabel2.setBounds(infPanelX+40, infPanelY, 30, 20);
+        portalLabel2.setBounds(infPanelX+50, infPanelY, 35, 20);
         infoPanel.add(portalLabel2);
 
         int inTrans = 0;
@@ -328,20 +328,20 @@ public class HolmesNodeInfoXTPN extends JFrame {
         }
 
         JLabel inTransLabel = new JLabel(lang.getText("HNXTPN_entry011")); //Input transitions:
-        inTransLabel.setBounds(infPanelX+60, infPanelY, 120, 20);
+        inTransLabel.setBounds(infPanelX+90, infPanelY, 120, 20);
         infoPanel.add(inTransLabel);
 
         JFormattedTextField inTransTextBox = new JFormattedTextField(inTrans);
-        inTransTextBox.setBounds(infPanelX+160, infPanelY, 25, 20);
+        inTransTextBox.setBounds(infPanelX+215, infPanelY, 25, 20);
         inTransTextBox.setEditable(false);
         infoPanel.add(inTransTextBox);
 
         JLabel outTransLabel = new JLabel(lang.getText("HNXTPN_entry012")); //Output transitions:
-        outTransLabel.setBounds(infPanelX+190, infPanelY, 120, 20);
+        outTransLabel.setBounds(infPanelX+245, infPanelY, 130, 20);
         infoPanel.add(outTransLabel);
 
         JFormattedTextField outTransTextBox = new JFormattedTextField(outTrans);
-        outTransTextBox.setBounds(infPanelX+310, infPanelY, 30, 20);
+        outTransTextBox.setBounds(infPanelX+380, infPanelY, 30, 20);
         outTransTextBox.setEditable(false);
         infoPanel.add(outTransTextBox);
 
@@ -676,7 +676,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         chartButtonPanel.add(simMode);
 
         JCheckBox simPlaceRepsCheckbox = new JCheckBox(lang.getText("HNXTPN_entry028")); //Reps:
-        simPlaceRepsCheckbox.setBounds(positionX+295, positionY-15, 70, 15);
+        simPlaceRepsCheckbox.setBounds(positionX+295, positionY-15, 100, 15);
         simPlaceRepsCheckbox.setSelected(simulateTime);
         simPlaceRepsCheckbox.setBackground(Color.WHITE);
         simPlaceRepsCheckbox.addItemListener(e -> {
@@ -689,7 +689,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         SpinnerModel simStepsRepeatedSpinnerModel = new SpinnerNumberModel(simPlaceNumberOfReps, 1, 100, 10);
         JSpinner simStepsRepeatedSpinner = new JSpinner(simStepsRepeatedSpinnerModel);
-        simStepsRepeatedSpinner.setBounds(positionX+300, positionY, 70, 25);
+        simStepsRepeatedSpinner.setBounds(positionX+300, positionY, 80, 25);
         simStepsRepeatedSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             simPlaceNumberOfReps = (int) spinner.getValue();
@@ -698,12 +698,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
 
         JLabel simPlaceIntervalLabel = new JLabel(lang.getText("HNXTPN_entry029")); //Interval:
-        simPlaceIntervalLabel.setBounds(positionX+380, positionY-15, 80, 15);
+        simPlaceIntervalLabel.setBounds(positionX+410, positionY-15, 90, 15);
         chartButtonPanel.add(simPlaceIntervalLabel);
 
         SpinnerModel simIntervalSpinnerModel = new SpinnerNumberModel(simPlaceInterval, 1, 1000, 10);
         JSpinner simIntervalSpinner = new JSpinner(simIntervalSpinnerModel);
-        simIntervalSpinner.setBounds(positionX+380, positionY, 60, 25);
+        simIntervalSpinner.setBounds(positionX+410, positionY, 60, 25);
         simIntervalSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             simPlaceInterval = (int) spinner.getValue();
@@ -1007,7 +1007,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         //************************* NEWLINE *************************
 
         JLabel portalLabel = new JLabel(lang.getText("HNXTPN_entry038")); //Portal:
-        portalLabel.setBounds(infPanelX, infPanelY, 40, 20);
+        portalLabel.setBounds(infPanelX, infPanelY, 50, 20);
         infoPanel.add(portalLabel);
 
         String port = lang.getText("no"); //no
@@ -1015,7 +1015,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             port = lang.getText("yes"); //yes
 
         JLabel portalLabel2 = new JLabel(port);
-        portalLabel2.setBounds(infPanelX+40, infPanelY, 30, 20);
+        portalLabel2.setBounds(infPanelX+50, infPanelY, 35, 20);
         infoPanel.add(portalLabel2);
 
         int preP = 0;
@@ -1026,20 +1026,20 @@ public class HolmesNodeInfoXTPN extends JFrame {
         }
 
         JLabel prePlaceLabel = new JLabel(lang.getText("HNXTPN_entry039")); //Input places:
-        prePlaceLabel.setBounds(infPanelX+60, infPanelY, 120, 20);
+        prePlaceLabel.setBounds(infPanelX+90, infPanelY, 120, 20);
         infoPanel.add(prePlaceLabel);
 
         JFormattedTextField prePlaceTextBox = new JFormattedTextField(preP);
-        prePlaceTextBox.setBounds(infPanelX+160, infPanelY, 25, 20);
+        prePlaceTextBox.setBounds(infPanelX+210, infPanelY, 25, 20);
         prePlaceTextBox.setEditable(false);
         infoPanel.add(prePlaceTextBox);
 
         JLabel postPlaceLabel = new JLabel(lang.getText("HNXTPN_entry040")); //Output places:
-        postPlaceLabel.setBounds(infPanelX+190, infPanelY, 120, 20);
+        postPlaceLabel.setBounds(infPanelX+240, infPanelY, 120, 20);
         infoPanel.add(postPlaceLabel);
 
         JFormattedTextField postPlaceTextBox = new JFormattedTextField(postP);
-        postPlaceTextBox.setBounds(infPanelX+310, infPanelY, 30, 20);
+        postPlaceTextBox.setBounds(infPanelX+365, infPanelY, 30, 20);
         postPlaceTextBox.setEditable(false);
         infoPanel.add(postPlaceTextBox);
 
@@ -1512,7 +1512,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         chartButtonPanel.add(simMode);
 
         JCheckBox simTransRepsCheckbox = new JCheckBox(lang.getText("HNXTPN_entry061")); //Reps:
-        simTransRepsCheckbox.setBounds(positionX+295, positionY-15, 70, 15);
+        simTransRepsCheckbox.setBounds(positionX+295, positionY-15, 100, 15);
         simTransRepsCheckbox.setSelected(simulateTime);
         simTransRepsCheckbox.setBackground(Color.WHITE);
         simTransRepsCheckbox.addItemListener(e -> {
@@ -1525,7 +1525,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         SpinnerModel simTransStepsRepeatedSpinnerModel = new SpinnerNumberModel(simPlaceNumberOfReps, 1, 100, 10);
         JSpinner simTransStepsRepeatedSpinner = new JSpinner(simTransStepsRepeatedSpinnerModel);
-        simTransStepsRepeatedSpinner.setBounds(positionX+300, positionY, 70, 25);
+        simTransStepsRepeatedSpinner.setBounds(positionX+300, positionY, 80, 25);
         simTransStepsRepeatedSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             simTransNumberOfReps = (int) spinner.getValue();
@@ -1533,12 +1533,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
         chartButtonPanel.add(simTransStepsRepeatedSpinner);
 
         JLabel simTransIntervalLabel = new JLabel(lang.getText("HNXTPN_entry062")); //Interval:
-        simTransIntervalLabel.setBounds(positionX+380, positionY-15, 80, 15);
+        simTransIntervalLabel.setBounds(positionX+410, positionY-15, 90, 15);
         chartButtonPanel.add(simTransIntervalLabel);
 
         SpinnerModel simTransIntervalSpinnerModel = new SpinnerNumberModel(simPlaceInterval, 1, 1000, 10);
         JSpinner simTransIntervalSpinner = new JSpinner(simTransIntervalSpinnerModel);
-        simTransIntervalSpinner.setBounds(positionX+380, positionY, 60, 25);
+        simTransIntervalSpinner.setBounds(positionX+410, positionY, 60, 25);
         simTransIntervalSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
             simTransInterval = (int) spinner.getValue();

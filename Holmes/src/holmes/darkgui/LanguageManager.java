@@ -47,6 +47,8 @@ public class LanguageManager {
                 currentDictionary = defaultDictionary;
             }
         }
+
+        CheckDictionaryIntegrity();
     }
     
     public String getSelectedLanguage() {
@@ -155,7 +157,7 @@ public class LanguageManager {
                     int comma = currentLine.indexOf(",");
                     if(comma == -1) continue;
                     String[] parts = {currentLine.substring(0, comma), currentLine.substring(comma+1)};
-
+                    
                     if(dictionary.containsKey(parts[0])) {
                         overlord.log("Duplicate entry "+ parts[0] +" in language file: " + dictPath, "error", false);
                     } else {
@@ -179,5 +181,22 @@ public class LanguageManager {
         }
 
         return dictionary;
+    }
+
+    /**
+     * Metoda iteruje po wszystkich tagach defaultDictionary i sprawdza czy są w currentDictionary
+     * we wszystkich językach one występują. Wypisuje dla każdego języka brakujące tagi.
+     */
+    private void CheckDictionaryIntegrity() {
+        for(HashMap.Entry<String, HashMap<String, String>> languagesEntry : loadedLanguages.entrySet()) { //dla każdego języka
+            HashMap<String, String> language = languagesEntry.getValue();
+            String langName = languagesEntry.getKey();
+            for(HashMap.Entry<String, String> entry : defaultDictionary.entrySet())  { //dla każdego tagu w defaultDictionary
+                String dafultKey = entry.getKey();
+                if(!language.containsKey(dafultKey)) { //jeżeli tag nie istnieje w języku
+                    overlord.log(langName + " missing tag: " + dafultKey, "error", false);
+                }
+            }
+        }
     }
 }

@@ -168,7 +168,7 @@ DM_menuView, Перегляд
 DM_menuViewZoom100, Збільшення 100%
 DM_menuViewZoomIn, Збільшити на 10%
 DM_menuViewZoomOut, Зменшити на 10%
-DM_menuWindows, Вікна
+DM_menuWindows, Налаштування
 DM_menuWindowsProject, Проект
 DM_menuWindowsConsole, Консоль журналу
 DM_menuWindowsProperties, Властивості
@@ -746,6 +746,8 @@ HDWT_entry308QuickSim, Менеджер станів
 HDWT_entry309QuickSim, <html><center>Скинути<br>p-стан</center></html>
 HDWT_entry310QuickSim, <html><center>Зберегти<br>p-стан</center></html>
 HDWT_entry311QuickSim, Затримка токенів:
+HDWT_entry312QuickSim, Налаштування
+HDWT_entry313QuickSim, Sim Початок
 
 //DecoCalccalculator:
 DCC_entry001, Будь ласка, виберіть тип порівняння
@@ -2423,7 +2425,7 @@ HNIwin_entryT005, Аналіз
 HNIwin_entryT005t, Панель аналізу
 HNIwin_entryM006title, МетаВузол:
 LOGentry00478exception, Виняток (1000213): HolmesNodeInfo.initializeCommon() не вдалося:
-HNIwin_entryP007, Загальна інформація про місце:
+HNIwin_entryP007, Загальна інформація про місце
 HNIwin_entryP008, ID:
 HNIwin_entryP009, Портал:
 HNIwin_entryP010, Токени:
@@ -2469,6 +2471,7 @@ HNIwin_entryT034op2, Часова мережа Петрі
 HNIwin_entryT034op3, Гібридний режим
 HNIwin_entryT035, Графік недоступний, основний симулятор активний.
 LOGentry00483, Неможливо зібрати %d векторів даних (місць) однакового розміру. Симулятор стану не може виконати %d кроків. Перший прохід мав: %d кроків.
+HNIwin_entryT036, Загальна інформація про перехід
 
 //HolmesNodeInfoActions:
 HNIAwin_entry001, Інваріант
@@ -2605,6 +2608,8 @@ HPPwinSYS_entry054, Ваша мова
 HPPwinSYS_entry055, Німецька
 HPPwinSYS_entry056, Іспанська
 HPPwinSYS_entry057, Українська
+HPPwinSYS_entry058, Французька
+HPPwinSYS_entry059, Італійська
 
 //HolmesProgramPropertiesActions:
 HPPAwin_entry001, Виберіть Rscript.exe
@@ -3391,7 +3396,7 @@ HNXTPN_entry016vis, <html>γ:видимий</html>
 HNXTPN_entry016invis, <html>γ:прихований</html>
 HNXTPN_entry017, γ (мін/макс):
 HNXTPN_entry018, Токени:
-HNXTPN_entry019, <html>Вікно токенів</html>
+HNXTPN_entry019, <html>Токені</html>
 HNXTPN_entry020, Поточна кількість:
 HNXTPN_entry021, Графік місць
 LOGentry00595exception, Виняток (1000313): HolmesNodeInfoXTPN.initializePlaceInfo() не вдалося:

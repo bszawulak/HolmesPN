@@ -168,7 +168,7 @@ DM_menuView, Ansicht
 DM_menuViewZoom100, Zoom 100%
 DM_menuViewZoomIn, Zoom um 10% erhöhen
 DM_menuViewZoomOut, Zoom um 10% verringern
-DM_menuWindows, Fenster
+DM_menuWindows, Einstellungen
 DM_menuWindowsProject, Projekt
 DM_menuWindowsConsole, Protokollkonsole
 DM_menuWindowsProperties, Eigenschaften
@@ -746,6 +746,8 @@ HDWT_entry308QuickSim, Zustandsmanager
 HDWT_entry309QuickSim, <html><center>Ort<br>zurücksetzen</center></html>
 HDWT_entry310QuickSim, <html><center>Ort<br>speichern</center></html>
 HDWT_entry311QuickSim, Token-Verzögerung:
+HDWT_entry312QuickSim, Sim-Einstellungen
+HDWT_entry313QuickSim, Sim-Start
 
 //DecoCalccalculator:
 DCC_entry001, Bitte wählen Sie den Vergleichstyp
@@ -2423,7 +2425,7 @@ HNIwin_entryT005, Analyse
 HNIwin_entryT005t, Analyse-Panel
 HNIwin_entryM006title, MetaNode:
 LOGentry00478exception, Ausnahme (1000213): HolmesNodeInfo.initializeCommon() fehlgeschlagen:
-HNIwin_entryP007, Allgemeine Informationen zum Ort:
+HNIwin_entryP007, Allgemeine Informationen zum Ort
 HNIwin_entryP008, ID:
 HNIwin_entryP009, Portal:
 HNIwin_entryP010, Tokens:
@@ -2469,6 +2471,7 @@ HNIwin_entryT034op2, Time Petri Net
 HNIwin_entryT034op3, Hybrid mode
 HNIwin_entryT035, Diagramm nicht verfügbar, Haupt-Simulator ist aktiv.
 LOGentry00483, Kann %d Datenvektoren (Orte) gleicher Größe nicht sammeln. Der Zustandssimulator kann nicht %d Schritte fortsetzen. Der erste Durchgang hatte: %d Schritte.
+HNIwin_entryT036, Allgemeine Informationen zur Transition
 
 //HolmesNodeInfoActions:
 HNIAwin_entry001, Invariante
@@ -2605,6 +2608,8 @@ HPPwinSYS_entry054, IhreSprache
 HPPwinSYS_entry055, Deutsch
 HPPwinSYS_entry056, Spanisch
 HPPwinSYS_entry057, Ukrainisch
+HPPwinSYS_entry058, Französisch
+HPPwinSYS_entry059, Italienisch
 
 //HolmesProgramPropertiesActions:
 HPPAwin_entry001, Wählen Sie Rscript.exe
@@ -3391,7 +3396,7 @@ HNXTPN_entry016vis, <html>γ:sichtbar</html>
 HNXTPN_entry016invis, <html>γ:versteckt</html>
 HNXTPN_entry017, γ (min/max):
 HNXTPN_entry018, Token:
-HNXTPN_entry019, <html>Tokenfenster</html>
+HNXTPN_entry019, <html>Token</html>
 HNXTPN_entry020, Aktuelle Anzahl:
 HNXTPN_entry021, Ortsdiagramm
 LOGentry00595exception, Ausnahme (1000313): HolmesNodeInfoXTPN.initializePlaceInfo() fehlgeschlagen:

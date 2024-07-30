@@ -104,23 +104,28 @@ public class HolmesAbout extends JFrame {
 		
 		JLabel nameLabel = new JLabel("Holmes v1.7.1"); // Harry du Bois edition
 		nameLabel.setFont(new Font("Consolas", Font.PLAIN, 25));
-		nameLabel.setBounds(170, 30, 300, 40);
+		nameLabel.setBounds(170, 20, 300, 40);
 		panel.add(nameLabel);
 		
 		JLabel nameLabel1b = new JLabel("Petri nets editor and analyzer");
 		nameLabel1b.setFont(new Font("Consolas", Font.PLAIN, 18));
-		nameLabel1b.setBounds(170, 50, 300, 40);
+		nameLabel1b.setBounds(170, 40, 300, 30);
 		panel.add(nameLabel1b);
 		
-		JLabel nameLabel2 = new JLabel("[build 16-07-2024]");
-		nameLabel2.setFont(new Font("Consolas", Font.PLAIN, 14));
-		nameLabel2.setBounds(170, 90, 330, 40);
+		JLabel nameLabel2 = new JLabel("[build 30-07-2024]");
+		nameLabel2.setFont(new Font("Consolas", Font.PLAIN, 12));
+		nameLabel2.setBounds(170, 80, 330, 15);
 		panel.add(nameLabel2);
 		
-		JLabel nameLabel3 = new JLabel("stable release with subnets");
-		nameLabel3.setFont(new Font("Consolas", Font.PLAIN, 14));
-		nameLabel3.setBounds(170, 110, 330, 40);
+		JLabel nameLabel3 = new JLabel("Release edition: \"Harrier du Buis\"");
+		nameLabel3.setFont(new Font("Consolas", Font.BOLD, 14));
+		nameLabel3.setBounds(170, 95, 330, 15);
 		panel.add(nameLabel3);
+
+		JLabel nameLabel3b = new JLabel("Subnets, MCS, Language (AI translated)");
+		nameLabel3b.setFont(new Font("Consolas", Font.PLAIN, 12));
+		nameLabel3b.setBounds(170, 110, 330, 15);
+		panel.add(nameLabel3b);
 		
 		JLabel nameLabel4 = new JLabel("(Scroll for authors, versions and libraries");
 		nameLabel4.setFont(new Font("Consolas", Font.ITALIC, 12));
