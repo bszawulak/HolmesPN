@@ -263,9 +263,9 @@ public class HolmesProgramProperties extends JFrame {
 	 */
 	@SuppressWarnings("SameParameterValue")
 	private JPanel createLanguagesSelectionPanel(int x, int y, int w, int h) {
-		JPanel ioPanel = new JPanel(null);
-		ioPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSYS_entry050"))); //Other options
-		ioPanel.setBounds(x, y, w, h);
+		JPanel langSelectionPanel = new JPanel(null);
+		langSelectionPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSYS_entry050"))); //Other options
+		langSelectionPanel.setBounds(x, y, w, h);
 		
 		int posX = 10;
 		int posY = 20;
@@ -274,14 +274,14 @@ public class HolmesProgramProperties extends JFrame {
 		//JPanel langPanel = new JPanel(null);
 		//langPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSYS_entry050"))); //Language:
 		//langPanel.setBounds(10, 20, 200, 110);
-		//ioPanel.add(langPanel);
+		//langSelectionPanel.add(langPanel);
 
 		//PRZYCISK ANGIELSKI:
 		try {
 			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/english.png"));
 			JLabel flagLabelEN = new JLabel(new ImageIcon(image));
 			flagLabelEN.setBounds(posX, posY, 38, 20);
-			ioPanel.add(flagLabelEN);
+			langSelectionPanel.add(flagLabelEN);
 		} catch (Exception ex) {
 			overlord.log(ex.getMessage(), "error", true);
 		}
@@ -305,14 +305,14 @@ public class HolmesProgramProperties extends JFrame {
 					JOptionPane.INFORMATION_MESSAGE);
 		});
 		group.add(englishRadioButton);
-		ioPanel.add(englishRadioButton);
+		langSelectionPanel.add(englishRadioButton);
 
 		//PRZYCISK POLSKI:
 		try {
 			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/poland.png"));
 			JLabel flagLabelPL = new JLabel(new ImageIcon(image));
 			flagLabelPL.setBounds(posX+=100, posY, 38, 20);
-			ioPanel.add(flagLabelPL);
+			langSelectionPanel.add(flagLabelPL);
 		} catch (Exception ex) {
 			overlord.log(ex.getMessage(), "error", true);
 		}
@@ -335,14 +335,14 @@ public class HolmesProgramProperties extends JFrame {
 					JOptionPane.INFORMATION_MESSAGE);
 		});
 		group.add(polishRadioButton);
-		ioPanel.add(polishRadioButton);
+		langSelectionPanel.add(polishRadioButton);
 
 		//PRZYCISK NIEMIECKI:
 		try {
 			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/germany.png"));
 			JLabel flagLabelMNT = new JLabel(new ImageIcon(image));
 			flagLabelMNT.setBounds(posX+=100, posY, 38, 20);
-			ioPanel.add(flagLabelMNT);
+			langSelectionPanel.add(flagLabelMNT);
 		} catch (Exception ex) {
 			overlord.log(ex.getMessage(), "error", true);
 		}
@@ -365,14 +365,14 @@ public class HolmesProgramProperties extends JFrame {
 					JOptionPane.INFORMATION_MESSAGE);
 		});
 		group.add(germanRadioButton);
-		ioPanel.add(germanRadioButton);
+		langSelectionPanel.add(germanRadioButton);
 
 		//PRZYCISK HISZPANSKI:
 		try {
 			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/spain.png"));
 			JLabel flagLabelMNT = new JLabel(new ImageIcon(image));
 			flagLabelMNT.setBounds(posX+=100, posY, 38, 20);
-			ioPanel.add(flagLabelMNT);
+			langSelectionPanel.add(flagLabelMNT);
 		} catch (Exception ex) {
 			overlord.log(ex.getMessage(), "error", true);
 		}
@@ -395,7 +395,7 @@ public class HolmesProgramProperties extends JFrame {
 					JOptionPane.INFORMATION_MESSAGE);
 		});
 		group.add(spainRadioButton);
-		ioPanel.add(spainRadioButton);
+		langSelectionPanel.add(spainRadioButton);
 
 		posX = 10;
 		posY+=40;
@@ -405,7 +405,7 @@ public class HolmesProgramProperties extends JFrame {
 			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/ukraine.png"));
 			JLabel flagLabelMNT = new JLabel(new ImageIcon(image));
 			flagLabelMNT.setBounds(posX, posY, 38, 20);
-			ioPanel.add(flagLabelMNT);
+			langSelectionPanel.add(flagLabelMNT);
 		} catch (Exception ex) {
 			overlord.log(ex.getMessage(), "error", true);
 		}
@@ -428,14 +428,14 @@ public class HolmesProgramProperties extends JFrame {
 					JOptionPane.INFORMATION_MESSAGE);
 		});
 		group.add(ukrainianRadioButton);
-		ioPanel.add(ukrainianRadioButton);
+		langSelectionPanel.add(ukrainianRadioButton);
 
 		//PRZYCISK FRANCUSKI:
 		try {
 			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/france.png"));
 			JLabel flagLabelMNT = new JLabel(new ImageIcon(image));
 			flagLabelMNT.setBounds(posX+=100, posY, 38, 20);
-			ioPanel.add(flagLabelMNT);
+			langSelectionPanel.add(flagLabelMNT);
 		} catch (Exception ex) {
 			overlord.log(ex.getMessage(), "error", true);
 		}
@@ -458,7 +458,7 @@ public class HolmesProgramProperties extends JFrame {
 					JOptionPane.INFORMATION_MESSAGE);
 		});
 		group.add(frenchRadioButton);
-		ioPanel.add(frenchRadioButton);
+		langSelectionPanel.add(frenchRadioButton);
 
 
 		//PRZYCISK WŁOSKI
@@ -466,7 +466,7 @@ public class HolmesProgramProperties extends JFrame {
 			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/italy.png"));
 			JLabel flagLabelMNT = new JLabel(new ImageIcon(image));
 			flagLabelMNT.setBounds(posX+=100, posY, 38, 20);
-			ioPanel.add(flagLabelMNT);
+			langSelectionPanel.add(flagLabelMNT);
 		} catch (Exception ex) {
 			overlord.log(ex.getMessage(), "error", true);
 		}
@@ -489,7 +489,7 @@ public class HolmesProgramProperties extends JFrame {
 					JOptionPane.INFORMATION_MESSAGE);
 		});
 		group.add(italianRadioButton);
-		ioPanel.add(italianRadioButton);
+		langSelectionPanel.add(italianRadioButton);
 
 
 		//PRZYCISK TWOJ JEZYK:
@@ -497,7 +497,7 @@ public class HolmesProgramProperties extends JFrame {
 			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/yourlang.png"));
 			JLabel flagLabelMNT = new JLabel(new ImageIcon(image));
 			flagLabelMNT.setBounds(posX+=100, posY, 38, 20);
-			ioPanel.add(flagLabelMNT);
+			langSelectionPanel.add(flagLabelMNT);
 		} catch (Exception ex) {
 			overlord.log(ex.getMessage(), "error", true);
 		}
@@ -520,31 +520,22 @@ public class HolmesProgramProperties extends JFrame {
 					JOptionPane.INFORMATION_MESSAGE);
 		});
 		group.add(yourLangRadioButton);
-		ioPanel.add(yourLangRadioButton);
-		
-		
+		langSelectionPanel.add(yourLangRadioButton);
 		
 		String current = lang.getSelectedLanguage();
-		if(current.equals("English")) {
-			group.setSelected(englishRadioButton.getModel(), true);
-		} else if(current.equals("Polish")) {
-			group.setSelected(polishRadioButton.getModel(), true);
-		} else if(current.equals("German")) {
-			group.setSelected(germanRadioButton.getModel(), true);
-		} else if(current.equals("Spanish")) {
-			group.setSelected(spainRadioButton.getModel(), true);
-		} else if(current.equals("Ukrainian")) {
-			group.setSelected(ukrainianRadioButton.getModel(), true);
-		} else if(current.equals("French")) {
-			group.setSelected(frenchRadioButton.getModel(), true);
-		} else if(current.equals("Italian")) {
-			group.setSelected(italianRadioButton.getModel(), true);
-		} else {
-			group.setSelected(yourLangRadioButton.getModel(), true);
-		}
+        switch (current) {
+            case "English" -> group.setSelected(englishRadioButton.getModel(), true);
+            case "Polish" -> group.setSelected(polishRadioButton.getModel(), true);
+            case "German" -> group.setSelected(germanRadioButton.getModel(), true);
+            case "Spanish" -> group.setSelected(spainRadioButton.getModel(), true);
+            case "Ukrainian" -> group.setSelected(ukrainianRadioButton.getModel(), true);
+            case "French" -> group.setSelected(frenchRadioButton.getModel(), true);
+            case "Italian" -> group.setSelected(italianRadioButton.getModel(), true);
+            default -> group.setSelected(yourLangRadioButton.getModel(), true);
+        }
 		
 		noAction = false;
-		return ioPanel;
+		return langSelectionPanel;
 	}
 
 	/**
@@ -554,40 +545,119 @@ public class HolmesProgramProperties extends JFrame {
 	 * @return String - nazwa języka w postaci z aktualnego słownika
 	 */
 	private String changeKeyWordIntoLangWord(String selectedLanguage) {
-		if(selectedLanguage.equals("English")) {
-			return lang.getText("HPPwinSYS_entry051");
-		} else if(selectedLanguage.equals("Polish")) {
-			return lang.getText("HPPwinSYS_entry052");
-		} else if(selectedLanguage.equals("German")) {
-			return lang.getText("HPPwinSYS_entry055");
-		} else if(selectedLanguage.equals("Spanish")) {
-			return lang.getText("HPPwinSYS_entry056");
-		} else if(selectedLanguage.equals("Ukrainian")) {
-			return lang.getText("HPPwinSYS_entry057");
-		} else if(selectedLanguage.equals("France")) {
-			return lang.getText("HPPwinSYS_entry058");
-		} else if(selectedLanguage.equals("Italian")) {
-			return lang.getText("HPPwinSYS_entry059");
-		} else {
-			return lang.getText("HPPwinSYS_entry054");
-		}
+        return switch (selectedLanguage) {
+            case "English" -> lang.getText("HPPwinSYS_entry051");
+            case "Polish" -> lang.getText("HPPwinSYS_entry052");
+            case "German" -> lang.getText("HPPwinSYS_entry055");
+            case "Spanish" -> lang.getText("HPPwinSYS_entry056");
+            case "Ukrainian" -> lang.getText("HPPwinSYS_entry057");
+            case "France" -> lang.getText("HPPwinSYS_entry058");
+            case "Italian" -> lang.getText("HPPwinSYS_entry059");
+            default -> lang.getText("HPPwinSYS_entry054");
+        };
 	}
 
 	private Component createOtherOptionsPanel(int x, int y, int w, int h) {
-		JPanel ioPanel = new JPanel(null);
-		ioPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSYS_entry049"))); //Other options
-		ioPanel.setBounds(x, y, w, h);
+		JPanel otherOptPanel = new JPanel(null);
+		otherOptPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HPPwinSYS_entry049"))); //Other options
+		otherOptPanel.setBounds(x, y, w, h);
 
 		int posX = 10;
 		int posY = 20;
 		noAction = true;
 		
-		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry014"), posX, posY, 240, 20,
+		JCheckBox alignGridWhenSavedCheckBox = checkboxWizard(lang.getText("HPPwinSYS_entry014"), posX, posY, 120, 20,
 				"programDebugMode", true); //Debug mode
-		ioPanel.add(alignGridWhenSavedCheckBox);
+		otherOptPanel.add(alignGridWhenSavedCheckBox);
+
+		//********************************
+		
+		JSeparator sep = new JSeparator();
+		sep.setOrientation(SwingConstants.VERTICAL);
+		sep.setBounds(posX+140, posY, 2, 60);
+		otherOptPanel.add(sep);
+
+		JLabel testUILabel = new JLabel("HIGHLY experimental UI change");
+		testUILabel.setBounds(posX+150, posY, 200, 20);
+		otherOptPanel.add(testUILabel);
+
+		String strWarning = "IMPORTANT! This change will take effect after restart.\n" +
+				"\nEVEN MORE IMPORTANT: if after this Holmes do not start, either delete" +
+				"\nholmes.cfg file and restart OR (more subtle), set systemUI setting in" +
+				"\nholmes.cfg file into 0 (instead of any other number).";
+		
+		ButtonGroup group = new ButtonGroup();
+		JRadioButton uiButton0 = new JRadioButton("Standard");
+		uiButton0.setBounds(posX+150, posY+=20, 90, 20);
+		uiButton0.setActionCommand("0");
+		uiButton0.addActionListener(actionEvent -> {
+			if(noAction) return;
+			overlord.getSettingsManager().setValue("systemUI", "0", true);
+			JOptionPane.showMessageDialog(null, strWarning, lang.getText("warning"),
+					JOptionPane.WARNING_MESSAGE);
+		});
+		group.add(uiButton0);
+		otherOptPanel.add(uiButton0);
+		
+		JRadioButton uiButton1 = new JRadioButton("Nimbus");
+		uiButton1.setBounds(posX+245, posY, 90, 20);
+		uiButton1.setActionCommand("1");
+		uiButton1.addActionListener(actionEvent -> {
+			if(noAction) return;
+			overlord.getSettingsManager().setValue("systemUI", "1", true);
+			JOptionPane.showMessageDialog(null, strWarning, lang.getText("warning"),
+					JOptionPane.WARNING_MESSAGE);
+		});
+		group.add(uiButton1);
+		otherOptPanel.add(uiButton1);
+
+		JRadioButton uiButton2 = new JRadioButton("CDE/Motif");
+		uiButton2.setBounds(posX+340, posY, 90, 20);
+		uiButton2.setActionCommand("2");
+		uiButton2.addActionListener(actionEvent -> {
+			if(noAction) return;
+			overlord.getSettingsManager().setValue("systemUI", "2", true);
+			JOptionPane.showMessageDialog(null, strWarning, lang.getText("warning"),
+					JOptionPane.WARNING_MESSAGE);
+		});
+		group.add(uiButton2);
+		otherOptPanel.add(uiButton2);
+
+		JRadioButton uiButton3 = new JRadioButton("Windows");
+		uiButton3.setBounds(posX+150, posY+20, 90, 20);
+		uiButton3.setActionCommand("3");
+		uiButton3.addActionListener(actionEvent -> {
+			if(noAction) return;
+			overlord.getSettingsManager().setValue("systemUI", "3", true);
+			JOptionPane.showMessageDialog(null, strWarning, lang.getText("warning"),
+					JOptionPane.WARNING_MESSAGE);
+		});
+		group.add(uiButton3);
+		otherOptPanel.add(uiButton3);
+
+		JRadioButton uiButton4 = new JRadioButton("Windows classic");
+		uiButton4.setBounds(posX+245, posY+20, 140, 20);
+		uiButton4.setActionCommand("4");
+		uiButton4.addActionListener(actionEvent -> {
+			if(noAction) return;
+			overlord.getSettingsManager().setValue("systemUI", "4", true);
+			JOptionPane.showMessageDialog(null, strWarning, lang.getText("warning"),
+					JOptionPane.WARNING_MESSAGE);
+		});
+		group.add(uiButton4);
+		otherOptPanel.add(uiButton4);
+
+		String current = overlord.getSettingsManager().getValue("systemUI");
+        switch (current) {
+            case "0" -> group.setSelected(uiButton0.getModel(), true);
+            case "1" -> group.setSelected(uiButton1.getModel(), true);
+            case "2" -> group.setSelected(uiButton2.getModel(), true);
+            case "3" -> group.setSelected(uiButton3.getModel(), true);
+            default -> group.setSelected(uiButton4.getModel(), true);
+        }
 		
 		noAction = false;
-		return ioPanel;
+		return otherOptPanel;
 	}
 	
 	/**

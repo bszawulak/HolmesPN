@@ -651,7 +651,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             JButton statesButton = new JButton(lang.getText("HDWT_entry308QuickSim")); //States manager
             statesButton.setName("State manager");
-            statesButton.setIcon(Tools.getResIcon32("/icons/menu/menu_statesViewer.png"));
+            statesButton.setIcon(Tools.getResIcon32("/icons/stateManager/stManIcon.png"));
             statesButton.setBounds(internalX, internalY, 150, 40);
             statesButton.setToolTipText(lang.getText("HDWT_entry018PNsim"));
             statesButton.setEnabled(true);

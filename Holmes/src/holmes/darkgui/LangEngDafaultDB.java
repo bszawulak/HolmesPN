@@ -2618,7 +2618,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HPPwinSYS_entry050","Language");
         defaultEnglish.put("HPPwinSYS_entry051","English");
         defaultEnglish.put("HPPwinSYS_entry052","Polish");
-        defaultEnglish.put("HPPwinSYS_entry053","Language set to: %s (from %s). In order for changes to take effect, restart the program.");
+        defaultEnglish.put("HPPwinSYS_entry053","Language set to: %s (from %s). In order for changes to take effect, restart the program.%n%nImportant note: with the exception of the English version, the rest%nof the translations (as of July 2024) were done automatically by AI.%nWe apologize for the (temporary) strange expressions :)");
         defaultEnglish.put("HPPwinSYS_entry054","YourLang");
         defaultEnglish.put("HPPwinSYS_entry055","German");
         defaultEnglish.put("HPPwinSYS_entry056","Spanish");

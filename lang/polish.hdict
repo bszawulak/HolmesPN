@@ -2601,12 +2601,11 @@ HPPwinANAL_entry045, Zapisz t-inwarianty w CSV jako wektory binarne.
 HPPwinANAL_entry046, Pozwól na obecność regionów z łukami odczytu napędzanymi przez siebie
 HPPwinANAL_entry047, Opcje algorytmów klastrów
 HPPwinANAL_entry048, Wyeliminuj zestawy MCS niepośrednio połączone z tranzycją objR.
-
 HPPwinSYS_entry049, Inne opcje
 HPPwinSYS_entry050, Język
 HPPwinSYS_entry051, Angielski
 HPPwinSYS_entry052, Polski
-HPPwinSYS_entry053, Język ustawiony na: %s (z %s).%n%nAby zmiany zaczęły obowiązywać, zrestartuj program.
+HPPwinSYS_entry053, Język ustawiony na: %s (z %s).%n%nAby zmiany zaczęły obowiązywać, zrestartuj program.%n%nWażna uwaga: z wyjątkiem wersji angielskiej, reszta tłumaczeń%n(lipiec 2024 r.) została wykonana automatycznie przez AI.%nPrzepraszamy za (tymczasowe) dziwne wyrażenia :)
 HPPwinSYS_entry054, YourLang
 HPPwinSYS_entry055, Niemiecki
 HPPwinSYS_entry056, Hiszpański

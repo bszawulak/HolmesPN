@@ -197,6 +197,16 @@ public class SettingsManager {
         checkAndFix(settingsNew, "simLogEnabled", "0");
         checkAndFix(settingsNew, "editorShortNameLowerIndex", "0");
 
+        try {
+            String tmp = getValue("systemUI");
+            int test = Integer.parseInt(tmp);
+            if (test < 0 || test > 4)
+                throw new Exception();
+            settingsNew.add(new Setting("systemUI", test + ""));
+        } catch (Exception e) {
+            settingsNew.add(new Setting("systemUI", "0"));
+        }
+
         settings = new ArrayList<Setting>(settingsNew);
         writeSettingsFile();
     }

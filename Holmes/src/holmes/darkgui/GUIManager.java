@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.Serial;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 import javax.swing.*;
@@ -147,18 +146,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public GUIManager(JFrame frejm) {
 		super(new BorderLayout());
-		/*
-		try {
-			for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (Exception e) {
-			// If Nimbus is not available, you can set the GUI to another look and feel.
-		}
-		 */
 		//JavaDocking wysypuje się jeśli numer wersji nie posiada przynajmniej jednej .
 		//Piękny był to fuckup, nie zapomnę go nigdy [MR].
 		// [2024]Już nie ważne, ale zostawmy na pamiątkę.
@@ -188,6 +175,19 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		settingsManager = new SettingsManager();
 		settingsManager.loadSettings();
+		
+		setJavaUI(); 
+		
+		/*
+		ArrayList<String> installedLAFs = new ArrayList<>();
+		try {
+			for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				installedLAFs.add(info.getName() + " | " + info.getClassName());
+			}
+		} catch (Exception e) {	
+		}*/
+		
+		
 		frame.setTitle("Holmes "+settingsManager.getValue("holmes_version"));
 		lang.setLanguage(settingsManager.getValue("selected_language"), true);
 		
@@ -419,6 +419,80 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		//getSimulatorBox().createSimulatorProperties(false);
 		getFrame().repaint();
+		
+		
+		//for(String str : installedLAFs) {
+		//	log("Look and feel: "+str, "text", false);
+		//}
+	}
+
+	/**
+	 * Metoda ustawia grafikę intefejsu programu z pakietów UIManager Java.
+	 */
+	private void setJavaUI() {
+		String current = getSettingsManager().getValue("systemUI");
+        switch (current) {
+            case "1" -> {
+                try {
+                    for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if ("Nimbus".equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    try {
+                        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    } catch (Exception ignored) {
+                    }
+                }  //Nimbus
+            }
+            case "2" -> {
+                try {
+                    for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if ("CDE/Motif".equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    try {
+                        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    } catch (Exception ignored) {
+                    }
+                } // CDE/Motif
+            }
+            case "3" -> {
+                try {
+                    for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if ("Windows".equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    try {
+                        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    } catch (Exception ignored) {
+                    }
+                }  //Windows
+            }
+            case "4" -> {
+                try {
+                    for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if ("Windows Classic".equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    try {
+                        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    } catch (Exception ignored) {
+                    }
+                }  //Windows Classic
+            }
+        } 
 	}
 
 	/**

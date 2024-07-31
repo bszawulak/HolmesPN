@@ -48,6 +48,8 @@ public class StateSimulatorXTPN implements Runnable {
     public JProgressBar progressBar;//pasek postępu symulacji
     private HolmesSimXTPN boss;    //okno nadrzędne symulatora
     private QuickSimTools quickSim;
+    
+    private int pBarProgress = 0;
 
     /**
      * Główny konstruktor obiektu klasy StateSimulator.
@@ -698,7 +700,7 @@ public class StateSimulatorXTPN implements Runnable {
         ArrayList<ArrayList<Double>> tokensInSteps = new ArrayList<>();
         ArrayList<Double> avgTimeForStep = new ArrayList<>();
         Date dateStart = new Date();
-
+        
         //powtórzenia symulacji:
         int repetitionsValue = sg.getSimRepetitions_XTPN();
 
@@ -749,6 +751,14 @@ public class StateSimulatorXTPN implements Runnable {
                         if (step % tenth == 0 && maxUpdate < 10) {
                             progressBar.setValue(progress++);
                             progressBar.update(progressBar.getGraphics());
+                            /*
+                            pBarProgress = progress++;
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    progressBar.setValue(pBarProgress);
+                                    progressBar.update(progressBar.getGraphics());
+                                }
+                            });*/
                             maxUpdate++;
                         }
                         continue;
@@ -865,6 +875,14 @@ public class StateSimulatorXTPN implements Runnable {
                 if (step % tenth == 0 && maxUpdate < 10) {
                     progressBar.setValue(progress++);
                     progressBar.update(progressBar.getGraphics());
+                    /*
+                    pBarProgress = progress++;
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            progressBar.setValue(pBarProgress);
+                            progressBar.update(progressBar.getGraphics());
+                        }
+                    });*/
                     maxUpdate++;
                 }
             }
@@ -888,8 +906,16 @@ public class StateSimulatorXTPN implements Runnable {
                 trans.simHistoryXTPN.storeHistory = true;
             }
         }
+
         progressBar.setValue(repetitionsValue * 10);
         progressBar.update(progressBar.getGraphics());
+        /*
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                progressBar.setValue(repetitionsValue * 10);
+                progressBar.update(progressBar.getGraphics());
+            }
+        });*/
 
         //podsumowanie całości, zebranie danych:
         int realSimulatedSteps = tokensInSteps.size();
@@ -1091,6 +1117,14 @@ public class StateSimulatorXTPN implements Runnable {
                 if (step % tenth == 0 && maxUpdate < 10) {
                     progressBar.setValue(progress++);
                     progressBar.update(progressBar.getGraphics());
+                    /*
+                    pBarProgress = progress++;
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            progressBar.setValue(pBarProgress);
+                            progressBar.update(progressBar.getGraphics());
+                        }
+                    });*/
                     maxUpdate++;
                 }
                 step++;
@@ -1204,8 +1238,15 @@ public class StateSimulatorXTPN implements Runnable {
             }
             progressBar.setValue((int) sg.getSimTime_XTPN());
             progressBar.update(progressBar.getGraphics());
+            /*
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    progressBar.setValue((int) sg.getSimTime_XTPN());
+                    progressBar.update(progressBar.getGraphics());
+                }
+            });*/
+            
             resMatrix.simSteps = step;
-
         } else {
             progressBar.setValue(0);
             progressBar.setMaximum((int) sg.getSimSteps_XTPN() - 1);
@@ -1226,10 +1267,26 @@ public class StateSimulatorXTPN implements Runnable {
                 if (step % tenth == 0) {
                     progressBar.setValue(step);
                     progressBar.update(progressBar.getGraphics());
+                    /*
+                    pBarProgress = step;
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            progressBar.setValue(pBarProgress);
+                            progressBar.update(progressBar.getGraphics());
+                        }
+                    });*/
                 }
             }
+            
             progressBar.setValue((int) sg.getSimSteps_XTPN() - 1);
             progressBar.update(progressBar.getGraphics());
+            /*
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    progressBar.setValue((int) sg.getSimSteps_XTPN() - 1);
+                    progressBar.update(progressBar.getGraphics());
+                }
+            });*/
             resMatrix.simSteps = sg.getSimSteps_XTPN();
         }
         resMatrix.simTime = simTimeCounter;
@@ -1320,6 +1377,14 @@ public class StateSimulatorXTPN implements Runnable {
                     if (((int) simTimeCounter) >= counter * tenth) {
                         progressBar.setValue(progress++);
                         progressBar.update(progressBar.getGraphics());
+                        /*
+                        pBarProgress = progress++;
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                progressBar.setValue(pBarProgress);
+                                progressBar.update(progressBar.getGraphics());
+                            }
+                        });*/
                         counter++;
                     }
 
@@ -1341,6 +1406,14 @@ public class StateSimulatorXTPN implements Runnable {
                     if (step % tenth == 0 && maxUpdate < 10) {
                         progressBar.setValue(progress++);
                         progressBar.update(progressBar.getGraphics());
+                        /*
+                        pBarProgress = progress++;
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                progressBar.setValue(pBarProgress);
+                                progressBar.update(progressBar.getGraphics());
+                            }
+                        });*/
                         maxUpdate++;
                     }
                 }
@@ -1374,6 +1447,13 @@ public class StateSimulatorXTPN implements Runnable {
         if(!knockoutSubSim) { //jeśli to symulacja dla obliczenia ref/knockout set, zignoruj inicjalizację progressBar
             progressBar.setValue(repetitionsValue * 10);
             progressBar.update(progressBar.getGraphics());
+            /*
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    progressBar.setValue(repetitionsValue * 10);
+                    progressBar.update(progressBar.getGraphics());
+                }
+            });*/
         }
 
         for (int tID = 0; tID < transitions.size(); tID++) {
@@ -1399,8 +1479,7 @@ public class StateSimulatorXTPN implements Runnable {
         restoreInternalMarkingZero(); //restore p-state
         return resMatrix;
     }
-
-
+    
     public ArrayList<StateSimDataContainer> quickSimKnockout() {
         ArrayList<StateSimDataContainer> resultSets = new ArrayList<>();
 
@@ -1427,6 +1506,13 @@ public class StateSimulatorXTPN implements Runnable {
 
         progressBar.setValue(repetitionsValue * 10 * 2);
         progressBar.update(progressBar.getGraphics());
+        /*
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                progressBar.setValue(repetitionsValue * 10 * 2);
+                progressBar.update(progressBar.getGraphics());
+            }
+        });*/
 
         resultSets.add(referenceSet);
         resultSets.add(knockoutSet);

@@ -2605,7 +2605,7 @@ HPPwinSYS_entry049, Andere Optionen
 HPPwinSYS_entry050, Sprache
 HPPwinSYS_entry051, Englisch
 HPPwinSYS_entry052, Polnisch
-HPPwinSYS_entry053, Sprache auf: %s (von %s) eingestellt.%n%nUm die Änderungen wirksam werden zu lassen, starten Sie das Programm neu.
+HPPwinSYS_entry053, Sprache auf: %s (von %s) eingestellt.%n%nUm die Änderungen wirksam werden zu lassen, starten Sie das Programm neu.%n%nWichtiger Hinweis: Mit Ausnahme der englischen Version wurden die restlichen%nÜbersetzungen (Stand: Juli 2024) automatisch von AI erstellt. %nWir entschuldigen uns für die (vorübergehend) seltsamen Ausdrücke :)
 HPPwinSYS_entry054, IhreSprache
 HPPwinSYS_entry055, Deutsch
 HPPwinSYS_entry056, Spanisch

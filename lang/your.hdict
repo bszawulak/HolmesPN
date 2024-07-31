@@ -2605,7 +2605,7 @@ HPPwinSYS_entry049, Other options
 HPPwinSYS_entry050, Language
 HPPwinSYS_entry051, English
 HPPwinSYS_entry052, Polish
-HPPwinSYS_entry053, Language set to: %s (from %s).%n%nIn order for changes to take effect, restart the program.
+HPPwinSYS_entry053, Language set to: %s (from %s).%n%nIn order for changes to take effect, restart the program.%n%nImportant note: with the exception of the English version, the rest%nof the translations (as of July 2024) were done automatically by AI.%nWe apologize for the (temporary) strange expressions :)
 HPPwinSYS_entry054, YourLang
 HPPwinSYS_entry055, German
 HPPwinSYS_entry056, Spanish
