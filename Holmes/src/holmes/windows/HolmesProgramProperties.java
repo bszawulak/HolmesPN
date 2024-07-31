@@ -463,7 +463,7 @@ public class HolmesProgramProperties extends JFrame {
 
 		//PRZYCISK WŁOSKI
 		try {
-			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/Italy.png"));
+			BufferedImage image = ImageIO.read(getClass().getResource("/icons/propertiesWindow/italy.png"));
 			JLabel flagLabelMNT = new JLabel(new ImageIcon(image));
 			flagLabelMNT.setBounds(posX+=100, posY, 38, 20);
 			ioPanel.add(flagLabelMNT);
