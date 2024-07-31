@@ -27,7 +27,7 @@ public class HolmesMCSanalysis extends JFrame {
     private JTextArea logField2ndTab;
 
     int windowWidth = 1070;
-    int windowHeight = 800;
+    int windowHeight = 810;
 
     JComboBox<String> TorP;
     JCheckBox description;
@@ -202,6 +202,14 @@ public class HolmesMCSanalysis extends JFrame {
         JPanel main = new JPanel(new BorderLayout());
 
         JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+            @Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+                return 32;
+            }
+            @Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+                super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+            }
+        });
 
         JPanel mainPanel1stTab = new JPanel();
         mainPanel1stTab.setLayout(null); //  ╯°□°）╯︵  ┻━┻

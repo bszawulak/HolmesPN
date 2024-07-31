@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 import javax.swing.*;
@@ -283,6 +284,27 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 		//getFrame().add(propericeTMPBox,BorderLayout.LINE_END);
 		JTabbedPane leftCentralPanel = new JTabbedPane();
+		leftCentralPanel.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				//rects[tabIndex].height = 26 + 1;
+				//rects[tabIndex].y = 32 - rects[tabIndex].height + 1;
+				/*
+				if(tabIndex==0) {
+					rects[tabIndex].height = 20 + 1;
+					rects[tabIndex].y = 32 - rects[tabIndex].height + 1;
+				} else if(tabIndex==1) {
+					rects[tabIndex].height = 26 + 1;
+					rects[tabIndex].y = 32 - rects[tabIndex].height + 1;
+				}
+				 */
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
+		
+		
 		leftCentralPanel.add(getToolBox().getTree());
 		leftCentralPanel.setTabComponentAt(0, new JLabel("Toolbox"));
 		leftCentralPanel.add(getSimulatorBox().getCurrentDockWindow().getPanel());
@@ -290,6 +312,25 @@ public class GUIManager extends JPanel implements ComponentListener {
 		leftCentralPanel.setPreferredSize(new Dimension(200,400));
 
 		analysisTabs = new JTabbedPane();
+		analysisTabs.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				//rects[tabIndex].height = 26 + 1;
+				//rects[tabIndex].y = 26 - rects[tabIndex].height + 1;
+				/*
+				if(tabIndex==0) {
+					rects[tabIndex].height = 20 + 1;
+					rects[tabIndex].y = 32 - rects[tabIndex].height + 1;
+				} else if(tabIndex==1) {
+					rects[tabIndex].height = 26 + 1;
+					rects[tabIndex].y = 32 - rects[tabIndex].height + 1;
+				}
+				 */
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
 		analysisTabs.add(getQuickSimBox().getCurrentDockWindow().getPanel());
 		analysisTabs.setTabComponentAt(0, new JLabel(lang.getText("GUIM_quicksimTabName")));
 		analysisTabs.add(getT_invBox().getCurrentDockWindow().getPanel());

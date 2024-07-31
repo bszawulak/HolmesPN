@@ -135,6 +135,14 @@ public class HolmesNodeInfoXTPN extends JFrame {
         add(main);
 
         JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+            @Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+                return 32;
+            }
+            @Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+                super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+            }
+        });
         tabbedPane.addTab(lang.getText("HNXTPN_entry002"), Tools.getResIcon16("/icons/nodeViewer/tab1.png") //XTPN place data
                 , initializePlaceInfo(), lang.getText("HNXTPN_entry002t"));
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
@@ -167,6 +175,14 @@ public class HolmesNodeInfoXTPN extends JFrame {
         add(main);
 
         JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+            @Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+                return 32;
+            }
+            @Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+                super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+            }
+        });
         tabbedPane.addTab(lang.getText("HNXTPN_entry004"), Tools.getResIcon16("/icons/nodeViewer/tab1.png") //XTPN transition data
                 , initializeTransitionInfo(), lang.getText("HNXTPN_entry004t"));
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
@@ -213,9 +229,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
         setResizable(false);
         setLocation(20, 20);
         if(node instanceof PlaceXTPN) {
-            setSize(new Dimension(800, 580));
+            setSize(new Dimension(800, 590));
         } else { //tranzycja
-            setSize(new Dimension(800, 720));
+            setSize(new Dimension(800, 730));
         }
 
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -350,7 +366,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         //************************* NEWLINE *************************
 
         JLabel gammaModeInfoLabel = new JLabel(lang.getText("HNXTPN_entry013")); //Time mode:
-        gammaModeInfoLabel.setBounds(infPanelX, infPanelY, 80, 20);
+        gammaModeInfoLabel.setBounds(infPanelX, infPanelY, 80, 30);
         infoPanel.add(gammaModeInfoLabel);
 
         buttonGammaMode = new HolmesRoundedButton(lang.getText("HNXTPN_entry014on") //Gamma: ON
@@ -1048,7 +1064,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         //************************* NEWLINE *************************
 
         JLabel timeModesInfoLabel = new JLabel(lang.getText("HNXTPN_entry041")); //Time modes:
-        timeModesInfoLabel.setBounds(infPanelX, infPanelY, 80, 20);
+        timeModesInfoLabel.setBounds(infPanelX, infPanelY, 80, 30);
         infoPanel.add(timeModesInfoLabel);
 
         buttonAlphaMode = new HolmesRoundedButton(lang.getText("HNXTPN_entry042on") //Alpha: ON

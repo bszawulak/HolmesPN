@@ -123,7 +123,6 @@ public class GraphicalSimulator {
 		if(simLogEnabled) {
 			nsl.logBackupCreated();
 		}
-		
 
 		previousSimStatus = getSimulatorStatus();
 		setSimulatorStatus(simulatorMode);

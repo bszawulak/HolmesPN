@@ -748,6 +748,8 @@ HDWT_entry310QuickSim, <html><center>Ort<br>speichern</center></html>
 HDWT_entry311QuickSim, Token-Verzögerung:
 HDWT_entry312QuickSim, Sim-Einstellungen
 HDWT_entry313QuickSim, Sim-Start
+HDWT_entry314SimPanel, Animationsmöglichkeiten:
+HDWT_entry315SimPanel, Orte anzeigen Farben
 
 //DecoCalccalculator:
 DCC_entry001, Bitte wählen Sie den Vergleichstyp
@@ -1796,7 +1798,7 @@ GS_entry005, Simulation gestoppt, keine aktiven Übergänge.
 GS_entry005t, Simulation gestoppt
 LOGentry00412, Simulation beendet - keine weiteren verfügbaren Schritte.
 GS_entry006, Keine weiteren verfügbaren Aktionen zum Zurückverfolgen!
-GS_entry006s, Zurückverfolgung beendet
+GS_entry006t, Zurückverfolgung beendet
 
 //GraphicalSimulatorLogger:
 GSL_entry001, Simulation gestartet. Netz-Simulationsmodell:

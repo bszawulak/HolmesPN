@@ -742,12 +742,14 @@ HDWT_entry304QuickSim, Color arcs
 HDWT_entry305QuickSim, Repetitions
 HDWT_entry306QuickSim, <html><center>Store<br>colors</center></html>
 HDWT_entry307QuickSim, <html><center>Restore<br>colors</center></html>
-HDWT_entry308QuickSim, State manager
+HDWT_entry308QuickSim, <html>State<br>manager</html>
 HDWT_entry309QuickSim, <html><center>Reset<br>p-state</center></html>
 HDWT_entry310QuickSim, <html><center>Store<br>p-state</center></html>
 HDWT_entry311QuickSim, Tokens delay:
 HDWT_entry312QuickSim, Settings
 HDWT_entry313QuickSim, Sim Start
+HDWT_entry314SimPanel, Animation options:
+HDWT_entry315SimPanel, Show places colors
 
 //DecoCalccalculator:
 DCC_entry001, Please choose comparison type
@@ -1796,7 +1798,7 @@ GS_entry005, Simulation stopped, no active transitions.
 GS_entry005t, Simulation stopped
 LOGentry00412, Simulation ended - no more available steps.
 GS_entry006, No more available actions to backtrack!
-GS_entry006s, Backtracking ended
+GS_entry006t, Backtracking ended
 
 //GraphicalSimulatorLogger:
 GSL_entry001, Simulation started. Net sim model:

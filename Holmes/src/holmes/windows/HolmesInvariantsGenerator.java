@@ -1,9 +1,6 @@
 package holmes.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.Serial;
@@ -102,6 +99,15 @@ public class HolmesInvariantsGenerator extends JFrame {
 		panelTinv.repaint();
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
+		
 		tabbedPane.addTab(lang.getText("HIGwin_entry002"), Tools.getResIcon22("/icons/invWindow/tInvIcon.png")
 				, panelTinv, lang.getText("HIGwin_entry002t")); //t-invariants
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);

@@ -742,12 +742,14 @@ HDWT_entry304QuickSim, Kolory łuków
 HDWT_entry305QuickSim, Powtórzenia
 HDWT_entry306QuickSim, <html><center>Zapisz<br>kolory</center></html>
 HDWT_entry307QuickSim, <html><center>Przywróć<br>kolory</center></html>
-HDWT_entry308QuickSim, Menedżer stanów
+HDWT_entry308QuickSim, <html>Menedżer<br>stanów</html>
 HDWT_entry309QuickSim, <html><center>Resetuj<br>p-state</center></html>
 HDWT_entry310QuickSim, <html><center>Zapisz<br>p-state</center></html>
 HDWT_entry311QuickSim, Opóźnienie tokenów:
 HDWT_entry312QuickSim, Ustawienia
 HDWT_entry313QuickSim, Start Sym.
+HDWT_entry314SimPanel, Opcje animacji:
+HDWT_entry315SimPanel, Pokaż kolory miejsc
 
 //DecoCalccalculator:
 DCC_entry001, Proszę wybrać typ porównania
@@ -1796,7 +1798,7 @@ GS_entry005, Symulacja zatrzymana, brak aktywnych tranzycji.
 GS_entry005t, Symulacja zatrzymana
 LOGentry00412, Symulacja zakończona - nie ma więcej dostępnych kroków.
 GS_entry006, Brak więcej dostępnych działań do cofnięcia!
-GS_entry006s, Cofanie zakończone
+GS_entry006t, Cofanie zakończone
  
 //GraphicalSimulatorLogger:
 GSL_entry001, Symulacja rozpoczęta. Model symulacji sieci:

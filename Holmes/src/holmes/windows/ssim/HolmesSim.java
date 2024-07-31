@@ -1,13 +1,6 @@
 package holmes.windows.ssim;
 
-import java.awt.BasicStroke;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Insets;
-import java.awt.Paint;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -16,6 +9,7 @@ import java.io.IOException;
 import java.io.Serial;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -156,12 +150,20 @@ public class HolmesSim extends JFrame {
 		} catch (Exception ex) {
 			overlord.log(lang.getText("LOGentry00545exception")+"\n"+ex.getMessage(), "error", true);
 		}
-		setSize(new Dimension(1000, 750));
+		setSize(new Dimension(1000, 760));
 		
 		JPanel main = new JPanel(new BorderLayout()); //główny panel okna
 		add(main);
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
 		tabbedPane.addTab(lang.getText("HSSwin_entry002"), Tools.getResIcon16("/icons/stateSim/placesDyn.png")
 				, createPlacesTabPanel(), lang.getText("HSSwin_entry002t")); //Places dynamics
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
@@ -170,6 +172,14 @@ public class HolmesSim extends JFrame {
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
 		mainTabPanel = new JTabbedPane();
+		mainTabPanel.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
 		JPanel firstTab = new JPanel(new BorderLayout());
 		firstTab.add(craeteDataAcquisitionPanel(), BorderLayout.NORTH);
 		firstTab.add(tabbedPane, BorderLayout.CENTER);

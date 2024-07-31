@@ -102,7 +102,7 @@ public class HolmesAbout extends JFrame {
 			overlord.log(lang.getText("LOGentry00438exception")+ "\n"+ex.getMessage(), "error", true);
 		}
 		
-		JLabel nameLabel = new JLabel("Holmes v1.7.1"); // Harry du Bois edition
+		JLabel nameLabel = new JLabel("Holmes v1.7.1.1"); // Harry du Bois edition
 		nameLabel.setFont(new Font("Consolas", Font.PLAIN, 25));
 		nameLabel.setBounds(170, 20, 300, 40);
 		panel.add(nameLabel);
@@ -112,7 +112,7 @@ public class HolmesAbout extends JFrame {
 		nameLabel1b.setBounds(170, 40, 300, 30);
 		panel.add(nameLabel1b);
 		
-		JLabel nameLabel2 = new JLabel("[build 30-07-2024]");
+		JLabel nameLabel2 = new JLabel("[build 31-07-2024]");
 		nameLabel2.setFont(new Font("Consolas", Font.PLAIN, 12));
 		nameLabel2.setBounds(170, 80, 330, 15);
 		panel.add(nameLabel2);

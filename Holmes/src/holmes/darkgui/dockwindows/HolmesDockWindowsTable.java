@@ -83,6 +83,7 @@ public class HolmesDockWindowsTable extends JPanel {
     public JComboBox<String> simMode;
     private JCheckBox maximumModeCheckBox;
     private JCheckBox singleModeCheckBox;
+    private JCheckBox showColorsCheckBox;
     public JLabel timeStepLabelValue;
     public JLabel timeLabelXTPN;
     public JLabel stepLabelXTPN;
@@ -461,20 +462,27 @@ public class HolmesDockWindowsTable extends JPanel {
             timeStepLabelValue.setBounds(internalX + 70, internalY, 70, 20);
             components.add(timeStepLabelValue);
 
-            internalY += 20;
+            internalY += 25;
 
+            JSeparator separator1 = new JSeparator();
+            separator1.setOrientation(SwingConstants.HORIZONTAL);
+            separator1.setBounds(internalX, internalY, 160, 2);
+            components.add(separator1);
+
+            internalY += 5;
+            
             // SIMULATOR CONTROLS
             // metoda startSimulation obiektu simulator troszczy się o wygaszanie
             // i aktywowanie odpowiednich przycisków
-            JLabel controlsLabel = new JLabel(lang.getText("HDWT_entry003PNsim"));
-            controlsLabel.setBounds(internalX, internalY, 120, 20);
+            JLabel controlsLabel = new JLabel(lang.getText("HDWT_entry003PNsim")); // Simulation controls
+            controlsLabel.setBounds(internalX, internalY, 160, 20);
             components.add(controlsLabel);
 
             internalY += 20;
 
-            JButton loopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_start.png"));
+            JButton loopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_start2.png"));
             loopSimulation.setName("simPNstart");
-            loopSimulation.setBounds(internalX, internalY, 80, 30);
+            loopSimulation.setBounds(internalX, internalY, 80, 40);
             loopSimulation.setToolTipText(lang.getText("HDWT_entry004PNsim"));
             loopSimulation.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -483,9 +491,9 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(loopSimulation);
 
-            JButton singleTransitionLoopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_startSingle.png"));
+            JButton singleTransitionLoopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_startSingle2.png"));
             singleTransitionLoopSimulation.setName("simPNstartSingle");
-            singleTransitionLoopSimulation.setBounds(internalX+80, internalY, 80, 30);
+            singleTransitionLoopSimulation.setBounds(internalX+80, internalY, 80, 40);
             singleTransitionLoopSimulation.setToolTipText(lang.getText("HDWT_entry005PNsim"));
             singleTransitionLoopSimulation.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -494,11 +502,11 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(singleTransitionLoopSimulation);
 
-            internalY += 30;
+            internalY += 40;
 
-            JButton pauseSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_pause.png"));
+            JButton pauseSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_pause2.png"));
             pauseSimulation.setName("simPNpause");
-            pauseSimulation.setBounds(internalX, internalY, 80, 30);
+            pauseSimulation.setBounds(internalX, internalY, 80, 40);
             pauseSimulation.setToolTipText(lang.getText("HDWT_entry006PNsim"));
             pauseSimulation.setEnabled(false);
             pauseSimulation.addActionListener(actionEvent -> {
@@ -508,9 +516,9 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(pauseSimulation);
 
-            JButton stopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_stop.png"));
+            JButton stopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_stop2.png"));
             stopSimulation.setName("simPNstop");
-            stopSimulation.setBounds(internalX+80, internalY, 80, 30);
+            stopSimulation.setBounds(internalX+80, internalY, 80, 40);
             stopSimulation.setToolTipText(lang.getText("HDWT_entry007PNsim"));
             stopSimulation.setEnabled(false);
             stopSimulation.addActionListener(actionEvent -> {
@@ -519,19 +527,19 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(stopSimulation);
 
-            internalY += 30;
+            internalY += 40;
 
-            JButton resetButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_reset.png"));
+            JButton resetButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_reset2.png"));
             resetButton.setName("simPNreset");
-            resetButton.setBounds(internalX, internalY, 80, 30);
+            resetButton.setBounds(internalX, internalY, 80, 40);
             resetButton.setToolTipText(lang.getText("HDWT_entry008PNsim"));
             resetButton.setEnabled(false);
             resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
             components.add(resetButton);
 
-            JButton saveButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_save_m0.png"));
+            JButton saveButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_save_m02.png"));
             saveButton.setName("Save m0");
-            saveButton.setBounds(internalX+80, internalY, 80, 30);
+            saveButton.setBounds(internalX+80, internalY, 80, 40);
             saveButton.setToolTipText(lang.getText("HDWT_entry009PNsim"));
             saveButton.addActionListener(actionEvent -> {
                 if (overlord.reset.isSimulatorActiveWarning(
@@ -552,9 +560,9 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(saveButton);
 
-            internalY += 30;
+            internalY += 40;
 
-            JLabel otherControlsLabel = new JLabel(lang.getText("HDWT_entry011PNsim"));
+            JLabel otherControlsLabel = new JLabel(lang.getText("HDWT_entry011PNsim")); //Other modes:
             otherControlsLabel.setBounds(internalX, internalY, 140, 20);
             components.add(otherControlsLabel);
 
@@ -562,7 +570,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             JButton oneActionBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
             oneActionBack.setName("simPNoneBack");
-            oneActionBack.setBounds(internalX, internalY, 70, 30);
+            oneActionBack.setBounds(internalX, internalY, 80, 30);
             oneActionBack.setToolTipText(lang.getText("HDWT_entry012PNsim"));
             oneActionBack.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -574,7 +582,7 @@ public class HolmesDockWindowsTable extends JPanel {
             JButton oneTransitionForward = new JButton(
                     Tools.getResIcon22("/icons/simulation/simPN_1transForw.png"));
             oneTransitionForward.setName("simPNoneForward");
-            oneTransitionForward.setBounds(internalX+70, internalY, 70, 30);
+            oneTransitionForward.setBounds(internalX+80, internalY, 80, 30);
             oneTransitionForward.setToolTipText(lang.getText("HDWT_entry013PNsim"));
             oneTransitionForward.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -587,7 +595,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             JButton loopBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_backLoop.png"));
             loopBack.setName("simB3");
-            loopBack.setBounds(internalX, internalY, 70, 30);
+            loopBack.setBounds(internalX, internalY, 80, 30);
             loopBack.setToolTipText(lang.getText("HDWT_entry014PNsim"));
             loopBack.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -599,7 +607,7 @@ public class HolmesDockWindowsTable extends JPanel {
             JButton oneStepForward = new JButton(
                     Tools.getResIcon22("/icons/simulation/simPN_1stepForw.png"));
             oneStepForward.setName("simB4");
-            oneStepForward.setBounds(internalX+70, internalY, 70, 30);
+            oneStepForward.setBounds(internalX+80, internalY, 80, 30);
             oneStepForward.setToolTipText(lang.getText("HDWT_entry015PNsim"));
             oneStepForward.addActionListener(actionEvent -> {
                 overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
@@ -612,7 +620,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             c1Button = new JButton(lang.getText("HDWT_entry306QuickSim"));
             c1Button.setName("resetColor");
-            c1Button.setBounds(internalX, internalY, 70, 30);
+            c1Button.setBounds(internalX, internalY, 80, 30);
             c1Button.setToolTipText(lang.getText("HDWT_entry016PNsim"));
             c1Button.setEnabled(false);
             c1Button.addActionListener(actionEvent -> {
@@ -622,7 +630,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
             c2Button = new JButton(lang.getText("HDWT_entry307QuickSim"));
             c2Button.setName("SaveM0Color");
-            c2Button.setBounds(internalX+70, internalY, 70, 30);
+            c2Button.setBounds(internalX+80, internalY, 80, 30);
             c2Button.setToolTipText(lang.getText("HDWT_entry017PNsim"));
             c2Button.setEnabled(false);
             c2Button.addActionListener(actionEvent -> {
@@ -632,11 +640,19 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(c2Button);
 
-            internalY += 35;
+            internalY += 40;
 
-            JButton statesButton = new JButton(lang.getText("HDWT_entry308QuickSim"));
+            JSeparator separator5 = new JSeparator();
+            separator5.setOrientation(SwingConstants.HORIZONTAL);
+            separator5.setBounds(internalX, internalY, 160, 2);
+            components.add(separator5);
+
+            internalY += 10;
+
+            JButton statesButton = new JButton(lang.getText("HDWT_entry308QuickSim")); //States manager
             statesButton.setName("State manager");
-            statesButton.setBounds(internalX, internalY, 140, 30);
+            statesButton.setIcon(Tools.getResIcon32("/icons/menu/menu_statesViewer.png"));
+            statesButton.setBounds(internalX, internalY, 150, 40);
             statesButton.setToolTipText(lang.getText("HDWT_entry018PNsim"));
             statesButton.setEnabled(true);
             statesButton.addActionListener(actionEvent -> {
@@ -649,7 +665,7 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(statesButton);
 
-            internalY += 35;
+            internalY += 45;
 
             //doNotUpdate = false;
             maximumModeCheckBox = new JCheckBox(lang.getText("HDWT_entry019PNsim"));
@@ -692,6 +708,90 @@ public class HolmesDockWindowsTable extends JPanel {
                 }
             });
             components.add(singleModeCheckBox);
+            internalY += 25;
+            
+            JSeparator separator9 = new JSeparator();
+            separator9.setOrientation(SwingConstants.HORIZONTAL);
+            separator9.setBounds(internalX, internalY, 160, 2);
+            components.add(separator9);
+
+            internalY += 5;
+            
+            JLabel graphInfoLabel = new JLabel(lang.getText("HDWT_entry314SimPanel")); 
+            graphInfoLabel.setBounds(internalX, internalY, 150, 20);
+            components.add(graphInfoLabel);
+
+            internalY += 20;
+
+            showColorsCheckBox = new JCheckBox(lang.getText("HDWT_entry315SimPanel"));
+            showColorsCheckBox.setSelected(overlord.getSettingsManager().getValue("simPlacesColors").equals("1"));
+            showColorsCheckBox.setBounds(internalX, internalY, 150, 20);
+            showColorsCheckBox.addActionListener(actionEvent -> {
+                AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+                if (abstractButton.getModel().isSelected()) {
+                    overlord.getSettingsManager().setValue("simPlacesColors", "1", false);
+                } else {
+                    overlord.getSettingsManager().setValue("simPlacesColors", "0", false);
+                }
+            });
+            components.add(showColorsCheckBox);
+            
+            internalY += 25;
+            
+            JLabel transDelayLabel = new JLabel(lang.getText("HPPwinSIM_entry042")); //Transition firing delay
+            transDelayLabel.setBounds(internalX, internalY, 150, 20);
+            components.add(transDelayLabel);
+
+            JLabel arcDelayLabel = new JLabel(lang.getText("HPPwinSIM_entry043")); //Arc token delay
+            arcDelayLabel.setBounds(internalX, internalY+70, 150, 20);
+            components.add(arcDelayLabel);
+
+            final JSlider arcDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
+            arcDelaySlider.setBounds(internalX, internalY+90, 150, 50);
+            arcDelaySlider.setMinorTickSpacing(10);
+            arcDelaySlider.setMajorTickSpacing(20);
+            arcDelaySlider.setPaintTicks(true);
+            //arcDelaySlider.setPaintLabels(true);
+            arcDelaySlider.setLabelTable(arcDelaySlider.createStandardLabels(10));
+            arcDelaySlider.addChangeListener(e -> {
+                JSlider s = (JSlider) e.getSource();
+                int val = s.getValue();
+                int reference = overlord.simSettings.getTransitionGraphicDelay();
+                if(val <= reference) {
+                    arcDelaySlider.setValue(val);
+                    overlord.simSettings.setArcGraphicDelay(val);
+                } else {
+                    s.setValue(reference);
+                }
+            });
+            components.add(arcDelaySlider);
+
+            final JSlider transDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
+            transDelaySlider.setBounds(internalX, internalY+20, 150, 50);
+            transDelaySlider.setMinorTickSpacing(10);
+            transDelaySlider.setMajorTickSpacing(20);
+            transDelaySlider.setPaintTicks(true);
+            //transDelaySlider.setPaintLabels(true);
+            transDelaySlider.setLabelTable(transDelaySlider.createStandardLabels(10));
+            transDelaySlider.addChangeListener(new ChangeListener() {
+                private JSlider anotherSlider = null;
+                public void stateChanged(ChangeEvent e) {
+                    JSlider s = (JSlider) e.getSource();
+                    int value = s.getValue();
+                    transDelaySlider.setValue(value);
+                    overlord.simSettings.setTransitionGraphicDelay(value);
+                    if(value <  overlord.simSettings.getArcGraphicDelay()) {
+                        anotherSlider.setValue(value);
+                    }
+                }
+                private ChangeListener yesWeCan(JSlider slider){
+                    anotherSlider = slider;
+                    return this;
+                }
+            }.yesWeCan(arcDelaySlider) );
+            components.add(transDelaySlider);
+            
+            
         } else { // nienormalny symulator: XTPN
             internalX = 5;
             internalY = 30;
@@ -9077,7 +9177,7 @@ public class HolmesDockWindowsTable extends JPanel {
         for (JComponent comp : components) {
             if (comp instanceof JButton && comp.getName() != null) {
                 if (comp.getName().equals("simPNoneBack") || comp.getName().equals("simPNoneForward")
-                        || comp.getName().equals("simPNoneForward") || comp.getName().equals("simB4")
+                        || comp.getName().equals("simB3") || comp.getName().equals("simB4")
                         || comp.getName().equals("simPNstart") || comp.getName().equals("simPNstartSingle")
                         || comp.getName().equals("simPNreset")) {
                     comp.setEnabled(enabled);

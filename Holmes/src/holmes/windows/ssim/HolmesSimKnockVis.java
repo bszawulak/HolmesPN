@@ -1,9 +1,6 @@
 package holmes.windows.ssim;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -134,7 +131,7 @@ public class HolmesSimKnockVis extends JFrame {
 		} catch (Exception ex) {
 			overlord.log(lang.getText("LOGentry00555exception")+" "+ex.getMessage(), "error", true);
 		}
-		setSize(new Dimension(1200, 920));
+		setSize(new Dimension(1200, 930));
 		
 		JPanel main = new JPanel(new BorderLayout()); //główny panel okna
 		add(main);
@@ -143,6 +140,14 @@ public class HolmesSimKnockVis extends JFrame {
 		
 		JPanel mainTabbedPanel = new JPanel(new BorderLayout());
 		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
 		tabbedPane.addTab(lang.getText("HSKVwin_entry002"), Tools.getResIcon32("/icons/simulationKnockout/visChartsIcon.png") //Charts
 				, createPlacesChartsPanel(), lang.getText("HSKVwin_entry002t"));
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);

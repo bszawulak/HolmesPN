@@ -1,8 +1,6 @@
 package holmes.windows.managers;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -79,7 +77,7 @@ public class HolmesStatesManager extends JFrame {
 	 */
 	private void initalizeComponents() {
 		setLayout(new BorderLayout());
-		setSize(new Dimension(900, 650));
+		setSize(new Dimension(900, 660));
 		setLocation(50, 50);
 		setResizable(true);
 		
@@ -93,6 +91,14 @@ public class HolmesStatesManager extends JFrame {
 		main.add(getButtonsPanel(), BorderLayout.EAST);
 
 		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
 		tabbedPane.addTab(lang.getText("HSMwin_entry002"), Tools.getResIcon22("/icons/stateManager/PNtab.png"), //PN p-states 
 				main, lang.getText("HSMwin_entry002t")); //
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);

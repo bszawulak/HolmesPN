@@ -742,12 +742,14 @@ HDWT_entry304QuickSim, Arcs colorés
 HDWT_entry305QuickSim, Répétitions
 HDWT_entry306QuickSim, <html><center>Enregistrer<br>les couleurs</center></html>
 HDWT_entry307QuickSim, <html><center>Restaurer<br>les couleurs</center></html>
-HDWT_entry308QuickSim, Gestionnaire d'états
+HDWT_entry308QuickSim, <html>Gestionnaire<br>d'états</html>
 HDWT_entry309QuickSim, <html><center>Réinitialiser<br>l'état p</center></html>
 HDWT_entry310QuickSim, <html><center>Enregistrer<br>l'état p</center></html>
 HDWT_entry311QuickSim, Délai des jetons:
 HDWT_entry312QuickSim, Paramètres
 HDWT_entry313QuickSim, Start Sim
+HDWT_entry314SimPanel, Options d'animation:
+HDWT_entry315SimPanel, Montrer les couleurs des lieux
 
 //DecoCalccalculator:
 DCC_entry001, Veuillez choisir le type de comparaison
@@ -1796,7 +1798,7 @@ GS_entry005, Simulation arrêtée, aucune transition active.
 GS_entry005t, Simulation arrêtée
 LOGentry00412, Simulation terminée - plus aucune étape disponible.
 GS_entry006, Plus aucune action disponible pour revenir en arrière !
-GS_entry006s, Retour en arrière terminé
+GS_entry006t, Retour en arrière terminé
 
 //GraphicalSimulatorLogger:
 GSL_entry001, Simulation démarrée. Modèle de simulation de réseau:
@@ -3388,7 +3390,7 @@ HNXTPN_entry009, Commentaires:
 HNXTPN_entry010, Portail:
 HNXTPN_entry011, Transitions d'entrée:
 HNXTPN_entry012, Transitions de sortie:
-HNXTPN_entry013, Mode temporel:
+HNXTPN_entry013, <html>Mode<br>>temporel:</html>
 HNXTPN_entry014on, <html>Gamma: ACTIVÉ</html>
 HNXTPN_entry014off, <html>Gamma: DÉSACTIVÉ</html>
 HNXTPN_entry015, Visibilité:
@@ -3424,7 +3426,7 @@ HNXTPN_entry037, Commentaires:
 HNXTPN_entry038, Portail:
 HNXTPN_entry039, Places d'entrée:
 HNXTPN_entry040, Places de sortie:
-HNXTPN_entry041, Mode temporel:
+HNXTPN_entry041, <html>Mode<br>>temporel:</html>
 HNXTPN_entry042on, <html>Alpha: ACTIVÉ</html>
 HNXTPN_entry042off, <html>Alpha: DÉSACTIVÉ</html>
 HNXTPN_entry043, Visibilité:

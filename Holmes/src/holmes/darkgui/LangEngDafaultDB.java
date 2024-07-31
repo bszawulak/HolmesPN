@@ -755,12 +755,14 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HDWT_entry305QuickSim","Repetitions");
         defaultEnglish.put("HDWT_entry306QuickSim","<html><center>Store<br>colors</center></html>");
         defaultEnglish.put("HDWT_entry307QuickSim","<html><center>Restore<br>colors</center></html>");
-        defaultEnglish.put("HDWT_entry308QuickSim","State manager");
+        defaultEnglish.put("HDWT_entry308QuickSim","<html>State<br>manager</html>");
         defaultEnglish.put("HDWT_entry309QuickSim","<html><center>Reset<br>p-state</center></html>");
         defaultEnglish.put("HDWT_entry310QuickSim","<html><center>Store<br>p-state</center></html>");
         defaultEnglish.put("HDWT_entry311QuickSim","Tokens delay:");
         defaultEnglish.put("HDWT_entry312QuickSim","Sim Settings");
         defaultEnglish.put("HDWT_entry313QuickSim","Sim Start");
+        defaultEnglish.put("HDWT_entry314SimPanel","Animation options:");
+        defaultEnglish.put("HDWT_entry315SimPanel","Show places colors");
 
         //DecoCalccalculator:
         defaultEnglish.put("DCC_entry001","Please choose comparison type");
@@ -1809,7 +1811,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("GS_entry005t","Simulation stopped");
         defaultEnglish.put("LOGentry00412","Simulation ended - no more available steps.");
         defaultEnglish.put("GS_entry006","No more available actions to backtrack!");
-        defaultEnglish.put("GS_entry006s","Backtracking ended");
+        defaultEnglish.put("GS_entry006t","Backtracking ended");
 
         //GraphicalSimulatorLogger:
         defaultEnglish.put("GSL_entry001","Simulation started. Net sim model:");
@@ -2074,10 +2076,10 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HIGwin_entry018","t-invariants log window");
         defaultEnglish.put("HIGwin_entry019","Tools");
         defaultEnglish.put("HIGwin_entry020","<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;canonity</html>");
-        defaultEnglish.put("HIGwin_entry020info","Check t-invariants for canonicality");
+        defaultEnglish.put("HIGwin_entry020info","Check t-invariants for canonicity");
         defaultEnglish.put("HIGwin_entry021","No t-invariants to analyze.");
         defaultEnglish.put("HIGwin_entry021t","No t-invariants");
-        defaultEnglish.put("HIGwin_entry022","Checking canonicality for %d t-invariants.%n");
+        defaultEnglish.put("HIGwin_entry022","Checking canonicity for %d t-invariants.%n");
         defaultEnglish.put("HIGwin_entry023","Non canonical t-invariants:");
         defaultEnglish.put("HIGwin_entry024","<html>Check sup.<br />&nbsp;minimality</html>");
         defaultEnglish.put("HIGwin_entry024info","Check t-invariants for support minimality");
@@ -2120,10 +2122,10 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HIGwin_entry045","Remove 1-el. inv.");
         defaultEnglish.put("HIGwin_entry046","p-invariants log window");
         defaultEnglish.put("HIGwin_entry047","<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;canonity</html>");
-        defaultEnglish.put("HIGwin_entry047info","Check p-invariants for canonicality");
+        defaultEnglish.put("HIGwin_entry047info","Check p-invariants for canonicity");
         defaultEnglish.put("HIGwin_entry048","No p-invariants to analyze.");
         defaultEnglish.put("HIGwin_entry048t","No p-invariants");
-        defaultEnglish.put("HIGwin_entry049","Check p-invariants for canonicality");
+        defaultEnglish.put("HIGwin_entry049","Check p-invariants for canonicity");
         defaultEnglish.put("HIGwin_entry050","non canonical p-invariants:");
         defaultEnglish.put("HIGwin_entry051","<html>Check sup.<br>&nbsp;minimality</html>");
         defaultEnglish.put("HIGwin_entry051info","Check p-invariants for support minimality");

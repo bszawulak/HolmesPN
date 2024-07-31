@@ -47,6 +47,16 @@ public class Workspace implements SelectionActionListener {
 		Point position = new Point(0, 0);
 		setProject(new PetriNet(this, "default"));
 		setTablePane(new JTabbedPane());
+
+		tp.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 26;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
+		
 		overlord.setTabbedWorkspace(getTablePane());
 		this.getProject().addActionListener(this);
 	}

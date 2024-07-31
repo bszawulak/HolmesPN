@@ -58,7 +58,9 @@ public class HolmesProgramProperties extends JFrame {
 	 * użyciu odpowiednich metod pomocniczych.
 	 */
 	private void initialize_components() {
-		this.setLocation(20, 20);
+		Point pPoint = parentFrame.getLocation();
+		this.setLocation(pPoint.x+300, pPoint.y+150);
+		//this.setLocation(20, 20);
 		setTitle(lang.getText("HPPwin_entry001title"));
 		setLayout(new BorderLayout());
 		setSize(new Dimension(600, 500));
@@ -66,6 +68,15 @@ public class HolmesProgramProperties extends JFrame {
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.setBounds(0, 0, 600, 500);
+
+		tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
 
 		//zakładka głównych opcji programu:
 		tabbedPane.addTab(lang.getText("HPPwin_entry002"), Tools.getResIcon32("/icons/propertiesWindow/systemIcon.png")
@@ -504,7 +515,7 @@ public class HolmesProgramProperties extends JFrame {
 			} catch (Exception e) {
 				overlord.log(lang.getText("LOGentryLNGexc")+" HPPwinSYS_entry053", "error", true);
 			}
-			lang.setLanguage("YourLanguage", false);
+			lang.setLanguage("YourLang", false);
 			JOptionPane.showMessageDialog(null, strB, lang.getText("information"),
 					JOptionPane.INFORMATION_MESSAGE);
 		});

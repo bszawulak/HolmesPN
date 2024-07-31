@@ -1,10 +1,6 @@
 package holmes.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
@@ -80,6 +76,14 @@ public class HolmesNodeInfo extends JFrame {
 		add(main);
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
 		tabbedPane.addTab(lang.getText("HNIwin_entryP002"), Tools.getResIcon16("/icons/nodeViewer/tab1.png")
 				, initializePlaceInfo(), lang.getText("HNIwin_entryP002t"));
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
@@ -110,6 +114,14 @@ public class HolmesNodeInfo extends JFrame {
 		add(main);
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
 		tabbedPane.addTab(lang.getText("HNIwin_entryT004"), Tools.getResIcon16("/icons/nodeViewer/tab1.png")
 				, initializeTransitionInfo(), lang.getText("HNIwin_entryT004t"));
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
@@ -153,7 +165,7 @@ public class HolmesNodeInfo extends JFrame {
 		parentFrame.setEnabled(false);
 		setResizable(false);
 		setLocation(20, 20);
-		setSize(new Dimension(600, 490));
+		setSize(new Dimension(600, 500));
 		
 		addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
