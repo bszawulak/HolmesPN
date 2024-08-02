@@ -5,6 +5,7 @@ import holmes.petrinet.elements.PlaceXTPN;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.TransitionXTPN;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class AlgorithmsXTPN {
@@ -40,6 +41,10 @@ public class AlgorithmsXTPN {
         for (long time = 1; time < maxSteps; time++) { //od 1! bo 0 to stan początkowy
             if(!areReadArcs)
                 shuffleElements(preTransitionsNanoA1);
+            
+            if(time == 22) {
+                int x =1;
+            }
 
             processInputTransitions(preTransitionsNanoA1, placeNanoA1);
             if(considerOutputTransitions) {
@@ -73,10 +78,16 @@ public class AlgorithmsXTPN {
         if(areRational) {
             multiplier = digits;
         }
-
+        
+        //miejsce do pomiaru tokenów:
+        placeNanoA1 = new PlaceNanoXTPN(placeXTPN, overlord.getWorkspace().getProject().getPlaces().indexOf(placeXTPN));
+        placeNanoA1.gammaL_N = (int) (placeNanoA1.gammaL * multiplier);
+        placeNanoA1.gammaU_N = (int) (placeNanoA1.gammaU * multiplier);
+        
         //tutaj przygotowujemy obiekty TransitionNanoXTPN i PlaceNanoXTPN do obliczeń:
         ArrayList<Integer> lcmCandidates = new ArrayList<Integer>();
-        for (Transition t : preTransitions) { //tworzenie listy tranzycji wejściowych
+        
+        for (Transition t : preTransitions) { //tworzenie listy tranzycji wejściowych do miejsca
             TransitionNanoXTPN nt = new TransitionNanoXTPN((TransitionXTPN) t, transitions.indexOf(t));
             if(((TransitionXTPN) t).isAlphaModeActive()) { //czy tranzycja ma aktywny tryb alfa
                 nt.isAlphaType = true;
@@ -97,8 +108,13 @@ public class AlgorithmsXTPN {
                 nt.betaL = 0;
                 nt.betaU = 0;
             }
-
-            nt.weightToPlace = t.getOutputArcWeightTo(placeXTPN); //tyle tokenów dodają do miejsca
+            
+            TransitionNanoXTPN.PlaceArcWeight paw = nt.new PlaceArcWeight();
+            paw.place = placeNanoA1;
+            paw.weight = t.getOutputArcWeightTo(placeXTPN);
+            nt.postPlaces.add(paw);
+            
+            //nt.weightToPlace = t.getOutputArcWeightTo(placeXTPN); //tyle tokenów dodają do miejsca
 
             switch(minMaxAvg) {
                 case -1: //wejściowe tranzycje najszybsze
@@ -125,7 +141,7 @@ public class AlgorithmsXTPN {
             preTransitionsNanoA1.add(nt);
         }
 
-        if(considerOutputTransitions) {
+        if(considerOutputTransitions) { //wyjściowe tranzycje badanego miejsca
             for (Transition t : postTransitions) { //tworzenie listy tranzycji wyjściowych
                 TransitionNanoXTPN nt = new TransitionNanoXTPN((TransitionXTPN) t, transitions.indexOf(t));
                 if(((TransitionXTPN) t).isAlphaModeActive()) { //czy tranzycja ma aktywny tryb alfa
@@ -148,7 +164,12 @@ public class AlgorithmsXTPN {
                     nt.betaU = 0;
                 }
 
-                nt.weightToPlace = t.getInputArcWeightFrom(placeXTPN); //tyle tokenów zabierają z miejsca
+                TransitionNanoXTPN.PlaceArcWeight paw = nt.new PlaceArcWeight();
+                paw.place = placeNanoA1;
+                paw.weight = t.getInputArcWeightFrom(placeXTPN);
+                nt.prePlaces.add(paw);
+
+                //nt.weightToPlace = t.getInputArcWeightFrom(placeXTPN); //tyle tokenów zabierają z miejsca
                 switch(minMaxAvg) {
                     case -1: //wyjściowe tranzycje najwolniejsze
                         nt.tauAlphaLimit = nt.alphaU_N;
@@ -166,9 +187,7 @@ public class AlgorithmsXTPN {
                 postTransitionsNanoA1.add(nt);
             }
         }
-        placeNanoA1 = new PlaceNanoXTPN(placeXTPN, overlord.getWorkspace().getProject().getPlaces().indexOf(placeXTPN));
-        placeNanoA1.gammaL_N = (int) (placeNanoA1.gammaL * multiplier);
-        placeNanoA1.gammaU_N = (int) (placeNanoA1.gammaU * multiplier);
+        
 
         //wyliczamy maksymalny czas obliczeń:
 
@@ -189,7 +208,7 @@ public class AlgorithmsXTPN {
             t.tauAlpha_N = -1; //niekoniecznie aktywna
             t.tauBeta_N = -1; //nie produkuje na początku
         }
-        
+        //maxSteps;
         return maxSteps;
     }
 
@@ -209,7 +228,7 @@ public class AlgorithmsXTPN {
     /**
      * Metoda przetwarza tranzycje wejściowe. W tej metodzie przetwarzany jest zbiór transitions, które MOGĄ mieć
      * łuki odczytu do miejsca place, tak więc są równocześnie wyjściowymi i podlegają zasadom aktywacji. Te tranzycje
-     * które nie mają łyków odczytu do miejsca place, są zawsze aktywne.
+     * które nie mają łuków odczytu do miejsca place, są zawsze aktywne.
      * @param transitions ArrayList<TransitionNanoXTPN> lista tranzycji
      * @param place PlaceNanoXTPN miejsce
      */
@@ -220,7 +239,11 @@ public class AlgorithmsXTPN {
                     inputTrans.tauBeta_N++; //zwiększ zegar
                     if(inputTrans.tauBeta_N == inputTrans.tauBetaLimit) { //jeżeli skończyła produkcję
 
-                        place.addTokens_N(inputTrans.weightToPlace); //dodaj tokeny do miejsca
+                        for(TransitionNanoXTPN.PlaceArcWeight paw : inputTrans.postPlaces) {
+                            paw.place.addTokens_N(paw.weight); //dodaj tokeny do miejsca wyjściowego
+                        }
+                        //place.addTokens_N(inputTrans.weightToPlace); //dodaj tokeny do miejsca
+                        
                         inputTrans.tauBeta_N = -1;
                         if(canActivate(inputTrans, place)) {
                             inputTrans.tauAlpha_N = 0; //aktywuj
@@ -239,13 +262,21 @@ public class AlgorithmsXTPN {
 
                             if(inputTrans.tauAlpha_N == inputTrans.tauAlphaLimit) { //jeżeli aktywacja w zerowym czasie
                                 inputTrans.tauBeta_N = 0; //rozpocznij produkcję
-                                place.removeTokens_N(inputTrans.weightToPlace); //usuń tokeny z miejsca
+
+                                for(TransitionNanoXTPN.PlaceArcWeight paw : inputTrans.prePlaces) {
+                                    paw.place.removeTokens_N(paw.weight); //usuń tokeny z każdego miejsca wejściowego
+                                }
+                                //place.removeTokens_N(inputTrans.weightToPlace); //usuń tokeny z miejsca
                             }
                         } else { //jeżeli już jest aktywna
                             inputTrans.tauAlpha_N++; //zwiększ zegar
                             if(inputTrans.tauAlpha_N == inputTrans.tauAlphaLimit) { //jeżeli skończyła aktywację
                                 inputTrans.tauBeta_N = 0; //rozpocznij produkcję
-                                place.removeTokens_N(inputTrans.weightToPlace); //usuń tokeny z miejsca
+
+                                for(TransitionNanoXTPN.PlaceArcWeight paw : inputTrans.prePlaces) {
+                                    paw.place.removeTokens_N(paw.weight); //usuń tokeny z każdego miejsca wejściowego
+                                }
+                                //place.removeTokens_N(inputTrans.weightToPlace); //usuń tokeny z miejsca
                             }
                         }
                     } else {
@@ -256,7 +287,12 @@ public class AlgorithmsXTPN {
                 //zawsze aktywna, bo wejściowa, wtedy zegar aktywacji odpowiada za aktywację ORAZ produkcję
                 inputTrans.tauAlpha_N++;
                 if(inputTrans.tauAlpha_N == inputTrans.tauAlphaLimit + inputTrans.tauBetaLimit) {
-                    place.addTokens_N(inputTrans.weightToPlace); //dodaj tokeny do miejsca
+                    
+                    for(TransitionNanoXTPN.PlaceArcWeight paw : inputTrans.postPlaces) {
+                        paw.place.addTokens_N(paw.weight); //dodaj tokeny do miejsca wyjściowego
+                    }
+                    //place.addTokens_N(inputTrans.weightToPlace); //dodaj tokeny do miejsca
+                    
                     inputTrans.tauAlpha_N = 0;
                 }
             }
@@ -275,7 +311,6 @@ public class AlgorithmsXTPN {
             if (outputTrans.tauBeta_N != -1) { //jeżeli produkuje
                 outputTrans.tauBeta_N++; //zwiększ zegar
                 if (outputTrans.tauBeta_N == outputTrans.tauBetaLimit) { //jeżeli skończyła produkcję
-                    place.removeTokens_N(outputTrans.weightToPlace); //usuń tokeny z miejsca
                     outputTrans.tauBeta_N = -1;
                     if (canActivate(outputTrans, place)) {
                         outputTrans.tauAlpha_N = 0; //aktywuj
@@ -293,13 +328,23 @@ public class AlgorithmsXTPN {
 
                         if (outputTrans.tauAlpha_N == outputTrans.tauAlphaLimit) { //jeżeli aktywacja w zerowym czasie
                             outputTrans.tauBeta_N = 0; //rozpocznij produkcję
-                            place.removeTokens_N(outputTrans.weightToPlace); //usuń tokeny z miejsca
+
+                            for(TransitionNanoXTPN.PlaceArcWeight paw : outputTrans.prePlaces) {
+                                paw.place.removeTokens_N(paw.weight); //usuń tokeny z każdego miejsca wejściowego
+                            }
+                            
+                            //place.removeTokens_N(outputTrans.weightToPlace); //usuń tokeny z miejsca
                         }
                     } else { //jeżeli już jest aktywna
                         outputTrans.tauAlpha_N++; //zwiększ zegar
                         if (outputTrans.tauAlpha_N == outputTrans.tauAlphaLimit) { //jeżeli skończyła aktywację
                             outputTrans.tauBeta_N = 0; //rozpocznij produkcję
-                            place.removeTokens_N(outputTrans.weightToPlace); //usuń tokeny z miejsca
+                            outputTrans.tauAlpha_N = -1; //dezaktywuj
+
+                            for(TransitionNanoXTPN.PlaceArcWeight paw : outputTrans.prePlaces) {
+                                paw.place.removeTokens_N(paw.weight); //usuń tokeny z każdego miejsca wejściowego
+                            }
+                            //place.removeTokens_N(outputTrans.weightToPlace); //usuń tokeny z miejsca
                         }
                     }
                 } else {
@@ -311,15 +356,23 @@ public class AlgorithmsXTPN {
 
     private static boolean canActivate(TransitionNanoXTPN outputTransition, PlaceNanoXTPN p) {
         if(!p.tokens_N.isEmpty()) {
-            int neededTokens = outputTransition.weightToPlace;
-            for(int token : p.tokens_N) {
-                if(token > outputTransition.alphaL_N) {
-                    neededTokens--;
+            
+            for(TransitionNanoXTPN.PlaceArcWeight paw : outputTransition.prePlaces) {
+
+                int neededTokens = paw.weight;
+                for(int token : paw.place.tokens_N) {
+                    if(token >= paw.place.gammaL_N) {
+                        neededTokens--;
+                    }
+                    if(neededTokens == 0) {
+                        //return true;
+                        break;
+                    }
                 }
-                if(neededTokens == 0) {
-                    return true;
-                }
+                
             }
+            
+            
         }
         return false;
     }

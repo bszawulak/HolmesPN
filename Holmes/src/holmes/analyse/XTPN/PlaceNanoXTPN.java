@@ -38,11 +38,17 @@ public class PlaceNanoXTPN {
     public void updateTokensSet_N(int i) {
         tokens_N.replaceAll(integer -> integer + i);
         //usuwanie tokenów, które przekroczyły czas maxTime:
+        ArrayList<Integer> toRemove = new ArrayList<Integer>();
         for (int j = 0; j < tokens_N.size(); j++) {
             if(tokens_N.get(j) > gammaU_N) {
-                tokens_N.remove(j);
-                j--;
+                toRemove.add(tokens_N.get(j));
+                //tokens_N.remove(j);
+                //j--;
             }
+        }
+
+        for (Integer integer : toRemove) {
+            tokens_N.remove(integer);
         }
     }
 

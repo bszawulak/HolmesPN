@@ -1700,21 +1700,25 @@ public class GraphPanel extends JComponent {
 				centerOnPoint(newPoint);
 
 			} else if (e.isShiftDown()) {  // przewijanie lewo/prawo
-				if(overlord.getNameLocChangeMode() != GUIManager.locationMoveType.NONE) { //przewijanie lokalizacji napisu
-					Point newP = nameLocationChangeHorizontal(e.getWheelRotation() * e.getScrollAmount()
-							, overlord.getNameLocChangeMode());
-					e.getComponent().repaint(); // bo samo się nie wywoła (P.S. NIE. Nie kombinuj. NIE!)
+				try {
+					if (overlord.getNameLocChangeMode() != GUIManager.locationMoveType.NONE) { //przewijanie lokalizacji napisu
+						Point newP = nameLocationChangeHorizontal(e.getWheelRotation() * e.getScrollAmount()
+								, overlord.getNameLocChangeMode());
+						e.getComponent().repaint(); // bo samo się nie wywoła (P.S. NIE. Nie kombinuj. NIE!)
 
-					if(overlord.getNameLocChangeMode() == GUIManager.locationMoveType.NAME) { //tylko dla nazwy węzła
-						if(overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
-							overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = true;
-							overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
-							overlord.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
-							overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = false;
+						if (overlord.getNameLocChangeMode() == GUIManager.locationMoveType.NAME) { //tylko dla nazwy węzła
+							if (overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel != null) {
+								overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = true;
+								overlord.getPropertiesBox().getCurrentDockWindow().nameLocationXSpinnerModel.setValue(newP.x);
+								overlord.getPropertiesBox().getCurrentDockWindow().nameLocationYSpinnerModel.setValue(newP.y);
+								overlord.getPropertiesBox().getCurrentDockWindow().doNotUpdate = false;
+							}
 						}
+					} else { //normalne przewijanie arkusza w poziomie
+						scrollSheetHorizontal(e.getWheelRotation() * e.getScrollAmount() * 30);
 					}
-				} else { //normalne przewijanie arkusza w poziomie
-					scrollSheetHorizontal(e.getWheelRotation() * e.getScrollAmount() * 30);
+				} catch (Exception ex) {
+					overlord.log("xxxxxx", "error", true);
 				}
 			} else { // przewijanie góra/dół
 				if(overlord.getNameLocChangeMode() != GUIManager.locationMoveType.NONE) { //przewijanie lokalizacji napisu

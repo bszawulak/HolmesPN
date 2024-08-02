@@ -2,7 +2,14 @@ package holmes.analyse.XTPN;
 
 import holmes.petrinet.elements.TransitionXTPN;
 
+import java.util.ArrayList;
+
 public class TransitionNanoXTPN {
+    public class PlaceArcWeight {
+        public PlaceNanoXTPN place;
+        public int weight;
+    }
+    
     /**minimalny czas aktywacji (double)*/
     public double alphaL;
     /**maksymlany czas aktywacji (double)*/
@@ -39,11 +46,14 @@ public class TransitionNanoXTPN {
 
     //algorytm znajdowania maksymalnej liczby kroków:
     public boolean hasReadArcToPlace = false;
-    public int weightToPlace = 0;
+    //public int weightToPlace = 0;
 
     public int globalID = -1;
     public int localID = -1;
     public String name = "";
+    
+    ArrayList<PlaceArcWeight> prePlaces = new ArrayList<PlaceArcWeight>();
+    ArrayList<PlaceArcWeight> postPlaces = new ArrayList<PlaceArcWeight>();
 
     public TransitionNanoXTPN() {
     }
