@@ -10,6 +10,12 @@ import java.util.ArrayList;
 public class AlgorithmsXTPN {
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 
+    ArrayList<TransitionNanoXTPN> preTransitionsNanoA1;
+    ArrayList<TransitionNanoXTPN> postTransitionsNanoA1;
+    PlaceNanoXTPN placeNanoA1 = null; //obliczanie max liczby tokenów w miejscu
+    long maxSteps; //ile kroków pracy Alg1
+    boolean areReadArcs = false; //czy są łuki odczytu w Alg1
+    
     public class ResultTokensAvg {
         public double avg;
         public double stdDev;
@@ -18,6 +24,9 @@ public class AlgorithmsXTPN {
     }
 
     public AlgorithmsXTPN() {
+        preTransitionsNanoA1 = new ArrayList<>();
+        postTransitionsNanoA1 = new ArrayList<>();
+        maxSteps = 0;
     }
 
     /**
@@ -25,7 +34,28 @@ public class AlgorithmsXTPN {
      * @param placeXTPN
      * @return
      */
-    public static int getTokensPerPlace(PlaceXTPN placeXTPN, int digits, int minMaxAvg, boolean considerOutputTransitions) {
+    public int getTokensPerPlace(PlaceXTPN placeXTPN, int digits, int minMaxAvg, boolean considerOutputTransitions) {
+        //calculateMaxStepsNumber(placeXTPN, digits, minMaxAvg, considerOutputTransitions);
+        int result = 0;
+        for (long time = 1; time < maxSteps; time++) { //od 1! bo 0 to stan początkowy
+            if(!areReadArcs)
+                shuffleElements(preTransitionsNanoA1);
+
+            processInputTransitions(preTransitionsNanoA1, placeNanoA1);
+            if(considerOutputTransitions) {
+                shuffleElements(preTransitionsNanoA1);
+                processOutputTransitions(postTransitionsNanoA1, placeNanoA1);
+            }
+            
+            placeNanoA1.updateTokensSet_N(1);
+            if(placeNanoA1.tokens_N.size() > result) {
+                result = placeNanoA1.tokens_N.size();
+            }
+        }
+        return result;
+    }
+
+    public long calculateMaxStepsNumber(PlaceXTPN placeXTPN, int digits, int minMaxAvg, boolean considerOutputTransitions) {
         //minMaxAvg = -1 - wejściowe tranzycje najszybsze, wyjściowe najwolniejsze
         //minMaxAvg = 0 - średnia z U/L alfa i beta
         //minMaxAvg = 1 - wejściowe tranzycje najwolniejsze, wyjściowe najszybsze
@@ -45,11 +75,6 @@ public class AlgorithmsXTPN {
         }
 
         //tutaj przygotowujemy obiekty TransitionNanoXTPN i PlaceNanoXTPN do obliczeń:
-
-        boolean areReadArcs = false;
-        ArrayList<TransitionNanoXTPN> preTransitionsNano = new ArrayList<>();
-        ArrayList<TransitionNanoXTPN> postTransitionsNano = new ArrayList<>();
-        PlaceNanoXTPN placeNano = null;
         ArrayList<Integer> lcmCandidates = new ArrayList<Integer>();
         for (Transition t : preTransitions) { //tworzenie listy tranzycji wejściowych
             TransitionNanoXTPN nt = new TransitionNanoXTPN((TransitionXTPN) t, transitions.indexOf(t));
@@ -97,7 +122,7 @@ public class AlgorithmsXTPN {
                 postTransitions.remove(t); //usuwamy z listy tranzycji wyjściowych
             }
 
-            preTransitionsNano.add(nt);
+            preTransitionsNanoA1.add(nt);
         }
 
         if(considerOutputTransitions) {
@@ -138,23 +163,21 @@ public class AlgorithmsXTPN {
                         nt.tauBetaLimit = nt.betaL_N;
                         break;
                 }
-
-                postTransitionsNano.add(nt);
+                postTransitionsNanoA1.add(nt);
             }
         }
-
-        placeNano = new PlaceNanoXTPN(placeXTPN, overlord.getWorkspace().getProject().getPlaces().indexOf(placeXTPN));
-        placeNano.gammaL_N = (int) (placeNano.gammaL * multiplier);
-        placeNano.gammaU_N = (int) (placeNano.gammaU * multiplier);
+        placeNanoA1 = new PlaceNanoXTPN(placeXTPN, overlord.getWorkspace().getProject().getPlaces().indexOf(placeXTPN));
+        placeNanoA1.gammaL_N = (int) (placeNanoA1.gammaL * multiplier);
+        placeNanoA1.gammaU_N = (int) (placeNanoA1.gammaU * multiplier);
 
         //wyliczamy maksymalny czas obliczeń:
 
         int[] arr = lcmCandidates.stream().mapToInt(i -> i).toArray();
-        long maxSteps = MathToolsXTPN.lcm_of_array_elements(arr);
-        maxSteps += placeNano.gammaU_N;
+        maxSteps = MathToolsXTPN.lcm_of_array_elements(arr);
+        maxSteps += placeNanoA1.gammaU_N;
 
         //symulacja, ustawianie zegarów
-        for (TransitionNanoXTPN t : preTransitionsNano) {
+        for (TransitionNanoXTPN t : preTransitionsNanoA1) {
             if(t.hasReadArcToPlace) {
                 t.tauAlpha_N = -1; //z łukiem odczyty niekoniecznie aktywna
             } else {
@@ -162,32 +185,12 @@ public class AlgorithmsXTPN {
             }
             t.tauBeta_N = -1; //nie produkuje na początku
         }
-        for(TransitionNanoXTPN t : postTransitionsNano) {
+        for(TransitionNanoXTPN t : postTransitionsNanoA1) {
             t.tauAlpha_N = -1; //niekoniecznie aktywna
             t.tauBeta_N = -1; //nie produkuje na początku
         }
-
-        //symulacja:
-
-        int result = 0;
-        ArrayList<Integer> Kp = new ArrayList<>();
-        for (long time = 0; time < maxSteps; time++) {
-
-            if(!areReadArcs)
-                shuffleElements(preTransitionsNano);
-
-            processInputTransitions(preTransitionsNano, placeNano);
-            placeNano.updateTokensSet_N(1);
-
-            if(considerOutputTransitions) {
-                shuffleElements(preTransitionsNano);
-                processOutputTransitions(postTransitionsNano, placeNano);
-            }
-            if(Kp.size() > result) {
-                result = Kp.size();
-            }
-        }
-        return result;
+        
+        return maxSteps;
     }
 
     /**

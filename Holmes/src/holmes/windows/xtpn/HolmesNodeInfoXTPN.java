@@ -586,9 +586,14 @@ public class HolmesNodeInfoXTPN extends JFrame {
         checkKboundButton.setMargin(new Insets(0, 0, 0, 0));
         checkKboundButton.setBounds(subPanelX, subPanelY, 130, 32);
         checkKboundButton.addActionListener(actionEvent -> {
-            int result = AlgorithmsXTPN.getTokensPerPlace(thePlace, 100, -1, true);
+            AlgorithmsXTPN alg1 = new AlgorithmsXTPN();
             placeSecondPanelResults.setText("");
+            long maxSteps = alg1.calculateMaxStepsNumber(thePlace, 100, -1, true);
             placeSecondPanelResults.append("Place: "+thePlace.getName()+"\n");
+            placeSecondPanelResults.append("Max steps: "+maxSteps+"\n");
+            
+            int result = alg1.getTokensPerPlace(thePlace, 100, -1, true);
+            
             placeSecondPanelResults.append("Tokens per place: "+result+"\n");
         });
         analP_firstPanel.add(checkKboundButton);
