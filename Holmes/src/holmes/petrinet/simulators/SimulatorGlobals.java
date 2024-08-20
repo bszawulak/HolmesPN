@@ -54,7 +54,7 @@ public class SimulatorGlobals {
 	private boolean recordStatictis = false;
 
 	private boolean readArcXTPNactive = false;
-
+	private boolean readArcXTPNdontTakeTokens = false;
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.
@@ -528,14 +528,23 @@ public class SimulatorGlobals {
 	 * Ustawia status czasowego łuku odczytu.
 	 * @param value (<b>boolean</b>) true, jeżeli łuk odczytu ma zachowywać czas tokenu.
 	 */
-	public void setXTPNreadArcActive(boolean value) {
+	public void setXTPNreadArcPreserveTokensLifetime(boolean value) {
 		readArcXTPNactive = value;
 	}
 
 	/**
 	 * Zwraca status czasowego łuku odczytu.
 	 */
-	public boolean isXTPNreadArcActive() {
+	public boolean isXTPNreadArcPreserveTokensLifetime() {
 		return readArcXTPNactive;
+	}
+
+
+	public void setXTPNreadArcDontTakeTokens(boolean value) {
+		readArcXTPNdontTakeTokens = value;
+	}
+	
+	public boolean isXTPNreadArcDontTakeTokens() {
+		return readArcXTPNdontTakeTokens;
 	}
 }

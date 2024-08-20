@@ -906,13 +906,16 @@ public class HolmesProgramProperties extends JFrame {
 		JPanel panel = new JPanel(null);
 		panel.setBounds(0, 0, 600, 500);
 		
-		panel.add(createSimPanel(0, 0, 590, 190));
+		panel.add(createSimPanel(0, 0, 590, 150));
 		
-		panel.add(createSimGraphic(0, 190, 590, 150));
+		panel.add(createSimGraphic(0, 150, 590, 100));
+		
+		panel.add(createSimXTPNPanel(0, 250, 590, 100));
 		
 		panel.repaint();
 		return panel;
 	}
+	
 	
 	/**
 	 * Metoda tworząca podpanel opcji inwariantów.
@@ -947,17 +950,34 @@ public class HolmesProgramProperties extends JFrame {
 				posX, posY+=20, 500, 20, "simPlacesColors", true); //Places change colors during simulation
 		panel.add(placesColorsCheckBox);
 
+		JCheckBox isSimulatorLoggedCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry044"),
+				posX, posY+=20, 500, 20, "simLogEnabled", true); //(XTPN) Read arcs preserve tokens lifetime
+		panel.add(isSimulatorLoggedCheckBox);
+
+		noAction = false;
+		return panel;
+	}
+
+	private JPanel createSimXTPNPanel(int x, int y, int w, int h) {
+		JPanel panel = new JPanel(null);
+		panel.setBorder(BorderFactory.createTitledBorder("XTPN")); //Simulator engine options
+		panel.setBounds(x, y, w, h);
+		int posX = 10;
+		int posY = 15;
+		noAction = true;
+
 		JCheckBox XTPNsimMassActionCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry039"),
-				posX, posY+=20, 500, 20, "simXTPNmassAction", true); //(XTPN) Globally use mass-action kinetics law for simulation
+				posX, posY, 500, 20, "simXTPNmassAction", true); //(XTPN) Globally use mass-action kinetics law for simulation
 		panel.add(XTPNsimMassActionCheckBox);
 
 		JCheckBox XTPNsimReadArcTokenCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry040"),
 				posX, posY+=20, 500, 20, "simXTPNreadArcTokens", true); //(XTPN) Read arcs preserve tokens lifetime
 		panel.add(XTPNsimReadArcTokenCheckBox);
 
-		JCheckBox isSimulatorLoggedCheckBox = checkboxWizard(lang.getText("HPPwinSIM_entry044"),
-				posX, posY+=20, 500, 20, "simLogEnabled", true); //(XTPN) Read arcs preserve tokens lifetime
-		panel.add(isSimulatorLoggedCheckBox);
+		JCheckBox XTPNsimReadArcDoNotTakeTokensCheckBox = checkboxWizard("(XTPN) Read arcs do not take tokens",
+				posX, posY+=20, 500, 20, "simXTPNreadArcDoNotTakeTokens", true); 
+		panel.add(XTPNsimReadArcDoNotTakeTokensCheckBox);
+		
 
 		noAction = false;
 		return panel;

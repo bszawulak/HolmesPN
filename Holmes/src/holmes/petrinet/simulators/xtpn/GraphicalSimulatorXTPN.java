@@ -106,7 +106,9 @@ public class GraphicalSimulatorXTPN {
         sg = overlord.simSettings;
 
         boolean readArcPreserveTime = overlord.getSettingsManager().getValue("simXTPNreadArcTokens").equals("1");
-        sg.setXTPNreadArcActive(readArcPreserveTime);
+        sg.setXTPNreadArcPreserveTokensLifetime(readArcPreserveTime);
+        boolean readArcDontTakeTokens = overlord.getSettingsManager().getValue("simXTPNreadArcDoNotTakeTokens").equals("1");
+        sg.setXTPNreadArcDontTakeTokens(readArcDontTakeTokens);
 
         ArrayList<Place> places = petriNet.getPlaces();
         //nsl.logStart(netSimType, writeHistory, simulatorMode, isMaxMode()); //TODO
@@ -556,12 +558,16 @@ public class GraphicalSimulatorXTPN {
                         if(arc.getArcType() == TypeOfArc.INHIBITOR) {
                             arc.setTransportingTokens(false);
                         }  else { //teraz określamy ile zabrać
+                            if(arc.getArcType() == Arc.TypeOfArc.READARC && sg.isXTPNreadArcDontTakeTokens()) {
+                                continue; //nie zabieraj tokenu!
+                            }
+                            
                             int weight = arc.getWeight();
                             if(transition.fpnExtension.isFunctional()) {
                                 weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                             }
+                            //zapisz aktualne czasy zabieranych tokenów
                             ArrayList<Double> removedTokens = place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
-
                             if(arc.getArcType() == TypeOfArc.READARC) {
                                 transition.readArcReturnVector.add(new TransitionXTPN.TokensBack(place, weight, removedTokens));
                             }

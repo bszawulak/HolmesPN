@@ -85,7 +85,9 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
         globalMAK = overlord.getSettingsManager().getValue("simXTPNmassAction").equals("1");
 
         boolean readArcPreserveTime = overlord.getSettingsManager().getValue("simXTPNreadArcTokens").equals("1");
-        sg.setXTPNreadArcActive(readArcPreserveTime);
+        sg.setXTPNreadArcPreserveTokensLifetime(readArcPreserveTime);
+        boolean readArcDontTakeTokens = overlord.getSettingsManager().getValue("simXTPNreadArcDoNotTakeTokens").equals("1");
+        sg.setXTPNreadArcDontTakeTokens(readArcDontTakeTokens);
 
         if(overlord.simSettings.getGeneratorType() == 1) {
             this.generator = new HighQualityRandom(System.currentTimeMillis());
@@ -538,8 +540,13 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                     overlord.log(strB, "warning", true);
                 }
 
-                if(arc.getArcType() == Arc.TypeOfArc.READARC && sg.isXTPNreadArcActive() && place.isGammaModeActive()) {
+                if(arc.getArcType() == Arc.TypeOfArc.READARC && sg.isXTPNreadArcPreserveTokensLifetime() && place.isGammaModeActive()) {
                     continue; //jeśli sg.isXTPNreadArcActive() == true i readarc, to zwrotem zajmie się pętla niżej
+                    //która zwraca tokeny do miejsc ze zmodyfikowanym czasem życia.
+                }
+                
+                if(arc.getArcType() == Arc.TypeOfArc.READARC && sg.isXTPNreadArcDontTakeTokens())  {
+                    continue; //tylko jeżeli w ogóle nie pobieramy tokenów z miejsc, to i ich nie zwracamy...
                 }
 
                 int weight = arc.getWeight();
@@ -550,27 +557,31 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
             }
 
             //Zwrot tokenów dla XTPN-read arc
-            double tau = transition.getTauBetaValue();
-            if(sg.isXTPNreadArcActive()) { //jeśli tryb włączony
-                if(tau < 0)
-                    tau = 0.0;
+            if(!sg.isXTPNreadArcDontTakeTokens()) { //jeżeli zabieramy tokeny łukiem odczytu
+                double tau = transition.getTauBetaValue();
+                if(sg.isXTPNreadArcPreserveTokensLifetime()) { //jeśli tryb włączony
+                    if(tau < 0)
+                        tau = 0.0;
 
-                for(TransitionXTPN.TokensBack box : transition.readArcReturnVector) {
-                    ArrayList<Double> returnedTokens = new ArrayList<>();
-                    double gammaMax = box.placeBack.getGammaMaxValue();
-                    for(int i=0; i<box.multisetBack.size(); i++) {
-                        if(box.multisetBack.get(i) + tau <= gammaMax) {
-                            returnedTokens.add(box.multisetBack.get(i) + tau);
+                    for(TransitionXTPN.TokensBack box : transition.readArcReturnVector) {
+                        ArrayList<Double> returnedTokens = new ArrayList<>();
+                        double gammaMax = box.placeBack.getGammaMaxValue();
+                        for(int i=0; i<box.multisetBack.size(); i++) {
+                            if(box.multisetBack.get(i) + tau <= gammaMax) {
+                                returnedTokens.add(box.multisetBack.get(i) + tau);
+                            }
                         }
-                    }
-                    box.placeBack.accessMultiset().addAll(returnedTokens);
-                    Collections.sort(box.placeBack.accessMultiset());
-                    Collections.reverse(box.placeBack.accessMultiset());
+                        box.placeBack.accessMultiset().addAll(returnedTokens);
+                        Collections.sort(box.placeBack.accessMultiset());
+                        Collections.reverse(box.placeBack.accessMultiset());
 
-                    box.placeBack.addTokensNumber(returnedTokens.size());
-                    box.Clear();
+                        box.placeBack.addTokensNumber(returnedTokens.size());
+                        box.Clear();
+                    }
                 }
-            }
+            } 
+            
+            
             transition.deactivateTransitionXTPN(graphicalSimulation);
             transition.setActivationStatusXTPN(false);
             transition.setProductionStatus_xTPN(false);

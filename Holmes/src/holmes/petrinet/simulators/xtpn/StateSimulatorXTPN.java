@@ -342,12 +342,15 @@ public class StateSimulatorXTPN implements Runnable {
                         //TODO: implement maybe?
                         //arc.setTransportingTokens(false);
                     } else { //teraz określamy ile zabrać
+                        if(arc.getArcType() == Arc.TypeOfArc.READARC && sg.isXTPNreadArcDontTakeTokens()) { 
+                            continue; //nie zabieraj tokenu!
+                        }
+                        
                         int weight = arc.getWeight();
                         if (transition.fpnExtension.isFunctional()) {
                             weight = FunctionsTools.getFunctionalArcWeight(transition, arc, place);
                         }
                         ArrayList<Double> removedTokens = place.removeTokensForProduction_XTPN(weight, 0, engineXTPN.getGenerator());
-
                         if(arc.getArcType() == Arc.TypeOfArc.READARC) {
                             transition.readArcReturnVector.add(new TransitionXTPN.TokensBack(place, weight, removedTokens));
                         }
