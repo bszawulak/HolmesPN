@@ -4,11 +4,11 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.utilities.Tools;
-import holmes.windows.HolmesNotepad;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
 import java.util.ArrayList;
 
 public class HolmesStSpRG extends JFrame {
@@ -21,7 +21,7 @@ public class HolmesStSpRG extends JFrame {
     private JPanel lowerPanel;
 
     public HolmesStSpRG() {
-        this.setTitle("State space analysis");
+        this.setTitle("Reachability graph analysis");
         try {
             setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
         } catch (Exception ex) {
@@ -30,10 +30,12 @@ public class HolmesStSpRG extends JFrame {
         
 
         //oblokowuje główne okno po zamknięciu tego
-        addWindowListener(new java.awt.event.WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 overlord.getFrame().setEnabled(true);
             }
+
         });
         overlord.getFrame().setEnabled(false); //blokuj główne okno
         setResizable(false);
@@ -71,34 +73,20 @@ public class HolmesStSpRG extends JFrame {
         int panX = 20;
         int panY = 20;
 
-        JButton button1 = new JButton("ExampleB1");
-        button1.setText("<html><center>Example<br />B1<center></html>");
-        button1.setBounds(panX, panY, 150, 40);
-        button1.setMargin(new Insets(0, 0, 0, 0));
-        //button1.setIcon(Tools.getResIcon32("/icons/stateSim/simpleSimTab.png"));
-        button1.addActionListener(actionEvent -> {
-            HolmesNotepad notePad = new HolmesNotepad(800,500);
-            notePad.setVisible(true);
-            notePad.addTextLine("Przykładowy tekst dla notatnika: ", "text");
-            notePad.addTextLineNL("a po nim enter", "italic");
-            notePad.addTextLineNL("Przykładowy tekst dla notatnika", "bold");
-            notePad.addTextLineNL("Przykładowy tekst dla notatnika", "small");
-        });
-        button1.setFocusPainted(false);
-        upperPanel.add(button1);
-
-        JButton button2 = new JButton("ExampleB1");
-        button2.setText("<html><center>Example<br />B1<center></html>");
-        button2.setBounds(panX+160, panY, 150, 40);
-        button2.setMargin(new Insets(0, 0, 0, 0));
-        //button2.setIcon(Tools.getResIcon32("/icons/stateSim/simpleSimTab.png"));
-        button2.addActionListener(actionEvent -> {
-            exampleMethod();
-        });
-        button2.setFocusPainted(false);
-        upperPanel.add(button2);
+        upperPanel.add(createReachabilityGraphGenerationButton(panX, panY));
 
         return upperPanel;
+    }
+
+    private JButton createReachabilityGraphGenerationButton(int panX, int panY) {
+        JButton buttonRGGen = new JButton("RG_gen1");
+        buttonRGGen.setText("<html><center>Generate<center></html>");
+        buttonRGGen.setBounds(panX +160, panY, 150, 40);
+        buttonRGGen.setMargin(new Insets(0, 0, 0, 0));
+        buttonRGGen.setIcon(Tools.getResIcon32("/icons/componentsManager/compIcon.png"));
+        buttonRGGen.addActionListener(actionEvent -> exampleMethod());
+        buttonRGGen.setFocusPainted(false);
+        return buttonRGGen;
     }
 
     private JPanel lowerPanel() {
