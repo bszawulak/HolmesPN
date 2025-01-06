@@ -122,32 +122,13 @@ public class HolmesStSpRG extends JFrame {
         RGUtil rgUtil = new RGUtilImpl();
 
         PetriNet net = overlord.getWorkspace().getProject();
-        Marking markingfromHolmes = rgUtil.getActualMarking(net);
-        List<holmes.windows.statespace.reachabilitygraph.Transition> transitionsFromHolmes = rgUtil.getTransitionsFromHolmes(net);
-        System.out.println(markingfromHolmes);
-        System.out.println(transitionsFromHolmes);
+        Marking actualMarking = rgUtil.getActualMarking(net);
+        System.out.println(actualMarking);
+        net.getTransitions().forEach(trans -> System.out.println(trans.getName() + ", "));
 
-        ReachabilityGraph reachabilityGraph = rgUtil.constructReachabilityGraph(transitionsFromHolmes, markingfromHolmes);
+        ReachabilityGraph reachabilityGraph = rgUtil.constructReachabilityGraph(net.getTransitions(), actualMarking);
         rgUtil.printRGresult(reachabilityGraph);
 
-    }
-
-    private void exampleMethod3() {
-        RGUtil rgUtil = new RGUtilImpl();
-
-        PetriNet net = overlord.getWorkspace().getProject();
-        System.out.println(rgUtil.getActualMarking(net));
-
-        GraphicalSimulator simulator = new GraphicalSimulator(SimulatorGlobals.SimNetType.BASIC, net);
-        simulator.resetSimulator();
-
-        ArrayList<Transition> launchingTransitions = new ArrayList<>();
-        launchingTransitions = simulator.engine.getTransLaunchList(false);
-        simulator.launchSingleSubtractPhase(launchingTransitions, false, null);
-        System.out.println(rgUtil.getActualMarking(net));
-        simulator.launchSingleAddPhaseGraphics(launchingTransitions, false, null);
-        simulator.launchSingleAddPhase(net.getTransitions(), false, null);
-        System.out.println(rgUtil.getActualMarking(net));
     }
 
     /**

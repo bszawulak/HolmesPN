@@ -1,6 +1,7 @@
 package holmes.windows.statespace.reachabilitygraph;
 
 import holmes.petrinet.data.PetriNet;
+import holmes.petrinet.elements.Transition;
 
 import java.util.List;
 
@@ -18,6 +19,5 @@ public interface RGUtil {
 
     void printRGresult(ReachabilityGraph graph);
 
-    List<Transition> getTransitionsFromHolmes(PetriNet net);
 
 }

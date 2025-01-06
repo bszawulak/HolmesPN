@@ -2,6 +2,7 @@ package holmes.windows.statespace.reachabilitygraph;
 
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Place;
+import holmes.petrinet.elements.Transition;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ public class RGUtilImpl implements RGUtil {
     public ReachabilityGraph constructReachabilityGraph(List<Transition> transitions, Marking initialMarking) {
         ReachabilityGraph graph = new ReachabilityGraph();
         Queue<Marking> toProcess = new LinkedList<>();
+
         graph.addNode(initialMarking);
         toProcess.add(initialMarking);
 
@@ -24,34 +26,32 @@ public class RGUtilImpl implements RGUtil {
             Marking current = toProcess.poll();
 
             for (Transition transition : transitions) {
-                if (transition.isEnabled(current)) {
-                    Marking newMarking = transition.fire(current);
+                if (!transition.isActive()) {
+                    continue;
+                }
 
-                    boolean handled = false;
-                    for (Marking existing : graph.markings) {
-                        if (newMarking.equals(existing)) {
-                            graph.addEdge(current, transition.name, existing);
-                            handled = true;
-                            break;
-                        } else if (newMarking.greaterThan(existing)) {
-                            handleBigger(newMarking, existing);
-                            graph.addEdge(current, transition.name, existing);
-                            handled = true;
-                            break;
-                        } else if (newMarking.lessThan(existing)) {
-                            handleSmaller(newMarking, existing);
-                            graph.addEdge(current, transition.name, existing);
-                            handled = true;
-                            break;
-                        }
-                    }
+                Marking newMarking = transition.fire(current);
 
-                    if (!handled) {
+                boolean handled = false;
+                for (Marking existing : graph.markings) {
+                    if (newMarking.equals(existing)) {
+                        graph.addEdge(current, transition.getName(), existing);
+                        break;
+                    } else if (newMarking.greaterThan(existing)) {
+                        handleBigger(newMarking, existing);
+                        graph.addEdge(current, transition.getName(), existing);
+                        break;
+                    } else if (newMarking.lessThan(existing)) {
+                        handleSmaller(newMarking, existing);
+                        graph.addEdge(current, transition.getName(), existing);
+                        break;
+                    } else {
                         graph.addNode(newMarking);
-                        graph.addEdge(current, transition.name, newMarking);
+                        graph.addEdge(current, transition.getName(), newMarking);
                         toProcess.add(newMarking);
                     }
                 }
+
             }
         }
 
@@ -76,6 +76,19 @@ public class RGUtilImpl implements RGUtil {
         }
     }
 
+    Marking fire(Marking marking, Transition transition) {
+        Map<String, Integer> newPlaces = new HashMap<>(marking.places);
+
+        for (String place : transition.getInputPlaces().keySet()) {
+            newPlaces.put(place, newPlaces.getOrDefault(place, 0) - input.get(place));
+        }
+        for (String place : output.keySet()) {
+            newPlaces.put(place, newPlaces.getOrDefault(place, 0) + output.get(place));
+        }
+
+        return new Marking(newPlaces);
+    }
+
     public Marking getActualMarking(PetriNet net) {
         ArrayList<Place> plcs = net.getPlaces();
         if (plcs.isEmpty()) {
@@ -83,20 +96,6 @@ public class RGUtilImpl implements RGUtil {
             return new Marking(new HashMap<>());
         }
         return new Marking(plcs.stream().collect(Collectors.toMap(Place::getName, Place::getTokensNumber)));
-    }
-
-    public List<Transition> getTransitionsFromHolmes(PetriNet net) {
-        ArrayList<holmes.petrinet.elements.Transition> transitionsFromHolmes = net.getTransitions();
-        if (transitionsFromHolmes.isEmpty()) {
-            System.out.println("ERR: No transitions in the net");
-            return new ArrayList<>();
-        }
-
-        return transitionsFromHolmes.stream().map(transition -> {
-            Map<String, Integer> input = transition.getInputPlaces().stream().collect(Collectors.toMap(Place::getName, Place::getTokensNumber));
-            Map<String, Integer> output = transition.getOutputPlaces().stream().collect(Collectors.toMap(Place::getName, Place::getTokensNumber));
-            return new Transition(transition.getName(), input, output);
-        }).toList();
     }
 
     public void printRGresult(ReachabilityGraph graph) {
