@@ -4,17 +4,16 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.GraphicalSimulator;
-import holmes.petrinet.simulators.SimulatorGlobals;
-import holmes.petrinet.simulators.SimulatorStandardPN;
 import holmes.utilities.Tools;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.util.ArrayList;
-import java.util.List;
 
 public class HolmesStSpRG extends JFrame {
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -89,7 +88,7 @@ public class HolmesStSpRG extends JFrame {
         buttonRGGen.setBounds(panX, panY, 150, 40);
         buttonRGGen.setMargin(new Insets(0, 0, 0, 0));
         buttonRGGen.setIcon(Tools.getResIcon32("/icons/componentsManager/compIcon.png"));
-        buttonRGGen.addActionListener(actionEvent -> exampleMethod2());
+        buttonRGGen.addActionListener(actionEvent -> generateReachabilityGraphAction());
         buttonRGGen.setFocusPainted(false);
         return buttonRGGen;
     }
@@ -118,17 +117,40 @@ public class HolmesStSpRG extends JFrame {
         return lowerPanel;
     }
 
-    private void exampleMethod2() {
+    private void generateReachabilityGraphAction() {
         RGUtil rgUtil = new RGUtilImpl();
 
         PetriNet net = overlord.getWorkspace().getProject();
         Marking actualMarking = rgUtil.getActualMarking(net);
         System.out.println(actualMarking);
-        net.getTransitions().forEach(trans -> System.out.println(trans.getName() + ", "));
+        RealVector M = actualMarking.toVector();
+        System.out.println("M");
+        System.out.println(M);
 
-        ReachabilityGraph reachabilityGraph = rgUtil.constructReachabilityGraph(net.getTransitions(), actualMarking);
-        rgUtil.printRGresult(reachabilityGraph);
 
+        IncidenceMatrix incidenceMatrix = new IncidenceMatrix(net);
+        incidenceMatrix.printToConsole();
+        RealMatrix I = incidenceMatrix.get();
+
+        double[] TArray = {0, 0, 1};
+        RealVector T = new ArrayRealVector(TArray);
+
+        M = calculateNextState(I, M, T);
+
+        System.out.println("M'");
+        System.out.println(M);
+
+
+
+
+//        ReachabilityGraph reachabilityGraph = rgUtil.constructReachabilityGraph(net.getTransitions(), actualMarking);
+//        rgUtil.printRGresult(reachabilityGraph);
+
+    }
+
+    // Funkcja obliczająca nowy stan M' = M + I * T
+    public static RealVector calculateNextState(RealMatrix I, RealVector M, RealVector T) {
+        return M.add(I.operate(T));
     }
 
     /**
@@ -136,8 +158,6 @@ public class HolmesStSpRG extends JFrame {
      * następnie wyświetla informacje o nim w polu logField1stTab (globalne).
      */
     private void exampleMethod() {
-        RGUtil rgUtil = new RGUtilImpl();
-        rgUtil.generateReachabilityGraph();
         //pobiera listę tranzycji i miejsc z projektu
         ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
         ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
@@ -176,47 +196,7 @@ public class HolmesStSpRG extends JFrame {
             logField1stTab.append("No places in the project.\n");
         }
 
-        //
 
-        //
-        /*
-        Sprawdźcie najpierw jakie metody są w klasach:
-         Transition
-         Place
-         Arc
-         Node (nadklasa dla Transition i Place)
-         
-         To jak połączone są obiektami ralacje miejsce-tranzycja i tranzycja-miejsce jest bardziej skomplikowane.
-         Nie sądzę, że koniecznie musicie to teraz wiedzieć, ale opiszę. Nadklasą dla Transition i Place jest Node.
-         W node jest lista private ArrayList<ElementLocation> elementLocations = new ArrayList<>();
-            ElementLocation to klasa, która łączy tranzycje z miejscami. Zobaczcie sobie od razu, jakie są pola tej
-            klasy, to wiele będzie tłumaczyć. Przede wszyskim listy inArcs i outArcs, które są listami łuków wejściowych
-            i wyjściowych. Wartością tych list są obiekty klasy Arc, która jest klasą łączącą tranzycje z miejscami.Każdy łuk
-            zawiera jeden obiekt ElementLocation wejściowy i jedno wyjściowy.
-            
-        Jeszcze o ElementLocation - jeżeli miejsce lub tranzycje nie są logiczne, czyli nie posiadają swoich
-        graficznych odpowiedników gdzieś w sieci, to w Node lista elementLocations ma tylko 1 element. W przypadku
-        gdy są logiczne, to lista elementLocations ma więcej elementów.
-        
-        Mówiąc krótko i uspokajając: metody z klasach Transition i Place są w większości przypadków wystarczające. One
-        zawierają tą logikę, np. pobieranie tranzycji wejściowych dla jakiegoś miejsca iteruje po wszystkich ElementLocations
-        tego miejsca (będzie minimum jedno) i zwraca wszystkie Nody/Tranzycje które są z tym miejscem połączone.
-        Jeśli jest niejasne, zobaczcie prosty kod public ArrayList<Transition> getOutputTransitions() w klasie Place.
-        
-        Kolejna sprawa - jeżeli zaczniecie trochę głębiej przeglądać kod Holmesa możecie zauważyć, że istnieją menadżery
-        stanów, np. p-stan, to po prostu dane ile dokładnie w danej chwili w każdym miejscu jest tokenów. Informacja
-        przydatna do analizy stanów, JEDNAKŻE sugeruję totalnie olac te menadżery i używać metod z klasy Plasy do "obsługi"
-        tokenów / przejść pomiędzy stanami.
-        
-        Żeby po analizie która może zmieniać aktualną liczbę tokenów w miejsach przywrócić stan początkowy, wystarczy
-        zrobić tak jak to dzieje się w klasie StateSimulator.java:
-         - ma ona pole private ArrayList<Integer> internalBackupMarkingZero = new ArrayList<Integer>();
-         - metoda saveInternalMarkingZero() zapisuje stan początkowy
-         - po analizie, metoda restoreInternalMarkingZero() przywraca stan początkowy. Ta druga używa dodatkowo
-          metody clearTransitionsValues() która zeruje wartości odpowiednich pól dla tranzycji. Po prostu skopiujcie ich
-          kod (saveInternalMarkingZero; restoreInternalMarkingZero; clearTransitionsValues) do swojej klasy.
-            
-         */
 
     }
 }

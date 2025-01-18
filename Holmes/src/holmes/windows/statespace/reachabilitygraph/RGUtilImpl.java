@@ -30,7 +30,7 @@ public class RGUtilImpl implements RGUtil {
                     continue;
                 }
 
-                Marking newMarking = transition.fire(current);
+                Marking newMarking = null; //transition.fire(current);
 
                 boolean handled = false;
                 for (Marking existing : graph.markings) {
@@ -76,18 +76,19 @@ public class RGUtilImpl implements RGUtil {
         }
     }
 
-    Marking fire(Marking marking, Transition transition) {
-        Map<String, Integer> newPlaces = new HashMap<>(marking.places);
-
-        for (String place : transition.getInputPlaces().keySet()) {
-            newPlaces.put(place, newPlaces.getOrDefault(place, 0) - input.get(place));
-        }
-        for (String place : output.keySet()) {
-            newPlaces.put(place, newPlaces.getOrDefault(place, 0) + output.get(place));
-        }
-
-        return new Marking(newPlaces);
-    }
+//    Marking fire(Marking marking, Transition transition) {
+//        //Macierz incydencji
+//        Map<String, Integer> newPlaces = new HashMap<>(marking.places);
+//
+//        for (String place : transition.getInputPlaces().keySet()) {
+//            newPlaces.put(place, newPlaces.getOrDefault(place, 0) - input.get(place));
+//        }
+//        for (String place : output.keySet()) {
+//            newPlaces.put(place, newPlaces.getOrDefault(place, 0) + output.get(place));
+//        }
+//
+//        return new Marking(newPlaces);
+//    }
 
     public Marking getActualMarking(PetriNet net) {
         ArrayList<Place> plcs = net.getPlaces();

@@ -1,5 +1,8 @@
 package holmes.windows.statespace.reachabilitygraph;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +38,16 @@ public class Marking {
     @Override
     public String toString() {
         return places.toString();
+    }
+
+    public RealVector toVector() {
+        double[] markingVector = new double[places.size()];
+        int i = 0;
+        for (String place : places.keySet()) {
+            markingVector[i] = places.get(place);
+            i++;
+        }
+        return new ArrayRealVector(markingVector);
     }
 
 }
