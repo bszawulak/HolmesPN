@@ -4,8 +4,9 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
+import holmes.petrinet.simulators.SimulatorGlobals;
+import holmes.petrinet.simulators.SimulatorStandardPN;
 import holmes.utilities.Tools;
-import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -118,39 +119,19 @@ public class HolmesStSpRG extends JFrame {
     }
 
     private void generateReachabilityGraphAction() {
-        RGUtil rgUtil = new RGUtilImpl();
 
         PetriNet net = overlord.getWorkspace().getProject();
-        Marking actualMarking = rgUtil.getActualMarking(net);
-        System.out.println(actualMarking);
-        RealVector M = actualMarking.toVector();
-        System.out.println("M");
-        System.out.println(M);
+        RGUtil rgUtil = new RGUtilImpl(net);
 
+        try {
+            ReachabilityGraph reachabilityGraph = rgUtil.constructReachabilityGraph();
+            rgUtil.printRGresult(reachabilityGraph);
+        } catch (Exception ex) {
+            logField1stTab.append("Error: " + ex.getMessage() + "\n");
+        } finally {
+            net.restoreMarkingZero();
+        }
 
-        IncidenceMatrix incidenceMatrix = new IncidenceMatrix(net);
-        incidenceMatrix.printToConsole();
-        RealMatrix I = incidenceMatrix.get();
-
-        double[] TArray = {0, 0, 1};
-        RealVector T = new ArrayRealVector(TArray);
-
-        M = calculateNextState(I, M, T);
-
-        System.out.println("M'");
-        System.out.println(M);
-
-
-
-
-//        ReachabilityGraph reachabilityGraph = rgUtil.constructReachabilityGraph(net.getTransitions(), actualMarking);
-//        rgUtil.printRGresult(reachabilityGraph);
-
-    }
-
-    // Funkcja obliczająca nowy stan M' = M + I * T
-    public static RealVector calculateNextState(RealMatrix I, RealVector M, RealVector T) {
-        return M.add(I.operate(T));
     }
 
     /**

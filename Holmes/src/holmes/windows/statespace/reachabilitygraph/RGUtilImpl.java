@@ -3,53 +3,81 @@ package holmes.windows.statespace.reachabilitygraph;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
+import holmes.petrinet.simulators.SimulatorGlobals;
+import holmes.petrinet.simulators.SimulatorStandardPN;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class RGUtilImpl implements RGUtil {
 
+    private final Marking mMarking;
+    private final RealMatrix iMatrix;
+    private final PetriNet net;
 
-    @Override
-    public void generateReachabilityGraph() {
-
+    RGUtilImpl(PetriNet net) {
+        this.mMarking = Marking.getActualMarking(net);
+        this.iMatrix = getIncidenceMatrix(net);
+        this.net = net;
     }
 
-    public ReachabilityGraph constructReachabilityGraph(List<Transition> transitions, Marking initialMarking) {
+    /**
+     * Returns incidence matrix for given Petri Net
+     * @param net - Petri Net
+     */
+    private static RealMatrix getIncidenceMatrix(PetriNet net) {
+        IncidenceMatrix incidenceMatrix = new IncidenceMatrix(net);
+        incidenceMatrix.printToConsole();
+        return incidenceMatrix.get();
+    }
+
+    /**
+     * Generates reachability graph for given Petri Net
+     */
+    public ReachabilityGraph constructReachabilityGraph() {
         ReachabilityGraph graph = new ReachabilityGraph();
         Queue<Marking> toProcess = new LinkedList<>();
 
-        graph.addNode(initialMarking);
-        toProcess.add(initialMarking);
+        graph.addNode(mMarking);
+        toProcess.add(mMarking);
 
         while (!toProcess.isEmpty()) {
             Marking current = toProcess.poll();
 
-            for (Transition transition : transitions) {
+            // Tu by trzeba było ustawiac tokeny w miejscach na podstawie current
+            net.getPlaces().forEach(place -> place.setTokensNumber(current.places.get(place.getName())));
+
+            for (Transition transition : net.getTransitions()) {
                 if (!transition.isActive()) {
                     continue;
                 }
 
-                Marking newMarking = null; //transition.fire(current);
+                Marking newMarking = fire(current, transition);
 
                 boolean handled = false;
                 for (Marking existing : graph.markings) {
                     if (newMarking.equals(existing)) {
                         graph.addEdge(current, transition.getName(), existing);
+                        handled = true;
                         break;
                     } else if (newMarking.greaterThan(existing)) {
                         handleBigger(newMarking, existing);
                         graph.addEdge(current, transition.getName(), existing);
+                        handled = true;
                         break;
                     } else if (newMarking.lessThan(existing)) {
                         handleSmaller(newMarking, existing);
                         graph.addEdge(current, transition.getName(), existing);
+                        handled = true;
                         break;
-                    } else {
-                        graph.addNode(newMarking);
-                        graph.addEdge(current, transition.getName(), newMarking);
-                        toProcess.add(newMarking);
                     }
+                }
+                if (!handled){
+                    graph.addNode(newMarking);
+                    graph.addEdge(current, transition.getName(), newMarking);
+                    toProcess.add(newMarking);
                 }
 
             }
@@ -76,27 +104,54 @@ public class RGUtilImpl implements RGUtil {
         }
     }
 
-//    Marking fire(Marking marking, Transition transition) {
-//        //Macierz incydencji
-//        Map<String, Integer> newPlaces = new HashMap<>(marking.places);
-//
-//        for (String place : transition.getInputPlaces().keySet()) {
-//            newPlaces.put(place, newPlaces.getOrDefault(place, 0) - input.get(place));
-//        }
-//        for (String place : output.keySet()) {
-//            newPlaces.put(place, newPlaces.getOrDefault(place, 0) + output.get(place));
-//        }
-//
-//        return new Marking(newPlaces);
-//    }
+    private Marking fire(Marking actualMarking, Transition transition) {
 
-    public Marking getActualMarking(PetriNet net) {
-        ArrayList<Place> plcs = net.getPlaces();
-        if (plcs.isEmpty()) {
-            System.out.println("ERR: No places in the net");
-            return new Marking(new HashMap<>());
-        }
-        return new Marking(plcs.stream().collect(Collectors.toMap(Place::getName, Place::getTokensNumber)));
+        // Return Array 1 when transLaunchList contains transition or 0 when not
+        double[] tArray = net.getTransitions().stream()
+                .mapToDouble(trans -> trans.equals(transition) ? 1 : 0)
+                .toArray();
+
+        // Convert the result array to a RealVector
+        RealVector tVector = new ArrayRealVector(tArray);
+        RealVector realVector = calculateNextState(iMatrix, actualMarking.toVector(), tVector);
+        return Marking.fromVector(realVector, net);
+    }
+    private Marking fire2(Marking actualMarking) {
+        ArrayList<Place> places = net.getPlaces();
+        places.forEach(place -> place.setTokensNumber(actualMarking.places.get(place.getName())));
+
+        SimulatorStandardPN simulator = new SimulatorStandardPN();
+        simulator.setEngine(SimulatorGlobals.SimNetType.BASIC, false, false,
+                net.getTransitions(), net.getTimeTransitions(), net.getPlaces());
+        // UWAGA - ta metoda zwraca listę tranzycji, które można odpalić w danej chwili już z ustaleniem pierwszeństwa
+        // jeśli jest więcej niż jedna możliwość odpalenia to prawdopodobnie stracimy info o nieodpalonych
+        // TA metoda pracuje na aktualnej sieci w Holmes a nie na aktualnym markingu
+        // Czy wystarczy podmienić net.getPlaces na podłożone?
+        // Mozna zmienic na szybko Marking? TAK, to działa
+        ArrayList<Transition> transLaunchList = simulator.getTransLaunchList(false);
+
+
+        // Return Array 1 when transLaunchList contains transition or 0 when not
+        double[] resultArray = net.getTransitions().stream()
+                .mapToDouble(transition -> transLaunchList.contains(transition) ? 1 : 0)
+                .toArray();
+
+        // Convert the result array to a RealVector
+        RealVector resultVector = new ArrayRealVector(resultArray);
+        RealVector realVector = calculateNextState(iMatrix, actualMarking.toVector(), resultVector);
+        return Marking.fromVector(realVector, net);
+    }
+
+    /**
+     * Calculates next state based on incidence matrix, current marking and transition vector
+     * Funkcja obliczająca nowy stan M' = M + I * T
+     * @param I - incidence matrix
+     * @param M - current marking
+     * @param T - transition vector
+     * @return new marking
+     */
+    public static RealVector calculateNextState(RealMatrix I, RealVector M, RealVector T) {
+        return M.add(I.operate(T));
     }
 
     public void printRGresult(ReachabilityGraph graph) {
