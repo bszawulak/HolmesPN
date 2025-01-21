@@ -3,8 +3,6 @@ package holmes.windows.statespace.reachabilitygraph;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.SimulatorGlobals;
-import holmes.petrinet.simulators.SimulatorStandardPN;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -63,7 +61,7 @@ public class RGUtilImpl implements RGUtil {
                         handled = true;
                         break;
                     } else if (newMarking.greaterThan(existing)) {
-                        handleBigger(newMarking, existing);
+                        handleBigger(current, newMarking, existing, graph, transition);
                         graph.addEdge(current, transition.getName(), existing);
                         handled = true;
                         break;
@@ -86,13 +84,30 @@ public class RGUtilImpl implements RGUtil {
         return graph;
     }
 
-    public void handleBigger(Marking newMarking, Marking existingMarking) {
-        for (String place : newMarking.places.keySet()) {
-            int diff = newMarking.places.get(place) - existingMarking.places.get(place);
-            if (diff > 0) {
-                newMarking.places.put(place, Integer.MAX_VALUE); // Reprezentacja nieskończoności
+    public void handleBigger(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
+        graph.removeMarking(existingMarking); //TODO: sprawdzić czy nie usuwa za dużo informacji. Może trzeba by było oznaczać do usunięcia
+        if (postsetContainsPreset(transition)) {
+            for (String place : newMarking.places.keySet()) {
+                int distance = newMarking.places.get(place) - existingMarking.places.get(place);
+                if (distance > 0) {
+                    newMarking.places.put(place, Integer.MAX_VALUE); // Reprezentacja nieskończoności
+                }
             }
         }
+        if (newMarking.equals(existingMarking)) {
+            graph.addNode(existingMarking); //TODO: Moze bedzie do usuniecia jesli to wyzej bedzie spelnione
+            graph.addEdge(existingMarking, transition.getName(), existingMarking);
+        } else {
+            //TODO: wtedy tylko tutaj bedzie usuwanie existing tak naprawde
+            graph.addNode(newMarking);
+            graph.addEdge(current, transition.getName(), newMarking);
+        }
+    }
+
+    private boolean postsetContainsPreset(Transition transition) {
+        Set<Place> preset = new HashSet<>(transition.getInputPlaces());
+        Set<Place> postset = new HashSet<>(transition.getOutputPlaces());
+        return postset.containsAll(preset);
     }
 
     public void handleSmaller(Marking newMarking, Marking existingMarking) {
@@ -114,31 +129,6 @@ public class RGUtilImpl implements RGUtil {
         // Convert the result array to a RealVector
         RealVector tVector = new ArrayRealVector(tArray);
         RealVector realVector = calculateNextState(iMatrix, actualMarking.toVector(), tVector);
-        return Marking.fromVector(realVector, net);
-    }
-    private Marking fire2(Marking actualMarking) {
-        ArrayList<Place> places = net.getPlaces();
-        places.forEach(place -> place.setTokensNumber(actualMarking.places.get(place.getName())));
-
-        SimulatorStandardPN simulator = new SimulatorStandardPN();
-        simulator.setEngine(SimulatorGlobals.SimNetType.BASIC, false, false,
-                net.getTransitions(), net.getTimeTransitions(), net.getPlaces());
-        // UWAGA - ta metoda zwraca listę tranzycji, które można odpalić w danej chwili już z ustaleniem pierwszeństwa
-        // jeśli jest więcej niż jedna możliwość odpalenia to prawdopodobnie stracimy info o nieodpalonych
-        // TA metoda pracuje na aktualnej sieci w Holmes a nie na aktualnym markingu
-        // Czy wystarczy podmienić net.getPlaces na podłożone?
-        // Mozna zmienic na szybko Marking? TAK, to działa
-        ArrayList<Transition> transLaunchList = simulator.getTransLaunchList(false);
-
-
-        // Return Array 1 when transLaunchList contains transition or 0 when not
-        double[] resultArray = net.getTransitions().stream()
-                .mapToDouble(transition -> transLaunchList.contains(transition) ? 1 : 0)
-                .toArray();
-
-        // Convert the result array to a RealVector
-        RealVector resultVector = new ArrayRealVector(resultArray);
-        RealVector realVector = calculateNextState(iMatrix, actualMarking.toVector(), resultVector);
         return Marking.fromVector(realVector, net);
     }
 

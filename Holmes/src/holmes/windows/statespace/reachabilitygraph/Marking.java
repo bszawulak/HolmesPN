@@ -11,7 +11,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Marking {
-    Map<String, Integer> places;
+    Map<String, Integer> places; //TODO: jak zaznaczyc infinity? i krotnosci infinity?
+    //Może Map<String, Integer>
 
     Marking(Map<String, Integer> places) {
         this.places = places;
@@ -21,7 +22,11 @@ public class Marking {
         return this.places.equals(other.places);
     }
 
-    //TODO: Co to ma sprawdzac? xdd
+    /**
+     * Checks if every place has at least as many tokens as in the other marking
+     * @param other
+     * @return
+     */
     boolean greaterThan(Marking other) {
         for (String place : this.places.keySet()) {
             if (this.places.get(place) < other.places.get(place)) {
@@ -31,6 +36,11 @@ public class Marking {
         return true;
     }
 
+    /**
+     * Checks if every place has maximum as many tokens as in the other marking
+     * @param other
+     * @return
+     */
     boolean lessThan(Marking other) {
         for (String place : this.places.keySet()) {
             if (this.places.get(place) > other.places.get(place)) {
