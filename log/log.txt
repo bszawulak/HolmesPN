@@ -1,0 +1,3002 @@
+*********************************************************************
+Console initiated
+[2024-12-09 22:26:05]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-09 22:26:13]   Settings file not found or damaged. The file holmes.cfg, which normally contains the settings for this application, has not been found or contains invalid values. Restoring default file.
+[2024-12-09 22:26:15]   Tools directory does not exist:Fixed
+[2024-12-09 22:26:15]   File COMMAND.ina does not exist or is corrupted.Fixed
+[2024-12-09 22:26:15]   File COMMANDp.ina does not exist or is corrupted.Fixed
+[2024-12-09 22:26:15]   File ina.bat did not exist or was corrupted:Fixed
+[2024-12-09 22:26:15]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-09 22:26:29]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-10 16:48:44]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-10 16:48:44]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: 
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-10 16:48:45]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-10 16:56:33]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-10 18:53:47]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-10 18:53:47]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: 
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-10 18:53:48]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-10 18:55:34]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-11 14:03:55]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-11 14:03:55]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: 
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-11 14:03:56]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-11 14:05:32]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-11 21:26:48]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-11 21:26:48]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: 
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-11 21:26:49]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-11 21:29:10]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-14 15:29:39]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-14 15:29:39]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: 
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-14 15:29:40]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-14 15:32:07]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-17 20:30:02]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-17 20:30:02]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-17 20:30:03]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-17 20:30:10]   Net data deletion initiated.
+[2024-12-17 20:30:10]   Net data deletion initiated.
+[2024-12-17 20:30:10]   Removing all nodes (places and transition) and all arcs.
+[2024-12-17 20:30:11]   Net data deletion initiated.
+[2024-12-17 20:30:11]   Net data deletion initiated.
+[2024-12-17 20:30:11]   Removing all nodes (places and transition) and all arcs.
+[2024-12-17 20:30:11]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\z_popova.project
+[2024-12-17 20:30:11]   Read 4 places, 3 transitions, 8 arcs. 0 functions.
+[2024-12-17 20:30:11]   Reading project file succcessful.
+[2024-12-17 20:30:40]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-17 22:18:18]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-17 22:18:19]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-17 22:18:20]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-17 22:18:26]   Net data deletion initiated.
+[2024-12-17 22:18:26]   Net data deletion initiated.
+[2024-12-17 22:18:26]   Removing all nodes (places and transition) and all arcs.
+[2024-12-17 22:18:26]   Net data deletion initiated.
+[2024-12-17 22:18:26]   Net data deletion initiated.
+[2024-12-17 22:18:26]   Removing all nodes (places and transition) and all arcs.
+[2024-12-17 22:18:26]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\z_popova.project
+[2024-12-17 22:18:27]   Read 4 places, 3 transitions, 8 arcs. 0 functions.
+[2024-12-17 22:18:27]   Reading project file succcessful.
+[2024-12-17 22:18:28]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-18 11:19:41]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-18 11:19:41]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-18 11:19:42]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-18 11:19:51]   Net data deletion initiated.
+[2024-12-18 11:19:51]   Net data deletion initiated.
+[2024-12-18 11:19:51]   Removing all nodes (places and transition) and all arcs.
+[2024-12-18 11:19:51]   Reading Snoopy file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\GG-NER_siec.spped
+[2024-12-18 11:19:51]   Petri net successfully imported from file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\GG-NER_siec.spped
+[2024-12-18 11:20:01]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-20 14:55:31]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-20 14:55:31]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-20 14:55:32]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-20 14:55:40]   Net data deletion initiated.
+[2024-12-20 14:55:40]   Net data deletion initiated.
+[2024-12-20 14:55:40]   Removing all nodes (places and transition) and all arcs.
+[2024-12-20 14:55:40]   Net data deletion initiated.
+[2024-12-20 14:55:40]   Net data deletion initiated.
+[2024-12-20 14:55:40]   Removing all nodes (places and transition) and all arcs.
+[2024-12-20 14:55:40]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2024-12-20 14:55:40]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2024-12-20 14:55:40]   Reading project file succcessful.
+[2024-12-20 14:55:57]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-25 18:05:56]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-25 18:05:57]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-25 18:05:57]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-25 18:06:01]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-26 18:38:24]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-26 18:38:24]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-26 18:38:25]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-26 18:38:31]   Net data deletion initiated.
+[2024-12-26 18:38:31]   Net data deletion initiated.
+[2024-12-26 18:38:31]   Removing all nodes (places and transition) and all arcs.
+[2024-12-26 18:38:31]   Net data deletion initiated.
+[2024-12-26 18:38:31]   Net data deletion initiated.
+[2024-12-26 18:38:31]   Removing all nodes (places and transition) and all arcs.
+[2024-12-26 18:38:31]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2024-12-26 18:38:31]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2024-12-26 18:38:31]   Reading project file succcessful.
+[2024-12-26 18:40:00]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-26 21:35:30]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-26 21:35:31]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-26 21:35:32]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-26 21:35:37]   Net data deletion initiated.
+[2024-12-26 21:35:37]   Net data deletion initiated.
+[2024-12-26 21:35:37]   Removing all nodes (places and transition) and all arcs.
+[2024-12-26 21:35:37]   Net data deletion initiated.
+[2024-12-26 21:35:37]   Net data deletion initiated.
+[2024-12-26 21:35:37]   Removing all nodes (places and transition) and all arcs.
+[2024-12-26 21:35:37]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2024-12-26 21:35:37]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2024-12-26 21:35:37]   Reading project file succcessful.
+[2024-12-26 21:36:04]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-27 18:32:38]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-27 18:32:39]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-27 18:32:39]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-27 18:32:44]   Net data deletion initiated.
+[2024-12-27 18:32:44]   Net data deletion initiated.
+[2024-12-27 18:32:44]   Removing all nodes (places and transition) and all arcs.
+[2024-12-27 18:32:45]   Net data deletion initiated.
+[2024-12-27 18:32:45]   Net data deletion initiated.
+[2024-12-27 18:32:45]   Removing all nodes (places and transition) and all arcs.
+[2024-12-27 18:32:45]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2024-12-27 18:32:45]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2024-12-27 18:32:45]   Reading project file succcessful.
+[2024-12-27 18:36:41]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-27 18:52:25]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-27 18:52:26]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-27 18:52:27]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-27 18:52:32]   Net data deletion initiated.
+[2024-12-27 18:52:32]   Net data deletion initiated.
+[2024-12-27 18:52:32]   Removing all nodes (places and transition) and all arcs.
+[2024-12-27 18:52:32]   Net data deletion initiated.
+[2024-12-27 18:52:32]   Net data deletion initiated.
+[2024-12-27 18:52:32]   Removing all nodes (places and transition) and all arcs.
+[2024-12-27 18:52:32]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2024-12-27 18:52:32]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2024-12-27 18:52:32]   Reading project file succcessful.
+[2024-12-27 18:52:51]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-27 20:32:58]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-27 20:32:58]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-27 20:32:59]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-27 20:33:04]   Net data deletion initiated.
+[2024-12-27 20:33:04]   Net data deletion initiated.
+[2024-12-27 20:33:04]   Removing all nodes (places and transition) and all arcs.
+[2024-12-27 20:33:04]   Net data deletion initiated.
+[2024-12-27 20:33:04]   Net data deletion initiated.
+[2024-12-27 20:33:04]   Removing all nodes (places and transition) and all arcs.
+[2024-12-27 20:33:04]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2024-12-27 20:33:05]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2024-12-27 20:33:05]   Reading project file succcessful.
+[2024-12-27 20:33:22]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-28 16:15:08]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-28 16:15:08]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-28 16:15:09]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-28 16:15:12]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-28 17:44:57]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-28 17:44:57]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-28 17:44:58]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-28 17:45:12]   Net data deletion initiated.
+[2024-12-28 17:45:12]   Net data deletion initiated.
+[2024-12-28 17:45:12]   Removing all nodes (places and transition) and all arcs.
+[2024-12-28 17:45:12]   Net data deletion initiated.
+[2024-12-28 17:45:12]   Net data deletion initiated.
+[2024-12-28 17:45:12]   Removing all nodes (places and transition) and all arcs.
+[2024-12-28 17:45:13]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2024-12-28 17:45:13]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2024-12-28 17:45:13]   Reading project file succcessful.
+[2024-12-28 17:52:58]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-30 17:46:50]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-30 17:46:50]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-30 17:46:51]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-30 17:46:54]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-30 17:55:45]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-30 17:55:45]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-30 17:55:46]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-30 17:55:51]   Net data deletion initiated.
+[2024-12-30 17:55:51]   Net data deletion initiated.
+[2024-12-30 17:55:51]   Removing all nodes (places and transition) and all arcs.
+[2024-12-30 17:55:52]   Net data deletion initiated.
+[2024-12-30 17:55:52]   Net data deletion initiated.
+[2024-12-30 17:55:52]   Removing all nodes (places and transition) and all arcs.
+[2024-12-30 17:55:52]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2024-12-30 17:55:52]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2024-12-30 17:55:52]   Reading project file succcessful.
+[2024-12-30 17:56:30]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-30 18:39:46]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-30 18:39:46]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-30 18:39:47]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-30 18:39:51]   Net data deletion initiated.
+[2024-12-30 18:39:51]   Net data deletion initiated.
+[2024-12-30 18:39:51]   Removing all nodes (places and transition) and all arcs.
+[2024-12-30 18:39:52]   Net data deletion initiated.
+[2024-12-30 18:39:52]   Net data deletion initiated.
+[2024-12-30 18:39:52]   Removing all nodes (places and transition) and all arcs.
+[2024-12-30 18:39:52]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2024-12-30 18:39:52]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2024-12-30 18:39:52]   Reading project file succcessful.
+[2024-12-30 18:40:01]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-30 18:40:09]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-30 18:40:09]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-30 18:40:10]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-30 18:40:13]   Net data deletion initiated.
+[2024-12-30 18:40:13]   Net data deletion initiated.
+[2024-12-30 18:40:13]   Removing all nodes (places and transition) and all arcs.
+[2024-12-30 18:40:14]   Net data deletion initiated.
+[2024-12-30 18:40:14]   Net data deletion initiated.
+[2024-12-30 18:40:14]   Removing all nodes (places and transition) and all arcs.
+[2024-12-30 18:40:14]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2024-12-30 18:40:14]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2024-12-30 18:40:14]   Reading project file succcessful.
+[2024-12-30 18:40:19]   Exiting program
+*********************************************************************
+Console initiated
+[2024-12-31 17:08:26]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2024-12-31 17:08:27]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2024-12-31 17:08:27]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2024-12-31 17:08:32]   Net data deletion initiated.
+[2024-12-31 17:08:32]   Net data deletion initiated.
+[2024-12-31 17:08:32]   Removing all nodes (places and transition) and all arcs.
+[2024-12-31 17:08:32]   Net data deletion initiated.
+[2024-12-31 17:08:32]   Net data deletion initiated.
+[2024-12-31 17:08:32]   Removing all nodes (places and transition) and all arcs.
+[2024-12-31 17:08:33]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2024-12-31 17:08:33]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2024-12-31 17:08:33]   Reading project file succcessful.
+[2024-12-31 17:08:39]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-02 15:36:50]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-02 15:36:51]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-02 15:36:52]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-02 15:36:59]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-03 14:33:22]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-03 14:33:22]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-03 14:33:23]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-03 14:33:25]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-03 15:17:51]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-03 15:17:51]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-03 15:17:52]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-03 15:17:55]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-03 16:48:18]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-03 16:48:18]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-03 16:48:20]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-03 16:48:23]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-03 18:44:01]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-03 18:44:01]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-03 18:44:02]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-03 18:44:06]   Net data deletion initiated.
+[2025-01-03 18:44:06]   Net data deletion initiated.
+[2025-01-03 18:44:06]   Removing all nodes (places and transition) and all arcs.
+[2025-01-03 18:44:06]   Net data deletion initiated.
+[2025-01-03 18:44:06]   Net data deletion initiated.
+[2025-01-03 18:44:06]   Removing all nodes (places and transition) and all arcs.
+[2025-01-03 18:44:07]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-03 18:44:07]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-03 18:44:07]   Reading project file succcessful.
+[2025-01-03 18:44:21]   Net data deletion initiated.
+[2025-01-03 18:44:21]   Net data deletion initiated.
+[2025-01-03 18:44:21]   Removing all nodes (places and transition) and all arcs.
+[2025-01-03 18:44:21]   t-invariants data removed from memory.
+[2025-01-03 18:44:21]   MCT data removed from memory.
+[2025-01-03 18:44:21]   Net data deletion initiated.
+[2025-01-03 18:44:21]   Net data deletion initiated.
+[2025-01-03 18:44:21]   Removing all nodes (places and transition) and all arcs.
+[2025-01-03 18:44:21]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\test_z_google.project
+[2025-01-03 18:44:21]   Read 6 places, 4 transitions, 10 arcs. 0 functions.
+[2025-01-03 18:44:21]   Reading project file succcessful.
+[2025-01-03 18:44:47]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-03 18:44:51]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-03 18:44:51]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-03 18:44:52]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-03 18:44:57]   Net data deletion initiated.
+[2025-01-03 18:44:57]   Net data deletion initiated.
+[2025-01-03 18:44:57]   Removing all nodes (places and transition) and all arcs.
+[2025-01-03 18:44:57]   Net data deletion initiated.
+[2025-01-03 18:44:57]   Net data deletion initiated.
+[2025-01-03 18:44:57]   Removing all nodes (places and transition) and all arcs.
+[2025-01-03 18:44:57]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\test_z_google.project
+[2025-01-03 18:44:57]   Read 6 places, 4 transitions, 10 arcs. 0 functions.
+[2025-01-03 18:44:57]   Reading project file succcessful.
+[2025-01-03 18:45:33]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-07 18:26:45]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-07 18:26:45]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-07 18:26:46]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-07 18:26:55]   Net data deletion initiated.
+[2025-01-07 18:26:55]   Net data deletion initiated.
+[2025-01-07 18:26:55]   Removing all nodes (places and transition) and all arcs.
+[2025-01-07 18:26:55]   Net data deletion initiated.
+[2025-01-07 18:26:55]   Net data deletion initiated.
+[2025-01-07 18:26:55]   Removing all nodes (places and transition) and all arcs.
+[2025-01-07 18:26:55]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-07 18:26:55]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-07 18:26:55]   Reading project file succcessful.
+[2025-01-07 19:25:08]   Net data deletion initiated.
+[2025-01-07 19:25:08]   Net data deletion initiated.
+[2025-01-07 19:25:08]   Removing all nodes (places and transition) and all arcs.
+[2025-01-07 19:25:08]   t-invariants data removed from memory.
+[2025-01-07 19:25:08]   MCT data removed from memory.
+[2025-01-07 19:25:08]   Net data deletion initiated.
+[2025-01-07 19:25:08]   Net data deletion initiated.
+[2025-01-07 19:25:08]   Removing all nodes (places and transition) and all arcs.
+[2025-01-07 19:25:09]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\test_z_google.project
+[2025-01-07 19:25:09]   Read 6 places, 4 transitions, 10 arcs. 0 functions.
+[2025-01-07 19:25:09]   Reading project file succcessful.
+[2025-01-07 19:25:49]   t-invariants data removed from memory.
+[2025-01-07 19:25:49]   MCT data removed from memory.
+[2025-01-07 22:00:35]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-07 22:10:33]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-07 22:10:34]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-07 22:10:35]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-07 22:10:42]   Net data deletion initiated.
+[2025-01-07 22:10:42]   Net data deletion initiated.
+[2025-01-07 22:10:42]   Removing all nodes (places and transition) and all arcs.
+[2025-01-07 22:10:42]   Net data deletion initiated.
+[2025-01-07 22:10:42]   Net data deletion initiated.
+[2025-01-07 22:10:42]   Removing all nodes (places and transition) and all arcs.
+[2025-01-07 22:10:42]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-07 22:10:42]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-07 22:10:42]   Reading project file succcessful.
+[2025-01-07 22:11:27]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-08 11:28:28]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-08 11:28:29]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-08 11:28:29]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-08 11:28:49]   Net data deletion initiated.
+[2025-01-08 11:28:49]   Net data deletion initiated.
+[2025-01-08 11:28:49]   Removing all nodes (places and transition) and all arcs.
+[2025-01-08 11:28:49]   Net data deletion initiated.
+[2025-01-08 11:28:49]   Net data deletion initiated.
+[2025-01-08 11:28:49]   Removing all nodes (places and transition) and all arcs.
+[2025-01-08 11:28:49]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-08 11:28:49]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-08 11:28:49]   Reading project file succcessful.
+[2025-01-08 11:35:48]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-10 15:15:39]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-10 15:15:39]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-10 15:15:41]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-10 15:15:46]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-11 18:01:35]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-11 18:01:36]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-11 18:01:37]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-11 18:01:44]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-12 14:03:23]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-12 14:03:23]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-12 14:03:23]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-12 14:03:28]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-12 14:31:42]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-12 14:31:42]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-12 14:31:43]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-12 14:31:49]   Net data deletion initiated.
+[2025-01-12 14:31:49]   Net data deletion initiated.
+[2025-01-12 14:31:49]   Removing all nodes (places and transition) and all arcs.
+[2025-01-12 14:31:49]   Net data deletion initiated.
+[2025-01-12 14:31:49]   Net data deletion initiated.
+[2025-01-12 14:31:49]   Removing all nodes (places and transition) and all arcs.
+[2025-01-12 14:31:49]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-12 14:31:50]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-12 14:31:50]   Reading project file succcessful.
+[2025-01-12 14:32:02]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-12 15:03:16]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-12 15:03:16]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-12 15:03:17]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-12 15:03:26]   Net data deletion initiated.
+[2025-01-12 15:03:26]   Net data deletion initiated.
+[2025-01-12 15:03:26]   Removing all nodes (places and transition) and all arcs.
+[2025-01-12 15:03:27]   Net data deletion initiated.
+[2025-01-12 15:03:27]   Net data deletion initiated.
+[2025-01-12 15:03:27]   Removing all nodes (places and transition) and all arcs.
+[2025-01-12 15:03:27]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-12 15:03:27]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-12 15:03:27]   Reading project file succcessful.
+[2025-01-12 15:03:38]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-13 10:35:24]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-13 10:35:24]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-13 10:35:25]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-13 10:35:35]   Net data deletion initiated.
+[2025-01-13 10:35:35]   Net data deletion initiated.
+[2025-01-13 10:35:35]   Removing all nodes (places and transition) and all arcs.
+[2025-01-13 10:35:35]   Net data deletion initiated.
+[2025-01-13 10:35:35]   Net data deletion initiated.
+[2025-01-13 10:35:35]   Removing all nodes (places and transition) and all arcs.
+[2025-01-13 10:35:35]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-13 10:35:35]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-13 10:35:35]   Reading project file succcessful.
+[2025-01-13 10:36:35]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-14 20:44:46]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-14 20:44:46]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 1
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-14 20:44:48]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-14 20:45:04]   Net data deletion initiated.
+[2025-01-14 20:45:04]   Net data deletion initiated.
+[2025-01-14 20:45:04]   Removing all nodes (places and transition) and all arcs.
+[2025-01-14 20:45:05]   Net data deletion initiated.
+[2025-01-14 20:45:05]   Net data deletion initiated.
+[2025-01-14 20:45:05]   Removing all nodes (places and transition) and all arcs.
+[2025-01-14 20:45:05]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-14 20:45:05]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-14 20:45:05]   Reading project file succcessful.
+[2025-01-16 14:06:27]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-21 13:58:18]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-21 13:58:18]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\sieci_do_inzynierki
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 0
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-21 13:58:18]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-21 13:58:35]   Net data deletion initiated.
+[2025-01-21 13:58:35]   Net data deletion initiated.
+[2025-01-21 13:58:35]   Removing all nodes (places and transition) and all arcs.
+[2025-01-21 13:58:36]   Net data deletion initiated.
+[2025-01-21 13:58:36]   Net data deletion initiated.
+[2025-01-21 13:58:36]   Removing all nodes (places and transition) and all arcs.
+[2025-01-21 13:58:36]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\z_popova.project
+[2025-01-21 13:58:36]   Read 4 places, 3 transitions, 8 arcs. 0 functions.
+[2025-01-21 13:58:36]   Reading project file succcessful.
+[2025-01-21 14:33:23]   Net data deletion initiated.
+[2025-01-21 14:33:23]   Net data deletion initiated.
+[2025-01-21 14:33:23]   Removing all nodes (places and transition) and all arcs.
+[2025-01-21 14:33:23]   t-invariants data removed from memory.
+[2025-01-21 14:33:23]   MCT data removed from memory.
+[2025-01-21 14:33:23]   Net data deletion initiated.
+[2025-01-21 14:33:23]   Net data deletion initiated.
+[2025-01-21 14:33:23]   Removing all nodes (places and transition) and all arcs.
+[2025-01-21 14:33:23]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-21 14:33:23]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-21 14:33:23]   Reading project file succcessful.
+[2025-01-21 19:17:05]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-22 15:23:44]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-22 15:23:44]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 0
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-22 15:23:45]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-22 15:23:51]   Net data deletion initiated.
+[2025-01-22 15:23:51]   Net data deletion initiated.
+[2025-01-22 15:23:51]   Removing all nodes (places and transition) and all arcs.
+[2025-01-22 15:23:51]   Net data deletion initiated.
+[2025-01-22 15:23:51]   Net data deletion initiated.
+[2025-01-22 15:23:51]   Removing all nodes (places and transition) and all arcs.
+[2025-01-22 15:23:51]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-22 15:23:51]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-22 15:23:51]   Reading project file succcessful.
+[2025-01-22 15:24:10]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-22 15:26:28]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-22 15:26:28]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 0
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-22 15:26:28]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-22 15:26:34]   Net data deletion initiated.
+[2025-01-22 15:26:34]   Net data deletion initiated.
+[2025-01-22 15:26:34]   Removing all nodes (places and transition) and all arcs.
+[2025-01-22 15:26:35]   Net data deletion initiated.
+[2025-01-22 15:26:35]   Net data deletion initiated.
+[2025-01-22 15:26:35]   Removing all nodes (places and transition) and all arcs.
+[2025-01-22 15:26:35]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-22 15:26:35]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-22 15:26:35]   Reading project file succcessful.
+[2025-01-22 15:27:16]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-22 15:27:25]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-22 15:27:25]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 0
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-22 15:27:26]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-22 15:27:31]   Net data deletion initiated.
+[2025-01-22 15:27:31]   Net data deletion initiated.
+[2025-01-22 15:27:31]   Removing all nodes (places and transition) and all arcs.
+[2025-01-22 15:27:31]   Net data deletion initiated.
+[2025-01-22 15:27:31]   Net data deletion initiated.
+[2025-01-22 15:27:31]   Removing all nodes (places and transition) and all arcs.
+[2025-01-22 15:27:31]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-22 15:27:31]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-22 15:27:31]   Reading project file succcessful.
+[2025-01-22 15:27:43]   Exiting program
+*********************************************************************
+Console initiated
+[2025-01-22 18:36:36]   Holmes language processing started.
+Language: default english Entries: 3394
+Language config read: 6 dictionaries.
+Dictionary: | English | Ukrainian | Polish | YourLanguage | German | Spanish | 
+Loaded: English File: lang\english.hdict Entries: 3394
+Loaded: Ukrainian File: lang\ukrainian.hdict Entries: 3394
+Loaded: Polish File: lang\polish.hdict Entries: 3394
+Loaded: YourLanguage File: lang\your.hdict Entries: 3394
+Loaded: German File: lang\german.hdict Entries: 3394
+Loaded: Spanish File: lang\spanish.hdict Entries: 3394
+[2025-01-22 18:36:36]   Settings file read:
+ID: holmes_version VALUE: 1.7.1 (Harry Du Bois edition)
+ID: selected_language VALUE: English
+ID: r_path VALUE: c://Program Files//R//R-3.1.2//bin//Rscript.exe
+ID: r_path64 VALUE: c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe
+ID: lastOpenedPath VALUE: C:\Users\T14\OneDrive\Pulpit\Inzynierka
+ID: ina_bat VALUE: START INAwin32.exe COMMAND.ina
+ID: ina_COMMAND1 VALUE:  80 4294901760 0 1 :BNNATTFFFFFFFFTFTFFFFFTFFFFFFTTFFFFTFasiec
+ID: ina_COMMAND2 VALUE: nnsyp
+ID: ina_COMMAND2p VALUE: nnsnnnfnn
+ID: ina_COMMAND3 VALUE: nnnfnn
+ID: ina_COMMAND4 VALUE: eqqy
+ID: mainWindowStartMaximized VALUE: true
+ID: mainWindowWidth VALUE: 1500
+ID: mainWindowHeight VALUE: 800
+ID: programUseOldSnoopyLoaders VALUE: 0
+ID: programAskForRonStartup VALUE: 0
+ID: programSnoopyLoaderNetExtFactor VALUE: 100
+ID: programUseSimpleEditor VALUE: 0
+ID: programDebugMode VALUE: 0
+ID: editorGridLines VALUE: 0
+ID: editorGridAlignWhenSaved VALUE: 1
+ID: editorUseSnoopyOffsets VALUE: 1
+ID: editorGraphArcLineSize VALUE: 1
+ID: editor3Dview VALUE: 0
+ID: editorSnoopyStyleGraphic VALUE: 0
+ID: editorSnoopyColors VALUE: 0
+ID: editorSnoopyCompatibleMode VALUE: 1
+ID: editorShowShortNames VALUE: 0
+ID: editorExportCheckAndWarning VALUE: 1
+ID: editorPortalLines VALUE: 1
+ID: editorGraphFontSize VALUE: 11
+ID: editorGraphFontBold VALUE: 0
+ID: editorSubnetCompressMode VALUE: 0
+ID: analysisBinaryCSVInvariants VALUE: 0
+ID: analysisFeasibleSelfPropAccepted VALUE: 1
+ID: analysisMCSReduction VALUE: 1
+ID: analysisRemoveNonInv VALUE: 0
+ID: analysisRemoveSingleElementInv VALUE: 0
+ID: mctNameShow VALUE: 1
+ID: simTransReadArcTokenReserv VALUE: 1
+ID: simPlacesColors VALUE: 1
+ID: simSingleMode VALUE: 1
+ID: simTDPNrunWhenEft VALUE: 0
+ID: simXTPNmassAction VALUE: 0
+ID: simXTPNreadArcTokens VALUE: 0
+ID: simLogEnabled VALUE: 0
+ID: editorShortNameLowerIndex VALUE: 0
+[2025-01-22 18:36:37]   Invalid path (c://Program Files//R//R-3.1.2//bin//Rscript.exe) to Rscript executable file.
+[2025-01-22 18:36:43]   Net data deletion initiated.
+[2025-01-22 18:36:43]   Net data deletion initiated.
+[2025-01-22 18:36:43]   Removing all nodes (places and transition) and all arcs.
+[2025-01-22 18:36:44]   Net data deletion initiated.
+[2025-01-22 18:36:44]   Net data deletion initiated.
+[2025-01-22 18:36:44]   Removing all nodes (places and transition) and all arcs.
+[2025-01-22 18:36:44]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-22 18:36:44]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-22 18:36:44]   Reading project file succcessful.
+[2025-01-22 19:12:12]   Net data deletion initiated.
+[2025-01-22 19:12:12]   Net data deletion initiated.
+[2025-01-22 19:12:12]   Removing all nodes (places and transition) and all arcs.
+[2025-01-22 19:12:12]   t-invariants data removed from memory.
+[2025-01-22 19:12:12]   MCT data removed from memory.
+[2025-01-22 19:12:12]   Net data deletion initiated.
+[2025-01-22 19:12:12]   Net data deletion initiated.
+[2025-01-22 19:12:12]   Removing all nodes (places and transition) and all arcs.
+[2025-01-22 19:12:12]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\modelViralInfection_v3.project
+[2025-01-22 19:12:12]   Read 6 places, 15 transitions, 27 arcs. 0 functions.
+[2025-01-22 19:12:12]   Reading project file succcessful.
+[2025-01-22 19:13:31]   t-invariants data removed from memory.
+[2025-01-22 19:13:31]   MCT data removed from memory.
+[2025-01-22 19:16:57]   Net data deletion initiated.
+[2025-01-22 19:16:57]   Net data deletion initiated.
+[2025-01-22 19:16:57]   Removing all nodes (places and transition) and all arcs.
+[2025-01-22 19:16:58]   Net data deletion initiated.
+[2025-01-22 19:16:58]   Net data deletion initiated.
+[2025-01-22 19:16:58]   Removing all nodes (places and transition) and all arcs.
+[2025-01-22 19:16:58]   Reading project file: C:\Users\T14\OneDrive\Pulpit\Inzynierka\CthulhuInfection.project
+[2025-01-22 19:16:58]   Read 8 places, 17 transitions, 31 arcs. 0 functions.
+[2025-01-22 19:16:58]   Reading project file succcessful.
+[2025-01-22 19:17:18]   t-invariants data removed from memory.
+[2025-01-22 19:17:18]   MCT data removed from memory.
+[2025-01-22 19:19:39]   *******************************************************
+[2025-01-22 19:19:39]   Net saved: true
+[2025-01-22 19:19:39]   t-invariants saved: false
+[2025-01-22 19:19:39]   p-invariants saved: false
+[2025-01-22 19:19:39]   MCT saved: false
+[2025-01-22 19:19:39]   Net states saved: true
+[2025-01-22 19:19:39]   Net XTPN states saved: false
+[2025-01-22 19:19:39]   Firing rates saved: true
+[2025-01-22 19:19:39]   SSA vectors saved: true
+[2025-01-22 19:19:39]   *******************************************************
+[2025-01-22 19:19:55]   Exiting program

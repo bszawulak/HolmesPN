@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="libraries (2)">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/Holmes/libraries" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/Holmes/libraries" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/Holmes/libraries" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/Holmes/libraries" recursive="false" type="SOURCES" />
+  </library>
+</component>
