@@ -85,20 +85,32 @@ public class RGUtilImpl implements RGUtil {
     }
 
     public void handleBigger(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
-        graph.removeMarking(existingMarking); //TODO: sprawdzić czy nie usuwa za dużo informacji. Może trzeba by było oznaczać do usunięcia
         if (postsetContainsPreset(transition)) {
             for (String place : newMarking.places.keySet()) {
-                int distance = newMarking.places.get(place) - existingMarking.places.get(place);
-                if (distance > 0) {
-                    newMarking.places.put(place, Integer.MAX_VALUE); // Reprezentacja nieskończoności
+                int tokenDiff = newMarking.places.get(place) - existingMarking.places.get(place);
+                if (tokenDiff > 0) {
+                    Place placeOrig = net.getPlaces().stream().filter(plc -> plc.getName().equals(place)).findFirst().orElse(null);
+                    if (placeOrig == null) {
+                        System.out.println("ERROR: Place not found in the net");
+                    }
+                    int distance = transition.getOutputArcWeightTo(placeOrig) - transition.getInputArcWeightFrom(placeOrig);
+                    if (tokenDiff % distance == 0) {
+                        if (true /*doesn't contain n*/ ) {
+                            int n = 111; // Do testu
+                            newMarking.places.put(place, n * distance);
+                            existingMarking.places.put(place, n * distance);
+                        } else {
+                            newMarking.places.put(place, existingMarking.places.get(place));
+                        }
+                    }
+
                 }
             }
         }
         if (newMarking.equals(existingMarking)) {
-            graph.addNode(existingMarking); //TODO: Moze bedzie do usuniecia jesli to wyzej bedzie spelnione
             graph.addEdge(existingMarking, transition.getName(), existingMarking);
         } else {
-            //TODO: wtedy tylko tutaj bedzie usuwanie existing tak naprawde
+            graph.removeMarking(existingMarking);
             graph.addNode(newMarking);
             graph.addEdge(current, transition.getName(), newMarking);
         }
@@ -108,6 +120,12 @@ public class RGUtilImpl implements RGUtil {
         Set<Place> preset = new HashSet<>(transition.getInputPlaces());
         Set<Place> postset = new HashSet<>(transition.getOutputPlaces());
         return postset.containsAll(preset);
+    }
+
+    private boolean presetContainsPostset(Transition transition) {
+        Set<Place> preset = new HashSet<>(transition.getInputPlaces());
+        Set<Place> postset = new HashSet<>(transition.getOutputPlaces());
+        return preset.containsAll(postset);
     }
 
     public void handleSmaller(Marking newMarking, Marking existingMarking) {
