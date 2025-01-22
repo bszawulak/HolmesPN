@@ -6,10 +6,9 @@ public interface RGUtil {
 
     ReachabilityGraph constructReachabilityGraph();
 
-    void handleBigger(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition);
+    boolean  handleBigger(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition);
 
-    void handleSmaller(Marking newMarking, Marking existingMarking);
-
+    boolean handleSmaller(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition);
     void printRGresult(ReachabilityGraph graph);
 
 

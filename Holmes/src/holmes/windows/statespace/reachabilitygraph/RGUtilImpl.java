@@ -61,14 +61,10 @@ public class RGUtilImpl implements RGUtil {
                         handled = true;
                         break;
                     } else if (newMarking.greaterThan(existing)) {
-                        handleBigger(current, newMarking, existing, graph, transition);
-                        graph.addEdge(current, transition.getName(), existing);
-                        handled = true;
-                        break;
+                        handled = handleBigger(current, newMarking, existing, graph, transition);
+                        break; //TODO: czy break? Czy nie ma szansy na obsługe kliku??
                     } else if (newMarking.lessThan(existing)) {
-                        handleSmaller(newMarking, existing);
-                        graph.addEdge(current, transition.getName(), existing);
-                        handled = true;
+                        handled = handleSmaller(current, newMarking, existing, graph, transition);
                         break;
                     }
                 }
@@ -84,7 +80,7 @@ public class RGUtilImpl implements RGUtil {
         return graph;
     }
 
-    public void handleBigger(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
+    public boolean handleBigger(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
         if (postsetContainsPreset(transition)) {
             for (String place : newMarking.places.keySet()) {
                 int tokenDiff = newMarking.places.get(place) - existingMarking.places.get(place);
@@ -111,9 +107,9 @@ public class RGUtilImpl implements RGUtil {
             graph.addEdge(existingMarking, transition.getName(), existingMarking);
         } else {
             graph.removeMarking(existingMarking);
-            graph.addNode(newMarking);
-            graph.addEdge(current, transition.getName(), newMarking);
+            return false;
         }
+        return true;
     }
 
     private boolean postsetContainsPreset(Transition transition) {
@@ -128,12 +124,41 @@ public class RGUtilImpl implements RGUtil {
         return preset.containsAll(postset);
     }
 
-    public void handleSmaller(Marking newMarking, Marking existingMarking) {
-        for (String place : newMarking.places.keySet()) {
-            int diff = existingMarking.places.get(place) - newMarking.places.get(place);
-            if (diff > 0) {
-                newMarking.places.put(place, 0); // Minimalizowanie tokenów
+    public boolean handleSmaller(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
+        boolean handled = true;
+        if (presetContainsPostset(transition)) {
+            Marking newNewMarking = new Marking(new HashMap<>(existingMarking.places));
+            for (String place : newMarking.places.keySet()) {
+                int tokenDiff = existingMarking.places.get(place) - newMarking.places.get(place);
+                if (tokenDiff > 0) { //Zamieniona kolejnosc wyzej
+                    Place placeOrig = net.getPlaces().stream().filter(plc -> plc.getName().equals(place)).findFirst().orElse(null);
+                    if (placeOrig == null) {
+                        System.out.println("ERROR: Place not found in the net");
+                    }
+                    int distance = transition.getOutputArcWeightTo(placeOrig) - transition.getInputArcWeightFrom(placeOrig);
+                    if (true /*doesn't contain n*/) {
+                        if (tokenDiff % distance == 0) {
+                            newMarking.places.put(place, existingMarking.places.get(place));
+                        }
+                        //TODO: newNewMarking.removeN(place);
+                        if (newNewMarking.places.get(place) > distance) {
+                            newNewMarking.places.put(place, newNewMarking.places.get(place) - distance);
+                        }
+                    }
+                }
             }
+            if (false /*isDead(newNewMarking)*/) {
+                handled = false;
+            }
+            if (graph.markings.contains(newNewMarking) || newNewMarking.equals(mMarking)) {
+                handled = false;
+            }
+            if (newMarking.equals(existingMarking)) {
+                graph.addEdge(existingMarking, transition.getName(), existingMarking);
+            }
+            return handled;
+        } else {
+            return false;
         }
     }
 
