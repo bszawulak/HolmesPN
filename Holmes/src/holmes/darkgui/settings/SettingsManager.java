@@ -94,7 +94,7 @@ public class SettingsManager {
     @SuppressWarnings("unused")
     private void checkAndRestoreSetting() {
         ArrayList<Setting> settingsNew = new ArrayList<Setting>();
-        settingsNew.add(new Setting("holmes_version", "1.7.1.2 (Harrier Du Bois edition)"));
+        settingsNew.add(new Setting("holmes_version", "2.0 (Kim Kitsuragi edition)"));
         //2.0 Tequila Sunset
         
         ArrayList<String> confiredDictionaries = new ArrayList<String>();
