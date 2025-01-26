@@ -19,7 +19,7 @@ import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;
 import holmes.windows.HolmesNotepad;
-import holmes.windows.statespace.HolmesStSpRG;
+import holmes.windows.statespace.reachabilitygraph.HolmesStSpRG;
 import holmes.windows.statespace.HolmesStSpRGtpn;
 import holmes.windows.statespace.HolmesStSpRP;
 import holmes.windows.statespace.HolmesStSpUNF;

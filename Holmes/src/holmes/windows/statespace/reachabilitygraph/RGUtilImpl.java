@@ -17,18 +17,8 @@ public class RGUtilImpl implements RGUtil {
 
     RGUtilImpl(PetriNet net) {
         this.mMarking = Marking.getActualMarking(net);
-        this.iMatrix = getIncidenceMatrix(net);
+        this.iMatrix = RGUtil.getIncidenceMatrix(net);
         this.net = net;
-    }
-
-    /**
-     * Returns incidence matrix for given Petri Net
-     * @param net - Petri Net
-     */
-    private static RealMatrix getIncidenceMatrix(PetriNet net) {
-        IncidenceMatrix incidenceMatrix = new IncidenceMatrix(net);
-        incidenceMatrix.printToConsole();
-        return incidenceMatrix.get();
     }
 
     /**
@@ -62,7 +52,7 @@ public class RGUtilImpl implements RGUtil {
                         break;
                     } else if (newMarking.greaterThan(existing)) {
                         handled = handleBigger(current, newMarking, existing, graph, transition);
-                        break; //TODO: czy break? Czy nie ma szansy na obsługe kliku??
+                        break;
                     } else if (newMarking.lessThan(existing)) {
                         handled = handleSmaller(current, newMarking, existing, graph, transition);
                         break;
@@ -80,8 +70,8 @@ public class RGUtilImpl implements RGUtil {
         return graph;
     }
 
-    public boolean handleBigger(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
-        if (postsetContainsPreset(transition)) {
+    private boolean handleBigger(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
+        if (RGUtil.postsetContainsPreset(transition)) {
             for (String place : newMarking.places.keySet()) {
                 int tokenDiff = newMarking.places.get(place) - existingMarking.places.get(place);
                 if (tokenDiff > 0) {
@@ -105,6 +95,7 @@ public class RGUtilImpl implements RGUtil {
         }
         if (newMarking.equals(existingMarking)) {
             graph.addEdge(existingMarking, transition.getName(), existingMarking);
+            //Stan dodawany jest w petli nad tą metodą. newMarking to referencja
         } else {
             graph.removeMarking(existingMarking);
             return false;
@@ -112,21 +103,9 @@ public class RGUtilImpl implements RGUtil {
         return true;
     }
 
-    private boolean postsetContainsPreset(Transition transition) {
-        Set<Place> preset = new HashSet<>(transition.getInputPlaces());
-        Set<Place> postset = new HashSet<>(transition.getOutputPlaces());
-        return postset.containsAll(preset);
-    }
-
-    private boolean presetContainsPostset(Transition transition) {
-        Set<Place> preset = new HashSet<>(transition.getInputPlaces());
-        Set<Place> postset = new HashSet<>(transition.getOutputPlaces());
-        return preset.containsAll(postset);
-    }
-
-    public boolean handleSmaller(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
+    private boolean handleSmaller(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
         boolean handled = true;
-        if (presetContainsPostset(transition)) {
+        if (RGUtil.presetContainsPostset(transition)) {
             Marking newNewMarking = new Marking(new HashMap<>(existingMarking.places));
             for (String place : newMarking.places.keySet()) {
                 int tokenDiff = existingMarking.places.get(place) - newMarking.places.get(place);
@@ -164,27 +143,15 @@ public class RGUtilImpl implements RGUtil {
 
     private Marking fire(Marking actualMarking, Transition transition) {
 
-        // Return Array 1 when transLaunchList contains transition or 0 when not
+        // Return 1 when transLaunchList contains transition or 0 when not
         double[] tArray = net.getTransitions().stream()
                 .mapToDouble(trans -> trans.equals(transition) ? 1 : 0)
                 .toArray();
 
         // Convert the result array to a RealVector
         RealVector tVector = new ArrayRealVector(tArray);
-        RealVector realVector = calculateNextState(iMatrix, actualMarking.toVector(), tVector);
+        RealVector realVector = RGUtil.calculateNextState(iMatrix, actualMarking.toVector(), tVector);
         return Marking.fromVector(realVector, net);
-    }
-
-    /**
-     * Calculates next state based on incidence matrix, current marking and transition vector
-     * Funkcja obliczająca nowy stan M' = M + I * T
-     * @param I - incidence matrix
-     * @param M - current marking
-     * @param T - transition vector
-     * @return new marking
-     */
-    public static RealVector calculateNextState(RealMatrix I, RealVector M, RealVector T) {
-        return M.add(I.operate(T));
     }
 
     public void printRGresult(ReachabilityGraph graph) {
