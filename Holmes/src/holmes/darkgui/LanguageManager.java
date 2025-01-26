@@ -194,7 +194,7 @@ public class LanguageManager {
             for(HashMap.Entry<String, String> entry : defaultDictionary.entrySet())  { //dla każdego tagu w defaultDictionary
                 String dafultKey = entry.getKey();
                 if(!language.containsKey(dafultKey)) { //jeżeli tag nie istnieje w języku
-                    overlord.log(langName + " missing tag: " + dafultKey, "error", false);
+                    overlord.log(langName + " missing tag: " + dafultKey, "warning", false);
                 }
             }
         }

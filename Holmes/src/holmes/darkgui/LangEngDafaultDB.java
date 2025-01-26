@@ -2626,6 +2626,9 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HPPwinSYS_entry058","French");
         defaultEnglish.put("HPPwinSYS_entry059","Italian");
 
+
+        defaultEnglish.put("HPPwinEDIT_entry127","(Editor) Place portals");
+
         //HolmesProgramPropertiesActions:
         defaultEnglish.put("HPPAwin_entry001","Select Rscript.exe");
         defaultEnglish.put("HPPAwin_entry001t","Please select Rscript exe, usually located in R/Rx.x.x/bin directory.");

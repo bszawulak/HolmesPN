@@ -722,10 +722,10 @@ public class HolmesProgramProperties extends JFrame {
 		panel.setBounds(0, 0, 600, 500);
 		
 		//Panel opcji graficznych edytora
-		panel.add(createGraphicalEditorPanel(0, 0, 590, 180));
+		panel.add(createGraphicalEditorPanel(0, 0, 590, 210));
 
 		//Panel opcji ogólnych edytora
-		panel.add(createGeneralEditorPanel(0, 180, 590, 120));
+		panel.add(createGeneralEditorPanel(0, 210, 590, 90));
 		
 		panel.repaint();
 		return panel;
@@ -847,6 +847,10 @@ public class HolmesProgramProperties extends JFrame {
 		JCheckBox snoopyColorsBox = checkboxWizard(lang.getText("HPPwinEDIT_entry029"), posX, posY+=20, 420, 20,
 				"editorSnoopyColors", true); //(Editor) Show non default T/P colors
 		panel.add(snoopyColorsBox);
+
+		JCheckBox portalNewVersionBox = checkboxWizard(lang.getText("HPPwinEDIT_entry127"), posX, posY+=20, 420, 20,
+				"editorNewPortalPlace", true); //(Editor) Petri net elements 3d view
+		panel.add(portalNewVersionBox);
 		
 		noAction = false;
 		return panel;

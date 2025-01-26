@@ -207,6 +207,11 @@ public final class ElementDraw {
 					if( ((Transition)node).getTransType() == TransitionType.TPN) {
 						g.setColor(tpnNormalColor);
 					}
+
+					//[MR2025]:
+					//if(trans.isPortal()) {
+					//	g.setColor(Color.WHITE);
+					//}
 				}
 				//wypełnianie:
 				Color back = g.getColor(); // te 4 linie: lekki trójwymiar, ładniejsza tranzycja
@@ -366,6 +371,9 @@ public final class ElementDraw {
 						g.fillRect(nodeBounds.x+1, nodeBounds.y+1, nodeBounds.width-2, nodeBounds.height-2);
 					} else {
 						g.drawRect(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
+						//[MR2025]:
+						//g.setColor(Color.LIGHT_GRAY);
+						//g.fillRect(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
 					}
 				}
 
@@ -635,6 +643,38 @@ public final class ElementDraw {
 					} else {
 						//g.setColor(Color.BLACK);
 						g.drawOval(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
+						//[MR2025]:
+						if(eds.newPlacePortal) {
+							g.setColor(stargate1);
+							g.fillOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 7, nodeBounds.height - 7);
+							g.setColor(stargate2);
+							g.fillOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 11, nodeBounds.height - 11);
+							g.setColor(stargate3);
+							g.fillOval(nodeBounds.x + 8, nodeBounds.y + 8, nodeBounds.width - 15, nodeBounds.height - 15);
+							g.setColor(stargate4);
+							g.fillOval(nodeBounds.x + 9, nodeBounds.y + 9, nodeBounds.width - 17, nodeBounds.height - 17);
+							g.setColor(stargate5);
+							g.fillOval(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.width - 19, nodeBounds.height - 19);
+							g.setColor(stargate6);
+							g.fillOval(nodeBounds.x + 11, nodeBounds.y + 11, nodeBounds.width - 21, nodeBounds.height - 21);
+							/*
+							g.setColor(stargate1);
+							g.fillOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 7, nodeBounds.height - 7);
+							g.setColor(stargate2);
+							g.fillOval(nodeBounds.x + 5, nodeBounds.y + 5, nodeBounds.width - 9, nodeBounds.height - 9);
+							g.setColor(stargate3);
+							g.fillOval(nodeBounds.x + 6, nodeBounds.y + 6, nodeBounds.width - 11, nodeBounds.height - 11);
+							g.setColor(stargate4);
+							g.fillOval(nodeBounds.x + 7, nodeBounds.y + 7, nodeBounds.width - 13, nodeBounds.height - 13);
+							g.setColor(stargate5);
+							g.fillOval(nodeBounds.x + 8, nodeBounds.y + 8, nodeBounds.width - 15, nodeBounds.height - 15);
+							g.setColor(stargate6);
+							g.fillOval(nodeBounds.x + 9, nodeBounds.y + 9, nodeBounds.width - 17, nodeBounds.height - 17);
+							 */
+						} else {
+							g.setColor(Color.white);
+							g.fillOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 7, nodeBounds.height - 7);
+						}
 					}
 				}
 

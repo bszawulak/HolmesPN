@@ -12,6 +12,7 @@ import holmes.darkgui.settings.SettingsManager;
 public class ElementDrawSettings {
 	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 	public boolean view3d = false;
+	public boolean newPlacePortal = false;
 	public boolean snoopyMode = false;
 	public boolean color = false;
 	/**
@@ -36,6 +37,7 @@ public class ElementDrawSettings {
 	private void checkSettings() {
 		SettingsManager sm = overlord.getSettingsManager();
 		view3d = sm.getValue("editor3Dview").equals("1");
+		newPlacePortal = sm.getValue("editorNewPortalPlace").equals("1");
 		snoopyMode = sm.getValue("editorSnoopyStyleGraphic").equals("1");
 		crazyColors = sm.getValue("simPlacesColors").equals("1");
 		nonDefColors = sm.getValue("editorSnoopyColors").equals("1");

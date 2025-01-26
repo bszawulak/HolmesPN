@@ -96,10 +96,10 @@ public class TransitionPopupMenu extends NodePopupMenu {
 		this.addMenuItem(lang.getText("TPM_entry004"), "portal.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
 				if(overlord.reset.isSimulatorActiveWarning(
-						lang.getText("TPM_entry005"), lang.getText("Warning")))
+						lang.getText("TPM_entry005"), lang.getText("warning")))
 					return;
 				if(overlord.reset.isXTPNSimulatorActiveWarning(
-						lang.getText("TPM_entry006"), lang.getText("Warning")))
+						lang.getText("TPM_entry006"), lang.getText("warning")))
 					return;
 
 				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
@@ -115,10 +115,10 @@ public class TransitionPopupMenu extends NodePopupMenu {
 		this.addMenuItem(lang.getText("TPM_entry008"), "cut.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
 				if(overlord.reset.isSimulatorActiveWarning(
-						lang.getText("TPM_entry005"), lang.getText("Warning")))
+						lang.getText("TPM_entry005"), lang.getText("warning")))
 					return;
 				if(overlord.reset.isXTPNSimulatorActiveWarning(
-						lang.getText("TPM_entry006"), lang.getText("Warning")))
+						lang.getText("TPM_entry006"), lang.getText("warning")))
 					return;
 
 				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();

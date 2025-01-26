@@ -162,6 +162,7 @@ public class SettingsManager {
         checkAndFix(settingsNew, "editorShowShortNames", "0");
         checkAndFix(settingsNew, "editorExportCheckAndWarning", "1");
         checkAndFix(settingsNew, "editorPortalLines", "1");
+        checkAndFix(settingsNew, "editorNewPortalPlace", "0");
 
         try {
             String tmp = getValue("editorGraphFontSize");

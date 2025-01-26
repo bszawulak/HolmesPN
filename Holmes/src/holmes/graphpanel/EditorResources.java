@@ -63,6 +63,14 @@ public class EditorResources {
 	public static final Color lightSky = new Color(0, 135, 230);
 	public static final Color lightSky2 = new Color(0, 185, 230);
 	public static final Color lightSky3 = new Color(0, 215, 230);
+	
+	
+	public static final Color stargate1 = new Color(0, 130, 255);
+	public static final Color stargate2 = new Color(0, 150, 255);
+	public static final Color stargate3 = new Color(0, 170, 255);
+	public static final Color stargate4 = new Color(0, 190, 255);
+	public static final Color stargate5 = new Color(0, 210, 255);
+	public static final Color stargate6 = new Color(0, 230, 255);
 
 
 	//Color-net:
