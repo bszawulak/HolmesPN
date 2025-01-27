@@ -28,13 +28,13 @@ public class RGUtilImpl implements RGUtil {
         ReachabilityGraph graph = new ReachabilityGraph();
         Queue<Marking> toProcess = new LinkedList<>();
 
-        graph.addNode(mMarking);
+        //graph.addNode(mMarking);
         toProcess.add(mMarking);
 
         while (!toProcess.isEmpty()) {
             Marking current = toProcess.poll();
 
-            // Tu by trzeba było ustawiac tokeny w miejscach na podstawie current
+            // Tu trzeba ustawiac tokeny w miejscach na podstawie current
             net.getPlaces().forEach(place -> place.setTokensNumber(current.places.get(place.getName())));
 
             for (Transition transition : net.getTransitions()) {
@@ -50,11 +50,15 @@ public class RGUtilImpl implements RGUtil {
                         graph.addEdge(current, transition.getName(), existing);
                         handled = true;
                         break;
+                    } else if (newMarking.equals(mMarking)) {
+                        graph.addEdge(current, transition.getName(), mMarking);
+                        handled = true;
+                        break;
                     } else if (newMarking.greaterThan(existing)) {
-                        handled = handleBigger(current, newMarking, existing, graph, transition);
+                        handled = handleBigger(newMarking, existing, graph, transition);
                         break;
                     } else if (newMarking.lessThan(existing)) {
-                        handled = handleSmaller(current, newMarking, existing, graph, transition);
+                        handled = handleSmaller(newMarking, existing, graph, transition);
                         break;
                     }
                 }
@@ -66,27 +70,29 @@ public class RGUtilImpl implements RGUtil {
 
             }
         }
-
+        graph.addNode(mMarking);
         return graph;
     }
 
-    private boolean handleBigger(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
+    private boolean handleBigger(Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
         if (RGUtil.postsetContainsPreset(transition)) {
             for (String place : newMarking.places.keySet()) {
                 int tokenDiff = newMarking.places.get(place) - existingMarking.places.get(place);
                 if (tokenDiff > 0) {
                     Place placeOrig = net.getPlaces().stream().filter(plc -> plc.getName().equals(place)).findFirst().orElse(null);
                     if (placeOrig == null) {
-                        System.out.println("ERROR: Place not found in the net");
+                        throw new NullPointerException(String.format("Place %s not found in the net", place));
                     }
                     int distance = transition.getOutputArcWeightTo(placeOrig) - transition.getInputArcWeightFrom(placeOrig);
                     if (tokenDiff % distance == 0) {
-                        if (true /*doesn't contain n*/ ) {
-                            int n = 111; // Do testu
-                            newMarking.places.put(place, n * distance);
-                            existingMarking.places.put(place, n * distance);
-                        } else {
+                        if (existingMarking.nTokens.get(place)) {
                             newMarking.places.put(place, existingMarking.places.get(place));
+                            newMarking.nTokens.put(place, true);
+                        } else {
+                            newMarking.places.put(place, distance);
+                            newMarking.nTokens.put(place, true); //Zapisuje informacje o n
+                            existingMarking.places.put(place, distance);
+                            existingMarking.nTokens.put(place, true);
                         }
                     }
 
@@ -96,17 +102,26 @@ public class RGUtilImpl implements RGUtil {
         if (newMarking.equals(existingMarking)) {
             graph.addEdge(existingMarking, transition.getName(), existingMarking);
             //Stan dodawany jest w petli nad tą metodą. newMarking to referencja
+        } else if (newMarking.greaterOneThan(existingMarking) != null) {
+            String greaterOne = newMarking.greaterOneThan(existingMarking);
+            newMarking.nTokens.put(greaterOne, true);
+            if (existingMarking.nTokens.get(greaterOne)){
+                return true;
+            } else {
+                existingMarking.nTokens.put(greaterOne, true);
+                return false;
+            }
         } else {
-            graph.removeMarking(existingMarking);
+            //graph.removeMarking(existingMarking);
             return false;
         }
         return true;
     }
 
-    private boolean handleSmaller(Marking current, Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
+    private boolean handleSmaller(Marking newMarking, Marking existingMarking, ReachabilityGraph graph, Transition transition) {
         boolean handled = true;
         if (RGUtil.presetContainsPostset(transition)) {
-            Marking newNewMarking = new Marking(new HashMap<>(existingMarking.places));
+            Marking newNewMarking = new Marking(new HashMap<>(existingMarking.places), new HashMap<>(existingMarking.nTokens));
             for (String place : newMarking.places.keySet()) {
                 int tokenDiff = existingMarking.places.get(place) - newMarking.places.get(place);
                 if (tokenDiff > 0) { //Zamieniona kolejnosc wyzej
@@ -115,18 +130,18 @@ public class RGUtilImpl implements RGUtil {
                         System.out.println("ERROR: Place not found in the net");
                     }
                     int distance = transition.getOutputArcWeightTo(placeOrig) - transition.getInputArcWeightFrom(placeOrig);
-                    if (true /*doesn't contain n*/) {
+                    if (existingMarking.nTokens.get(place)) {
                         if (tokenDiff % distance == 0) {
                             newMarking.places.put(place, existingMarking.places.get(place));
                         }
-                        //TODO: newNewMarking.removeN(place);
+                        newNewMarking.nTokens.put(place, false);
                         if (newNewMarking.places.get(place) > distance) {
                             newNewMarking.places.put(place, newNewMarking.places.get(place) - distance);
                         }
                     }
                 }
             }
-            if (false /*isDead(newNewMarking)*/) {
+            if (isDead(newNewMarking)) {
                 handled = false;
             }
             if (graph.markings.contains(newNewMarking) || newNewMarking.equals(mMarking)) {
@@ -141,6 +156,14 @@ public class RGUtilImpl implements RGUtil {
         }
     }
 
+    private boolean isDead(Marking newMarking) {
+        Marking actualMarking = Marking.getActualMarking(net);
+        net.getPlaces().forEach(place -> place.setTokensNumber(newMarking.places.get(place.getName())));
+        boolean result = net.getTransitions().stream().noneMatch(Transition::isActive);
+        net.getPlaces().forEach(place -> place.setTokensNumber(actualMarking.places.get(place.getName())));
+        return result;
+    }
+
     private Marking fire(Marking actualMarking, Transition transition) {
 
         // Return 1 when transLaunchList contains transition or 0 when not
@@ -151,7 +174,7 @@ public class RGUtilImpl implements RGUtil {
         // Convert the result array to a RealVector
         RealVector tVector = new ArrayRealVector(tArray);
         RealVector realVector = RGUtil.calculateNextState(iMatrix, actualMarking.toVector(), tVector);
-        return Marking.fromVector(realVector, net);
+        return Marking.fromVector(realVector, net, actualMarking);
     }
 
     public void printRGresult(ReachabilityGraph graph) {

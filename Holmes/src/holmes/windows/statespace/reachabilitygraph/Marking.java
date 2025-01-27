@@ -11,11 +11,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Marking {
-    Map<String, Integer> places; //TODO: jak zaznaczyc infinity? i krotnosci infinity?
-    //Może Map<String, Integer>
+    Map<String, Integer> places;
+    Map<String, Boolean> nTokens;
 
     Marking(Map<String, Integer> places) {
         this.places = places;
+        this.nTokens = places.keySet().stream().collect(Collectors.toMap(k -> k, k -> false));
+    }
+
+    Marking(Map<String, Integer> places, Map<String, Boolean> nTokens) {
+        this.places = places;
+        this.nTokens = nTokens;
     }
 
     boolean equals(Marking other) {
@@ -34,6 +40,26 @@ public class Marking {
             }
         }
         return true;
+    }
+
+    /**
+     * Checks if one place has more tokens than others, and other has equal
+     * @param other
+     * @return
+     */
+    String greaterOneThan(Marking other) {
+        String oneGreater = null;
+
+        for (String place : this.places.keySet()) {
+            if (this.places.get(place) > other.places.get(place)) {
+                if (oneGreater == null) {
+                    oneGreater = place;
+                } else {
+                    return null;
+                }
+            }
+        }
+        return oneGreater;
     }
 
     /**
@@ -65,13 +91,13 @@ public class Marking {
         return new ArrayRealVector(markingVector);
     }
 
-    public static Marking fromVector(RealVector vector, PetriNet net) {
+    public static Marking fromVector(RealVector vector, PetriNet net, Marking oldMarking) {
         Map<String, Integer> placeTokens = net.getPlaces().stream()
                 .collect(Collectors.toMap(
                         Place::getName,
                         place -> (int) vector.getEntry(net.getPlaces().indexOf(place))
                 ));
-        return new Marking(placeTokens);
+        return new Marking(placeTokens, new HashMap<>(oldMarking.nTokens));
     }
 
     public static Marking getActualMarking(PetriNet net) {
