@@ -14,6 +14,8 @@ public class Marking {
     Map<String, Integer> places;
     Map<String, Boolean> nTokens;
 
+    private String name;
+
     Marking(Map<String, Integer> places) {
         this.places = places;
         this.nTokens = places.keySet().stream().collect(Collectors.toMap(k -> k, k -> false));
@@ -78,7 +80,14 @@ public class Marking {
 
     @Override
     public String toString() {
-        return places.toString();
+        return nTokens.entrySet().stream()
+                .map(p -> p.getValue() ? places.get(p.getKey()) + "n"
+                        : places.get(p.getKey())
+                )
+                .map(Object::toString)
+                .map(p -> "0n".equals(p) ? "0" : p)
+                .map(p -> "1n".equals(p) ? "n" : p)
+                .toList().toString();
     }
 
     public RealVector toVector() {
@@ -110,4 +119,11 @@ public class Marking {
         return new Marking(plcs.stream().collect(Collectors.toMap(Place::getName, Place::getTokensNumber)));
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

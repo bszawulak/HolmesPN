@@ -15,7 +15,7 @@ public class RGUtilImpl implements RGUtil {
     private final RealMatrix iMatrix;
     private final PetriNet net;
 
-    RGUtilImpl(PetriNet net) {
+    public RGUtilImpl(PetriNet net) {
         this.mMarking = Marking.getActualMarking(net);
         this.iMatrix = RGUtil.getIncidenceMatrix(net);
         this.net = net;
@@ -102,7 +102,7 @@ public class RGUtilImpl implements RGUtil {
         if (newMarking.equals(existingMarking)) {
             graph.addEdge(existingMarking, transition.getName(), existingMarking);
             //Stan dodawany jest w petli nad tą metodą. newMarking to referencja
-        } else if (newMarking.greaterOneThan(existingMarking) != null) {
+        } else if (newMarking.greaterOneThan(existingMarking) != null) { // TODO:One to powinno byc weight chyba
             String greaterOne = newMarking.greaterOneThan(existingMarking);
             newMarking.nTokens.put(greaterOne, true);
             if (existingMarking.nTokens.get(greaterOne)){
@@ -181,17 +181,15 @@ public class RGUtilImpl implements RGUtil {
         // Wyświetlenie grafu osiągalności
         System.out.println("Nodes:");
         for (Marking marking : graph.markings) {
-//            System.out.println(marking);
-            System.out.println(marking.places.values().stream().toList());
+            System.out.println(marking.toString());
         }
 
         System.out.println("Edges:");
         for (Marking marking : graph.edges.keySet()) {
             for (Map.Entry<String, Marking> edge : graph.edges.get(marking).entrySet()) {
-                //System.out.println(marking + " --" + edge.getKey() + "--> " + edge.getValue());
-                System.out.println(marking.places.values().stream().toList()
+                System.out.println(marking.toString()
                         + " --" + edge.getKey() + "--> "
-                        + edge.getValue().places.values().stream().toList());
+                        + edge.getValue().toString());
             }
         }
     }
