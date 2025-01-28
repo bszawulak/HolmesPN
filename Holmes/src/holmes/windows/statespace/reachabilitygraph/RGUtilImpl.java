@@ -16,9 +16,11 @@ public class RGUtilImpl implements RGUtil {
     private final PetriNet net;
 
     public RGUtilImpl(PetriNet net) {
+        this.net = net;
+        Marking.placesNames.clear();
+        net.getPlaces().forEach(p -> Marking.placesNames.add(p.getName()));
         this.mMarking = Marking.getActualMarking(net);
         this.iMatrix = RGUtil.getIncidenceMatrix(net);
-        this.net = net;
     }
 
     /**
@@ -183,6 +185,7 @@ public class RGUtilImpl implements RGUtil {
         for (Marking marking : graph.markings) {
             System.out.println(marking.toString());
         }
+
 
         System.out.println("Edges:");
         for (Marking marking : graph.edges.keySet()) {

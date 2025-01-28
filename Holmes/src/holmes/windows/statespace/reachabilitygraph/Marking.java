@@ -7,10 +7,12 @@ import org.apache.commons.math3.linear.RealVector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Marking {
+    public static final List<String> placesNames = new ArrayList<>();
     Map<String, Integer> places;
     Map<String, Boolean> nTokens;
 
@@ -80,9 +82,9 @@ public class Marking {
 
     @Override
     public String toString() {
-        return nTokens.entrySet().stream()
-                .map(p -> p.getValue() ? places.get(p.getKey()) + "n"
-                        : places.get(p.getKey())
+        return placesNames.stream()
+                .map(p -> nTokens.get(p) ? places.get(p) + "n"
+                        : places.get(p)
                 )
                 .map(Object::toString)
                 .map(p -> "0n".equals(p) ? "0" : p)
@@ -93,7 +95,7 @@ public class Marking {
     public RealVector toVector() {
         double[] markingVector = new double[places.size()];
         int i = 0;
-        for (String place : places.keySet()) {
+        for (String place : placesNames) {
             markingVector[i] = places.get(place);
             i++;
         }
@@ -106,7 +108,7 @@ public class Marking {
                         Place::getName,
                         place -> (int) vector.getEntry(net.getPlaces().indexOf(place))
                 ));
-        return new Marking(placeTokens, new HashMap<>(oldMarking.nTokens));
+        return new Marking(placeTokens, new HashMap<>(placesNames.stream().collect(Collectors.toMap(k -> k, k -> false))));
     }
 
     public static Marking getActualMarking(PetriNet net) {
