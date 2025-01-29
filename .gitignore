@@ -2,3 +2,7 @@
 /output/
 /.gitignore
 /tmp/
+.idea/
+/log
+*.iml
+/tools/
