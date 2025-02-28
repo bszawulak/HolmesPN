@@ -696,13 +696,13 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (abstractButton.getModel().isSelected()) {
                     simulator.setSingleMode(true);
                     doNotUpdate = true;
-                    maximumModeCheckBox.setSelected(overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
+                    singleModeCheckBox.setSelected(overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
                     doNotUpdate = false;
                 } else {
                     simulator.setSingleMode(false);
 
                     doNotUpdate = true;
-                    maximumModeCheckBox.setSelected(false);
+                    singleModeCheckBox.setSelected(false);
                     simulator.setMaxMode(false);
                     doNotUpdate = false;
                 }
