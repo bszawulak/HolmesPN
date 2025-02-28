@@ -672,7 +672,7 @@ public final class ElementDraw {
 							*/
 						} else {
 							g.setColor(Color.white);
-							g.fillOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 7, nodeBounds.height - 7);
+							g.fillOval(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
 						}
 					}
 				}

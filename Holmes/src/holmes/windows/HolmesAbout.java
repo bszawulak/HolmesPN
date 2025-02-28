@@ -117,7 +117,7 @@ public class HolmesAbout extends JFrame {
 		nameLabel2.setBounds(170, 80, 330, 15);
 		panel.add(nameLabel2);
 		
-		JLabel nameLabel3 = new JLabel("Release edition: \"Harrier du Buis\"");
+		JLabel nameLabel3 = new JLabel("Release edition: \"Kim Kitsuragi\"");
 		nameLabel3.setFont(new Font("Consolas", Font.BOLD, 14));
 		nameLabel3.setBounds(170, 95, 330, 15);
 		panel.add(nameLabel3);
