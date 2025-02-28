@@ -2627,7 +2627,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HPPwinSYS_entry059","Italian");
 
 
-        defaultEnglish.put("HPPwinEDIT_entry127","(Editor) Place portals");
+        defaultEnglish.put("HPPwinEDIT_entry127","(Editor) Style of Places and Logical Transitions - Holmes 2.0");
 
         //HolmesProgramPropertiesActions:
         defaultEnglish.put("HPPAwin_entry001","Select Rscript.exe");

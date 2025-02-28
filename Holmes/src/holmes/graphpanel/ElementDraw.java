@@ -378,7 +378,7 @@ public final class ElementDraw {
 							g.setColor(normalColor);
 							g.fillRect(nodeBounds.x + 4, nodeBounds.y + 4, nodeBounds.width - 8, nodeBounds.height - 8);
 						} else {
-							g.setColor(Color.white);
+							g.setColor(Color.black);
 							g.drawRect(nodeBounds.x + 3, nodeBounds.y + 3, nodeBounds.width - 6, nodeBounds.height - 6);
 						}
 					}

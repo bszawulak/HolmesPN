@@ -2613,6 +2613,8 @@ HPPwinSYS_entry057, Ukrainien
 HPPwinSYS_entry058, Français
 HPPwinSYS_entry059, Italien
 
+HPPwinEDIT_entry127, (Éditeur) Style des lieux et des transitions logiques - Holmes 2.0
+
 //HolmesProgramPropertiesActions:
 HPPAwin_entry001, Sélectionner Rscript.exe
 HPPAwin_entry001t, Veuillez sélectionner Rscript exe, généralement situé dans le répertoire R/Rx.x.x/bin.
