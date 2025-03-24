@@ -2,6 +2,9 @@ Holmes is a stand-alone Java program designed for creating and analyzing various
 
 Installation: not required, archive must be unpacked with its directory structure, Holmes.jar is a Java exectutable file (run.bat file can also be used to start the program).
 
+Sources: github/HolmesPN/Holmes/src
+Branch: Holmes_xTPN (current 2.0 version)
+
 Most recent .jar releases (version 2.0 and older ones) are available at https://www.cs.put.poznan.pl/mradom/Holmes/  
 
 Necessary components:
