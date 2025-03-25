@@ -10,9 +10,6 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * Klasa renderująca tablicę tranzycji inwariantu w oknie podglądu inwariantów.
- * 
- * @author MR
- *
  */
 public class InvariantsTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
@@ -24,7 +21,6 @@ public class InvariantsTableRenderer implements TableCellRenderer {
 	public InvariantsTableRenderer(JTable table) {
 		this.table = table;
 	}
-
 	
 	/**
 	 * Przeciążona metoda odpowiedzialna za zwrócenie komórki tabeli w zależności od ustawionego
@@ -34,7 +30,7 @@ public class InvariantsTableRenderer implements TableCellRenderer {
 	 * @param isSelected boolean - czy zaznaczona komórka
 	 * @param hasFocus boolean - czy aktywna komórka
 	 * @param row int - numer wiersza
-	 * @param columnt int - numer kolumny
+	 * @param column int - numer kolumny
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
@@ -61,10 +57,7 @@ public class InvariantsTableRenderer implements TableCellRenderer {
 				val = val.substring(1);
 			}
 		}
-    	
-    	
     	oLabel.setText(val);
         return oLabel;
-
 	}
 }

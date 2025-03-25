@@ -8,11 +8,11 @@ import holmes.darkgui.settings.SettingsManager;
  * przerysowywania sieci. Aby w każdym wywołaniu nie powtarzać tych samym poleceń sprawdzających ustawienia
  * wyświetlania grafiki, są one zawarte w tej klasie, która jest tworzona raz na odświeżenie w ramach
  * metody drawPetriNet w GraphPanel, i posyłana do odpowiednich metod rysujących.
- * @author MR
- *
  */
 public class ElementDrawSettings {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 	public boolean view3d = false;
+	public boolean newPlacePortal = false;
 	public boolean snoopyMode = false;
 	public boolean color = false;
 	/**
@@ -35,33 +35,13 @@ public class ElementDrawSettings {
 	 * Matoda ustawia odpowiednie flagi w zależności od ustawień programu.
 	 */
 	private void checkSettings() {
-		SettingsManager sm = GUIManager.getDefaultGUIManager().getSettingsManager();
-		if(sm.getValue("editor3Dview").equals("1")) {
-			view3d = true;
-		} else {
-			view3d = false;
-		}
-		
-		if(sm.getValue("editorSnoopyStyleGraphic").equals("1")) {
-			snoopyMode = true;
-		} else {
-			snoopyMode = false;
-		}
-		
-		if(sm.getValue("simPlacesColors").equals("1")) {
-			crazyColors = true;
-		} else {
-			crazyColors = false;
-		}
-		
-		if(sm.getValue("editorSnoopyColors").equals("1")) {
-			nonDefColors = true;
-		} else {
-			nonDefColors = false;
-		}
-		
-		quickSimMode = GUIManager.getDefaultGUIManager().simSettings.quickSimToken;
-		
-		arcSize = Integer.parseInt(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("editorGraphArcLineSize"));
+		SettingsManager sm = overlord.getSettingsManager();
+		view3d = sm.getValue("editor3Dview").equals("1");
+		newPlacePortal = sm.getValue("editorNewPortalPlace").equals("1");
+		snoopyMode = sm.getValue("editorSnoopyStyleGraphic").equals("1");
+		crazyColors = sm.getValue("simPlacesColors").equals("1");
+		nonDefColors = sm.getValue("editorSnoopyColors").equals("1");
+		quickSimMode = overlord.simSettings.quickSimToken;
+		arcSize = Integer.parseInt(overlord.getSettingsManager().getValue("editorGraphArcLineSize"));
 	}
 }

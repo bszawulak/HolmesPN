@@ -6,7 +6,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class MCTPetriNet {
-
 	private SortedMap<String, MCTPlace> places = new TreeMap<String, MCTPlace>();
 	private SortedMap<String, MCTTransition> transitions = new TreeMap<String, MCTTransition>();
 	
@@ -25,11 +24,6 @@ public class MCTPetriNet {
 		return transitions.get(id);
 	}
 	
-	public MCTPlace getPlace(String id)
-	{
-		return places.get(id);
-	}
-	
 	public MCTTransition getOrCreateTransition(String id)
 	{
 		MCTTransition t = transitions.get(id);
@@ -39,15 +33,4 @@ public class MCTPetriNet {
 		transitions.put(id, t);
 		return t;
 	}
-	
-	public MCTPlace getOrCreatePlace(String id)
-	{
-		MCTPlace p = places.get(id);
-		if (p != null)
-			return p;
-		p = new MCTPlace(id, this);
-		places.put(id, p);
-		return p;
-	}
-	
 }

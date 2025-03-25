@@ -1,16 +1,15 @@
 package holmes.tables;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
 
 /**
  * Model tablicy danych o inwariancie na potrzeby okna podglądu inwariantów.
- * 
- * @author MR
- *
  */
 public class InvariantsViewerTableModel extends DefaultTableModel  {
+	@Serial
 	private static final long serialVersionUID = -6625961285405380868L;
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
@@ -25,7 +24,7 @@ public class InvariantsViewerTableModel extends DefaultTableModel  {
 	public InvariantsViewerTableModel(boolean mctMode) {
 		this.mctMode = mctMode;
 		
-		if(mctMode == true) {
+		if(mctMode) {
 			columnNames = new String[2];
 			columnNames[0] = "ID";
 			columnNames[1] = "Element";
@@ -111,23 +110,22 @@ public class InvariantsViewerTableModel extends DefaultTableModel  {
      */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Object returnValue = null;
+		Object returnValue;
 		if(mctMode) {
 			if(columnIndex > 1)
 				return null;
 			else
-				return dataMatrix.get(rowIndex).get(columnIndex).toString();
+				return dataMatrix.get(rowIndex).get(columnIndex);
 		} else {
 			if(columnIndex < 3) {
-				return dataMatrix.get(rowIndex).get(columnIndex).toString();
+				return dataMatrix.get(rowIndex).get(columnIndex);
 			} else {
 				try {
 					returnValue = dataMatrix.get(rowIndex).get(columnIndex);
 					String strVal = returnValue.toString();
-					double val = Double.parseDouble(strVal);
-					return val;
+					return Double.parseDouble(strVal);
 				} catch (Exception e) {
-					return dataMatrix.get(rowIndex).get(columnIndex).toString();
+					return dataMatrix.get(rowIndex).get(columnIndex);
 				}
 			}
 		}

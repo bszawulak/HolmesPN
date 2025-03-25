@@ -5,48 +5,61 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 
 /**
  * Globalne ustawienia symulatora.
- * 
- * @author MR
- *
  */
 public class SimulatorGlobals {
-	private GUIManager overlord;
-	
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
+	/** BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func */
+	public enum SimNetType {
+		BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func
+	}
 	private int ARC_STEP_DELAY = 25;
 	private int TRANS_FIRING_DELAY = 25;
 	
 	private boolean maxMode = false;
 	private boolean singleMode = false;
-	private NetType refNetType = NetType.BASIC;	
+	private SimNetType refNetType = SimNetType.BASIC;
 	private boolean emptySteps = false; // 0 - bez pustych kroków, 1 - z pustymi krokami
-	private int simSteps = 1000;			//liczba kroków dla zbioru referencyjnego
+	private int simSteps = 1000; //liczba kroków dla zbioru referencyjnego
 	private int simReps = 100;
 
 	public long currentStep = 0;
 	public double currentTime = 0;
-	private int simulatorType = 0; // 0 -standard, 1 - SSPN, 2 - Gillespie SSA
+	private int simulatorType = 0; // 0 - standard, 1 - SSPN, 2 - Gillespie SSA
 	private int generatorType = 0; // 0 - Random (Java), 1 - HighQualityRandomGenerator
 	
 	private int SPNimmediateMode = 2;
 	private boolean SPNdetRemove = true;
-	
 	private boolean ssaMassActionKineticsEnabled = true;
-	
 	public boolean quickSimToken = false;
+
+	//XTPN:
+	private double calculationsAccuracy = 0.000000001;
+	private long simSteps_XTPN = 30000;
+	private double simMaxTime_XTPN = 5000.0;
+	private int simRepetitions_XTPN = 10;
+	private boolean simulateTime = false; //domyślnie: true = steps
+	/** Zmienna określa, czy mają być zapamiętywane dane dla wszystkich kroków symulacji, czy tylko niektóre (patrz: recordedSteps) */
+	private boolean recordSomeSteps = false; //domyślnie: true = steps
+	/** Co ile kroków symulacji zapamiętywane są dane */
+	private int recordedSteps = 10;
+	private boolean recordStatictis = false;
+
+	private boolean readArcXTPNactive = false;
+	private boolean readArcXTPNdontTakeTokens = false;
 	
 	/**
 	 * Konstruktor obiektu SimulatorGlobals.
 	 */
 	public SimulatorGlobals() {
-		this.overlord = GUIManager.getDefaultGUIManager();
 	}
 	
 	/**
@@ -92,8 +105,8 @@ public class SimulatorGlobals {
 		//if(value == false)
 		//	this.maxMode = false;
 		
-		if(singleMode == true)
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("simSingleMode").equals("1")) {
+		if(singleMode)
+			if(overlord.getSettingsManager().getValue("simSingleMode").equals("1")) {
 				setMaxMode(true);
 			}
 	}
@@ -107,56 +120,58 @@ public class SimulatorGlobals {
 	}
 	
 	/**
-	 * Zwraca aktualnie ustawiony typ sieci.
-	 * @return
+	 * Zwraca aktualnie ustawiony typ symulacji sieci.
+	 * @return (<b>SimulatorGlobals.SimNetType</b>) typ sumulacji.
 	 */
-	public NetType getNetType() {
+	public SimulatorGlobals.SimNetType getNetType() {
 		return this.refNetType;
 	}
 	
 	/**
 	 * Metoda ustawiająca tryb sieci do symulacji.
-	 * @param type int - typ sieci:<br> 0 - PN;<br> 1 - TPN;<br> 2 - Hybrid mode
+	 * @param typeID int - typ sieci:<br> 0 - PN;<br> 1 - TPN;<br> 2 - Hybrid mode
 	 * @return int - faktyczny ustawiony tryb: 0 - PN, 1 - TPN, 2 - Hybrid, -1 : crash mode
 	 */
 	public int setNetType(int typeID) {
 		int res = checkSimulatorNetType(typeID);
-		
-		switch(res) {
-			case 0:
-				refNetType = NetType.BASIC;
-				break;
-			case 1:
-				refNetType = NetType.TIME;
-				break;
-			case 2:
-				refNetType = NetType.HYBRID;
-				break;
+
+		switch (res) {
+			case 0 -> refNetType = SimNetType.BASIC;
+			case 1 -> refNetType = SimNetType.TIME;
+			case 2 -> refNetType = SimNetType.HYBRID;
+			//case 3 -> refNetType = SimNetType.COLOR;
+			//case 4 -> refNetType = SimNetType.XTPN;
+			//case 5 -> refNetType = SimNetType.XTPNfunc;
+			//case 6 -> refNetType = SimNetType.XTPNext;
+			//case 7 -> refNetType = SimNetType.XTPNext_func;
 		}
 		return res;
 	}
-	
-	public int setNetType(NetType netType) {
-		int typeID = 0;
-		if(netType == NetType.BASIC)
-			typeID = 0;
-		else if(netType == NetType.TIME)
+
+	/**
+	 * Uswtawia typ symulacji sieci.
+	 * @param netType (<b>SimNetType</b>) BASIC, TIME, HYBRID, COLOR, XTPN, XTPNfunc, XTPNext, XTPNext_func
+	 * @param isXTPN (<b>boolean</b>) jeśli true, olewamy sprawdzanie.
+	 * @return (<b>int</b>) numer porządkowy
+	 */
+	public int setNetType(SimNetType netType, boolean isXTPN) {
+		if(isXTPN) {
+			refNetType = netType;
+			return -1;
+		}
+		int typeID = 0; //SimNetType.BASIC as default
+
+		if(netType == SimNetType.TIME)
 			typeID = 1;
-		else if(netType == NetType.HYBRID)
+		else if(netType == SimNetType.HYBRID)
 			typeID = 2;
 				
 		int res = checkSimulatorNetType(typeID);
-		
-		switch(res) {
-			case 0:
-				refNetType = NetType.BASIC;
-				break;
-			case 1:
-				refNetType = NetType.TIME;
-				break;
-			case 2:
-				refNetType = NetType.HYBRID;
-				break;
+
+		switch (res) {
+			case 0 -> refNetType = SimNetType.BASIC;
+			case 1 -> refNetType = SimNetType.TIME;
+			case 2 -> refNetType = SimNetType.HYBRID;
 		}
 		
 		return res;
@@ -179,9 +194,9 @@ public class SimulatorGlobals {
 				
 				if(n instanceof Transition) {
 					if(!(((Transition)n).getTransType() == TransitionType.TPN)) {
-						JOptionPane.showMessageDialog(null, "Current net is not pure Time Petri Net.\nSimulator switched to hybrid mode.",
-								"Invalid mode", JOptionPane.ERROR_MESSAGE);
-						GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
+						JOptionPane.showMessageDialog(null, lang.getText("SG_entry001"),
+								lang.getText("SG_entry001t"), JOptionPane.ERROR_MESSAGE);
+						overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(2);
 						return 2;
 					}
 				}
@@ -273,10 +288,10 @@ public class SimulatorGlobals {
 	 * Metoda ustawia liczbę przystanków na drodze tokenu (grafika)
 	 * @param value int - nowa wartość, im mniej (min=5), tym szybciej
 	 */
-	public void setArcDelay(int value) {
-		if(value < 5)
-			this.ARC_STEP_DELAY = 5;
-		
+	public void setArcGraphicDelay(int value) {
+		//if(value < 5)
+		//	this.ARC_STEP_DELAY = 5;
+
 		this.ARC_STEP_DELAY = value;
 	}
 	
@@ -284,7 +299,7 @@ public class SimulatorGlobals {
 	 * Zwraca liczbę przystanków na drodze rysowania tokenu
 	 * @return int
 	 */
-	public int getArcDelay() {
+	public int getArcGraphicDelay() {
 		return ARC_STEP_DELAY;
 	}
 	
@@ -292,9 +307,9 @@ public class SimulatorGlobals {
 	 * Metoda ustawia opóźnienie odpalenia tranzycji (grafika)
 	 * @param value int - nowa wartość, im mniej (min=10), tym szybciej
 	 */
-	public void setTransDelay(int value) {
-		if(value < 10)
-			this.TRANS_FIRING_DELAY = 10;
+	public void setTransitionGraphicDelay(int value) {
+		//if(value < 10)
+		//	this.TRANS_FIRING_DELAY = 10;
 		
 		this.TRANS_FIRING_DELAY = value;
 	}
@@ -303,12 +318,12 @@ public class SimulatorGlobals {
 	 * Zwraca wartość opóźnienia tranzycji
 	 * @return int
 	 */
-	public int getTransDelay() {
+	public int getTransitionGraphicDelay() {
 		return TRANS_FIRING_DELAY;
 	}
 	
 	/**
-	 * Reset do ustawień początkowych.
+	 * Reset do ustawień początkowych. Wywoływane przez GUIreset.
 	 */
 	public void reset() {
 		ARC_STEP_DELAY = 25;
@@ -316,12 +331,13 @@ public class SimulatorGlobals {
 		
 		maxMode = false;
 		singleMode = false;
-		refNetType = NetType.BASIC;	
+		refNetType = SimNetType.BASIC;
 		emptySteps = false;
 		simSteps = 1000;
 		simReps = 100;
 
 		currentStep = 0;
+		currentTime = 0;
 	}
 	
 	/**
@@ -371,5 +387,164 @@ public class SimulatorGlobals {
 	 */
 	public boolean isSSAMassAction() {
 		return this.ssaMassActionKineticsEnabled;
+	}
+
+
+
+	// ****************************************************************************************
+	// ****************************************************************************************
+	// ****************************************************************************************
+	// ****************************************************************************************
+	// ****************************************************************************************
+
+	/**
+	 * Zwraca dokładność obliczeń dla XTPN, domyślnie 0.000000001
+	 * @return (<b>double</b>) - dokładność obliczeń.
+	 */
+	public double getCalculationsAccuracy() {
+		return calculationsAccuracy;
+	}
+
+	/**
+	 * Ustawia dokładność obliczeń dla XTPN, domyślnie 0.000000001
+	 * @param calculationsAccuracy (<b>double</b>) dokładność obliczeń.
+	 */
+	public void setCalculationsAccuracy(double calculationsAccuracy) {
+		this.calculationsAccuracy = calculationsAccuracy;
+	}
+
+	/**
+	 * Ustawia status symulacji czasowej.
+	 * @param value (<b>boolean</b>) true, jeżeli symulacja po czasie, false, jeżeli do maksymalnej liczby kroków.
+	 */
+	public void setTimeSimulationStatus_XTPN(boolean value) {
+		simulateTime = value;
+	}
+
+	/**
+	 * Zwraca status symulacji czasowej.
+	 * @return (<b>boolean</b>) - true, jeżeli symulacja po czasie, false, jeżeli do maksymalnej liczby kroków.
+	 */
+	public boolean isTimeSimulation_XTPN() {
+		return simulateTime;
+	}
+
+	/**
+	 * Ustawia maksymalną liczbę kroków symulacji dla sieci XTPN.
+	 * @param value (<b>double</b>) nowa maksymalna liczba kroków.
+	 */
+	public void setSimSteps_XTPN(long value) {
+		simSteps_XTPN = value;
+	}
+
+	/**
+	 * Zwraca maksymalną liczbę kroków symulacji dla sieci XTPN.
+	 * @return (<b>double</b>) - maksymalna liczba kroków.
+	 */
+	public long getSimSteps_XTPN() {
+		return simSteps_XTPN;
+	}
+
+	/**
+	 * Ustawia maksymalny czas symulacji dla sieci XTPN.
+	 * @param value (<b>double</b>) nowy maksymalny czas.
+	 */
+	public void setSimTime_XTPN(double value) {
+		simMaxTime_XTPN = value;
+	}
+
+	/**
+	 * Zwraca maksymalny czas symulacji dla sieci XTPN.
+	 * @return (<b>double</b>) - maksymalny czas symulacji.
+	 */
+	public double getSimTime_XTPN() {
+		return simMaxTime_XTPN;
+	}
+
+	/**
+	 * Ustawia maksymalną liczbę powtórzeń symulacji.
+	 * @param value (<b>double</b>) nowa maksymalna liczba powtórzeń.
+	 */
+	public void setSimRepetitions_XTPN(int value) {
+		simRepetitions_XTPN = value;
+	}
+
+	/**
+	 * Zwraca maksymalną liczbę powtórzeń symulacji.
+	 * @return (<b>int</b>) - maksymalna liczba powtórzeń.
+	 */
+	public int getSimRepetitions_XTPN() {
+		return simRepetitions_XTPN;
+	}
+
+	/**
+	 * Ustawia status częściowego rejestrowania kroków.
+	 * @param value (<b>boolean<b>) true, jeżeli tylko niektóre (co getRecordedSteps() ) kroki mają być rejestrowane
+	 */
+	public void setPartialRecordingStetsStatus(boolean value) {
+		recordSomeSteps = value;
+	}
+
+	/**
+	 * Zwraca status częściowego rejestrowania kroków.
+	 * @return (<b>boolean</b>) - true, jeżeli tylko niektóre (co getRecordedSteps() ) kroki mają być rejestrowane
+	 */
+	public boolean isPartialRecordingSteps() {
+		return recordSomeSteps;
+	}
+
+	/**
+	 * Jeżeli włączono częściowe rejestrowanie kroków ( isPartialRecordingSteps() ), to metoda ustawia co ile kroków.
+	 * @param value (<b>int</b>) co ile kroków ma być rejestrowany stan symulacji.
+	 */
+	public void setRecordedSteps(int value) {
+		recordedSteps = value;
+	}
+
+	/**
+	 * Jeżeli włączono częściowe rejestrowanie kroków ( isPartialRecordingSteps() ), to metoda zwraca co ile kroków.
+	 * @return (<b>int</b>) co ile kroków ma być rejestrowany stan symulacji.
+	 */
+	public int getRecordedSteps() {
+		return recordedSteps;
+	}
+
+	/**
+	 * Ustawia status rejestrowania statystyk.
+	 * @param value (<b>boolean</b>) true, jeżeli statystyki mają być liczone.
+	 */
+	public void setStatsRecordingStatus(boolean value) {
+		recordStatictis = value;
+	}
+
+	/**
+	 * Zwraca status rejestrowania statystyk.
+	 */
+	public boolean isStatsRecorded() {
+		return recordStatictis;
+	}
+
+	/**
+	 * Ustawia status czasowego łuku odczytu.
+	 * @param value (<b>boolean</b>) true, jeżeli łuk odczytu ma zachowywać czas tokenu.
+	 */
+	public void setXTPNreadArcPreserveTokensLifetime(boolean value) {
+		readArcXTPNactive = value;
+	}
+
+	/**
+	 * Zwraca status czasowego łuku odczytu.
+	 */
+	public boolean isXTPNreadArcPreserveTokensLifetime() {
+		return readArcXTPNactive;
+	}
+
+
+	public void setXTPNreadArcDontTakeTokens(boolean value) {
+		readArcXTPNdontTakeTokens = value;
+	}
+	
+	public boolean isXTPNreadArcDontTakeTokens() {
+		return readArcXTPNdontTakeTokens;
 	}
 }

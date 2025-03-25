@@ -3,17 +3,18 @@ package holmes.petrinet.data;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.elements.Transition.StochaticsType;
+import holmes.darkgui.LanguageManager;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 /**
  * Klasa zarządzająca wektorem danych tranzycji SPN.
- * 
- * @author MR
  */
 public class SPNdataVector {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<SPNtransitionData> dataVector;
-	private SPNvectorSuperType SPNvectorType = SPNvectorSuperType.SPN;
-	private String SPNvectorDescription = "";
+	private SPNvectorSuperType SPNvectorType;
+	private String SPNvectorDescription;
 	
 	/** SPN, SSA */
 	public enum SPNvectorSuperType { SPN, SSA }
@@ -24,7 +25,7 @@ public class SPNdataVector {
 	public SPNdataVector() {
 		dataVector = new ArrayList<SPNtransitionData>();
 		SPNvectorType = SPNvectorSuperType.SPN;
-		SPNvectorDescription = "Default description for SPN transitions data vector.";
+		SPNvectorDescription = lang.getText("SPNDV_entry001"); //Default description for SPN transitions data vector.
 	}
 	
 	/**
@@ -33,7 +34,7 @@ public class SPNdataVector {
 	 * @param subType StochaticsType - typ SPN tranzycji
 	 * @return SPNdataContainer - obiekt
 	 */
-	public SPNtransitionData newContainer(String frFunction, StochaticsType subType) {
+	public SPNtransitionData newContainer(String frFunction, TransitionSPNExtension.StochaticsType subType) {
 		return new SPNtransitionData(frFunction, subType);
 	}
 	
@@ -62,7 +63,7 @@ public class SPNdataVector {
 	 * @param value String - fire rate (funkcja)
 	 * @param sType StochaticsType - typ stochastyczny tranzycji
 	 */
-	public void addTrans(String value, StochaticsType sType) {
+	public void addTrans(String value, TransitionSPNExtension.StochaticsType sType) {
 		dataVector.add(new SPNtransitionData(value, sType));
 	}
 	
@@ -99,10 +100,15 @@ public class SPNdataVector {
 		else {
 			try {
 				//TODO: moduł obliczania z funkcji:
-				double fr = Double.parseDouble(dataVector.get(index).ST_function);
-				return fr;
+				return Double.parseDouble(dataVector.get(index).ST_function);
 			} catch(Exception e) {
-				GUIManager.getDefaultGUIManager().log("Firing rate function evaluation failed for t"+index+", returning 1.0.", "warning", true);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("LOGentry00374exception"), index);
+				} catch (Exception ex2) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00374exception", "error", true);
+				}
+				overlord.log(strB+"\n"+e.getMessage(), "warning", true);
 				return 1.0;
 			}
 		}
@@ -113,9 +119,9 @@ public class SPNdataVector {
 	 * @param index int - nr tranzycji
 	 * @return StochaticsType - podtyp
 	 */
-	public StochaticsType getStochasticType(int index) {
+	public TransitionSPNExtension.StochaticsType getStochasticType(int index) {
 		if(index >= dataVector.size())
-			return StochaticsType.ST;
+			return TransitionSPNExtension.StochaticsType.ST;
 		else
 			return dataVector.get(index).sType;
 	}
@@ -138,7 +144,7 @@ public class SPNdataVector {
 	
 	/**
 	 * Ustawia nowy typ wektora danych tranzycji SPN.
-	 * @param description SPNvectorSuperType - typ wektora
+	 * @param type SPNvectorSuperType - typ wektora
 	 */
 	public void setSyperType(SPNvectorSuperType type) {
 		this.SPNvectorType = type;

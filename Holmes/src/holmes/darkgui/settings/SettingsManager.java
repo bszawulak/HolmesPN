@@ -12,14 +12,14 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 
 /**
  * Klasa zarządzająca plikiem konfiguracyjnym programu.
- *
- * @author students - pierwsza podstawowa wersja która nic nie robiła :)
- * @author MR - w tej chwili większość kodu tutaj
  */
 public class SettingsManager {
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private ArrayList<Setting> settings;
 
     /**
@@ -32,8 +32,8 @@ public class SettingsManager {
     /**
      * Metoda zwraca wartość związaną z podawanym ID.
      *
-     * @param ID String - identyfikator właściwości
-     * @return String - właściwość
+     * @param ID <b>String</b> - identyfikator właściwości
+     * @return <b>String</b> - właściwość
      */
     public String getValue(String ID) {
         for (Setting s : settings) {
@@ -46,8 +46,8 @@ public class SettingsManager {
     /**
      * Metoda ustawia nową wartość związaną z podawanym ID.
      *
-     * @param ID    String - identyfikator właściwości
-     * @param value String - nowa wartość właściwości
+     * @param ID    <b>String</b> - identyfikator właściwości
+     * @param value <b>String</b> - nowa wartość właściwości
      * @param save  boolean - jeśli true to od razu zapis do pliku
      * @return int - 0 jeśli znaleziono id, -1 jeśli nie - dodawana jest wtedy od razu NOWA
      * właściwość pod podanym ID
@@ -74,9 +74,8 @@ public class SettingsManager {
 
     /**
      * Metoda dodaje nową właściwość z ID oraz wartością
-     *
-     * @param ID    String - unikalny ID
-     * @param value String - wartość właściwości
+     * @param ID    <b>String</b> - unikalny ID
+     * @param value <b>String</b> - wartość właściwości
      */
     private void addSetting(ArrayList<Setting> settings, String ID, String value) {
         for (Setting s : settings) {
@@ -95,12 +94,25 @@ public class SettingsManager {
     @SuppressWarnings("unused")
     private void checkAndRestoreSetting() {
         ArrayList<Setting> settingsNew = new ArrayList<Setting>();
-
-        //checkAndFix(settingsNew, "abyss_version", "1.30 release 30-3-2015");
-        //settingsNew.add(new Setting("abyss_version", "1.31 release 7-4-2015"));
-        //settingsNew.add(new Setting("abyss_version", "1.37 release 19-4-2015")); //always add new
-        settingsNew.add(new Setting("holmes_version", "1.1.0"));
-
+        settingsNew.add(new Setting("holmes_version", "2.0 (Kim Kitsuragi edition)"));
+        //2.0 Tequila Sunset
+        
+        ArrayList<String> confiredDictionaries = new ArrayList<String>();
+        confiredDictionaries.add("English");
+        confiredDictionaries.add("Polish");
+        confiredDictionaries.add("German");
+        confiredDictionaries.add("Ukrainian");
+        confiredDictionaries.add("Spanish");
+        confiredDictionaries.add("French");
+        confiredDictionaries.add("Italian");
+        confiredDictionaries.add("YourLang");
+        if(!confiredDictionaries.contains(getValue("selected_language"))) {
+            settingsNew.add(new Setting("selected_language", "English"));
+        } else {
+            checkAndFix(settingsNew, "selected_language", getValue("selected_language"));
+        }
+        
+        //checkAndFix(settingsNew, "selected_language", "English");
         checkAndFix(settingsNew, "r_path", "c://Program Files//R//R-3.1.2//bin//Rscript.exe");
         checkAndFix(settingsNew, "r_path64", "c://Program Files//R//R-3.1.2//bin//x64//Rscript.exe");
         checkAndFix(settingsNew, "lastOpenedPath", "");
@@ -110,6 +122,11 @@ public class SettingsManager {
         checkAndFix(settingsNew, "ina_COMMAND2p", "nnsnnnfnn");
         checkAndFix(settingsNew, "ina_COMMAND3", "nnnfnn");
         checkAndFix(settingsNew, "ina_COMMAND4", "eqqy");
+
+        //width and height of the main window
+        checkAndFix(settingsNew, "mainWindowStartMaximized", "true");
+        checkAndFix(settingsNew, "mainWindowWidth", "1500");
+        checkAndFix(settingsNew, "mainWindowHeight", "800");
 
         //program - ogólne
         checkAndFix(settingsNew, "programUseOldSnoopyLoaders", "0");
@@ -144,11 +161,13 @@ public class SettingsManager {
         checkAndFix(settingsNew, "editorSnoopyCompatibleMode", "1");
         checkAndFix(settingsNew, "editorShowShortNames", "0");
         checkAndFix(settingsNew, "editorExportCheckAndWarning", "1");
+        checkAndFix(settingsNew, "editorPortalLines", "1");
+        checkAndFix(settingsNew, "editorNewPortalPlace", "0");
 
         try {
             String tmp = getValue("editorGraphFontSize");
             int test = Integer.parseInt(tmp);
-            if (test < 8 || test > 15)
+            if (test < 7 || test > 25)
                 throw new Exception();
             checkAndFix(settingsNew, "editorGraphFontSize", "11");
         } catch (Exception e) {
@@ -174,17 +193,32 @@ public class SettingsManager {
         checkAndFix(settingsNew, "simSingleMode", "1");
         checkAndFix(settingsNew, "simTDPNrunWhenEft", "0");
 
+        checkAndFix(settingsNew, "simXTPNmassAction", "0");
+        checkAndFix(settingsNew, "simXTPNreadArcTokens", "0");
+        checkAndFix(settingsNew, "simXTPNreadArcDoNotTakeTokens", "1");
+        checkAndFix(settingsNew, "simLogEnabled", "0");
+        checkAndFix(settingsNew, "editorShortNameLowerIndex", "0");
+
+        try {
+            String tmp = getValue("systemUI");
+            int test = Integer.parseInt(tmp);
+            if (test < 0 || test > 4)
+                throw new Exception();
+            settingsNew.add(new Setting("systemUI", test + ""));
+        } catch (Exception e) {
+            settingsNew.add(new Setting("systemUI", "0"));
+        }
+
         settings = new ArrayList<Setting>(settingsNew);
         writeSettingsFile();
     }
 
     /**
-     * Metoda sprawdza, czy dane ustawienie istnieje - jeśli tak, dodaje je do nowej listy, jeśli nie - ustawia
+     * Sprawdzamy, czy dane ustawienie istnieje - jeśli tak, dodajemy je do nowej listy, jeśli nie - ustawiamy
      * jego nową wartość na domyślną.
-     *
-     * @param settings ArrayList[Setting] - nowa tablica ustawień
-     * @param ID       String - identyfikator ustawienia
-     * @param value    String - wartość domyślna, jeśli nie udało się wczytać ustawienia z danym ID
+     * @param settings ArrayList[<b>Setting</b>] - nowa tablica ustawień
+     * @param ID <b>String</b> - identyfikator ustawienia
+     * @param value <b>String</b> - wartość domyślna, jeśli nie udało się wczytać ustawienia z danym ID
      */
     private void checkAndFix(ArrayList<Setting> settings, String ID, String value) {
         if (getValue(ID) == null)
@@ -205,16 +239,15 @@ public class SettingsManager {
             }
             cfgFileWriter.close();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "For some reason, settings could not be saved.", "Unknown error",
+            JOptionPane.showMessageDialog(null, lang.getText("SetMan_entry001"), lang.getText("error"),
                     JOptionPane.ERROR_MESSAGE);
-            GUIManager.getDefaultGUIManager().log("Unknown error, for some reason, settings could not be saved.", "error", true);
+            GUIManager.getDefaultGUIManager().log(lang.getText("SetMan_entry001"), "error", true);
         }
     }
 
     /**
      * Metoda wczytuje plik właściwości albo go odtwarza w razie braku.
-     *
-     * @param error boolean - true, jeśli wywołała samą siebie, bo nie dało się wczytać pliku, w takim
+     * @param error <b>boolean</b> - true, jeśli wywołała samą siebie, bo nie dało się wczytać pliku, w takim
      *              wypadku podejmowana jest jeszcze TYLKO jedna próba, bez dalszej rekurencji
      */
     private void readSettingsFile(boolean error) {
@@ -229,7 +262,7 @@ public class SettingsManager {
 
             checkAndRestoreSetting();
 
-            GUIManager.getDefaultGUIManager().log("Settings file read:", "text", true);
+            GUIManager.getDefaultGUIManager().log(lang.getText("SetMan_entry002"), "text", true); //Settings file read:
             for (Setting s : settings) {
                 GUIManager.getDefaultGUIManager().logNoEnter("ID: ", "bold", false);
                 GUIManager.getDefaultGUIManager().logNoEnter(s.getID(), "italic", false);
@@ -238,12 +271,12 @@ public class SettingsManager {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    "The file \"holmes\".cfg, which normally contains the settings for this application,\n"
-                            + "has not been found or contains invalid values. Restoring default file.",
-                    "Settings file not found or damaged",
+                    lang.getText("SetMan_entry003"), //The file holmes.cfg, which normally contains the settings for this application,\nhas not been found or contains invalid values. Restoring default file.
+                    lang.getText("SetMan_entry004"), //Settings file not found or damaged
                     JOptionPane.ERROR_MESSAGE);
-            GUIManager.getDefaultGUIManager().log("Settings file not found or damaged. The file \"holmes\".cfg, which normally "
-                    + "contains the settings for this application, has not been found or contains invalid values. Restoring default file.", "error", true);
+            //Settings file not found or damaged. The file holmes.cfg, which normally contains the settings for this application,
+            // has not been found or contains invalid values. Restoring default file.
+            GUIManager.getDefaultGUIManager().log(lang.getText("SetMan_entry005"), "error", true);
 
             if (error)
                 return;
@@ -256,14 +289,14 @@ public class SettingsManager {
     /**
      * Metoda odpowiedzialna za wczytanie właściwości i jej ID w lini (ID do pierwszej spacji).
      *
-     * @param line String - linia z pliku
-     * @return Setting - właściwość programu
+     * @param line <b>String</b> - linia z pliku
+     * @return <b>Setting</b> - właściwość programu
      */
     private Setting convertLineToSetting(String line) {
         try {
             Random rand = new Random();
-            String ID = "";
-            String value = "";
+            String ID;
+            String value;
             int index = line.indexOf(" ");
             if (index < 1) {
                 ID = "Unknown_" + rand.nextInt(999999);
@@ -276,11 +309,11 @@ public class SettingsManager {
             return new Setting(ID, value);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    "The file \"holmes\".cfg, which normally contains the settings for this application, is corrupt. Unable to load settings.",
-                    "Settings corrupt, converting line has failed.",
+                    lang.getText("SetMan_entry006"), //The file holmes.cfg, which normally contains the settings for this application, is corrupt. Unable to load settings.
+                    lang.getText("SetMan_entry007"), //Settings corrupt, converting line has failed.
                     JOptionPane.ERROR_MESSAGE);
-            GUIManager.getDefaultGUIManager().log("Settings corrupt! The file \"holmes\".cfg, which normally contains the "
-                    + "settings for this application, is corrupt. Unable to load setting line: ", "error", true);
+            //Settings corrupt! The file holmes.cfg, which normally contains the settings for this application, is corrupt. Unable to load setting line: 
+            GUIManager.getDefaultGUIManager().log(lang.getText("SetMan_entry008"), "error", true);
             GUIManager.getDefaultGUIManager().log(line, "italic", false);
             return null;
         }

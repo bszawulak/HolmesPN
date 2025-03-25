@@ -3,17 +3,17 @@ package holmes.petrinet.data;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.SPNdataVector.SPNvectorSuperType;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.elements.Transition.StochaticsType;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 /**
  * Klasa zarządzająca wektorami danych SPN.
- * 
- * @author MR
  */
 public class SPNdataVectorManager {
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private PetriNet pn;
 	
 	private ArrayList<SPNdataVector> SPNdataMatrix;
@@ -24,9 +24,7 @@ public class SPNdataVectorManager {
 	 * @param net PetriNet - główny obiekt sieci
 	 */
 	public SPNdataVectorManager(PetriNet net) {
-		overlord = GUIManager.getDefaultGUIManager();
 		this.pn = net;
-		
 		this.SPNdataMatrix = new ArrayList<SPNdataVector>();
 		SPNdataMatrix.add(new SPNdataVector());
 	}
@@ -36,7 +34,7 @@ public class SPNdataVectorManager {
 	 */
 	public void addTrans() {
 		for(SPNdataVector frVector: SPNdataMatrix) {
-			frVector.addTrans(""+1.0, StochaticsType.ST);
+			frVector.addTrans(""+1.0, TransitionSPNExtension.StochaticsType.ST);
 		}
 	}
 	
@@ -52,11 +50,10 @@ public class SPNdataVectorManager {
 		for(SPNdataVector frVector: SPNdataMatrix) {
 			boolean status = frVector.removeTrans(index);
 			if(!status) {
-				overlord.log("Critical error: invalid transition index in SPN data matrix.", "error", true);
+				overlord.log(lang.getText("LOGentry00375critErr"), "error", true);
 				return false;
 			}
 		}
-
 		return true;
 	}
 	
@@ -82,7 +79,7 @@ public class SPNdataVectorManager {
 	public void addCurrentFRasSPNdataVector() {
 		SPNdataVector frVector = new SPNdataVector();
 		for(Transition trans : pn.getTransitions()) {
-			frVector.addTrans(""+trans.getFiringRate(), trans.getSPNtype());
+			frVector.addTrans(""+trans.spnExtension.getFiringRate(), trans.spnExtension.getSPNtype());
 		}
 		SPNdataMatrix.add(frVector);
 	}
@@ -94,7 +91,7 @@ public class SPNdataVectorManager {
 		reset(false);
 		int transNo = pn.getTransitions().size();
 		for(int t=0; t<transNo; t++) {
-			SPNdataMatrix.get(0).addTrans(""+1.0, StochaticsType.ST);
+			SPNdataMatrix.get(0).addTrans(""+1.0, TransitionSPNExtension.StochaticsType.ST);
 		}
 	}
 	
@@ -107,8 +104,8 @@ public class SPNdataVectorManager {
 		SPNdataVector frVector = SPNdataMatrix.get(vectorID);
 		for(int t=0; t<transitions.size(); t++) {
 			Transition trans = transitions.get(t);
-			trans.setSPNtype(frVector.getStochasticType(t));
-			trans.setFiringRate(frVector.getFiringRate(t));
+			trans.spnExtension.setSPNtype(frVector.getStochasticType(t));
+			trans.spnExtension.setFiringRate(frVector.getFiringRate(t));
 		}
 		selectedVector = vectorID;
 	}
@@ -131,14 +128,14 @@ public class SPNdataVectorManager {
 	
 	/**
 	 * Zastępuje wskazany stan SPN aktualnym stanem firing rates sieci.
-	 * @param stateID int - wskazany stan z tabeli
+	 * @param vectorID (<b>int</b>) wskazany stan z tabeli.
 	 */
 	public void replaceSPNvectorWithNetFRates(int vectorID) {
 		ArrayList<Transition> transitions = pn.getTransitions();
 		SPNdataVector frVector = SPNdataMatrix.get(vectorID);
 		for(int t=0; t<transitions.size(); t++) {
-			frVector.accessVector().get(t).ST_function = ""+transitions.get(t).getFiringRate();
-			frVector.accessVector().get(t).sType = transitions.get(t).getSPNtype();
+			frVector.accessVector().get(t).ST_function = ""+transitions.get(t).spnExtension.getFiringRate();
+			frVector.accessVector().get(t).sType = transitions.get(t).spnExtension.getSPNtype();
 		}
 	}
 	

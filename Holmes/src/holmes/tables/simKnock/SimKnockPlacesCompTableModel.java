@@ -1,5 +1,6 @@
 package holmes.tables.simKnock;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
@@ -9,14 +10,12 @@ import holmes.petrinet.elements.Place;
 
 /**
  * Model tabeli danych statystycznych dla miejsca (symulacja knockout).
- * 
- * @author MR
- *
  */
 public class SimKnockPlacesCompTableModel extends AbstractTableModel {
+	@Serial
 	private static final long serialVersionUID = 5141687750658780227L;
 	
-	public class PlaceCompContainer {
+	public static class PlaceCompContainer {
     	public int ID;
     	public String name;
     	
@@ -187,42 +186,18 @@ public class SimKnockPlacesCompTableModel extends AbstractTableModel {
      */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Object returnValue = null;
-		switch (columnIndex) {
-        case 0:
-            returnValue = dataMatrix.get(rowIndex).ID;
-            break;
-        case 1:
-        	returnValue = dataMatrix.get(rowIndex).name;
-            break;
-        case 2:
-        	returnValue = dataMatrix.get(rowIndex).tokenAvgRef;
-            break;
-        case 3:
-        	returnValue = dataMatrix.get(rowIndex).stdDevRef;
-            break;
-        case 4:
-        	returnValue = dataMatrix.get(rowIndex).tokenAvgKnock;
-            break;
-        case 5:
-        	returnValue = dataMatrix.get(rowIndex).stdDevKnock;
-            break;
-        case 6:
-        	returnValue = dataMatrix.get(rowIndex).tokenAvgPercDiff;
-            break;
-        case 7:
-        	returnValue = dataMatrix.get(rowIndex).noTokensKnock;
-            break;
-        case 8:
-        	returnValue = dataMatrix.get(rowIndex).signifLvl1;
-            break;
-        case 9:
-        	returnValue = dataMatrix.get(rowIndex).signifLvl2;
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid column index");
-        }
-         
-        return returnValue;
+		return switch (columnIndex) {
+			case 0 -> dataMatrix.get(rowIndex).ID;
+			case 1 -> dataMatrix.get(rowIndex).name;
+			case 2 -> dataMatrix.get(rowIndex).tokenAvgRef;
+			case 3 -> dataMatrix.get(rowIndex).stdDevRef;
+			case 4 -> dataMatrix.get(rowIndex).tokenAvgKnock;
+			case 5 -> dataMatrix.get(rowIndex).stdDevKnock;
+			case 6 -> dataMatrix.get(rowIndex).tokenAvgPercDiff;
+			case 7 -> dataMatrix.get(rowIndex).noTokensKnock;
+			case 8 -> dataMatrix.get(rowIndex).signifLvl1;
+			case 9 -> dataMatrix.get(rowIndex).signifLvl2;
+			default -> throw new IllegalArgumentException("Invalid column index");
+		};
 	}
 }

@@ -1,12 +1,10 @@
 package holmes.graphpanel.popupmenu;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.Serial;
 import java.util.ArrayList;
-
 import javax.swing.JOptionPane;
-
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
@@ -16,23 +14,23 @@ import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 
 /**
  * Klasa odpowiedzialna za dodanie do menu kontekstowego opcji związanych z tranzycjami.
- * 
- * @author students - statyczna wersja
- * @author MR - dynamiczna wersja
  *
  */
 public class TransitionPopupMenu extends NodePopupMenu {
+	@Serial
 	private static final long serialVersionUID = 1268637178521514216L;
-
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
+	
 	/**
 	 * Konstruktor obiektu klasy TransitionPopupMenu.
 	 * @param graphPanel GraphPanel - arkusz dla którego powstaje menu
 	 */
 	public TransitionPopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
-		super(graphPanel, pne, el.getParentNode());
+		super(graphPanel, el, pne, el.getParentNode());
 		
-		this.addMenuItem("Transition ON/OFF", "offlineSmall.png", e -> {
-			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+		this.addMenuItem(lang.getText("TPM_entry001"), "offlineSmall.png", e -> {
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
 				return;
 
 			ArrayList<Node> listOfSelectedNodes =  new ArrayList<>();
@@ -43,15 +41,14 @@ public class TransitionPopupMenu extends NodePopupMenu {
 
 			for (Node n : listOfSelectedNodes) {
 				if (n instanceof Transition) {
-					((Transition) n).setOffline(!((Transition) n).isOffline());
+					((Transition) n).setKnockout(!((Transition) n).isKnockedOut());
 				}
 			}
-
-			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			overlord.getWorkspace().repaintAllGraphPanels();
 		});
 		
-		this.addMenuItem("Invisibility ON/OFF", "smallInvisibility.png", e -> {
-			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+		this.addMenuItem(lang.getText("TPM_entry002"), "smallInvisibility.png", e -> {
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
 				return;
 
 			ArrayList<Node> listOfSelectedNodes =  new ArrayList<>();
@@ -62,18 +59,14 @@ public class TransitionPopupMenu extends NodePopupMenu {
 
 			for (Node n : listOfSelectedNodes) {
 				if (n instanceof Transition) {
-					if (n.isInvisible())
-						n.setInvisibility(false);
-					else
-						n.setInvisibility(true);
+					n.setInvisibility( !(n.isInvisible()) ); //odwrotność isInvisible, czyli switcher
 				}
 			}
-			GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+			overlord.getWorkspace().repaintAllGraphPanels();
 		});
-		
-		
-		this.addMenuItem("Functions builder...", "functionalWindowIcon.png", e -> {
-			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
+
+		this.addMenuItem(lang.getText("TPM_entry003"), "functionalWindowIcon.png", e -> {
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
 				return;
 
 			Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
@@ -82,21 +75,17 @@ public class TransitionPopupMenu extends NodePopupMenu {
 			}
 		});
 		
-		
-		
-		
-		
 		/*
 		this.addMenuItem("Change selected Transitions into same Portals", "portal.png", new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
-					if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
+					if(overlord.reset.isSimulatorActiveWarning(
 							"Operation impossible when simulator is working."
 							, "Warning") == true)
 						return;
 					
 					//getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
-					//GUIManager.getDefaultGUIManager().markNetChange();
+					//overlord.markNetChange();
 				} else {
 					JOptionPane.showMessageDialog(null, "Option possible if more than one transition is selected.", "Too few selections", 
 							JOptionPane.INFORMATION_MESSAGE);
@@ -104,35 +93,39 @@ public class TransitionPopupMenu extends NodePopupMenu {
 			}
 		});
 		*/
-		this.addMenuItem("Clone this Transition into Portal", "portal.png", e -> {
+		this.addMenuItem(lang.getText("TPM_entry004"), "portal.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
-				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-						"Operation impossible when simulator is working."
-						, "Warning"))
+				if(overlord.reset.isSimulatorActiveWarning(
+						lang.getText("TPM_entry005"), lang.getText("warning")))
+					return;
+				if(overlord.reset.isXTPNSimulatorActiveWarning(
+						lang.getText("TPM_entry006"), lang.getText("warning")))
 					return;
 
 				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
 				getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
-				GUIManager.getDefaultGUIManager().markNetChange();
+				overlord.markNetChange();
 			} else {
-				JOptionPane.showMessageDialog(null, "Option possible for one transition only.", "Too many selections",
+				JOptionPane.showMessageDialog(null, lang.getText("TPM_entry007"), lang.getText("TPM_entry008"),
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 
 
-		this.addMenuItem("Export subnet to File", "cut.png", e -> {
+		this.addMenuItem(lang.getText("TPM_entry008"), "cut.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
-				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-						"Operation impossible when simulator is working."
-						, "Warning"))
+				if(overlord.reset.isSimulatorActiveWarning(
+						lang.getText("TPM_entry005"), lang.getText("warning")))
+					return;
+				if(overlord.reset.isXTPNSimulatorActiveWarning(
+						lang.getText("TPM_entry006"), lang.getText("warning")))
 					return;
 
 				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
 				getGraphPanel().getSelectionManager().saveSubnet();
-				GUIManager.getDefaultGUIManager().markNetChange();
+				overlord.markNetChange();
 			} else {
-				JOptionPane.showMessageDialog(null, "Option possible for one transition only.", "Too many selections",
+				JOptionPane.showMessageDialog(null, lang.getText("TPM_entry007"), lang.getText("TPM_entry007t"),
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});

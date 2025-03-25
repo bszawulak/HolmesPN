@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import holmes.clusters.Clustering;
 import holmes.clusters.ClusteringExtended;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.utilities.Tools;
 
 /**
@@ -19,7 +20,9 @@ import holmes.utilities.Tools;
  *
  */
 public class ClusterReader {
-	private String fileInfo[];
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
+	private String[] fileInfo;
 
 	/**
 	 * Konstruktor domyślny obiektu ClusterReader.
@@ -40,10 +43,10 @@ public class ClusterReader {
 		}
 		
 		if(checkFiles(path) == -1) { //no cluster files
-			GUIManager.getDefaultGUIManager().log("Some files are still missing in "+path+" Possible further errors.", "error", true);
+			overlord.log(lang.getText("LOGentry00058a")+" "+path+" "+lang.getText("LOGentry00058b"), "error", true);
 		}
 		
-		int tableLocation = 0;
+		int tableLocation;
 		ArrayList<ArrayList<Clustering>> bigTable = new ArrayList<ArrayList<Clustering>>();
 		for(int metric=1; metric<=8; metric++) { //dla ośmiu miar
 			for(int alg=1; alg<=7; alg++) { //dla siedmiu algorytmów
@@ -51,10 +54,10 @@ public class ClusterReader {
 				String fileName = fileInfo[tableLocation];
 				String[] splited = fileName.split("_");
 				ArrayList<Clustering> table = readClusterFile(path+"\\"+fileName, splited[0], splited[1]);
-				GUIManager.getDefaultGUIManager().logNoEnter("Processing data for: ", "text", true);
-				GUIManager.getDefaultGUIManager().log(splited[0] + " " + splited[1], "italic",false);
+				overlord.logNoEnter(lang.getText("CR_entry001") + " ", "text", true); //"Processing data for:
+				overlord.log(splited[0] + " " + splited[1], "italic",false);
 				if(table == null) {
-					GUIManager.getDefaultGUIManager().log("Failure to fill the data for "+splited[0]+"/"+splited[1], "error", true);
+					overlord.log(lang.getText("LOGentry00059")+" "+splited[0]+"/"+splited[1], "error", true);
 				}
 				bigTable.add(table);
 			}
@@ -71,8 +74,8 @@ public class ClusterReader {
 		int result = 0;
 		boolean firstFound = false;
 		String foundTemplateName = "";
-		int checkList[] = new int[57];
-		File check = null;
+		int[] checkList = new int[57];
+		File check;
 		for(int i=1; i<=56; i++) {
 			check = new File(path+"\\"+fileInfo[i]);
 			if(check.exists()) {
@@ -86,8 +89,7 @@ public class ClusterReader {
 		
 		if(!firstFound) { //ERROR: not a single file		
 			result = -2;
-			GUIManager.getDefaultGUIManager().log("Critical error. Directory "+path+" does not contain "
-					+ "any cluster file.", "error", true);
+			overlord.log(lang.getText("LOGentry00060a")+" "+path+" "+lang.getText("LOGentry00060b"), "error", true);
 			return result;
 		}
 		
@@ -95,13 +97,13 @@ public class ClusterReader {
 			if(checkList[i] == 0) { //dla każdego brakującego pliku
 				//stwórz kopię:
 				try {
-					GUIManager.getDefaultGUIManager().logNoEnter("Missing file: "+fileInfo[i], "warning", true);
+					overlord.logNoEnter(lang.getText("LOGentry00061")+" "+fileInfo[i], "warning", true);
 					Tools.copyFileByPath(path+"\\"+foundTemplateName, path+"\\"+fileInfo[i]+".tmp");
 					nullFile(path+"\\"+fileInfo[i]+".tmp", path);
-					GUIManager.getDefaultGUIManager().log(" - Fixed: recreated clean.", "text", false);
+					overlord.log(" "+lang.getText("LOGentry00062"), "text", false);
 				} catch (IOException e) {
-					GUIManager.getDefaultGUIManager().log("Restoring missing file has failed.", "error", true);
-					GUIManager.getDefaultGUIManager().log("Error: "+e.getMessage(), "error", true);
+					overlord.log(lang.getText("LOGentry00063"), "error", true);
+					overlord.log(lang.getText("error")+":\n"+e.getMessage(), "error", true);
 					result = -1;
 				}
 			}
@@ -115,14 +117,14 @@ public class ClusterReader {
 	 * @param path String - katalog dla pliku tymczasowego
 	 */
 	private void nullFile(String filePath, String path) {
-		String line = "";
+		String line;
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(filePath));
 			BufferedWriter bw = new BufferedWriter(new FileWriter(path+"\\c_tmp.txt"));
 			
 			
 	        while ((line = br.readLine()) != null) {
-	        	if(!line.contains("Output:Silhouette of "))
+	        	if(!line.contains(lang.getText("CR_entry002")+" "))
 	        		line = line.replaceAll("(-)?\\d+(\\.\\d*)?","0"); //wszystkie cyfry zmienione na zera
 	        		//line = line.replaceAll("[0-9]", "0");
 	        	bw.write(line+"\n");
@@ -130,7 +132,8 @@ public class ClusterReader {
 	        br.close();
 	        bw.close();
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Critical error. Cleaning file "+filePath+" has failed.", "error", true);
+			overlord.log(lang.getText("LOGentry00064a")+" "+filePath+" "
+					+lang.getText("LOGentry00064b"), "error", true);
 		}
 		
 		try {
@@ -142,9 +145,9 @@ public class ClusterReader {
 	        d = new File(filePath);
 	        d.delete();
 		} catch (IOException e) {
-			GUIManager.getDefaultGUIManager().log("Critical error. Creating of cleaning file "+filePath+" has failed.", "error", true);
+			overlord.log(lang.getText("LOGentry00065a")+" "+filePath+" "
+					+lang.getText("LOGentry00065b"), "error", true);
 		}
-        
 	}
 
 	/**
@@ -162,7 +165,7 @@ public class ClusterReader {
 		
 		ArrayList<Clustering> resTable = new ArrayList<Clustering>();
 		Clustering entry; // = new Clustering();
-		String line = "";
+		String line;
 		try(BufferedReader br = new BufferedReader(new FileReader(path))) {
 	        while ((line = br.readLine()) != null) {
 	        	if(line.contains("Output:Silhouette of")) { //blok opisu klastrowania
@@ -172,8 +175,7 @@ public class ClusterReader {
 	        		entry.clusterNumber = Integer.parseInt(splited[5]);
 	        		if(entry.clusterNumber<1)
 	        			entry.clusterNumber = 1;
-	        		//entry.clusterSize = new int[entry.clusterNumber];
-	        		//entry.clusterMSS = new float[entry.clusterNumber];
+
 	        		if(nameAlg.equals("average"))
 	        			nameAlg = "UPGMA";
 	        		entry.algorithmName = nameAlg;
@@ -183,16 +185,14 @@ public class ClusterReader {
 	        		while(!(line = br.readLine()).contains("Output:Individual")) {
 	        			//teraz czytamy parami linii, informacje o klastrach
 	        			line = line.replace(":", " ");
-	        			String line1[] = line.split("\\s+"); //wagi klastrów
+	        			String[] line1 = line.split("\\s+"); //wagi klastrów
 	        			line = br.readLine();
 	        			line = line.replace(":", " ");
-	        			String line2[] = line.split("\\s+"); //miara MSS
+	        			String[] line2 = line.split("\\s+"); //miara MSS
 	        			
 	        			for(int i=1; i<line1.length; i++) {
 	        				entry.clusterSize.add(Integer.parseInt(line1[i]));
-	        				//entry.clusterSize[readValues] = Integer.parseInt(line1[i]);
 	        				entry.clusterMSS.add(Float.parseFloat(line2[i]));
-	        				//entry.clusterMSS[readValues] = Float.parseFloat(line2[i]);
 	        				readValues++;
 	        				if(readValues-1 > entry.clusterNumber) { //przepełnienie zakresu tablicy
 	        					throw new Exception();
@@ -214,17 +214,15 @@ public class ClusterReader {
 	        		entry.evalMSS = Float.parseFloat(splited[4]);
 	        		
 	        		for(int i=0; i<entry.clusterNumber;i++) {
-	        			//if(entry.clusterSize[i] == 1)
 	        			if(entry.clusterSize.get(i) == 1)
 	        				entry.zeroClusters++;
 	        		}
 	        		
 	        		resTable.add(entry);
 	        	} //if(line.contains("Output:Silhouette of"))
-	        	
 	        } //while
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Critical error in readCluserFile while reading "+path, "error", true);
+			overlord.log(lang.getText("LOGentry00066")+ " "+path, "error", true);
 		}
 		return resTable;
 	}
@@ -252,19 +250,19 @@ public class ClusterReader {
 		File csvFile = new File(filePaths[0]);
 		File mctFile = new File(filePaths[2]);
 		File clustersFile = new File(filePaths[1]);
-		
-		GUIManager.getDefaultGUIManager().log("Attempting to extract clustering data from the following files:", "text", true);
-		GUIManager.getDefaultGUIManager().logNoEnter("Invariants CSV:  ", "text", false);
-		GUIManager.getDefaultGUIManager().log(csvFile.getAbsolutePath(), "italic", false);
-		GUIManager.getDefaultGUIManager().logNoEnter("MCT master file: ", "text", false);
-		GUIManager.getDefaultGUIManager().log(mctFile.getAbsolutePath(), "italic", false);
-		GUIManager.getDefaultGUIManager().logNoEnter("Clustering file: ", "text", false);
-		GUIManager.getDefaultGUIManager().log(clustersFile.getAbsolutePath(), "italic", false);
+
+		overlord.log(lang.getText("LOGentry00067"), "text", true);
+		overlord.logNoEnter(lang.getText("LOGentry00068")+"  ", "text", false);
+		overlord.log(csvFile.getAbsolutePath(), "italic", false);
+		overlord.logNoEnter(lang.getText("LOGentry00069")+" ", "text", false);
+		overlord.log(mctFile.getAbsolutePath(), "italic", false);
+		overlord.logNoEnter(lang.getText("LOGentry00070")+ " ", "text", false);
+		overlord.log(clustersFile.getAbsolutePath(), "italic", false);
 		
 		// SEKCJA I: CZYTANIE PLIKU CSV - tranzycje i inwarianty
 		
 		if(!csvFile.exists()) {
-			GUIManager.getDefaultGUIManager().log("CSV file missing, wrong path: "+filePaths[0], "error", true);
+			overlord.log(lang.getText("LOGentry00071")+" "+filePaths[0], "error", true);
 			return null;
 		} else {
 			try {
@@ -286,10 +284,8 @@ public class ClusterReader {
 					String[] invTmp = line.split(";");
 	        		int invIndex = Integer.parseInt(invTmp[0]);
 	        		invRow.add(invIndex); //nr porządkowy inwariantu
-	        		//data.csvInvariants[invCounter][0] = invIndex;
 	        		for(int i=1; i<invTmp.length; i++) {
 	        			invRow.add(Integer.parseInt(invTmp[i]));
-	        			//data.csvInvariants[invCounter][i] = Integer.parseInt(invTmp[i]);
 	        		}
 	        		data.csvInvariants.add(invRow);
 	        		//lepiej, żeby nie było więcej inv, bo nastąpi przepełnienie tab statycznej
@@ -297,16 +293,15 @@ public class ClusterReader {
 		        br.close();
 		            
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("CSV file corrupt, unable to retrieve invariants data. "
-						+ "Path: "+filePaths[0], "error", true);
+				overlord.log(lang.getText("LOGentry00072")+" "+filePaths[0], "error", true);
 				return null;
 			}
 		}
-		GUIManager.getDefaultGUIManager().log("CSV invariants: extracted.", "text",true);
+		overlord.log(lang.getText("LOGentry00073"), "text",true);
 		// SEKCJA II: CZYTANIE PLIKU MCT
 		
 		if(!mctFile.exists()) {
-			GUIManager.getDefaultGUIManager().log("MCT file missing, wrong path: "+filePaths[2], "error", true);
+			overlord.log(lang.getText("LOGentry00074")+" "+filePaths[2], "error", true);
 			return null;
 		} else {
 			try {
@@ -318,34 +313,34 @@ public class ClusterReader {
 				ArrayList<String> tmpMCT = new ArrayList<String>();
 				if(line != null && line.contains("Proper MCT sets")) {
 					while((line = br.readLine()) != null && !line.contains("Single MCT sets") 
-							&& !line.equals("")) {
+							&& !line.isEmpty()) {
 						tmpMCT.add(line); //wczytywanie linii opisujących zbiory MCT
 					}
 					br.close();
 
 					data.mctSets = new ArrayList<ArrayList<Integer>>();
-					for(int i=0; i<tmpMCT.size(); i++) {
+					for (String s : tmpMCT) {
 						ArrayList<Integer> newMctList = new ArrayList<Integer>();
-						
-						line = tmpMCT.get(i);
-						line = line.substring(line.indexOf("{")+1);
+
+						line = s;
+						line = line.substring(line.indexOf("{") + 1);
 						line = line.substring(0, line.indexOf("}"));
 						line = line.trim().replaceAll("\\s+", "");
 						String[] tmpSplit = line.split(",");
-						int transIndex = -1;
+						int transIndex;
 						int lastFound = 0;
-						for(int j=0; j<tmpSplit.length; j++) {
+						for (String value : tmpSplit) {
 							transIndex = -1;
-							for(int k=lastFound; k<data.transNames.length; k++) {
-								if(tmpSplit[j].equals(data.transNames[k])) {
+							for (int k = lastFound; k < data.transNames.length; k++) {
+								if (value.equals(data.transNames[k])) {
 									transIndex = k;
 									lastFound = k;
 									break;
 								}
 							}
-							if(transIndex == -1) {
+							if (transIndex == -1) {
 								transIndex = -1;
-								GUIManager.getDefaultGUIManager().log("Something is wrong with MCT data. File:"+filePaths[2], "error", true);
+								overlord.log(lang.getText("LOGentry00075")+ " " + filePaths[2], "error", true);
 								lastFound = 0; //nie zaszkodzi, choć już raczej nie pomoże...
 							}
 							newMctList.add(transIndex); //dodajemy nr porządkowy tranzycji
@@ -355,25 +350,22 @@ public class ClusterReader {
 					data.metaData.MCTnumber = data.mctSets.size(); //ile nietrywalnych MCT
 
 				} else {
-					GUIManager.getDefaultGUIManager().log("MCT file corrupt. Path: "+filePaths[2], "error", true);
+					overlord.log(lang.getText("LOGentry00076")+ " "+filePaths[2], "error", true);
 					br.close();
 					return null;
 				}
 				
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("MCT file reading error. Path: "+filePaths[2], "error", true);
+				overlord.log(lang.getText("LOGentry00077")+" "+filePaths[2], "error", true);
 				return null;
 			}
 		}
-		
-		
-		
-		
-		GUIManager.getDefaultGUIManager().log("MCT data: extracted.", "text",true);
+
+		overlord.log(lang.getText("LOGentry00078"), "text",true);
 		//SEKCJA III: ODCZYT PLIKU KLASTROWANIA
 		
 		if(!clustersFile.exists()) {
-			GUIManager.getDefaultGUIManager().log("Cluster file missing. Path: "+filePaths[1], "error", true);
+			overlord.log(lang.getText("LOGentry00079")+ " "+filePaths[1], "error", true);
 			return null;
 		} else {
 			try {
@@ -383,15 +375,15 @@ public class ClusterReader {
 					; //przewijanie do linii z liczbą tranzycji
 				
 				if(!line.contains(data.metaData.invNumber+"")) {
-					GUIManager.getDefaultGUIManager().log("Critical error. File: "+filePaths[1]+
-							"contains invalid number of invariants previously read from file "+filePaths[1], "error", true);
+					overlord.log(lang.getText("LOGentry00080a")+" "+filePaths[1]+
+							lang.getText("LOGentry00080b")+ " "+filePaths[1], "error", true);
 					br.close();
 					return null;
 				}
 				line = line.substring(line.indexOf(data.metaData.invNumber+"")+(data.metaData.invNumber+"").length());
 				if(!line.contains(data.metaData.clusterNumber+"")) {
-					GUIManager.getDefaultGUIManager().log("Critical error. File: "+filePaths[1]+
-							"contains invalid number of clusters.", "error", true);
+					overlord.log(lang.getText("LOGentry00081a")+ " "+filePaths[1]+
+							lang.getText("LOGentry00081b"), "error", true);
 					br.close();
 					return null;
 				}
@@ -405,10 +397,10 @@ public class ClusterReader {
         		while(!(line = br.readLine()).contains("Output:Individual")) {
         			//teraz czytamy parami linii, informacje o klastrach
         			line = line.replace(":", " ");
-        			String line1[] = line.split("\\s+"); //wagi klastrów
+        			String[] line1 = line.split("\\s+"); //wagi klastrów
         			line = br.readLine();
         			line = line.replace(":", " ");
-        			String line2[] = line.split("\\s+"); //miara MSS
+        			String[] line2 = line.split("\\s+"); //miara MSS
         			
         			for(int i=1; i<line1.length; i++) {
         				mssVector.add(Float.parseFloat(line2[i]));
@@ -421,24 +413,24 @@ public class ClusterReader {
 				while((line = br.readLine()) != null && !line.contains("[1]"))
 					;
 				
-				String clusterLine = "";
+				StringBuilder clusterLine;
 				data.clustersInv = new ArrayList<ArrayList<Integer>>();
 				
 				while(line != null && line.contains("[1]")) {
-					clusterLine = line.substring(line.indexOf("]")+1);
+					clusterLine = new StringBuilder(line.substring(line.indexOf("]") + 1));
 					while((line = br.readLine()) != null && !line.contains("[1]") &&
 							line.contains("\"")) { //jeśli klaster ma wiele linii
 						line = line.substring(line.indexOf("]")+1);
-						clusterLine += line.substring(line.indexOf("]")+1);
+						clusterLine.append(line.substring(line.indexOf("]") + 1));
 						
 					}
 					
-					clusterLine = clusterLine.replace("\"", " "); //usuwanie cudzysłowów
-					clusterLine = clusterLine.trim().replaceAll("\\s+", " "); //wiele spacji na jedną
-					String[] clustInv  = clusterLine.split(" ");
+					clusterLine = new StringBuilder(clusterLine.toString().replace("\"", " ")); //usuwanie cudzysłowów
+					clusterLine = new StringBuilder(clusterLine.toString().trim().replaceAll("\\s+", " ")); //wiele spacji na jedną
+					String[] clustInv  = clusterLine.toString().split(" ");
 					ArrayList<Integer> cluster = new ArrayList<Integer>(); // wektor dla klastra
-					for(int i=0; i<clustInv.length; i++) {
-						int invNo = Integer.parseInt(clustInv[i]);
+					for (String s : clustInv) {
+						int invNo = Integer.parseInt(s);
 						cluster.add(invNo - 1); // 'invNo-1' to id inwariantu z csvInvariants[id][]
 					}
 					data.clustersInv.add(cluster); //dodajemy klaster (inwarianty) do macierzy
@@ -447,17 +439,16 @@ public class ClusterReader {
 				
 				//final check:
 				if(data.metaData.clusterNumber != data.clustersInv.size()) {
-					GUIManager.getDefaultGUIManager().log("Error: more clusters have been read than "+
-							"should be possible. Cluster file corrupt. Aborting procedure. Path: "+filePaths[1], "error", true);
+					overlord.log(lang.getText("LOGentry00082")+" "+filePaths[1], "error", true);
 					return null;
 				} 
 				
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Cluster file corrupt. Path: "+filePaths[1], "error", true);
+				overlord.log(lang.getText("LOGentry00083")+" "+filePaths[1], "error", true);
 				return null;
 			}
 		}
-		GUIManager.getDefaultGUIManager().log("Clustering data: extracted.", "text",true);
+		overlord.log(lang.getText("LOGentry00084"), "text",true);
 		return data;
 	}
 	
@@ -533,7 +524,4 @@ public class ClusterReader {
 		
 		return fileNames;
 	}
-	
-	
-	
 }

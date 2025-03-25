@@ -4,9 +4,7 @@ import holmes.petrinet.elements.Transition;
 
 /**
  * Klasa rozszerzenie dla Transition. Definiuj dla każdej tranzycji jej liczbę uruchomień.
- * Jest ona używana jako pojedyńczy obiekt dla macierzy inwariantów II typu. 
- * @author students
- *
+ * Jest ona używana jako pojedyńczy obiekt dla macierzy inwariantów II typu.
  */
 public class InvariantTransition {
 	private Transition transition;
@@ -32,7 +30,7 @@ public class InvariantTransition {
 
 	/**
 	 * Metoda ustawia tranzycję dla danego inwariantu.
-	 * @return Transition - tranzycja
+	 * @param transition (<b>Transition</b>) tranzycja.
 	 */
 	public void setTransition(Transition transition) {
 		this.transition = transition;
@@ -48,7 +46,7 @@ public class InvariantTransition {
 
 	/**
 	 * Metoda ustawiająca liczbę uruchomień tranzycji w inwariancie.
-	 * @return Integer - nowa liczba uruchomień
+	 * @param amountOfFirings (<b>Integer</b>) liczba odpaleń, diabli wiedzą czemu Integer a nie int...
 	 */
 	public void setAmountOfFirings(Integer amountOfFirings) {
 		this.amountOfFirings = amountOfFirings;

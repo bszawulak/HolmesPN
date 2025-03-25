@@ -5,15 +5,16 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.files.io.MCSoperations;
 import holmes.petrinet.elements.Transition;
 
 /**
  * Klasa odpowiedzialna za zarządzanie informacjami o przechowywanych zbiorach MCS.
- * @author MR
- *
  */
 public class MCSDataMatrix {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<ArrayList<ArrayList<Integer>>> mcsDataCore;
 	private ArrayList<ArrayList<ArrayList<Integer>>> mcsSetsInfo;
 	private ArrayList<String> transNames;
@@ -41,7 +42,7 @@ public class MCSDataMatrix {
 	 * każdej tranzycji sieci.
 	 */
 	public void initiateMCS() {
-		ArrayList<Transition> transitions =  GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Transition> transitions =  overlord.getWorkspace().getProject().getTransitions();
 		matrixSize = transitions.size();
 		mcsDataCore = new ArrayList<ArrayList<ArrayList<Integer>>>();
 		for(int i=0; i<matrixSize; i++) {
@@ -69,18 +70,18 @@ public class MCSDataMatrix {
 	 */
 	public void insertMCS(ArrayList<ArrayList<Integer>> mcsList, ArrayList<ArrayList<Integer>> mcsListInfo, int pos, boolean warning) {
 		if(pos < matrixSize) {
-			if(warning == false) {
+			if(!warning) {
 				mcsDataCore.set(pos, mcsList);
 				mcsSetsInfo.set(pos, mcsListInfo);
 			} else {
-				if(mcsDataCore.get(pos).size() > 0) {
-					Object[] options = {"Replace", "Cancel"};
+				if(!mcsDataCore.get(pos).isEmpty()) {
+					Object[] options = {lang.getText("replace"), lang.getText("cancel")};
 					int decision = JOptionPane.showOptionDialog(null,
-									"Existing MCS list detected for a given transition. Replace?",
-									"Transition already have MCS data", JOptionPane.YES_NO_OPTION,
+									lang.getText("MCSDM_entry001"),
+									lang.getText("MCSDM_entry001t"), JOptionPane.YES_NO_OPTION,
 									JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 					if (decision == 1) {
-						return;
+
 					} else {
 						mcsDataCore.set(pos, mcsList);
 						mcsSetsInfo.set(pos,  mcsListInfo);
@@ -91,7 +92,7 @@ public class MCSDataMatrix {
 				}
 			}
 		} else {
-			GUIManager.getDefaultGUIManager().log("Unable to add new MCS list. DataCore size: "+matrixSize, "error", true);
+			overlord.log(lang.getText("LOGentry003340")+" "+matrixSize, "error", true);
 		}
 	}
 	
@@ -102,7 +103,7 @@ public class MCSDataMatrix {
 	public int getCalculatedMCSnumber() {
 		int size = 0;
 		for(ArrayList<ArrayList<Integer>> list : mcsDataCore) {
-			if(list.size()>0) {
+			if(!list.isEmpty()) {
 				size++;
 			}
 		}
@@ -118,7 +119,7 @@ public class MCSDataMatrix {
 		if(pos < matrixSize) {
 			return mcsDataCore.get(pos); 
 		} else {
-			GUIManager.getDefaultGUIManager().log("Unable to return MCS list. DataCore size: "+matrixSize, "warning", true);
+			overlord.log(lang.getText("LOGentry00335")+" "+matrixSize, "warning", true);
 			return null;
 		}
 	}
@@ -132,7 +133,7 @@ public class MCSDataMatrix {
 		if(pos < matrixSize) {
 			return mcsSetsInfo.get(pos); 
 		} else {
-			GUIManager.getDefaultGUIManager().log("Unable to return MCS list info. DataCore size: "+matrixSize, "warning", true);
+			overlord.log(lang.getText("LOGentry00336")+" "+matrixSize, "warning", true);
 			return null;
 		}
 	}
@@ -146,11 +147,10 @@ public class MCSDataMatrix {
 		int dataSize = getCalculatedMCSnumber();
 		if(dataSize > 0) {
 			
-			Object[] options = {"Replace", "Save & replace", "Cancel"};
+			Object[] options = {lang.getText("replace"), lang.getText("saveAndReplace"), lang.getText("cancel")};
 			int decision = JOptionPane.showOptionDialog(null,
-							"MCS data for a given net is not empty. Cancel current operation,\n"
-							+ "replace data or save current MCS data to file before replacing?",
-							"Net change detected", JOptionPane.YES_NO_OPTION,
+							lang.getText("MCSDM_entry002"),
+							lang.getText("MCSDM_entry002t"), JOptionPane.YES_NO_OPTION,
 							JOptionPane.WARNING_MESSAGE, null, options, options[1]);
 			if (decision == 2) {
 				return false;
@@ -158,8 +158,10 @@ public class MCSDataMatrix {
 				return true;
 			} else {
 				boolean status = MCSoperations.saveAllMCS(this);
-				if(status == false) {
-					JOptionPane.showMessageDialog(null, "Saving current MCS sets failed. Loading new sets cancelled.","Operation cancel.",JOptionPane.ERROR_MESSAGE);
+				if(!status) {
+					JOptionPane.showMessageDialog(null,
+							lang.getText("MCSDM_entry003"),
+							lang.getText("MCSDM_entry003t"),JOptionPane.ERROR_MESSAGE);
 				}
 				return status;
 			}

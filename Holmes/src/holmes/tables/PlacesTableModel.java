@@ -1,20 +1,21 @@
 package holmes.tables;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 /**
  * Klasa model dla tabeli miejsc.
- * @author MR
  */
 public class PlacesTableModel extends AbstractTableModel {
+	@Serial
 	private static final long serialVersionUID = -4767203046375075488L;
 	/**
 	 * Wewnętrzna klasa kontener dla danych wiersza tabeli miejsc.
 	 * @author MR
 	 *
 	 */
-	public class PlaceContainer {
+	public static class PlaceContainer {
     	public int ID;
     	public String name;
     	public int token;
@@ -104,30 +105,14 @@ public class PlacesTableModel extends AbstractTableModel {
      */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Object returnValue = null;
-		switch (columnIndex) {
-        case 0:
-            returnValue = dataMatrix.get(rowIndex).ID;
-            break;
-        case 1:
-        	returnValue = dataMatrix.get(rowIndex).name;
-            break;
-        case 2:
-        	returnValue = dataMatrix.get(rowIndex).token;
-            break;
-        case 3:
-        	returnValue = dataMatrix.get(rowIndex).intT;
-            break;
-        case 4:
-        	returnValue = dataMatrix.get(rowIndex).outT;
-            break;
-        case 5:
-        	returnValue = dataMatrix.get(rowIndex).avgTokens;
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid column index");
-        }
-         
-        return returnValue;
+		return switch (columnIndex) {
+			case 0 -> dataMatrix.get(rowIndex).ID;
+			case 1 -> dataMatrix.get(rowIndex).name;
+			case 2 -> dataMatrix.get(rowIndex).token;
+			case 3 -> dataMatrix.get(rowIndex).intT;
+			case 4 -> dataMatrix.get(rowIndex).outT;
+			case 5 -> dataMatrix.get(rowIndex).avgTokens;
+			default -> throw new IllegalArgumentException("Invalid column index");
+		};
 	}
 }

@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 import javax.swing.JTextArea;
 
+import holmes.darkgui.LanguageManager;
+import holmes.petrinet.elements.PlaceXTPN;
 import org.nfunk.jep.JEP;
 
 import holmes.darkgui.GUIManager;
@@ -16,13 +18,10 @@ import holmes.windows.HolmesNotepad;
 
 /**
  * Klasa metod zarządzania tranzycjami funkcyjnymi.
- * 
- * @author MR
- *
  */
 public class FunctionsTools {
-	private static GUIManager overlord = GUIManager.getDefaultGUIManager();
-	
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Konstruktor obiektów klasy FunctionsTools.
 	 */
@@ -41,11 +40,16 @@ public class FunctionsTools {
 		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 	
 		for(Transition transition : transitions) {
-			for(FunctionContainer fc : transition.accessFunctionsList()) {
+			for(FunctionContainer fc : transition.fpnExtension.accessFunctionsList()) {
 				if(fc.involvedPlaces.containsKey("p"+placeIndex)) {
 					int transIndex = transitions.indexOf(transition);
-					overlord.log("Function: \'"+fc.simpleExpression+"\' (fID: "+fc.fID+") of transition t"+transIndex+
-							" has been disabled due to removal of place p"+placeIndex, "warning", false);
+					String strB = "err.";
+					try {
+						strB = String.format(lang.getText("LOGentry00395"), fc.simpleExpression, fc.fID, transIndex, placeIndex);
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00395", "error", true);
+					}
+					overlord.log(strB, "warning", true);
 					
 					fc.enabled = false;
 					fc.correct = false;
@@ -79,7 +83,7 @@ public class FunctionsTools {
 			if(index >= placesNumber || index < 0) {
 				fc.simpleExpression = fc.simpleExpression.replace(x, " ??? ");
 				if(commentField != null) {
-					commentField.append("Non existing place identifier used: "+x+"\n");
+					commentField.append(lang.getText("FT_entry001")+x+"\n");
 				}
 			} else {
 				Place place = places.get(index);
@@ -97,33 +101,32 @@ public class FunctionsTools {
 	 * @return boolean - true, jeśli metoda napotkała jakiekolwiek problemy
 	 */
 	public static boolean validateFunctionNet(HolmesNotepad notepad, ArrayList<Place> places) {
-		GUIManager overlord = GUIManager.getDefaultGUIManager();
 		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 		boolean logErrors = false;
 		boolean errorsFlag = false;
 		if(notepad != null) {
 			logErrors = true;
-			notepad.addTextLineNL("List of errors for previously enabled functions:", "text");
+			notepad.addTextLineNL(lang.getText("FT_entry002"), "text");
 			notepad.addTextLineNL("", "text");
 		}
 		
 		int transCounter = -1;
 		for(Transition transition : transitions) {
 			transCounter++;
-			if(!transition.isFunctional())
+			if(!transition.fpnExtension.isFunctional())
 				continue;
 			
-			for(FunctionContainer fc : transition.accessFunctionsList()) {
+			for(FunctionContainer fc : transition.fpnExtension.accessFunctionsList()) {
 				if(!fc.enabled)
 					continue;
 				
 				resetPlaceVector(fc, null, places);
-				if(fc.simpleExpression.contains("???") || fc.simpleExpression.length()==0) {
+				if(fc.simpleExpression.contains("???") || fc.simpleExpression.isEmpty()) {
 					errorsFlag = true;
 					fc.enabled = false;
 					fc.correct = false;
 					if(logErrors)
-						notepad.addTextLineNL("t"+transCounter+" : "+fc.toString(), "text");
+						notepad.addTextLineNL("t"+transCounter+" : "+ fc, "text");
 				}
 				
 				try {
@@ -138,7 +141,7 @@ public class FunctionsTools {
 					if(myParser.hasError()) {
 						HolmesNotepad note = new HolmesNotepad(640, 480);
 						note.setVisible(true);
-						notepad.addTextLineNL("  variables initialization error (function disabled):", "text");
+						notepad.addTextLineNL("  "+lang.getText("FT_entry003"), "text");
 						note.addTextLineNL("    * "+myParser.getErrorInfo(), "text");
 						fc.enabled = false;
 						fc.correct = false;
@@ -147,7 +150,7 @@ public class FunctionsTools {
 					}
 				} catch (Exception e) {
 					errorsFlag = true;
-					notepad.addTextLineNL("   CRITICAL ERROR WHILE INITIALIZATION. FUNCTION DISABLED.", "text");
+					notepad.addTextLineNL("   "+lang.getText("FT_entry004"), "text");
 					fc.enabled = false;
 					fc.correct = false;
 				}
@@ -170,7 +173,7 @@ public class FunctionsTools {
 		
 		fc.simpleExpression = newEquation;
 		resetPlaceVector(fc, commentField, places);
-		if(fc.simpleExpression.contains("???") || fc.simpleExpression.length()==0)
+		if(fc.simpleExpression.contains("???") || fc.simpleExpression.isEmpty())
 			return false;
 		
 		try {
@@ -191,7 +194,6 @@ public class FunctionsTools {
 				if(commentField != null) {
 					commentField.append(myParser.getErrorInfo()+"\n");
 				}
-				
 				fc.enabled = false;
 				fc.correct = false;
 			} else {
@@ -200,7 +202,7 @@ public class FunctionsTools {
 			
 			return (!errors);
 		} catch (Exception e) {
-			commentField.append("Function creation critically failed for: "+fc.simpleExpression+"\n");
+			commentField.append(lang.getText("FT_entry005")+" "+fc.simpleExpression+"\n");
 			fc.enabled = false;
 			fc.correct = false;
 			return false;
@@ -218,41 +220,29 @@ public class FunctionsTools {
 	public static boolean getFunctionDecision(int startPlaceTokens, Arc arc, int nonFuncWeight, Transition transition) {
 		//wartość funkcji musi być >= startPlaceTokens
 		try {
-			FunctionContainer fc = transition.getFunctionContainer(arc);
+			FunctionContainer fc = transition.fpnExtension.getFunctionContainer(arc);
 			if(fc != null) { // jeśli znaleziono, to od razu przypisujemy oryginalną wagę
 				fc.currentValue = nonFuncWeight; //wartość początkowa: oryginalna waga
 			}
 			
-			if(fc != null && fc.enabled == true && fc.correct == true) {
+			if(fc != null && fc.enabled && fc.correct) {
 				fc.currentValue = getFunctionValue(fc); //wartość równania, ale:
 				fc.currentValue = fc.currentValue <= 0 ? nonFuncWeight : fc.currentValue; //like a boss
-				
-				if (startPlaceTokens < fc.currentValue)
-					return false;
-				else
-					return true;
+				return !(startPlaceTokens < fc.currentValue);
 				
 			} else { //oryginalna waga przypisana do fc.currentValue tak czy inaczej (ważne!)
-				if (startPlaceTokens < arc.getWeight())
-					return false;
-				else
-					return true;
+				return startPlaceTokens >= arc.getWeight();
 			}
-			
 		} catch (Exception e) {
 			//jak coś wybuchło, sprawdzamy po staremu:
-			if (startPlaceTokens < arc.getWeight())
-				return false;
-			else
-				return true;
+			return startPlaceTokens >= arc.getWeight();
 		}
 	}
 	
-
 	/**
 	 * Metoda obliczająca wartość równania funkcji, na bazie tokenów w miejsach użytych w równaniu.
-	 * @param fc FunctionContainer - kontener funkcji
-	 * @return double - wartość funkcji lub -1 jeśli coś nie wyszło
+	 * @param fc (<b>FunctionContainer</b>) kontener funkcji.
+	 * @return (<b>double</b>) - wartość funkcji lub -1 jeśli coś nie wyszło.
 	 */
 	private static double getFunctionValue(FunctionContainer fc) {
 		try {
@@ -260,14 +250,22 @@ public class FunctionsTools {
 			myParser.addStandardFunctions();
 			for(String key : fc.involvedPlaces.keySet()) {
 				Place place = fc.involvedPlaces.get(key);
-				myParser.addVariable(key, place.getTokensNumber());
+
+				if(place instanceof PlaceXTPN) {
+					if( ((PlaceXTPN)place).isGammaModeActive() ) {
+						myParser.addVariable(key, ((PlaceXTPN)place).accessMultiset().size() );
+					} else {
+						myParser.addVariable(key, place.getTokensNumber());
+					}
+				} else {
+					myParser.addVariable(key, place.getTokensNumber());
+				}
 			}
 			myParser.parseExpression(fc.simpleExpression);
-			double result = myParser.getValue();
-			
-			return result;
+            return myParser.getValue();
 		} catch (Exception e) {
-			GUIManager.getDefaultGUIManager().log("Parsing equation failed for "+fc.simpleExpression, "error", true);
+			overlord.log(lang.getText("LOGentry00396exception")+" "
+					+fc.simpleExpression+"\n"+e.getMessage(), "error", true);
 			return -1;
 		}
 	}
@@ -279,15 +277,39 @@ public class FunctionsTools {
 	 * @param place Place - miejsce
 	 */
 	public static void functionalExtraction(Transition transition, Arc arc, Place place) {
-		if(transition.isFunctional()) {
-			FunctionContainer fc = transition.getFunctionContainer(arc);
+		if(transition.fpnExtension.isFunctional()) {
+			FunctionContainer fc = transition.fpnExtension.getFunctionContainer(arc);
 			if(fc != null) //TODO: czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
-				place.modifyTokensNumber(-((int) fc.currentValue));
+			{
+				fc.currentValue = getFunctionValue(fc); //wartość równania, ale:
+				fc.currentValue = fc.currentValue <= 0 ? arc.getWeight() : fc.currentValue; //like a boss
+				place.addTokensNumber(-((int) fc.currentValue));
 				//nie ważne, aktywna czy nie, jeśli nie, to tu jest i tak oryginalna waga
-			else
-				place.modifyTokensNumber(-arc.getWeight());
+			} else {
+				place.addTokensNumber(-arc.getWeight());
+			}
 		} else {
-			place.modifyTokensNumber(-arc.getWeight());
+			place.addTokensNumber(-arc.getWeight());
+		}
+	}
+
+	/**
+	 * Na potrzeby symulatora XTPN, na bazie functionalExtraction.
+	 * @return int
+	 */
+	public static int getFunctionalArcWeight(Transition transition, Arc arc, Place place) {
+		if(transition.fpnExtension.isFunctional()) {
+			FunctionContainer fc = transition.fpnExtension.getFunctionContainer(arc);
+
+			if(fc != null && fc.enabled && fc.correct) {
+				fc.currentValue = getFunctionValue(fc); //wartość równania, ale:
+				fc.currentValue = fc.currentValue <= 0 ? arc.getWeight() : fc.currentValue; //like a boss
+				return (int) fc.currentValue;
+			} else {
+				return arc.getWeight();
+			}
+		} else {
+			return arc.getWeight();
 		}
 	}
 	
@@ -298,23 +320,22 @@ public class FunctionsTools {
 	 * @param place Place - miejsce
 	 */
 	public static void functionalAddition(Transition transition, Arc arc, Place place) {
-		if(transition.isFunctional()) {
-			FunctionContainer fc = transition.getFunctionContainer(arc);
+		if(transition.fpnExtension.isFunctional()) {
+			FunctionContainer fc = transition.fpnExtension.getFunctionContainer(arc);
 			if(fc != null) {//czy to jest potrzebne? jeśli na początku symulacji wszystkie tranzycje zyskają te wektory?
-				
-				if(fc != null && fc.enabled == true && fc.correct == true) {
+				if(fc.enabled && fc.correct) {
 					fc.currentValue = getFunctionValue(fc); //wartość równania, ale:
 					fc.currentValue = fc.currentValue <= 0 ? arc.getWeight() : fc.currentValue; //like a boss
 					
-					place.modifyTokensNumber((int) fc.currentValue);
+					place.addTokensNumber((int) fc.currentValue);
 				} else {
-					place.modifyTokensNumber(arc.getWeight());
+					place.addTokensNumber(arc.getWeight());
 				}
 			} else {
-				place.modifyTokensNumber(arc.getWeight());
+				place.addTokensNumber(arc.getWeight());
 			}
 		} else {
-			place.modifyTokensNumber(arc.getWeight());
+			place.addTokensNumber(arc.getWeight());
 		}
 	}
 }

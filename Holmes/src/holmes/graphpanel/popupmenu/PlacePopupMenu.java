@@ -1,11 +1,11 @@
 package holmes.graphpanel.popupmenu;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.Serial;
 
 import javax.swing.JOptionPane;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
@@ -14,89 +14,67 @@ import holmes.petrinet.elements.Place;
 
 /**
  * Klasa odpowiedzialna za dodanie do menu kontekstowego opcji związanych z miejscami.
- * @author students - statyczna wersja
- * @author MR - dynamiczna wersja
  */
 public class PlacePopupMenu extends NodePopupMenu {
+	@Serial
 	private static final long serialVersionUID = -5062389148117837851L;
-
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
+	
 	/**
 	 * Konstruktor obiektu klasy PlacePopupMenu.
-	 * @param graphPanel GraphPanel - panel dla którego powstaje menu
+	 * @param graphPanel (<b>GraphPanel</b>) panel, dla którego powstaje menu.
 	 */
 	public PlacePopupMenu(GraphPanel graphPanel, ElementLocation el, PetriNetElementType pne) {
-		super(graphPanel, pne, el.getParentNode());
-
-		/*
-		if(pne == PetriNetElementType.TRANSITION || pne == PetriNetElementType.PLACE) {
-			this.addMenuItem("Change selected Places into same Portals", "portal.png", new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
-						if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-								"Operation impossible when simulator is working."
-								, "Warning") == true)
-							return;
-						
-						//getGraphPanel().getSelectionManager().transformSelectedIntoPortal();
-						//GUIManager.getDefaultGUIManager().markNetChange();
-					} else {
-						JOptionPane.showMessageDialog(null, "Option possible if more than one place is selected.", "Too few selections", 
-								JOptionPane.INFORMATION_MESSAGE);
-					}
-				}
-			});
-		}
-		*/
+		super(graphPanel, el, pne, el.getParentNode());
 		
-		this.addMenuItem("Invisibility ON/OFF", "smallInvisibility.png", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 0)
-					return;
-				
-				Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
-				if(n instanceof Place) {
-					if(n.isInvisible() == true)
-						n.setInvisibility(false);
-					else
-						n.setInvisibility(true);
-				}
-				GUIManager.getDefaultGUIManager().getWorkspace().repaintAllGraphPanels();
+		this.addMenuItem(lang.getText("PPM_entry001"), "smallInvisibility.png", e -> {
+			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().isEmpty())
+				return;
+
+			Node n = getGraphPanel().getSelectionManager().getSelectedElementLocations().get(0).getParentNode();
+			if(n instanceof Place) {
+				n.setInvisibility(!n.isInvisible());
 			}
+			overlord.getWorkspace().repaintAllGraphPanels();
 		});
 		
 		if(pne == PetriNetElementType.TRANSITION || pne == PetriNetElementType.PLACE) {
-			this.addMenuItem("Clone this Place into Portal", "portal.png", new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
-						if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-								"Operation impossible when simulator is working."
-								, "Warning"))
-							return;
-						
-						//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
-						getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
-						GUIManager.getDefaultGUIManager().markNetChange();
-					} else {
-						JOptionPane.showMessageDialog(null, "Option possible for one place only.", "Too many selections", 
-								JOptionPane.INFORMATION_MESSAGE);
-					}
-					
+			this.addMenuItem(lang.getText("PPM_entry002"), "portal.png", e -> {
+				if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() == 1) {
+					if(overlord.reset.isSimulatorActiveWarning(
+							lang.getText("PPM_entry003")
+							, lang.getText("warning")))
+						return;
+
+					if(overlord.reset.isXTPNSimulatorActiveWarning(
+							lang.getText("PPM_entry004")
+							, lang.getText("warning")))
+						return;
+
+					//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
+					getGraphPanel().getSelectionManager().cloneNodeIntoPortalV2();
+					overlord.markNetChange();
+				} else {
+					JOptionPane.showMessageDialog(null, lang.getText("PPM_entry005"), lang.getText("PPM_entry006"),
+							JOptionPane.INFORMATION_MESSAGE);
 				}
 			});
 		}
 
-		this.addMenuItem("Export subnet to File", "cut.png", e -> {
+		this.addMenuItem(lang.getText("PPM_entry007"), "cut.png", e -> {
 			if(getGraphPanel().getSelectionManager().getSelectedElementLocations().size() > 1) {
-				if(GUIManager.getDefaultGUIManager().reset.isSimulatorActiveWarning(
-						"Operation impossible when simulator is working."
-						, "Warning"))
+				if(overlord.reset.isSimulatorActiveWarning(
+						lang.getText("PPM_entry003"), lang.getText("warning")))
+					return;
+				if(overlord.reset.isXTPNSimulatorActiveWarning(
+						lang.getText("PPM_entry004"), lang.getText("warning")))
 					return;
 
-				//getGraphPanel().getSelectionManager().cloneNodeIntoPortal();
 				getGraphPanel().getSelectionManager().saveSubnet();
-				GUIManager.getDefaultGUIManager().markNetChange();
+				overlord.markNetChange();
 			} else {
-				JOptionPane.showMessageDialog(null, "Option possible for one transition only.", "Too many selections",
+				JOptionPane.showMessageDialog(null, lang.getText("PPM_entry008"), lang.getText("PPM_entry009"),
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});

@@ -3,8 +3,7 @@ package holmes.utilities;
 import javax.swing.JFileChooser;
 import javax.swing.plaf.metal.MetalFileChooserUI;
 
-public class MyFileChooser extends MetalFileChooserUI  
-{  
+public class MyFileChooser extends MetalFileChooserUI {
     public MyFileChooser(JFileChooser filechooser) throws NoSuchFieldException  
     {  
         super(filechooser);  

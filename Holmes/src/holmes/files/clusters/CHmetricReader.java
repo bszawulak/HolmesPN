@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.utilities.ByExt;
 
 /**
@@ -17,13 +18,15 @@ import holmes.utilities.ByExt;
  *
  */
 public class CHmetricReader {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Dość niezwykły sposób przeprowadzania elementarnej operacji konwersji :)
 	 * @param strNumber String - łańcuch znaków, który z pietyzmem zmieniamy w Double
 	 * @return double - święta liczba rzeczywista
 	 */
 	double ParseDouble(String strNumber) {
-		if (strNumber != null && strNumber.length() > 0) {
+		if (strNumber != null && !strNumber.isEmpty()) {
 			try {
 				return Double.parseDouble(strNumber);
 			} catch(Exception e) {
@@ -38,8 +41,8 @@ public class CHmetricReader {
 	 * w nim zawarte na obiekt ArrayList[Double]
 	 * @param source String - ścieżka do pliku
 	 * @return ArrayList[Double] - wartości miary
-	 * @throws NumberFormatException
-	 * @throws IOException
+	 * @throws NumberFormatException ex1
+	 * @throws IOException ex1
 	 */
 	private ArrayList<Double> parseSingleClusterInfo(String source) throws NumberFormatException, IOException {
 		ArrayList<Double> measureValuesHC = new ArrayList<Double>();
@@ -59,8 +62,8 @@ public class CHmetricReader {
 		for(int i = 3; i < lines.length; i=i+3) {
 			lines[i] = lines[i].replace("[2,]", "").trim();	
 			String[] hcValues = lines[i].split("[\\s\\t\\n]+");
-			for (int j = 0; j < hcValues.length; ++j)
-				measureValuesHC.add(ParseDouble(hcValues[j])); 
+			for (String hcValue : hcValues)
+				measureValuesHC.add(ParseDouble(hcValue));
 		}
 		return measureValuesHC;
 	}
@@ -79,9 +82,8 @@ public class CHmetricReader {
 			FilenameFilter only = new ByExt("_clusters.txt");
 			String[] tempList = fp1.list(only); // metoda list z filtrem
 			if(tempList.length != 56) {
-				String msg = "Warning. Directory "+CHmetricsPath+" may not contain all necessary files. Operation "
-						+ "will continue, but may fail.";
-				GUIManager.getDefaultGUIManager().log(msg, "warning", true);
+				String msg = lang.getText("LOGentry00056a")+" "+CHmetricsPath+" "+lang.getText("LOGentry00056b");
+				overlord.log(msg, "warning", true);
 			}
 			
 			String[] dirList = ClusterReader.fillFileInfo();
@@ -95,7 +97,7 @@ public class CHmetricReader {
 				//.out.println("");
 			}
 		} catch (IOException e){
-			GUIManager.getDefaultGUIManager().log("Reading failed for Celiński-Harabasz metric in file "+currentFile, "error", true);
+			overlord.log(lang.getText("LOGentry00057")+" "+currentFile, "error", true);
 		}
 		return chData;
 	}

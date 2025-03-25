@@ -8,25 +8,23 @@ import holmes.analyse.matrix.IncidenceMatrix;
 import holmes.analyse.matrix.InputMatrix;
 import holmes.analyse.matrix.OutputMatrix;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
 
 /**
  * Klasa odpowiedzialna za generowanie zbiorów MCT.
- * 
- * @author students
- * @author MR
- *
  */
 public class MCTCalculator {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 	private InputMatrix inMatrix;
 	private OutputMatrix outMatrix;
 	private IncidenceMatrix matrix;
 	private PetriNet petriNet;
 
 	/**
-	 * Konstruktor obiektu analizatora
-	 * @param petriNet
+	 * Konstruktor klasy tworzącej MCT.
+	 * @param petriNet PetriNet, obiekt klasy PetriNet
 	 */
 	public MCTCalculator(PetriNet petriNet) {
 		this.petriNet = petriNet;
@@ -34,7 +32,7 @@ public class MCTCalculator {
 
 	/**
 	 * Metoda tworząca macierze wejściowe i wyjściowe (in/out arcs) oraz na ich
-	 * bazie tworząca nową macierz incydencji
+	 * bazie tworząca nową macierz incydencji.
 	 */
 	public void initiateData() {
 		inMatrix = new InputMatrix(petriNet.getTransitions(), petriNet.getPlaces());
@@ -44,7 +42,7 @@ public class MCTCalculator {
 
 	/**
 	 * Metoda zwracają aktualną macierz incydencji.
-	 * @return IncidenceMatrix - obiekt klasy IncidenceMatrix
+	 * @return IncidenceMatrix, obiekt klasy IncidenceMatrix
 	 */
 	public IncidenceMatrix getMatrix() {
 		return matrix;
@@ -52,7 +50,7 @@ public class MCTCalculator {
 
 	/**
 	 * Metoda ustawiająca nową macierz incydencji.
-	 * @param matrix IncidenceMatrix - nowa macierz
+	 * @param matrix IncidenceMatrix, nowa macierz
 	 */
 	private void setMatrix(IncidenceMatrix matrix) {
 		this.matrix = matrix;
@@ -60,15 +58,15 @@ public class MCTCalculator {
 
 	/**
 	 * Metoda generująca zbiory MCT na bazie macierzy T-inwariantów.
-	 * @return ArrayList[ArrayList[Transition]] - macierz wyjściowa
+	 * @return ArrayList[ArrayList[Transition]], macierz wyjściowa
 	 */
 	public ArrayList<ArrayList<Transition>> generateMCT() {
-		ArrayList<Transition> allTransitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Transition> allTransitions = overlord.getWorkspace().getProject().getTransitions();
 		ArrayList<ArrayList<Integer>> invariantsTranspose = null;
-		if(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_invTypesComputed() == true) {
+		if(overlord.getWorkspace().getProject().getT_invTypesComputed()) {
 			//tylko prawdziwe mct
-			ArrayList<Integer> tInvTypes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessT_InvTypesVector();
-			ArrayList<ArrayList<Integer>> tInv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix() ;
+			ArrayList<Integer> tInvTypes = overlord.getWorkspace().getProject().accessT_InvTypesVector();
+			ArrayList<ArrayList<Integer>> tInv = overlord.getWorkspace().getProject().getT_InvMatrix() ;
 			ArrayList<ArrayList<Integer>> cleantInv = new ArrayList<>();
 			
 			for(int x=0; x<tInv.size(); x++) {
@@ -78,14 +76,13 @@ public class MCTCalculator {
 			invariantsTranspose =	InvariantsTools.transposeMatrix(cleantInv );
 		} else {
 			invariantsTranspose =	InvariantsTools.transposeMatrix(
-					GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix() );
+					overlord.getWorkspace().getProject().getT_InvMatrix() );
 		}
 		
 		invariantsTranspose = InvariantsTools.returnBinaryMatrix(invariantsTranspose);
 		
 		ArrayList<ArrayList<Transition>> mctGroups = new ArrayList<ArrayList<Transition>>();
 		int size = allTransitions.size();
-	
 		
 		for(int t1=0; t1<size; t1++) {
 			ArrayList<Transition> currentMCT = new ArrayList<Transition>();
@@ -93,15 +90,15 @@ public class MCTCalculator {
 			ArrayList<Integer> support = InvariantsTools.getSupport(invVector); //tutaj: niezerowy, jeśli t należy do inw
 			for(int t2=0; t2<size; t2++) {
 				ArrayList<Integer> invVector2 = invariantsTranspose.get(t2);
-				if(invVector.equals(invVector2) && support.size()>0 ) {
+				if(invVector.equals(invVector2) && !support.isEmpty()) {
 					currentMCT.add(allTransitions.get(t2));
 				}
 			}
-			if ((currentMCT.size() > 0) && !mctGroups.contains(currentMCT))
+			if ((!currentMCT.isEmpty()) && !mctGroups.contains(currentMCT))
 				mctGroups.add(currentMCT);
 		}
-		
-		GUIManager.getDefaultGUIManager().reset.setMCTStatus(true); //status zbiorów MCT: wczytane
+
+		overlord.reset.setMCTStatus(true); //status zbiorów MCT: wczytane
 		return mctGroups;
 	}
 	

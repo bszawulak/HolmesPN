@@ -1,14 +1,14 @@
 package holmes.clusters;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Klasa kontener do przechowywania podstawowych metadanych o konkretnym klastrowaniu.
- * @author MR
- *
  */
 public class Clustering implements Serializable {
+	@Serial
 	private static final long serialVersionUID = -5381441187018735328L;
 	public String algorithmName;
 	public String metricName;
@@ -60,19 +60,11 @@ public class Clustering implements Serializable {
 		result.zeroClusters = source.zeroClusters;
 		result.evalMSS = source.evalMSS;
 		result.evalCH = source.evalCH;
-		
-		ArrayList<Integer> newClusterSize = new ArrayList<Integer>( source.clusterSize ); 
-		result.clusterSize = newClusterSize;
-		
-		ArrayList<Float> newclusterMSS = new ArrayList<Float>( source.clusterMSS ); 
-		result.clusterMSS = newclusterMSS;
-		
-		ArrayList<Float> newvectorMSS = new ArrayList<Float>( source.vectorMSS ); 
-		result.vectorMSS = newvectorMSS;
-		
+		result.clusterSize = new ArrayList<Integer>( source.clusterSize );
+		result.clusterMSS = new ArrayList<Float>( source.clusterMSS );
+		result.vectorMSS = new ArrayList<Float>( source.vectorMSS );
 		result.transNumber = source.transNumber;
 		result.MCTnumber = source.MCTnumber;
-				
 		return result;
 	}
 }

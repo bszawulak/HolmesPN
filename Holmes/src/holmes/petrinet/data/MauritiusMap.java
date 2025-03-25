@@ -5,21 +5,21 @@ import java.util.ArrayList;
 import holmes.analyse.InvariantsTools;
 import holmes.analyse.MCTCalculator;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Transition;
 
 /**
  * Klasa tworząca Mapę Mauritiusa dla wybranej tranzycji. Publikacja:
- * 
  * "Petri net modelling of gene regulation of the Duchenne muscular dystrophy"
  * Stefanie Grunwald, Astrid Speer, Jorg Ackermann, Ina Koch
  * BioSystems, 2008, 92, pp.189-205
- * 
- * @author MR
  */
 public class MauritiusMap {
-	BTNode root = null;
-	ArrayList<Transition> transitions = null;
-	ArrayList<String> transMCTNames = null;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
+	BTNode root;
+	ArrayList<Transition> transitions;
+	ArrayList<String> transMCTNames;
 	public enum NodeType {
 		ROOT, BRANCH, LEAF, VERTEX
 	}
@@ -36,7 +36,7 @@ public class MauritiusMap {
 	public MauritiusMap(ArrayList<ArrayList<Integer>> invariants, int rootTransition, int coverageVal, int mode) {
 		root = new BTNode();
 		root.type = NodeType.ROOT;
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		transitions = overlord.getWorkspace().getProject().getTransitions();
 		transMCTNames = getMCTNamesVector();
 		invariants = addIndexToInvariants(invariants);
 		
@@ -87,7 +87,9 @@ public class MauritiusMap {
 					if(x < treshold) {
 						antiVector.set(j, 0); //udawajmy, że jej tam w ogóle nie ma, na potrzeby bloku niżej
 					}
-				} catch (Exception e) {} //divide by zero - ignore
+				} catch (Exception ex) {
+					overlord.log(lang.getText("LOGentry00544exception")+"\n"+ex.getMessage(), "error", true);
+				} //divide by zero - ignore
 			}
 			
 			for(int i=0; i<invariantsWITHroot.size(); i++) {
@@ -105,48 +107,6 @@ public class MauritiusMap {
 			ArrayList<ArrayList<Integer>> subInvariants = InvariantsTools.returnT_invWithTransition(invariants, rootTransition);
 			createMTreeV2(subInvariants, rootTransition, root);
 		}
-		
-		
-		
-		/*
-		//usuń tranzycje z anty-listy:
-		if(antiVector.size() == subInvariants.size()) {
-			for(ArrayList<Integer> inv : subInvariants) {
-				for(int i=0; i<inv.size()-1; i++) { //!!! ostatnie pole ignorujemy - to indeks inwariantu
-					if(antiVector.get(i) > 0) {
-						inv.set(i, 0);
-					}
-				}
-			}
-		}
-		//usuń tranzycje poniżej procentu pokrycia:
-		ArrayList<Integer> freqVector = InvariantsTools.getFrequency(subInvariants, true);
-		float treshold = (float)coverageVal / (float)100;
-		float maxCoverage = freqVector.get(rootTransition);
-		ArrayList<Integer> transToKeepVector = new ArrayList<Integer>();
-		for(int i=0; i<freqVector.size(); i++) {
-			int currentValue = freqVector.get(i);
-			if(currentValue == 0) {
-				transToKeepVector.add(0);
-			} else {
-				float coverage = (float)currentValue / maxCoverage;
-				if(coverage >= treshold) {
-					transToKeepVector.add(1);
-				} else {
-					transToKeepVector.add(0); //usun tranzycje ze zbioru
-				}
-			}
-		}
-		
-		for(ArrayList<Integer> inv : subInvariants) {
-			for(int i=0; i<inv.size()-1; i++) { //!!! ostatnie pole ignorujemy - to indeks inwariantu
-				if(transToKeepVector.get(i) == 0) {
-					inv.set(i, 0);
-				}
-			}
-		}
-		*/
-
 	}
 	
 	/**
@@ -171,7 +131,7 @@ public class MauritiusMap {
 	 * @return ArrayList[String] - wektor nazw tranzycji
 	 */
 	private ArrayList<String> getMCTNamesVector() {
-		MCTCalculator analyzer = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCTanalyzer();
+		MCTCalculator analyzer = overlord.getWorkspace().getProject().getMCTanalyzer();
 		ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
 		ArrayList<String> resultNames = new ArrayList<String>();
 		
@@ -179,7 +139,7 @@ public class MauritiusMap {
 			resultNames.add(t.getName());
 		}
 		
-		if(mct.size() == 0) {
+		if(mct.isEmpty()) {
 			return resultNames;
 		} else {
 			//mct = getSortedMCT(mct);
@@ -236,7 +196,7 @@ public class MauritiusMap {
 		ArrayList<ArrayList<Integer>> invsWithCurrentNode = InvariantsTools.returnT_invWithTransition(subInvariants, maxTransition);
 		ArrayList<ArrayList<Integer>> invsWithoutCurrentNode = InvariantsTools.returnT_invWithoutTransition(subInvariants, maxTransition);
 		
-		if(invsWithoutCurrentNode.size() == 0 || howManyLeft == 0) {
+		if(invsWithoutCurrentNode.isEmpty() || howManyLeft == 0) {
 			// brak inwariantów bez tranzycji maxTransition: węzeł typu Data
 			// czyli: brak poddrzewa invsWithoutCurrentNode
 			
@@ -306,7 +266,7 @@ public class MauritiusMap {
 	 */
 	private ArrayList<Integer> addInvsIndices(ArrayList<ArrayList<Integer>> invsWithCurrentNode) {
 		ArrayList<Integer> idVector = new ArrayList<Integer>();
-		if(invsWithCurrentNode.size() == 0) {
+		if(invsWithCurrentNode.isEmpty()) {
 			return idVector;
 		}
 		
@@ -396,10 +356,8 @@ public class MauritiusMap {
 	
 	/**
 	 * Klasa wewnętrzna - węzeł drzewa BT
-	 * @author MR
-	 *
 	 */
-	public class BTNode {
+	public static class BTNode {
 		public NodeType type = NodeType.VERTEX;
 		public String transName;
 		public int transLocation = -1;
@@ -423,7 +381,7 @@ public class MauritiusMap {
 	public MauritiusMap(ArrayList<ArrayList<Integer>> invariants) {
 		root = new BTNode();
 		root.type = NodeType.ROOT;
-		transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		transitions = overlord.getWorkspace().getProject().getTransitions();
 		//tu wstaw MCT
 		transMCTNames = getMCTNamesVector();
 		createMTree(invariants, -1, root, null);
@@ -434,7 +392,7 @@ public class MauritiusMap {
 	 * @param subInvariants ArrayList[ArrayList[Integer]] - podmacierz inwariantów
 	 * @param chosenTrans int - id wierzchołka początkowego
 	 * @param currentNode BTNode - aktualnie przetwarzany węzeł drzewa
-	 * @param antiInvariants ArrayList[ArrayList[Integer]] - podmacierz inwariantów w których nie występuje RootTransition
+	 * @param antiVector ArrayList[ArrayList[Integer]] - podmacierz inwariantów w których nie występuje RootTransition
 	 */
 	@SuppressWarnings("unused")
 	private void createMTree(ArrayList<ArrayList<Integer>> subInvariants, int chosenTrans, BTNode currentNode, 
@@ -478,7 +436,7 @@ public class MauritiusMap {
 		ArrayList<ArrayList<Integer>> rightInvariants = InvariantsTools.returnT_invWithTransition(subInvariants, maxTransition);
 		ArrayList<ArrayList<Integer>> leftInvariants = InvariantsTools.returnT_invWithoutTransition(subInvariants, maxTransition);
 		
-		if(leftInvariants.size() == 0 || howManyLeft == 0) {
+		if(leftInvariants.isEmpty() || howManyLeft == 0) {
 			// brak inwariantów bez tranzycji maxTransition: węzeł typu Data
 			// czyli: brak lewego podrzewa
 			

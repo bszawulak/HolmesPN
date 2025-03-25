@@ -7,7 +7,6 @@ import java.awt.*;
 /**
  * Jak się okazuje - nieużywana klasa nie bardzo wiadomo do czego.
  * @author students
- *
  */
 public class SpringUtilities {
     /**

@@ -1,15 +1,6 @@
 package holmes.darkgui;
 
-import java.awt.Point;
-
-import com.javadocking.dock.Position;
-import com.javadocking.dockable.DefaultDockable;
-import com.javadocking.dockable.DockingMode;
-import com.javadocking.event.DockingEvent;
-import com.javadocking.event.DockingListener;
-
 import holmes.workspace.Workspace;
-import holmes.workspace.WorkspaceFiller;
 
 /**
  * Klasa implementująca interfejs DockingListener. Jedna z klas odpowiedzialnych
@@ -18,27 +9,8 @@ import holmes.workspace.WorkspaceFiller;
  * @author students
  *
  */
-public class DarkDockingListener implements DockingListener {
+public class DarkDockingListener{
 	private Workspace workspace;
-
-	@Override
-	public void dockingChanged(DockingEvent e) {
-		if (e.getDestinationDock() == workspace.getWorkspaceDock())
-			workspace.getWorkspaceDock().emptyChild(workspace.getFillerDock());
-		// else if (this.getChildDockCount()==0) this.addChildDock(fillerDock,
-		// new Position(0))
-	}
-
-	@Override
-	public void dockingWillChange(DockingEvent e) {
-		if ((e.getDestinationDock() != workspace.getWorkspaceDock()) && (workspace.getWorkspaceDock().getChildDockCount() == 1)) {
-			workspace.setFillerDockable(GUIManager.externalWithListener(new DefaultDockable("Workspace", new WorkspaceFiller(), "Workspace"), this));
-			workspace.setFillerDock(workspace.getDockFactory().createDock(workspace.getFillerDockable(), DockingMode.SINGLE));
-			Point position = new Point(0, 0);
-			workspace.getFillerDock().addDockable(workspace.getFillerDockable(), position, position);
-			workspace.getWorkspaceDock().addChildDock(workspace.getFillerDock(), new Position(0));
-		}
-	}
 
 	/**
 	 * Metoda zwraca obiekt obszaru roboczego.
@@ -50,10 +22,9 @@ public class DarkDockingListener implements DockingListener {
 
 	/**
 	 * Metoda ustawia obiekt obszaru roboczego.
-	 * @return Workspace - nowy obszar roboczy
+	 * @param workspace (Workspace) nowy obszar roboczy
 	 */
 	public void setWorkspace(Workspace workspace) {
 		this.workspace = workspace;
 	}
-
 }

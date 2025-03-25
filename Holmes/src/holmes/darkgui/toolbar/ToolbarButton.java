@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -13,18 +14,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
 
-/**
- * <p>
- * A component that can be used as button to execute a given action.
- * </p>
- * <p>
- * It has a fixed size. The icon of the given action will be displayed on this component.
- * </p>
- * <p>
- * When the button is clicked, the action is performed.
- * </p>
- */
 public class ToolbarButton extends JLabel {
+	@Serial
 	private static final long serialVersionUID = 3034370365062643549L;
 	/** The button will always have this size. */
 	private static final Dimension DEFAULT_SIZE = new Dimension(48, 48);
@@ -43,8 +34,7 @@ public class ToolbarButton extends JLabel {
 	private Action action;
 
 	/**
-	 * Constructs an icon button with the given action. 
-	 * 
+	 * Constructs an icon button with the given action.
 	 * @param	action 		The action that will be performed when this button is clicked.
 	 */
 	public ToolbarButton(Action action) {		
@@ -95,15 +85,12 @@ public class ToolbarButton extends JLabel {
 			// Perform the action.
 			action.actionPerformed(actionEvent);
 		}
-
 		public void mouseEntered(MouseEvent mouseEvent) {
 			setBorder(LINE_BORDER);
 		}
-
 		public void mouseExited(MouseEvent mouseEvent) {
 			setBorder(EMPTY_BORDER);
 		}
-		
 	}
 	
 	/**

@@ -9,15 +9,13 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-import holmes.petrinet.elements.Transition.StochaticsType;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 /**
  * Klasa rysująca tablicę tranzycji dla jednego wektora danych SPN.
- * @author MR
  */
 public class SPNsingleVectorTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
-	@SuppressWarnings("unused")
 	private JTable table;
 	private static final Font fontNormal =  new Font("Verdana", Font.PLAIN, 12);
 	
@@ -35,7 +33,7 @@ public class SPNsingleVectorTableRenderer implements TableCellRenderer {
 	 * @param isSelected boolean - czy zaznaczona komórka
 	 * @param hasFocus boolean - czy aktywna komórka
 	 * @param row int - numer wiersza
-	 * @param columnt int - numer kolumny
+	 * @param column int - numer kolumny
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
@@ -49,12 +47,12 @@ public class SPNsingleVectorTableRenderer implements TableCellRenderer {
 			
 			oLabel.setText(value.toString());
 		} else {
-			StochaticsType sType = (StochaticsType)value;
-			if(sType == StochaticsType.ST) {
+			TransitionSPNExtension.StochaticsType sType = (TransitionSPNExtension.StochaticsType)value;
+			if(sType == TransitionSPNExtension.StochaticsType.ST) {
 				oLabel.setText("Stochastic");
-			} else if(sType == StochaticsType.IM) {
+			} else if(sType == TransitionSPNExtension.StochaticsType.IM) {
 				oLabel.setText("Immediate");
-			}	else if(sType == StochaticsType.DT) {
+			}	else if(sType == TransitionSPNExtension.StochaticsType.DT) {
 				oLabel.setText("Deterministic");
 			}  else {
 				oLabel.setText("Scheduled");

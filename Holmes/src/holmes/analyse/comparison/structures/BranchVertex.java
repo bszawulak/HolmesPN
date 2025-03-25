@@ -39,15 +39,15 @@ public class BranchVertex {
     }
 
     public int getDegreeOfBV(){
-        return branchVertex.getOutInArcs().size();
+        return branchVertex.getNeighborsArcs().size();
     }
 
     public int getInDegreeOfBV(){
-        return branchVertex.getInArcs().size();
+        return branchVertex.getInputArcs().size();
     }
 
     public int getOutDegreeOfBV(){
-        return branchVertex.getOutArcs().size();
+        return branchVertex.getOutputArcs().size();
     }
 
     public PetriNetElement.PetriNetElementType getTypeOfBV(){
@@ -56,15 +56,15 @@ public class BranchVertex {
 
 
     public int getDegreeOfInEndpoint(int index){
-        return inEndpoints.get(index).getOutInArcs().size();
+        return inEndpoints.get(index).getNeighborsArcs().size();
     }
 
     public int getInDegreeOfInEndpoint(int index){
-        return inEndpoints.get(index).getInArcs().size();
+        return inEndpoints.get(index).getInputArcs().size();
     }
 
     public int getOutDegreeOfInEndpoint(int index){
-        return inEndpoints.get(index).getOutArcs().size();
+        return inEndpoints.get(index).getOutputArcs().size();
     }
 
     public PetriNetElement.PetriNetElementType getTypeOfInEndpoint(int index){
@@ -72,15 +72,15 @@ public class BranchVertex {
     }
 
     public int getDegreeOfOutEndpoint(int index){
-        return outEndpoints.get(index).getOutInArcs().size();
+        return outEndpoints.get(index).getNeighborsArcs().size();
     }
 
     public int getInDegreeOfOutEndpoint(int index){
-        return outEndpoints.get(index).getInArcs().size();
+        return outEndpoints.get(index).getInputArcs().size();
     }
 
     public int getOutDegreeOfOutEndpoint(int index){
-        return outEndpoints.get(index).getOutArcs().size();
+        return outEndpoints.get(index).getOutputArcs().size();
     }
 
     public PetriNetElement.PetriNetElementType getTypeOfOutEndpoint(int index){

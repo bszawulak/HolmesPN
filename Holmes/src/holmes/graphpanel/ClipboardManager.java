@@ -1,5 +1,8 @@
 package holmes.graphpanel;
 
+import holmes.petrinet.elements.Arc;
+import holmes.petrinet.elements.ElementLocation;
+
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
@@ -8,12 +11,13 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.Toolkit;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Objects;
 
 //import biz.source_code.base64Coder.Base64Coder;
 
 /**
  * Storing object in clipboard as 'DarkAbyss:'+Serialized(ArrayList<ElementLocation>)+':'+Serialized(ArrayList<Arc>)
- * 
  * @author Antrov
  * 
  */
@@ -65,13 +69,13 @@ public class ClipboardManager implements ClipboardOwner {
 
 	/**
 	 * Serializes given ArrayList of ElementLocation and Arc and send it to clipboard
-	 * @param elementLocationGroup
-	 * @param arcGroup
+	 * @param elementLocationGroup ArrayList[ElementLocation]
+	 * @param arcGroup ArrayList[Arc]
 	 */
-/* static void sendObjectsToClipboard(ArrayList<ElementLocation> elementLocationGroup, ArrayList<Arc> arcGroup) {
-		String serializedObject = "DarkAbyss:"+toString(elementLocationGroup)+':'+toString(arcGroup);	
+	 static void sendObjectsToClipboard(ArrayList<ElementLocation> elementLocationGroup, ArrayList<Arc> arcGroup) {
+		String serializedObject = "DarkAbyss:"+elementLocationGroup.toString()+':'+arcGroup.toString();
 		setClipboardContents(serializedObject);
-	}*/
+	}
 	
 	public static Serializable getObjectFromClipboard()
 	{
@@ -89,9 +93,7 @@ public class ClipboardManager implements ClipboardOwner {
 		if (clipbrdContent == null)
 			return false;
 		String[] inputData = clipbrdContent.split(":");
-		if (inputData.length != 3 || inputData[0] != "DarkAbyss")
-			return false;
-		return true;
+		return inputData.length == 3 && Objects.equals(inputData[0], "DarkAbyss");
 	}
 /*
 	public static Object fromString(String s) {

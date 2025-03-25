@@ -3,7 +3,6 @@ package holmes.adam.mct;
 import java.util.*;
 
 public class TInvariant implements Comparable<TInvariant> {
-	
 	public final String id;
 	public final MCTPetriNet petriNet;
 	
@@ -23,14 +22,14 @@ public class TInvariant implements Comparable<TInvariant> {
 	@Override
 	public String toString()
 	{
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(id);
 		sb.append("=");
 		for (MCTTransition t : map.keySet())
 		{
 			Integer count = map.get(t);
 			sb.append(t.id);
-			if (count.intValue() > 1)
+			if (count > 1)
 			{
 				sb.append(":");
 				sb.append(count);

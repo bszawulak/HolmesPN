@@ -4,8 +4,6 @@ import java.awt.Color;
 
 /**
  * Klasa pojemnik używana do podświetlania elementów klastra na sieci w programie.
- * @author MR
- *
  */
 public class ClusterTransition {
 	/**
@@ -51,6 +49,4 @@ public class ClusterTransition {
 		this.transInCluster = transInCluster;
 		this.firedInCluster = firedInCluster;
 	}
-	
-	
 }

@@ -6,24 +6,20 @@ import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
 import holmes.graphpanel.GraphPanel;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.Node;
+import holmes.petrinet.elements.*;
 import holmes.workspace.WorkspaceSheet;
 
 /**
- * Klasa przekształceń graficznych i strukturalnych sieci.
- * @author MR
- *
+ * Klasa przekształceń elementów graficznych sieci.
  */
 public class NetworkTransformations {
-
 	public NetworkTransformations() {
 		
 	}
 	
 	/**
 	 * Metoda zmienia rozmiar całej sieci na 10% większy lub mniejszy. 
-	 * @param magnify boolean - true, jeśli zwiększamy sieć o 10%, false jeśli zmniejszamy o 10%
+	 * @param magnify (<b>boolean</b>) true, jeśli zwiększamy sieć o 10%, false jeśli zmniejszamy o 10%.
 	 */
 	public void extendNetwork(boolean magnify) {
 		ArrayList<Node> nodes = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes();
@@ -44,12 +40,6 @@ public class NetworkTransformations {
 				}
 				
 				int sheetID = GUIManager.getDefaultGUIManager().IDtoIndex(el.getSheetID());
-				
-				if(sheetID >= sheetsToChange.size()) {
-					@SuppressWarnings("unused")
-					int xx=1;
-				}
-				
 				if(sheetsToChange.get(sheetID).get(1) < x) {
 					sheetsToChange.get(sheetID).set(0, sheetID);
 					sheetsToChange.get(sheetID).set(1, (int)x);
@@ -58,9 +48,21 @@ public class NetworkTransformations {
 					sheetsToChange.get(sheetID).set(0, sheetID);
 					sheetsToChange.get(sheetID).set(2, (int)y);
 				}
-				
 				el.getPosition().setLocation(x, y);
+
+				if(n instanceof Transition) {
+					//nieistotne nawet, że to tranzycja, mogłoby być miejsce - istotne jest to, zeby nie
+					//wywoływać poniższych pętli dwa razy, dwa miejsca I dla tranzycji, pomiędzy którymi
+					//byłby ten sam łuk przecież (tylko przeciwnie skierowany).
+					for(Arc arc : el.getInArcs()) {
+						arc.updateAllBreakPointsLocationsNetExtension(magnify);
+					}
+					for(Arc arc : el.getOutArcs()) {
+						arc.updateAllBreakPointsLocationsNetExtension(magnify);
+					}
+				}
 			}
+
 		}
 		
 		//resize all valid panels:
@@ -74,8 +76,8 @@ public class NetworkTransformations {
 						new Dimension(sheetData.get(1)+100, sheetData.get(2)+100));
 			}
 		}
-		
 
+		alignNetToGrid();
 		GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
 	}
 	
@@ -86,6 +88,13 @@ public class NetworkTransformations {
 			for(ElementLocation el : n.getElementLocations()) {
 				Point oldXY = el.getPosition();
 				el.setPosition(alignToGrid(oldXY));
+
+				for(Arc arc : el.getInArcs()) {
+					arc.alignBreakPoints();
+				}
+				for(Arc arc : el.getOutArcs()) {
+					arc.alignBreakPoints();
+				}
 			}
 		}
 	}
@@ -115,15 +124,13 @@ public class NetworkTransformations {
 		
 		if(x==0) x = 20;
 		if(y==0) y = 20;
-		
-		
-		
+
 		return new Point(x,y);
 	}
 
 	/**
-	 * Przygotowuje macierz pomocniczą do przechowywania danych o max(x) i max(y) arkuszy
-	 * @return ArrayList[ArrayList[Integer]] - każdy wiersz to arkusz od 0 do max(ID arkuszy)
+	 * Przygotowuje macierz pomocniczą do przechowywania danych o max(x) i max(y) arkuszy.
+	 * @return (<b>ArrayList[ArrayList[Integer]]</b>) każdy wiersz to arkusz od 0 do max(ID arkuszy).
 	 */
 	private ArrayList<ArrayList<Integer>> prepareChangeMatrix() {
 		//przygotowanie tablicy arkuszy do zmiany rozmiary:

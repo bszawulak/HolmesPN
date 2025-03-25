@@ -2,7 +2,6 @@ package holmes.analyse.comparison;
 
 import holmes.analyse.GraphletsCalculator;
 import holmes.analyse.SubnetCalculator;
-import holmes.darkgui.GUIManager;
 import holmes.files.io.IOprotocols;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Node;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
-import java.util.stream.Stream;
 
 public class GraphletComparator {
 
@@ -96,18 +94,30 @@ public class GraphletComparator {
                     PetriNet pn1 = compareSpecificType(i,j,p,path,"BASE");
                     PetriNet pn2 = compareSpecificType(i,j,p,path,"P3OVARIANT");
 
+                    //TODO compare base with P3OVARIANT
+
                 }
             }
         }
     }
 
     public void complexNDcompare(String path) {
+        // create 3 result matrixes
         for (int i = 0; i < 41; i = i + 5) {
             for (int j = 0; j < 41; j = j+5) {
+                //Create Matrix
                 for (int p = 0; p < 100; p++) {
                     PetriNet pn1 = compareSpecificType(i,j,p,path,"BASE");
                     PetriNet pn2 = compareSpecificType(i,j,p,path,"P3OVARIANT");
                 }
+
+                //get min
+
+                //get max
+
+                //get avg
+
+
             }
         }
     }
@@ -260,7 +270,7 @@ public class GraphletComparator {
         if (i < 0) {
             return listOfNodes;
         }
-        for (Node m : n.getOutInNodes()) {
+        for (Node m : n.getNeighborsNodes()) {
             if (!listOfNodes.contains(m)) {
                 listOfNodes.add(m);
                 //listOfNodes.addAll(deepDown(m,i,listOfNodes));

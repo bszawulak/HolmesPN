@@ -3,13 +3,12 @@ package holmes.windows;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,10 +33,10 @@ import holmes.analyse.InvariantsCalculator;
 import holmes.analyse.InvariantsTools;
 import holmes.analyse.TimeComputations;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.NetSimulator.NetType;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.StateSimulator;
 import holmes.tables.InvariantsTableRenderer;
@@ -46,13 +45,12 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa okna podglądu struktury t-inwariantów sieci.
- * 
- * @author MR
- *
  */
 public class HolmesInvariantsViewer extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 7735367902562553555L;
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private PetriNet pn;
 	private static final DecimalFormat formatter = new DecimalFormat( "#.##" );
 	
@@ -78,9 +76,6 @@ public class HolmesInvariantsViewer extends JFrame {
 	private JLabel labelPNtrans;
 	
 	private JTable table;
-	private DefaultTableModel tableModel;
-	private InvariantsViewerTableModel modelTransition;
-	private InvariantsViewerTableModel modelMCTandTrans;
 	private InvariantsTableRenderer tableRenderer;
 	private JScrollPane tableScrollPane;
 	private int currentSelected = 0;
@@ -99,15 +94,14 @@ public class HolmesInvariantsViewer extends JFrame {
 	 * Konstruktor okna podglądu inwariantów sieci.
 	 */
 	public HolmesInvariantsViewer() {
-		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();
 		this.invariantsMatrix = pn.getT_InvMatrix();
 		
 		boolean problem = false;
-		if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
+		if(invariantsMatrix == null || invariantsMatrix.isEmpty()) {
 			JOptionPane.showMessageDialog(null,
-					"No invariants found, window cannot be initialized.", 
-					"Error: no invariants", JOptionPane.ERROR_MESSAGE);
+					lang.getText("HIVwin_entry001"), 
+					lang.getText("error"), JOptionPane.ERROR_MESSAGE);
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 			problem = true;
 		}
@@ -127,16 +121,15 @@ public class HolmesInvariantsViewer extends JFrame {
 	 * @param invNumber int - indeks inwariantu
 	 */
 	public HolmesInvariantsViewer(int invNumber) {
-		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();
 		this.invariantsMatrix = pn.getT_InvMatrix();
 		this.currentSelected = invNumber+1;
 		
 		boolean problem = false;
-		if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
+		if(invariantsMatrix == null || invariantsMatrix.isEmpty()) {
 			JOptionPane.showMessageDialog(null,
-					"No invariants found, window cannot initiate itself.", 
-					"Error: no ivnariants", JOptionPane.ERROR_MESSAGE);
+					lang.getText("HIVwin_entry001"), 
+					lang.getText("error"), JOptionPane.ERROR_MESSAGE);
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 			problem = true;
 		}
@@ -157,38 +150,36 @@ public class HolmesInvariantsViewer extends JFrame {
 	 */
 	private void initiateVariables() {
 		try {
-			int invariantsNumber = invariantsMatrix.size();
+			//int invariantsNumber = invariantsMatrix.size();
 			transitions = pn.getTransitions();
 			readArcTransLocations = InvariantsTools.getReadArcTransitionsStatic(); //feasibility
 			InvariantsCalculator ic = new InvariantsCalculator(true); //invariant class (sub,sur,non)
 			incidenceMatrix = ic.getCMatrix();
 			
 			supportMatrix = new ArrayList<ArrayList<Integer>>(); // minimality
-			for(int i=0; i<invariantsNumber; i++) {
-				supportMatrix.add(InvariantsTools.getSupport(invariantsMatrix.get(i))); // minimality
+			for (ArrayList<Integer> matrix : invariantsMatrix) {
+				supportMatrix.add(InvariantsTools.getSupport(matrix)); // minimality
 			}
 			
 			//simulator part:
-			if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
-				JOptionPane.showMessageDialog(null, "Net simulator working. Unable to retrieve transitions statistics..", 
-						"Simulator working", JOptionPane.ERROR_MESSAGE);
+			if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+				JOptionPane.showMessageDialog(null, lang.getText("HIVwin_entry002"), 
+						lang.getText("HIVwin_entry002t"), JOptionPane.ERROR_MESSAGE);
 				transStats = null;
 				problem = true;
 			} else {
 				StateSimulator ss = new StateSimulator();
 				SimulatorGlobals ownSettings = new SimulatorGlobals();
-				ownSettings.setNetType(NetType.BASIC);
+				ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC, false);
 				ownSettings.setMaxMode(false);
 				ownSettings.setSingleMode(false);
 				ss.initiateSim(false, ownSettings);
 
 				transStats = ss.simulateForInvariantTrans(1000, 20, false);
-				problem = false;
-				if(transStats==null)
-					problem = true;
+				problem = ( transStats == null );
 			}
 		} catch (Exception e) {
-			overlord.log("Problems encountered while initializing variables for invariant viewer window.", "error", true);
+			overlord.log(lang.getText("LOGentry00449exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 
@@ -198,14 +189,14 @@ public class HolmesInvariantsViewer extends JFrame {
 	private void initalizeComponents() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) { 
-			
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentry00449exception")+"\n"+e.getMessage(), "error", true);
 		}
 		setLayout(new BorderLayout());
 		setSize(new Dimension(800, 650));
 		setLocation(50, 50);
 		setResizable(true);
-		setTitle("Holmes Invariants Viewer");
+		setTitle(lang.getText("HIVwin_entry003title"));
 		setLayout(new BorderLayout());
 		JPanel main = new JPanel(new BorderLayout());
 		main.add(getUpperPanel(), BorderLayout.NORTH);
@@ -217,72 +208,66 @@ public class HolmesInvariantsViewer extends JFrame {
 	 * Tworzy panel przycisków górnych.
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("UnusedAssignment")
 	public JPanel getUpperPanel() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("General information"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HIVwin_entry05"))); //General information
 		result.setPreferredSize(new Dimension(800, 200));
 
 		int posXda = 10;
 		int posYda = 25;
 
-		JLabel label0 = new JLabel("Invariant: ");
+		JLabel label0 = new JLabel(lang.getText("HIVwin_entry06")); //Invariant:
 		label0.setBounds(posXda, posYda, 70, 20);
 		result.add(label0);
 
 		invCombo = new JComboBox<String>();
 		invCombo.addItem(" ---------- ");
 		for(int i=0; i < invariantsMatrix.size(); i++) {
-			invCombo.addItem("Invariant "+(i+1)+" (ID:"+i+")");
+			invCombo.addItem(lang.getText("HIVwin_entry07")+" "+(i+1)+" (ID:"+i+")"); //Invariant
 		}
 		invCombo.setBounds(posXda+75, posYda, 160, 20);
 		invCombo.setSelectedIndex(currentSelected);
 		invCombo.setMaximumRowCount(6);
-		invCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				currentSelected = invCombo.getSelectedIndex();
-				if(currentSelected > 0) {
-					fillData(currentSelected);
-				} else {
-					clearSelection();
-				}
+		invCombo.addActionListener(actionEvent -> {
+			currentSelected = invCombo.getSelectedIndex();
+			if(currentSelected > 0) {
+				fillData(currentSelected);
+			} else {
+				clearSelection();
 			}
-			
 		});
 		result.add(invCombo);
 
-		JButton prevButton = new JButton("Previous");
+		JButton prevButton = new JButton(lang.getText("previous")); //Previous
 		prevButton.setBounds(posXda+245, posYda, 80, 20);
 		prevButton.setMargin(new Insets(0, 0, 0, 0));
 		prevButton.setIcon(Tools.getResIcon16("/icons/invViewer/prevIcon.png"));
-		prevButton.setToolTipText("Show previous invariant data.");
-		prevButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				currentSelected--;
-				if(currentSelected <= 0)
-					currentSelected = invariantsMatrix.size();
-				
-				invCombo.setSelectedIndex(currentSelected);
-			}
+		prevButton.setToolTipText(lang.getText("HIVwin_entry08"));
+		prevButton.addActionListener(actionEvent -> {
+			currentSelected--;
+			if(currentSelected <= 0)
+				currentSelected = invariantsMatrix.size();
+
+			invCombo.setSelectedIndex(currentSelected);
 		});
 		result.add(prevButton);
 		
-		JButton nextButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>");
+		JButton nextButton = new JButton(lang.getText("HIVwin_entry09")); //Next
 		nextButton.setBounds(posXda+335, posYda, 80, 20);
 		nextButton.setMargin(new Insets(0, 0, 0, 0));
 		nextButton.setIcon(Tools.getResIcon16("/icons/invViewer/nextIcon.png"));
-		nextButton.setToolTipText("Show next invariant data.");
-		nextButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				currentSelected++;
-				if(currentSelected > invariantsMatrix.size())
-					currentSelected = 1;
-				
-				invCombo.setSelectedIndex(currentSelected);
-			}
+		nextButton.setToolTipText(lang.getText("HIVwin_entry09t"));
+		nextButton.addActionListener(actionEvent -> {
+			currentSelected++;
+			if(currentSelected > invariantsMatrix.size())
+				currentSelected = 1;
+
+			invCombo.setSelectedIndex(currentSelected);
 		});
 		result.add(nextButton);
 
-		JLabel label1 = new JLabel("Minimal:");
+		JLabel label1 = new JLabel(lang.getText("HIVwin_entry10")); //Minimal:
 		label1.setBounds(posXda, posYda+=20, 70, 20);
 		result.add(label1);
 		
@@ -290,7 +275,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelMinimal.setBounds(posXda+75, posYda, 40, 20);
 		result.add(labelMinimal);
 		
-		JLabel label2 = new JLabel("Feasible:");
+		JLabel label2 = new JLabel(lang.getText("HIVwin_entry11")); //Feasible:
 		label2.setBounds(posXda+110, posYda, 70, 20);
 		result.add(label2);
 		
@@ -298,7 +283,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelFeasible.setBounds(posXda+180, posYda, 40, 20);
 		result.add(labelFeasible);
 		
-		JLabel label3 = new JLabel("Sub-inv:");
+		JLabel label3 = new JLabel(lang.getText("HIVwin_entry12")); //Sub-inv:
 		label3.setBounds(posXda+220, posYda, 70, 20);
 		result.add(label3);
 		
@@ -306,7 +291,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelSub.setBounds(posXda+290, posYda, 40, 20);
 		result.add(labelSub);
 		
-		JLabel label4 = new JLabel("Sur-inv:");
+		JLabel label4 = new JLabel(lang.getText("HIVwin_entry13")); //Sur-inv:
 		label4.setBounds(posXda+330, posYda, 70, 20);
 		result.add(label4);
 		
@@ -314,7 +299,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelSur.setBounds(posXda+400, posYda, 40, 20);
 		result.add(labelSur);
 		
-		JLabel label5 = new JLabel("Canonical:");
+		JLabel label5 = new JLabel(lang.getText("HIVwin_entry14")); //Canonical:
 		label5.setBounds(posXda+440, posYda, 70, 20);
 		result.add(label5);
 		
@@ -322,7 +307,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelCanon.setBounds(posXda+510, posYda, 40, 20);
 		result.add(labelCanon);
 		
-		JLabel label6 = new JLabel("pInTrans:");
+		JLabel label6 = new JLabel(lang.getText("HIVwin_entry15")); //pInTrans:
 		label6.setBounds(posXda, posYda+=20, 70, 20);
 		result.add(label6);
 		
@@ -330,7 +315,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelPureInT.setBounds(posXda+75, posYda, 40, 20);
 		result.add(labelPureInT);
 		
-		JLabel label7 = new JLabel("inTrans:");
+		JLabel label7 = new JLabel(lang.getText("HIVwin_entry16")); //inTrans:
 		label7.setBounds(posXda+110, posYda, 70, 20);
 		result.add(label7);
 		
@@ -338,7 +323,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelInT.setBounds(posXda+180, posYda, 40, 20);
 		result.add(labelInT);
 		
-		JLabel label8 = new JLabel("outTrans:");
+		JLabel label8 = new JLabel(lang.getText("HIVwin_entry17")); //outTrans:
 		label8.setBounds(posXda+220, posYda, 70, 20);
 		result.add(label8);
 		
@@ -346,7 +331,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelOutT.setBounds(posXda+290, posYda, 40, 20);
 		result.add(labelOutT);
 		
-		JLabel label9 = new JLabel("ReadArcs:");
+		JLabel label9 = new JLabel(lang.getText("HIVwin_entry18")); //ReadArcs:
 		label9.setBounds(posXda+330, posYda, 70, 20);
 		result.add(label9);
 		
@@ -354,7 +339,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelReadArcs.setBounds(posXda+400, posYda, 40, 20);
 		result.add(labelReadArcs);
 		
-		JLabel label10 = new JLabel("Inhibitors:");
+		JLabel label10 = new JLabel(lang.getText("HIVwin_entry19")); //Inhibitors:
 		label10.setBounds(posXda+440, posYda, 70, 20);
 		result.add(label10);
 		
@@ -363,7 +348,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		result.add(labelInhibitors);
 		
 		//TIME:
-		JLabel label11 = new JLabel("Min. time:");
+		JLabel label11 = new JLabel(lang.getText("HIVwin_entry20")); //Min. time:
 		label11.setBounds(posXda, posYda+=20, 70, 20);
 		result.add(label11);
 		
@@ -371,7 +356,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelEFT.setBounds(posXda+75, posYda, 40, 20);
 		result.add(labelEFT);
 		
-		JLabel label12 = new JLabel("Avg. time:");
+		JLabel label12 = new JLabel(lang.getText("HIVwin_entry21")); //Avg. time:
 		label12.setBounds(posXda+140, posYda, 70, 20);
 		result.add(label12);
 		
@@ -379,7 +364,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelAVG.setBounds(posXda+210, posYda, 40, 20);
 		result.add(labelAVG);
 		
-		JLabel label13 = new JLabel("Max. time:");
+		JLabel label13 = new JLabel(lang.getText("HIVwin_entry22")); //Max. time:
 		label13.setBounds(posXda+280, posYda, 70, 20);
 		result.add(label13);
 		
@@ -387,7 +372,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelLFT.setBounds(posXda+350, posYda, 40, 20);
 		result.add(labelLFT);
 		
-		JLabel label16 = new JLabel("TPN trans:");
+		JLabel label16 = new JLabel(lang.getText("HIVwin_entry23")); //TPN trans:
 		label16.setBounds(posXda, posYda+=20, 70, 20);
 		result.add(label16);
 		
@@ -395,7 +380,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelTPNtrans.setBounds(posXda+75, posYda, 40, 20);
 		result.add(labelTPNtrans);
 		
-		JLabel label17 = new JLabel("DPN trans:");
+		JLabel label17 = new JLabel(lang.getText("HIVwin_entry24")); //DPN trans
 		label17.setBounds(posXda+110, posYda, 70, 20);
 		result.add(label17);
 		
@@ -403,7 +388,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelDPNtrans.setBounds(posXda+180, posYda, 40, 20);
 		result.add(labelDPNtrans);
 		
-		JLabel label18 = new JLabel("TDPN trans:");
+		JLabel label18 = new JLabel(lang.getText("HIVwin_entry25")); //TDPN trans:
 		label18.setBounds(posXda+220, posYda, 70, 20);
 		result.add(label18);
 		
@@ -411,28 +396,16 @@ public class HolmesInvariantsViewer extends JFrame {
 		labelTDPNtrans.setBounds(posXda+290, posYda, 40, 20);
 		result.add(labelTDPNtrans);
 		
-		JLabel label19 = new JLabel("PN trans:");
+		JLabel label19 = new JLabel(lang.getText("HIVwin_entry26")); //PN trans:
 		label19.setBounds(posXda+330, posYda, 70, 20);
 		result.add(label19);
 		
 		labelPNtrans = new JLabel("---");
 		labelPNtrans.setBounds(posXda+400, posYda, 40, 20);
 		result.add(labelPNtrans);
-		//labelSur = new JLabel("---");
-		//labelSur.setBounds(posXda+400, posYda, 40, 20);
-		//result.add(labelSur);
-		
-		//JLabel label15 = new JLabel("Canonical:");
-		//label15.setBounds(posXda+440, posYda, 70, 20);
-		//result.add(label15);
-		
-		//labelCanon = new JLabel("---");
-		//labelCanon.setBounds(posXda+510, posYda, 40, 20);
-		//result.add(labelCanon);
-		
 		
 		//END TIME
-		JLabel comLabel = new JLabel("Description:");
+		JLabel comLabel = new JLabel(lang.getText("HIVwin_entry27")); //Description:
 		comLabel.setBounds(posXda, posYda+=20, 70, 20);
 		result.add(comLabel);
 
@@ -472,64 +445,52 @@ public class HolmesInvariantsViewer extends JFrame {
         result.add(descProblemPanel);
         */
         
-        JButton calcButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Recalculate statistics</html>");
+        JButton calcButton = new JButton(lang.getText("HIVwin_entry28")); //Recalculate statistics
 		calcButton.setBounds(570, 20, 200, 35);
 		calcButton.setMargin(new Insets(0, 0, 0, 0));
 		calcButton.setIcon(Tools.getResIcon16("/icons/invViewer/recalculateInvStats.png"));
-		calcButton.setToolTipText("Show previous invariant data.");
-		calcButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
-					JOptionPane.showMessageDialog(null, "Net simulator working. Unable to retrieve transitions statistics..", 
-							"Simulator working", JOptionPane.ERROR_MESSAGE);
-					transStats = null;
-					problem = true;
-				} else {
-					StateSimulator ss = new StateSimulator();
-					
-					SimulatorGlobals ownSettings = new SimulatorGlobals();
-					ownSettings.setNetType(NetType.BASIC);
-					ownSettings.setMaxMode(false);
-					ownSettings.setSingleMode(false);
-					ss.initiateSim(false, ownSettings);
+		calcButton.setToolTipText(lang.getText("HIVwin_entry28t"));
+		calcButton.addActionListener(actionEvent -> {
+			if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+				JOptionPane.showMessageDialog(null, lang.getText("HIVwin_entry002"),
+						lang.getText("HIVwin_entry002t"), JOptionPane.ERROR_MESSAGE);
+				transStats = null;
+				problem = true;
+			} else {
+				StateSimulator ss = new StateSimulator();
 
-					transStats = ss.simulateForInvariantTrans(1000, 20, false);
-					problem = false;
-					if(transStats==null)
-						problem = true;
-				}
+				SimulatorGlobals ownSettings = new SimulatorGlobals();
+				ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC, false);
+				ownSettings.setMaxMode(false);
+				ownSettings.setSingleMode(false);
+				ss.initiateSim(false, ownSettings);
+
+				transStats = ss.simulateForInvariantTrans(1000, 20, false);
+				problem = ( transStats == null );
 			}
 		});
 		result.add(calcButton);
 		
-		JButton showNotepadButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Show data in notepad</html>");
+		JButton showNotepadButton = new JButton(lang.getText("HIVwin_entry29")); //Show data in notepad
 		showNotepadButton.setBounds(570, 60, 200, 35);
 		showNotepadButton.setMargin(new Insets(0, 0, 0, 0));
 		showNotepadButton.setIcon(Tools.getResIcon32("/icons/invViewer/showInNotepad.png"));
-		showNotepadButton.setToolTipText("Show invariants data in internal notepad.");
-		showNotepadButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(currentSelected > 0)
-					showInvariantNotepad(currentSelected);
-			}
+		showNotepadButton.setToolTipText(lang.getText("HIVwin_entry29t"));
+		showNotepadButton.addActionListener(actionEvent -> {
+			if(currentSelected > 0)
+				showInvariantNotepad(currentSelected);
 		});
 		result.add(showNotepadButton);
 		
-		JCheckBox maximumModeCheckBox = new JCheckBox("MCT/transitions table");
+		JCheckBox maximumModeCheckBox = new JCheckBox(lang.getText("HIVwin_entry30")); //MCT/transitions table
 		maximumModeCheckBox.setBounds(570, 130, 150, 20);
-		maximumModeCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected())
-					showTransTable = false;
-				else
-					showTransTable = true;
-				
-				if(currentSelected > 0) {
-					fillData(currentSelected);
-				} else {
-					clearSelection();
-				}
+		maximumModeCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			showTransTable = !abstractButton.getModel().isSelected();
+			if(currentSelected > 0) {
+				fillData(currentSelected);
+			} else {
+				clearSelection();
 			}
 		});
 		result.add(maximumModeCheckBox);
@@ -544,8 +505,8 @@ public class HolmesInvariantsViewer extends JFrame {
 		invNo--;
 		if(invNo == -1)
 			return;
-		
-		modelTransition = new InvariantsViewerTableModel(false);
+
+		InvariantsViewerTableModel modelTransition = new InvariantsViewerTableModel(false);
 		table.setModel(modelTransition);
 
 		table.getColumnModel().getColumn(0).setHeaderValue("ID");
@@ -600,7 +561,7 @@ public class HolmesInvariantsViewer extends JFrame {
 					value = formatter.format((Number)(transStats.get(1).get(t)*100));
 					row.add(value+"%");
 				}
-				((InvariantsViewerTableModel)modelTransition).addNew(row);
+				modelTransition.addNew(row);
 			}
 		}
 		
@@ -617,7 +578,7 @@ public class HolmesInvariantsViewer extends JFrame {
 		if(invNo == -1)
 			return;
 
-		modelMCTandTrans = new InvariantsViewerTableModel(true);
+		InvariantsViewerTableModel modelMCTandTrans = new InvariantsViewerTableModel(true);
 		table.setModel(modelMCTandTrans);
 
 		table.getColumnModel().getColumn(0).setHeaderValue("ID");
@@ -645,7 +606,7 @@ public class HolmesInvariantsViewer extends JFrame {
 				ArrayList<String> row = new ArrayList<String>();
 				row.add("MCT"+(mctIndex+1));
 				row.add(pn.getMCTname(mctIndex));
-				((InvariantsViewerTableModel)modelMCTandTrans).addNew(row);
+				modelMCTandTrans.addNew(row);
 				
 				//czyszczenie inwariantu:
 				for(Transition trans : mctSet) {
@@ -660,7 +621,7 @@ public class HolmesInvariantsViewer extends JFrame {
 				ArrayList<String> row = new ArrayList<String>();
 				row.add("t"+t);
 				row.add(transitions.get(t).getName());
-				((InvariantsViewerTableModel)modelMCTandTrans).addNew(row);
+				modelMCTandTrans.addNew(row);
 			}
 		}
 		
@@ -691,33 +652,33 @@ public class HolmesInvariantsViewer extends JFrame {
 				, incidenceMatrix, supportMatrix);
 		
 		if(data.get(0) == 0) 
-			labelMinimal.setText("yes");
+			labelMinimal.setText(lang.getText("yes"));
 		else
-			labelMinimal.setText("no");
+			labelMinimal.setText(lang.getText("no"));
 		
 		if(data.get(1) == 1)
-			labelFeasible.setText("yes");
+			labelFeasible.setText(lang.getText("yes"));
 		else
-			labelFeasible.setText("no");
+			labelFeasible.setText(lang.getText("no"));
 		
 		if(data.get(2) == 0) {
-			labelSub.setText("no");
-			labelSur.setText("no");
+			labelSub.setText(lang.getText("no"));
+			labelSur.setText(lang.getText("no"));
 		} else if(data.get(2) == -1) {
-			labelSub.setText("yes");
-			labelSur.setText("no");
+			labelSub.setText(lang.getText("yes"));
+			labelSur.setText(lang.getText("no"));
 		} else if(data.get(2) == 1){
-			labelSub.setText("no");
-			labelSur.setText("yes");
+			labelSub.setText(lang.getText("no"));
+			labelSur.setText(lang.getText("yes"));
 		} else {
 			labelSub.setText("n-Inv");
 			labelSur.setText("n-Inv");
 		}
 		
 		if(data.get(3) == 1)
-			labelCanon.setText("yes");
+			labelCanon.setText(lang.getText("yes"));
 		else
-			labelCanon.setText("no");
+			labelCanon.setText(lang.getText("no"));
 
 		labelInT.setText(data.get(4)+"");
 		labelPureInT.setText(data.get(5)+"");
@@ -737,20 +698,26 @@ public class HolmesInvariantsViewer extends JFrame {
 		
 		//TIME:
 		ArrayList<Double> timeVector = TimeComputations.getT_InvTimeValues(invariantsMatrix.get(invNo), transitions);
-		
-		labelEFT.setText(String.format("%.2f", timeVector.get(0)+timeVector.get(3)));
-		labelAVG.setText(String.format("%.2f", timeVector.get(2)+timeVector.get(3)));
-		labelLFT.setText(String.format("%.2f", timeVector.get(1)+timeVector.get(3)));
-		
-		labelTPNtrans.setText(""+timeVector.get(5).intValue());
-		labelDPNtrans.setText(""+timeVector.get(6).intValue());
-		labelTDPNtrans.setText(""+timeVector.get(7).intValue());
-		labelPNtrans.setText(""+timeVector.get(4).intValue());
+
+		try {
+			assert timeVector != null;
+			labelEFT.setText(String.format("%.2f", timeVector.get(0)+timeVector.get(3)));
+			labelAVG.setText(String.format("%.2f", timeVector.get(2)+timeVector.get(3)));
+			labelLFT.setText(String.format("%.2f", timeVector.get(1)+timeVector.get(3)));
+
+			labelTPNtrans.setText(""+timeVector.get(5).intValue());
+			labelDPNtrans.setText(""+timeVector.get(6).intValue());
+			labelTDPNtrans.setText(""+timeVector.get(7).intValue());
+			labelPNtrans.setText(""+timeVector.get(4).intValue());
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentry00451exception")+"\n"+e.getMessage(), "error", true);
+		}
+
 	}
 	
 	/**
 	 * Metoda wywołuje okno notatnika z danymi o inwariancie.
-	 * @param selectedInvIndex2 int - indeks wybranego z listy
+	 * @param invNo int - indeks wybranego z listy
 	 */
 	protected void showInvariantNotepad(int invNo) {
 		if(invNo == 0)
@@ -782,20 +749,27 @@ public class HolmesInvariantsViewer extends JFrame {
 		}
 		Collections.sort(mcts);
 		String description = overlord.getWorkspace().getProject().accessT_InvDescriptions().get(invNo);
-		note.addTextLineNL("T-Invariant "+(invNo+1), "text");
-		note.addTextLineNL("Description: "+description, "text");
-		note.addTextLineNL("Total number of transitions: "+transNumber, "text");
+		note.addTextLineNL(lang.getText("HIVwin_entry32")+" "+(invNo+1), "text"); //T-Invariant
+		note.addTextLineNL(lang.getText("HIVwin_entry33")+" "+description, "text"); //Description
+		note.addTextLineNL(lang.getText("HIVwin_entry34")+" "+transNumber, "text"); //Total number of transitions
 		//TIME DATA:
 		ArrayList<Double> timeVector = TimeComputations.getT_InvTimeValues(invariant, transitions);
-		note.addTextLineNL("Minimum firing time: "+String.format("%.2f", timeVector.get(0)+timeVector.get(3)), "text");
-		note.addTextLineNL("Maximum firing time: "+String.format("%.2f", timeVector.get(1)+timeVector.get(3)), "text");
-		note.addTextLineNL("Average firing time: "+String.format("%.2f", timeVector.get(2)+timeVector.get(3)), "text");
-		note.addTextLineNL("TPN trans: "+(timeVector.get(5).intValue())+" | DPN trans: "+(timeVector.get(6).intValue())+
-				" | TDPN trans: "+(timeVector.get(7).intValue())+" | PN trans: "+(timeVector.get(4).intValue()), "text");
+		assert timeVector != null;
+		note.addTextLineNL(lang.getText("HIVwin_entry35")+" "+String.format("%.2f", timeVector.get(0)+timeVector.get(3)), "text"); //Minimum firing time
+		note.addTextLineNL(lang.getText("HIVwin_entry36")+" "+String.format("%.2f", timeVector.get(1)+timeVector.get(3)), "text"); //Maximum firing time
+		note.addTextLineNL(lang.getText("HIVwin_entry37")+" "+String.format("%.2f", timeVector.get(2)+timeVector.get(3)), "text"); //Average firing time
+
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HIVwin_entry38"), timeVector.get(5).intValue(), timeVector.get(6).intValue(), timeVector.get(7).intValue(), timeVector.get(4).intValue());
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIVwin_entry38", "error", true);
+		}
+		note.addTextLineNL(strB, "text");
 		note.addTextLineNL(" ", "text");
 		
 		
-		note.addTextLineNL("Support structure:", "text");
+		note.addTextLineNL(lang.getText("HIVwin_entry39"), "text"); //Support structure
 		for(int mct : mcts) {
 			String MCTname = overlord.getWorkspace().getProject().getMCTname(mct);
 			note.addTextLineNL("  [MCT: "+(mct+1)+"]: "+MCTname, "text");
@@ -805,33 +779,32 @@ public class HolmesInvariantsViewer extends JFrame {
 		//END OF STRUCTURE BLOCK
 		
 		note.addTextLineNL("", "text");
-		note.addTextLineNL("All transitions of INV #" + (invNo+1)+":", "text");
+		note.addTextLineNL(lang.getText("HIVwin_entry40") + (invNo+1)+":", "text"); //All transitions of INV #
 		
 		if(transitions.size() != invariant.size()) {
 			transitions = overlord.getWorkspace().getProject().getTransitions();
 			if(transitions == null || transitions.size() != invariant.size()) {
-				overlord.log("Critical error in invariants subwindow. "
-						+ "Invariants support size refers to non-existing transitions.", "error", true);
+				overlord.log(lang.getText("HIVwin_entry41"), "error", true);
 				return;
 			}
 		}
 		
-		String vector = "";
+		StringBuilder vector = new StringBuilder();
 		for(int t=0; t<invariant.size(); t++) {
 			int fireValue = invariant.get(t);
-			vector += fireValue+";";
+			vector.append(fireValue).append(";");
 			if(fireValue == 0)
 				continue;
 			
 			Transition realT = transitions.get(t);
 			String t1 = Tools.setToSize("t"+t, 5, false);
-			String t2 = Tools.setToSize("Fired: "+fireValue, 12, false);
+			String t2 = Tools.setToSize(lang.getText("HIVwin_entry42")+" "+fireValue, 12, false); //Fired:
 			note.addTextLineNL(t1 + t2 + " ; "+realT.getName(), "text");
 		}
-		vector = vector.substring(0, vector.length()-1);
+		vector = new StringBuilder(vector.substring(0, vector.length() - 1));
 		note.addTextLineNL("", "text");
-		note.addTextLineNL("Invariant vector:", "text");
-		note.addTextLineNL(vector, "text");
+		note.addTextLineNL(lang.getText("HIVwin_entry43"), "text"); //Invariant vector
+		note.addTextLineNL(vector.toString(), "text");
 
 		note.setCaretFirstLine();
 		note.setVisible(true);
@@ -872,15 +845,15 @@ public class HolmesInvariantsViewer extends JFrame {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setBorder(BorderFactory.createTitledBorder("Tables"));
 		result.setPreferredSize(new Dimension(150, 500));
-		
-		tableModel = new DefaultTableModel();
+
+		DefaultTableModel tableModel = new DefaultTableModel();
 		table = new JTable(tableModel);
 		tableRenderer = new InvariantsTableRenderer(table);
 		
 		table.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		cellClickAction();
           	    }
           	 }
@@ -903,8 +876,8 @@ public class HolmesInvariantsViewer extends JFrame {
 				int transId = Integer.parseInt(id);
 				new HolmesNodeInfo(transitions.get(transId), this);
 			}
-		} catch (Exception e) {
-			
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00452exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 

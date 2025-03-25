@@ -1,34 +1,31 @@
 package holmes.graphpanel.popupmenu;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.XMLEncoder;
 import java.io.FileOutputStream;
+import java.io.Serial;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.utilities.Tools;
 
 /**
  * Klasa odpowiedzialna za tworzenie menu kontekstowego dla sieci narysowanej na danym panelu.
- * @author students
- *
  */
 public class GraphPanelPopupMenu extends JPopupMenu {
+	@Serial
 	private static final long serialVersionUID = 2192129184059718857L;
-	
-	@SuppressWarnings("unused")
-	private GUIManager guiManager;
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private GraphPanel graphPanel;
-
 	protected JMenuItem cutMenuItem;
 	protected JMenuItem copyMenuItem;
 	protected JMenuItem pasteMenuItem;
@@ -38,7 +35,6 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	 * @param graphPanel GraphPanel - obiekt dla którego powstaje menu kontekstowe
 	 */
 	public GraphPanelPopupMenu(GraphPanel graphPanel, PetriNetElementType pne) {
-		this.guiManager = GUIManager.getDefaultGUIManager();
 		this.setGraphPanel(graphPanel);
 		
 		if(pne != PetriNetElementType.META)
@@ -49,29 +45,24 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	 * Metoda pomocnicza konstruktora, tworzy podstawowe elementy menu kontekstowego sieci.
 	 */
 	public void createPredefineMenuItems() {
-		cutMenuItem = this.createMenuItem("Cut", "cut.png",
-				KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK),
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						// getGraphPanel().removeAllSelectedElementLocations();
-					}
+		cutMenuItem = this.createMenuItem(lang.getText("GPPM_entry001"), "cut.png",
+				KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK),
+				e -> {
+					// getGraphPanel().removeAllSelectedElementLocations();
 				});
 
-		copyMenuItem = this.createMenuItem("Copy", "copying_and_distribution.png",
-				KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						@SuppressWarnings("unused")
-						int x = 1;
-						// getGraphPanel().removeAllSelectedElementLocations();
-					}
+		copyMenuItem = this.createMenuItem(lang.getText("GPPM_entry002"), "copying_and_distribution.png",
+				KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK),
+				e -> {
+					@SuppressWarnings("unused")
+					int x = 1;
+					// getGraphPanel().removeAllSelectedElementLocations();
 				});
 
-		pasteMenuItem = this.createMenuItem("Paste", "paste_plain.png",
-				KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK),
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-					}
+		pasteMenuItem = this.createMenuItem(lang.getText("GPPM_entry003"), "paste_plain.png",
+				KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK),
+				e -> {
+					//TODO
 				});
 		
 		cutMenuItem.setEnabled(false);
@@ -119,7 +110,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	protected void addMenuItem(String text, String iconName, ActionListener actionListener) {
 		try {
 			JMenuItem menuItem;
-			if(!iconName.equals(""))
+			if(!iconName.isEmpty())
 				menuItem = new JMenuItem(text, Tools.getResIcon16("/icons/" + iconName));
 			else
 				menuItem = new JMenuItem(text);
@@ -143,7 +134,7 @@ public class GraphPanelPopupMenu extends JPopupMenu {
 	protected JMenuItem createMenuItem(String text, String iconName, KeyStroke accelerator, ActionListener actionListener) {
 		try {
 			JMenuItem menuItem;
-			if(!iconName.equals(""))
+			if(!iconName.isEmpty())
 				menuItem = new JMenuItem(text, Tools.getResIcon16("/icons/" + iconName));
 			else
 				menuItem = new JMenuItem(text);

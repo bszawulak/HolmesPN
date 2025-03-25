@@ -8,8 +8,6 @@ import holmes.petrinet.elements.Transition;
 /**
  * Klasa tworząca macierz wejściową do obliczeń, dziedzicząca z Matrix.
  * W notacji sieci jest to macierz wartości łuków wyjściowych (in-arcs).
- * @author students
- *
  */
 public class InputMatrix extends Matrix {
 	/**
@@ -21,7 +19,7 @@ public class InputMatrix extends Matrix {
 		initiateMatrix(placeList.size(),transitionList.size());
 		for (int i = 0; i < transitionList.size(); i++)
 			for (int j = 0; j < placeList.size(); j++) {
-				setValue(i, j, transitionList.get(i).getInArcWeightFrom( placeList.get(j)));
+				setValue(i, j, transitionList.get(i).getInputArcWeightFrom( placeList.get(j)));
 			}
 	}
 }

@@ -7,14 +7,11 @@ import holmes.petrinet.elements.ElementLocation;
 
 /**
  * Klasa przekazująca informacje związane ze zdarzeniem zaznaczania, wywoływanym przez SelectionManager.
- * @author students
- *
  */
 public interface SelectionActionListener {
-	public void actionPerformed(SelectionActionEvent e);
+	void actionPerformed(SelectionActionEvent e);
 
-	public class SelectionActionEvent {
-
+	class SelectionActionEvent {
 		public enum SelectionActionType { SELECTED_ONE, SELECTED_GROUP, SELECTED_SHEET }
 		private ArrayList<Arc> arcGroup = new ArrayList<Arc>();
 		private ArrayList<ElementLocation> elementLocationGroup = new ArrayList<ElementLocation>();
@@ -26,12 +23,12 @@ public interface SelectionActionListener {
 		 */
 		public SelectionActionEvent() {
 		}
-		
-		@SuppressWarnings("static-access")
+
 		/**
 		 * Konstruktor obiektu klasy SelectionActionEvent.
 		 * @param sheetId int - numer arkusza
 		 */
+		@SuppressWarnings("static-access")
 		public SelectionActionEvent(int sheetId)
 		{
 			this.setActionType(getActionType().SELECTED_SHEET);
@@ -84,7 +81,7 @@ public interface SelectionActionListener {
 		 * @return Arc - zaznaczony łuk
 		 */
 		public Arc getArc() {
-			if (getArcGroup() == null || getArcGroup().size() == 0)
+			if (getArcGroup() == null || getArcGroup().isEmpty())
 				return null;
 			return getArcGroup().get(0);
 		}
@@ -139,7 +136,7 @@ public interface SelectionActionListener {
 		 * @return ElementLocation - lokalizacja zaznaczonego elementu
 		 */
 		public ElementLocation getElementLocation() {
-			if (getElementLocationGroup() == null || getElementLocationGroup().size() == 0)
+			if (getElementLocationGroup() == null || getElementLocationGroup().isEmpty())
 				return null;
 			return getElementLocationGroup().get(0);
 		}

@@ -3,7 +3,6 @@ package holmes.adam.mct;
 import java.util.*;
 
 public class MCTPlace extends MCTNode {
-	
 	protected SortedSet<MCTTransition> in = new TreeSet<MCTTransition>();
 	protected SortedSet<MCTTransition> out = new TreeSet<MCTTransition>();
 	

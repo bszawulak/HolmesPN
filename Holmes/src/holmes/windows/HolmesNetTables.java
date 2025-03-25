@@ -5,11 +5,10 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +26,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
@@ -37,8 +34,9 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Transition;
-import holmes.petrinet.simulators.NetSimulator.NetType;
+import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.tables.InvariantsSimulatorTableModel;
 import holmes.tables.InvariantsTableModel;
 import holmes.tables.PTITableRenderer;
@@ -48,30 +46,17 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa odpowiedzialna za rysowanie i obsługę okna tabel elementów sieci.
- * 
- * @author MR
  */
 public class HolmesNetTables extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 8429744762731301629L;
-	
-	//interface components:
-	@SuppressWarnings("unused")
-	private JFrame parentFrame;
-	private JPanel mainPanel;
-	private JPanel tablesSubPanel;
-	private JPanel buttonsPanel;
-	private JScrollPane tableScrollPane;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JComboBox<String> invSimNetModeCombo;
-	private NetType invSimNetType = NetType.BASIC;
+	private SimulatorGlobals.SimNetType invSimNetType = SimulatorGlobals.SimNetType.BASIC;
 	private boolean doNotUpdate = false;
 	//data components:
 	private JTable table;
-	
-	private DefaultTableModel model;
-	private PlacesTableModel modelPlaces;
-	private TransitionsTableModel modelTransition;
-	private InvariantsTableModel modelBasicInvariants;
-	private InvariantsSimulatorTableModel modelInvariantsSimData;
 	private PTITableRenderer tableRenderer;
 	public int currentClickedRow;
 	private int simStepsForInv = 10000;
@@ -82,20 +67,15 @@ public class HolmesNetTables extends JFrame {
 	
 	/**
 	 * Główny konstruktor okna tabel sieci.
-	 * @param papa JFrame - ramka okna głównego
+	 * @param parent JFrame - ramka okna głównego
 	 */
-	public HolmesNetTables(JFrame papa) {
-		//ego = this;
+	public HolmesNetTables(JFrame parent) {
 		action  = new HolmesNetTablesActions(this);
-		parentFrame = papa;
-		
 		try {
 			initialize_components();
 			setVisible(false);
 		} catch (Exception e) {
-			String msg = e.getMessage();
-			GUIManager.getDefaultGUIManager().log("Critical error, cannot create Holmes Net Tables window:", "error", true);
-			GUIManager.getDefaultGUIManager().log(msg, "error", false);
+			overlord.log(lang.getText("LOGentry00473exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -110,16 +90,18 @@ public class HolmesNetTables extends JFrame {
 	 * Metoda inicjalizująca komponenty interfejsu okna.
 	 */
 	private void initialize_components() {
-		setTitle("Net data tables");
+		setTitle(lang.getText("HNTwin_entry001title"));
     	try { setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png")); } 
-    	catch (Exception e ) { }
+    	catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00474exception")+"\n"+ex.getMessage(), "error", true);
+		}
     	
     	setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setLocation(20, 20);
 		
 		setSize(new Dimension(900, 700));
-		
-		mainPanel = new JPanel();
+
+		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(createTablePanel(), BorderLayout.CENTER);
 		mainPanel.add(createButtonsPanel(), BorderLayout.EAST);
@@ -130,14 +112,14 @@ public class HolmesNetTables extends JFrame {
 	 * Metoda ta tworzy obiekty modelu i tabeli, inicjalizuje listenery tablicy.
 	 */
 	private void createTableConstruct() {
-		model = new DefaultTableModel();
+		DefaultTableModel model = new DefaultTableModel();
 		table = new JTable(model);
 		tableRenderer = new PTITableRenderer(table);
 		
 		table.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		action.cellClickAction(table);
           	    }
           	 }
@@ -149,7 +131,7 @@ public class HolmesNetTables extends JFrame {
 	 * @return JPanel - panel główny
 	 */
 	private JPanel createTablePanel() {
-		tablesSubPanel = new JPanel(new BorderLayout());
+		JPanel tablesSubPanel = new JPanel(new BorderLayout());
 		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
 		tablesSubPanel.setLocation(0, 0);
 		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Tables:"));
@@ -157,7 +139,7 @@ public class HolmesNetTables extends JFrame {
 		createTableConstruct();
 
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		tableScrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane tableScrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
 		
 		return tablesSubPanel;
@@ -167,8 +149,9 @@ public class HolmesNetTables extends JFrame {
 	 * Metoda pomocnicza tworząca panel boczny przycisków.
 	 * @return JPanel - panel boczny przycisków
 	 */
+	@SuppressWarnings("ConstantConditions")
 	private JPanel createButtonsPanel() {
-		buttonsPanel = new JPanel(null);
+		JPanel buttonsPanel = new JPanel(null);
 		//buttonsPanel.setBounds(670, 0, 130, 560);
 		
 		buttonsPanel.setPreferredSize(new Dimension(130, 560));
@@ -185,53 +168,43 @@ public class HolmesNetTables extends JFrame {
 		int bHeight = 30;
 		
 		//JButton placesButton = createStandardButton("Places", Tools.getResIcon32(""));
-		JButton placesButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp;Places&nbsp;&nbsp;&nbsp;&nbsp;</html>");
+		JButton placesButton = new JButton(lang.getText("HNTwin_entry002")); //Places
 		placesButton.setFocusPainted(false);
 		placesButton.setMargin(new Insets(0, 0, 0, 0));
 		placesButton.setIcon(Tools.getResIcon16("/icons/netTables/placeIcon.png"));
-		placesButton.setToolTipText("Shows places table");
+		placesButton.setToolTipText(lang.getText("HNTwin_entry002t"));
 		placesButton.setBounds(xPos, yPos, bWidth, bHeight);
-		placesButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				createPlacesTable();
-			}
-		});
+		placesButton.addActionListener(actionEvent -> createPlacesTable());
 		placesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		upperButtonsPanel.add(placesButton);
 		yPos = yPos + bHeight + 5;
 		
 		//JButton transitionsButton = createStandardButton("Transitions", Tools.getResIcon32(""));
-		JButton transitionsButton = new JButton("Transitions");
+		JButton transitionsButton = new JButton(lang.getText("HNTwin_entry003")); //Transitions
 		transitionsButton.setFocusPainted(false);
 		transitionsButton.setMargin(new Insets(0, 0, 0, 0));
 		transitionsButton.setIcon(Tools.getResIcon16("/icons/netTables/transIcon.png"));
-		transitionsButton.setToolTipText("Shows transitions table");
+		transitionsButton.setToolTipText(lang.getText("HNTwin_entry003t"));
 		transitionsButton.setBounds(xPos, yPos, bWidth, bHeight);
-		transitionsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				createTransitionTable();
-			}
-		});
+		transitionsButton.addActionListener(actionEvent -> createTransitionTable());
 		transitionsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		upperButtonsPanel.add(transitionsButton);
 		yPos = yPos + bHeight + 5;
 		
 		//JButton switchButton = createStandardButton("Switch P/T", Tools.getResIcon32(""));
-		JButton switchButton = new JButton("Switch P / T");
+		JButton switchButton = new JButton(lang.getText("HNTwin_entry004")); //Switch P/T
 		switchButton.setFocusPainted(false);
 		switchButton.setMargin(new Insets(0, 0, 0, 0));
 		switchButton.setIcon(Tools.getResIcon16("/icons/netTables/switchIcon.png"));
-		switchButton.setToolTipText("Switch internal localization of two places or two transitions.");
+		switchButton.setToolTipText(lang.getText("HNTwin_entry004t"));
 		switchButton.setBounds(xPos, yPos, bWidth, 20);
-		switchButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				boolean status = action.switchSelected(table);
-				if(status == true) {
-					if(table.getName().equals("PlacesTable")) {
-						createPlacesTable();
-					} else if(table.getName().equals("TransitionTable")) {
-						createTransitionTable();
-					}
+		switchButton.addActionListener(actionEvent -> {
+			boolean status = action.switchSelected(table);
+			if(status) {
+				if(table.getName().equals("PlacesTable")) {
+					createPlacesTable();
+				} else if(table.getName().equals("TransitionTable")) {
+					createTransitionTable();
 				}
 			}
 		});
@@ -241,17 +214,13 @@ public class HolmesNetTables extends JFrame {
 		yPos = yPos + bHeight - 5;
 		
 		//JButton invButton = createStandardButton("Invariants", Tools.getResIcon32(""));
-		JButton invButton = new JButton("t-invariants");
+		JButton invButton = new JButton(lang.getText("HNTwin_entry005")); //Invariants
 		invButton.setFocusPainted(false);
 		invButton.setMargin(new Insets(0, 0, 0, 0));
 		invButton.setIcon(Tools.getResIcon16("/icons/netTables/invIcon.png"));
-		invButton.setToolTipText("Shows invariants information table");
+		invButton.setToolTipText(lang.getText("HNTwin_entry005t"));
 		invButton.setBounds(xPos, yPos, bWidth, bHeight);
-		invButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				createSimpleInvTable();
-			}
-		});
+		invButton.addActionListener(actionEvent -> createSimpleInvTable());
 		invButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		upperButtonsPanel.add(invButton);
 		yPos = yPos + bHeight + 5;
@@ -263,44 +232,38 @@ public class HolmesNetTables extends JFrame {
 		
 		JPanel buttonsInvariantsPanel = new JPanel(null);
 		buttonsInvariantsPanel.setBounds(0, upperButtonsPanel.getHeight(), 130, 220);
-		buttonsInvariantsPanel.setBorder(BorderFactory.createTitledBorder("Invariants sim."));
+		buttonsInvariantsPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNTwin_entry006")));
 		
 		yPos = 20;
 		xPos = 10;
 		
 		//JButton invariantsButton = createStandardButton("Show data", Tools.getResIcon32(""));
-		JButton invariantsButton = new JButton("Show data");
+		JButton invariantsButton = new JButton(lang.getText("HNTwin_entry007")); //Show data
 		invariantsButton.setFocusPainted(false);
 		invariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		invariantsButton.setIcon(Tools.getResIcon16("/icons/netTables/invIcon.png"));
-		invariantsButton.setToolTipText("Show invariants table with transition firing rates.");
+		invariantsButton.setToolTipText(lang.getText("HNTwin_entry007t"));
 		invariantsButton.setBounds(xPos, yPos, bWidth, bHeight);
-		invariantsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				createInvariantsTable();
-			}
-		});
+		invariantsButton.addActionListener(actionEvent -> createInvariantsTable());
 		invariantsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		buttonsInvariantsPanel.add(invariantsButton);
 		
-		JLabel ssLabel = new JLabel("State simulator");
+		JLabel ssLabel = new JLabel(lang.getText("HNTwin_entry008")); //State simulator
 		ssLabel.setBounds(xPos, yPos+=30, 110, 20);
 		buttonsInvariantsPanel.add(ssLabel);
 		
-		JButton acqDataButton = new JButton("SimStart");
+		JButton acqDataButton = new JButton(lang.getText("HNTwin_entry009")); //SimStart
 		acqDataButton.setFocusPainted(false);
 		acqDataButton.setBounds(xPos, yPos+=20, 110, 25);
 		acqDataButton.setMargin(new Insets(0, 0, 0, 0));
 		acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-		acqDataButton.setToolTipText("Compute new transitions firing statistics.");
-		acqDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				String name = table.getName();
-				if(name == null)
-					return;
-				else if(name.equals("InvariantsTable")) {
-					createInvariantsTable();
-				}
+		acqDataButton.setToolTipText(lang.getText("HNTwin_entry009t"));
+		acqDataButton.addActionListener(actionEvent -> {
+			String name = table.getName();
+			if(name == null)
+				return;
+			else if(name.equals("InvariantsTable")) {
+				createInvariantsTable();
 			}
 		});
 		buttonsInvariantsPanel.add(acqDataButton);
@@ -308,92 +271,81 @@ public class HolmesNetTables extends JFrame {
 		SpinnerModel simStepsSpinnerModel = new SpinnerNumberModel(simStepsForInv, 0, 1000000, 10000);
 		JSpinner simStepsSpinner = new JSpinner(simStepsSpinnerModel);
 		simStepsSpinner.setBounds(xPos, yPos+=30, 110, 25);
-		simStepsSpinner.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				JSpinner spinner = (JSpinner) e.getSource();
-				int val = (int) spinner.getValue();
-				simStepsForInv = val;
-			}
+		simStepsSpinner.addChangeListener(e -> {
+			JSpinner spinner = (JSpinner) e.getSource();
+			simStepsForInv = (int) spinner.getValue();
 		});
 		buttonsInvariantsPanel.add(simStepsSpinner);
 		
-		JLabel label0 = new JLabel("Net type:");
+		JLabel label0 = new JLabel(lang.getText("HNTwin_entry010")); //Net type
 		label0.setBounds(xPos, yPos+=25, 80, 15);
 		buttonsInvariantsPanel.add(label0);
 		
-		String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode"};
+		String[] simModeName = {lang.getText("HNTwin_entry011op1"), lang.getText("HNTwin_entry011op2"), lang.getText("HNTwin_entry011op3")}; //Petri Net, Timed Petri Net, Hybrid mode
 		invSimNetModeCombo = new JComboBox<String>(simModeName);
 		invSimNetModeCombo.setBounds(xPos, yPos+=15, 110, 25);
 		invSimNetModeCombo.setSelectedIndex(0);
-		invSimNetModeCombo.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate)
-					return;
-				
-				int selectedModeIndex = invSimNetModeCombo.getSelectedIndex();
-				selectedModeIndex = GUIManager.getDefaultGUIManager().simSettings.checkSimulatorNetType(selectedModeIndex);
-				doNotUpdate = true;
-				switch(selectedModeIndex) {
-					case 0:
-						invSimNetType = NetType.BASIC;
-						invSimNetModeCombo.setSelectedIndex(0);
-						break;
-					case 1:
-						invSimNetType = NetType.TIME;
-						invSimNetModeCombo.setSelectedIndex(1);
-						break;
-					case 2:
-						invSimNetType = NetType.HYBRID;
-						invSimNetModeCombo.setSelectedIndex(2);
-						break;
-					case -1:
-						invSimNetType = NetType.BASIC;
-						invSimNetModeCombo.setSelectedIndex(1);
-						GUIManager.getDefaultGUIManager().log("Error while changing simulator mode. Set for BASIC.", "error", true);
-						break;
+		invSimNetModeCombo.addActionListener(actionEvent -> {
+			if(doNotUpdate)
+				return;
+
+			int selectedModeIndex = invSimNetModeCombo.getSelectedIndex();
+			selectedModeIndex = overlord.simSettings.checkSimulatorNetType(selectedModeIndex);
+			doNotUpdate = true;
+			switch (selectedModeIndex) {
+				case 0 -> {
+					invSimNetType = SimulatorGlobals.SimNetType.BASIC;
+					invSimNetModeCombo.setSelectedIndex(0);
 				}
-				doNotUpdate = false;
+				case 1 -> {
+					invSimNetType = SimulatorGlobals.SimNetType.TIME;
+					invSimNetModeCombo.setSelectedIndex(1);
+				}
+				case 2 -> {
+					invSimNetType = SimulatorGlobals.SimNetType.HYBRID;
+					invSimNetModeCombo.setSelectedIndex(2);
+				}
+				case -1 -> {
+					invSimNetType = SimulatorGlobals.SimNetType.BASIC;
+					invSimNetModeCombo.setSelectedIndex(1);
+					overlord.log(lang.getText("LOGentry00475"), "error", true);
+				}
 			}
+			doNotUpdate = false;
 		});
 		buttonsInvariantsPanel.add(invSimNetModeCombo);
 		
-		JLabel label1 = new JLabel("Submode:");
+		JLabel label1 = new JLabel(lang.getText("HNTwin_entry012")); //Submode
 		label1.setBounds(xPos, yPos+=25, 80, 15);
 		buttonsInvariantsPanel.add(label1);
 		
-		final JComboBox<String> simMode = new JComboBox<String>(new String[] {"50/50 mode", "Maximum mode", "Single mode"});
-		simMode.setToolTipText("In maximum mode each active transition fire at once, 50/50 means 50% chance for firing,\n"
-				+ "in single mode only one transition will fire.");
+		final JComboBox<String> simMode = new JComboBox<String>(
+				new String[] {lang.getText("HNTwin_entry013op1"), lang.getText("HNTwin_entry013op2"), lang.getText("HNTwin_entry013op3")});
+		simMode.setToolTipText(lang.getText("HNTwin_entry013t"));
 		simMode.setBounds(xPos, yPos+=15, 110, 25);
 		simMode.setSelectedIndex(0);
 		simMode.setMaximumRowCount(6);
-		simMode.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = simMode.getSelectedIndex();
-				if(selected == 0)
-					maxModeForSSInv = false;
-				else if(selected == 0)
-					maxModeForSSInv = true;
-				else
-					singleModeForSSInv = true;
+		simMode.addActionListener(actionEvent -> {
+			int selected = simMode.getSelectedIndex();
+			if(selected == 0) {
+				maxModeForSSInv = false;
+			} else if(selected == 1) {
+				maxModeForSSInv = true;
+			} else {
+				singleModeForSSInv = true;
 			}
 		});
 		buttonsInvariantsPanel.add(simMode);
 		
 		//TODO:
 		
-		JButton timeDataButton = new JButton("Time & Inv.");
+		JButton timeDataButton = new JButton(lang.getText("HNTwin_entry014")); //Time & Inv.
 		timeDataButton.setFocusPainted(false);
 		timeDataButton.setBounds(xPos, yPos+=210, 110, 30);
 		timeDataButton.setMargin(new Insets(0, 0, 0, 0));
 		timeDataButton.setIcon(Tools.getResIcon22("/icons/stateSim/aaa.png"));
-		timeDataButton.setToolTipText("Show time data for t-invariants");
-		timeDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				action.showTimeDataNotepad();
-			}
-		});
+		timeDataButton.setToolTipText(lang.getText("HNTwin_entry014t"));
+		timeDataButton.addActionListener(actionEvent -> action.showTimeDataNotepad());
 		buttonsPanel.add(timeDataButton);
 
 		//****
@@ -407,7 +359,7 @@ public class HolmesNetTables extends JFrame {
 	 * Metoda tworząca tabelę miejsc
 	 */
     private void createPlacesTable() {
-    	modelPlaces = new PlacesTableModel();
+		PlacesTableModel modelPlaces = new PlacesTableModel();
         table.setModel(modelPlaces);
         
         table.getColumnModel().getColumn(0).setHeaderValue("ID");
@@ -450,8 +402,8 @@ public class HolmesNetTables extends JFrame {
     /**
      * Metoda przygotowująca tabelę dla tranzycji.
      */
-    private void createTransitionTable() { 
-        modelTransition = new TransitionsTableModel();
+    private void createTransitionTable() {
+		TransitionsTableModel modelTransition = new TransitionsTableModel();
         table.setModel(modelTransition);
         
         table.getColumnModel().getColumn(0).setHeaderValue("ID");
@@ -494,8 +446,8 @@ public class HolmesNetTables extends JFrame {
     /**
      * Metoda przygotowująca tabelę dla tranzycji.
      */
-    private void createSimpleInvTable() { 
-        modelBasicInvariants = new InvariantsTableModel();
+    private void createSimpleInvTable() {
+		InvariantsTableModel modelBasicInvariants = new InvariantsTableModel();
         table.setModel(modelBasicInvariants);
         
         table.getColumnModel().getColumn(0).setHeaderValue("ID");
@@ -572,16 +524,16 @@ public class HolmesNetTables extends JFrame {
      * Metoda tworząca tablicę inwariantów.
      */
 	private void createInvariantsTable() {
-    	ArrayList<ArrayList<Integer>> invariantsMatrix = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix();
-    	if(invariantsMatrix == null || invariantsMatrix.size() == 0) {
-    		JOptionPane.showMessageDialog(this, "Please generate T-invariants (Elementary Modes)", "No invariants", JOptionPane.INFORMATION_MESSAGE);
+    	ArrayList<ArrayList<Integer>> invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
+    	if(invariantsMatrix == null || invariantsMatrix.isEmpty()) {
+    		JOptionPane.showMessageDialog(this, lang.getText("HNTwin_entry015"), lang.getText("HNTwin_entry016"), JOptionPane.INFORMATION_MESSAGE);
     			return;
     	}
-    	if(invariantsMatrix == null || invariantsMatrix.size() == 0) return; //final check
+    	//if(invariantsMatrix == null || invariantsMatrix.size() == 0) return; //final check
     	
-    	int transNumber = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
-    	
-    	modelInvariantsSimData = new InvariantsSimulatorTableModel(transNumber);        
+    	int transNumber = overlord.getWorkspace().getProject().getTransitions().size();
+
+		InvariantsSimulatorTableModel modelInvariantsSimData = new InvariantsSimulatorTableModel(transNumber);
         table.setModel(modelInvariantsSimData);
         
         table.getColumnModel().getColumn(0).setHeaderValue("ID");
@@ -608,7 +560,7 @@ public class HolmesNetTables extends JFrame {
 		//ustawianie komentarzy dla kolumn:
 		ColumnHeaderToolTips tips = new ColumnHeaderToolTips();
 		JTableHeader header = table.getTableHeader();
-		ArrayList<Transition> transition = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+		ArrayList<Transition> transition = overlord.getWorkspace().getProject().getTransitions();
 	    for (int c = 2; c < table.getColumnCount(); c++) {
 	    	TableColumn col = table.getColumnModel().getColumn(c);
 	    	tips.setToolTip(col, "t"+(c-2)+"_"+transition.get(c-2).getName());
@@ -668,16 +620,7 @@ public class HolmesNetTables extends JFrame {
 	public void updateRow(String data, int column) {
 		table.getModel().setValueAt(data, currentClickedRow, column);
 	}
-		
-	/**
-	 * Metoda interfejsu ComponentListener, odpowiada za dopasowanie rozmiaru paneli
-	 * tabel i przycisków.
-	 */
-	//public void componentResized(ComponentEvent e) { resizeComponents(); }
-	//public void componentHidden(ComponentEvent e) {} //unused
-	//public void componentMoved(ComponentEvent e) {} //unused
-	//public void componentShown(ComponentEvent e) {} //unused
-	
+
 	
 	//*********************************************************************************************************************
 	//*********************************************************************************************************************
@@ -688,10 +631,8 @@ public class HolmesNetTables extends JFrame {
 	/**
 	 * Klasa wewnętrzna, służy do wyświetlania komentarz gdy kursor znajduje się nad nazwą kolumny
 	 * danej tabeli danych.
-	 * @author MR
-	 *
 	 */
-	class ColumnHeaderToolTips extends MouseMotionAdapter {
+	static class ColumnHeaderToolTips extends MouseMotionAdapter {
 		TableColumn curCol;
 		Map<TableColumn, String> tips = new HashMap<TableColumn, String>();
 		public void setToolTip(TableColumn col, String tooltip) {
@@ -712,7 +653,7 @@ public class HolmesNetTables extends JFrame {
 				col = colModel.getColumn(vColIndex);
 			}
 			if (col != curCol) {
-				header.setToolTipText((String) tips.get(col));
+				header.setToolTipText(tips.get(col));
 				curCol = col;
 			}
 		}

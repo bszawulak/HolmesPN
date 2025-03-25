@@ -1,16 +1,12 @@
 package holmes.windows.ssim;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -33,6 +29,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import holmes.darkgui.LanguageManager;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -72,12 +69,12 @@ import holmes.windows.HolmesNotepad;
 
 /**
  * Klasa okna przeglądania danych symulacji knockout.
- * 
- * @author MR
  */
 public class HolmesSimKnockVis extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 3020186160500907678L;
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private PetriNet pn;
 	private static final DecimalFormat formatter1 = new DecimalFormat( "#.#" );
 	private static final DecimalFormat formatter2 = new DecimalFormat( "#.##" );
@@ -85,8 +82,6 @@ public class HolmesSimKnockVis extends JFrame {
 	
 	private boolean doNotUpdate = false;
 	private HolmesSim boss;
-	private XYSeriesCollection placesSeriesDataSet = null;
-	private XYSeriesCollection transitionsSeriesDataSet = null;
 	private JFreeChart placesChart;
 	private JFreeChart transitionsChart;
 	private JPanel placesChartPanel;
@@ -102,29 +97,18 @@ public class HolmesSimKnockVis extends JFrame {
 	//tablice:
 	private DefaultTableModel model;
 	private SimKnockTableRenderer tableRenderer;
-	private SimKnockTableRenderer tableRendererPlaces;
-	private SimKnockTableRenderer tableRendererTrans;
-	private SimKnockPlacesTableModel modelPlaces;
-	private SimKnockPlacesCompTableModel modelPlacesComp;
-	private SimKnockPlacesCompAllTableModel modelPlacesCompAll;
-	private SimKnockTransTableModel modelTrans;
-	private SimKnockTransCompTableModel modelTransComp;
-	private SimKnockTransCompAllTableModel modelTransCompAll;
 	private JTable placesTable;
 	private JTable transTable;
 	private JTable placesCompAllTable;
 	private JTable transCompAllTable;
 	
-	
 	protected boolean notepadInfo = false;
-	
 	
 	/**
 	 * Konstruktor obiektu klast HolmesStateSimKnockVis.
 	 * @param boss HolmesStateSim - główne okno symulatora
 	 */
 	public HolmesSimKnockVis(HolmesSim boss) {
-		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();
 		this.boss = boss;
 		
@@ -140,12 +124,14 @@ public class HolmesSimKnockVis extends JFrame {
 	 */
 	private void initializeComponents() {
 		setVisible(true);
-		setTitle("Knockout data visualisation");
+		setTitle(lang.getText("HSKVwin_entry001title"));
 		setLocation(boss.getLocation().x,boss. getLocation().y);
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {}
-		setSize(new Dimension(1200, 920));
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00555exception")+" "+ex.getMessage(), "error", true);
+		}
+		setSize(new Dimension(1200, 930));
 		
 		JPanel main = new JPanel(new BorderLayout()); //główny panel okna
 		add(main);
@@ -154,28 +140,34 @@ public class HolmesSimKnockVis extends JFrame {
 		
 		JPanel mainTabbedPanel = new JPanel(new BorderLayout());
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Charts", Tools.getResIcon32("/icons/simulationKnockout/visChartsIcon.png"), createPlacesChartsPanel(), 
-				"<html>Show charts comparing difference in places na transitions<br>behaviour between reference and data sets</html>");
+		tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
+		tabbedPane.addTab(lang.getText("HSKVwin_entry002"), Tools.getResIcon32("/icons/simulationKnockout/visChartsIcon.png") //Charts
+				, createPlacesChartsPanel(), lang.getText("HSKVwin_entry002t"));
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-		tabbedPane.addTab("Places", Tools.getResIcon16("/icons/simulationKnockout/visPlaces.png"), createPlacesTablePanel(), 
-				"<html>Show places behaviour for selected dataset OR<br>comparison between reference and data sets</html>");
+		tabbedPane.addTab(lang.getText("HSKVwin_entry003"), Tools.getResIcon16("/icons/simulationKnockout/visPlaces.png") //Places
+				, createPlacesTablePanel(), lang.getText("HSKVwin_entry003t"));
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-		tabbedPane.addTab("Transitions", Tools.getResIcon16("/icons/simulationKnockout/visTrans.png"), createTransTablePanel(), 
-				"<html>Show transitions behaviour for selected dataset OR<br>comparison between reference and data sets</html>");
+		tabbedPane.addTab(lang.getText("HSKVwin_entry004"), Tools.getResIcon16("/icons/simulationKnockout/visTrans.png") //Transitions
+				, createTransTablePanel(), lang.getText("HSKVwin_entry004t"));
 		tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
-		tabbedPane.addTab("Places (series)", Tools.getResIcon16("/icons/simulationKnockout/visPlacesSeries.png"), createPlacesCompAllTablePanel(), 
-				"<html>Show places table for knockout series.</html>");
+		tabbedPane.addTab(lang.getText("HSKVwin_entry005"), Tools.getResIcon16("/icons/simulationKnockout/visPlacesSeries.png") //Places (series)
+				, createPlacesCompAllTablePanel(), lang.getText("HSKVwin_entry005t"));
 		tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
-		tabbedPane.addTab("Transitions (series)", Tools.getResIcon16("/icons/simulationKnockout/visTransSeries.png"), createTransCompAllTablePanel(), 
-				"<html>Show transitions table for knockout series.</html>");
+		tabbedPane.addTab(lang.getText("HSKVwin_entry006"), Tools.getResIcon16("/icons/simulationKnockout/visTransSeries.png") //Transitions (series)
+				, createTransCompAllTablePanel(), lang.getText("HSKVwin_entry006t"));
 		tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 		
 		mainTabbedPanel.add(tabbedPane);
-		
 		main.add(mainTabbedPanel, BorderLayout.CENTER);
-		
 		//this.boss.setEnabled(false);
-		GUIManager.getDefaultGUIManager().getFrame().setEnabled(false);
+		overlord.getFrame().setEnabled(false);
 	}
 	
 	/**
@@ -184,165 +176,134 @@ public class HolmesSimKnockVis extends JFrame {
 	 */
 	private JPanel getActionsPanel() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Main options panel"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSKVwin_entry007"))); //Main options panel
 		result.setPreferredSize(new Dimension(670, 120));
 	
 		int posXda = 10;
 		int posYda = 20;
 		
-		JLabel label1 = new JLabel("Ref sets:");
+		JLabel label1 = new JLabel(lang.getText("HSKVwin_entry008")); //Ref sets:
 		label1.setBounds(posXda, posYda, 70, 20);
 		result.add(label1);
 		
 		String[] data = { " ----- " };
 		referencesCombo = new JComboBox<String>(data); //final, aby listener przycisku odczytał wartość
-		referencesCombo.setToolTipText("Select reference data (presumably dataset without any transition knockout)");
+		referencesCombo.setToolTipText(lang.getText("HSKVwin_entry009t"));
 		referencesCombo.setBounds(posXda+80, posYda, 500, 20);
 		referencesCombo.setMaximumRowCount(12);
-		referencesCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate) 
-					return;
-				
-				
-			}
-			
+		referencesCombo.addActionListener(actionEvent -> {
+			//if(doNotUpdate)
+			//	return;
 		});
 		result.add(referencesCombo);
 		
-		JLabel label3 = new JLabel("Sim. series:");
+		JLabel label3 = new JLabel(lang.getText("HSKVwin_entry010")); //Sim. series:
 		label3.setBounds(posXda+600, posYda, 80, 20);
 		result.add(label3);
 		
 		String[] dataSeries = { " ----- " };
 		seriesCombo = new JComboBox<String>(dataSeries); //final, aby listener przycisku odczytał wartość
-		seriesCombo.setToolTipText("Select dataset series (presumably with every transition disable one per dataset)");
+		seriesCombo.setToolTipText(lang.getText("HSKVwin_entry011t"));
 		seriesCombo.setBounds(posXda+680, posYda, 250, 20);
 		seriesCombo.setMaximumRowCount(12);
-		seriesCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate) 
-					return;
-			}
-			
+		seriesCombo.addActionListener(actionEvent -> {
+			//if(doNotUpdate)
+			//	return;
 		});
 		result.add(seriesCombo);
 		
-		JLabel label2 = new JLabel("Data sets:");
+		JLabel label2 = new JLabel(lang.getText("HSKVwin_entry012")); //Data sets:
 		label2.setBounds(posXda, posYda+=25, 70, 20);
 		result.add(label2);
 		
 		String[] data2 = { " ----- " };
 		dataCombo = new JComboBox<String>(data2); //final, aby listener przycisku odczytał wartość
-		dataCombo.setToolTipText("Select dataset (presumably with some transition(s) knocked out)");
+		dataCombo.setToolTipText(lang.getText("HSKVwin_entry013t"));
 		dataCombo.setBounds(posXda+80, posYda, 850, 20);
 		dataCombo.setMaximumRowCount(12);
-		dataCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(doNotUpdate) 
-					return;
-
-				//int selected = dataCombo.getSelectedIndex();
-			}
-			
+		dataCombo.addActionListener(actionEvent -> {
+			//if(doNotUpdate)
+			//	return;
+			//int selected = dataCombo.getSelectedIndex();
 		});
 		result.add(dataCombo);
-
 		
-		
-		JButton showRefDataButton = new JButton("<html>Show reference<br/>&nbsp; &nbsp; &nbsp; &nbsp; dataset</html>");
-		showRefDataButton.setBounds(posXda, posYda+=25, 175, 36);
+		JButton showRefDataButton = new JButton(lang.getText("HSKVwin_entry014")); //Show reference dataset
+		showRefDataButton.setBounds(posXda, posYda+=25, 175, 42);
 		showRefDataButton.setMargin(new Insets(0, 0, 0, 0));
 		showRefDataButton.setIcon(Tools.getResIcon32("/icons/simulationKnockout/visShowRefButton.png"));
-		showRefDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selRef = referencesCombo.getSelectedIndex();
-				if(selRef > 0) {
-					showSingleKnockoutCharts(true);
-					createPlacesTable(true);
-					createTransTable(true);
-				}
+		showRefDataButton.addActionListener(actionEvent -> {
+			int selRef = referencesCombo.getSelectedIndex();
+			if(selRef > 0) {
+				showSingleKnockoutCharts(true);
+				createPlacesTable(true);
+				createTransTable(true);
 			}
 		});
 		result.add(showRefDataButton);
 		
-		JButton showKnockDataButton = new JButton("<html>Show knockout<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataset</html>");
-		showKnockDataButton.setBounds(posXda+180, posYda, 175, 36);
+		JButton showKnockDataButton = new JButton(lang.getText("HSKVwin_entry015")); //Show knockout dataset
+		showKnockDataButton.setBounds(posXda+180, posYda, 175, 42);
 		showKnockDataButton.setMargin(new Insets(0, 0, 0, 0));
 		showKnockDataButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visShowDataSetButton.png"));
-		showKnockDataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = dataCombo.getSelectedIndex();
-				if(selected > 0) {
-					showSingleKnockoutCharts(false);
-					createPlacesTable(false);
-					createTransTable(false);
-				}
+		showKnockDataButton.addActionListener(actionEvent -> {
+			int selected = dataCombo.getSelectedIndex();
+			if(selected > 0) {
+				showSingleKnockoutCharts(false);
+				createPlacesTable(false);
+				createTransTable(false);
 			}
 		});
 		result.add(showKnockDataButton);
 		
-		JButton showChartKnockButton = new JButton("<html>Compare reference<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and knockout</html>");
-		showChartKnockButton.setBounds(posXda+360, posYda, 175, 36);
+		JButton showChartKnockButton = new JButton(lang.getText("HSKVwin_entry016")); //Compare reference and knockout
+		showChartKnockButton.setBounds(posXda+360, posYda, 175, 42);
 		showChartKnockButton.setMargin(new Insets(0, 0, 0, 0));
 		showChartKnockButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visCompRefDataButton.png"));
-		showChartKnockButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selRef = referencesCombo.getSelectedIndex();
-				int dataRef = dataCombo.getSelectedIndex();
-				if(selRef < 1 || dataRef < 1) {
-					JOptionPane.showMessageDialog(null,
-						"Please select reference and knockout set!", 
-						"Selection needed", JOptionPane.WARNING_MESSAGE);
-				} else {
-					showCompareCharts();
-					createPlacesCompTable();
-					createTransCompTable();
-				}
+		showChartKnockButton.addActionListener(actionEvent -> {
+			int selRef = referencesCombo.getSelectedIndex();
+			int dataRef = dataCombo.getSelectedIndex();
+			if(selRef < 1 || dataRef < 1) {
+				JOptionPane.showMessageDialog(null,
+					lang.getText("HSKVwin_entry016msg"), lang.getText("HSKVwin_entry016t"), JOptionPane.WARNING_MESSAGE);
+			} else {
+				showCompareCharts();
+				createPlacesCompTable();
+				createTransCompTable();
 			}
 		});
 		result.add(showChartKnockButton);
 		
-		JButton showSeriesButton = new JButton("<html>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;Full series&nbsp;<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;datatables</html>");
-		showSeriesButton.setBounds(posXda+600, posYda, 175, 36);
+		JButton showSeriesButton = new JButton(lang.getText("HSKVwin_entry017")); //Full series datatables
+		showSeriesButton.setBounds(posXda+600, posYda, 175, 42);
 		showSeriesButton.setMargin(new Insets(0, 0, 0, 0));
 		showSeriesButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visRefDataSeriesButton.png"));
-		showSeriesButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = seriesCombo.getSelectedIndex() - 1;
-				if(selected > -1) {
-					createCompareAllTables(selected);
-				}
+		showSeriesButton.addActionListener(actionEvent -> {
+			int selected = seriesCombo.getSelectedIndex() - 1;
+			if(selected > -1) {
+				createCompareAllTables(selected);
 			}
 		});
 		result.add(showSeriesButton);
 		
-		JButton showNotepadButton = new JButton("<html>&nbsp; &nbsp;Show notepad<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;summary</html>");
-		showNotepadButton.setBounds(posXda+780, posYda, 175, 36);
+		JButton showNotepadButton = new JButton(lang.getText("HSKVwin_entry018")); //Show notepad summary
+		showNotepadButton.setBounds(posXda+780, posYda, 175, 42);
 		showNotepadButton.setMargin(new Insets(0, 0, 0, 0));
 		showNotepadButton.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visRefDataSeriesNotepadButton.png"));
-		showNotepadButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int selected = seriesCombo.getSelectedIndex() - 1;
-				if(selected > -1) {
-					createCompareAllTablesNotepad(selected);
-				}
+		showNotepadButton.addActionListener(actionEvent -> {
+			int selected = seriesCombo.getSelectedIndex() - 1;
+			if(selected > -1) {
+				createCompareAllTablesNotepad(selected);
 			}
 		});
 		result.add(showNotepadButton);
 		
-		JCheckBox sortedCheckBox = new JCheckBox("Notepad");
+		JCheckBox sortedCheckBox = new JCheckBox(lang.getText("HSKVwin_entry019")); //Notepad
 		sortedCheckBox.setBounds(posXda+960, posYda, 80, 20);
 		sortedCheckBox.setSelected(false);
-		sortedCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					notepadInfo = true;
-				} else {
-					notepadInfo = false;
-				}
-			}
+		sortedCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			notepadInfo = abstractButton.getModel().isSelected();
 		});
 		result.add(sortedCheckBox);
 		
@@ -355,40 +316,40 @@ public class HolmesSimKnockVis extends JFrame {
 	 */
 	private JPanel createPlacesChartsPanel() {
 		JPanel result = new JPanel(new BorderLayout());
-		result.setBorder(BorderFactory.createTitledBorder("Charts"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSKVwin_entry020")));
 		result.setPreferredSize(new Dimension(670, 500));
 
-		String chartTitle = "Places dynamics";
-	    String xAxisLabel = "Step";
-	    String yAxisLabel = "Tokens";
+		String chartTitle = lang.getText("HSKVwin_entry021"); //Places dynamics
+	    String xAxisLabel = "Step"; //Step
+	    String yAxisLabel = "Tokens"; //Tokens
 	    boolean showLegend = true;
 	    boolean createTooltip = true;
 	    boolean createURL = false;
-		placesSeriesDataSet = new XYSeriesCollection();
+		XYSeriesCollection placesSeriesDataSet = new XYSeriesCollection();
 	    placesChart = ChartFactory.createXYLineChart(chartTitle, xAxisLabel, yAxisLabel, placesSeriesDataSet, 
 	    		PlotOrientation.VERTICAL, showLegend, createTooltip, createURL);
 		
 	    placesChartPanel = new JPanel(new BorderLayout());
-		placesChartPanel.setBorder(BorderFactory.createTitledBorder("Places chart"));
+		placesChartPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSKVwin_entry024"))); //Places chart
 		placesChartPanel.add(new ChartPanel(placesChart), BorderLayout.CENTER);
 
 		JPanel result2 = new JPanel(new BorderLayout());
-		result2.setBorder(BorderFactory.createTitledBorder("Charts"));
+		result2.setBorder(BorderFactory.createTitledBorder(lang.getText("HSKVwin_entry025"))); //Charts
 		result2.setPreferredSize(new Dimension(670, 500));
 		
-		String chartTitle2 = "Transitions dynamics";
-	    String xAxisLabel2 = "Transition";
-	    String yAxisLabel2 = "Firing";
+		String chartTitle2 = lang.getText("HSKVwin_entry026"); //Transitions dynamics
+	    String xAxisLabel2 = "Transition"; //Transition
+	    String yAxisLabel2 = "Firing"; //Firing
 	    boolean showLegend2 = true;
 	    boolean createTooltip2 = true;
 	    boolean createURL2 = false;
-	    
-		transitionsSeriesDataSet = new XYSeriesCollection();
+
+		XYSeriesCollection transitionsSeriesDataSet = new XYSeriesCollection();
 		transitionsChart = ChartFactory.createXYLineChart(chartTitle2, xAxisLabel2, yAxisLabel2, transitionsSeriesDataSet,
 			PlotOrientation.VERTICAL, showLegend2, createTooltip2, createURL2);
 
 		transitionsChartPanel = new JPanel(new BorderLayout());
-		transitionsChartPanel.setBorder(BorderFactory.createTitledBorder("Transitions chart"));
+		transitionsChartPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSKVwin_entry029"))); //Transitions chart
 		transitionsChartPanel.add(new ChartPanel(transitionsChart), BorderLayout.CENTER);
 
 		JSplitPane pane = new JSplitPane( JSplitPane.VERTICAL_SPLIT, placesChartPanel, transitionsChartPanel );
@@ -417,7 +378,7 @@ public class HolmesSimKnockVis extends JFrame {
 		//PLACES:
 		StatisticalCategoryDataset datasetPlaces = createPlacesDataset(data, null);
 
-        CategoryAxis xAxisPlaces = new CategoryAxis("Type");
+        CategoryAxis xAxisPlaces = new CategoryAxis(lang.getText("HSKVwin_entry030")); //Type
         xAxisPlaces.setLowerMargin(0.01d); // percentage of space before first bar
         xAxisPlaces.setUpperMargin(0.01d); // percentage of space after last bar
         xAxisPlaces.setCategoryMargin(0.05d); // percentage of space between categories
@@ -427,7 +388,7 @@ public class HolmesSimKnockVis extends JFrame {
         rendererPlaces.setToolTipGenerator(new CustomToolTipGenerator(true, false, places, transitions, data, null));
         
         placesChartPanel.removeAll();
-        placesChart = new JFreeChart("Places statistical data", new Font("Helvetica", Font.BOLD, 14), plotPlaces, true);
+        placesChart = new JFreeChart(lang.getText("HSKVwin_entry031"), new Font("Helvetica", Font.BOLD, 14), plotPlaces, true); //Places statistical data
 		ChartPanel chartPanelPlaces = new ChartPanel(placesChart);
 		chartPanelPlaces.setPreferredSize(new Dimension(data.placesNumber*40, 270)); 
 		chartPanelPlaces.setMaximumDrawWidth(data.placesNumber*40);
@@ -439,7 +400,7 @@ public class HolmesSimKnockVis extends JFrame {
 	    //TRANSITIONS:
 		StatisticalCategoryDataset datasetTrans = createTransitionsDataset(data, null);
 		
-        CategoryAxis xAxisTrans = new CategoryAxis("Type");
+        CategoryAxis xAxisTrans = new CategoryAxis(lang.getText("HSKVwin_entry032")); //Type
         xAxisTrans.setLowerMargin(0.01d); // percentage of space before first bar
        	xAxisTrans.setUpperMargin(0.01d); // percentage of space after last bar
         xAxisTrans.setCategoryMargin(0.05d); // percentage of space between categories
@@ -450,7 +411,7 @@ public class HolmesSimKnockVis extends JFrame {
         rendererTrans.setToolTipGenerator(new CustomToolTipGenerator(false, false, places, transitions, data, null));
         
         transitionsChartPanel.removeAll();
-        transitionsChart = new JFreeChart("Transitions statistical data", new Font("Helvetica", Font.BOLD, 14), plotTrans, true);
+        transitionsChart = new JFreeChart(lang.getText("HSKVwin_entry033"), new Font("Helvetica", Font.BOLD, 14), plotTrans, true); //Transitions statistical data
 		ChartPanel chartPanelTrans = new ChartPanel(transitionsChart);
 		chartPanelTrans.setPreferredSize(new Dimension(data.transNumber*40, 270)); 
 		chartPanelTrans.setMaximumDrawWidth(data.transNumber*40);
@@ -466,7 +427,7 @@ public class HolmesSimKnockVis extends JFrame {
 	 * @return NetSimulationData - pakiet danych symulacji
 	 */
 	private NetSimulationData getCorrectSet(boolean showRef) {
-		NetSimulationData data = null;
+		NetSimulationData data;
 		if(showRef) {
 			int selectedRef = referencesCombo.getSelectedIndex() - 1;
 			if(selectedRef == -1)
@@ -479,7 +440,7 @@ public class HolmesSimKnockVis extends JFrame {
 			data = pn.accessSimKnockoutData().getKnockoutSet(selectedKnockout);
 		}
 		if(data == null) {
-			overlord.log("Error accessing dataset.", "error", true);
+			overlord.log(lang.getText("LOGentry00556critError"), "error", true);
 			return null;
 		}
 		return data;
@@ -490,8 +451,8 @@ public class HolmesSimKnockVis extends JFrame {
 	 */
 	@SuppressWarnings("deprecation")
 	protected void showCompareCharts() {
-		NetSimulationData refData = null;
-		NetSimulationData knockData = null;
+		NetSimulationData refData;
+		NetSimulationData knockData;
 		int selectedRef = referencesCombo.getSelectedIndex() - 1;
 		if(selectedRef == -1)
 			return;
@@ -503,13 +464,13 @@ public class HolmesSimKnockVis extends JFrame {
 		knockData = pn.accessSimKnockoutData().getKnockoutSet(selectedKnockout);
 		
 		if(refData == null || knockData == null) {
-			overlord.log("Error accessing dataset.", "error", true);
+			overlord.log(lang.getText("LOGentry00557critError"), "error", true);
 			return;
 		}
 		
 		StatisticalCategoryDataset datasetPlaces = createPlacesDataset(refData, knockData);
 
-        CategoryAxis xAxisPlaces = new CategoryAxis("Type");
+        CategoryAxis xAxisPlaces = new CategoryAxis(lang.getText("HSKVwin_entry030")); //Type
         xAxisPlaces.setLowerMargin(0.01d); // percentage of space before first bar
         xAxisPlaces.setUpperMargin(0.01d); // percentage of space after last bar
         xAxisPlaces.setCategoryMargin(0.1d); // percentage of space between categories
@@ -523,7 +484,7 @@ public class HolmesSimKnockVis extends JFrame {
         rendererPlaces.setToolTipGenerator(new CustomToolTipGenerator(true, true, places, transitions, refData, knockData));
         
         placesChartPanel.removeAll();
-        placesChart = new JFreeChart("Places statistical data", new Font("Helvetica", Font.BOLD, 14), plotPlaces, true);
+        placesChart = new JFreeChart(lang.getText("HSKVwin_entry031"), new Font("Helvetica", Font.BOLD, 14), plotPlaces, true); //Places statistical data
 		ChartPanel chartPanelPlaces = new ChartPanel(placesChart);
 		chartPanelPlaces.setPreferredSize(new Dimension(refData.placesNumber*50, 270)); 
 		chartPanelPlaces.setMaximumDrawWidth(refData.placesNumber*50);
@@ -536,7 +497,7 @@ public class HolmesSimKnockVis extends JFrame {
 	    //TRANSITIONS:
 		StatisticalCategoryDataset datasetTrans = createTransitionsDataset(refData, knockData);
 		
-        CategoryAxis xAxisTrans = new CategoryAxis("Type");
+        CategoryAxis xAxisTrans = new CategoryAxis(lang.getText("HSKVwin_entry032")); //Type
         xAxisTrans.setLowerMargin(0.01d); // percentage of space before first bar
        	xAxisTrans.setUpperMargin(0.01d); // percentage of space after last bar
         xAxisTrans.setCategoryMargin(0.1d); // percentage of space between categories
@@ -550,7 +511,7 @@ public class HolmesSimKnockVis extends JFrame {
         rendererTrans.setToolTipGenerator(new CustomToolTipGenerator(false, true, places, transitions, refData, knockData));
         
         transitionsChartPanel.removeAll();
-        transitionsChart = new JFreeChart("Transitions statistical data", new Font("Helvetica", Font.BOLD, 14), plotTrans, true);
+        transitionsChart = new JFreeChart(lang.getText("HSKVwin_entry033"), new Font("Helvetica", Font.BOLD, 14), plotTrans, true); //Transitions statistical data
 		ChartPanel chartPanelTrans = new ChartPanel(transitionsChart);
 		chartPanelTrans.setPreferredSize(new Dimension(refData.transNumber*50, 270)); 
 		chartPanelTrans.setMaximumDrawWidth(refData.transNumber*50);
@@ -590,7 +551,7 @@ public class HolmesSimKnockVis extends JFrame {
         	int placesRef = data.placesNumber;
         	int placesKnock = compData.placesNumber;
         	if(placesRef != placesKnock) {
-        		overlord.log("Reference set and knockout set have different number of places.", "error", true);
+        		overlord.log(lang.getText("LOGentry00558critError"), "error", true);
         		return null;
         	}
         	
@@ -628,7 +589,7 @@ public class HolmesSimKnockVis extends JFrame {
 	/**
 	 * Metoda tworzy zbiór danych dla wykresu dla tranzycji na bazie symulacji knockout.
 	 * @param data NetSimulationData - pakiet danych
-	 * @param knockData NetSimulationData - pakiet do porównania
+	 * @param compData NetSimulationData - pakiet do porównania
 	 * @return StatisticalCategoryDataset - dane dla wykresu
 	 */
 	private StatisticalCategoryDataset createTransitionsDataset(NetSimulationData data, NetSimulationData compData) {
@@ -657,7 +618,7 @@ public class HolmesSimKnockVis extends JFrame {
         	int transRef = data.transNumber;
         	int transKnock = compData.transNumber;
         	if(transRef != transKnock) {
-        		overlord.log("Reference set and knockout set have different number of transitions.", "error", true);
+        		overlord.log(lang.getText("LOGentry00560critError"), "error", true);
         		return null;
         	}
         	
@@ -706,14 +667,14 @@ public class HolmesSimKnockVis extends JFrame {
 		JPanel tablesSubPanel = new JPanel(new BorderLayout());
 		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
 		tablesSubPanel.setLocation(0, 0);
-		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Place single knockout data table:"));
+		tablesSubPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSKVwin_entry034"))); //Place single knockout data table:
 		model = new DefaultTableModel();
 		placesTable = new JTable(model);
 		
 		placesTable.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		cellClickAction(placesTable);
           	    }
           	 }
@@ -735,19 +696,18 @@ public class HolmesSimKnockVis extends JFrame {
 		JPanel tablesSubPanel = new JPanel(new BorderLayout());
 		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
 		tablesSubPanel.setLocation(0, 0);
-		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Places comparison single knockout data table:"));
+		tablesSubPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSKVwin_entry035"))); //Places comparison single knockout data table:
 		model = new DefaultTableModel();
 		placesCompAllTable = new JTable(model);
 		
 		placesCompAllTable.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		cellClickAction(placesCompAllTable);
           	    }
           	 }
       	});
-		
 		
 		tableRenderer = new SimKnockTableRenderer(placesCompAllTable);
 		placesCompAllTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -764,14 +724,14 @@ public class HolmesSimKnockVis extends JFrame {
 		JPanel tablesSubPanel = new JPanel(new BorderLayout());
 		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
 		tablesSubPanel.setLocation(0, 0);
-		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Transition single knockout data table:"));
+		tablesSubPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSKVwin_entry036"))); //Transition single knockout data table:
 		model = new DefaultTableModel();
 		transTable = new JTable(model);
 		
 		transTable.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		cellClickAction(transTable);
           	    }
           	 }
@@ -792,14 +752,14 @@ public class HolmesSimKnockVis extends JFrame {
 		JPanel tablesSubPanel = new JPanel(new BorderLayout());
 		tablesSubPanel.setPreferredSize(new Dimension(670, 560));
 		tablesSubPanel.setLocation(0, 0);
-		tablesSubPanel.setBorder(BorderFactory.createTitledBorder("Transition comparison single knockout data table:"));
+		tablesSubPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HSKVwin_entry037"))); //Transition comparison single knockout data table:
 		model = new DefaultTableModel();
 		transCompAllTable = new JTable(model);
 		
 		transCompAllTable.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		cellClickAction(transCompAllTable);
           	    }
           	 }
@@ -820,8 +780,8 @@ public class HolmesSimKnockVis extends JFrame {
     	NetSimulationData data = getCorrectSet(ref);
     	if(data == null)
     		return;
-    	
-    	modelPlaces = new SimKnockPlacesTableModel();
+
+		SimKnockPlacesTableModel modelPlaces = new SimKnockPlacesTableModel();
     	placesTable.setModel(modelPlaces);
         
     	int cellSize = 50;
@@ -832,22 +792,22 @@ public class HolmesSimKnockVis extends JFrame {
     	placesTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
     	placesTable.getColumnModel().getColumn(0).setMinWidth(cellSize);
     	placesTable.getColumnModel().getColumn(0).setMaxWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(1).setHeaderValue("Place name:");
+    	placesTable.getColumnModel().getColumn(1).setHeaderValue(lang.getText("HSKVwin_entry038")); //Place name
     	placesTable.getColumnModel().getColumn(1).setPreferredWidth(300);
     	placesTable.getColumnModel().getColumn(1).setMinWidth(100);
-    	placesTable.getColumnModel().getColumn(2).setHeaderValue("AvgT:");
+    	placesTable.getColumnModel().getColumn(2).setHeaderValue("AvgT");
     	placesTable.getColumnModel().getColumn(2).setPreferredWidth(largeCell);
     	placesTable.getColumnModel().getColumn(2).setMinWidth(largeCell);
     	placesTable.getColumnModel().getColumn(2).setMaxWidth(largeCell);
-    	placesTable.getColumnModel().getColumn(3).setHeaderValue("MinT:");
+    	placesTable.getColumnModel().getColumn(3).setHeaderValue("MinT");
     	placesTable.getColumnModel().getColumn(3).setPreferredWidth(largeCell);
     	placesTable.getColumnModel().getColumn(3).setMinWidth(largeCell);
     	placesTable.getColumnModel().getColumn(3).setMaxWidth(largeCell);
-    	placesTable.getColumnModel().getColumn(4).setHeaderValue("MaxT:");
+    	placesTable.getColumnModel().getColumn(4).setHeaderValue("MaxT");
     	placesTable.getColumnModel().getColumn(4).setPreferredWidth(largeCell);
     	placesTable.getColumnModel().getColumn(4).setMinWidth(largeCell);
     	placesTable.getColumnModel().getColumn(4).setMaxWidth(largeCell);
-    	placesTable.getColumnModel().getColumn(5).setHeaderValue("notT:");
+    	placesTable.getColumnModel().getColumn(5).setHeaderValue("notT");
     	placesTable.getColumnModel().getColumn(5).setPreferredWidth(cellSize);
     	placesTable.getColumnModel().getColumn(5).setMinWidth(cellSize);
     	placesTable.getColumnModel().getColumn(5).setMaxWidth(cellSize);
@@ -886,7 +846,7 @@ public class HolmesSimKnockVis extends JFrame {
     	placesTable.setDefaultRenderer(Object.class, tableRenderer);
 
     	try {
-    		if(places.size() == 0) {
+    		if(places.isEmpty()) {
         		for(int p=0; p<data.placesNumber; p++) 
         			modelPlaces.addNew(data, p, null);
         	} else {
@@ -896,7 +856,9 @@ public class HolmesSimKnockVis extends JFrame {
             		modelPlaces.addNew(data, index, place);
             	}
         	}
-    	} catch (Exception e) {}
+    	} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00561exception")+" "+ex.getMessage(), "error", true);
+		}
     	
         //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
     	
@@ -912,8 +874,8 @@ public class HolmesSimKnockVis extends JFrame {
     	NetSimulationData dataComp = getCorrectSet(false);
     	if(dataRef == null || dataComp == null)
     		return;
-    	
-    	modelPlacesComp = new SimKnockPlacesCompTableModel();
+
+		SimKnockPlacesCompTableModel modelPlacesComp = new SimKnockPlacesCompTableModel();
     	placesTable.setModel(modelPlacesComp);
 
     	int cellSize = 50;
@@ -924,7 +886,7 @@ public class HolmesSimKnockVis extends JFrame {
     	placesTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
     	placesTable.getColumnModel().getColumn(0).setMinWidth(cellSize);
     	placesTable.getColumnModel().getColumn(0).setMaxWidth(cellSize);
-    	placesTable.getColumnModel().getColumn(1).setHeaderValue("Place name");
+    	placesTable.getColumnModel().getColumn(1).setHeaderValue(lang.getText("HSKVwin_entry039")); //Place name
     	placesTable.getColumnModel().getColumn(1).setPreferredWidth(300);
     	placesTable.getColumnModel().getColumn(1).setMinWidth(100);
     	placesTable.getColumnModel().getColumn(2).setHeaderValue("AvgTRef");
@@ -944,7 +906,7 @@ public class HolmesSimKnockVis extends JFrame {
     	placesTable.getColumnModel().getColumn(5).setMinWidth(cellSize);
     	placesTable.getColumnModel().getColumn(5).setMaxWidth(cellSize);
     	
-    	placesTable.getColumnModel().getColumn(6).setHeaderValue("diff:");
+    	placesTable.getColumnModel().getColumn(6).setHeaderValue("diff");
     	placesTable.getColumnModel().getColumn(6).setPreferredWidth(largeCell+10);
     	placesTable.getColumnModel().getColumn(6).setMinWidth(largeCell+10);
     	placesTable.getColumnModel().getColumn(6).setMaxWidth(largeCell+10);
@@ -963,16 +925,16 @@ public class HolmesSimKnockVis extends JFrame {
     	
     	TableRowSorter<TableModel> sorter  = new TableRowSorter<TableModel>(placesTable.getModel());
     	placesTable.setRowSorter(sorter);
-        //TODO:
+
     	placesTable.setName("PlacesCompTable");
     	placesTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-    	tableRendererPlaces = new SimKnockTableRenderer(placesTable);
+		SimKnockTableRenderer tableRendererPlaces = new SimKnockTableRenderer(placesTable);
     	tableRendererPlaces.setMode(2);
     	placesTable.setDefaultRenderer(String.class, tableRendererPlaces);
     	placesTable.setDefaultRenderer(Double.class, tableRendererPlaces);
 
     	try {
-    		if(places.size() == 0) {
+    		if(places.isEmpty()) {
         		for(int index=0; index<dataRef.placesNumber; index++) 
         			modelPlacesComp.addNew(dataRef, dataComp, index, null);
         	} else {
@@ -982,7 +944,9 @@ public class HolmesSimKnockVis extends JFrame {
             		modelPlacesComp.addNew(dataRef, dataComp, index, place);
             	}
         	}
-    	} catch (Exception e) {}
+    	} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00562exception")+" "+ex.getMessage(), "error", true);
+		}
     	
         //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
     	
@@ -990,14 +954,13 @@ public class HolmesSimKnockVis extends JFrame {
         placesTable.validate();
         
         if(notepadInfo) {
-        	HolmesNotepad notepad = null;
-        	notepad = new HolmesNotepad(900,600);
+        	HolmesNotepad notepad = new HolmesNotepad(900,600);
         	notepad.setVisible(true);
 
-        	notepad.addTextLine("PLACES", "text");
+        	notepad.addTextLine(lang.getText("HSKVwin_entry040"), "text"); //PLACES
     		for(PlaceCompContainer data : modelPlacesComp.accessDataMatrix()) {
     			double diff = data.tokenAvgPercDiff/100;
-    			String dif = "";
+    			String dif;
     			if(data.tokenAvgPercDiff == -999999.0) {
     				dif = " -inf";
     			} else if(data.tokenAvgPercDiff == 999991.0) {
@@ -1027,8 +990,8 @@ public class HolmesSimKnockVis extends JFrame {
     	NetSimulationData data = getCorrectSet(ref);
     	if(data == null)
     		return;
-    	
-    	modelTrans = new SimKnockTransTableModel();
+
+		SimKnockTransTableModel modelTrans = new SimKnockTransTableModel();
     	transTable.setModel(modelTrans);
         
     	int cellSize = 50;
@@ -1040,27 +1003,27 @@ public class HolmesSimKnockVis extends JFrame {
     	transTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
     	transTable.getColumnModel().getColumn(0).setMinWidth(cellSize);
     	transTable.getColumnModel().getColumn(0).setMaxWidth(cellSize);
-    	transTable.getColumnModel().getColumn(1).setHeaderValue("Transition name:");
+    	transTable.getColumnModel().getColumn(1).setHeaderValue(lang.getText("HSKVwin_entry041")); //Transition name
     	transTable.getColumnModel().getColumn(1).setPreferredWidth(300);
     	transTable.getColumnModel().getColumn(1).setMinWidth(100);
-    	transTable.getColumnModel().getColumn(2).setHeaderValue("AvgF:");
+    	transTable.getColumnModel().getColumn(2).setHeaderValue("AvgF");
     	transTable.getColumnModel().getColumn(2).setPreferredWidth(hugeCell);
     	transTable.getColumnModel().getColumn(2).setMinWidth(hugeCell);
     	transTable.getColumnModel().getColumn(2).setMaxWidth(hugeCell);
-    	transTable.getColumnModel().getColumn(3).setHeaderValue("MinF:");
+    	transTable.getColumnModel().getColumn(3).setHeaderValue("MinF");
     	transTable.getColumnModel().getColumn(3).setPreferredWidth(hugeCell);
     	transTable.getColumnModel().getColumn(3).setMinWidth(hugeCell);
     	transTable.getColumnModel().getColumn(3).setMaxWidth(hugeCell);
-    	transTable.getColumnModel().getColumn(4).setHeaderValue("MaxF:");
+    	transTable.getColumnModel().getColumn(4).setHeaderValue("MaxF");
     	transTable.getColumnModel().getColumn(4).setPreferredWidth(hugeCell);
     	transTable.getColumnModel().getColumn(4).setMinWidth(hugeCell);
     	transTable.getColumnModel().getColumn(4).setMaxWidth(hugeCell);
-    	transTable.getColumnModel().getColumn(5).setHeaderValue("notF:");
+    	transTable.getColumnModel().getColumn(5).setHeaderValue("notF");
     	transTable.getColumnModel().getColumn(5).setPreferredWidth(cellSize);
     	transTable.getColumnModel().getColumn(5).setMinWidth(cellSize);
     	transTable.getColumnModel().getColumn(5).setMaxWidth(cellSize);
     	
-    	transTable.getColumnModel().getColumn(6).setHeaderValue("stdDev:");
+    	transTable.getColumnModel().getColumn(6).setHeaderValue("stdDev");
     	transTable.getColumnModel().getColumn(6).setPreferredWidth(cellSize);
     	transTable.getColumnModel().getColumn(6).setMinWidth(cellSize);
     	transTable.getColumnModel().getColumn(6).setMaxWidth(cellSize);
@@ -1094,7 +1057,7 @@ public class HolmesSimKnockVis extends JFrame {
     	transTable.setDefaultRenderer(Object.class, tableRenderer);
 
     	try {
-    		if(transitions.size() == 0) {
+    		if(transitions.isEmpty()) {
         		for(int p=0; p<data.transNumber; p++) 
         			modelTrans.addNew(data, p, null);
         	} else {
@@ -1104,7 +1067,9 @@ public class HolmesSimKnockVis extends JFrame {
             		modelTrans.addNew(data, index, trans);
             	}
         	}
-    	} catch (Exception e) {}
+    	} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00563exception")+" "+ex.getMessage(), "error", true);
+		}
     	
         //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
     	
@@ -1120,8 +1085,8 @@ public class HolmesSimKnockVis extends JFrame {
     	NetSimulationData dataComp = getCorrectSet(false);
     	if(dataRef == null || dataComp == null)
     		return;
-    	
-    	modelTransComp = new SimKnockTransCompTableModel();
+
+		SimKnockTransCompTableModel modelTransComp = new SimKnockTransCompTableModel();
     	transTable.setModel(modelTransComp);
         
     	int cellSize = 50;
@@ -1132,7 +1097,7 @@ public class HolmesSimKnockVis extends JFrame {
     	transTable.getColumnModel().getColumn(0).setPreferredWidth(cellSize);
     	transTable.getColumnModel().getColumn(0).setMinWidth(cellSize);
     	transTable.getColumnModel().getColumn(0).setMaxWidth(cellSize);
-    	transTable.getColumnModel().getColumn(1).setHeaderValue("Transition name");
+    	transTable.getColumnModel().getColumn(1).setHeaderValue(lang.getText("HSKVwin_entry042"));
     	transTable.getColumnModel().getColumn(1).setPreferredWidth(300);
     	transTable.getColumnModel().getColumn(1).setMinWidth(100);
     	transTable.getColumnModel().getColumn(2).setHeaderValue("AvgFRef");
@@ -1152,7 +1117,7 @@ public class HolmesSimKnockVis extends JFrame {
     	transTable.getColumnModel().getColumn(5).setMinWidth(cellSize);
     	transTable.getColumnModel().getColumn(5).setMaxWidth(cellSize);
     	
-    	transTable.getColumnModel().getColumn(6).setHeaderValue("diff:");
+    	transTable.getColumnModel().getColumn(6).setHeaderValue("diff");
     	transTable.getColumnModel().getColumn(6).setPreferredWidth(largeCell+10);
     	transTable.getColumnModel().getColumn(6).setMinWidth(largeCell+10);
     	transTable.getColumnModel().getColumn(6).setMaxWidth(largeCell+10);
@@ -1174,14 +1139,14 @@ public class HolmesSimKnockVis extends JFrame {
         
     	transTable.setName("TransitionsCompTable");
     	transTable.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-    	tableRendererTrans = new SimKnockTableRenderer(transTable);
+		SimKnockTableRenderer tableRendererTrans = new SimKnockTableRenderer(transTable);
     	tableRendererTrans.setMode(1);
     	transTable.setDefaultRenderer(String.class, tableRendererTrans);
     	transTable.setDefaultRenderer(Double.class, tableRendererTrans);
     	
 
     	try {
-    		if(transitions.size() == 0) {
+    		if(transitions.isEmpty()) {
         		for(int index=0; index<dataRef.transNumber; index++) 
         			modelTransComp.addNew(dataRef, dataComp, index, null);
         	} else {
@@ -1191,24 +1156,23 @@ public class HolmesSimKnockVis extends JFrame {
             		modelTransComp.addNew(dataRef, dataComp, index, trans);
             	}
         	}
-    	} catch (Exception e) {}
+    	} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00564exception")+" "+ex.getMessage(), "error", true);
+		}
     	
         //action.addPlacesToModel(modelPlaces); // metoda generująca dane o miejscach
     	
     	transTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         transTable.validate();
         
-        //TODO:
-        
         if(notepadInfo) {
-        	HolmesNotepad notepad = null;
-        	notepad = new HolmesNotepad(900,600);
+        	HolmesNotepad notepad = new HolmesNotepad(900,600);
         	notepad.setVisible(true);
-        	notepad.addTextLine("TRANSITIONS\n", "text");
+        	notepad.addTextLine(lang.getText("HSKVwin_entry043"), "text"); //TRANSITIONS
     		
     		for(TransCompContainer data : modelTransComp.accessDataMatrix()) {
     			double diff = data.firingAvgPercDiff;
-    			String dif = "";
+    			String dif;
     			if(diff == -999999.0) {
     				dif = " -inf";
     			} else if(diff == 999991.0) {
@@ -1239,8 +1203,7 @@ public class HolmesSimKnockVis extends JFrame {
     	int selRef = referencesCombo.getSelectedIndex() - 1;
     	if(selRef == -1) {
     		JOptionPane.showMessageDialog(null,
-					"Please select reference set!", 
-					"Reference selection", JOptionPane.WARNING_MESSAGE);
+					lang.getText("HSKVwin_entry044"), lang.getText("HSKVwin_entry044t"), JOptionPane.WARNING_MESSAGE);
     		seriesCombo.setSelectedIndex(0);
     		return;
     	}
@@ -1250,16 +1213,16 @@ public class HolmesSimKnockVis extends JFrame {
     	}
     	
     	int transNumber = dataPackage.get(0).transNumber;
-    	modelTransCompAll = new SimKnockTransCompAllTableModel(transNumber);
+		SimKnockTransCompAllTableModel modelTransCompAll = new SimKnockTransCompAllTableModel(transNumber);
     	transCompAllTable.setModel(modelTransCompAll);
     	transCompAllTable.getColumnModel().getColumn(0).setHeaderValue("ID");
     	transCompAllTable.getColumnModel().getColumn(0).setPreferredWidth(40);
     	transCompAllTable.getColumnModel().getColumn(0).setMinWidth(40);
     	transCompAllTable.getColumnModel().getColumn(0).setMaxWidth(40);
-    	transCompAllTable.getColumnModel().getColumn(1).setHeaderValue("Transition name");
+    	transCompAllTable.getColumnModel().getColumn(1).setHeaderValue(lang.getText("HSKVwin_entry045"));
     	transCompAllTable.getColumnModel().getColumn(1).setPreferredWidth(300);
     	transCompAllTable.getColumnModel().getColumn(1).setMinWidth(100);
-    	transCompAllTable.getColumnModel().getColumn(2).setHeaderValue("Knocked");
+    	transCompAllTable.getColumnModel().getColumn(2).setHeaderValue(lang.getText("HSKVwin_entry046"));
     	transCompAllTable.getColumnModel().getColumn(2).setPreferredWidth(50);
     	transCompAllTable.getColumnModel().getColumn(2).setMinWidth(50);
     	transCompAllTable.getColumnModel().getColumn(2).setMaxWidth(50);
@@ -1281,17 +1244,17 @@ public class HolmesSimKnockVis extends JFrame {
 
     	
     	int placesNumber = dataPackage.get(0).placesNumber;
-    	modelPlacesCompAll = new SimKnockPlacesCompAllTableModel(placesNumber);
+		SimKnockPlacesCompAllTableModel modelPlacesCompAll = new SimKnockPlacesCompAllTableModel(placesNumber);
     	placesCompAllTable.setModel(modelPlacesCompAll);
     	
     	placesCompAllTable.getColumnModel().getColumn(0).setHeaderValue("ID");
     	placesCompAllTable.getColumnModel().getColumn(0).setPreferredWidth(40);
     	placesCompAllTable.getColumnModel().getColumn(0).setMinWidth(40);
     	placesCompAllTable.getColumnModel().getColumn(0).setMaxWidth(40);
-    	placesCompAllTable.getColumnModel().getColumn(1).setHeaderValue("Transition name");
+    	placesCompAllTable.getColumnModel().getColumn(1).setHeaderValue(lang.getText("HSKVwin_entry047"));
     	placesCompAllTable.getColumnModel().getColumn(1).setPreferredWidth(300);
     	placesCompAllTable.getColumnModel().getColumn(1).setMinWidth(100);
-    	placesCompAllTable.getColumnModel().getColumn(2).setHeaderValue("Disabled");
+    	placesCompAllTable.getColumnModel().getColumn(2).setHeaderValue(lang.getText("HSKVwin_entry048"));
     	placesCompAllTable.getColumnModel().getColumn(2).setPreferredWidth(50);
     	placesCompAllTable.getColumnModel().getColumn(2).setMinWidth(50);
     	placesCompAllTable.getColumnModel().getColumn(2).setMaxWidth(50);
@@ -1310,8 +1273,7 @@ public class HolmesSimKnockVis extends JFrame {
     	placesCompAllTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     	placesCompAllTable.validate();
     	resizeColumnWidth(placesCompAllTable);
-    	
-    	
+		
     	HolmesNotepad notePadTrans = null;
     	HolmesNotepad notePadPlaces = null;
     	if(notepadInfo) {
@@ -1320,8 +1282,7 @@ public class HolmesSimKnockVis extends JFrame {
     		notePadPlaces = new HolmesNotepad(900,600);
     		notePadPlaces.setVisible(true);
     	}
-
-    	//TODO:
+		
     	modelTransCompAll.tTableData = new ArrayList<>();
     	modelPlacesCompAll.pTableData = new ArrayList<>();
     	for(int t=0; t<transNumber; t++) {
@@ -1338,8 +1299,8 @@ public class HolmesSimKnockVis extends JFrame {
     		tTableVector.add(null);
     		
     		//NAZWY:
-    		String name = "";
-    		if(transitions.size() == 0) {
+    		String name;
+    		if(transitions.isEmpty()) {
     			name = "t"+t;
     		} else {
     			name = "t"+transitions.get(t).getName();
@@ -1434,10 +1395,9 @@ public class HolmesSimKnockVis extends JFrame {
     				pTableVector.add(details);
     			}
     		}
-    		if(tVector.size() != tTableVector.size() || pVector.size() != pTableVector.size()) {
-    			@SuppressWarnings("unused")
-				int x=1;
-    		}
+    		//if(tVector.size() != tTableVector.size() || pVector.size() != pTableVector.size()) {
+			//	int x=1;
+    		//}
     		
     		modelTransCompAll.addNew(tVector);
     		modelTransCompAll.tTableData.add(tTableVector);
@@ -1445,15 +1405,17 @@ public class HolmesSimKnockVis extends JFrame {
     		modelPlacesCompAll.pTableData.add(pTableVector);
     		
     		if(notepadInfo) {
-    			for(String s : tVector) {
-    				notePadTrans.addTextLine(s+";", "text");
-    			}
-    			
-    			for(String s : pVector) {
-    				notePadPlaces.addTextLine(s+";", "text");
-    			}
-    			notePadTrans.addTextLineNL("", "text");
-    			notePadPlaces.addTextLineNL("", "text");
+				if(notePadTrans != null) {
+					for(String s : tVector) {
+						notePadTrans.addTextLine(s+";", "text");
+					}
+
+					for(String s : pVector) {
+						notePadPlaces.addTextLine(s+";", "text");
+					}
+					notePadTrans.addTextLineNL("", "text");
+					notePadPlaces.addTextLineNL("", "text");
+				}
     		}
     	}
     }
@@ -1462,14 +1424,14 @@ public class HolmesSimKnockVis extends JFrame {
      * Tworzy tabele porównania serii danych ze zbiorem referencyjnym - w formie tekstowej.
      * @param selected int - ID serii
      */
-    private void createCompareAllTablesNotepad(int selected) {
+    @SuppressWarnings("UnnecessaryContinue")
+	private void createCompareAllTablesNotepad(int selected) {
     	long IDseries = pn.accessSimKnockoutData().accessSeries().get(selected);
     	ArrayList<NetSimulationData> dataPackage = pn.accessSimKnockoutData().getSeriesDatasets(IDseries);
     	int selRef = referencesCombo.getSelectedIndex() - 1;
     	if(selRef == -1) {
     		JOptionPane.showMessageDialog(null,
-					"Please select reference set!", 
-					"Reference selection", JOptionPane.WARNING_MESSAGE);
+					lang.getText("HSKVwin_entry044"), lang.getText("HSKVwin_entry044t"), JOptionPane.WARNING_MESSAGE);
     		seriesCombo.setSelectedIndex(0);
     		return;
     	}
@@ -1485,15 +1447,27 @@ public class HolmesSimKnockVis extends JFrame {
     	
     	HolmesNotepad notePad = new HolmesNotepad(900,600);
 		notePad.setVisible(true);
-		notePad.addTextLineNL("Data series "+selected+" analysis:", "text");
-		notePad.addTextLineNL(" +/-20% treshold for increased/decreased firing of transitions ", "text");
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HSKVwin_entry049"), selected);
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry049", "error", true);
+		}
+		notePad.addTextLineNL(strB, "text");
+		notePad.addTextLineNL(" "+lang.getText("HSKVwin_entry050"), "text");
 		notePad.addTextLineNL("===============================================================================", "text");
 		notePad.addTextLineNL("", "text");
 
     	for(int t=0; t<transNumber; t++) {
     		NetSimulationData dataSet = dataPackage.get(t);
-
-    		notePad.addTextLineNL("*** t"+t+"_"+transitions.get(t).getName()+"    disabled manually. Impact on the net:", "text");
+			strB = "err.";
+			try {
+				strB = String.format(lang.getText("HSKVwin_entry051"), t, transitions.get(t).getName());
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry051", "error", true);
+			}
+			
+    		notePad.addTextLineNL(strB, "text");
     		ArrayList<Integer> transVector = new ArrayList<>();
     		for(int t1=0; t1<transNumber; t1++) {
     			if(t == t1)
@@ -1507,22 +1481,41 @@ public class HolmesSimKnockVis extends JFrame {
     				continue;
 
     			if(refSet.transFiringsAvg.get(t1) == 0 && dataSet.transFiringsAvg.get(t1) == 0) {
-    				notePad.addTextLineNL("      (DEAD IN REF & SERIES SETS!) t"+t1+"_"+transitions.get(t1).getName()+"", "text");
+					strB = "err.";
+					try {
+						strB = String.format("      "+lang.getText("HSKVwin_entry052"), t1, transitions.get(t1).getName());
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry052", "error", true);
+					}
+					
+    				notePad.addTextLineNL(strB, "text");
     				transVector.set(t1, 0);
     				continue;
     			}
     			
     			if(refSet.transFiringsAvg.get(t1) == 0 && dataSet.transFiringsAvg.get(t1) > 0) {
     				double value = dataSet.transFiringsAvg.get(t1) * 100;
-    				notePad.addTextLineNL("      (DEAD IN REF, ALIVE IN SERIES) [avg fire chance: "
-    						+formatter2.format(value)+"%]  t"+t1+"_"+transitions.get(t1).getName(), "text");
+					strB = "err.";
+					try {
+						strB = String.format("      "+lang.getText("HSKVwin_entry053"), formatter2.format(value), t1, transitions.get(t1).getName());
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry053", "error", true);
+					}
+					
+    				notePad.addTextLineNL(strB, "text");
     				transVector.set(t1, 0);
     				continue;
     			}
     			if(refSet.transFiringsAvg.get(t1) > 0 && dataSet.transFiringsAvg.get(t1) == 0) {
     				double value = refSet.transFiringsAvg.get(t1) * 100;
-    				notePad.addTextLineNL("      (KNOCKED OUT IN SERIES SET) [avg fired chance in reference: "
-    						+formatter2.format(value)+"%]  t"+t1+"_"+transitions.get(t1).getName(), "text");
+					strB = "err.";
+					try {
+						strB = String.format("      "+lang.getText("HSKVwin_entry054")+" " +formatter2.format(value)+"%]  t%d_%s", t1, transitions.get(t1).getName());
+					} catch (Exception e) {
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry054", "error", true);
+					}
+					
+    				notePad.addTextLineNL(strB, "text");
     				transVector.set(t1, 0);
     				continue;
     			}
@@ -1535,18 +1528,24 @@ public class HolmesSimKnockVis extends JFrame {
     		
     			double diff = refSet.transFiringsAvg.get(t1) - dataSet.transFiringsAvg.get(t1);
     			diff = (diff / refSet.transFiringsAvg.get(t1));
-    			String txt = "[firing chance refSet:"+ formatter2.format(refSet.transFiringsAvg.get(t1)*100)+"% dataSet: "
-    					+formatter2.format(dataSet.transFiringsAvg.get(t1)*100)+"%] ";
-    			if(diff < 0) { //wzrosło w stos. do ref		
+
+				strB = "err.";
+				try {
+					strB = String.format(lang.getText("HSKVwin_entry055")+" "
+							,formatter2.format(refSet.transFiringsAvg.get(t1)*100), formatter2.format(dataSet.transFiringsAvg.get(t1)*100));
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry055", "error", true);
+				}
+				if(diff < 0) { //wzrosło w stos. do ref		
     				diff *= -1;
     				double value = diff * 100;
-					data.put(value, txt+"t"+t1+"_"+transitions.get(t1).getName());
+					data.put(value, strB+"t"+t1+"_"+transitions.get(t1).getName());
     				transVector.set(t1, 0);
     				continue;
     			} else {
     				diff *= -1;
     				double value = diff * 100;
-					data.put(value, txt+"t"+t1+"_"+transitions.get(t1).getName());
+					data.put(value, strB+"t"+t1+"_"+transitions.get(t1).getName());
     				transVector.set(t1, 0);
     				continue;
     			}
@@ -1554,18 +1553,16 @@ public class HolmesSimKnockVis extends JFrame {
 
     		for(Double key: data.keySet()){
     			if(key < -20) {
-    				notePad.addTextLineNL("      (DECREASED) [change: "+formatter1.format(key)+"%] "
+    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry056")+" "+formatter1.format(key)+"%] "
     						+data.get(key), "text");
     			} 
     			
     			if(key > 20) {
-    				notePad.addTextLineNL("      (INCREASED) [change: +"+formatter1.format(key)+"%] "
+    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry057")+" "+formatter1.format(key)+"%] "
     						+data.get(key), "text");
     			}
-
             }
-    			
-    			
+			
     		/*
     		
     		for(int p=0; p<placesNumber; p++) {
@@ -1616,14 +1613,19 @@ public class HolmesSimKnockVis extends JFrame {
     	notePad.addTextLineNL("", "text");
     	notePad.addTextLineNL("", "text");
     	notePad.addTextLineNL("===============================================================================", "text");
-		notePad.addTextLineNL(" +/-20% treshold for increased/decreased tokens in places ", "text");
+		notePad.addTextLineNL(" "+lang.getText("HSKVwin_entry058"), "text");
 		notePad.addTextLineNL("===============================================================================", "text");
 		notePad.addTextLineNL("", "text");
 
     	for(int t=0; t<transNumber; t++) {
     		NetSimulationData dataSet = dataPackage.get(t);
-
-    		notePad.addTextLineNL("*** t"+t+"_"+transitions.get(t).getName()+"    disabled manually. Impact on the net:", "text");
+			strB = "err.";
+			try {
+				strB = String.format("*** t%d_%s    "+lang.getText("HSKVwin_entry059"), t, transitions.get(t).getName());
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry059", "error", true);
+			}
+    		notePad.addTextLineNL(strB, "text");
     		ArrayList<Integer> placesVector = new ArrayList<>();
     		for(int p=0; p<placesNumber; p++) {
     			placesVector.add(1);
@@ -1631,21 +1633,21 @@ public class HolmesSimKnockVis extends JFrame {
     		
     		for(int p=0; p<placesNumber; p++) {
     			if(refSet.placeTokensAvg.get(p) == 0 && dataSet.placeTokensAvg.get(p) == 0) {
-    				notePad.addTextLineNL("      (DEAD IN REF & SERIES SETS!) p"+p+"_"+places.get(p).getName()+"", "text");
+    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry060")+p+"_"+places.get(p).getName()+"", "text");
     				placesVector.set(p, 0);
     				continue;
     			}
     			
     			if(refSet.placeTokensAvg.get(p) == 0 && dataSet.placeTokensAvg.get(p) > 0) {
     				double value = dataSet.placeTokensAvg.get(p);
-    				notePad.addTextLineNL("      (DEAD IN REF, ALIVE IN SERIES) [avg tokens: "
+    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry061")+" "
     						+formatter3.format(value)+"]  p"+p+"_"+places.get(p).getName(), "text");
     				placesVector.set(p, 0);
     				continue;
     			}
     			if(refSet.placeTokensAvg.get(p) > 0 && dataSet.placeTokensAvg.get(p) == 0) {
     				double value = refSet.placeTokensAvg.get(p);
-    				notePad.addTextLineNL("      (KNOCKED OUT IN SERIES SET) [avg tokens reference: "
+    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry062")+" "
     						+formatter3.format(value)+"]  p"+p+"_"+places.get(p).getName(), "text");
     				placesVector.set(p, 0);
     				continue;
@@ -1673,18 +1675,15 @@ public class HolmesSimKnockVis extends JFrame {
     				continue;
     			}
     		}
-
     		for(Double key: data.keySet()){
     			if(key < -20) {
-    				notePad.addTextLineNL("      (DECREASED) [tokens change: "+formatter2.format(key)+"%] "
-    						+data.get(key), "text");
-    			} 
-    			
-    			if(key > 20) {
-    				notePad.addTextLineNL("      (INCREASED) [tokens change: +"+formatter2.format(key)+"%] "
+    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry063")+" "+formatter2.format(key)+"%] "
     						+data.get(key), "text");
     			}
-
+    			if(key > 20) {
+    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry064")+formatter2.format(key)+"%] "
+    						+data.get(key), "text");
+    			}
             }
     	}
     }
@@ -1698,17 +1697,9 @@ public class HolmesSimKnockVis extends JFrame {
      */
     private boolean getTransSign1(NetSimulationData refSet, NetSimulationData dataSet, int index) {
     	if(refSet.transFiringsAvg.get(index) > dataSet.transFiringsAvg.get(index)) {
-    		if(refSet.transFiringsMin.get(index) > dataSet.transFiringsMax.get(index)) {
-    			return true;
-    		} else {
-    			return false;
-    		}
+			return ( refSet.transFiringsMin.get(index) > dataSet.transFiringsMax.get(index) );
     	} else {
-    		if(refSet.transFiringsMax.get(index) < dataSet.transFiringsMin.get(index)) {
-    			return true;
-    		} else {
-    			return false;
-    		}
+			return ( refSet.transFiringsMax.get(index) < dataSet.transFiringsMin.get(index) );
     	}
     }
     
@@ -1721,17 +1712,9 @@ public class HolmesSimKnockVis extends JFrame {
      */
     private boolean getTransSign2(NetSimulationData refSet, NetSimulationData dataSet, int index) {
     	if(refSet.transFiringsAvg.get(index) > dataSet.transFiringsAvg.get(index)) {
-    		if(refSet.transFiringsAvg.get(index) - refSet.transStdDev.get(index) > dataSet.transFiringsAvg.get(index) + dataSet.transStdDev.get(index)) {
-    			return true;
-    		} else {
-    			return false;
-    		}
+			return ( refSet.transFiringsAvg.get(index) - refSet.transStdDev.get(index) > dataSet.transFiringsAvg.get(index) + dataSet.transStdDev.get(index) );
     	} else { //ref mniejsze niż knock
-    		if(refSet.transFiringsAvg.get(index) + refSet.transStdDev.get(index) < dataSet.transFiringsAvg.get(index) - dataSet.transStdDev.get(index)) {
-    			return true;
-    		} else {
-    			return false;
-    		}
+			return ( refSet.transFiringsAvg.get(index) + refSet.transStdDev.get(index) < dataSet.transFiringsAvg.get(index) - dataSet.transStdDev.get(index) );
     	}
     }
     
@@ -1744,17 +1727,9 @@ public class HolmesSimKnockVis extends JFrame {
      */
     private boolean getPlaceSign1(NetSimulationData refSet, NetSimulationData dataSet, int index) {
     	if(refSet.placeTokensAvg.get(index) > dataSet.placeTokensAvg.get(index)) {
-    		if(refSet.placeTokensMin.get(index) > dataSet.placeTokensMax.get(index)) {
-    			return true;
-    		} else {
-    			return false;
-    		}
+			return ( refSet.placeTokensMin.get(index) > dataSet.placeTokensMax.get(index) );
     	} else {
-    		if(refSet.placeTokensMax.get(index) < dataSet.placeTokensMin.get(index)) {
-    			return true;
-    		} else {
-    			return false;
-    		}
+			return ( refSet.placeTokensMax.get(index) < dataSet.placeTokensMin.get(index) );
     	}
     }
     
@@ -1767,17 +1742,9 @@ public class HolmesSimKnockVis extends JFrame {
      */
     private boolean getPlaceSign2(NetSimulationData refSet, NetSimulationData dataSet, int index) {
     	if(refSet.placeTokensAvg.get(index) > dataSet.placeTokensAvg.get(index)) {
-    		if(refSet.placeTokensAvg.get(index) - refSet.placeStdDev.get(index) > dataSet.placeTokensAvg.get(index) + dataSet.placeStdDev.get(index)) {
-    			return true;
-    		} else {
-    			return false;
-    		}
+			return ( refSet.placeTokensAvg.get(index) - refSet.placeStdDev.get(index) > dataSet.placeTokensAvg.get(index) + dataSet.placeStdDev.get(index) );
     	} else {
-    		if(refSet.placeTokensAvg.get(index) + refSet.placeStdDev.get(index) < dataSet.placeTokensAvg.get(index) - dataSet.placeStdDev.get(index)) {
-    			return true;
-    		} else {
-    			return false;
-    		}
+			return ( refSet.placeTokensAvg.get(index) + refSet.placeStdDev.get(index) < dataSet.placeTokensAvg.get(index) - dataSet.placeStdDev.get(index) );
     	}
     }
     
@@ -1811,7 +1778,7 @@ public class HolmesSimKnockVis extends JFrame {
     	addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 		    	boss.setEnabled(true);
-		    	GUIManager.getDefaultGUIManager().getFrame().setEnabled(true);
+				overlord.getFrame().setEnabled(true);
 		    }
 		});
     }
@@ -1826,27 +1793,29 @@ public class HolmesSimKnockVis extends JFrame {
 		ArrayList<NetSimulationData> references = pn.accessSimKnockoutData().accessReferenceSets();
 		int refSize = references.size();
 		doNotUpdate = true;
-		int oldSelected = 0;
+		int oldSelected;
 		oldSelected = referencesCombo.getSelectedIndex();
 		referencesCombo.removeAllItems();
 		referencesCombo.addItem(" ----- ");
 		if(refSize > 0) {
 			for(int r=0; r<refSize; r++) {
-				String disTxt = "Disabled: ";
+				StringBuilder disTxt = new StringBuilder(lang.getText("HSKVwin_entry065")+" "); //Disabled: 
 				for(int t : references.get(r).disabledTransitionsIDs) {
-					disTxt += "t"+t+", ";
+					disTxt.append("t").append(t).append(", ");
 				}
 				for(int t : references.get(r).disabledMCTids) {
-					disTxt += "MCT"+(t+1)+", ";
+					disTxt.append("MCT").append(t + 1).append(", ");
 				}
-				disTxt = disTxt.replace(", ", " ");
+				disTxt = new StringBuilder(disTxt.toString().replace(", ", " "));
+
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HSKVwin_entry066"), r, disTxt, references.get(r).netSimType, references.get(r).maxMode);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry066", "error", true);
+				}
 				
-				String name = "Data set:"+r+":    "+disTxt+"     NetMode:"+references.get(r).netSimType+
-						"   MaxMode:"+references.get(r).maxMode;
-				
-				//String name = "Ref:"+r+" Date: "+references.get(r).date+" NetMode:"+references.get(r).netSimType+
-				//		" MaxMode:"+references.get(r).maxMode;
-				referencesCombo.addItem(name);
+				referencesCombo.addItem(strB);
 			}
 			
 			if(oldSelected < referencesCombo.getItemCount())
@@ -1860,35 +1829,34 @@ public class HolmesSimKnockVis extends JFrame {
 		//knockout data:
 		ArrayList<NetSimulationData> knockout = pn.accessSimKnockoutData().accessKnockoutDataSets();
 		int knockSize = knockout.size();
-		int oldKnockSelected = 0;
-		oldKnockSelected = dataCombo.getSelectedIndex();
+		int oldKnockSelected = dataCombo.getSelectedIndex();
 
 		dataCombo.removeAllItems();
 		dataCombo.addItem(" ----- ");
 		if(knockSize > 0) {
 			for(int r=0; r<knockSize; r++) {
 				
-				String disTxt = "Disabled: ";
+				StringBuilder disTxt = new StringBuilder(lang.getText("HSKVwin_entry065")+" "); //Disabled: 
 				for(int t : knockout.get(r).disabledTransitionsIDs) {
-					disTxt += "t"+t+", ";
+					disTxt.append("t").append(t).append(", ");
 				}
 				for(int t : knockout.get(r).disabledMCTids) {
-					disTxt += "MCT"+(t+1)+", ";
+					disTxt.append("MCT").append(t + 1).append(", ");
 				}
-				disTxt = disTxt.replace(", ", " ");
+				disTxt = new StringBuilder(disTxt.toString().replace(", ", " "));
 				
-				String transName = "(multiple transitions";
+				String transName = lang.getText("HSKVwin_entry067"); //Multiple transitions
 				if(knockout.get(r).disabledTransitionsIDs.size() == 1) {
 					transName = "("+transitions.get(knockout.get(r).disabledTransitionsIDs.get(0)).getName();
 				}
 				transName += ")";
-				
-				String name = "Data set:"+r+":    "+disTxt+"     NetMode:"+knockout.get(r).netSimType+
-						"   MaxMode:"+knockout.get(r).maxMode+"  "+transName;
-				
-				//String name = "Data set:"+r+" Date: "+knockout.get(r).date+" NetMode:"+knockout.get(r).netSimType+
-				//		" MaxMode:"+knockout.get(r).maxMode;
-				dataCombo.addItem(name);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HSKVwin_entry068"), r, disTxt, knockout.get(r).netSimType, knockout.get(r).maxMode, transName);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry068", "error", true);
+				}
+				dataCombo.addItem(strB);
 			}
 	
 			if(oldKnockSelected < dataCombo.getItemCount())
@@ -1901,16 +1869,20 @@ public class HolmesSimKnockVis extends JFrame {
 		//Seires daya
 		ArrayList<Long> series = pn.accessSimKnockoutData().accessSeries();
 		int seriesSize = series.size();
-		int oldSeriesSelected = 0;
-		oldSeriesSelected = seriesCombo.getSelectedIndex();
+		int oldSeriesSelected = seriesCombo.getSelectedIndex();
 		seriesCombo.removeAllItems();
 		seriesCombo.addItem(" ----- ");
 		if(seriesSize > 0) {
 			for(int s=0; s<seriesSize; s++) {
 				long IDseries = series.get(s);
-				NetSimulationData representant = pn.accessSimKnockoutData().returnSeriesFirst(IDseries);	
-				String disTxt = "Package: "+s+" Steps: "+representant.steps+" Reps: "+representant.reps;
-				seriesCombo.addItem(disTxt);
+				NetSimulationData representant = pn.accessSimKnockoutData().returnSeriesFirst(IDseries);
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HSKVwin_entry069"), s, representant.steps, representant.reps);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry069", "error", true);
+				}
+				seriesCombo.addItem(strB);
 			}
 	
 			if(oldSeriesSelected < seriesCombo.getItemCount())
@@ -1918,11 +1890,9 @@ public class HolmesSimKnockVis extends JFrame {
 			else
 				seriesCombo.setSelectedIndex(0);
 		}
-		
 		doNotUpdate = false;
 	}
-
-
+	
 	//***********************************************************************************************************************
 	//***********************************************************************************************************************
 	//***********************************************************************************************************************
@@ -1938,29 +1908,27 @@ public class HolmesSimKnockVis extends JFrame {
 	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
 	  	    	
 	  	    	HolmesNodeInfo window = new HolmesNodeInfo(
-	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(index), this);
+						overlord.getWorkspace().getProject().getPlaces().get(index), this);
 	  	    	window.setVisible(true);
 			} else if(name.contains("Transitions")){
 				int row = table.getSelectedRow();
 	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
 	  	    	
 	  	    	HolmesNodeInfo window = new HolmesNodeInfo(
-	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(index), this);
+						overlord.getWorkspace().getProject().getTransitions().get(index), this);
 	  	    	window.setVisible(true);
 			}
-		} catch (Exception e) {
-			
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00565exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	
 	/**
 	 * Klasa odpowiedzialna za informacje o wskazanym pasku wykresu.
-	 * 
-	 * @author MR
 	 */
-	public class CustomToolTipGenerator implements CategoryToolTipGenerator  {
-		boolean isPlaces = false;
-		boolean compareMode = false;
+	public static class CustomToolTipGenerator implements CategoryToolTipGenerator  {
+		boolean isPlaces;
+		boolean compareMode;
 		ArrayList<Place> places;
 		ArrayList<Transition> transitions;
 		NetSimulationData refData;
@@ -1999,48 +1967,54 @@ public class HolmesSimKnockVis extends JFrame {
 		 */
 		@Override
 	    public String generateToolTip(CategoryDataset dataset, int bar, int nodeIndex)   {
-	    	String text = "<html><font size=\"5\">";
-	    	text += "Simulate steps: <b>"+refData.steps+"</b> Repetitions: <b>"+refData.reps+"</b><br>";
+	    	StringBuilder text = new StringBuilder("<html><font size=\"5\">");
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HSKVwin_entry070"), refData.steps, refData.reps);
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry070", "error", true);
+			}
+	    	text.append(strB);
 	    	if(compareMode) { //compare ref and knockout:
 	    		if(isPlaces) {
 	    			if(simpleMode) {
-	    				text += "Place: p"+nodeIndex;
+	    				text.append(lang.getText("HSKVwin_entry071")).append(nodeIndex); //Place: p
 	    			} else {
-	    				text += "Place: p"+nodeIndex+"_"+places.get(nodeIndex).getName();
+	    				text.append(lang.getText("HSKVwin_entry071")).append(nodeIndex).append("_").append(places.get(nodeIndex).getName()); //Place: p
 	    			}
 	    			double tokensRef = refData.placeTokensAvg.get(nodeIndex);
-	    			text += "<br>Reference tokens: <b>"+formatter.format(tokensRef);
-	    			text += "</b> StdDev: <b>"+formatter.format(refData.placeStdDev.get(nodeIndex))+"</b>";
+	    			text.append(lang.getText("HSKVwin_entry072")).append(formatter.format(tokensRef)); //Reference tokens:
+	    			text.append(lang.getText("HSKVwin_entry073")).append(formatter.format(refData.placeStdDev.get(nodeIndex))).append("</b>"); // StdDev:
 	    			
 	    			double tokensKnock = knockData.placeTokensAvg.get(nodeIndex);
-	    			text += "<br>Knockout tokens: <b>"+formatter.format(tokensKnock);
-	    			text += "</b> StdDev: <b>"+formatter.format(knockData.placeStdDev.get(nodeIndex))+"</b>";
+	    			text.append(lang.getText("HSKVwin_entry074")).append(formatter.format(tokensKnock)); //Knockout tokens:
+	    			text.append(lang.getText("HSKVwin_entry073")).append(formatter.format(knockData.placeStdDev.get(nodeIndex))).append("</b>"); // StdDev:
 	    			
 	    			
 		    	} else {
 		    		if(simpleMode) {
-		    			text += "Transition: t"+nodeIndex;
+		    			text.append(lang.getText("HSKVwin_entry075")).append(nodeIndex); //Transition: t
 	    			} else {
-	    				text += "Transition: t"+nodeIndex+"_"+transitions.get(nodeIndex).getName();
+	    				text.append(lang.getText("HSKVwin_entry075")).append(nodeIndex).append("_").append(transitions.get(nodeIndex).getName()); //Transition: t
 	    			}
 		    		double firingRef = refData.transFiringsAvg.get(nodeIndex);
-	    			text += "<br>Reference firing: <b>"+formatter.format(firingRef);
-	    			text += "</b> StdDev: <b>"+formatter.format(refData.transStdDev.get(nodeIndex))+"</b>";
+	    			text.append(lang.getText("HSKVwin_entry076")).append(formatter.format(firingRef)); //Reference firing:
+	    			text.append(lang.getText("HSKVwin_entry073")).append(formatter.format(refData.transStdDev.get(nodeIndex))).append("</b>"); // StdDev:
 	    			
 	    			double firingKnock = knockData.transFiringsAvg.get(nodeIndex);
-	    			text += "<br>Knockout firing: <b>"+formatter.format(firingKnock);
-	    			text += "</b> StdDev: <b>"+formatter.format(knockData.transStdDev.get(nodeIndex))+"</b>";
+	    			text.append(lang.getText("HSKVwin_entry077")).append(formatter.format(firingKnock)); //Knockout firing:
+	    			text.append(lang.getText("HSKVwin_entry073")).append(formatter.format(knockData.transStdDev.get(nodeIndex))).append("</b>"); // StdDev:
 	    			
 	    			//dodatkowe info o wyłączonej tranzycji:
 	    			if(bar != 0) {
 	    				if(knockData.disabledTotals.contains(nodeIndex)) {
-		    				text += "<br><font color=\"green\">Transition disabled manually in simulation</font> ";
+		    				text.append(lang.getText("HSKVwin_entry078"));
 		    			} else {
 		    				if(firingKnock == 0) {
-		    					text += "<br><font color=\"red\">Transition starved because of other disabled transition(s)</font><br><b>";
+		    					text.append(lang.getText("HSKVwin_entry079"));
 		    					for(int t : knockData.disabledTotals)
-		    						text += "t"+t+" ";
-		    					text += "</b>";
+		    						text.append("t").append(t).append(" ");
+		    					text.append("</b>");
 		    				}
 		    			}
 	    			}
@@ -2048,40 +2022,40 @@ public class HolmesSimKnockVis extends JFrame {
 	    	} else { //single data mode:
 	    		if(isPlaces) {
 	    			if(simpleMode) {
-	    				text += "Place: p"+nodeIndex;
+	    				text.append(lang.getText("HSKVwin_entry071")).append(nodeIndex); //Place: p
 	    			} else {
-	    				text += "Place: p"+nodeIndex+"_"+places.get(nodeIndex).getName();
+	    				text.append(lang.getText("HSKVwin_entry071")).append(nodeIndex).append("_").append(places.get(nodeIndex).getName()); //Place: p
 	    			}
 	    			double tokensRef = refData.placeTokensAvg.get(nodeIndex);
-	    			text += "<br>Tokens: <b>"+formatter.format(tokensRef);
-	    			text += "</b> StdDev: <b>"+formatter.format(refData.placeStdDev.get(nodeIndex))+"</b>";
+	    			text.append(lang.getText("HSKVwin_entry080")).append(formatter.format(tokensRef)); //Tokens:
+	    			text.append(lang.getText("HSKVwin_entry073")).append(formatter.format(refData.placeStdDev.get(nodeIndex))).append("</b>"); // StdDev:
 		    	} else {
 		    		if(simpleMode) {
-		    			text += "Transition: t"+nodeIndex;
+		    			text.append(lang.getText("HSKVwin_entry075")).append(nodeIndex); //Transition: t
 	    			} else {
-	    				text += "Transition: t"+nodeIndex+"_"+transitions.get(nodeIndex).getName();
+	    				text.append(lang.getText("HSKVwin_entry075")).append(nodeIndex).append("_").append(transitions.get(nodeIndex).getName()); //Transition: t
 	    			}
 		    		double firingRef = refData.transFiringsAvg.get(nodeIndex);
-	    			text += "<br>Reference firing: <b>"+formatter.format(firingRef);
-	    			text += "</b> StdDev: <b>"+formatter.format(refData.transStdDev.get(nodeIndex))+"</b>";
+	    			text.append(lang.getText("HSKVwin_entry076")).append(formatter.format(firingRef)); //Reference firing:
+	    			text.append(lang.getText("HSKVwin_entry073")).append(formatter.format(refData.transStdDev.get(nodeIndex))).append("</b>"); // StdDev:
 	    			
 	    			//dodatkowe info o wyłączonej tranzycji:
 	    			if(bar != 0) {
 	    				if(refData.disabledTotals.contains(nodeIndex)) {
-		    				text += "<br><font color=\"green\">Transition disabled manually in simulation</font> ";
+		    				text.append(lang.getText("HSKVwin_entry081")); //Transition disabled manually in simulation
 		    			} else {
 		    				if(firingRef == 0) {
-		    					text += "<br><font color=\"red\">Transition starved because of other disabled transition(s):</font><br><b>";
+		    					text.append(lang.getText("HSKVwin_entry082")); //Transition starved because of other disabled transition(s):
 		    					for(int t : refData.disabledTotals)
-		    						text += "t"+t+" ";
-		    					text += "</b>";
+		    						text.append("t").append(t).append(" ");
+		    					text.append("</b>");
 		    				}
 		    			}
 	    			}
 		    	}
 	    	}
-	    	text += "</font></html>";
-	    	return text;
+	    	text.append("</font></html>");
+	    	return text.toString();
 	    }
 	}
 }

@@ -1,15 +1,15 @@
 package holmes.tables;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
 
 /**
  * Model tabeli prostego wyświetlania inwariantów - tylko ID i opis.
- * 
- * @author MR
  */
 public class InvariantsSimpleTableModel extends DefaultTableModel {
+	@Serial
 	private static final long serialVersionUID = -1188248363088935217L;
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
@@ -88,7 +88,6 @@ public class InvariantsSimpleTableModel extends DefaultTableModel {
      */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		String returnValue = dataMatrix.get(rowIndex).get(columnIndex);
-        return returnValue;
+		return dataMatrix.get(rowIndex).get(columnIndex);
 	}
 }

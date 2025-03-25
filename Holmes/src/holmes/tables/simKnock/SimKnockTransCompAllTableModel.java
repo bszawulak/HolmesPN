@@ -1,25 +1,28 @@
 package holmes.tables.simKnock;
 
+import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
+
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Model tabeli danych statystycznych dla tranzycji (wszystkich)
- * 
- * @author MR
- *
+ * Model tabeli danych statystycznych dla tranzycji (wszystkich).
  */
 public class SimKnockTransCompAllTableModel extends AbstractTableModel {
+	@Serial
 	private static final long serialVersionUID = -1394169736979919555L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
 	private int dataSize;
 	public ArrayList<ArrayList<DetailsTrans>> tTableData;
 	
-	public class DetailsTrans {
+	public static class DetailsTrans {
 		public DetailsTrans() {}
-		
 		public double refAvgFiring;
 		public double knockAvgFiring;
 		public int knockDisabled;
@@ -105,28 +108,28 @@ public class SimKnockTransCompAllTableModel extends AbstractTableModel {
      */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Object returnValue = null;
+		Object returnValue;
 		if(columnIndex == 1) {
-			return dataMatrix.get(rowIndex).get(columnIndex).toString();
+			return dataMatrix.get(rowIndex).get(columnIndex);
 		}
 		
 		if(columnIndex < 3) {
 			try {
 				returnValue = dataMatrix.get(rowIndex).get(columnIndex);
 				String strVal = returnValue.toString();
-				int val = Integer.parseInt(strVal);
-				return val;
+				return Integer.parseInt(strVal);
 				//return returnValue;
 			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentry00431exception")+"\n"+e.getMessage(), "error", true);
 				return "error";
 			}
 		} else {
 			try {
 				returnValue = dataMatrix.get(rowIndex).get(columnIndex);
 				String strVal = returnValue.toString().replace(",", ".");
-				double val = Double.parseDouble(strVal);
-				return val;
+				return Double.parseDouble(strVal);
 			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentry00432exception")+"\n"+e.getMessage(), "error", true);
 				return "error";
 			}
 		}

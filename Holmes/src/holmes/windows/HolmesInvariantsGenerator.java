@@ -1,13 +1,9 @@
 package holmes.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -28,6 +24,7 @@ import holmes.analyse.InvariantsCalculator;
 import holmes.analyse.InvariantsCalculatorFeasible;
 import holmes.analyse.InvariantsTools;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.files.io.IOprotocols;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
@@ -41,12 +38,12 @@ import holmes.workspace.ExtensionFileFilter;
 
 /**
  * Okno generatora inwariantów i związanych z nimi narzędzi.
- * 
- * @author MR
  */
 public class HolmesInvariantsGenerator extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 5805567123988000425L;
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JFrame ego;
 	private JTextArea logFieldTinv;
 	private JTextArea logFieldPinv;
@@ -65,17 +62,16 @@ public class HolmesInvariantsGenerator extends JFrame {
 	public HolmesInvariantsGenerator() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
-			
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00440exception")+"\n"+ex.getMessage(), "error", true);
 		}
 		this.ego = this;
 		setVisible(false);
 		this.setTitle("Invariants generator and tools");
-		this.overlord = GUIManager.getDefaultGUIManager();
 		//ego = this;
 		
 		setLayout(new BorderLayout());
-		setSize(new Dimension(666, 560));
+		setSize(new Dimension(682, 570));
 		setLocation(50, 50);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -92,7 +88,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 		JPanel main = new JPanel(new BorderLayout());
 
 		JPanel panelTinv = new JPanel();
-		panelTinv.setLayout(null); /**  ╯°□°）╯︵  ┻━┻   */
+		panelTinv.setLayout(null); //  ╯°□°）╯︵  ┻━┻
 		JPanel buttonPanelT = createUpperButtonPanelTinv(0, 0, 660, 90);
 		JPanel logMainPanelT = createLogMainPanelTinv(0, 90, 530, 400);
 		JPanel sideButtonPanelT = createRightButtonPanelTinv(530, 90, 130, 400);
@@ -103,11 +99,21 @@ public class HolmesInvariantsGenerator extends JFrame {
 		panelTinv.repaint();
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("T-invariants", Tools.getResIcon22("/icons/invWindow/tInvIcon.png"), panelTinv, "T-invariants");
+		tabbedPane.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
+		
+		tabbedPane.addTab(lang.getText("HIGwin_entry002"), Tools.getResIcon22("/icons/invWindow/tInvIcon.png")
+				, panelTinv, lang.getText("HIGwin_entry002t")); //t-invariants
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 		
 		JPanel panelPinv = new JPanel();
-		panelPinv.setLayout(null); /**  ╯°□°）╯︵  ┻━┻   */
+		panelPinv.setLayout(null); //  ╯°□°）╯︵  ┻━┻
 		JPanel buttonPanelP = createUpperButtonPanelPinv(0, 0, 660, 90);
 		JPanel logMainPanelP = createLogMainPanelPinv(0, 90, 530, 400);
 		JPanel sideButtonPanelP = createRightButtonPanelPinv(530, 90, 130, 400);
@@ -117,10 +123,9 @@ public class HolmesInvariantsGenerator extends JFrame {
 		panelPinv.add(sideButtonPanelP);
 		panelPinv.repaint();
 		
-		
-		tabbedPane.addTab("P-invariants", Tools.getResIcon22("/icons/invWindow/pInvIcon.png"), panelPinv, "P-invariants");
+		tabbedPane.addTab(lang.getText("HIGwin_entry003"), Tools.getResIcon22("/icons/invWindow/pInvIcon.png")
+				, panelPinv, lang.getText("HIGwin_entry003t")); //p-invariants
 		tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
-		
 		main.add(tabbedPane, BorderLayout.CENTER);
 		
 		return main;
@@ -134,6 +139,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 	 * @param height - wysokość panelu
 	 * @return JPanel - utworzony panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createUpperButtonPanelTinv(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -144,14 +150,14 @@ public class HolmesInvariantsGenerator extends JFrame {
 		int posY = 10;
 		
 		// przycisk generatora inwariantów
-		JButton generateButton = new JButton("Generate");
+		JButton generateButton = new JButton(lang.getText("HIGwin_entry004")); //Generate
 		generateButton.setBounds(posX, posY, 110, 60);
 		generateButton.setMargin(new Insets(0, 0, 0, 0));
 		generateButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
 		generateButton.addActionListener(actionEvent -> {
-			if(isGeneratorWorking == true) {
-				JOptionPane.showMessageDialog(null, "Invariants generation already in progress.",
-						"Generator working",JOptionPane.WARNING_MESSAGE);
+			if(isGeneratorWorking) {
+				JOptionPane.showMessageDialog(null, lang.getText("HIGwin_entry005"),
+						lang.getText("HIGwin_entry005t"),JOptionPane.WARNING_MESSAGE); //Generator working
 			} else {
 				setGeneratorStatus(true);
 				invGenerator = new InvariantsCalculator(true);
@@ -165,68 +171,64 @@ public class HolmesInvariantsGenerator extends JFrame {
 		
 		// INA GENERATOR
 		JButton INAgenerateButton = new JButton();
-		INAgenerateButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA<br>generator</html>");
+		INAgenerateButton.setText(lang.getText("HIGwin_entry006")); //INA generator
 		INAgenerateButton.setBounds(posX+130, posY, 120, 36);
 		INAgenerateButton.setMargin(new Insets(0, 0, 0, 0));
 		INAgenerateButton.setIcon(Tools.getResIcon22("/icons/invWindow/inaGenerator.png"));
-		INAgenerateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(overlord.getINAStatus()) {
-					setGeneratorStatus(true);
-					overlord.io.generateINAinvariants(true);
-					overlord.reset.setT_invariantsStatus(true);
-					overlord.accessNetTablesWindow().resetT_invData();
-					overlord.markNetChange();
-				} else {
-					JOptionPane.showMessageDialog(null, "INAwin32.exe status set to non ready. Please read initial warnings\n"
-							+ "in the Holmes log windows for more information.", "INAwin32 problem",JOptionPane.ERROR_MESSAGE);
-				}
+		INAgenerateButton.addActionListener(actionEvent -> {
+			if(overlord.getINAStatus()) {
+				setGeneratorStatus(true);
+				overlord.io.generateINAinvariants(true);
+				overlord.reset.setT_invariantsStatus(true);
+				overlord.accessNetTablesWindow().resetT_invData();
+				overlord.markNetChange();
+			} else {
+				JOptionPane.showMessageDialog(null, lang.getText("HIGwin_entry007"), lang.getText("HIGwin_entry007t"),JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		INAgenerateButton.setFocusPainted(false);
+		INAgenerateButton.setEnabled(false);
 		panel.add(INAgenerateButton);
 		
 		JButton loadInvariantsButton = new JButton();
-		loadInvariantsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Load<br>t-invariants</html>");
+		loadInvariantsButton.setText(lang.getText("HIGwin_entry008")); //Load t-invariants
 		loadInvariantsButton.setBounds(posX+255, posY, 120, 36);
 		loadInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		loadInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/loadInvariants.png"));
-		loadInvariantsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				overlord.accessNetTablesWindow().resetT_invData();
-				boolean status = overlord.io.loadExternalAnalysis(true);
-				if(status) {
-					logFieldTinv.append("\n");
-					logFieldTinv.append("=====================================================================\n");
-					logFieldTinv.append("Loaded t-invariants: "+overlord.getWorkspace().getProject().getT_InvMatrix().size()+"\n");
-					logFieldTinv.append("=====================================================================\n");
-					overlord.markNetChange();
-				} else {
-					logFieldTinv.append("\n");
-					logFieldTinv.append("Loading t-invariants from file has been unsuccessfull.\n");
-				}
+		loadInvariantsButton.setToolTipText(lang.getText("HIGwin_entry008info")); //Load t-invariants from file
+		loadInvariantsButton.addActionListener(actionEvent -> {
+			overlord.accessNetTablesWindow().resetT_invData();
+			boolean status = overlord.io.loadExternalAnalysis(true);
+			if(status) {
+				logFieldTinv.append("\n");
+				logFieldTinv.append("=====================================================================\n");
+				logFieldTinv.append(lang.getText("LOGentry00441")+" "+overlord.getWorkspace().getProject().getT_InvMatrix().size()+"\n"); //Loaded t-invariants:
+				logFieldTinv.append("=====================================================================\n");
+				overlord.markNetChange();
+			} else {
+				logFieldTinv.append("\n");
+				logFieldTinv.append(lang.getText("LOGentry00442")); //Loading t-invariants has been unsuccessfull.
 			}
 		});
 		loadInvariantsButton.setFocusPainted(false);
 		panel.add(loadInvariantsButton);
 		
 		JButton saveInvariantsButton = new JButton();
-		saveInvariantsButton.setText("<html>&nbsp;&nbsp;&nbsp;Export<br>t-invariants</html>");
+		saveInvariantsButton.setText(lang.getText("HIGwin_entry009")); //Export t-invariants
 		saveInvariantsButton.setBounds(posX+380, posY, 120, 36);
 		saveInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		saveInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/saveInvariants.png"));
-		saveInvariantsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				boolean status = overlord.io.exportGeneratedInvariants(true);
-				if(status) {
-					logFieldTinv.append("\n");
-					logFieldTinv.append("=====================================================================\n");
-					logFieldTinv.append("Saved t-invariants: "+overlord.getWorkspace().getProject().getT_InvMatrix().size()+"\n");
-					logFieldTinv.append("=====================================================================\n");
-				} else {
-					logFieldTinv.append("\n");
-					logFieldTinv.append("Saving t-invariants has been unsuccessfull.\n");
-				}
+		saveInvariantsButton.setToolTipText(lang.getText("HIGwin_entry009info")); //Save t-invariants to file
+		saveInvariantsButton.addActionListener(actionEvent -> {
+			boolean status = overlord.io.exportGeneratedInvariants(true);
+			if(status) {
+				logFieldTinv.append("\n");
+				logFieldTinv.append("=====================================================================\n");
+				logFieldTinv.append(lang.getText("LOGentry00443")+" "+overlord.getWorkspace().getProject().getT_InvMatrix().size()+"\n"); //Saved t-invariants:
+				logFieldTinv.append("=====================================================================\n");
+			} else {
+				logFieldTinv.append("\n");
+				logFieldTinv.append(lang.getText("LOGentry00444")); //Saving t-invariants has been unsuccessfull.
 			}
 		});
 		saveInvariantsButton.setFocusPainted(false);
@@ -235,95 +237,77 @@ public class HolmesInvariantsGenerator extends JFrame {
 		//**************************************************************************************************
 
 		JButton showInvariantsButton = new JButton();
-		showInvariantsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Show<br>t-invariants</html>");
+		showInvariantsButton.setText(lang.getText("HIGwin_entry010")); //Show t-invariants
 		showInvariantsButton.setBounds(posX+505, posY, 120, 36);
 		showInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		showInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
-		showInvariantsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				showNotepadInvariants(true);
-			}
-		});
+		showInvariantsButton.addActionListener(actionEvent -> showNotepadInvariants(true));
+		showInvariantsButton.setToolTipText(lang.getText("HIGwin_entry010info")); //Show t-invariants in notepad
 		showInvariantsButton.setFocusPainted(false);
 		panel.add(showInvariantsButton);
 
 		JButton saveInvButton = new JButton();
-		saveInvButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Save<br>t-invariants</html>");
+		saveInvButton.setText(lang.getText("HIGwin_entry011")); //Save t-invariants
 		saveInvButton.setBounds(posX+130, posY+40, 120, 36);
 		saveInvButton.setMargin(new Insets(0, 0, 0, 0));
 		saveInvButton.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
-		saveInvButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				saveInvKajaType(true);
-			}
-		});
+		saveInvButton.addActionListener(actionEvent -> saveInvKajaType(true));
+		saveInvButton.setToolTipText(lang.getText("HIGwin_entry011info"));
 		saveInvButton.setFocusPainted(false);
 		panel.add(saveInvButton);
 
 		JButton makeFeasibleButton = new JButton();
-		makeFeasibleButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Make<br>&nbsp;&nbsp;feasible</html>");
+		makeFeasibleButton.setText(lang.getText("HIGwin_entry012")); //Make feasible
 		makeFeasibleButton.setBounds(posX+255, posY+40, 120, 36);
 		makeFeasibleButton.setMargin(new Insets(0, 0, 0, 0));
 		makeFeasibleButton.setIcon(Tools.getResIcon22("/icons/invWindow/makeFeasible.png"));
-		makeFeasibleButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				checkAndMakeFeasible();
-			}
-		});
+		makeFeasibleButton.addActionListener(actionEvent -> checkAndMakeFeasible());
 		makeFeasibleButton.setFocusPainted(false);
+		makeFeasibleButton.setToolTipText(lang.getText("HIGwin_entry012info")); //Make t-invariants feasible
 		panel.add(makeFeasibleButton);
 		
-		JCheckBox feasModeCheckBox = new JCheckBox("Feasible adv. mode");
-		feasModeCheckBox.setBounds(posX+380, posY+36, 140, 20); //505
-		feasModeCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					feasibleCalcMode = 1;
-				} else {
-					feasibleCalcMode = 0;
-				}
+		JCheckBox feasModeCheckBox = new JCheckBox(lang.getText("HIGwin_entry013")); //Feasible advanced mode
+		feasModeCheckBox.setBounds(posX+380, posY+36, 240, 20); //505
+		feasModeCheckBox.setToolTipText(lang.getText("HIGwin_entry013info")); //Advanced mode for feasible t-invariants
+		feasModeCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				feasibleCalcMode = 1;
+			} else {
+				feasibleCalcMode = 0;
 			}
 		});
 		feasModeCheckBox.setSelected(true);
 		panel.add(feasModeCheckBox);
 		
-		JCheckBox invPurityCheckBox = new JCheckBox("Clean non-inv.");
+		JCheckBox invPurityCheckBox = new JCheckBox(lang.getText("HIGwin_entry014")); //Clean non-invariant
 		invPurityCheckBox.setBounds(posX+380, posY+56, 120, 20);
-		invPurityCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveNonInv", "1", true);
-					//cleanNonInvariant = true;//TODO:
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveNonInv", "0", true);
-					//cleanNonInvariant = false;
-				}
+		invPurityCheckBox.setToolTipText(lang.getText("HIGwin_entry014info")); //Remove non-invariant t-invariants
+		invPurityCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				overlord.getSettingsManager().setValue("analysisRemoveNonInv", "1", true);
+				//cleanNonInvariant = true;//TODO:
+			} else {
+				overlord.getSettingsManager().setValue("analysisRemoveNonInv", "0", true);
+				//cleanNonInvariant = false;
 			}
 		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1")) 
-			invPurityCheckBox.setSelected(true);
-		else
-			invPurityCheckBox.setSelected(false);
+		invPurityCheckBox.setSelected(overlord.getSettingsManager().getValue("analysisRemoveNonInv").equals("1"));
 		panel.add(invPurityCheckBox);
 		
-		JCheckBox removeSingleInvCheckBox = new JCheckBox("Remove 1-el. inv.");
+		JCheckBox removeSingleInvCheckBox = new JCheckBox(lang.getText("HIGwin_entry015")); //Remove 1-element invariant
 		removeSingleInvCheckBox.setBounds(posX+510, posY+56, 120, 20);
-		removeSingleInvCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveSingleElementInv", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveSingleElementInv", "0", true);
-				}
+		removeSingleInvCheckBox.setToolTipText(lang.getText("HIGwin_entry015info")); //Remove 1-element t-invariants
+		removeSingleInvCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				overlord.getSettingsManager().setValue("analysisRemoveSingleElementInv", "1", true);
+			} else {
+				overlord.getSettingsManager().setValue("analysisRemoveSingleElementInv", "0", true);
 			}
 		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1")) 
-			removeSingleInvCheckBox.setSelected(true);
-		else
-			removeSingleInvCheckBox.setSelected(false);
+		removeSingleInvCheckBox.setSelected(overlord.getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1"));
 		panel.add(removeSingleInvCheckBox);
 
 		return panel;
@@ -337,17 +321,18 @@ public class HolmesInvariantsGenerator extends JFrame {
 				transitions = overlord.getWorkspace().getProject().getTransitions();
 				HolmesNotepad notePad = new HolmesNotepad(900, 600);
 				notePad.setVisible(true);
-				notePad.addTextLineNL("T-invariants - Kaja Style:", "text");
+				notePad.addTextLineNL(lang.getText("HIGwin_entry016"), "text"); //T-invariants - Kaja Style
 				for (int i = 0; i < t_invariants.size(); i++) {
 					ArrayList<Integer> inv = t_invariants.get(i);
-					String vector = "x" + i + " - ";
+					//StringBuilder vector = new StringBuilder("x" + i + " - ");
+					StringBuilder vector = new StringBuilder("x" + i + ";");
 					for (int j = 0 ; j < inv.size();j++) {
 						int value = inv.get(j);
 						if(value!=0) {
-							vector += "t"+ overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transitions.get(j)) + ";";
+							vector.append("t").append(overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transitions.get(j))).append(";");
 						}
 					}
-					notePad.addTextLineNL(vector, "text");
+					notePad.addTextLineNL(vector.toString(), "text");
 				}
 			}
 		}
@@ -359,17 +344,18 @@ public class HolmesInvariantsGenerator extends JFrame {
 				places = overlord.getWorkspace().getProject().getPlaces();
 				HolmesNotepad notePad = new HolmesNotepad(900, 600);
 				notePad.setVisible(true);
-				notePad.addTextLineNL("P-invariants - Kaja Style:", "text");
+				notePad.addTextLineNL(lang.getText("HIGwin_entry017"), "text"); //P-invariants - Kaja Style
 				for (int i = 0; i < p_invariants.size(); i++) {
 					ArrayList<Integer> inv = p_invariants.get(i);
-					String vector = "x" + i + " - ";
+					//StringBuilder vector = new StringBuilder("x" + i + " - ");
+					StringBuilder vector = new StringBuilder("x" + i + ";");
 					for (int j = 0 ; j < inv.size();j++) {
 						int value = inv.get(j);
 						if(value!=0) {
-							vector += "p"+overlord.getWorkspace().getProject().getPlaces().lastIndexOf(places.get(j)) + ";";
+							vector.append("p").append(overlord.getWorkspace().getProject().getPlaces().lastIndexOf(places.get(j))).append(";");
 						}
 					}
-					notePad.addTextLineNL(vector, "text");
+					notePad.addTextLineNL(vector.toString(), "text");
 				}
 			}
 		}
@@ -383,10 +369,11 @@ public class HolmesInvariantsGenerator extends JFrame {
 	 * @param height - wysokość panelu
 	 * @return JPanel - utworzony panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createLogMainPanelTinv(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setBorder(BorderFactory.createTitledBorder("T-invariants log window"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HIGwin_entry018"))); //t-invariants log window
 		panel.setBounds(x, y, width, height);
 		
 		logFieldTinv = new JTextArea();
@@ -412,148 +399,150 @@ public class HolmesInvariantsGenerator extends JFrame {
 	 * @param height - wysokość panelu
 	 * @return JPanel - utworzony panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createRightButtonPanelTinv(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Tools"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HIGwin_entry019"))); //Tools
 		panel.setBounds(x, y, width, height);
 		
 		int posX = 10;
 		int posY = 18;
 		
 		JButton cardinalityButton = new JButton();
-		cardinalityButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;canonity</html>");
-		cardinalityButton.setBounds(posX, posY, 110, 32);
+		cardinalityButton.setText(lang.getText("HIGwin_entry020")); //Check canonity
+		cardinalityButton.setBounds(posX, posY, 110, 48);
 		cardinalityButton.setMargin(new Insets(0, 0, 0, 0));
 		cardinalityButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_canon.png"));
-		cardinalityButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
-				if(invariants == null || invariants.size() == 0) {
-					JOptionPane.showMessageDialog(ego, "No t-invariants to analyze.", 
-							"No invariants", JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					logFieldTinv.append("\n");
-					logFieldTinv.append("=====================================================================\n");
-					logFieldTinv.append("Checking canonicality for "+invariants.size()+" t-invariants.\n");
-					int card = InvariantsTools.checkCanonity(invariants);
-					logFieldTinv.append("Non canonical t-invariants: "+card+"\n");
-					logFieldTinv.append("=====================================================================\n");
+		cardinalityButton.setToolTipText(lang.getText("HIGwin_entry020info")); //Check t-invariants canonity
+		cardinalityButton.addActionListener(actionEvent -> {
+			ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
+			if(invariants == null || invariants.isEmpty()) {
+				JOptionPane.showMessageDialog(ego, lang.getText("HIGwin_entry021"), //No invariants to analyze.
+						lang.getText("HIGwin_entry021t"), JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				logFieldTinv.append("\n");
+				logFieldTinv.append("=====================================================================\n");
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HIGwin_entry022"), invariants.size());
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIGwin_entry022", "error", true);
 				}
+				logFieldTinv.append(strB); //Checking canonicality for
+				int card = InvariantsTools.checkCanonity(invariants);
+				logFieldTinv.append(lang.getText("HIGwin_entry023")+" "+card+"\n"); //Non canonical t-invariants:
+				logFieldTinv.append("=====================================================================\n");
 			}
 		});
 		cardinalityButton.setFocusPainted(false);
 		panel.add(cardinalityButton);
 		
 		JButton minSuppButton = new JButton();
-		minSuppButton.setText("<html>Check sup.<br />&nbsp;minimality</html>");
-		minSuppButton.setBounds(posX, posY+38, 110, 32);
+		minSuppButton.setText(lang.getText("HIGwin_entry024")); //Check support minimality
+		minSuppButton.setBounds(posX, posY+54, 110, 48);
 		minSuppButton.setMargin(new Insets(0, 0, 0, 0));
 		minSuppButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_minsup.png"));
-		minSuppButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
-				if(invariants == null || invariants.size() == 0) {
-					JOptionPane.showMessageDialog(ego, "No t-invariants to analyze.", 
-							"No invariants",JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					logFieldTinv.append("\n");
-					logFieldTinv.append("=====================================================================\n");
-					logFieldTinv.append("Checking support minimality for "+invariants.size()+" t-invariants.\n");
-					int value = InvariantsTools.checkSupportMinimality(invariants);
-					logFieldTinv.append("Non support-minimal t-invariants: "+value+"\n");
-					logFieldTinv.append("=====================================================================\n");
+		minSuppButton.setToolTipText(lang.getText("HIGwin_entry024info")); //Check t-invariants support minimality
+		minSuppButton.addActionListener(actionEvent -> {
+			ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
+			if(invariants == null || invariants.isEmpty()) {
+				JOptionPane.showMessageDialog(ego, lang.getText("HIGwin_entry021"), //No invariants to analyze.
+						lang.getText("HIGwin_entry021t"),JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				logFieldTinv.append("\n");
+				logFieldTinv.append("=====================================================================\n");
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HIGwin_entry025"), invariants.size());
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIGwin_entry025", "error", true);
 				}
+				logFieldTinv.append(strB); //Checking support minimality for
+				int value = InvariantsTools.checkSupportMinimality(invariants);
+				logFieldTinv.append(lang.getText("HIGwin_entry026")+" "+value+"\n");	//Non support-minimal t-invariants:
+				logFieldTinv.append("=====================================================================\n");
 			}
 		});
 		minSuppButton.setFocusPainted(false);
 		panel.add(minSuppButton);
 		
 		JButton checkMatrixZeroButton = new JButton();
-		checkMatrixZeroButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>");
-		checkMatrixZeroButton.setBounds(posX, posY+76, 110, 32);
+		checkMatrixZeroButton.setText(lang.getText("HIGwin_entry027")); //Check Cx = 0
+		checkMatrixZeroButton.setBounds(posX, posY+108, 110, 48);
 		checkMatrixZeroButton.setMargin(new Insets(0, 0, 0, 0));
 		checkMatrixZeroButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_invC.png"));
-		checkMatrixZeroButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
-				if(invariants == null || invariants.size() == 0) {
-					JOptionPane.showMessageDialog(ego, "No t-invariants to analyze.", 
-							"No invariants",JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					logFieldTinv.append("\n");
-					logFieldTinv.append("=====================================================================\n");
-					logFieldTinv.append("Checking t0invariants correctness for "+invariants.size()+" invariants.\n");
-					InvariantsCalculator ic = new InvariantsCalculator(true);
-					ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(
-							ic.getCMatrix(), invariants, true);
-					logFieldTinv.append("t-invariants (Cx = 0): "+results.get(0).get(0)+"\n");
-					logFieldTinv.append("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n");
-					logFieldTinv.append("Sub-invariants (Cx < 0): "+results.get(0).get(2)+"\n");
-					logFieldTinv.append("Non-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n");
-					logFieldTinv.append("=====================================================================\n");
-					
-					if(detailsTinv)
-						showSubSurT_invInfo(results, invariants.size());
+		checkMatrixZeroButton.setToolTipText(lang.getText("HIGwin_entry027info")); //Check t-invariants correctness
+		checkMatrixZeroButton.addActionListener(actionEvent -> {
+			ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix();
+			if(invariants == null || invariants.isEmpty()) {
+				JOptionPane.showMessageDialog(ego, lang.getText("HIGwin_entry021"), //No invariants to analyze.
+						lang.getText("HIGwin_entry021t"),JOptionPane.INFORMATION_MESSAGE); //No invariants
+			} else {
+				logFieldTinv.append("\n");
+				logFieldTinv.append("=====================================================================\n");
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HIGwin_entry028"), invariants.size());
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIGwin_entry028", "error", true);
 				}
+				logFieldTinv.append(strB); //Checking t0invariants correctness for
+				InvariantsCalculator ic = new InvariantsCalculator(true);
+				ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(
+						ic.getCMatrix(), invariants, true);
+				logFieldTinv.append(lang.getText("HIGwin_entry029")+" "+results.get(0).get(0)+"\n"); //t-invariants (Cx = 0):
+				logFieldTinv.append(lang.getText("HIGwin_entry030")+" "+results.get(0).get(1)+"\n"); //Sur-invariants (Cx > 0):
+				logFieldTinv.append(lang.getText("HIGwin_entry031")+" "+results.get(0).get(2)+"\n"); //Sub-invariants (Cx < 0):
+				logFieldTinv.append(lang.getText("HIGwin_entry032")+" "+results.get(0).get(3)+"\n"); //Non-invariants (Cx <=> 0):
+				logFieldTinv.append("=====================================================================\n");
+
+				if(detailsTinv)
+					showSubSurT_invInfo(results, invariants.size());
 			}
 		});
 		checkMatrixZeroButton.setFocusPainted(false);
 		panel.add(checkMatrixZeroButton);
-		
-		JButton loadRefButton = new JButton();
-		loadRefButton.setText("<html>&nbsp;&nbsp;&nbsp;Ref. set<br />&nbsp;&nbsp;&nbsp;compare</html>");
-		loadRefButton.setBounds(posX, posY+114, 110, 32);
-		loadRefButton.setMargin(new Insets(0, 0, 0, 0));
-		loadRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
-		loadRefButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				testReference(true);
-			}
-		});
-		loadRefButton.setFocusPainted(false);
-		panel.add(loadRefButton);
-		
-		JButton testRefButton = new JButton();
-		testRefButton.setText("<html>&nbsp;&nbsp;Incidence<br />&nbsp;&nbsp;&nbsp;matrix</html>");
-		testRefButton.setBounds(posX, posY+180, 110, 32);
-		testRefButton.setMargin(new Insets(0, 0, 0, 0));
-		testRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
-		testRefButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				getIncMatrix(true);
-			}
-		});
-		testRefButton.setFocusPainted(false);
-		panel.add(testRefButton);
-		
-		JCheckBox detailsCheckBox = new JCheckBox("Details");
-		detailsCheckBox.setBounds(posX, posY+144, 110, 20);
-		detailsCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					detailsTinv = true;
-				} else {
-					detailsTinv = false;
-				}
-			}
+
+		JCheckBox detailsCheckBox = new JCheckBox(lang.getText("HIGwin_entry035")); //Details
+		detailsCheckBox.setBounds(posX, posY+160, 110, 20);
+		detailsCheckBox.setToolTipText(lang.getText("HIGwin_entry035info")); //Show details of t-invariants
+		detailsCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			detailsTinv = abstractButton.getModel().isSelected();
 		});
 		detailsCheckBox.setSelected(true);
 		panel.add(detailsCheckBox);
 		
-		//TODO:
-		JCheckBox showDiffCheckBox = new JCheckBox("Show difference");
-		showDiffCheckBox.setBounds(posX, posY+220, 130, 20);
-		showDiffCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					showInvDiff = true;
-				} else {
-					showInvDiff = false;
-				}
-			}
+		JButton loadRefButton = new JButton();
+		loadRefButton.setText(lang.getText("HIGwin_entry033")); //Reference set compare
+		loadRefButton.setBounds(posX, posY+192, 110, 48);
+		loadRefButton.setMargin(new Insets(0, 0, 0, 0));
+		loadRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
+		loadRefButton.setToolTipText(lang.getText("HIGwin_entry033info")); //Compare t-invariants with reference set
+		loadRefButton.addActionListener(actionEvent -> testReference(true));
+		loadRefButton.setFocusPainted(false);
+		panel.add(loadRefButton);
+
+		
+		
+		JButton testRefButton = new JButton();
+		testRefButton.setText(lang.getText("HIGwin_entry034")); //Incidence matrix
+		testRefButton.setBounds(posX, posY+246, 110, 48);
+		testRefButton.setMargin(new Insets(0, 0, 0, 0));
+		testRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
+		testRefButton.setToolTipText(lang.getText("HIGwin_entry034info")); //Test incidence matrix
+		testRefButton.addActionListener(actionEvent -> getIncMatrix(true));
+		testRefButton.setFocusPainted(false);
+		panel.add(testRefButton);
+		
+
+		JCheckBox showDiffCheckBox = new JCheckBox(lang.getText("HIGwin_entry036")); //Show difference
+		showDiffCheckBox.setBounds(posX, posY+300, 130, 20);
+		showDiffCheckBox.setToolTipText(lang.getText("HIGwin_entry036info")); //Show difference between t-invariants
+		showDiffCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			showInvDiff = abstractButton.getModel().isSelected();
 		});
 		showDiffCheckBox.setSelected(false);
 		panel.add(showDiffCheckBox);
@@ -569,6 +558,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 	 * @param height - wysokość panelu
 	 * @return JPanel - utworzony panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createUpperButtonPanelPinv(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
@@ -579,21 +569,19 @@ public class HolmesInvariantsGenerator extends JFrame {
 		int posY = 10;
 		
 		// przycisk generatora inwariantów
-		JButton generateButton = new JButton("<html>Generate<br>p-inv.</html>");
+		JButton generateButton = new JButton(lang.getText("HIGwin_entry037")); //Generate p-inv.
 		generateButton.setBounds(posX, posY, 110, 60);
 		generateButton.setMargin(new Insets(0, 0, 0, 0));
 		generateButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-		generateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(isGeneratorWorking == true) {
-					JOptionPane.showMessageDialog(null, "Invariants generation already in progress.", 
-							"Generator working",JOptionPane.WARNING_MESSAGE);
-				} else {
-					setGeneratorStatus(true);
-					invGenerator = new InvariantsCalculator(false);
-					Thread myThread = new Thread(invGenerator);
-					myThread.start();
-				}
+		generateButton.addActionListener(actionEvent -> {
+			if(isGeneratorWorking) {
+				JOptionPane.showMessageDialog(null, lang.getText("HIGwin_entry038"), //Generator working
+						lang.getText("HIGwin_entry038t"),JOptionPane.WARNING_MESSAGE);
+			} else {
+				setGeneratorStatus(true);
+				invGenerator = new InvariantsCalculator(false);
+				Thread myThread = new Thread(invGenerator);
+				myThread.start();
 			}
 		});
 		generateButton.setFocusPainted(false);
@@ -601,68 +589,63 @@ public class HolmesInvariantsGenerator extends JFrame {
 		
 		// INA GENERATOR
 		JButton INAgenerateButton = new JButton();
-		INAgenerateButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INA<br>generator</html>");
+		INAgenerateButton.setText(lang.getText("HIGwin_entry039")); //INA generator
 		INAgenerateButton.setBounds(posX+130, posY, 120, 36);
 		INAgenerateButton.setMargin(new Insets(0, 0, 0, 0));
 		INAgenerateButton.setIcon(Tools.getResIcon22("/icons/invWindow/inaGenerator.png"));
-		INAgenerateButton.addActionListener(new ActionListener() {
-			@SuppressWarnings("unused")
-			public void actionPerformed(ActionEvent actionEvent) {
-				if(overlord.getINAStatus()) {
-					setGeneratorStatus(true);
-					overlord.io.generateINAinvariants(false);
-					overlord.reset.setP_invariantsStatus(true);
-					ArrayList<ArrayList<Integer>> pInv = overlord.getWorkspace().getProject().getP_InvMatrix();
-					overlord.markNetChange();
-				} else {
-					JOptionPane.showMessageDialog(null, "INAwin32.exe status set to non ready. Please read initial warnings\n"
-							+ "in the Holmes log windows for more information.", "INAwin32 problem",JOptionPane.ERROR_MESSAGE);
-				}
+		INAgenerateButton.addActionListener(actionEvent -> {
+			if(overlord.getINAStatus()) {
+				setGeneratorStatus(true);
+				overlord.io.generateINAinvariants(false);
+				overlord.reset.setP_invariantsStatus(true);
+				ArrayList<ArrayList<Integer>> pInv = overlord.getWorkspace().getProject().getP_InvMatrix();
+				overlord.markNetChange();
+			} else {
+				JOptionPane.showMessageDialog(null, lang.getText("HIGwin_entry040"), lang.getText("HIGwin_entry040t"),JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		INAgenerateButton.setFocusPainted(false);
+		INAgenerateButton.setEnabled(false);
 		panel.add(INAgenerateButton);
 		
 		JButton loadInvariantsButton = new JButton();
-		loadInvariantsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Load<br>p-invariants</html>");
+		loadInvariantsButton.setText(lang.getText("HIGwin_entry041")); //Load p-invariants
 		loadInvariantsButton.setBounds(posX+255, posY, 120, 36);
 		loadInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		loadInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/loadInvariants.png"));
-		loadInvariantsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				boolean status = overlord.io.loadExternalAnalysis(false);
-				if(status) {
-					logFieldPinv.append("\n");
-					logFieldPinv.append("=====================================================================\n");
-					logFieldPinv.append("Loaded p-invariants: "+overlord.getWorkspace().getProject().getP_InvMatrix().size()+"\n");
-					logFieldPinv.append("=====================================================================\n");
-					overlord.markNetChange();
-				} else {
-					logFieldPinv.append("\n");
-					logFieldPinv.append("P-invariants reading has been unsuccessfull.\n");
-				}
+		loadInvariantsButton.setToolTipText(lang.getText("HIGwin_entry041info")); //Load p-invariants from file
+		loadInvariantsButton.addActionListener(actionEvent -> {
+			boolean status = overlord.io.loadExternalAnalysis(false);
+			if(status) {
+				logFieldPinv.append("\n");
+				logFieldPinv.append("=====================================================================\n");
+				logFieldPinv.append(lang.getText("LOGentry00445")+" "+overlord.getWorkspace().getProject().getP_InvMatrix().size()+"\n"); //Loaded p-invariants:
+				logFieldPinv.append("=====================================================================\n");
+				overlord.markNetChange();
+			} else {
+				logFieldPinv.append("\n");
+				logFieldPinv.append(lang.getText("LOGentry00446"));
 			}
 		});
 		loadInvariantsButton.setFocusPainted(false);
 		panel.add(loadInvariantsButton);
 		
 		JButton saveInvariantsButton = new JButton();
-		saveInvariantsButton.setText("<html>&nbsp;&nbsp;&nbsp;Export<br>p-invariants</html>");
+		saveInvariantsButton.setText(lang.getText("HIGwin_entry042")); //Export p-invariants
 		saveInvariantsButton.setBounds(posX+380, posY, 120, 36);
 		saveInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		saveInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/saveInvariants.png"));
-		saveInvariantsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				boolean status = overlord.io.exportGeneratedInvariants(false);
-				if(status) {
-					logFieldPinv.append("\n");
-					logFieldPinv.append("=====================================================================\n");
-					logFieldPinv.append("Saved p-invariants: "+overlord.getWorkspace().getProject().getP_InvMatrix().size()+"\n");
-					logFieldPinv.append("=====================================================================\n");
-				} else {
-					logFieldPinv.append("\n");
-					logFieldPinv.append("Saving p-invariants has been unsuccessfull.\n");
-				}
+		saveInvariantsButton.setToolTipText(lang.getText("HIGwin_entry042info")); //Save p-invariants to file
+		saveInvariantsButton.addActionListener(actionEvent -> {
+			boolean status = overlord.io.exportGeneratedInvariants(false);
+			if(status) {
+				logFieldPinv.append("\n");
+				logFieldPinv.append("=====================================================================\n");
+				logFieldPinv.append(lang.getText("LOGentry00447")+" "+overlord.getWorkspace().getProject().getP_InvMatrix().size()+"\n"); //Saved p-invariants:
+				logFieldPinv.append("=====================================================================\n");
+			} else {
+				logFieldPinv.append("\n");
+				logFieldPinv.append(lang.getText("LOGentry00448"));
 			}
 		});
 		saveInvariantsButton.setFocusPainted(false);
@@ -671,55 +654,44 @@ public class HolmesInvariantsGenerator extends JFrame {
 		//**************************************************************************************************
 		
 		JButton showInvariantsButton = new JButton();
-		showInvariantsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Show<br>p-invariants</html>");
+		showInvariantsButton.setText(lang.getText("HIGwin_entry043")); //Show p-invariants
 		showInvariantsButton.setBounds(posX+505, posY, 120, 36);
 		showInvariantsButton.setMargin(new Insets(0, 0, 0, 0));
 		showInvariantsButton.setIcon(Tools.getResIcon22("/icons/invWindow/showInvariants.png"));
-		showInvariantsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				showNotepadInvariants(false);
-			}
-		});
+		showInvariantsButton.addActionListener(actionEvent -> showNotepadInvariants(false));
+		showInvariantsButton.setToolTipText(lang.getText("HIGwin_entry043info")); //Show p-invariants in notepad
 		showInvariantsButton.setFocusPainted(false);
 		panel.add(showInvariantsButton);
-
-
-		JCheckBox invPurityCheckBox = new JCheckBox("Clean non-inv.");
+		
+		JCheckBox invPurityCheckBox = new JCheckBox(lang.getText("HIGwin_entry044")); //Clean non-invariant
 		invPurityCheckBox.setBounds(posX+380, posY+56, 120, 20);
-		invPurityCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveNonInv", "1", true);
-					//cleanNonInvariant = true;//TODO:
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveNonInv", "0", true);
-					//cleanNonInvariant = false;
-				}
+		invPurityCheckBox.setToolTipText(lang.getText("HIGwin_entry044info")); //Remove non-invariant p-invariants
+		invPurityCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				overlord.getSettingsManager().setValue("analysisRemoveNonInv", "1", true);
+				//cleanNonInvariant = true;//TODO:
+			} else {
+				overlord.getSettingsManager().setValue("analysisRemoveNonInv", "0", true);
+				//cleanNonInvariant = false;
 			}
 		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveNonInv").equals("1"))
-			invPurityCheckBox.setSelected(true);
-		else
-			invPurityCheckBox.setSelected(false);
+		invPurityCheckBox.setSelected(overlord.getSettingsManager().getValue("analysisRemoveNonInv").equals("1"));
 		panel.add(invPurityCheckBox);
 
-		JCheckBox removeSingleInvCheckBox = new JCheckBox("Remove 1-el. inv.");
+		JCheckBox removeSingleInvCheckBox = new JCheckBox(lang.getText("HIGwin_entry045")); //Remove 1-element invariant
 		removeSingleInvCheckBox.setBounds(posX+510, posY+56, 120, 20);
-		removeSingleInvCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveSingleElementInv", "1", true);
-				} else {
-					GUIManager.getDefaultGUIManager().getSettingsManager().setValue("analysisRemoveSingleElementInv", "0", true);
-				}
+		removeSingleInvCheckBox.setToolTipText(lang.getText("HIGwin_entry045info")); //Remove 1-element p-invariants
+		removeSingleInvCheckBox.setToolTipText(lang.getText("HIGwin_entry045info")); //Remove 1-element p-invariants
+		removeSingleInvCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			if (abstractButton.getModel().isSelected()) {
+				overlord.getSettingsManager().setValue("analysisRemoveSingleElementInv", "1", true);
+			} else {
+				overlord.getSettingsManager().setValue("analysisRemoveSingleElementInv", "0", true);
 			}
 		});
-		if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1"))
-			removeSingleInvCheckBox.setSelected(true);
-		else
-			removeSingleInvCheckBox.setSelected(false);
+		removeSingleInvCheckBox.setSelected(overlord.getSettingsManager().getValue("analysisRemoveSingleElementInv").equals("1"));
 		panel.add(removeSingleInvCheckBox);
 
 		return panel;
@@ -733,10 +705,11 @@ public class HolmesInvariantsGenerator extends JFrame {
 	 * @param height - wysokość panelu
 	 * @return JPanel - utworzony panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createLogMainPanelPinv(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setBorder(BorderFactory.createTitledBorder("P-invariants log window"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HIGwin_entry046"))); //P-invariants log window
 		panel.setBounds(x, y, width, height);
 		
 		logFieldPinv = new JTextArea();
@@ -762,136 +735,143 @@ public class HolmesInvariantsGenerator extends JFrame {
 	 * @param height - wysokość panelu
 	 * @return JPanel - utworzony panel
 	 */
+	@SuppressWarnings("SameParameterValue")
 	private JPanel createRightButtonPanelPinv(int x, int y, int width, int height) {
 		JPanel panel = new JPanel();
 		panel.setLayout(null);
-		panel.setBorder(BorderFactory.createTitledBorder("Tools"));
+		panel.setBorder(BorderFactory.createTitledBorder(lang.getText("HIGwin_entry019")));
 		panel.setBounds(x, y, width, height);
 		
 		int posX = 10;
 		int posY = 18;
 		
 		JButton cardinalityButton = new JButton();
-		cardinalityButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check<br />&nbsp;&nbsp;&nbsp;canonity</html>");
-		cardinalityButton.setBounds(posX, posY, 110, 32);
+		cardinalityButton.setText(lang.getText("HIGwin_entry047")); //Check canonity
+		cardinalityButton.setBounds(posX, posY, 110, 48);
 		cardinalityButton.setMargin(new Insets(0, 0, 0, 0));
 		cardinalityButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_canon.png"));
-		cardinalityButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				ArrayList<ArrayList<Integer>> p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
-				if(p_invariants == null || p_invariants.size() == 0) {
-					JOptionPane.showMessageDialog(ego, "No p-invariants to analyze.", 
-							"No p-invariants",JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					logFieldPinv.append("\n");
-					logFieldPinv.append("=====================================================================\n");
-					logFieldPinv.append("Checking canonicality for "+p_invariants.size()+" p-invariants.\n");
-					int card = InvariantsTools.checkCanonity(p_invariants);
-					logFieldPinv.append("Non canonical p-invariants: "+card+"\n");
-					logFieldPinv.append("=====================================================================\n");
+		cardinalityButton.setToolTipText(lang.getText("HIGwin_entry047info")); //Check p-invariants canonity
+		cardinalityButton.addActionListener(actionEvent -> {
+			ArrayList<ArrayList<Integer>> p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
+			if(p_invariants == null || p_invariants.isEmpty()) {
+				JOptionPane.showMessageDialog(ego, lang.getText("HIGwin_entry048"), //No invariants to analyze.
+						lang.getText("HIGwin_entry048t"),JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				logFieldPinv.append("\n");
+				logFieldPinv.append("=====================================================================\n");
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HIGwin_entry049"), p_invariants.size());
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIGwin_entry049", "error", true);
 				}
+				logFieldPinv.append(strB); //Checking canonicality for
+				int card = InvariantsTools.checkCanonity(p_invariants); 
+				logFieldPinv.append(lang.getText("HIGwin_entry050")+" "+card+"\n"); //Non canonical p-invariants:
+				logFieldPinv.append("=====================================================================\n");
 			}
 		});
 		cardinalityButton.setFocusPainted(false);
 		panel.add(cardinalityButton);
 		
 		JButton minSuppButton = new JButton();
-		minSuppButton.setText("<html>Check sup.<br>&nbsp;minimality</html>");
-		minSuppButton.setBounds(posX, posY+38, 110, 32);
+		minSuppButton.setText(lang.getText("HIGwin_entry051")); //Check support minimality
+		minSuppButton.setBounds(posX, posY+54, 110, 48);
 		minSuppButton.setMargin(new Insets(0, 0, 0, 0));
 		minSuppButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_minsup.png"));
-		minSuppButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				ArrayList<ArrayList<Integer>> p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
-				if(p_invariants == null || p_invariants.size() == 0) {
-					JOptionPane.showMessageDialog(null, "No p-invariants to analyze.", 
-							"No p-invariants",JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					logFieldPinv.append("\n");
-					logFieldPinv.append("=====================================================================\n");
-					logFieldPinv.append("Checking support minimality for "+p_invariants.size()+" p-invariants.\n");
-					int value = InvariantsTools.checkSupportMinimality(p_invariants);
-					logFieldPinv.append("Non support-minimal p-invariants: "+value+"\n");
-					logFieldPinv.append("=====================================================================\n");
+		minSuppButton.setToolTipText(lang.getText("HIGwin_entry051info")); //Check p-invariants support minimality
+		minSuppButton.addActionListener(actionEvent -> {
+			ArrayList<ArrayList<Integer>> p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
+			if(p_invariants == null || p_invariants.isEmpty()) {
+				JOptionPane.showMessageDialog(null, lang.getText("HIGwin_entry048"), //No invariants to analyze.
+						lang.getText("HIGwin_entry048t"),JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				logFieldPinv.append("\n");
+				logFieldPinv.append("=====================================================================\n");
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HIGwin_entry052"), p_invariants.size());
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIGwin_entry052", "error", true);
 				}
+				logFieldPinv.append(strB); //Checking support minimality for
+				int value = InvariantsTools.checkSupportMinimality(p_invariants);
+				logFieldPinv.append(lang.getText("HIGwin_entry053")+" "+value+"\n"); //Non support-minimal p-invariants:
+				logFieldPinv.append("=====================================================================\n");
 			}
 		});
 		minSuppButton.setFocusPainted(false);
 		panel.add(minSuppButton);
 		
 		JButton checkMatrixZeroButton = new JButton();
-		checkMatrixZeroButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;Check<br>&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;&middot;&nbsp;x = 0</html>");
-		checkMatrixZeroButton.setBounds(posX, posY+76, 110, 32);
+		checkMatrixZeroButton.setText(lang.getText("HIGwin_entry054")); //Check Cx = 0
+		checkMatrixZeroButton.setBounds(posX, posY+108, 110, 48);
 		checkMatrixZeroButton.setMargin(new Insets(0, 0, 0, 0));
 		checkMatrixZeroButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_invC.png"));
-		checkMatrixZeroButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				ArrayList<ArrayList<Integer>> p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
-				if(p_invariants == null || p_invariants.size() == 0) {
-					JOptionPane.showMessageDialog(null, "No invariants to analyze.", 
-							"No invariants",JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					logFieldPinv.append("\n");
-					logFieldPinv.append("=====================================================================\n");
-					logFieldPinv.append("Checking invariants correctness for "+p_invariants.size()+" invariants.\n");
-					InvariantsCalculator ic = new InvariantsCalculator(true);
-					ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(
-							ic.getCMatrix(), p_invariants, false);
-					logFieldPinv.append("T-invariants (Cx = 0): "+results.get(0).get(0)+"\n");
-					logFieldPinv.append("Sur-invariants (Cx > 0): "+results.get(0).get(1)+"\n");
-					logFieldPinv.append("Sub-invariants (Cx < 0): "+results.get(0).get(2)+"\n");
-					logFieldPinv.append("Non-invariants (Cx <=> 0): "+results.get(0).get(3)+"\n");
-					logFieldPinv.append("=====================================================================\n");
-					
-					if(detailsPinv)
-						showSubSurP_invInfo(results, p_invariants.size());
+		checkMatrixZeroButton.setToolTipText(lang.getText("HIGwin_entry054info")); //Check p-invariants correctness
+		checkMatrixZeroButton.addActionListener(actionEvent -> {
+			ArrayList<ArrayList<Integer>> p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix();
+			if(p_invariants == null || p_invariants.isEmpty()) {
+				JOptionPane.showMessageDialog(null, lang.getText("HIGwin_entry048"), //No invariants to analyze.
+						lang.getText("HIGwin_entry048t"),JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				logFieldPinv.append("\n");
+				logFieldPinv.append("=====================================================================\n");
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HIGwin_entry055"), p_invariants.size());
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HIGwin_entry055", "error", true);
 				}
+				logFieldPinv.append(strB); //Checking invariants correctness for
+				InvariantsCalculator ic = new InvariantsCalculator(true);
+				ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(
+						ic.getCMatrix(), p_invariants, false);
+				logFieldPinv.append(lang.getText("HIGwin_entry056")+" "+results.get(0).get(0)+"\n"); //T-invariants (Cx = 0):
+				logFieldPinv.append(lang.getText("HIGwin_entry057")+" "+results.get(0).get(1)+"\n"); //Sur-invariants (Cx > 0):
+				logFieldPinv.append(lang.getText("HIGwin_entry058")+" "+results.get(0).get(2)+"\n"); //Sub-invariants (Cx < 0):
+				logFieldPinv.append(lang.getText("HIGwin_entry059")+" "+results.get(0).get(3)+"\n"); //	
+				logFieldPinv.append("=====================================================================\n");
+
+				if(detailsPinv)
+					showSubSurP_invInfo(results, p_invariants.size());
 			}
 		});
 		checkMatrixZeroButton.setFocusPainted(false);
 		panel.add(checkMatrixZeroButton);
+
+		JCheckBox detailsCheckBox = new JCheckBox(lang.getText("HIGwin_entry062")); //Details
+		detailsCheckBox.setBounds(posX, posY+160, 110, 20);
+		detailsCheckBox.setToolTipText(lang.getText("HIGwin_entry062info")); //Show details of p-invariants
+		detailsCheckBox.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			detailsPinv = abstractButton.getModel().isSelected();
+		});
+		detailsCheckBox.setSelected(true);
+		panel.add(detailsCheckBox);
 		
 		JButton loadRefButton = new JButton();
-		loadRefButton.setText("<html>&nbsp;&nbsp;&nbsp;Ref. set<br>&nbsp;&nbsp;&nbsp;compare</html>");
-		loadRefButton.setBounds(posX, posY+114, 110, 32);
+		loadRefButton.setText(lang.getText("HIGwin_entry060")); //Reference set compare
+		loadRefButton.setBounds(posX, posY+192, 110, 48);
 		loadRefButton.setMargin(new Insets(0, 0, 0, 0));
 		loadRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
-		loadRefButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				testReference(false);
-			}
-		});
+		loadRefButton.setToolTipText(lang.getText("HIGwin_entry060info")); //Compare p-invariants with reference set
+		loadRefButton.addActionListener(actionEvent -> testReference(false));
 		loadRefButton.setFocusPainted(false);
 		panel.add(loadRefButton);
 		
 		
 		JButton testRefButton = new JButton();
-		testRefButton.setText("<html>&nbsp;&nbsp;Incidence<br>&nbsp;&nbsp;&nbsp;matrix</html>");
-		testRefButton.setBounds(posX, posY+180, 110, 32);
+		testRefButton.setText(lang.getText("HIGwin_entry061")); //Incidence matrix
+		testRefButton.setBounds(posX, posY+246, 110, 48);
 		testRefButton.setMargin(new Insets(0, 0, 0, 0));
 		testRefButton.setIcon(Tools.getResIcon22("/icons/invWindow/test_ref.png"));
-		testRefButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				getIncMatrix(false);
-			}
-		});
+		testRefButton.setToolTipText(lang.getText("HIGwin_entry061info")); //Test incidence matrix
+		testRefButton.addActionListener(actionEvent -> getIncMatrix(false));
 		testRefButton.setFocusPainted(false);
 		panel.add(testRefButton);
 		
-		JCheckBox detailsCheckBox = new JCheckBox("Details");
-		detailsCheckBox.setBounds(posX, posY+144, 110, 20);
-		detailsCheckBox.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					detailsPinv = true;
-				} else {
-					detailsPinv = false;
-				}
-			}
-		});
-		detailsCheckBox.setSelected(true);
-		panel.add(detailsCheckBox);
+		
 
 		return panel;
 	}
@@ -901,6 +881,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 	 * @param Tinv boolean - true, wtedy P to kolumny, T to wiersze, czyli na takiej macierzy działa
 	 * 			algorytm generowania T-inwariantów
 	 */
+	@SuppressWarnings("SuspiciousMethodCalls")
 	protected void getIncMatrix(boolean Tinv) {
 		HashMap<Place, Integer> placesMap = new HashMap<Place, Integer>();
 		HashMap<Transition, Integer> transitionsMap = new HashMap<Transition, Integer>();
@@ -927,9 +908,9 @@ public class HolmesInvariantsGenerator extends JFrame {
 		}
 		//wypełnianie macierzy incydencji
 		for (Arc oneArc : arcs) {
-			int tPosition = 0;
-			int pPosition = 0;
-			int incidenceValue = 0;
+			int tPosition;
+			int pPosition;
+			int incidenceValue;
 			
 			if(oneArc.getArcType() != TypeOfArc.NORMAL) {
 				continue;
@@ -938,7 +919,7 @@ public class HolmesInvariantsGenerator extends JFrame {
 			if (oneArc.getStartNode().getType() == PetriNetElementType.TRANSITION) {
 				tPosition = transitionsMap.get(oneArc.getStartNode());
 				pPosition = placesMap.get(oneArc.getEndNode());
-				incidenceValue = 1 * oneArc.getWeight();
+				incidenceValue = oneArc.getWeight();
 			} else { //miejsca
 				tPosition = transitionsMap.get(oneArc.getEndNode());
 				pPosition = placesMap.get(oneArc.getStartNode());
@@ -960,12 +941,12 @@ public class HolmesInvariantsGenerator extends JFrame {
 			notePad.addTextLineNL("", "text");
 			for(int t=0; t<globalIncidenceMatrix.size(); t++) {
 				ArrayList<Integer> transRow = globalIncidenceMatrix.get(t);
-				String text = "t"+t+" ";
-				
-				for(int p=0; p<transRow.size(); p++) {
-					text += " "+transRow.get(p);
+				StringBuilder text = new StringBuilder("t" + t + " ");
+
+				for (Integer integer : transRow) {
+					text.append(" ").append(integer);
 				}
-				notePad.addTextLineNL(text, "text");
+				notePad.addTextLineNL(text.toString(), "text");
 			}
 		} else {
 			globalIncidenceMatrix = InvariantsTools.transposeMatrix(globalIncidenceMatrix);
@@ -975,12 +956,12 @@ public class HolmesInvariantsGenerator extends JFrame {
 			notePad.addTextLineNL("", "text");
 			for(int p=0; p<globalIncidenceMatrix.size(); p++) {
 				ArrayList<Integer> placeRow = globalIncidenceMatrix.get(p);
-				String text = "p"+p+" ";
-				
-				for(int t=0; t<placeRow.size(); t++) {
-					text += " "+placeRow.get(t);
+				StringBuilder text = new StringBuilder("p" + p + " ");
+
+				for (Integer integer : placeRow) {
+					text.append(" ").append(integer);
 				}
-				notePad.addTextLineNL(text, "text");
+				notePad.addTextLineNL(text.toString(), "text");
 			}
 		}
 	}
@@ -1002,21 +983,22 @@ public class HolmesInvariantsGenerator extends JFrame {
 		else
 			filters[0] = new ExtensionFileFilter("INA p-invariants file (.inv)", new String[] { "INV" });
 		
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load invariants", "Select invariant file", "");
-		if(selectedFile.equals(""))
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("HIGwin_entry063")
+				, lang.getText("HIGwin_entry063t"), "");
+		if(selectedFile.isEmpty())
 			return;
 		
 		File file = new File(selectedFile);
 		if(!file.exists()) return;
 		
 		IOprotocols io = new IOprotocols();
-		boolean status = false;
+		boolean status;
 		if(t_inv)
 			status = io.readT_invariants(file.getPath());
 		else
 			status = io.readP_invariants(file.getPath());
 		
-		if(status == false) {
+		if(!status) {
 			return;
 		}
 		refTest(invariants, io.getInvariantsList(), t_inv);
@@ -1037,25 +1019,25 @@ public class HolmesInvariantsGenerator extends JFrame {
 			ArrayList<ArrayList<Integer>> res =  InvariantsTools.compareTwoInvariantsSets(invRefMatrix, invLoadedMatrix);
 			accessLogField(t_inv).append("\n");
 			accessLogField(t_inv).append("=====================================================================\n");
-			accessLogField(t_inv).append("Prev. computed set size:   "+invRefMatrix.size()+"\n");
-			accessLogField(t_inv).append("Loaded (now) set size:    "+invLoadedMatrix.size()+"\n");
-			accessLogField(t_inv).append("Common set size (load & ref): "+res.get(0).size()+"\n");
-			accessLogField(t_inv).append("Loaded "+symbol+"invariants not in a computed set:  "+res.get(1).size()+"\n");
-			accessLogField(t_inv).append("Computed "+symbol+"invariants not in a loaded set:  "+res.get(2).size()+"\n");
-			accessLogField(t_inv).append("Repetitions in common set: "+res.get(3).get(0)+"\n");
-			accessLogField(t_inv).append("Total repetitions in loaded:"+res.get(3).get(1)+"\n");
+			accessLogField(t_inv).append(lang.getText("HIGwin_entry064")+"   "+invRefMatrix.size()+"\n");
+			accessLogField(t_inv).append(lang.getText("HIGwin_entry065")+"    "+invLoadedMatrix.size()+"\n");
+			accessLogField(t_inv).append(lang.getText("HIGwin_entry066")+" "+res.get(0).size()+"\n");
+			accessLogField(t_inv).append(lang.getText("HIGwin_entry068")+" "+symbol+lang.getText("HIGwin_entry068_1")+" "+res.get(1).size()+"\n");
+			accessLogField(t_inv).append(lang.getText("HIGwin_entry069")+" "+symbol+lang.getText("HIGwin_entry069_1")+" "+res.get(2).size()+"\n");
+			accessLogField(t_inv).append(lang.getText("HIGwin_entry070")+" "+res.get(3).get(0)+"\n");
+			accessLogField(t_inv).append(lang.getText("HIGwin_entry071")+res.get(3).get(1)+"\n");
 			accessLogField(t_inv).append("\n");
-			accessLogField(t_inv).append("Inititating further tests for the loaded set of "+invLoadedMatrix.size()+" "+symbol+"invariants.\n");
+			accessLogField(t_inv).append(lang.getText("HIGwin_entry072")+" "+invLoadedMatrix.size()+" "+symbol+lang.getText("HIGwin_entry072_1"));
 			int card = InvariantsTools.checkCanonity(invLoadedMatrix);
-			accessLogField(t_inv).append("-> Non canonical "+symbol+"invariants found : "+card+"\n");
+			accessLogField(t_inv).append(lang.getText("HIGwin_entry073")+" "+symbol+lang.getText("HIGwin_entry073_1")+" "+card+"\n");
 			int value = InvariantsTools.checkSupportMinimality(invLoadedMatrix);
-			accessLogField(t_inv).append("-> Non support-minimal "+symbol+"invariants found: "+value+"\n");
+			accessLogField(t_inv).append(lang.getText("HIGwin_entry074")+" "+symbol+lang.getText("HIGwin_entry074_1")+" "+value+"\n");
 			InvariantsCalculator ic = new InvariantsCalculator(true);
 			ArrayList<ArrayList<Integer>> results = InvariantsTools.analyseInvariantDetails(ic.getCMatrix(), invLoadedMatrix, t_inv);
-			accessLogField(t_inv).append(" "+symbol+"invariants (Cx = 0): "+results.get(0).get(0)+"\n");
-			accessLogField(t_inv).append("Sur-"+symbol+"invariants (Cx > 0): "+results.get(0).get(1)+"\n");
-			accessLogField(t_inv).append("Sun-"+symbol+"invariants (Cx < 0): "+results.get(0).get(2)+"\n");
-			accessLogField(t_inv).append("Non-"+symbol+"invariants (Cx <=> 0): "+results.get(0).get(3)+"\n");
+			accessLogField(t_inv).append(" "+symbol+lang.getText("HIGwin_entry075")+" "+results.get(0).get(0)+"\n");
+			accessLogField(t_inv).append("Sur-"+symbol+lang.getText("HIGwin_entry076")+" "+results.get(0).get(1)+"\n");
+			accessLogField(t_inv).append("Sub-"+symbol+lang.getText("HIGwin_entry077")+" "+results.get(0).get(2)+"\n");
+			accessLogField(t_inv).append("Non-"+symbol+lang.getText("HIGwin_entry078")+" "+results.get(0).get(3)+"\n");
 			accessLogField(t_inv).append("=====================================================================\n");
 			accessLogField(t_inv).append("\n");
 			
@@ -1072,8 +1054,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 	private void showSubSurT_invInfo(ArrayList<ArrayList<Integer>> results, int invMatrixSize) {
 		int surPlaceMaxName = 0;
 		int subPlaceMaxName = 0;
-		ArrayList<Place> places = null;
-		int size = 0;
+		ArrayList<Place> places;
+		int size;
 		ArrayList<Integer> surInvVector = results.get(1);
 		ArrayList<Integer> subInvVector = results.get(2);
 		ArrayList<Integer> noInvVector = results.get(3);
@@ -1082,11 +1064,11 @@ public class HolmesInvariantsGenerator extends JFrame {
 		notePad.setVisible(true);
 		
 		notePad.addTextLineNL("", "text");
-		notePad.addTextLineNL("Vectors analysed: "+invMatrixSize, "text");
-		notePad.addTextLineNL("Canonical t-invariants: "+results.get(0).get(0), "text");
-		notePad.addTextLineNL("Sur-t-invariants: "+results.get(0).get(1), "text");
-		notePad.addTextLineNL("Sub-t-invariants: "+results.get(0).get(2), "text");
-		notePad.addTextLineNL("Non t-invariants vectors: "+results.get(0).get(3), "text");
+		notePad.addTextLineNL(lang.getText("HIGwin_entry079")+" "+invMatrixSize, "text");
+		notePad.addTextLineNL(lang.getText("HIGwin_entry080")+" "+results.get(0).get(0), "text");
+		notePad.addTextLineNL(lang.getText("HIGwin_entry081")+" "+results.get(0).get(1), "text");
+		notePad.addTextLineNL(lang.getText("HIGwin_entry082")+" "+results.get(0).get(2), "text");
+		notePad.addTextLineNL(lang.getText("HIGwin_entry083")+" "+results.get(0).get(3), "text");
 		notePad.addTextLineNL("", "text");
 		
 		places = overlord.getWorkspace().getProject().getPlaces();
@@ -1110,8 +1092,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 		}
 		
 		if(results.get(0).get(1) > 0) {
-			notePad.addTextLineNL("Places for which sur-t-invariants leaves tokens (tokens>0) :", "text");
-			notePad.addTextLineNL("(in parenthesis number of sur-t-invariants for each place):", "text");
+			notePad.addTextLineNL(lang.getText("HIGwin_entry084"), "text");
+			notePad.addTextLineNL(lang.getText("HIGwin_entry085"), "text");
 			for(int p=0; p<size; p++) {
 				int value = surInvVector.get(p);
 				if(value != 0) {
@@ -1122,8 +1104,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 		}
 		notePad.addTextLineNL("", "text");
 		if(results.get(0).get(2) > 0) {
-			notePad.addTextLineNL("Places for which sub-t-invariants takes tokens (tokens<0):", "text");
-			notePad.addTextLineNL("(in parenthesis number of sub-t-invariants for each place):", "text");
+			notePad.addTextLineNL(lang.getText("HIGwin_entry086"), "text");
+			notePad.addTextLineNL(lang.getText("HIGwin_entry087"), "text");
 			for(int p=0; p<size; p++) {
 				int value = subInvVector.get(p);
 				if(value != 0) {
@@ -1134,8 +1116,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 		}
 		
 		if(results.get(0).get(3) > 0) {
-			notePad.addTextLineNL("Places for which non-invariants takes or produces tokens:", "text");
-			notePad.addTextLineNL("(in parenthesis number of non-t-invariants for each place):", "text");
+			notePad.addTextLineNL(lang.getText("HIGwin_entry088"), "text");
+			notePad.addTextLineNL(lang.getText("HIGwin_entry089"), "text");
 			for(int p=0; p<size; p++) {
 				int value = noInvVector.get(p);
 				if(value != 0) {
@@ -1154,8 +1136,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 	private void showSubSurP_invInfo(ArrayList<ArrayList<Integer>> results, int invMatrixSize) {
 		int surTransMaxName = 0;
 		int subTransMaxName = 0;
-		ArrayList<Transition> transitions = null;
-		int size = 0;
+		ArrayList<Transition> transitions;
+		int size;
 		ArrayList<Integer> surInvVector = results.get(1);
 		ArrayList<Integer> subInvVector = results.get(2);
 		ArrayList<Integer> noInvVector = results.get(3);
@@ -1164,11 +1146,11 @@ public class HolmesInvariantsGenerator extends JFrame {
 		notePad.setVisible(true);
 		
 		notePad.addTextLineNL("", "text");
-		notePad.addTextLineNL("Vectors analysed: "+invMatrixSize, "text");
-		notePad.addTextLineNL("Canonical p-invariants: "+results.get(0).get(0), "text");
-		notePad.addTextLineNL("Sur-p-invariants: "+results.get(0).get(1), "text");
-		notePad.addTextLineNL("Sub-p-invariants: "+results.get(0).get(2), "text");
-		notePad.addTextLineNL("Non p-invariants vectors: "+results.get(0).get(3), "text");
+		notePad.addTextLineNL(lang.getText("HIGwin_entry090")+" "+invMatrixSize, "text");
+		notePad.addTextLineNL(lang.getText("HIGwin_entry091")+" "+results.get(0).get(0), "text");
+		notePad.addTextLineNL(lang.getText("HIGwin_entry092")+" "+results.get(0).get(1), "text");
+		notePad.addTextLineNL(lang.getText("HIGwin_entry093")+" "+results.get(0).get(2), "text");
+		notePad.addTextLineNL(lang.getText("HIGwin_entry094")+" "+results.get(0).get(3), "text");
 		notePad.addTextLineNL("", "text");
 		
 		transitions = overlord.getWorkspace().getProject().getTransitions();
@@ -1192,8 +1174,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 		}
 		
 		if(results.get(0).get(1) > 0) {
-			notePad.addTextLineNL("Problematics transitions for sur-p-invariants:", "text");
-			notePad.addTextLineNL("(in parenthesis number of sur-p-invariants for each transition):", "text");
+			notePad.addTextLineNL(lang.getText("HIGwin_entry095"), "text");
+			notePad.addTextLineNL(lang.getText("HIGwin_entry096"), "text");
 			for(int t=0; t<size; t++) {
 				int value = surInvVector.get(t);
 				if(value != 0) {
@@ -1204,8 +1186,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 		}
 		notePad.addTextLineNL("", "text");
 		if(results.get(0).get(2) > 0) {
-			notePad.addTextLineNL("Problematics transitions for sub-p-invariants:", "text");
-			notePad.addTextLineNL("(in parenthesis number of sub-p-invariants for each transition):", "text");
+			notePad.addTextLineNL(lang.getText("HIGwin_entry097"), "text");
+			notePad.addTextLineNL(lang.getText("HIGwin_entry098"), "text");
 			for(int t=0; t<size; t++) {
 				int value = subInvVector.get(t);
 				if(value != 0) {
@@ -1216,8 +1198,8 @@ public class HolmesInvariantsGenerator extends JFrame {
 		}
 		
 		if(results.get(0).get(3) > 0) {
-			notePad.addTextLineNL("Problematics transitions for non p-invariant vector:", "text");
-			notePad.addTextLineNL("(in parenthesis number of non p-invariants for each transition):", "text");
+			notePad.addTextLineNL(lang.getText("HIGwin_entry099"), "text");
+			notePad.addTextLineNL(lang.getText("HIGwin_entry100"), "text");
 			for(int t=0; t<size; t++) {
 				int value = noInvVector.get(t);
 				if(value != 0) {
@@ -1236,18 +1218,15 @@ public class HolmesInvariantsGenerator extends JFrame {
 		if(invariants == null)
 			return;
 
-		overlord.getWorkspace().getProject().restoreMarkingZero();
+		//overlord.getWorkspace().getProject().restoreMarkingZero(); //TODO: zapytać, czy przywrócić?
+
 		InvariantsCalculatorFeasible invF = new InvariantsCalculatorFeasible(invariants, true);
 		invariants = invF.getMinFeasible(feasibleCalcMode);
 		
-		Object[] options = {"Save & replace", "Save only", "Replace only", "Cancel"};
+		Object[] options = {lang.getText("saveAndReplace"), lang.getText("saveOnly"), lang.getText("replaceOnly"), lang.getText("cancel")};
 		int n = JOptionPane.showOptionDialog(null,
-						"New (feasible) invariants set computed. What to do now?\n"
-						+ "Save it to file and replace the current set.\n"
-						+ "Save it to file only (do not replace current set).\n"
-						+ "Do not save to file, only replace current set.\n"
-						+ "Discart new feasible invariants set.",
-						"What to do?", JOptionPane.YES_NO_OPTION,
+						lang.getText("HIGwin_entry101"),
+						lang.getText("question"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.QUESTION_MESSAGE, null, options, options[3]);
 		if (n == 0) {
 			PetriNet project = overlord.getWorkspace().getProject();
@@ -1260,7 +1239,9 @@ public class HolmesInvariantsGenerator extends JFrame {
 			try {
 				overlord.getWorkspace().getProject().setT_InvMatrix(invariants, false);
 				overlord.io.exportGeneratedInvariants(true);
-			} catch (Exception e) {}
+			} catch (Exception ex) {
+				overlord.log(lang.getText("HIGwin_entry102exception")+"\n"+ex.getMessage(), "error", true);
+			}
 			finally {
 				overlord.getWorkspace().getProject().setT_InvMatrix(invBackup, false);
 			}
@@ -1282,15 +1263,14 @@ public class HolmesInvariantsGenerator extends JFrame {
 			if ((t_invariants = overlord.getWorkspace().getProject().getT_InvMatrix()) != null) {
 				HolmesNotepad notePad = new HolmesNotepad(900,600);
 				notePad.setVisible(true);
-				notePad.addTextLineNL("T-invariants:", "text");
-				for(int i=0; i<t_invariants.size(); i++) {
-					ArrayList<Integer> inv = t_invariants.get(i);
-					String vector = "";
-					for(int value : inv) {
-						vector += value+";";
+				notePad.addTextLineNL(lang.getText("HIGwin_entry103"), "text");
+				for (ArrayList<Integer> inv : t_invariants) {
+					StringBuilder vector = new StringBuilder();
+					for (int value : inv) {
+						vector.append(value).append(";");
 					}
-					vector = vector.substring(0, vector.length()-1);
-					notePad.addTextLineNL(vector, "text");
+					vector = new StringBuilder(vector.substring(0, vector.length() - 1));
+					notePad.addTextLineNL(vector.toString(), "text");
 				}
 			}
 		} else {
@@ -1298,15 +1278,14 @@ public class HolmesInvariantsGenerator extends JFrame {
 			if ((p_invariants = overlord.getWorkspace().getProject().getP_InvMatrix()) != null) {
 				HolmesNotepad notePad = new HolmesNotepad(900,600);
 				notePad.setVisible(true);
-				notePad.addTextLineNL("P-invariants:", "text");
-				for(int i=0; i<p_invariants.size(); i++) {
-					ArrayList<Integer> inv = p_invariants.get(i);
-					String vector = "";
-					for(int value : inv) {
-						vector += value+";";
+				notePad.addTextLineNL(lang.getText("HIGwin_entry104"), "text");
+				for (ArrayList<Integer> inv : p_invariants) {
+					StringBuilder vector = new StringBuilder();
+					for (int value : inv) {
+						vector.append(value).append(";");
 					}
-					vector = vector.substring(0, vector.length()-1);
-					notePad.addTextLineNL(vector, "text");
+					vector = new StringBuilder(vector.substring(0, vector.length() - 1));
+					notePad.addTextLineNL(vector.toString(), "text");
 				}
 			}
 		}

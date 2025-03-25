@@ -1,5 +1,6 @@
 package holmes.tables.managers;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
@@ -9,10 +10,9 @@ import holmes.windows.managers.HolmesSPNmanager;
 
 /**
  * Klasa tablicy wszystkich wektorów tranzycji SPN.
- * 
- * @author MR
  */
 public class SPNdataVectorsTableModel extends DefaultTableModel {
+	@Serial
 	private static final long serialVersionUID = 3869824360655880298L;
 	private String[] columnNames;
 	private ArrayList<SPNvectorTableClass> dataMatrix;
@@ -20,7 +20,7 @@ public class SPNdataVectorsTableModel extends DefaultTableModel {
 	public boolean changes = false;
 	private HolmesSPNmanager boss;
 	
-	public class SPNvectorTableClass {
+	public static class SPNvectorTableClass {
 		public String selected;
 		public int ID;
 		public String frName;
@@ -108,10 +108,7 @@ public class SPNdataVectorsTableModel extends DefaultTableModel {
      * Zwraca status edytowalności komórek.
      */
     public boolean isCellEditable(int row, int column) {
-    	if(column == 2)
-    		return true;
-    	else
-    		return false;
+		return ( column == 2 );
     }
 
     /**
@@ -120,17 +117,13 @@ public class SPNdataVectorsTableModel extends DefaultTableModel {
      * @param columnIndex int - numer kolumny
      */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		switch(columnIndex) {
-			case 0:
-				return dataMatrix.get(rowIndex).selected;
-			case 1:
-				return dataMatrix.get(rowIndex).ID;
-			case 2:
-				return dataMatrix.get(rowIndex).frName;
-			case 3:
-				return dataMatrix.get(rowIndex).superType;
-		}
-		return null;
+		return switch (columnIndex) {
+			case 0 -> dataMatrix.get(rowIndex).selected;
+			case 1 -> dataMatrix.get(rowIndex).ID;
+			case 2 -> dataMatrix.get(rowIndex).frName;
+			case 3 -> dataMatrix.get(rowIndex).superType;
+			default -> null;
+		};
 	}
 	
 	public void setValueAt(Object value, int row, int col) {

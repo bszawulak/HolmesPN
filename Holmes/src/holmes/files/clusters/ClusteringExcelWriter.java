@@ -8,6 +8,8 @@ import java.util.Locale;
 import javax.swing.JOptionPane;
 
 import holmes.clusters.ClusteringExtended;
+import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import jxl.CellView;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
@@ -30,6 +32,7 @@ import jxl.write.biff.RowsExceededException;
  *
  */
 public class ClusteringExcelWriter {
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private WritableCellFormat defCellFormat; //standardowe formatowanie
 	private WritableCellFormat defCellFormatBold;
 	private WritableCellFormat defCellFormatItalic;
@@ -112,8 +115,8 @@ public class ClusteringExcelWriter {
 			workbook.close();
 			succeed = true;
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Unable to access file: "+ outputFilePath 
-					+"\nPlease make sure it is not open in any other application!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, lang.getText("CEW_entry001a")+" "+ outputFilePath 
+					+lang.getText("CEW_entry001b"), "Error", JOptionPane.ERROR_MESSAGE);
 			succeed = false;
 		}
 	}
@@ -125,25 +128,25 @@ public class ClusteringExcelWriter {
 	 * @throws Exception - płacze i jęki jxl'a
 	 */
 	private void fillClusterDatasheet(WritableSheet clusterSheet, int clusterIndex, boolean extended) throws Exception {
-		int rowIndex = 0;
-		int transStartRow = 0;
+		int rowIndex;
+		int transStartRow;
 		//int colIndex = 0;
-		String txt = "";
+		String txt;
 		//double clusterMSS = dataCore.metaData.clusterMSS[clusterIndex];
 		double clusterMSS = dataCore.metaData.clusterMSS.get(clusterIndex);
 		int clusterSize = dataCore.clustersInv.get(clusterIndex).size();
 		
 		//nagłówek:
-		txt = "Cluster #"+(clusterIndex+1)+" ("+dataCore.metaData.algorithmName+"/"
-				+dataCore.metaData.metricName+") Size: "+clusterSize; //+" MSS: "+clusterMSS;
+		txt = lang.getText("CEW_entry002")+(clusterIndex+1)+" ("+dataCore.metaData.algorithmName+"/"
+				+dataCore.metaData.metricName+lang.getText("CEW_entry002b")+" "+clusterSize; //+" MSS: "+clusterMSS;
 		addTextCell(clusterSheet, 0, 0, txt, defCellFormatBold, null);
 		
 		addTextCell(clusterSheet, 4, 0, getMSSEval(clusterMSS), defCellFormatBold, setMSSEval(clusterMSS));
-		addTextCell(clusterSheet, 3, 1, "CLUSTER "+(clusterIndex+1), defCellFormatBoldRed, null);
-		addTextCell(clusterSheet, 1, 2, "MCT#:", defCellFormatBold, null);
-		addTextCell(clusterSheet, 2, 2, "HowMany?", defCellFormatBold, null);
-		addTextCell(clusterSheet, 3, 2, "Size:", defCellFormatBold, null);
-		addTextCell(clusterSheet, 4, 2, "Meaning", defCellFormatBold, null);
+		addTextCell(clusterSheet, 3, 1, lang.getText("CEW_entry003")+" "+(clusterIndex+1), defCellFormatBoldRed, null);
+		addTextCell(clusterSheet, 1, 2, lang.getText("CEW_entry004"), defCellFormatBold, null);
+		addTextCell(clusterSheet, 2, 2, lang.getText("CEW_entry005"), defCellFormatBold, null);
+		addTextCell(clusterSheet, 3, 2, lang.getText("CEW_entry006"), defCellFormatBold, null);
+		addTextCell(clusterSheet, 4, 2, lang.getText("CEW_entry007"), defCellFormatBold, null);
 		
 		ArrayList<Integer> mctInCluster = dataCore.getMCTFrequencyInCluster(clusterIndex);
 		rowIndex = 3;
@@ -161,20 +164,19 @@ public class ClusteringExcelWriter {
 		}
 		
 		rowIndex++;
-		addTextCell(clusterSheet, 1, rowIndex, "Trans.#:", defCellFormatBold, null);
-		addTextCell(clusterSheet, 2, rowIndex, "Freq.:", defCellFormatBold, null);
-		addTextCell(clusterSheet, 3, rowIndex, "Avg.Fired:", defCellFormatBold, null);
-		addTextCell(clusterSheet, 4, rowIndex, "Transition name:", defCellFormatBold, null);
+		addTextCell(clusterSheet, 1, rowIndex, lang.getText("CEW_entry008"), defCellFormatBold, null);
+		addTextCell(clusterSheet, 2, rowIndex, lang.getText("CEW_entry009"), defCellFormatBold, null);
+		addTextCell(clusterSheet, 3, rowIndex, lang.getText("CEW_entry010"), defCellFormatBold, null);
+		addTextCell(clusterSheet, 4, rowIndex, lang.getText("CEW_entry011"), defCellFormatBold, null);
 		transStartRow = rowIndex;
 		rowIndex++;
 		int[][] transInCluster = dataCore.getTransitionFrequencyNoMCT(clusterIndex, mctInCluster);
 		
 		for(int trans=0; trans<dataCore.transNames.length; trans++) { //tabelka tranzycji
 			if(transInCluster[0][trans]>0) {
-				addTextCell(clusterSheet, 1, rowIndex, "Trans. "+trans, defCellFormat, null);
+				addTextCell(clusterSheet, 1, rowIndex, lang.getText("CEW_entry012")+" "+trans, defCellFormat, null);
 				addIntCell(clusterSheet, 2, rowIndex, transInCluster[0][trans], defCellFormat,
 						setColour(transInCluster[0][trans], clusterSize));
-				//addIntCell(clusterSheet, 3, rowIndex, transInCluster[1][trans], defCellFormat, null);
 				//clusterSize
 				double value = (double)(transInCluster[1][trans]) / (double)clusterSize;
 				addDoubleCell(clusterSheet, 3, rowIndex, value, defCellFormat, null);
@@ -183,21 +185,20 @@ public class ClusteringExcelWriter {
 			}
 		}
 		if(extended) {
-			addTextCell(clusterSheet, 6, transStartRow-1, "Real firing of MCT transitions", defCellFormatBold, null);
-			addTextCell(clusterSheet, 6, transStartRow, "Trans.#:", defCellFormatBold, null);
-			addTextCell(clusterSheet, 7, transStartRow, "from MCT:", defCellFormatBold, null);
-			addTextCell(clusterSheet, 8, transStartRow, "Freq:", defCellFormatBold, null);
-			addTextCell(clusterSheet, 9, transStartRow, "Avg.fired:", defCellFormatBold, null);
-			addTextCell(clusterSheet, 10, transStartRow, "Transition name:", defCellFormatBold, null);
+			addTextCell(clusterSheet, 6, transStartRow-1, lang.getText("CEW_entry013"), defCellFormatBold, null);
+			addTextCell(clusterSheet, 6, transStartRow, lang.getText("CEW_entry014"), defCellFormatBold, null);
+			addTextCell(clusterSheet, 7, transStartRow, lang.getText("CEW_entry015"), defCellFormatBold, null);
+			addTextCell(clusterSheet, 8, transStartRow, lang.getText("CEW_entry016"), defCellFormatBold, null);
+			addTextCell(clusterSheet, 9, transStartRow, lang.getText("CEW_entry017"), defCellFormatBold, null);
+			addTextCell(clusterSheet, 10, transStartRow, lang.getText("CEW_entry018"), defCellFormatBold, null);
 			transStartRow++;
 			for(int trans=0; trans<dataCore.transNames.length; trans++) { //tabelka tranzycji
 				if(transInCluster[2][trans]>0) {
-					addTextCell(clusterSheet, 6, transStartRow, "Trans. "+trans, defCellFormat, null);
-					addTextCell(clusterSheet, 7, transStartRow, "MCT "+transInCluster[3][trans], defCellFormat, null);
+					addTextCell(clusterSheet, 6, transStartRow, lang.getText("CEW_entry019")+" "+trans, defCellFormat, null);
+					addTextCell(clusterSheet, 7, transStartRow, lang.getText("CEW_entry020")+" "+transInCluster[3][trans], defCellFormat, null);
 					addIntCell(clusterSheet, 8, transStartRow, mctInCluster.get(transInCluster[3][trans]-1)
 							, defCellFormat, setColour( mctInCluster.get(transInCluster[3][trans]-1), clusterSize));
-
-					//addIntCell(clusterSheet, 9, transStartRow, transInCluster[2][trans], defCellFormat, null);
+					
 					double value = (double)(transInCluster[2][trans]) / (double)clusterSize;
 					addDoubleCell(clusterSheet, 9, transStartRow, value, defCellFormat, null);
 					
@@ -220,19 +221,16 @@ public class ClusteringExcelWriter {
 			ArrayList<String> invArray = dataCore.getNormalizedInvariant(invNo, false);
 			String nr = invArray.get(0);
 			String mct = invArray.get(1);
-			String transitions = "";
+			StringBuilder transitions = new StringBuilder();
 			for(int i=2; i<invArray.size(); i++)
 			{
-				transitions += invArray.get(i) + "  ;  ";
+				transitions.append(invArray.get(i)).append("  ;  ");
 			}
-			
 			addTextCell(clusterSheet, 1, rowIndex, ""+nr, defCellFormat, null);
 			addTextCell(clusterSheet, 2, rowIndex, mct, defCellFormat, null);
-			addTextCell(clusterSheet, 4, rowIndex, transitions, defCellFormat, null);
+			addTextCell(clusterSheet, 4, rowIndex, transitions.toString(), defCellFormat, null);
 			rowIndex++;
 		}
-		
-		
 	}
 	
 	/**
@@ -246,19 +244,18 @@ public class ClusteringExcelWriter {
         txt += df.format(clusterMSS);
         
         if(clusterMSS > 0.80)
-        	txt += " (very strong structure)";
+        	txt += " "+lang.getText("CEW_entry021");
         else if(clusterMSS > 0.60)
-        	txt += " (solid structure)";
+        	txt += " "+lang.getText("CEW_entry022");
         else if(clusterMSS > 0.45)
-        	txt += " (regular structure)";
+        	txt += " "+lang.getText("CEW_entry023");
         else if(clusterMSS > 0.25)
-        	txt += " (weak structure)";
+        	txt += " "+lang.getText("CEW_entry024");
         else if(clusterMSS == 0.0)
-        	txt += " (single element structure?)";
+        	txt += " "+lang.getText("CEW_entry025");
         else if(clusterMSS <= 0.25)
-        	txt += " (no significant structure)";
-        
-        
+        	txt += " "+lang.getText("CEW_entry026");
+		
 		return txt;
 	}
 	
@@ -310,32 +307,31 @@ public class ClusteringExcelWriter {
 	 */
 	private void fillMCTdatasheet(WritableSheet mctSheet) throws Exception {
 		int rowIndex = 0;
-		addTextCell(mctSheet, 0, rowIndex, "MCT #:", defCellFormatBold, null);
-		addTextCell(mctSheet, 1, rowIndex, "Size:", defCellFormatBold, null);
-		addTextCell(mctSheet, 2, rowIndex, "Meaning:", defCellFormatBold, null);
+		addTextCell(mctSheet, 0, rowIndex, lang.getText("CEW_entry027"), defCellFormatBold, null);
+		addTextCell(mctSheet, 1, rowIndex, lang.getText("CEW_entry028"), defCellFormatBold, null);
+		addTextCell(mctSheet, 2, rowIndex, lang.getText("CEW_entry029"), defCellFormatBold, null);
 		rowIndex++;
 		for(int mctIndex=0; mctIndex<dataCore.metaData.MCTnumber; mctIndex++) {
 			int mctSize = dataCore.mctSets.get(mctIndex).size();
 			addIntCell(mctSheet, 0, rowIndex, mctIndex+1, defCellFormat, null);
 			addIntCell(mctSheet, 1, rowIndex, mctSize, defCellFormat, null);
-			addTextCell(mctSheet, 2, rowIndex, "default meaning for mct no. "+(mctIndex+1), defCellFormatItalic, null);
+			addTextCell(mctSheet, 2, rowIndex, lang.getText("CEW_entry030")+" "+(mctIndex+1), defCellFormatItalic, null);
 			rowIndex++;
 		}
 		
 		//IV kolumna - rozpiska MCT
 		rowIndex++;
-		addTextCell(mctSheet, 2, rowIndex++, "MCT sets composition:", defCellFormatBold, null);
+		addTextCell(mctSheet, 2, rowIndex++, lang.getText("CEW_entry031"), defCellFormatBold, null);
 		rowIndex++;
 		for(int mctIndex=0; mctIndex<dataCore.metaData.MCTnumber; mctIndex++) {
 			int mctSize = dataCore.mctSets.get(mctIndex).size();
-			addTextCell(mctSheet, 2, rowIndex++, "MCT#"+(mctIndex+1)+ " Size: "+mctSize, defCellFormatBold, null);
+			addTextCell(mctSheet, 2, rowIndex++, "MCT#"+(mctIndex+1)+ " "+lang.getText("CEW_entry028")+" "+mctSize, defCellFormatBold, null);
 			
 			for(int mctElIndex=0; mctElIndex < mctSize; mctElIndex++) {
-				String txt = "";
+				String txt;
 				int elementIndex = dataCore.mctSets.get(mctIndex).get(mctElIndex);
 				txt = dataCore.transNames[elementIndex];
 				addTextCell(mctSheet, 2, rowIndex++, txt, defCellFormat, null);
-				
 			}
 			addTextCell(mctSheet, 2, rowIndex++, "", defCellFormat, null);
 		} 
@@ -360,7 +356,6 @@ public class ClusteringExcelWriter {
 			sheet.setColumnView(3, 10); // liczność (real)
 			sheet.setColumnView(4, 41); //nazwy tranzycji
 			sheet.setColumnView(7, 12); //mct extended
-
 		}
 	}
 
@@ -411,8 +406,8 @@ public class ClusteringExcelWriter {
 	 * @param value Integer - wartość int do wpisania
 	 * @param format WritableCellFormat - domyślny format czcionek
 	 * @param col Colour - jeśli jest podany (a nie null) to wtedy jest uwzględniany
-	 * @throws WriteException
-	 * @throws RowsExceededException
+	 * @throws WriteException ex1
+	 * @throws RowsExceededException ex2
 	 */
 	private void addIntCell(WritableSheet sheet, int column, int row, Integer value, WritableCellFormat format, Colour col) throws WriteException, RowsExceededException {
 		if(col != null) {
@@ -450,8 +445,8 @@ public class ClusteringExcelWriter {
 	 * @param s String - wartość int do wpisania
 	 * @param format WritableCellFormat - domyślny format czcionek
 	 * @param col Colour - jeśli jest podany (a nie null) to wtedy jest uwzględniany
-	 * @throws WriteException
-	 * @throws RowsExceededException
+	 * @throws WriteException ex1
+	 * @throws RowsExceededException ex2
 	 */
 	private void addTextCell(WritableSheet sheet, int column, int row, String s, WritableCellFormat format, Colour col) throws WriteException, RowsExceededException {
 		if(col != null) {

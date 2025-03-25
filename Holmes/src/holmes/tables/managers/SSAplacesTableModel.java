@@ -1,5 +1,6 @@
 package holmes.tables.managers;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.table.DefaultTableModel;
@@ -8,16 +9,15 @@ import holmes.petrinet.data.SSAplacesVector.SSAdataType;
 
 /**
  * Model tabeli do wyświetlania listy wektorów stanów miejsc w SSA.
- * 
- * @author MR
  */
 public class SSAplacesTableModel extends DefaultTableModel {
+	@Serial
 	private static final long serialVersionUID = -7214250232934584183L;
 	private String[] columnNames;
 	private ArrayList<SSAtableContainer> dataMatrix;
 	private int dataSize;
 	
-	public class SSAtableContainer {
+	public static class SSAtableContainer {
 		public String selected;
 		public int ID;
 		public String description;
@@ -116,21 +116,14 @@ public class SSAplacesTableModel extends DefaultTableModel {
         if (dataMatrix.isEmpty()) {
             return Object.class;
         }
-        switch(columnIndex) {
-			case 0:
-				return String.class;
-			case 1:
-				return Integer.class;
-			case 2:
-				return String.class;
-			case 3:
-				return String.class;
-			case 4:
-				return Double.class;
-        }
-        
-        return Object.class;
-    }
+		return switch (columnIndex) {
+			case 0, 2, 3 -> String.class;
+			case 1 -> Integer.class;
+			case 4 -> Double.class;
+			default -> Object.class;
+		};
+
+	}
     
     /**
 	 * Metoda ustawia flagę wyboru odpowiedniego wektora.
@@ -153,20 +146,14 @@ public class SSAplacesTableModel extends DefaultTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		try {
-			switch(columnIndex) {
-				case 0:
-					return dataMatrix.get(rowIndex).selected;
-				case 1:
-					return dataMatrix.get(rowIndex).ID;
-				case 2:
-					return dataMatrix.get(rowIndex).description;
-				case 3:
-					return dataMatrix.get(rowIndex).type;
-				case 4:
-					return dataMatrix.get(rowIndex).volume;
-				default:
-					return -1;
-			}
+			return switch (columnIndex) {
+				case 0 -> dataMatrix.get(rowIndex).selected;
+				case 1 -> dataMatrix.get(rowIndex).ID;
+				case 2 -> dataMatrix.get(rowIndex).description;
+				case 3 -> dataMatrix.get(rowIndex).type;
+				case 4 -> dataMatrix.get(rowIndex).volume;
+				default -> -1;
+			};
 		} catch (Exception e) {
 			return -1;
 		}

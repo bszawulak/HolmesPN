@@ -42,9 +42,6 @@ import holmes.petrinet.elements.Node;
  * 
  * ArrayList[Integer] createVector(int size, int startVal):<br>
  * 		Metoda zwraca wektor intów o zadanej długości i wartościach początkowych.<br><br>
- * 
- * 
- * @author MR
  */
 public final class SubnetsTools {
 	/** Prywatny konstruktor. To powinno załatwić problem obiektów. */

@@ -3,6 +3,7 @@ package holmes.analyse;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 
@@ -11,10 +12,10 @@ import holmes.petrinet.elements.Transition;
  * nie będzie nigdy aktywny (z powodów różnych, aczkolwiek dla tej klasy zupełnie nieistotnych).
  * Zwraca listę elementów, które przestają funkcjonować w następnie dysfunkcji wskazanych elementów (lub ich zbioru) - na
  * bazie inwariantów.
- * @author MR
- *
  */
 public class KnockoutCalculator {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	ArrayList<ArrayList<Integer>> calc_invariants;
 	ArrayList<Transition> calc_transitions;
 	ArrayList<Place> calc_places;
@@ -23,13 +24,13 @@ public class KnockoutCalculator {
 	 * Konstruktor klasy KnockoutCalculator
 	 */
 	public KnockoutCalculator() {
-		ArrayList<ArrayList<Integer>> invariants = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getT_InvMatrix(); 
-    	if(invariants == null || invariants.size() == 0) { //STEP 1: EM obliczono
+		ArrayList<ArrayList<Integer>> invariants = overlord.getWorkspace().getProject().getT_InvMatrix(); 
+    	if(invariants == null || invariants.isEmpty()) { //STEP 1: EM obliczono
     		return;
     	} else {
     		calc_invariants = invariants;
-    		calc_transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-    		calc_places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+    		calc_transitions = overlord.getWorkspace().getProject().getTransitions();
+    		calc_places = overlord.getWorkspace().getProject().getPlaces();
     	}
 	}
 	
@@ -47,7 +48,7 @@ public class KnockoutCalculator {
 					for(int t=0; t<transNumber; t++) { // dla każdej tranzycji
 						if(calc_invariants.get(i).get(t) > 0) {
 							Transition knockedout = calc_transitions.get(t);
-							if(resultSet.contains(knockedout) == false) {
+							if(!resultSet.contains(knockedout)) {
 								resultSet.add(knockedout);
 							}
 						}
@@ -55,11 +56,9 @@ public class KnockoutCalculator {
 				}
 			}
 		}
-		
 		for(Transition trans : knockout) {
 			resultSet.remove(trans);
 		}
-		
 		return resultSet;
 	}
 }

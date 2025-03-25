@@ -1,27 +1,23 @@
 package holmes.petrinet.data;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 
 import javax.swing.filechooser.FileFilter;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.utilities.Tools;
 import holmes.workspace.ExtensionFileFilter;
 
 /**
  * Klasa odpowiedzialna za zarządzanie danymi symulacji knockout.
- * 
- * @author MR
  */
 public class NetSimulationDataCore implements Serializable {
+	@Serial
 	private static final long serialVersionUID = -2180386709205258057L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<NetSimulationData> referenceSets = new ArrayList<NetSimulationData>();
 	private ArrayList<NetSimulationData> knockoutSets = new ArrayList<NetSimulationData>();
 	private ArrayList<Long> seriesData = new ArrayList<Long>();
@@ -126,7 +122,7 @@ public class NetSimulationDataCore implements Serializable {
 				knockSize--;
 			}
 		}
-		seriesData.remove((Long)IDseries);
+		seriesData.remove(IDseries);
 	}
 	
 	/**
@@ -150,16 +146,15 @@ public class NetSimulationDataCore implements Serializable {
 	 */
 	public ArrayList<NetSimulationData> getSeriesDatasets(long IDseries) {
 		ArrayList<NetSimulationData> result = new ArrayList<NetSimulationData>();
-		int transSize = 0;
 		NetSimulationData tmp = returnSeriesFirst(IDseries);
-		transSize = tmp.transNumber;
+		int transSize = tmp.transNumber;
 		for(NetSimulationData data : knockoutSets) {
 			if(data.getIDseries() == IDseries) {
 				result.add(data);
 			}
 		}
 		if(result.size() != transSize) {
-			GUIManager.getDefaultGUIManager().log("Error: data package incomplete!", "error", true);
+			overlord.log(lang.getText("LOGentry00338"), "error", true);
 			return null;
 		}
 		return result;
@@ -175,15 +170,15 @@ public class NetSimulationDataCore implements Serializable {
 	 */
 	public boolean loadDataSets() {
 		NetSimulationDataCore core = new NetSimulationDataCore();
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		
 		String newLocation = "";
 		try
 		{
-			FileFilter filter[] = new FileFilter[1];
+			FileFilter[] filter = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Simulation Data (.sim)",  new String[] { "sim" });
-			newLocation = Tools.selectFileDialog(lastPath, filter, "Load data", "", "");
-			if(newLocation.equals("")) 
+			newLocation = Tools.selectFileDialog(lastPath, filter, lang.getText("NSDC_entry001"), "", "");
+			if(newLocation.isEmpty())
 				return false;
 			
 			File test = new File(newLocation);
@@ -195,14 +190,14 @@ public class NetSimulationDataCore implements Serializable {
 			core = (NetSimulationDataCore) ois.readObject();
 			ois.close();
 			fis.close();
-			
-			GUIManager.getDefaultGUIManager().getWorkspace().getProject().setNewKnockoutData(core);
+
+			overlord.getWorkspace().getProject().setNewKnockoutData(core);
 			
 			return true;
 		} catch(Exception ioe){
-			String msg = "Simulation data loading failed for file "+newLocation;
-			GUIManager.getDefaultGUIManager().log(msg, "error", true);
-			GUIManager.getDefaultGUIManager().log(ioe.getMessage(), "error", true);
+			String msg = lang.getText("LOGentry00339exception")+" "+newLocation;
+			overlord.log(msg, "error", true);
+			overlord.log(ioe.getMessage(), "error", false);
 			return false;
 		}
 	}
@@ -213,12 +208,12 @@ public class NetSimulationDataCore implements Serializable {
 	 */
 	public boolean saveDataSets() {
 		try{
-			String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+			String lastPath = overlord.getLastPath();
 			
-			FileFilter filter[] = new FileFilter[1];
+			FileFilter[] filter = new FileFilter[1];
 			filter[0] = new ExtensionFileFilter("Simulation Data (.sim)",  new String[] { "sim" });
-			String newLocation = Tools.selectFileDialog(lastPath, filter, "Save data", "", "");
-			if(newLocation.equals(""))
+			String newLocation = Tools.selectFileDialog(lastPath, filter, lang.getText("NSDC_entry002"), "", "");
+			if(newLocation.isEmpty())
 				return false;
 			
 			if(!newLocation.contains(".sim"))
@@ -226,16 +221,14 @@ public class NetSimulationDataCore implements Serializable {
 
 			FileOutputStream fos= new FileOutputStream(newLocation);
 			ObjectOutputStream oos= new ObjectOutputStream(fos);
-			NetSimulationDataCore core = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessSimKnockoutData();
+			NetSimulationDataCore core = overlord.getWorkspace().getProject().accessSimKnockoutData();
 			oos.writeObject(core);
 			oos.close();
 			fos.close();
 			return true;
 		} catch(IOException ioe){
-			GUIManager.getDefaultGUIManager().log("Saving simulation data failed.", "error", false);
+			overlord.log(lang.getText("LOGentry00340exception") +"\n"+ioe.getMessage(), "error", true);
 			return false;
 		}
 	}
-
-
 }

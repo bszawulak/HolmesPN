@@ -3,11 +3,10 @@ package holmes.windows;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -24,6 +23,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import holmes.darkgui.LanguageManager;
 import org.nfunk.jep.JEP;
 
 import holmes.darkgui.GUIManager;
@@ -34,33 +34,31 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.functions.FunctionContainer;
 import holmes.petrinet.functions.FunctionsTools;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.tables.FunctionalTransAuxTableModel;
 import holmes.tables.FunctionalTransTableModel;
 import holmes.tables.FunctionalTransTableRenderer;
 import holmes.utilities.Tools;
 
+import static java.lang.Double.valueOf;
+
 /**
  * Okno zarządzania funkcjami wskazanej tranzycji.
- * 
- * @author MR
  */
 public class HolmesFunctionsBuilder extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 1235426932930026597L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private static final DecimalFormat formatter = new DecimalFormat( "#.###" );
 	private Transition transition;
 	private ArrayList<Place> places;
 	private ArrayList<Arc> arcs;
-	private JPanel mainPanel;
-	private GUIManager overlord;
 	private PetriNet pn;
 	private boolean mainSimulatorActive;
-	private JPanel tablePanel;
 	private JTable tableFunc;
 	private FunctionalTransTableModel tableFuncModel;
-	private FunctionalTransTableRenderer tableRenderer;
-	private JScrollPane tableScrollPane;
-	
+
 	private JTextField idField;
 	private JTextField functionField;
 	private JCheckBox enabledCheckBox;
@@ -73,18 +71,19 @@ public class HolmesFunctionsBuilder extends JFrame {
 	 * @param trans Transition - wskazana tranzycja
 	 */
 	public HolmesFunctionsBuilder(Transition trans) {
-		overlord = GUIManager.getDefaultGUIManager();
 		pn = overlord.getWorkspace().getProject();
 		this.transition = trans;
 		this.places = pn.getPlaces();
 		this.arcs = pn.getArcs();
 		
-		setTitle("Transition: "+trans.getName());
+		setTitle(lang.getText("HFBwin_entry001")+" "+trans.getName());
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {}
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00439exception")+"\n"+ex.getMessage(), "error", true);
+		}
 		
-		if(GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
+		if(overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED)
 			mainSimulatorActive = true;
 
 		addWindowListener(new java.awt.event.WindowAdapter() {
@@ -93,15 +92,15 @@ public class HolmesFunctionsBuilder extends JFrame {
 		    }
 		});
 		
-		if(places.size() == 0) {
+		if(places.isEmpty()) {
 			JOptionPane.showMessageDialog(null,
-					"At least one places required.", 
-					"Error: to few places", JOptionPane.ERROR_MESSAGE);
+					lang.getText("HFBwin_entry002"), 
+					lang.getText("HFBwin_entry002t"), JOptionPane.ERROR_MESSAGE);
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		} else if(mainSimulatorActive) {
 			JOptionPane.showMessageDialog(null,
-					"Function editor unavailble when simulator is working.", 
-					"Error: simulation in progress", JOptionPane.ERROR_MESSAGE);
+					lang.getText("HFBwin_entry003"),
+					lang.getText("HFBwin_entry003t"), JOptionPane.ERROR_MESSAGE);
 			this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 		} else {
 			overlord.getFrame().setEnabled(false);
@@ -117,8 +116,8 @@ public class HolmesFunctionsBuilder extends JFrame {
 	private void initializeComponents() {
 		this.setLocation(20, 20);
 		setSize(new Dimension(900, 650));
-		mainPanel = new JPanel(new BorderLayout());
-		tablePanel = createTablePanel();
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		JPanel tablePanel = createTablePanel();
 		mainPanel.add(tablePanel, BorderLayout.NORTH);
 		mainPanel.add(createAuxPanel(), BorderLayout.CENTER);
 		add(mainPanel);
@@ -146,14 +145,14 @@ public class HolmesFunctionsBuilder extends JFrame {
 	private JPanel createBuilderPanel() {
 		JPanel resultPanel = new JPanel(null);
 		resultPanel.setPreferredSize(new Dimension(900, 160));
-		resultPanel.setBorder(BorderFactory.createTitledBorder("Function builder"));
+		resultPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HFBwin_entry004"))); //Function builder
 		
 		int posX = 15;
 		int posY = 15;
 		
 		//DefaultFormatter format = new DefaultFormatter();
 	   // format.setOverwriteMode(false);
-		JLabel labelID = new JLabel("ID:");
+		JLabel labelID = new JLabel(lang.getText("HFBwin_entry005")); //ID:
 		labelID.setBounds(posX, posY, 50, 20);
 		resultPanel.add(labelID);
 		
@@ -162,7 +161,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		idField.setEditable(false);
 		resultPanel.add(idField);
 		
-		JLabel labelFunction = new JLabel("Function edit field:");
+		JLabel labelFunction = new JLabel(lang.getText("HFBwin_entry006")); //Function edit field:
 		labelFunction.setBounds(posX+65, posY, 150, 20);
 		resultPanel.add(labelFunction);
 		
@@ -170,7 +169,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		functionField.setBounds(posX+65, posY+20, 350, 20);
 		resultPanel.add(functionField);
 		
-		JLabel labelEnable = new JLabel("Enabled?");
+		JLabel labelEnable = new JLabel(lang.getText("HFBwin_entry007"));//Enable:
 		labelEnable.setBounds(posX+420, posY, 60, 20);
 		resultPanel.add(labelEnable);
 		
@@ -178,7 +177,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		enabledCheckBox.setBounds(posX+435, posY+20, 40, 20);
 		resultPanel.add(enabledCheckBox);
 		
-		JLabel resultLabel = new JLabel("Result:");
+		JLabel resultLabel = new JLabel(lang.getText("HFBwin_entry008")); //Result:
 		resultLabel.setBounds(posX+490, posY, 80, 20);
 		resultPanel.add(resultLabel);
 		
@@ -187,87 +186,66 @@ public class HolmesFunctionsBuilder extends JFrame {
 		resultPanel.add(currentResult);
 		
 		validateButton = new JButton(Tools.getResIcon16("/icons/functionsWindow/addFIcon.png"));
-		validateButton.setText("Check and add");
-		validateButton.setToolTipText("Validate the equation and add it to transition functions list");
+		validateButton.setText(lang.getText("HFBwin_entry009")); //Check and add
+		validateButton.setToolTipText(lang.getText("HFBwin_entry009t"));
 		validateButton.setMargin(new Insets(0, 0, 0, 0));
 		validateButton.setBounds(posX+650, posY+20, 120, 22);
-		validateButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				addFunctionAction();
-			}
-		});
+		validateButton.addActionListener(actionEvent -> addFunctionAction());
 		resultPanel.add(validateButton);
 		
 		JButton clearButton = new JButton(Tools.getResIcon16("/icons/functionsWindow/removeFIcon.png"));
-		clearButton.setText("Clear function");
-		clearButton.setToolTipText("Clear the equation from the list");
+		clearButton.setText(lang.getText("HFBwin_entry010")); //Clear function
+		clearButton.setToolTipText(lang.getText("HFBwin_entry010t"));
 		clearButton.setMargin(new Insets(0, 0, 0, 0));
 		clearButton.setBounds(posX+650, posY+50, 120, 22);
-		clearButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				int row = tableFunc.getSelectedRow();
-				if(row == -1)
-					return;
+		clearButton.addActionListener(actionEvent -> {
+			int row = tableFunc.getSelectedRow();
+			if(row == -1)
+				return;
 
-				
-				String fID = (String) tableFunc.getValueAt(row, 0);
-				FunctionContainer container = transition.getFunctionContainer(fID);
-				container.simpleExpression = "";
-				container.correct = false;
-				container.enabled = false;
 
-				tableFunc.getModel().setValueAt("", row, 2);
-				tableFunc.getModel().setValueAt(false, row, 3);
-				tableFunc.getModel().setValueAt(false, row, 6);
-				tableFuncModel.fireTableDataChanged();
-				
-				idField.setText("");
-				functionField.setText("");
-				enabledCheckBox.setSelected(false);
-				currentResult.setText("");
-				commentField.setText("");
-				
-				overlord.markNetChange();
-			}
+			String fID = (String) tableFunc.getValueAt(row, 0);
+			FunctionContainer container = transition.fpnExtension.getFunctionContainer(fID);
+			container.simpleExpression = "";
+			container.correct = false;
+			container.enabled = false;
+
+			tableFunc.getModel().setValueAt("", row, 2);
+			tableFunc.getModel().setValueAt(false, row, 3);
+			tableFunc.getModel().setValueAt(false, row, 6);
+			tableFuncModel.fireTableDataChanged();
+
+			idField.setText("");
+			functionField.setText("");
+			enabledCheckBox.setSelected(false);
+			currentResult.setText("");
+			commentField.setText("");
+
+			overlord.markNetChange();
 		});
 		resultPanel.add(clearButton);
 		
 		JButton helpButton = new JButton(Tools.getResIcon16("/icons/functionsWindow/helpIcon.png"));
-		helpButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Help&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</html>");
-		helpButton.setToolTipText("Show list of operations and functions");
+		helpButton.setText(lang.getText("HFBwin_entry011")); //Help
+		helpButton.setToolTipText(lang.getText("HFBwin_entry011t"));
 		helpButton.setMargin(new Insets(0, 0, 0, 0));
 		helpButton.setBounds(posX+650, posY+80, 120, 22);
-		helpButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				helpNotepad();
-			}
-		});
+		helpButton.addActionListener(actionEvent -> helpNotepad());
 		resultPanel.add(helpButton);
 		
-		JCheckBox functionalActiveButton = new JCheckBox("Functional transition");
+		JCheckBox functionalActiveButton = new JCheckBox(lang.getText("HFBwin_entry012")); //Functional transition
 		functionalActiveButton.setBounds(posX+650, posY+110, 150, 20);
-		if(transition.isFunctional()) {
-			functionalActiveButton.setSelected(true);
-		} else {
-			functionalActiveButton.setSelected(false);
-		}
+		functionalActiveButton.setSelected(transition.fpnExtension.isFunctional());
 
-		functionalActiveButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				
-				AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-				if (abstractButton.getModel().isSelected()) {
-					transition.setFunctional(true);
-				} else {
-					transition.setFunctional(false);
-				}
-				pn.repaintAllGraphPanels();
-				overlord.markNetChange();
-			}
+		functionalActiveButton.addActionListener(actionEvent -> {
+			AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+			transition.fpnExtension.setFunctional(abstractButton.getModel().isSelected());
+			pn.repaintAllGraphPanels();
+			overlord.markNetChange();
 		});
 		resultPanel.add(functionalActiveButton);
 		
-		JLabel errLabel = new JLabel("Error log:", JLabel.LEFT);
+		JLabel errLabel = new JLabel(lang.getText("HFBwin_entry013"), JLabel.LEFT); //Error log:
 		errLabel.setBounds(posX, posY+=40, 140, 20);
 		resultPanel.add(errLabel);	
 		
@@ -286,7 +264,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 	protected void helpNotepad() {
 		HolmesNotepad notePad = new HolmesNotepad(640,500);
 		notePad.setVisible(true);
-		notePad.addTextLineNL("Arithemic and logic operators:", "text");
+		notePad.addTextLineNL(lang.getText("HFBwin_entry014"), "text"); //Arithemic and logic operators:
 		notePad.addTextLineNL("", "text");
 		notePad.addTextLineNL("                                      |Double |Complex|String |Vector|", "text");
 		notePad.addTextLineNL(" Power                         ^      |   X   |   X   |       |      |", "text");
@@ -304,7 +282,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		notePad.addTextLineNL("                                                                     ", "text");
 		
 		notePad.addTextLineNL("", "text");
-		notePad.addTextLineNL(" Mathematical functions table:", "text");
+		notePad.addTextLineNL(lang.getText("HFBwin_entry015"), "text"); //Mathematical functions table:
 		notePad.addTextLineNL("                                      |Double |Complex|", "text");
 		notePad.addTextLineNL(" Sine                        sin()    |   X   |   X   |", "text");
 		notePad.addTextLineNL(" Cosine                      cos()    |   X   |   X   |", "text");
@@ -344,13 +322,13 @@ public class HolmesFunctionsBuilder extends JFrame {
 		currentResult.setText("");
 		String fID = (String) tableFunc.getValueAt(row, 0);
 		boolean enabled = enabledCheckBox.isSelected();
-		FunctionContainer container = transition.getFunctionContainer(fID);
+		FunctionContainer container = transition.fpnExtension.getFunctionContainer(fID);
 		boolean correct = FunctionsTools.validateFunction(container, functionField.getText(), false, commentField, places);
 		
 		if(!correct)
 			enabled = false;
 		
-		transition.updateFunctionString(fID, container.simpleExpression, correct, enabled);
+		transition.fpnExtension.updateFunctionString(fID, container.simpleExpression, correct, enabled);
 		tableFunc.getModel().setValueAt(container.simpleExpression, row, 2);
 		tableFunc.getModel().setValueAt(correct, row, 3);
 		tableFunc.getModel().setValueAt(enabled, row, 6);
@@ -365,7 +343,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		myParser.parseExpression(container.simpleExpression);
 
 		double result = myParser.getValue();
-		if((new Double(result)).isNaN()) {
+		if((valueOf(result)).isNaN()) {
 			currentResult.setText("Not-A-Number");
 			container.correct = false;
 			container.enabled = false;
@@ -375,24 +353,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 			currentResult.setText(formatter.format(result));
 		}
 		
-		/*
-		Expression exp = transition.getFunctionContainer(fID).equation;
-		if(exp != null && correct) {
-			double result = exp.evaluate();
-			
-			if((new Double(result)).isNaN()) {
-				currentResult.setText("Not-A-Number");
-				container.correct = false;
-				container.enabled = false;
-				tableFunc.getModel().setValueAt(container.correct, row, 3);
-				tableFunc.getModel().setValueAt(container.enabled, row, 6);
-			} else
-				currentResult.setText(formatter.format(result));
-		}
-		*/
-		
 		tableFuncModel.fireTableDataChanged();
-		
 		tableFunc.setRowSelectionInterval(row, row);
 		overlord.markNetChange();
 	}
@@ -436,8 +397,8 @@ public class HolmesFunctionsBuilder extends JFrame {
 		tableFunc.getColumnModel().getColumn(6).setPreferredWidth(60);
 		tableFunc.getColumnModel().getColumn(6).setMinWidth(60);
 		tableFunc.getColumnModel().getColumn(6).setMaxWidth(60);
-    	
-		tableRenderer = new FunctionalTransTableRenderer(tableFunc);
+
+		FunctionalTransTableRenderer tableRenderer = new FunctionalTransTableRenderer(tableFunc);
 		tableFunc.setDefaultRenderer(Object.class, tableRenderer);
 		tableFunc.setDefaultRenderer(Integer.class, tableRenderer);
 		tableFunc.setDefaultRenderer(Boolean.class, tableRenderer);
@@ -445,15 +406,15 @@ public class HolmesFunctionsBuilder extends JFrame {
 		tableFunc.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		cellClickedFuncTable();
           	    }
           	 }
       	});
 		
 		
-		transition.checkFunctions(arcs, places);
-		ArrayList<FunctionContainer> fVector = transition.accessFunctionsList();
+		transition.fpnExtension.checkFunctions(arcs, places);
+		ArrayList<FunctionContainer> fVector = transition.fpnExtension.accessFunctionsList();
 		for(FunctionContainer fc : fVector) { //najpierw łuki wejściowe
 			if(!fc.inTransArc) // jeśli nie jest to łuk WEJŚCIOWY DO TRANZYCJI - ignoruj
 				continue;
@@ -469,7 +430,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		}
 
 		tableFunc.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		tableScrollPane = new JScrollPane(tableFunc, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane tableScrollPane = new JScrollPane(tableFunc, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		tablesSubPanel.add(tableScrollPane, BorderLayout.CENTER);
 		return tablesSubPanel;
 	}
@@ -500,7 +461,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 				validateButton.setEnabled(false);
 				currentResult.setEnabled(false);
 				
-				functionField.setText("Function possible only for a normal arc");
+				functionField.setText(lang.getText("HFBwin_entry016"));
 				enabledCheckBox.setSelected(false);
 			}
 		}
@@ -513,7 +474,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 	private JPanel createPlacesTablePanel() {
 		JPanel resultPanel = new JPanel(new BorderLayout());
 		resultPanel.setPreferredSize(new Dimension(900, 200));
-		resultPanel.setBorder(BorderFactory.createTitledBorder("Places table for selection"));
+		resultPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HFBwin_entry017")));
 		
 		FunctionalTransAuxTableModel auxTableModel = new FunctionalTransAuxTableModel();
 		JTable auxTable = new JTable(auxTableModel);
@@ -532,7 +493,7 @@ public class HolmesFunctionsBuilder extends JFrame {
 		auxTable.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		;
           	    }
           	 }

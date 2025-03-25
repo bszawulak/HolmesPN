@@ -1,38 +1,19 @@
 package holmes.darkgui.dockwindows;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.Serial;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
-import javax.swing.AbstractButton;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -42,104 +23,113 @@ import holmes.analyse.*;
 import holmes.clusters.ClusterDataPackage;
 import holmes.clusters.ClusterTransition;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
+import holmes.darkgui.holmesInterface.HolmesRoundedButton;
+import holmes.darkgui.GUIController;
 import holmes.graphpanel.EditorResources;
 import holmes.graphpanel.GraphPanel;
 import holmes.graphpanel.GraphPanel.DrawModes;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SPNtransitionData;
-import holmes.petrinet.elements.Arc;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.Arc.TypeOfArc;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.MetaNode;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.PetriNetElement;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
 import holmes.petrinet.elements.MetaNode.MetaType;
-import holmes.petrinet.simulators.NetSimulator;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.petrinet.simulators.GraphicalSimulator;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
+import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
 import holmes.petrinet.simulators.QuickSimTools;
 import holmes.utilities.ColorPalette;
 import holmes.utilities.Tools;
 import holmes.windows.HolmesFunctionsBuilder;
 import holmes.windows.HolmesInvariantsViewer;
 import holmes.windows.HolmesNotepad;
+import holmes.windows.xtpn.HolmesXTPNtokens;
 import holmes.windows.managers.HolmesStatesManager;
 import holmes.windows.ssim.HolmesSimSetup;
 import holmes.workspace.WorkspaceSheet;
-import jxl.biff.drawing.ComboBox;
 
 /**
- * Klasa zawierająca szczegóły interfejsu podokien dokowalnych programu.
- *
- * @author students<br>
- * @author MR<br>
- * <br>
- * <b>Absolute positioning. Of almost absolute everything here.</b><br>
- * Nie obchodzi mnie, co o tym myślisz (╯゜Д゜）╯︵ ┻━┻) . Idź w layout i nie wracaj. ┌∩┐(◣_◢)┌∩┐
+ * [MR]Klasa zawierająca szczegóły interfejsu podokien programu. Jest to najlepiej napisana klasa w całym programie.
+ * Nasi profesorowie inżynierii oprogramowania byliby dumni.
+ * Aby wprawić się w odpowiedni nastrój do jej przeglądania, zacznijmy od dowcipu:
+ * Jedziesz na koniu. Żyrafa popierdala przed tobą, z tyłu goni cię lew. Co robisz?
+ * Obrzygujesz lwa, mówisz sobie, że więcej nie pijesz i schodzisz z karuzeli.
+ * Absolute positioning. Of absolute everything here. It's like a 90s website.
+ * Nie obchodzi mnie, co o tym myślicie (╯゜Д゜）╯︵ ┻━┻) . Idźcie w layout i nie wracajcie. ┌∩┐(◣_◢)┌∩┐
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class HolmesDockWindowsTable extends JPanel {
+    @Serial
     private static final long serialVersionUID = 4510802239873443705L;
-    private GUIManager overlord;
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private ArrayList<JComponent> components;
     private int mode;
+
+    public int simulatorType = 0; //normalne symulatory
     private ArrayList<Transition> transitions; // j.w.
     private ArrayList<Place> places;
-    private ArrayList<ArrayList<Transition>> mctGroups; //używane tylko w przypadku, gdy obiekt jest typu DockWindowType.MctANALYZER
     private ArrayList<ArrayList<Integer>> knockoutData;
-
-    public JPanel getPanel() {
-        return panel;
-    }
-
-    public void setPanel(JPanel panel) {
-        this.panel = panel;
-    }
 
     // Containers & general use
     private JPanel panel; // główny panel okna
     private boolean stopAction = false;
     public boolean doNotUpdate = false;
+
     //simulator:
     public ButtonGroup group = new ButtonGroup();
-    private JSpinner spiner = new JSpinner();
     public JComboBox<String> simMode;
     private JCheckBox maximumModeCheckBox;
     private JCheckBox singleModeCheckBox;
-    public JCheckBox functionalModeCheckBox;
+    private JCheckBox showColorsCheckBox;
     public JLabel timeStepLabelValue;
-    private NetSimulator simulator;  // obiekt symulatora
+    public JLabel timeLabelXTPN;
+    public JLabel stepLabelXTPN;
+    private GraphicalSimulator simulator;  // obiekt symulatora
+    private GraphicalSimulatorXTPN simulatorXTPN;
+
     // P/T/M/A
-    private ButtonGroup groupRadioMetaType = new ButtonGroup();  //metanode
+    private final ButtonGroup groupRadioMetaType = new ButtonGroup();  //metanode
     private boolean nameLocChangeMode = false;
     private PetriNetElement element;
     private ElementLocation elementLocation;
     public SpinnerModel nameLocationXSpinnerModel = null;
     public SpinnerModel nameLocationYSpinnerModel = null;
     private Arc pairedArc = null;
-    private JCheckBox tpnCheckBox;
-    private JCheckBox pnCheckBox;
+    private JCheckBox timeTransitionCheckBox;
+    private JCheckBox classicalTransitionCheckBox;
+    private JCheckBox stochasticTransitionCheckBox;
+
     //MCT:
     private int selectedMCTindex = -1;
     private boolean colorMCT = false;
     private boolean allMCTselected = false;
+
+    JComboBox<String> chooseMctBox = null; //combobox z wyborem MCT
     private JTextArea MCTnameField;
+
+    private ArrayList<ArrayList<Transition>> mctGroups;
+    //ArrayList<ArrayList<Transition>> mctGroupsMatrix; //używane w podoknie MCT
+
     //knockout:
     private JTextArea knockoutTextArea;
+
     //t-invariants:
-    private JComboBox<String> chooseInvBox;
+    private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //używane w podoknie t-inwariantów
+    private JComboBox<String> chooseInvBox = null;
     private JComboBox<String> chooseSurInvBox;
     private JComboBox<String> chooseSubInvBox;
     private JComboBox<String> chooseNoneInvBox;
-    private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //używane w podoknie t-inwariantów
     private int selectedT_invIndex = -1;
     private boolean markMCT = false;
     private boolean glowT_inv = true;
     private JTextArea t_invNameField;
-    //t-invariants:
+
+    //p-invariants:
     private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //używane w podoknie p-inwariantów
+    private JComboBox<String> choosePInvBox = null;
     private int selectedP_invIndex = -1;
     private JTextArea p_invNameField;
     private boolean invStructure = true;
@@ -147,6 +137,7 @@ public class HolmesDockWindowsTable extends JPanel {
     private JLabel avgTimeLabel;
     private JLabel maxTimeLabel;
     private JLabel structureLabel;
+
     //clusters:
     private JComboBox<String> chooseCluster;
     private JComboBox<String> chooseClusterInv;
@@ -156,11 +147,14 @@ public class HolmesDockWindowsTable extends JPanel {
     private boolean clustersMCT = false;
     private JProgressBar progressBar = null;
     private JLabel mssValueLabel;
+
     //MCS
     private JComboBox<String> mcsObjRCombo;
     private JComboBox<String> mcsMCSforObjRCombo;
+
     //sheets:
     private WorkspaceSheet currentSheet;
+
     //fixer:
     public JLabel fixInvariants;
     public JLabel fixInvariants2;
@@ -168,6 +162,7 @@ public class HolmesDockWindowsTable extends JPanel {
     public JLabel fixIOTransitions;
     public JLabel fixlinearTrans;
     private ProblemDetector detector;
+
     //quickSim:
     private QuickSimTools quickSim;
     private boolean scanTransitions = true;
@@ -180,8 +175,59 @@ public class HolmesDockWindowsTable extends JPanel {
     private int choosenDeco = 0;
     private JTextArea elementsOfDecomposedStructure;
     private int selectedSubNetindex = -1;
-    private boolean colorSubNet = false;
+
     private boolean allSubNetsselected = false;
+
+    //kolor:
+    private JButton c1Button;
+    private JButton c2Button;
+
+    private JLabel projectTypeLabelText; //typ sieci
+
+    //XTPN:
+    private HolmesRoundedButton alfaVisibilityButton;//tranzycja
+    private HolmesRoundedButton betaVisibilityButton;//tranzycja
+    private HolmesRoundedButton tauVisibilityButton;//tranzycja
+    private HolmesRoundedButton alphaLocChangeButton;//tranzycja
+    private HolmesRoundedButton betaLocChangeButton;//tranzycja
+    private HolmesRoundedButton tauLocChangeButton;//tranzycja
+    private HolmesRoundedButton buttonClassicMode;//tranzycja
+
+    private HolmesRoundedButton buttonGammaMode; //miejsce
+    private HolmesRoundedButton gammaVisibilityButton;//miejsce
+    private HolmesRoundedButton gammaLocChangeButton;//miejsce
+
+    private boolean alphaLocChangeMode = false;
+    private boolean betaLocChangeMode = false;
+    private boolean gammaLocChangeMode = false;
+    private boolean tauLocChangeMode = false;
+
+    //aby była możliwa zmiana bez odświeżania:
+    private JFormattedTextField alphaMinTextField;
+    private JFormattedTextField alphaMaxTextField;
+    private JFormattedTextField betaMinTextField;
+    private JFormattedTextField betaMaxTextField;
+
+    //przyciski sumulatora XTPN używają poniższych aby globalnie zmieniać widoczność wartości czasowych rysunku sieci:
+    private boolean alphaValuesVisible = true;
+    private boolean betaValuesVisible = true;
+    private boolean gammaValuesVisible = true;
+    private boolean tauValuesVisible = true;
+
+    //XTPN qSim:
+    JCheckBox qSimXTPNStatsStepsCheckbox;
+    JCheckBox qSimXTPNStatsTimeCheckbox;
+
+    boolean qSimXTPNSbySteps = true;
+    boolean qSimXTPNrepeateSim = false;
+    double qSimXTPNStatsTime = 500.0;
+    int qSimXTPNsimStatsSteps = 10000;
+    int qSimXTPNStatsRepetitions = 10;
+    boolean qSimXTPNknockoutMode = false;
+
+    private JProgressBar qSimXTPNProgressBar = null;
+    private HolmesRoundedButton acqDataButtonXTPN = null; //przycisk qSim, wygaszony gdy trwa analiza
+
 
     // modes
     private static final int PLACE = 0;
@@ -198,77 +244,64 @@ public class HolmesDockWindowsTable extends JPanel {
     private static final int META = 11;
     private static final int CTRANSITION = 12;
     private static final int DECOMPOSITION = 13;
+    private static final int XTPN_TRANS = 14;
+    private static final int XTPN_PLACE = 15;
+    private static final int XARC = 16;
+    private static final int SPN = 99; //rzutem na taśmę
 
     public enum SubWindow {
-        SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, CTRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS,
-        MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM, DECOMPOSITION
+        SIMULATOR, PLACE, TRANSITION, TIMETRANSITION, SPNTRANSITION, XTPNTRANSITION, XTPNPLACE, XARC, CTRANSITION, META, ARC, SHEET, T_INVARIANTS, P_INVARIANTS, MCT, CLUSTERS, KNOCKOUT, MCS, FIXER, QUICKSIM, DECOMPOSITION, EMPTY
+    }
+    
+    public JPanel getPanel() {
+        return panel;
     }
 
+    public void setPanel(JPanel panel) {
+        this.panel = panel;
+    }
+    
     /**
      * Konstruktor główny, wybierający odpowiednią metodę do tworzenia podokna wybranego typu
-     *
      * @param subType  SubWindow - typ podokna do utworzenia
      * @param blackBox Object[...] - bliżej nieokreślona lista nieokreślonych parametrów :)
      */
     @SuppressWarnings("unchecked")
     public HolmesDockWindowsTable(SubWindow subType, Object... blackBox) {
-        overlord = GUIManager.getDefaultGUIManager();
-
+        //System.out.println("HolmesDockWindowsTable constructor called by: "+subType);  //What are you creating
         switch (subType) {
-
-            case SIMULATOR:
-                createSimulatorSubWindow((NetSimulator) blackBox[0]);
-                break;
-            case PLACE:
-                createPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
-                break;
-            case TRANSITION:
-                createTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
-                break;
-            case TIMETRANSITION:
-                createTimeTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
-                break;
-            case CTRANSITION:
-                createColorTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
-                break;
-            case META:
-                createMetaNodeSubWindow((MetaNode) blackBox[0], (ElementLocation) blackBox[1]);
-                break;
-            case ARC:
-                createArcSubWindow((Arc) blackBox[0]);
-                break;
-            case SHEET:
-                createSheetSubWindow((WorkspaceSheet) blackBox[0]);
-                break;
-            case T_INVARIANTS:
-                createT_invSubWindow((ArrayList<ArrayList<Integer>>) blackBox[0]);
-                break;
-            case P_INVARIANTS:
-                createP_invSubWindow((ArrayList<ArrayList<Integer>>) blackBox[0]);
-                break;
-            case MCT:
-                createMCTSubWindow((ArrayList<ArrayList<Transition>>) blackBox[0]);
-                break;
-            case CLUSTERS:
-                createClustersSubWindow((ClusterDataPackage) blackBox[0]);
-                break;
-            case MCS:
-                createMCSSubWindow((MCSDataMatrix) blackBox[0]);
-                break;
-            case FIXER:
-                createFixerSubWindow();
-                break;
-            case QUICKSIM:
-                createQuickSimSubWindow();
-                break;
-            case KNOCKOUT:
-                createKnockoutData((ArrayList<ArrayList<Integer>>) blackBox[0]);
-                break;
-            case DECOMPOSITION:
-                createDecompositionData();
-                break;
+            case SIMULATOR -> createSimulatorSubWindow((GraphicalSimulator) blackBox[0], (GraphicalSimulatorXTPN) blackBox[1]);
+            case PLACE -> createPlaceSubWindow((Place) blackBox[0], (ElementLocation) blackBox[1]);
+            case TRANSITION -> createTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+            case TIMETRANSITION -> createTimeTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+            case SPNTRANSITION -> createSPNTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+            case XTPNTRANSITION -> createXTPNTransitionSubWindow((TransitionXTPN) blackBox[0], (ElementLocation) blackBox[1]);
+            case XTPNPLACE -> createXTPNPlaceSubWindow((PlaceXTPN) blackBox[0], (ElementLocation) blackBox[1]);
+            case CTRANSITION -> createColorTransitionSubWindow((Transition) blackBox[0], (ElementLocation) blackBox[1]);
+            case META -> createMetaNodeSubWindow((MetaNode) blackBox[0], (ElementLocation) blackBox[1]);
+            case ARC, XARC -> createArcSubWindow((Arc) blackBox[0]);
+            case SHEET -> createSheetSubWindow((WorkspaceSheet) blackBox[0]);
+            case T_INVARIANTS -> createT_invSubWindow((ArrayList<ArrayList<Integer>>) blackBox[0]);
+            case P_INVARIANTS -> createP_invSubWindow((ArrayList<ArrayList<Integer>>) blackBox[0]);
+            case MCT -> createMCTSubWindow((ArrayList<ArrayList<Transition>>) blackBox[0]);
+            case CLUSTERS -> createClustersSubWindow((ClusterDataPackage) blackBox[0]);
+            case MCS -> createMCSSubWindow();//(MCSDataMatrix) blackBox[0]);
+            case FIXER -> createFixerSubWindow();
+            case QUICKSIM -> createQuickSimSubWindow();
+            case KNOCKOUT -> createKnockoutData((ArrayList<ArrayList<Integer>>) blackBox[0]);
+            case DECOMPOSITION -> createDecompositionData();
+            case EMPTY -> createEmpty();
         }
+    }
 
+    private void createEmpty() {
+        // wiem że tworzy nowe okno w evencie, ale czy dodaje gdzie trzeba? Test z zwenetrznym oknem?
+        initiateContainers();
+        createSheetSubWindow(overlord.getWorkspace().getSelectedSheet());
+        //mode = PLACE;
+        //panel=new JPanel();
+        add(panel);
+        setPanel(panel);
     }
 
     //**************************************************************************************
@@ -279,370 +312,902 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda pomocnicza konstruktora odpowiedzialna za tworzenie podokna dla symulatora sieci.
-     *
-     * @param sim NetSimulator - obiekt symulatora sieci
+     * @param sim (<b>GraphicalSimulator</b>) obiekt symulatora sieci PN.
+     * @param simXTPN (<b>GraphicalSimulatorXTPN</b>) obiekt symulatora sieci XTPN.
      */
-    private void createSimulatorSubWindow(NetSimulator sim) {
-        int columnA_posX = 10;
-        int columnB_posX = 80;
-        int columnA_Y = 0;
-        int columnB_Y = 0;
-        int colACompLength = 70;
-        int colBCompLength = 70;
-
+    //@SuppressWarnings("UnusedAssignment")
+    private void createSimulatorSubWindow(GraphicalSimulator sim, GraphicalSimulatorXTPN simXTPN) {
         initiateContainers();
-
-        String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode", "Color"};
         mode = SIMULATOR;
-        setSimulator(sim);
+        setSimulator(sim, simXTPN);
+        if (GUIManager.isXTPN_simMode())
+            simulatorType = 1; //XTPN
+        else
+            simulatorType = 0;
 
-        // SIMULATION MODE
-        JLabel netTypeLabel = new JLabel("Mode:");
-        netTypeLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
-        components.add(netTypeLabel);
+        //System.out.println("Window activated: " + GUIManager.isXTPN_simMode());
 
-        simMode = new JComboBox<>(simModeName);
-        simMode.setLocation(columnB_posX - 30, columnB_Y += 10);
-        simMode.setSize(colBCompLength + 30, 20);
-        simMode.setSelectedIndex(0);
-        simMode.addActionListener(actionEvent -> {
-            if (doNotUpdate)
-                return;
-
-            int selectedModeIndex = simMode.getSelectedIndex();
-            int change = simulator.setSimNetType(selectedModeIndex);
-            doNotUpdate = true;
-            if (change == 0) {
-                simMode.setSelectedIndex(0);
-            } else if (change == 1) {
-                simMode.setSelectedIndex(1);
-            } else if (change == 2) {
-                simMode.setSelectedIndex(2);
-            } else if (change == 3) {
-                simMode.setSelectedIndex(3);
-            } else {
-                overlord.log("Error while changing graphical simulator mode.", "error", true);
-            }
-            doNotUpdate = false;
-        });
-        components.add(simMode);
-
-        JLabel timeStepLabel = new JLabel("Time/step:");
-        timeStepLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-        components.add(timeStepLabel);
-
-        timeStepLabelValue = new JLabel("0");
-        timeStepLabelValue.setBounds(columnA_posX + 70, columnB_Y += 20, colACompLength, 20);
-        components.add(timeStepLabelValue);
-
-        // SIMULATOR CONTROLS
-        // metoda startSimulation obiektu simulator troszczy się o wygaszanie
-        // i aktywowanie odpowiednich przycisków
-        JLabel controlsLabel = new JLabel("Simulation options:");
-        controlsLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength * 2, 20);
-        components.add(controlsLabel);
-        columnB_Y += 20;
-
-        JButton oneActionBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
-        oneActionBack.setName("simB1");
-        oneActionBack.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 30);
-        oneActionBack.setToolTipText("One action back");
-        oneActionBack.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.startSimulation(SimulatorMode.ACTION_BACK);
-            mode = SIMULATOR;
-        });
-        components.add(oneActionBack);
-
-        JButton oneTransitionForward = new JButton(
-                Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
-        oneTransitionForward.setName("simB2");
-        oneTransitionForward.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 30);
-        oneTransitionForward.setToolTipText("One transition forward");
-        oneTransitionForward.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION);
-            mode = SIMULATOR;
-        });
-        components.add(oneTransitionForward);
-
-        JButton loopBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_backLoop.png"));
-        loopBack.setName("simB3");
-        loopBack.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-        loopBack.setToolTipText("Loop back to oldest saved action");
-        loopBack.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.startSimulation(SimulatorMode.LOOP_BACK);
-            mode = SIMULATOR;
-        });
-        components.add(loopBack);
-        JButton oneStepForward = new JButton(
-                Tools.getResIcon22("/icons/simulation/control_sim_fwdLoop.png"));
-        oneStepForward.setName("simB4");
-        oneStepForward.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-        oneStepForward.setToolTipText("One step forward");
-        oneStepForward.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.startSimulation(SimulatorMode.STEP);
-            mode = SIMULATOR;
-        });
-        components.add(oneStepForward);
-
-        JButton loopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_loop.png"));
-        loopSimulation.setName("simB5");
-        loopSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-        loopSimulation.setToolTipText("Loop simulation");
-        loopSimulation.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.startSimulation(SimulatorMode.LOOP);
-            mode = SIMULATOR;
-        });
-        components.add(loopSimulation);
-
-        JButton singleTransitionLoopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_1transLoop.png"));
-        singleTransitionLoopSimulation.setName("simB6");
-        singleTransitionLoopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-        singleTransitionLoopSimulation.setToolTipText("Loop single transition simulation");
-        singleTransitionLoopSimulation.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
-            mode = SIMULATOR;
-        });
-        components.add(singleTransitionLoopSimulation);
-
-        JButton pauseSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_pause.png"));
-        pauseSimulation.setName("stop");
-        pauseSimulation.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 30);
-        pauseSimulation.setToolTipText("Pause simulation");
-        pauseSimulation.setEnabled(false);
-        pauseSimulation.addActionListener(actionEvent -> {
-            overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
-            simulator.pause();
-            mode = SIMULATOR;
-        });
-        components.add(pauseSimulation);
-
-        JButton stopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_stop.png"));
-        stopSimulation.setName("stop");
-        stopSimulation.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 30);
-        stopSimulation.setToolTipText("Schedule a stop for the simulation");
-        stopSimulation.setEnabled(false);
-        stopSimulation.addActionListener(actionEvent -> {
-            simulator.stop();
-            mode = SIMULATOR;
-        });
-        components.add(stopSimulation);
-
-        JButton resetButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_reset.png"));
-        resetButton.setName("reset");
-        resetButton.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
-        resetButton.setToolTipText("Reset all tokens in places.");
-        resetButton.setEnabled(false);
-        resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
-        components.add(resetButton);
-
-        JButton saveButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_save_m0.png"));
-        saveButton.setName("Save m0");
-        saveButton.setBounds(columnB_posX, columnA_Y += 30, colBCompLength, 30);
-        saveButton.setToolTipText("Save m0 state.");
-        saveButton.addActionListener(actionEvent -> {
-            if (overlord.reset.isSimulatorActiveWarning(
-                    "Operation impossible while simulator is working.", "Warning"))
-                return;
-
-            Object[] options = {"Save new m0 state", "Cancel",};
-            int n = JOptionPane.showOptionDialog(null,
-                    "Add new net state to states table?",
-                    "Saving m0 state", JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-            if (n == 0) {
-                overlord.getWorkspace().getProject().accessStatesManager().addCurrentState();
-            }
-        });
-        components.add(saveButton);
-
-        JButton c1Button = new JButton("Store");
-        c1Button.setName("reset");
-        c1Button.setBounds(columnA_posX, columnB_Y += 30, colACompLength, 30);
-        c1Button.setToolTipText("Reset all tokens in places.");
-        c1Button.setEnabled(true);
-        c1Button.addActionListener(actionEvent -> overlord.getWorkspace().getProject().storeColors());
-        components.add(c1Button);
-
-        JButton c2Button = new JButton("Reset");
-        c2Button.setName("reset");
-        c2Button.setBounds(columnB_posX, columnA_Y += 30, colBCompLength, 30);
-        c2Button.setToolTipText("Reset all tokens in places.");
-        c2Button.setEnabled(true);
-        c2Button.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreColors());
-        components.add(c2Button);
-
-        JButton statesButton = new JButton("State manager");
-        statesButton.setName("State manager");
-        statesButton.setBounds(columnA_posX, columnB_Y += 35, colACompLength * 2, 30);
-        statesButton.setToolTipText("Open states manager window.");
-        statesButton.setEnabled(true);
-        statesButton.addActionListener(actionEvent -> {
-            if (overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
-                JOptionPane.showMessageDialog(null, "Net simulator must be stopped in order to access state manager.",
-                        "Simulator working", JOptionPane.WARNING_MESSAGE);
-            } else {
-                new HolmesStatesManager();
-            }
-        });
-        components.add(statesButton);
-
-        columnB_Y += 35;
-        columnA_Y += 35;
-        //doNotUpdate = false;
-        maximumModeCheckBox = new JCheckBox("Maximum mode");
-        maximumModeCheckBox.setBounds(columnA_posX, columnA_Y += 30, 200, 20);
-        maximumModeCheckBox.addActionListener(actionEvent -> {
-            if (doNotUpdate)
-                return;
-
-            if (singleModeCheckBox.isSelected()) {
-                JOptionPane.showMessageDialog(null, "Mode overrided by an active single mode.",
-                        "Cannot change now", JOptionPane.WARNING_MESSAGE);
-                doNotUpdate = true;
-                maximumModeCheckBox.setSelected(overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
-                doNotUpdate = false;
-            }
-
-            AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-            simulator.setMaxMode(abstractButton.getModel().isSelected());
-        });
-        components.add(maximumModeCheckBox);
-
-        singleModeCheckBox = new JCheckBox("Single mode");
-        singleModeCheckBox.setBounds(columnA_posX, columnA_Y += 20, 200, 20);
-        singleModeCheckBox.addActionListener(actionEvent -> {
-            AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
-            if (abstractButton.getModel().isSelected()) {
-                simulator.setSingleMode(true);
-                doNotUpdate = true;
-                maximumModeCheckBox.setSelected(overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
-                doNotUpdate = false;
-            } else {
-                simulator.setSingleMode(false);
-
-                doNotUpdate = true;
-                maximumModeCheckBox.setSelected(false);
-                simulator.setMaxMode(false);
-                doNotUpdate = false;
-            }
-        });
-        components.add(singleModeCheckBox);
-
-        //PANEL SYMULATORA INWARIANTÓW
-        JPanel invariantsSimulatorPanel = new JPanel();
-
-        invariantsSimulatorPanel.setLayout(null);
-        invariantsSimulatorPanel.setBorder(BorderFactory.createTitledBorder("Invariants simulator"));
-        invariantsSimulatorPanel.setBounds(columnA_posX - 5, columnA_Y += 20, 160, 160);
-
-        int internalXA = 10;
-        int internalXB = 60;
-        int internalY = 20;
-
-        JLabel simTypeLabel = new JLabel("Mode:");
-        simTypeLabel.setBounds(internalXA, internalY, 50, 20);
-        invariantsSimulatorPanel.add(simTypeLabel);
-
-        JRadioButton TimeMode = new JRadioButton("Time Mode");
-        TimeMode.setBounds(internalXB, internalY, 90, 20);
-        //TimeMode.setLocation(internalXB, internalY);
-        internalY += 20;
-        TimeMode.setSize(90, 20);
-        TimeMode.setActionCommand("0");
-        invariantsSimulatorPanel.add(TimeMode);
-        group.add(TimeMode);
-
-        columnA_Y += 20;
-        JRadioButton StepMode = new JRadioButton("Step Mode");
-        StepMode.setBounds(internalXB, internalY, 90, 20);
-        //StepMode.setLocation(internalXB, internalY);
-        internalY += 20;
-        StepMode.setSize(90, 20);
-        StepMode.setActionCommand("1");
-        invariantsSimulatorPanel.add(StepMode);
-        group.add(StepMode);
-
-        JRadioButton CycleMode = new JRadioButton("Cycle Mode");
-        CycleMode.setBounds(internalXB, internalY, 90, 20);
-        //CycleMode.setLocation(internalXB, internalY);
-        internalY += 20;
-        CycleMode.setSize(90, 20);
-        CycleMode.setActionCommand("2");
-        invariantsSimulatorPanel.add(CycleMode);
-        group.add(CycleMode);
-        group.setSelected(TimeMode.getModel(), true);
-
-
-        JLabel timeLabel = new JLabel("Time (min):");
-        timeLabel.setBounds(internalXA, internalY, 70, 20);
-        invariantsSimulatorPanel.add(timeLabel);
-
-        SpinnerModel timeCycle = new SpinnerNumberModel(1, 1, 9999, 1);
-        spiner = new JSpinner(timeCycle);
-        spiner.setLocation(internalXB + 20, internalY + 3);
-        spiner.setSize(70, 20);
-        internalY += 25;
-        invariantsSimulatorPanel.add(spiner);
-
-        // INVARIANTS SIMULATION START BUTTON
-        //JButton startButton = new JButton("Start");
-        JButton startButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_fwd.png"));
-        startButton.setBounds(internalXA, internalY, 80, 30);
-        //startButton.setLocation(internalXA, internalY);
-        //startButton.setSize(80, 40);
-        startButton.addActionListener(actionEvent -> {
-            /*
-            if(overlord.getWorkspace().getProject().get2ndFormInvariantsList().size()>0)
-            {
-
-                mode = INVARIANTSSIMULATOR;
-                setEnabledSimulationInitiateButtons(false);
-                setEnabledSimulationDisruptButtons(false);
-                overlord.getShortcutsBar().setEnabledSimulationInitiateButtons(false);
-                overlord.getShortcutsBar().setEnabledSimulationDisruptButtons(false);
-
-                try {
-                    //overlord.startInvariantsSimulation(Integer.valueOf(group.getSelection().getActionCommand()),
-                    //		(Integer) spiner.getValue()); //jaki tryb
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                //STOP:
-                setEnabledSimulationInitiateButtons(true);
-                setEnabledSimulationDisruptButtons(false);
-                overlord.getShortcutsBar().setEnabledSimulationInitiateButtons(true);
-                overlord.getShortcutsBar().setEnabledSimulationDisruptButtons(false);
-
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "There are no invariants to simulate.",
-                        "Invariant simulator", JOptionPane.INFORMATION_MESSAGE);
-            }
-            */
-        });
-
-        TimeMode.setEnabled(false);
-        StepMode.setEnabled(false);
-        CycleMode.setEnabled(false);
-        spiner.setEnabled(false);
-        startButton.setEnabled(false);
-        invariantsSimulatorPanel.add(startButton);
-        //components.add(invariantsSimulatorPanel);
-
+        repopulateSimulatorPanel();
         panel.setLayout(null);
-        for (JComponent component : components) {
-            panel.add(component);
-        }
+        
         panel.setOpaque(true);
         panel.repaint();
         panel.setVisible(true);
         add(panel);
+        setPanel(panel);
+    }
+
+    /**
+     * Metoda odpowiedzialna za stworzenie komponentów panelu symulacji standardowej lub XTPN (po prawej
+     * stronie głównego okna). Jest wywoływana przez actionListener comboBoxa, gdy zmieniamy rodzaj symulatora.
+     */
+    private void repopulateSimulatorPanel() {
+        int internalX = 5;
+        int internalY = 10;
+
+        if (GUIManager.isXTPN_simMode()) { // comboBox dla symulatora XPTN
+            JLabel netTypeLabel = new JLabel(lang.getText("HDWT_entry001"));
+            netTypeLabel.setBounds(internalX, internalY, 70, 20);
+            components.add(netTypeLabel);
+
+            String[] simModeName = {lang.getText("HDWT_entry001op1"), lang.getText("HDWT_entry001op2")};
+            simMode = new JComboBox<>(simModeName);
+            simMode.setName("XTPNcombo");
+            simMode.setLocation(internalX+40, internalY);
+            simMode.setSize(120, 20);
+            simMode.setSelectedIndex(0);
+            simMode.addActionListener(actionEvent -> {
+                if (doNotUpdate)
+                    return;
+
+                if(simulatorXTPN.getsimulatorStatusXTPN() != GraphicalSimulatorXTPN.SimulatorModeXTPN.STOPPED) {
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_dialog001"),
+                            lang.getText("HDWT_dialog001t"), JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                int selectedModeIndex = simMode.getSelectedIndex();
+                if (selectedModeIndex == 1) { //restore others
+                    GUIManager.setXTPN_simMode(false);
+                    System.out.println("isXTPNsim? : " + GUIManager.isXTPN_simMode());
+                    overlord.getSimulatorBox().createSimulatorProperties(false);
+                    components.clear();
+                    panel.removeAll();
+                    repopulateSimulatorPanel();
+                    this.getPanel().validate();
+                    this.getPanel().repaint();
+                    return;
+                } else {
+                    GUIManager.setXTPN_simMode(true);
+                    //System.out.println("XTPNmode2 " + GUIManager.isXTPN_simMode());
+                }
+                doNotUpdate = false;
+            });
+            components.add(simMode);
+        } else { //XTPNmode == false
+            // SIMULATION MODE
+            JLabel netTypeLabel = new JLabel(lang.getText("HDWT_entry001"));
+            netTypeLabel.setBounds(internalX, internalY, 70, 20);
+            components.add(netTypeLabel);
+
+            String[] simModeName = {"Petri Net", "Timed Petri Net", "Hybrid mode", "Color", "XTPN"};
+            simMode = new JComboBox<>(simModeName);
+            simMode.setName("Classical");
+            simMode.setLocation(internalX+50, internalY);
+            simMode.setSize(100, 20);
+            simMode.setSelectedIndex(0);
+            simMode.addActionListener(actionEvent -> {
+                if (doNotUpdate)
+                    return;
+
+                if (simulator.getSimulatorStatus() != SimulatorMode.STOPPED) {
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_dialog002"),
+                            lang.getText("HDWT_dialog002t"), JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                int selectedModeIndex = simMode.getSelectedIndex();
+                if (selectedModeIndex == 4) { //XTPN
+                    //overlord.getSimulatorBox().createSimulatorProperties(true);
+                    //doNotUpdate = false;
+                    GUIManager.setXTPN_simMode(true);
+                    System.out.println("isXTPNsim? : " + GUIManager.isXTPN_simMode());
+                    components.clear();
+                    panel.removeAll();
+                    repopulateSimulatorPanel();
+                    return;
+                } else {
+                    int change = simulator.setGraphicalSimulatorNetType(selectedModeIndex);
+                    doNotUpdate = true;
+                    c1Button.setEnabled(false);
+                    c2Button.setEnabled(false);
+                    if (change == 0) {
+                        simMode.setSelectedIndex(0);
+                    } else if (change == 1) {
+                        simMode.setSelectedIndex(1);
+                    } else if (change == 2) {
+                        simMode.setSelectedIndex(2);
+                    } else if (change == 3) {
+                        simMode.setSelectedIndex(3);
+                        c1Button.setEnabled(true);
+                        c2Button.setEnabled(true);
+                    } else {
+                        overlord.log(lang.getText("LOGentry00041"), "error", true);
+                    }
+                    GUIManager.setXTPN_simMode(false);
+                    System.out.println("isXTPNsim? :  " + GUIManager.isXTPN_simMode());
+                    components.clear();
+                    panel.removeAll();
+                    repopulateSimulatorPanel();
+                }
+                doNotUpdate = false;
+            });
+            components.add(simMode);
+        }
+
+        if (!GUIManager.isXTPN_simMode()) { //normalny symulator (klasyczny)
+            //System.out.println("Standard simulator creation started");
+            //i tyle, jakby kto pytał, to są obiekty, można im zmienić tekst, ale się nie wyświetla /NA RAZIE tak ma być:
+            stepLabelXTPN = new JLabel("0");
+            timeLabelXTPN = new JLabel("0.0");
+
+            internalX = 5;
+            internalY = 30;
+
+            JLabel timeStepLabel = new JLabel(lang.getText("HDWT_entry002PNsim"));
+            timeStepLabel.setBounds(internalX, internalY, 70, 20);
+            components.add(timeStepLabel);
+
+            timeStepLabelValue = new JLabel("0");
+            timeStepLabelValue.setBounds(internalX + 70, internalY, 70, 20);
+            components.add(timeStepLabelValue);
+
+            internalY += 25;
+
+            JSeparator separator1 = new JSeparator();
+            separator1.setOrientation(SwingConstants.HORIZONTAL);
+            separator1.setBounds(internalX, internalY, 160, 2);
+            components.add(separator1);
+
+            internalY += 5;
+            
+            // SIMULATOR CONTROLS
+            // metoda startSimulation obiektu simulator troszczy się o wygaszanie
+            // i aktywowanie odpowiednich przycisków
+            JLabel controlsLabel = new JLabel(lang.getText("HDWT_entry003PNsim")); // Simulation controls
+            controlsLabel.setBounds(internalX, internalY, 160, 20);
+            components.add(controlsLabel);
+
+            internalY += 20;
+
+            JButton loopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_start2.png"));
+            loopSimulation.setName("simPNstart");
+            loopSimulation.setBounds(internalX, internalY, 80, 40);
+            loopSimulation.setToolTipText(lang.getText("HDWT_entry004PNsim"));
+            loopSimulation.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.LOOP);
+                mode = SIMULATOR;
+            });
+            components.add(loopSimulation);
+
+            JButton singleTransitionLoopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_startSingle2.png"));
+            singleTransitionLoopSimulation.setName("simPNstartSingle");
+            singleTransitionLoopSimulation.setBounds(internalX+80, internalY, 80, 40);
+            singleTransitionLoopSimulation.setToolTipText(lang.getText("HDWT_entry005PNsim"));
+            singleTransitionLoopSimulation.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION_LOOP);
+                mode = SIMULATOR;
+            });
+            components.add(singleTransitionLoopSimulation);
+
+            internalY += 40;
+
+            JButton pauseSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_pause2.png"));
+            pauseSimulation.setName("simPNpause");
+            pauseSimulation.setBounds(internalX, internalY, 80, 40);
+            pauseSimulation.setToolTipText(lang.getText("HDWT_entry006PNsim"));
+            pauseSimulation.setEnabled(false);
+            pauseSimulation.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.pause();
+                mode = SIMULATOR;
+            });
+            components.add(pauseSimulation);
+
+            JButton stopSimulation = new JButton(Tools.getResIcon22("/icons/simulation/simPN_stop2.png"));
+            stopSimulation.setName("simPNstop");
+            stopSimulation.setBounds(internalX+80, internalY, 80, 40);
+            stopSimulation.setToolTipText(lang.getText("HDWT_entry007PNsim"));
+            stopSimulation.setEnabled(false);
+            stopSimulation.addActionListener(actionEvent -> {
+                simulator.stop();
+                mode = SIMULATOR;
+            });
+            components.add(stopSimulation);
+
+            internalY += 40;
+
+            JButton resetButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_reset2.png"));
+            resetButton.setName("simPNreset");
+            resetButton.setBounds(internalX, internalY, 80, 40);
+            resetButton.setToolTipText(lang.getText("HDWT_entry008PNsim"));
+            resetButton.setEnabled(false);
+            resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
+            components.add(resetButton);
+
+            JButton saveButton = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_save_m02.png"));
+            saveButton.setName("Save m0");
+            saveButton.setBounds(internalX+80, internalY, 80, 40);
+            saveButton.setToolTipText(lang.getText("HDWT_entry009PNsim"));
+            saveButton.addActionListener(actionEvent -> {
+                if (overlord.reset.isSimulatorActiveWarning(
+                        lang.getText("LOGentry00042"), "Warning"))
+                    return;
+                if (overlord.reset.isXTPNSimulatorActiveWarning(
+                        lang.getText("LOGentry00043"), "Warning"))
+                    return;
+
+                Object[] options = {lang.getText("HDWT_entry010op1"), lang.getText("cancel"),};
+                int n = JOptionPane.showOptionDialog(null,
+                        lang.getText("HDWT_entry010msg1"),
+                        lang.getText("HDWT_entry010t"), JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                if (n == 0) {
+                    overlord.getWorkspace().getProject().accessStatesManager().addCurrentStatePN();
+                }
+            });
+            components.add(saveButton);
+
+            internalY += 40;
+
+            JLabel otherControlsLabel = new JLabel(lang.getText("HDWT_entry011PNsim")); //Other modes:
+            otherControlsLabel.setBounds(internalX, internalY, 140, 20);
+            components.add(otherControlsLabel);
+
+            internalY += 20;
+
+            JButton oneActionBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_back.png"));
+            oneActionBack.setName("simPNoneBack");
+            oneActionBack.setBounds(internalX, internalY, 80, 30);
+            oneActionBack.setToolTipText(lang.getText("HDWT_entry012PNsim"));
+            oneActionBack.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.ACTION_BACK);
+                mode = SIMULATOR;
+            });
+            components.add(oneActionBack);
+
+            JButton oneTransitionForward = new JButton(
+                    Tools.getResIcon22("/icons/simulation/simPN_1transForw.png"));
+            oneTransitionForward.setName("simPNoneForward");
+            oneTransitionForward.setBounds(internalX+80, internalY, 80, 30);
+            oneTransitionForward.setToolTipText(lang.getText("HDWT_entry013PNsim"));
+            oneTransitionForward.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.SINGLE_TRANSITION);
+                mode = SIMULATOR;
+            });
+            components.add(oneTransitionForward);
+
+            internalY += 30;
+
+            JButton loopBack = new JButton(Tools.getResIcon22("/icons/simulation/control_sim_backLoop.png"));
+            loopBack.setName("simB3");
+            loopBack.setBounds(internalX, internalY, 80, 30);
+            loopBack.setToolTipText(lang.getText("HDWT_entry014PNsim"));
+            loopBack.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.LOOP_BACK);
+                mode = SIMULATOR;
+            });
+            components.add(loopBack);
+
+            JButton oneStepForward = new JButton(
+                    Tools.getResIcon22("/icons/simulation/simPN_1stepForw.png"));
+            oneStepForward.setName("simB4");
+            oneStepForward.setBounds(internalX+80, internalY, 80, 30);
+            oneStepForward.setToolTipText(lang.getText("HDWT_entry015PNsim"));
+            oneStepForward.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulator.startSimulation(SimulatorMode.STEP);
+                mode = SIMULATOR;
+            });
+            components.add(oneStepForward);
+
+            internalY += 30;
+
+            c1Button = new JButton(lang.getText("HDWT_entry306QuickSim"));
+            c1Button.setName("resetColor");
+            c1Button.setBounds(internalX, internalY, 80, 30);
+            c1Button.setToolTipText(lang.getText("HDWT_entry016PNsim"));
+            c1Button.setEnabled(false);
+            c1Button.addActionListener(actionEvent -> {
+                overlord.getWorkspace().getProject().storeColors();
+            });
+            components.add(c1Button);
+
+            c2Button = new JButton(lang.getText("HDWT_entry307QuickSim"));
+            c2Button.setName("SaveM0Color");
+            c2Button.setBounds(internalX+80, internalY, 80, 30);
+            c2Button.setToolTipText(lang.getText("HDWT_entry017PNsim"));
+            c2Button.setEnabled(false);
+            c2Button.addActionListener(actionEvent -> {
+                JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry017PNsim_1"),
+                        lang.getText("HDWT_entry017PNsim_2"), JOptionPane.INFORMATION_MESSAGE);
+                overlord.getWorkspace().getProject().restoreColors();
+            });
+            components.add(c2Button);
+
+            internalY += 40;
+
+            JSeparator separator5 = new JSeparator();
+            separator5.setOrientation(SwingConstants.HORIZONTAL);
+            separator5.setBounds(internalX, internalY, 160, 2);
+            components.add(separator5);
+
+            internalY += 10;
+
+            JButton statesButton = new JButton(lang.getText("HDWT_entry308QuickSim")); //States manager
+            statesButton.setName("State manager");
+            statesButton.setIcon(Tools.getResIcon32("/icons/stateManager/stManIcon.png"));
+            statesButton.setBounds(internalX, internalY, 150, 40);
+            statesButton.setToolTipText(lang.getText("HDWT_entry018PNsim"));
+            statesButton.setEnabled(true);
+            statesButton.addActionListener(actionEvent -> {
+                if (overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimulatorStatus() != SimulatorMode.STOPPED) {
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry018PNsim_1"),
+                            lang.getText("HDWT_entry018PNsim_1t"), JOptionPane.WARNING_MESSAGE);
+                } else {
+                    new HolmesStatesManager();
+                }
+            });
+            components.add(statesButton);
+
+            internalY += 45;
+
+            //doNotUpdate = false;
+            maximumModeCheckBox = new JCheckBox(lang.getText("HDWT_entry019PNsim"));
+            maximumModeCheckBox.setBounds(internalX, internalY, 200, 20);
+            maximumModeCheckBox.addActionListener(actionEvent -> {
+                if (doNotUpdate)
+                    return;
+
+                if (singleModeCheckBox.isSelected()) {
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry019PNsim_1"),
+                            lang.getText("HDWT_entry019PNsim_1t"), JOptionPane.WARNING_MESSAGE);
+                    doNotUpdate = true;
+                    maximumModeCheckBox.setSelected(overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
+                    doNotUpdate = false;
+                }
+
+                AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+                simulator.setMaxMode(abstractButton.getModel().isSelected());
+            });
+            components.add(maximumModeCheckBox);
+
+            internalY += 20;
+
+            singleModeCheckBox = new JCheckBox(lang.getText("HDWT_entry020PNsim"));
+            singleModeCheckBox.setBounds(internalX, internalY, 200, 20);
+            singleModeCheckBox.addActionListener(actionEvent -> {
+                AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+                if (abstractButton.getModel().isSelected()) {
+                    simulator.setSingleMode(true);
+                    doNotUpdate = true;
+                    singleModeCheckBox.setSelected(overlord.getSettingsManager().getValue("simSingleMode").equals("1"));
+                    doNotUpdate = false;
+                } else {
+                    simulator.setSingleMode(false);
+
+                    doNotUpdate = true;
+                    singleModeCheckBox.setSelected(false);
+                    simulator.setMaxMode(false);
+                    doNotUpdate = false;
+                }
+            });
+            components.add(singleModeCheckBox);
+            internalY += 25;
+            
+            JSeparator separator9 = new JSeparator();
+            separator9.setOrientation(SwingConstants.HORIZONTAL);
+            separator9.setBounds(internalX, internalY, 160, 2);
+            components.add(separator9);
+
+            internalY += 5;
+            
+            JLabel graphInfoLabel = new JLabel(lang.getText("HDWT_entry314SimPanel")); 
+            graphInfoLabel.setBounds(internalX, internalY, 150, 20);
+            components.add(graphInfoLabel);
+
+            internalY += 20;
+
+            showColorsCheckBox = new JCheckBox(lang.getText("HDWT_entry315SimPanel"));
+            showColorsCheckBox.setSelected(overlord.getSettingsManager().getValue("simPlacesColors").equals("1"));
+            showColorsCheckBox.setBounds(internalX, internalY, 150, 20);
+            showColorsCheckBox.addActionListener(actionEvent -> {
+                AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
+                if (abstractButton.getModel().isSelected()) {
+                    overlord.getSettingsManager().setValue("simPlacesColors", "1", false);
+                } else {
+                    overlord.getSettingsManager().setValue("simPlacesColors", "0", false);
+                }
+            });
+            components.add(showColorsCheckBox);
+            
+            internalY += 25;
+            
+            JLabel transDelayLabel = new JLabel(lang.getText("HPPwinSIM_entry042")); //Transition firing delay
+            transDelayLabel.setBounds(internalX, internalY, 150, 20);
+            components.add(transDelayLabel);
+
+            JLabel arcDelayLabel = new JLabel(lang.getText("HPPwinSIM_entry043")); //Arc token delay
+            arcDelayLabel.setBounds(internalX, internalY+70, 150, 20);
+            components.add(arcDelayLabel);
+
+            final JSlider arcDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
+            arcDelaySlider.setBounds(internalX, internalY+90, 150, 50);
+            arcDelaySlider.setMinorTickSpacing(10);
+            arcDelaySlider.setMajorTickSpacing(20);
+            arcDelaySlider.setPaintTicks(true);
+            //arcDelaySlider.setPaintLabels(true);
+            arcDelaySlider.setLabelTable(arcDelaySlider.createStandardLabels(10));
+            arcDelaySlider.addChangeListener(e -> {
+                JSlider s = (JSlider) e.getSource();
+                int val = s.getValue();
+                int reference = overlord.simSettings.getTransitionGraphicDelay();
+                if(val <= reference) {
+                    arcDelaySlider.setValue(val);
+                    overlord.simSettings.setArcGraphicDelay(val);
+                } else {
+                    s.setValue(reference);
+                }
+            });
+            components.add(arcDelaySlider);
+
+            final JSlider transDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
+            transDelaySlider.setBounds(internalX, internalY+20, 150, 50);
+            transDelaySlider.setMinorTickSpacing(10);
+            transDelaySlider.setMajorTickSpacing(20);
+            transDelaySlider.setPaintTicks(true);
+            //transDelaySlider.setPaintLabels(true);
+            transDelaySlider.setLabelTable(transDelaySlider.createStandardLabels(10));
+            transDelaySlider.addChangeListener(new ChangeListener() {
+                private JSlider anotherSlider = null;
+                public void stateChanged(ChangeEvent e) {
+                    JSlider s = (JSlider) e.getSource();
+                    int value = s.getValue();
+                    transDelaySlider.setValue(value);
+                    overlord.simSettings.setTransitionGraphicDelay(value);
+                    if(value <  overlord.simSettings.getArcGraphicDelay()) {
+                        anotherSlider.setValue(value);
+                    }
+                }
+                private ChangeListener yesWeCan(JSlider slider){
+                    anotherSlider = slider;
+                    return this;
+                }
+            }.yesWeCan(arcDelaySlider) );
+            components.add(transDelaySlider);
+            
+            
+        } else { // nienormalny symulator: XTPN
+            internalX = 5;
+            internalY = 30;
+            //i tyle, jakby kto pytał, to jest obiekt, można mu zmienić tekst, ale się nie wyświetla NA RAZIE tak ma być
+            timeStepLabelValue = new JLabel("0");
+
+            JLabel stepLabelText = new JLabel(lang.getText("HDWT_entry021XTPNsim"));
+            stepLabelText.setBounds(internalX, internalY, 90, 20);
+            components.add(stepLabelText);
+
+            stepLabelXTPN = new JLabel("0");
+            stepLabelXTPN.setBounds(internalX + 60, internalY, 90, 20);
+            components.add(stepLabelXTPN);
+
+            internalY += 20;
+
+            JLabel timeLabelText = new JLabel(lang.getText("HDWT_entry022XTPNsim"));
+            timeLabelText.setBounds(internalX, internalY, 90, 20);
+            components.add(timeLabelText);
+
+            timeLabelXTPN = new JLabel("0.0");
+            timeLabelXTPN.setBounds(internalX + 60, internalY, 90, 20);
+            components.add(timeLabelXTPN);
+
+            internalY += 20;
+
+            JLabel optionsLavel = new JLabel(lang.getText("HDWT_entry023XTPNsim"));
+            optionsLavel.setBounds(internalX, internalY, 120, 20);
+            components.add(optionsLavel);
+
+            internalY += 20;
+
+            HolmesRoundedButton loopSimulation = new HolmesRoundedButton(""
+                    , "simulator/simStart1.png", "simulator/simStart2.png", "simulator/simStart3.png");
+            loopSimulation.setName("XTPNstart");
+            loopSimulation.setBounds(internalX, internalY, 40, 35);
+            loopSimulation.setToolTipText(lang.getText("HDWT_entry024XTPNsim"));
+            loopSimulation.addActionListener(actionEvent -> {
+                if (overlord.getWorkspace().getProject().isSimulationActive()) {
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry024XTPNsim_1"), lang.getText("HDWT_entry024XTPNsim_1t"),
+                            JOptionPane.WARNING_MESSAGE);
+                } else {
+                    overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                    simulatorXTPN.startSimulation(GraphicalSimulatorXTPN.SimulatorModeXTPN.XTPNLOOP);
+                    mode = SIMULATOR;
+                }
+
+            });
+            components.add(loopSimulation);
+
+            HolmesRoundedButton pauseSimulation = new HolmesRoundedButton(""
+                    , "simulator/simPause1.png", "simulator/simPause2.png", "simulator/simPause3.png");
+            pauseSimulation.setName("XTPNpause");
+            pauseSimulation.setBounds(internalX + 40, internalY, 40, 35);
+            pauseSimulation.setToolTipText(lang.getText("HDWT_entry025XTPNsim"));
+            pauseSimulation.setEnabled(false);
+            pauseSimulation.addActionListener(actionEvent -> {
+                overlord.getWorkspace().setGraphMode(DrawModes.POINTER);
+                simulatorXTPN.pause();
+                mode = SIMULATOR;
+            });
+            components.add(pauseSimulation);
+
+            HolmesRoundedButton stopSimulation = new HolmesRoundedButton(""
+                    , "simulator/simStop1.png", "simulator/simStop2.png", "simulator/simStop2.png");
+            stopSimulation.setName("XTPNstop");
+            stopSimulation.setBounds(internalX + 80, internalY, 40, 35);
+            stopSimulation.setToolTipText(lang.getText("HDWT_entry026XTPNsim"));
+            stopSimulation.setEnabled(false);
+            stopSimulation.addActionListener(actionEvent -> {
+                simulatorXTPN.stop();
+                mode = SIMULATOR;
+            });
+            components.add(stopSimulation);
+
+            internalY += 40;
+
+            HolmesRoundedButton resetButton = new HolmesRoundedButton(lang.getText("HDWT_entry309QuickSim")
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+            resetButton.setName("resetM0button");
+            resetButton.setBounds(internalX, internalY, 75, 40);
+            resetButton.setToolTipText(lang.getText("HDWT_entry027XTPNsim"));
+            resetButton.setEnabled(true);
+            resetButton.addActionListener(actionEvent -> overlord.getWorkspace().getProject().restoreMarkingZero());
+            components.add(resetButton);
+
+            HolmesRoundedButton storeButton = new HolmesRoundedButton(lang.getText("HDWT_entry310QuickSim")
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+            storeButton.setName("storeM0button");
+            storeButton.setBounds(internalX+75, internalY, 75, 40);
+            storeButton.setToolTipText(lang.getText("HDWT_entry028XTPNsim"));
+            storeButton.setEnabled(true);
+            storeButton.addActionListener(actionEvent -> {
+                int selected = 0;
+                Object[] options = {lang.getText("HDWT_entry028XTPNsim_op1"), lang.getText("cancel"),};
+                int n = JOptionPane.showOptionDialog(null,
+                        lang.getText("HDWT_entry028XTPNsim_1"), lang.getText("HDWT_entry028XTPNsim_1t"), JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+                if (n == 1) {
+                    return;
+                }
+
+                overlord.getWorkspace().getProject().accessStatesManager().replaceStoredMultiset_M_withCurrentNetState(selected);
+                overlord.markNetChange();
+            });
+            components.add(storeButton);
+
+            internalY += 50;
+
+            JLabel transDelayLabel = new JLabel(lang.getText("HDWT_entry029XTPNsim"));
+            transDelayLabel.setBounds(internalX, internalY, 150, 20);
+            components.add(transDelayLabel);
+
+            internalY += 20;
+
+            final JSlider arcDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
+            arcDelaySlider.setBounds(internalX, internalY, 150, 50);
+            arcDelaySlider.setMinorTickSpacing(5);
+            arcDelaySlider.setMajorTickSpacing(20);
+            arcDelaySlider.setPaintTicks(true);
+            arcDelaySlider.setPaintLabels(true);
+            arcDelaySlider.setLabelTable(arcDelaySlider.createStandardLabels(20));
+            arcDelaySlider.addChangeListener(e -> {
+                JSlider s = (JSlider) e.getSource();
+                int val = s.getValue();
+                int reference = overlord.simSettings.getTransitionGraphicDelay();
+                if (val <= reference) {
+                    arcDelaySlider.setValue(val);
+                    overlord.simSettings.setArcGraphicDelay(val);
+                } else {
+                    s.setValue(reference);
+                }
+            });
+            components.add(arcDelaySlider);
+
+            internalY += 50;
+
+            JLabel arcDelayLabel = new JLabel(lang.getText("HDWT_entry311QuickSim"));
+            arcDelayLabel.setBounds(internalX, internalY, 120, 20);
+            components.add(arcDelayLabel);
+
+            internalY += 20;
+
+            final JSlider transDelaySlider = new JSlider(JSlider.HORIZONTAL, 5, 85, 25);
+            transDelaySlider.setBounds(internalX, internalY, 150, 50);
+            transDelaySlider.setMinorTickSpacing(5);
+            transDelaySlider.setMajorTickSpacing(20);
+            transDelaySlider.setPaintTicks(true);
+            transDelaySlider.setPaintLabels(true);
+            transDelaySlider.setLabelTable(transDelaySlider.createStandardLabels(20));
+            transDelaySlider.addChangeListener(new ChangeListener() {
+                private JSlider anotherSlider = null;
+
+                public void stateChanged(ChangeEvent e) {
+                    JSlider s = (JSlider) e.getSource();
+                    int value = s.getValue();
+                    transDelaySlider.setValue(value);
+                    overlord.simSettings.setTransitionGraphicDelay(value);
+                    if (value < overlord.simSettings.getArcGraphicDelay()) {
+                        anotherSlider.setValue(value);
+                    }
+                }
+
+                private ChangeListener yesWeCan(JSlider slider) {
+                    anotherSlider = slider;
+                    return this;
+                }
+            }.yesWeCan(arcDelaySlider));
+            components.add(transDelaySlider);
+
+            internalY += 50;
+
+            JLabel timeValuesVisLabel = new JLabel(lang.getText("HDWT_entry030XTPNsim"));
+            timeValuesVisLabel.setBounds(internalX, internalY, 140, 20);
+            components.add(timeValuesVisLabel);
+
+            internalY += 20;
+
+            HolmesRoundedButton showAlfaSwitchButton = new HolmesRoundedButton("<html><center>\u03B1:ON</center></html>"
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+            showAlfaSwitchButton.setName("switchAlphas");
+            showAlfaSwitchButton.setBounds(internalX, internalY, 80, 30);
+            showAlfaSwitchButton.setToolTipText(lang.getText("HDWT_entry031XTPNsim"));
+            showAlfaSwitchButton.setEnabled(true);
+            showAlfaSwitchButton.addActionListener(actionEvent -> {
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
+                if (alphaValuesVisible) {
+                    alphaValuesVisible = false;
+                    button.setNewText("<html><center>\u03B1:OFF</center></html>");//u03B1
+                } else {
+                    alphaValuesVisible = true;
+                    button.setNewText("<html><center>\u03B1:ON</center></html>");
+                }
+                for (Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
+                    ((TransitionXTPN) trans).setAlphaRangeVisibility(alphaValuesVisible);
+                }
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+            });
+            components.add(showAlfaSwitchButton);
+
+            HolmesRoundedButton showBetaSwitchButton = new HolmesRoundedButton("<html><center>\u03B2:ON</center></html>"
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+            showBetaSwitchButton.setName("switchBetas");
+            showBetaSwitchButton.setBounds(internalX + 80, internalY, 80, 30);
+            showBetaSwitchButton.setToolTipText(lang.getText("HDWT_entry032XTPNsim"));
+            showBetaSwitchButton.setEnabled(true);
+            showBetaSwitchButton.addActionListener(actionEvent -> {
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
+
+                if (betaValuesVisible) {
+                    betaValuesVisible = false;
+                    button.setNewText("<html><center>\u03B2:OFF</center></html>"); //u03B2
+                } else {
+                    betaValuesVisible = true;
+                    button.setNewText("<html><center>\u03B2:ON</center></html>");
+                }
+                for (Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
+                    ((TransitionXTPN) trans).setBetaRangeVisibility(betaValuesVisible);
+                }
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+            });
+            components.add(showBetaSwitchButton);
+
+            internalY += 30;
+
+            HolmesRoundedButton showGammaSwitchButton = new HolmesRoundedButton("<html><center>\u03B3:ON</center></html>"
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+            showGammaSwitchButton.setName("switchGammas");
+            showGammaSwitchButton.setBounds(internalX, internalY, 80, 30);
+            showGammaSwitchButton.setToolTipText(lang.getText("HDWT_entry033XTPNsim"));
+            showGammaSwitchButton.setEnabled(true);
+            showGammaSwitchButton.addActionListener(actionEvent -> {
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
+
+                if (gammaValuesVisible) {
+                    gammaValuesVisible = false;
+                    button.setNewText("<html><center>\u03B3:OFF</center></html>"); //u03C4
+                } else {
+                    gammaValuesVisible = true;
+                    button.setNewText("<html><center>\u03B3:ON</center></html>");
+                }
+                for (Place place : overlord.getWorkspace().getProject().getPlaces()) {
+                    ((PlaceXTPN) place).setGammaRangeVisibility(gammaValuesVisible);
+                }
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+            });
+            components.add(showGammaSwitchButton);
+
+            HolmesRoundedButton showTauSwitchButton = new HolmesRoundedButton("<html><center>\u03C4:ON</center></html>"
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+            showTauSwitchButton.setName("switchTaus");
+            showTauSwitchButton.setBounds(internalX + 80, internalY, 80, 30);
+            showTauSwitchButton.setToolTipText(lang.getText("HDWT_entry034XTPNsim"));
+            showTauSwitchButton.setEnabled(true);
+            showTauSwitchButton.addActionListener(actionEvent -> {
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
+
+                if (tauValuesVisible) {
+                    tauValuesVisible = false;
+                    button.setNewText("<html><center>\u03C4:OFF</center></html>"); //u03C4
+                } else {
+                    tauValuesVisible = true;
+                    button.setNewText("<html><center>\u03C4:ON</center></html>");
+                }
+                for (Transition trans : overlord.getWorkspace().getProject().getTransitions()) {
+                    ((TransitionXTPN) trans).setTauTimersVisibility(tauValuesVisible);
+                }
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+            });
+            components.add(showTauSwitchButton);
+            quickSim = new QuickSimTools(this);
+
+            internalY += 40;
+
+            JLabel qSimLabel = new JLabel(lang.getText("HDWT_entry035XTPNsim"));
+            qSimLabel.setBounds(internalX, internalY, 140, 20);
+            components.add(qSimLabel);
+
+            internalY += 20;
+
+            acqDataButtonXTPN = new HolmesRoundedButton("<html>Simulate</html>"
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+            acqDataButtonXTPN.setBounds(internalX, internalY, 100, 30);
+            acqDataButtonXTPN.setMargin(new Insets(0, 0, 0, 0));
+            acqDataButtonXTPN.setFocusPainted(false);
+            acqDataButtonXTPN.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+            acqDataButtonXTPN.setToolTipText(lang.getText("HDWT_entry036XTPNsim"));
+            acqDataButtonXTPN.addActionListener(actionEvent -> {
+                if (overlord.getWorkspace().getProject().isSimulationActive()) {
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry036XTPNsim_1"), lang.getText("HDWT_entry036XTPNsim_1t"),
+                            JOptionPane.WARNING_MESSAGE);
+                } else {
+                    quickSim.acquireDataXTPN(qSimXTPNSbySteps, qSimXTPNsimStatsSteps, qSimXTPNStatsTime
+                            , qSimXTPNrepeateSim, qSimXTPNStatsRepetitions, qSimXTPNknockoutMode
+                            , qSimXTPNProgressBar, acqDataButtonXTPN);
+                }
+            });
+            components.add(acqDataButtonXTPN);
+
+            internalY += 35;
+
+            qSimXTPNProgressBar = new JProgressBar();
+            qSimXTPNProgressBar.setBounds(internalX, internalY, 160, 20);
+            qSimXTPNProgressBar.setMaximum(100);
+            qSimXTPNProgressBar.setMinimum(0);
+            qSimXTPNProgressBar.setValue(0);
+            qSimXTPNProgressBar.setStringPainted(true);
+            components.add(qSimXTPNProgressBar);
+
+            internalY += 25;
+
+            qSimXTPNStatsStepsCheckbox = new JCheckBox(lang.getText("HDWT_entry037XTPNsim"));
+            qSimXTPNStatsStepsCheckbox.setBounds(internalX, internalY, 70, 20);
+            qSimXTPNStatsStepsCheckbox.setSelected(qSimXTPNSbySteps);
+            qSimXTPNStatsStepsCheckbox.addItemListener(e -> {
+                if (doNotUpdate)
+                    return;
+                JCheckBox box = (JCheckBox) e.getSource();
+                qSimXTPNSbySteps = box.isSelected();
+                doNotUpdate = true;
+                qSimXTPNStatsTimeCheckbox.setSelected(!qSimXTPNSbySteps);
+                doNotUpdate = false;
+            });
+            components.add(qSimXTPNStatsStepsCheckbox);
+
+            SpinnerModel qSimStepsSpinnerModel = new SpinnerNumberModel(qSimXTPNsimStatsSteps, 0, 100000000, 1000);
+            JSpinner qsimStepsSpinner = new JSpinner(qSimStepsSpinnerModel);
+            qsimStepsSpinner.setBounds(internalX + 70, internalY, 90, 20);
+            qsimStepsSpinner.addChangeListener(e -> {
+                JSpinner spinner = (JSpinner) e.getSource();
+                int tmp = (int) spinner.getValue();
+                qSimXTPNsimStatsSteps = tmp;
+            });
+            components.add(qsimStepsSpinner);
+
+            internalY += 22;
+
+            qSimXTPNStatsTimeCheckbox = new JCheckBox(lang.getText("HDWT_entry038XTPNsim"));
+            qSimXTPNStatsTimeCheckbox.setBounds(internalX, internalY, 70, 20);
+            qSimXTPNStatsTimeCheckbox.setSelected(!qSimXTPNSbySteps);
+            qSimXTPNStatsTimeCheckbox.addItemListener(e -> {
+                if (doNotUpdate)
+                    return;
+                JCheckBox box = (JCheckBox) e.getSource();
+                qSimXTPNSbySteps = !(box.isSelected());
+                doNotUpdate = true;
+                qSimXTPNStatsStepsCheckbox.setSelected(qSimXTPNSbySteps);
+                doNotUpdate = false;
+            });
+            components.add(qSimXTPNStatsTimeCheckbox);
+
+            SpinnerModel qsimTimeLengthSpinnerModel = new SpinnerNumberModel(qSimXTPNStatsTime, 0, 1000000, 100);
+            JSpinner qsimTimeSpinner = new JSpinner(qsimTimeLengthSpinnerModel);
+            qsimTimeSpinner.setBounds(internalX + 70, internalY, 90, 20);
+            qsimTimeSpinner.addChangeListener(e -> {
+                JSpinner spinner = (JSpinner) e.getSource();
+                qSimXTPNStatsTime = (double) spinner.getValue();
+            });
+            components.add(qsimTimeSpinner);
+
+            internalY += 22;
+
+            JCheckBox qSimXTPNrepetitionsCheckBox = new JCheckBox(lang.getText("HDWT_entry039XTPNsim"));
+            qSimXTPNrepetitionsCheckBox.setBounds(internalX, internalY, 70, 20);
+            qSimXTPNrepetitionsCheckBox.setSelected(!qSimXTPNSbySteps);
+            qSimXTPNrepetitionsCheckBox.addItemListener(e -> {
+                JCheckBox box = (JCheckBox) e.getSource();
+                qSimXTPNrepeateSim = (box.isSelected());
+            });
+            components.add(qSimXTPNrepetitionsCheckBox);
+
+            SpinnerModel qsimRepetitionsSpinnerModel = new SpinnerNumberModel(qSimXTPNStatsRepetitions, 10, 100, 10);
+            JSpinner qsimRepetitionsSpinner = new JSpinner(qsimRepetitionsSpinnerModel);
+            qsimRepetitionsSpinner.setBounds(internalX + 70, internalY, 90, 20);
+            qsimRepetitionsSpinner.addChangeListener(e -> {
+                JSpinner spinner = (JSpinner) e.getSource();
+                qSimXTPNStatsRepetitions = (int) spinner.getValue();
+            });
+            components.add(qsimRepetitionsSpinner);
+
+            internalY += 22;
+
+            JCheckBox qSimXTPNknockoutCheckBox = new JCheckBox(lang.getText("HDWT_entry040XTPNsim"));
+            qSimXTPNknockoutCheckBox.setBounds(internalX, internalY, 150, 20);
+            qSimXTPNknockoutCheckBox.setSelected(qSimXTPNknockoutMode);
+            qSimXTPNknockoutCheckBox.addItemListener(e -> {
+                JCheckBox box = (JCheckBox) e.getSource();
+                qSimXTPNknockoutMode = (box.isSelected());
+            });
+            components.add(qSimXTPNknockoutCheckBox);
+
+            internalY += 30;
+
+            HolmesRoundedButton sSimAlpha = new HolmesRoundedButton("<html><center>XTPN net<br>simulator</center></html>"
+                    , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+            sSimAlpha.setBounds(internalX, internalY, 100, 35);
+            sSimAlpha.setMargin(new Insets(0, 0, 0, 0));
+            sSimAlpha.setFocusPainted(false);
+            sSimAlpha.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
+            sSimAlpha.setToolTipText(lang.getText("HDWT_entry041XTPNsim"));
+            sSimAlpha.addActionListener(actionEvent -> {
+                if(overlord.getWorkspace().getProject().isSimulationActive()) {
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry041XTPNsim_1"), lang.getText("HDWT_entry041XTPNsim_1t"),
+                            JOptionPane.WARNING_MESSAGE);
+                } else {
+                    overlord.showStateSimulatorWindowXTPN();
+                }
+            });
+            components.add(sSimAlpha);
+
+        }
+        for (JComponent component : components) {
+            panel.add(component);
+        }
+        panel.revalidate();
+        panel.repaint();
     }
 
     //**************************************************************************************
@@ -653,10 +1218,10 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda pomocnicza konstruktora podokna wyświetlającego właściwości klikniętego miejsca sieci.
-     *
      * @param place    Place - obiekt miejsca
      * @param location ElementLocation - lokalizacja miejsca
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createPlaceSubWindow(Place place, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -694,7 +1259,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(idLabel4);
 
         // NAME
-        JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
+        JLabel nameLabel = new JLabel(lang.getText("HDWT_entry042place"), JLabel.LEFT);
         nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(nameLabel);
 
@@ -706,7 +1271,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00567exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -715,7 +1280,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(nameField);
 
         // KOMENTARZE WIERZCHOŁKA
-        JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
+        JLabel comLabel = new JLabel(lang.getText("HDWT_entry043place"), JLabel.LEFT);
         comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         columnA_Y += 20;
         components.add(comLabel);
@@ -741,13 +1306,13 @@ public class HolmesDockWindowsTable extends JPanel {
 
         // PLACE TOKEN
         if (!place.isColored) {
-            JLabel tokenLabel = new JLabel("Tokens:", JLabel.LEFT);
+            JLabel tokenLabel = new JLabel(lang.getText("HDWT_entry044place"), JLabel.LEFT);
             tokenLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
             components.add(tokenLabel);
             int tok = place.getTokensNumber();
             boolean problem = false;
             if (tok < 0) {
-                overlord.log("Negative number of tokens in " + place.getName(), "error", true);
+                overlord.log(lang.getText("LOGentry00044") + place.getName(), "error", true);
                 tok = 0;
                 problem = true;
             }
@@ -763,8 +1328,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 tokenSpinner.setEnabled(false);
             components.add(tokenSpinner);
         }
-
-
+        
         //SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
@@ -776,7 +1340,7 @@ public class HolmesDockWindowsTable extends JPanel {
         width = (int) (((double) 100 / (double) zoom) * width);
         height = (int) (((double) 100 / (double) zoom) * height);
 
-        JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
+        JLabel sheetLabel = new JLabel(lang.getText("HDWT_entry045place"), JLabel.LEFT);
         sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(sheetLabel);
         JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
@@ -785,7 +1349,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(sheetIdLabel);
 
         //ZOOM:
-        JLabel zoomLabel = new JLabel("Zoom:");
+        JLabel zoomLabel = new JLabel(lang.getText("HDWT_entry046place"));
         zoomLabel.setBounds(columnB_posX + 30, columnB_Y, 50, 20);
         components.add(zoomLabel);
         JLabel zoomLabel2 = new JLabel("" + zoom);
@@ -796,7 +1360,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(zoomLabel2);
 
         // PORTAL
-        JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
+        JLabel portalLabel = new JLabel(lang.getText("HDWT_entry047place"), JLabel.LEFT);
         portalLabel.setBounds(columnB_posX + 110, columnB_Y, colACompLength, 20);
         components.add(portalLabel);
         JCheckBox portalBox = new JCheckBox("", place.isPortal());
@@ -808,18 +1372,20 @@ public class HolmesDockWindowsTable extends JPanel {
                 makePortal();
             } else {
                 if (((Place) element).getElementLocations().size() > 1)
-                    JOptionPane.showMessageDialog(null, "Place contains more than one location!", "Cannot proceed",
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry047place_1"), lang.getText("problem"),
                             JOptionPane.INFORMATION_MESSAGE);
                 else {
                     unPortal();
                     overlord.markNetChange();
                 }
             }
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
 
         //LOKALIZACJA:
-        JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
+        JLabel locLabel = new JLabel(lang.getText("HDWT_entry048place"), JLabel.LEFT);
         locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(locLabel);
         SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
@@ -841,19 +1407,18 @@ public class HolmesDockWindowsTable extends JPanel {
 
         locationSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, colBCompLength, 20);
         components.add(locationSpinnerPanel);
-
-
+        
         // WSPÓŁRZĘDNE NAPISU:
         columnA_Y += 20;
         columnB_Y += 20;
 
-        JLabel locNameLabel = new JLabel("Name offset:", JLabel.LEFT);
+        JLabel locNameLabel = new JLabel(lang.getText("HDWT_entry049place"), JLabel.LEFT);
         locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength + 10, 20);
         components.add(locNameLabel);
 
         int locationIndex = place.getElementLocations().indexOf(location);
-        int xNameOffset = place.getNamesLocations().get(locationIndex).getPosition().x;
-        int yNameOffset = place.getNamesLocations().get(locationIndex).getPosition().y;
+        int xNameOffset = place.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = place.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -867,7 +1432,6 @@ public class HolmesDockWindowsTable extends JPanel {
         nameLocationXSpinner.addChangeListener(new ChangeListener() {
             private Place place_tmp;
             private ElementLocation el_tmp;
-
             public void stateChanged(ChangeEvent e) {
                 if (doNotUpdate)
                     return;
@@ -919,7 +1483,7 @@ public class HolmesDockWindowsTable extends JPanel {
         nameLocChangeButton.setName("LocNameChanger");
         nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
         nameLocChangeButton.setBounds(columnA_posX + 90, columnA_Y += 25, 150, 40);
-        nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
+        nameLocChangeButton.setToolTipText(lang.getText("HDWT_entry050place"));
         nameLocChangeButton.setFocusPainted(false);
         nameLocChangeButton.addActionListener(new ActionListener() {
             // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
@@ -932,11 +1496,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (!nameLocChangeMode) {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
                     nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(place_tmp, el_tmp, true);
+                    overlord.setNameLocationChangeMode(place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
                     nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, false);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
 
@@ -949,16 +1513,15 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(nameLocChangeButton);
 
         //COLORS:
-        //TODO
         if (place.isColored) {
             // PLACE TOKEN
-            JLabel tokenLabel = new JLabel("T0 Red:", JLabel.LEFT);
+            JLabel tokenLabel = new JLabel(lang.getText("HDWT_entry051place"), JLabel.LEFT);
             tokenLabel.setBounds(columnA_posX, columnA_Y += 50, colACompLength, 20);
             components.add(tokenLabel);
             int tok0 = place.getTokensNumber();
             boolean problem = false;
             if (tok0 < 0) {
-                overlord.log("Negative number of tokens in " + place.getName(), "error", true);
+                overlord.log(lang.getText("LOGentry00045") + place.getName(), "error", true);
                 tok0 = 0;
                 problem = true;
             }
@@ -974,10 +1537,10 @@ public class HolmesDockWindowsTable extends JPanel {
                 tokenSpinner.setEnabled(false);
             components.add(tokenSpinner);
 
-            JLabel token3Label = new JLabel("T3 Yellow:", JLabel.LEFT);
+            JLabel token3Label = new JLabel(lang.getText("HDWT_entry052place"), JLabel.LEFT);
             token3Label.setBounds(columnB_posX + 60, columnB_Y, colACompLength, 20);
             components.add(token3Label);
-            int tok3 = place.getColorTokensNumber(3);
+            int tok3 = ((PlaceColored) place).getColorTokensNumber(3);
 
             SpinnerModel token3SpinnerModel = new SpinnerNumberModel(tok3, 0, Integer.MAX_VALUE, 1);
             JSpinner token3Spinner = new JSpinner(token3SpinnerModel);
@@ -990,10 +1553,10 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(token3Spinner);
 
 
-            JLabel token1Label = new JLabel("T1 Green:", JLabel.LEFT);
+            JLabel token1Label = new JLabel(lang.getText("HDWT_entry053place"), JLabel.LEFT);
             token1Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
             components.add(token1Label);
-            int tok1 = place.getColorTokensNumber(1);
+            int tok1 = ((PlaceColored) place).getColorTokensNumber(1);
 
             SpinnerModel token1SpinnerModel = new SpinnerNumberModel(tok1, 0, Integer.MAX_VALUE, 1);
             JSpinner token1Spinner = new JSpinner(token1SpinnerModel);
@@ -1005,10 +1568,10 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(token1Spinner);
 
-            JLabel token4Label = new JLabel("T4 Grey:", JLabel.LEFT);
+            JLabel token4Label = new JLabel(lang.getText("HDWT_entry054place"), JLabel.LEFT);
             token4Label.setBounds(columnB_posX + 60, columnB_Y, colACompLength, 20);
             components.add(token4Label);
-            int tok4 = place.getColorTokensNumber(4);
+            int tok4 = ((PlaceColored) place).getColorTokensNumber(4);
 
             SpinnerModel token4SpinnerModel = new SpinnerNumberModel(tok4, 0, Integer.MAX_VALUE, 1);
             JSpinner token4Spinner = new JSpinner(token4SpinnerModel);
@@ -1020,10 +1583,10 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(token4Spinner);
 
-            JLabel token2Label = new JLabel("T2 Blue:", JLabel.LEFT);
+            JLabel token2Label = new JLabel(lang.getText("HDWT_entry055place"), JLabel.LEFT);
             token2Label.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
             components.add(token2Label);
-            int tok2 = place.getColorTokensNumber(2);
+            int tok2 = ((PlaceColored) place).getColorTokensNumber(2);
 
             SpinnerModel token2SpinnerModel = new SpinnerNumberModel(tok2, 0, Integer.MAX_VALUE, 1);
             JSpinner token2Spinner = new JSpinner(token2SpinnerModel);
@@ -1035,10 +1598,10 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(token2Spinner);
 
-            JLabel token5Label = new JLabel("T5 Black:", JLabel.LEFT);
+            JLabel token5Label = new JLabel(lang.getText("HDWT_entry056place"), JLabel.LEFT);
             token5Label.setBounds(columnB_posX + 60, columnB_Y, colACompLength, 20);
             components.add(token5Label);
-            int tok5 = place.getColorTokensNumber(5);
+            int tok5 = ((PlaceColored) place).getColorTokensNumber(5);
 
             SpinnerModel token5SpinnerModel = new SpinnerNumberModel(tok5, 0, Integer.MAX_VALUE, 1);
             JSpinner token5Spinner = new JSpinner(token5SpinnerModel);
@@ -1051,6 +1614,7 @@ public class HolmesDockWindowsTable extends JPanel {
             components.add(token5Spinner);
         }
 
+        /*
         JLabel debugModeLabel1 = new JLabel("Debug1:", JLabel.LEFT);
         debugModeLabel1.setBounds(columnA_posX, columnA_Y += 45, colACompLength, 20);
         components.add(debugModeLabel1);
@@ -1068,7 +1632,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 try {
                     int id = Integer.parseInt(newFR);
 
-                    ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+                    ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
                     if (id >= 0 && id < places.size()) {
 
                         Place p1 = (Place) element;
@@ -1076,12 +1640,680 @@ public class HolmesDockWindowsTable extends JPanel {
                         if (places.indexOf(p1) == id)
                             return;
 
-                        int pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p1);
-                        int pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p2);
-                        Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
-                        GUIManager.getDefaultGUIManager().log("Swapping places " + p1.getName() + " and " + p2.getName() + " successfull.", "text", true);
+                        int pos1 = overlord.getWorkspace().getProject().getNodes().indexOf(p1);
+                        int pos2 = overlord.getWorkspace().getProject().getNodes().indexOf(p2);
+                        Collections.swap(overlord.getWorkspace().getProject().getNodes(), pos1, pos2);
+                        overlord.log("Swapping places " + p1.getName() + " and " + p2.getName() + " successfull.", "text", true);
 
-                        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+                        //ElementLocation loc1st = ((Transition)element).getElementLocations().get(0);
+                        ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
+                    }
+                } catch (Exception ee) {
+                    System.out.println(ee.getMessage());
+                }
+            }
+        });
+
+        components.add(debugChangeID);
+        JButton aaa = new JButton();
+        aaa.setName("ChangeID");
+        aaa.setText("Change ID");
+        aaa.setMargin(new Insets(0, 0, 0, 0));
+        aaa.setBounds(columnB_posX + 70, columnB_Y, 80, 20);
+        aaa.addActionListener(actionEvent -> {
+        });
+        components.add(aaa);
+
+         */
+
+        panel.setLayout(null);
+        for (JComponent component : components) {
+            panel.add(component);
+        }
+        panel.setOpaque(true);
+        panel.repaint();
+        add(panel);
+    }
+
+    //**************************************************************************************
+    //*********************************      MIEJSCE     ***********************************
+    //*********************************       _XTPN       ***********************************
+    //*********************************                  ***********************************
+    //**************************************************************************************
+
+    /**
+     * Metoda pokazuje okno właściwości klikniętego miejsca XTPN.
+     * @param place    Place - obiekt miejsca
+     * @param location ElementLocation - lokalizacja miejsca
+     */
+    private void createXTPNPlaceSubWindow(PlaceXTPN place, ElementLocation location) {
+        int columnA_posX = 10;
+        int columnB_posX = 100;
+        int columnA_Y = 0;
+        int columnB_Y = 0;
+        int colACompLength = 70;
+        int colBCompLength = 200;
+        elementLocation = location;
+        initiateContainers();
+        mode = XTPN_PLACE;
+        element = place;
+        Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
+
+        // ID
+        JLabel idLabel = new JLabel("ID XTPN:", JLabel.LEFT);
+        idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+        components.add(idLabel);
+        
+        int gID = overlord.getWorkspace().getProject().getPlaces().indexOf(place);
+        
+        JLabel idLabel2 = new JLabel(Integer.toString(gID));
+        idLabel2.setBounds(columnB_posX, columnB_Y += 10, 50, 20);
+        idLabel2.setFont(normalFont);
+        components.add(idLabel2);
+
+        JLabel idLabel3 = new JLabel("global ID:");
+        idLabel3.setBounds(columnB_posX + 55, columnA_Y, 60, 20);
+        components.add(idLabel3);
+        JLabel idLabel4 = new JLabel(place.getID() + "");
+        idLabel4.setBounds(columnB_posX + 120, columnB_Y, 50, 20);
+        idLabel4.setFont(normalFont);
+        components.add(idLabel4);
+
+        // XTPN-place NAME
+        JLabel nameLabel = new JLabel(lang.getText("HDWT_entry057XTPNplace"), JLabel.LEFT);
+        nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(nameLabel);
+
+        JFormattedTextField nameField = new JFormattedTextField();
+        nameField.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+        nameField.setText(place.getName());
+        nameField.addPropertyChangeListener("value", e -> {
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                overlord.log(lang.getText("LOGentry00568exception")+"\n"+ex.getMessage(), "error", true);
+            }
+            String newName = field.getText();
+            changeName(newName);
+            overlord.markNetChange();
+        });
+        components.add(nameField);
+
+        // XTPN-place  KOMENTARZE
+        JLabel comLabel = new JLabel(lang.getText("HDWT_entry058XTPNplace"), JLabel.LEFT);
+        comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        columnA_Y += 20;
+        components.add(comLabel);
+        JTextArea commentField = new JTextArea(place.getComment());
+        commentField.setLineWrap(true);
+        commentField.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent e) {
+                JTextArea field = (JTextArea) e.getSource();
+                String newComment = "";
+                if (field != null)
+                    newComment = field.getText();
+                changeComment(newComment);
+                overlord.markNetChange();
+            }
+        });
+
+        JPanel CreationPanel = new JPanel();
+        CreationPanel.setLayout(new BorderLayout());
+        CreationPanel.add(new JScrollPane(commentField), BorderLayout.CENTER);
+        CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
+        columnB_Y += 20;
+        components.add(CreationPanel);
+
+        // XTPN-place przycisk Gamma ON/OFF
+        JLabel gammaLabel = new JLabel(lang.getText("HDWT_entry059XTPNplace"), JLabel.LEFT);
+        gammaLabel.setBounds(columnA_posX, columnA_Y += 25, colACompLength + 15, 20);
+        components.add(gammaLabel);
+
+        buttonGammaMode = new HolmesRoundedButton(lang.getText("HDWT_entry060XTPNplaceG_ON")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        buttonGammaMode.setMargin(new Insets(0, 0, 0, 0));
+        buttonGammaMode.setName("gammaModeButton");
+        buttonGammaMode.setBounds(columnB_posX, columnB_Y += 25, 65, 35);
+        buttonGammaMode.setFocusPainted(false);
+        if (place.isGammaModeActive()) {
+            buttonGammaMode.setNewText(lang.getText("HDWT_entry060XTPNplaceG_ON"));
+            buttonGammaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        } else {
+            buttonGammaMode.setNewText(lang.getText("HDWT_entry060XTPNplaceG_OFF"));
+            buttonGammaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+        }
+        buttonGammaMode.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+
+            SharedActionsXTPN.access().buttonGammaSwitchMode(e, place, null, gammaVisibilityButton, elementLocation);
+        });
+        components.add(buttonGammaMode);
+
+        // XTPN-place gamma values visibility
+        gammaVisibilityButton = new HolmesRoundedButton(lang.getText("HDWT_entry061XTPNplaceG_vis")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        gammaVisibilityButton.setName("gammaVisButton");
+        gammaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
+        gammaVisibilityButton.setBounds(columnB_posX + 65, columnB_Y, 65, 35);
+        gammaVisibilityButton.setFocusPainted(false);
+        if (place.isGammaModeActive()) {
+            if (place.isGammaRangeVisible()) {
+                gammaVisibilityButton.setNewText(lang.getText("HDWT_entry061XTPNplaceG_vis"));
+                gammaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            } else {
+                gammaVisibilityButton.setNewText(lang.getText("HDWT_entry061XTPNplaceG_invis"));
+                gammaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+            }
+        } else {
+            gammaVisibilityButton.setEnabled(false);
+        }
+        gammaVisibilityButton.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+            HolmesRoundedButton button = (HolmesRoundedButton) e.getSource();
+            if (place.isGammaRangeVisible()) {
+                ((PlaceXTPN) element).setGammaRangeVisibility(false);
+
+                button.setNewText(lang.getText("HDWT_entry061XTPNplaceG_invis"));
+                button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+            } else {
+                ((PlaceXTPN) element).setGammaRangeVisibility(true);
+
+                button.setNewText(lang.getText("HDWT_entry061XTPNplaceG_vis"));
+                button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            }
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(gammaVisibilityButton);
+
+        // XTPN-place gamma offset
+        gammaLocChangeButton = new HolmesRoundedButton(lang.getText("HDWT_entry062XTPNplaceG_off")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        //gammaLocChangeButton = new JButton("<html>Gamma<br>offset<html>");
+        gammaLocChangeButton.setName("gammaOffsetButton");
+        gammaLocChangeButton.setToolTipText(lang.getText("HDWT_entry064XTPNplaceG"));
+        gammaLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+        gammaLocChangeButton.setBounds(columnB_posX + 130, columnB_Y, 65, 35);
+        gammaLocChangeButton.setFocusPainted(false);
+        if (place.isGammaModeActive() && place.isGammaRangeVisible()) {
+            if (gammaLocChangeMode) {
+
+                gammaLocChangeButton.setNewText(lang.getText("HDWT_entry063XTPNplaceG_changeLoc"));
+                gammaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+            } else {
+                gammaLocChangeButton.setNewText(lang.getText("HDWT_entry062XTPNplaceG_off"));
+                gammaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            }
+        } else {
+            gammaLocChangeButton.setNewText(lang.getText("HDWT_entry063XTPNplaceG_changeLoc"));
+            gammaLocChangeMode = false;
+            gammaLocChangeButton.setEnabled(false);
+        }
+        gammaLocChangeButton.addActionListener(new ActionListener() {
+            // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+            private Place place_tmp;
+            private ElementLocation el_tmp;
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (!gammaLocChangeMode) { //włączamy tryb przesuwania napisu
+                    gammaLocChangeButton.setNewText(lang.getText("HDWT_entry063XTPNplaceG_changeLoc"));
+                    gammaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+                    gammaLocChangeMode = true;
+                    overlord.setNameLocationChangeMode(place_tmp, el_tmp, GUIManager.locationMoveType.GAMMA);
+                } else {
+                    gammaLocChangeButton.setNewText(lang.getText("HDWT_entry062XTPNplaceG_off"));
+                    gammaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+                    gammaLocChangeMode = false;
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+                }
+            }
+
+            private ActionListener yesWeCan(Place place, ElementLocation inLoc) {
+                place_tmp = place;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(place, location));
+        components.add(gammaLocChangeButton);
+
+        // XTPN-place  Zakresy gamma:
+        JLabel minMaxLabel = new JLabel(lang.getText("HDWT_entry065XTPNplaceG"), JLabel.LEFT);
+        minMaxLabel.setBounds(columnA_posX, columnA_Y += 40, colACompLength + 20, 20);
+        components.add(minMaxLabel);
+
+        // format danych gamma do 6 miejsc po przecinku
+        NumberFormat formatter = DecimalFormat.getInstance();
+        formatter.setMinimumFractionDigits(1);
+        formatter.setMaximumFractionDigits(place.getFractionForPlaceXTPN());
+        formatter.setRoundingMode(RoundingMode.HALF_UP);
+        Double example = 3.14;
+
+        JFormattedTextField gammaMinTextField = new JFormattedTextField(formatter);
+        gammaMinTextField.setValue(example);
+        gammaMinTextField.setValue(place.getGammaMinValue());
+        gammaMinTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                overlord.log(lang.getText("LOGentry00569exception")+"\n"+ex.getMessage(), "error", true);
+            }
+            double min = Double.parseDouble("" + field.getValue());
+
+            if (!(SharedActionsXTPN.access().setGammaMinTime(min, (PlaceXTPN) element, elementLocation))) {
+                doNotUpdate = true;
+                field.setValue(place.getGammaMinValue());
+                doNotUpdate = false;
+                overlord.markNetChange();
+            }
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+
+        JFormattedTextField gammaMaxTextField = new JFormattedTextField(formatter);
+        gammaMaxTextField.setValue(example);
+        gammaMaxTextField.setValue(place.getGammaMaxValue());
+        gammaMaxTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                overlord.log(lang.getText("LOGentry00570exception")+"\n"+ex.getMessage(), "error", true);
+            }
+
+            double max = Double.parseDouble("" + field.getValue());
+
+            if (!(SharedActionsXTPN.access().setGammaMaxTime(max, (PlaceXTPN) element, elementLocation))) {
+                doNotUpdate = true;
+                field.setValue(place.getGammaMaxValue());
+                doNotUpdate = false;
+                overlord.markNetChange();
+            }
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+
+        if (!place.isGammaModeActive()) {
+            gammaMinTextField.setEnabled(false);
+            gammaMaxTextField.setEnabled(false);
+        }
+
+        gammaMinTextField.setBounds(columnB_posX, columnB_Y += 41, 90, 20);
+        components.add(gammaMinTextField);
+        JLabel slash1 = new JLabel(" / ", JLabel.LEFT);
+        slash1.setBounds(columnB_posX + 95, columnA_Y, 15, 20);
+        components.add(slash1);
+        gammaMaxTextField.setBounds(columnB_posX + 110, columnB_Y, 90, 20);
+        components.add(gammaMaxTextField);
+
+
+        //JLabel tokensXTPNLabel = new JLabel("Tokens options:", JLabel.LEFT);
+        //tokensXTPNLabel.setBounds(columnA_posX, columnA_Y += 20, 120, 20);
+        //components.add(tokensXTPNLabel);
+
+        JLabel tokensXTPNLabel2 = new JLabel(lang.getText("HDWT_entry066XTPNplaceG") + place.getTokensNumber(), JLabel.LEFT);
+        tokensXTPNLabel2.setBounds(columnA_posX, columnA_Y += 20, 140, 20);
+        components.add(tokensXTPNLabel2);
+
+        JLabel fractionLabel = new JLabel(lang.getText("HDWT_entry067XTPNplaceG"), JLabel.LEFT);
+        fractionLabel.setBounds(columnA_posX, columnA_Y += 22, 70, 20);
+        components.add(fractionLabel);
+
+        int fract = place.getFractionForPlaceXTPN();
+        SpinnerModel fractionSpinnerModel = new SpinnerNumberModel(fract, 0, 6, 1);
+        JSpinner fractionSpinner = new JSpinner(fractionSpinnerModel);
+        fractionSpinner.setBounds(columnB_posX, columnB_Y += 42, 40, 20);
+        fractionSpinner.addChangeListener(e -> {
+            int fraction = (int) ((JSpinner) e.getSource()).getValue();
+            place.setFractionForPlaceXTPN(fraction);
+        });
+        components.add(fractionSpinner);
+
+        HolmesRoundedButton nameLocChangeButton = new HolmesRoundedButton(lang.getText("HDWT_entry068XTPNplaceName_OFF")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        //JButton nameLocChangeButton = new JButton("<html><center>Name<br>offset</center><html>");
+        nameLocChangeButton.setName("placeLocOffsetButton");
+        nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+        nameLocChangeButton.setBounds(columnB_posX+131, columnB_Y-12, 65, 35);
+        nameLocChangeButton.setToolTipText(lang.getText("HDWT_entry069XTPNplaceName"));
+        nameLocChangeButton.setFocusPainted(false);
+        nameLocChangeButton.addActionListener(new ActionListener() {
+            // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+            private Place place_tmp;
+            private ElementLocation el_tmp;
+            public void actionPerformed(ActionEvent actionEvent) {
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
+
+                if (!nameLocChangeMode) {
+                    button.setNewText(lang.getText("HDWT_entry070XTPNplaceName_changeLoc"));
+                    button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+                    nameLocChangeMode = true;
+                    overlord.setNameLocationChangeMode(place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                } else {
+                    button.setNewText(lang.getText("HDWT_entry068XTPNplaceName_OFF"));
+                    button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+                    nameLocChangeMode = false;
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+                }
+            }
+            private ActionListener yesWeCan(Place inPlace, ElementLocation inLoc) {
+                place_tmp = inPlace;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(place, location));
+        components.add(nameLocChangeButton);
+
+        // XTPN-place przycisk okna tokenów
+        //JButton tokensWindowButton = new JButton("<html>Tokens<br>window</html>");
+
+        HolmesRoundedButton tokensWindowButton = new HolmesRoundedButton(lang.getText("HDWT_entry071XTPNplaceTokens")
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+        tokensWindowButton.setMargin(new Insets(0, 0, 0, 0));
+        tokensWindowButton.setBounds(columnA_posX, columnB_Y += 40, 90, 40);
+        if (!place.isGammaModeActive()) {
+            tokensWindowButton.setEnabled(false);
+        }
+        tokensWindowButton.addActionListener(actionEvent -> new HolmesXTPNtokens((PlaceXTPN) element, null, place.accessMultiset(), place.isGammaModeActive()));
+        components.add(tokensWindowButton);
+
+        // XTPN-place przycisk dodania tokenu XTPN
+        HolmesRoundedButton add0tokenButton = new HolmesRoundedButton(lang.getText("HDWT_entry072XTPNplaceTokens")
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+        add0tokenButton.setMargin(new Insets(0, 0, 0, 0));
+        add0tokenButton.setBounds(columnB_posX, columnB_Y, 90, 40);
+        if (place.isGammaModeActive()) {
+            add0tokenButton.setText(lang.getText("HDWT_entry073XTPNplaceTokens"));
+            add0tokenButton.setBackground(Color.GREEN);
+        } else {
+            add0tokenButton.setText(lang.getText("HDWT_entry074XTPNplaceTokens"));
+            add0tokenButton.setBackground(null);
+        }
+        add0tokenButton.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+            JButton button = (JButton) e.getSource();
+
+            place.addTokens_XTPN(1, 0.0);
+
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(add0tokenButton);
+
+        // XTPN-place przycisk usunięcia tokenu XTPN
+        //JButton remove0tokenButton = new JButton("<html>Remove<br>0-token</html>");
+        HolmesRoundedButton remove0tokenButton = new HolmesRoundedButton(lang.getText("HDWT_entry075XTPNplaceTokens")
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+        remove0tokenButton.setMargin(new Insets(0, 0, 0, 0));
+        remove0tokenButton.setBounds(columnB_posX + 90, columnB_Y, 90, 40);
+        if (place.isGammaModeActive()) {
+            remove0tokenButton.setText(lang.getText("HDWT_entry076XTPNplaceTokens"));
+        } else {
+            remove0tokenButton.setText(lang.getText("HDWT_entry077XTPNplaceTokens"));
+        }
+        remove0tokenButton.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+            JButton button = (JButton) e.getSource();
+
+            if (place.isGammaModeActive()) {
+                int size = place.accessMultiset().size();
+                if (size > 0) {
+                    double lastToken = place.accessMultiset().get(size - 1);
+                    if (lastToken == 0.0) {
+                        place.accessMultiset().remove(size - 1);
+                        place.addTokensNumber(-1);
+                    }
+                }
+            } else {
+                int tokens = place.getTokensNumber();
+                if (tokens > 0)
+                    place.addTokensNumber(-1);
+            }
+
+            overlord.getWorkspace().getProject().repaintAllGraphPanels();
+            button.setFocusPainted(false);
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(remove0tokenButton);
+
+        // XTPN-place SHEET ID
+        int sheetIndex = overlord.IDtoIndex(location.getSheetID());
+        GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+        int xPos = location.getPosition().x;
+        int width = graphPanel.getSize().width;
+        int zoom = graphPanel.getZoom();
+        int yPos = location.getPosition().y;
+        int height = graphPanel.getSize().height;
+        width = (int) (((double) 100 / (double) zoom) * width);
+        height = (int) (((double) 100 / (double) zoom) * height);
+
+        JLabel sheetLabel = new JLabel(lang.getText("HDWT_entry078XTPNplace"), JLabel.LEFT);
+        sheetLabel.setBounds(columnA_posX, columnA_Y += 80, colACompLength, 20);
+        components.add(sheetLabel);
+        JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
+        sheetIdLabel.setBounds(columnB_posX, columnB_Y += 40, colBCompLength, 20);
+        sheetIdLabel.setFont(normalFont);
+        components.add(sheetIdLabel);
+
+        // XTPN-place ZOOM:
+        JLabel zoomLabel = new JLabel(lang.getText("HDWT_entry079XTPNplace"));
+        zoomLabel.setBounds(columnB_posX + 30, columnB_Y, 50, 20);
+        components.add(zoomLabel);
+        JLabel zoomLabel2 = new JLabel("" + zoom);
+        zoomLabel2.setBounds(columnB_posX + 70, columnB_Y, colBCompLength, 20);
+        zoomLabel2.setFont(normalFont);
+        if (zoom != 100)
+            zoomLabel2.setForeground(Color.red);
+        components.add(zoomLabel2);
+
+        // XTPN-place  PORTAL
+        JLabel portalLabel = new JLabel(lang.getText("HDWT_entry080XTPNplace"), JLabel.LEFT);
+        portalLabel.setBounds(columnB_posX + 110, columnB_Y, colACompLength, 20);
+        components.add(portalLabel);
+        JCheckBox portalBox = new JCheckBox("", place.isPortal());
+        portalBox.setBounds(columnB_posX + 180, columnB_Y, colACompLength, 20);
+        portalBox.setSelected(((Place) element).isPortal());
+        portalBox.addItemListener(e -> {
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                makePortal();
+            } else {
+                if (((Place) element).getElementLocations().size() > 1)
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry080XTPNplace_1"), lang.getText("HDWT_entry080XTPNplace_1t"),
+                            JOptionPane.INFORMATION_MESSAGE);
+                else {
+                    unPortal();
+                    overlord.markNetChange();
+                }
+            }
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(portalBox);
+
+        // XTPN-place LOKALIZACJA:
+        JLabel locLabel = new JLabel(lang.getText("HDWT_entry081XTPNplace"), JLabel.LEFT);
+        locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(locLabel);
+
+        SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
+        JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
+        locationXSpinner.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
+        locationXSpinner.addChangeListener(e -> setX((int) ((JSpinner) e.getSource()).getValue()));
+
+        JLabel labelCom = new JLabel(" , ");
+        labelCom.setBounds(columnB_posX + 60, columnB_Y, 10, 20);
+
+        SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
+        JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
+        locationYSpinner.setBounds(columnB_posX + 70, columnB_Y, 60, 20);
+        locationYSpinner.addChangeListener(e -> setY((int) ((JSpinner) e.getSource()).getValue()));
+        if (zoom != 100) {
+            locationXSpinner.setEnabled(false);
+            locationYSpinner.setEnabled(false);
+        }
+        components.add(locationXSpinner);
+        components.add(labelCom);
+        components.add(locationYSpinner);
+
+        // XTPN-place  WSPÓŁRZĘDNE NAPISU:
+        columnA_Y += 20;
+        columnB_Y += 25;
+
+        JLabel locNameLabel = new JLabel(lang.getText("HDWT_entry082XTPNplace"), JLabel.LEFT);
+        locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength + 10, 20);
+        components.add(locNameLabel);
+
+        int locationIndex = place.getElementLocations().indexOf(location);
+        int xNameOffset = place.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = place.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
+
+        nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
+        nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
+
+        JLabel locNameLabelX = new JLabel("x: ", JLabel.LEFT);
+        locNameLabelX.setBounds(columnA_posX + 90, columnA_Y, 20, 20);
+        components.add(locNameLabelX);
+
+        JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
+        nameLocationXSpinner.setBounds(columnA_posX + 105, columnA_Y, 45, 20);
+        nameLocationXSpinner.addChangeListener(new ChangeListener() {
+            private Place place_tmp;
+            private ElementLocation el_tmp;
+
+            public void stateChanged(ChangeEvent e) {
+                if (doNotUpdate)
+                    return;
+
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp);
+                doNotUpdate = true;
+                nameLocationXSpinnerModel.setValue(res.x);
+                doNotUpdate = false;
+            }
+
+            private ChangeListener yesWeCan(Place inPlace, ElementLocation inLoc) {
+                place_tmp = inPlace;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(place, location));
+
+        components.add(nameLocationXSpinner);
+
+        JLabel locNameLabelY = new JLabel("y: ", JLabel.LEFT);
+        locNameLabelY.setBounds(columnA_posX + 160, columnA_Y, 15, 20);
+        components.add(locNameLabelY);
+
+        JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
+        nameLocationYSpinner.setBounds(columnA_posX + 175, columnA_Y, 45, 20);
+        nameLocationYSpinner.addChangeListener(new ChangeListener() {
+            private Place place_tmp;
+            private ElementLocation el_tmp;
+
+            public void stateChanged(ChangeEvent e) {
+                if (doNotUpdate)
+                    return;
+
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), place_tmp, el_tmp);
+                doNotUpdate = true;
+                nameLocationYSpinnerModel.setValue(res.y);
+                doNotUpdate = false;
+            }
+
+            private ChangeListener yesWeCan(Place inPlace, ElementLocation inLoc) {
+                place_tmp = inPlace;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(place, location));
+        components.add(nameLocationYSpinner);
+
+        // XTPN-place przycisk zmiany lokalizacj napisu
+
+        nameLocChangeButton = new HolmesRoundedButton(lang.getText("HDWT_entry083XTPNplace")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        //JButton nameLocChangeButton = new JButton("<html><center>Name<br>offset</center><html>");
+        nameLocChangeButton.setName("placeLocOffsetButton");
+        nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+        nameLocChangeButton.setBounds(columnB_posX + 131, columnA_Y - 15, 65, 35);
+        nameLocChangeButton.setToolTipText(lang.getText("HDWT_entry084XTPNplace"));
+        nameLocChangeButton.setFocusPainted(false);
+        nameLocChangeButton.addActionListener(new ActionListener() {
+            // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+            private Place place_tmp;
+            private ElementLocation el_tmp;
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
+
+                if (!nameLocChangeMode) {
+                    button.setNewText(lang.getText("HDWT_entry085XTPNplace"));
+                    button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+                    nameLocChangeMode = true;
+                    overlord.setNameLocationChangeMode(place_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                } else {
+                    button.setNewText(lang.getText("HDWT_entry083XTPNplace"));
+                    button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+                    nameLocChangeMode = false;
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+                }
+            }
+
+            private ActionListener yesWeCan(Place inPlace, ElementLocation inLoc) {
+                place_tmp = inPlace;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(place, location));
+        components.add(nameLocChangeButton);
+
+        /*
+        JLabel debugModeLabel1 = new JLabel("Debug1:", JLabel.LEFT);
+        debugModeLabel1.setBounds(columnA_posX, columnA_Y += 45, colACompLength, 20);
+        components.add(debugModeLabel1);
+
+        JTextArea debugChangeID = new JTextArea("");
+        debugChangeID.setBounds(columnB_posX, columnB_Y += 70, 60, 20);
+        debugChangeID.setLineWrap(true);
+        debugChangeID.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent e) {
+                JTextArea field = (JTextArea) e.getSource();
+                String newFR = "";
+                if (field != null)
+                    newFR = field.getText();
+
+                try {
+                    int id = Integer.parseInt(newFR);
+
+                    ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+                    if (id >= 0 && id < places.size()) {
+
+                        Place p1 = (Place) element;
+                        Place p2 = places.get(id);
+                        if (places.indexOf(p1) == id)
+                            return;
+
+                        int pos1 = overlord.getWorkspace().getProject().getNodes().indexOf(p1);
+                        int pos2 = overlord.getWorkspace().getProject().getNodes().indexOf(p2);
+                        Collections.swap(overlord.getWorkspace().getProject().getNodes(), pos1, pos2);
+                        overlord.log("Swapping places " + p1.getName() + " and " + p2.getName() + " successfull.", "text", true);
+
+                        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                         //ElementLocation loc1st = ((Transition)element).getElementLocations().get(0);
                         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
                     }
@@ -1099,6 +2331,9 @@ public class HolmesDockWindowsTable extends JPanel {
         aaa.addActionListener(actionEvent -> {
         });
         components.add(aaa);
+         */
+
+
         panel.setLayout(null);
         for (JComponent component : components) {
             panel.add(component);
@@ -1120,6 +2355,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param transition Transition - obiekt tranzycji sieci
      * @param location   ElementLocation - lokalizacja tranzycji
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createTransitionSubWindow(Transition transition, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -1134,7 +2370,7 @@ public class HolmesDockWindowsTable extends JPanel {
         element = transition;
         Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
 
-        // ID:
+        // CLASSICAL TRANSITION ID:
         JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
         idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
         components.add(idLabel);
@@ -1153,8 +2389,8 @@ public class HolmesDockWindowsTable extends JPanel {
         idLabel4.setFont(normalFont);
         components.add(idLabel4);
 
-        // TRANSITION NAME:
-        JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
+        // CLASSICAL TRANSITION NAME:
+        JLabel nameLabel = new JLabel(lang.getText("HDWT_entry086trans"), JLabel.LEFT);
         nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(nameLabel);
 
@@ -1168,7 +2404,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00571exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -1176,8 +2412,8 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(nameField);
 
-        //KOMENTARZE WIERZCHOŁKA:
-        JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
+        // CLASSICAL TRANSITION KOMENTARZE WIERZCHOŁKA:
+        JLabel comLabel = new JLabel(lang.getText("HDWT_entry087trans"), JLabel.LEFT);
         comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         columnA_Y += 20;
         components.add(comLabel);
@@ -1202,78 +2438,70 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
 
-        //CHANGE TYPE:
-        JLabel changeTypeLabel = new JLabel("Trans. Type:", JLabel.LEFT);
+        // CLASSICAL TRANSITION CHANGE TYPE:
+        JLabel changeTypeLabel = new JLabel(lang.getText("HDWT_entry088trans"), JLabel.LEFT);
         changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(changeTypeLabel);
 
-        pnCheckBox = new JCheckBox("Standard", transition.isPortal());
-        pnCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
-        pnCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
-
-        pnCheckBox.addItemListener(e -> {
+        classicalTransitionCheckBox = new JCheckBox("PN");
+        classicalTransitionCheckBox.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
+        classicalTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
+        classicalTransitionCheckBox.addItemListener(e -> {
             if (doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
             if (box.isSelected()) {
                 ((Transition) element).setTransType(TransitionType.PN);
-
                 doNotUpdate = true;
-                tpnCheckBox.setSelected(false);
+                timeTransitionCheckBox.setSelected(false);
+                stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
-        components.add(pnCheckBox);
+        components.add(classicalTransitionCheckBox);
 
-        tpnCheckBox = new JCheckBox("Time", transition.isPortal());
-        tpnCheckBox.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
-        tpnCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
-
-        tpnCheckBox.addItemListener(e -> {
+        timeTransitionCheckBox = new JCheckBox("TPN");
+        timeTransitionCheckBox.setBounds(columnB_posX + 70, columnB_Y, 60, 20);
+        timeTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
+        timeTransitionCheckBox.addItemListener(e -> {
             if (doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
             if (box.isSelected()) {
                 ((Transition) element).setTransType(TransitionType.TPN);
-
                 doNotUpdate = true;
-                pnCheckBox.setSelected(false);
+                classicalTransitionCheckBox.setSelected(false);
+                stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
-        components.add(tpnCheckBox);
+        components.add(timeTransitionCheckBox);
 
-        JLabel frLabel = new JLabel("Firing rate:", JLabel.LEFT);
-        frLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-        components.add(frLabel);
-
-        JTextArea frField = new JTextArea("" + ((Transition) element).getFiringRate());
-        frField.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
-        frField.setLineWrap(true);
-        frField.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e) {
-                JTextArea field = (JTextArea) e.getSource();
-                String newFR = "";
-                if (field != null)
-                    newFR = field.getText();
-
-                try {
-                    double newVal = Double.parseDouble(newFR);
-
-                    SPNtransitionData xxx = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessFiringRatesManager()
-                            .getCurrentSPNdataVector().accessVector().get(gID);
-                    ((Transition) element).setFiringRate(newVal);
-                    xxx.ST_function = newFR;
-                } catch (Exception ee) {
-                    System.out.println(ee.getMessage());
-                }
-                //changeComment(newComment);
-                //overlord.markNetChange();
+        stochasticTransitionCheckBox = new JCheckBox("SPN");
+        stochasticTransitionCheckBox.setBounds(columnB_posX + 130, columnB_Y, 60, 20);
+        stochasticTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.SPN);
+        stochasticTransitionCheckBox.addItemListener(e -> {
+            if (doNotUpdate)
+                return;
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                ((Transition) element).setTransType(TransitionType.SPN);
+                doNotUpdate = true;
+                classicalTransitionCheckBox.setSelected(false);
+                timeTransitionCheckBox.setSelected(false);
+                doNotUpdate = false;
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
-        components.add(frField);
+        components.add(stochasticTransitionCheckBox);
 
         //SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
@@ -1286,7 +2514,7 @@ public class HolmesDockWindowsTable extends JPanel {
         width = (int) (((double) 100 / (double) zoom) * width);
         height = (int) (((double) 100 / (double) zoom) * height);
 
-        JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
+        JLabel sheetLabel = new JLabel(lang.getText("HDWT_entry089trans"), JLabel.LEFT);
         sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(sheetLabel);
         JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
@@ -1295,7 +2523,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(sheetIdLabel);
 
         //ZOOM:
-        JLabel zoomLabel = new JLabel("Zoom:");
+        JLabel zoomLabel = new JLabel(lang.getText("HDWT_entry090trans"));
         zoomLabel.setBounds(columnB_posX + 30, columnB_Y, 50, 20);
         components.add(zoomLabel);
         JLabel zoomLabel2 = new JLabel("" + zoom);
@@ -1305,8 +2533,8 @@ public class HolmesDockWindowsTable extends JPanel {
             zoomLabel2.setForeground(Color.red);
         components.add(zoomLabel2);
 
-        //LOKALIZACJA:
-        JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
+        // CLASSICAL TRANSITION LOKALIZACJA:
+        JLabel locLabel = new JLabel(lang.getText("HDWT_entry091trans"), JLabel.LEFT);
         locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(locLabel);
 
@@ -1330,8 +2558,8 @@ public class HolmesDockWindowsTable extends JPanel {
         locationSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, colBCompLength, 20);
         components.add(locationSpinnerPanel);
 
-        // PORTAL
-        JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
+        // CLASSICAL TRANSITION PORTAL
+        JLabel portalLabel = new JLabel(lang.getText("HDWT_entry092trans"), JLabel.LEFT);
         portalLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(portalLabel);
         JCheckBox portalBox = new JCheckBox("", transition.isPortal());
@@ -1344,50 +2572,54 @@ public class HolmesDockWindowsTable extends JPanel {
                 makePortal();
             } else {
                 if (((Transition) element).getElementLocations().size() > 1)
-                    JOptionPane.showMessageDialog(null, "Transition contains more than one location!", "Cannot proceed",
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry092trans_1"), lang.getText("HDWT_entry092trans_1t"),
                             JOptionPane.INFORMATION_MESSAGE);
                 else {
                     unPortal();
                     overlord.markNetChange();
                 }
             }
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(portalBox);
 
-        //FUNKCYJNOŚĆ
-        JLabel functionLabel = new JLabel("Functional:", JLabel.LEFT);
+        // CLASSICAL TRANSITION FUNKCYJNOŚĆ
+        JLabel functionLabel = new JLabel(lang.getText("HDWT_entry093trans"), JLabel.LEFT);
         functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(functionLabel);
 
-        JCheckBox functionalCheckBox = new JCheckBox("", transition.isPortal());
+        JCheckBox functionalCheckBox = new JCheckBox("", transition.fpnExtension.isFunctional());
         functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        functionalCheckBox.setSelected(((Transition) element).isFunctional());
+        functionalCheckBox.setSelected(((Transition) element).fpnExtension.isFunctional());
 
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            ((Transition) element).setFunctional(box.isSelected());
+            ((Transition) element).fpnExtension.setFunctional(box.isSelected());
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
         });
         components.add(functionalCheckBox);
 
         JButton functionsEditorButton = new JButton(Tools.getResIcon32("/icons/functionsWindow/functionsIcon.png"));
         functionsEditorButton.setName("Functions editor");
-        functionsEditorButton.setText("<html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>");
+        functionsEditorButton.setText(lang.getText("HDWT_entry094trans"));
         functionsEditorButton.setMargin(new Insets(0, 0, 0, 0));
         functionsEditorButton.setBounds(columnA_posX + 125, columnA_Y - 16, 110, 32);
         functionsEditorButton.addActionListener(actionEvent -> new HolmesFunctionsBuilder((Transition) element));
         components.add(functionsEditorButton);
 
-        // WSPÓŁRZĘDNE NAPISU:
+        // CLASSICAL TRANSITION WSPÓŁRZĘDNE NAPISU:
         columnA_Y += 20;
         columnB_Y += 20;
 
-        JLabel locNameLabel = new JLabel("Name offset:", JLabel.LEFT);
+        JLabel locNameLabel = new JLabel(lang.getText("HDWT_entry095trans"), JLabel.LEFT);
         locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength + 10, 20);
         components.add(locNameLabel);
 
         int locationIndex = transition.getElementLocations().indexOf(location);
-        int xNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().x;
-        int yNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().y;
+        int xNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -1448,9 +2680,10 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(transition, location));
         components.add(nameLocationYSpinner);
 
+        // CLASSICAL TRANSITION TEXT LOCATION CHANGE BUTTON
         JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
         nameLocChangeButton.setName("LocNameChanger");
-        nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
+        nameLocChangeButton.setToolTipText(lang.getText("HDWT_entry096trans"));
         nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
         nameLocChangeButton.setBounds(columnA_posX + 90, columnA_Y += 25, 150, 40);
         nameLocChangeButton.addActionListener(new ActionListener() {
@@ -1464,11 +2697,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (!nameLocChangeMode) {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
                     nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, true);
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
                     nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, false);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
 
@@ -1480,10 +2713,9 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(transition, location));
         components.add(nameLocChangeButton);
 
-
         JLabel debugModeLabel1 = new JLabel("Debug1:", JLabel.LEFT);
         debugModeLabel1.setBounds(columnA_posX, columnA_Y += 45, colACompLength, 20);
-        components.add(debugModeLabel1);
+        //components.add(debugModeLabel1);
 
         JTextArea debugChangeID = new JTextArea("");
         debugChangeID.setBounds(columnB_posX, columnB_Y += 70, 60, 20);
@@ -1498,7 +2730,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 try {
                     int id = Integer.parseInt(newFR);
 
-                    ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+                    ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
                     if (id >= 0 && id < transitions.size()) {
 
                         Transition t1 = (Transition) element;
@@ -1506,21 +2738,21 @@ public class HolmesDockWindowsTable extends JPanel {
                         if (transitions.indexOf(t1) == id)
                             return;
 
-                        int pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t1);
-                        int pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t2);
-                        Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
-                        GUIManager.getDefaultGUIManager().log("Swapping transitions " + t1.getName() + " and " + t2.getName() + " successfull.", "text", true);
+                        int pos1 = overlord.getWorkspace().getProject().getNodes().indexOf(t1);
+                        int pos2 = overlord.getWorkspace().getProject().getNodes().indexOf(t2);
+                        Collections.swap(overlord.getWorkspace().getProject().getNodes(), pos1, pos2);
+                        overlord.log("Swapping transitions " + t1.getName() + " and " + t2.getName() + " successfull.", "text", true);
 
-                        WorkspaceSheet ws = GUIManager.getDefaultGUIManager().getWorkspace().getSheets().get(0);
+                        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
                         //ElementLocation loc1st = ((Transition)element).getElementLocations().get(0);
                         ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
                     }
                 } catch (Exception ee) {
-                    System.out.println(ee.getMessage());
+                    overlord.log(lang.getText("LOGentry00572exception")+"\n"+ee.getMessage(), "error", true);
                 }
             }
         });
-        components.add(debugChangeID);
+        //components.add(debugChangeID);
 
         JButton aaa = new JButton();
         aaa.setName("ChangeID");
@@ -1529,7 +2761,7 @@ public class HolmesDockWindowsTable extends JPanel {
         aaa.setBounds(columnB_posX + 70, columnB_Y, 80, 20);
         aaa.addActionListener(actionEvent -> {
         });
-        components.add(aaa);
+        //components.add(aaa);
 
         panel.setLayout(null);
         for (JComponent component : components) {
@@ -1543,17 +2775,17 @@ public class HolmesDockWindowsTable extends JPanel {
 
     //**************************************************************************************
     //*********************************    TRANZYCJA     ***********************************
-    //*********************************     CZASOWA      ***********************************
+    //*********************************     KOLOROWA     ***********************************
     //*********************************                  ***********************************
     //**************************************************************************************
 
     /**
-     * Metoda odpowiedzialna za utworzenie podokna właściwości tranzycji czasowej.
-     *
-     * @param transition TimeTransition - obiekt tranzycji czasowej
-     * @param location   ElementLocation - lokalizacja tranzycji
+     * Metoda odpowiedzialna za tworzenie podokna właściwości klikniętej tranzycji.
+     * @param transition (<b>Transition</b>) obiekt tranzycji sieci.
+     * @param location   (<b>ElementLocation</b>) - lokalizacja tranzycji.
      */
-    private void createTimeTransitionSubWindow(final Transition transition, ElementLocation location) {
+    @SuppressWarnings("UnusedAssignment")
+    private void createColorTransitionSubWindow(Transition transition, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
         int columnA_Y = 0;
@@ -1561,20 +2793,25 @@ public class HolmesDockWindowsTable extends JPanel {
         int colACompLength = 70;
         int colBCompLength = 200;
 
-        mode = TIMETRANSITION;
+        mode = CTRANSITION;
         elementLocation = location;
-        initiateContainers(); //!!!
+        initiateContainers();
         element = transition;
         Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
 
-        // ID
+        JLabel colorLabel = new JLabel(lang.getText("HDWT_entry097Ctrans"), JLabel.LEFT);
+        colorLabel.setBounds(columnA_posX, columnA_Y += 10, 220, 20);
+        components.add(colorLabel);
+        columnB_Y += 10;
+
+        // COLOR-TRANSITION ID:
         JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
-        idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+        idLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(idLabel);
 
-        int gID = overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transition);
+        final int gID = overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transition);
         JLabel idLabel2 = new JLabel(Integer.toString(gID));
-        idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+        idLabel2.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
         idLabel2.setFont(normalFont);
         components.add(idLabel2);
 
@@ -1586,8 +2823,8 @@ public class HolmesDockWindowsTable extends JPanel {
         idLabel4.setFont(normalFont);
         components.add(idLabel4);
 
-        // T-TRANSITION NAME
-        JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
+        // COLOR-TRANSITION NAME:
+        JLabel nameLabel = new JLabel(lang.getText("HDWT_entry098Ctrans"), JLabel.LEFT);
         nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(nameLabel);
 
@@ -1601,7 +2838,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00573exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -1609,8 +2846,8 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(nameField);
 
-        // T-TRANSITION COMMENT
-        JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
+        // COLOR-TRANSITION KOMENTARZE WIERZCHOŁKA:
+        JLabel comLabel = new JLabel(lang.getText("HDWT_entry099Ctrans"), JLabel.LEFT);
         comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         columnA_Y += 20;
         components.add(comLabel);
@@ -1635,61 +2872,918 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
 
-        //CHANGE TYPE:
-        JLabel changeTypeLabel = new JLabel("Trans. Type:", JLabel.LEFT);
+        // COLOR-TRANSITION SHEET ID
+        int sheetIndex = overlord.IDtoIndex(location.getSheetID());
+        GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+        int xPos = location.getPosition().x;
+        int width = graphPanel.getSize().width;
+        int zoom = graphPanel.getZoom();
+        int yPos = location.getPosition().y;
+        int height = graphPanel.getSize().height;
+        width = (int) (((double) 100 / (double) zoom) * width);
+        height = (int) (((double) 100 / (double) zoom) * height);
+
+        JLabel sheetLabel = new JLabel(lang.getText("HDWT_entry100Ctrans"), JLabel.LEFT);
+        sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(sheetLabel);
+        JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
+        sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+        sheetIdLabel.setFont(normalFont);
+        components.add(sheetIdLabel);
+
+        // COLOR-TRANSITION ZOOM:
+        JLabel zoomLabel = new JLabel(lang.getText("HDWT_entry101Ctrans"));
+        zoomLabel.setBounds(columnB_posX + 30, columnB_Y, 50, 20);
+        components.add(zoomLabel);
+        JLabel zoomLabel2 = new JLabel("" + zoom);
+        zoomLabel2.setBounds(columnB_posX + 70, columnB_Y, colBCompLength, 20);
+        zoomLabel2.setFont(normalFont);
+        if (zoom != 100)
+            zoomLabel2.setForeground(Color.red);
+        components.add(zoomLabel2);
+
+        // COLOR-TRANSITION PORTAL
+        JLabel portalLabel = new JLabel(lang.getText("HDWT_entry102Ctrans"), JLabel.LEFT);
+        portalLabel.setBounds(columnB_posX + 120, columnB_Y, colACompLength, 20);
+        components.add(portalLabel);
+
+        JCheckBox portalBox = new JCheckBox("", transition.isPortal());
+        portalBox.setBounds(columnB_posX + 180, columnB_Y, 30, 20);
+        portalBox.setSelected(((Transition) element).isPortal());
+
+        portalBox.addItemListener(e -> {
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                makePortal();
+            } else {
+                if (((Transition) element).getElementLocations().size() > 1)
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry102Ctrans_1"), lang.getText("HDWT_entry102Ctrans_1t"),
+                            JOptionPane.INFORMATION_MESSAGE);
+                else {
+                    unPortal();
+                    overlord.markNetChange();
+                }
+            }
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(portalBox);
+
+        // COLOR-TRANSITION LOKALIZACJA:
+        JLabel locLabel = new JLabel(lang.getText("HDWT_entry103Ctrans"), JLabel.LEFT);
+        locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(locLabel);
+
+        SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
+        SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
+
+        JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
+        locationXSpinner.addChangeListener(e -> setX((int) ((JSpinner) e.getSource()).getValue()));
+        JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
+        locationYSpinner.addChangeListener(e -> setY((int) ((JSpinner) e.getSource()).getValue()));
+        if (zoom != 100) {
+            locationXSpinner.setEnabled(false);
+            locationYSpinner.setEnabled(false);
+        }
+        JPanel locationSpinnerPanel = new JPanel();
+        locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel, BoxLayout.X_AXIS));
+        locationSpinnerPanel.add(locationXSpinner);
+        locationSpinnerPanel.add(new JLabel(" , "));
+        locationSpinnerPanel.add(locationYSpinner);
+
+        locationSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, colBCompLength, 20);
+        components.add(locationSpinnerPanel);
+
+
+        // COLOR-TRANSITION WSPÓŁRZĘDNE NAPISU:
+        columnA_Y += 20;
+        columnB_Y += 20;
+
+        JLabel locNameLabel = new JLabel(lang.getText("HDWT_entry104Ctrans"), JLabel.LEFT);
+        locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength + 10, 20);
+        components.add(locNameLabel);
+
+        int locationIndex = transition.getElementLocations().indexOf(location);
+        int xNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
+
+        nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
+        nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
+
+        JLabel locNameLabelX = new JLabel("xOff: ", JLabel.LEFT);
+        locNameLabelX.setBounds(columnA_posX + 90, columnA_Y, 40, 20);
+        components.add(locNameLabelX);
+
+        JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
+        nameLocationXSpinner.setBounds(columnA_posX + 125, columnA_Y, 60, 20);
+        nameLocationXSpinner.addChangeListener(new ChangeListener() {
+            private Transition trans_tmp;
+            private ElementLocation el_tmp;
+
+            public void stateChanged(ChangeEvent e) {
+                if (doNotUpdate)
+                    return;
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+                doNotUpdate = true;
+                nameLocationXSpinnerModel.setValue(res.x);
+                doNotUpdate = false;
+            }
+
+            private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc) {
+                trans_tmp = transition;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(transition, location));
+
+        components.add(nameLocationXSpinner);
+
+        JLabel locNameLabelY = new JLabel("yOff: ", JLabel.LEFT);
+        locNameLabelY.setBounds(columnA_posX + 195, columnB_Y, 40, 20);
+        components.add(locNameLabelY);
+
+        JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
+        nameLocationYSpinner.setBounds(columnA_posX + 230, columnA_Y, 60, 20);
+        nameLocationYSpinner.addChangeListener(new ChangeListener() {
+            private Transition trans_tmp;
+            private ElementLocation el_tmp;
+
+            public void stateChanged(ChangeEvent e) {
+                if (doNotUpdate)
+                    return;
+
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+                doNotUpdate = true;
+                nameLocationYSpinnerModel.setValue(res.y);
+                doNotUpdate = false;
+            }
+
+            private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc) {
+                trans_tmp = transition;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(transition, location));
+        components.add(nameLocationYSpinner);
+
+        // COLOR-TRANSITION TEXT LOCATION BUTTON
+        JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
+        nameLocChangeButton.setName("LocNameChanger");
+        nameLocChangeButton.setToolTipText(lang.getText("HDWT_entry105Ctrans"));
+        nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+        nameLocChangeButton.setBounds(columnA_posX + 90, columnA_Y += 25, 150, 40);
+        nameLocChangeButton.addActionListener(new ActionListener() {
+            // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+            private Transition trans_tmp;
+            private ElementLocation el_tmp;
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                JButton button_tmp = (JButton) actionEvent.getSource();
+
+                if (!nameLocChangeMode) {
+                    button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
+                    nameLocChangeMode = true;
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                } else {
+                    button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
+                    nameLocChangeMode = false;
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+                }
+            }
+
+            private ActionListener yesWeCan(Transition transition, ElementLocation inLoc) {
+                trans_tmp = transition;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(transition, location));
+        components.add(nameLocChangeButton);
+
+        // COLOR-TRANSITION TOKENS
+        JLabel reqLabel = new JLabel(lang.getText("HDWT_entry106Ctrans"), JLabel.LEFT);
+        reqLabel.setBounds(columnA_posX, columnA_Y += 50, 220, 20);
+        columnB_Y += 76;
+        components.add(reqLabel);
+
+        JLabel reqT0Label = new JLabel(lang.getText("HDWT_entry107Ctrans"), JLabel.LEFT);
+        reqT0Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+        components.add(reqT0Label);
+
+        SpinnerModel weightT0SpinnerModel = new SpinnerNumberModel(((TransitionColored) transition).getRequiredColoredTokens(0), 0, Integer.MAX_VALUE, 1);
+        JSpinner weightT0Spinner = new JSpinner(weightT0SpinnerModel);
+        weightT0Spinner.setBounds(columnB_posX - 35, columnB_Y += 20, 65, 20);
+        weightT0Spinner.addChangeListener(e -> {
+            int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+            setActivationWeight(tokenz, (Transition) element, 0);
+        });
+        components.add(weightT0Spinner);
+
+        JLabel reqT3Label = new JLabel(lang.getText("HDWT_entry108Ctrans"), JLabel.LEFT);
+        reqT3Label.setBounds(columnB_posX + 40, columnB_Y, 80, 20);
+        components.add(reqT3Label);
+
+        SpinnerModel weightT3SpinnerModel = new SpinnerNumberModel(((TransitionColored) transition).getRequiredColoredTokens(3), 0, Integer.MAX_VALUE, 1);
+        JSpinner weightT3Spinner = new JSpinner(weightT3SpinnerModel);
+        weightT3Spinner.setBounds(columnB_posX + 100, columnB_Y, 65, 20);
+        weightT3Spinner.addChangeListener(e -> {
+            int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+            setActivationWeight(tokenz, (Transition) element, 3);
+        });
+        components.add(weightT3Spinner);
+
+        JLabel reqT1Label = new JLabel(lang.getText("HDWT_entry109Ctrans"), JLabel.LEFT);
+        reqT1Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+        components.add(reqT1Label);
+
+        SpinnerModel weightT1SpinnerModel = new SpinnerNumberModel(((TransitionColored) transition).getRequiredColoredTokens(1), 0, Integer.MAX_VALUE, 1);
+        JSpinner weightT1Spinner = new JSpinner(weightT1SpinnerModel);
+        weightT1Spinner.setBounds(columnB_posX - 35, columnB_Y += 20, 65, 20);
+        weightT1Spinner.addChangeListener(e -> {
+            int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+            setActivationWeight(tokenz, (Transition) element, 1);
+        });
+        components.add(weightT1Spinner);
+
+        JLabel reqT4Label = new JLabel(lang.getText("HDWT_entry110Ctrans"), JLabel.LEFT);
+        reqT4Label.setBounds(columnB_posX + 40, columnB_Y, 80, 20);
+        components.add(reqT4Label);
+
+        SpinnerModel weightT4SpinnerModel = new SpinnerNumberModel(((TransitionColored) transition).getRequiredColoredTokens(4), 0, Integer.MAX_VALUE, 1);
+        JSpinner weightT4Spinner = new JSpinner(weightT4SpinnerModel);
+        weightT4Spinner.setBounds(columnB_posX + 100, columnB_Y, 65, 20);
+        weightT4Spinner.addChangeListener(e -> {
+            int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+            setActivationWeight(tokenz, (Transition) element, 4);
+        });
+        components.add(weightT4Spinner);
+
+        JLabel reqT2Label = new JLabel(lang.getText("HDWT_entry111Ctrans"), JLabel.LEFT);
+        reqT2Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+        components.add(reqT2Label);
+
+        SpinnerModel weightT2SpinnerModel = new SpinnerNumberModel(((TransitionColored) transition).getRequiredColoredTokens(2), 0, Integer.MAX_VALUE, 1);
+        JSpinner weightT2Spinner = new JSpinner(weightT2SpinnerModel);
+        weightT2Spinner.setBounds(columnB_posX - 35, columnB_Y += 20, 65, 20);
+        weightT2Spinner.addChangeListener(e -> {
+            int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+            setActivationWeight(tokenz, (Transition) element, 2);
+        });
+        components.add(weightT2Spinner);
+
+        JLabel reqT5Label = new JLabel(lang.getText("HDWT_entry112Ctrans"), JLabel.LEFT);
+        reqT5Label.setBounds(columnB_posX + 40, columnB_Y, 80, 20);
+        components.add(reqT5Label);
+
+        SpinnerModel weightT5SpinnerModel = new SpinnerNumberModel(((TransitionColored) transition).getRequiredColoredTokens(5), 0, Integer.MAX_VALUE, 1);
+        JSpinner weightT5Spinner = new JSpinner(weightT5SpinnerModel);
+        weightT5Spinner.setBounds(columnB_posX + 100, columnB_Y, 65, 20);
+        weightT5Spinner.addChangeListener(e -> {
+            int tokenz = (int) ((JSpinner) e.getSource()).getValue();
+            setActivationWeight(tokenz, (Transition) element, 5);
+        });
+        components.add(weightT5Spinner);
+
+        panel.setLayout(null);
+        for (JComponent component : components) {
+            panel.add(component);
+        }
+
+        panel.setOpaque(true);
+        panel.repaint();
+        add(panel);
+    }
+
+    //**************************************************************************************
+    //*********************************     TRANZYCJA    ***********************************
+    //*********************************        SPN       ***********************************
+    //*********************************                  ***********************************
+    //**************************************************************************************
+
+    /**
+     * Metoda odpowiedzialna za tworzenie podokna właściwości klikniętej tranzycji.
+     * @param transition (<b>Transition</b>) obiekt tranzycji sieci.
+     * @param location   (<b>ElementLocation</b>) - lokalizacja tranzycji.
+     */
+    @SuppressWarnings("UnusedAssignment")
+    private void createSPNTransitionSubWindow(Transition transition, ElementLocation location) {
+        //[2022-07-06] na razie czysto na bazie zwykłej tranzycji, copy pase
+
+        int columnA_posX = 10;
+        int columnB_posX = 100;
+        int columnA_Y = 0;
+        int columnB_Y = 0;
+        int colACompLength = 70;
+        int colBCompLength = 200;
+
+        mode = SPN;
+        elementLocation = location;
+        initiateContainers();
+        element = transition;
+        Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
+
+        // SPN TRANSITION ID:
+        JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
+        idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+        components.add(idLabel);
+
+        final int gID = overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transition);
+        JLabel idLabel2 = new JLabel(Integer.toString(gID));
+        idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+        idLabel2.setFont(normalFont);
+        components.add(idLabel2);
+
+        JLabel idLabel3 = new JLabel("gID:");
+        idLabel3.setBounds(columnB_posX + 35, columnA_Y, 50, 20);
+        components.add(idLabel3);
+        JLabel idLabel4 = new JLabel(transition.getID() + "");
+        idLabel4.setBounds(columnB_posX + 60, columnB_Y, 50, 20);
+        idLabel4.setFont(normalFont);
+        components.add(idLabel4);
+
+        // SPN TRANSITION NAME:
+        JLabel nameLabel = new JLabel(lang.getText("HDWT_entry113SPNtrans"), JLabel.LEFT);
+        nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(nameLabel);
+
+        DefaultFormatter format = new DefaultFormatter();
+        format.setOverwriteMode(false);
+        JFormattedTextField nameField = new JFormattedTextField(format);
+        nameField.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+        nameField.setValue(transition.getName());
+        nameField.addPropertyChangeListener("value", e -> {
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                overlord.log(lang.getText("LOGentry00574exception")+"\n"+ex.getMessage(), "error", true);
+            }
+            String newName = field.getText();
+            changeName(newName);
+            overlord.markNetChange();
+        });
+        components.add(nameField);
+
+        // SPN TRANSITION KOMENTARZE WIERZCHOŁKA:
+        JLabel comLabel = new JLabel(lang.getText("HDWT_entry114SPNtrans"), JLabel.LEFT);
+        comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        columnA_Y += 20;
+        components.add(comLabel);
+
+        JTextArea commentField = new JTextArea(transition.getComment());
+        commentField.setLineWrap(true);
+        commentField.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent e) {
+                JTextArea field = (JTextArea) e.getSource();
+                String newComment = "";
+                if (field != null)
+                    newComment = field.getText();
+                changeComment(newComment);
+                overlord.markNetChange();
+            }
+        });
+
+        JPanel CreationPanel = new JPanel();
+        CreationPanel.setLayout(new BorderLayout());
+        CreationPanel.add(new JScrollPane(commentField), BorderLayout.CENTER);
+        CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
+        columnB_Y += 20;
+        components.add(CreationPanel);
+
+        // SPN TRANSITION CHANGE TYPE:
+        JLabel changeTypeLabel = new JLabel(lang.getText("HDWT_entry115SPNtrans"), JLabel.LEFT);
         changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(changeTypeLabel);
 
-        pnCheckBox = new JCheckBox("Standard", transition.isPortal());
-        pnCheckBox.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
-        pnCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
-
-        pnCheckBox.addItemListener(e -> {
+        classicalTransitionCheckBox = new JCheckBox("PN");
+        classicalTransitionCheckBox.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
+        classicalTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
+        classicalTransitionCheckBox.addItemListener(e -> {
             if (doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
             if (box.isSelected()) {
                 ((Transition) element).setTransType(TransitionType.PN);
-
                 doNotUpdate = true;
-                tpnCheckBox.setSelected(false);
+                timeTransitionCheckBox.setSelected(false);
+                stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
-        components.add(pnCheckBox);
+        components.add(classicalTransitionCheckBox);
 
-        tpnCheckBox = new JCheckBox("Time", transition.isPortal());
-        tpnCheckBox.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
-        tpnCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
-
-        tpnCheckBox.addItemListener(e -> {
+        timeTransitionCheckBox = new JCheckBox("TPN");
+        timeTransitionCheckBox.setBounds(columnB_posX + 70, columnB_Y, 60, 20);
+        timeTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
+        timeTransitionCheckBox.addItemListener(e -> {
             if (doNotUpdate)
                 return;
             JCheckBox box = (JCheckBox) e.getSource();
             if (box.isSelected()) {
                 ((Transition) element).setTransType(TransitionType.TPN);
-
                 doNotUpdate = true;
-                pnCheckBox.setSelected(false);
+                classicalTransitionCheckBox.setSelected(false);
+                stochasticTransitionCheckBox.setSelected(false);
                 doNotUpdate = false;
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().repaintAllGraphPanels();
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
             }
         });
-        components.add(tpnCheckBox);
+        components.add(timeTransitionCheckBox);
 
-        // EFT / LFT TIMES:
+        stochasticTransitionCheckBox = new JCheckBox("SPN");
+        stochasticTransitionCheckBox.setBounds(columnB_posX + 130, columnB_Y, 60, 20);
+        stochasticTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.SPN);
+        stochasticTransitionCheckBox.addItemListener(e -> {
+            if (doNotUpdate)
+                return;
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                ((Transition) element).setTransType(TransitionType.SPN);
+                doNotUpdate = true;
+                classicalTransitionCheckBox.setSelected(false);
+                timeTransitionCheckBox.setSelected(false);
+                doNotUpdate = false;
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            }
+        });
+        components.add(stochasticTransitionCheckBox);
+
+        JLabel frLabel = new JLabel(lang.getText("HDWT_entry116SPNtrans"), JLabel.LEFT);
+        frLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(frLabel);
+
+        JTextArea frField = new JTextArea("" + ((Transition) element).spnExtension.getFiringRate());
+        frField.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
+        frField.setLineWrap(true);
+        frField.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent e) {
+                JTextArea field = (JTextArea) e.getSource();
+                String newFR = "";
+                if (field != null)
+                    newFR = field.getText();
+
+                try {
+                    double newVal = Double.parseDouble(newFR);
+
+                    SPNtransitionData xxx = overlord.getWorkspace().getProject().accessFiringRatesManager()
+                            .getCurrentSPNdataVector().accessVector().get(gID);
+                    ((Transition) element).spnExtension.setFiringRate(newVal);
+                    xxx.ST_function = newFR;
+                } catch (Exception ee) {
+                    overlord.log(lang.getText("LOGentry00575exception")+"\n"+ee.getMessage(), "error", true);
+                }
+            }
+        });
+        components.add(frField);
+
+        // SPN TRANSITION SHEET ID
+        int sheetIndex = overlord.IDtoIndex(location.getSheetID());
+        GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+        int xPos = location.getPosition().x;
+        int width = graphPanel.getSize().width;
+        int zoom = graphPanel.getZoom();
+        int yPos = location.getPosition().y;
+        int height = graphPanel.getSize().height;
+        width = (int) (((double) 100 / (double) zoom) * width);
+        height = (int) (((double) 100 / (double) zoom) * height);
+
+        JLabel sheetLabel = new JLabel(lang.getText("HDWT_entry117SPNtrans"), JLabel.LEFT);
+        sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(sheetLabel);
+        JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
+        sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+        sheetIdLabel.setFont(normalFont);
+        components.add(sheetIdLabel);
+
+        //ZOOM:
+        JLabel zoomLabel = new JLabel(lang.getText("HDWT_entry118SPNtrans"));
+        zoomLabel.setBounds(columnB_posX + 30, columnB_Y, 50, 20);
+        components.add(zoomLabel);
+        JLabel zoomLabel2 = new JLabel("" + zoom);
+        zoomLabel2.setBounds(columnB_posX + 70, columnB_Y, colBCompLength, 20);
+        zoomLabel2.setFont(normalFont);
+        if (zoom != 100)
+            zoomLabel2.setForeground(Color.red);
+        components.add(zoomLabel2);
+
+        //LOKALIZACJA:
+        JLabel locLabel = new JLabel(lang.getText("HDWT_entry119SPNtrans"), JLabel.LEFT);
+        locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(locLabel);
+
+        SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
+        SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
+
+        JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
+        locationXSpinner.addChangeListener(e -> setX((int) ((JSpinner) e.getSource()).getValue()));
+        JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
+        locationYSpinner.addChangeListener(e -> setY((int) ((JSpinner) e.getSource()).getValue()));
+        if (zoom != 100) {
+            locationXSpinner.setEnabled(false);
+            locationYSpinner.setEnabled(false);
+        }
+        JPanel locationSpinnerPanel = new JPanel();
+        locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel, BoxLayout.X_AXIS));
+        locationSpinnerPanel.add(locationXSpinner);
+        locationSpinnerPanel.add(new JLabel(" , "));
+        locationSpinnerPanel.add(locationYSpinner);
+
+        locationSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, colBCompLength, 20);
+        components.add(locationSpinnerPanel);
+
+        // SPN TRANSITION PORTAL
+        JLabel portalLabel = new JLabel(lang.getText("HDWT_entry120SPNtrans"), JLabel.LEFT);
+        portalLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(portalLabel);
+        JCheckBox portalBox = new JCheckBox("", transition.isPortal());
+        portalBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
+        portalBox.setSelected(((Transition) element).isPortal());
+
+        portalBox.addItemListener(e -> {
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                makePortal();
+            } else {
+                if (((Transition) element).getElementLocations().size() > 1)
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry120SPNtrans_1"), lang.getText("HDWT_entry120SPNtrans_1t"),
+                            JOptionPane.INFORMATION_MESSAGE);
+                else {
+                    unPortal();
+                    overlord.markNetChange();
+                }
+            }
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(portalBox);
+
+        // SPN TRANSITION FUNKCYJNOŚĆ
+        JLabel functionLabel = new JLabel(lang.getText("HDWT_entry121SPNtrans"), JLabel.LEFT);
+        functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
+        components.add(functionLabel);
+
+        JCheckBox functionalCheckBox = new JCheckBox("", transition.fpnExtension.isFunctional());
+        functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
+        functionalCheckBox.setSelected(((Transition) element).fpnExtension.isFunctional());
+
+        functionalCheckBox.addItemListener(e -> {
+            JCheckBox box = (JCheckBox) e.getSource();
+            ((Transition) element).fpnExtension.setFunctional(box.isSelected());
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(functionalCheckBox);
+
+        JButton functionsEditorButton = new JButton(Tools.getResIcon32("/icons/functionsWindow/functionsIcon.png"));
+        functionsEditorButton.setName("Functions editor");
+        functionsEditorButton.setText(lang.getText("HDWT_entry122SPNtrans"));
+        functionsEditorButton.setMargin(new Insets(0, 0, 0, 0));
+        functionsEditorButton.setBounds(columnA_posX + 125, columnA_Y - 16, 110, 32);
+        functionsEditorButton.addActionListener(actionEvent -> new HolmesFunctionsBuilder((Transition) element));
+        components.add(functionsEditorButton);
+
+        // SPN TRANSITION WSPÓŁRZĘDNE NAPISU:
+        columnA_Y += 20;
+        columnB_Y += 20;
+
+        JLabel locNameLabel = new JLabel(lang.getText("HDWT_entry123SPNtrans"), JLabel.LEFT);
+        locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength + 10, 20);
+        components.add(locNameLabel);
+
+        int locationIndex = transition.getElementLocations().indexOf(location);
+        int xNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
+
+        nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
+        nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
+
+        JLabel locNameLabelX = new JLabel("xOff: ", JLabel.LEFT);
+        locNameLabelX.setBounds(columnA_posX + 90, columnA_Y, 40, 20);
+        components.add(locNameLabelX);
+
+        JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
+        nameLocationXSpinner.setBounds(columnA_posX + 125, columnA_Y, 60, 20);
+        nameLocationXSpinner.addChangeListener(new ChangeListener() {
+            private Transition trans_tmp;
+            private ElementLocation el_tmp;
+
+            public void stateChanged(ChangeEvent e) {
+                if (doNotUpdate)
+                    return;
+                Point res = setNameOffsetX((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+                doNotUpdate = true;
+                nameLocationXSpinnerModel.setValue(res.x);
+                doNotUpdate = false;
+            }
+
+            private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc) {
+                trans_tmp = transition;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(transition, location));
+
+        components.add(nameLocationXSpinner);
+
+        JLabel locNameLabelY = new JLabel("yOff: ", JLabel.LEFT);
+        locNameLabelY.setBounds(columnA_posX + 195, columnB_Y, 40, 20);
+        components.add(locNameLabelY);
+
+        JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
+        nameLocationYSpinner.setBounds(columnA_posX + 230, columnA_Y, 60, 20);
+        nameLocationYSpinner.addChangeListener(new ChangeListener() {
+            private Transition trans_tmp;
+            private ElementLocation el_tmp;
+
+            public void stateChanged(ChangeEvent e) {
+                if (doNotUpdate)
+                    return;
+
+                Point res = setNameOffsetY((int) ((JSpinner) e.getSource()).getValue(), trans_tmp, el_tmp);
+                doNotUpdate = true;
+                nameLocationYSpinnerModel.setValue(res.y);
+                doNotUpdate = false;
+            }
+
+            private ChangeListener yesWeCan(Transition transition, ElementLocation inLoc) {
+                trans_tmp = transition;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(transition, location));
+        components.add(nameLocationYSpinner);
+
+        // SPN TRANSITION TEXT LOCATION BUTTON
+        JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
+        nameLocChangeButton.setName("LocNameChanger");
+        nameLocChangeButton.setToolTipText(lang.getText("HDWT_entry124SPNtrans"));
+        nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+        nameLocChangeButton.setBounds(columnA_posX + 90, columnA_Y += 25, 150, 40);
+        nameLocChangeButton.addActionListener(new ActionListener() {
+            // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+            private Transition trans_tmp;
+            private ElementLocation el_tmp;
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                JButton button_tmp = (JButton) actionEvent.getSource();
+
+                if (!nameLocChangeMode) {
+                    button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
+                    nameLocChangeMode = true;
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
+                } else {
+                    button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
+                    nameLocChangeMode = false;
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
+                }
+            }
+
+            private ActionListener yesWeCan(Transition transition, ElementLocation inLoc) {
+                trans_tmp = transition;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(transition, location));
+        components.add(nameLocChangeButton);
+
+        /*
+        JLabel debugModeLabel1 = new JLabel("Debug1:", JLabel.LEFT);
+        debugModeLabel1.setBounds(columnA_posX, columnA_Y += 45, colACompLength, 20);
+        components.add(debugModeLabel1);
+
+        JTextArea debugChangeID = new JTextArea("");
+        debugChangeID.setBounds(columnB_posX, columnB_Y += 70, 60, 20);
+        debugChangeID.setLineWrap(true);
+        debugChangeID.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent e) {
+                JTextArea field = (JTextArea) e.getSource();
+                String newFR = "";
+                if (field != null)
+                    newFR = field.getText();
+
+                try {
+                    int id = Integer.parseInt(newFR);
+
+                    ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
+                    if (id >= 0 && id < transitions.size()) {
+
+                        Transition t1 = (Transition) element;
+                        Transition t2 = transitions.get(id);
+                        if (transitions.indexOf(t1) == id)
+                            return;
+
+                        int pos1 = overlord.getWorkspace().getProject().getNodes().indexOf(t1);
+                        int pos2 = overlord.getWorkspace().getProject().getNodes().indexOf(t2);
+                        Collections.swap(overlord.getWorkspace().getProject().getNodes(), pos1, pos2);
+                        overlord.log("Swapping transitions " + t1.getName() + " and " + t2.getName() + " successfull.", "text", true);
+
+                        WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+                        //ElementLocation loc1st = ((Transition)element).getElementLocations().get(0);
+                        ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation); //zaznacz element
+                    }
+                } catch (Exception ee) {
+                    System.out.println(ee.getMessage());
+                }
+            }
+        });
+        components.add(debugChangeID);
+
+        JButton aaa = new JButton();
+        aaa.setName("ChangeID");
+        aaa.setText("Change ID");
+        aaa.setMargin(new Insets(0, 0, 0, 0));
+        aaa.setBounds(columnB_posX + 70, columnB_Y, 80, 20);
+        aaa.addActionListener(actionEvent -> {
+        });
+        components.add(aaa); */
+
+        panel.setLayout(null);
+        for (JComponent component : components) {
+            panel.add(component);
+        }
+
+        panel.setOpaque(true);
+        panel.repaint();
+        add(panel);
+    }
+
+    //**************************************************************************************
+    //*********************************    TRANZYCJA     ***********************************
+    //*********************************     CZASOWA      ***********************************
+    //*********************************                  ***********************************
+    //**************************************************************************************
+
+    /**
+     * Metoda odpowiedzialna za utworzenie podokna właściwości tranzycji czasowej.
+     * @param transition TimeTransition - obiekt tranzycji czasowej
+     * @param location   ElementLocation - lokalizacja tranzycji
+     */
+    @SuppressWarnings("UnusedAssignment")
+    private void createTimeTransitionSubWindow(final Transition transition, ElementLocation location) {
+        int columnA_posX = 10;
+        int columnB_posX = 100;
+        int columnA_Y = 0;
+        int columnB_Y = 0;
+        int colACompLength = 70;
+        int colBCompLength = 200;
+
+        mode = TIMETRANSITION;
+        elementLocation = location;
+        initiateContainers(); //!!!
+        element = transition;
+        Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
+
+        // TIMETRANSITION ID
+        JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
+        idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+        components.add(idLabel);
+
+        int gID = overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transition);
+        JLabel idLabel2 = new JLabel(Integer.toString(gID));
+        idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
+        idLabel2.setFont(normalFont);
+        components.add(idLabel2);
+
+        JLabel idLabel3 = new JLabel("gID:");
+        idLabel3.setBounds(columnB_posX + 35, columnA_Y, 50, 20);
+        components.add(idLabel3);
+        JLabel idLabel4 = new JLabel(transition.getID() + "");
+        idLabel4.setBounds(columnB_posX + 60, columnB_Y, 50, 20);
+        idLabel4.setFont(normalFont);
+        components.add(idLabel4);
+
+        // TIME TRANSITION NAME
+        JLabel nameLabel = new JLabel(lang.getText("HDWT_entry125TPNtrans"), JLabel.LEFT);
+        nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(nameLabel);
+
+        DefaultFormatter format = new DefaultFormatter();
+        format.setOverwriteMode(false);
+        JFormattedTextField nameField = new JFormattedTextField(format);
+        nameField.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+        nameField.setValue(transition.getName());
+        nameField.addPropertyChangeListener("value", e -> {
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                overlord.log(lang.getText("LOGentry00576exception")+"\n"+ex.getMessage(), "error", true);
+            }
+            String newName = field.getText();
+            changeName(newName);
+            overlord.markNetChange();
+        });
+        components.add(nameField);
+
+        // TIME TRANSITION COMMENT
+        JLabel comLabel = new JLabel(lang.getText("HDWT_entry126TPNtrans"), JLabel.LEFT);
+        comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        columnA_Y += 20;
+        components.add(comLabel);
+
+        JTextArea commentField = new JTextArea(transition.getComment());
+        commentField.setLineWrap(true);
+        commentField.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent e) {
+                JTextArea field = (JTextArea) e.getSource();
+                String newComment = "";
+                if (field != null)
+                    newComment = field.getText();
+                changeComment(newComment);
+                overlord.markNetChange();
+            }
+        });
+
+        JPanel CreationPanel = new JPanel();
+        CreationPanel.setLayout(new BorderLayout());
+        CreationPanel.add(new JScrollPane(commentField), BorderLayout.CENTER);
+        CreationPanel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 40);
+        columnB_Y += 20;
+        components.add(CreationPanel);
+
+        // TIME TRANSITION CHANGE TYPE:
+        JLabel changeTypeLabel = new JLabel(lang.getText("HDWT_entry127TPNtrans"), JLabel.LEFT);
+        changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(changeTypeLabel);
+
+        classicalTransitionCheckBox = new JCheckBox("PN");
+        classicalTransitionCheckBox.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
+        classicalTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.PN);
+        classicalTransitionCheckBox.addItemListener(e -> {
+            if (doNotUpdate)
+                return;
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                ((Transition) element).setTransType(TransitionType.PN);
+                doNotUpdate = true;
+                timeTransitionCheckBox.setSelected(false);
+                stochasticTransitionCheckBox.setSelected(false);
+                doNotUpdate = false;
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            }
+        });
+        components.add(classicalTransitionCheckBox);
+
+        timeTransitionCheckBox = new JCheckBox("TPN");
+        timeTransitionCheckBox.setBounds(columnB_posX + 70, columnB_Y, 60, 20);
+        timeTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.TPN);
+        timeTransitionCheckBox.addItemListener(e -> {
+            if (doNotUpdate)
+                return;
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                ((Transition) element).setTransType(TransitionType.TPN);
+                doNotUpdate = true;
+                classicalTransitionCheckBox.setSelected(false);
+                stochasticTransitionCheckBox.setSelected(false);
+                doNotUpdate = false;
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            }
+        });
+        components.add(timeTransitionCheckBox);
+
+        stochasticTransitionCheckBox = new JCheckBox("SPN");
+        stochasticTransitionCheckBox.setBounds(columnB_posX + 130, columnB_Y, 60, 20);
+        stochasticTransitionCheckBox.setSelected(((Transition) element).getTransType() == TransitionType.SPN);
+        stochasticTransitionCheckBox.addItemListener(e -> {
+            if (doNotUpdate)
+                return;
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                ((Transition) element).setTransType(TransitionType.SPN);
+                doNotUpdate = true;
+                classicalTransitionCheckBox.setSelected(false);
+                timeTransitionCheckBox.setSelected(false);
+                doNotUpdate = false;
+                overlord.getWorkspace().getProject().repaintAllGraphPanels();
+                WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+                ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+            }
+        });
+        components.add(stochasticTransitionCheckBox);
+
+        // TIME TRANSITION EFT / LFT TIMES:
         JLabel minMaxLabel = new JLabel("EFT / LFT:", JLabel.LEFT);
         minMaxLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(minMaxLabel);
         JFormattedTextField minTimeField = new JFormattedTextField();
-        minTimeField.setValue(transition.getEFT());
+        minTimeField.setValue(transition.timeExtension.getEFT());
         minTimeField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00577exception")+"\n"+ex.getMessage(), "error", true);
             }
             double min = (double) field.getValue();
             setMinFireTime(min);
@@ -1697,13 +3791,13 @@ public class HolmesDockWindowsTable extends JPanel {
         });
 
         JFormattedTextField maxTimeField = new JFormattedTextField();
-        maxTimeField.setValue(transition.getLFT());
+        maxTimeField.setValue(transition.timeExtension.getLFT());
         maxTimeField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00578exception")+"\n"+ex.getMessage(), "error", true);
             }
             double max = (double) field.getValue();
             setMaxFireTime(max);
@@ -1719,11 +3813,11 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(minTimeSpinnerPanel);
 
         //DURATION:
-        JLabel durationLabel = new JLabel("Duration:", JLabel.LEFT);
+        JLabel durationLabel = new JLabel(lang.getText("HDWT_entry128TPNtrans"), JLabel.LEFT);
         durationLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(durationLabel);
         JFormattedTextField durationField = new JFormattedTextField();
-        durationField.setValue(transition.getDPNduration());
+        durationField.setValue(transition.timeExtension.getDPNduration());
         durationField.setBounds(columnA_posX + 90, columnB_Y += 20, 90, 20);
         durationField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
@@ -1733,13 +3827,13 @@ public class HolmesDockWindowsTable extends JPanel {
                 setDurationTime(time);
                 overlord.markNetChange();
             } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00579exception")+"\n"+ex.getMessage(), "error", true);
             }
         });
         components.add(durationField);
 
         //columnA_Y+=40;
-        JCheckBox tpnBox = new JCheckBox("TPN active", transition.getTPNstatus());
+        JCheckBox tpnBox = new JCheckBox(lang.getText("HDWT_entry129TPNtrans"), transition.timeExtension.isTPN());
         tpnBox.setBounds(columnB_posX - 5, columnB_Y += 20, 100, 20);
         tpnBox.setEnabled(true);
         tpnBox.addItemListener(e -> {
@@ -1751,7 +3845,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(tpnBox);
 
         columnA_Y += 20;
-        JCheckBox dpnBox = new JCheckBox("DPN active", transition.getDPNstatus());
+        JCheckBox dpnBox = new JCheckBox(lang.getText("HDWT_entry130TPNtrans"), transition.timeExtension.isDPN());
         dpnBox.setBounds(columnB_posX + 100, columnB_Y, 100, 20);
         dpnBox.setEnabled(true);
         dpnBox.addItemListener(e -> {
@@ -1762,7 +3856,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(dpnBox);
 
-        // T-TRANSITION SHEET ID
+        // TIME TRANSITION SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
         GraphPanel graphPanel = overlord
                 .getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
@@ -1774,7 +3868,7 @@ public class HolmesDockWindowsTable extends JPanel {
         width = (int) (((double) 100 / (double) zoom) * width);
         height = (int) (((double) 100 / (double) zoom) * height);
 
-        JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
+        JLabel sheetLabel = new JLabel(lang.getText("HDWT_entry131TPNtrans"), JLabel.LEFT);
         sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(sheetLabel);
         JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
@@ -1782,7 +3876,7 @@ public class HolmesDockWindowsTable extends JPanel {
         sheetIdLabel.setFont(normalFont);
         components.add(sheetIdLabel);
 
-        JLabel zoomLabel = new JLabel("Zoom:");
+        JLabel zoomLabel = new JLabel(lang.getText("HDWT_entry132TPNtrans"));
         zoomLabel.setBounds(columnB_posX + 30, columnB_Y, 50, 20);
         components.add(zoomLabel);
         JLabel zoomLabel2 = new JLabel("" + zoom);
@@ -1793,7 +3887,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(zoomLabel2);
 
         // T-TRANSITION LOCATION:
-        JLabel comLabel2 = new JLabel("Location:", JLabel.LEFT);
+        JLabel comLabel2 = new JLabel(lang.getText("HDWT_entry133TPNtrans"), JLabel.LEFT);
         comLabel2.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(comLabel2);
 
@@ -1816,7 +3910,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(locationSpinnerPanel);
 
         // T-TRANSITION PORTAL STATUS
-        JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
+        JLabel portalLabel = new JLabel(lang.getText("HDWT_entry134TPNtrans"), JLabel.LEFT);
         portalLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(portalLabel);
 
@@ -1829,7 +3923,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 makePortal();
             } else {
                 if (((Transition) element).getElementLocations().size() > 1)
-                    JOptionPane.showMessageDialog(null, "Transition contains more than one location!", "Cannot proceed",
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry134TPNtrans_1"), lang.getText("HDWT_entry134TPNtrans_1t"),
                             JOptionPane.INFORMATION_MESSAGE);
                 else {
                     unPortal();
@@ -1839,18 +3933,18 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(portalBox);
 
-        //FUNKCYJNOŚĆ
-        JLabel functionLabel = new JLabel("Functional:", JLabel.LEFT);
+        // TIME TRANSITION FUNKCYJNOŚĆ
+        JLabel functionLabel = new JLabel(lang.getText("HDWT_entry135TPNtrans"), JLabel.LEFT);
         functionLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
         components.add(functionLabel);
 
-        JCheckBox functionalCheckBox = new JCheckBox("", transition.isPortal());
+        JCheckBox functionalCheckBox = new JCheckBox("", transition.fpnExtension.isFunctional());
         functionalCheckBox.setBounds(columnB_posX, columnB_Y += 20, 30, 20);
-        functionalCheckBox.setSelected(((Transition) element).isFunctional());
+        functionalCheckBox.setSelected(((Transition) element).fpnExtension.isFunctional());
 
         functionalCheckBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
-            ((Transition) element).setFunctional(box.isSelected());
+            ((Transition) element).fpnExtension.setFunctional(box.isSelected());
 
             overlord.markNetChange();
         });
@@ -1858,23 +3952,23 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JButton functionsEditorButton = new JButton(Tools.getResIcon32("/icons/functionsWindow/functionsIcon.png"));
         functionsEditorButton.setName("Functions editor");
-        functionsEditorButton.setText("<html>Functions<br>&nbsp;&nbsp;&nbsp;editor&nbsp;</html>");
+        functionsEditorButton.setText(lang.getText("HDWT_entry136TPNtrans"));
         functionsEditorButton.setMargin(new Insets(0, 0, 0, 0));
         functionsEditorButton.setBounds(columnA_posX + 125, columnA_Y - 16, 110, 32);
         functionsEditorButton.addActionListener(actionEvent -> new HolmesFunctionsBuilder((Transition) element));
         components.add(functionsEditorButton);
 
-        // WSPÓŁRZĘDNE NAPISU:
+        // TIME TRANSITION WSPÓŁRZĘDNE NAPISU:
         columnA_Y += 20;
         columnB_Y += 20;
 
-        JLabel locNameLabel = new JLabel("Name offset:", JLabel.LEFT);
+        JLabel locNameLabel = new JLabel(lang.getText("HDWT_entry137TPNtrans"), JLabel.LEFT);
         locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength + 10, 20);
         components.add(locNameLabel);
 
         int locationIndex = transition.getElementLocations().indexOf(location);
-        int xNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().x;
-        int yNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().y;
+        int xNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -1936,9 +4030,10 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(transition, location));
         components.add(nameLocationYSpinner);
 
+        // TIME TRANSITION LOCATION CHANGE
         JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
         nameLocChangeButton.setName("LocNameChanger");
-        nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
+        nameLocChangeButton.setToolTipText(lang.getText("HDWT_entry138TPNtrans"));
         nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
         nameLocChangeButton.setBounds(columnA_posX + 90, columnA_Y += 25, 150, 40);
         nameLocChangeButton.addActionListener(new ActionListener() {
@@ -1952,11 +4047,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (!nameLocChangeMode) {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
                     nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, true);
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
                     nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, false);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
 
@@ -1977,18 +4072,17 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     //**************************************************************************************
-    //*********************************                  ***********************************
     //*********************************    TRANZYCJA     ***********************************
+    //*********************************      _XTPN       ***********************************
     //*********************************                  ***********************************
     //**************************************************************************************
 
     /**
-     * Metoda odpowiedzialna za tworzenie podokna właściwości klikniętej tranzycji.
-     *
-     * @param transition Transition - obiekt tranzycji sieci
-     * @param location   ElementLocation - lokalizacja tranzycji
+     * Metoda odpowiedzialna za utworzenie podokna właściwości tranzycji XTPN.
+     * @param transition (<b>Transition</b>) obiekt tranzycji czasowej.
+     * @param location   (<b>ElementLocation</b>) lokalizacja tranzycji.
      */
-    private void createColorTransitionSubWindow(Transition transition, ElementLocation location) {
+    private void createXTPNTransitionSubWindow(final TransitionXTPN transition, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
         int columnA_Y = 0;
@@ -1996,40 +4090,33 @@ public class HolmesDockWindowsTable extends JPanel {
         int colACompLength = 70;
         int colBCompLength = 200;
 
-        //TODO:
-
-        mode = CTRANSITION;
+        mode = XTPN_TRANS;
         elementLocation = location;
-        initiateContainers();
+        initiateContainers(); //!!!
         element = transition;
         Font normalFont = new Font(Font.DIALOG, Font.PLAIN, 12);
 
-        JLabel colorLabel = new JLabel("Colored transition data:", JLabel.LEFT);
-        colorLabel.setBounds(columnA_posX, columnA_Y += 10, 220, 20);
-        components.add(colorLabel);
-        columnB_Y += 10;
-
-        // ID:
-        JLabel idLabel = new JLabel("ID:", JLabel.LEFT);
-        idLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        // XTPN ID
+        JLabel idLabel = new JLabel("ID XTPN:", JLabel.LEFT);
+        idLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
         components.add(idLabel);
 
-        final int gID = overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transition);
+        int gID = overlord.getWorkspace().getProject().getTransitions().lastIndexOf(transition);
         JLabel idLabel2 = new JLabel(Integer.toString(gID));
-        idLabel2.setBounds(columnB_posX, columnB_Y += 20, colACompLength, 20);
+        idLabel2.setBounds(columnB_posX, columnB_Y += 10, colACompLength, 20);
         idLabel2.setFont(normalFont);
         components.add(idLabel2);
 
-        JLabel idLabel3 = new JLabel("gID:");
-        idLabel3.setBounds(columnB_posX + 35, columnA_Y, 50, 20);
+        JLabel idLabel3 = new JLabel("globalID:");
+        idLabel3.setBounds(columnB_posX + 55, columnA_Y, 50, 20);
         components.add(idLabel3);
         JLabel idLabel4 = new JLabel(transition.getID() + "");
-        idLabel4.setBounds(columnB_posX + 60, columnB_Y, 50, 20);
+        idLabel4.setBounds(columnB_posX + 120, columnB_Y, 50, 20);
         idLabel4.setFont(normalFont);
         components.add(idLabel4);
 
-        // TRANSITION NAME:
-        JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
+        // XTPN transition name
+        JLabel nameLabel = new JLabel(lang.getText("HDWT_entry139XTPNtrans"), JLabel.LEFT);
         nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(nameLabel);
 
@@ -2043,7 +4130,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00580exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -2051,10 +4138,9 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(nameField);
 
-        //KOMENTARZE WIERZCHOŁKA:
-        JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
+        // XTPN transition comment
+        JLabel comLabel = new JLabel(lang.getText("HDWT_entry140XTPNtrans"), JLabel.LEFT);
         comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-        columnA_Y += 20;
         components.add(comLabel);
 
         JTextArea commentField = new JTextArea(transition.getComment());
@@ -2077,7 +4163,555 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_Y += 20;
         components.add(CreationPanel);
 
-        //SHEET ID
+
+        // XTPN transition włączanie lub wyłączanie funkcji alfa i beta
+        columnA_Y += 20;
+        JLabel changeTypeLabel = new JLabel(lang.getText("HDWT_entry141XTPNtrans"), JLabel.LEFT);
+        changeTypeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(changeTypeLabel);
+
+        // XTPN transition przycisk Alfa mode ON/OFF
+        HolmesRoundedButton buttonAlfaMode = new HolmesRoundedButton(lang.getText("HDWT_entry142XTPNtransA_ON")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        //JButton buttonAlfaMode = new JButton("Alfa: ON");
+        buttonAlfaMode.setName("alphaModeButton");
+        buttonAlfaMode.setMargin(new Insets(0, 0, 0, 0));
+        buttonAlfaMode.setBounds(columnB_posX, columnB_Y += 20, 65, 35);
+        if (transition.isAlphaModeActive()) {
+            buttonAlfaMode.setNewText(lang.getText("HDWT_entry142XTPNtransA_ON"));
+            buttonAlfaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        } else {
+            buttonAlfaMode.setNewText(lang.getText("HDWT_entry142XTPNtransA_OFF"));
+            buttonAlfaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+        }
+        buttonAlfaMode.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+
+            doNotUpdate = true;
+            SharedActionsXTPN.access().buttonAlphaSwitchMode(e, transition, null, tauVisibilityButton, buttonClassicMode, alphaMaxTextField, elementLocation);
+            doNotUpdate = false;
+        });
+        components.add(buttonAlfaMode);
+
+        // XTPN transition przycisk Beta ON/OFF
+        HolmesRoundedButton buttonBetaMode = new HolmesRoundedButton(lang.getText("HDWT_entry143XTPNtransB_ON")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        //JButton buttonBetaMode = new JButton("Beta: ON");
+        buttonBetaMode.setName("betaModeButton");
+        buttonBetaMode.setMargin(new Insets(0, 0, 0, 0));
+        buttonBetaMode.setBounds(columnB_posX + 65, columnB_Y, 65, 35);
+        if (transition.isBetaModeActive()) {
+            buttonBetaMode.setNewText(lang.getText("HDWT_entry143XTPNtransB_ON"));
+            buttonBetaMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        } else {
+            buttonBetaMode.setNewText(lang.getText("HDWT_entry143XTPNtransB_OFF"));
+            buttonBetaMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+        }
+        buttonBetaMode.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+
+            doNotUpdate = true;
+            SharedActionsXTPN.access().buttonBetaSwitchMode(e, transition, null, tauVisibilityButton, buttonClassicMode, betaMaxTextField, elementLocation);
+            doNotUpdate = false;
+        });
+        components.add(buttonBetaMode);
+
+        // XTPN transition przycisk XTPN ON/OFF
+        buttonClassicMode = new HolmesRoundedButton(lang.getText("HDWT_entry144XTPNtrans")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        //buttonClassicMode = new JButton("<html><center>PN<b>trans.</center></html>");
+        buttonClassicMode.setName("classXTPNswitchButton");
+        buttonClassicMode.setMargin(new Insets(0, 0, 0, 0));
+        buttonClassicMode.setBounds(columnB_posX + 130, columnB_Y, 65, 35);
+        if (!transition.isAlphaModeActive() && !transition.isBetaModeActive()) {
+            buttonClassicMode.setNewText("<html>Classical<html>");
+            buttonClassicMode.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+        } else { //gdy jeden z trybów włączony
+            buttonClassicMode.setNewText("<html>XTPN<html>");
+            buttonClassicMode.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        }
+        buttonClassicMode.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+
+            doNotUpdate = true;
+            SharedActionsXTPN.access().buttonTransitionToXTPN_classicSwitchMode(e, transition, null, alphaMaxTextField, betaMaxTextField, elementLocation);
+            doNotUpdate = false;
+        });
+        components.add(buttonClassicMode);
+
+        // XTPN transition alpha values visibility
+        alfaVisibilityButton = new HolmesRoundedButton("<html>\u03B1:visible</html>"
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        alfaVisibilityButton.setName("alphaVisButton");
+        alfaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
+        alfaVisibilityButton.setBounds(columnB_posX, columnB_Y += 37, 65, 35);
+        alfaVisibilityButton.setFocusPainted(false);
+        if (transition.isAlphaModeActive()) {
+            if (transition.isAlphaRangeVisible()) {
+                alfaVisibilityButton.setNewText(lang.getText("HDWT_entry145XTPNtransA_vis"));
+                alfaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            } else {
+                alfaVisibilityButton.setNewText(lang.getText("HDWT_entry145XTPNtransA_invis"));
+                alfaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+            }
+        } else {
+            if (transition.isAlphaRangeVisible()) {
+                alfaVisibilityButton.setNewText(lang.getText("HDWT_entry145XTPNtransA_vis"));
+            } else {
+                alfaVisibilityButton.setNewText(lang.getText("HDWT_entry145XTPNtransA_invis"));
+            }
+            alfaVisibilityButton.setEnabled(false);
+        }
+
+        alfaVisibilityButton.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+
+            alphaLocChangeMode = SharedActionsXTPN.access().alphaVisButtonAction(e, transition, alphaLocChangeButton, alphaLocChangeMode, elementLocation);
+        });
+        components.add(alfaVisibilityButton);
+
+        // XTPN transition beta values visibility
+        betaVisibilityButton = new HolmesRoundedButton(lang.getText("HDWT_entry146XTPNtransB_vis")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        betaVisibilityButton.setName("betaVisButton1");
+        betaVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
+        betaVisibilityButton.setBounds(columnB_posX + 65, columnB_Y, 65, 35);
+        betaVisibilityButton.setFocusPainted(false);
+        if (transition.isBetaModeActive()) {
+            if (transition.isBetaRangeVisible()) {
+                betaVisibilityButton.setNewText(lang.getText("HDWT_entry146XTPNtransB_vis"));
+                betaVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            } else {
+                betaVisibilityButton.setNewText(lang.getText("HDWT_entry146XTPNtransB_invis"));
+                betaVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+            }
+        } else {
+            if (transition.isBetaRangeVisible()) {
+                betaVisibilityButton.setNewText(lang.getText("HDWT_entry146XTPNtransB_vis"));
+            } else {
+                betaVisibilityButton.setNewText(lang.getText("HDWT_entry146XTPNtransB_invis"));
+            }
+            betaVisibilityButton.setEnabled(false);
+        }
+        betaVisibilityButton.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+
+            betaLocChangeMode = SharedActionsXTPN.access().betaVisButtonAction(e, transition, betaLocChangeButton, betaLocChangeMode, elementLocation);
+        });
+        components.add(betaVisibilityButton);
+
+        // XTPN-transition tau values visibility
+        tauVisibilityButton = new HolmesRoundedButton(lang.getText("HDWT_entry147XTPNtransT_vis")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        tauVisibilityButton.setName("tauVisButton");
+        tauVisibilityButton.setMargin(new Insets(0, 0, 0, 0));
+        tauVisibilityButton.setBounds(columnB_posX + 130, columnB_Y, 65, 35);
+        tauVisibilityButton.setFocusPainted(false);
+        if (transition.isAlphaModeActive() || transition.isBetaModeActive()) {
+            if (transition.isTauTimerVisible()) {
+                tauVisibilityButton.setNewText(lang.getText("HDWT_entry147XTPNtransT_vis"));
+                tauVisibilityButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            } else {
+                tauVisibilityButton.setNewText(lang.getText("HDWT_entry147XTPNtransT_invis"));
+                tauVisibilityButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+            }
+        } else {
+            if (transition.isTauTimerVisible()) {
+                tauVisibilityButton.setNewText(lang.getText("HDWT_entry147XTPNtransT_vis"));
+            } else {
+                tauVisibilityButton.setNewText(lang.getText("HDWT_entry147XTPNtransT_invis"));
+            }
+            tauVisibilityButton.setEnabled(false);
+        }
+        tauVisibilityButton.addActionListener(e -> {
+            if (doNotUpdate)
+                return;
+
+            tauLocChangeMode = SharedActionsXTPN.access().tauVisButtonAction(e, transition, tauLocChangeButton, tauLocChangeMode, elementLocation);
+        });
+        components.add(tauVisibilityButton);
+
+        // XTPN-transition Alfa offset
+        alphaLocChangeButton = new HolmesRoundedButton(lang.getText("HDWT_entry148XTPNtransA_off")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        alphaLocChangeButton.setName("alphaOffsetButton");
+        alphaLocChangeButton.setToolTipText(lang.getText("HDWT_entry150XTPNtrans"));
+        alphaLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+        alphaLocChangeButton.setBounds(columnB_posX, columnB_Y += 37, 65, 35);
+        alphaLocChangeButton.setFocusPainted(false);
+        if (transition.isAlphaModeActive() && transition.isAlphaRangeVisible()) {
+            if (alphaLocChangeMode) {
+                alphaLocChangeButton.setNewText(lang.getText("HDWT_entry149XTPNtransB_changeLoc"));
+                alphaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+            } else {
+                alphaLocChangeButton.setNewText(lang.getText("HDWT_entry148XTPNtransA_off"));
+                alphaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            }
+        } else {
+            alphaLocChangeMode = false;
+            alphaLocChangeButton.setEnabled(false);
+        }
+        alphaLocChangeButton.addActionListener(new ActionListener() {
+            // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+            private Transition trans_tmp;
+            private ElementLocation el_tmp;
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (!alphaLocChangeMode) {
+                    alphaLocChangeButton.setNewText(lang.getText("HDWT_entry149XTPNtransB_changeLoc"));
+                    alphaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+                    alphaLocChangeMode = true;
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.ALPHA);
+                } else {
+                    alphaLocChangeButton.setNewText(lang.getText("HDWT_entry148XTPNtransA_off"));
+                    alphaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+                    alphaLocChangeMode = false;
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.ALPHA);
+                }
+            }
+
+            private ActionListener yesWeCan(Transition transition, ElementLocation inLoc) {
+                trans_tmp = transition;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(transition, location));
+        components.add(alphaLocChangeButton);
+
+        // XTPN-transition beta offset
+        betaLocChangeButton = new HolmesRoundedButton(lang.getText("HDWT_entry152XTPNtransB_changeLoc")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        betaLocChangeButton.setName("betaOffsetButton");
+        betaLocChangeButton.setToolTipText(lang.getText("HDWT_entry153XTPNtransB"));
+        betaLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+        betaLocChangeButton.setBounds(columnB_posX + 65, columnB_Y, 65, 35);
+        betaLocChangeButton.setFocusPainted(false);
+        if (transition.isBetaModeActive() && transition.isBetaRangeVisible()) {
+            if (betaLocChangeMode) {
+                betaLocChangeButton.setNewText(lang.getText("HDWT_entry152XTPNtransB_changeLoc"));
+                betaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+            } else {
+                betaLocChangeButton.setNewText(lang.getText("HDWT_entry154XTPNtransB_off"));
+                betaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            }
+        } else {
+            betaLocChangeMode = false;
+            betaLocChangeButton.setEnabled(false);
+        }
+        betaLocChangeButton.addActionListener(new ActionListener() {
+            // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+            private Transition trans_tmp;
+            private ElementLocation el_tmp;
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                //JButton button_tmp = (JButton) actionEvent.getSource();
+                if (!betaLocChangeMode) {
+                    betaLocChangeButton.setNewText(lang.getText("HDWT_entry152XTPNtransB_changeLoc"));
+                    betaLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+                    betaLocChangeMode = true;
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.BETA);
+                } else {
+                    betaLocChangeButton.setNewText(lang.getText("HDWT_entry154XTPNtransB_off"));
+                    betaLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+                    betaLocChangeMode = false;
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.BETA);
+                }
+            }
+
+            private ActionListener yesWeCan(Transition transition, ElementLocation inLoc) {
+                trans_tmp = transition;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(transition, location));
+        components.add(betaLocChangeButton);
+
+        // XTPN-transition tau offset
+        tauLocChangeButton = new HolmesRoundedButton(lang.getText("HDWT_entry155XTPNtransT_off")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        tauLocChangeButton.setName("tauOffsetButton");
+        tauLocChangeButton.setToolTipText(lang.getText("HDWT_entry157XTPNtransT"));
+        tauLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
+        tauLocChangeButton.setBounds(columnB_posX + 130, columnB_Y, 65, 35);
+        tauLocChangeButton.setFocusPainted(false);
+        if (transition.isAlphaModeActive() || transition.isBetaModeActive()) {
+            if (tauLocChangeMode) {
+                tauLocChangeButton.setNewText(lang.getText("HDWT_entry156XTPNtransT_changeLoc"));
+                tauLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+            } else {
+                tauLocChangeButton.setNewText(lang.getText("HDWT_entry155XTPNtransT_off"));
+                tauLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+            }
+        } else {
+            tauLocChangeMode = false;
+            tauLocChangeButton.setEnabled(false);
+        }
+        tauLocChangeButton.addActionListener(new ActionListener() {
+            // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
+            private Transition trans_tmp;
+            private ElementLocation el_tmp;
+
+            public void actionPerformed(ActionEvent actionEvent) {
+                //JButton button_tmp = (JButton) actionEvent.getSource();
+                if (!tauLocChangeMode) {
+                    tauLocChangeButton.setNewText(lang.getText("HDWT_entry156XTPNtransT_changeLoc"));
+                    tauLocChangeButton.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
+                    tauLocChangeMode = true;
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.TAU);
+                } else {
+                    tauLocChangeButton.setNewText(lang.getText("HDWT_entry155XTPNtransT_off"));
+                    tauLocChangeButton.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+                    tauLocChangeMode = false;
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.TAU);
+                }
+            }
+
+            private ActionListener yesWeCan(Transition transition, ElementLocation inLoc) {
+                trans_tmp = transition;
+                el_tmp = inLoc;
+                return this;
+            }
+        }.yesWeCan(transition, location));
+        components.add(tauLocChangeButton);
+
+        // XTPN-transition Zakresy alfa:
+        JLabel minMaxLabel = new JLabel(lang.getText("HDWT_entry158XTPNtrans"), JLabel.LEFT);
+        minMaxLabel.setBounds(columnA_posX, columnA_Y += 105, colACompLength + 10, 20);
+        components.add(minMaxLabel);
+
+        // format danych alfa i beta: do 6 miejsc po przecinku
+        NumberFormat formatter = DecimalFormat.getInstance();
+        formatter.setMinimumFractionDigits(2);
+        formatter.setMaximumFractionDigits(6);
+        formatter.setRoundingMode(RoundingMode.HALF_UP);
+        Double example = 3.14;
+
+        // XTPN-transition alfaMin value
+        alphaMinTextField = new JFormattedTextField(formatter);
+        alphaMinTextField.setValue(example);
+        alphaMinTextField.setValue(transition.getAlphaMinValue());
+        alphaMinTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                overlord.log(lang.getText("LOGentry00581exception")+"\n"+ex.getMessage(), "error", true);
+            }
+
+            double min = Double.parseDouble("" + field.getValue());
+            SharedActionsXTPN.access().setAlfaMinTime(min, transition, elementLocation);
+
+            doNotUpdate = true;
+            alphaMaxTextField.setValue(transition.getAlphaMaxValue());
+            field.setValue(transition.getAlphaMinValue());
+            doNotUpdate = false;
+            overlord.markNetChange();
+
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+
+        // alfaMax value
+        alphaMaxTextField = new JFormattedTextField(formatter);
+        alphaMaxTextField.setValue(example);
+        alphaMaxTextField.setValue(transition.getAlphaMaxValue());
+        alphaMaxTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                overlord.log(lang.getText("LOGentry00582exception")+"\n"+ex.getMessage(), "error", true);
+            }
+
+            double max = Double.parseDouble("" + field.getValue());
+            SharedActionsXTPN.access().setAlfaMaxTime(max, transition, elementLocation);
+
+            doNotUpdate = true;
+            alphaMinTextField.setValue(transition.getAlphaMinValue());
+            field.setValue(transition.getAlphaMaxValue());
+            doNotUpdate = false;
+            overlord.markNetChange();
+
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+
+        if (!transition.isAlphaModeActive()) {
+            alphaMinTextField.setEnabled(false);
+            alphaMaxTextField.setEnabled(false);
+        }
+
+        alphaMinTextField.setBounds(columnB_posX, columnB_Y += 36, 80, 20);
+        components.add(alphaMinTextField);
+        JLabel slash1 = new JLabel(" / ", JLabel.LEFT);
+        slash1.setBounds(columnB_posX + 85, columnB_Y, 15, 20);
+        components.add(slash1);
+        alphaMaxTextField.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
+        components.add(alphaMaxTextField);
+
+        // XTPN-transition zakresy beta:
+        JLabel betaLabel = new JLabel(lang.getText("HDWT_entry159XTPNtrans"), JLabel.LEFT);
+        betaLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength + 10, 20);
+        components.add(betaLabel);
+
+        // XTPN-transition betaMin value
+        betaMinTextField = new JFormattedTextField(formatter);
+        betaMinTextField.setValue(example);
+        betaMinTextField.setValue(transition.getBetaMinValue());
+        betaMinTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                overlord.log(lang.getText("LOGentry00583exception")+"\n"+ex.getMessage(), "error", true);
+            }
+
+            double min = Double.parseDouble("" + field.getValue());
+            SharedActionsXTPN.access().setBetaMinTime(min, transition, elementLocation);
+
+            doNotUpdate = true;
+            field.setValue(transition.getBetaMinValue());
+            betaMaxTextField.setValue(transition.getBetaMaxValue());
+            doNotUpdate = false;
+            overlord.markNetChange();
+
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+
+        // XTPN-transition betaMax value
+        betaMaxTextField = new JFormattedTextField(formatter);
+        betaMaxTextField.setValue(example);
+        betaMaxTextField.setValue(transition.getBetaMaxValue());
+        betaMaxTextField.addPropertyChangeListener("value", e -> {
+            if (doNotUpdate)
+                return;
+            JFormattedTextField field = (JFormattedTextField) e.getSource();
+            try {
+                field.commitEdit();
+            } catch (ParseException ex) {
+                overlord.log(lang.getText("LOGentry00584exception")+"\n"+ex.getMessage(), "error", true);
+            }
+            double max = Double.parseDouble("" + field.getValue());
+            SharedActionsXTPN.access().setBetaMaxTime(max, transition, elementLocation);
+
+            doNotUpdate = true;
+            betaMinTextField.setValue(transition.getBetaMinValue());
+            field.setValue(transition.getBetaMaxValue());
+            doNotUpdate = false;
+            overlord.markNetChange();
+
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+
+        if (!transition.isBetaModeActive()) {
+            betaMinTextField.setEnabled(false);
+            betaMaxTextField.setEnabled(false);
+        }
+
+        betaMinTextField.setBounds(columnB_posX, columnB_Y += 20, 80, 20);
+        components.add(betaMinTextField);
+        JLabel slash2 = new JLabel(" / ", JLabel.LEFT);
+        slash2.setBounds(columnB_posX + 85, columnB_Y, 15, 20);
+        components.add(slash2);
+        betaMaxTextField.setBounds(columnB_posX + 100, columnB_Y, 80, 20);
+        components.add(betaMaxTextField);
+
+        //mass-action for XTPN transition
+        JCheckBox makCheckBox = new JCheckBox(lang.getText("HDWT_entry160XTPNtrans"));
+        makCheckBox.setBounds(columnA_posX - 5, columnA_Y += 25, 150, 20);
+        makCheckBox.setSelected(transition.isMassActionKineticsActiveXTPN());
+        makCheckBox.addActionListener(actionEvent -> {
+            if (doNotUpdate)
+                return;
+
+            transition.setMassActionKineticsXTPNstatus(makCheckBox.isSelected());
+        });
+        components.add(makCheckBox);
+
+        // XTPM immediate classical-XTPN
+        JCheckBox immediateCheckBox = new JCheckBox(lang.getText("HDWT_entry161XTPNtrans"));
+        immediateCheckBox.setBounds(columnA_posX + 150, columnA_Y, 100, 20);
+        immediateCheckBox.setSelected(transition.isImmediateXTPN());
+        immediateCheckBox.addActionListener(actionEvent -> {
+            if (doNotUpdate)
+                return;
+            transition.setImmediateStatusXTPN(immediateCheckBox.isSelected());
+        });
+        components.add(immediateCheckBox);
+
+        // XTPN-transition FUNKCYJNOŚĆ
+        JCheckBox functionalCheckBox = new JCheckBox(lang.getText("HDWT_entry162XTPNtrans"), transition.fpnExtension.isFunctional());
+        functionalCheckBox.setBounds(columnA_posX - 5, columnA_Y += 20, 140, 20);
+        functionalCheckBox.setSelected(((Transition) element).fpnExtension.isFunctional());
+        functionalCheckBox.addItemListener(e -> {
+            JCheckBox box = (JCheckBox) e.getSource();
+            ((Transition) element).fpnExtension.setFunctional(box.isSelected());
+            overlord.markNetChange();
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        functionalCheckBox.setEnabled(false);
+        components.add(functionalCheckBox);
+
+        JButton functionsEditorButton = new JButton(Tools.getResIcon32("/icons/functionsWindow/functionsIcon.png"));
+        functionsEditorButton.setName("Functions editor");
+        functionsEditorButton.setText(lang.getText("HDWT_entry163XTPNtrans"));
+        functionsEditorButton.setMargin(new Insets(0, 0, 0, 0));
+        functionsEditorButton.setBounds(columnB_posX + 65, columnB_Y + 45, 110, 32);
+        functionsEditorButton.addActionListener(actionEvent -> new HolmesFunctionsBuilder((Transition) element));
+        functionsEditorButton.setEnabled(false);
+        components.add(functionsEditorButton);
+
+        // XTPN portal status
+        JCheckBox portalBox = new JCheckBox(lang.getText("HDWT_entry164XTPNtrans"), transition.isPortal());
+        portalBox.setBounds(columnA_posX - 5, columnA_Y += 20, 90, 20);
+        portalBox.setSelected(((Transition) element).isPortal());
+        portalBox.addItemListener(e -> {
+            JCheckBox box = (JCheckBox) e.getSource();
+            if (box.isSelected()) {
+                makePortal();
+            } else {
+                if (((Transition) element).getElementLocations().size() > 1)
+                    JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry164XTPNtrans_1"), lang.getText("HDWT_entry164XTPNtrans_1t"),
+                            JOptionPane.INFORMATION_MESSAGE);
+                else {
+                    unPortal();
+                    overlord.markNetChange();
+                }
+            }
+            WorkspaceSheet ws = overlord.getWorkspace().getSheets().get(0);
+            ws.getGraphPanel().getSelectionManager().selectOneElementLocation(elementLocation);
+        });
+        components.add(portalBox);
+
+        JLabel fractionLabel = new JLabel(lang.getText("HDWT_entry165XTPNtrans"), JLabel.LEFT);
+        fractionLabel.setBounds(columnA_posX, columnA_Y += 20, 70, 20);
+        components.add(fractionLabel);
+
+        int fract = transition.getFraction_xTPN();
+        SpinnerModel fractionSpinnerModel = new SpinnerNumberModel(fract, 0, 6, 1);
+        JSpinner fractionSpinner = new JSpinner(fractionSpinnerModel);
+        fractionSpinner.setBounds(columnB_posX, columnB_Y += 82, 40, 20);
+        fractionSpinner.addChangeListener(e -> {
+            int fraction = (int) ((JSpinner) e.getSource()).getValue();
+            transition.setFraction_xTPN(fraction);
+        });
+        components.add(fractionSpinner);
+
+        // XTPN-transition SHEET ID
         int sheetIndex = overlord.IDtoIndex(location.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
         int xPos = location.getPosition().x;
@@ -2088,16 +4722,15 @@ public class HolmesDockWindowsTable extends JPanel {
         width = (int) (((double) 100 / (double) zoom) * width);
         height = (int) (((double) 100 / (double) zoom) * height);
 
-        JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
-        sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        JLabel sheetLabel = new JLabel(lang.getText("HDWT_entry166XTPNtrans"), JLabel.LEFT);
+        sheetLabel.setBounds(columnA_posX, columnA_Y += 25, colACompLength, 20);
         components.add(sheetLabel);
         JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
-        sheetIdLabel.setBounds(columnB_posX, columnB_Y += 20, colBCompLength, 20);
+        sheetIdLabel.setBounds(columnB_posX, columnB_Y += 25, 100, 20);
         sheetIdLabel.setFont(normalFont);
         components.add(sheetIdLabel);
 
-        //ZOOM:
-        JLabel zoomLabel = new JLabel("Zoom:");
+        JLabel zoomLabel = new JLabel(lang.getText("HDWT_entry167XTPNtrans"));
         zoomLabel.setBounds(columnB_posX + 30, columnB_Y, 50, 20);
         components.add(zoomLabel);
         JLabel zoomLabel2 = new JLabel("" + zoom);
@@ -2107,78 +4740,53 @@ public class HolmesDockWindowsTable extends JPanel {
             zoomLabel2.setForeground(Color.red);
         components.add(zoomLabel2);
 
-        //PORTAL
-        JLabel portalLabel = new JLabel("Portal:", JLabel.LEFT);
-        portalLabel.setBounds(columnB_posX + 120, columnB_Y, colACompLength, 20);
-        components.add(portalLabel);
-
-        JCheckBox portalBox = new JCheckBox("", transition.isPortal());
-        portalBox.setBounds(columnB_posX + 180, columnB_Y, 30, 20);
-        portalBox.setSelected(((Transition) element).isPortal());
-
-        portalBox.addItemListener(e -> {
-            JCheckBox box = (JCheckBox) e.getSource();
-            if (box.isSelected()) {
-                makePortal();
-            } else {
-                if (((Transition) element).getElementLocations().size() > 1)
-                    JOptionPane.showMessageDialog(null, "Transition contains more than one location!", "Cannot proceed",
-                            JOptionPane.INFORMATION_MESSAGE);
-                else {
-                    unPortal();
-                    overlord.markNetChange();
-                }
-            }
-        });
-        components.add(portalBox);
-
-        //LOKALIZACJA:
-        JLabel locLabel = new JLabel("Location:", JLabel.LEFT);
-        locLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
-        components.add(locLabel);
+        // XTPN-transition lokalizacja:
+        JLabel comLabel2 = new JLabel(lang.getText("HDWT_entry168XTPNtrans"), JLabel.LEFT);
+        comLabel2.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
+        components.add(comLabel2);
 
         SpinnerModel locationXSpinnerModel = new SpinnerNumberModel(xPos, 0, width, 1);
-        SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
-
         JSpinner locationXSpinner = new JSpinner(locationXSpinnerModel);
+        locationXSpinner.setBounds(columnB_posX, columnB_Y += 20, 60, 20);
         locationXSpinner.addChangeListener(e -> setX((int) ((JSpinner) e.getSource()).getValue()));
+
+        JLabel labelCom = new JLabel(" , ");
+        labelCom.setBounds(columnB_posX + 60, columnB_Y, 10, 20);
+
+        SpinnerModel locationYSpinnerModel = new SpinnerNumberModel(yPos, 0, height, 1);
         JSpinner locationYSpinner = new JSpinner(locationYSpinnerModel);
+        locationYSpinner.setBounds(columnB_posX + 70, columnB_Y, 60, 20);
         locationYSpinner.addChangeListener(e -> setY((int) ((JSpinner) e.getSource()).getValue()));
         if (zoom != 100) {
             locationXSpinner.setEnabled(false);
             locationYSpinner.setEnabled(false);
         }
-        JPanel locationSpinnerPanel = new JPanel();
-        locationSpinnerPanel.setLayout(new BoxLayout(locationSpinnerPanel, BoxLayout.X_AXIS));
-        locationSpinnerPanel.add(locationXSpinner);
-        locationSpinnerPanel.add(new JLabel(" , "));
-        locationSpinnerPanel.add(locationYSpinner);
 
-        locationSpinnerPanel.setBounds(columnA_posX + 90, columnB_Y += 20, colBCompLength, 20);
-        components.add(locationSpinnerPanel);
+        components.add(locationXSpinner);
+        components.add(labelCom);
+        components.add(locationYSpinner);
 
-
-        // WSPÓŁRZĘDNE NAPISU:
+        // XTPN-transition WSPÓŁRZĘDNE NAPISU:
         columnA_Y += 20;
         columnB_Y += 20;
 
-        JLabel locNameLabel = new JLabel("Name offset:", JLabel.LEFT);
+        JLabel locNameLabel = new JLabel(lang.getText("HDWT_entry169XTPNtrans"), JLabel.LEFT);
         locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength + 10, 20);
         components.add(locNameLabel);
 
         int locationIndex = transition.getElementLocations().indexOf(location);
-        int xNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().x;
-        int yNameOffset = transition.getNamesLocations().get(locationIndex).getPosition().y;
+        int xNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = transition.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
 
-        JLabel locNameLabelX = new JLabel("xOff: ", JLabel.LEFT);
-        locNameLabelX.setBounds(columnA_posX + 90, columnA_Y, 40, 20);
+        JLabel locNameLabelX = new JLabel("x:", JLabel.LEFT);
+        locNameLabelX.setBounds(columnA_posX + 90, columnB_Y, 20, 20);
         components.add(locNameLabelX);
 
         JSpinner nameLocationXSpinner = new JSpinner(nameLocationXSpinnerModel);
-        nameLocationXSpinner.setBounds(columnA_posX + 125, columnA_Y, 60, 20);
+        nameLocationXSpinner.setBounds(columnA_posX + 105, columnB_Y, 45, 20);
         nameLocationXSpinner.addChangeListener(new ChangeListener() {
             private Transition trans_tmp;
             private ElementLocation el_tmp;
@@ -2198,15 +4806,14 @@ public class HolmesDockWindowsTable extends JPanel {
                 return this;
             }
         }.yesWeCan(transition, location));
-
         components.add(nameLocationXSpinner);
 
-        JLabel locNameLabelY = new JLabel("yOff: ", JLabel.LEFT);
-        locNameLabelY.setBounds(columnA_posX + 195, columnB_Y, 40, 20);
+        JLabel locNameLabelY = new JLabel("y:", JLabel.LEFT);
+        locNameLabelY.setBounds(columnA_posX + 160, columnB_Y, 10, 20);
         components.add(locNameLabelY);
 
         JSpinner nameLocationYSpinner = new JSpinner(nameLocationYSpinnerModel);
-        nameLocationYSpinner.setBounds(columnA_posX + 230, columnA_Y, 60, 20);
+        nameLocationYSpinner.setBounds(columnA_posX + 175, columnA_Y, 45, 20);
         nameLocationYSpinner.addChangeListener(new ChangeListener() {
             private Transition trans_tmp;
             private ElementLocation el_tmp;
@@ -2229,27 +4836,33 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(transition, location));
         components.add(nameLocationYSpinner);
 
-        JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
-        nameLocChangeButton.setName("LocNameChanger");
-        nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
+        // XTPN-transition zmiana lokalizacji napisu
+
+        HolmesRoundedButton nameLocChangeButton = new HolmesRoundedButton(lang.getText("HDWT_entry170XTPNtransName_off")
+                , "jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
+        nameLocChangeButton.setName("transNameOffsetButton");
+        nameLocChangeButton.setToolTipText(lang.getText("HDWT_entry171XTPNtransName"));
         nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
-        nameLocChangeButton.setBounds(columnA_posX + 90, columnA_Y += 25, 150, 40);
+        nameLocChangeButton.setBounds(columnB_posX + 131, columnA_Y - 15, 65, 35);
+        nameLocChangeButton.setFocusPainted(false);
         nameLocChangeButton.addActionListener(new ActionListener() {
             // anonimowy action listener przyjmujący zmienne non-final (⌐■_■)
             private Transition trans_tmp;
             private ElementLocation el_tmp;
 
             public void actionPerformed(ActionEvent actionEvent) {
-                JButton button_tmp = (JButton) actionEvent.getSource();
+                HolmesRoundedButton button = (HolmesRoundedButton) actionEvent.getSource();
 
                 if (!nameLocChangeMode) {
-                    button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
+                    button.setNewText(lang.getText("HDWT_entry172XTPNtransName_changeLoc"));
+                    button.repaintBackground("amber_bH1_neutr.png", "jade_bH2_hover.png", "jade_bH3_press.png");
                     nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, true);
+                    overlord.setNameLocationChangeMode(trans_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
-                    button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
+                    button.setNewText(lang.getText("HDWT_entry170XTPNtransName_off"));
+                    button.repaintBackground("jade_bH1_neutr.png", "amber_bH2_hover.png", "amber_bH3_press.png");
                     nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, false);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
 
@@ -2261,98 +4874,37 @@ public class HolmesDockWindowsTable extends JPanel {
         }.yesWeCan(transition, location));
         components.add(nameLocChangeButton);
 
-        JLabel reqLabel = new JLabel("Required tokens threshold:", JLabel.LEFT);
-        reqLabel.setBounds(columnA_posX, columnA_Y += 50, 220, 20);
-        columnB_Y += 76;
-        components.add(reqLabel);
+/*
+        JButton S1L1Reset = new JButton("Reset");
+        S1L1Reset.setFont(new Font("Work Sans", Font.PLAIN, 14));
+        S1L1Reset.setForeground(new Color(90, 90, 90));
+        S1L1Reset.setBackground(new Color(220, 208, 192));
+        S1L1Reset.setOpaque(true);
+        S1L1Reset.setBorderPainted(false);
+        S1L1Reset.setBorder(new RoundedBorder(20));
+        S1L1Reset.setBounds(43, 465, 100, 20);
 
-        JLabel reqT0Label = new JLabel("T0 red:", JLabel.LEFT);
-        reqT0Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
-        components.add(reqT0Label);
+        S1L1Reset.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                S1L1Reset.setForeground(new Color(0,0,0));
 
-        SpinnerModel weightT0SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(0), 0, Integer.MAX_VALUE, 1);
-        JSpinner weightT0Spinner = new JSpinner(weightT0SpinnerModel);
-        weightT0Spinner.setBounds(columnB_posX - 35, columnB_Y += 20, 65, 20);
-        weightT0Spinner.addChangeListener(e -> {
-            int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-            setActivationWeight(tokenz, (Transition) element, 0);
+            }
+            public void mouseExited(MouseEvent e) {
+                S1L1Reset.setForeground(new Color(90,90,90));
+            }
         });
-        components.add(weightT0Spinner);
-
-        JLabel reqT3Label = new JLabel("T3 yellow:", JLabel.LEFT);
-        reqT3Label.setBounds(columnB_posX + 40, columnB_Y, 80, 20);
-        components.add(reqT3Label);
-
-        SpinnerModel weightT3SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(3), 0, Integer.MAX_VALUE, 1);
-        JSpinner weightT3Spinner = new JSpinner(weightT3SpinnerModel);
-        weightT3Spinner.setBounds(columnB_posX + 100, columnB_Y, 65, 20);
-        weightT3Spinner.addChangeListener(e -> {
-            int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-            setActivationWeight(tokenz, (Transition) element, 3);
-        });
-        components.add(weightT3Spinner);
-
-        JLabel reqT1Label = new JLabel("T1 green:", JLabel.LEFT);
-        reqT1Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
-        components.add(reqT1Label);
-
-        SpinnerModel weightT1SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(1), 0, Integer.MAX_VALUE, 1);
-        JSpinner weightT1Spinner = new JSpinner(weightT1SpinnerModel);
-        weightT1Spinner.setBounds(columnB_posX - 35, columnB_Y += 20, 65, 20);
-        weightT1Spinner.addChangeListener(e -> {
-            int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-            setActivationWeight(tokenz, (Transition) element, 1);
-        });
-        components.add(weightT1Spinner);
-
-        JLabel reqT4Label = new JLabel("T4 gray:", JLabel.LEFT);
-        reqT4Label.setBounds(columnB_posX + 40, columnB_Y, 80, 20);
-        components.add(reqT4Label);
-
-        SpinnerModel weightT4SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(4), 0, Integer.MAX_VALUE, 1);
-        JSpinner weightT4Spinner = new JSpinner(weightT4SpinnerModel);
-        weightT4Spinner.setBounds(columnB_posX + 100, columnB_Y, 65, 20);
-        weightT4Spinner.addChangeListener(e -> {
-            int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-            setActivationWeight(tokenz, (Transition) element, 4);
-        });
-        components.add(weightT4Spinner);
-
-        JLabel reqT2Label = new JLabel("T2 blue:", JLabel.LEFT);
-        reqT2Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
-        components.add(reqT2Label);
-
-        SpinnerModel weightT2SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(2), 0, Integer.MAX_VALUE, 1);
-        JSpinner weightT2Spinner = new JSpinner(weightT2SpinnerModel);
-        weightT2Spinner.setBounds(columnB_posX - 35, columnB_Y += 20, 65, 20);
-        weightT2Spinner.addChangeListener(e -> {
-            int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-            setActivationWeight(tokenz, (Transition) element, 2);
-        });
-        components.add(weightT2Spinner);
-
-        JLabel reqT5Label = new JLabel("T5 black:", JLabel.LEFT);
-        reqT5Label.setBounds(columnB_posX + 40, columnB_Y, 80, 20);
-        components.add(reqT5Label);
-
-        SpinnerModel weightT5SpinnerModel = new SpinnerNumberModel(transition.getRequiredColoredTokens(5), 0, Integer.MAX_VALUE, 1);
-        JSpinner weightT5Spinner = new JSpinner(weightT5SpinnerModel);
-        weightT5Spinner.setBounds(columnB_posX + 100, columnB_Y, 65, 20);
-        weightT5Spinner.addChangeListener(e -> {
-            int tokenz = (int) ((JSpinner) e.getSource()).getValue();
-            setActivationWeight(tokenz, (Transition) element, 5);
-        });
-        components.add(weightT5Spinner);
+        S1L1Reset.setMargin(new Insets(0, 0, 0, 0));
+        S1L1Reset.setBounds(columnA_posX + 90, columnA_Y += 45, 150, 40);
+        components.add(S1L1Reset);*/
 
         panel.setLayout(null);
-        for (JComponent component : components) {
-            panel.add(component);
-        }
+        for (JComponent component : components) panel.add(component);
 
         panel.setOpaque(true);
         panel.repaint();
         add(panel);
     }
+
 
     //**************************************************************************************
     //*********************************        META      ***********************************
@@ -2366,6 +4918,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param metaNode TimeTransition - obiekt tranzycji czasowej
      * @param location ElementLocation - lokalizacja tranzycji
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createMetaNodeSubWindow(final MetaNode metaNode, ElementLocation location) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -2399,7 +4952,7 @@ public class HolmesDockWindowsTable extends JPanel {
         idLabel4.setFont(normalFont);
         components.add(idLabel4);
 
-        JLabel sheetRepresentedLabel = new JLabel("Subnet(sheet):");
+        JLabel sheetRepresentedLabel = new JLabel(lang.getText("HDWT_entry173subnet"));
         sheetRepresentedLabel.setBounds(columnA_posX, columnA_Y += 20, 95, 20);
         components.add(sheetRepresentedLabel);
         int shID = metaNode.getRepresentedSheetID();
@@ -2411,7 +4964,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(sheetRepresentedLabelValue);
 
         // META-NODE NAME
-        JLabel nameLabel = new JLabel("Name:", JLabel.LEFT);
+        JLabel nameLabel = new JLabel(lang.getText("HDWT_entry174subnet"), JLabel.LEFT);
         nameLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(nameLabel);
 
@@ -2425,7 +4978,7 @@ public class HolmesDockWindowsTable extends JPanel {
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00584exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
             changeName(newName);
@@ -2434,7 +4987,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(nameField);
 
         // T-TRANSITION COMMENT
-        JLabel comLabel = new JLabel("Comment:", JLabel.LEFT);
+        JLabel comLabel = new JLabel(lang.getText("HDWT_entry175subnet"), JLabel.LEFT);
         comLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         columnA_Y += 20;
         components.add(comLabel);
@@ -2460,8 +5013,8 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(CreationPanel);
 
         // ZMIANA TYPU META-WĘZŁA
-        // ВНИМАНИЕ!!! Hic sunt leones...
-        JRadioButton subnetTButton = new JRadioButton("Subnet T-type");
+        // ВНИМАНИЕ!!!
+        JRadioButton subnetTButton = new JRadioButton(lang.getText("HDWT_entry176subnet"));
         subnetTButton.setBounds(columnA_posX - 5, columnA_Y += 20, 105, 20);
         subnetTButton.setActionCommand("0");
         subnetTButton.addActionListener(new ActionListener() {
@@ -2498,7 +5051,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(subnetTButton);
 
 
-        JRadioButton subnetPButton = new JRadioButton("Subnet P-type");
+        JRadioButton subnetPButton = new JRadioButton(lang.getText("HDWT_entry177subnet"));
         subnetPButton.setBounds(columnA_posX + 100, columnA_Y, 120, 20);
         subnetPButton.setActionCommand("1");
         subnetPButton.addActionListener(new ActionListener() {
@@ -2587,7 +5140,7 @@ public class HolmesDockWindowsTable extends JPanel {
         width = (int) (((double) 100 / (double) zoom) * width);
         height = (int) (((double) 100 / (double) zoom) * height);
 
-        JLabel sheetLabel = new JLabel("Sheet:", JLabel.LEFT);
+        JLabel sheetLabel = new JLabel(lang.getText("HDWT_entry178subnet"), JLabel.LEFT);
         sheetLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(sheetLabel);
         JLabel sheetIdLabel = new JLabel(Integer.toString(location.getSheetID()));
@@ -2595,7 +5148,7 @@ public class HolmesDockWindowsTable extends JPanel {
         sheetIdLabel.setFont(normalFont);
         components.add(sheetIdLabel);
 
-        JLabel zoomLabel = new JLabel("Zoom:");
+        JLabel zoomLabel = new JLabel(lang.getText("HDWT_entry179subnet"));
         zoomLabel.setBounds(columnB_posX + 30, columnB_Y, 50, 20);
         components.add(zoomLabel);
         JLabel zoomLabel2 = new JLabel("" + zoom);
@@ -2606,7 +5159,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(zoomLabel2);
 
         // T-TRANSITION LOCATION:
-        JLabel comLabel2 = new JLabel("Location:", JLabel.LEFT);
+        JLabel comLabel2 = new JLabel(lang.getText("HDWT_entry180subnet"), JLabel.LEFT);
         comLabel2.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(comLabel2);
 
@@ -2632,13 +5185,13 @@ public class HolmesDockWindowsTable extends JPanel {
         columnA_Y += 20;
         columnB_Y += 20;
 
-        JLabel locNameLabel = new JLabel("Name offset:", JLabel.LEFT);
+        JLabel locNameLabel = new JLabel(lang.getText("HDWT_entry181subnet"), JLabel.LEFT);
         locNameLabel.setBounds(columnA_posX, columnA_Y, colACompLength + 10, 20);
         components.add(locNameLabel);
 
         int locationIndex = metaNode.getElementLocations().indexOf(location);
-        int xNameOffset = metaNode.getNamesLocations().get(locationIndex).getPosition().x;
-        int yNameOffset = metaNode.getNamesLocations().get(locationIndex).getPosition().y;
+        int xNameOffset = metaNode.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().x;
+        int yNameOffset = metaNode.getTextsLocations(GUIManager.locationMoveType.NAME).get(locationIndex).getPosition().y;
 
         nameLocationXSpinnerModel = new SpinnerNumberModel(xNameOffset, -99999, 99999, 1);
         nameLocationYSpinnerModel = new SpinnerNumberModel(yNameOffset, -99999, 99999, 1);
@@ -2702,7 +5255,7 @@ public class HolmesDockWindowsTable extends JPanel {
 
         JButton nameLocChangeButton = new JButton(Tools.getResIcon22("/icons/changeNameLocation.png"));
         nameLocChangeButton.setName("LocNameChanger");
-        nameLocChangeButton.setToolTipText("MouseWheel - up/down ; SHIFT+MouseWheel - left/right");
+        nameLocChangeButton.setToolTipText(lang.getText("HDWT_entry182subnet"));
         nameLocChangeButton.setMargin(new Insets(0, 0, 0, 0));
         nameLocChangeButton.setBounds(columnA_posX + 90, columnA_Y += 25, 150, 40);
         nameLocChangeButton.addActionListener(new ActionListener() {
@@ -2716,11 +5269,11 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (!nameLocChangeMode) {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocationON.png"));
                     nameLocChangeMode = true;
-                    overlord.setNameLocationChangeMode(meta_tmp, el_tmp, true);
+                    overlord.setNameLocationChangeMode(meta_tmp, el_tmp, GUIManager.locationMoveType.NAME);
                 } else {
                     button_tmp.setIcon(Tools.getResIcon22("/icons/changeNameLocation.png"));
                     nameLocChangeMode = false;
-                    overlord.setNameLocationChangeMode(null, null, false);
+                    overlord.setNameLocationChangeMode(null, null, GUIManager.locationMoveType.NONE);
                 }
             }
 
@@ -2751,6 +5304,7 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param arc Arc - obiekt łuku
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createArcSubWindow(Arc arc) {
         int columnA_posX = 10;
         int columnB_posX = 110;
@@ -2761,6 +5315,9 @@ public class HolmesDockWindowsTable extends JPanel {
         initiateContainers();
         // set mode
         mode = ARC;
+        if (arc.arcXTPNbox.isXTPN())
+            mode = XARC;
+
         element = arc;
         pairedArc = arc.getPairedArc();
         elementLocation = arc.getStartLocation();
@@ -2776,7 +5333,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(idLabel2);
 
         // ARC COMMENT
-        JLabel commLabel = new JLabel("Comment:", JLabel.LEFT);
+        JLabel commLabel = new JLabel(lang.getText("HDWT_entry183arc"), JLabel.LEFT);
         commLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         columnA_Y += 20;
         components.add(commLabel);
@@ -2808,7 +5365,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     type1 = "P-->T";
                     type2 = "T-->P";
                 }
-                JLabel weightLabel = new JLabel("Weight (" + type1 + ")", JLabel.LEFT);
+                JLabel weightLabel = new JLabel(lang.getText("HDWT_entry184arc") + type1 + ")", JLabel.LEFT);
                 weightLabel.setBounds(columnA_posX, columnA_Y += 20, 100, 20);
                 components.add(weightLabel);
 
@@ -2821,7 +5378,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 });
                 components.add(weightSpinner);
 
-                JLabel weightLabel2 = new JLabel("Weight (" + type2 + ")", JLabel.LEFT);
+                JLabel weightLabel2 = new JLabel(lang.getText("HDWT_entry184arc") + type2 + ")", JLabel.LEFT);
                 weightLabel2.setBounds(columnA_posX, columnA_Y += 20, 100, 20);
                 components.add(weightLabel2);
 
@@ -2834,7 +5391,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 });
                 components.add(weightSpinner2);
             } else {
-                JLabel weightLabel = new JLabel("Weight:", JLabel.LEFT);
+                JLabel weightLabel = new JLabel(lang.getText("HDWT_entry185arc"), JLabel.LEFT);
                 weightLabel.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
                 components.add(weightLabel);
 
@@ -2853,7 +5410,7 @@ public class HolmesDockWindowsTable extends JPanel {
         columnB_posX += 30;
         colACompLength += 40;
 
-        JLabel typeArcLabel = new JLabel("Type:", JLabel.LEFT);
+        JLabel typeArcLabel = new JLabel(lang.getText("HDWT_entry186arc"), JLabel.LEFT);
         //typeArcLabel.setFont(boldFont);
         typeArcLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(typeArcLabel);
@@ -2863,17 +5420,17 @@ public class HolmesDockWindowsTable extends JPanel {
         typeArcLabel2.setBounds(columnB_posX - 40, columnB_Y += 20, colACompLength + 40, 20);
         components.add(typeArcLabel2);
 
-        JLabel readArcLabel = new JLabel("Read arc:", JLabel.LEFT);
+        JLabel readArcLabel = new JLabel(lang.getText("HDWT_entry187arc"), JLabel.LEFT);
         readArcLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(readArcLabel);
 
 
-        String txt = "no";
+        String txt = lang.getText("HDWT_entry188arc");
         if (pairedArc != null) {
-            txt = "yes [paired arc ID: " + pairedArc.getID() + "]";
+            txt = lang.getText("HDWT_entry189arc") + pairedArc.getID() + "]";
         } else {
             if (InvariantsTools.isDoubleArc(arc)) {
-                txt = "double arc (hidden readarc)";
+                txt = lang.getText("HDWT_entry190arc");
             }
         }
 
@@ -2882,7 +5439,7 @@ public class HolmesDockWindowsTable extends JPanel {
         readArcLabel2.setBounds(columnB_posX - 40, columnB_Y += 20, colACompLength + 60, 20);
         components.add(readArcLabel2);
 
-        JLabel startNodeLabel = new JLabel("Start Node name:", JLabel.LEFT);
+        JLabel startNodeLabel = new JLabel(lang.getText("HDWT_entry191arc"), JLabel.LEFT);
         startNodeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(startNodeLabel);
         columnB_Y += 20;
@@ -2903,7 +5460,7 @@ public class HolmesDockWindowsTable extends JPanel {
         label1B.setBounds(columnA_posX + 40, columnB_Y += 20, 50, 20);
         components.add(label1B);
 
-        JLabel label3A = new JLabel("Sheet:", JLabel.LEFT);
+        JLabel label3A = new JLabel(lang.getText("HDWT_entry192arc"), JLabel.LEFT);
         label3A.setBounds(columnA_posX + 80, columnA_Y, colACompLength, 20);
         components.add(label3A);
         JLabel label3B = new JLabel(Integer.toString(arc.getStartLocation().getSheetID()));
@@ -2911,7 +5468,7 @@ public class HolmesDockWindowsTable extends JPanel {
         label3B.setBounds(columnA_posX + 120, columnB_Y, 40, 20);
         components.add(label3B);
 
-        JLabel label4A = new JLabel("Location:", JLabel.LEFT);
+        JLabel label4A = new JLabel(lang.getText("HDWT_entry193arc"), JLabel.LEFT);
         label4A.setBounds(columnA_posX + 150, columnA_Y, colACompLength, 20);
         components.add(label4A);
         JLabel label4B = new JLabel(arc.getStartLocation().getPosition().x + ", "
@@ -2921,7 +5478,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(label4B);
 
         // endNode
-        JLabel endNodeLabel = new JLabel("End Node name:", JLabel.LEFT);
+        JLabel endNodeLabel = new JLabel(lang.getText("HDWT_entry194arc"), JLabel.LEFT);
         endNodeLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(endNodeLabel);
         columnB_Y += 20;
@@ -2942,7 +5499,7 @@ public class HolmesDockWindowsTable extends JPanel {
         label5B.setBounds(columnA_posX + 40, columnB_Y += 20, colBCompLength, 20);
         components.add(label5B);
 
-        JLabel label7A = new JLabel("Sheet:", JLabel.LEFT);
+        JLabel label7A = new JLabel(lang.getText("HDWT_entry195arc"), JLabel.LEFT);
         label7A.setBounds(columnA_posX + 80, columnA_Y, colACompLength, 20);
         components.add(label7A);
         JLabel label7B = new JLabel(Integer.toString(arc.getEndLocation().getSheetID()));
@@ -2950,7 +5507,7 @@ public class HolmesDockWindowsTable extends JPanel {
         label7B.setBounds(columnA_posX + 120, columnB_Y, 40, 20);
         components.add(label7B);
 
-        JLabel label8A = new JLabel("Location:", JLabel.LEFT);
+        JLabel label8A = new JLabel(lang.getText("HDWT_entry196arc"), JLabel.LEFT);
         label8A.setBounds(columnA_posX + 150, columnA_Y, colACompLength, 20);
         components.add(label8A);
         JLabel label8B = new JLabel(arc.getEndLocation().getPosition().x + ", "
@@ -2960,15 +5517,14 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(label8B);
 
         //KOLORY
-        //TODO:
         if (arc.getArcType() == TypeOfArc.COLOR) {
-            String type1 = "T-->P (Transition to Place weights):";
-            String type2 = "P-->T (Place to Transition weights):";
+            String type1 = lang.getText("HDWT_entry197arc");
+            String type2 = lang.getText("HDWT_entry198arc");
             pairedArc = InvariantsTools.getPairedArc(arc);
             if (pairedArc != null) {
                 if (((Arc) element).getStartNode() instanceof Place) {
-                    type1 = "P-->T (Place to Transition weights):";
-                    type2 = "T-->P (Transition to Place weights):";
+                    type1 = lang.getText("HDWT_entry198arc");
+                    type2 = lang.getText("HDWT_entry197arc");
                 }
 
                 JLabel weightPair1Label = new JLabel(type1, JLabel.LEFT);
@@ -2976,7 +5532,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 columnB_Y += 20;
                 components.add(weightPair1Label);
             }
-            JLabel weight0Label = new JLabel("W0 (red):", JLabel.LEFT);
+            JLabel weight0Label = new JLabel(lang.getText("HDWT_entry199arc"), JLabel.LEFT);
             weight0Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
             components.add(weight0Label);
 
@@ -2989,7 +5545,7 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(weightT0Spinner);
 
-            JLabel weight3Label = new JLabel("W3 (yellow):", JLabel.LEFT);
+            JLabel weight3Label = new JLabel(lang.getText("HDWT_entry200arc"), JLabel.LEFT);
             weight3Label.setBounds(columnB_posX + 10, columnB_Y, 80, 20);
             components.add(weight3Label);
 
@@ -3002,7 +5558,7 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(weightT3Spinner);
 
-            JLabel weight1Label = new JLabel("W1 (green):", JLabel.LEFT);
+            JLabel weight1Label = new JLabel(lang.getText("HDWT_entry201arc"), JLabel.LEFT);
             weight1Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
             components.add(weight1Label);
 
@@ -3015,7 +5571,7 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(weightT1Spinner);
 
-            JLabel weight4Label = new JLabel("W4 (gray):", JLabel.LEFT);
+            JLabel weight4Label = new JLabel(lang.getText("HDWT_entry202arc"), JLabel.LEFT);
             weight4Label.setBounds(columnB_posX + 10, columnB_Y, 80, 20);
             components.add(weight4Label);
 
@@ -3028,7 +5584,7 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(weightT4Spinner);
 
-            JLabel weight2Label = new JLabel("W2 (blue):", JLabel.LEFT);
+            JLabel weight2Label = new JLabel(lang.getText("HDWT_entry203arc"), JLabel.LEFT);
             weight2Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
             components.add(weight2Label);
 
@@ -3041,7 +5597,7 @@ public class HolmesDockWindowsTable extends JPanel {
             });
             components.add(weightT2Spinner);
 
-            JLabel weight5Label = new JLabel("W5 (black):", JLabel.LEFT);
+            JLabel weight5Label = new JLabel(lang.getText("HDWT_entry204arc"), JLabel.LEFT);
             weight5Label.setBounds(columnB_posX + 10, columnB_Y, 80, 20);
             components.add(weight5Label);
 
@@ -3061,7 +5617,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 columnB_Y += 20;
                 components.add(weightPair2Label);
 
-                JLabel weightp0Label = new JLabel("W0 (red):", JLabel.LEFT);
+                JLabel weightp0Label = new JLabel(lang.getText("HDWT_entry199arc"), JLabel.LEFT);
                 weightp0Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
                 components.add(weightp0Label);
 
@@ -3074,7 +5630,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 });
                 components.add(weightTp0Spinner);
 
-                JLabel weightp3Label = new JLabel("W3 (yellow):", JLabel.LEFT);
+                JLabel weightp3Label = new JLabel(lang.getText("HDWT_entry200arc"), JLabel.LEFT);
                 weightp3Label.setBounds(columnB_posX + 10, columnB_Y, 80, 20);
                 components.add(weightp3Label);
 
@@ -3087,7 +5643,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 });
                 components.add(weightTp3Spinner);
 
-                JLabel weightp1Label = new JLabel("W1 (green):", JLabel.LEFT);
+                JLabel weightp1Label = new JLabel(lang.getText("HDWT_entry201arc"), JLabel.LEFT);
                 weightp1Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
                 components.add(weightp1Label);
 
@@ -3100,7 +5656,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 });
                 components.add(weightTp1Spinner);
 
-                JLabel weightp4Label = new JLabel("W4 (gray):", JLabel.LEFT);
+                JLabel weightp4Label = new JLabel(lang.getText("HDWT_entry202arc"), JLabel.LEFT);
                 weightp4Label.setBounds(columnB_posX + 10, columnB_Y, 80, 20);
                 components.add(weightp4Label);
 
@@ -3113,7 +5669,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 });
                 components.add(weightTp4Spinner);
 
-                JLabel weightp2Label = new JLabel("W2 (blue):", JLabel.LEFT);
+                JLabel weightp2Label = new JLabel(lang.getText("HDWT_entry203arc"), JLabel.LEFT);
                 weightp2Label.setBounds(columnA_posX, columnA_Y += 20, 80, 20);
                 components.add(weightp2Label);
 
@@ -3126,7 +5682,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 });
                 components.add(weightTp2Spinner);
 
-                JLabel weightp5Label = new JLabel("W5 (black):", JLabel.LEFT);
+                JLabel weightp5Label = new JLabel(lang.getText("HDWT_entry204arc"), JLabel.LEFT);
                 weightp5Label.setBounds(columnB_posX + 10, columnB_Y, 80, 20);
                 components.add(weightp5Label);
 
@@ -3140,8 +5696,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 components.add(weightTp5Spinner);
             }
         }
-
-
+        
         panel.setLayout(null);
         for (JComponent component : components) panel.add(component);
         panel.setOpaque(true);
@@ -3156,10 +5711,11 @@ public class HolmesDockWindowsTable extends JPanel {
     //**************************************************************************************
 
     /**
-     * Metoda pomocnicza konstruktora odpowiedzialna za utworzenia podokna właściwości arkusza sieci.
-     *
-     * @param sheet WorkspaceSheet - obiekt arkusza
+     * Metoda pomocnicza konstruktora odpowiedzialna za utworzenia okna właściwości arkusza sieci.<br>
+     * [2022-07-06] ...i czasopisma... tfu, znaczy: i jeszcze projektu aktualnie wgranego.
+     * @param sheet (<b>WorkspaceSheet</b>) obiekt arkusza
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createSheetSubWindow(WorkspaceSheet sheet) {
         int columnA_posX = 10;
         int columnB_posX = 100;
@@ -3172,23 +5728,33 @@ public class HolmesDockWindowsTable extends JPanel {
         mode = SHEET;
         currentSheet = sheet;
 
+        JLabel projectTypeLabel = new JLabel(lang.getText("HDWT_entry205sheet"), JLabel.LEFT);
+        projectTypeLabel.setBounds(columnA_posX, columnA_Y += 10, 80, 20);
+        components.add(projectTypeLabel);
+
+        projectTypeLabelText = new JLabel(lang.getText("HDWT_entry206sheet"), JLabel.LEFT);
+        projectTypeLabelText.setBounds(columnB_posX, columnB_Y += 10, 200, 20);
+        projectTypeLabelText.setText(GUIController.access().getCurrentNetType() + "");
+        components.add(projectTypeLabelText);
+
+        //ArrayList<Integer> nodeTypes = Check.getSuggestedNetType();
+
         // SHEET ID
-        JLabel netNameLabel = new JLabel("PN Name:", JLabel.LEFT);
-        netNameLabel.setBounds(columnA_posX, columnA_Y += 10, colACompLength, 20);
+        JLabel netNameLabel = new JLabel(lang.getText("HDWT_entry207sheet"), JLabel.LEFT);
+        netNameLabel.setBounds(columnA_posX, columnA_Y += 30, colACompLength, 20);
         components.add(netNameLabel);
 
         JFormattedTextField netNameField = new JFormattedTextField();
-        netNameField.setBounds(columnB_posX, columnB_Y += 10, colBCompLength, 20);
+        netNameField.setBounds(columnB_posX, columnB_Y += 30, colBCompLength, 20);
         netNameField.setText(overlord.getWorkspace().getProject().getName());
         netNameField.addPropertyChangeListener("value", e -> {
             JFormattedTextField field = (JFormattedTextField) e.getSource();
             try {
                 field.commitEdit();
             } catch (ParseException ex) {
-                System.out.println(ex.getMessage());
+                overlord.log(lang.getText("LOGentry00585exception")+"\n"+ex.getMessage(), "error", true);
             }
             String newName = field.getText();
-
             overlord.getWorkspace().getProject().setName(newName);
         });
         components.add(netNameField);
@@ -3199,7 +5765,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(idLabel);
         String text = "" + sheet.getId();
         int shPos = overlord.getWorkspace().getIndexOfId(sheet.getId());
-        text += " (sheet position: " + shPos + ")";
+        text += " " + lang.getText("HDWT_entry208sheet") + shPos + ")";
         JLabel idLabel2 = new JLabel(text);
         idLabel2.setBounds(columnB_posX, columnB_Y += 20, colACompLength + 150, 20);
         components.add(idLabel2);
@@ -3221,7 +5787,7 @@ public class HolmesDockWindowsTable extends JPanel {
         //widthOrg = (int) (((double)100/(double)zoom) * widthOrg);
         //heightOrg = (int) (((double)100/(double)zoom) * heightOrg);
 
-        JLabel zoomLabel1 = new JLabel("Zoom:", JLabel.LEFT);
+        JLabel zoomLabel1 = new JLabel(lang.getText("HDWT_entry209sheet"), JLabel.LEFT);
         zoomLabel1.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(zoomLabel1);
         JLabel zoomLabel2 = new JLabel(zoom + "%");
@@ -3231,7 +5797,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(zoomLabel2);
 
         // SHEET SIZE
-        JLabel widthLabel = new JLabel("Width:", JLabel.LEFT);
+        JLabel widthLabel = new JLabel(lang.getText("HDWT_entry210sheet"), JLabel.LEFT);
         widthLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(widthLabel);
 
@@ -3253,7 +5819,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(widthLabel3);
 
         // SHEET HEIGHT
-        JLabel heightLabel = new JLabel("Height:", JLabel.LEFT);
+        JLabel heightLabel = new JLabel(lang.getText("HDWT_entry211sheet"), JLabel.LEFT);
         heightLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(heightLabel);
 
@@ -3279,7 +5845,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(heightLabel3);
 
         // is auto scroll when dragging automatic
-        JLabel autoSrclLabel = new JLabel("Autoscroll:", JLabel.LEFT);
+        JLabel autoSrclLabel = new JLabel(lang.getText("HDWT_entry212sheet"), JLabel.LEFT);
         autoSrclLabel.setBounds(columnA_posX, columnA_Y += 20, colACompLength, 20);
         components.add(autoSrclLabel);
 
@@ -3308,42 +5874,41 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda pomocnicza konstruktora odpowiedzialna za wypełnienie podokna informacji o inwariantach sieci.
-     *
      * @param invariantsData ArrayList[ArrayList[Integer]] - macierz inwariantów
      */
     private void createT_invSubWindow(ArrayList<ArrayList<Integer>> invariantsData) {
         doNotUpdate = true;
-        if (invariantsData == null || invariantsData.size() == 0) {
-            return;
-        } else {
-            mode = tINVARIANTS;
-            t_invariantsMatrix = invariantsData;
-            transitions = overlord.getWorkspace().getProject().getTransitions();
-            places = overlord.getWorkspace().getProject().getPlaces();
-            overlord.reset.setT_invariantsStatus(true);
-        }
+        initiateContainers();
 
+        mode = tINVARIANTS;
+        t_invariantsMatrix = new ArrayList<>();
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        places = overlord.getWorkspace().getProject().getPlaces();
+        
+        components.clear();
+        panel.removeAll();
         int colA_posX = 10;
         int colB_posX = 100;
         int positionY = 10;
-        initiateContainers();
 
-        JLabel chooseInvLabel = new JLabel("T-invariant: ");
+        JLabel chooseInvLabel = new JLabel(lang.getText("HDWT_entry213TinvPanel"));
         chooseInvLabel.setBounds(colA_posX, positionY, 80, 20);
         components.add(chooseInvLabel);
 
-        String[] invariantHeaders = new String[t_invariantsMatrix.size() + 3];
+        //MRtinv
+        String[] invariantHeaders = new String[3];
         invariantHeaders[0] = "---";
-        for (int i = 0; i < t_invariantsMatrix.size(); i++) {
-            int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(i)).size();
-            invariantHeaders[i + 1] = "Inv. #" + (i + 1) + " (size: " + invSize + ")";
-        }
-        invariantHeaders[invariantHeaders.length - 2] = "null transitions";
-        invariantHeaders[invariantHeaders.length - 1] = "inv/trans frequency";
+        invariantHeaders[1] = lang.getText("HDWT_entry214TinvPanel");   //null transitions
+        invariantHeaders[2] = lang.getText("HDWT_entry215TinvPanel");   //inv/trans frequency
 
         chooseInvBox = new JComboBox<>(invariantHeaders);
         chooseInvBox.setBounds(colB_posX, positionY, 150, 20);
         chooseInvBox.addActionListener(actionEvent -> {
+            if(doNotUpdate)
+                return;
+
+            refreshTINVwindowData();
+
             @SuppressWarnings("unchecked")
             JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             int items = comboBox.getItemCount();
@@ -3357,17 +5922,28 @@ public class HolmesDockWindowsTable extends JPanel {
                 selectedT_invIndex = -1;
                 showT_invTransFrequency(); //show transition frequency (in invariants)
             } else {
-                selectedT_invIndex = comboBox.getSelectedIndex() - 1;
+                try{
+                    String xStr = String.valueOf(comboBox.getSelectedItem());
+                    int selInd = -1;
+                    int ind1 = xStr.indexOf("#");
+                    int ind2 = xStr.indexOf("(");
+                    String invIndex = xStr.substring(ind1 + 1, ind2 - 1);
+                    selInd = Integer.parseInt(invIndex);
+                    selectedT_invIndex = selInd - 1;
+                } catch (Exception ignored) {
+                    overlord.log(lang.getText("LOGentry00046exception"), "error", true);
+                    return;
+                }
                 showT_invariant();
             }
         });
         components.add(chooseInvBox);
 
-        JButton prevButton = new JButton("Previous");
+        JButton prevButton = new JButton(lang.getText("HDWT_entry216TinvPanel"));   //Previous
         prevButton.setBounds(colB_posX - 50, positionY += 25, 100, 20);
         prevButton.setMargin(new Insets(0, 0, 0, 0));
         prevButton.setIcon(Tools.getResIcon16("/icons/invViewer/prevIcon.png"));
-        prevButton.setToolTipText("Show previous invariant data.");
+        prevButton.setToolTipText(lang.getText("HDWT_entry217TinvPanel"));
         prevButton.addActionListener(actionEvent -> {
             int sel = chooseInvBox.getSelectedIndex();
             if (sel > 0) {
@@ -3376,11 +5952,11 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(prevButton);
 
-        JButton nextButton = new JButton("<html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>");
+        JButton nextButton = new JButton(lang.getText("HDWT_entry218TinvPanel")); //<html>&nbsp;&nbsp;&nbsp;Next&nbsp;</html>
         nextButton.setBounds(colB_posX + 55, positionY, 100, 20);
         nextButton.setMargin(new Insets(0, 0, 0, 0));
         nextButton.setIcon(Tools.getResIcon16("/icons/invViewer/nextIcon.png"));
-        nextButton.setToolTipText("Show next invariant data.");
+        nextButton.setToolTipText(lang.getText("HDWT_entry219TinvPanel"));
         nextButton.addActionListener(actionEvent -> {
             int sel = chooseInvBox.getSelectedIndex();
             int max = chooseInvBox.getItemCount();
@@ -3390,71 +5966,49 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(nextButton);
 
-        JButton recalculateTypesButton = new JButton("Refresh");
-        //showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
-        //recalculateTypesButton.setIcon(Tools.getResIcon16("/icons/menu/aaa.png"));
+        JButton recalculateTypesButton = new JButton(lang.getText("HDWT_entry220TinvPanel")); //Refresh
         recalculateTypesButton.setBounds(colA_posX, positionY += 25, 100, 20);
-        recalculateTypesButton.setToolTipText("If t-inv types have been determined, this button will refresh the content of the three comboboxes below:");
-        recalculateTypesButton.addActionListener(actionEvent -> refreshSubSurCombos());
+        recalculateTypesButton.setToolTipText(lang.getText("HDWT_entry220TinvPanel_1"));
+        recalculateTypesButton.addActionListener(actionEvent -> {
+            try {
+                if(t_invariantsMatrix != null && !t_invariantsMatrix.isEmpty()) {
+                    InvariantsCalculator ic = new InvariantsCalculator(true);
+                    InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), t_invariantsMatrix, true);
+                }
+                refreshTINVwindowData();
+                refreshSubSurCombos();
+            } catch (Exception e) {
+                overlord.log(lang.getText("LOGentry00586exception"), "error", true);
+            }
+        });
         components.add(recalculateTypesButton);
 
-        JButton recalculateInvTypesButton = new JButton("Recalculate");
-        //showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
+        JButton recalculateInvTypesButton = new JButton(lang.getText("HDWT_entry221TinvPanel")); //Recalculate
         recalculateInvTypesButton.setIcon(Tools.getResIcon16("/icons/portal.png"));
-        recalculateInvTypesButton.setToolTipText("This will force the program to determine the type of t-invariants (it may take time) and refresh the comboboxes below:");
+        recalculateInvTypesButton.setToolTipText(lang.getText("HDWT_entry221TinvPanel_1"));
         recalculateInvTypesButton.setBounds(colA_posX + 105, positionY, 130, 20);
         recalculateInvTypesButton.addActionListener(actionEvent -> {
             try {
-                InvariantsCalculator ic = new InvariantsCalculator(true);
-                InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), t_invariantsMatrix, true);
-
+                refreshTINVwindowData();
+                if(t_invariantsMatrix != null && !t_invariantsMatrix.isEmpty()) {
+                    InvariantsCalculator ic = new InvariantsCalculator(true);
+                    InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), t_invariantsMatrix, true);
+                }
                 refreshSubSurCombos();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                overlord.log(lang.getText("LOGentry00587exception"), "error", true);
             }
         });
         components.add(recalculateInvTypesButton);
 
-        //sur-sub-non-invariants:
-        ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
-
-        ArrayList<Integer> sursInv = new ArrayList<>();
-        ArrayList<Integer> subsInv = new ArrayList<>();
-        ArrayList<Integer> nonsInv = new ArrayList<>();
-
-        for (int i = 0; i < typesVector.size(); i++) { //zliczanie tałatajstwa
-            if (typesVector.get(i) == 1)
-                sursInv.add(i);
-            else if (typesVector.get(i) == -1)
-                subsInv.add(i);
-            if (typesVector.get(i) == 11)
-                nonsInv.add(i);
-        }
-
-        String[] surHeaders = new String[sursInv.size() + 1];
+        String[] surHeaders = new String[1];
         surHeaders[0] = "---";
-        if (sursInv.size() > 0) {
-            for (int i = 0; i < sursInv.size(); i++) {
-                int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(sursInv.get(i))).size();
-                surHeaders[i + 1] = "Inv. #" + (sursInv.get(i) + 1) + " (size: " + invSize + ")";
-            }
-        }
-        String[] subHeaders = new String[subsInv.size() + 1];
+        String[] subHeaders = new String[1];
         subHeaders[0] = "---";
-        if (subsInv.size() > 0) {
-            for (int i = 0; i < subsInv.size(); i++) {
-                int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(subsInv.get(i))).size();
-                subHeaders[i + 1] = "Inv. #" + (subsInv.get(i) + 1) + " (size: " + invSize + ")";
-            }
-        }
-        String[] nonsHeaders = new String[nonsInv.size() + 1];
+
+        @SuppressWarnings("MismatchedReadAndWriteOfArray")
+        String[] nonsHeaders = new String[1];
         nonsHeaders[0] = "---";
-        if (nonsInv.size() > 0) {
-            for (int i = 0; i < nonsInv.size(); i++) {
-                int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(nonsInv.get(i))).size();
-                nonsHeaders[i + 1] = "Inv. #" + (nonsInv.get(i) + 1) + " (size: " + invSize + ")";
-            }
-        }
 
         JLabel surLabel1 = new JLabel("Sur-inv: ");
         surLabel1.setBounds(colA_posX, positionY += 25, 80, 20);
@@ -3463,6 +6017,8 @@ public class HolmesDockWindowsTable extends JPanel {
         chooseSurInvBox = new JComboBox<>(surHeaders);
         chooseSurInvBox.setBounds(colB_posX, positionY, 150, 20);
         chooseSurInvBox.addActionListener(actionEvent -> {
+            if(doNotUpdate)
+                return;
             @SuppressWarnings("unchecked")
             JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             if (comboBox.getSelectedIndex() == 0) {
@@ -3478,7 +6034,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     selectedT_invIndex = index - 1;
                     showT_invariant();
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    overlord.log(lang.getText("LOGentry00588exception"), "error", true);
                 }
             }
         });
@@ -3491,6 +6047,8 @@ public class HolmesDockWindowsTable extends JPanel {
         chooseSubInvBox = new JComboBox<>(subHeaders);
         chooseSubInvBox.setBounds(colB_posX, positionY, 150, 20);
         chooseSubInvBox.addActionListener(actionEvent -> {
+            if(doNotUpdate)
+                return;
             @SuppressWarnings("unchecked")
             JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             if (comboBox.getSelectedIndex() == 0) {
@@ -3506,7 +6064,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     selectedT_invIndex = index - 1;
                     showT_invariant();
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    overlord.log(lang.getText("LOGentry00589exception"), "error", true);
                 }
             }
         });
@@ -3519,6 +6077,8 @@ public class HolmesDockWindowsTable extends JPanel {
         chooseNoneInvBox = new JComboBox<>(subHeaders);
         chooseNoneInvBox.setBounds(colB_posX, positionY, 150, 20);
         chooseNoneInvBox.addActionListener(actionEvent -> {
+            if(doNotUpdate)
+                return;
             @SuppressWarnings("unchecked")
             JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             if (comboBox.getSelectedIndex() == 0) {
@@ -3534,16 +6094,16 @@ public class HolmesDockWindowsTable extends JPanel {
                     selectedT_invIndex = index - 1;
                     showT_invariant();
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    overlord.log(lang.getText("LOGentry00590exception"), "error", true);
                 }
             }
         });
         components.add(chooseNoneInvBox);
 
         JButton showDetailsButton = new JButton();
-        showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
+        showDetailsButton.setText(lang.getText("HDWT_entry222TinvPanel")); //Show details
         showDetailsButton.setIcon(Tools.getResIcon32("/icons/menu/menu_invViewer.png"));
-        showDetailsButton.setBounds(colA_posX, positionY += 30, 120, 32);
+        showDetailsButton.setBounds(colA_posX, positionY += 25, 120, 40);
         showDetailsButton.addActionListener(actionEvent -> {
             if (selectedT_invIndex == -1)
                 return;
@@ -3551,8 +6111,8 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(showDetailsButton);
 
-        JCheckBox markMCTcheckBox = new JCheckBox("Color MCT");
-        markMCTcheckBox.setBounds(colA_posX + 130, positionY - 5, 120, 20);
+        JCheckBox markMCTcheckBox = new JCheckBox(lang.getText("HDWT_entry223TinvPanel")); //Color MCT
+        markMCTcheckBox.setBounds(colA_posX + 120, positionY, 120, 20);
         markMCTcheckBox.setSelected(false);
         markMCTcheckBox.addActionListener(actionEvent -> {
             AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -3561,8 +6121,8 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(markMCTcheckBox);
 
-        JCheckBox glowINVcheckBox = new JCheckBox("Transitions glow");
-        glowINVcheckBox.setBounds(colA_posX + 130, positionY + 15, 120, 20);
+        JCheckBox glowINVcheckBox = new JCheckBox(lang.getText("HDWT_entry224TinvPanel")); //Transitions glow
+        glowINVcheckBox.setBounds(colA_posX + 120, positionY + 20, 160, 20);
         glowINVcheckBox.setSelected(true);
         glowINVcheckBox.addActionListener(actionEvent -> {
             AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -3584,11 +6144,11 @@ public class HolmesDockWindowsTable extends JPanel {
         JPanel descPanel = new JPanel();
         descPanel.setLayout(new BorderLayout());
         descPanel.add(new JScrollPane(t_invNameField), BorderLayout.CENTER);
-        descPanel.setBounds(colA_posX, positionY += 40, 250, 80);
+        descPanel.setBounds(colA_posX, positionY += 45, 250, 80);
         components.add(descPanel);
 
-        JCheckBox markAreaCheckBox = new JCheckBox("Invariant-net structure painted");
-        markAreaCheckBox.setBounds(colA_posX, positionY += 85, 200, 20);
+        JCheckBox markAreaCheckBox = new JCheckBox(lang.getText("HDWT_entry225TinvPanel")); //Invariant-net structure painted
+        markAreaCheckBox.setBounds(colA_posX, positionY += 85, 260, 20);
         markAreaCheckBox.setSelected(true);
         markAreaCheckBox.addActionListener(actionEvent -> {
             AbstractButton abstractButton = (AbstractButton) actionEvent.getSource();
@@ -3598,41 +6158,85 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(markAreaCheckBox);
 
         //TPN:
-        JLabel labelTime1 = new JLabel("Min. time: ");
-        labelTime1.setBounds(colA_posX, positionY += 20, 80, 20);
+        JLabel labelTime1 = new JLabel(lang.getText("HDWT_entry226TinvPanel"));  //Min. time: 
+        labelTime1.setBounds(colA_posX, positionY += 20, 100, 20);
         components.add(labelTime1);
         minTimeLabel = new JLabel("---");
-        minTimeLabel.setBounds(colB_posX, positionY, 80, 20);
+        minTimeLabel.setBounds(colB_posX+20, positionY, 80, 20);
         components.add(minTimeLabel);
 
-        JLabel labelTime2 = new JLabel("Avg. time: ");
-        labelTime2.setBounds(colA_posX, positionY += 20, 80, 20);
+        JLabel labelTime2 = new JLabel(lang.getText("HDWT_entry228TinvPanel")); //Avg. time: 
+        labelTime2.setBounds(colA_posX, positionY += 20, 100, 20);
         components.add(labelTime2);
         avgTimeLabel = new JLabel("---");
-        avgTimeLabel.setBounds(colB_posX, positionY, 80, 20);
+        avgTimeLabel.setBounds(colB_posX+20, positionY, 80, 20);
         components.add(avgTimeLabel);
 
-        JLabel labelTime3 = new JLabel("Max. time: ");
-        labelTime3.setBounds(colA_posX, positionY += 20, 80, 20);
+        JLabel labelTime3 = new JLabel(lang.getText("HDWT_entry227TinvPanel")); //Max. time: 
+        labelTime3.setBounds(colA_posX, positionY += 20, 100, 20);
         components.add(labelTime3);
         maxTimeLabel = new JLabel("---");
-        maxTimeLabel.setBounds(colB_posX, positionY, 80, 20);
+        maxTimeLabel.setBounds(colB_posX+20, positionY, 80, 20);
         components.add(maxTimeLabel);
 
-        JLabel labelTime4 = new JLabel("Structure:");
-        labelTime4.setBounds(colA_posX, positionY += 20, 80, 20);
+        JLabel labelTime4 = new JLabel(lang.getText("HDWT_entry229TinvPanel")); //Structure:
+        labelTime4.setBounds(colA_posX, positionY += 20, 100, 20);
         components.add(labelTime4);
         structureLabel = new JLabel("---");
-        structureLabel.setBounds(colB_posX, positionY, 200, 20);
+        structureLabel.setBounds(colB_posX+20, positionY, 200, 20);
         components.add(structureLabel);
 
         doNotUpdate = false;
+
         panel.setLayout(null);
-        for (JComponent component : components) panel.add(component);
+        for (JComponent component : components)
+            panel.add(component);
         panel.setOpaque(true);
         panel.repaint();
-        panel.setVisible(true);
         add(panel);
+    }
+
+    /**
+     * Metoda odświeża zawartość comboBoxa dla inwariantów. Wyświetla tylko te, dla których cX=0.
+     */
+    public void refreshInvariantsComboBox() {
+        if (t_invariantsMatrix == null)
+            return;
+
+        ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
+        ArrayList<Integer> zeroInv = new ArrayList<>();
+        for (int i = 0; i < typesVector.size(); i++) { //zliczanie tałatajstwa
+            if(typesVector.get(i) == 0)
+                zeroInv.add(i);
+            //else if (typesVector.get(i) == 1)
+            //    sursInv.add(i);
+            //else if (typesVector.get(i) == -1)
+            //    subsInv.add(i);
+            //else if (typesVector.get(i) == 11)
+            //    nonsInv.add(i);
+        }
+
+        //String[] invariantHeaders = new String[t_invariantsMatrix.size() + 3];
+        String[] invariantHeaders = new String[zeroInv.size() + 3];
+        invariantHeaders[0] = "---";
+
+        if (!zeroInv.isEmpty()) {
+            for (int i = 0; i < zeroInv.size(); i++) {
+                int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(zeroInv.get(i))).size();
+                invariantHeaders[i + 1] = "Inv. #" + (zeroInv.get(i) + 1) + " (size: " + invSize + ")";
+            }
+        }
+
+        invariantHeaders[invariantHeaders.length - 2] = lang.getText("HDWT_entry214TinvPanel"); //null transitions
+        invariantHeaders[invariantHeaders.length - 1] = lang.getText("HDWT_entry215TinvPanel"); //inv/trans frequency
+
+        doNotUpdate = true;
+        chooseInvBox.removeAllItems();
+        for (String header : invariantHeaders) {
+            chooseInvBox.addItem(header);
+        }
+        chooseInvBox.setSelectedIndex(0);
+        doNotUpdate = false;
     }
 
     /**
@@ -3640,6 +6244,8 @@ public class HolmesDockWindowsTable extends JPanel {
      */
     public void refreshSubSurCombos() {
         ArrayList<Integer> typesVector = overlord.getWorkspace().getProject().accessT_InvTypesVector();
+        if(typesVector == null)
+            typesVector = new ArrayList<>();
 
         ArrayList<Integer> sursInv = new ArrayList<>();
         ArrayList<Integer> subsInv = new ArrayList<>();
@@ -3656,26 +6262,26 @@ public class HolmesDockWindowsTable extends JPanel {
 
         String[] surHeaders = new String[sursInv.size() + 1];
         surHeaders[0] = "---";
-        if (sursInv.size() > 0) {
+        if (!sursInv.isEmpty()) {
             for (int i = 0; i < sursInv.size(); i++) {
                 int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(sursInv.get(i))).size();
-                surHeaders[i + 1] = "Inv. #" + (sursInv.get(i) + 1) + " (size: " + invSize + ")";
+                surHeaders[i + 1] = "Inv. #" + (sursInv.get(i) + 1) + " "+ lang.getText("HDWT_entry230TinvPanel") + invSize + ")";
             }
         }
         String[] subHeaders = new String[subsInv.size() + 1];
         subHeaders[0] = "---";
-        if (subsInv.size() > 0) {
+        if (!subsInv.isEmpty()) {
             for (int i = 0; i < subsInv.size(); i++) {
                 int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(subsInv.get(i))).size();
-                subHeaders[i + 1] = "Inv. #" + (subsInv.get(i) + 1) + " (size: " + invSize + ")";
+                subHeaders[i + 1] = "Inv. #" + (subsInv.get(i) + 1) + " " + lang.getText("HDWT_entry230TinvPanel") + invSize + ")";
             }
         }
         String[] nonsHeaders = new String[nonsInv.size() + 1];
         nonsHeaders[0] = "---";
-        if (nonsInv.size() > 0) {
+        if (!nonsInv.isEmpty()) {
             for (int i = 0; i < nonsInv.size(); i++) {
                 int invSize = InvariantsTools.getSupport(t_invariantsMatrix.get(nonsInv.get(i))).size();
-                nonsHeaders[i + 1] = "Inv. #" + (nonsInv.get(i) + 1) + " (size: " + invSize + ")";
+                nonsHeaders[i + 1] = "Inv. #" + (nonsInv.get(i) + 1) + " " + lang.getText("HDWT_entry230TinvPanel") + invSize + ")";
             }
         }
 
@@ -3686,13 +6292,11 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Zmiana nazwy inwariantu.
-     *
      * @param newName String - nowa nazwa
      */
     private void changeT_invName(String newName) {
         if (selectedT_invIndex == -1)
             return;
-
         overlord.getWorkspace().getProject().accessT_InvDescriptions().set(selectedT_invIndex, newName);
     }
 
@@ -3700,6 +6304,11 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda odpowiedzialna za podświetlanie inwariantów na rysunku sieci.
      */
     private void showT_invariant() {
+        if(t_invariantsMatrix == null)
+            return;
+        if(t_invariantsMatrix.isEmpty()) //nie ma co odświeżać
+            return;
+
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
 
@@ -3708,44 +6317,40 @@ public class HolmesDockWindowsTable extends JPanel {
             if (transitions.size() != invariant.size()) {
                 transitions = overlord.getWorkspace().getProject().getTransitions();
                 if (transitions == null || transitions.size() != invariant.size()) {
-                    overlord.log("Critical error in t-invariants subwindow. "
-                            + "T-invariants size differ from transition set cardinality!", "error", true);
+                    overlord.log(lang.getText("LOGentry00047"), "error", true);
                     return;
                 }
             }
 
             ArrayList<Integer> transMCTvector = overlord.getWorkspace().getProject().getMCTtransIndicesVector();
-            ArrayList<Transition> invTransitions = new ArrayList<>();
             ColorPalette cp = new ColorPalette();
             for (int t = 0; t < invariant.size(); t++) {
                 int fireValue = invariant.get(t);
                 Transition trans = transitions.get(t);
                 if (fireValue == 0) {
-                    trans.qSimDrawed = false;
+                    trans.qSimBoxT.qSimDrawed = false;
                     trans.qSimArcSign = false;
                     continue;
                 }
-
-                invTransitions.add(trans);
+                
                 if (markMCT) {
                     int mctNo = transMCTvector.get(t);
                     if (mctNo == -1) {
-                        trans.setGlowedINV(glowT_inv, fireValue);
+                        trans.drawGraphBoxT.setGlowedINV(glowT_inv, fireValue);
                     } else {
-                        trans.setColorWithNumber(true, cp.getColor(mctNo), false, fireValue, true, "[MCT" + (mctNo + 1) + "]");
-                        trans.setGlowedINV(false, fireValue);
+                        trans.drawGraphBoxT.setColorWithNumber(true, cp.getColor(mctNo), false, fireValue, true, "[MCT" + (mctNo + 1) + "]");
+                        trans.drawGraphBoxT.setGlowedINV(false, fireValue);
                     }
                 } else {
-                    trans.setGlowedINV(glowT_inv, fireValue);
+                    trans.drawGraphBoxT.setGlowedINV(glowT_inv, fireValue);
                 }
 
                 if (invStructure) {
-                    trans.qSimDrawed = true;
+                    trans.qSimBoxT.qSimDrawed = true;
                     trans.qSimArcSign = true;
-                    trans.qSimFillColor = new Color(0, 102, 0);
+                    trans.qSimBoxT.qSimFillColor = new Color(0, 102, 0);
                     for (ElementLocation el : trans.getElementLocations()) {
                         el.qSimArcSign = true;
-                        //el.qSimDrawed = true;
                     }
                 }
             }
@@ -3755,7 +6360,7 @@ public class HolmesDockWindowsTable extends JPanel {
                     for (ElementLocation el : place.getElementLocations()) { //dla każdej lokalizacji miejsca
                         boolean inFound = false;
                         for (Arc inArc : el.getInArcs()) { //sprawdź łuki wejściowe
-                            if (((Transition) inArc.getStartNode()).qSimDrawed) {
+                            if (((Transition) inArc.getStartNode()).qSimBoxT.qSimDrawed) {
                                 inFound = true; //to znaczy, że prowadzi tu łuk z tranzycji inwariantu
                                 break;
                             }
@@ -3765,30 +6370,28 @@ public class HolmesDockWindowsTable extends JPanel {
 
                         for (ElementLocation el2 : place.getElementLocations()) {
                             for (Arc outArc : el2.getOutArcs()) { //sprawdź łuki wyjściowe
-                                if (((Transition) outArc.getEndNode()).qSimDrawed) {
+                                if (((Transition) outArc.getEndNode()).qSimBoxT.qSimDrawed) {
                                     el2.qSimArcSign = true;    //to znaczy, że prowadzi stąd łuk do tranzycji inwariantu
                                     el2.qSimDrawed = true;
                                     el.qSimArcSign = true;
                                     el.qSimDrawed = true;
-                                    place.qSimFillColor = new Color(0, 102, 0);
-                                    place.qSimDrawed = true;
+                                    place.qSimBoxP.qSimFillColor = new Color(0, 102, 0);
+                                    place.qSimBoxP.qSimDrawed = true;
 
-                                    place.qSimTokens = 0; //jakie to płytkie :)
-                                    place.qSimOvalColor = new Color(0, 102, 0);
-                                    place.qSimOvalSize = 0;
+                                    place.qSimBoxP.qSimTokens = 0; //jakie to płytkie :)
+                                    place.qSimBoxP.qSimOvalColor = new Color(0, 102, 0);
+                                    place.qSimBoxP.qSimOvalSize = 0;
                                     break;
                                 }
                             }
                         }
                     }
-
-
                 }
 
                 for (Arc arc : pn.getArcs()) {
                     if (arc.getStartLocation().qSimArcSign && arc.getEndLocation().qSimArcSign) {
-                        arc.qSimForcedArc = true;
-                        arc.qSimForcedColor = new Color(0, 102, 0);
+                        arc.arcQSimBox.qSimForcedArc = true;
+                        arc.arcQSimBox.qSimForcedColor = new Color(0, 102, 0);
                     }
                 }
             }
@@ -3805,16 +6408,16 @@ public class HolmesDockWindowsTable extends JPanel {
 
                 String structText = "";
                 if (timeVector.get(5) > 0) {
-                    structText += "" + timeVector.get(5).intValue() + "xTPN; ";
+                    structText += timeVector.get(5).intValue() + "xTPN; ";
                 }
                 if (timeVector.get(6) > 0) {
-                    structText += "" + timeVector.get(6).intValue() + "xDPN; ";
+                    structText += timeVector.get(6).intValue() + "xDPN; ";
                 }
                 if (timeVector.get(7) > 0) {
-                    structText += "" + timeVector.get(7).intValue() + "xTDPN; ";
+                    structText += timeVector.get(7).intValue() + "xTDPN; ";
                 }
                 if (timeVector.get(4) > 0) {
-                    structText += "" + timeVector.get(4).intValue() + "xPN; ";
+                    structText += timeVector.get(4).intValue() + "xPN; ";
                 }
                 structureLabel.setText(structText);
             }
@@ -3823,47 +6426,34 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     /**
-     * Metoda pokazująca w ilu inwariantach występuje każda tranzycja
+     * Metoda pokazująca w ilu inwariantach występuje każda tranzycja.
      */
     private void showT_invTransFrequency() {
+        if(t_invariantsMatrix == null)
+            return;
+        if(t_invariantsMatrix.isEmpty()) //nie ma co odświeżać
+            return;
+
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
-
-        //ArrayList<Integer> freqVector = InvariantsTools.getFrequency(t_invariantsMatrix, false);
+        
         ArrayList<Integer> freqVector = InvariantsTools.getFrequencyRealInvariants(t_invariantsMatrix, false);
         ArrayList<Transition> transitions_tmp = overlord.getWorkspace().getProject().getTransitions();
-
 
         int max_freq = freqVector.stream()
                 .mapToInt(v -> v)
                 .max().orElseThrow(NoSuchElementException::new);
 
-        if (freqVector == null) {
-            JOptionPane.showMessageDialog(null, "T-invariants data unavailable.", "No t-invariants", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            for (int i = 0; i < freqVector.size(); i++) {
-                Transition realT = transitions_tmp.get(i);
+        for (int i = 0; i < freqVector.size(); i++) {
+            Transition realT = transitions_tmp.get(i);
 
-                if (freqVector.get(i) != 0) {
-                    //realT.setGlowedINV(glowT_inv, freqVector.get(i));
-
-                    double fr = (double) freqVector.get(i) / (double) max_freq;
-                    //double fr = freqVector.get(i) /max_freq;
-
-                    int usuwane = (int) ((1 - fr) * 255);
-                    //System.out.println(usuwane);
-
-
-                    //int[] color = getRGB(usuwane);
-                    //new Color(color[0],color[1],color[2]
-
-                    realT.setColorWithNumber(true, getDiscColor(fr), true, freqVector.get(i), false, "");
-                    System.out.println(realT.getName() + " trans \t" + realT.getID() + " \t " + fr + " \t " + freqVector.get(i));
-
-                } else {
-                    realT.setColorWithNumber(true, Color.gray, true, 0, false, "");
-                    System.out.println(realT.getName() + " trans \t" + realT.getID() + " \t " + 0 + " \t " + 0);
-                }
+            if (freqVector.get(i) != 0) {
+                double fr = (double) freqVector.get(i) / (double) max_freq;
+                realT.drawGraphBoxT.setColorWithNumber(true, getDiscColor(fr), true, freqVector.get(i), false, "");
+                //System.out.println(realT.getName() + " trans \t" + realT.getID() + " \t " + fr + " \t " + freqVector.get(i));
+            } else {
+                realT.drawGraphBoxT.setColorWithNumber(true, Color.gray, true, 0, false, "");
+                //System.out.println(realT.getName() + " trans \t" + realT.getID() + " \t " + 0 + " \t " + 0);
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -3916,23 +6506,30 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda pomocnicza do zaznaczania tranzycji nie pokrytych inwariantami.
      */
     private void showDeadT_inv() {
+        if (t_invariantsMatrix == null)
+            return;
+        if (t_invariantsMatrix.isEmpty()) //nie ma co odświeżać
+            return;
+
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
 
-        HolmesNotepad note = new HolmesNotepad(640, 480);
-        note.addTextLineNL("Transitions not covered by t-invariants:", "text");
+        HolmesNotepad note = new HolmesNotepad(700, 480);
+        note.addTextLineNL(lang.getText("LOGentry00048"), "text");
+        note.addTextLineNL(lang.getText("LOGentry00049"), "text");
+        note.addTextLineNL("", "text");
 
         ArrayList<Integer> deadTrans = InvariantsTools.detectUncovered(t_invariantsMatrix, true);
         ArrayList<Transition> transitions_tmp = overlord.getWorkspace().getProject().getTransitions();
         int counter = 0;
         if (deadTrans == null) {
-            JOptionPane.showMessageDialog(null, "T-invariants data unavailable.", "No t-invariants", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry231TinvPanel"), lang.getText("HDWT_entry231TinvPanel_t"), JOptionPane.INFORMATION_MESSAGE);
         } else {
             for (int deadOne : deadTrans) {
                 Transition realT = transitions_tmp.get(deadOne);
                 String t1 = Tools.setToSize("t" + deadOne, 5, false);
                 note.addTextLineNL(t1 + " | " + realT.getName(), "text");
-                realT.setGlowedINV(true, 0);
+                realT.drawGraphBoxT.setGlowedINV(true, 0);
                 counter++;
             }
         }
@@ -3942,9 +6539,58 @@ public class HolmesDockWindowsTable extends JPanel {
         } else {
             note.dispose();
         }
-
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
     }
+
+    /**
+     * Metoda czyści podokno t-inwariantów, ponieważ chwilowo nie ma danych.
+     */
+    public void cleanTINVsubwindowFields() {
+        t_invariantsMatrix = new ArrayList<>();
+
+        String[] invariantHeaders = new String[3];
+        invariantHeaders[0] = "---";
+        invariantHeaders[1] = lang.getText("HDWT_entry214TinvPanel"); //null transitions
+        invariantHeaders[2] = lang.getText("HDWT_entry215TinvPanel"); //inv/trans frequency
+
+        doNotUpdate = true;
+        chooseInvBox.removeAllItems();
+        chooseInvBox.addItem(invariantHeaders[0]);
+        chooseInvBox.addItem(invariantHeaders[1]);
+        chooseInvBox.addItem(invariantHeaders[2]);
+        chooseInvBox.setSelectedIndex(0);
+
+        chooseSurInvBox.removeAllItems();
+        chooseSubInvBox.removeAllItems();
+        chooseNoneInvBox.removeAllItems();
+        doNotUpdate = false;
+
+        t_invNameField.setText("");
+        minTimeLabel.setText("---");
+        avgTimeLabel.setText("---");
+        maxTimeLabel.setText("---");
+        structureLabel.setText("---");
+    }
+
+    /**
+     * Metoda pomocnicza konstruktora odpowiedzialna za wypełnienie podokna informacji o t-inwariantach sieci.
+     * @param tInvariants ArrayList[ArrayList[Integer]] - macierz inwariantów
+     */
+    public void setT_invariants(ArrayList<ArrayList<Integer>> tInvariants) {
+        t_invariantsMatrix = tInvariants;
+    }
+
+    /**
+     * Metoda pobiera aktualne dane o p-invariantach. A także o miejsach i tranzycja sieci.
+     */
+    private void refreshTINVwindowData() {
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        places = overlord.getWorkspace().getProject().getPlaces();
+        t_invariantsMatrix = overlord.getWorkspace().getProject().getT_InvMatrix();
+        if(t_invariantsMatrix == null)
+            t_invariantsMatrix = new ArrayList<>();
+    }
+
 
     //**************************************************************************************
     //*********************************                  ***********************************
@@ -3954,41 +6600,40 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda pomocnicza konstruktora odpowiedzialna za wypełnienie podokna informacji o p-inwariantach sieci.
-     *
      * @param pInvData ArrayList[ArrayList[Integer]] - macierz inwariantów
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createP_invSubWindow(ArrayList<ArrayList<Integer>> pInvData) {
         doNotUpdate = true;
-        if (pInvData == null || pInvData.size() == 0) {
-            return;
-        } else {
-            mode = pINVARIANTS;
-            p_invariantsMatrix = pInvData;
-            places = overlord.getWorkspace().getProject().getPlaces();
-            overlord.reset.setP_invariantsStatus(true);
-        }
+        initiateContainers();
+
+        mode = pINVARIANTS;
+        p_invariantsMatrix = new ArrayList<>();
+        places = overlord.getWorkspace().getProject().getPlaces();
+        transitions = overlord.getWorkspace().getProject().getTransitions();
 
         int colA_posX = 10;
         int colB_posX = 100;
         int positionY = 10;
-        initiateContainers();
 
-        JLabel chooseInvLabel = new JLabel("P-invariant: ");
+        JLabel chooseInvLabel = new JLabel(lang.getText("HDWT_entry232PinvPanel")); //p-invariant: 
         chooseInvLabel.setBounds(colA_posX, positionY, 80, 20);
         components.add(chooseInvLabel);
 
-        String[] invariantHeaders = new String[p_invariantsMatrix.size() + 3];
+        String[] invariantHeaders = new String[3];
         invariantHeaders[0] = "---";
-        for (int i = 0; i < p_invariantsMatrix.size(); i++) {
-            int invSize = InvariantsTools.getSupport(p_invariantsMatrix.get(i)).size();
-            invariantHeaders[i + 1] = "Inv. #" + (i + 1) + " (size: " + invSize + ")";
-        }
-        invariantHeaders[invariantHeaders.length - 2] = "null places";
-        invariantHeaders[invariantHeaders.length - 1] = "inv/places frequency";
+        invariantHeaders[1] = lang.getText("HDWT_entry233PinvPanel"); //null places
+        invariantHeaders[2] = lang.getText("HDWT_entry234PinvPanel"); //inv/places frequency
 
-        JComboBox<String> chooseInvBox = new JComboBox<>(invariantHeaders);
-        chooseInvBox.setBounds(colB_posX, positionY, 150, 20);
-        chooseInvBox.addActionListener(actionEvent -> {
+        choosePInvBox = new JComboBox<>(invariantHeaders);
+        choosePInvBox.setBounds(colB_posX, positionY, 150, 20);
+        choosePInvBox.addActionListener(actionEvent -> {
+
+            refreshPINVwindowData();
+            if(p_invariantsMatrix.isEmpty()) { //nie ma co pokazywać
+                return;
+            }
+
             @SuppressWarnings("unchecked")
             JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             int items = comboBox.getItemCount();
@@ -4006,16 +6651,26 @@ public class HolmesDockWindowsTable extends JPanel {
                 showP_invariant();
             }
         });
-        components.add(chooseInvBox);
+        components.add(choosePInvBox);
 
         JButton showDetailsButton = new JButton();
-        showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
+        showDetailsButton.setText(lang.getText("HDWT_entry235PinvPanel")); //Show details
         showDetailsButton.setIcon(Tools.getResIcon32("/icons/menu/menu_invViewer.png"));
-        showDetailsButton.setBounds(colA_posX, positionY += 30, 120, 32);
+        showDetailsButton.setBounds(colA_posX, positionY += 30, 120, 40);
         showDetailsButton.addActionListener(actionEvent -> {
-            if (selectedP_invIndex == -1)
+            if(p_invariantsMatrix == null)
                 return;
-            //new HolmesInvariantsViewer(selectedT_invIndex);
+            if(p_invariantsMatrix.isEmpty()) //nie ma co pokazywać
+                return;
+
+            if (selectedP_invIndex == -1) {
+                return;
+            }
+            try {
+                new HolmesInvariantsViewer(selectedT_invIndex);
+            } catch (Exception ex) {
+                overlord.log(lang.getText("LOGentry00050exception")+"\n"+ex.getMessage(), "error", true);
+            }
         });
         components.add(showDetailsButton);
 
@@ -4032,21 +6687,21 @@ public class HolmesDockWindowsTable extends JPanel {
         JPanel descPanel = new JPanel();
         descPanel.setLayout(new BorderLayout());
         descPanel.add(new JScrollPane(p_invNameField), BorderLayout.CENTER);
-        descPanel.setBounds(colA_posX, positionY += 40, 250, 80);
+        descPanel.setBounds(colA_posX, positionY += 50, 250, 80);
         components.add(descPanel);
 
         doNotUpdate = false;
+
         panel.setLayout(null);
-        for (JComponent component : components) panel.add(component);
+        for (JComponent component : components)
+            panel.add(component);
         panel.setOpaque(true);
         panel.repaint();
-        panel.setVisible(true);
         add(panel);
     }
 
     /**
      * Zmiana nazwy p-inwariantu.
-     *
      * @param newName String - nowa nazwa
      */
     private void changeP_invName(String newName) {
@@ -4068,8 +6723,7 @@ public class HolmesDockWindowsTable extends JPanel {
             if (places.size() != invariant.size()) {
                 places = overlord.getWorkspace().getProject().getPlaces();
                 if (places == null || places.size() != invariant.size()) {
-                    overlord.log("Critical error in p-invariants subwindow. "
-                            + "P-invariants size differ from transition set cardinality!", "error", true);
+                    overlord.log(lang.getText("LOGentry00051"), "error", true);
                     return;
                 }
             }
@@ -4079,7 +6733,7 @@ public class HolmesDockWindowsTable extends JPanel {
                 if (value == 0)
                     continue;
 
-                places.get(p).setColorWithNumber(true, EditorResources.glowPlaceColorLevelBlue, false, -1, false, "");
+                places.get(p).drawGraphBoxP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelBlue, false, -1, false, "");
             }
             //name field:
             String name = overlord.getWorkspace().getProject().accessP_InvDescriptions().get(selectedP_invIndex);
@@ -4099,41 +6753,42 @@ public class HolmesDockWindowsTable extends JPanel {
         ArrayList<Integer> freqVector = InvariantsTools.getFrequency(p_invariantsMatrix, false);
         ArrayList<Place> places_tmp = pn.getPlaces();
 
-        if (freqVector == null) {
-            JOptionPane.showMessageDialog(null, "P-invariants data unavailable.", "No p-invariants", JOptionPane.INFORMATION_MESSAGE);
+        if (freqVector.isEmpty()) {
+            JOptionPane.showMessageDialog(null, lang.getText("HWDT_entry236"), lang.getText("HWDT_entry236_t"), JOptionPane.INFORMATION_MESSAGE);
         } else {
             for (int i = 0; i < freqVector.size(); i++) {
                 Place realP = places_tmp.get(i);
                 if (freqVector.get(i) != 0) {
-                    realP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelBlue, true, freqVector.get(i), false, "");
+                    realP.drawGraphBoxP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelBlue, true, freqVector.get(i), false, "");
                 } else
-                    realP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelRed, true, 0, false, "");
+                    realP.drawGraphBoxP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelRed, true, 0, false, "");
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
     }
 
     /**
-     * Metoda pomocnicza do zaznaczania tranzycji nie pokrytych inwariantami.
+     * Metoda pomocnicza do zaznaczania miejsc nie pokrytych inwariantami.
      */
     private void showDeadP_inv() {
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
 
         HolmesNotepad note = new HolmesNotepad(640, 480);
-        note.addTextLineNL("Places not covered by p-invariants:", "text");
+        note.addTextLineNL(lang.getText("HDWT_entry237PinvPanel"), "text");
 
         ArrayList<Integer> deadPlaces = InvariantsTools.detectUncovered(p_invariantsMatrix, false);
         ArrayList<Place> places_tmp = overlord.getWorkspace().getProject().getPlaces();
         int counter = 0;
         if (deadPlaces == null) {
-            JOptionPane.showMessageDialog(null, "P-invariants data unavailable.", "No p-invariants", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry237PinvPanel_1")
+                    , lang.getText("HDWT_entry237PinvPanel_1t"), JOptionPane.INFORMATION_MESSAGE);
         } else {
             for (int deadOne : deadPlaces) {
                 Place realP = places_tmp.get(deadOne);
                 String p1 = Tools.setToSize("p" + deadOne, 5, false);
                 note.addTextLineNL(p1 + " | " + realP.getName(), "text");
-                realP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelRed, false, -1, false, "");
+                realP.drawGraphBoxP.setColorWithNumber(true, EditorResources.glowPlaceColorLevelRed, false, -1, false, "");
                 //realT.setGlowedINV(true, 0);
                 counter++;
             }
@@ -4148,6 +6803,72 @@ public class HolmesDockWindowsTable extends JPanel {
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
     }
 
+    /**
+     * Metoda odświeża zawartość comboBoxów dla p-invariantów.
+     */
+    public void refreshP_invComboBox() {
+        if (p_invariantsMatrix == null)
+            return;
+
+        String[] invariantHeaders = new String[p_invariantsMatrix.size() + 3];
+        invariantHeaders[0] = "---";
+        for (int i = 0; i < p_invariantsMatrix.size(); i++) {
+            int invSize = InvariantsTools.getSupport(p_invariantsMatrix.get(i)).size();
+            invariantHeaders[i + 1] = "Inv. #" + (i + 1) + " " + lang.getText("HDWT_entry238PinvPanel") + invSize + ")"; //size: 
+        }
+        invariantHeaders[invariantHeaders.length - 2] = lang.getText("HDWT_entry233PinvPanel");  //null places
+        invariantHeaders[invariantHeaders.length - 1] = lang.getText("HDWT_entry234PinvPanel"); //inv/places frequency
+
+        doNotUpdate = true;
+        choosePInvBox.removeAllItems();
+        for (String header : invariantHeaders) {
+            choosePInvBox.addItem(header);
+        }
+        choosePInvBox.setSelectedIndex(0);
+        doNotUpdate = false;
+    }
+
+    /**
+     * Metoda pobiera aktualne dane o p-invariantach. A także o miejsach i tranzycja sieci.
+     */
+    private void refreshPINVwindowData() {
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        places = overlord.getWorkspace().getProject().getPlaces();
+        p_invariantsMatrix = overlord.getWorkspace().getProject().getP_InvMatrix();
+        if(p_invariantsMatrix == null)
+            p_invariantsMatrix = new ArrayList<>();
+    }
+
+    /**
+     * Metoda ustawia macierz p-inwariantów na podaną w parametrze.
+     * @param pInvData ArrayList[ArrayList[Integer]] - macierz p-inwariantów
+     */
+    public void setP_invariants(ArrayList<ArrayList<Integer>> pInvData) {
+        p_invariantsMatrix = pInvData;
+    }
+
+    /**
+     * Metoda czyści podokno p-inwariantów, ponieważ chwilowo nie ma danych.
+     */
+    public void cleanPINVsubwindowFields() {
+        p_invariantsMatrix = new ArrayList<>();
+
+        String[] invariantHeaders = new String[3];
+        invariantHeaders[0] = "---";
+        invariantHeaders[1] = lang.getText("HDWT_entry233PinvPanel"); //null places
+        invariantHeaders[2] = lang.getText("HDWT_entry234PinvPanel"); //inv/places frequency
+
+        doNotUpdate = true;
+        choosePInvBox.removeAllItems();
+        choosePInvBox.addItem(invariantHeaders[0]);
+        choosePInvBox.addItem(invariantHeaders[1]);
+        choosePInvBox.addItem(invariantHeaders[2]);
+        choosePInvBox.setSelectedIndex(0);
+
+        doNotUpdate = false;
+        p_invNameField.setText("");
+    }
+
     //**************************************************************************************
     //*********************************                  ***********************************
     //*********************************       MCT        ***********************************
@@ -4159,46 +6880,35 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param mct ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("UnusedAssignment")
     private void createMCTSubWindow(ArrayList<ArrayList<Transition>> mct) {
+        initiateContainers();
+        mode = MCT;
+        //overlord.reset.setMCTStatus(true);
 
-
-        if (mct == null || mct.size() == 0) {
-            return;
-            //błędne wywołanie
-        } else {
-            mode = MCT;
-            overlord.reset.setMCTStatus(true);
-        }
         doNotUpdate = true;
 
         int colA_posX = 10;
         int colB_posX = 100;
         int positionY = 10;
 
-        initiateContainers();
-        this.mctGroups = mct;
+        this.mctGroups = new ArrayList<>();
 
-        String[] mctHeaders = new String[mctGroups.size() + 2];
+        String[] mctHeaders = new String[1];
         mctHeaders[0] = "---";
-        for (int i = 0; i < mctGroups.size(); i++) {
-            if (i < mctGroups.size() - 1)
-                mctHeaders[i + 1] = "MCT #" + (i + 1) + " (size: " + mctGroups.get(i).size() + ")";
-            else {
-                mctHeaders[i + 1] = "No-MCT transitions";
-                mctHeaders[i + 2] = "Show all";
-            }
-        }
 
         // getting the data
-        JLabel chooseMctLabel = new JLabel("Choose MCT: ");
-        chooseMctLabel.setBounds(colA_posX, positionY, 80, 20);
+        JLabel chooseMctLabel = new JLabel(lang.getText("HDWT_entry239MCTPanel")); //Choose MCT:
+        chooseMctLabel.setBounds(colA_posX, positionY, 100, 20);
         components.add(chooseMctLabel);
 
-        JComboBox<String> chooseMctBox = new JComboBox<>(mctHeaders);
-        chooseMctBox.setBounds(colB_posX, positionY, 150, 20);
+        chooseMctBox = new JComboBox<>(mctHeaders);
+        chooseMctBox.setBounds(colB_posX+15, positionY, 150, 20);
         chooseMctBox.addActionListener(actionEvent -> {
-            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            if(mctGroups.isEmpty())
+                return;
+
+            JComboBox<?> comboBox = (JComboBox<?>) actionEvent.getSource();
             int selected = comboBox.getSelectedIndex();
             if (selected == 0) {
                 selectedMCTindex = -1;
@@ -4217,13 +6927,15 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(chooseMctBox);
 
         JButton showDetailsButton = new JButton();
-        showDetailsButton.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show<br>&nbsp;&nbsp;&nbsp;&nbsp;details</html>");
+        showDetailsButton.setText(lang.getText("HDWT_entry240MCTPanel")); //Show details
         showDetailsButton.setIcon(Tools.getResIcon32("/icons/invViewer/showInNotepad.png"));
         showDetailsButton.setBounds(colA_posX, positionY += 30, 120, 32);
-        showDetailsButton.addActionListener(actionEvent -> showMCTNotepad());
+        showDetailsButton.addActionListener(actionEvent -> {
+            showMCTNotepad();
+        });
         components.add(showDetailsButton);
 
-        JCheckBox glowCheckBox = new JCheckBox("Different colors");
+        JCheckBox glowCheckBox = new JCheckBox(lang.getText("HDWT_entry241MCTPanel")); //Different colors
         glowCheckBox.setBounds(colA_posX + 130, positionY - 5, 120, 20);
         glowCheckBox.setSelected(false);
         glowCheckBox.addActionListener(actionEvent -> {
@@ -4235,28 +6947,6 @@ public class HolmesDockWindowsTable extends JPanel {
                 showMct();
         });
         components.add(glowCheckBox);
-
-		/*
-		DefaultFormatter format = new DefaultFormatter();
-	    format.setOverwriteMode(false);
-	    MCTnameField = new JFormattedTextField(format);
-	    MCTnameField.setBounds(colA_posX, positionY += 40, 250, 20);
-	    MCTnameField.setValue("");
-	    MCTnameField.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				if(doNotUpdate)
-					return;
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					field.commitEdit();
-				} catch (ParseException ex) {
-				}
-				String newName = (String) field.getText();
-				changeMCTname(newName);
-			}
-		});
-		components.add(MCTnameField);
-		*/
 
         MCTnameField = new JTextArea();
         MCTnameField.setLineWrap(true);
@@ -4273,21 +6963,63 @@ public class HolmesDockWindowsTable extends JPanel {
         descPanel.add(new JScrollPane(MCTnameField), BorderLayout.CENTER);
         descPanel.setBounds(colA_posX, positionY += 40, 250, 80);
         components.add(descPanel);
-
-
+        
         doNotUpdate = false;
 
         panel.setLayout(null);
-        for (JComponent component : components) panel.add(component);
+        for (JComponent component : components)
+            panel.add(component);
         panel.setOpaque(true);
         panel.repaint();
-        panel.setVisible(true);
         add(panel);
     }
 
     /**
+     * Metoda czyści podokno MCT, ponieważ chwilowo nie ma danych.
+     */
+    public void cleanMCtsubwindowFields() {
+        mctGroups = new ArrayList<>();
+        selectedMCTindex = -1;
+        allMCTselected = false;
+        MCTnameField.setText("");
+        doNotUpdate = true;
+        chooseMctBox.setSelectedIndex(0);
+        doNotUpdate = false;
+    }
+
+    /**
+     * Metoda pomocnicza konstruktora odpowiedzialna za wypełnienie podokna informacji o zbiorach MCT sieci.
+     * @param mct ArrayList[ArrayList[Transition]] - macierz zbiorów MCT
+     */
+    public void refreshMCTComboBox(ArrayList<ArrayList<Transition>> mct) {
+        this.mctGroups = mct;
+        if(mctGroups == null) //nie ma co pokazywać
+            return;
+        if(mctGroups.isEmpty())
+            return;
+        overlord.reset.setMCTStatus(true);
+
+        String[] mctHeaders = new String[mctGroups.size() + 2];
+        mctHeaders[0] = "---";
+        for (int i = 0; i < mctGroups.size(); i++) {
+            if (i < mctGroups.size() - 1)
+                mctHeaders[i + 1] = "MCT #" + (i + 1) + " " + lang.getText("HDWT_entry242MCTPanel") + mctGroups.get(i).size() + ")"; // (size: 
+            else {
+                mctHeaders[i + 1] = lang.getText("HDWT_entry243MCTPanel"); //No-MCT transitions
+                mctHeaders[i + 2] = lang.getText("HDWT_entry244MCTPanel"); //Show all
+            }
+        }
+        doNotUpdate = true;
+        chooseMctBox.removeAllItems();
+        for (String header : mctHeaders) {
+            chooseMctBox.addItem(header);
+        }
+        chooseMctBox.setSelectedIndex(0);
+        doNotUpdate = false;
+    }
+
+    /**
      * Metoda zmiany nazwy zbioru MCT.
-     *
      * @param newName String - nowa nazwa
      */
     private void changeMCTname(String newName) {
@@ -4310,9 +7042,9 @@ public class HolmesDockWindowsTable extends JPanel {
         ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
         int size = mct.size();
         if (selectedMCTindex == mctGroups.size() - 1) {
-            note.addTextLineNL("Trivial MCT-transitions (" + size + "):", "text");
+            note.addTextLineNL(lang.getText("HDWT_entry245MCTPanel") + size + "):", "text"); //Trivial MCT-transitions (
         } else {
-            note.addTextLineNL("Transitions (" + size + ") of MCT #" + (selectedMCTindex + 1), "text");
+            note.addTextLineNL(lang.getText("HDWT_entry246MCTPanel") + size + lang.getText("HDWT_entry247MCTPanel") + (selectedMCTindex + 1), "text"); //Transitions (  ) of MCT #
         }
 
         for (Transition transition : mct) {
@@ -4320,7 +7052,6 @@ public class HolmesDockWindowsTable extends JPanel {
             String t1 = Tools.setToSize("t" + globalIndex, 5, false);
             note.addTextLineNL(t1 + transition.getName(), "text");
         }
-
         note.setCaretFirstLine();
         note.setVisible(true);
     }
@@ -4329,6 +7060,9 @@ public class HolmesDockWindowsTable extends JPanel {
      * Metoda odpowiedzialna za pokazanie szczegółów wybranego zbioru MCT.
      */
     private void showMct() {
+        if(mctGroups == null)
+            return;
+
         PetriNet pn = overlord.getWorkspace().getProject();
         pn.resetNetColors();
 
@@ -4340,12 +7074,12 @@ public class HolmesDockWindowsTable extends JPanel {
         ColorPalette cp = new ColorPalette();
         for (Transition transition : mct) {
             if (!colorMCT) {
-                transition.setGlowed_MTC(true);
+                transition.drawGraphBoxT.setGlowed_MTC(true);
             } else {
                 if (selectedMCTindex == size - 1)
-                    transition.setColorWithNumber(true, cp.getColor(selectedMCTindex), false, 0, true, "[trivial]");
+                    transition.drawGraphBoxT.setColorWithNumber(true, cp.getColor(selectedMCTindex), false, 0, true, "[trivial]");
                 else
-                    transition.setColorWithNumber(true, cp.getColor(selectedMCTindex), false, 0, true, "[MCT" + (selectedMCTindex + 1) + "]");
+                    transition.drawGraphBoxT.setColorWithNumber(true, cp.getColor(selectedMCTindex), false, 0, true, "[MCT" + (selectedMCTindex + 1) + "]");
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -4368,9 +7102,9 @@ public class HolmesDockWindowsTable extends JPanel {
             ArrayList<Transition> mct = mctGroups.get(m);
             for (Transition transition : mct) {
                 if (overlord.getSettingsManager().getValue("mctNameShow").equals("1"))
-                    transition.setColorWithNumber(true, currentColor, false, m, true, "MCT #" + (m + 1) + " (" + mct.size() + ")");
+                    transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "MCT #" + (m + 1) + " (" + mct.size() + ")");
                 else
-                    transition.setColorWithNumber(true, currentColor, false, m, true, "");
+                    transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "");
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -4387,10 +7121,11 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param clusteringData int - w zależności od tego, tworzy dane okno
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createClustersSubWindow(ClusterDataPackage clusteringData) {
         initiateContainers();
         doNotUpdate = true;
-        if (clusteringData == null || clusteringData.dataMatrix.size() == 0) {
+        if (clusteringData == null || clusteringData.dataMatrix.isEmpty()) {
             return;
         } else {
             mode = CLUSTERS;
@@ -4403,28 +7138,28 @@ public class HolmesDockWindowsTable extends JPanel {
         int positionY = 10;
         initiateContainers();
 
-        JLabel label1 = new JLabel("Algorithm: ");
+        JLabel label1 = new JLabel(lang.getText("HDWT_entry248ClusterPanel")); //Algorithm: 
         label1.setBounds(colA_posX, positionY, 80, 20);
         components.add(label1);
         JLabel label2 = new JLabel(clusterColorsData.algorithm);
         label2.setBounds(colB_posX, positionY, 80, 20);
         components.add(label2);
         positionY += 20;
-        JLabel label3 = new JLabel("Metric: ");
+        JLabel label3 = new JLabel(lang.getText("HDWT_entry249ClusterPanel")); //Metric:
         label3.setBounds(colA_posX, positionY, 80, 20);
         components.add(label3);
         JLabel label4 = new JLabel(clusterColorsData.metric);
         label4.setBounds(colB_posX, positionY, 80, 20);
         components.add(label4);
         positionY += 20;
-        JLabel label5 = new JLabel("Clusters: ");
+        JLabel label5 = new JLabel(lang.getText("HDWT_entry250ClusterPanel"));   //Clusters: 
         label5.setBounds(colA_posX, positionY, 80, 20);
         components.add(label5);
         JLabel label6 = new JLabel(clusterColorsData.clNumber + "");
         label6.setBounds(colB_posX, positionY, 80, 20);
         components.add(label6);
 
-        JLabel chooseInvLabel = new JLabel("Selected: ");
+        JLabel chooseInvLabel = new JLabel(lang.getText("HDWT_entry251ClusterPanel")); //Selected:
         chooseInvLabel.setBounds(colA_posX, positionY += 20, 80, 20);
         components.add(chooseInvLabel);
 
@@ -4432,8 +7167,8 @@ public class HolmesDockWindowsTable extends JPanel {
         String[] clustersHeaders = new String[clusterColorsData.dataMatrix.size() + 1];
         clustersHeaders[0] = "---";
         for (int i = 0; i < clusterColorsData.dataMatrix.size(); i++) {
-            clustersHeaders[i + 1] = "Cluster " + (i + 1)
-                    + " (size: " + clusterColorsData.clSize.get(i) + " inv.)";
+            clustersHeaders[i + 1] = lang.getText("HDWT_entry252ClusterPanel") + " " + (i + 1) //Cluster 
+                    + " " + lang.getText("HDWT_entry253ClusterPanel") + " " + clusterColorsData.clSize.get(i) + " inv.)"; //(size: 
         }
 
         chooseCluster = new JComboBox<>(clustersHeaders);
@@ -4453,7 +7188,7 @@ public class HolmesDockWindowsTable extends JPanel {
         });
         components.add(chooseCluster);
 
-        JLabel mssLabel1 = new JLabel("MSS value:");
+        JLabel mssLabel1 = new JLabel(lang.getText("HDWT_entry254ClusterPanel")); //MSS value:
         mssLabel1.setBounds(colA_posX, positionY += 20, 80, 20);
         components.add(mssLabel1);
 
@@ -4462,7 +7197,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(mssValueLabel);
 
         //SPOSÓB WYŚWIETLANIA - TRANZYCJE CZY ODPALENIA
-        JCheckBox transFiringMode = new JCheckBox("Show transition average firing");
+        JCheckBox transFiringMode = new JCheckBox(lang.getText("HDWT_entry255ClusterPanel")); //Show transition average firing
         transFiringMode.setBounds(colA_posX - 3, positionY += 20, 220, 20);
         transFiringMode.setSelected(false);
         transFiringMode.addActionListener(actionEvent -> {
@@ -4470,11 +7205,10 @@ public class HolmesDockWindowsTable extends JPanel {
             clusterColorsData.showFirings = abstractButton.getModel().isSelected();
             int selected = chooseCluster.getSelectedIndex();
             chooseCluster.setSelectedIndex(selected);
-            //chooseCluster.setSelectedItem(selected);
         });
         components.add(transFiringMode);
 
-        JCheckBox scaleMode = new JCheckBox("Show scaled colors");
+        JCheckBox scaleMode = new JCheckBox(lang.getText("HDWT_entry256ClusterPanel")); //Show scaled colors
         scaleMode.setBounds(colA_posX - 3, positionY += 20, 170, 20);
         scaleMode.setSelected(false);
         scaleMode.addActionListener(actionEvent -> {
@@ -4482,11 +7216,10 @@ public class HolmesDockWindowsTable extends JPanel {
             clusterColorsData.showScale = abstractButton.getModel().isSelected();
             int selected = chooseCluster.getSelectedIndex();
             chooseCluster.setSelectedIndex(selected);
-            //chooseCluster.setSelectedItem(selected);
         });
         components.add(scaleMode);
 
-        JCheckBox mctMode = new JCheckBox("Show MCT sets");
+        JCheckBox mctMode = new JCheckBox(lang.getText("HDWT_entry257ClusterPanel")); //Show MCT sets
         mctMode.setBounds(colA_posX - 3, positionY += 20, 120, 20);
         mctMode.setSelected(false);
         mctMode.addActionListener(actionEvent -> {
@@ -4498,14 +7231,14 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(mctMode);
 
         JButton showDetailsButton = new JButton();
-        showDetailsButton.setText("<html>&nbsp;Show&nbsp;<br>details</html>");
+        showDetailsButton.setText(lang.getText("HDWT_entry258ClusterPanel"));  //Show details
         showDetailsButton.setIcon(Tools.getResIcon22("/icons/clustWindow/showInfo.png"));
         showDetailsButton.setBounds(colA_posX, positionY += 30, 130, 30);
         showDetailsButton.addActionListener(actionEvent -> showClustersNotepad());
         components.add(showDetailsButton);
 
         JButton screenshotsButton = new JButton();
-        screenshotsButton.setText("<html>&nbsp;Export&nbsp;<br>pictures</html>");
+        screenshotsButton.setText(lang.getText("HDWT_entry259ClusterPanel")); //Export pictures
         screenshotsButton.setIcon(Tools.getResIcon22("/icons/clustWindow/exportPictures.png"));
         screenshotsButton.setBounds(colA_posX + 135, positionY, 130, 30);
         screenshotsButton.addActionListener(actionEvent -> dropClustersToFiles());
@@ -4517,14 +7250,14 @@ public class HolmesDockWindowsTable extends JPanel {
         progressBar.setMinimum(0);
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
-        Border border = BorderFactory.createTitledBorder("Completed");
+        Border border = BorderFactory.createTitledBorder(lang.getText("HDWT_entry260ClusterPanel")); //Completed
         progressBar.setBorder(border);
         progressBar.setVisible(false);
         progressBar.setForeground(Color.RED);
         components.add(progressBar);
 
         //inwarianty w ramach klastra:
-        JLabel chooseClustInvLabel = new JLabel("Cluster inv.:");
+        JLabel chooseClustInvLabel = new JLabel(lang.getText("HDWT_entry261ClusterPanel")); //Cluster inv.:
         chooseClustInvLabel.setBounds(colA_posX, positionY += 40, 80, 20);
         components.add(chooseClustInvLabel);
 
@@ -4548,14 +7281,14 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(chooseClusterInv);
 
         JButton showTimeDetailsButton = new JButton();
-        showTimeDetailsButton.setText("<html>&nbsp;Time&nbsp;<br>details</html>");
+        showTimeDetailsButton.setText(lang.getText("HDWT_entry262ClusterPanel")); //Time details
         showTimeDetailsButton.setIcon(Tools.getResIcon22("/icons/clustWindow/showInfo.png"));
         showTimeDetailsButton.setBounds(colA_posX, positionY += 30, 130, 30);
         showTimeDetailsButton.addActionListener(actionEvent -> showTimeDataNotepad());
         components.add(showTimeDetailsButton);
 
         JButton showClustersDataButton = new JButton();
-        showClustersDataButton.setText("<html>&nbsp;Clusters&nbsp;<br>details</html>");
+        showClustersDataButton.setText(lang.getText("HDWT_entry263ClusterPanel")); //Cluster details
         showClustersDataButton.setIcon(Tools.getResIcon22("/icons/clustWindow/showInfo.png"));
         showClustersDataButton.setBounds(colA_posX, positionY += 35, 130, 30);
         showClustersDataButton.addActionListener(actionEvent -> showClustersData());
@@ -4574,10 +7307,10 @@ public class HolmesDockWindowsTable extends JPanel {
         if (selectedClusterIndex == -1)
             return;
 
-        PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+        PetriNet pn = overlord.getWorkspace().getProject();
         ArrayList<Transition> transitions = pn.getTransitions();
         ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
-        if (invMatrix == null || invMatrix.size() == 0)
+        if (invMatrix == null || invMatrix.isEmpty())
             return;
 
         ArrayList<Integer> clInvariants = clusterColorsData.clustersInvariants.get(selectedClusterIndex);
@@ -4591,10 +7324,11 @@ public class HolmesDockWindowsTable extends JPanel {
         HolmesNotepad note = new HolmesNotepad(800, 600);
 
         note.addTextLineNL("", "text");
-        note.addTextLineNL("Cluster: " + (selectedClusterIndex + 1) + " (" + clusterColorsData.clSize.get(selectedClusterIndex) + " inv.) alg.: " + clusterColorsData.algorithm
-                + " metric: " + clusterColorsData.metric, "text");
+        note.addTextLineNL(lang.getText("HDWT_entry264ClusterPanel") + " " + (selectedClusterIndex + 1) + " (" + clusterColorsData.clSize.get(selectedClusterIndex) 
+                + " " + lang.getText("HDWT_entry265ClusterPanel") + " " + clusterColorsData.algorithm
+                + " " + lang.getText("HDWT_entry266ClusterPanel") + clusterColorsData.metric, "text"); //Cluster: ; inv.) alg.:  ;  metric:
         note.addTextLineNL("", "text");
-        note.addTextLineNL("T-invariants and their time values:", "text");
+        note.addTextLineNL(lang.getText("HDWT_entry267ClusterPanel"), "text"); //T-invariants and their time values:
 
         note.addTextLineNL(" No.           Min.         Avg.          Max.    PN   TPN  DPN TDPN", "text");
         for (int i = 0; i < invSubMatrix.size(); i++) {
@@ -4629,20 +7363,20 @@ public class HolmesDockWindowsTable extends JPanel {
         for (double avg : avgStatsVector) {
             avgMean += avg;
         }
-        avgMean /= (double) avgStatsVector.size();
+        avgMean /= avgStatsVector.size();
 
         double variance = 0;
         for (double avg : avgStatsVector) {
             variance += (avgMean - avg) * (avgMean - avg);
         }
-        variance /= (double) avgStatsVector.size();
+        variance /= avgStatsVector.size();
 
         double stdDev = Math.sqrt(variance);
 
         note.addTextLineNL("", "text");
-        note.addTextLineNL("Mean of average times: " + avgMean, "text");
-        note.addTextLineNL("Variance: " + variance, "text");
-        note.addTextLineNL("Standard deviation: " + stdDev, "text");
+        note.addTextLineNL(lang.getText("HDWT_entry268ClusterPanel") + " " + avgMean, "text"); //Mean of average times:
+        note.addTextLineNL(lang.getText("HDWT_entry269ClusterPanel") + " " + variance, "text"); //Variance:
+        note.addTextLineNL(lang.getText("HDWT_entry270ClusterPanel") +" " + stdDev, "text"); //Standard deviation:
 
         note.setCaretFirstLine();
         note.setVisible(true);
@@ -4650,16 +7384,15 @@ public class HolmesDockWindowsTable extends JPanel {
 
     //TODO
     private void showClustersData() {
-        PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
-        ArrayList<Transition> transitions = pn.getTransitions();
+        PetriNet pn = overlord.getWorkspace().getProject();
         ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
-        if (invMatrix == null || invMatrix.size() == 0)
+        if (invMatrix == null || invMatrix.isEmpty())
             return;
 
         HolmesNotepad note = new HolmesNotepad(800, 600);
 
         for (int i = 0; i < clusterColorsData.clustersInvariants.size(); i++) {
-            note.addTextLineNL("Cluster#" + i, "text");
+            note.addTextLineNL(lang.getText("HDWT_entry271ClusterPanel") + i, "text"); //Cluster#
 
             ArrayList<Integer> invariantsIndices = clusterColorsData.clustersInvariants.get(i);
             ArrayList<ArrayList<Integer>> invSubMatrix = new ArrayList<>();
@@ -4676,7 +7409,6 @@ public class HolmesDockWindowsTable extends JPanel {
                 }
                 note.addTextLineNL("", "text");
             }
-
         }
         note.addTextLineNL("", "text");
         note.addTextLineNL("", "text");
@@ -4684,9 +7416,8 @@ public class HolmesDockWindowsTable extends JPanel {
         note.addTextLineNL("", "text");
         note.addTextLineNL("", "text");
 
-
         for (int i = 0; i < clusterColorsData.clustersInvariants.size(); i++) {
-            note.addTextLineNL("Cluster#" + i, "text");
+            note.addTextLineNL(lang.getText("HDWT_entry271ClusterPanel") + i, "text"); //Cluster#
 
             ArrayList<Integer> invariantsIndices = clusterColorsData.clustersInvariants.get(i);
             ArrayList<ArrayList<Integer>> invSubMatrix = new ArrayList<>();
@@ -4702,17 +7433,12 @@ public class HolmesDockWindowsTable extends JPanel {
                     if (invSubMatrix.get(inv).get(trans) > 0) {
                         note.addTextLine(";t" + trans, "text");
                     }
-
-
                 }
                 note.addTextLineNL("", "text");
             }
-
         }
-
         note.setCaretFirstLine();
         note.setVisible(true);
-
     }
 
     /**
@@ -4734,11 +7460,12 @@ public class HolmesDockWindowsTable extends JPanel {
             clustersInvHeaders[0] = "---";
             for (int i = 0; i < clInvariants.size(); i++) {
                 int invIndex = clInvariants.get(i);
-                clustersInvHeaders[i + 1] = "Cluster: " + (selectedClusterIndex + 1) + "  |#" + (i + 1) + "  Inv: " + (invIndex + 1);
+                clustersInvHeaders[i + 1] = lang.getText("HDWT_entry264ClusterPanel") + " " 
+                        + (selectedClusterIndex + 1) + "  |#" + (i + 1) + "  Inv: " + (invIndex + 1); //Cluster: ;  |# ;  Inv:
             }
             chooseClusterInv.setModel(new DefaultComboBoxModel<>(clustersInvHeaders));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            overlord.log(lang.getText("LOGentry00591exception"), "error", true);
         }
         doNotUpdate = false;
     }
@@ -4761,14 +7488,14 @@ public class HolmesDockWindowsTable extends JPanel {
 
         for (int i = 0; i < transColors.size(); i++) {
             if (transColors.get(i).transInCluster != 0) {   //equals(Color.white)) {
-                transitions.get(i).setColorWithNumber(true, Color.DARK_GRAY, false, -1, false, "");
+                transitions.get(i).drawGraphBoxT.setColorWithNumber(true, Color.DARK_GRAY, false, -1, false, "");
             }
         }
 
         for (int i = 0; i < invariant.size(); i++) {
             if (invariant.get(i) != 0) {
 
-                transitions.get(i).setColorWithNumber(true, Color.GREEN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
+                transitions.get(i).drawGraphBoxT.setColorWithNumber(true, Color.GREEN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -4780,9 +7507,9 @@ public class HolmesDockWindowsTable extends JPanel {
     private void dropClustersToFiles() {
         //chose folder
         String lastPath = overlord.getLastPath();
-        String dirPath = Tools.selectDirectoryDialog(lastPath, "Select dir",
-                "Select directory for clusters screenshots.");
-        if (dirPath.equals("")) { // czy wskazano cokolwiek
+        String dirPath = Tools.selectDirectoryDialog(lastPath, lang.getText("HDWT_entry272ClusterPanel"),
+                lang.getText("HDWT_entry273ClusterPanel"));
+        if (dirPath.isEmpty()) { // czy wskazano cokolwiek
             return;
         }
 
@@ -4794,9 +7521,8 @@ public class HolmesDockWindowsTable extends JPanel {
         main.setZoom(120, main.getZoom());
         try {
             JOptionPane.showMessageDialog(null,
-                    "Please click OK button and wait until another information window shows up.\n"
-                            + "Depending on the number of clusters this should take from 10 sec. to 1 min.\n"
-                            + "Please do not use the program until operation is finished.", "Please wait", JOptionPane.INFORMATION_MESSAGE);
+                    lang.getText("HDWT_entry274ClusterPanel"), 
+                    lang.getText("HDWT_entry274ClusterPanel_t"), JOptionPane.INFORMATION_MESSAGE);
 
             progressBar.setMaximum(clusters - 1);
             progressBar.setValue(0);
@@ -4821,15 +7547,15 @@ public class HolmesDockWindowsTable extends JPanel {
                 ImageIO.write(image2, "png", new File(fileName));
             }
         } catch (Exception e) {
-            overlord.log("Saving clusters screenshots failed.", "error", true);
+            overlord.log(lang.getText("HDWT_entry275ClusterPanel")+":\n"+e.getMessage(), "error", true);
             progressBar.setVisible(false);
         } finally {
             selectedClusterIndex = oldSelected;
             main.setZoom(100, main.getZoom());
         }
         progressBar.setVisible(false);
-        JOptionPane.showMessageDialog(null, "Saving " + clusters + " clusters to graphic files completed.", "Success", JOptionPane.INFORMATION_MESSAGE);
-
+        JOptionPane.showMessageDialog(null, lang.getText("HDWT_entry276ClusterPanel") + " " 
+                + clusters + " " + lang.getText("HDWT_entry276ClusterPanelb"), "Success", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -4842,8 +7568,9 @@ public class HolmesDockWindowsTable extends JPanel {
         HolmesNotepad note = new HolmesNotepad(640, 480);
 
         note.addTextLineNL("", "text");
-        note.addTextLineNL("Cluster: " + (selectedClusterIndex + 1) + " (" + clusterColorsData.clSize.get(selectedClusterIndex) + " inv.) alg.: " + clusterColorsData.algorithm
-                + " metric: " + clusterColorsData.metric, "text");
+        note.addTextLineNL(lang.getText("HDWT_entry277ClusterPanel") + " " + (selectedClusterIndex + 1) + " (" + clusterColorsData.clSize.get(selectedClusterIndex) 
+                + " " + lang.getText("HDWT_entry278ClusterPanel") + " " + clusterColorsData.algorithm
+                + " " + lang.getText("HDWT_entry279ClusterPanel") + " " + clusterColorsData.metric, "text");
         note.addTextLineNL("", "text");
 
         ArrayList<ClusterTransition> transColors = clusterColorsData.dataMatrix.get(selectedClusterIndex);
@@ -4886,22 +7613,22 @@ public class HolmesDockWindowsTable extends JPanel {
 
         for (int i = 0; i < transColors.size(); i++) { //ustaw kolory dla tranzycji
             if (transColors.get(i).transInCluster == 0) {   //equals(Color.white)) {
-                holyVector.get(i).setColorWithNumber(false, Color.white, false, -1, false, "");
+                holyVector.get(i).drawGraphBoxT.setColorWithNumber(false, Color.white, false, -1, false, "");
             } else {
                 if (clustersMCT) {
                     int mctNo = transMCTvector.get(i);
                     if (mctNo == -1) {
                         if (clusterColorsData.showFirings) { //pokazuj średnią liczbę odpaleń
                             if (clusterColorsData.showScale) { //pokazuj kolory skalowalne
-                                holyVector.get(i).setColorWithNumber(true, Color.CYAN, true, transColors.get(i).firedInCluster, false, "", 0, 20, 5, -3);
+                                holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, Color.CYAN, true, transColors.get(i).firedInCluster, false, "", 0, 20, 5, -3);
                             } else { //pokazuj kolory z krokiem 10%
-                                holyVector.get(i).setColorWithNumber(true, Color.CYAN, true, transColors.get(i).firedInCluster, false, "", 0, 20, 5, -3);
+                                holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, Color.CYAN, true, transColors.get(i).firedInCluster, false, "", 0, 20, 5, -3);
                             }
                         } else { //pokazuj tylko liczbę wystąpień jako część inwariantów
                             if (clusterColorsData.showScale) { //pokazuj kolory skalowalne
-                                holyVector.get(i).setColorWithNumber(true, Color.CYAN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
+                                holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, Color.CYAN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
                             } else { //pokazuj kolory z krokiem 10%
-                                holyVector.get(i).setColorWithNumber(true, Color.CYAN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
+                                holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, Color.CYAN, true, transColors.get(i).transInCluster, false, "", 0, 20, 5, -3);
                             }
                         }
                     } else {
@@ -4911,28 +7638,28 @@ public class HolmesDockWindowsTable extends JPanel {
                         } else {
                             value = transColors.get(i).transInCluster;
                         }
-                        holyVector.get(i).setColorWithNumber(true, cp.getColor(mctNo), true, value, true, "[MCT" + (mctNo + 1) + "]", -10, 15, 5, -3);
+                        holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, cp.getColor(mctNo), true, value, true, "[MCT" + (mctNo + 1) + "]", -10, 15, 5, -3);
                     }
                 } else {
                     if (clusterColorsData.showFirings) { //pokazuj średnią liczbę odpaleń
                         if (clusterColorsData.showScale) { //pokazuj kolory skalowalne
                             double tranNumber = transColors.get(i).firedInCluster;
                             Color tranColor = transColors.get(i).colorFiredScale;
-                            holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
+                            holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
                         } else { //pokazuj kolory z krokiem 10%
                             double tranNumber = transColors.get(i).firedInCluster;
                             Color tranColor = transColors.get(i).colorFiredGrade;
-                            holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
+                            holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
                         }
                     } else { //pokazuj tylko liczbę wystąpień jako część inwariantów
                         if (clusterColorsData.showScale) { //pokazuj kolory skalowalne
                             int tranNumber = transColors.get(i).transInCluster;
                             Color tranColor = transColors.get(i).colorTransScale;
-                            holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
+                            holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
                         } else { //pokazuj kolory z krokiem 10%
                             int tranNumber = transColors.get(i).transInCluster;
                             Color tranColor = transColors.get(i).colorTransGrade;
-                            holyVector.get(i).setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
+                            holyVector.get(i).drawGraphBoxT.setColorWithNumber(true, tranColor, true, tranNumber, false, "", 0, 0, 5, -2);
                         }
                     }
                 }
@@ -4962,18 +7689,16 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda pomocnicza konstruktora podokna dla zbiorów MCS.
-     *
-     * @param mcsData MCSDataMatrix - obiekt danych zbiorów MCS
      */
-    private void createMCSSubWindow(MCSDataMatrix mcsData) {
+    @SuppressWarnings("UnusedAssignment")
+    private void createMCSSubWindow(){//MCSDataMatrix mcsData) {
         transitions = overlord.getWorkspace().getProject().getTransitions();
-
         initiateContainers();
 
         int posX = 10;
         int posY = 10;
 
-        JLabel objRLabel = new JLabel("Reaction: ");
+        JLabel objRLabel = new JLabel(lang.getText("HDWT_entry280MCSPanel") + " ");
         objRLabel.setBounds(posX, posY, 80, 20);
         components.add(objRLabel);
 
@@ -4983,10 +7708,9 @@ public class HolmesDockWindowsTable extends JPanel {
             objRset[i + 1] = "t" + i + transitions.get(i).getName();
         }
 
-
         //WYBÓR REAKCJI ZE ZBIORAMI MCS
         mcsObjRCombo = new JComboBox<>(objRset);
-        mcsObjRCombo.setBounds(posX + 60, posY, 230, 20);
+        mcsObjRCombo.setBounds(posX + 60, posY, 210, 20);
         mcsObjRCombo.addActionListener(actionEvent -> {
             if (stopAction)
                 return;
@@ -5022,7 +7746,7 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(mcsObjRCombo);
         posY += 25;
 
-        JLabel mcsLabel = new JLabel("MCS: ");
+        JLabel mcsLabel = new JLabel(lang.getText("HDWT_entry281MCSPanel") + " "); //MCS: 
         mcsLabel.setBounds(posX, posY, 80, 20);
         components.add(mcsLabel);
 
@@ -5041,7 +7765,6 @@ public class HolmesDockWindowsTable extends JPanel {
             int selected = comboBox.getSelectedIndex();
             if (selected > 0) {
                 selected--;
-                //MCSDataMatrix mcsDataCore = overlord.getWorkspace().getProject().getMCSdataCore();
                 int selTrans = mcsObjRCombo.getSelectedIndex();
                 selTrans--;
                 showMCSDataInNet(Objects.requireNonNull(comboBox.getSelectedItem()).toString(), selTrans);
@@ -5050,11 +7773,11 @@ public class HolmesDockWindowsTable extends JPanel {
         components.add(mcsMCSforObjRCombo);
 
         JButton refreshButton = new JButton();
-        refreshButton.setText("Refresh");
-        refreshButton.setBounds(posX + 225, posY, 70, 20);
+        refreshButton.setText(lang.getText("HDWT_entry282MCSPanel")); //Refresh data
+        refreshButton.setBounds(posX, posY + 30, 150, 30);
         refreshButton.addActionListener(actionEvent -> {
             transitions = overlord.getWorkspace().getProject().getTransitions();
-            if (transitions.size() == 0)
+            if (transitions.isEmpty())
                 return;
 
             String[] objRset1 = new String[transitions.size() + 1];
@@ -5083,9 +7806,37 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     /**
+     * Metoda inicjująca kontenery dla podokna z danymi o MCS.
+     */
+    public void cleanMCScomboBoxes() {
+        transitions = overlord.getWorkspace().getProject().getTransitions();
+        if (transitions.isEmpty())
+            return;
+
+        String[] objRset = new String[transitions.size() + 1];
+        objRset[0] = "---";
+        for (int i = 0; i < transitions.size(); i++) {
+            objRset[i + 1] = "t" + i + transitions.get(i).getName();
+        }
+
+        stopAction = true;
+        mcsObjRCombo.removeAllItems();
+        for (String str : objRset) {
+            mcsObjRCombo.addItem(str);
+        }
+
+        String[] init = new String[1];
+        init[0] = "---";
+        mcsMCSforObjRCombo.removeAllItems();
+        for (String str : init) {
+            mcsMCSforObjRCombo.addItem(str);
+        }
+        stopAction = false;
+    }
+
+    /**
      * Metoda pokazuje w kolorach tranzycje wchodzące w skład MCS oraz tramzycję bazową zbioru MCS.
-     *
-     * @param sets          String - zbiór w formie łańcucha znaków [x, y, z, ...]
+     * @param sets String - zbiór w formie łańcucha znaków [x, y, z, ...]
      * @param objReactionID int - nr tranzycji bazowe
      */
     private void showMCSDataInNet(String sets, int objReactionID) {
@@ -5105,19 +7856,16 @@ public class HolmesDockWindowsTable extends JPanel {
             }
 
             Transition trans_TMP = overlord.getWorkspace().getProject().getTransitions().get(objReactionID);
-            trans_TMP.setColorWithNumber(true, Color.red, false, -1, false, "");
+            trans_TMP.drawGraphBoxT.setColorWithNumber(true, Color.red, false, -1, false, "");
 
             for (int id : invIDs) {
                 trans_TMP = overlord.getWorkspace().getProject().getTransitions().get(id);
-                trans_TMP.setColorWithNumber(true, Color.black, false, -1, false, "");
-                //double tranNumber = transColors.get(i).firedInCluster;
-                //Color tranColor = transColors.get(i).colorFiredScale;
-                //holyVector.get(i).setColorWithNumber(true, tranColor, tranNumber);
+                trans_TMP.drawGraphBoxT.setColorWithNumber(true, Color.black, false, -1, false, "");
             }
 
             overlord.getWorkspace().getProject().repaintAllGraphPanels();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            overlord.log(lang.getText("LOGentry00592exception"), "error", true);
         }
     }
 
@@ -5131,6 +7879,7 @@ public class HolmesDockWindowsTable extends JPanel {
      * @param knockoutData ArrayList[ArrayList[Integer]] - macierz danych o knockout
      */
     private void createKnockoutData(ArrayList<ArrayList<Integer>> knockoutData) {
+        initiateContainers();
         if (knockoutData == null || knockoutData.isEmpty()) {
             return;
         } else {
@@ -5142,8 +7891,6 @@ public class HolmesDockWindowsTable extends JPanel {
         int colB_posX = 100;
         int positionY = 10;
 
-        initiateContainers();
-
         //MCT - obliczenia:
         MCTCalculator analyzer = overlord.getWorkspace().getProject().getMCTanalyzer();
         ArrayList<ArrayList<Transition>> mct = analyzer.generateMCT();
@@ -5153,10 +7900,8 @@ public class HolmesDockWindowsTable extends JPanel {
         int transSize = transitions.size();
 
         ArrayList<String> mctOrNot = new ArrayList<>();
-        ArrayList<Integer> mctSize = new ArrayList<>();
         for (int i = 0; i < transSize; i++) {
             mctOrNot.add("");
-            mctSize.add(0);
         }
         int mctNo = 0;
         for (ArrayList<Transition> arr : mct) {
@@ -5164,7 +7909,6 @@ public class HolmesDockWindowsTable extends JPanel {
             for (Transition t : arr) {
                 int id = transitions.indexOf(t);
                 mctOrNot.set(id, "MCT_" + mctNo);
-                mctSize.set(id, arr.size());
             }
         }
 
@@ -5177,14 +7921,14 @@ public class HolmesDockWindowsTable extends JPanel {
         }
 
         // getting the data
-        JLabel chooseMctLabel = new JLabel("Knockout: ");
+        JLabel chooseMctLabel = new JLabel(lang.getText("HDWT_entry283KnockPanel") + " "); //Knockout:
         chooseMctLabel.setBounds(colA_posX, positionY, 60, 20);
         components.add(chooseMctLabel);
 
         JComboBox<String> chooseMctBox = new JComboBox<>(headers);
         chooseMctBox.setBounds(colB_posX, positionY, 150, 20);
         chooseMctBox.addActionListener(actionEvent -> {
-            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            JComboBox<?> comboBox = (JComboBox<?>) actionEvent.getSource();
             int selected = comboBox.getSelectedIndex();
             if (selected == 0) {
                 showKnockout(-1, false);
@@ -5199,30 +7943,29 @@ public class HolmesDockWindowsTable extends JPanel {
         knockoutTextArea = new JTextArea();
         knockoutTextArea.setEditable(false);
         knockoutTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        //mctTextArea.setLineWrap(true);
-        //mctTextArea.setWrapStyleWord(true);
+
         JPanel textAreaPanel = new JPanel();
         textAreaPanel.setLayout(new BorderLayout());
         textAreaPanel.add(new JScrollPane(
                         knockoutTextArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED),
                 BorderLayout.CENTER);
 
-        int w = overlord.getMctBox().getWidth();
-        int h = overlord.getMctBox().getHeight();
+        int w = 0;//overlord.getMctBox().getWidth();
+        int h = 0;//overlord.getMctBox().getHeight();
         textAreaPanel.setBounds(colA_posX, positionY, w - 30, h - 60);
         components.add(textAreaPanel);
 
-        panel.setLayout(null);
-        for (JComponent component : components) panel.add(component);
-        panel.setOpaque(true);
-        panel.repaint();
+        overlord.getKnockoutBox().getCurrentDockWindow().getPanel().setLayout(null);
+        for (JComponent component : components) overlord.getKnockoutBox().getCurrentDockWindow().getPanel().add(component);
+        overlord.getKnockoutBox().getCurrentDockWindow().getPanel().setOpaque(true);
+        overlord.getKnockoutBox().getCurrentDockWindow().getPanel().revalidate();
+        overlord.getKnockoutBox().getCurrentDockWindow().getPanel().repaint();
         panel.setVisible(true);
         add(panel);
     }
 
     /**
      * Metoda odpowiedzialna za pokazanie szczegółów wybranego zbioru MCT.
-     *
      * @param knockIndex  Integer - numer wybranego zbioru
      * @param showOrClear boolean - true, jeśli wybrano zbiór mct, false jeśli "---"
      */
@@ -5237,16 +7980,16 @@ public class HolmesDockWindowsTable extends JPanel {
 
             for (int id : idToShow) { //wyłączane przez objR
                 trans_TMP = transitions.get(id);
-                trans_TMP.setColorWithNumber(true, Color.black, false, -1, false, "");
+                trans_TMP.drawGraphBoxT.setColorWithNumber(true, Color.black, false, -1, false, "");
             }
 
             trans_TMP = transitions.get(knockIndex);
-            trans_TMP.setColorWithNumber(true, Color.red, false, -1, false, "");
+            trans_TMP.drawGraphBoxT.setColorWithNumber(true, Color.red, false, -1, false, "");
 
             knockoutTextArea.setText("");
-            knockoutTextArea.append("Knocked out:" + knockIndex + ":\n");
+            knockoutTextArea.append(lang.getText("HDWT_entry284KnockPanel") + knockIndex + ":\n"); //Knocked out:
             knockoutTextArea.append("\n");
-            knockoutTextArea.append(" * * * Also knocked out: \n");
+            knockoutTextArea.append(" " + lang.getText("HDWT_entry285KnockPanel")); // * * * Also knocked out:\n
 
             for (int t_id : idToShow) {
                 String t1 = Tools.setToSize("t" + t_id, 5, false);
@@ -5267,78 +8010,92 @@ public class HolmesDockWindowsTable extends JPanel {
      * Tworzy okno wykrywania i wskazywania problemów sieci.
      */
     private void createFixerSubWindow() {
-        int posX = 10;
-        int posY = 10;
+        int internalX = 10;
+        int internalY = 10;
 
         initiateContainers();
         detector = new ProblemDetector(this);
 
-        JLabel label0 = new JLabel("t-invariants:");
-        label0.setBounds(posX, posY, 100, 20);
+        JLabel label0 = new JLabel(lang.getText("HDWT_entry286FixPanel")); //t-invariants:
+        label0.setBounds(internalX, internalY, 100, 20);
         components.add(label0);
 
-        fixInvariants = new JLabel("Normal: 0 / Non-inv.: 0");
-        fixInvariants.setBounds(posX, posY += 20, 190, 20);
+        internalY += 20;
+
+        fixInvariants = new JLabel(lang.getText("HDWT_entry287FixPanel")); //Normal: 0 / Non-inv.: 0
+        fixInvariants.setBounds(internalX, internalY, 190, 20);
         components.add(fixInvariants);
 
-        fixInvariants2 = new JLabel("Sub-inv.: 0 / Sur-inv: 0");
-        fixInvariants2.setBounds(posX, posY += 20, 190, 20);
+        internalY += 20;
+
+        fixInvariants2 = new JLabel(lang.getText("HDWT_entry288FixPanel")); //Sub-inv.: 0 / Sur-inv: 0
+        fixInvariants2.setBounds(internalX, internalY, 190, 20);
         components.add(fixInvariants2);
 
         JButton markInvButton = new JButton();
-        markInvButton.setText("<html>Show<br>&nbsp;&nbsp;&nbsp;inv.</html>");
-        markInvButton.setBounds(posX + 185, posY - 18, 100, 32);
+        markInvButton.setText(lang.getText("HDWT_entry289FixPanel")); //Show inv.
+        markInvButton.setBounds(internalX + 185, internalY - 18, 110, 32);
         markInvButton.setMargin(new Insets(0, 0, 0, 0));
         markInvButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
         markInvButton.addActionListener(actionEvent -> detector.markSubSurNonInvariantsPlaces());
         markInvButton.setFocusPainted(false);
         components.add(markInvButton);
 
-        JLabel label1 = new JLabel("Input and output places:");
-        label1.setBounds(posX, posY += 25, 200, 20);
+        internalY += 25;
+
+        JLabel label1 = new JLabel(lang.getText("HDWT_entry290FixPanel")); //Input and output places:
+        label1.setBounds(internalX, internalY, 200, 20);
         components.add(label1);
 
-        fixIOPlaces = new JLabel("Input: 0 / Output: 0");
-        fixIOPlaces.setBounds(posX, posY += 20, 190, 20);
+        internalY += 20;
+
+        fixIOPlaces = new JLabel(lang.getText("HDWT_entry291FixPanel")); //Input: 0 / Output: 0
+        fixIOPlaces.setBounds(internalX, internalY, 190, 20);
         components.add(fixIOPlaces);
 
         JButton markIOPlacesButton = new JButton();
-        markIOPlacesButton.setText("<html>Show<br>places</html>");
-        markIOPlacesButton.setBounds(posX + 185, posY - 16, 100, 32);
+        markIOPlacesButton.setText(lang.getText("HDWT_entry292FixPanel")); //Show places
+        markIOPlacesButton.setBounds(internalX + 185, internalY - 16, 110, 32);
         markIOPlacesButton.setMargin(new Insets(0, 0, 0, 0));
         markIOPlacesButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
         markIOPlacesButton.addActionListener(actionEvent -> detector.markIOPlaces());
         markIOPlacesButton.setFocusPainted(false);
         components.add(markIOPlacesButton);
 
-        JLabel label2 = new JLabel("Input and output transitions:");
-        label2.setBounds(posX, posY += 25, 200, 20);
+        internalY += 25;
+
+        JLabel label2 = new JLabel(lang.getText("HDWT_entry293FixPanel")); //Input and output transitions:
+        label2.setBounds(internalX, internalY, 200, 20);
         components.add(label2);
 
-        fixIOTransitions = new JLabel("Input: 0 / Output: 0");
-        fixIOTransitions.setBounds(posX, posY += 20, 190, 20);
+        internalY += 20;
+
+        fixIOTransitions = new JLabel(lang.getText("HDWT_entry294FixPanel")); //Input: 0 / Output: 0
+        fixIOTransitions.setBounds(internalX, internalY, 190, 20);
         components.add(fixIOTransitions);
 
         JButton markIOTransButton = new JButton();
-        markIOTransButton.setText("<html>Show<br>trans.</html>");
-        markIOTransButton.setBounds(posX + 185, posY - 14, 100, 32);
+        markIOTransButton.setText(lang.getText("HDWT_entry295FixPanel")); //Show trans.
+        markIOTransButton.setBounds(internalX + 185, internalY - 14, 110, 32);
         markIOTransButton.setMargin(new Insets(0, 0, 0, 0));
         markIOTransButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
         markIOTransButton.addActionListener(actionEvent -> detector.markIOTransitions());
         markIOTransButton.setFocusPainted(false);
         components.add(markIOTransButton);
 
-        JLabel label3 = new JLabel("Linear transitions and places");
-        label3.setBounds(posX, posY += 25, 200, 20);
+        JLabel label3 = new JLabel(lang.getText("HDWT_entry296FixPanel")); //Linear transitions and places
+        label3.setBounds(internalX, internalY += 25, 200, 20);
         components.add(label3);
 
-        fixlinearTrans = new JLabel("Transitions: 0 / Places: 0");
-        fixlinearTrans.setBounds(posX, posY += 20, 190, 20);
+        internalY += 20;
+
+        fixlinearTrans = new JLabel(lang.getText("HDWT_entry297FixPanel")); //Transitions: 0 / Places: 0
+        fixlinearTrans.setBounds(internalX, internalY, 190, 20);
         components.add(fixlinearTrans);
 
         JButton markLinearTPButton = new JButton();
-        markLinearTPButton.setText("<html>Show<br>T & P</html>");
-        markLinearTPButton.setBounds(posX + 185, posY - 12, 100, 32);
+        markLinearTPButton.setText(lang.getText("HDWT_entry298FixPanel")); //Show T & P
+        markLinearTPButton.setBounds(internalX + 185, internalY - 12, 110, 32);
         markLinearTPButton.setMargin(new Insets(0, 0, 0, 0));
         markLinearTPButton.setIcon(Tools.getResIcon22("/icons/fixGlass.png"));
         markLinearTPButton.addActionListener(actionEvent -> detector.markLinearRegions());
@@ -5356,55 +8113,60 @@ public class HolmesDockWindowsTable extends JPanel {
     //**************************************************************************************
     //*********************************                  ***********************************
     //*********************************     quickSim     ***********************************
-    //*********************************                  ***********************************
+    //*********************************       qSim       ***********************************
     //**************************************************************************************
 
     /**
      * Tworzy okno wykrywania i wskazywania problemów sieci.
      */
+    @SuppressWarnings("UnusedAssignment")
     private void createQuickSimSubWindow() {
-        int posX = 10;
-        int posY = 10;
+        int internalX = 10;
+        int internalY = 10;
         initiateContainers();
 
         quickSim = new QuickSimTools(this);
 
-        JButton acqDataButton = new JButton("SimStart");
-        acqDataButton.setBounds(posX, posY, 110, 40);
+        JButton acqDataButton = new JButton(lang.getText("HDWT_entry313QuickSim"));
+        acqDataButton.setBounds(internalX, internalY, 130, 40);
         acqDataButton.setMargin(new Insets(0, 0, 0, 0));
         acqDataButton.setFocusPainted(false);
         acqDataButton.setIcon(Tools.getResIcon32("/icons/stateSim/computeData.png"));
-        acqDataButton.setToolTipText("Compute steps from zero marking through the number of states");
-        acqDataButton.addActionListener(actionEvent -> quickSim.acquireData(scanTransitions, scanPlaces, markArcs, repetitions, quickProgressBar));
+        acqDataButton.setToolTipText(lang.getText("HDWT_entry299QuickSim"));
+        acqDataButton.addActionListener(actionEvent -> {
+            quickSim.acquireData(scanTransitions, scanPlaces, markArcs, repetitions, quickProgressBar);
+        });
         components.add(acqDataButton);
 
-        JButton simSettingsButton = new JButton("SimSettings");
-        simSettingsButton.setBounds(posX + 120, posY, 130, 40);
+        JButton simSettingsButton = new JButton(lang.getText("HDWT_entry312QuickSim"));
+        simSettingsButton.setBounds(internalX + 140, internalY, 130, 40);
         simSettingsButton.setMargin(new Insets(0, 0, 0, 0));
         simSettingsButton.setFocusPainted(false);
         simSettingsButton.setIcon(Tools.getResIcon32("/icons/simSettings/setupIcon.png"));
-        simSettingsButton.setToolTipText("Set simulator options.");
-        simSettingsButton.addActionListener(actionEvent -> new HolmesSimSetup(GUIManager.getDefaultGUIManager().getFrame()));
+        simSettingsButton.setToolTipText(lang.getText("HDWT_entry300QuickSim")); //Set simulator options.
+        simSettingsButton.addActionListener(actionEvent -> new HolmesSimSetup(overlord.getFrame()));
         components.add(simSettingsButton);
 
+        internalY += 45;
+
         quickProgressBar = new JProgressBar();
-        quickProgressBar.setBounds(posX, posY += 45, 280, 25);
+        quickProgressBar.setBounds(internalX, internalY, 280, 25);
         quickProgressBar.setMaximum(100);
         quickProgressBar.setMinimum(0);
         quickProgressBar.setValue(0);
         quickProgressBar.setStringPainted(true);
-        //Border border = BorderFactory.createTitledBorder("Progress");
-        //quickProgressBar.setBorder(border);
         components.add(quickProgressBar);
+
+        internalY += 30;
 
         JPanel borderPanel = new JPanel(null);
         //borderPanel.setLayout(new BorderLayout());
-        borderPanel.setBounds(posX, posY += 30, 280, 80);
-        borderPanel.setBorder(BorderFactory.createTitledBorder("Data type simulated"));
+        borderPanel.setBounds(internalX, internalY, 280, 110);
+        borderPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HDWT_entry301QuickSim"))); //Data type simulated
         components.add(borderPanel);
 
-        JCheckBox transBox = new JCheckBox("Transitions firing data", scanTransitions);
-        transBox.setBounds(5, 15, 160, 20);
+        JCheckBox transBox = new JCheckBox(lang.getText("HDWT_entry302QuickSim"), scanTransitions); //Transitions firing data
+        transBox.setBounds(5, 20, 240, 20);
         transBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             scanTransitions = box.isSelected();
@@ -5412,24 +8174,24 @@ public class HolmesDockWindowsTable extends JPanel {
         borderPanel.add(transBox);
 
 
-        JCheckBox placesBox = new JCheckBox("Places tokens data", scanPlaces);
-        placesBox.setBounds(5, 35, 160, 20);
+        JCheckBox placesBox = new JCheckBox(lang.getText("HDWT_entry303QuickSim"), scanPlaces); //Places tokens data
+        placesBox.setBounds(5, 40, 240, 20);
         placesBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             scanPlaces = box.isSelected();
         });
         borderPanel.add(placesBox);
 
-        JCheckBox arcsBox = new JCheckBox("Color arcs", markArcs);
-        arcsBox.setBounds(5, 55, 140, 20);
+        JCheckBox arcsBox = new JCheckBox(lang.getText("HDWT_entry304QuickSim"), markArcs); //Color arcs
+        arcsBox.setBounds(5, 60, 240, 20);
         arcsBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             markArcs = box.isSelected();
         });
         borderPanel.add(arcsBox);
 
-        JCheckBox repsBox = new JCheckBox("Repetitions", repetitions);
-        repsBox.setBounds(165, 15, 100, 20);
+        JCheckBox repsBox = new JCheckBox(lang.getText("HDWT_entry305QuickSim"), repetitions); //Repetitions
+        repsBox.setBounds(5, 80, 240, 20);
         repsBox.addItemListener(e -> {
             JCheckBox box = (JCheckBox) e.getSource();
             repetitions = box.isSelected();
@@ -5454,19 +8216,10 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Tworzy okno z opcjami do dekompozycji
      */
-
+    @SuppressWarnings("unchecked")
     private void createDecompositionData() {
-
-
         int posX = 10;
         int posY = 10;
-
-        /*
-        String[] newComoList = new String[SubnetCalculator.functionalSubNets.size()];
-        for (int i = 0; i < SubnetCalculator.functionalSubNets.size(); i++) {
-            newComoList[i] = "Functional subnet " + overlordi;
-        }
-        */
 
         if (!SubnetCalculator.functionalSubNets.isEmpty()) {
             mode = DECOMPOSITION;
@@ -5572,7 +8325,8 @@ public class HolmesDockWindowsTable extends JPanel {
         JComboBox<String> newCB = generateButton(index);
         newCB.setBounds(10, 70, 150, 20);
         newCB.addActionListener(actionEvent -> {
-            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            JComboBox<?> comboBox = (JComboBox<?>) actionEvent.getSource();
+            //JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             int selected = comboBox.getSelectedIndex();
             if (selected == 0) {
                 selectedSubNetindex = -1;
@@ -5622,7 +8376,8 @@ public class HolmesDockWindowsTable extends JPanel {
         JComboBox<String> newCB = new JComboBox<>(newComoList);
         newCB.setBounds(10, 70, 150, 20);
         newCB.addActionListener(actionEvent -> {
-            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            JComboBox<?> comboBox = (JComboBox<?>) actionEvent.getSource();
+            //JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             int selected = comboBox.getSelectedIndex();
             if (selected == 0) {
                 selectedSubNetindex = -1;
@@ -5656,7 +8411,8 @@ public class HolmesDockWindowsTable extends JPanel {
         JComboBox<String> newCB = new JComboBox<>(newComoList);
         newCB.setBounds(10, 70, 150, 20);
         newCB.addActionListener(actionEvent -> {
-            JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
+            JComboBox<?> comboBox = (JComboBox<?>) actionEvent.getSource();
+            //JComboBox<String> comboBox = (JComboBox<String>) actionEvent.getSource();
             int selected = comboBox.getSelectedIndex();
             if (selected == 0) {
                 selectedSubNetindex = -1;
@@ -5677,84 +8433,48 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     private String getProperSubNetName(int index) {
-        switch (index) {
-            case 0:
-                return "Functional ";
-            case 1:
-                return "S-net ";
-            case 2:
-                return "T-net ";
-            case 3:
-                return "maxADT ";
-            case 4:
-                return "Teng-Zeng ";
-            case 5:
-                return "Hou ";
-            case 6:
-                return "Nishi ";
-            case 7:
-                return "Cycle";
-            case 8:
-                return "Ootsuki";
-        }
-        return "";
+        return switch (index) {
+            case 0 -> "Functional ";
+            case 1 -> "S-net ";
+            case 2 -> "T-net ";
+            case 3 -> "maxADT ";
+            case 4 -> "Teng-Zeng ";
+            case 5 -> "Hou ";
+            case 6 -> "Nishi ";
+            case 7 -> "Cycle";
+            case 8 -> "Ootsuki";
+            default -> "";
+        };
     }
 
     private void generateProperSubNet(int index) {
         SubnetCalculator.compileElements();
         switch (index) {
-            case 0:
-                SubnetCalculator.generateFS();
-                break;
-            case 1:
-                SubnetCalculator.generateSnets();
-                break;
-            case 2:
-                SubnetCalculator.generateTnets();
-                break;
-            case 3:
-                SubnetCalculator.generateADT();
-                break;
-            case 4:
-                SubnetCalculator.generateTZ();
-                break;
-            case 5:
-                SubnetCalculator.generateHou();
-                break;
-            case 6:
-                SubnetCalculator.generateNishi();
-                break;
-            case 7:
-                SubnetCalculator.generateCycle(false);
-                break;
-            case 8:
-                SubnetCalculator.generateOotsuki();
-                break;
+            case 0 -> SubnetCalculator.generateFS();
+            case 1 -> SubnetCalculator.generateSnets();
+            case 2 -> SubnetCalculator.generateTnets();
+            case 3 -> SubnetCalculator.generateADT();
+            case 4 -> SubnetCalculator.generateTZ();
+            case 5 -> SubnetCalculator.generateHou();
+            case 6 -> SubnetCalculator.generateNishi();
+            case 7 -> SubnetCalculator.generateCycle(false);
+            case 8 -> SubnetCalculator.generateOotsuki();
         }
     }
 
     private int getSubnetSize(int index) {
-        switch (index) {
-            case 0:
-                return SubnetCalculator.functionalSubNets.size();
-            case 1:
-                return SubnetCalculator.snetSubNets.size();
-            case 2:
-                return SubnetCalculator.tnetSubNets.size();
-            case 3:
-                return SubnetCalculator.adtSubNets.size();
-            case 4:
-                return SubnetCalculator.tzSubNets.size();
-            case 5:
-                return SubnetCalculator.houSubNets.size();
-            case 6:
-                return SubnetCalculator.nishiSubNets.size();
-            case 7:
-                return SubnetCalculator.cycleSubNets.size();
-            case 8:
-                return SubnetCalculator.ootsukiSubNets.size();
-        }
-        return 0;
+        return switch (index) {
+            case 0 -> SubnetCalculator.functionalSubNets.size();
+            case 1 -> SubnetCalculator.snetSubNets.size();
+            case 2 -> SubnetCalculator.tnetSubNets.size();
+            case 3 -> SubnetCalculator.adtSubNets.size();
+            case 4 -> SubnetCalculator.tzSubNets.size();
+            case 5 -> SubnetCalculator.houSubNets.size();
+            case 6 -> SubnetCalculator.nishiSubNets.size();
+            case 7 -> SubnetCalculator.cycleSubNets.size();
+            case 8 -> SubnetCalculator.ootsukiSubNets.size();
+            default -> 0;
+        };
     }
 
     private void showSubNet(int typeOfDecomposition) {
@@ -5766,56 +8486,59 @@ public class HolmesDockWindowsTable extends JPanel {
         SubnetCalculator.SubNet subnet = null;
         int size = 0;
         switch (typeOfDecomposition) {
-            case 0:
+            case 0 -> {
                 subnet = SubnetCalculator.functionalSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.functionalSubNets.size();
-                break;
-            case 1:
+            }
+            case 1 -> {
                 subnet = SubnetCalculator.snetSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.snetSubNets.size();
-                break;
-            case 2:
+            }
+            case 2 -> {
                 subnet = SubnetCalculator.tnetSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.tnetSubNets.size();
-                break;
-            case 3:
+            }
+            case 3 -> {
                 subnet = SubnetCalculator.adtSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.adtSubNets.size();
-                break;
-            case 4:
+            }
+            case 4 -> {
                 subnet = SubnetCalculator.tzSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.tzSubNets.size();
-                break;
-            case 5:
+            }
+            case 5 -> {
                 subnet = SubnetCalculator.houSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.houSubNets.size();
-                break;
-            case 6:
+            }
+            case 6 -> {
                 subnet = SubnetCalculator.nishiSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.nishiSubNets.size();
-                break;
-            case 7:
+            }
+            case 7 -> {
                 subnet = SubnetCalculator.cycleSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.cycleSubNets.size();
-                break;
-            case 8:
+            }
+            case 8 -> {
                 subnet = SubnetCalculator.ootsukiSubNets.get(selectedSubNetindex);
                 size = SubnetCalculator.ootsukiSubNets.size();
-                break;
+            }
         }
 
         ColorPalette cp = new ColorPalette();
 
         //places
+        boolean colorSubNet = false;
+
+        assert subnet != null;
         for (Place place : subnet.getSubPlaces()) {
             if (!colorSubNet) {
                 place.setGlowedSub(true);
 
             } else {
                 if (selectedSubNetindex == size - 1)
-                    place.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
+                    place.drawGraphBoxP.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
                 else
-                    place.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+                    place.drawGraphBoxP.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
             }
         }
 
@@ -5828,13 +8551,13 @@ public class HolmesDockWindowsTable extends JPanel {
         //transitions
         for (Transition transition : subnet.getSubTransitions()) {
             if (!colorSubNet) {
-                transition.setGlowed_MTC(true);
+                transition.drawGraphBoxT.setGlowed_MTC(true);
 
             } else {
                 if (selectedSubNetindex == size - 1)
-                    transition.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
+                    transition.drawGraphBoxT.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[trivial]");
                 else
-                    transition.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
+                    transition.drawGraphBoxT.setColorWithNumber(true, cp.getColor(selectedSubNetindex), false, 0, true, "[Sub net " + (selectedSubNetindex + 1) + "]");
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
@@ -5861,13 +8584,13 @@ public class HolmesDockWindowsTable extends JPanel {
 
             for (Node transition : transitions) {
                 if (transition.getType() == PetriNetElement.PetriNetElementType.TRANSITION)
-                    ((Transition) transition).setColorWithNumber(true, Color.red, false, m, true, "");
+                    ((Transition) transition).drawGraphBoxT.setColorWithNumber(true, Color.red, false, m, true, "");
                 if (transition.getType() == PetriNetElement.PetriNetElementType.PLACE)
-                    ((Place) transition).setColorWithNumber(true, Color.red, false, m, true, "");
+                    ((Place) transition).drawGraphBoxP.setColorWithNumber(true, Color.red, false, m, true, "");
             }
             ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
             for (Arc arc : arcs) {
-                arc.setColor(true, Color.red);
+                arc.arcDecoBox.setColor(true, Color.red);
             }
         }
 
@@ -5890,19 +8613,19 @@ public class HolmesDockWindowsTable extends JPanel {
                 ArrayList<Transition> transitions = subNet.getSubTransitions();
                 if (transitions.size() > 1 || trivial) {
                     for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                        transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
                     }
 
                     ArrayList<Place> places = subnets.get(m).getSubPlaces();
                     for (Place place : places) {
                         if (subNet.getSubBorderPlaces().contains(place))
-                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, calcMiddleColor(currentColor, place.drawGraphBoxP.getPlaceNewColor()), false, m, true, "");
                         else
-                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, currentColor, false, m, true, "");
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
+                        arc.arcDecoBox.setColor(true, currentColor);
                     }
                 }
             }
@@ -5914,19 +8637,19 @@ public class HolmesDockWindowsTable extends JPanel {
                 ArrayList<Place> places = subNet.getSubPlaces();
                 if (places.size() > 1 || trivial) {
                     for (Place place : places) {
-                        place.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + places.size() + ")");
+                        place.drawGraphBoxP.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + places.size() + ")");
                     }
 
                     ArrayList<Transition> transitions = subnets.get(m).getSubTransitions();
                     for (Transition transition : transitions) {
                         if (subNet.getSubBorderTransition().contains(transition))
-                            transition.setColorWithNumber(true, calcMiddleColor(currentColor, transition.getTransitionNewColor()), false, m, true, "");
+                            transition.drawGraphBoxT.setColorWithNumber(true, calcMiddleColor(currentColor, transition.drawGraphBoxT.getTransitionNewColor()), false, m, true, "");
                         else
-                            transition.setColorWithNumber(true, currentColor, false, m, true, "");
+                            transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "");
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
+                        arc.arcDecoBox.setColor(true, currentColor);
                     }
                 }
             }
@@ -5938,19 +8661,19 @@ public class HolmesDockWindowsTable extends JPanel {
                 ArrayList<Transition> transitions = subNet.getSubTransitions();
                 if (transitions.size() > 1 || trivial) {
                     for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                        transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
                     }
 
                     ArrayList<Place> places = subnets.get(m).getSubPlaces();
                     for (Place place : places) {
                         if (subNet.getSubBorderPlaces().contains(place))
-                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, calcMiddleColor(currentColor, place.drawGraphBoxP.getPlaceNewColor()), false, m, true, "");
                         else
-                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, currentColor, false, m, true, "");
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
+                        arc.arcDecoBox.setColor(true, currentColor);
                     }
                 }
             }
@@ -5973,51 +8696,42 @@ public class HolmesDockWindowsTable extends JPanel {
                 ArrayList<Transition> transitions = subNet.getSubTransitions();
                 if (transitions.size() > 1 || trivial) {
                     for (Transition transition : transitions) {
-                        transition.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
+                        transition.drawGraphBoxT.setColorWithNumber(true, currentColor, false, m, true, "Sub #" + (m + 1) + " (" + transitions.size() + ")");
                     }
 
                     ArrayList<Place> places = subnets.get(m).getSubPlaces();
                     for (Place place : places) {
                         if (subNet.getSubBorderPlaces().contains(place))
-                            place.setColorWithNumber(true, calcMiddleColor(currentColor, place.getPlaceNewColor()), false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, calcMiddleColor(currentColor, place.drawGraphBoxP.getPlaceNewColor()), false, m, true, "");
                         else
-                            place.setColorWithNumber(true, currentColor, false, m, true, "");
+                            place.drawGraphBoxP.setColorWithNumber(true, currentColor, false, m, true, "");
                     }
                     ArrayList<Arc> arcs = subnets.get(m).getSubArcs();
                     for (Arc arc : arcs) {
-                        arc.setColor(true, currentColor);
+                        arc.arcDecoBox.setColor(true, currentColor);
                     }
                 }
-
             }
         }
         overlord.getWorkspace().getProject().repaintAllGraphPanels();
     }
 
     private ArrayList<SubnetCalculator.SubNet> getCorrectSubnet(int type) {
-        switch (type) {
-            case 0:
-                return SubnetCalculator.functionalSubNets;
-            case 1:
-                return SubnetCalculator.snetSubNets;
-            case 2:
-                return SubnetCalculator.tnetSubNets;
-            case 3:
-                return SubnetCalculator.adtSubNets;
-            case 4:
-                return SubnetCalculator.tzSubNets;
-            case 5:
-                return SubnetCalculator.houSubNets;
-            case 6:
-                return SubnetCalculator.nishiSubNets;
-            case 7:
-                return SubnetCalculator.cycleSubNets;
-            case 8:
-                return SubnetCalculator.ootsukiSubNets;
-        }
-        return SubnetCalculator.functionalSubNets;
+        return switch (type) {
+            case 0 -> SubnetCalculator.functionalSubNets;
+            case 1 -> SubnetCalculator.snetSubNets;
+            case 2 -> SubnetCalculator.tnetSubNets;
+            case 3 -> SubnetCalculator.adtSubNets;
+            case 4 -> SubnetCalculator.tzSubNets;
+            case 5 -> SubnetCalculator.houSubNets;
+            case 6 -> SubnetCalculator.nishiSubNets;
+            case 7 -> SubnetCalculator.cycleSubNets;
+            case 8 -> SubnetCalculator.ootsukiSubNets;
+            default -> SubnetCalculator.functionalSubNets;
+        };
     }
 
+    @SuppressWarnings("all")
     private Color calcMiddleColor(Color one, Color two) {
         int blue = 0;
         int red = 0;
@@ -6061,29 +8775,11 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     /**
-     * Metoda zwraca okno tekstowe na bazie podanego comboBox.
-     *
-     * @param spinner JSpinner - ComboBox po ludzku
-     * @return JFormattedTextField - chyba TextBox?
-     */
-    public JFormattedTextField getTextField(JSpinner spinner) {
-        JComponent editor = spinner.getEditor();
-        if (editor instanceof JSpinner.DefaultEditor) {
-            return ((JSpinner.DefaultEditor) editor).getTextField();
-        } else {
-            System.err.println("Unexpected editor type: " + spinner.getEditor().getClass()
-                    + " isn't a descendant of DefaultEditor");
-            return null;
-        }
-    }
-
-    /**
      * Metoda odpowiedzialna za przerysowanie grafu obrazu w arkuszu sieci.
      */
     private void repaintGraphPanel() {
         int sheetIndex = overlord.IDtoIndex(elementLocation.getSheetID());
-        GraphPanel graphPanel = overlord
-                .getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
+        GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
         graphPanel.repaint();
     }
 
@@ -6129,7 +8825,6 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda zmienia wysokość dla wymiaru dla arkusza dla sieci.
-     *
      * @param height    int - nowa wysokość
      * @param container JComponent - obiekt dla którego zmieniany jest wymiar
      */
@@ -6143,7 +8838,6 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia opcję autoscroll dla panelu graficznego w arkuszu sieci.
-     *
      * @param value boolean - true, jeśli autoscroll włączony
      */
     private void setAutoscroll(boolean value) {
@@ -6154,76 +8848,71 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda ustawia nową wartość czasu EFT dla tranzycji czasowej.
-     *
-     * @param x double - nowe EFT
+     * @param x (double) nowe EFT.
      */
     private void setMinFireTime(double x) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.setEFT(x);
+            transition.timeExtension.setEFT(x);
             repaintGraphPanel();
         }
     }
 
     /**
      * Metoda ustawia nową wartość czasu LFT dla tranzycji czasowej.
-     *
-     * @param x double - nowe LFT
+     * @param x (double) nowe LFT.
      */
     private void setMaxFireTime(double x) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.setLFT(x);
+            transition.timeExtension.setLFT(x);
             repaintGraphPanel();
         }
     }
 
     /**
      * Metoda ustawia nową wartość opóźnienia dla produkcji tokenów.
-     *
-     * @param x double - nowa wartość duration
+     * @param x (double) nowa wartość duration.
      */
     private void setDurationTime(double x) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.setDPNduration(x);
+            transition.timeExtension.setDPNduration(x);
             repaintGraphPanel();
         }
     }
 
     /**
      * Metoda ustawia status trybu TPN dla tranzycji.
-     *
-     * @param status boolean - nowy status
+     * @param status (boolean) nowy status.
      */
     private void setTPNstatus(boolean status) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.setTPNstatus(status);
+            transition.timeExtension.setTPNstatus(status);
             repaintGraphPanel();
         }
     }
 
     /**
      * Metoda ustawia status trybu DPN dla tranzycji.
-     *
-     * @param status boolean - nowy status
+     * @param status (boolean) nowy status, true jeżeli ma być DPN
      */
     private void setDPNstatus(boolean status) {
         if (mode == TIMETRANSITION) {
             Transition transition = (Transition) element;
-            transition.setDPNstatus(status);
+            transition.timeExtension.setDPNstatus(status);
             repaintGraphPanel();
         }
     }
 
     /**
      * Metoda zmienia współrzędną X dla wierzchołka sieci.
-     *
-     * @param x int - nowa wartość
+     * @param x (int) nowa wartość
      */
     private void setX(int x) {
-        if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
+        if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION
+                || mode == XTPN_PLACE || mode == XTPN_TRANS) {
             elementLocation.setPosition(new Point(x, elementLocation.getPosition().y));
             repaintGraphPanel();
         }
@@ -6231,11 +8920,11 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda zmienia współrzędną Y dla wierzchołka sieci.
-     *
      * @param y int - nowa wartość
      */
     private void setY(int y) {
-        if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION) {
+        if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION
+                || mode == XTPN_PLACE || mode == XTPN_TRANS) {
             elementLocation.setPosition(new Point(elementLocation.getPosition().x, y));
             repaintGraphPanel();
         }
@@ -6243,65 +8932,56 @@ public class HolmesDockWindowsTable extends JPanel {
 
     /**
      * Metoda sprawdza, czy dla danego węzła sieci lokalizacja jego nazwy nie wykracza poza ramy
-     * obrazu sieci - dla współrzędnej Y
-     *
-     * @param y  int - współrzędna Y
-     * @param n  Node - wierzchołek sieci
-     * @param el ElementLocation - obiekt lokalizacji wierzchołka
-     * @return Point - prawidłowe współrzędne
+     * obrazu sieci - dla współrzędnej Y.
+     * @param oldY (int) współrzędna Y.
+     * @param n    (Node) wierzchołek sieci.
+     * @param el   (ElementLocation) obiekt lokalizacji wierzchołka.
+     * @return (Point) prawidłowe współrzędne.
      */
-    private Point setNameOffsetY(int y, Node n, ElementLocation el) {
+    private Point setNameOffsetY(int oldY, Node n, ElementLocation el) {
         int nameLocIndex = n.getElementLocations().indexOf(el);
-        int oldX = n.getNamesLocations().get(nameLocIndex).getPosition().x;
-        int oldY = y;
-        int newx = oldX + el.getPosition().x;
-        int newy = oldY + el.getPosition().y;
+        int oldX = n.getTextsLocations(GUIManager.locationMoveType.NAME).get(nameLocIndex).getPosition().x;
 
         int sheetIndex = overlord.IDtoIndex(el.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 
-        if (graphPanel.isLegalLocation(new Point(newx, newy))) {
-            n.getNamesLocations().get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+        if (graphPanel.isLegalLocation(new Point(oldX + el.getPosition().x, oldY + el.getPosition().y))) {
+            n.getTextsLocations(GUIManager.locationMoveType.NAME).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
             graphPanel.repaint();
         }
-        return n.getNamesLocations().get(nameLocIndex).getPosition();
+        return n.getTextsLocations(GUIManager.locationMoveType.NAME).get(nameLocIndex).getPosition();
     }
 
     /**
      * Metoda sprawdza, czy dla danego węzła sieci lokalizacja jego nazwy nie wykracza poza ramy
-     * obrazu sieci - dla współrzędnej X
-     *
-     * @param x  int - współrzędna X
-     * @param n  Node - wierzchołek sieci
-     * @param el ElementLocation - obiekt lokalizacji wierzchołka
-     * @return Point - prawidłowe współrzędne
+     * obrazu sieci - dla współrzędnej X.
+     * @param oldX (int) współrzędna X.
+     * @param n    (Node) wierzchołek sieci.
+     * @param el   (ElementLocation) - obiekt lokalizacji wierzchołka.
+     * @return (Point) prawidłowe współrzędne.
      */
-    private Point setNameOffsetX(int x, Node n, ElementLocation el) {
+    private Point setNameOffsetX(int oldX, Node n, ElementLocation el) {
         int nameLocIndex = n.getElementLocations().indexOf(el);
-        int oldX = x;
-        int oldY = n.getNamesLocations().get(nameLocIndex).getPosition().y;
-        int newx = oldX + el.getPosition().x;
-        int newy = oldY + el.getPosition().y;
+        int oldY = n.getTextsLocations(GUIManager.locationMoveType.NAME).get(nameLocIndex).getPosition().y;
 
         int sheetIndex = overlord.IDtoIndex(el.getSheetID());
         GraphPanel graphPanel = overlord.getWorkspace().getSheets().get(sheetIndex).getGraphPanel();
 
-        if (graphPanel.isLegalLocation(new Point(newx, newy))) {
-            n.getNamesLocations().get(nameLocIndex).getPosition().setLocation(oldX, oldY);
+        if (graphPanel.isLegalLocation(new Point(oldX + el.getPosition().x, oldY + el.getPosition().y))) {
+            n.getTextsLocations(GUIManager.locationMoveType.NAME).get(nameLocIndex).getPosition().setLocation(oldX, oldY);
             graphPanel.repaint();
         }
-
-        return n.getNamesLocations().get(nameLocIndex).getPosition();
+        return n.getTextsLocations(GUIManager.locationMoveType.NAME).get(nameLocIndex).getPosition();
     }
 
     /**
      * Zmiana nazwy elementu sieci, dokonywana poza listenerem, który
      * jest klasa anonimową (i nie widzi pola element).
-     *
-     * @param newName String - nowa nazwa
+     * @param newName (String) nowa nazwa.
      */
     private void changeName(String newName) {
-        if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION || mode == META) {
+        if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION || mode == META
+                || mode == XTPN_PLACE || mode == XTPN_TRANS) {
             Node node = (Node) element;
             node.setName(newName);
             repaintGraphPanel();
@@ -6311,8 +8991,7 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda zmienia komentarz dla elementu sieci, poza listenerem, który
      * jest klasą anonimową (i nie widzi pola element).
-     *
-     * @param newComment String - nowy komentarz
+     * @param newComment (String) nowy komentarz.
      */
     private void changeComment(String newComment) {
         element.setComment(newComment);
@@ -6322,7 +9001,8 @@ public class HolmesDockWindowsTable extends JPanel {
      * Tworzenie portalu z aktualnie wybranego elementu sieci.
      */
     private void makePortal() {
-        if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION || mode == CTRANSITION) {
+        if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION || mode == CTRANSITION
+                || mode == XTPN_PLACE || mode == XTPN_TRANS) {
             Node node = (Node) element;
             node.setPortal(true);
         }
@@ -6332,7 +9012,8 @@ public class HolmesDockWindowsTable extends JPanel {
      * Wyłączenie statusu portalu na elemencie posiadającym tylko jedno EL.
      */
     private void unPortal() {
-        if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION || mode == CTRANSITION) {
+        if (mode == PLACE || mode == TRANSITION || mode == TIMETRANSITION || mode == CTRANSITION
+                || mode == XTPN_PLACE || mode == XTPN_TRANS) {
             Node node = (Node) element;
             if (node.getElementLocations().size() == 1)
                 node.setPortal(false);
@@ -6342,7 +9023,6 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda zmienia liczbę tokenów dla miejsca sieci, poza listenerem, który
      * jest klasą anonimową (i nie widzi pola element).
-     *
      * @param tokens int - nowa liczba tokenów
      */
     private void setTokens(int tokens) {
@@ -6350,9 +9030,9 @@ public class HolmesDockWindowsTable extends JPanel {
         if (mode == PLACE) {
             place.setTokensNumber(tokens);
 
-            if (overlord.getWorkspace().getProject().accessStatesManager().selectedState == 0) {
+            if (overlord.getWorkspace().getProject().accessStatesManager().selectedStatePN == 0) {
                 ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
-                overlord.getWorkspace().getProject().accessStatesManager().getState(0).setTokens(places.indexOf(place), tokens);
+                overlord.getWorkspace().getProject().accessStatesManager().getStatePN(0).setTokens(places.indexOf(place), tokens);
             }
             repaintGraphPanel();
         }
@@ -6361,34 +9041,20 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda zmienia liczbę tokenów dla miejsca kolorowego sieci, poza listenerem, który
      * jest klasą anonimową (i nie widzi pola element).
-     *
      * @param tokens int - nowa liczba tokenów
      * @param i      int - nr porządkowy tokenu, default 0, od 0 do 5
      */
     private void setColorTokens(int tokens, int i) {
-        Place place = (Place) element;
-        if (mode == PLACE && place.isColored) {
+        if (mode == PLACE && element instanceof PlaceColored) {
+            PlaceColored place = (PlaceColored) element;
             switch (i) {
-                case 0:
-                    place.setColorTokensNumber(tokens, 0);
-                    break;
-                case 1:
-                    place.setColorTokensNumber(tokens, 1);
-                    break;
-                case 2:
-                    place.setColorTokensNumber(tokens, 2);
-                    break;
-                case 3:
-                    place.setColorTokensNumber(tokens, 3);
-                    break;
-                case 4:
-                    place.setColorTokensNumber(tokens, 4);
-                    break;
-                case 5:
-                    place.setColorTokensNumber(tokens, 5);
-                    break;
-                default:
-                    place.setTokensNumber(tokens);
+                case 0 -> place.setColorTokensNumber(tokens, 0);
+                case 1 -> place.setColorTokensNumber(tokens, 1);
+                case 2 -> place.setColorTokensNumber(tokens, 2);
+                case 3 -> place.setColorTokensNumber(tokens, 3);
+                case 4 -> place.setColorTokensNumber(tokens, 4);
+                case 5 -> place.setColorTokensNumber(tokens, 5);
+                default -> place.setTokensNumber(tokens);
             }
             repaintGraphPanel();
         }
@@ -6397,12 +9063,11 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda zmienia wagę dla łuku sieci, poza listenerem, który
      * jest klasą anonimową (i nie widzi pola element).
-     *
-     * @param weight int - nowa waga
-     * @param arc    Arc - łuk
+     * @param weight int - nowa waga.
+     * @param arc    Arc - łuk.
      */
     private void setWeight(int weight, Arc arc) {
-        if (mode == ARC) {
+        if (mode == ARC || mode == XARC) {
             arc.setWeight(weight);
             repaintGraphPanel();
         }
@@ -6411,35 +9076,20 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda zmienia wagę dla łuku sieci, poza listenerem, który
      * jest klasą anonimową (i nie widzi pola element).
-     *
      * @param weight int - nowa waga dla koloru
      * @param arc    Arc - obiekt łuku
      * @param i      int - nr porządkowy koloru, default 0, od 0 do 5
      */
     private void setColorWeight(int weight, Arc arc, int i) {
-        if (mode == ARC) {
+        if (mode == ARC || mode == XARC) {
             switch (i) {
-                case 0:
-                    arc.setColorWeight(weight, i);
-                    break;
-                case 1:
-                    arc.setColorWeight(weight, i);
-                    break;
-                case 2:
-                    arc.setColorWeight(weight, i);
-                    break;
-                case 3:
-                    arc.setColorWeight(weight, i);
-                    break;
-                case 4:
-                    arc.setColorWeight(weight, i);
-                    break;
-                case 5:
-                    arc.setColorWeight(weight, i);
-                    break;
-                default:
-                    arc.setColorWeight(weight, i);
-                    break;
+                case 0 -> arc.setColorWeight(weight, i);
+                case 1 -> arc.setColorWeight(weight, i);
+                case 2 -> arc.setColorWeight(weight, i);
+                case 3 -> arc.setColorWeight(weight, i);
+                case 4 -> arc.setColorWeight(weight, i);
+                case 5 -> arc.setColorWeight(weight, i);
+                default -> arc.setColorWeight(weight, i);
             }
 
             repaintGraphPanel();
@@ -6449,52 +9099,72 @@ public class HolmesDockWindowsTable extends JPanel {
     /**
      * Metoda zmienia liczbę tokenów aktywacji tranzycji, poza listenerem, który
      * jest klasą anonimową (i nie widzi pola element).
-     *
      * @param weight int - nowa waga aktywacji dla koloru
      * @param trans  Transition - obiekt łuku
      * @param i      int - nr porządkowy koloru, default 0, od 0 do 5
      */
     private void setActivationWeight(int weight, Transition trans, int i) {
-        switch (i) {
-            case 0:
-                trans.setRequiredColoredTokens(weight, 0);
-                break;
-            case 1:
-                trans.setRequiredColoredTokens(weight, 1);
-                break;
-            case 2:
-                trans.setRequiredColoredTokens(weight, 2);
-                break;
-            case 3:
-                trans.setRequiredColoredTokens(weight, 3);
-                break;
-            case 4:
-                trans.setRequiredColoredTokens(weight, 4);
-                break;
-            case 5:
-                trans.setRequiredColoredTokens(weight, 5);
-                break;
-            default:
-                trans.setRequiredColoredTokens(weight, 0);
+        if (trans instanceof TransitionColored) {
+            TransitionColored transition = (TransitionColored) trans;
+            switch (i) {
+                case 0 -> transition.setRequiredColoredTokens(weight, 0);
+                case 1 -> transition.setRequiredColoredTokens(weight, 1);
+                case 2 -> transition.setRequiredColoredTokens(weight, 2);
+                case 3 -> transition.setRequiredColoredTokens(weight, 3);
+                case 4 -> transition.setRequiredColoredTokens(weight, 4);
+                case 5 -> transition.setRequiredColoredTokens(weight, 5);
+                default -> transition.setRequiredColoredTokens(weight, 0);
+            }
         }
+
     }
 
     /**
      * Metoda ustawia nowy obiekt symulatora sieci.
-     *
-     * @param netSim NetSimulator - nowy obiekt
+     * @param netSim     (<b>NetSimulator</b>) simulator zwykły.
+     * @param netSimXTPN (<b>NetSimulatorXTPN</b>) simulator XTPN.
      */
-    public void setSimulator(NetSimulator netSim) {
+    public void setSimulator(GraphicalSimulator netSim, GraphicalSimulatorXTPN netSimXTPN) {
         simulator = netSim;
+        simulatorXTPN = netSimXTPN;
     }
 
     /**
-     * Metoda zwraca obiekt aktywnego symulatora z podokna symulacji.
-     *
-     * @return NetSimulator - obiekt symulatora
+     * Metoda zwraca obiekt aktywnego zwykłego symulatora z podokna symulacji.
+     * @return (< b > NetSimulator < / b >) obiekt symulatora sieci zwykłej.
      */
-    public NetSimulator getSimulator() {
+    public GraphicalSimulator getSimulator() {
         return simulator;
+    }
+
+    /**
+     * Metoda zwraca obiekt aktywnego symulatora XTPN z podokna symulacji.
+     * @return (< b > NetSimulatorXTPN < / b >) obiekt symulatora XTPN.
+     */
+    public GraphicalSimulatorXTPN getSimulatorXTPN() {
+        return simulatorXTPN;
+    }
+    
+    /**
+     * Metoda uaktywnia tylko przyciski stop i pauza dla symulatora. Cała reszta - nieaktywna.
+     */
+    public void allowOnlySimulationDisruptButtons() {
+        setStartSimulationButtonsStatus(false);
+        setPauseAndStopSimulationButtonsStatus(true);
+
+        overlord.getSimulatorBox().getCurrentDockWindow().getPanel().revalidate();
+        overlord.getSimulatorBox().getCurrentDockWindow().getPanel().repaint();
+    }
+
+    /**
+     * Metoda uaktywnia tylko przycisku startu dla symulatora, blokuje stop i pauzę.
+     */
+    public void allowOnlySimulationInitiateButtons() {
+        setStartSimulationButtonsStatus(true);
+        setPauseAndStopSimulationButtonsStatus(false);
+
+        overlord.getSimulatorBox().getCurrentDockWindow().getPanel().revalidate();
+        overlord.getSimulatorBox().getCurrentDockWindow().getPanel().repaint();
     }
 
     /**
@@ -6503,13 +9173,13 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param enabled boolean - true, jeśli mają być aktywne
      */
-    private void setEnabledSimulationInitiateButtons(boolean enabled) {
+    private void setStartSimulationButtonsStatus(boolean enabled) {
         for (JComponent comp : components) {
             if (comp instanceof JButton && comp.getName() != null) {
-                if (comp.getName().equals("simB1") || comp.getName().equals("simB2")
+                if (comp.getName().equals("simPNoneBack") || comp.getName().equals("simPNoneForward")
                         || comp.getName().equals("simB3") || comp.getName().equals("simB4")
-                        || comp.getName().equals("simB5") || comp.getName().equals("simB6")
-                        || comp.getName().equals("reset")) {
+                        || comp.getName().equals("simPNstart") || comp.getName().equals("simPNstartSingle")
+                        || comp.getName().equals("simPNreset")) {
                     comp.setEnabled(enabled);
                 }
             }
@@ -6521,10 +9191,10 @@ public class HolmesDockWindowsTable extends JPanel {
      *
      * @param enabled boolean - true, jeśli mają być aktywne
      */
-    private void setEnabledSimulationDisruptButtons(boolean enabled) {
+    private void setPauseAndStopSimulationButtonsStatus(boolean enabled) {
         for (JComponent comp : components) {
             if (comp instanceof JButton && comp.getName() != null) {
-                if (comp.getName().equals("stop") || comp.getName().equals("pause")) {
+                if (comp.getName().equals("simPNpause") || comp.getName().equals("simPNstop")) {
                     comp.setEnabled(enabled);
                 }
             }
@@ -6532,31 +9202,16 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     /**
-     * Metoda uaktywnia tylko przycisku startu dla symulatora, bloku stop i pauzę.
-     */
-    public void allowOnlySimulationInitiateButtons() {
-        setEnabledSimulationInitiateButtons(true);
-        setEnabledSimulationDisruptButtons(false);
-    }
-
-    /**
-     * Metoda uaktywnia tylko przyciski stop i pauza dla symulatora. Cała reszta - nieaktywna.
-     */
-    public void allowOnlySimulationDisruptButtons() {
-        setEnabledSimulationInitiateButtons(false);
-        setEnabledSimulationDisruptButtons(true);
-    }
-
-    /**
      * Metoda zostawia aktywny tylko przycisku od-pauzowania.
      */
     public void allowOnlyUnpauseButton() {
         allowOnlySimulationDisruptButtons();
+
         //values.get(4).setEnabled(false);
         for (JComponent comp : components) {
             if (comp instanceof JButton && comp.getName() != null) {
-                if (comp.getName().equals("pause")) {
-                    comp.setEnabled(false);
+                if (comp.getName().equals("simPNpause")) {
+                    comp.setEnabled(true);
                     break;
                 }
             }
@@ -6564,30 +9219,76 @@ public class HolmesDockWindowsTable extends JPanel {
     }
 
     /**
-     * Metoda czyści dane o t-inwariantach.
+     * Metoda uaktywnia tylko przyciski stop i pauza dla symulatora XTPN. Cała reszta - nieaktywna.
      */
-    public void resetT_invariants() {
-        t_invariantsMatrix = null;
+    public void allowOnlySimulationDisruptButtonsXTPN() {
+        setEnabledSimulationInitiateButtonsXTPN(false);
+        setEnabledSimulationDisruptButtonsXTPN(true);
+    }
+
+    /**
+     * Metoda uaktywnia tylko przycisku startu dla symulatora, blokuje stop i pauzę.
+     */
+    public void allowOnlySimulationInitiateButtonsXTPN() {
+        setEnabledSimulationInitiateButtonsXTPN(true);
+        setEnabledSimulationDisruptButtonsXTPN(false);
+    }
+
+    /**
+     * Metoda ustawia status wszystkich przycisków rozpoczęcia symulacji XTPN za wyjątkiem
+     * Pauzy, Stopu - w przypadku startu / stopu symulacji
+     * @param enabled boolean - true, jeśli mają być aktywne
+     */
+    private void setEnabledSimulationInitiateButtonsXTPN(boolean enabled) {
+        for (JComponent comp : components) {
+            if (comp instanceof HolmesRoundedButton && comp.getName() != null) {
+                if (comp.getName().equals("XTPNstart") || comp.getName().equals("resetM0button")) {
+                    comp.setEnabled(enabled);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Metoda ustawia status przycisków Stop, Pauza.
+     * @param enabled boolean - true, jeśli mają być aktywne
+     */
+    private void setEnabledSimulationDisruptButtonsXTPN(boolean enabled) {
+        for (JComponent comp : components) {
+            if (comp instanceof HolmesRoundedButton && comp.getName() != null) {
+                if (comp.getName().equals("XTPNstop") || comp.getName().equals("XTPNpause")) {
+                    comp.setEnabled(enabled);
+                }
+            }
+        }
+    }
+
+    /**
+     * Metoda zostawia aktywny tylko przycisku od-pauzowania.
+     */
+    public void allowOnlyUnpauseButtonXTPN() {
+        allowOnlySimulationDisruptButtonsXTPN();
+        for (JComponent comp : components) {
+            if (comp instanceof HolmesRoundedButton && comp.getName() != null) {
+                if (comp.getName().equals("XTPNpause")) {
+                    comp.setEnabled(true);
+                    break;
+                }
+            }
+        }
     }
 
     /**
      * Metoda czyści dane o p-inwariantach.
      */
-    public void resetP_invariants() {
+    public void cleanPInvSubwindowData() {
         p_invariantsMatrix = null;
-    }
-
-    /**
-     * Metoda czyści dane o zbiorach MCT.
-     */
-    public void resetMCT() {
-        mctGroups = null;
     }
 
     /**
      * Metoda czyści dane o klastrach.
      */
-    public void resetClusters() {
+    public void cleanClustersSubwindowData() {
         clusterColorsData = null;
     }
 }

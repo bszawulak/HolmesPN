@@ -1,23 +1,22 @@
 package holmes.darkgui.dockwindows;
 
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.SelectionActionListener.SelectionActionEvent;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 
+import java.io.Serial;
+
 /**
  * Klasa implementująca panel pokazujący informacje o zaznaczonych myszą elementach sieci.
- * @author students
- *
  */
 public class SelectionPanel extends JPanel {
+	@Serial
 	private static final long serialVersionUID = -7388729615923711657L;
-	private GUIManager guiManager;
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private DefaultListModel<String> selectedElementLocationList;
 	private DefaultListModel<String> selectedArcList;
 
@@ -26,8 +25,7 @@ public class SelectionPanel extends JPanel {
 	 */
 	public SelectionPanel() {
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		//add(new JLabel("No elements selected."));
-		this.setGuiManager(GUIManager.getDefaultGUIManager());
+		add(new JLabel(lang.getText("SP_toolTip001")));
 		this.setSelectedElementLocationList(new DefaultListModel<String>());
 		this.setSelectedArcList(new DefaultListModel<String>());
 		
@@ -38,22 +36,6 @@ public class SelectionPanel extends JPanel {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
 		JList arcList = new JList(this.getSelectedArcList());
 		this.add(arcList);
-	}
-
-	/**
-	 * Metoda zwracająca obiekt managera interfejsu.
-	 * @return GUIManager - obiekt managera
-	 */
-	protected GUIManager getGuiManager() {
-		return guiManager;
-	}
-
-	/**
-	 * Metoda ustwiająca nowy obiekt managera interfejsu.
-	 * @return GUIManager - obiekt managera
-	 */
-	protected void setGuiManager(GUIManager guiManager) {
-		this.guiManager = guiManager;
 	}
 	
 	/**
@@ -97,11 +79,11 @@ public class SelectionPanel extends JPanel {
 	public void actionPerformed(SelectionActionEvent e) {
 		this.getSelectedElementLocationList().clear();
 		this.getSelectedArcList().clear();
-		if (e.getElementLocationGroup() != null && e.getElementLocationGroup().size() > 0) {			
+		if (e.getElementLocationGroup() != null && !e.getElementLocationGroup().isEmpty()) {
 			for (ElementLocation el : e.getElementLocationGroup())
 				this.getSelectedElementLocationList().addElement(el.toString());
 		}
-		if (e.getArcGroup() != null && e.getArcGroup().size() > 0) {			
+		if (e.getArcGroup() != null && !e.getArcGroup().isEmpty()) {
 			for (Arc a : e.getArcGroup())
 				this.getSelectedArcList().addElement(a.toString());
 		}

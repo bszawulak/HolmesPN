@@ -4,7 +4,7 @@ import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 
 /**
- * Klasa odpowiedzialna za przechwytywanie naciśnieć przycisków.
+ * Klasa odpowiedzialna za przechwytywanie naciśnięcia przycisków.
  * @author students
  *
  */

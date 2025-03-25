@@ -3,16 +3,16 @@ package holmes.analyse;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Transition.TransitionType;
 
 /**
  * Klasa odpowiedzialna za działania związane z czasem w sieci Petriego.
- * 
- * @author MR
  */
 public class TimeComputations {
-
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Metoda zwraca wektor danych czasowych dla t-inwariantu.
 	 * @param invariant ArrayList[Integer] - t-inwariant
@@ -37,7 +37,7 @@ public class TimeComputations {
 		int dpnPureTrans = 0;
 		int tdpnTrans = 0;
 		if(invariant.size() != transitions.size()) {
-			GUIManager.getDefaultGUIManager().log("Error: t-invariant and transition set sizes do not match!", "error", true);
+			overlord.log(lang.getText("TC_entry001"), "error", true);
 			return null;
 		}
 		
@@ -52,24 +52,24 @@ public class TimeComputations {
 				normalTrans++;
 				continue;
 			}
-			boolean tpnStatus = trans.getTPNstatus();
-			boolean dpnStatus = trans.getDPNstatus();
+			boolean tpnStatus = trans.timeExtension.isTPN();
+			boolean dpnStatus = trans.timeExtension.isDPN();
 			
 			if(tpnStatus && dpnStatus) {
 				tdpnTrans++;
 				
-				eftTotalTime += trans.getEFT();
-				lftTotalTime += trans.getLFT();
-				dpnTotalTime += trans.getDPNduration();
+				eftTotalTime += trans.timeExtension.getEFT();
+				lftTotalTime += trans.timeExtension.getLFT();
+				dpnTotalTime += trans.timeExtension.getDPNduration();
 			} else if(tpnStatus) {
 				tpnPureTrans++;
 				
-				eftTotalTime += trans.getEFT();
-				lftTotalTime += trans.getLFT();
+				eftTotalTime += trans.timeExtension.getEFT();
+				lftTotalTime += trans.timeExtension.getLFT();
 			} else if(dpnStatus) {
 				dpnPureTrans++;
 				
-				dpnTotalTime += trans.getDPNduration();
+				dpnTotalTime += trans.timeExtension.getDPNduration();
 			} else {
 				normalTrans++; //niby TPN, ale oba parametry wyłączone
 			}

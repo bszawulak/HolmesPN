@@ -10,11 +10,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.Serial;
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -33,6 +32,7 @@ import holmes.analyse.InvariantsCalculator;
 import holmes.analyse.InvariantsTools;
 import holmes.analyse.NetPropertiesAnalyzer;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
@@ -47,8 +47,10 @@ import holmes.workspace.ExtensionFileFilter;
  *
  */
 public class HolmesNetProperties extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -4382182770445745847L;
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JFrame ego;
 	
 	//Wiemy wszystko o wszystkim:
@@ -83,11 +85,10 @@ public class HolmesNetProperties extends JFrame {
 		ego = this;
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
-			
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00470exception")+"\n"+ex.getMessage(), "error", true);
 		}
-		this.setTitle("Petri net general information and properties");
-		this.overlord = GUIManager.getDefaultGUIManager();
+		this.setTitle(lang.getText("HNPwin_entry001title"));
 
 		setLayout(new BorderLayout());
 		setSize(new Dimension(650, 550));
@@ -123,13 +124,13 @@ public class HolmesNetProperties extends JFrame {
 		
 		ArrayList<Integer> arcClasses = Check.getArcClassCount();
 		
-		nameField.setText(overlord.getWorkspace().getProject().getName()+"");
+		nameField.setText(overlord.getWorkspace().getProject().getName());
 		label_nodesNumber.setText(nodes.size()+"");
 		label_transitionsNumber.setText(transitions.size()+"");
 		label_placesNumber.setText(places.size()+"");
 		int readArcs = arcClasses.get(1) / 2;
 		label_arcNumber.setText((arcs.size()-readArcs)+"");
-		int inv_number = 0;
+		int inv_number;
 		if(invariantsMatrix == null) {
 			inv_number = 0;
 		}
@@ -161,19 +162,19 @@ public class HolmesNetProperties extends JFrame {
 		int normal = 0;
 		if(invariantsMatrix != null) {
 			//sprawdza czy określono typy inwariantów, jeśli nie - wymusza przeliczenie 
-			if(overlord.getWorkspace().getProject().getT_invTypesComputed() == false) {
-				textField.append("Computing t-invariants types vector\n");
+			if(!overlord.getWorkspace().getProject().getT_invTypesComputed()) {
+				textField.append(lang.getText("HNPwin_entry002")); //Computing t-invariants types vector
 				InvariantsCalculator ic = new InvariantsCalculator(true);
 				InvariantsTools.analyseInvariantTypes(ic.getCMatrix(), invariantsMatrix, true);
 			}
 			ArrayList<Integer> invTypes = overlord.getWorkspace().getProject().accessT_InvTypesVector();
-			
-			for(int i=0; i<invTypes.size(); i++) {
-				if(invTypes.get(i) == 0) {
+
+			for (Integer invType : invTypes) {
+				if (invType == 0) {
 					normal++;
-				} else if(invTypes.get(i) == -1) {
+				} else if (invType == -1) {
 					sub++;
-				} else if(invTypes.get(i) == 1) {
+				} else if (invType == 1) {
 					sur++;
 				} else {
 					none++;
@@ -207,30 +208,40 @@ public class HolmesNetProperties extends JFrame {
 					transInNoInvariant++;
 				}
 			}
-			textField.append("t-invariants (Cx = 0): "+normal+"\n");
-			textField.append("Sur-t-invariants (Cx > 0): "+sur+"\n");
-			textField.append("Sub-t-invariants (Cx < 0): "+sub+"\n");
-			textField.append("Non-t-invariants (Cx <=> 0): "+none+"\n");
+			textField.append(lang.getText("HNPwin_entry003")+" "+normal+"\n");
+			textField.append(lang.getText("HNPwin_entry004")+" "+sur+"\n");
+			textField.append(lang.getText("HNPwin_entry005")+" "+sub+"\n");
+			textField.append(lang.getText("HNPwin_entry006")+" "+none+"\n");
 			
 			//WYŚWIETLANIE DANYCH:
 			if(transInNoInvariant==0) {
 				textField.append("\n");
-				textField.append("The net is covered by t-invariants (only vectors x such as Cx=0 are considered).\n");
+				textField.append(lang.getText("HNPwin_entry007"));
 				textField.append("\n");
 			} else {
 				textField.append("\n");
-				textField.append("The net is not covered by t-invariants (only vectors x such as Cx=0 are considered).\n");
-				textField.append("Transitions not covered by the "+normal+" t-invariants:\n");
+				textField.append(lang.getText("HNPwin_entry008"));
+				String strB = "err.";
+				try {
+					strB = String.format(lang.getText("HNPwin_entry008"), normal);
+				} catch (Exception e) {
+					overlord.log(lang.getText("LOGentryLNGexc")+" "+"HNPwin_entry008", "error", true);
+				}
+				textField.append(strB);
 				textField.append("\n");
-				for(int i=0; i<idTransNoInv.size(); i++) {
-					int tNumber = idTransNoInv.get(i);
-					String txt1 = Tools.setToSize("t"+tNumber, 5, false);
-					textField.append(txt1+" "+(tNumber)+transitions.get(tNumber).getName()+"\n");
+				for (int tNumber : idTransNoInv) {
+					String txt1 = Tools.setToSize("t" + tNumber, 5, false);
+					textField.append(txt1 + " " + (tNumber) + transitions.get(tNumber).getName() + "\n");
 				}
 				textField.append("\n");
 			}
-			
-			textField.append("Transitions within "+normal+" t-invariants:\n");
+			String strB = "err.";
+			try {
+				strB = String.format(lang.getText("HNPwin_entry009"), normal);
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HNPwin_entry009", "error", true);
+			}
+			textField.append(strB);
 			for(int i=0; i<transitions.size(); i++) {
 				if(transInInv.get(i) > 0) { //dla tranz. w inwariantach
 					int transInv = transInInv.get(i);
@@ -258,7 +269,7 @@ public class HolmesNetProperties extends JFrame {
 	 */
 	private JPanel createMainPanel() {
 		JPanel panel = new JPanel();
-		panel.setLayout(null);  /** (ノಠ益ಠ)ノ彡┻━━━┻ |   */
+		panel.setLayout(null);  // (ノಠ益ಠ)ノ彡┻━━━┻ |
 		panel.setBorder(BorderFactory.createTitledBorder("General Petri net informations:"));
 		
 		int xPos = 10;
@@ -274,49 +285,48 @@ public class HolmesNetProperties extends JFrame {
 		
 		nameField = new JFormattedTextField();
 		nameField.setBounds(xPos+110, yPosA+2, 500, 20);
-		nameField.addPropertyChangeListener("value", new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent e) {
-				JFormattedTextField field = (JFormattedTextField) e.getSource();
-				try {
-					field.commitEdit();
-				} catch (ParseException ex) {
-				}
-				String newName = (String) field.getText();
-				overlord.getWorkspace().getProject().setName(newName);
+		nameField.addPropertyChangeListener("value", e -> {
+			JFormattedTextField field = (JFormattedTextField) e.getSource();
+			try {
+				field.commitEdit();
+			} catch (ParseException ex) {
+				overlord.log(lang.getText("LOGentry00471exception")+"\n"+ex.getMessage(), "error", true);
 			}
+			String newName = field.getText();
+			overlord.getWorkspace().getProject().setName(newName);
 		});
 		panel.add(nameField);
 		
 		//NET NODES:
-		JLabel label2 = new JLabel("Nodes:");
+		JLabel label2 = new JLabel(lang.getText("HNPwin_entry010")); //Nodes
 		label2.setBounds(xPos, yPosA+=spacing, 100, 20);
 		panel.add(label2);
-		label_nodesNumber = new JLabel("N/A");
+		label_nodesNumber = new JLabel(lang.getText("HNPwin_entry011"));
 		label_nodesNumber.setBounds(xPos+label2.getWidth()+10, label2.getLocation().y, numberLabelWidth, 20);
 		panel.add(label_nodesNumber);
 		//NET TRANSITION:
-		JLabel label3 = new JLabel("Transitions:");
+		JLabel label3 = new JLabel(lang.getText("HNPwin_entry012"));//Transitions
 		label3.setBounds(xPos, yPosA+=spacing, 100, 20);
 		panel.add(label3);
-		label_transitionsNumber = new JLabel("N/A");
+		label_transitionsNumber = new JLabel(lang.getText("HNPwin_entry011"));
 		label_transitionsNumber.setBounds(xPos+label3.getWidth()+10, label3.getLocation().y, numberLabelWidth, 20);
 		panel.add(label_transitionsNumber);
 		//NET PLACES:
-		JLabel label4 = new JLabel("Places:");
+		JLabel label4 = new JLabel(lang.getText("HNPwin_entry013")); //Places
 		label4.setBounds(xPos, yPosA+=spacing, 100, 20);
 		panel.add(label4);
-		label_placesNumber = new JLabel("N/A");
+		label_placesNumber = new JLabel(lang.getText("HNPwin_entry011"));
 		label_placesNumber.setBounds(xPos+label4.getWidth()+10, label4.getLocation().y, numberLabelWidth, 20);
 		panel.add(label_placesNumber);
 		//NET PLACES:
-		JLabel label5 = new JLabel("Arcs:");
+		JLabel label5 = new JLabel(lang.getText("HNPwin_entry014")); //Arcs
 		label5.setBounds(xPos, yPosA+=spacing, 100, 20);
 		panel.add(label5);
-		label_arcNumber = new JLabel("N/A");
+		label_arcNumber = new JLabel(lang.getText("HNPwin_entry011"));
 		label_arcNumber.setBounds(xPos+label5.getWidth()+10, label5.getLocation().y, numberLabelWidth, 20);
 		panel.add(label_arcNumber);
 		//NET INVARIANTS:
-		JLabel label6 = new JLabel("t-invariants:");
+		JLabel label6 = new JLabel(lang.getText("HNPwin_entry015")); //Invariants
 		label6.setBounds(xPos, yPosA+=spacing, 100, 20);
 		panel.add(label6);
 		label_invNumber = new JLabel("N/A");
@@ -324,64 +334,60 @@ public class HolmesNetProperties extends JFrame {
 		panel.add(label_invNumber);
 		
 		//II KOLUMNA:
-		JLabel label11 = new JLabel("Normal arc:");
-		label11.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		JLabel label11 = new JLabel(lang.getText("HNPwin_entry016")); //Normal arc
+		label11.setBounds(xPos+150, yPosB+=spacing, 110, 20);
 		panel.add(label11);
 		label_arcNormal = new JLabel("0");
-		label_arcNormal.setBounds(xPos+240, yPosB, 60, 20);
+		label_arcNormal.setBounds(xPos+265, yPosB, 60, 20);
 		panel.add(label_arcNormal);
 		
-		JLabel label12 = new JLabel("Read-arc:");
-		label12.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		JLabel label12 = new JLabel(lang.getText("HNPwin_entry017")); //Read arc
+		label12.setBounds(xPos+150, yPosB+=spacing, 110, 20);
 		panel.add(label12);
 		label_arcReadarc = new JLabel("0");
-		label_arcReadarc.setBounds(xPos+240, yPosB, 60, 20);
+		label_arcReadarc.setBounds(xPos+265, yPosB, 60, 20);
 		panel.add(label_arcReadarc);
 		
-		JLabel label13 = new JLabel("Inhibitor arc:");
-		label13.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		JLabel label13 = new JLabel(lang.getText("HNPwin_entry018")); //Inhibitor arc
+		label13.setBounds(xPos+150, yPosB+=spacing, 110, 20);
 		panel.add(label13);
 		label_arcInhibitor = new JLabel("0");
-		label_arcInhibitor.setBounds(xPos+240, yPosB, 60, 20);
+		label_arcInhibitor.setBounds(xPos+265, yPosB, 60, 20);
 		panel.add(label_arcInhibitor);
 		
-		JLabel label14 = new JLabel("Reset arc:");
-		label14.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		JLabel label14 = new JLabel(lang.getText("HNPwin_entry019")); //Reset arc
+		label14.setBounds(xPos+150, yPosB+=spacing, 110, 20);
 		panel.add(label14);
 		label_arcReset = new JLabel("0");
-		label_arcReset.setBounds(xPos+240, yPosB, 60, 20);
+		label_arcReset.setBounds(xPos+265, yPosB, 60, 20);
 		panel.add(label_arcReset);
 		
-		JLabel label15 = new JLabel("Equal arc:");
-		label15.setBounds(xPos+150, yPosB+=spacing, 80, 20);
+		JLabel label15 = new JLabel(lang.getText("HNPwin_entry020")); //Equal arc
+		label15.setBounds(xPos+150, yPosB+=spacing, 110, 20);
 		panel.add(label15);
 		label_arcEqual = new JLabel("0");
-		label_arcEqual.setBounds(xPos+240, yPosB, 60, 20);
+		label_arcEqual.setBounds(xPos+265, yPosB, 60, 20);
 		panel.add(label_arcEqual);
 		
 		//Panel właściwości
 		staticPropertiesPanel = new JPanel(new FlowLayout());
-		staticPropertiesPanel.setBorder(BorderFactory.createTitledBorder("Net static properties:"));
+		staticPropertiesPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNPwin_entry021")));
 		staticPropertiesPanel.setBounds(330, 35, 300, 100);
 		panel.add(staticPropertiesPanel);
 		
 		yPosA += 25;
 		
-		JButton saveButton = new JButton("Save to file");
+		JButton saveButton = new JButton(lang.getText("HNPwin_entry022")); //Save to file
 		saveButton.setMargin(new Insets(0, 0, 0, 0));
 		saveButton.setIcon(Tools.getResIcon22("/icons/quickSave.png"));
-		saveButton.setBounds(xPos, yPosA, 130, 30);
-		saveButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				saveToFile();
-			}
-		});
+		saveButton.setBounds(xPos, yPosA, 150, 30);
+		saveButton.addActionListener(actionEvent -> saveToFile());
 		panel.add(saveButton);
 		
 		yPosA += 10;
 		//Panel informacji o invariantach
 		JPanel invInfoPanel = new JPanel(new BorderLayout());
-		invInfoPanel.setBorder(BorderFactory.createTitledBorder("Invariants details:"));
+		invInfoPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNPwin_entry023"))); //Invariants details
 		invInfoPanel.setBounds(xPos-5, yPosA+=spacing, 635, 345);
 		
 		textField = new JTextArea();
@@ -414,7 +420,7 @@ public class HolmesNetProperties extends JFrame {
 			if (pr.size() < 2) {
 				pButton.setBackground(Color.GRAY);
 			} else {
-				if ((Boolean) pr.get(1) == true) {
+				if ((Boolean) pr.get(1)) {
 					pButton.setBackground(Color.green);
 					pButton.setForeground(Color.WHITE);
 				} else {
@@ -428,8 +434,8 @@ public class HolmesNetProperties extends JFrame {
 				    private String[] yesWeCan;
 				    public void actionPerformed(ActionEvent e) {
 				    	JOptionPane.showMessageDialog(ego, 
-				    			"Petri net meaning:\n" + yesWeCan[1]
-				    			+ "\n\nBiological interpretation:\n" + yesWeCan[2],
+				    			lang.getText("HNPwin_entry024a") + yesWeCan[1]
+				    			+ lang.getText("HNPwin_entry024b") + yesWeCan[2],
 				    			yesWeCan[0], JOptionPane.INFORMATION_MESSAGE);
 				    }
 				    private ActionListener goForthMyMinion(String[] codeInjection){
@@ -454,7 +460,7 @@ public class HolmesNetProperties extends JFrame {
 		filters[0] = new ExtensionFileFilter("Normal text file (.txt)",  new String[] { "TXT" });
 		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "", "");
 		
-		if(!selectedFile.equals("")) { //jeśli wskazano plik
+		if(!selectedFile.isEmpty()) { //jeśli wskazano plik
 			String fileName = selectedFile.substring(selectedFile.lastIndexOf(File.separator)+1);
 			if(!fileName.contains(".txt")) //(⌐■_■)
 				selectedFile += ".txt";
@@ -462,38 +468,38 @@ public class HolmesNetProperties extends JFrame {
 			try {
 				BufferedWriter bw = new BufferedWriter(new FileWriter(selectedFile));
 				
-				bw.write("Petri net name: "+nameField.getText()+"\n");
-				bw.write("Number of nodes: "+label_nodesNumber.getText()+"\n");
-				bw.write("Number of transitions: "+label_transitionsNumber.getText()+"\n");
-				bw.write("Number of places: "+label_placesNumber.getText()+"\n");
-				bw.write("Number of arcs: "+label_arcNumber.getText()+"\n");
+				bw.write(lang.getText("HNPwin_entry025")+" "+nameField.getText()+"\n");
+				bw.write(lang.getText("HNPwin_entry026")+" "+label_nodesNumber.getText()+"\n");
+				bw.write(lang.getText("HNPwin_entry027")+" "+label_transitionsNumber.getText()+"\n");
+				bw.write(lang.getText("HNPwin_entry028")+" "+label_placesNumber.getText()+"\n");
+				bw.write(lang.getText("HNPwin_entry029")+" "+label_arcNumber.getText()+"\n");
 				
 				bw.write("\n");
-				bw.write("Net static properties: \n");
+				bw.write(lang.getText("HNPwin_entry030"));
 				int count = 1;
-				for(int i=0; i<properties.size(); i++) {
-					boolean isNet = (boolean)properties.get(i).get(1);
-					if(isNet) {
-						String[] data = (String[]) properties.get(i).get(2);
-						bw.write("Property "+count+": "+data[0]+"\n");
+				for (ArrayList<Object> property : properties) {
+					boolean isNet = (boolean) property.get(1);
+					if (isNet) {
+						String[] data = (String[]) property.get(2);
+						bw.write(lang.getText("HNPwin_entry031")+" " + count + ": " + data[0] + "\n");
 						String txt = data[1];
 						txt = txt.replace("\n", "");
-						bw.write("Meaning: "+txt+"\n");
+						bw.write(lang.getText("HNPwin_entry032")+" " + txt + "\n");
 						txt = data[2];
 						txt = txt.replace("\n", "");
-						bw.write("Biological: "+data[2]+"\n\n");
+						bw.write(lang.getText("HNPwin_entry033")+" " + data[2] + "\n\n");
 						count++;
 					}
 				}
 				bw.write("\n");
 				if(invariantsMatrix != null) {
 					int inv_number = invariantsMatrix.size();
-					bw.write("Number of invariants: "+inv_number+"\n");
+					bw.write(lang.getText("HNPwin_entry034")+" "+inv_number+"\n");
 					bw.write(textField.getText());
 				}
 				bw.close();
-			} catch (Exception e) {
-				
+			} catch (Exception ex) {
+				overlord.log(lang.getText("LOGentry00472exception")+"\n"+ex.getMessage(), "error", true);
 			}
 		}
 	}

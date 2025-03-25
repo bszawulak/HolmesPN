@@ -1,5 +1,6 @@
 package holmes.tables.simKnock;
 
+import java.io.Serial;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -10,15 +11,13 @@ import holmes.petrinet.elements.Transition;
 
 /**
  * Model tabeli danych statystycznych dla tranzycji (symulacja knockout).
- * 
- * @author MR
- *
  */
 public class SimKnockTransTableModel extends AbstractTableModel {
+	@Serial
 	private static final long serialVersionUID = -5809682023062187908L;
 	private static final DecimalFormat formatter3 = new DecimalFormat( "#.#####" );
 	
-	public class TransContainer {
+	public static class TransContainer {
     	public int ID;
     	public String name;
     	public double firingAvg;
@@ -52,6 +51,7 @@ public class SimKnockTransTableModel extends AbstractTableModel {
 	 * @param index int - index tranzycji
 	 * @param t Transition - tranzycja
 	 */
+	@SuppressWarnings("IntegerDivisionInFloatingPointContext")
 	public void addNew(NetSimulationData data, int index, Transition t) {
 		TransContainer tc = new TransContainer();
 		tc.ID = index;
@@ -131,51 +131,23 @@ public class SimKnockTransTableModel extends AbstractTableModel {
      */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Object returnValue = null;
-		switch (columnIndex) {
-        case 0:
-            returnValue = dataMatrix.get(rowIndex).ID;
-            break;
-        case 1:
-        	returnValue = dataMatrix.get(rowIndex).name;
-            break;
-        case 2:
-        	returnValue = formatter3.format((Number)dataMatrix.get(rowIndex).firingAvg);
-        	//returnValue = dataMatrix.get(rowIndex).firingAvg;returnValue = formatter3.format((Number)dataMatrix.get(rowIndex).firingAvg);
-            break;
-        case 3:
-        	returnValue = formatter3.format((Number)dataMatrix.get(rowIndex).firingMin);
-        	//returnValue = dataMatrix.get(rowIndex).firingMin;
-            break;
-        case 4:
-        	returnValue = formatter3.format((Number)dataMatrix.get(rowIndex).firingMax);
-        	//returnValue = dataMatrix.get(rowIndex).firingMax;
-            break;
-        case 5:
-        	returnValue = dataMatrix.get(rowIndex).noFiring;
-            break;
-        case 6:
-        	returnValue = dataMatrix.get(rowIndex).stdDev;
-            break;
-        case 7:
-        	returnValue = dataMatrix.get(rowIndex).s1;
-            break;
-        case 8:
-        	returnValue = dataMatrix.get(rowIndex).s2;
-            break;
-        case 9:
-        	returnValue = dataMatrix.get(rowIndex).s3;
-            break;
-        case 10:
-        	returnValue = dataMatrix.get(rowIndex).s4;
-            break;
-        case 11:
-        	returnValue = dataMatrix.get(rowIndex).s5;
-            break;
-        default:
-            throw new IllegalArgumentException("Invalid column index");
-        }
-         
-        return returnValue;
+		return switch (columnIndex) {
+			case 0 -> dataMatrix.get(rowIndex).ID;
+			case 1 -> dataMatrix.get(rowIndex).name;
+			case 2 -> formatter3.format((Number) dataMatrix.get(rowIndex).firingAvg);
+			//returnValue = dataMatrix.get(rowIndex).firingAvg;returnValue = formatter3.format((Number)dataMatrix.get(rowIndex).firingAvg);
+			case 3 -> formatter3.format((Number) dataMatrix.get(rowIndex).firingMin);
+			//returnValue = dataMatrix.get(rowIndex).firingMin;
+			case 4 -> formatter3.format((Number) dataMatrix.get(rowIndex).firingMax);
+			//returnValue = dataMatrix.get(rowIndex).firingMax;
+			case 5 -> dataMatrix.get(rowIndex).noFiring;
+			case 6 -> dataMatrix.get(rowIndex).stdDev;
+			case 7 -> dataMatrix.get(rowIndex).s1;
+			case 8 -> dataMatrix.get(rowIndex).s2;
+			case 9 -> dataMatrix.get(rowIndex).s3;
+			case 10 -> dataMatrix.get(rowIndex).s4;
+			case 11 -> dataMatrix.get(rowIndex).s5;
+			default -> throw new IllegalArgumentException("Invalid column index");
+		};
 	}
 }

@@ -1,21 +1,24 @@
 package holmes.tables.managers;
 
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.EventObject;
 
 import javax.swing.table.AbstractTableModel;
 
+import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.windows.managers.HolmesStatesManager;
 
 /**
  * Model tabeli stanów początkowych sieci (klasyczny).
- * 
- * @author MR
- *
  */
 public class StatesPlacesTableModel extends AbstractTableModel {
+	@Serial
 	private static final long serialVersionUID = 7776195572631920285L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
 	private int dataSize;
@@ -111,11 +114,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
      * Zwraca status edytowalności komórek.
      */
     public boolean isCellEditable(int row, int column) {
-    	if(column > 1) {
-    		return true;
-    	} else { 
-    		return false;
-    	}
+		return ( column > 1 );
     }
     
     /**
@@ -123,6 +122,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
      * @param evt EventObject
      * @return boolean
      */
+	@SuppressWarnings("unused")
     public boolean isCellEditable(EventObject evt) {
         if (evt instanceof MouseEvent) {
             int clickCount = 1;
@@ -146,15 +146,14 @@ public class StatesPlacesTableModel extends AbstractTableModel {
      */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Object returnValue = null;
+		Object returnValue;
 		if(columnIndex < 2) {
-			return dataMatrix.get(rowIndex).get(columnIndex).toString();
+			return dataMatrix.get(rowIndex).get(columnIndex);
 		} else {
 			try {
 				returnValue = dataMatrix.get(rowIndex).get(columnIndex);
 				String strVal = returnValue.toString();
-				double val = Double.parseDouble(strVal);
-				return val;
+				return Double.parseDouble(strVal);
 			} catch (Exception e) {
 				return -1;
 			}
@@ -168,7 +167,7 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 	 * @param col int - nr kolumny
 	 */
 	public void setValueAt(Object value, int row, int col) {
-		double newValue = 0;
+		double newValue;
 		try {
 			newValue = Double.parseDouble(value.toString());
 			if(newValue < 0)
@@ -177,21 +176,21 @@ public class StatesPlacesTableModel extends AbstractTableModel {
 			rowVector.set(col, ""+(int)newValue);
 
 			boss.changeState(row, col, newValue);
-		} catch (Exception e) {
-			
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00425exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	
 	public void setQuietlyValueAt(Object value, int row, int col) {
-		double newValue = 0;
+		double newValue;
 		try {
 			newValue = Double.parseDouble(value.toString());
 			if(newValue < 0)
 				newValue = 0;
 			ArrayList<String> rowVector = dataMatrix.get(row);
 			rowVector.set(col, ""+(int)newValue);
-		} catch (Exception e) {
-			
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00426exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 }

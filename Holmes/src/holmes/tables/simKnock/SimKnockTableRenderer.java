@@ -50,7 +50,7 @@ public class SimKnockTableRenderer implements TableCellRenderer {
 	 * @param isSelected boolean - czy zaznaczona komórka
 	 * @param hasFocus boolean - czy aktywna komórka
 	 * @param row int - numer wiersza
-	 * @param columnt int - numer kolumny
+	 * @param column int - numer kolumny
 	 * @return Component - zależy od kolumny
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -157,14 +157,14 @@ public class SimKnockTableRenderer implements TableCellRenderer {
 		if(value instanceof Double) {
 			double val = (double)value;
 			if(column == 2 || column == 4) { //dla sredniej liczby odpalen
-				value = formatter2.format((Number)value);
+				value = formatter2.format(value);
 			} else { //stdDev :
 				if(val < 10)
-					value = formatter3.format((Number)value);
+					value = formatter3.format(value);
 				else if(val < 100)
-					value = formatter2.format((Number)value);
+					value = formatter2.format(value);
 				else
-					value = formatter1.format((Number)value);
+					value = formatter1.format(value);
 			}
 		}
 		
@@ -249,11 +249,11 @@ public class SimKnockTableRenderer implements TableCellRenderer {
 		if(value instanceof Double) {
 			double val = (double)value;
 			if(val < 10)
-				value = formatter3.format((Number)value);
+				value = formatter3.format(value);
 			else if(val < 100)
-				value = formatter2.format((Number)value);
+				value = formatter2.format(value);
 			else
-				value = formatter1.format((Number)value);
+				value = formatter1.format(value);
 		}
 		
 		Component renderer = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
@@ -296,13 +296,13 @@ public class SimKnockTableRenderer implements TableCellRenderer {
 		if(value instanceof Double || value instanceof Number) {
 			double val = (double)value;
 			if(val < 1) {
-				value = formatter6.format((Number)value);
+				value = formatter6.format(value);
 			} else if(val < 10) 
-				value = formatter3.format((Number)value);
+				value = formatter3.format(value);
 			else if(val < 100)
-				value = formatter2.format((Number)value);
+				value = formatter2.format(value);
 			else
-				value = formatter1.format((Number)value);
+				value = formatter1.format(value);
 		}
 		
 		

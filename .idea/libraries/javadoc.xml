@@ -1,12 +1,7 @@
 <component name="libraryTable">
   <library name="javadoc">
     <CLASSES />
-    <JAVADOC>
-      <root url="file://$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/docs/javadoc" />
-    </JAVADOC>
-    <SOURCES>
-      <root url="file://$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/samples" />
-      <root url="file://$PROJECT_DIR$/Holmes/javadocking1.5.0/javadocking/src" />
-    </SOURCES>
+    <JAVADOC />
+    <SOURCES />
   </library>
 </component>

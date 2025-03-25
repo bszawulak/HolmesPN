@@ -1,6 +1,7 @@
 package holmes.tables;
 
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.EventObject;
 
@@ -9,10 +10,9 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * Model tabeli węzłow dla okna łączenia sieci
- * 
- * @author MR
  */
 public class MergeNodesTableModel extends DefaultTableModel {
+	@Serial
 	private static final long serialVersionUID = 6346267999771986379L;
 	private String[] columnNames;
 	private ArrayList<InternalData463> dataMatrix;
@@ -177,16 +177,12 @@ public class MergeNodesTableModel extends DefaultTableModel {
      * @param columnIndex int - numer kolumny
      */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		switch(columnIndex) {
-			case 0:
-				return dataMatrix.get(rowIndex).ID;
-			case 1:
-				return dataMatrix.get(rowIndex).name;
-			case 2:
-				return dataMatrix.get(rowIndex).preNodes;
-			case 3:
-				return dataMatrix.get(rowIndex).postNodes;
-		}
-		return null;
-	}
+        return switch (columnIndex) {
+            case 0 -> dataMatrix.get(rowIndex).ID;
+            case 1 -> dataMatrix.get(rowIndex).name;
+            case 2 -> dataMatrix.get(rowIndex).preNodes;
+            case 3 -> dataMatrix.get(rowIndex).postNodes;
+            default -> null;
+        };
+    }
 }

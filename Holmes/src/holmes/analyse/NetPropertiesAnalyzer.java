@@ -3,6 +3,7 @@ package holmes.analyse;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
@@ -14,17 +15,15 @@ import holmes.petrinet.elements.Transition;
 /**
  * Klasa odpowiedzialna za analizę właściwości sieci Petriego. Tworzona ręcznie, do działania
  * wymaga istniejących: miejsc, tranzycji oraz łuków (niepuste zbiory).
- * @author students
- * @author MR - porządek w klasie, dodanie opisów i działającego sprawdzania CN i SCN oraz cała masa
- *  niezbędnych poprawek błędów które tu były
- *
  */
 public class NetPropertiesAnalyzer {
-	private ArrayList<Arc> arcs = new ArrayList<Arc>();
-	private ArrayList<Place> places = new ArrayList<Place>();
-	private ArrayList<Transition> transitions = new ArrayList<Transition>();
-	private ArrayList<Node> nodes = new ArrayList<Node>();
-	private ArrayList<MetaNode> metaNodes = new ArrayList<MetaNode>();
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
+	private ArrayList<Arc> arcs;
+	private ArrayList<Place> places;
+	private ArrayList<Transition> transitions;
+	private ArrayList<Node> nodes;
+	private ArrayList<MetaNode> metaNodes;
 
 	ArrayList<Node> checked = new ArrayList<Node>();
 
@@ -32,7 +31,7 @@ public class NetPropertiesAnalyzer {
 	 * Konstruktor domyślny obiektu klasy NetPropAnalyzer.
 	 */
 	public NetPropertiesAnalyzer() {
-		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
 		places = pn.getPlaces();
 		transitions = pn.getTransitions();
 		arcs = pn.getArcs();
@@ -48,146 +47,128 @@ public class NetPropertiesAnalyzer {
 		ArrayList<ArrayList<Object>> NetProps = new ArrayList<ArrayList<Object>>();
 		
 		ArrayList<Object> purProp = new ArrayList<Object>();
-		purProp.add("PUR");
+		purProp.add("PUR"); //Pure
 		purProp.add(false);
 		String[] purTxt = { 
-				"Pure", 
-				"There are no two nodes, directly connected in both directions. This precludes "
-				+ "\nread arcs and double arcs.",
-				"No component is produced and consumed by the same reaction."};
+				lang.getText("NPA_entry001"), 
+				lang.getText("NPA_entry001d1"),
+				lang.getText("NPA_entry001d2")};
 		purProp.add(purTxt);
 		NetProps.add(purProp);
 		
 		ArrayList<Object> ordProp = new ArrayList<Object>();
-		ordProp.add("ORD");
+		ordProp.add("ORD"); //Ordinary
 		ordProp.add(false);
 		String[] ordTxt = { 
-				"Ordinary", 
-				"All arc weights are equal to 1.",
-				"Every stoichiometric coefficient of each reaction is equal to one."};
+				lang.getText("NPA_entry002"), 
+				lang.getText("NPA_entry002d1"),
+				lang.getText("NPA_entry002d2")};
 		ordProp.add(ordTxt);
 		NetProps.add(ordProp);
 		
 		ArrayList<Object> homProp = new ArrayList<Object>();
-		homProp.add("HOM");
+		homProp.add("HOM"); //Homogeneous
 		homProp.add(false);
 		String[] homTxt = { 
-				"Homogeneous", 
-				"All outgoing arcs of a given place have the same multiplicity.",
-				"Each consuming reaction associated with one component takes the same "
-				+ "\namount of molecules of this component."};
+				lang.getText("NPA_entry003"), 
+				lang.getText("NPA_entry003d1"),
+				lang.getText("NPA_entry003d2")};
 		homProp.add(homTxt);
 		NetProps.add(homProp);
 		
 		ArrayList<Object> conProp = new ArrayList<Object>();
-		conProp.add("CON");
+		conProp.add("CON"); //Connected
 		conProp.add(false);
 		String[] conTxt = { 
-				"Connected", 
-				"A Petri net is connected if it holds for every two nodes a and b that "
-				+ "\nthere is an undirected path between a and b. Disconnected parts of a "
-				+ "\nPetri net can not influence each other, so they can be usually analysed "
-				+ "\nseparately.",
-				"All components in a system are directly or indirectly connected with "
-				+ "\neach other through a set of reactions, e.g., metabolic paths, signal flows."};
+				lang.getText("NPA_entry004"), 
+				lang.getText("NPA_entry004d1")+lang.getText("NPA_entry004d2"),
+				lang.getText("NPA_entry004d2")};
 		conProp.add(conTxt);
 		NetProps.add(conProp);
 		
 		ArrayList<Object> scProp = new ArrayList<Object>();
-		scProp.add("SC");
+		scProp.add("SC"); //Strongly Connected
 		scProp.add(false);
 		String[] scTxt = { 
-				"Strongly Connected", 
-				"A Petri net is strongly connected if it holds for every two nodes a and b that "
-				+ "\nthere is a directed path from a to b, vice versa. Strong connectedness "
-				+ "\ninvolves connectedness and the absence of boundary nodes. It is a necessary "
-				+ "\ncondition for a Petri net to be live and bounded at the same time.",
-				"All components in a system are directly connected with each other through a set "
-				+ "\nof reactions, e.g., metabolic paths, signal flows."};
+				lang.getText("NPA_entry005"),
+				lang.getText("NPA_entry005d1")+lang.getText("NPA_entry005d2"),
+				lang.getText("NPA_entry005d2")};
 		scProp.add(scTxt);
 		NetProps.add(scProp);
 		
 		ArrayList<Object> nbmProp = new ArrayList<Object>();
-		nbmProp.add("NBM");
+		nbmProp.add("NBM"); //Non-blocking Multiplicity
 		nbmProp.add(false);
-		String[] nbmTxt = { 
-				"Non-blocking Multiplicity", 
-				"The minimum of the multiplicity of the incoming arcs for a place is not "
-				+ "\nless than the maximum of the multiplicities of its outgoing arcs.",
-				"The amount of produced and consumed molecules of a certain component "
-				+ "\nis always equal."};
+		String[] nbmTxt = {
+				lang.getText("NPA_entry006"),
+				lang.getText("NPA_entry006d1"),
+				lang.getText("NPA_entry006d2")};
 		nbmProp.add(nbmTxt);
 		NetProps.add(nbmProp);
 		
 		ArrayList<Object> csvProp = new ArrayList<Object>();
-		csvProp.add("CSV");
+		csvProp.add("CSV"); //Conservative
 		csvProp.add(false);
-		String[] csvTxt = { 
-				"Conservative", 
-				"All transitions add exactly as many tokens to their post-places as they "
-				+ "\nsubtract from their pre-places (token-preservingly firing). A conservative "
-				+ "\nPetri net is structurally bounded.",
-				"The total amount of consumed and produced molecules by a certain reaction "
-				+ "\nis always equal."};
+		String[] csvTxt = {
+				lang.getText("NPA_entry007"),
+				lang.getText("NPA_entry007d1"),
+				lang.getText("NPA_entry007d2")};
 		csvProp.add(csvTxt);
 		NetProps.add(csvProp);
 		
 		ArrayList<Object> scfProp = new ArrayList<Object>();
-		scfProp.add("SCF");
+		scfProp.add("SCF"); //Static Conflict Free
 		scfProp.add(false);
-		String[] scfTxt = { 
-				"Static Conflict Free", 
-				"There are no two transitions sharing a pre-place. Transitions involved in a "
-				+ "\ndynamic conflict compete for the tokens on shared places.",
-				"For every reactant exist just one possible reaction or there are no two "
-				+ "\nreactions sharing at least one reactant."};
+		String[] scfTxt = {
+				lang.getText("NPA_entry008"),
+				lang.getText("NPA_entry008d1"),
+				lang.getText("NPA_entry008d2")};
 		scfProp.add(scfTxt);
 		NetProps.add(scfProp);
 		
 		ArrayList<Object> ft0Prop = new ArrayList<Object>();
-		ft0Prop.add("Ft0");
+		ft0Prop.add("Ft0"); //Input transitions
 		ft0Prop.add(false);
-		String[] ft0Txt = { 
-				"Input transitions", 
-				"There are transitions without a pre-place: Ft = {}",
-				"Infinite source of a component."};
+		String[] ft0Txt = {
+				lang.getText("NPA_entry009"),
+				lang.getText("NPA_entry009d1"),
+				lang.getText("NPA_entry009d2")};
 		ft0Prop.add(ft0Txt);
 		NetProps.add(ft0Prop);
 		
 		ArrayList<Object> tf0Prop = new ArrayList<Object>();
 		tf0Prop.add("tF0");
 		tf0Prop.add(false);
-		String[] tf0Txt = { 
-				"Output transitions", 
-				"There are transitions without a post-place: tF = {}",
-				"Sink of a component."};
+		String[] tf0Txt = {
+				lang.getText("NPA_entry010"),
+				lang.getText("NPA_entry010d1"),
+				lang.getText("NPA_entry010d2")};
 		tf0Prop.add(tf0Txt);
 		NetProps.add(tf0Prop);
 		
 		ArrayList<Object> fp0Prop = new ArrayList<Object>();
 		fp0Prop.add("Fp0");
 		fp0Prop.add(false);
-		String[] fp0Txt = { 
-				"Input places", 
-				"There are places without pre-transitions: Fp = {}",
-				"Every component can be consumed by a reaction."};
+		String[] fp0Txt = {
+				lang.getText("NPA_entry011"),
+				lang.getText("NPA_entry011d1"),
+				lang.getText("NPA_entry011d2")};
 		fp0Prop.add(fp0Txt);
 		NetProps.add(fp0Prop);
 		
 		ArrayList<Object> pf0Prop = new ArrayList<Object>();
 		pf0Prop.add("pF0");
 		pf0Prop.add(false);
-		String[] pf0Txt = { 
-				"Output places", 
-				"There are places without post-transitions: pF = {}",
-				"Components can infinitely accumulate in the system."};
+		String[] pf0Txt = {
+				lang.getText("NPA_entry012"),
+				lang.getText("NPA_entry012d1"),
+				lang.getText("NPA_entry012d2")};
 		pf0Prop.add(pf0Txt);
 		NetProps.add(pf0Prop);
 
-		if (places.size() == 0 || transitions.size() == 0 || arcs.size() == 0) {
+		if (places.isEmpty() || transitions.isEmpty() || arcs.isEmpty()) {
 			return NetProps;
 		}
-		
 		
 		boolean isFT0 = false; // FT0 - a transition without pre place: input transitions
 		boolean isTF0 = false; // TF0- a transitions without post place: output transitions
@@ -198,14 +179,14 @@ public class NetPropertiesAnalyzer {
 			boolean arcIn = false;
 			boolean arcOut = false;
 			for (ElementLocation el : t.getElementLocations()) {
-				if (!el.getInArcs().isEmpty() && arcIn == false)
+				if (!el.getInArcs().isEmpty() && !arcIn)
 					arcIn = true;
-				if (!el.getOutArcs().isEmpty() && arcOut == false)
+				if (!el.getOutArcs().isEmpty() && !arcOut)
 					arcOut = true;
 			}
-			if (arcIn == false && arcOut == true)
+			if (!arcIn && arcOut)
 				isFT0 = true;
-			if (arcIn == true && arcOut == false)
+			if (arcIn && !arcOut)
 				isTF0 = true;
 		}
 
@@ -213,14 +194,14 @@ public class NetPropertiesAnalyzer {
 			boolean arcIn = false;
 			boolean arcOut = false;
 			for (ElementLocation el : p.getElementLocations()) {
-				if (!el.getInArcs().isEmpty() && arcIn == false)
+				if (!el.getInArcs().isEmpty() && !arcIn)
 					arcIn = true;
-				if (!el.getOutArcs().isEmpty() && arcOut == false)
+				if (!el.getOutArcs().isEmpty() && !arcOut)
 					arcOut = true;
 			}
-			if (arcIn == false && arcOut == true)
+			if (!arcIn && arcOut)
 				isFP0 = true;
-			if (arcIn == true && arcOut == false)
+			if (arcIn && !arcOut)
 				isPF0 = true;
 		}
 		ft0Prop.set(1, isFT0);
@@ -247,8 +228,11 @@ public class NetPropertiesAnalyzer {
 		// ORD
 		boolean isOrdinary = true;
 		for (Arc a : arcs)
-			if (a.getWeight() != 1)
+			if (a.getWeight() != 1) {
 				isOrdinary = false;
+				break;
+			}
+
 		ordProp.set(1, isOrdinary);
 
 		// HOM - homogenous net
@@ -278,8 +262,10 @@ public class NetPropertiesAnalyzer {
 						valOut = a.getWeight();
 
 			}
-			if (valOut > valIn)
+			if (valOut > valIn) {
 				isNonBlockingMulti = false;
+				break;
+			}
 		}
 		nbmProp.set(1, isNonBlockingMulti);
 
@@ -294,8 +280,10 @@ public class NetPropertiesAnalyzer {
 				for (Arc a : el.getOutArcs())
 					arcOut += a.getWeight();
 			}
-			if (arcIn != arcOut)
+			if (arcIn != arcOut) {
 				isConservative = false;
+				break;
+			}
 		}
 		csvProp.set(1, isConservative);
 
@@ -307,9 +295,9 @@ public class NetPropertiesAnalyzer {
 		int mnNo = metaNodes.size();
 		int numberOfNodes = nodes.size();
 		if(tNo + pNo != numberOfNodes - mnNo) {
-			GUIManager.getDefaultGUIManager().log("Network analyzer detected a problem within the net. "
-				+ "Number of places: "+pNo+ " and number transitions: "+tNo+ " do not sum to the total stored "
-				+ "number of nodes: "+numberOfNodes+" minus number of meta-nodes: "+mnNo+".", "warning", true);
+			overlord.log(lang.getText("NPA_entry013")+ " "+pNo+ " "
+					+lang.getText("NPA_entry013a")+" "+tNo+ " "+lang.getText("NPA_entry013b")+" "
+					+numberOfNodes+" "+lang.getText("NPA_entry013c")+" "+mnNo+".", "warning", true);
 		}
 		
 		int visitedNodes = checkNetConnectivity(start, new ArrayList<Node>());
@@ -319,7 +307,7 @@ public class NetPropertiesAnalyzer {
 
 		// SC - strongly connected net
 		boolean isStronglyConnected = false;
-		if(fastStrongConnectivityTest() == true) {
+		if(fastStrongConnectivityTest()) {
 			visitedNodes = checkNetStrongConnectivity(start, new ArrayList<Node>());
 			if(visitedNodes == numberOfNodes)
 				isStronglyConnected = true;
@@ -336,7 +324,7 @@ public class NetPropertiesAnalyzer {
 							for (ElementLocation el2 : t2.getElementLocations())
 								for (Arc a2 : el2.getInArcs())
 									if (a1.getStartNode().getID() == a2.getStartNode().getID()) {
-										;
+										//nothing
 									}
 		isStaticConFree = false;
 		scfProp.set(1, isStaticConFree);
@@ -345,24 +333,24 @@ public class NetPropertiesAnalyzer {
 	}
 
 	@SuppressWarnings("unused")
-	/**
+	/*
 	 * Metoda sprawdzająca silne połączenie elementów sieci.
 	 * @param n1 Node - wierzchołek nr 1
 	 * @param n2 Node - wierzchołek nr 2
 	 * @param last Node - ostatni wierzchołek
-	 * @param mode boolean - 
+	 * @param mode boolean - diabli wiedzą co :)
 	 * @return boolean - true, jeśli silnie połączona
 	 */
 	private boolean checkStronglyConnectionExist(Node n1, Node n2, Node last, boolean mode) {
-		if (mode == true && n1.getID() == n2.getID())
+		if (mode && n1.getID() == n2.getID())
 			return false;
 
-		if (n1.getInArcs()!=null)
+		if (n1.getInputArcs()!=null)
 		{
-			for (Arc a : n1.getInArcs())
+			for (Arc a : n1.getInputArcs())
 				if (a.getStartNode().getID() == last.getID())
 					return true;
-			for (Arc a : n1.getInArcs())
+			for (Arc a : n1.getInputArcs())
 				if (checkStronglyConnectionExist(a.getStartNode(), n2, last, true))
 					return true;
 		}else{
@@ -386,9 +374,9 @@ public class NetPropertiesAnalyzer {
 			reachable.add(start);
 		}
 		
-		if (start.getInArcs()!=null)
+		if (start.getInputArcs()!=null)
 		{
-			for (Arc a : start.getInArcs()) { //łuki wchodzące do aktualnie badanego wierzchołka
+			for (Arc a : start.getInputArcs()) { //łuki wchodzące do aktualnie badanego wierzchołka
 				Node nod = a.getStartNode(); //wierzchołek początkowy łuku
 				if(!reachable.contains(nod)) { //jeśli jeszcze nie ma
 					reachable.add(nod);
@@ -396,9 +384,9 @@ public class NetPropertiesAnalyzer {
 				}
 			}
 		}
-		if (start.getOutArcs()!=null)
+		if (start.getOutputArcs()!=null)
 		{
-			for (Arc a : start.getOutArcs()) { //łuki wychodzące z aktualnego
+			for (Arc a : start.getOutputArcs()) { //łuki wychodzące z aktualnego
 				Node nod = a.getEndNode(); //wierzchołek końcowy łuku
 				if(!reachable.contains(nod)) {//jeśli jeszcze nie ma
 					reachable.add(nod);
@@ -419,11 +407,11 @@ public class NetPropertiesAnalyzer {
 		if(!reachable.contains(start)) { //jeśli jeszcze nie ma
 			reachable.add(start);
 		}
-		if (start.getOutArcs()!=null)
+		if (start.getOutputArcs()!=null)
 		{
-			for (Arc a : start.getOutArcs()) { //łuki wychodzące z aktualnego
+			for (Arc a : start.getOutputArcs()) { //łuki wychodzące z aktualnego
 				Node nod = a.getEndNode(); //wierzchołek końcowy łuku
-				if(reachable.contains(nod) == false) {//jeśli jeszcze nie ma
+				if(!reachable.contains(nod)) {//jeśli jeszcze nie ma
 					reachable.add(nod);
 					checkNetStrongConnectivity(nod, reachable);
 				}
@@ -439,7 +427,7 @@ public class NetPropertiesAnalyzer {
 	 */
 	private boolean fastStrongConnectivityTest() {
 		for(Node n : nodes) {
-			if(n.getInArcs().size() == 0 || n.getOutArcs().size() == 0)
+			if(n.getInputArcs().isEmpty() || n.getOutputArcs().isEmpty())
 				return false;
 		}
 		return true;

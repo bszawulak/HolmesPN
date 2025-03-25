@@ -8,8 +8,6 @@ import holmes.petrinet.elements.Transition;
 /**
  * Klasa tworząca macierz incydencji, dziedziczy z Matrix.
  * W notacji sieci jest to macierz wartości łuków wyjściowych (out-arcs).
- * @author studens
- *
  */
 public class IncidenceMatrix extends Matrix {
 	/**

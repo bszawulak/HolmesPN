@@ -1,15 +1,21 @@
 package holmes.tables.managers;
 
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.EventObject;
 
 import javax.swing.table.DefaultTableModel;
 
+import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.windows.managers.HolmesStatesEditor;
 
 public class StatesPlacesEditorTableModel extends DefaultTableModel {
+	@Serial
 	private static final long serialVersionUID = -7416704094839931505L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<PlaceEditContainer> dataMatrix;
 	private int dataSize;
@@ -17,7 +23,7 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
 	private int stateVectorIndex;
 	public boolean changes = false;
 	
-	public class PlaceEditContainer {
+	public static class PlaceEditContainer {
 		public int ID;
 		public String name;
 		public Double tokens;
@@ -104,11 +110,7 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
      * Zwraca status edytowalności komórek.
      */
     public boolean isCellEditable(int row, int column) {
-    	if(column == 2) {
-    		return true;
-    	} else { 
-    		return false;
-    	}
+		return column == 2;
     }
     
     /**
@@ -116,6 +118,7 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
      * @param evt EventObject
      * @return boolean
      */
+	@SuppressWarnings("unused")
     public boolean isCellEditable(EventObject evt) {
         if (evt instanceof MouseEvent) {
             int clickCount = 1;
@@ -130,15 +133,12 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
      * @param columnIndex int - numer kolumny
      */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		switch(columnIndex) {
-			case 0:
-				return dataMatrix.get(rowIndex).ID;
-			case 1:
-				return dataMatrix.get(rowIndex).name;
-			case 2:
-				return dataMatrix.get(rowIndex).tokens;
-		}
-		return null;
+		return switch (columnIndex) {
+			case 0 -> dataMatrix.get(rowIndex).ID;
+			case 1 -> dataMatrix.get(rowIndex).name;
+			case 2 -> dataMatrix.get(rowIndex).tokens;
+			default -> null;
+		};
 	}
 	
 	/**
@@ -148,26 +148,27 @@ public class StatesPlacesEditorTableModel extends DefaultTableModel {
 	 * @param col int - nr kolumny
 	 */
 	public void setValueAt(Object value, int row, int col) {
-		double newValue = 0;
+		double newValue;
 		try {
 			if(col == 2) {
 				newValue = Double.parseDouble(value.toString());
 				dataMatrix.get(row).tokens = newValue;
 				boss.changeRealValue(stateVectorIndex, row, newValue);
 			}
-		} catch (Exception e) {
-			//dataMatrix.get(row).firingRate = 1.0;
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00423exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	
 	public void setQuietlyValueAt(Object value, int row, int col) {
-		double newValue = 0;
+		double newValue;
 		try {
 			if(col == 2) {
 				newValue = Double.parseDouble(value.toString());
 				dataMatrix.get(row).tokens = newValue;
 			}
-		} catch (Exception e) {
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00424exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 }

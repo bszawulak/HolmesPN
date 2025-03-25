@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.swing.JTextArea;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.MCSDataMatrix;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Transition;
@@ -18,18 +19,14 @@ import holmes.windows.HolmesMCS;
 
 /**
  * Klasa obliczająca zbiory MCS (Mimimal Cut Set) według algorytmu z artykułu:
- * 
- * "Mimal cut sets in biochemical reaction networks" 
- * Steffen Klamt, Ernst Dieter Gilles
+ * "Mimal cut sets in biochemical reaction networks" Steffen Klamt, Ernst Dieter Gilles
  * Bioinformatics, 2004, 20, pp. 226-234
- * 
- * @author MR
- *
  */
 public class MCSCalculator implements Runnable {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
     private ArrayList<ArrayList<Integer>> em_obR;
     private ArrayList<Integer> em_obRinvID;
-    
     private ArrayList<Integer> transitions;
     private ArrayList<Set<Integer>> mcs;
     private List<Set<Integer>> precutsets;
@@ -45,14 +42,14 @@ public class MCSCalculator implements Runnable {
      * Konstruktor klasy MCSCalculator, odpowiedzialny za przygotowanie struktur danych niezbędnych
      * do dalszych obliczeń.
      * @param objR int - ID tranzycji którą należy wyłączyć jak najmniejszym kosztem
-     * @param invariants ArrayList[ArrayList[Integer]] - macierz inwariantów
-     * @param transitions ArrayList[Transition] - wektor tranzycji
-     * @param MAX_CUTSETSIZE int - maksymalny rozmiar dla zbiorów
-     * @param mstWindow HolmesMCS - okno generatora
+     * @param invariants ArrayList[ArrayList[Integer]], macierz inwariantów
+     * @param transitionsList ArrayList[Transition], wektor tranzycji
+     * @param MAX_CUTSETSIZE int, maksymalny rozmiar dla zbiorów
+     * @param mstWindow HolmesMCS, okno generatora
      */
     public MCSCalculator(int objR, ArrayList<ArrayList<Integer>> invariants, 
     		ArrayList<Transition> transitionsList, int MAX_CUTSETSIZE, int maxNumber, HolmesMCS mstWindow, boolean safe) {
-    	if(invariants == null || invariants.size() == 0) { //STEP 1: EM obliczono
+    	if(invariants == null || invariants.isEmpty()) { //STEP 1: EM obliczono
     		return;
     	} else {
     		em_obR = new ArrayList<ArrayList<Integer>>();
@@ -64,13 +61,12 @@ public class MCSCalculator implements Runnable {
             askBeforeAdd = safe;
             maxSetsNumber = maxNumber;
     	}
-    	//ArrayList<Transition> transitionsList = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
 
     	//STEP 2: zdefiniowana objR (int, argument funkcji MCSCalculator(int objR)
     	em_obRinvID = new ArrayList<Integer>();
     	int counter = 0;
         for (ArrayList<Integer> inv : invariants) {
-            if (transInInvariant(inv, objective_Reaction) == true) {
+            if (transInInvariant(inv, objective_Reaction)) {
             	em_obR.add(binaryInv(inv)); //STEP 3
             	em_obRinvID.add(counter);
             }
@@ -79,18 +75,16 @@ public class MCSCalculator implements Runnable {
         
         for(Transition t : transitionsList)
         	transitions.add(transitionsList.indexOf(t));  	
-        //transitions = getActiveTransitions(em_obR);
 
         for (int t : transitions) { //STEP 4
             Set<Integer> tSet = new HashSet<Integer>();
             tSet.add(t);
-            if (transitionCoverabilityTest(t) == true) 
+            if (transitionCoverabilityTest(t))
             	mcs.add(tSet); //jeśli tranzycja t bierze udział w każdym EM
             else
                 precutsets.add(tSet); // jeśli nie w każdym
         }
         maxCutSetSize = MAX_CUTSETSIZE;
-        
         ready = true;
     }
     
@@ -99,24 +93,22 @@ public class MCSCalculator implements Runnable {
      */
 	public void run() {
 		try {
-			logInternal("Searching MCS started.\n",true);
+			logInternal(lang.getText("MCSC_entry001"),true);
 			ArrayList<Set<Integer>> results = findMcs();
 			addNewDataVector(results);
 			if(masterWindow != null) {
-				logInternal("MCS list created.\n",true);
+				logInternal(lang.getText("MCSC_entry002"),true);
 				showMCS();
 				masterWindow.resetMCSGenerator();
 			}
 		} catch (OutOfMemoryError e) { // pray...
 			precutsets = null;
-			GUIManager.getDefaultGUIManager().log("Catastrophic error: out of memory. JRE will become unstable.\n"
-					+ "Please save your work immediatelly in *separate* files and restart the program."
-					+ " Operation terminated unconditionally.", "error", true);
+			overlord.log(lang.getText("LOG_entry0071_exception"), "error", true);
 			addNewDataVector(mcs);
 			showMCS();
 			masterWindow.resetMCSGenerator();
 		} catch (Exception e) {
-			logInternal("Operation malfuntion. Unknown error. \n", true);
+			logInternal(lang.getText("LOG_entry0072_exception")+e.getMessage(), true);
 			addNewDataVector(mcs);
 			showMCS();
 			masterWindow.resetMCSGenerator();
@@ -130,60 +122,46 @@ public class MCSCalculator implements Runnable {
      */
     private ArrayList<Integer> binaryInv(ArrayList<Integer> inv) {
     	ArrayList<Integer> binaryInvariant = new ArrayList<Integer>();
-    	for(int i=0; i<inv.size(); i++) {
-    		if(inv.get(i) > 0)
-    			binaryInvariant.add(1);
-    		else
-    			binaryInvariant.add(0);
-    	}
+		for (Integer integer : inv) {
+			if (integer > 0)
+				binaryInvariant.add(1);
+			else
+				binaryInvariant.add(0);
+		}
 		return binaryInvariant;
 	}
 
 	/**
      * Metoda sprawdza, czy dana tranzycja znajduje się w każdym inwariancie.
-     * @param trans int - ID tranzycji
-     * @return boolean - true, jeśli jest w każdym, false w przeciwnym wypadku
+     * @param trans int, ID tranzycji
+     * @return boolean, true, jeśli jest w każdym, false w przeciwnym wypadku
      */
     private boolean transitionCoverabilityTest(int trans) {
         for (ArrayList<Integer> invariant : em_obR)
-            if (transInInvariant(invariant, trans) == false) //if(invariant.contains(trans) == false)	
+            if (!transInInvariant(invariant, trans)) //if(invariant.contains(trans) == false)
                 return false;
         return true;
     }
     
     /**
      * Główna metoda odpowiedzialna za szukanie MCS.
-     * @param MAX_CUTSETSIZE int - do jakiego rozmiaru (uwaga! EKSPLOZJA stanów >6,7)
-     * @return List[Set[Integer]] - zbiory MCS
+     * @return List[Set[Integer]], zbiory MCS
      */
 	public ArrayList<Set<Integer>> findMcs() {
-    	if(ready == false)
+    	if(!ready)
     		return null;
     	
-        List<Set<Integer>> newPrecutsets = null;
+        List<Set<Integer>> newPrecutsets;
         int k = 1;
         while (++k <= maxCutSetSize) {
             newPrecutsets = new ArrayList<>();
-            
-    		//System.out.println();
-    		//System.out.print("Step: "+currentStep);
-    		logInternal("Calculating for set size: "+k+": ", false);
+			
+    		logInternal(lang.getText("MCSC_entry005")+" "+k+": ", false);
     		
     		long currTime = System.currentTimeMillis();
     		int oldPrecutSetsSize = precutsets.size();
     		
             for (int j : transitions) {
-
-            	if(j==27) {
-            		@SuppressWarnings("unused")
-            		String tName = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(j).getName();
-            		@SuppressWarnings("unused")
-					int breakPoint = 1;	
-            	}
-            	
-            	
-            	
-            	//System.out.print("*");
             	logInternal("*", false);
             	if(terminate) return mcs;
             		//5.2.1 usuń z listy zbiorów precutsets, te w których występuje j
@@ -206,15 +184,16 @@ public class MCSCalculator implements Runnable {
             int sizePre = newPrecutsets.size();
             int sizeMCS = mcs.size();
             
-            float incFactor = (float)((float)sizePre/(float)oldPrecutSetsSize);
+            float incFactor = (float)sizePre/(float)oldPrecutSetsSize;
             long currTimeNow = System.currentTimeMillis();
             long diffTime = currTimeNow - currTime;
             diffTime /= 1000; //sekundy
             
-            logInternal("MCS found: "+sizeMCS+" Precutsets list size:"+sizePre+" \n", false);
-            logInternal("Precutsets increase factor: "+String.format("%.2f", incFactor)+" Last interval time: "+diffTime+" seconds.\n", false);
+            logInternal(lang.getText("MCSC_entry006a")+" "+sizeMCS+" "+lang.getText("MCSC_entry006b")+" "+sizePre+" \n", false);
+            logInternal(lang.getText("MCSC_entry007a")+" "+String.format("%.2f", incFactor)+" "
+					+lang.getText("MCSC_entry007b")+" "+diffTime+" "+lang.getText("MCSC_entry007c"), false);
             
-            if (newPrecutsets.isEmpty() == true || maxSetsNumber < mcs.size())
+            if (newPrecutsets.isEmpty() || maxSetsNumber < mcs.size())
                 break;
             else
                 precutsets = newPrecutsets;
@@ -224,31 +203,26 @@ public class MCSCalculator implements Runnable {
 	
 	/**
 	 * II algorytm - under construction
-	 * @return
+	 * @return (<b>HashSet[HashSet[Integer]]</b>)
 	 */
 	public HashSet<HashSet<Integer>> findMcs2() {
 		HashSet<HashSet<Integer>> result = new HashSet<HashSet<Integer>>();
-		int invMatrixSize = em_obR.size();
 		int invSize = transitions.size();
-		
-		int maxSize = 6;
-		maxSize =invSize;
-		
-		for(int i=0; i<invMatrixSize; i++) {
-			for(int j=0; j<invSize; j++) {
-				int val = em_obR.get(i).get(j);
-				if(val != 0) {
+
+		for (ArrayList<Integer> integers : em_obR) {
+			for (int j = 0; j < invSize; j++) {
+				int val = integers.get(j);
+				if (val != 0) {
 					HashSet<Integer> newSet = new HashSet<Integer>();
-					
+
 					newSet.add(j);
 					result.add(newSet); //duplikatów nie doda
 					
-					//int resSize = result.size();
-					for(HashSet<Integer> test : result) {
-						if(test.size() <= maxSize) {
+					for (HashSet<Integer> test : result) {
+						if (test.size() <= invSize) {
 							test.add(j); //duplikatów i tak nie doda
 						}
-					}	
+					}
 				}
 			}
 		}
@@ -258,7 +232,7 @@ public class MCSCalculator implements Runnable {
 		for(HashSet<Integer> test : result) {
 			found = false;
 			for(HashSet<Integer> ref : result) {
-				if(test.equals(ref) == false) {
+				if(!test.equals(ref)) {
 					if(test.containsAll(ref)) {
 						found = true;
 						break;
@@ -266,7 +240,7 @@ public class MCSCalculator implements Runnable {
 					
 				}
 			}
-			if(found == false) {
+			if(!found) {
 				minimal.add(test);
 			}
 		}
@@ -275,14 +249,14 @@ public class MCSCalculator implements Runnable {
     
     /**
      * Metoda usuwa ze zbioru precutsets wszystkie zbiory, które zawierają tranzycję trans.
-     * @param trans int - ID tranzycji
+     * @param trans int, ID tranzycji
      */
     private void removeSetsContainingTransition2(int trans) {
     	int size = precutsets.size();	
     	Set<Integer> set;
     	for(int s=0; s<size; s++) {
     		set = precutsets.get(s);
-    		if (set.contains(trans) == true) {
+    		if (set.contains(trans)) {
     			precutsets.remove(s);
     			s--;
     			size--;
@@ -291,26 +265,20 @@ public class MCSCalculator implements Runnable {
     }
     
     /**
-     * Punkt 5.2.2 z artykułu, znajdź wszystkie takie zbiory z precutsets, 
-     * @param precutsets
-     * @param trans
-     * @return
+     * Punkt 5.2.2 z artykułu, znajdź wszystkie takie zbiory z precutsets.
+     * @param precutsets (<b>List[Set[Integer]]</b>) 
+     * @param trans (<b>int</b>) 
+     * @return (<b>List[Set[Integer]]</b>)
      */
     private List<Set<Integer>> calculatePreliminaryCutsets(List<Set<Integer>> precutsets, int trans) {
         List<Set<Integer>> newPrecutsets = new ArrayList<>();
-        //int invNumber = -1;
-        //int invID = 0;
         for (Set<Integer> precutset : precutsets) {
 	        if(terminate) return newPrecutsets;
 	        
         	boolean correct = false;
-        	//invNumber = -1;
         	for (ArrayList<Integer> invariant : em_obR) { //dla każdego inwariantu z tablicy:
-        		//invNumber++;
-        		//invID = em_obRinvID.get(invNumber);
-        		
-        		if (transInInvariant(invariant, trans) == true) {
-        			if(commonSubset(invariant, precutset).isEmpty() == true) {
+        		if (transInInvariant(invariant, trans)) {
+        			if(commonSubset(invariant, precutset).isEmpty()) {
         				correct = true;
                         break;
         			} else {
@@ -319,16 +287,7 @@ public class MCSCalculator implements Runnable {
         		} else {
         			continue;
         		}
-                	
-        		/*
-            	if (transInInvariant(invariant, trans) == true && commonSubset(invariant, precutset).isEmpty() == false) {
-                    incorrect = true;
-                    break;
-                }// 5.2.2 'intersekcja' to niby 'cover' ?!!! WTH?!
-            	*/
             }
-        	//if(incorrect == true)
-        		//continue;
         	if(!correct) continue;
         	
             // powyższe trwa tak długo, aż trafimy na precutset który nie ma części wspólnej z pewnym inwariantem
@@ -343,9 +302,9 @@ public class MCSCalculator implements Runnable {
     
     /**
      * Metoda zwraca wspólny zbiór inwariantu i precutsets.
-     * @param invariant ArrayList[Integer] - invariant
-     * @param precutset Set[Integer] - zbiór precutsets
-     * @return Set[Integer] - część wspólna
+     * @param invariant ArrayList[Integer], invariant
+     * @param precutset Set[Integer], zbiór precutsets
+     * @return Set[Integer], część wspólna
      */
     private Set<Integer> commonSubset(ArrayList<Integer> invariant, Set<Integer> precutset) {
     	Set<Integer> result = new HashSet<Integer>();
@@ -358,7 +317,7 @@ public class MCSCalculator implements Runnable {
 	
 	/**
 	 * Metoda pozostawia tylko te zbiory precutset, które nie są nadzbiorami już znalezionych mcs.
-     * @param precutsets List[Set[Integer]] - precutsets
+     * @param precutsets List[Set[Integer]], precutsets
 	 */
 	private void removeNonMinimalSets(List<Set<Integer>> precutsets) {
 		int size = precutsets.size();
@@ -378,15 +337,15 @@ public class MCSCalculator implements Runnable {
     
 	/**
 	 * Metoda identyfikuje zbiory mcs i przenosi je do listy wynikowej. Pozostawia cała resztę.
-	 * @param precutsets List[Set[Integer]] - zbiór tmp_precutsets
-	 * @return List[Set[Integer]] - tmp_precutsets, tylko, że przycięty o mcs
+	 * @param precutsets List[Set[Integer]], zbiór tmp_precutsets
+	 * @return List[Set[Integer]], tmp_precutsets, tylko, że przycięty o mcs
 	 */
     private List<Set<Integer>> identifyNewMCSs2(List<Set<Integer>> precutsets) {
     	int size = precutsets.size();
 		Set<Integer> precutset;
 		for(int s=0; s<size; s++) {
 			precutset = precutsets.get(s);
-			if (coversAllTInvariants(precutset) == true) {
+			if (coversAllTInvariants(precutset)) {
                 mcs.add(precutset);
                 precutsets.remove(s);
                 s--;
@@ -398,12 +357,12 @@ public class MCSCalculator implements Runnable {
     
     /**
      * Metoda sprawdza, czy dany zbiór zawiera się w każdym inwariancie.
-     * @param set Set[Integer] - zbiór precutset
-     * @return boolean - false, jeśli zbiór nie występuje w chociaż jednym inwariancie istotnym dla obj_R
+     * @param set Set[Integer], zbiór precutset
+     * @return boolean, false, jeśli zbiór nie występuje w chociaż jednym inwariancie istotnym dla obj_R
      */
     private boolean coversAllTInvariants(Set<Integer> set) {
         for (ArrayList<Integer> invariant : em_obR) {
-            if (commonSubset(invariant, set).isEmpty() == true)
+            if (commonSubset(invariant, set).isEmpty())
                 return false;
         }
         return true;
@@ -417,10 +376,7 @@ public class MCSCalculator implements Runnable {
      * 		przeciwnym przypadku
      */
     private boolean transInInvariant(ArrayList<Integer> invariant, int transition) {
-    	if(invariant.get(transition) > 0)
-    		return true;
-    	else
-    		return false;
+		return invariant.get(transition) > 0;
     }
     
     /**
@@ -432,20 +388,17 @@ public class MCSCalculator implements Runnable {
     
     /**
      * Metoda służąca do zapisywania w bazie programu kolejnej listy zbiorów MCS. 
-     * @param results ArrayList[Set[Integer]] - lista zbiorów MCS
+     * @param results ArrayList[Set[Integer]], lista zbiorów MCS
      */
     private void addNewDataVector(ArrayList<Set<Integer>> results) {
     	//TODO:
-    	ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+    	ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
     	ArrayList<ArrayList<Integer>> mcsInfoMatrix = new ArrayList<ArrayList<Integer>>();
 		ArrayList<ArrayList<Integer>> mcsDataMatrix = new ArrayList<ArrayList<Integer>>();
 		
-    	if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("analysisMCSReduction").equals("1")) {	
+    	if(overlord.getSettingsManager().getValue("analysisMCSReduction").equals("1")) {	
     		for(Set<Integer> mcsSet : results) {
-    			ArrayList<Integer> mcsSetData = new ArrayList<Integer>();
-    			for(int element : mcsSet) {
-    				mcsSetData.add(element);
-    			}
+				ArrayList<Integer> mcsSetData = new ArrayList<Integer>(mcsSet);
     			Collections.sort(mcsSetData);	
     			ArrayList<Integer> mcsInfo = new ArrayList<Integer>();
     			
@@ -467,13 +420,10 @@ public class MCSCalculator implements Runnable {
     			mcsInfoMatrix.add(mcsInfo);
     		}
     		
-    		logInternal("Infeasible sets reduction completed. Remained: "+mcsDataMatrix.size()+"\n", false);
+    		logInternal(lang.getText("MCSC_entry008")+" "+mcsDataMatrix.size()+"\n", false);
     	} else { //bez redukcji zbiorów
     		for(Set<Integer> mcsSet : results) {
-    			ArrayList<Integer> mcsSetData = new ArrayList<Integer>();
-    			for(int element : mcsSet) {
-    				mcsSetData.add(element);
-    			}
+				ArrayList<Integer> mcsSetData = new ArrayList<Integer>(mcsSet);
     			Collections.sort(mcsSetData);	
     			ArrayList<Integer> mcsInfo = new ArrayList<Integer>();
     			
@@ -487,7 +437,7 @@ public class MCSCalculator implements Runnable {
     			mcsInfoMatrix.add(mcsInfo);
     		}
     	}
-		MCSDataMatrix mcsd = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getMCSdataCore();
+		MCSDataMatrix mcsd = overlord.getWorkspace().getProject().getMCSdataCore();
 		mcsd.insertMCS(mcsDataMatrix, mcsInfoMatrix, objective_Reaction, askBeforeAdd);
 	}
 
@@ -496,41 +446,35 @@ public class MCSCalculator implements Runnable {
      */
 	private void showMCS() {
 		int mcsSize = mcs.size();
-		logInternal("Computed sets: "+mcsSize, false);
+		logInternal(lang.getText("MCSC_entry009")+" "+mcsSize, false);
 		
 		for(int s=0; s<mcsSize; s++) {
-			String msg = "Set "+s+ ": [";
+			StringBuilder msg = new StringBuilder("Set " + s + ": [");
 			Set<Integer> mcsSet = mcs.get(s);
 			for(int el : mcsSet) {
-				msg += el+", ";
+				msg.append(el).append(", ");
 			}
-			msg += "]\n";
-			msg = msg.replace(", ]", "]");
-			//logInternal(msg, false);
+			msg.append("]\n");
+			msg = new StringBuilder(msg.toString().replace(", ]", "]"));
 		}
 	}
 
 	/**
 	 * Metoda wysyłająca komunikaty do podokna logów generatora.
-	 * @param msg String - tekst do logów
-	 * @param date boolean - true, jeśli ma być podany czas komunikatu
+	 * @param msg String, tekst do logów
+	 * @param date boolean, true, jeśli ma być podany czas komunikatu
 	 */
 	private void logInternal(String msg, boolean date) {
 		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
 		if(masterWindow != null) {
-			if(date == false) {
+			if(!date) {
 				JTextArea jta = masterWindow.accessLogField();
 				jta.append(msg);
 				jta.setCaretPosition(jta.getDocument().getLength());
-				
-				//masterWindow.accessLogField().append(msg);
-				
 			} else {
 				JTextArea jta = masterWindow.accessLogField();
 				jta.append("["+timeStamp+"] "+msg);
 				jta.setCaretPosition(jta.getDocument().getLength());
-				
-				//masterWindow.accessLogField().append("["+timeStamp+"] "+msg);
 			}
 		}
 	}

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import rcaller.RCaller;
 import rcaller.RCode;
 
@@ -18,6 +19,8 @@ import rcaller.RCode;
  *
  */
 public class Rprotocols implements Runnable {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	String pathToR;
 	String pathOutput;
 	String fileNameCSV;
@@ -50,8 +53,8 @@ public class Rprotocols implements Runnable {
 				commands = commandsPearson;
 				executeCHmetricScripts();
 			}
-		} catch (Exception e) {
-			
+		} catch (Exception ex) {
+			overlord.log("Error: 579016465 (Rprotocols) | Exception "+ex, "error", true);
 		}
 	}
 	
@@ -94,7 +97,7 @@ public class Rprotocols implements Runnable {
 	
 	/**
 	 * Konstruktor parametrowy klasy, określa tryb pracy
-	 * @param mode
+	 * @param mode (<b>int</b>) tryb.
 	 */
 	public Rprotocols(int mode) {
 		this();
@@ -111,14 +114,14 @@ public class Rprotocols implements Runnable {
 		BufferedReader in = new BufferedReader(we);
 		String linia;
 		StringBuilder sb = new StringBuilder();
-		while ((linia = in.readLine()) != null) sb.append(linia+"\n");
+		while ((linia = in.readLine()) != null) sb.append(linia).append("\n");
 		in.close();
 		return sb.toString();
 	}
 
 	/**
 	 * Obliczanie miar CH dla klastrów.
-	 * @throws IOException
+	 * @throws IOException ex1
 	 */
 	public void executeCHmetricScripts() throws IOException{		
 		File file = new File(scriptName);
@@ -136,29 +139,27 @@ public class Rprotocols implements Runnable {
 			if(!commandsValidate.contains(line)) {
 				continue;
 			}
-			
-			
 			RCaller rcaller = new RCaller();
 			RCode code = new RCode();
 			rcaller.setRscriptExecutable(pathToR);
 			rcaller.cleanRCode();
 			code.addRCode(str);
-			
-			GUIManager.getDefaultGUIManager().log("Processing CH: "+line, "text", true);
+
+			overlord.log(lang.getText("LOGentry00085")+ " "+line, "text", true);
 			
 			//int reallyToCompute = nrClusters + 1; //don't ask (MR)
 			
-			String function = new String("veni1("+line+", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
+			String function = "veni1(" + line + ", \"" + pathOutput + "\",\"" + fileNameCSV + "\"," + nrClusters + ")";
 			code.addRCode(function);
 			String replaced = line.replace("\"", "");
 			String[] parts = replaced.split(",");
-			String filename = new String(pathOutput+parts[1]+"_"+parts[0]+	"_clusters.txt");
+			String filename = pathOutput + parts[1] + "_" + parts[0] + "_clusters.txt";
 			rcaller.redirectROutputToFile(filename, false);
 			rcaller.setRCode(code);
 			rcaller.runOnly();
 		}
 		br.close();
-		GUIManager.getDefaultGUIManager().log("All Celiński-Harabasz metrics has been computed.", "text", true);
+		overlord.log(lang.getText("LOGentry00086"), "text", true);
 	}
 	
 	/**
@@ -166,7 +167,7 @@ public class Rprotocols implements Runnable {
 	 * plik z numerami inwariantów dla każdego klastra.
 	 * @throws IOException - wyjątek operacji na plikach
 	 */
-	public void executeAllClustersScripts() throws IOException{		
+	public void executeAllClustersScripts() throws IOException{
 		File file = new File(scriptName);
 		FileInputStream fis = new FileInputStream(file);
 		byte[] data = new byte[(int) file.length()];
@@ -189,20 +190,20 @@ public class Rprotocols implements Runnable {
 			rcaller.setRscriptExecutable(pathToR);
 			rcaller.cleanRCode();
 			code.addRCode(str);
-			
-			GUIManager.getDefaultGUIManager().log("Processing: "+line, "text", true);
+
+			overlord.log(lang.getText("LOGentry00087")+ " "+line, "text", true);
 			//tu wstawić logi w zależności od 'line'
-			String function = new String("veni1("+line+", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
+			String function = "veni1(" + line + ", \"" + pathOutput + "\",\"" + fileNameCSV + "\"," + nrClusters + ")";
 			code.addRCode(function);
 			String replaced = line.replace("\"", "");
 			String[] parts = replaced.split(",");
-			String filename = new String(pathOutput+parts[1]+"_"+parts[0]+	"_clusters.txt");
+			String filename = pathOutput + parts[1] + "_" + parts[0] + "_clusters.txt";
 			rcaller.redirectROutputToFile(filename, false);
 			rcaller.setRCode(code);
 			rcaller.runOnly();
 		}
 		br.close();
-		GUIManager.getDefaultGUIManager().log("All clusterings has been computed.", "text", true);
+		overlord.log(lang.getText("LOGentry00088"), "text", true);
 	}
 	
 	public String generateSingleClustering(String pathToR, String pathOutput, String fileNameCSV, 
@@ -220,9 +221,9 @@ public class Rprotocols implements Runnable {
 		rcaller.setRscriptExecutable(pathToR);
 		rcaller.cleanRCode();
 		code.addRCode(str);
-		String function = new String("veni1(\""+miara_odl+"\",\""+algorytm_c+"\", \""+pathOutput+"\",\""+fileNameCSV+"\","+nrClusters+")");
+		String function = "veni1(\"" + miara_odl + "\",\"" + algorytm_c + "\", \"" + pathOutput + "\",\"" + fileNameCSV + "\"," + nrClusters + ")";
 		code.addRCode(function);
-		String filename = new String(pathOutput+algorytm_c+"_"+miara_odl+"_clusters_ext_"+nrClusters+".txt");
+		String filename = pathOutput + algorytm_c + "_" + miara_odl + "_clusters_ext_" + nrClusters + ".txt";
 		rcaller.redirectROutputToFile(filename, false);
 		rcaller.setRCode(code);
 		rcaller.runOnly();

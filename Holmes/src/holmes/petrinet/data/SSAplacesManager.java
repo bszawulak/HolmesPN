@@ -3,15 +3,15 @@ package holmes.petrinet.data;
 import java.util.ArrayList;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.elements.Place;
 
 /**
  * Klasa zarządzająca danymi do eksperymentów SSA.
- * 
- * @author MR
  */
 public class SSAplacesManager {
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private PetriNet pn;
 	
 	private ArrayList<SSAplacesVector> ssaMatrix;
@@ -22,9 +22,7 @@ public class SSAplacesManager {
 	 * @param net PetriNet - główny obiekt sieci
 	 */
 	public SSAplacesManager(PetriNet net) {
-		overlord = GUIManager.getDefaultGUIManager();
 		this.pn = net;
-		
 		this.ssaMatrix = new ArrayList<SSAplacesVector>();
 		ssaMatrix.add(new SSAplacesVector());
 	}
@@ -40,8 +38,8 @@ public class SSAplacesManager {
 	
 	/**
 	 * Usuwa we wszystkich wektorach SSA dane o właśnie kasowanym miejscu.
-	 * @param index int - indeks miejsca
-	 * @return boolean - true, jeśli operacja przebiegła poprawnie
+	 * @param index (<b>int</b>) - indeks miejsca
+	 * @return (<b>boolean</b>) - true, jeśli operacja przebiegła poprawnie
 	 */
 	public boolean removePlace(int index) {
 		if(index >= ssaMatrix.get(0).getSize())
@@ -50,7 +48,7 @@ public class SSAplacesManager {
 		for(SSAplacesVector pVector: ssaMatrix) {
 			boolean status = pVector.removePlace(index);
 			if(!status) {
-				overlord.log("Critical error: invalid place index in SSA vectors matrix.", "error", true);
+				overlord.log(lang.getText("LOGentry00376critErr"), "error", true);
 				return false;
 			}
 		}
@@ -59,8 +57,8 @@ public class SSAplacesManager {
 	
 	/**
 	 * Zwraca obiekt wektora stanu o zadanym indeksie.
-	 * @param index int - nr stanu
-	 * @return PlacesStateVector - obiekt wektora stanów
+	 * @param index (<b>int</b>) - nr stanu
+	 * @return (<b>PlacesStateVector</b>) - obiekt wektora stanów
 	 */
 	public SSAplacesVector getSSAvector(int index) {
 		if(index >= ssaMatrix.size())
@@ -98,7 +96,7 @@ public class SSAplacesManager {
 	
 	/**
 	 * Metoda ustawia nowy stan SSA miejsc sieci.
-	 * @param stateID int - nr stanu z tablicy
+	 * @param stateID (<b>int</b>) - nr stanu z tablicy
 	 */
 	public void setNetworkSSAvector(int stateID) {
 		ArrayList<Place> places = pn.getPlaces();
@@ -175,10 +173,9 @@ public class SSAplacesManager {
 	 */
 	public void reset(boolean isLoading) {
 		ssaMatrix = new ArrayList<SSAplacesVector>();
-		if(isLoading == false) {
+		if(!isLoading) {
 			ssaMatrix.add(new SSAplacesVector());
 		}
-		
 		selectedSSAvector = 0;
 	}
 }

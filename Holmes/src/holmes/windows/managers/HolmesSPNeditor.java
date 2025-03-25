@@ -7,6 +7,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -16,11 +17,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.SPNdataVectorManager;
 import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.data.PetriNet;
@@ -33,24 +33,20 @@ import holmes.utilities.Tools;
 
 /**
  * Okno edycji firing rate przechowywanych w danym wektorze wejściowym.
- * 
- * @author MR
  */
 public class HolmesSPNeditor extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -6810858686209063022L;
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JFrame parentWindow;
 	private JFrame ego;
-	private TableCellRenderer tableRenderer;
 	private SPNsingleVectorTableModel tableModel;
 	private JTable table;
-	private JPanel tablePanel;
 	private SPNdataVector frData;
 	private int frIndex;
-	private JTextArea vectorDescrTextArea;
-	
+
 	private ArrayList<Transition> transitions;
-	private PetriNet pn;
 	private SPNdataVectorManager firingRatesManager;
 	
 	/**
@@ -60,14 +56,13 @@ public class HolmesSPNeditor extends JFrame {
 	 * @param frIndex int - indeks powyższego wektora w tablicy
 	 */
 	public HolmesSPNeditor(JFrame parent, SPNdataVector frData, int frIndex) {
-		setTitle("Holmes SPN data editor");
+		setTitle(lang.getText("HSPNwin_entry001title"));
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
-			
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00519exception")+"\n"+ex.getMessage(), "error", true);
 		}
-    	this.overlord = GUIManager.getDefaultGUIManager();
-    	this.pn = overlord.getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
     	this.ego = this;
     	this.parentWindow = parent;
     	this.frData = frData;
@@ -99,8 +94,8 @@ public class HolmesSPNeditor extends JFrame {
 			
 			String postFix = "";
 			Transition t = transitions.get(row);
-			int inSize = t.getInArcs().size();
-			int outSize = t.getOutArcs().size();
+			int inSize = t.getInputArcs().size();
+			int outSize = t.getOutputArcs().size();
 			
 			if(inSize == 0 && outSize != 0)
 				postFix += "     - IN -    ";
@@ -108,20 +103,16 @@ public class HolmesSPNeditor extends JFrame {
 				postFix += "     - OUT -    ";
 			if(inSize == 0 && outSize == 0)
 				postFix += "     * IN/OUT *    ";
-			
-			switch(frBox.sType) {
-				case ST:
-					tableModel.addNew(row, postFix+transitions.get(row).getName(), ""+frData.getFiringRate(row), frBox.sType);
-					break;
-				case DT:
-					tableModel.addNew(row, postFix+transitions.get(row).getName(), ""+frBox.DET_delay, frBox.sType);
-					break;
-				case IM:
-					tableModel.addNew(row, postFix+transitions.get(row).getName(), ""+frBox.IM_priority, frBox.sType);
-					break;
-				case SchT:
-					tableModel.addNew(row, postFix+transitions.get(row).getName(), ""+frBox.SCH_start+"; "+frBox.SCH_rep+"; "+frBox.SCH_end, frBox.sType);
-					break;
+
+			switch (frBox.sType) {
+				case ST ->
+						tableModel.addNew(row, postFix + transitions.get(row).getName(), "" + frData.getFiringRate(row), frBox.sType);
+				case DT ->
+						tableModel.addNew(row, postFix + transitions.get(row).getName(), "" + frBox.DET_delay, frBox.sType);
+				case IM ->
+						tableModel.addNew(row, postFix + transitions.get(row).getName(), "" + frBox.IM_priority, frBox.sType);
+				case SchT ->
+						tableModel.addNew(row, postFix + transitions.get(row).getName(), frBox.SCH_start + "; " + frBox.SCH_rep + "; " + frBox.SCH_end, frBox.sType);
 			}
 		}
 		tableModel.fireTableDataChanged();
@@ -136,8 +127,8 @@ public class HolmesSPNeditor extends JFrame {
 		setLocation(50, 50);
 		setResizable(true);
 		setLayout(new BorderLayout());
-		
-		tablePanel = getMainTablePanel();
+
+		JPanel tablePanel = getMainTablePanel();
 		add(getTopPanel(), BorderLayout.NORTH);
 		add(tablePanel, BorderLayout.CENTER);
 	}
@@ -149,7 +140,7 @@ public class HolmesSPNeditor extends JFrame {
 	private JPanel getTopPanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("SPN transitions data"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSPNwin_entry002"))); //SPN transitions data
 		result.setPreferredSize(new Dimension(500, 100));
 		
 		JPanel filler = new JPanel(null);
@@ -157,15 +148,15 @@ public class HolmesSPNeditor extends JFrame {
 		int posX = 5;
 		int posY = 0;
 		
-		JLabel label0 = new JLabel("SPN data vector ID: ");
+		JLabel label0 = new JLabel(lang.getText("HSPNwin_entry003")); //SPN data vector ID:
 		label0.setBounds(posX, posY, 120, 20);
 		filler.add(label0);
 		
 		JLabel labelID = new JLabel(frIndex+"");
 		labelID.setBounds(posX+130, posY, 100, 20);
 		filler.add(labelID);
-		
-		vectorDescrTextArea = new JTextArea(firingRatesManager.getSPNvectorDescription(frIndex));
+
+		JTextArea vectorDescrTextArea = new JTextArea(firingRatesManager.getSPNvectorDescription(frIndex));
 		vectorDescrTextArea.setLineWrap(true);
 		vectorDescrTextArea.setEditable(true);
 		vectorDescrTextArea.addFocusListener(new FocusAdapter() {
@@ -182,7 +173,7 @@ public class HolmesSPNeditor extends JFrame {
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
         CreationPanel.add(new JScrollPane(vectorDescrTextArea), BorderLayout.CENTER);
-        CreationPanel.setBounds(posX, posY+=20, 600, 50);
+        CreationPanel.setBounds(posX, posY+20, 600, 50);
         filler.add(CreationPanel);
         
         result.add(filler, BorderLayout.CENTER);
@@ -196,7 +187,7 @@ public class HolmesSPNeditor extends JFrame {
 	public JPanel getMainTablePanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("SPN data vector transitions table"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSPNwin_entry004"))); //SPN data vector transitions table
 		result.setPreferredSize(new Dimension(500, 500));
 		
 		tableModel = new SPNsingleVectorTableModel(this, frIndex);
@@ -219,19 +210,17 @@ public class HolmesSPNeditor extends JFrame {
         
 		table.setName("FiringRatesTransitionTable");
 		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		tableRenderer = new SPNsingleVectorTableRenderer(table);
+		TableCellRenderer tableRenderer = new SPNsingleVectorTableRenderer(table);
 		table.setDefaultRenderer(Object.class, tableRenderer);
 		table.setDefaultRenderer(Double.class, tableRenderer);
 
-		table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-	        public void valueChanged(ListSelectionEvent event) {
-	            // do some actions here, for example
-	            // print first column value from selected row
-	        	int selectedRow = table.getSelectedRow();
-	        	if(selectedRow > -1)
-	        		new HolmesSPNtransitionEditor(ego, frData.getSPNtransitionContainer(selectedRow), transitions.get(selectedRow), new Point(400, 400)); 
-	        }
-	    });
+		table.getSelectionModel().addListSelectionListener(event -> {
+			// do some actions here, for example
+			// print first column value from selected row
+			int selectedRow = table.getSelectedRow();
+			if(selectedRow > -1)
+				new HolmesSPNtransitionEditor(ego, frData.getSPNtransitionContainer(selectedRow), transitions.get(selectedRow), new Point(400, 400));
+		});
     	
 		table.setRowSelectionAllowed(false);
     	

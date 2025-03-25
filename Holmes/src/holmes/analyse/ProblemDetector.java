@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.darkgui.dockwindows.HolmesDockWindowsTable;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
@@ -14,18 +15,15 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 
 /**
- * Klasa odpowiedzialna za wykrywanie potencjalnie problematycznych regionów sieci i ich
- * kolorowanie.
- * 
- * @author MR
+ * Klasa odpowiedzialna za wykrywanie potencjalnie problematycznych regionów sieci i ich kolorowanie.
  */
 public class ProblemDetector {
-	GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	PetriNet pn;
 	HolmesDockWindowsTable subwindow;
 
 	public ProblemDetector(HolmesDockWindowsTable holmesDockWindowsTable) {
-		this.overlord = GUIManager.getDefaultGUIManager();
 		this.pn = overlord.getWorkspace().getProject();
 		this.subwindow = holmesDockWindowsTable;
 	}
@@ -39,7 +37,6 @@ public class ProblemDetector {
 			return;
 		}
 		pn.resetNetColors();
-		//ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
 		ArrayList<Object> res_places = result.get(0);
 		ArrayList<Object> res_descr = result.get(1);
 		
@@ -47,7 +44,7 @@ public class ProblemDetector {
 			Place place = (Place)res_places.get(p);
 			String descr = (String)res_descr.get(p);
 			
-			place.setColorWithNumber(true, Color.GREEN, false, 0.0, true, descr, 0, 0, 0, 0);
+			place.drawGraphBoxP.setColorWithNumber(true, Color.GREEN, false, 0.0, true, descr, 0, 0, 0, 0);
 		}
 		
 		pn.repaintAllGraphPanels();
@@ -67,7 +64,7 @@ public class ProblemDetector {
 			for(int p=0; p<inP; p++) {
 				Place place = inPlaces.get(p);
 				
-				place.setColorWithNumber(true, new Color(255,0,127), false, 0.0, true, "IN-place", 0, 0, 0, 0);
+				place.drawGraphBoxP.setColorWithNumber(true, new Color(255,0,127), false, 0.0, true, lang.getText("PD_entry001"), 0, 0, 0, 0);
 			}
 		}
 		
@@ -76,10 +73,10 @@ public class ProblemDetector {
 			for(int p=0; p<outP; p++) {
 				Place place = outPlaces.get(p);
 				
-				place.setColorWithNumber(true, new Color(255,153,204), false, 0.0, true, "OUT-place", 0, 0, 0, 0);
+				place.drawGraphBoxP.setColorWithNumber(true, new Color(255,153,204), false, 0.0, true, lang.getText("PD_entry002"), 0, 0, 0, 0);
 			}
 		}
-		subwindow.fixIOPlaces.setText("Input: "+inP+" / Output: "+outP);
+		subwindow.fixIOPlaces.setText(lang.getText("PD_entry003")+" "+inP+" "+lang.getText("PD_entry004")+" "+outP);
 		pn.repaintAllGraphPanels();
 	}
 	
@@ -96,7 +93,7 @@ public class ProblemDetector {
 			inT = inTransitions.size();
 			for(int p=0; p<inT; p++) {
 				Transition trans = inTransitions.get(p);
-				trans.setColorWithNumber(true, new Color(0,153,153), false, 0.0, true, "IN-trans", 0, 0, 0, 0);
+				trans.drawGraphBoxT.setColorWithNumber(true, new Color(0,153,153), false, 0.0, true, lang.getText("PD_entry005"), 0, 0, 0, 0);
 			}
 		}
 		
@@ -104,10 +101,10 @@ public class ProblemDetector {
 			outT = outTransitions.size();
 			for(int t=0; t<outT; t++) {
 				Transition trans = outTransitions.get(t);
-				trans.setColorWithNumber(true, new Color(153,255,255), false, 0.0, true, "OUT-trans", 0, 0, 0, 0);
+				trans.drawGraphBoxT.setColorWithNumber(true, new Color(153,255,255), false, 0.0, true, lang.getText("PD_entry006"), 0, 0, 0, 0);
 			}
 		}
-		subwindow.fixIOTransitions.setText("Input: "+inT+" / Output: "+outT);
+		subwindow.fixIOTransitions.setText(lang.getText("PD_entry007")+" "+inT+" "+lang.getText("PD_entry008")+" "+outT);
 		pn.repaintAllGraphPanels();
 	}
 	
@@ -125,7 +122,7 @@ public class ProblemDetector {
 			for(int p=0; p<linP; p++) {
 				Place place = linearPlaces.get(p);
 				
-				place.setColorWithNumber(true, new Color(0,102,0), false, 0.0, true, "Linear place", 0, 0, 0, 0);
+				place.drawGraphBoxP.setColorWithNumber(true, new Color(0,102,0), false, 0.0, true, lang.getText("PD_entry009"), 0, 0, 0, 0);
 			}
 		}
 		
@@ -133,7 +130,7 @@ public class ProblemDetector {
 			linT = linearTransitions.size();
 			for(int p=0; p<linT; p++) {
 				Transition trans = linearTransitions.get(p);
-				trans.setColorWithNumber(true, new Color(128,255,0), false, 0.0, true, "Linear trans", 0, 0, 0, 0);
+				trans.drawGraphBoxT.setColorWithNumber(true, new Color(128,255,0), false, 0.0, true, lang.getText("PD_entry010"), 0, 0, 0, 0);
 			}
 		}
 		
@@ -142,25 +139,25 @@ public class ProblemDetector {
 		if(regions) {
 			//int counter = -1;
 			for(Place place : places) {
-				if(!place.isColorChanged())
+				if(!place.drawGraphBoxP.isColorChanged())
 					continue;
 				
 				for(ElementLocation el : place.getElementLocations()) {
 					for(Arc arc : el.getInArcs()) {
-						if(((Transition)arc.getStartNode()).isColorChanged()) {
-							((Transition)arc.getStartNode()).setColorWithNumber(
-								true, new Color(255,0,0), false, 0.0, true, "LINEAR REGION", 0, 0, 0, 0);
-							place.setColorWithNumber(
-									true, new Color(255,0,0), false, 0.0, true, "LINEAR REGION", 0, 0, 0, 0);
+						if(((Transition)arc.getStartNode()).drawGraphBoxT.isColorChanged()) {
+							((Transition)arc.getStartNode()).drawGraphBoxT.setColorWithNumber(
+								true, Color.RED, false, 0.0, true, lang.getText("PD_entry011"), 0, 0, 0, 0);
+							place.drawGraphBoxP.setColorWithNumber(
+									true, Color.RED, false, 0.0, true, lang.getText("PD_entry011"), 0, 0, 0, 0);
 						}
 					}
 					
 					for(Arc arc : el.getOutArcs()) {
-						if(((Transition)arc.getEndNode()).isColorChanged()) {
-							((Transition)arc.getEndNode()).setColorWithNumber(
-								true, new Color(255,0,0), false, 0.0, true, "LINEAR REGION", 0, 0, 0, 0);
-							place.setColorWithNumber(
-									true, new Color(255,0,0), false, 0.0, true, "LINEAR REGION", 0, 0, 0, 0);
+						if(((Transition)arc.getEndNode()).drawGraphBoxT.isColorChanged()) {
+							((Transition)arc.getEndNode()).drawGraphBoxT.setColorWithNumber(
+								true, Color.RED, false, 0.0, true, lang.getText("PD_entry011"), 0, 0, 0, 0);
+							place.drawGraphBoxP.setColorWithNumber(
+									true, Color.RED, false, 0.0, true, lang.getText("PD_entry011"), 0, 0, 0, 0);
 						}
 					}
 				}
@@ -177,24 +174,22 @@ public class ProblemDetector {
 		ArrayList<Place> inPlaces = new ArrayList<Place>();
 		ArrayList<Place> places = pn.getPlaces();
 		
-		if(places == null || places.size()==0)
+		if(places == null || places.isEmpty())
 			return null;
 		
 		for(Place place : places) {
 			boolean ok = true;
 			for(ElementLocation el : place.getElementLocations()) {
-				if(el.getInArcs().size() > 0) { //nie powinno być żadnych
+				if(!el.getInArcs().isEmpty()) { //nie powinno być żadnych
 					ok = false;
 					break;
 				}
 			}
-			
-			if(!ok) {
-				continue;
-			} else {
+
+            if (ok) {
 				inPlaces.add(place);
 			}
-		}
+        }
 		
 		return inPlaces;
 	}
@@ -202,38 +197,34 @@ public class ProblemDetector {
 	public ArrayList<Place> detectOutPlaces() {
 		ArrayList<Place> outPlaces = new ArrayList<Place>();
 		ArrayList<Place> places = pn.getPlaces();
-		if(places == null || places.size()==0)
+		if(places == null || places.isEmpty())
 			return null;
 		
 		for(Place place : places) {
 			boolean ok = true;
 			for(ElementLocation el : place.getElementLocations()) {
-				if(el.getOutArcs().size() > 0) { //nie powinno być żadnych
+				if(!el.getOutArcs().isEmpty()) { //nie powinno być żadnych
 					ok = false;
 					break;
 				}
 			}
-			
-			if(!ok) {
-				continue;
-			} else {
+            if (ok) {
 				outPlaces.add(place);
 			}
-		}
-		
+        }
 		return outPlaces;
 	}
 	
 	public ArrayList<Transition> detectInTrans() {
 		ArrayList<Transition> inTrans = new ArrayList<Transition>();
 		ArrayList<Transition> transitions = pn.getTransitions();
-		if(transitions == null || transitions.size()==0)
+		if(transitions == null || transitions.isEmpty())
 			return null;
 		
 		for(Transition trans : transitions) {
 			boolean ok = true;
 			for(ElementLocation el : trans.getElementLocations()) {
-				if(el.getInArcs().size() > 0) { //nie powinno być żadnych
+				if(!el.getInArcs().isEmpty()) { //nie powinno być żadnych
 					
 					//TODO: pure ?
 					
@@ -241,59 +232,46 @@ public class ProblemDetector {
 					break;
 				}
 			}
-			
-			if(!ok) {
-				continue;
-			} else {
+            if (ok) {
 				inTrans.add(trans);
 			}
-		}
+        }
 		return inTrans;
 	}
 	
 	public ArrayList<Transition> detectOutTrans() {
 		ArrayList<Transition> outTrans = new ArrayList<Transition>();
 		ArrayList<Transition> transitions = pn.getTransitions();
-		if(transitions == null || transitions.size()==0)
+		if(transitions == null || transitions.isEmpty())
 			return null;
 		
 		for(Transition trans : transitions) {
 			boolean ok = true;
 			for(ElementLocation el : trans.getElementLocations()) {
-				if(el.getOutArcs().size() > 0) { //nie powinno być żadnych
-					
+				if(!el.getOutArcs().isEmpty()) { //nie powinno być żadnych
 					//TODO: pure ?
-					
 					ok = false;
 					break;
 				}
 			}
-			
-			if(!ok) {
-				continue;
-			} else {
+            if (ok) {
 				outTrans.add(trans);
 			}
-		}
+        }
 		return outTrans;
 	}
 	
 	public ArrayList<Place> detectLinearPlaces() {
 		ArrayList<Place> linearPlaces = new ArrayList<Place>();
 		ArrayList<Place> places = pn.getPlaces();
-		if(places == null || places.size()==0)
+		if(places == null || places.isEmpty())
 			return null;
-		int inArcs = 0;
-		int ourArcs = 0;
+		int inArcs;
+		int ourArcs;
 		
 		int counter = -1;
 		for(Place place : places) {
 			counter++;
-			if(counter == 48) {
-				@SuppressWarnings("unused")
-				int x=1;
-			}
-			
 			inArcs = 0;
 			ourArcs = 0;
 			boolean cancel = false;
@@ -310,7 +288,6 @@ public class ProblemDetector {
 				continue;
 			
 			//jeśli tu jesteśmy, miejsce ma dokładnie 1 łuk wejściowy
-			
 			for(ElementLocation el : place.getElementLocations()) {
 				ourArcs += el.getOutArcs().size();
 				if(ourArcs > 1) {
@@ -318,27 +295,25 @@ public class ProblemDetector {
 					break;
 				}
 			}
-			
-			if(cancel || ourArcs==0)
-				continue;
-			else
-				linearPlaces.add(place);
-		}
-		
+
+            if (!cancel && ourArcs != 0) {
+                linearPlaces.add(place);
+            }
+        }
 		return linearPlaces;
 	}
 	
 	public ArrayList<Transition> detectLinearTrans() {
 		ArrayList<Transition> linearTrans = new ArrayList<Transition>();
 		ArrayList<Transition> transitions = pn.getTransitions();
-		if(transitions == null || transitions.size()==0)
+		if(transitions == null || transitions.isEmpty())
 			return null;
-		int inArcs = 0;
-		int ourArcs = 0;
+		int inArcs;
+		int outArcs;
 		
 		for(Transition trans : transitions) {
 			inArcs = 0;
-			ourArcs = 0;
+			outArcs = 0;
 			boolean cancel = false;
 			
 			for(ElementLocation el : trans.getElementLocations()) {
@@ -353,20 +328,17 @@ public class ProblemDetector {
 				continue;
 			
 			//jeśli tu jesteśmy, miejsce ma dokładnie 1 łuk wejściowy
-			
 			for(ElementLocation el : trans.getElementLocations()) {
-				ourArcs += el.getOutArcs().size();
-				if(ourArcs > 1) {
+				outArcs += el.getOutArcs().size();
+				if(outArcs > 1) {
 					cancel = true;
 					break;
 				}
 			}
-			
-			if(cancel || ourArcs==0)
-				continue;
-			else
-				linearTrans.add(trans);
-		}
+            if (!cancel && outArcs != 0) {
+                linearTrans.add(trans);
+            }
+        }
 		return linearTrans;
 	}
 	
@@ -376,12 +348,12 @@ public class ProblemDetector {
 	 */
 	public ArrayList<ArrayList<Object>> detectInvProblemPlaces() {
 		ArrayList<ArrayList<Integer>> invariants = pn.getT_InvMatrix();
-		if(invariants==null || invariants.size() == 0) {
+		if(invariants==null || invariants.isEmpty()) {
 			JOptionPane.showMessageDialog(null, "T-invariants matrix has not been found.", 
 					"No t-invariants", JOptionPane.WARNING_MESSAGE);
 			return null;
 		}
-		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+		ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 		
 		ArrayList<Object> res_places = new ArrayList<Object>();
 		ArrayList<Object> res_descr = new ArrayList<Object>();
@@ -399,18 +371,6 @@ public class ProblemDetector {
 		subwindow.fixInvariants.setText("Normal: "+invNumber+" / Non-inv.: "+nonNumber);
 		subwindow.fixInvariants2.setText("Sub-inv.: "+subNumber+" / Sur-inv: "+surNumber);
 		
-		//test:
-		/*
-		matrix.get(1).set(0, 1); surNumber++;
-		matrix.get(1).set(1, 1); surNumber++;
-		matrix.get(2).set(0, 1); subNumber++;
-		matrix.get(2).set(12, 1); subNumber++;
-		
-		matrix.get(3).set(3, 1); nonNumber++;
-		matrix.get(3).set(5, 1); nonNumber++;
-		matrix.get(3).set(7, 1); nonNumber++;
-		matrix.get(3).set(11, 1); nonNumber++;
-		*/
 		if(surNumber>0) {
 			ArrayList<Integer> surVector = matrix.get(1);
 			for(int i=0; i<surVector.size(); i++) {
@@ -450,11 +410,11 @@ public class ProblemDetector {
 					if(res_places.contains(p)) {
 						int index = res_places.indexOf(p);
 						String oldVal = res_descr.get(index).toString();
-						oldVal += (" / NonI:"+value);
+						oldVal += ("/ "+lang.getText("PD_entry012")+value);
 						res_descr.set(index, oldVal);
 					} else {
 						res_places.add(places.get(i));
-						res_descr.add("NonI:"+value);
+						res_descr.add(lang.getText("PD_entry012")+value);
 					}
 				}
 			}

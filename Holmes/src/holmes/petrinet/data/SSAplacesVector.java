@@ -4,16 +4,14 @@ import java.util.ArrayList;
 
 /**
  * Klasa definiująca wektor danych wejściowych SSA.
- * 
- * @author MR
  */
 public class SSAplacesVector {
 	private ArrayList<Double> ssaVector;
-	private String description = "";
+	private String description;
 	private SSAdataType type;
 	private double experimentVolume;
 	
-	public enum SSAdataType { MOLECULES, CONCENTRATION };
+	public enum SSAdataType { MOLECULES, CONCENTRATION }
 	
 	/**
 	 * Konstruktor obiektu klasy SSAplacesVector.

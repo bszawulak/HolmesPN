@@ -8,11 +8,11 @@ import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.*;
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class GraphletModuleTest {
@@ -71,6 +71,46 @@ public class GraphletModuleTest {
         structure.add(t3);
         structure.add(p0);
         structure.add(p1);
+    }
+
+
+    void generateTestStructureNr3() {
+        structure.clear();
+        Transition t1 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Transition t2 = new Transition(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p1 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p2 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Place p3 = new Place(IdGenerator.getNextId(), 99, new Point(0, 0));
+        Arc a1 = new Arc(t1.getElementLocations().get(0), p1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a2 = new Arc(p1.getElementLocations().get(0), t2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a3 = new Arc(t2.getElementLocations().get(0), p2.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a4 = new Arc(p2.getElementLocations().get(0), t1.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+        Arc a5 = new Arc(t1.getElementLocations().get(0), p3.getElementLocations().get(0), Arc.TypeOfArc.NORMAL);
+
+
+
+        ArrayList<Arc> al = new ArrayList<>();
+        al.add(a1);
+        al.add(a2);
+        al.add(a3);
+        al.add(a4);
+        al.add(a5);
+        structure.add(t1);
+        structure.add(t2);
+        structure.add(p1);
+        structure.add(p2);
+        structure.add(p3);
+    }
+
+    @Test
+    void testGraphlet86Net3() {
+        generateTestStructureNr3();
+        GraphletsCalculator gc = new GraphletsCalculator();
+        gc.generateGraphlets();
+
+        //orbit 0
+        int[] vectorOrbit = gc.vectorOrbit(structure.get(3), false);
+        assertEquals(1, vectorOrbit[312]);
     }
 
     //net 1

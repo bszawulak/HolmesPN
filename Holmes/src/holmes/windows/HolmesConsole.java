@@ -5,13 +5,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -28,22 +22,21 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import holmes.darkgui.GUIManager;
 import holmes.utilities.HolmesFileView;
 import holmes.utilities.Tools;
 
 /**
  * Klasa ta tworzy okno konsoli programu, na którym pojawiają się informacje na temat wykonywania
  * różnych funkcji programu. Pozwala na zapis logu do pliku.
- * @author MR
- *
  */
 public class HolmesConsole extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -2286636544180010192L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
 	private String newline = "\n";
 	private StyledDocument doc; //
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
-	private JPanel editPanel; //główny panel okna
-	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel
 	/**
 	 * regular, italic, bold, small, large, warning, error
 	 */
@@ -58,8 +51,8 @@ public class HolmesConsole extends JFrame {
 		setTitle("Holmes Status Console");
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
-			
+		} catch (Exception ex) {
+			overlord.log("Error (316619924) | Exception:  "+ex.getMessage(), "error", true);
 		}
     	setVisible(false);
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -82,7 +75,8 @@ public class HolmesConsole extends JFrame {
 	 * @return JPanel - główny panel okna
 	 */
 	private JPanel createEditor() {
-		editPanel = new JPanel();
+		//główny panel okna
+		JPanel editPanel = new JPanel();
 		//this.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		editPanel.setLayout(new GridBagLayout());
         
@@ -96,7 +90,8 @@ public class HolmesConsole extends JFrame {
            
         textPane = createTextPane();
         textPane.setEditable(false);
-        paneScrollPane = new JScrollPane(textPane);
+		//panel scrollbar -> editPanel
+		JScrollPane paneScrollPane = new JScrollPane(textPane);
         paneScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
       
         editPanel.add(paneScrollPane, gbc);
@@ -107,11 +102,7 @@ public class HolmesConsole extends JFrame {
         gbc.fill = GridBagConstraints.SOUTH;
         
         JButton button = new JButton("Save log...");
-        button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				saveDialog();
-			}
-		});
+        button.addActionListener(actionEvent -> saveDialog());
         editPanel.add(button, gbc);
         
         return editPanel;
@@ -148,27 +139,24 @@ public class HolmesConsole extends JFrame {
 		String newLn = "";
 		if(enter) newLn = newline;
 			
-		int style = 0;
-		if(mode.equals("warning")) {
-			if(noWarnings) return;
-			style = 5;
-		} else if(mode.equals("error")) {
-			if(noErrors) return;
-			style = 6;
-		} else if(mode.equals("text")) {
-			style = 0;
-		} else if(mode.equals("italic")) {
-			style = 1;
-		} else if(mode.equals("bold")) {
-			style = 2;
-		} else {
-			style = 0;
+		int style;
+		switch (mode) {
+			case "warning" -> {
+				if (noWarnings) return;
+				style = 5;
+			}
+			case "error" -> {
+				if (noErrors) return;
+				style = 6;
+			}
+			case "text" -> style = 0;
+			case "italic" -> style = 1;
+			case "bold" -> style = 2;
+			default -> style = 0;
 		}
-		if(time) {
-			
-		}
-		if(style < 0 || style > 6)
-			style = 0;
+
+		//if(style < 0 || style > 6)
+		//	style = 0;
 		
 		try {
 			if(time) {
@@ -254,7 +242,7 @@ public class HolmesConsole extends JFrame {
 	 * @param file File - plik do zapisu, jeśli == null, wtedy zapis domyślny
 	 */
 	public void saveLogToFile(File file) {
-		File saveFile = null;
+		File saveFile;
 		if(file == null) {
 			saveFile = new File("log/log.txt");
 		} else {

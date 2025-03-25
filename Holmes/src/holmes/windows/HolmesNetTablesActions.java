@@ -9,6 +9,7 @@ import javax.swing.JTable;
 import holmes.analyse.InvariantsTools;
 import holmes.analyse.TimeComputations;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
@@ -16,7 +17,6 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.petrinet.simulators.StateSimulator;
-import holmes.petrinet.simulators.NetSimulator.NetType;
 import holmes.tables.InvariantContainer;
 import holmes.tables.InvariantsSimulatorTableModel;
 import holmes.tables.InvariantsTableModel;
@@ -26,10 +26,10 @@ import holmes.utilities.Tools;
 
 /**
  * Klasa z metodami obsługującymi okno tabel programu - klasy HolmesNetTables.
- * @author MR
- *
  */
 public class HolmesNetTablesActions {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private HolmesNetTables antWindow; 
 	public ArrayList<InvariantContainer> dataMatrix;
 	
@@ -56,8 +56,7 @@ public class HolmesNetTablesActions {
 	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
 	  	    	
 	  	    	HolmesNodeInfo window = new HolmesNodeInfo(
-	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().get(index), 
-	  	    			antWindow);
+	  	    			overlord.getWorkspace().getProject().getPlaces().get(index), antWindow);
 	  	    	window.setVisible(true);
 	  	    	//int column = table.getSelectedColumn();
 	  	    	//cellClickedEvent(row, column);
@@ -67,12 +66,12 @@ public class HolmesNetTablesActions {
 	  	    	//int index = Integer.parseInt(table.getModel().getValueAt(row, 0).toString());
 	  	    	int index = Integer.parseInt(table.getValueAt(row, 0).toString());
 	  	    	HolmesNodeInfo window = new HolmesNodeInfo(
-	  	    			GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().get(index), 
+						overlord.getWorkspace().getProject().getTransitions().get(index), 
 	  	    			antWindow);
 	  	    	window.setVisible(true);
 			}
-		} catch (Exception e) {
-			
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00476exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -81,16 +80,16 @@ public class HolmesNetTablesActions {
 	 * @param modelPlaces PlacesTableModel - obiekt danych
 	 */
 	public void addPlacesToModel(PlacesTableModel modelPlaces) {
-		ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
-		if(places.size() == 0) {
+		ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+		if(places.isEmpty()) {
 			return;
 		}
 		
-		ArrayList<Double> resVector = null;
+		ArrayList<Double> resVector;
 		StateSimulator ss = new StateSimulator();
 		
 		SimulatorGlobals ownSettings = new SimulatorGlobals();
-		ownSettings.setNetType(NetType.BASIC);
+		ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC, false);
 		ownSettings.setMaxMode(false);
 		ownSettings.setSingleMode(false);
 		ss.initiateSim(false, ownSettings);
@@ -103,7 +102,7 @@ public class HolmesNetTablesActions {
 			int index = places.indexOf(p);
 			
 			if(iterIndex != index) {
-				GUIManager.getDefaultGUIManager().log("Problem with position", "warning", true);
+				overlord.log(lang.getText("LOGentry00477"), "warning", true);
 				//compactTable
 			}
 			
@@ -118,7 +117,7 @@ public class HolmesNetTablesActions {
 			}
 			
 			double avgTokens = 0;
-			if(resVector != null && resVector.size() > 0)
+			if(resVector != null && !resVector.isEmpty())
 				avgTokens = resVector.get(iterIndex);
 			
 			modelPlaces.addNew(index, name, tokens, inTrans, outTrans, (float)avgTokens);
@@ -127,17 +126,17 @@ public class HolmesNetTablesActions {
 
 	/**
 	 * Metoda wypełniająca tabelę tramzycji danymi.
-	 * @param model DefaultTableModel - obiekt danych
+	 * @param modelTransitions DefaultTableModel - obiekt danych
 	 */
 	public void addTransitionsToModel(TransitionsTableModel modelTransitions) {
-		ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
-		if(transitions.size() == 0) {
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
+		if(transitions.isEmpty()) {
 			return;
 		}
 		
 		StateSimulator ss = new StateSimulator();
 		SimulatorGlobals ownSettings = new SimulatorGlobals();
-		ownSettings.setNetType(NetType.BASIC);
+		ownSettings.setNetType(SimulatorGlobals.SimNetType.BASIC, false);
 		ownSettings.setMaxMode(false);
 		ownSettings.setSingleMode(false);
 		ss.initiateSim(false, ownSettings);
@@ -149,7 +148,7 @@ public class HolmesNetTablesActions {
 			iterIndex++;
 			int index = transitions.indexOf(t);
 			if(iterIndex != index) {
-				GUIManager.getDefaultGUIManager().log("Problem with position", "warning", true);
+				overlord.log(lang.getText("LOGentry00477"), "warning", true);
 				//compactTable
 			}
 			
@@ -163,7 +162,7 @@ public class HolmesNetTablesActions {
 			}
 			
 			double avgFired = 0;
-			if(resVector.size() > 0)
+			if(!resVector.isEmpty())
 				avgFired = resVector.get(iterIndex);
 			avgFired *= 100;
 			int inInv = 0;
@@ -174,22 +173,22 @@ public class HolmesNetTablesActions {
 
 	/**
 	 * Metoda wypełniająca tabelę inwariantów podstawowymi informacjami o nich.
-	 * @param model DefaultTableModel - obiekt danych
+	 * @param modelInvariants DefaultTableModel - obiekt danych
 	 */
 	public void addBasicInvDataToModel(InvariantsTableModel modelInvariants) {
 		//TODO:
-		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
 		ArrayList<Transition> transitions = pn.getTransitions();
-		if(transitions.size() == 0) return;
+		if(transitions.isEmpty()) return;
 		
 		ArrayList<Arc> arcs = pn.getArcs();
-		if(arcs.size() == 0) return;
+		if(arcs.isEmpty()) return;
 		
 		ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
-		if(invMatrix == null || invMatrix.size() == 0) return;
+		if(invMatrix == null || invMatrix.isEmpty()) return;
 		int invMatrixSize = invMatrix.size();
 
-    	if(dataMatrix == null || dataMatrix.size() == 0) {
+    	if(dataMatrix == null || dataMatrix.isEmpty()) {
     		dataMatrix = new ArrayList<InvariantContainer>();
     		ArrayList<ArrayList<Integer>> nonMinimalInvariants = InvariantsTools.checkSupportMinimalityThorough(invMatrix);
     		ArrayList<ArrayList<Integer>> arcsInfoMatrix = InvariantsTools.getExtendedT_invariantsInfo(invMatrix, true);
@@ -207,16 +206,9 @@ public class HolmesNetTablesActions {
     			ic.ID = i;
     			ic.name = pn.accessT_InvDescriptions().get(i);
     			ic.transNumber = support.size();
-    			
-    			if(nonMinimalInvariants.get(i).size() == 0)
-    				ic.minimal = true;
-    			else
-    				ic.minimal = false;
 
-    			if(feasibleVector.get(i) == -1)
-    				ic.feasible = false;
-    			else
-    				ic.feasible = true;
+				ic.minimal = nonMinimalInvariants.get(i).isEmpty();
+				ic.feasible = feasibleVector.get(i) != -1;
     		
     			ic.pureInTransitions = inOutInfoMatrix.get(i).get(0);
     			ic.inTransitions = inOutInfoMatrix.get(i).get(1);
@@ -241,42 +233,32 @@ public class HolmesNetTablesActions {
     				ic.sub = false;
     				ic.sur = false;
     			}
-    			
-    			if(canonicalVector.get(i) == 0)
-    				ic.canonical = true;
-    			else
-    				ic.canonical = false;
-    			
-    			
+				ic.canonical = canonicalVector.get(i) == 0;
     			dataMatrix.add(ic);
     		}	
     	}
-    	
     	for(InvariantContainer ic : dataMatrix) {
     		modelInvariants.addNew(ic.ID, ic.transNumber, ic.minimal, ic.feasible, ic.pureInTransitions, ic.inTransitions, 
     				ic.outTransitions, ic.readArcs, ic.inhibitors, ic.sur, ic.sub, ic.normalInv, ic.canonical, ic.name);
-    			
+
     	}
-     	
-    	
 	}
 	
 	/**
 	 * Metoda służąca do wypełniania tabeli inwariantów.
 	 * @param modelInvariants InvariantsTableModel - model tablicy inwariantów
 	 * @param invariantsMatrix ArrayList[ArrayList[Integer]] - macierz inwariantów
-	 * @param invSize ArrayList[Integer] invSize - wektor wielkości inwariantów
 	 * @param simSteps int - ile kroków symulacji
 	 * @param maximumMode boolean - true: tryb maximum
 	 * @param singleMode boolean - true: 1 odpalenie tranzycji na turę(krok)
 	 * @param invSimNetType NetType - rodzaj symulacji sieci
 	 */
 	public void addInvariantsToModel(InvariantsSimulatorTableModel modelInvariants, ArrayList<ArrayList<Integer>> invariantsMatrix,
-			int simSteps, boolean maximumMode, boolean singleMode, NetType invSimNetType) {
+			int simSteps, boolean maximumMode, boolean singleMode, SimulatorGlobals.SimNetType invSimNetType) {
 		StateSimulator ss = new StateSimulator();
 		
 		SimulatorGlobals ownSettings = new SimulatorGlobals();
-		ownSettings.setNetType(invSimNetType);
+		ownSettings.setNetType(invSimNetType, false);
 		ownSettings.setMaxMode(maximumMode);
 		ownSettings.setSingleMode(singleMode);
 		ss.initiateSim(false, ownSettings);
@@ -285,7 +267,7 @@ public class HolmesNetTablesActions {
 		
 		ArrayList<Integer> rowsWithZero = new ArrayList<Integer>();
 		ArrayList<Integer> zeroDeadTrans = new ArrayList<Integer>();
-		int transNo = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().size();
+		int transNo = overlord.getWorkspace().getProject().getTransitions().size();
 		for(int i=0; i<transNo; i++)
 			zeroDeadTrans.add(0); //to co pozostanie zerem jest niepokrytą żadnym inwariantem tranzycją
 
@@ -306,13 +288,13 @@ public class HolmesNetTablesActions {
 					double avg = resVector.get(t);
 					
 					if(avg == 0) { //dane o inwariantach z zagłodzonymi tranzycjami
-						if(rowsWithZero.contains(row) == false)
+						if(!rowsWithZero.contains(row))
 							rowsWithZero.add(row);
 						zeroDeadTrans.set(t, -1); //aktywna, ale zagłodzona
 					}
 					
 					avg *= 100; // do 100%
-					String cell = ""+value+"("+Tools.cutValue(avg)+"%)";
+					String cell = value+"("+Tools.cutValue(avg)+"%)";
 					newRow.add(cell);
 				} else {
 					newRow.add("");
@@ -335,43 +317,43 @@ public class HolmesNetTablesActions {
 		try {
 			String name = table.getName();
 			if(!name.equals("PlacesTable") && !name.equals("TransitionsTable")) {
-				JOptionPane.showMessageDialog(null, "Swap operation allowed only for places or transitions.",
-						"Invalid table", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("HNTAwin_entry001"),
+						lang.getText("HNTAwin_entry001t"), JOptionPane.WARNING_MESSAGE);
 				return false;
 			}
 			
-			int selRows[] = table.getSelectedRows();
+			int[] selRows = table.getSelectedRows();
 			if(selRows.length != 2) {
-				JOptionPane.showMessageDialog(null, "Please select two rows (SHIFT key + mouse click).",
-						"Invalid number of rows selected", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, lang.getText("HNTAwin_entry002"),
+						lang.getText("HNTAwin_entry002t"), JOptionPane.WARNING_MESSAGE);
 				return false;
 			}
-			
-			GUIManager.getDefaultGUIManager().reset.reset2ndOrderData(true);
+
+			overlord.reset.reset2ndOrderData(true);
 			
 			if(name.equals("PlacesTable")) {
-				ArrayList<Place> places = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces();
+				ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 				int pos1 = selRows[0];
 				int pos2 = selRows[1];
 				Place p1 = places.get(pos1);
 				Place p2 = places.get(pos2);
 				
-				pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p1); 
-				pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(p2);
-				Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
-				
-				GUIManager.getDefaultGUIManager().log("Swapping places "+p1.getName()+" and "+p2.getName()+" successfull.", "text", true);
-			} else if(name.equals("TransitionTable")) {
-				ArrayList<Transition> transitions = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions();
+				pos1 = overlord.getWorkspace().getProject().getNodes().indexOf(p1); 
+				pos2 = overlord.getWorkspace().getProject().getNodes().indexOf(p2);
+				Collections.swap(overlord.getWorkspace().getProject().getNodes(), pos1, pos2);
+
+				overlord.log("Swapping places "+p1.getName()+" and "+p2.getName()+" successfull.", "text", true);
+			} else if(name.equals("TransitionTable")) { //TODO coś tu jest nie tak!!!!!
+				ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 				int pos1 = selRows[0];
 				int pos2 = selRows[1];
 				Transition t1 = transitions.get(pos1);
 				Transition t2 = transitions.get(pos2);
 				
-				pos1 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t1); 
-				pos2 = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().indexOf(t2);
-				Collections.swap(GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes(), pos1, pos2);
-				GUIManager.getDefaultGUIManager().log("Swapping transitions "+t1.getName()+" and "+t2.getName()+" successfull.", "text", true);
+				pos1 = overlord.getWorkspace().getProject().getNodes().indexOf(t1); 
+				pos2 = overlord.getWorkspace().getProject().getNodes().indexOf(t2);
+				Collections.swap(overlord.getWorkspace().getProject().getNodes(), pos1, pos2);
+				overlord.log("Swapping transitions "+t1.getName()+" and "+t2.getName()+" successfull.", "text", true);
 			}
 		} catch (Exception e) {
 			return false;
@@ -383,10 +365,10 @@ public class HolmesNetTablesActions {
 	 * Metoda pokazuje dane czasowe inwariantów.
 	 */
 	public void showTimeDataNotepad() {
-		PetriNet pn = GUIManager.getDefaultGUIManager().getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
 		ArrayList<Transition> transitions = pn.getTransitions();
 		ArrayList<ArrayList<Integer>> invMatrix = pn.getT_InvMatrix();
-		if(invMatrix == null || invMatrix.size() == 0) 
+		if(invMatrix == null || invMatrix.isEmpty())
 			return;
 		int invMatrixSize = invMatrix.size();
 		
@@ -418,8 +400,6 @@ public class HolmesNetTablesActions {
 			line += Tools.setToSize(tdpn, 5, false);
 			note.addTextLineNL(line, "text");
 		}
-		
-		
 		
 		note.setCaretFirstLine();
 		note.setVisible(true);

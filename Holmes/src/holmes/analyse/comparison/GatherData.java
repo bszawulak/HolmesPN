@@ -1,15 +1,10 @@
 package holmes.analyse.comparison;
 
-import holmes.analyse.GraphletsCalculator;
-import holmes.darkgui.GUIManager;
-
-import javax.swing.table.DefaultTableModel;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class GatherData {
 

@@ -9,13 +9,16 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.Timer;
 
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.simulators.NetSimulator;
-import holmes.petrinet.simulators.NetSimulator.SimulatorMode;
+import holmes.darkgui.LanguageManager;
+import holmes.petrinet.simulators.GraphicalSimulator;
+import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 
 public class Weird {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	public boolean forceSimulatorStop() {
 		//final boolean success = true;
-		NetSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
+		GraphicalSimulator ns = GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().getSimulator();
 		Timer t = ns.getTimer();
 		if(t==null) {
 			return true;
@@ -34,12 +37,10 @@ public class Weird {
 			}
 			return r;
 			//pool.
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
+		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-        return false;
+		return false;
 		
 		//Process p1 = Runtime.getRuntime().exec(ns.stop());
 		
@@ -67,9 +68,9 @@ public class Weird {
 */
 	}
 	
-	public class SimStop implements Callable<Boolean> {
-		NetSimulator ns;
-		public SimStop(NetSimulator ns) {
+	public static class SimStop implements Callable<Boolean> {
+		GraphicalSimulator ns;
+		public SimStop(GraphicalSimulator ns) {
 			this.ns = ns;
 		}
         public Boolean call() throws Exception {
@@ -79,9 +80,9 @@ public class Weird {
         }
     }
 	
-	public class SimWait implements Callable<Boolean> {
-		NetSimulator ns;
-		public SimWait(NetSimulator ns) {
+	public static class SimWait implements Callable<Boolean> {
+		GraphicalSimulator ns;
+		public SimWait(GraphicalSimulator ns) {
 			this.ns = ns;
 		}
         public Boolean call() throws Exception {
@@ -107,4 +108,22 @@ public class Weird {
     			return false;
         }
     }
+
+	public static void testStr() {
+		int yyyy = 1;
+		
+		String strB = "err.";
+		try {
+			
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"xxxx", "error", true);
+		}
+
+		strB = String.format("xxxxxxxxxxxxxxxxxxxx %d xxxxxxx", yyyy);
+	}
+	
 }
+
+
+
+

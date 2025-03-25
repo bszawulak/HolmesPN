@@ -10,8 +10,6 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * PTI - Places, Transitions, Invariants. Klasa-renderer dla tabel miejsc, tranzycji i inwariantów.
- * @author MR
- *
  */
 public class PTITableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
@@ -50,7 +48,7 @@ public class PTITableRenderer implements TableCellRenderer {
 	 * @param isSelected boolean - czy zaznaczona komórka
 	 * @param hasFocus boolean - czy aktywna komórka
 	 * @param row int - numer wiersza
-	 * @param columnt int - numer kolumny
+	 * @param column int - numer kolumny
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
@@ -77,7 +75,7 @@ public class PTITableRenderer implements TableCellRenderer {
     	renderer.setFont(new Font("Arial", Font.BOLD, 9));
     	InvariantsSimulatorTableModel modelInvariants = (InvariantsSimulatorTableModel) table.getModel();
     	
-		if(modelInvariants.getInfeasibleInvariants().contains(row) == true) { //cały inw. na jasno szary
+		if(modelInvariants.getInfeasibleInvariants().contains(row)) { //cały inw. na jasno szary
 			renderer.setBackground(Color.lightGray);
 			if(column > 1) {
 				if(((String)modelInvariants.getValueAt(row, column)).contains("(0%)")) { // zagłodzona tranz. na ciemno szary

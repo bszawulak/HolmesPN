@@ -12,13 +12,11 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * Klasa obiektu rysującego tablicę stanów sieci (klasyczna).
- * @author MR
- *
  */
 public class StatesPlacesTableRenderer implements TableCellRenderer {
 	public DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
 	private static final DecimalFormat formatter = new DecimalFormat( "#" );
-	private JTable table;
+	private final JTable table;
 	private static final Font fontNormal =  new Font("Verdana", Font.PLAIN, 9);
 	private static final Font fontBold =  new Font("Verdana", Font.BOLD, 9);
 	
@@ -38,7 +36,7 @@ public class StatesPlacesTableRenderer implements TableCellRenderer {
 	 * @param isSelected boolean - czy zaznaczona komórka
 	 * @param hasFocus boolean - czy aktywna komórka
 	 * @param row int - numer wiersza
-	 * @param columnt int - numer kolumny
+	 * @param column int - numer kolumny
 	 */
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
             boolean hasFocus, int row, int column) {
@@ -46,7 +44,7 @@ public class StatesPlacesTableRenderer implements TableCellRenderer {
     }
 
     /**
-     * Metoda trybu rysowania dla komórek tabeli inwariantów.
+     * Metoda trybu rysowania dla komórek tabeli.
      * @param value Object - wartość do wpisania
      * @param isSelected boolean - czy komórka jest wybrana
      * @param hasFocus boolean - czy jest aktywna
@@ -71,12 +69,10 @@ public class StatesPlacesTableRenderer implements TableCellRenderer {
     	}
     	if(selectedRow == row)
     		oLabel.setBackground(Color.lightGray);
-    	
-    	
+
     	if(value instanceof Double) {
-            value = formatter.format((Number)value);
+            value = formatter.format(value);
         }
-    	
     	
     	oLabel.setText(value.toString());
         return oLabel;

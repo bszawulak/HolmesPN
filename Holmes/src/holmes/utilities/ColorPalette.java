@@ -6,8 +6,6 @@ import java.util.Random;
 
 /**
  * Klasa użytkowa, zapewniająca dużo kolorów
- * @author MR
- *
  */
 public class ColorPalette {
 	private int currentColor = 0;
@@ -100,8 +98,7 @@ public class ColorPalette {
 			green = (green + mix.getGreen()) / 2;
 			blue = (blue + mix.getBlue()) / 2;
 		}
-		
-		Color color = new Color(red, green, blue);
-		return color;
+
+		return new Color(red, green, blue);
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -16,6 +17,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.MauritiusMapPanel.MapElement;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Transition;
@@ -23,21 +25,17 @@ import holmes.tables.InvariantsSimpleTableModel;
 import holmes.utilities.Tools;
 
 public class HolmesKnockoutViewer extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -6944527110471274930L;
-	private GUIManager overlord;
-	@SuppressWarnings("unused")
-	private HolmesKnockout parentWindow;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private PetriNet pn;
 	private MapElement data;
 	private ArrayList<Transition> transitions;
-	
-	private InvariantsSimpleTableModel tableModel;
 	private JTable table;
 	
-	public HolmesKnockoutViewer(MapElement data, HolmesKnockout holmesKnockout) {
-		this.overlord = GUIManager.getDefaultGUIManager();
+	public HolmesKnockoutViewer(MapElement data) {
 		this.pn = overlord.getWorkspace().getProject();
-		this.parentWindow = holmesKnockout;
 		this.data = data;
 		this.transitions = pn.getTransitions();
 		//parentWindow.setEnabled(false);
@@ -53,12 +51,14 @@ public class HolmesKnockoutViewer extends JFrame {
 	private void initalizeComponents() {
 		try {
 			setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) { }
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00466exception")+ "\n"+ex.getMessage(), "error", true);
+		}
 		setLayout(new BorderLayout());
 		setSize(new Dimension(640, 400));
 		setLocation(50, 50);
 		setResizable(false);
-		setTitle("Holmes Inv-Knockout Details window");
+		setTitle(lang.getText("HKVwin_entry001title"));
 		setLayout(new BorderLayout());
 		JPanel main = new JPanel(new BorderLayout());
 		main.add(getUpperPanel(), BorderLayout.NORTH);
@@ -70,15 +70,16 @@ public class HolmesKnockoutViewer extends JFrame {
 	 * Tworzy panel przycisków bocznych.
 	 * @return JPanel - panel
 	 */
+	@SuppressWarnings("UnusedAssignment")
 	public JPanel getUpperPanel() {
 		JPanel result = new JPanel(null);
-		result.setBorder(BorderFactory.createTitledBorder("Knockout element general information"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HKVwin_entry003"))); //Knockout element general information
 		result.setPreferredSize(new Dimension(640, 130));
 
 		int posXda = 10;
 		int posYda = 20;
 
-		JLabel label0 = new JLabel("Element: ");
+		JLabel label0 = new JLabel(lang.getText("HKVwin_entry002")); //Element:
 		label0.setBounds(posXda, posYda, 70, 20);
 		result.add(label0);
 		
@@ -90,9 +91,9 @@ public class HolmesKnockoutViewer extends JFrame {
 		result.add(labelElement);
 
 		if(mctSet.size() > 1) {
-			labelElement.setText("MCT #"+mctSet.get(0));
+			labelElement.setText(lang.getText("HKVwin_entry004")+mctSet.get(0)); //MCT #1
 			
-			JLabel label2 = new JLabel("MCT set:");
+			JLabel label2 = new JLabel(lang.getText("HKVwin_entry005"));
 			label2.setBounds(posXda+210, posYda, 80, 20);
 			result.add(label2);
 			
@@ -109,7 +110,7 @@ public class HolmesKnockoutViewer extends JFrame {
 			labelElement.setText("t"+t_index+"_"+transitions.get(t_index).getName());
 		}
 		
-		JLabel label3 = new JLabel("Dependent invariants:");
+		JLabel label3 = new JLabel(lang.getText("HKVwin_entry006")); //Dependent invariants:
 		label3.setBounds(posXda, posYda+=20, 150, 20);
 		result.add(label3);
 	
@@ -117,7 +118,7 @@ public class HolmesKnockoutViewer extends JFrame {
 		label4.setBounds(posXda+160, posYda, 30, 20);
 		result.add(label4);
 		
-		JLabel label5 = new JLabel("Unaffected invariants:");
+		JLabel label5 = new JLabel(lang.getText("HKVwin_entry007")); //Unaffected invariants:
 		label5.setBounds(posXda+190, posYda, 150, 20);
 		result.add(label5);
 		
@@ -125,7 +126,7 @@ public class HolmesKnockoutViewer extends JFrame {
 		label6.setBounds(posXda+350, posYda, 150, 20);
 		result.add(label6);
 		
-		JLabel label7 = new JLabel("Knockout path:");
+		JLabel label7 = new JLabel(lang.getText("HKVwin_entry008")); //Knockout path:
 		label7.setBounds(posXda, posYda+=20, 150, 20);
 		result.add(label7);
 		
@@ -149,10 +150,10 @@ public class HolmesKnockoutViewer extends JFrame {
 	 */
 	public JPanel getBottomPanel() {
 		JPanel result = new JPanel(new BorderLayout());
-		result.setBorder(BorderFactory.createTitledBorder("Tables"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HKVwin_entry009")));
 		result.setPreferredSize(new Dimension(640, 320));
-		
-		tableModel = new InvariantsSimpleTableModel();
+
+		InvariantsSimpleTableModel tableModel = new InvariantsSimpleTableModel();
 		table = new JTable(tableModel);
 		table.setName("Invariant description");
 		
@@ -167,7 +168,7 @@ public class HolmesKnockoutViewer extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		cellClickAction();
           	    }
           	 }
@@ -196,9 +197,8 @@ public class HolmesKnockoutViewer extends JFrame {
 				int invID = Integer.parseInt(id);
 				new HolmesInvariantsViewer(invID);
 			}
-
-		} catch (Exception e) {
-			
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00467exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 	
@@ -210,28 +210,28 @@ public class HolmesKnockoutViewer extends JFrame {
 		ArrayList<Integer> path = data.disabledHistory;
 		ArrayList<Integer> processed = new ArrayList<>();
 		
-		String resultPath = "";
+		StringBuilder resultPath = new StringBuilder();
 		for(Integer trans : path) {
 			if(processed.contains(trans))
 				continue;
 			
 			ArrayList<Integer> mct = checkMCT(trans);
 			if(mct.size() > 1) {
-				resultPath += "MCT#"+mct.get(0)+" ==> ";
+				resultPath.append("MCT#").append(mct.get(0)).append(" ==> ");
 				
 				for(int i=1; i<mct.size(); i++) {
 					processed.add(mct.get(i));
 				}
 			} else {
-				resultPath += "t"+trans+" ==> ";
+				resultPath.append("t").append(trans).append(" ==> ");
 				processed.add(trans);
 			}
 		}
 		
 		if(resultPath.length() > 5) 
-			resultPath = resultPath.substring(0, resultPath.length()-4);
+			resultPath = new StringBuilder(resultPath.substring(0, resultPath.length() - 4));
 		
-		descriptionTextArea.setText(resultPath);
+		descriptionTextArea.setText(resultPath.toString());
 	}
 
 	/**
@@ -255,12 +255,10 @@ public class HolmesKnockoutViewer extends JFrame {
 				for(Transition trans : mct) {
 					result.add(transitions.indexOf(trans));
 				}
-				
 				found = true;
 				break;
 			}
 		}
-		
 		if(!found)
 			result.add(-1);
 		

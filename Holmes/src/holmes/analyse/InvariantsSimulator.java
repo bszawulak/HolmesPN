@@ -19,26 +19,28 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.InvariantTransition;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
+import holmes.petrinet.simulators.GraphicalSimulator;
 import holmes.petrinet.simulators.SimulationStep;
 
 /**
  * Klasa odpowiadzialna za symulację wykonywania inwariantów w sieci.
- * @author students
- *
  */
 public class InvariantsSimulator {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private NetType simulationType;
-	private SimulatorMode mode = SimulatorMode.STOPPED;
+	private SimulatorMode mode;
 	private SimulatorMode previousMode = SimulatorMode.STOPPED;
 	private SimulatorType simType = SimulatorType.TIME;
 
 	private PetriNet petriNet;
-	private Integer delay = new Integer(0);
+	private Integer delay = 0;
 	private boolean simulationActive = false;
 	private Timer timer;
 	private ArrayList<Transition> launchingTransitions;
@@ -48,7 +50,7 @@ public class InvariantsSimulator {
 	private boolean maximumMode = false;
 
 	public static int DEFAULT_COUNTER = 50;
-	public int stepValue = 0;
+	public int stepValue;
 
 	public JFrame timeFrame = new JFrame("Zegar");
 
@@ -98,8 +100,7 @@ public class InvariantsSimulator {
 	 * @param st int - rodzaj symulacji
 	 * @param simV int - krok
 	 */
-	public InvariantsSimulator(NetType type, PetriNet net,
-			ArrayList<ArrayList<InvariantTransition>> inv, int st, int simV) {
+	public InvariantsSimulator(NetType type, PetriNet net, ArrayList<ArrayList<InvariantTransition>> inv, int st, int simV) {
 		simulationType = type;
 		petriNet = net;
 		invariants = inv;
@@ -138,22 +139,17 @@ public class InvariantsSimulator {
 	 */
 	public void setSimulatorNetType(int type) {
 		switch (type) {
-		case (0):
-			simulationType = NetType.BASIC;
-			break;
-
-		case (1):
-			simulationType = NetType.TIME;
-			break;
+			case (0) -> simulationType = NetType.BASIC;
+			case (1) -> simulationType = NetType.TIME;
 		}
 
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	/**
 	 * Metoda rozpoczynająca symulację inwariantów.
 	 * @param simulatorMode SimulatorMode - tryb pracy symulatora
 	 */
+	@SuppressWarnings("incomplete-switch")
 	public void startSimulation(SimulatorMode simulatorMode) {
 		timeFrame.setBounds(185, 115, 80, 30);
 		timeFrame.getContentPane().add(
@@ -166,28 +162,18 @@ public class InvariantsSimulator {
 		setMode(simulatorMode);
 		setSimulationActive(true);
 		ActionListener taskPerformer = new SimulationPerformer();
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
-		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
+		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
+		//overlord.getShortcutsBar().allowOnlySimulationDisruptButtons();
 		switch (getMode()) {
-		case LOOP:
-			taskPerformer = new StepPerformer(true,simType,stepValue);
-			break;
-		case SINGLE_TRANSITION_LOOP:
-			taskPerformer = new SingleTransitionPerformer(true);
-			break;
-		case SINGLE_TRANSITION:
-			taskPerformer = new SingleTransitionPerformer();
-			break;
-		case STEP:
-			taskPerformer = new StepPerformer();
-			break;
-		case ACTION_BACK:
-			taskPerformer = new StepBackPerformer();
-			break;
-		case LOOP_BACK:
-			launchingTransitions.clear();
-			taskPerformer = new StepBackPerformer(true);
-			break;
+			case LOOP -> taskPerformer = new StepPerformer(true, simType, stepValue);
+			case SINGLE_TRANSITION_LOOP -> taskPerformer = new SingleTransitionPerformer(true);
+			case SINGLE_TRANSITION -> taskPerformer = new SingleTransitionPerformer();
+			case STEP -> taskPerformer = new StepPerformer();
+			case ACTION_BACK -> taskPerformer = new StepBackPerformer();
+			case LOOP_BACK -> {
+				launchingTransitions.clear();
+				taskPerformer = new StepBackPerformer(true);
+			}
 		}
 		setTimer(new Timer(getDelay(), taskPerformer));
 		getTimer().start();
@@ -208,7 +194,6 @@ public class InvariantsSimulator {
 		return launchingTransitions;
 	}
 
-	@SuppressWarnings("unused")
 	/**
 	 * Metoda generująca zbiór tranzycji do uruchomienia.
 	 * @return ArrayList[Transition] - zbiór tranzycji
@@ -219,7 +204,7 @@ public class InvariantsSimulator {
 		ArrayList<Transition> allTransitions = petriNet.getTransitions();
 		ArrayList<Integer> indexList = new ArrayList<Integer>();
 		int i = 0;
-		for (Transition transition : allTransitions) {
+		for (Transition ignored : allTransitions) {
 			indexList.add(i);
 			i++;
 		}
@@ -290,12 +275,11 @@ public class InvariantsSimulator {
 
 	/**
 	 * 
-	 * @param t
-	 * @param list
-	 * @return
+	 * @param t (<b>Transition</b>)
+	 * @param list (<b>ArrayList[Transition]</b>)
+	 * @return (<b>ArrayList[Transition]</b>)
 	 */
-	public ArrayList<Transition> searchConflict(Transition t,
-			ArrayList<Transition> list) {
+	public ArrayList<Transition> searchConflict(Transition t, ArrayList<Transition> list) {
 		return null;
 	}
 
@@ -310,9 +294,9 @@ public class InvariantsSimulator {
 		for (Transition transition : transitions) {
 			transition.setLaunching(true);
 			if (!backtracking)
-				arcs = transition.getInArcs();
+				arcs = transition.getInputArcs();
 			else
-				arcs = transition.getOutArcs();
+				arcs = transition.getOutputArcs();
 			// subtract adequate number of tokens from origins
 			for (Arc arc : arcs) {
 				arc.setSimulationForwardDirection(!backtracking);
@@ -322,7 +306,7 @@ public class InvariantsSimulator {
 					place = (Place) arc.getStartNode();
 				else
 					place = (Place) arc.getEndNode();
-				place.modifyTokensNumber(-arc.getWeight());
+				place.addTokensNumber(-arc.getWeight());
 			}
 		}
 	}
@@ -331,7 +315,7 @@ public class InvariantsSimulator {
 	 * Metoda uruchamiająca pojedynczą fazę pobrania substratów.
 	 * @param transitions ArrayList[Transition] - zbiór tranzycji
 	 * @param backtracking boolean - true, jeśli symulacja się cofa
-	 * @param chosenTransitionTransition - wybrana tranzycja
+	 * @param chosenTransition Transition - wybrana tranzycja
 	 * @return boolean - zwraca true, jeśli się udało coś odpalić
 	 */
 	public boolean launchSingleSubtractPhase(ArrayList<Transition> transitions,
@@ -343,10 +327,10 @@ public class InvariantsSimulator {
 			ArrayList<Arc> arcs;
 			if (!backtracking) {
 				tran = transitions.get(0);
-				arcs = tran.getInArcs();
+				arcs = tran.getInputArcs();
 			} else {
 				tran = chosenTransition;
-				arcs = tran.getOutArcs();
+				arcs = tran.getOutputArcs();
 			}
 			tran.setLaunching(true);
 			for (Arc arc : arcs) {
@@ -357,7 +341,7 @@ public class InvariantsSimulator {
 					place = (Place) arc.getStartNode();
 				else
 					place = (Place) arc.getEndNode();
-				place.modifyTokensNumber(-arc.getWeight());
+				place.addTokensNumber(-arc.getWeight());
 			}
 			return true;
 		}
@@ -365,18 +349,17 @@ public class InvariantsSimulator {
 
 	/**
 	 * 
-	 * @param transitions
-	 * @param backtracking
+	 * @param transitions (<b>ArrayList[Transition]</b>)
+	 * @param backtracking (<b>boolean</b>)
 	 */
-	public void launchAddPhaseGraphics(ArrayList<Transition> transitions,
-			boolean backtracking) {
+	public void launchAddPhaseGraphics(ArrayList<Transition> transitions, boolean backtracking) {
 		ArrayList<Arc> arcs;
 		for (Transition tran : transitions) {
 			tran.setLaunching(true);
 			if (!backtracking)
-				arcs = tran.getOutArcs();
+				arcs = tran.getOutputArcs();
 			else
-				arcs = tran.getInArcs();
+				arcs = tran.getInputArcs();
 			for (Arc arc : arcs) {
 				arc.setSimulationForwardDirection(!backtracking);
 				arc.setTransportingTokens(true);
@@ -394,10 +377,10 @@ public class InvariantsSimulator {
 			ArrayList<Arc> arcs;
 			if (!backtracking) {
 				tran = transitions.get(0);
-				arcs = tran.getOutArcs();
+				arcs = tran.getOutputArcs();
 			} else {
 				tran = chosenTransition;
-				arcs = tran.getInArcs();
+				arcs = tran.getInputArcs();
 			}
 			tran.setLaunching(true);
 			for (Arc arc : arcs) {
@@ -413,9 +396,9 @@ public class InvariantsSimulator {
 		ArrayList<Arc> arcs;
 		for (Transition transition : transitions) {
 			if (!backtracking)
-				arcs = transition.getOutArcs();
+				arcs = transition.getOutputArcs();
 			else
-				arcs = transition.getInArcs();
+				arcs = transition.getInputArcs();
 			// add adequate number of tokens to destinations
 			for (Arc arc : arcs) {
 				Place place;
@@ -423,7 +406,7 @@ public class InvariantsSimulator {
 					place = (Place) arc.getEndNode();
 				else
 					place = (Place) arc.getStartNode();
-				place.modifyTokensNumber(arc.getWeight());
+				place.addTokensNumber(arc.getWeight());
 			}
 		}
 		transitions.clear();
@@ -438,10 +421,10 @@ public class InvariantsSimulator {
 			ArrayList<Arc> arcs;
 			if (!backtracking) {
 				tran = transitions.get(0);
-				arcs = tran.getOutArcs();
+				arcs = tran.getOutputArcs();
 			} else {
 				tran = chosenTransition;
-				arcs = tran.getInArcs();
+				arcs = tran.getInputArcs();
 			}
 			for (Arc arc : arcs) {
 				Place place;
@@ -449,7 +432,7 @@ public class InvariantsSimulator {
 					place = (Place) arc.getEndNode();
 				else
 					place = (Place) arc.getStartNode();
-				place.modifyTokensNumber(arc.getWeight());
+				place.addTokensNumber(arc.getWeight());
 			}
 			transitions.remove(tran);
 			return true;
@@ -478,24 +461,24 @@ public class InvariantsSimulator {
 	 * Metoda obsługująca wciśnięcie przycisku zatrzymania symulacji.
 	 */
 	private void stopSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationInitiateButtons();
-		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationInitiateButtons();
+		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationInitiateButtons();
+		//overlord.getShortcutsBar().allowOnlySimulationInitiateButtons();
 		timer.stop();
 		previousMode = mode;
 		setMode(SimulatorMode.STOPPED);
 	}
 
 	private void pauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlyUnpauseButton();
-		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlyUnpauseButton();
+		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlyUnpauseButton();
+		//overlord.getShortcutsBar().allowOnlyUnpauseButton();
 		timer.stop();
 		previousMode = mode;
 		setMode(SimulatorMode.PAUSED);
 	}
 
 	private void unpauseSimulation() {
-		GUIManager.getDefaultGUIManager().getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
-		//GUIManager.getDefaultGUIManager().getShortcutsBar().allowOnlySimulationDisruptButtons();
+		overlord.getSimulatorBox().getCurrentDockWindow().allowOnlySimulationDisruptButtons();
+		//overlord.getShortcutsBar().allowOnlySimulationDisruptButtons();
 		if (previousMode != SimulatorMode.STOPPED) {
 			timer.start();
 			setMode(previousMode);
@@ -508,8 +491,7 @@ public class InvariantsSimulator {
 
 	public void setSimulationActive(boolean simulationActive) {
 		this.simulationActive = simulationActive;
-		GUIManager.getDefaultGUIManager().getWorkspace().getProject()
-				.setSimulationActive(isSimulationActive());
+		overlord.getWorkspace().getProject().setSimulationActive(isSimulationActive());
 	}
 
 	public int getNodesAmount() {
@@ -593,10 +575,10 @@ public class InvariantsSimulator {
 		protected int remainingTransitionsAmount = launchingTransitions.size();
 
 		protected void updateStep() {
-			GUIManager.getDefaultGUIManager().getWorkspace().incrementSimulationStep();
-			
+			overlord.getWorkspace().getProject().incrementGraphicalSimulationStep();
+
 			//tutaj nic si� nie dzieje: a chyba chodzi�o o update podokna w�a�ciwo�ci z liczb� token�w
-			GUIManager.getDefaultGUIManager().getSimulatorBox().updateSimulatorProperties();
+			//overlord.getSimulatorBox().updateSimulatorProperties();
 		}
 
 		public void scheduleStop() {
@@ -639,10 +621,10 @@ public class InvariantsSimulator {
 				} else if (!actionStack.empty()) { // if steps remaining
 					currentStep = actionStack.pop();
 
-					if (currentStep.getType() == holmes.petrinet.simulators.NetSimulator.SimulatorMode.STEP) {
+					if (currentStep.getType() == GraphicalSimulator.SimulatorMode.STEP) {
 						launchSubtractPhase(
 								currentStep.getPendingTransitions(), true);
-					} else if (currentStep.getType() == holmes.petrinet.simulators.NetSimulator.SimulatorMode.SINGLE_TRANSITION) {
+					} else if (currentStep.getType() == GraphicalSimulator.SimulatorMode.SINGLE_TRANSITION) {
 						launchSingleSubtractPhase(
 								currentStep.getPendingTransitions(), true,
 								currentStep.getLaunchedTransition());
@@ -654,15 +636,15 @@ public class InvariantsSimulator {
 					stopSimulation();
 					JOptionPane.showMessageDialog(null, "Backtracking ended", "No more available actions to backtrack!",
 							JOptionPane.INFORMATION_MESSAGE);
-					GUIManager.getDefaultGUIManager().log("Backtracking ended, no more available actions to backtrack.", "text", true);
+					overlord.log("Backtracking ended, no more available actions to backtrack.", "text", true);
 				}
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
 				// subtract phase ended, commencing add phase
-				if (currentStep.getType() == holmes.petrinet.simulators.NetSimulator.SimulatorMode.STEP)
+				if (currentStep.getType() == GraphicalSimulator.SimulatorMode.STEP)
 					launchAddPhaseGraphics(currentStep.getPendingTransitions(),
 							true);
-				else if (currentStep.getType() == holmes.petrinet.simulators.NetSimulator.SimulatorMode.SINGLE_TRANSITION)
+				else if (currentStep.getType() == GraphicalSimulator.SimulatorMode.SINGLE_TRANSITION)
 					launchSingleAddPhaseGraphics(
 							currentStep.getPendingTransitions(), true,
 							currentStep.getLaunchedTransition());
@@ -670,9 +652,9 @@ public class InvariantsSimulator {
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER - 5 && !finishedAddPhase) {
 				// ending add phase
-				if (currentStep.getType() == holmes.petrinet.simulators.NetSimulator.SimulatorMode.STEP)
+				if (currentStep.getType() == GraphicalSimulator.SimulatorMode.STEP)
 					launchAddPhase(currentStep.getPendingTransitions(), true);
-				else if (currentStep.getType() == holmes.petrinet.simulators.NetSimulator.SimulatorMode.SINGLE_TRANSITION)
+				else if (currentStep.getType() == GraphicalSimulator.SimulatorMode.SINGLE_TRANSITION)
 					launchSingleAddPhase(currentStep.getPendingTransitions(),
 							true, currentStep.getLaunchedTransition());
 				finishedAddPhase = true;
@@ -715,7 +697,7 @@ public class InvariantsSimulator {
 			long t = date.getTime();
 			
 			if(simulatorType == SimulatorType.TIME)
-				time = t + (value * 60000);
+				time = t + (value * 60000L);
 			if(simulatorType == SimulatorType.CYCLE)
 				cycle = value;
 			if(simulatorType == SimulatorType.STEP)
@@ -760,8 +742,8 @@ public class InvariantsSimulator {
 										if(lastTransition.get(invariant)!=Integer.MAX_VALUE)
 										{
 											boolean connectionExist=false;
-											for(Arc arc : invariants.get(invariant).get(tran).getTransition().getInArcs())
-												for(Arc arcPlace : arc.getStartNode().getInArcs())
+											for(Arc arc : invariants.get(invariant).get(tran).getTransition().getInputArcs())
+												for(Arc arcPlace : arc.getStartNode().getInputArcs())
 													if(arcPlace.getStartNode().getID() == lastTransition.get(invariant))
 														connectionExist = true;
 											if(connectionExist)
@@ -775,7 +757,7 @@ public class InvariantsSimulator {
 											
 											for ( int tr = 0 ; tr < invariants.get(invariant).size();tr++)
 											{
-												if(generatedInvariants.get(invariant)[tr]!=invariants.get(invariant).get(tr).getAmountOfFirings())
+												if(generatedInvariants.get(invariant)[tr] != invariants.get(invariant).get(tr).getAmountOfFirings())
 													ready = false;
 												if(generatedInvariants.get(invariant)[tr]>invariants.get(invariant).get(tr).getAmountOfFirings())
 													toomany = true;
@@ -808,11 +790,11 @@ public class InvariantsSimulator {
 					}
 
 					//
-					actionStack.push(new SimulationStep(holmes.petrinet.simulators.NetSimulator.SimulatorMode.STEP,
+					actionStack.push(new SimulationStep(GraphicalSimulator.SimulatorMode.STEP,
 							cloneTransitionArray(launchingTransitions)));
 					if (actionStack.peek().getPendingTransitions() == null) {
 						//SettingsManager.log("Yay");
-						GUIManager.getDefaultGUIManager().log("Uknown problem in actionPerformed(ActionEvent event) in InvariantsSimulator class", "error", true);
+						overlord.log("Uknown problem in actionPerformed(ActionEvent event) in InvariantsSimulator class", "error", true);
 					}
 					launchSubtractPhase(launchingTransitions, false);
 					subtractPhase = false;
@@ -822,7 +804,7 @@ public class InvariantsSimulator {
 					stopSimulation();
 					JOptionPane.showMessageDialog(null, "Simulation ended", "No more available steps!",
 							JOptionPane.INFORMATION_MESSAGE);
-					GUIManager.getDefaultGUIManager().log("Simulation ended, no more available steps.", "text", true);
+					overlord.log("Simulation ended, no more available steps.", "text", true);
 				}
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
@@ -854,7 +836,7 @@ public class InvariantsSimulator {
 						
 						invariantsWriter.write(invariants, foundInvariants);
 						
-						//GUIManager.getDefaultGUIManager().getInvSimBox().getCurrentDockWindow().setEnabledInvariantSimulationInitiateButtons(true);
+						//overlord.getInvSimBox().getCurrentDockWindow().setEnabledInvariantSimulationInitiateButtons(true);
 				}
 				counter++;
 			} else {
@@ -889,7 +871,7 @@ public class InvariantsSimulator {
 								.size();
 					}
 					actionStack.push(new SimulationStep(
-							holmes.petrinet.simulators.NetSimulator.SimulatorMode.SINGLE_TRANSITION,
+							GraphicalSimulator.SimulatorMode.SINGLE_TRANSITION,
 							launchingTransitions.get(0), cloneTransitionArray(launchingTransitions)));
 					launchSingleSubtractPhase(launchingTransitions, false, null);
 					subtractPhase = false;
@@ -899,7 +881,7 @@ public class InvariantsSimulator {
 					stopSimulation();
 					JOptionPane.showMessageDialog(null, "Simulation ended", "No more available steps!",
 							JOptionPane.INFORMATION_MESSAGE);
-					GUIManager.getDefaultGUIManager().log("Simulation ended, no more available steps.", "text", true);
+					overlord.log("Simulation ended, no more available steps.", "text", true);
 				}
 				counter = 0;
 			} else if (counter == DEFAULT_COUNTER && !subtractPhase) {
@@ -921,13 +903,11 @@ public class InvariantsSimulator {
 		}
 	}
 	
-	public class InvariantsWriter{
+	public static class InvariantsWriter{
 		String zawartoscPliku = "";
 		public void write(ArrayList<ArrayList<InvariantTransition>> invariants, ArrayList<Integer> counterOfInvariants) {
 			try {
-				@SuppressWarnings("unused")
-				Date date = new Date();
-				
+				//Date date = new Date();
 				DateFormat df = new SimpleDateFormat("MM_dd_yyyy_HH_mm_ss");
 				Date today = Calendar.getInstance().getTime();        
 				String saveDate = df.format(today);	
@@ -951,12 +931,10 @@ public class InvariantsSimulator {
 				zawartoscPliku += "\n";
 				zapis.println(zawartoscPliku);
 				zapis.close();
-				
-								
 			} catch (Exception e) {
 				System.err.println("Error: " + e.getMessage());
 				JOptionPane.showMessageDialog(null,"Program cannot write invariants into file", "Error", JOptionPane.ERROR_MESSAGE);
-				GUIManager.getDefaultGUIManager().log(e.getMessage(), "error", true);
+				overlord.log(e.getMessage(), "error", true);
 			}
 		}
 	}

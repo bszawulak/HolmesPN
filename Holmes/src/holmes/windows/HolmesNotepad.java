@@ -5,13 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -31,22 +25,22 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.utilities.Tools;
 import holmes.workspace.ExtensionFileFilter;
 
 /**
  * Okno wewnętrznego notatnika programu.
- * 
- * @author MR
  */
 public class HolmesNotepad extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 1694133455242675169L;
-
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String newline = "\r\n";
 	private StyledDocument doc; //
 	private JTextPane textPane; //panel z tekstem -> paneScrollPane
-	private JScrollPane paneScrollPane; //panel scrollbar -> editPanel
-	
+
 	private JTextArea textArea;
 	
 	private boolean simpleMode = false;
@@ -57,13 +51,12 @@ public class HolmesNotepad extends JFrame {
 	 * Główny konstruktor domyślny okna notatnika.
 	 */
 	private HolmesNotepad() {
-		setTitle("Holmes Notepad");
+		setTitle(lang.getText("HNwin_entry001title"));
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
-			
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00485exception")+"\n"+ex.getMessage(), "error", true);
 		}
-		//setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
     	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 	
@@ -76,10 +69,10 @@ public class HolmesNotepad extends JFrame {
 		this();
 		
 		try {
-			if(GUIManager.getDefaultGUIManager().getSettingsManager().getValue("programUseSimpleEditor").equals("1"))
+			if(overlord.getSettingsManager().getValue("programUseSimpleEditor").equals("1"))
 				simpleMode = true;
-		} catch (Exception e) {
-			
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00486exception")+ "\n"+ex.getMessage(), "error", true);
 		}
 		setPreferredSize(new Dimension(width, height));
 		setLocation(50,50);
@@ -114,7 +107,9 @@ public class HolmesNotepad extends JFrame {
 		main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
 
 		main.add(createButtonsPanel(width, height));
-		
+
+		//panel scrollbar -> editPanel
+		JScrollPane paneScrollPane;
 		if(simpleMode) {
 			textArea = new JTextArea();
 			textArea.setFont(new Font("monospaced", Font.PLAIN, 12));
@@ -137,6 +132,7 @@ public class HolmesNotepad extends JFrame {
 	 * @param height int - wysokość
 	 * @return JPanel - panel, okrętu się pan spodziewałeś?
 	 */
+	@SuppressWarnings("unused")
 	private Component createButtonsPanel(int width, int height) {
 		JPanel buttonPanel = new JPanel(null);
 		buttonPanel.setMinimumSize(new Dimension(width, 50));
@@ -149,39 +145,27 @@ public class HolmesNotepad extends JFrame {
 		savedButton.setBounds(10, 7, 35, 35);
 		savedButton.setMargin(new Insets(0, 0, 0, 0));
 		savedButton.setIcon(Tools.getResIcon16("/icons/notepad/saveFile.png"));
-		savedButton.setToolTipText("Saves the content of notepad.");
+		savedButton.setToolTipText(lang.getText("HNwin_entry002")); //Saves the content of notepad.
 		savedButton.setFocusPainted(false);
-		savedButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				saveContent();
-			}
-		});
+		savedButton.addActionListener(actionEvent -> saveContent());
 		buttonPanel.add(savedButton);
 		
 		JButton loadButton = new JButton();
 		loadButton.setBounds(50, 7, 35, 35);
 		loadButton.setMargin(new Insets(0, 0, 0, 0));
 		loadButton.setIcon(Tools.getResIcon16("/icons/notepad/loadFile.png"));
-		loadButton.setToolTipText("Load txt files.");
+		loadButton.setToolTipText(lang.getText("HNwin_entry003")); //Load txt files.
 		loadButton.setFocusPainted(false);
-		loadButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				loadContent();
-			}
-		});
+		loadButton.addActionListener(actionEvent -> loadContent());
 		buttonPanel.add(loadButton);
 		
 		JButton clearButton = new JButton();
 		clearButton.setBounds(90, 7, 35, 35);
 		clearButton.setMargin(new Insets(0, 0, 0, 0));
 		clearButton.setIcon(Tools.getResIcon16("/icons/notepad/eraserIcon.png"));
-		clearButton.setToolTipText("Clear content");
+		clearButton.setToolTipText(lang.getText("HNwin_entry004")); //Clear content
 		clearButton.setFocusPainted(false);
-		clearButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent actionEvent) {
-				clearContent();
-			}
-		});
+		clearButton.addActionListener(actionEvent -> clearContent());
 		buttonPanel.add(clearButton);
 		
 		return buttonPanel;
@@ -195,8 +179,8 @@ public class HolmesNotepad extends JFrame {
 			int len = textPane.getDocument().getLength();
 			try {
 				doc.remove(0, len);
-			} catch (BadLocationException e) {
-				;
+			} catch (BadLocationException ex) {
+				overlord.log(lang.getText("LOGentry00487exception")+"\n"+ex.getMessage(), "error", true);
 			}
 		}
 	}
@@ -205,21 +189,18 @@ public class HolmesNotepad extends JFrame {
 	 * Obsługa wczytywania pliku tekstowego
 	 */
 	protected void loadContent() {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Holmes notepad text file (.txt)",  new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Load", "Select text file", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("load"), lang.getText("HNwin_entry005"), "");
 		
-		if(selectedFile.equals("")) {
-			return;
-			//JOptionPane.showMessageDialog(null, "Incorrect filename or location.", "Operation failed.", JOptionPane.ERROR_MESSAGE);
-		} else {
+		if(!selectedFile.isEmpty()) {
 			try {
 				clearContent();
 				DataInputStream dis = new DataInputStream(new FileInputStream(selectedFile));
 				BufferedReader buffer = new BufferedReader(new InputStreamReader(dis));
 				
-				String line = "";
+				String line;
 				//addTextLineNL(line,  "text");
 				while((line = buffer.readLine()) != null) {
 					addTextLineNL(line,  "text");
@@ -227,7 +208,7 @@ public class HolmesNotepad extends JFrame {
 				buffer.close();
 				setCaretFirstLine();
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Reading text file into the notepad failed.", "error", true);
+				overlord.log(lang.getText("LOGentry00488exception")+ "\n"+e.getMessage(), "error", true);
 			}
 		}
 	}
@@ -236,16 +217,14 @@ public class HolmesNotepad extends JFrame {
 	 * Zapisuje zawartość notatnika do pliku.
 	 */
 	protected void saveContent() {
-		String lastPath = GUIManager.getDefaultGUIManager().getLastPath();
+		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Holmes notepad text file (.txt)",  new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, "Save", "Select new filename", "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("load"), lang.getText("HNwin_entry006"), "");
 		
-		if(selectedFile.equals("")) {
-			return;
-		} else {
+		if(!selectedFile.isEmpty()) {
 			String extension = ".txt";
-			if(selectedFile.contains(extension) == false)
+			if(!selectedFile.contains(extension))
 				selectedFile += extension;
 			
 			try {
@@ -258,33 +237,28 @@ public class HolmesNotepad extends JFrame {
 				}
 				pw.close();
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Notepad saving operation for file "+selectedFile.toString()+" failed.", "error", true);
+				overlord.log(lang.getText("LOGentry00489exception")+"\n"+e.getMessage(), "error", true);
 			}
 		}
 	}
 
 	/**
 	 * Metoda pomocnicza konstruktora, tworzy obiekt edytora.
-	 * @return JTextPane - panel edytora
+	 * @return (<b>JTextPane</b>) - panel edytora.
 	 */
 	private JTextPane createTextPane() {
 	    JTextPane txtPane = new JTextPane();
 	    doc = txtPane.getStyledDocument();
 	    addStylesToDocument(doc);
-	    try {
-	        //doc.insertString(doc.getLength(), initString, doc.getStyle("regular"));
-	    } catch (Exception e) {
-	        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.","error", true);
-	    }
 	    return txtPane;
 	}
 	
 	/**
 	 * Metoda wpisuje nową linię do okna logów.
-	 * @param text String - text do wpisania
-	 * @param mode String - tryb pisania
-	 * @param time boolean - true, jeśli ma być wyświetlony czas wpisu
-	 * @param enter boolean - trye jeśli kończymy enterem
+	 * @param text (<b>String</b>) text do wpisania.
+	 * @param mode (<b>String</b>) tryb pisania.
+	 * @param time (<b>boolean</b>) true, jeśli ma być wyświetlony czas wpisu.
+	 * @param enter (<b>boolean</b>) true jeśli kończymy enterem.
 	 */
 	public void addText(String text, String mode, boolean time, boolean enter) {
 		if(simpleMode) {
@@ -308,8 +282,8 @@ public class HolmesNotepad extends JFrame {
 					doc.insertString(doc.getLength(), "["+timeStamp+"]   ", doc.getStyle("time"));
 				}
 		        doc.insertString(doc.getLength(), text+nL, doc.getStyle(initStyles[style]));
-		    } catch (Exception ble) {
-		        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
+		    } catch (Exception e) {
+				overlord.log(lang.getText("LOGentry00490exception")+"\n"+e.getMessage(), "error", true);
 		    }
 			
 			int len = textPane.getDocument().getLength();
@@ -319,8 +293,8 @@ public class HolmesNotepad extends JFrame {
 	
 	/**
 	 * Dodaj nową linię do notatnika (bez entera).
-	 * @param text String - tekst
-	 * @param mode mode - tryb wstawiania
+	 * @param text (<b>String</b>) tekst.
+	 * @param mode (<b>String</b>) tryb wstawiania.
 	 */
 	public void addTextLine(String text, String mode) {
 		if(simpleMode) {
@@ -329,8 +303,8 @@ public class HolmesNotepad extends JFrame {
 			int style = setWritingStyle(mode);
 			try {
 		        doc.insertString(doc.getLength(), text, doc.getStyle(initStyles[style]));
-		    } catch (Exception ble) {
-		        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
+		    } catch (Exception e) {
+				overlord.log(lang.getText("LOGentry00491exception")+"\n"+e.getMessage(), "error", true);
 		    }
 			int len = textPane.getDocument().getLength();
 			textPane.setCaretPosition(len);
@@ -339,8 +313,8 @@ public class HolmesNotepad extends JFrame {
 	
 	/**
 	 * Dodaj nową linię do notatnika (z enterem).
-	 * @param text String - tekst
-	 * @param mode mode - tryb wstawiania
+	 * @param text (<b>String</b>) tekst.
+	 * @param mode (<b>String</b>) tryb wstawiania.
 	 */
 	public void addTextLineNL(String text, String mode) {
 		if(simpleMode) {
@@ -349,8 +323,8 @@ public class HolmesNotepad extends JFrame {
 			int style = setWritingStyle(mode);
 			try {
 		        doc.insertString(doc.getLength(), text+newline, doc.getStyle(initStyles[style]));
-		    } catch (Exception ble) {
-		        GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
+		    } catch (Exception e) {
+				overlord.log(lang.getText("LOGentry00492exception")+"\n"+e.getMessage(), "error", true);
 		    }
 			int len = textPane.getDocument().getLength();
 			textPane.setCaretPosition(len);
@@ -359,8 +333,8 @@ public class HolmesNotepad extends JFrame {
 	
 	/**
 	 * Dodaje pojedyńczą linię tekstu.
-	 * @param text String - tekst do dodania
-	 * @param mode String - tryb pisania
+	 * @param text (<b>String</b>) tekst do dodania.
+	 * @param mode (<b>String</b>) tryb pisania.
 	 */
 	public void addLine(String text, String mode) {
 		if(simpleMode) {
@@ -369,8 +343,8 @@ public class HolmesNotepad extends JFrame {
 			int style = setWritingStyle(mode);
 			try {
 		        doc.insertString(doc.getLength(), text, doc.getStyle(initStyles[style]));
-		    } catch (Exception ble) {
-		    	GUIManager.getDefaultGUIManager().log("Couldn't insert initial text into text pane.", "error", true);
+		    } catch (Exception e) {
+				overlord.log(lang.getText("LOGentry00493exception")+"\n"+e.getMessage(), "error", true);
 		    }
 			int len = textPane.getDocument().getLength();
 			textPane.setCaretPosition(len);
@@ -389,71 +363,60 @@ public class HolmesNotepad extends JFrame {
 	
 	/**
 	 * Metoda wewnętrzna definiująca styl po jego nazwie. Zwraca numer ID stylu.
-	 * @param mode String - nazwa stylu pisania tekstu
-	 * @return int - numer stylu
+	 * @param mode (<b>String</b>) nazwa stylu pisania tekstu.
+	 * @return (<b>int</b>) - numer stylu.
 	 */
 	private int setWritingStyle(String mode) {
-		int style = 0;
-		if(mode.equals("text") || mode.equals("t")) {
-			style = 0;
-		} else if(mode.equals("italic") || mode.equals("i")) {
-			style = 1;
-		} else if(mode.equals("bold") || mode.equals("b")) {
-			style = 2;
-		} else if(mode.equals("small")) {
-			style = 3;
-		} else if(mode.equals("large")) {
-			style = 4;
-		} else if(mode.equals("warning")) {
-			style = 5;
-		} else if(mode.equals("error")) {
-			style = 6;
-		} else if(mode.equals("time")) {
-			style = 7;
-		} else if(mode.equals("nodeName")) {
-			style = 8;
-		} else {
-			style = 1;
-		}
-		return style;
+		return switch (mode) {
+			case "text", "t" -> 0;
+			case "italic", "i" -> 1;
+			case "bold", "b" -> 2;
+			case "small" -> 3;
+			case "large" -> 4;
+			case "warning" -> 5;
+			case "error" -> 6;
+			case "time" -> 7;
+			case "nodeName" -> 8;
+			default -> 0;
+		};
 	}
 	
 	/**
 	 * Metoda pomocnicza konstruktora klasy, tworzy style dla wypisywanych komunikatów.
-	 * @param doc StyledDocument - obiekt dokumentu przechowującego style
+	 * @param styledDoc (<b>StyledDocument</b>) obiekt dokumentu przechowującego style.
 	 */
-	private void addStylesToDocument(StyledDocument doc) {
+	private void addStylesToDocument(StyledDocument styledDoc) {
         Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
         StyleConstants.setFontFamily(def, "Consolas"); //Monospaced
         StyleConstants.setFontSize(def, 14);
         
-        Style regular = doc.addStyle("regular", def); //0
+        Style regular = styledDoc.addStyle("regular", def); //0
         StyleConstants.setFontFamily(regular, "Consolas");
         StyleConstants.setFontSize(regular, 14);
 
-        Style s = doc.addStyle("italic", regular); //1
+        Style s = styledDoc.addStyle("italic", regular); //1
         StyleConstants.setItalic(s, true);
 
-        s = doc.addStyle("bold", regular); //2
+        s = styledDoc.addStyle("bold", regular); //2
         StyleConstants.setBold(s, true);
 
-        s = doc.addStyle("small", regular); //3
+        s = styledDoc.addStyle("small", regular); //3
         StyleConstants.setFontSize(s, 10);
 
-        s = doc.addStyle("large", regular); //4
+        s = styledDoc.addStyle("large", regular); //4
         StyleConstants.setFontSize(s, 18);
         
-        s = doc.addStyle("warning", regular); //5
+        s = styledDoc.addStyle("warning", regular); //5
         StyleConstants.setForeground(s, Color.orange);
         
-        s = doc.addStyle("error", regular); //6
+        s = styledDoc.addStyle("error", regular); //6
         StyleConstants.setForeground(s, Color.red);
         
-        s = doc.addStyle("time", regular); //7
+        s = styledDoc.addStyle("time", regular); //7
         StyleConstants.setForeground(s, Color.darkGray);
         StyleConstants.setBold(s, true);
         
-        s = doc.addStyle("node", regular); //8
+        s = styledDoc.addStyle("node", regular); //8
         StyleConstants.setForeground(s, Color.darkGray);
         StyleConstants.setBold(s, true);
 	}

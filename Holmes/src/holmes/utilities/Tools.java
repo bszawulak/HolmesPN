@@ -10,8 +10,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -19,15 +21,15 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 
 /**
- * Klasa narzędziowa, odpowiednik klasy statycznej w <b>NORMALNYM</b> języku programowania
- * jak np. C#.
- * @author MR
- *
+ * Klasa narzędziowa, odpowiednik klasy statycznej w <b>NORMALNYM</b> języku programowania.
  */
 public final class Tools {
 	public static String lastExtension = "";
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	
 	/**
 	 * Prywatny konstruktor. To powinno załatwić problem obiektów.
@@ -42,8 +44,8 @@ public final class Tools {
 	 * @throws IOException - się zepsuło się...
 	 */
 	public static void copyFileByPath(String source, String target) throws IOException{
-    	InputStream inStream = null;
-    	OutputStream outStream = null;
+    	InputStream inStream;
+    	OutputStream outStream;
    	    File file1 =new File(source);
    	    File file2 =new File(target);
    	    inStream = new FileInputStream(file1);
@@ -54,9 +56,9 @@ public final class Tools {
    	    while ((length = inStream.read(buffer)) > 0){
    	    	outStream.write(buffer, 0, length);
    	    }
-   	    
-   	    if (inStream != null)inStream.close();
-   	    if (outStream != null)outStream.close();
+
+		inStream.close();
+		outStream.close();
     }
 	
 	/**
@@ -65,8 +67,8 @@ public final class Tools {
 	 * @param target File - plik który zastępujemy kopiowanym
 	 */
 	public static void copyFileDirectly(File source, File target) {
-    	InputStream inStream = null;
-    	OutputStream outStream = null;
+    	InputStream inStream;
+    	OutputStream outStream;
    	    try {
 			inStream = new FileInputStream(source);
 			outStream = new FileOutputStream(target);
@@ -76,16 +78,11 @@ public final class Tools {
 	   	    while ((length = inStream.read(buffer)) > 0){
 	   	    	outStream.write(buffer, 0, length);
 	   	    }
-	   	    
-	   	    if (inStream != null)
-	   	    	inStream.close();
-	   	    if (outStream != null)
-	   	    	outStream.close();
+
+			inStream.close();
+			outStream.close();
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null,
-					"I/O operation failed for reason unknown. You can now start panicking.\nHave a nice day!",
-					"Critical error", JOptionPane.ERROR_MESSAGE);
-			return;
+			overlord.log(lang.getText("LOGentry00434exception"), "error", true);
 		}
     }
 	
@@ -99,7 +96,7 @@ public final class Tools {
 	 */
 	public static String selectFileDialog(String lastPath, FileFilter[] filter, 
 			String buttonText, String buttonToolTip, String suggestedFileName) {
-		String resultPath = "";
+		String resultPath;
 		JFileChooser fc;
 		if(lastPath == null)
 			fc = new JFileChooser();
@@ -108,17 +105,17 @@ public final class Tools {
 		
 		fc.setFileView(new HolmesFileView());
 
-		for(int i=0; i<filter.length; i++) {
-			fc.addChoosableFileFilter(filter[i]);
+		for (FileFilter fileFilter : filter) {
+			fc.addChoosableFileFilter(fileFilter);
 		}
 		fc.setFileFilter(filter[0]);
 
-		if(!buttonText.equals(""))
+		if(!buttonText.isEmpty())
 			fc.setApproveButtonText(buttonText);
-		if(!buttonToolTip.equals(""))
+		if(!buttonToolTip.isEmpty())
 			fc.setApproveButtonToolTipText(buttonToolTip);
 		//TODO:
-		if(suggestedFileName.length() > 0) { //sugerowana nazwa pliku
+		if(!suggestedFileName.isEmpty()) { //sugerowana nazwa pliku
 			fc.setSelectedFile(new File(suggestedFileName));
 		}
 		
@@ -137,7 +134,7 @@ public final class Tools {
 	
 	public static String selectNetSaveFileDialog(String lastPath, FileFilter[] filter, 
 			String buttonText, String buttonToolTip, String suggestedFileName) {
-		String resultPath = "";
+		String resultPath;
 		JFileChooser fc;
 		if(lastPath == null)
 			fc = new JFileChooser();
@@ -146,18 +143,18 @@ public final class Tools {
 		
 		fc.setFileView(new HolmesFileView());
 
-		for(int i=0; i<filter.length; i++) {
-			fc.addChoosableFileFilter(filter[i]);
+		for (FileFilter fileFilter : filter) {
+			fc.addChoosableFileFilter(fileFilter);
 		}
 		//TODO: detekcja domyślnego filtra
 		fc.setFileFilter(filter[0]);
 
-		if(!buttonText.equals(""))
+		if(!buttonText.isEmpty())
 			fc.setApproveButtonText(buttonText);
-		if(!buttonToolTip.equals(""))
+		if(!buttonToolTip.isEmpty())
 			fc.setApproveButtonToolTipText(buttonToolTip);
 		
-		if(suggestedFileName.length() > 0) { //sugerowana nazwa pliku
+		if(!suggestedFileName.isEmpty()) { //sugerowana nazwa pliku
 			fc.setSelectedFile(new File(suggestedFileName));
 		}
 		
@@ -184,10 +181,10 @@ public final class Tools {
 	 */
 	public static String selectDirectoryDialog(String lastPath, String buttonText, String buttonToolTip) {
 		String resultDir = "";
-		JFileChooser fc = null;
+		JFileChooser fc;
 		if(lastPath == null)
 			fc = new JFileChooser();
-		else if(lastPath == "")
+		else if(lastPath.isEmpty())
 			fc = new JFileChooser();
 		else
 			fc = new JFileChooser(lastPath);
@@ -196,9 +193,9 @@ public final class Tools {
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fc.setAcceptAllFileFilterUsed(false);
 		
-		if(!buttonText.equals(""))
+		if(!buttonText.isEmpty())
 			fc.setApproveButtonText(buttonText);
-		if(!buttonToolTip.equals(""))
+		if(!buttonToolTip.isEmpty())
 			fc.setApproveButtonToolTipText(buttonToolTip);
 		
 		int returnVal = fc.showDialog(fc, fc.getApproveButtonText());
@@ -247,8 +244,9 @@ public final class Tools {
 	 * @param resPath String - ścieżka do zasobów
 	 * @return ImageIcon - ikona obrazek z zasobów
 	 */
+	@SuppressWarnings("ConstantConditions")
 	public static ImageIcon getResIcon16(String resPath) {
-		ImageIcon icon=null;
+		ImageIcon icon;
 		try {
 			icon = new ImageIcon(Tools.class.getResource(resPath));
 		} catch (Exception e) {
@@ -266,8 +264,9 @@ public final class Tools {
 	 * @param resPath String - ścieżka do zasobów
 	 * @return ImageIcon - ikona obrazek z zasobów
 	 */
+	@SuppressWarnings("ConstantConditions")
 	public static ImageIcon getResIcon22(String resPath) {
-		ImageIcon icon=null;
+		ImageIcon icon;
 		try {
 			icon = new ImageIcon(Tools.class.getResource(resPath));
 		} catch (Exception e) {
@@ -286,8 +285,9 @@ public final class Tools {
 	 * @param resPath String - ścieżka do zasobów
 	 * @return ImageIcon - ikona obrazek z zasobów
 	 */
+	@SuppressWarnings("ConstantConditions")
 	public static ImageIcon getResIcon32(String resPath) {
-		ImageIcon icon=null;
+		ImageIcon icon;
 		try {
 			icon = new ImageIcon(Tools.class.getResource(resPath));
 		} catch (Exception e) {
@@ -306,8 +306,9 @@ public final class Tools {
 	 * @param resPath String - ścieżka do zasobów
 	 * @return ImageIcon - ikona obrazek z zasobów
 	 */
+	@SuppressWarnings("ConstantConditions")
 	public static ImageIcon getResIcon48(String resPath) {
-		ImageIcon icon=null;
+		ImageIcon icon;
 		try {
 			icon = new ImageIcon(Tools.class.getResource(resPath));
 		} catch (Exception e) {
@@ -331,10 +332,11 @@ public final class Tools {
 	 * @param resPath String - ścieżka do source katalogu zasobów
 	 * @return Image - obiekt kurwa klasy Image, niegodny Jar'a jak się okazuje
 	 */
+	@SuppressWarnings("ConstantConditions")
 	public static Image getImageFromIcon(String resPath) {
 		resPath = resPath.toLowerCase();
-		ImageIcon icon = null;
-		Image result = null;
+		ImageIcon icon;
+		Image result;
 		try {
 			icon = new ImageIcon(Tools.class.getResource(resPath));
 			result = icon.getImage();
@@ -353,8 +355,7 @@ public final class Tools {
 				icon = new ImageIcon(Tools.class.getResource("/nullIcon16.png"));
 				result = icon.getImage(); //geniusz, zaiste geniusz to wymyślił w Javie...
 			} catch (Exception e2) {
-				System.out.println("CRITICAL EXCEPTION IN getImageFromIcon. "
-						+ "No FAILSAFE IMAGE: /nullIcon16.png IN JAR");
+				overlord.log(lang.getText("LOGentry00435exception")+"\n"+e2.getMessage(), "error", true);
 				return null;
 			}
 		}
@@ -373,24 +374,26 @@ public final class Tools {
 			return source;
 		
 		int oldSize = source.length();
-		for(int i=0; i<size-oldSize; i++) {
+		StringBuilder sourceBuilder = new StringBuilder(source);
+		for(int i = 0; i<size-oldSize; i++) {
 			if(left)
-				source = " "+source;
+				sourceBuilder.insert(0, " ");
 			else
-				source += " ";
+				sourceBuilder.append(" ");
 		}
-		
+		source = sourceBuilder.toString();
+
 		return source;
 	}
 	
 	/**
 	 * Metoda formatuje liczbę typu double do wyznaczonej liczby miejsc po przecinku, a następnie
 	 * zwraca ją jako String.
-	 * @param evalMSS double - liczba do przycięcia
+	 * @param value - double; liczba do przycięcia
 	 * @return String - reprezentacja liczby
 	 */
 	public static String cutValue(double value) {
-    	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(GUIManager.getDefaultGUIManager().getLocale());
+    	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(overlord.getLocale());
     	otherSymbols.setDecimalSeparator('.');
     	DecimalFormat df = new DecimalFormat("#.##", otherSymbols);
 		return df.format(value);
@@ -404,6 +407,15 @@ public final class Tools {
 	 * @return String - liczba
 	 */
 	public static String cutValueExt(double value, int howMany) {
+		NumberFormat formatter = DecimalFormat.getInstance();
+		formatter.setMinimumFractionDigits(2);
+		formatter.setMaximumFractionDigits(howMany);
+		formatter.setRoundingMode(RoundingMode.HALF_UP);
+
+		//String result = formatter.format(value);
+		//result = result.replace(",", ".");
+		return formatter.format(value).replace(",", ".");
+		/*
 		String format = "#.";
 		for(int i=0; i<howMany; i++)
 			format += "#";
@@ -413,10 +425,11 @@ public final class Tools {
 		if(howMany > 8)
 			format = "#.########";
 		
-    	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(GUIManager.getDefaultGUIManager().getLocale());
+    	DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(overlord.getLocale());
     	otherSymbols.setDecimalSeparator('.');
     	DecimalFormat df = new DecimalFormat(format, otherSymbols);
 		return df.format(value);
+		 */
 	}
 	
 	public static int absolute(int i) {
@@ -433,7 +446,7 @@ public final class Tools {
 	 */
 	public static boolean overwriteDecision(String selectedFilePath) {
 		File file = new File(selectedFilePath);
-		if(file.exists() == true) {
+		if(file.exists()) {
 			String name = selectedFilePath;
 			int ind = name.lastIndexOf("\\");
 			if(ind > 1) {
@@ -485,4 +498,30 @@ public final class Tools {
             b=b*m/i;
         return b;
     }
+
+	/**
+	 * Zwraca czas w formie łańcucha znaków HH:MM:SS dla wartości w milisekundach.
+	 * @param milisecond (<b>long</b>) czas w milisekundach.
+	 * @return (<b>String</b>) czas w formacie HH:MM:SS
+	 */
+	public static String getTime(long milisecond) {
+		long seconds = milisecond /= 1000;
+		long hours = seconds / 3600;
+		String h = hours+"";
+		if(h.length() == 1)
+			h = "0" + h;
+
+		seconds = seconds - (hours * 3600);
+		long minutes = seconds / 60;
+		String m = minutes+"";
+		if(m.length() == 1)
+			m = "0" + m;
+
+		seconds = seconds - (minutes * 60);
+		String s = seconds+"";
+		if(s.length() == 1)
+			s = "0" + s;
+
+		return h + ":" + m + ":" + s;
+	}
 }

@@ -2,30 +2,29 @@ package holmes.petrinet.data;
 
 import holmes.analyse.MCTCalculator;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.GUIController;
+import holmes.darkgui.LanguageManager;
 import holmes.files.io.AbyssReader;
 import holmes.files.io.AbyssWriter;
 import holmes.files.io.IOprotocols;
-import holmes.files.io.Snoopy.NetHandler;
-import holmes.files.io.Snoopy.NetHandler_Classic;
-import holmes.files.io.Snoopy.NetHandler_Colored;
-import holmes.files.io.Snoopy.NetHandler_Extended;
-import holmes.files.io.Snoopy.NetHandler_Time;
-import holmes.files.io.Snoopy.SnoopyReader;
-import holmes.files.io.Snoopy.SnoopyWriter;
+import holmes.files.io.snoopy.NetHandler;
+import holmes.files.io.snoopy.NetHandler_Classic;
+import holmes.files.io.snoopy.NetHandler_Colored;
+import holmes.files.io.snoopy.NetHandler_Extended;
+import holmes.files.io.snoopy.NetHandler_Time;
+import holmes.files.io.snoopy.SnoopyReader;
+import holmes.files.io.snoopy.SnoopyWriter;
 import holmes.graphpanel.GraphPanel;
 import holmes.graphpanel.SelectionActionListener;
 import holmes.graphpanel.GraphPanel.DrawModes;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.ElementLocation;
-import holmes.petrinet.elements.MetaNode;
-import holmes.petrinet.elements.Node;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.*;
 import holmes.petrinet.elements.MetaNode.MetaType;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
 import holmes.petrinet.elements.Transition.TransitionType;
-import holmes.petrinet.simulators.NetSimulator;
-import holmes.petrinet.simulators.NetSimulator.NetType;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
+import holmes.petrinet.simulators.GraphicalSimulator;
+import holmes.petrinet.simulators.xtpn.GraphicalSimulatorXTPN;
+import holmes.petrinet.simulators.SimulatorGlobals;
 import holmes.workspace.Workspace;
 import holmes.workspace.WorkspaceSheet;
 
@@ -37,7 +36,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -47,12 +46,11 @@ import org.simpleframework.xml.Root;
 /**
  * Klasa przechowująca listy wszystkich obiektów projektu oraz arkusze. Dodatkowo agreguje
  * metody działające na sieci - zapis, odczyt, generowanie MCT, klastrów, itd.
- * @author students - pierwsza wersja
- * @author MR - dodatkowe metody
- *
  */
 @Root
 public class PetriNet implements SelectionActionListener, Cloneable {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<SelectionActionListener> actionListeners = new ArrayList<>();
 	private ArrayList<ArrayList<Integer>> t_invariantsMatrix; //macierz t-inwariantów
 	private ArrayList<String> t_invariantsDescriptions;
@@ -60,42 +58,45 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	private ArrayList<Integer> t_invariantsTypes;
 	private ArrayList<ArrayList<Integer>> p_invariantsMatrix; //macierz p-inwariantów
 	private ArrayList<String> p_invariantsDescriptions;
-	
 	private ArrayList<ArrayList<Integer>> colorVector = null;
-	
 	private ArrayList<ArrayList<Transition>> mctData;
 	private ArrayList<Integer> transitionMCTnumber;
 	private ArrayList<String> mctNames;
 	private NetSimulationDataCore simData;
 	private MCSDataMatrix mcsData;
-	private StatePlacesManager statesManager;
+	private P_StateManager statesManager;
 	private SPNdataVectorManager firingRatesManager;
 	private SSAplacesManager ssaManager;
-
 	private ArrayList<String> subNetNames;
-	
 	private String lastFileName = "";
 	private PetriNetData dataCore = new PetriNetData(new ArrayList<>(), new ArrayList<>(), "default");
-	
 	private ArrayList<GraphPanel> graphPanels;
-	
-	private AbyssWriter ABYSSSwriter;
-	private AbyssReader ABYSSReader;
 	private IOprotocols communicationProtocol;
 	private NetHandler handler;
-	private SAXParserFactory readerSNOOPY;
 	private Workspace workspace;
 	private DrawModes drawMode = DrawModes.POINTER;
-	private NetSimulator simulator;
+	private GraphicalSimulator simulator;
+	private GraphicalSimulatorXTPN simulatorXTPN;
 	private MCTCalculator analyzer;
 	private PetriNetMethods methods;
 	private boolean isSimulationActive = false;
-	
 	public boolean anythingChanged = false;
-	public GUIManager overlord;
-	
-	/** PN, timePN, extPN, funcPN, timeFuncPN, timeExtPN, funcExtPN, timeFuncExtPN, stochasticPN, stochasticFuncPN */
-	public enum GlobalNetType { PN, timePN, extPN, funcPN, timeFuncPN, timeExtPN, funcExtPN, timeFuncExtPN, stochasticPN, stochasticFuncPN }
+
+
+	/** [<b>ext - inhibitor, reset or equal Arcs present</b>]
+	 * PN, TPN, PN_extArcs, FPN, timeFPN, TPN_extArcs, FPN_extArcs, timeFPN_extArcs, SPN, functionalSPN, XTPN
+	 */
+	public enum GlobalNetType { PN, TPN, PN_extArcs, FPN, timeFPN, TPN_extArcs, FPN_extArcs, timeFPN_extArcs
+		, SPN, functionalSPN, XTPN }
+
+	/**
+	 *  CLEAN, FUNCTIONAL, EXT_ARCS, FUN_EXT_ARCS
+	 */
+	public enum GlobalNetSubType {CLEAN_XTPN, FUNCTIONAL, EXT_ARCS, FUNCTIONAL_EXT_ARCS}
+
+	private GlobalNetType projectType = GlobalNetType.PN;
+	private GlobalNetSubType projectSubType = GlobalNetSubType.CLEAN_XTPN;
+
 	/** SPPED, SPEPT, SPTPT, HOLMESPROJECT */
 	public enum GlobalFileNetType { SPPED, SPEPT, SPTPT, HOLMESPROJECT }
 	
@@ -106,7 +107,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param ar ArrayList[Arc] - lista łuków sieci
 	 */
 	public PetriNet(ArrayList<Node> nod, ArrayList<Arc> ar) {
-		overlord = GUIManager.getDefaultGUIManager();
+		setProjectType(GlobalNetType.PN);
 		getDataCore().nodes = nod;
 		getDataCore().arcs = ar;
 		this.communicationProtocol = new IOprotocols();
@@ -114,7 +115,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		this.mcsData = new MCSDataMatrix();
 		this.methods = new PetriNetMethods(this);
 		this.simData = new NetSimulationDataCore();
-		this.statesManager = new StatePlacesManager(this);
+		this.statesManager = new P_StateManager(this);
 		this.ssaManager = new SSAplacesManager(this);
 		this.t_invComputed = false;
 	}
@@ -124,12 +125,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param workspace Workspace - obiekt obszaru roboczego dla sieci
 	 */
 	public PetriNet(Workspace workspace, String name) {
-		this.overlord = GUIManager.getDefaultGUIManager();
 		this.setGraphPanels(new ArrayList<>());
 		this.workspace = workspace;
-		this.setSimulator(new NetSimulator(NetType.BASIC, this));
+		this.setSimulator(new GraphicalSimulator(SimulatorGlobals.SimNetType.BASIC, this));
+		this.setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
 		this.setMCTanalyzer(new MCTCalculator(this));
-		this.statesManager = new StatePlacesManager(this);
+		this.statesManager = new P_StateManager(this);
 		this.ssaManager = new SSAplacesManager(this);
 		this.firingRatesManager = new SPNdataVectorManager(this);
 		resetComm();
@@ -156,7 +157,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * w wielu obiektach programu.
 	 */
 	public void resetData() {
-		overlord.log("Removing all nodes (places and transition) and all arcs.", "text", true);
+		overlord.log(lang.getText("LOGentry00347"), "text", true);
 		getDataCore().nodes.clear();
 		getDataCore().arcs.clear();
 		getDataCore().netName = "default";
@@ -206,19 +207,6 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Zwraca liczbę tranzycji sieci.
-	 * @return int - liczba tranzycji
-	 */
-	public int getTransitionsNumber() {
-		int counter = 0;
-		for (Node n : this.dataCore.nodes) {
-			if (n instanceof Transition)
-				counter++;
-		}
-		return counter;
-	}
-	
-	/**
 	 * Metoda pozwala pobrać wszystkie obiekty tranzycji czasowych w danej sieci.
 	 * @return ArrayList[TimeTransition] - lista tranzycji czasowych projektu sieci
 	 */
@@ -249,9 +237,10 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if (n instanceof Place) {
 				places.add(n);
 			} else if(n instanceof Transition) {
-				if (((Transition)n).getTransType() == TransitionType.TPN)
+				if (((Transition)n).getTransType() == TransitionType.TPN) {
+					transitions.add(n);
 					timeTransitions.add(n);
-				else
+				} else
 					transitions.add(n);
 			} else if(n instanceof MetaNode) {
 				metaNodes.add(n);
@@ -381,6 +370,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda pobiera aktualny tryb rysowania definiowany przez tryb DrawModes.
 	 * @return DrawModes - tryb rysowania
 	 */
+	@SuppressWarnings("unused")
 	public DrawModes getDrawMode() {
 		return this.drawMode;
 	}
@@ -389,6 +379,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda zwracająca handler oczytu pliku sieci.
 	 * @return NetHandler - obiekt dla parsera w czasie czytania pliku
 	 */
+	@SuppressWarnings("unused")
 	public NetHandler getHandler() {
 		return handler;
 	}
@@ -439,20 +430,35 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda pozwala na pobrania aktualnego obiektu symulatora Netsimulator
-	 * dla bieżącego projektu
-	 * @return NetSimulator - symulator
+	 * Metoda pozwala na pobrania aktualnego obiektu symulatora dla bieżącego projektu.
+	 * @return (<b>GraphicalSimulator</b>) - symulator sieci klasycznych.
 	 */
-	public NetSimulator getSimulator() {
+	public GraphicalSimulator getSimulator() {
 		return simulator;
 	}
 	
 	/**
-	 * Metoda pozwala na ustawienie symulatora NetSimulator dla bieżącego projektu
-	 * @param simulator NetSimulator - nowy symulator
+	 * Metoda pozwala na ustawienie symulatora GraphicalSimulator dla bieżącego projektu
+	 * @param simulator (<b>GraphicalSimulator</b>) nowy symulator klasy GraphicalSimulator (zwykły)
 	 */
-	public void setSimulator(NetSimulator simulator) {
+	public void setSimulator(GraphicalSimulator simulator) {
 		this.simulator = simulator;
+	}
+
+	/**
+	 * Metoda pozwala na pobrania aktualnego obiektu symulatora XTPN.
+	 * @return (<b>GraphicalSimulatorXTPN</b>) - symulator sieci XTPN.
+	 */
+	public GraphicalSimulatorXTPN getSimulatorXTPN() {
+		return simulatorXTPN;
+	}
+
+	/**
+	 * Metoda pozwala na ustawienie symulatora XTPN dla bieżącego projektu
+	 * @param simulator (<b>GraphicalSimulatorXTPN</b>) nowy symulator klasy GraphicalSimulatorXTPN (XTPN)
+	 */
+	public void setSimulatorXTPN(GraphicalSimulatorXTPN simulator) {
+		this.simulatorXTPN = simulator;
 	}
 
 	/**
@@ -529,7 +535,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		}
 		
 		for(int i=0; i<t_invariantsMatrix.size(); i++) {
-			t_invariantsDescriptions.add("Default description of t-invariant #"+(i+1));
+			t_invariantsDescriptions.add(lang.getText("PN_entry001")+(i+1));
 			t_invariantsTypes.add(99999);
 		}
 		
@@ -555,7 +561,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			this.p_invariantsDescriptions = new ArrayList<>();
 		
 		for(int i=0; i<p_invariantsMatrix.size(); i++) {
-			p_invariantsDescriptions.add("Default description of p-invariant #"+(i+1));
+			p_invariantsDescriptions.add(lang.getText("PN_entry002")+(i+1));
 		}
 	}
 	
@@ -612,6 +618,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @param index int - nr p-inwariantu, od zera
 	 * @return String - nazwa p-inwariantu
 	 */
+	@SuppressWarnings("unused")
 	public String getP_InvDescription(int index) {
 		if(p_invariantsMatrix == null)
 			return "";
@@ -648,6 +655,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda zwraca wektor informacji o type t-inwariantu.
+	 * [0] - normalny t-inwariant, -1 - sub, +1 - sur, 11 - non-inv
 	 * @return ArrayList[Integer] - wektor typów t-inwariantów
 	 */
 	public ArrayList<Integer> accessT_InvTypesVector() {
@@ -693,7 +701,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			mct = MCTCalculator.getSortedMCT(mct, true);
 		
 		for(int m=0; m<mct.size(); m++) {
-			mctNames.add("default name for mct"+(m+1));
+			mctNames.add(lang.getText("PN_entry003")+(m+1));
 		}
 		
 		transitionMCTnumber = methods.getTransMCTindicesVector();
@@ -717,7 +725,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda zwraca obiekt wektora nazw zbiorów MCT.
-	 * @return
+	 * @return (<b>ArrayList[String]</b>) wektor nazw.
 	 */
 	public ArrayList<String> accessMCTnames() {
 		return mctNames;
@@ -725,7 +733,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda ustawia nowy wektor nazw dla zbiorów MCT.
-	 * @param namesVector ArrayList[String] - nazwy MCT
+	 * @param namesVector (<b>ArrayList[String]</b>) wektor nazw MCT.
 	 */
 	public void setMCTNames(ArrayList<String> namesVector) {
 		if(mctData == null)
@@ -761,12 +769,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * @return boolean - true jeżeli arkusz nie ma węzłów;
 	 * 		false w przeciwnym wypadku
 	 */
+	@SuppressWarnings("unused")
 	public boolean isSheetEmpty(int sheetID) {
 		boolean result = true;
 		for (Node node : getNodes())
 			for (ElementLocation location : node.getNodeLocations())
-				if (location.getSheetID() == sheetID)
+				if (location.getSheetID() == sheetID) {
 					result = false;
+					break;
+				}
 		return result;
 	}
 
@@ -818,7 +829,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda zwraca obiekt przechowujący zbiory MCS;
-	 * @return MinCutSetData - obiekt MCS
+	 * @return (<b>MCSDataMatrix</b>) - obiekt MCS
 	 */
 	public MCSDataMatrix getMCSdataCore() {
 		return mcsData;
@@ -826,7 +837,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda ustawia nowy obiekt danych zbiorów MCS.
-	 * @param newMCS MCSDataMatrix - nowy obiekt
+	 * @param newMCS (<b>MCSDataMatrix</b>) nowy obiekt MCS.
 	 */
 	public void setMCSdataCore(MCSDataMatrix newMCS) {
 		mcsData = newMCS;
@@ -834,7 +845,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Dostęp do obiektu danych symulacji knockout.
-	 * @return NetSimulationDataCore - obiekt
+	 * @return (<b>NetSimulationDataCore</b>) - obiekt danych.
 	 */
 	public NetSimulationDataCore accessSimKnockoutData() {
 		return this.simData;
@@ -842,7 +853,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Ustawia nowy obiekt danych symulacji.
-	 * @param data NetSimulationDataCore - dane
+	 * @param data (<b>NetSimulationDataCore</b>) dane.
 	 */
 	public void setNewKnockoutData(NetSimulationDataCore data) {
 		this.simData = data;
@@ -858,121 +869,190 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Umożliwia dostęp do managera stanów sieci.
-	 * @return StatesManager - obiekt managera
+	 * @return (<b>StatesManager</b>) obiekt managera stanów.
 	 */
-	public StatePlacesManager accessStatesManager() {
+	public P_StateManager accessStatesManager() {
 		return this.statesManager;
 	}
 	
 	/**
 	 * Umożliwia dostęp do managera wektorów SSA sieci.
-	 * @return SSAplacesManager - obiekt managera
+	 * @return (<b>SSAplacesManager</b>) - obiekt managera.
 	 */
 	public SSAplacesManager accessSSAmanager() {
 		return this.ssaManager;
 	}
 	
-	public void replaceStatesManager(StatePlacesManager newStatesMngr) {
+	public void replaceStatesManager(P_StateManager newStatesMngr) {
 		statesManager = newStatesMngr;
 	}
 	
 	/**
 	 * Umożliwia dostęp do managera odpaleń tranzycji SPN sieci.
-	 * @return FiringRatesManager - obiekt managera fr
+	 * @return (<b>FiringRatesManager</b>) - obiekt managera fr.
 	 */
 	public SPNdataVectorManager accessFiringRatesManager() {
 		return this.firingRatesManager;
 	}
-	
+
+
 	public void replaceStatesManager(SPNdataVectorManager newStatesMngr) {
 		this.firingRatesManager = newStatesMngr;
 	}
 	
 	//*********************************************************************************
-	
+
+	/**
+	 * Ustawia odpowiedni symulator w oknach symulacji. W sumie to chodzi o XTPN vs cała reszta.
+	 * @param XTPN (<b>boolean</b>) true, jeśli ma być ustawiony XTPN.
+	 */
+	public void selectProperSimulatorBox(boolean XTPN) {
+		int simulatorType = overlord.getSimulatorBox().getCurrentDockWindow().simulatorType;
+		if(XTPN) {
+			//TODO: fix iy
+			try {
+				if(simulatorType == 0) { //jeśli wybrane są klasyczne, przełącz na XTPN
+					JComboBox<String> comboSim = overlord.getSimulatorBox().getCurrentDockWindow().simMode;
+					String firstName = comboSim.getItemAt(0);
+					if(!firstName.contains("XTPN")) {
+						if(firstName.equals("Petri Net") && comboSim.getItemCount() >= 5) {
+							overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(4);
+						}
+					}
+				}
+			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentry00348exception")+"\n"+e.getMessage(), "error", true);
+			}
+		} else {
+			if(simulatorType == 1) { //wybrany jest XTPN, przełaczamy na normalne
+				overlord.getSimulatorBox().getCurrentDockWindow().simMode.setSelectedIndex(0);
+			}
+		}
+	}
+
 	/**
 	 * Metoda ta przywraca stan sieci przed rozpoczęciem symulacji. Liczba tokenów jest przywracana
 	 * z aktualnie wskazanego stanu w managerze stanów, tranzycje są resetowane wewnętrznie.
 	 */
 	public void restoreMarkingZero() {
 		try {
-			accessStatesManager().restoreSelectedState();
-	
+			if(GUIController.access().getCurrentNetType() == GlobalNetType.XTPN) {
+				restoreMarkingZeroXTPN();
+				return;
+			}
+			accessStatesManager().setNetworkStatePN(accessStatesManager().selectedStatePN);
+
 			for(Transition trans : getTransitions()) {
 				trans.setLaunching(false);
-
 				if(trans.getTransType() == TransitionType.TPN) {
-					trans.resetTimeVariables();
+					trans.timeExtension.resetTimeVariables();
 				}
 			}
-			
-			NetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
-			setSimulator(new NetSimulator(nt, this));
-			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
-			overlord.io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
-			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep();
-			
+
+			//SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
+			getSimulator().resetSimulator();
+
+			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep(); //-1, jak wyżej
+			overlord.getSimulatorBox().getCurrentDockWindow().timeStepLabelValue.setText("" + getSimulator().getSimulatorTimeStep());
 			repaintAllGraphPanels();
 			getSimulator().getSimLogger().logSimReset();
 		} catch (Exception e) {
-			overlord.log("Unknown error: unable to restore state m0 on request.", "error", true);
+			overlord.log(lang.getText("LOGentry00349exception")+"\n"+e.getMessage(), "error", true);
+		}
+	}
+
+	/**
+	 * Wywoływana TYLKO przez restoreMarkingZero(), jeśli ta wykryje elementy XTPN. Jedyny wyjątek to
+	 * dwa wywołania przy tworzeniu nowego miejsca i nowej tranzycji XTPN.
+	 */
+	public void restoreMarkingZeroXTPN() {
+		try {
+			accessStatesManager().replaceNetStateWithSelectedMultiset_M(accessStatesManager().selectedStateXTPN);
+			for(Transition trans : getTransitions()) {
+				if( !(trans instanceof TransitionXTPN)) {
+					overlord.log(lang.getText("LOGentry00350critErr"), "error", true);
+					return;
+				}
+
+				trans.setLaunching(false);
+				((TransitionXTPN)trans).resetTimeVariables_xTPN();
+			}
+
+			//SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
+			getSimulatorXTPN().resetSimulator();
+
+			overlord.io.updateTimeStep(true, getSimulatorXTPN().getStepsCounterXTPN(), getSimulatorXTPN().getTimeCounterXTPN(), 0); //-1 po resecie symulatorów
+			overlord.simSettings.currentStep = getSimulatorXTPN().getStepsCounterXTPN(); //-1, jak wyżej
+			overlord.simSettings.currentTime = getSimulatorXTPN().getTimeCounterXTPN();
+
+			repaintAllGraphPanels();
+			getSimulator().getSimLogger().logSimReset();
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentry00351exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	
 	/**
 	 * Szybsza wersja przywracania stanu sieci, bez zawracania głowy okna SimulatorBox j.w.
-	 * @param transitions ArrayList[Transition] - wektor tranzycji
+	 * @param transitions (<b>ArrayList[Transition]</b>) wektor tranzycji.
 	 */
 	public void restoreMarkingZeroFast(ArrayList<Transition> transitions) {
 		try {
-			accessStatesManager().restoreSelectedState();
+			if(checkIfXTPNpresent()) {
+				accessStatesManager().replaceNetStateWithSelectedMultiset_M(accessStatesManager().selectedStateXTPN);
+			} else {
+				accessStatesManager().setNetworkStatePN(accessStatesManager().selectedStatePN);
+			}
 	
 			for(Transition trans : transitions) {
 				trans.setLaunching(false);
 				if(trans.getTransType() == TransitionType.TPN) {
-					trans.resetTimeVariables();
+					trans.timeExtension.resetTimeVariables();
+				}
+				if( trans instanceof TransitionXTPN ) {
+					((TransitionXTPN)trans).resetTimeVariables_xTPN();
 				}
 			}
 			getSimulator().getSimLogger().logSimReset();
 		} catch (Exception e) {
-			overlord.log("Unknown error: unable to restore state m0 on request.", "error", true);
+			overlord.log(lang.getText("LOGentry00352exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	
 	/**
-	 * Metoda przechowuje stan kolorowany m0 sieci na życzenie.
+	 * Metoda przechowuje stan kolorowany m0 sieci.
 	 */
 	public void storeColors() {
 		colorVector = new ArrayList<>();
 		for(Place place : getPlaces()) {
 			ArrayList<Integer> tokensC = new ArrayList<>();
-			tokensC.add(place.getColorTokensNumber(0));
-			tokensC.add(place.getColorTokensNumber(1));
-			tokensC.add(place.getColorTokensNumber(2));
-			tokensC.add(place.getColorTokensNumber(3));
-			tokensC.add(place.getColorTokensNumber(4));
-			tokensC.add(place.getColorTokensNumber(5));
+			tokensC.add( ((PlaceColored)place).getColorTokensNumber(0));
+			tokensC.add( ((PlaceColored)place).getColorTokensNumber(1));
+			tokensC.add( ((PlaceColored)place).getColorTokensNumber(2));
+			tokensC.add( ((PlaceColored)place).getColorTokensNumber(3));
+			tokensC.add( ((PlaceColored)place).getColorTokensNumber(4));
+			tokensC.add( ((PlaceColored)place).getColorTokensNumber(5));
 			colorVector.add(tokensC);
 		}
 	}
 	
 	/**
-	 * Metoda przywraca stan początkowy sieci
+	 * Metoda przywraca stan początkowy sieci kolorowej.
 	 */
 	public void restoreColors() {
+		if(checkIfXTPNpresent())
+			return;
 		try {
 			ArrayList<Place> places = getPlaces();
-			for(int p = 0; p<places.size(); p++) {
-				Place place = places.get(p);
+			for (Place place : places) {
 				place.setTokensNumber(0);
 			}
-
 			if(colorVector == null)
 				return;
 			
 			places = getPlaces();
 			for(int p = 0; p<places.size(); p++) {
-				Place place = places.get(p);
+				PlaceColored place = (PlaceColored)places.get(p);
 				place.setColorTokensNumber(colorVector.get(p).get(0), 0);
 				place.setColorTokensNumber(colorVector.get(p).get(1), 1);
 				place.setColorTokensNumber(colorVector.get(p).get(2), 2);
@@ -981,27 +1061,28 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				place.setColorTokensNumber(colorVector.get(p).get(5), 5);
 				place.setTokensNumber(0);
 			}
-			
 			ArrayList<Transition> transitions = getTransitions();
-
 			for(Transition trans : transitions) {
 				trans.setLaunching(false);
 				
 				if(trans.getTransType() == TransitionType.TPN) {
-					trans.resetTimeVariables();
+					trans.timeExtension.resetTimeVariables();
 				}
 			}
-			
-			NetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
-			setSimulator(new NetSimulator(nt, this));
-			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator());
-			overlord.io.updateTimeStep(""+getSimulator().getSimulatorTimeStep());
+
+			//SimulatorGlobals.SimNetType nt = overlord.getSimulatorBox().getCurrentDockWindow().getSimulator().getSimNetType();
+			getSimulator().resetSimulator();
+			getSimulatorXTPN().resetSimulator();
+			//setSimulator(new GraphicalSimulator(nt, this));
+			//setSimulatorXTPN(new GraphicalSimulatorXTPN(SimulatorGlobals.SimNetType.XTPN, this));
+			overlord.getSimulatorBox().getCurrentDockWindow().setSimulator(getSimulator(), getSimulatorXTPN());
+			overlord.io.updateTimeStep(false, getSimulator().getSimulatorTimeStep(), 0, 0);
 			overlord.simSettings.currentStep = getSimulator().getSimulatorTimeStep();
 			
 			repaintAllGraphPanels();
 			getSimulator().getSimLogger().logSimReset();
 		} catch (Exception e) {
-			overlord.log("Unknown error: unable to restore colored state m0 on request.", "error", true);
+			overlord.log(lang.getText("LOGentry00353exception")+"\n"+e.getMessage(), "error", true);
 		}
 	}
 	
@@ -1019,12 +1100,11 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 * Metoda powoduje usunięcie arkusza GraphPanel o identyfikatorze podanym w
 	 * parametrze. Nie powoduje to jednak usunięcia zawartych na nim wierzchołków
 	 * oraz łuków.
-	 * @param sheetID int - identyfikator który ma zostać usunięty
-	 * @return boolean - true w sytuacji powodzenia operacji GraphPanel od podanym identyfikatorze istniał
-	 *		false w przypadku przeciwnym
+	 * @param sheetID (<b>int</b>) identyfikator który ma zostać usunięty.
+	 * @return (<b>boolean</b>) - true w sytuacji powodzenia operacji usunięcia, gdy GraphPanel o podanym identyfikatorze istniał.
 	 */
 	public boolean removeGraphPanel(int sheetID) {
-		System.out.println("Przed usunieciem:");
+		System.out.println("Before deletion:");
 		for (GraphPanel g : getGraphPanels())
 			System.out.println(g);
 		for (Node n : getNodes())
@@ -1051,7 +1131,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 						}
 					}
 				}
-				System.out.println("Po usunieciu:");
+				System.out.println("After deletion:");
 				for (GraphPanel g : getGraphPanels())
 					System.out.println(g);
 				for (Node n : getNodes())
@@ -1065,8 +1145,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda sprawdza potencjalne konflikty w nazwach wierzchołków.
-	 * @param name - nazwa wierzchołka
-	 * @return boolean - true jeżeli nazwa już istnieje; false w przeciwnym wypadku
+	 * @param name (<b>String</b>) nazwa wierzchołka.
+	 * @return (<b>boolean</b>) - true jeżeli nazwa już istnieje; false w przeciwnym wypadku.
 	 */
 	public boolean checkNameConflict(String name) {
 		for (Node n : this.getNodes())
@@ -1091,8 +1171,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda pozwala na zapis całej sieci z projektu do pliku PNT
-	 * @param filePath String - ścieżka do pliku zapisu
-	 * @return boolean - status operacji: true jeśli nie było problemów
+	 * @param filePath (<b>String</b>) - ścieżka do pliku zapisu.
+	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było problemów.
 	 */
 	public boolean saveAsPNT(String filePath) {
 		return communicationProtocol.writePNT(filePath, getPlaces(), getTransitions(), getArcs());
@@ -1100,18 +1180,18 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda pozwala na zapis całej sieci do pliku projektu.
-	 * @param filePath String - ścieżka do pliku zapisu
-	 * @return boolean - status operacji: true jeśli nie było problemów
+	 * @param filePath (<b>String</b>) ścieżka do pliku zapisu.
+	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było problemów.
 	 */
 	public boolean saveAsAbyss(String filePath) {
-		ABYSSSwriter = new AbyssWriter();
+		AbyssWriter ABYSSSwriter = new AbyssWriter();
 		return ABYSSSwriter.write(filePath);
 	}
 	
 	/**
 	 * Metoda pozwala zapisać sieć do formatu SPPED programu Snoopy.
-	 * @param filePath String - ścieżka docelowa pliku
-	 * @return boolean - status operacji: true jeśli nie było błędów
+	 * @param filePath (<b>String</b>) ścieżka docelowa pliku.
+	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było błędów.
 	 */
 	public boolean saveAsSPPED(String filePath) {
 		SnoopyWriter sWr = new SnoopyWriter();
@@ -1120,8 +1200,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda pozwala zapisać sieć do formatu SPEPT (Extended) programu Snoopy.
-	 * @param filePath String - ścieżka docelowa pliku
-	 * @return boolean - status operacji: true jeśli nie było problemów
+	 * @param filePath (<b>String</b>) ścieżka docelowa pliku.
+	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było problemów.
 	 */
 	public boolean saveAsSPEPT(String filePath) {
 		SnoopyWriter sWr = new SnoopyWriter();
@@ -1130,8 +1210,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	
 	/**
 	 * Metoda pozwala zapisać sieć do formatu SPTPT (czasowe) programu Snoopy.
-	 * @param filePath String - ścieżka docelowa pliku
-	 * @return boolean - status operacji: true jeśli nie było problemów
+	 * @param filePath (<b>String</b>) ścieżka docelowa pliku.
+	 * @return (<b>boolean</b>) - status operacji: true jeśli nie było problemów.
 	 */
 	public boolean saveAsSPTPT(String filePath) {
 		SnoopyWriter sWr = new SnoopyWriter();
@@ -1140,19 +1220,19 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda pozwala na odczyt całej sieci z pliku podanego w parametrze metody.
-	 * @param path String - ścieżka do pliku odczytu
+	 * @param path (<b>String</b>) ścieżka do pliku odczytu.
 	 */
 	public boolean loadFromFile(String path) {
 		boolean status = overlord.reset.newProjectInitiated();
 		if(!status) {
 			return false;
 		}
-		
-		readerSNOOPY = SAXParserFactory.newInstance();
+
+		SAXParserFactory readerSNOOPY = SAXParserFactory.newInstance();
 		try {
 			// Format własny
 			if (path.endsWith(".abyss")) {
-				ABYSSReader = new AbyssReader();
+				AbyssReader ABYSSReader = new AbyssReader();
 				ABYSSReader.read(path);
 				addArcsAndNodes(ABYSSReader.getArcArray(), ABYSSReader.getNodeArray());
 				setName(ABYSSReader.getPNname());
@@ -1167,7 +1247,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			// Formaty Snoopiego
 			if (path.endsWith(".spped") || path.endsWith(".spept") || path.endsWith(".colpn") || path.endsWith(".sptpt") || path.endsWith(".pn") || path.endsWith(".xpn")) {
 				if(overlord.getSettingsManager().getValue("programUseOldSnoopyLoaders").equals("1")) {
-					overlord.log("Activating old Snoopy loader. Will fail for hierarchical networks.", "text", true);
+					overlord.log(lang.getText("LOGentry00354"), "text", true);
 					InputStream xmlInput = new FileInputStream(path);
 					SAXParser saxParser = readerSNOOPY.newSAXParser();
 					if (path.endsWith(".spped") || path.endsWith(".pn")) {
@@ -1184,7 +1264,7 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 					}
 					saxParser.parse(xmlInput, handler);
 					addArcsAndNodes(handler.getArcList(), handler.getNodesList());
-					accessStatesManager().createCleanState();
+					accessStatesManager().createCleanStatePN();
 					accessSSAmanager().createCleanSSAvector();
 					accessFiringRatesManager().createCleanSPNdataVector();
 					
@@ -1204,12 +1284,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				} else { //new loader
 					SnoopyReader reader = new SnoopyReader(0, path);
 					addArcsAndNodes(reader.getArcList(), reader.getNodesList());
-					accessStatesManager().createCleanState();
+					accessStatesManager().createCleanStatePN();
 					accessFiringRatesManager().createCleanSPNdataVector();
 					accessSSAmanager().createCleanSSAvector();
 					overlord.subnetsGraphics.addRequiredSheets();
 					overlord.subnetsGraphics.resizePanels();
-					overlord.getWorkspace().setSelectedDock(0);
+					//overlord.getWorkspace().setSelectedDock(0);
 				}
 				
 				int nodeSID = overlord.getWorkspace().getSheets().size() - 1;
@@ -1222,32 +1302,32 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if (path.endsWith(".pnt")) {
 				communicationProtocol.readPNT(path);
 				addArcsAndNodes(communicationProtocol.getArcArray(), communicationProtocol.getNodeArray());
-				accessStatesManager().createCleanState();
+				accessStatesManager().createCleanStatePN();
 				accessFiringRatesManager().createCleanSPNdataVector();
 			}
 			
-			overlord.log("Petri net successfully imported from file "+path, "text", true);
+			overlord.log(lang.getText("LOGentry00355")+" "+path, "text", true);
 
 			ArrayList<Place> places = getPlaces();
 			ArrayList<Arc> arcs = getArcs();
 			ArrayList<Transition> transitions = getTransitions();
 			for(Transition transition : transitions) { //aktywacja wektorów funkcji
-				transition.checkFunctions(arcs, places);
+				transition.fpnExtension.checkFunctions(arcs, places);
 			}
 			
 			return true;
 		} catch (Exception e) {
-			overlord.log("Critical error while loading network: " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00356exception")+" "+ e.getMessage(), "error", true);
 			return false;
 		}
 	}
 
 	/**
 	 * Metoda zapisująca inwarianty do pliku w formacie CSV.
-	 * @param path String - ścieżka do pliku zapisu
-	 * @param silence boolean - true, jeśli mają być komunikaty
-	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
-	 * @return int - 0 jeśli operacja się udała, -1 w przeciwnym wypadku
+	 * @param path (<b>String</b>) ścieżka do pliku zapisu.
+	 * @param silence (<b>boolean</b>) true, jeśli mają być komunikaty.
+	 * @param t_inv (<b>boolean</b>) true, jeśli chodzi o t-inwarianty.
+	 * @return (<b>int</b>) - 0 jeśli operacja się udała, -1 w przeciwnym wypadku.
 	 */
 	public int saveInvariantsToCSV(String path, boolean silence, boolean t_inv) {
 		int result = -1;
@@ -1256,44 +1336,42 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				if (getT_InvMatrix() != null) {
 					communicationProtocol.writeT_invCSV(path, getT_InvMatrix(), getTransitions());
 					if(!silence)
-						JOptionPane.showMessageDialog(null,  "T-invariants saved to file:\n"+path,
-							"Success",JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null,  lang.getText("PN_entry004")+path,
+							lang.getText("success"),JOptionPane.INFORMATION_MESSAGE);
 					result = 0;
 				} else {
 					if(!silence)
-						JOptionPane.showMessageDialog(null, "There are no t-invariants to export.",
-							"Warning",JOptionPane.WARNING_MESSAGE);
-					overlord.log("No t-invariants, saving into CSV file failed.","error", true);
-					result = -1;
+						JOptionPane.showMessageDialog(null, lang.getText("PN_entry005"),
+							lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
+					overlord.log(lang.getText("LOGentry00357"),"error", true);
+					//result = -1;
 				}
 			} else {
 				if (getP_InvMatrix() != null) {
 					communicationProtocol.writeP_invCSV(path, getP_InvMatrix(), getPlaces());
 					if(!silence)
-						JOptionPane.showMessageDialog(null,  "P-invariants saved to file:\n"+path,
-							"Success",JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(null,  lang.getText("PN_entry006")+path,
+							lang.getText("success"),JOptionPane.INFORMATION_MESSAGE);
 					
 					result = 0;
 				} else {
 					if(!silence)
-						JOptionPane.showMessageDialog(null, "There are no p-invariants to export.",
-							"Warning",JOptionPane.WARNING_MESSAGE);
-					overlord.log("No p-invariants, saving into CSV file failed.","error", true);
-					result = -1;
+						JOptionPane.showMessageDialog(null, lang.getText("PN_entry007"),
+							lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
+					overlord.log(lang.getText("LOGentry00358"),"error", true);
 				}
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
-			overlord.log("Error: " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00359exception")+"\n" + e.getMessage(), "error", true);
 		}
 		return result;
 	}
 	
 	/**
 	 * Metoda zapisująca inwarianty do pliku w formacie INA.
-	 * @param path String - ścieżka do pliku zapisu
-	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
-	 * @return int - 0 jeśli operacja się udała, -1 w przeciwnym wypadku
+	 * @param path (<b>String</b>) ścieżka do pliku zapisu.
+	 * @param t_inv (<b>boolean</b>) true, jeśli chodzi o t-inwarianty.
+	 * @return (<b>int</b>) - 0 jeśli operacja się udała, -1 w przeciwnym wypadku.
 	 */
 	public int saveInvariantsToInaFormat(String path, boolean t_inv) {
 		int result = -1;
@@ -1301,43 +1379,41 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if(t_inv) {
 				if (getT_InvMatrix() != null) {
 					communicationProtocol.writeT_invINA(path, getT_InvMatrix(), getTransitions());
-					JOptionPane.showMessageDialog(null, "T-invariants saved to file:\n"+path,
-							"Success", JOptionPane.INFORMATION_MESSAGE);
-					overlord.log("T-invariants saved into .inv INA file.","text", true);
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry008")+path,
+							lang.getText("success"), JOptionPane.INFORMATION_MESSAGE);
+					overlord.log(lang.getText("LOGentry00360"),"text", true);
 					result = 0;
 				} else {
-					JOptionPane.showMessageDialog(null, "There are no t-invariants to export",
-							"Warning",JOptionPane.WARNING_MESSAGE);
-					overlord.log("No t-invariants, saving into CSV file failed.","error", true);
-					result = -1;
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry009"),
+							lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
+					overlord.log(lang.getText("LOGentry00361"),"error", true);
+					//result = -1;
 				}
 			} else {
 				if (getP_InvMatrix() != null) {
 					communicationProtocol.writeP_invINA(path, getP_InvMatrix(), getPlaces());
-					JOptionPane.showMessageDialog(null, "P-invariants saved to file:\n"+path,
-							"Success", JOptionPane.INFORMATION_MESSAGE);
-					overlord.log("P-invariants saved into .inv INA file.","text", true);
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry010")+path,
+							lang.getText("success"), JOptionPane.INFORMATION_MESSAGE);
+					overlord.log(lang.getText("LOGentry00362"),"text", true);
 					result = 0;
 				} else {
-					JOptionPane.showMessageDialog(null, "There are no p-invariants to export",
-							"Warning",JOptionPane.WARNING_MESSAGE);
-					overlord.log("No p-invariants, saving into CSV file failed.","error", true);
-					result = -1;
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry011"),
+							lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
+					overlord.log(lang.getText("LOGentry00363"),"error", true);
 				}
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			overlord.log("Error: " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00364exception")+"\n" + e.getMessage(), "error", true);
 		}
 		return result;
 	}
 	
 	/**
 	 * Metoda zapisująca inwarianty do pliku w formacie CSV.
-	 * @param path String - ścieżka do pliku zapisu
-	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
-	 * @return int - 0 jeśli operacja się udała, -1 w przeciwnym wypadku
+	 * @param path (<b>String</b>) ścieżka do pliku zapisu.
+	 * @param t_inv (<b>boolean</b>) true, jeśli chodzi o t-inwarianty.
+	 * @return (<b>int</b>) - 0 jeśli operacja się udała, -1 w przeciwnym wypadku.
 	 */
 	public int saveInvariantsToCharlie(String path, boolean t_inv) {
 		int result = -1;
@@ -1345,34 +1421,30 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 			if(t_inv) {
 				if (getT_InvMatrix() != null) {
 					communicationProtocol.writeT_invCharlie(path, getT_InvMatrix(), getTransitions());
-					JOptionPane.showMessageDialog(null, "T-invariants saved to file:\n"+path,
-							"Success",JOptionPane.INFORMATION_MESSAGE);
-					overlord.log("T-invariants saved in Charlie file format.","text", true);
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry012")+path,
+							lang.getText("success"),JOptionPane.INFORMATION_MESSAGE);
+					overlord.log(lang.getText("LOGentry00365"),"text", true);
 					result = 0;
 				} else {
-					JOptionPane.showMessageDialog(null, "There are no t-invariants to export.",
-							"Warning",JOptionPane.WARNING_MESSAGE);
-					overlord.log("No t-invariants, saving into CSV file failed.","error", true);
-					result = -1;
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry013"),
+							lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
+					overlord.log(lang.getText("LOGentry00366"),"error", true);
 				}
 			} else {
 				if (getP_InvMatrix() != null) {
 					communicationProtocol.writeP_invCharlie(path, getP_InvMatrix(), getPlaces());
-					JOptionPane.showMessageDialog(null, "P-invariants saved to file:\n"+path,
-							"Success",JOptionPane.INFORMATION_MESSAGE);
-					overlord.log("P-invariants saved in Charlie file format.","text", true);
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry014")+path,
+							lang.getText("success"),JOptionPane.INFORMATION_MESSAGE);
+					overlord.log(lang.getText("LOGentry00367"),"text", true);
 					result = 0;
 				} else {
-					JOptionPane.showMessageDialog(null, "There are no p-invariants to export.",
-							"Warning",JOptionPane.WARNING_MESSAGE);
-					overlord.log("No p-invariants, saving into CSV file failed.","error", true);
-					result = -1;
+					JOptionPane.showMessageDialog(null, lang.getText("PN_entry015"),
+							lang.getText("warning"),JOptionPane.WARNING_MESSAGE);
+					overlord.log(lang.getText("LOGentry00368"),"error", true);
 				}
 			}
-			
 		} catch (Exception e) {
-			//e.printStackTrace();
-			overlord.log("Error: " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00369exception")+"\n" + e.getMessage(), "error", true);
 		}
 		return result;
 	}
@@ -1380,9 +1452,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	/**
 	 * Metoda wczytująca plik inwariantów z pliku .inv (format INA) i zastępująca aktualnie
 	 * wynegerowane w programie inwarianty jego zawartością (o ile został poprawnie wczytany).
-	 * @param path String - ścieżka do pliku INA
-	 * @param t_inv boolean - true, jeśli chodzi o t-inwarianty
-	 * @return boolean - true, jeśli operacja się powiodła
+	 * @param path (<b>String</b>) - ścieżka do pliku INA.
+	 * @param t_inv (<b>boolean</b>) true, jeśli chodzi o t-inwarianty.
+	 * @return (<b>boolean</b>) - true, jeśli operacja się powiodła.
 	 */
 	public boolean loadTPinvariantsFromFile(String path, boolean t_inv) {
 		try {
@@ -1399,10 +1471,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 				setP_InvMatrix(communicationProtocol.getInvariantsList());
 				overlord.reset.setP_invariantsStatus(true); //status p-inwariantów: wczytane
 			}
-			
 			return true;
 		} catch (Exception e) {
-			overlord.log("Invariants reading and/or adding to program failed.", "error", true);
+			overlord.log(lang.getText("LOGentry00370exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}
@@ -1418,23 +1489,12 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
-	 * Metoda pozwala na pobranie stanu symulacji. W sytuacji gdy jest ona aktywna
-	 * (isSimulationActive = true) wszelka interakcja z arkuszami oraz obiektami
-	 * znajdującymi się na nich jest zablokowana.
-	 * @return boolean - true w sytuacji gdy symulacja jest aktualnie aktywna;
-	 * 		false w przypadku przeciwnym
-	 */
-	public boolean isSimulationActive() {
-		return isSimulationActive;
-	}
-
-	/**
 	 * Metoda pozwala na zwiększenie kroku symulacji o 1. Jest ona wywoływana przez
-	 * NetSimulator danego projektu, co powoduje wywołanie metody incrementSimulationStep() 
+	 * GraphicalSimulator danego projektu, co powoduje wywołanie metody incrementSimulationStep()
 	 * dla każdego łuku zawartego w projekcie, odpowiedzialnego za wyświetlanie animacji 
 	 * tokenów przemieszczających się w trakcie symulacji.
 	 */
-	public void incrementSimulationStep() {
+	public void incrementGraphicalSimulationStep() {
 		for (Arc a : getArcs())
 			a.incrementSimulationStep();
 		for (GraphPanel g : this.getGraphPanels()) {
@@ -1444,15 +1504,26 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 
 	/**
+	 * Metoda pozwala na pobranie stanu symulacji. W sytuacji gdy jest ona aktywna
+	 * (isSimulationActive = true) wszelka interakcja z arkuszami oraz obiektami
+	 * znajdującymi się na nich jest zablokowana.
+	 * @return (<b>boolean</b>) - true w sytuacji gdy symulacja jest aktualnie aktywna
+	 */
+	public boolean isSimulationActive() {
+		return isSimulationActive;
+	}
+
+	/**
 	 * Metoda pozwala na ustawienie stanu symulacji. W sytuacji gdy jest ona aktywna
 	 * (isSimulationActive = true) wszelka interakcja z arkuszami oraz obiektami
 	 * znajdującymi się na nich jest zablokowana.
-	 * @param isSimulationActive boolean - nowy stan symulacji
+	 * @param isSimulationActive (<b>boolean</b>) nowy stan symulacji.
 	 */
 	public void setSimulationActive(boolean isSimulationActive) {
 		this.isSimulationActive = isSimulationActive;
-		for (GraphPanel g : this.getGraphPanels())
+		for (GraphPanel g : this.getGraphPanels()) {
 			g.setSimulationActive(isSimulationActive);
+		}
 	}
 
 	/**
@@ -1499,18 +1570,18 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 
 	/**
 	 * Metoda ustawia podświetlanie zbiorów MCT.
-	 * @param isGlowedMTC boolean - true jeśli MCT ma być podświetlony
+	 * @param isGlowedMTC (<b>boolean</b>) true jeśli MCT ma być podświetlony.
 	 */
 	private void setTransitionGlowedMTC(boolean isGlowedMTC) {
 		for (Node n : getNodes())
 			if (n.getType() == PetriNetElementType.TRANSITION) {
-				((Transition) n).setGlowed_MTC(isGlowedMTC);
+				((Transition) n).drawGraphBoxT.setGlowed_MTC(isGlowedMTC);
 			}
 	}
 
 	/**
 	 * Metoda ustawia podświetlanie podsieci.
-	 * @param isGlowedSubnet boolean - true jeśli MCT ma być podświetlony
+	 * @param isGlowedSubnet (<b>boolean</b>) true jeśli MCT ma być podświetlony.
 	 */
 	private void setGlowedSubnet(boolean isGlowedSubnet) {
 		for (Node n : getNodes()){
@@ -1528,8 +1599,8 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		turnTransitionGlowingOff();
 		setTransitionGlowedMTC(false);
 		setGlowedSubnet(false);
-		resetTransitionGraphics();
-		resetPlaceGraphics();
+		resetSimulationGraphics_Transitions();
+		resetSimulationGraphics_Places();
 		resetArcGraphics();
 		resetNodes();
 		//reset frame
@@ -1553,55 +1624,66 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	 */
 	private void resetArcGraphics() {
 		for(Arc a : getArcs()) {
-			a.qSimForcedArc = false;
+			a.arcQSimBox.qSimForcedArc = false;
 			if (a.getType() == PetriNetElementType.ARC) {
-				a.setColor(false, Color.BLACK);
+				a.arcDecoBox.setColor(false, Color.BLACK);
 			}
+
+			a.arcXTPNbox.showQSimXTPN = false;
 		}
 	}
 
 	/**
 	 * Metoda wygasza kolorowanie tranzycji, zeruje dodatkowe wyświetlanie liczb czy tekstów.
 	 */
-	private void resetTransitionGraphics() {
-		for (Node n : getNodes())
+	private void resetSimulationGraphics_Transitions() {
+		for (Node n : getNodes()) {
 			if (n.getType() == PetriNetElementType.TRANSITION) {
 				Transition trans = ((Transition) n);
-				trans.setColorWithNumber(false, Color.white, false, -1, false, "");
-				trans.resetOffs();
-				
-				trans.qSimDrawed = false;
-				trans.qSimDrawStats = false;
-				trans.qSimArcSign = false;
-				trans.qSimOvalSize = 10;
+				trans.drawGraphBoxT.setColorWithNumber(false, Color.white, false, -1, false, "");
+				trans.drawGraphBoxT.resetOffs();
+				trans.qSimBoxT.qSimDrawed = false;
+				trans.qSimBoxT.qSimDrawStats = false;
+				trans.qSimBoxT.qSimOvalSize = 10;
+
+				n.qSimArcSign = false;  //NODE level
 			}
+
+			if(n instanceof TransitionXTPN) {
+				((TransitionXTPN)n).qSimXTPN.clean();
+				((TransitionXTPN)n).qSimXTPN.showQSimXTPN = false;
+			}
+		}
 	}
 	
 	/**
 	 * Metoda wygasza kolorowanie miejsca, zeruje dodatkowe wyświetlanie liczb czy tekstów.
 	 */
-	private void resetPlaceGraphics() {
-		for (Node n : getNodes())
+	private void resetSimulationGraphics_Places() {
+		for (Node n : getNodes()) {
 			if (n.getType() == PetriNetElementType.PLACE) {
 				Place place = ((Place) n);
-				place.setColorWithNumber(false, Color.white, false, -1, false, "");
-				place.resetOffs();
-				
-				place.qSimDrawed = false;
-				place.qSimDrawStats = false;
-				place.qSimArcSign = false;
-				place.qSimOvalSize = 10;
+				place.drawGraphBoxP.setColorWithNumber(false, Color.white, false, -1, false, "");
+				place.drawGraphBoxP.resetOffs();
+				place.qSimBoxP.qSimDrawed = false;
+				place.qSimBoxP.qSimDrawStats = false;
+				place.qSimBoxP.qSimOvalSize = 10;
+				n.qSimArcSign = false; //NODE level
 			}
+			if(n instanceof PlaceXTPN) {
+				((PlaceXTPN)n).showQSimXTPN = false;
+			}
+		}
 	}
 	
 	/**
 	 * Metoda sprawdza czy istnieje już rysowana wcześniej sieć.
-	 * @return boolean - false, jeśli nie należy kontynuować
+	 * @return (<b>boolean</b>) - false, jeśli nie należy kontynuować.
 	 */
 	@SuppressWarnings("unused")
 	private boolean checkIfEmpty() {
 		//TODO: UNUSED
-		if(getNodes().size() == 0) {
+		if(getNodes().isEmpty()) {
 			return true;
 		} else {
 			Object[] options = {"Load and replace project", "Cancel operation",};
@@ -1615,18 +1697,15 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 	}
 	
 	/**
-	 * Metoda rozpoczynająca proces symulatora wykonać inwariantów.
+	 * Metoda rozpoczynająca proces symulatora wykonań inwariantów.
 	 * @param type int - typ symulacji: 0 - zwykła, 1 - czasowa
-	 * @param value - 
-	 * @throws CloneNotSupportedException
+	 * @param value int
 	 */
-	public void startInvSim(int type, int value) throws CloneNotSupportedException {
+	public void startInvSim(int type, int value)  {
 		//Timer timer = new Timer();
 		//Date date = new Date();
-		
 		//this.invSimulator = new InvariantsSimulator(abyss.analyzer.InvariantsSimulator.NetType.BASIC, new PetriNet(
 		//				getData().nodes, getData().arcs), get2ndFormInvariantsList(),type, value);
-
 		//invSimulator.startSimulation(SimulatorMode.LOOP);
 	}
 	
@@ -1639,12 +1718,9 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		for (GraphPanel gp : getGraphPanels()) {
 			gp.getSelectionManager().forceDeselectAllElements();
 		}
-		
 		setNodes(new ArrayList<>());
 		setArcs(new ArrayList<>());
-		
 		repaintAllGraphPanels();
-		
 		ArrayList<GraphPanel> newGraphPanels = new ArrayList<>();
 		for (GraphPanel gp : getGraphPanels()) {
 			int sheetID = gp.getSheetId();
@@ -1657,6 +1733,114 @@ public class PetriNet implements SelectionActionListener, Cloneable {
 		setGraphPanels(newGraphPanels);
 		repaintAllGraphPanels();
 	}
-	
-	
+
+	/**
+	 * Metoda zwraca typ sieci po nazwie.
+	 * @param name (<b>String</b>) nazwa typu.
+	 * @return (<b>GlobalNetType</b>) enum typ sieci.
+	 */
+	public GlobalNetType getNetTypeByName(String name) {
+		return switch (name) {
+			case "TPN" -> GlobalNetType.TPN;
+			case "PN_extArcs" -> GlobalNetType.PN_extArcs;
+			case "FPN" -> GlobalNetType.FPN;
+			case "timeFPN" -> GlobalNetType.timeFPN;
+			case "TPN_extArcs" -> GlobalNetType.TPN_extArcs;
+			case "FPN_extArcs" -> GlobalNetType.FPN_extArcs;
+			case "timeFPN_extArcs" -> GlobalNetType.timeFPN_extArcs;
+			case "SPN" -> GlobalNetType.SPN;
+			case "functionalSPN" -> GlobalNetType.functionalSPN;
+			case "XTPN" -> GlobalNetType.XTPN;
+			default -> GlobalNetType.PN;
+		};
+	}
+
+	/**
+	 * Ustawia główny typ sieci. Także w obiekcie kontrolera.
+	 * @param projectType (<b>GlobalNetType</b>) - PN, timePN, <b>ext</b>PN, funcPN, timeFuncPN, time<b>Ext</b>PN, func<b>Ext</b>PN, timeFunc<b>Ext</b>PN, stochasticPN, stochasticFuncPN, XTPN
+	 */
+	public void setProjectType(GlobalNetType projectType) {
+		this.projectType = projectType;
+		GUIController.access().setCurrentNetType(projectType);
+	}
+
+	/**
+	 * Zwraca typ sieci. Używać tylko dla zapisu lub odczytu. Poza tym używać kontrolera do ustalenia, jaki jest główny AKTYWNY typ sieci programu.
+	 * @return (<b>GlobalNetType</b>) - np. PN, timePN, <b>ext</b>PN, funcPN, timeFuncPN, time<b>Ext</b>PN, func<b>Ext</b>PN, timeFunc<b>Ext</b>PN, stochasticPN, stochasticFuncPN, XTPN
+	 */
+	public GlobalNetType getProjectType() {
+		return projectType;
+	}
+
+
+	/**
+	 * Zwraca podtyp sieci.
+	 * @return (<b>getProjectSubType</b>) CLEAN, FUNCTIONAL, EXT_ARCS
+	 */
+	public GlobalNetSubType getProjectSubType() {
+		return projectSubType;
+	}
+
+	/**
+	 * Ustawia podtyp sieci.
+	 * @param projectSubType (<b>getProjectSubType</b>) CLEAN, FUNCTIONAL, EXT_ARCS
+	 */
+	public void setProjectSubType(GlobalNetSubType projectSubType) {
+		this.projectSubType = projectSubType;
+	}
+
+	/**
+	 * Metoda sprawdza, czy sieć zawiera węzły inne niż XTPN.
+	 * @return (<b>boolean</b>) true, jeżeli są inne niż XTPN
+	 */
+	public boolean hasNonXTPNnodes() {
+		boolean result = false;
+		for (Node n : this.dataCore.nodes) {
+			if( (n instanceof Place) && !(n instanceof PlaceXTPN)) {
+				return true;
+			}
+			if( (n instanceof Transition) && !(n instanceof TransitionXTPN)) {
+				return true;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Metoda sprawdza, czy istnieją elementy XTPN.
+	 * @return (<b>boolean</b>) true, jeżeli są węzły XTPN.
+	 */
+	public boolean checkIfXTPNpresent() {
+		boolean result = false;
+		for (Node n : this.dataCore.nodes) {
+			if (n instanceof PlaceXTPN) {
+				return true; //zawiera node XTPN
+			} else if (n instanceof TransitionXTPN){
+				return true; //zawiera node XTPN
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Zmienia wszystkie non-XTPN nodes w XTPN
+	 */
+	public void transformAllIntoXTPNnodes_TODO() { //TODO
+		for (Node n : this.dataCore.nodes) {
+			if (n instanceof Place) {
+				Place place = ((Place) n);
+				//place.setXTPNplaceStatus(true);
+				//place.setGammaMin_xTPN(99, true);
+				//place.setGammaMax_xTPN(99, true);
+				//place.setGammaModeXTPNstatus(false); //!! tak! można ręcznie każde miejsce potem zmienić
+			} else if (n instanceof Transition){
+				Transition transition = ((Transition) n);
+				//transition.setXTPNstatus(true);
+				transition.setTransType(TransitionType.XTPN);
+				transition.timeExtension.setTPNstatus(false);
+				transition.timeExtension.setDPNstatus(false);
+				transition.spnExtension.setSPNtype(TransitionSPNExtension.StochaticsType.NONE);
+			}
+		}
+	}
 }

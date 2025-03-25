@@ -11,38 +11,37 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 
 public class Runner {
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private PrintWriter out = null;
 
-	private void print(String s) throws FileNotFoundException
-	{
+	private void print(String s) throws FileNotFoundException {
 		if (out == null)
-			out = new PrintWriter(new File("output/output.txt"));
+			out = new PrintWriter("output/output.txt");
 		//System.out.print(s);
 		out.print(s);
 		out.flush();
 	}
 	
-	private void print(PrintWriter pw, String s) throws FileNotFoundException
-	{
+	private void print(PrintWriter pw, String s) {
 		if (pw == null)
 			return;
 		pw.print(s);
 		pw.flush();
 	}
 	
-	private void println(String s) throws FileNotFoundException
-	{
+	private void println(String s) throws FileNotFoundException {
 		if (out == null)
-			out = new PrintWriter(new File("output/output.txt"));
+			out = new PrintWriter("output/output.txt");
 		//System.out.println(s);
 		out.println(s);
 		out.flush();
 	}
 	
-	private void println(PrintWriter pw, String s) throws FileNotFoundException
-	{
+	private void println(PrintWriter pw, String s) {
 		if (pw == null)
 			return;
 		print(pw, s);
@@ -64,7 +63,7 @@ public class Runner {
 		Double showAsCommonTransitionThreshold = 1.0;
 		boolean showClusterAsVector = false;
 		
-		public ProgramSettings(String args[]) {
+		public ProgramSettings(String[] args) {
 			for (int i = 0; i < args.length; i++) {
 				String param = args[i];
 				
@@ -117,23 +116,20 @@ public class Runner {
 				}
 				
 				// parametry argumentowe
-				if (param.equals("-o")) {
-					outputFilePath = args[++i];
-				} else if (param.equals("-csvo")) {
-					csvOutputFilePath = args[++i];
-				} else if (param.equals("-mct")) {
-					mctRenameFile = args[++i];
-				} else if (param.equals("-cr")) {
-					setClusters(args[++i]);
-				} else if (param.equals("-sactt")) {
-					String threshold = args[++i];
-					try {
-						showAsCommonTransitionThreshold = Double.parseDouble(threshold);
-					} catch (NumberFormatException nfe) {
-						throw new NumberFormatException("Error in format of common transition threshold value (-scatt arg.): " + threshold);
+				switch (param) {
+					case "-o" -> outputFilePath = args[++i];
+					case "-csvo" -> csvOutputFilePath = args[++i];
+					case "-mct" -> mctRenameFile = args[++i];
+					case "-cr" -> setClusters(args[++i]);
+					case "-sactt" -> {
+						String threshold = args[++i];
+						try {
+							showAsCommonTransitionThreshold = Double.parseDouble(threshold);
+						} catch (NumberFormatException nfe) {
+							throw new NumberFormatException(lang.getText("LOGentry00537")+" " + threshold);
+						}
 					}
-				} else {
-					throw new IllegalArgumentException("Wrong parameter: " + param);
+					default -> throw new IllegalArgumentException(lang.getText("LOGentry00538exception")+" " + param);
 				}
 			}
 		}
@@ -144,21 +140,20 @@ public class Runner {
 		 *  np. 1-2,5;3-4,6-8;9-50;51-90;91-129
 		 */
 		private void setClusters(String tclusters) {
-			String tInvariantsInClusters[] = tclusters.split(";");
+			String[] tInvariantsInClusters = tclusters.split(";");
 			clusters = new ArrayList<SortedSet<String>>(tInvariantsInClusters.length);
-			for (int j = 0; j < tInvariantsInClusters.length; j++) {
-				String clusterDescriptor = tInvariantsInClusters[j];
-				String ranges[] = clusterDescriptor.split(",");
+			for (String clusterDescriptor : tInvariantsInClusters) {
+				String[] ranges = clusterDescriptor.split(",");
 				SortedSet<String> ss = new TreeSet<String>(new Utils.HybridStringNumberComparator());
-				
+
 				for (String range : ranges) {
 					// dla ew. id tinwariant�w innych ni� liczbowe
-					if (range.indexOf('-') < 0 || !range.matches("[0-9]+-[0-9]+") ) {
+					if (range.indexOf('-') < 0 || !range.matches("[0-9]+-[0-9]+")) {
 						ss.add(range);
 						continue;
 					}
-					
-					String limits[] = range.split("-");
+
+					String[] limits = range.split("-");
 					try {
 						int from = Integer.parseInt(limits[0]);
 						int to = limits.length > 1 ? Integer.parseInt(limits[1]) : from;
@@ -166,7 +161,7 @@ public class Runner {
 							ss.add(String.valueOf(index));
 						}
 					} catch (NumberFormatException nfe) {
-						throw new NumberFormatException("Error in cluster range format: " + range);
+						throw new NumberFormatException(lang.getText("LOGentry00539exception")+" " + range);
 					}
 				}
 				clusters.add(ss);
@@ -183,23 +178,22 @@ public class Runner {
 				//}
 				br.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				overlord.log(lang.getText("LOGentry00540exception")+" "+e.getMessage(), "error", true);
 			}
 		}
 	}
 	
 	/**
-	 * @param args
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
+	 * @param args (<b>String[]</b>)
+	 * @throws IOException ex1
+	 * @throws FileNotFoundException ex2
 	 */
 	public void activate(String[] args) throws FileNotFoundException, IOException
 	{
-		ProgramSettings ps = null;
+		ProgramSettings ps;
 		try {
 			ps = new ProgramSettings(args);
 		} catch (RuntimeException re) {
-			//System.out.println(re.getMessage());
 			ProgramSettings.printHelp();
 			return;
 		}
@@ -217,8 +211,8 @@ public class Runner {
 		else
 			tInvariants = Utils.readTInvariants(is, true, petriNet);
 		Map <String, String> renameMap = ps.mctRenameFile != null ? Utils.readMCTNameMap(ps.mctRenameFile) : null;
-		
-		GUIManager.getDefaultGUIManager().log("MCT Generator: input file read.", "text", true);
+
+		overlord.log(lang.getText("LOGentry00541"), "text", true);
 		
 		SortedSet<MCTSet> mctSets = Utils.buildMCT(tInvariants, renameMap);
 		SortedSet<MCTSet> properMctSets = new TreeSet<MCTSet>();
@@ -233,23 +227,23 @@ public class Runner {
 			println("---Invariants---------------------------");
 			println(Utils.invariantsToString(tInvariants));
 		}
-		
-		GUIManager.getDefaultGUIManager().log("MCT Generator: invariants section written.", "text", true);
+
+		overlord.log(lang.getText("LOGentry00542"), "text", true);
 		
 		println("---Invariants[VECTORS]---------------------------");
-		String header = ";";
+		StringBuilder header = new StringBuilder(";");
 		for (MCTTransition t : petriNet.getTransitions())
 		{
-			header += t.id + ";";
+			header.append(t.id).append(";");
 		}
-		println(header);
-		println(vOut, header);
+		println(header.toString());
+		println(vOut, header.toString());
 		String vectors = Utils.invariantsToCsvVectors(tInvariants, false, true, ps.latexMode);
 		println(vectors);
 		println(vOut, vectors);
 		println("");
 		println("---Invariants[IN MCT]---------------------------");
-		println(header);
+		println(header.toString());
 		println(Utils.invariantsWithMCT(tInvariants, properMctSets, ps.includeId, ps.includeVectors, ps.boolValues, ps.latexMode, ps.clusters));
 		println("");
 		println("Proper MCT sets (size > 1): ");
@@ -261,8 +255,8 @@ public class Runner {
 			else 
 				println((mct.getPrintName(false)) + " [" + mct.getTransitionSet().size() + "]. " + mct);
 		}
-		
-		GUIManager.getDefaultGUIManager().log("MCT Generator: properMCTsets section finished.", "text", true);
+
+		overlord.log(lang.getText("LOGentry00543"), "text", true);
 		
 		println("Single MCT sets (size = 1): ");
 		for (MCTSet mct : single)
@@ -350,7 +344,6 @@ public class Runner {
 				}
 			}
 		}
-		
 		if(out != null)
 			out.close();
 	}

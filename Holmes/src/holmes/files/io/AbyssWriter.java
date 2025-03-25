@@ -3,6 +3,7 @@ package holmes.files.io;
 import java.io.PrintWriter;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNetData;
 
 import com.thoughtworks.xstream.XStream;
@@ -11,11 +12,10 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 /**
  * Klasa odpowiedzialna za zapis struktury sieci do pliku natywnego programu.
  * Wymaga XStream 1.4.7
- * @author students
- *
  */
 public class AbyssWriter {
-
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	/**
 	 * Główna i jedyna metoda, zapisująca plik sieci.
 	 * @param path String - ścieżka do pliku
@@ -32,18 +32,18 @@ public class AbyssWriter {
 		xstream.alias("petriNet", PetriNetData.class);
 
 		try {
-			PetriNetData dataModule = GUIManager.getDefaultGUIManager().getWorkspace().getProject().getDataCore();
+			PetriNetData dataModule = overlord.getWorkspace().getProject().getDataCore();
 			String xml = xstream.toXML(dataModule);
 			
 			PrintWriter zapis = new PrintWriter(path);
 			zapis.println(xml);
 			zapis.close();
-			GUIManager.getDefaultGUIManager().log("Network has been saved to file: "+path + ".abyss", "text", true);
-			GUIManager.getDefaultGUIManager().markNetSaved();
+			overlord.log(lang.getText("LOGentry00155")+" "+path + ".abyss", "text", true);
+			overlord.markNetSaved();
 			return true;
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
-			GUIManager.getDefaultGUIManager().log("Error: " + e.getMessage(), "error", true);
+			overlord.log(lang.getText("LOGentry00156exception")+"\n"+e.getMessage(), "error", true);
 			return false;
 		}
 	}

@@ -1,23 +1,27 @@
 package holmes.tables.simKnock;
 
+import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
+
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
 /**
  * Model tabeli danych statystycznych dla miejsc
- * 
- * @author MR
- *
  */
 public class SimKnockPlacesCompAllTableModel extends AbstractTableModel {
+	@Serial
 	private static final long serialVersionUID = 2403086900970134182L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<ArrayList<String>> dataMatrix;
 	private int dataSize;
 	public ArrayList<ArrayList<DetailsPlace>> pTableData;
 	
-	public class DetailsPlace {
+	public static class DetailsPlace {
 		public DetailsPlace() {}
 		
 		public double refAvgTokens;
@@ -106,28 +110,28 @@ public class SimKnockPlacesCompAllTableModel extends AbstractTableModel {
      */
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Object returnValue = null;
+		Object returnValue;
 		if(columnIndex == 1) {
-			return dataMatrix.get(rowIndex).get(columnIndex).toString();
+			return dataMatrix.get(rowIndex).get(columnIndex);
 		}
 		
 		if(columnIndex < 3) {
 			try {
 				returnValue = dataMatrix.get(rowIndex).get(columnIndex);
 				String strVal = returnValue.toString();
-				int val = Integer.parseInt(strVal);
-				return val;
+				return Integer.parseInt(strVal);
 				//return returnValue;
 			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentry00429exception")+"\n"+e.getMessage(), "error", true);
 				return "error";
 			}
 		} else {
 			try {
 				returnValue = dataMatrix.get(rowIndex).get(columnIndex);
 				String strVal = returnValue.toString().replace(",", ".");
-				double val = Double.parseDouble(strVal);
-				return val;
+				return Double.parseDouble(strVal);
 			} catch (Exception e) {
+				overlord.log(lang.getText("LOGentry00430exception")+"\n"+e.getMessage(), "error", true);
 				return "error";
 			}
 		}

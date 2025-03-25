@@ -2,7 +2,6 @@ package holmes.darkgui;
 
 import holmes.analyse.MCTCalculator;
 import holmes.clusters.ClusterDataPackage;
-import holmes.darkgui.dockable.DeleteAction;
 import holmes.darkgui.dockwindows.HolmesDockWindow;
 import holmes.darkgui.dockwindows.PetriNetTools;
 import holmes.darkgui.dockwindows.HolmesDockWindow.DockWindowType;
@@ -10,6 +9,7 @@ import holmes.darkgui.settings.SettingsManager;
 import holmes.darkgui.toolbar.Toolbar;
 import holmes.files.io.TexExporter;
 import holmes.petrinet.elements.ElementLocation;
+import holmes.petrinet.elements.MetaNode;
 import holmes.petrinet.elements.Node;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.simulators.SimulatorGlobals;
@@ -17,63 +17,42 @@ import holmes.petrinet.subnets.SubnetsControl;
 import holmes.petrinet.subnets.SubnetsGraphics;
 import holmes.utilities.Tools;
 import holmes.windows.*;
+import holmes.windows.clusters.HolmesClusters;
+import holmes.windows.decompositions.*;
 import holmes.windows.ssim.HolmesSim;
+import holmes.windows.xtpn.HolmesSimXTPN;
 import holmes.workspace.ExtensionFileFilter;
 import holmes.workspace.Workspace;
+import holmes.workspace.WorkspaceSheet;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.KeyboardFocusManager;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Random;
 
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
-import com.javadocking.DockingManager;
-import com.javadocking.component.DefaultSwComponentFactory;
-import com.javadocking.dock.CompositeDock;
-import com.javadocking.dock.CompositeTabDock;
-import com.javadocking.dock.Dock;
-import com.javadocking.dock.FloatDock;
-import com.javadocking.dock.Position;
-import com.javadocking.dock.SplitDock;
-import com.javadocking.dock.factory.LeafDockFactory;
-import com.javadocking.dockable.ActionDockable;
-import com.javadocking.dockable.Dockable;
-import com.javadocking.dockable.DockableState;
-import com.javadocking.dockable.StateActionDockable;
-import com.javadocking.dockable.action.DefaultDockableStateActionFactory;
-import com.javadocking.dockable.action.DefaultPopupMenuFactory;
-import com.javadocking.event.DockingListener;
-import com.javadocking.model.DefaultDockingPath;
-import com.javadocking.model.FloatDockModel;
-import com.javadocking.visualizer.FloatExternalizer;
-import com.javadocking.visualizer.LineMinimizer;
-import com.javadocking.visualizer.SingleMaximizer;
 
 /**
  * Główna klasa programu odpowiedzialna za właściwie wszystko. Zaczyna od utworzenia elementów
  * graficznych programu, a dalej jakoś tak samo już się wszystko toczy. Albo wywala.
  * 
  * @author students - ktoś musiał zacząć.
- * @author MR - Metody, Metody. Nowe Metody. Podpisano: Cyryl
+ * @author MR - Metody, Metody. Nowe Metody. сделал: Цириль
  */
 public class GUIManager extends JPanel implements ComponentListener {
+	@Serial
 	private static final long serialVersionUID = -817072868916096442L;
-	// Static fields.
-	private static GUIManager guiManager;
-	public boolean debug = false;
+	// Static fields:
+	private static GUIManager guiManager; //our holy overlord, uber object to rule them all
+	private static LanguageManager lang; //his holy servant, the language manager
+	public boolean debug = false; //don't know this guy, never heard of him
 	public Random randGen = new Random(System.currentTimeMillis());
 	public GUIOperations io;
 	public TexExporter tex;
@@ -85,48 +64,30 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private Dimension screenSize; 		// praca w maksymalizacji
 	@SuppressWarnings("unused")
 	private Dimension smallScreenSize;	// praca poza maksymalizowanym oknem
-	private FloatDockModel dockModel;
-	
+
 	// settings
 	private final SettingsManager settingsManager;
 	
-	// visualizers
-	private LineMinimizer minimizer;
-	private SingleMaximizer maximizer;
-	private FloatExternalizer externalizer;
-	
 	// main Docks
 	private Workspace workspace;
-	private CompositeTabDock leftTabDock;
-	//private CompositeTabDock bottomLeftTabDock;
-	private CompositeTabDock topRightTabDock;
-	private CompositeTabDock bottomRightTabDock;
-	// SplitDocks
-	private SplitDock leftSplitDock;
-	private SplitDock rightSplitDock;
-	private SplitDock totalSplitDock;
-	
+	private JTabbedPane tabbedWorkspace = new JTabbedPane();
+
 	private PetriNetTools toolBox;
 	
-	// podokna dokowalne głównego okna Holmes:
+	// podokna głównego okna programu
 	private HolmesDockWindow simulatorBox;	//podokno przycisków symulatorów sieci
-	private HolmesDockWindow selectionBox;	//podokno zaznaczonych elementów sieci
+	private HolmesDockWindow selectionBox;	//podokno zaznaczonych elementów sieci //06.2023: ni ma. Widział ktoś??
 	private HolmesDockWindow mctBox;			//podokno MCT
 	private HolmesDockWindow t_invariantsBox;	//podokno t-inwariantów
-	private HolmesDockWindow p_invariantsBox;
+	private HolmesDockWindow p_invariantsBox;	//p-inwarianty
 	private HolmesDockWindow selElementBox;  //podokno klikniętego elementu sieci
 	private HolmesDockWindow clustersBox;	//podokno podświetlania klastrów
-	private HolmesDockWindow mcsBox;
+	private HolmesDockWindow mcsBox;	//minimal cuttting sets
 	private HolmesDockWindow fixBox;
-	private HolmesDockWindow knockoutBox;
-	private HolmesDockWindow quickSimBox;
+	private HolmesDockWindow knockoutBox;	//symulator knockout
+	private HolmesDockWindow quickSimBox;  //szybki symulator
 	//-//private HolmesDockWindow decompositionBox;
 	
-	//UNUSED
-	
-	
-	// docking listener
-	private DarkDockingListener dockingListener;
 	private Toolbar shortcutsBar;
 
 	// main frame
@@ -142,13 +103,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private String logPath;
 	
 	// okna niezależne:
-	private HolmesClusters windowClusters; //okno tabeli 
+	private HolmesClusters windowClusters; //okno tabeli
 	private HolmesConsole windowConsole; //konsola logów
 	private HolmesNetProperties windowNetProperties; //okno właściwości sieci
 	private HolmesAbout windowAbout; //okno About...
 	private HolmesSearch windowSearch; //okno wyszukiwania elementów sieci
 	private HolmesProgramProperties windowProperties; //okno właściwości sieci
 	private HolmesSim windowStateSim; //okno symulatora stanów
+	private HolmesSimXTPN windowStateSimXTPN; //okno symulatora stanów
 	private HolmesNetTables windowNetTables; //okno tabel sieci
 	private HolmesNotepad windowSimulationLog; //okno logów symulatora
 	private HolmesInvariantsGenerator windowInvariants; //okno generatora inwariantów
@@ -162,15 +124,21 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private HolmesComparisonModule windowsComp;
 	private HolmesReductionPrototype windowReduction;
 
-
 	private boolean rReady = false; // true, jeżeli program ma dostęp do pliku Rscript.exe
 	private boolean inaReady = true;
-	
-	private boolean nameLocChangeMode = false; //jeśli true, zmieniamy offset napisu
+
+	static private boolean isXTPNmode = false;
+
+	/**
+	 * NONE, NAME, ALPHA, BETA, GAMMA, TAU
+	 */
+	public enum locationMoveType {NONE, NAME, ALPHA, BETA, GAMMA, TAU}
+	private locationMoveType nameLocChangeMode = locationMoveType.NONE;
 	private Node nameSelectedNode = null;
 	private ElementLocation nameNodeEL = null;
-	
-	public ArrayList<Dockable> globalSheetsList = new ArrayList<>();
+
+	public JPanel propericeTMPBox;
+	public JTabbedPane analysisTabs;
 	
 	/**
 	 * Konstruktor obiektu klasy GUIManager.
@@ -178,17 +146,21 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public GUIManager(JFrame frejm) {
 		super(new BorderLayout());
-
 		//JavaDocking wysypuje się jeśli numer wersji nie posiada przynajmniej jednej .
-		if(!System.getProperty("java.version").contains("."))
-			System.setProperty("java.version",System.getProperty("java.version")+".0");
+		//Piękny był to fuckup, nie zapomnę go nigdy [MR].
+		// [2024]Już nie ważne, ale zostawmy na pamiątkę.
+		//if(!System.getProperty("java.version").contains("."))
+		//	System.setProperty("java.version",System.getProperty("java.version")+".0");
 
 		guiManager = this;
-		io = new GUIOperations(this); //obiekt klasy operacji głównych
+		createHiddenConsole(); // okno konsoli logowania zdarzeń
+		lang = new LanguageManager();
+
+		io = new GUIOperations(); //obiekt klasy operacji głównych
 		tex = new TexExporter(); //obiekt zarządzający eksportem tabel do formatu latex
 		reset = new GUIReset(); //obiekt odpowiadający za resetowanie danych / kasowanie / czyszczenie
 		subnetsGraphics = new SubnetsGraphics(); //obiekt z metodami graficznymi dla sieci hierarchicznych
-		subnetsHQ = new SubnetsControl(this); //obiekt z metodami zarządzania sieciami hierarchicznymi
+		subnetsHQ = new SubnetsControl(); //obiekt z metodami zarządzania sieciami hierarchicznymi
 		simSettings = new SimulatorGlobals(); //opcje symulatora
 		
 		setFrame(frejm);
@@ -197,18 +169,27 @@ public class GUIManager extends JPanel implements ComponentListener {
 		} catch (Exception e ) {
 			System.out.println(e.getMessage());
 		}
-		
-		frame.getContentPane().add(this);
+
 		frame.addComponentListener(this);
-		getFrame().getContentPane().add(this);
 		getFrame().addComponentListener(this);
-		
-		createHiddenConsole(); // okno konsoli logowania zdarzeń
-		
+
 		settingsManager = new SettingsManager();
 		settingsManager.loadSettings();
-		frame.setTitle("Holmes "+settingsManager.getValue("holmes_version"));
 		
+		setJavaUI(); 
+		
+		/*
+		ArrayList<String> installedLAFs = new ArrayList<>();
+		try {
+			for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+				installedLAFs.add(info.getName() + " | " + info.getClassName());
+			}
+		} catch (Exception e) {	
+		}*/
+		
+		
+		frame.setTitle("Holmes "+settingsManager.getValue("holmes_version"));
+		lang.setLanguage(settingsManager.getValue("selected_language"), true);
 		
 		createClusterWindow(); // okno tabeli klastrów
 		createNetPropertiesWindow(); // okno właściwości sieci
@@ -227,37 +208,46 @@ public class GUIManager extends JPanel implements ComponentListener {
 		
 		getFrame().setLocation((int) (screenSize.width * 0.1) / 2, (int) (screenSize.height * 0.1) / 2);
 		getFrame().setSize((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
+		//getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		getFrame().setVisible(true);
-		getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
-		
-		
-		// Create the dock model for the docks.
-		setDockModel(new FloatDockModel());
-		getDockModel().addOwner("frame0", getFrame());
 
-		FloatDock floatDock = getDockModel().getFloatDock(getFrame());
-		floatDock.setChildDockFactory(new LeafDockFactory(false));
+		boolean startMaximized = Boolean.parseBoolean(settingsManager.getValue("mainWindowStartMaximized"));
+		startMaximized = true; // fot the moment
 
-		// setfactories
-		DefaultPopupMenuFactory popupMenuFactory = new DefaultPopupMenuFactory();
-		popupMenuFactory.setPopupActions(DefaultPopupMenuFactory.DOCKABLE_ACTIONS
-				| DefaultPopupMenuFactory.CLOSE_ALL_ACTION
-				| DefaultPopupMenuFactory.CLOSE_OTHERS_ACTION);
-		DefaultSwComponentFactory componentFactory = new DefaultSwComponentFactory();
-		componentFactory.setPopupMenuFactory(popupMenuFactory);
-		DockingManager.setComponentFactory(componentFactory);
+		int screenHeight = screenSize.height;
+		int screenWidth = screenSize.width;
 
-		// Give the dock model to the docking manager.
-		DockingManager.setDockModel(getDockModel());
+		float aspect = (float)screenWidth / (float)screenHeight;
+		if(aspect > 2.0) {
+			getFrame().setSize(screenHeight*2, screenHeight-40);
+			getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.NORMAL);
+			getFrame().setLocation(-7, -1);
+		} else {
+			if(startMaximized) {
+				getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.MAXIMIZED_BOTH);
+			} else {
+				int width = Integer.parseInt(settingsManager.getValue("mainWindowWidth"));
+				int height = Integer.parseInt(settingsManager.getValue("mainWindowHeight"));
 
-		// Create the composite tab docks.
-		leftTabDock = new CompositeTabDock(); // default Toolbox dock
-		topRightTabDock = new CompositeTabDock(); // default Properties dock
-		bottomRightTabDock = new CompositeTabDock(); // default Simulator dock
+				getFrame().setSize(width, height);
+				getFrame().setExtendedState(getFrame().getExtendedState() | JFrame.NORMAL);
+			}
+		}
+
+		getFrame().setVisible(true);
 
 		// set docking listener
-		setDockingListener(new DarkDockingListener());
+		//setDockingListener(new DarkDockingListener());
 		setToolBox(new PetriNetTools());
+
+		// create workspace
+		createSimLogWindow(); // okno logów symulatora
+
+		setWorkspace(new Workspace());
+		getWorkspace().newTab(false, new Point(0,0), 1, MetaNode.MetaType.SUBNET);
+		getTabbedWorkspace().setPreferredSize(new Dimension(1300,400));
+
+		// create sub panels for main frame:
 		setPropertiesBox(new HolmesDockWindow(DockWindowType.EDITOR));
 		setSimulatorBox(new HolmesDockWindow(DockWindowType.SIMULATOR));
 		setSelectionBox(new HolmesDockWindow(DockWindowType.SELECTOR));
@@ -268,128 +258,148 @@ public class GUIManager extends JPanel implements ComponentListener {
 		setMCSBox(new HolmesDockWindow(DockWindowType.MCSselector));
 		setKnockoutBox(new HolmesDockWindow(DockWindowType.Knockout));
 		setQuickSimBox(new HolmesDockWindow(DockWindowType.QuickSim));
+		setFixBox(new HolmesDockWindow(DockWindowType.FIXNET));
 		//setDecompositionBox(new HolmesDockWindow(DockWindowType.DECOMPOSITION));
 
 		// create menu
 		setMenu(new DarkMenu());
 		getFrame().setJMenuBar(getMenu());
 
-		// create workspace
-		setWorkspace(new Workspace(this)); // default workspace dock
-		getDockingListener().setWorkspace(workspace);
-		
-		setFixBox(new HolmesDockWindow(DockWindowType.FIXNET));
-
-		//leftTabDock.setHeaderPosition(Position.BOTTOM);
-		leftTabDock.addChildDock(getToolBox(), new Position(0));
-		leftTabDock.addChildDock(getSimulatorBox(), new Position(1));
-		leftTabDock.setSelectedDock(getToolBox());
-
-		topRightTabDock.addChildDock(getPropertiesBox(), new Position(0));
-		topRightTabDock.setSelectedDock(getPropertiesBox());
-		
-		bottomRightTabDock.addChildDock(getT_invBox(), new Position(1));
-		bottomRightTabDock.addChildDock(getP_invBox(), new Position(2));
-		bottomRightTabDock.addChildDock(getMctBox(), new Position(3));
-		bottomRightTabDock.addChildDock(getMCSBox(), new Position(4));
-		bottomRightTabDock.addChildDock(getClusterSelectionBox(), new Position(5));
-		bottomRightTabDock.addChildDock(getKnockoutBox(), new Position(6));
-		bottomRightTabDock.addChildDock(getQuickSimBox(), new Position(7));
-		bottomRightTabDock.addChildDock(getFixBox(), new Position(8));
-		//bottomRightTabDock.addChildDock(getDecompositionBox(), new Position(9));
-
-		// create the split docks
-		//leftSplitDock = new SplitDock();
-		//leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
-		//leftSplitDock.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
-				
-		leftSplitDock = new SplitDock();
-		leftSplitDock.addChildDock(leftTabDock, new Position(Position.LEFT));
-		
-		SplitDock workspaceSplit = new SplitDock();
-		workspaceSplit.addChildDock(getWorkspace().getWorkspaceDock(), new Position(Position.CENTER));
-		if(debug) {
-			workspaceSplit.addChildDock(getSelectionBox(), new Position(Position.BOTTOM));
-		} else {
-			topRightTabDock.addChildDock(getSelectionBox(), new Position(1));
-			topRightTabDock.setSelectedDock(getPropertiesBox());
-		}
-		workspaceSplit.setDividerLocation((int) (screenSize.getHeight() * 7 / 10));
-		leftSplitDock.addChildDock(workspaceSplit, new Position(Position.CENTER));
-		leftSplitDock.setDividerLocation(180);
-		
-		rightSplitDock = new SplitDock();
-		rightSplitDock.addChildDock(topRightTabDock, new Position(Position.TOP));
-		rightSplitDock.addChildDock(bottomRightTabDock, new Position(Position.BOTTOM));
-		rightSplitDock.setDividerLocation((int) (screenSize.getHeight() * 2 / 5));
-
-		totalSplitDock = new SplitDock();
-		totalSplitDock.addChildDock(leftSplitDock, new Position(Position.LEFT));
-		totalSplitDock.addChildDock(rightSplitDock,new Position(Position.RIGHT));
-		//totalSplitDock.setDividerLocation(400);
-		totalSplitDock.setDividerLocation((int) screenSize.getWidth() - (int) screenSize.getWidth() / 6);
-		
-		// // Add root dock
-		getDockModel().addRootDock("totalSplitDock", totalSplitDock, getFrame());
-		add(totalSplitDock, BorderLayout.CENTER);
-
-		// save docking paths
-		DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getToolBox().getDockable()));
-		DockingManager.getDockingPathModel().add(DefaultDockingPath.createDockingPath(getPropertiesBox().getDockable()));
-
-		// Create an externalizer.
-		setExternalizer(new FloatExternalizer(getFrame()));
-		dockModel.addVisualizer("externalizer", getExternalizer(), getFrame());
-
-		// Create a minimizer.
-		setMinimizer(new LineMinimizer(totalSplitDock));
-		dockModel.addVisualizer("minimizer", getMinimizer(), getFrame());
-
-		// Create a maximizer.
-		setMaximizer(new SingleMaximizer(getMinimizer()));
-		dockModel.addVisualizer("maximizer", getMaximizer(), getFrame());
-		this.add(getMaximizer(), BorderLayout.CENTER);
-
 		// default screen size unmaximized
 		smallScreenSize = new Dimension((int) (screenSize.getWidth() * 0.9), (int) (screenSize.getHeight() * 0.9));
 		setShortcutsBar(new Toolbar());
+		getFrame().add(shortcutsBar,BorderLayout.PAGE_START);
 
-		// Add the shortcuts bar also as root dock to the dock model.
-		dockModel.addRootDock("toolBarBorderDock", getShortcutsBar().getToolBarBorderDock(), frame);
+		JPanel mainpanel = new JPanel();
+		mainpanel.add(getWorkspace().getSelectedSheet());	//03072023 old code
 
-		// Add the shortcuts bar to this panel.
-		this.add(getShortcutsBar().getToolBarBorderDock(), BorderLayout.CENTER);
+		mainpanel.setLayout(new BorderLayout());
+		mainpanel.setSize(200,200);
+		
+		getFrame().add(getWorkspace().getSelectedSheet(),  BorderLayout.CENTER); //03072023 old code
+		
+		// create tools
+		propericeTMPBox = getPropertiesBox().getCurrentDockWindow();
+		propericeTMPBox.setPreferredSize(new Dimension(200, 400));
+
+		//getFrame().add(propericeTMPBox,BorderLayout.LINE_END);
+		JTabbedPane leftCentralPanel = new JTabbedPane();
+		leftCentralPanel.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				//rects[tabIndex].height = 26 + 1;
+				//rects[tabIndex].y = 32 - rects[tabIndex].height + 1;
+				/*
+				if(tabIndex==0) {
+					rects[tabIndex].height = 20 + 1;
+					rects[tabIndex].y = 32 - rects[tabIndex].height + 1;
+				} else if(tabIndex==1) {
+					rects[tabIndex].height = 26 + 1;
+					rects[tabIndex].y = 32 - rects[tabIndex].height + 1;
+				}
+				 */
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
+		
+		
+		leftCentralPanel.add(getToolBox().getTree());
+		leftCentralPanel.setTabComponentAt(0, new JLabel("Toolbox"));
+		leftCentralPanel.add(getSimulatorBox().getCurrentDockWindow().getPanel());
+		leftCentralPanel.setTabComponentAt(1, new JLabel("Simulator"));
+		leftCentralPanel.setPreferredSize(new Dimension(200,400));
+
+		analysisTabs = new JTabbedPane();
+		analysisTabs.setUI(new javax.swing.plaf.basic.BasicTabbedPaneUI() {
+			@Override protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+				return 32;
+			}
+			@Override protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
+				//rects[tabIndex].height = 26 + 1;
+				//rects[tabIndex].y = 26 - rects[tabIndex].height + 1;
+				/*
+				if(tabIndex==0) {
+					rects[tabIndex].height = 20 + 1;
+					rects[tabIndex].y = 32 - rects[tabIndex].height + 1;
+				} else if(tabIndex==1) {
+					rects[tabIndex].height = 26 + 1;
+					rects[tabIndex].y = 32 - rects[tabIndex].height + 1;
+				}
+				 */
+				super.paintTab(g, tabPlacement, rects, tabIndex, iconRect, textRect);
+			}
+		});
+		analysisTabs.add(getQuickSimBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(0, new JLabel(lang.getText("GUIM_quicksimTabName")));
+		analysisTabs.add(getT_invBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(1, new JLabel(lang.getText("GUIM_tinvTabName")));
+		analysisTabs.add(getP_invBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(2, new JLabel(lang.getText("GUIM_pinvTabName")));
+		analysisTabs.add(getMctBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(3, new JLabel(lang.getText("GUIM_mctTabName")));
+		analysisTabs.add(getMCSBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(4, new JLabel(lang.getText("GUIM_mcsTabName")));
+		
+		//analysisTabs.add(getKnockoutBox().getCurrentDockWindow().getPanel());
+		//analysisTabs.setTabComponentAt(5, new JLabel(lang.getText("GUIM_KnockoutTabName")));
+		
+		analysisTabs.add(getFixBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(5, new JLabel(lang.getText("GUIM_fixTabName")));
+		analysisTabs.add(getClusterSelectionBox().getCurrentDockWindow().getPanel());
+		analysisTabs.setTabComponentAt(6, new JLabel(lang.getText("GUIM_clustersTabName")));
+		analysisTabs.setPreferredSize(new Dimension(200,200));
+
+		JSplitPane simAndworkspacePanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftCentralPanel , getTabbedWorkspace());
+		leftCentralPanel.setPreferredSize(new Dimension(200, 400));
+		simAndworkspacePanel.setPreferredSize(new Dimension(1200,200));
+		simAndworkspacePanel.setDividerLocation(180);
+		JSplitPane rightPanelSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, propericeTMPBox, analysisTabs);
+		JSplitPane uberMainPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, simAndworkspacePanel, rightPanelSplit);
+
+		if(aspect > 2.0) {
+			uberMainPanel.setDividerLocation(screenHeight*2 - 330); //pasek okien po prawej
+		} else {
+			uberMainPanel.setDividerLocation(this.screenSize.width - 350); //normal
+		}
+
+		rightPanelSplit.setDividerLocation(340); //podział pionowy prawego panelu
+
+		getFrame().add(uberMainPanel,BorderLayout.CENTER);
+
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new KeyManager(this));
 
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-		    	boolean status = GUIManager.getDefaultGUIManager().getNetChangeStatus();
+		    	boolean status = getNetChangeStatus();
 				if(status) {
-					Object[] options = {"Exit", "Save and exit", "Cancel",};
+					Object[] options = {lang.getText("exit"), lang.getText("saveAndExit"), lang.getText("cancel"),};
+					String tmp = lang.getText("GUIM_closingQuestion001");
 					int n = JOptionPane.showOptionDialog(null,
-									"Network or its data have been changed since last save. Exit, save&exit or do not exit now?",
-									"Project has been modified", JOptionPane.YES_NO_OPTION,
+									tmp,
+									lang.getText("GUIM_closeWindowTitle001"), JOptionPane.YES_NO_OPTION,
 									JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
 					//cancel
-					if (n == 2) return;
-					else if (n == 1) { //try to save
+					if (n == 0) {
+						log(lang.getText("LOGentry00001"),"text",true);
+						windowConsole.saveLogToFile(null);
+						System.exit(0);
+					} else if (n == 1) { //try to save
 						boolean savingStatus = io.saveAsGlobal();
-						if(!savingStatus) return;
-						else {
-							log("Exiting program","text",true);
+						if(!savingStatus) {
+							return;
+						} else {
+							log(lang.getText("LOGentry00001"),"text",true);
 			            	windowConsole.saveLogToFile(null);
 			            	System.exit(0);
 						}
-					} else { // n == 0
-						log("Exiting program","text",true);
-		            	windowConsole.saveLogToFile(null);
-		            	System.exit(0);
 					}
-				} else if (JOptionPane.showConfirmDialog(frame, "Are you sure you want to close the program?", "Exit?", 
+				} else if (JOptionPane.showConfirmDialog(frame, lang.getText("GUIM_closingQuestion002"), lang.getText("exit")+"?",
 		            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-		        		log("Exiting program","text",true);
+		        		log(lang.getText("LOGentry00001"),"text",true);
 		            	windowConsole.saveLogToFile(null);
 		            	System.exit(0);
 		        	}
@@ -399,15 +409,90 @@ public class GUIManager extends JPanel implements ComponentListener {
 		//na samym końcu, gdy już wszystko 'działa'
 		//createPropertiesWindow();
 		createStateSimulatorWindow();
+		createStateSimulatorXTPNWindow();
 		createMCSWindow(); // okno generatora MCS
-		createSimLogWindow(); // okno logów symulatora
-		
+
 		String path = settingsManager.getValue("lastOpenedPath");
 		File f = new File(path);
 		if(f.exists())
 			lastPath = path;	
 
-		getSimulatorBox().createSimulatorProperties();
+		//getSimulatorBox().createSimulatorProperties(false);
+		getFrame().repaint();
+		
+		
+		//for(String str : installedLAFs) {
+		//	log("Look and feel: "+str, "text", false);
+		//}
+	}
+
+	/**
+	 * Metoda ustawia grafikę intefejsu programu z pakietów UIManager Java.
+	 */
+	private void setJavaUI() {
+		String current = getSettingsManager().getValue("systemUI");
+        switch (current) {
+            case "1" -> {
+                try {
+                    for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if ("Nimbus".equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    try {
+                        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    } catch (Exception ignored) {
+                    }
+                }  //Nimbus
+            }
+            case "2" -> {
+                try {
+                    for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if ("CDE/Motif".equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    try {
+                        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    } catch (Exception ignored) {
+                    }
+                } // CDE/Motif
+            }
+            case "3" -> {
+                try {
+                    for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if ("Windows".equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    try {
+                        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    } catch (Exception ignored) {
+                    }
+                }  //Windows
+            }
+            case "4" -> {
+                try {
+                    for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if ("Windows Classic".equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    try {
+                        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                    } catch (Exception ignored) {
+                    }
+                }  //Windows Classic
+            }
+        } 
 	}
 
 	/**
@@ -438,11 +523,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 				|| !checkFileINA3.exists() || !(checkFileINA3.length() == 30)
 				|| !checkFileINA2p.exists() || !(checkFileINA2p.length() == 77)) {
 			
-			log("Something wrong with the INA tools directory.", "warning", true);
+			//log("Something wrong with the INA tools directory.", "warning", true);
 			if(!checkFileINA0.exists()) {
 				checkFileINA0.mkdirs();
-				logNoEnter("Tools directory does not exist: ", "warning", true);
-				log("fixed", "italic", false);
+				logNoEnter(lang.getText("LOGentry00002"), "warning", true);
+				log(lang.getText("fixed"), "italic", false);
 			}
 			
 			if(!checkFileINA2.exists() || !(checkFileINA2.length() == 80)) { //COMMAND.ina
@@ -453,12 +538,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 					pw.print(settingsManager.getValue("ina_COMMAND3")+"\r");
 					pw.print(settingsManager.getValue("ina_COMMAND4"));
 					pw.close();
-					logNoEnter("File COMMAND.ina does not exist or is corrupted. ", "warning", true);
-					log("Fixed", "italic", false);
+					logNoEnter(lang.getText("LOGentry00003"), "warning", true);
+					log(lang.getText("fixed"), "italic", false);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Unable to recreate COMMAND.ina.","Error - COMMAND.ina", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("GUI_inaProblem001"),lang.getText("GUI_inaProblem002"), JOptionPane.ERROR_MESSAGE);
 					inaReady = false;
-					log("Unable to recreate COMMAND.ina. Invariants generator will work in Holmes mode only.", "warning", true);
+					log(lang.getText("LOGentry00004"), "warning", true);
 				}
 			} 
 			
@@ -469,12 +554,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 					pw.print(settingsManager.getValue("ina_COMMAND2p")+"\r");
 					pw.print(settingsManager.getValue("ina_COMMAND4"));
 					pw.close();
-					logNoEnter("File COMMANDp.ina does not exist or is corrupted. ", "warning", true);
+					logNoEnter(lang.getText("LOGentry00005"), "warning", true);
 					log("Fixed", "italic", false);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Unable to recreate COMMANDp.ina.","Error - COMMANDp.ina", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("GUI_inaProblem001"),lang.getText("GUI_inaProblem003"), JOptionPane.ERROR_MESSAGE);
 					inaReady = false;
-					log("Unable to recreate COMMANDp.ina. Invariants generator will work in Holmes mode only.", "warning", true);
+					log(lang.getText("LOGentry00004"), "warning", true);
 				}
 			} 
 			
@@ -483,23 +568,18 @@ public class GUIManager extends JPanel implements ComponentListener {
 					PrintWriter pw = new PrintWriter(checkFileINA3.getPath());
 					pw.print(settingsManager.getValue("ina_bat"));
 					pw.close();
-					logNoEnter("File ina.bat did not exist or was corrupted: ", "warning", true);
-					log("fixed", "italic", false);
+					logNoEnter(lang.getText("LOGentry00006"), "warning", true);
+					log(lang.getText("fixed"), "italic", false);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Unable to recreate ina.bat. This is a critical error, possible write"
-							+ " protection issues in program directory. All in all, invariants generation using INAwin32 will"
-							+ " most likely fail.","Critical error - writing", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang.getText("GUI_inaProblem004"),lang.getText("GUI_inaProblem005"), JOptionPane.ERROR_MESSAGE);
 					inaReady = false;
-					log("Critical error, unable to recreate ina.bat file. Invariants generator will not work.", "warning", true);
+					log(lang.getText("LOGentry00007"), "warning", true);
 				}
 			} 
 			
 			if(!checkFileINA1.exists()) { //no INAwin32.exe
-				//String msg = "INAwin32.exe missing in\n "+checkFileINA0.getPath()+"directory.\n"
-				//		+ "Please download manually from and put in the right directory.";
-				//JOptionPane.showMessageDialog(null, msg, "Error - no INAwin32.exe", JOptionPane.ERROR_MESSAGE);
-				log("INAwin32.exe missing in "+checkFileINA0+"directory. Please download "
-						+ "manually from www2.informatik.hu-berlin.de/~starke/ina.html and put into the \\Tools directory.", "warning", true);
+				//log("INAwin32.exe missing in "+checkFileINA0+"directory. Please download "
+				//		+ "manually from www2.informatik.hu-berlin.de/~starke/ina.html and put into the \\Tools directory.", "warning", true);
 				inaReady = false;
 			}
 		}
@@ -521,24 +601,24 @@ public class GUIManager extends JPanel implements ComponentListener {
 		File rF = new File(Rpath);
 		if(!rF.exists()) {
 			rReady = false;
-			log("Invalid path ("+Rpath+") to Rscript executable file.", "warning", true);
+			log(lang.getText("LOGentry00008R")+Rpath+lang.getText("LOGentry00009R"), "warning", true);
 			if(!forceCheck) { //jeśli nie jest wymuszone sprawdzanie, sprawdź status settings
 				if(getSettingsManager().getValue("programAskForRonStartup").equals("0"))
 					return;
 			}
 
-			Object[] options = {"Manually locate Rscript.exe", "R not installed",};
+			Object[] options = {lang.getText("GUI_RscriptProblem001"), lang.getText("GUI_RscriptProblem002"),};
 			int n = JOptionPane.showOptionDialog(null,
-					"Rscript.exe missing in path "+Rpath,
-					"Missing executable", JOptionPane.YES_NO_OPTION,
+					lang.getText("GUI_RscriptProblem003")+Rpath,
+					lang.getText("GUI_RscriptProblem004"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 			if (n == 0) {
 				FileFilter[] filters = new FileFilter[1];
 				filters[0] = new ExtensionFileFilter(".exe - Rscript",  new String[] { "EXE" });
-				String selectedFile = Tools.selectFileDialog("", filters, "Select Rscript.exe", 
-						"Please select Rscript exe, usually located in R/Rx.x.x/bin directory.", "");
-				if(selectedFile.equals("")) {
-					log("Rscript executable file inaccessible. Some features (clusters operations) will be disabled.", "error", true);
+				String selectedFile = Tools.selectFileDialog("", filters, lang.getText("GUI_RscriptButton001"),
+						lang.getText("GUI_RscriptButton002tip"), "");
+				if(selectedFile.isEmpty()) {
+					log(lang.getText("LOGentry00010R"), "error", true);
 				} else {
 					if(!selectedFile.contains("x64")) { //jeśli wskazano 64b
 						String dest = selectedFile.substring(0,selectedFile.lastIndexOf(File.separator));
@@ -555,12 +635,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 						settingsManager.setValue("r_path", selectedFile, true);
 						settingsManager.saveSettings();
 						setRStatus(true);
-						log("Rscript.exe manually located in "+selectedFile+". Settings file updated.", "text", true);
+						log(lang.getText("LOGentry00011R")+selectedFile+lang.getText("LOGentry00012R"), "text", true);
 					
 					} else {
 						settingsManager.setValue("r_path", "", true);
 						setRStatus(false);
-						log("Rscript.exe location unknown. Clustering procedures will not work.", "error", true);	
+						log(lang.getText("LOGentry00013R"), "error", true);
 					}
 				}
 			}
@@ -574,45 +654,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 	private void resetSplitDocks() {
 		if (getFrame().getExtendedState() == JFrame.MAXIMIZED_BOTH) {
 			screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-			//leftSplitDock.setDividerLocation((int) screenSize.getWidth() / 10);
-			leftSplitDock.setDividerLocation(180);
-			//
-			//int width = this.getWidth();
-			//totalSplitDock.setDividerLocation(600);
-			//totalSplitDock.setDividerLocation((int) (screenSize.getWidth() * 5.6 / 7));
-			totalSplitDock.setDividerLocation((int) (screenSize.getWidth() - 350));
 		} else {
 			smallScreenSize = getFrame().getSize();
-			//leftSplitDock.setDividerLocation((int) smallScreenSize.getWidth() / 8);
-			leftSplitDock.setDividerLocation(180);
-			//totalSplitDock.setDividerLocation((int) (smallScreenSize.getWidth() * 5.6 / 7));
-			totalSplitDock.setDividerLocation((int) (screenSize.getWidth() - 350));
 		}
 	}
 
-	/**
-	 * Metoda odpowiedzialna za dodawanie nowych ikonek w prawy górnym roku każdego podokna programu.
-	 * @param dockable - okno do przystrojenia dodatkowymi okienkami
-	 * @param deletable - true, jeśli dodajemy ikonę usuwania (główne podokno arkuszy sieci)
-	 * @return Dockable - nowe okno po dodaniu elementów
-	 */
-	public Dockable decorateDockableWithActions(Dockable dockable, boolean deletable) {
-		Dockable wrapper = new StateActionDockable(dockable, new DefaultDockableStateActionFactory(), new int[0]);
-		int[] states = { DockableState.NORMAL, DockableState.MINIMIZED, DockableState.MAXIMIZED, DockableState.EXTERNALIZED, DockableState.CLOSED };
-		wrapper = new StateActionDockable(wrapper, new DefaultDockableStateActionFactory(), states);
-
-		if (deletable) {
-			DeleteAction deleteAction = new DeleteAction(this, "Delete", Tools.getResIcon16("/icons/page_white_delete.png"));
-			Action[][] actions = new Action[1][];
-			actions[0] = new Action[1];
-			actions[0][0] = deleteAction;
-			wrapper = new ActionDockable(wrapper, actions);
-			deleteAction.setDockable(wrapper);
-		}
-
-		return wrapper;
-	}
-	
 	/**
 	 * Metoda zwraca ścieżki do ostatio używanego katalagu.
 	 * @return String - ścieżka do katalogu
@@ -623,7 +669,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda ustawia nową ścieżkę do ostatnio używanego katalagu. Zapisuje ją do pliku ustawień programu.
-	 * @return String - ścieżka do katalogu
 	 */
 	public void setLastPath(String path) {
 		lastPath = path;
@@ -682,7 +727,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt podokna wyświetlania zbiorów MCS.
 	 * @return HolmesDockWindow - okno wyboru MCS
 	 */
-	private HolmesDockWindow getMCSBox() {
+	public HolmesDockWindow getMCSBox() {
 		return mcsBox;
 	}
 	/**
@@ -697,7 +742,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt podokna naprawy sieci.
 	 * @return HolmesDockWindow - okno naprawcze
 	 */
-	private HolmesDockWindow getFixBox() {
+	public HolmesDockWindow getFixBox() {
 		return this.fixBox;
 	}
 	/**
@@ -720,7 +765,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda zwraca obiekt podokna wyświetlania zbiorów knockout.
 	 * @return HolmesDockWindow - okno wyboru knockoutBox
 	 */
-	private HolmesDockWindow getKnockoutBox() {
+	public HolmesDockWindow getKnockoutBox() {
 		return knockoutBox;
 	}
 	
@@ -732,25 +777,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		this.quickSimBox = quickSimBox;
 	}
 
-	/**
-	 * Metoda ustawia nowe podokno dekompozycji.
-	 * @param deompositionBox HolmesDockWindow - nowe okno dekompozycji
-	 */
-	//-//
-	/*
-	public void setDecompositionBox(HolmesDockWindow deompositionBox){
-		this.decompositionBox = deompositionBox;
-	}
-*/
-	/**
-	 * Metoda zwraca obiekt podokna dekompozycji.
-	 * @return HolmesDockWindow - okno dekompozycji
-	 */
-	/*
-	public HolmesDockWindow getDecompositionBox() {
-		return decompositionBox;
-	}
-*/
 	/**
 	 * Metoda zwraca obiekt podokna symulatora QuickSim.
 	 * @return HolmesDockWindow - okno QuickSim
@@ -835,7 +861,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda ustawia nowy obiekt podokna do wyświetlania właściwości klikniętego elementu sieci.
 	 * @param propertiesBox HolmesDockWindow - podokno właściwości
 	 */
-	private void setPropertiesBox(HolmesDockWindow propertiesBox) {
+	public void setPropertiesBox(HolmesDockWindow propertiesBox) {
 		this.selElementBox = propertiesBox;
 	}
 
@@ -856,27 +882,20 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 
 	/**
-	 * Opis: I have no idea...
-	 * @return FloatDockModel
-	 */
-	public FloatDockModel getDockModel() {
-		return dockModel;
-	}
-
-	/**
-	 * Opis: I have no idea...
-	 * @param dockModel FloatDockModel
-	 */
-	private void setDockModel(FloatDockModel dockModel) {
-		this.dockModel = dockModel;
-	}
-
-	/**
-	 * Metoda zwraca obiekt - referencji swojej klasy.
-	 * @return GUIManager - obiekt managaera
+	 * Zwraca obiekt głównej, statycznej klasy Holmesa. Właściwie wszelka komunikacja klas ze sobą odbywa się
+	 * poprzez ten obiekt.
+	 * @return GUIManager - obiekt najwyażniejszej klasy/obiektu programu.
 	 */
 	public static GUIManager getDefaultGUIManager() {
 		return guiManager;
+	}
+
+	/**
+	 * Zwraca obiekt zarządzający językiem interfejsu.
+	 * @return LanguageManager - obiekt zarządzający językiem.
+	 */
+	public static LanguageManager getLanguageManager() {
+		return lang;
 	}
 
 	/**
@@ -888,50 +907,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 		return workspace.getIndexOfId(id);
 	}
 
-	/**
-	 * Zwraca obiekt przycisku powiększającego okno do rozmiarów ekranu.
-	 * @return SingleMaximizer
-	 */
-	public SingleMaximizer getMaximizer() {
-		return maximizer;
-	}
-
-	/**
-	 * Ustawia obiekt przycisku powiększającego okno do rozmiarów ekranu.
-	 * @param maximizer SingleMaximizer
-	 */
-	private void setMaximizer(SingleMaximizer maximizer) {
-		this.maximizer = maximizer;
-	}
-
-	/**
-	 * Zwraca obiekt przycisku pomniejszającego okno do paska zadań.
-	 * @return LineMinimizer
-	 */
-	public LineMinimizer getMinimizer() {
-		return minimizer;
-	}
-
-	/**
-	 * Ustawia obiekt przycisku pomniejszającego okno do paska zadań.
-	 * @param minimizer LineMinimizer
-	 */
-	private void setMinimizer(LineMinimizer minimizer) {
-		this.minimizer = minimizer;
-	}
-
-	public FloatExternalizer getExternalizer() {
-		return externalizer;
-	}
-
-	/**
-	 * Opis: I have no idea...
-	 * @param externalizer FloatExternalizer
-	 */
-	private void setExternalizer(FloatExternalizer externalizer) {
-		this.externalizer = externalizer;
-	}
-	
 	/**
 	 * Metoda zwraca obiekt ramki.
 	 * @return JFrame - ramka
@@ -994,35 +969,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	private void setShortcutsBar(Toolbar shortcutsBar) {
 		this.shortcutsBar = shortcutsBar;
-	}
-	
-	/**
-	 * Metoda pomocnicza wywoływana w trakcie tworzenia podokien Holmes (inwarianty, mct, inne, także 
-	 * narzedzia do rysowania).
-	 * @param dockable Dockable
-	 * @param listener DockingListener
-	 * @return Dockable - obiekt podokna zaboxowany w obiekcie dokowalnym
-	 */
-	public static Dockable externalWithListener(Dockable dockable, DockingListener listener) {
-		Dockable wrapper = guiManager.decorateDockableWithActions(dockable, false);
-		wrapper.addDockingListener(listener);
-		return wrapper;
-	}
-
-	/**
-	 * Metoda zwracająca obiekt nasłuchujący zdarzenia dokowania podokna.
-	 * @return DarkDockingListener - obiekt nasłuchujący
-	 */
-	public DarkDockingListener getDockingListener() {
-		return dockingListener;
-	}
-
-	/**
-	 * Metoda ustawiająca nowy obiekt nasłuchujący zdarzenia dokowania podokna.
-	 * @param dockingListener DarkDockingListener - nowy obiekt nasłuchujący
-	 */
-	public void setDockingListener(DarkDockingListener dockingListener) {
-		this.dockingListener = dockingListener;
 	}
 	
 	/**
@@ -1092,7 +1038,7 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda pokazuje podokienko zbiorów MCS.
+	 * Metoda wywołuje funkcję odświeżenia zawartości okna MCS.
 	 */
 	public void showMCS() {
 		getMCSBox().showMCS();
@@ -1110,14 +1056,14 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void showClusterSelectionBox(ClusterDataPackage data){
 		getClusterSelectionBox().showClusterSelector(data);
-		GUIManager.getDefaultGUIManager().reset.setClustersStatus(true); //status klastrów: wczytane
+		reset.setClustersStatus(true); //status klastrów: wczytane
 	}
 	
 	/**
 	 * Metoda rozpoczyna symulację uruchamiania inwariantów.
 	 * @param type int - 0-basic, 1- time
 	 * @param value - wartość
-	 * @throws CloneNotSupportedException
+	 * @throws CloneNotSupportedException ex
 	 */
 	public void startInvariantsSimulation(int type, int value) throws CloneNotSupportedException{
 		this.getWorkspace().getProject().startInvSim(type, value);
@@ -1172,15 +1118,6 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda służy do wyświetlenia okna informacji o programie.
-	 */
-	public void showAboutWindow() {
-		if(windowAbout != null) {
-			windowAbout.setVisible(true);
-		}
-	}
-	
-	/**
 	 * Metoda ta tworzy nowe okno szukania elementów sieci.
 	 */
 	private void createSearchWindow() {
@@ -1230,12 +1167,12 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 * Metoda tworzy nowe okno symulatora stanów programu.
 	 */
 	private void createStateSimulatorWindow() {
-		windowStateSim = new HolmesSim(this);
+		windowStateSim = new HolmesSim();
 	}
 	
 	/**
 	 * Metoda zwraca obiekt okna symulatora.
-	 * @return HolmesStateSimulator - obiekt
+	 * @return HolmesStateSimulator - obiekt okna symulatora.
 	 */
 	public HolmesSim accessStateSimulatorWindow() {
 		return windowStateSim;
@@ -1250,7 +1187,31 @@ public class GUIManager extends JPanel implements ComponentListener {
 			//this.getFrame().setEnabled(false);
 		}
 	}
-	
+
+	/**
+	 * Metoda tworzy nowe okno symulatora stanów XTPN programu.
+	 */
+	private void createStateSimulatorXTPNWindow() {
+		windowStateSimXTPN = new HolmesSimXTPN(this);
+	}
+
+	/**
+	 * Metoda zwraca obiekt okna symulatora XTPN.
+	 * @return HolmesStateSimulatorXTPN - obiekt symulatora XTPN.
+	 */
+	public HolmesSimXTPN accessStateSimulatorXTPNWindow() {
+		return windowStateSimXTPN;
+	}
+
+	/**
+	 * Metoda pokazuje okno symulatora stanów XTPN programu.
+	 */
+	public void showStateSimulatorWindowXTPN() {
+		if(windowStateSimXTPN != null) {
+			windowStateSimXTPN.setVisible(true);
+		}
+	}
+
 	/**
 	 * Metoda tworzy nowe okno tabel sieci.
 	 */
@@ -1263,9 +1224,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 	 */
 	public void showNetTablesWindow() {
 		if(windowNetTables != null) {
-			if(!reset.isSimulatorActiveWarning("Warning: simulator active. Cannot proceed until manually stopped."
-					, "Net simulator working")) {
-				windowNetTables.setVisible(true);
+			if(!reset.isSimulatorActiveWarning(lang.getText("GUI_simulator0001warn"), lang.getText("netSimWork01"))) {
+				if(!reset.isXTPNSimulatorActiveWarning(lang.getText("GUI_simulator0002warn"), lang.getText("netSimWork01"))) {
+					windowNetTables.setVisible(true);
+				}
 			}
 		}
 	}
@@ -1372,8 +1334,8 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda umożliwia dostęp do obiektu okna narzedzi MCS
-	 * @return
+	 * Metoda umożliwia dostęp do obiektu okna narzędzi MCS.
+	 * @return (<b>HolmesMCS</b>) obiekt okna MCS.
 	 */
 	public HolmesMCS accessMCSWindow() {
 		if(windowMCS != null)
@@ -1493,9 +1455,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 
 	/**
 	 * Metoda zapisująca nowe zdarzenie w oknie logów.
-	 * @param text String - tekst zdarzenia
-	 * @param mode String - tryb zapisu w oknie
-	 * @param time boolean - true, jeśli ma być podany czas zdarzenia
+	 * @param text (<b>String</b>) tekst zdarzenia.
+	 * @param mode (<b>String</b>) tryb zapisu w oknie: <b>warning</b>, <b>error</b>, <b>text</b>, <b>italic</b>, <b>bold</b>
+	 * @param time (<b>boolean</b>) true, jeśli ma być podany czas zdarzenia
 	 */
 	public void log(String text, String mode, boolean time) {
 		windowConsole.addText(text, mode, time, true);
@@ -1504,10 +1466,10 @@ public class GUIManager extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Metoda zapisująca nowe zdarzenie w oknie logów - bez Enter na końcu.
-	 * @param text String - tekst zdarzenia
-	 * @param mode String - tryb zapisu w oknie
-	 * @param time boolean - true, jeśli ma być podany czas zdarzenia
+	 * Metoda zapisująca nowe zdarzenie w oknie logów - <b>bez Enter na końcu</b>.
+	 * @param text (<b>String</b>) tekst zdarzenia.
+	 * @param mode (<b>String</b>) tryb zapisu w oknie: <b>warning</b>, <b>error</b>, <b>text</b>, <b>italic</b>, <b>bold</b>
+	 * @param time (<b>boolean</b>) true, jeśli ma być podany czas zdarzenia
 	 */
 	public void logNoEnter(String text, String mode, boolean time) {
 		windowConsole.addText(text, mode, time, false);
@@ -1550,11 +1512,11 @@ public class GUIManager extends JPanel implements ComponentListener {
 	/**
 	 * Metoda ustawia lub resetuje tryb zmieniania lokalizacji napisu dla klikniętego wierzchołka.
 	 * Faktyczna realizacja tego trybu odbywa się w GraphPanel.MouseWheelHandler.mouseWheelMoved(MouseWheelEvent e)
-	 * @param n Node - wybrany wierzchołek
-	 * @param el ElementLocation - wybrana lokalizacja wierzchołka (portal)
-	 * @param mode boolean - tryb: true jeśli przesuwamy.
+	 * @param n (<b>Node</b>) wybrany wierzchołek.
+	 * @param el (<b>ElementLocation</b>) wybrana lokalizacja wierzchołka (portal).
+	 * @param mode (<b>locationMoveType</b>) NONE, ALPHA, BETA, GAMMA, TAU.
 	 */
-	public void setNameLocationChangeMode(Node n, ElementLocation el, boolean mode) {
+	public void setNameLocationChangeMode(Node n, ElementLocation el, locationMoveType mode) {
 		this.nameSelectedNode = n;
 		this.nameNodeEL = el;
 		this.nameLocChangeMode = mode;
@@ -1562,9 +1524,9 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda zwraca wartość flagi dla trybu zmiany lokalizacji nazwy wybranego wierzchołka sieci.
-	 * @return boolean - true, jeśli włączony tryb zmiany lokalizacji nazwy
+	 * @return (<b>locationMoveType</b>) - NONE, NAME, ALPHA, BETA, GAMMA or TAU
 	 */
-	public boolean getNameLocChangeMode() {
+	public locationMoveType getNameLocChangeMode() {
 		return nameLocChangeMode;
 	}
 	
@@ -1602,32 +1564,39 @@ public class GUIManager extends JPanel implements ComponentListener {
 	
 	/**
 	 * Metoda zwraca wartość flagi zmiany sieci.
-	 * @return boolean - jeśli true, to znaczy że sieć się zmieniłą od ostatniego zapisu.
+	 * @return (<b>boolean</b>) - jeśli true, to znaczy, że sieć się zmieniło od ostatniego zapisu.
 	 */
 	public boolean getNetChangeStatus() {
 		return getWorkspace().getProject().anythingChanged;
 	}
-	
-	/**
-	 * Metoda sprawdza do jakiego komponentu nadrzędnego należy przesłany w parametrze i go
-	 * stamtąd usuwa.
-	 * @param x Dockable - komponent
-	 */
-	public void cleanLostOne(Dockable x) {
-		Dock xxx = x.getDock();
-		CompositeDock yyy = xxx.getParentDock();
-		yyy.emptyChild(xxx);
+
+	public static boolean isXTPN_simMode() {  //jeżeli true - XTPN
+		return isXTPNmode;
 	}
-	
-	/**
-	 * Metoda usuwa wszystkie panele podsieci nie będące zadokowanymi w oknie worksheet.
-	 */
-	public void cleanDockables() {
-		ArrayList<Dockable> activeSheets = getWorkspace().getDockables();
-		
-		for(Dockable d : globalSheetsList){
-			if(!activeSheets.contains(d))
-				cleanLostOne(d);
+
+	public static void setXTPN_simMode(boolean simMode) { //jeżeli false = PN, true = XTPN
+		GUIManager.isXTPNmode = simMode;
+	}
+
+	public JTabbedPane getTabbedWorkspace() {
+		return getWorkspace().getTablePane();
+	}
+
+	public void setTabbedWorkspace(JTabbedPane tabbedWorkspace) {
+		this.tabbedWorkspace = tabbedWorkspace;
+	}
+
+	public void testRemovePanel(int sheetID) {
+		WorkspaceSheet begone = null;
+		for(WorkspaceSheet ws : getWorkspace().getSheets()) {
+			if(ws.getId() == sheetID) {
+				begone = ws;
+				break;
+			}
+		}
+
+		if(begone != null) {
+			getWorkspace().deleteSheetFromArrays(begone);
 		}
 	}
 }

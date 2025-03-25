@@ -1,18 +1,21 @@
 package holmes.tables;
 
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 
 /**
  * Klasa model dla tabeli inwariantów okna HolmesNetTables.
- * @author MR
  */
 public class InvariantsSimulatorTableModel extends AbstractTableModel {
+	@Serial
 	private static final long serialVersionUID = -1557850148390063580L;
-	
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private ArrayList<Integer> infeasibleInvariants;
 	private ArrayList<Integer> zeroDeadTransitions;
 	private String[] columnNames;
@@ -98,7 +101,7 @@ public class InvariantsSimulatorTableModel extends AbstractTableModel {
 				//int value = Integer.parseInt(returnValue.toString());
 				return returnValue;
 			} catch (Exception e) {
-				GUIManager.getDefaultGUIManager().log("Invariants table malfunction: non-numerical value in 1st or 2nd column.", "error", true);
+				overlord.log(lang.getText("LOGentry00605exception")+"\n"+e.getMessage(), "error", true);
 			}
 		} else {
 			returnValue = dataMatrix.get(rowIndex).get(columnIndex);

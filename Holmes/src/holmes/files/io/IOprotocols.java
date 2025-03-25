@@ -7,12 +7,10 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import holmes.analyse.SubnetCalculator;
-import holmes.analyse.comparison.KnockoutInvariantComparison;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.graphpanel.GraphPanel;
-import holmes.graphpanel.popupmenu.SheetPopupMenu;
 import holmes.petrinet.data.PetriNet;
-import holmes.petrinet.data.StatePlacesVector;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.ElementLocation;
 import holmes.petrinet.elements.Node;
@@ -20,18 +18,18 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.petrinet.elements.Arc.TypeOfArc;
 import holmes.petrinet.elements.PetriNetElement.PetriNetElementType;
-import holmes.windows.HolmesBranchVerticesPrototype;
+import holmes.windows.decompositions.HolmesBranchVerticesPrototype;
 
 /**
  * Klasa odpowiedzialna za protokoły komunikacyjne z programem INA, Charlie, itd. Precyzyjnie,
  * posiada ona metody zapisu i odczytu plików sieci, inwariantów i innych zbiorów analitycznych
  * do/z różnych formatów plików.
- *
  * @author students - pierwsze wersje metod w czterech oddzielnych klasach
  * @author MR - integracja w jedną klasę, writeINV - przeróbka, aby w ogóle działało
  */
 public class IOprotocols {
-    private GUIManager overlord;
+    private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private ArrayList<ArrayList<Integer>> invariantsList; // = new ArrayList<ArrayList<Integer>>();
     private ArrayList<Integer> nodesList; // = new ArrayList<Integer>();
     private ArrayList<Node> nodeArray; // = new ArrayList<Node>();
@@ -42,7 +40,7 @@ public class IOprotocols {
     @SuppressWarnings("unused")
     private String netName; // = "";
     private int globalPlaceNumber; // = 0;
-    private int etap; // = 1;
+    private int stage; // = 1;
     private int placeCount;//  = 0;
     private ArrayList<String[]> placeArcListPost; // = new ArrayList<String[]>();
     private ArrayList<ArrayList<Integer>> placeArcListPostWeight; // = new ArrayList<ArrayList<Integer>>();
@@ -53,7 +51,6 @@ public class IOprotocols {
      * Konstruktor obiektu klasy IOprotocols.
      */
     public IOprotocols() {
-        overlord = GUIManager.getDefaultGUIManager();
         resetComponents();
     }
 
@@ -79,7 +76,7 @@ public class IOprotocols {
         MatSiz = 99999;
         netName = "";
         globalPlaceNumber = 0;
-        etap = 1;
+        stage = 1;
         placeCount = 0;
         placeArcListPost = new ArrayList<String[]>();
         placeArcListPostWeight = new ArrayList<ArrayList<Integer>>();
@@ -112,10 +109,10 @@ public class IOprotocols {
                 buffer.close();
                 return readCharlieT_inv(path);
             } else {
-                Object[] options = {"Read as INA file", "Read as MonaLisa file", "Read as Charlie file", "Terminate reading",};
+                Object[] options = {lang.getText("IOP_entry001op1"), lang.getText("IOP_entry001op2"), lang.getText("IOP_entry001op3"), lang.getText("IOP_entry001op4"),};
                 int decision = JOptionPane.showOptionDialog(null,
-                        "Unknown or corrupted t-invariants file format.\nPlease choose format for this t-invariants file.",
-                        "Error reading file header", JOptionPane.YES_NO_OPTION,
+                        lang.getText("IOP_entry001msg"),
+                        lang.getText("IOP_entry001t"), JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
                 if (decision == 1) {
                     buffer.close();
@@ -131,8 +128,8 @@ public class IOprotocols {
             }
 
             if (backup.contains("transition invariants basis")) {
-                JOptionPane.showMessageDialog(null, "Wrong invariants. Only semipositives are acceptable.",
-                        "ERROR:readINV", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, lang.getText("IOP_entry002"),
+                        lang.getText("error"), JOptionPane.ERROR_MESSAGE);
                 buffer.close();
                 return false;
             }
@@ -154,7 +151,7 @@ public class IOprotocols {
                         try {
                             nodesList.add(Integer.parseInt(s));
                         } catch (NumberFormatException e) {
-                            overlord.log("Reading file failed in header section.", "text", true);
+                            overlord.log(lang.getText("LOGentry00157exception")+"\n"+e.getMessage(), "text", true);
                         }
                     }
                 }
@@ -179,10 +176,10 @@ public class IOprotocols {
                 }
             }
             buffer.close();
-            overlord.log("T-invariants from INA file have been read.", "text", true);
+            overlord.log(lang.getText("LOGentry00157"), "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log("T-invariants reading operation failed.", "error", true);
+            overlord.log(lang.getText("LOGentry00158exception")+"\n"+e.getMessage(), "error", true);
             return false;
         }
     }
@@ -190,7 +187,6 @@ public class IOprotocols {
     /**
      * Wczytywanie pliki t-inwariantów INA, wcześniej: INAinvariants.read
      * Dodano poprawki oraz drugą ściękę odczytu - jako plik inwariantów Charliego.
-     *
      * @param path String - scieżka do pliku
      * @return boolean - true, jeśli operacja się powiodła
      */
@@ -201,7 +197,7 @@ public class IOprotocols {
             DataInputStream in = new DataInputStream(new FileInputStream(path));
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
             String readLine = buffer.readLine();
-            String backup = readLine;
+            //String backup = readLine;
 
             buffer.readLine();
             while (!readLine.contains("semipositive transition invariants =")) {
@@ -222,7 +218,7 @@ public class IOprotocols {
                         try {
                             nodesListTmp.add(Integer.parseInt(s));
                         } catch (NumberFormatException e) {
-                            overlord.log("Reading file failed in header section.", "text", true);
+                            overlord.log(lang.getText("LOGentry00159exception")+"\n"+e.getMessage(), "text", true);
                         }
                     }
                 }
@@ -248,15 +244,14 @@ public class IOprotocols {
                 }
             }
             buffer.close();
-            overlord.log("T-invariants from INA file have been read.", "text", true);
+            overlord.log(lang.getText("LOGentry00160"), "text", true);
             return invariantsListOut;
         } catch (Exception e) {
-            overlord.log("T-invariants reading operation failed.", "error", true);
+            overlord.log(lang.getText("LOGentry00161exception")+"\n"+e.getMessage(), "error", true);
             return new ArrayList<>();
         }
     }
-
-
+    
     /**
      * Wczytywanie pliki p-inwariantów INA, wcześniej: INAinvariants.read
      * Dodano poprawki oraz drugą ściękę odczytu - jako plik inwariantów Charliego.
@@ -265,23 +260,17 @@ public class IOprotocols {
      * @return boolean - true, jeśli operacja się powiodła
      */
     public ArrayList<ArrayList<Integer>> readP_invariantsOut(String path) {
-
-        //TODO
-        //unifikować z t?
-
         try {
             resetComponents();
             DataInputStream in = new DataInputStream(new FileInputStream(path));
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
             String readLine = buffer.readLine();
-            String backup = readLine;
 
             buffer.readLine();
             while (!readLine.contains("semipositive place invariants =")) {
                 readLine = buffer.readLine();
             }
             buffer.readLine();
-            //nodesList.clear();
 
             ArrayList<Integer> nodesListTmp = new ArrayList<>();
             // Etap I - Liczba tranzycji/miejsc
@@ -295,7 +284,7 @@ public class IOprotocols {
                         try {
                             nodesListTmp.add(Integer.parseInt(s));
                         } catch (NumberFormatException e) {
-                            overlord.log("Reading file failed in header section.", "text", true);
+                            overlord.log(lang.getText("LOGentry00162exception")+"\n"+e.getMessage(), "text", true);
                         }
                     }
                 }
@@ -321,10 +310,10 @@ public class IOprotocols {
                 }
             }
             buffer.close();
-            overlord.log("P-invariants from INA file have been read.", "text", true);
+            overlord.log(lang.getText("LOGentry00163"), "text", true);
             return invariantsListOut;
         } catch (Exception e) {
-            overlord.log("P-invariants reading operation failed.", "error", true);
+            overlord.log(lang.getText("LOGentry00164exception")+"\n"+e.getMessage(), "error", true);
             return new ArrayList<>();
         }
     }
@@ -352,10 +341,10 @@ public class IOprotocols {
                 buffer.close();
                 return readCharlieP_inv(path);
             } else {
-                Object[] options = {"Read as INA file", "Read as MonaLisa file", "Read as Charlie file", "Terminate reading",};
+                Object[] options = {lang.getText("IOP_entry003op1"), lang.getText("IOP_entry003op2"), lang.getText("IOP_entry003op3"), lang.getText("IOP_entry003op4"),};
                 int decision = JOptionPane.showOptionDialog(null,
-                        "Unknown or corrupted p-invariants file format.\nPlease choose format for this p-invariants file.",
-                        "Error reading file header", JOptionPane.YES_NO_OPTION,
+                        lang.getText("IOP_entry003msg"),
+                        lang.getText("IOP_entry003t"), JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
                 if (decision == 1) {
                     buffer.close();
@@ -371,8 +360,8 @@ public class IOprotocols {
             }
 
             if (backup.contains("transition invariants basis")) {
-                JOptionPane.showMessageDialog(null, "Wrong invariants. Only semipositives are acceptable.",
-                        "ERROR:readINV", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, lang.getText("LOGentry00165"),
+                        lang.getText("error"), JOptionPane.ERROR_MESSAGE);
                 buffer.close();
                 return false;
             }
@@ -394,7 +383,7 @@ public class IOprotocols {
                         try {
                             nodesList.add(Integer.parseInt(s));
                         } catch (NumberFormatException e) {
-                            overlord.log("Reading file failed in header section.", "text", true);
+                            overlord.log(lang.getText("LOGentry00166exception")+"\n"+e.getMessage(), "text", true);
                         }
                     }
                 }
@@ -419,10 +408,10 @@ public class IOprotocols {
                 }
             }
             buffer.close();
-            overlord.log("P-invariants from INA file have been read.", "text", true);
+            overlord.log(lang.getText("LOGentry00167"), "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log("P-invariants reading operation failed.", "error", true);
+            overlord.log(lang.getText("LOGentry00168exception")+"\n"+e.getMessage(), "error", true);
             return false;
         }
     }
@@ -440,17 +429,16 @@ public class IOprotocols {
             String readLine = buffer.readLine();
 
             if (!readLine.contains("minimal semipositive transition")) {
-                Object[] options = {"Force read as Charlie file", "Terminate reading",};
+                Object[] options = {lang.getText("IOP_entry004op1"), lang.getText("IOP_entry004op2"),};
                 int n = JOptionPane.showOptionDialog(null,
-                        "Unknown or corrupted t-invariants file format!\nRead anyway as Charlie invariants?",
-                        "Error reading file header", JOptionPane.YES_NO_OPTION,
+                        lang.getText("IOP_entry004msg"),
+                        lang.getText("IOP_entry004t"), JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
                 if (n == 1) {
                     buffer.close();
                     return false;
                 }
-
             }
             nodesList.clear();
 
@@ -464,12 +452,12 @@ public class IOprotocols {
                 tmpInvariant.add(0);
 
             readLine = buffer.readLine();
-            while (readLine != null && readLine.length() > 0) {
+            while (readLine != null && !readLine.isEmpty()) {
                 String lineStart = readLine.substring(0, readLine.indexOf("|"));
                 lineStart = lineStart.replace(" ", "");
                 lineStart = lineStart.replace("\t", "");
 
-                if (lineStart.length() > 0 && !firstPass) { //początek inwariantu
+                if (!lineStart.isEmpty() && !firstPass) { //początek inwariantu
                     invariantsList.add(tmpInvariant);
 
                     tmpInvariant = new ArrayList<Integer>();
@@ -491,8 +479,9 @@ public class IOprotocols {
 
                 String orgName = namesCheck.get(transNumber).getName();
                 if (!transName.equals(orgName)) {
-                    overlord.log("Transition name and location do not match!"
-                            + " Read transition: " + transName + " (loc:" + transNumber + "), while in net: " + orgName, "text", true);
+                    overlord.log(lang.getText("LOGentry00169a")+" " + transName 
+                            +" " +lang.getText("LOGentry00169b") + transNumber 
+                            + lang.getText("LOGentry00169c")+" " + orgName, "text", true);
                 }
 
                 readLine = readLine.substring(readLine.indexOf(":") + 1);
@@ -500,13 +489,11 @@ public class IOprotocols {
                 int transValue = Integer.parseInt(readLine);
 
                 if (transNumber >= transSetSize) {
-                    overlord.log("Charlie t-invariants file has reference to non existing transitions in the current net."
-                            + " Operation cancelled.", "text", true);
+                    overlord.log(lang.getText("LOGentry00170"), "text", true);
                     buffer.close();
                     return false;
                 }
                 tmpInvariant.set(transNumber, transValue);
-
                 readLine = buffer.readLine();
             }
 
@@ -514,10 +501,10 @@ public class IOprotocols {
             invariantsList.add(tmpInvariant);
 
             buffer.close();
-            overlord.log("T-invariants from Charlie file have been read.", "text", true);
+            overlord.log(lang.getText("LOGentry00171"), "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log("Charlie t-invariants reading operation failed.", "text", true);
+            overlord.log(lang.getText("LOGentry00172exception")+"\n"+e.getMessage(), "text", true);
             return false;
         }
     }
@@ -535,10 +522,10 @@ public class IOprotocols {
             String readLine = buffer.readLine();
 
             if (!readLine.contains("minimal semipositive place invariants")) {
-                Object[] options = {"Force read as Charlie file", "Terminate reading",};
+                Object[] options = {lang.getText("IOP_entry005op1"), lang.getText("IOP_entry005op2"),};
                 int n = JOptionPane.showOptionDialog(null,
-                        "Unknown or corrupted p-invariants file format!\nRead anyway as Charlie invariants?",
-                        "Error reading file header", JOptionPane.YES_NO_OPTION,
+                        lang.getText("IOP_entry005msg"),
+                        lang.getText("IOP_entry005t"), JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
                 if (n == 1) {
@@ -560,12 +547,12 @@ public class IOprotocols {
                 tmpInvariant.add(0);
 
             readLine = buffer.readLine();
-            while (readLine != null && readLine.length() > 0) {
+            while (readLine != null && !readLine.isEmpty()) {
                 String lineStart = readLine.substring(0, readLine.indexOf("|"));
                 lineStart = lineStart.replace(" ", "");
                 lineStart = lineStart.replace("\t", "");
 
-                if (lineStart.length() > 0 && !firstPass) { //początek inwariantu
+                if (!lineStart.isEmpty() && !firstPass) { //początek inwariantu
                     invariantsList.add(tmpInvariant);
 
                     tmpInvariant = new ArrayList<Integer>();
@@ -587,8 +574,9 @@ public class IOprotocols {
 
                 String orgName = places.get(placeNumber).getName();
                 if (!placeName.equals(orgName)) {
-                    overlord.log("Place name and location do not match!"
-                            + " Read place: " + placeName + " (loc:" + placeNumber + "), while in net: " + orgName, "text", true);
+                    overlord.log(lang.getText("IOP_entry006a") + " " 
+                            + placeName + " "+lang.getText("IOP_entry006b") + placeNumber + lang.getText("IOP_entry006a")
+                            + " " + orgName, "text", true);
                 }
 
                 readLine = readLine.substring(readLine.indexOf(":") + 1);
@@ -596,8 +584,7 @@ public class IOprotocols {
                 int transValue = Integer.parseInt(readLine);
 
                 if (placeNumber >= placesSetSize) {
-                    overlord.log("Charlie p-invariants file has reference to non existing places in the current net."
-                            + " Operation cancelled.", "text", true);
+                    overlord.log(lang.getText("LOGentry00173"), "text", true);
                     buffer.close();
                     return false;
                 }
@@ -608,17 +595,16 @@ public class IOprotocols {
             invariantsList.add(tmpInvariant);
 
             buffer.close();
-            overlord.log("P-invariants from Charlie file have been read.", "text", true);
+            overlord.log(lang.getText("LOGentry00174"), "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log("Charlie p-invariants reading operation failed.", "text", true);
+            overlord.log(lang.getText("LOGentry00175exception")+"\n"+e.getMessage(), "text", true);
             return false;
         }
     }
 
     /**
      * Metoda wczytująca plik t-inwariantów wygenerowany programem MonaLisa.
-     *
      * @param path String - ścieżka do pliku
      * @return boolean - true, jeśli operacja się powiodła
      */
@@ -629,10 +615,10 @@ public class IOprotocols {
             String line = buffer.readLine();
 
             if (!line.contains("# List of all elementary modes")) {
-                Object[] options = {"Force read as Mona Lisa file", "Terminate reading",};
+                Object[] options = {lang.getText("IOP_entry007op1"), lang.getText("IOP_entry007op2"),};
                 int n = JOptionPane.showOptionDialog(null,
-                        "Unknown or corrupted invariants file format! Read anyway as Mona Lisa invariants?",
-                        "Error reading file header", JOptionPane.YES_NO_OPTION,
+                        lang.getText("IOP_entry007msg"),
+                        lang.getText("IOP_entry007t"), JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
                 if (n == 1) {
@@ -646,10 +632,10 @@ public class IOprotocols {
             ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
             int transSetSize = transitions.size();
 
-            ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+            ArrayList<Integer> tmpInvariant;
 
             line = buffer.readLine();
-            while (line != null && line.length() > 0 && line.contains("Elementary")) {
+            while (line != null && line.contains("Elementary")) {
                 tmpInvariant = new ArrayList<Integer>();
                 for (int t = 0; t < transSetSize; t++) //init
                     tmpInvariant.add(0);
@@ -678,15 +664,15 @@ public class IOprotocols {
                     invariantsList.add(tmpInvariant);
                     line = buffer.readLine();
                 } catch (Exception e) {
-                    overlord.log("Error reading t-invariant #" + lineNumber, "error", true);
+                    overlord.log( lang.getText("LOGentry00176exception")+" #" + lineNumber+"\n"+e.getMessage(), "error", true);
                     line = buffer.readLine();
                 }
             }
             buffer.close();
-            overlord.log("T-invariants from MonaLisa file have been read.", "text", true);
+            overlord.log(lang.getText("LOGentry00177"), "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log("MonaLisa t-invariants reading operation failed.", "text", true);
+            overlord.log(lang.getText("LOGentry00178exception")+"\n"+e.getMessage(), "text", true);
             return false;
         }
     }
@@ -704,10 +690,10 @@ public class IOprotocols {
             String line = buffer.readLine();
 
             if (!line.contains("# List of all place invariants")) {
-                Object[] options = {"Force read as Mona Lisa file", "Terminate reading",};
+                Object[] options = {lang.getText("IOP_entry008op1"), lang.getText("IOP_entry008op2"),};
                 int n = JOptionPane.showOptionDialog(null,
-                        "Unknown or corrupted invariants file format!\nRead anyway as Mona Lisa p-invariants?",
-                        "Error reading file header", JOptionPane.YES_NO_OPTION,
+                        lang.getText("IOP_entry008msg"),
+                        lang.getText("IOP_entry008t"), JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
 
                 if (n == 1) {
@@ -720,10 +706,10 @@ public class IOprotocols {
 
             ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
             int placesSetSize = places.size();
-            ArrayList<Integer> tmpInvariant = new ArrayList<Integer>();
+            ArrayList<Integer> tmpInvariant;
 
             line = buffer.readLine();
-            while (line != null && line.length() > 0 && line.contains("Place")) {
+            while (line != null && line.contains("Place")) {
                 tmpInvariant = new ArrayList<Integer>();
                 for (int t = 0; t < placesSetSize; t++) //init
                     tmpInvariant.add(0);
@@ -752,22 +738,21 @@ public class IOprotocols {
                     invariantsList.add(tmpInvariant);
                     line = buffer.readLine();
                 } catch (Exception e) {
-                    overlord.log("Error reading p-invariant #" + lineNumber, "error", true);
+                    overlord.log(lang.getText("LOGentry00179exception")+" #" + lineNumber+"\n"+e.getMessage(), "error", true);
                     line = buffer.readLine();
                 }
             }
             buffer.close();
-            overlord.log("P-invariants from MonaLisa file have been read.", "text", true);
+            overlord.log(lang.getText("LOGentry00180"), "text", true);
             return true;
         } catch (Exception e) {
-            overlord.log("MonaLisa p-invariants reading operation failed.", "text", true);
+            overlord.log(lang.getText("LOGentry00181exception")+"\n"+e.getMessage(), "text", true);
             return false;
         }
     }
 
     /**
      * Zapis t-inwariantow do pliku w formacie INA.
-     *
      * @param path        String - scieżka do pliku
      * @param invariants  ArrayList[ArrayList[Integer]] - lista t-inwariantów
      * @param transitions ArrayList[Transition] - lista tranzycji
@@ -836,11 +821,12 @@ public class IOprotocols {
             pw.print("\r\n");
             pw.print("@");
             pw.close();
-            overlord.log("T-invariants in INA file format saved to " + path, "text", true);
+            overlord.log(lang.getText("LOGentry00182")+" " + path, "text", true);
         } catch (Exception e) {
-            //System.err.println("Error: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR: writeT_invINA", JOptionPane.ERROR_MESSAGE);
-            overlord.log("Error: " + e.getMessage(), "error", true);
+            JOptionPane.showMessageDialog(null, lang.getText("LOGentry00183exception")+"\n"
+                    +e.getMessage(), lang.getText("error"), JOptionPane.ERROR_MESSAGE);
+            overlord.log(lang.getText("LOGentry00183exception")+"\n"
+                    +e.getMessage(), "error", true);
         }
     }
 
@@ -914,24 +900,23 @@ public class IOprotocols {
             pw.print("\r\n");
             pw.print("@");
             pw.close();
-            overlord.log("P-invariants in INA file format saved to " + path, "text", true);
+            overlord.log(lang.getText("LOGentry00184")+" " + path, "text", true);
         } catch (Exception e) {
-            //System.err.println("Error: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR: writeP_invINA", JOptionPane.ERROR_MESSAGE);
-            overlord.log("Error: " + e.getMessage(), "error", true);
+            JOptionPane.showMessageDialog(null, lang.getText("LOGentry00185exception")+"\n"
+                    +e.getMessage(), lang.getText("error"), JOptionPane.ERROR_MESSAGE);
+            overlord.log(lang.getText("LOGentry00185exception")+"\n"
+                    +e.getMessage(), "error", true);
         }
     }
 
     /**
      * Metoda pomocnicza zwracająca liczbę w formie String z odpowiednią liczbą spacji.
      * Metoda ta jest niezbędna do zapisu pliku inwariantów w formacie programu INA.
-     *
      * @param large boolean - true, jeśli dla dużej sieci
      * @param tr    int - liczba do konwersji
      * @return String - liczba po konwersji
      */
     private String convertIntToStr(boolean large, int tr) {
-        //String result = "";
         if (large) {
             if (tr < 10)
                 return "    " + tr;
@@ -949,12 +934,10 @@ public class IOprotocols {
             else
                 return " " + tr;
         }
-        //return result = " "+tr;
     }
 
     /**
      * Metoda zwraca nazwę pliku.
-     *
      * @param sciezka - scieżka do pliku
      * @return String - nazwa pliku
      */
@@ -965,7 +948,6 @@ public class IOprotocols {
 
     /**
      * Metoda zwraca listę wezłów sieci po tym jak readPNT przeczyta plik INY
-     *
      * @return nodeArray[Node] - tablica węzłów sieci
      */
     public ArrayList<Node> getNodeArray() {
@@ -974,7 +956,6 @@ public class IOprotocols {
 
     /**
      * Zwraca liste krawedzi sieci po tym jak readPNT przeczyta plik INY
-     *
      * @return arcArray[Arc] - lista łuków sieci
      */
     public ArrayList<Arc> getArcArray() {
@@ -983,13 +964,11 @@ public class IOprotocols {
 
     /**
      * Czyta plik sieci petriego w formacie PNT (INA) na serverze
-     *
      * @param sciezka String - scieżka do pliku
      */
     public PetriNet serverReadPNT(String sciezka, int SID) {
         try {
             resetComponents();
-            //int SID = overlord.getWorkspace().getProject().returnCleanSheetID();
             DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
             String wczytanaLinia = buffer.readLine();
@@ -1004,12 +983,11 @@ public class IOprotocols {
 
             while ((wczytanaLinia = buffer.readLine()) != null) {
                 // Etap I
-
                 // Wczytywanie informacji o Arcach i tokenach
                 if (wczytanaLinia.equals("@")) {
-                    etap++;
+                    stage++;
                 }
-                switch (etap) {
+                switch (stage) {
 
                     case 1:
                         ArrayList<String> tmpStringWej = new ArrayList<String>();
@@ -1085,7 +1063,6 @@ public class IOprotocols {
                     case 2:
                         // Etap II
                         // Wczytywanie danych o miejscach
-
                         if ((wczytanaLinia.contains("capacity") && wczytanaLinia.contains("time")
                                 && wczytanaLinia.contains("name")) || wczytanaLinia.equals("@")) {
                         } else {
@@ -1098,7 +1075,23 @@ public class IOprotocols {
                             Place tmpPlace = new Place(placeNumber, new ArrayList<ElementLocation>(), placeName, "", wMark[placeNumber]);
                             ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
                             namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(namesLoc);
+                            tmpPlace.setTextsLocations(namesLoc, GUIManager.locationMoveType.NAME);
+                            //XTPN:
+                            ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
+                            alphaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+
+                            ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
+                            betaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
+
+                            ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
+                            gammaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+
+                            ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
+                            tauLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
 
                             nodeArray.add(tmpPlace);
                         }
@@ -1124,16 +1117,33 @@ public class IOprotocols {
                             tabWczytanaLinia = tabWczytanaLinia[1].split(" ");
                             String transName = tabWczytanaLinia[0];
                             Transition tmpTrans = new Transition(transNumber, new ArrayList<ElementLocation>(), transName, "");
+
                             ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
                             namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(namesLoc);
+                            tmpTrans.setTextsLocations(namesLoc, GUIManager.locationMoveType.NAME);
+                            //XTPN
+                            ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
+                            alphaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+
+                            ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
+                            betaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
+
+                            ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
+                            gammaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+
+                            ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
+                            tauLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
+
                             nodeArray.add(tmpTrans);
                             //mark++;
                         }
                         break;
                     case 4:
-                        // Tworzenie Arców, szerokosci okna
-                        // tworzenie dla kazdego noda element location
+                        // Tworzenie łuków, szerokosci okna tworzenie dla kazdego węzła element location
                         for (int j = 0; j < nodeArray.size(); j++) {
                             if (nodeArray.get(j).getType() == PetriNetElementType.PLACE) {
                                 elemArray.add(new ElementLocation(SID, new Point(80, 30 + j * 60), nodeArray.get(j)));
@@ -1151,7 +1161,7 @@ public class IOprotocols {
                         }
 
                         int pozycja_a = 0;
-                        // Arki
+                        // Arcs
                         for (int k = 0; k < placeArcListPre.size(); k++) {
                             for (int j = 0; j < placeArcListPre.get(k).length; j++) {
                                 int t1 = trans[Integer.parseInt(placeArcListPre.get(k)[j])][1];
@@ -1172,60 +1182,20 @@ public class IOprotocols {
 
                             }
                         }
-
-						/*
-						int wid = Toolkit.getDefaultToolkit().getScreenSize().width - 20;
-						int hei = Toolkit.getDefaultToolkit().getScreenSize().height - 20;
-						int SIN = overlord.IDtoIndex(SID);
-						int tmpX = 0;
-						int tmpY = 0;
-						boolean xFound = false;
-						boolean yFound = false;
-						GraphPanel graphPanel = overlord
-								.getWorkspace().getSheets().get(SIN).getGraphPanel();
-						for (int l = 0; l < elemArray.size(); l++) {
-							if (elemArray.get(l).getPosition().x > wid) {
-								tmpX = l;
-								xFound = true;
-								wid = elemArray.get(l).getPosition().x;
-							}
-							if (elemArray.get(l).getPosition().y > hei) {
-								tmpY = l;
-								yFound = true;
-								hei = elemArray.get(l).getPosition().y;
-							}
-						}
-						if (xFound && !yFound) {
-							graphPanel.setSize(new Dimension(elemArray.get(tmpX)
-									.getPosition().x + 90,graphPanel.getSize().height));
-						}
-						if (!xFound && yFound) {
-							graphPanel.setSize(new Dimension(
-									graphPanel.getSize().width, elemArray.get(tmpY).getPosition().y + 90));
-						}
-						if (xFound && yFound) {
-							graphPanel.setSize(new Dimension(elemArray.get(tmpX)
-									.getPosition().x + 90, elemArray.get(tmpY).getPosition().y + 90));
-						}
-						graphPanel.setOriginSize(graphPanel.getSize());
-						*/
                         break;
                 }
             }
 
             in.close();
-            //overlord.log("Petri net from INA .pnt file successfully read.", "text", true);
+            overlord.log(lang.getText("LOGentry00186"), "text", true);
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-            //JOptionPane.showMessageDialog(null,e.getMessage(),"ERROR: readPNT",JOptionPane.ERROR_MESSAGE);
-            //overlord.log("Error: " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00187exception")+"\n"+e.getMessage(), "error", true);
         }
         return new PetriNet(nodeArray, arcArray);
     }
 
     /**
      * Czyta plik sieci petriego w formacie PNT (INA)
-     *
      * @param sciezka String - scieżka do pliku
      */
     public void readPNT(String sciezka) {
@@ -1234,8 +1204,8 @@ public class IOprotocols {
             int SID = overlord.getWorkspace().getProject().returnCleanSheetID();
             DataInputStream in = new DataInputStream(new FileInputStream(sciezka));
             BufferedReader buffer = new BufferedReader(new InputStreamReader(in));
-            String wczytanaLinia = buffer.readLine();
-            String[] tabWczytanaLinia = wczytanaLinia.split(":");
+            String readLine = buffer.readLine();
+            String[] tabWczytanaLinia = readLine.split(":");
             netName = tabWczytanaLinia[1];
             int[][] trans = new int[MatSiz][2];
             int ID = 0;
@@ -1244,22 +1214,20 @@ public class IOprotocols {
             ArrayList<Integer> wagiWej = new ArrayList<Integer>();
             ArrayList<Integer> wagiWyj = new ArrayList<Integer>();
 
-            while ((wczytanaLinia = buffer.readLine()) != null) {
+            while ((readLine = buffer.readLine()) != null) {
                 // Etap I
 
                 // Wczytywanie informacji o Arcach i tokenach
-                if (wczytanaLinia.equals("@")) {
-                    etap++;
+                if (readLine.equals("@")) {
+                    stage++;
                 }
-                switch (etap) {
-
+                switch (stage) {
                     case 1:
                         ArrayList<String> tmpStringWej = new ArrayList<String>();
                         ArrayList<String> tmpStringWyj = new ArrayList<String>();
-
-                        wczytanaLinia = wczytanaLinia.replace(",", " , ");
-                        wczytanaLinia = wczytanaLinia.replace(":", " : ");
-                        String[] WczytanyString = wczytanaLinia.split(" ");
+                        readLine = readLine.replace(",", " , ");
+                        readLine = readLine.replace(":", " : ");
+                        String[] WczytanyString = readLine.split(" ");
                         int poz = 0;
                         int poZap = 0;
                         for (String s : WczytanyString) {
@@ -1328,19 +1296,37 @@ public class IOprotocols {
                         // Etap II
                         // Wczytywanie danych o miejscach
 
-                        if ((wczytanaLinia.contains("capacity") && wczytanaLinia.contains("time")
-                                && wczytanaLinia.contains("name")) || wczytanaLinia.equals("@")) {
+                        if ((readLine.contains("capacity") && readLine.contains("time") && readLine.contains("name")) || readLine.equals("@")) {
+
                         } else {
-                            tabWczytanaLinia = wczytanaLinia.split(": ");
+                            tabWczytanaLinia = readLine.split(": ");
                             //String[] tmp4 = tabWczytanaLinia[0].split(" ");
                             int placeNumber = globalPlaceNumber;
                             globalPlaceNumber++;
                             tabWczytanaLinia = tabWczytanaLinia[1].split(" ");
                             String placeName = tabWczytanaLinia[0];
                             Place tmpPlace = new Place(placeNumber, new ArrayList<ElementLocation>(), placeName, "", wMark[placeNumber]);
+
                             ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
                             namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpPlace.setNamesLocations(namesLoc);
+                            tmpPlace.setTextsLocations(namesLoc, GUIManager.locationMoveType.NAME);
+
+                            //XTPN
+                            ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
+                            alphaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+
+                            ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
+                            betaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
+
+                            ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
+                            gammaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+
+                            ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
+                            tauLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpPlace.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
 
                             nodeArray.add(tmpPlace);
                         }
@@ -1348,11 +1334,11 @@ public class IOprotocols {
                     case 3:
                         // Etap III
                         // Wczytywanie danych o tranzycjach
-                        if ((wczytanaLinia.contains("priority") && wczytanaLinia.contains("time")
-                                && wczytanaLinia.contains("name")) || wczytanaLinia.equals("@")) {
+                        if ((readLine.contains("priority") && readLine.contains("time")
+                                && readLine.contains("name")) || readLine.equals("@")) {
                             placeCount = globalPlaceNumber;
                         } else {
-                            tabWczytanaLinia = wczytanaLinia.split(": ");
+                            tabWczytanaLinia = readLine.split(": ");
                             String[] tmp5 = tabWczytanaLinia[0].split(" ");
                             for (String s : tmp5) {
                                 if (!s.isEmpty()) {
@@ -1366,11 +1352,30 @@ public class IOprotocols {
                             tabWczytanaLinia = tabWczytanaLinia[1].split(" ");
                             String transName = tabWczytanaLinia[0];
                             Transition tmpTrans = new Transition(transNumber, new ArrayList<ElementLocation>(), transName, "");
+
                             ArrayList<ElementLocation> namesLoc = new ArrayList<ElementLocation>();
                             namesLoc.add(new ElementLocation(0, new Point(0, 0), null));
-                            tmpTrans.setNamesLocations(namesLoc);
-                            nodeArray.add(tmpTrans);
+                            tmpTrans.setTextsLocations(namesLoc, GUIManager.locationMoveType.NAME);
+
+                            //XTPN
+                            ArrayList<ElementLocation> alphaLoc = new ArrayList<ElementLocation>();
+                            alphaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setTextsLocations(alphaLoc, GUIManager.locationMoveType.ALPHA);
+
+                            ArrayList<ElementLocation> betaLoc = new ArrayList<ElementLocation>();
+                            betaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setTextsLocations(betaLoc, GUIManager.locationMoveType.BETA);
+
+                            ArrayList<ElementLocation> gammaLoc = new ArrayList<ElementLocation>();
+                            gammaLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setTextsLocations(gammaLoc, GUIManager.locationMoveType.GAMMA);
+
+                            ArrayList<ElementLocation> tauLoc = new ArrayList<ElementLocation>();
+                            tauLoc.add(new ElementLocation(0, new Point(0, 0), null));
+                            tmpTrans.setTextsLocations(tauLoc, GUIManager.locationMoveType.TAU);
                             //mark++;
+
+                            nodeArray.add(tmpTrans);
                         }
                         break;
                     case 4:
@@ -1454,18 +1459,14 @@ public class IOprotocols {
             }
 
             in.close();
-            overlord.log("Petri net from INA .pnt file successfully read.", "text", true);
+            overlord.log(lang.getText("LOGentry00188"), "text", true);
         } catch (Exception e) {
-            //System.err.println("Error: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR: readPNT", JOptionPane.ERROR_MESSAGE);
-            overlord.log("Error: " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00189exception")+"\n"+e.getMessage(), "error", true);
         }
-
     }
 
     /**
      * Metoda służąca do zapisywaniu pliku sieci Petriego w formacie PNT (INA).
-     *
      * @param path           - ścieżka zapisu pliku
      * @param placeList      ArrayList[Place] - lista miejsc sieci
      * @param transitionList ArrayList[Transition] - lista tranzycji sieci
@@ -1478,7 +1479,6 @@ public class IOprotocols {
             PrintWriter writerObject = new PrintWriter(path);
             fileBuffer.append(getFileName(path));
             fileBuffer.append("\r\n");
-            //int[] tabPlace = new int[placeList.size()];
 
             for (int i = 0; i < placeList.size(); i++) {
                 if (i < 9) {
@@ -1493,50 +1493,50 @@ public class IOprotocols {
                 fileBuffer.append("    ");
 
                 // łuki
-                if (placeList.get(i).getInArcs().isEmpty()
-                        && placeList.get(i).getOutArcs().isEmpty()) {
+                if (placeList.get(i).getInputArcs().isEmpty()
+                        && placeList.get(i).getOutputArcs().isEmpty()) {
                     fileBuffer.append(" ");
                 }
-                if (placeList.get(i).getInArcs().size() > 0 && placeList.get(i).getOutArcs().isEmpty()) {
-                    for (int j = 0; j < placeList.get(i).getInArcs().size(); j++) {
-                        if (transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode()) != -1) {
+                if (!placeList.get(i).getInputArcs().isEmpty() && placeList.get(i).getOutputArcs().isEmpty()) {
+                    for (int j = 0; j < placeList.get(i).getInputArcs().size(); j++) {
+                        if (transitionList.contains((Transition)placeList.get(i).getInputArcs().get(j).getStartNode())) {
                             fileBuffer.append(" ");
-                            fileBuffer.append(transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode()));
-                            if (placeList.get(i).getInArcs().get(j).getWeight() > 1) {
-                                fileBuffer.append(": ").append(placeList.get(i).getInArcs().get(j).getWeight());
+                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getInputArcs().get(j).getStartNode()));
+                            if (placeList.get(i).getInputArcs().get(j).getWeight() > 1) {
+                                fileBuffer.append(": ").append(placeList.get(i).getInputArcs().get(j).getWeight());
                             }
                         }
                     }
                 }
-                if (placeList.get(i).getInArcs().size() > 0 && placeList.get(i).getOutArcs().size() > 0) {
-                    for (int j = 0; j < placeList.get(i).getInArcs().size(); j++) {
-                        if (transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode()) != -1) {
+                if (!placeList.get(i).getInputArcs().isEmpty() && !placeList.get(i).getOutputArcs().isEmpty()) {
+                    for (int j = 0; j < placeList.get(i).getInputArcs().size(); j++) {
+                        if (transitionList.contains((Transition)placeList.get(i).getInputArcs().get(j).getStartNode())) {
                             fileBuffer.append(" ");
-                            fileBuffer.append(transitionList.indexOf(placeList.get(i).getInArcs().get(j).getStartNode()));
-                            if (placeList.get(i).getInArcs().get(j).getWeight() > 1) {
-                                fileBuffer.append(": ").append(placeList.get(i).getInArcs().get(j).getWeight());
+                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getInputArcs().get(j).getStartNode()));
+                            if (placeList.get(i).getInputArcs().get(j).getWeight() > 1) {
+                                fileBuffer.append(": ").append(placeList.get(i).getInputArcs().get(j).getWeight());
                             }
                         }
                     }
                     fileBuffer.append(",");
-                    for (int j = 0; j < placeList.get(i).getOutArcs().size(); j++) {
-                        if (transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode())!=-1) {
+                    for (int j = 0; j < placeList.get(i).getOutputArcs().size(); j++) {
+                        if (transitionList.contains((Transition)placeList.get(i).getOutputArcs().get(j).getEndNode())) {
                             fileBuffer.append(" ");
-                            fileBuffer.append(transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode()));
-                            if (placeList.get(i).getOutArcs().get(j).getWeight() > 1) {
-                                fileBuffer.append(": ").append(placeList.get(i).getOutArcs().get(j).getWeight());
+                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getOutputArcs().get(j).getEndNode()));
+                            if (placeList.get(i).getOutputArcs().get(j).getWeight() > 1) {
+                                fileBuffer.append(": ").append(placeList.get(i).getOutputArcs().get(j).getWeight());
                             }
                         }
                     }
                 }
-                if (placeList.get(i).getInArcs().isEmpty() && placeList.get(i).getOutArcs().size() > 0) {
+                if (placeList.get(i).getInputArcs().isEmpty() && !placeList.get(i).getOutputArcs().isEmpty()) {
                     fileBuffer.append(",");
-                    for (int j = 0; j < placeList.get(i).getOutArcs().size(); j++) {
-                        if(transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode())!=-1) {
+                    for (int j = 0; j < placeList.get(i).getOutputArcs().size(); j++) {
+                        if(transitionList.contains((Transition)placeList.get(i).getOutputArcs().get(j).getEndNode())) {
                             fileBuffer.append(" ");
-                            fileBuffer.append(transitionList.indexOf(placeList.get(i).getOutArcs().get(j).getEndNode()));
-                            if (placeList.get(i).getOutArcs().get(j).getWeight() > 1) {
-                                fileBuffer.append(": ").append(placeList.get(i).getOutArcs().get(j).getWeight());
+                            fileBuffer.append(transitionList.indexOf((Transition)placeList.get(i).getOutputArcs().get(j).getEndNode()));
+                            if (placeList.get(i).getOutputArcs().get(j).getWeight() > 1) {
+                                fileBuffer.append(": ").append(placeList.get(i).getOutputArcs().get(j).getWeight());
                             }
                         }
                     }
@@ -1573,20 +1573,6 @@ public class IOprotocols {
                 }
                 fileBuffer.append(i);
                 fileBuffer.append(": ");
-				/*
-				if (transitionList.get(i).getName().length() > 16) {
-					tmpNazwy = transitionList.get(i).getName();
-					
-					tmpNazwy = tmpNazwy.substring(0, 16);
-					
-				} else {
-					tmpNazwy = transitionList.get(i).getName();
-					wielkoscNazwy = tmpNazwy.length();
-					for (int k = wielkoscNazwy; k < 16; k++) {
-						przerwa += " ";
-					}
-				}*/
-
                 fileBuffer.append(transitionList.get(i).getName()).append("                      ");
                 fileBuffer.append("0    0");
                 fileBuffer.append("\r\n");
@@ -1595,13 +1581,10 @@ public class IOprotocols {
             fileBuffer.append("@");
             writerObject.println(fileBuffer);
             writerObject.close();
-            //overlord.log("Petri net exported as .pnt INA format. File: "+path, "text", true);
-            //overlord.markNetSaved();
+            overlord.log(lang.getText("LOGentry00190")+": "+path, "text", true);
             return true;
         } catch (Exception e) {
-            //System.err.println("Error: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR: writePNT", JOptionPane.ERROR_MESSAGE);
-            overlord.log("Error: " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00191exception")+"\n"+e.getMessage(), "error", true);
             return false;
         }
     }
@@ -1642,17 +1625,14 @@ public class IOprotocols {
                 }
             }
             pw.close();
-            overlord.log("Invariants in Charlie file format saved to " + path, "text", true);
+            overlord.log(lang.getText("LOGentry00192")+ " " + path, "text", true);
         } catch (Exception e) {
-            //System.err.println("Error: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR: writeP_invCharlie", JOptionPane.ERROR_MESSAGE);
-            overlord.log("Error: " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00193exception")+"\n"+e.getMessage(), "error", true);
         }
     }
 
     /**
      * Metoda zapisująca p-inwarianty do pliku w formacie programu Charlie.
-     *
      * @param path       String - ścieżka do pliku
      * @param invariants ArrayList[ArrayList[Integer]] - macierz p-inwariantów
      * @param places     ArrayList[Place] - wektor miejsc
@@ -1686,10 +1666,10 @@ public class IOprotocols {
             }
             pw.print("\r\n");
             pw.close();
-            overlord.log("P-invariants in Charlie file format saved to " + path, "text", true);
+            overlord.log(lang.getText("LOGentry00194")+ " " + path, "text", true);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR: writeP_invCharlie", JOptionPane.ERROR_MESSAGE);
-            overlord.log("Error: " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00195exception") +"\n"+e.getMessage(), "error", true);
         }
     }
 
@@ -1741,17 +1721,14 @@ public class IOprotocols {
                 }
             }
             pw.close();
-            overlord.log("Invariants saved as CSV file " + path, "text", true);
+            overlord.log(lang.getText("LOGentry00196")+ " " + path, "text", true);
         } catch (Exception e) {
-            //System.err.println("Error: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR: writeT_invCSV", JOptionPane.ERROR_MESSAGE);
-            overlord.log("Error: " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00197exception")+"\n"+e.getMessage(), "error", true);
         }
     }
 
     /**
      * Metoda zapisująca p-inwarianty w formacie CSV (Comma Separated Value).
-     *
      * @param path         String - ścieżka do pliku zapisu
      * @param p_invariants ArrayList[ArrayList[Integer]] - macierz t-inwariantów
      * @param places       ArrayList[Place] - wektor miejsc
@@ -1777,11 +1754,9 @@ public class IOprotocols {
             }
 
             pw.close();
-            overlord.log("P-invariants saved as CSV file " + path, "text", true);
+            overlord.log(lang.getText("LOGentry00198")+" " + path, "text", true);
         } catch (Exception e) {
-            //System.err.println("Error: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, e.getMessage(), "ERROR: writeP_invCSV", JOptionPane.ERROR_MESSAGE);
-            overlord.log("Error: " + e.getMessage(), "error", true);
+            overlord.log(lang.getText("LOGentry00199exception")+"\n"+e.getMessage(), "error", true);
         }
     }
 
@@ -1816,7 +1791,7 @@ public class IOprotocols {
             oos.writeObject(sn);
             oos.flush();
         } catch (Exception e) {
-            System.out.println("Problem serializing: " + e);
+            overlord.log(lang.getText("LOGentry00200exception")+"\n"+e.getMessage(), "error", true);
         }
 
     }
@@ -1833,7 +1808,7 @@ public class IOprotocols {
             oos.writeObject(bsl);
             oos.flush();
         } catch (Exception e) {
-            System.out.println("Problem serializing: " + e);
+            overlord.log(lang.getText("LOGentry00201exception")+"\n"+e.getMessage(), "error", true);
         }
     }
 
@@ -1841,7 +1816,7 @@ public class IOprotocols {
         ArrayList<HolmesBranchVerticesPrototype.BranchStructure> sn = new ArrayList<>();
         try {
             // Reading the object from a file
-            FileInputStream file = new FileInputStream(new File(absolutePath));
+            FileInputStream file = new FileInputStream(absolutePath);
             ObjectInputStream in = new ObjectInputStream(file);
 
             // Method for deserialization of object
@@ -1850,19 +1825,16 @@ public class IOprotocols {
 
             sn = (ArrayList<HolmesBranchVerticesPrototype.BranchStructure>) in.readObject();// b.bsl;
 
-            //ArrayList<StatePlacesVector>  spv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().accessStateMatrix();
+            //[MR] poniższe było unused:
+            //ArrayList<StatePlacesVector>  spv = overlord.getWorkspace().getProject().accessStatesManager().accessStateMatrix();
 
             in.close();
             file.close();
 
             System.out.println("Object has been deserialized ");
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException e) {
+            overlord.log(lang.getText("LOGentry00202exception")+"\n"+e.getMessage(), "error", true);
         }
         return sn;
     }
@@ -1899,21 +1871,17 @@ public class IOprotocols {
             oos.writeObject(sn);
             oos.flush();
         } catch (Exception e) {
-            System.out.println("Problem serializing: " + e);
+            overlord.log(lang.getText("LOGentry00203exception")+"\n"+e.getMessage(), "error", true);
         }
-
     }
 
     public void importSubnetFromFile(String absolutePath, int x, int y) {
-
         try {
             // Reading the object from a file
-            FileInputStream file = new FileInputStream(new File(absolutePath));
+            FileInputStream file = new FileInputStream(absolutePath);
             ObjectInputStream in = new ObjectInputStream(file);
 
             // Method for deserialization of object
-
-
             SubnetCalculator.SubNet sn = (SubnetCalculator.SubNet) in.readObject();
 
             for (Place p : sn.getSubPlaces()) {
@@ -1926,42 +1894,26 @@ public class IOprotocols {
                     el.getPosition().y += y;
                     el.setSelected(false);
                 }
-
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().getNodes().add(n);
+                overlord.getWorkspace().getProject().getNodes().add(n);
 
                 if (n.getType() == PetriNetElementType.PLACE) {
-                    GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().addPlace();
+                    overlord.getWorkspace().getProject().accessStatesManager().addPlace((Place)n);
                 }
-                for (Place p : GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces()) {
+                for (Place p : overlord.getWorkspace().getProject().getPlaces()) {
                     p.setTokensNumber(0);
                 }
             }
-			/*
-			for (Transition n: sn.getSubTransitions()) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getTransitions().add(n);
-			}
-			for (Place n: sn.getSubPlaces()) {
-				GUIManager.getDefaultGUIManager().getWorkspace().getProject().getPlaces().add(n);
-			}
-			*/
             for (Arc n : sn.getSubArcs()) {
                 n.setSelected(false);
-                GUIManager.getDefaultGUIManager().getWorkspace().getProject().getArcs().add(n);
+                overlord.getWorkspace().getProject().getArcs().add(n);
             }
-
-
-            ArrayList<StatePlacesVector> spv = GUIManager.getDefaultGUIManager().getWorkspace().getProject().accessStatesManager().accessStateMatrix();
 
             in.close();
             file.close();
 
             System.out.println("Object has been deserialized ");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | IOException e) {
+            overlord.log(lang.getText("LOGentry00204exception")+"\n"+e.getMessage(), "error", true);
         }
     }
 }

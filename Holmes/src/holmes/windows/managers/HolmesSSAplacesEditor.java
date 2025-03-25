@@ -6,6 +6,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -17,6 +18,7 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SSAplacesManager;
 import holmes.petrinet.data.SSAplacesVector;
@@ -28,21 +30,18 @@ import holmes.tables.managers.SSAplacesTableRenderer;
 import holmes.utilities.Tools;
 
 public class HolmesSSAplacesEditor extends JFrame {
+	@Serial
 	private static final long serialVersionUID = -6810858686209063022L;
-	private GUIManager overlord;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private JFrame parentWindow;
-	private SSAplacesTableRenderer tableRenderer;
 	private SSAplacesEditorTableModel tableModel;
-	private JTable table;
-	private JPanel tablePanel;
 	private SSAplacesVector ssaVector;
 	private int ssaIndex;
-	private JTextArea vectorDescrTextArea;
-	private SSAdataType dataType = SSAdataType.MOLECULES;
-	private String dataTypeUnits = "";
+	private SSAdataType dataType;
+	private String dataTypeUnits;
 	
 	private ArrayList<Place> places;
-	private PetriNet pn;
 	private SSAplacesManager ssaManager;
 	
 	/**
@@ -52,14 +51,13 @@ public class HolmesSSAplacesEditor extends JFrame {
 	 * @param ssaIndex int - indeks powyższego wektora w tablicy
 	 */
 	public HolmesSSAplacesEditor(JFrame parent, SSAplacesVector ssaVector, int ssaIndex) {
-		setTitle("Holmes SSA components editor");
+		setTitle(lang.getText("HSSAwin_entry001title"));
     	try {
     		setIconImage(Tools.getImageFromIcon("/icons/holmesicon.png"));
-		} catch (Exception e ) {
-			
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00526exception")+"\n"+ex.getMessage(), "error", true);
 		}
-    	this.overlord = GUIManager.getDefaultGUIManager();
-    	this.pn = overlord.getWorkspace().getProject();
+		PetriNet pn = overlord.getWorkspace().getProject();
     	this.parentWindow = parent;
     	this.ssaVector = ssaVector;
     	this.ssaIndex = ssaIndex;
@@ -105,8 +103,8 @@ public class HolmesSSAplacesEditor extends JFrame {
 		setLocation(50, 50);
 		setResizable(true);
 		setLayout(new BorderLayout());
-		
-		tablePanel = getMainTablePanel();
+
+		JPanel tablePanel = getMainTablePanel();
 		add(getTopPanel(), BorderLayout.NORTH);
 		add(tablePanel, BorderLayout.CENTER);
 	}
@@ -118,7 +116,7 @@ public class HolmesSSAplacesEditor extends JFrame {
 	private JPanel getTopPanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("SSA components vector data"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSSAwin_entry002"))); //SSA components vector data
 		result.setPreferredSize(new Dimension(500, 100));
 		
 		JPanel filler = new JPanel(null);
@@ -126,7 +124,7 @@ public class HolmesSSAplacesEditor extends JFrame {
 		int posX = 5;
 		int posY = 0;
 		
-		JLabel label0 = new JLabel("SSA vector ID: ");
+		JLabel label0 = new JLabel(lang.getText("HSSAwin_entry003")); //SSA vector ID:
 		label0.setBounds(posX, posY, 100, 20);
 		filler.add(label0);
 		
@@ -134,16 +132,16 @@ public class HolmesSSAplacesEditor extends JFrame {
 		labelID.setBounds(posX+110, posY, 100, 20);
 		filler.add(labelID);
 		
-		JLabel label1 = new JLabel("Data vector type:");
+		JLabel label1 = new JLabel(lang.getText("HSSAwin_entry004")); //Data vector type:
 		label1.setBounds(posX+220, posY, 100, 20);
 		filler.add(label1);
 		
 		
-		JLabel label2 = new JLabel(""+dataType+dataTypeUnits);
+		JLabel label2 = new JLabel(dataType+dataTypeUnits);
 		label2.setBounds(posX+330, posY, 230, 20);
 		filler.add(label2);
-		
-		vectorDescrTextArea = new JTextArea(ssaManager.accessSSAmatrix().get(ssaIndex).getDescription());
+
+		JTextArea vectorDescrTextArea = new JTextArea(ssaManager.accessSSAmatrix().get(ssaIndex).getDescription());
 		vectorDescrTextArea.setLineWrap(true);
 		vectorDescrTextArea.setEditable(true);
 		vectorDescrTextArea.addFocusListener(new FocusAdapter() {
@@ -156,8 +154,6 @@ public class HolmesSSAplacesEditor extends JFrame {
             	}
             }
         });
-		
-		
 		
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
@@ -176,12 +172,12 @@ public class HolmesSSAplacesEditor extends JFrame {
 	public JPanel getMainTablePanel() {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
-		result.setBorder(BorderFactory.createTitledBorder("SSA components table"));
+		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSSAwin_entry005"))); //SSA components table
 		result.setPreferredSize(new Dimension(500, 500));
 		
 		tableModel = new SSAplacesEditorTableModel(this, ssaIndex, dataType);
-		table = new RXTable(tableModel);
-		((RXTable)table).setSelectAllForEdit(true);
+		RXTable table = new RXTable(tableModel);
+		table.setSelectAllForEdit(true);
 		
 		table.getColumnModel().getColumn(0).setHeaderValue("ID");
 		table.getColumnModel().getColumn(0).setPreferredWidth(30);
@@ -196,7 +192,7 @@ public class HolmesSSAplacesEditor extends JFrame {
         
 		table.setName("SSAplacesTable");
 		table.setFillsViewportHeight(true); // tabela zajmująca tyle miejsca, ale jest w panelu - związane ze scrollbar
-		tableRenderer = new SSAplacesTableRenderer();
+		SSAplacesTableRenderer tableRenderer = new SSAplacesTableRenderer();
 		table.setDefaultRenderer(Object.class, tableRenderer);
 		table.setDefaultRenderer(Double.class, tableRenderer);
 
@@ -204,7 +200,7 @@ public class HolmesSSAplacesEditor extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
         	public void mouseClicked(MouseEvent e) {
           	    if (e.getClickCount() == 1) {
-          	    	if(e.isControlDown() == false)
+          	    	if(!e.isControlDown())
           	    		;	//cellClickAction();
           	    }
           	 }

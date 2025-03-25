@@ -1,14 +1,14 @@
 package holmes.petrinet.simulators;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *  Numerical Recipes 3rd Edition: The Art of Scientific Computing
- *  by William H. Press (Author), Saul A. Teukolsky (Author), William T. Vetterling (Author), Brian P. Flannery (Author) 
- * 
- *	http://www.javamex.com/tutorials/random_numbers/numerical_recipes.shtml
+ *  by William H. Press (Author), Saul A. Teukolsky (Author), William T. Vetterling (Author), Brian P. Flannery (Author)
+ *	<a href="http://www.javamex.com/tutorials/random_numbers/numerical_recipes.shtml">...</a>
  */
 public class HighQualityRandom implements IRandomGenerator {
 	private Lock l = new ReentrantLock();
@@ -31,7 +31,6 @@ public class HighQualityRandom implements IRandomGenerator {
 		w = v;
 		nextLong();
 		l.unlock();
-		
 		generator = new Random(System.nanoTime());
 	}
 	
@@ -46,8 +45,7 @@ public class HighQualityRandom implements IRandomGenerator {
 			long x = u ^ (u << 21);
 			x ^= x >>> 35;
 			x ^= x << 4;
-			long ret = (x + v) ^ w;
-			return ret;
+			return (x + v) ^ w;
 		} finally {
 			l.unlock();
 		}
@@ -66,15 +64,12 @@ public class HighQualityRandom implements IRandomGenerator {
 		return result;
 	}
 	
-	public long nextLong(long min, long max) 
-	{
-		long res = nextLong(max - min) + min;
-		return res;
+	public long nextLong(long min, long max) {
+        return nextLong(max - min) + min;
 	}
 	
 	public int nextInt(int bits) {
 		//return (int) (nextLong() >>> (64-bits));
-		
 		int result = (int) nextLong(bits);
 		result = result < 0 ? -result : result;
 		return result;
@@ -83,5 +78,9 @@ public class HighQualityRandom implements IRandomGenerator {
 	@Override
 	public double nextDouble() {
 		return generator.nextDouble();
+	}
+
+	public double nextDouble(double min, double max) {
+		return ThreadLocalRandom.current().nextDouble(min, max);
 	}
 }

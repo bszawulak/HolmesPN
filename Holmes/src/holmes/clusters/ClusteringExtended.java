@@ -10,8 +10,6 @@ import java.util.ArrayList;
  * W klasie zdefiniowane są również metody obróbki danych. Zostały przetestowane, a autor modli się
  * żarliwie, aby okazały się prawidłowo napisane. W innym wypadku znajdywanie błędu może się okazać
  * 'interesujścymi czasami' z chińskiego przekleństwa.
- * @author MR
- *
  */
 public class ClusteringExtended {
 	public Clustering metaData; //meta dane o klastrowaniu
@@ -55,32 +53,30 @@ public class ClusteringExtended {
 	/**
 	 * Metoda ta zwraca wektor o liczności zbiorów MCT, każda liczba oznacza ile razy MCT 
 	 * wystąpią w 'sumie' inwariantów klastra
-	 * @param clusterIndex int - numer klastra
-	 * @return ArrayList<Integer> - ile razy MCT występuje w klastrze
+	 * @param clusterIndex (<b>int</b>) - numer klastra
+	 * @return ArrayList[<b>Integer</b>] - ile razy MCT występuje w klastrze
 	 */
 	public ArrayList<Integer> getMCTFrequencyInCluster(int clusterIndex) {
 		ArrayList<Integer> result = new ArrayList<Integer>();
-		
-		for(int mctInd=0; mctInd < mctSets.size(); mctInd++) {
-			ArrayList<Integer> mctRow = mctSets.get(mctInd); //numery tranzycji MCT
-			//teraz, dla każdego inwariantu klastra należy sprawdzić, czy mctRow choć
-			//raz się w nim znajduje
-			int mctCounterInCluster = 0;
 
-			ArrayList<Integer> invRow = clustersInv.get(clusterIndex); //numery tranzycji inwariantu
-			int rowSize = invRow.size();
-			for(int invInd=0; invInd < rowSize; invInd++) {
-				int invIndex = invRow.get(invInd);
-				ArrayList<Integer> transRow = csvInvariants.get(invIndex);
-				
-				boolean isMCTinInv = isSubset(mctRow, transRow);
-				if(isMCTinInv) {
-					mctCounterInCluster++;
-				}
+        //numery tranzycji MCT
+        for (ArrayList<Integer> mctRow : mctSets) {
+            //teraz, dla każdego inwariantu klastra należy sprawdzić, czy mctRow choć
+            //raz się w nim znajduje
+            int mctCounterInCluster = 0;
 
-			}
-			result.add(mctCounterInCluster);
-		}
+            ArrayList<Integer> invRow = clustersInv.get(clusterIndex); //numery tranzycji inwariantu
+            //int rowSize = invRow.size();
+            for (int invIndex : invRow) {
+                ArrayList<Integer> transRow = csvInvariants.get(invIndex);
+
+                boolean isMCTinInv = isSubset(mctRow, transRow);
+                if (isMCTinInv) {
+                    mctCounterInCluster++;
+                }
+            }
+            result.add(mctCounterInCluster);
+        }
 		return result;
 	}
 	
@@ -88,7 +84,7 @@ public class ClusteringExtended {
 	 * Metoda zwraca wektor o liczności tranzycji. Pozycja oznacza nr tranzycji wg schematu z 
 	 * wektora transNames, liczba oznacza ile razy dana tranzycja występuje w klastrze, z wyłączeniem
 	 * zbiorów MCT. 
-	 * @param clusterIndex int - nr klastra
+	 * @param clusterIndex (<b>int</b>) - nr klastra
 	 * @return int[4][] - pierwszy wektor to liczba występujących w klastrze tranzycji które nie
 	 * wchodzą w skład zbiorów MCT dla tego klastra, drugi wektor podobnie, z tym że wartości w nim
 	 * to rzeczywiste liczby uruchomień tranzycji w ramach inwariantu (i dalej: w ramach wszystkich
@@ -132,11 +128,10 @@ public class ClusteringExtended {
 				//teraz dla każdego występującego w klastrze MCT przetwarzamy go
 				//na jego tranzycje składowe
 				ArrayList<Integer> mctRow = mctSets.get(mctNumber);
-				for(int j=0; j<mctRow.size(); j++) { //dla wszystkich tranzycji tego MCT
-					int trans = mctRow.get(j); 
-					mctTransitions[trans] += getMCTFrequencyInCluster.get(mctNumber); 
-					mctTransNumber[trans] = (mctNumber+1);
-				}
+                for (int trans : mctRow) { //dla wszystkich tranzycji tego MCT
+                    mctTransitions[trans] += getMCTFrequencyInCluster.get(mctNumber);
+                    mctTransNumber[trans] = (mctNumber + 1);
+                }
 			}
 		}
 		//teraz wektor mctTransitions zawiera liczność wszystkich tranzycji ze zbiorów MCT
@@ -148,18 +143,16 @@ public class ClusteringExtended {
 				realFrequency[i] = 0;
 			}
 		}
-		
-		int[][] result = { transFrequency, realFrequency, realMCTTransFirings, mctTransNumber};
-		return result;
+        return new int[][]{ transFrequency, realFrequency, realMCTTransFirings, mctTransNumber};
 	}
 	
 	/**
 	 * Metoda ta zwraca tablicę łańcuchów znaków. Pierwszym elementem jest numer inwariantu
 	 * wraz z frazą Inv. #, drugi element to wszystkie zbiory MCT wchodzące w skład inwariantu
 	 * w formie [ ... ], następnie każdy element to nazwa tranzycji inwariantu poza MCT.
-	 * @param invNumber int - nr inwariantu
-	 * @param transIndexOnly boolean - jeśli true, zwraca tylko ID tranzycji
-	 * @return ArrayList[String] - nazwa-opis inwariantu
+	 * @param invNumber (<b>int</b>) - nr inwariantu
+	 * @param transIndexOnly (<b>boolean</b>) - jeśli true, zwraca tylko ID tranzycji
+	 * @return ArrayList[<b>String</b>] - nazwa-opis inwariantu
 	 */
 	public ArrayList<String> getNormalizedInvariant(int invNumber, boolean transIndexOnly) {
 		ArrayList<String> result = new ArrayList<String>();
@@ -167,7 +160,7 @@ public class ClusteringExtended {
 		//z wyjątkiem I miejsca
 		
 		result.add("Inv. #"+invRow.get(0));
-		String mctCell = "[";
+		StringBuilder mctCell = new StringBuilder("[");
 
 		boolean alreadyCried = false;
 		
@@ -176,32 +169,29 @@ public class ClusteringExtended {
 			ArrayList<Integer> mctVector = mctSets.get(mct);
 			int mctSize = mctVector.size();
 			int mctPartsFound = 0;
-			for(int tr=0; tr < mctVector.size(); tr++) { //dla każdej tranzycji MCT
-				if(invRow.get(mctVector.get(tr)) > 0) { //jeśli w inw. występuje tranzycja o numerze w MCT
-					mctPartsFound++;
-				}
-			}
+            for (Integer integer : mctVector) { //dla każdej tranzycji MCT
+                if (invRow.get(integer) > 0) { //jeśli w inw. występuje tranzycja o numerze w MCT
+                    mctPartsFound++;
+                }
+            }
 			
 			if(mctPartsFound == mctSize) {//dany MCT występuje w inwariancie
-				mctCell += (mct+1)+",";
+				mctCell.append(mct + 1).append(",");
 				//usuwanie śladów po MCT w inwariancie:
-				for(int tr=0; tr < mctVector.size(); tr++) { //powtórka z poprzednich iteracji
-					int transToRemove = mctVector.get(tr);
-					int oldValue = invRow.get(transToRemove);
-					if(oldValue > 1) {
-						//Hmm, dziwne. A przynajmniej odkryliśmy coś, co zainteresuje Adama.
-						if(alreadyCried == false) 
-							alreadyCried=true;
-							//GUIManager.getDefaultGUIManager().log("Logical error MCT:invariant:transition in inv "+invRow.get(0), "warning",true);
-						
-					}
-					invRow.set(transToRemove, 0);
-				}
+                for (int transToRemove : mctVector) { //powtórka z poprzednich iteracji
+                    int oldValue = invRow.get(transToRemove);
+                    if (oldValue > 1) {
+                        //Hmm, dziwne. A przynajmniej odkryliśmy coś, co zainteresuje Adama.
+                        if (!alreadyCried)
+                            alreadyCried = true;
+                    }
+                    invRow.set(transToRemove, 0);
+                }
 			}
 		}
-		mctCell += "]";
-		mctCell = mctCell.replace(",]", "]");
-		result.add(mctCell);
+		mctCell.append("]");
+		mctCell = new StringBuilder(mctCell.toString().replace(",]", "]"));
+		result.add(mctCell.toString());
 		
 		for(int i=1; i<invRow.size(); i++) { // po wszystkich pozostałych tranzycjach
 			if(invRow.get(i) > 0) {
@@ -220,11 +210,11 @@ public class ClusteringExtended {
 	/**
 	 * Metoda pod wezwaniem ArrayListy, zwraca macierz klastrów/tranzycji, z kolorami 
 	 * dla każdej tranzycji.
-	 * @return ArrayList[ArrayList[Color]] - macierz danych dla tranzycji w klastrach
+	 * @return ArrayList[ArrayList[<b>Color</b>]] - macierz danych dla tranzycji w klastrach
 	 */
 	public ArrayList<ArrayList<ClusterTransition>> getClusteringColored() {
 		ArrayList<ArrayList<ClusterTransition>> coloredClustering = new ArrayList<ArrayList<ClusterTransition>>();
-		if(clustersInv.size() > 0) {
+		if(!clustersInv.isEmpty()) {
 			for(int c=0; c<clustersInv.size(); c++) {
 				ArrayList<ClusterTransition> dataRow = new ArrayList<ClusterTransition>();
 				ArrayList<Integer> cTrans = getTransitionFromCluster(c, false);
@@ -232,14 +222,14 @@ public class ClusteringExtended {
 				
 				ArrayList<Double> avgFire = new ArrayList<Double>();
 				double clSize = clustersInv.get(c).size();
-				for(int i=0; i<cFired.size(); i++) {
-					avgFire.add(cFired.get(i).doubleValue() / clSize );
-				}
+                for (Integer integer : cFired) {
+                    avgFire.add(integer.doubleValue() / clSize);
+                }
 				
 				ArrayList<Double> tmpCTrans = new ArrayList<Double>();
-				for(int i=0; i<cTrans.size(); i++) {
-					tmpCTrans.add(cTrans.get(i).doubleValue());
-				}
+                for (Integer cTran : cTrans) {
+                    tmpCTrans.add(cTran.doubleValue());
+                }
 				
 				ArrayList<Color> colorRowTransGrade = getTransitionColorsType1(c, false, tmpCTrans);  //cTrans
 				ArrayList<Color> colorRowTransScale = getTransitionColorsType1(c, true, tmpCTrans); //cTrans
@@ -261,109 +251,98 @@ public class ClusteringExtended {
 	
 	/**
 	 * Zwraca wektor kolorów tranzycji dla wybranego klastra, działa w trybie binarnym
-	 * @param clusterNumber int - nr klastra
-	 * @param scale boolean - true jeśli chcemy skalę od zielonego do czerwonego, false
+	 * @param clusterNumber (<b>int</b>) - nr klastra
+	 * @param scale (<b>boolean</b>) - true jeśli chcemy skalę od zielonego do czerwonego, false
 	 * 		jeśli maja być wartości krokowe kolorów
-	 * @param data ArrayList[Integer] - wektor liczby tranzycji w klastrze lub ich odpaleń
-	 * @return ArrayList[Color] - wektor kolorów tranzycji
+	 * @param data (ArrayList[<b>Integer</b>]) - wektor liczby tranzycji w klastrze lub ich odpaleń
+	 * @return ArrayList[<b>Color</b>] - wektor kolorów tranzycji
 	 */
-	private ArrayList<Color> getTransitionColorsType1(int clusterNumber, boolean scale,
-			ArrayList<Double> data) {
-		ArrayList<Double> clusterTransitions = data;
-		//policz maks
+	private ArrayList<Color> getTransitionColorsType1(int clusterNumber, boolean scale, ArrayList<Double> data) {
 		double max=0;
-		for(int i=0; i<clusterTransitions.size(); i++) {
-			if(clusterTransitions.get(i) > max)
-				max = clusterTransitions.get(i);
-		}
+        for (Double datum : data) {
+            if (datum > max)
+                max = datum;
+        }
 		//względem tego kolory
 		if(scale)
-			return getColorScale(clusterTransitions, max);
+			return getColorScale(data, max);
 		else
-			return getColorsForTransitions(clusterTransitions, max);
+			return getColorsForTransitions(data, max);
 	}
 	
 	/**
 	 * Metoda zwraca wektor kolorów dla każdej tranzycji w zależności od jej 'mocy'
 	 * w klastrze
-	 * @param clusterTransitions ArrayList[Double] - wektor tranzycji
-	 * @param value double - wartość referencyjna
-	 * @return ArrayList[Colors] - wektor kolorów dla tranzycji
+	 * @param clusterTransitions (ArrayList[<b>Double</b>]) - wektor tranzycji
+	 * @param value (<b>double</b>) - wartość referencyjna
+	 * @return ArrayList[<b>Colors</b>] - wektor kolorów dla tranzycji
 	 */
 	private ArrayList<Color> getColorsForTransitions(ArrayList<Double> clusterTransitions, double value) {
 		ArrayList<Color> colors = new ArrayList<Color>();
-		double max = value;
-		double step = max / 10;
-		
-		for(int i=0; i<clusterTransitions.size(); i++) {
-			double power = clusterTransitions.get(i);
-			if(power >= 9*step) {
-				colors.add(new Color(25, 105, 0)); //dark green
-			} else if(power >= 8*step) {
-				colors.add(new Color(55, 235, 0)); // light green
-			} else if(power >= 7*step) {
-				colors.add(new Color(145, 255, 0)); //green-yellow
-			} else if(power >= 6*step) {
-				colors.add(new Color(239, 255, 0)); //yellow
-			} else if(power >= 5*step) {
-				colors.add(new Color(255, 205, 0)); //gold
-			} else if(power >= 4*step) {
-				colors.add(new Color(255, 162, 0)); //orange
-			} else if(power >= 3*step) {
-				colors.add(new Color(255, 94, 0)); //darker orange
-			} else if(power == 0) {
-				colors.add(Color.white); //null
-			} else if(power < 3*step) {
-				colors.add(new Color(255, 0, 0)); //red
-			}
-		}
+		double step = value / 10;
+
+        for (double power : clusterTransitions) {
+            if (power >= 9 * step) {
+                colors.add(new Color(25, 105, 0)); //dark green
+            } else if (power >= 8 * step) {
+                colors.add(new Color(55, 235, 0)); // light green
+            } else if (power >= 7 * step) {
+                colors.add(new Color(145, 255, 0)); //green-yellow
+            } else if (power >= 6 * step) {
+                colors.add(new Color(239, 255, 0)); //yellow
+            } else if (power >= 5 * step) {
+                colors.add(new Color(255, 205, 0)); //gold
+            } else if (power >= 4 * step) {
+                colors.add(new Color(255, 162, 0)); //orange
+            } else if (power >= 3 * step) {
+                colors.add(new Color(255, 94, 0)); //darker orange
+            } else if (power == 0) {
+                colors.add(Color.white); //null
+            } else if (power < 3 * step) {
+                colors.add(new Color(255, 0, 0)); //red
+            }
+        }
 		return colors;
 	}
 	
 	/**
 	 * Metoda dla danego wektora tranzycji zwraca wektor kolorów w skali od zieleni do czerwonego.
-	 * @param clusterTransitions ArrayList[Integer] - wektor tranzycji
-	 * @param value double - wartość referencyjna
-	 * @return ArrayList[Color] - wektor kolorów
+	 * @param clusterTransitions (ArrayList[<b>Integer</b>]) - wektor tranzycji
+	 * @param value (<b>double</b>) - wartość referencyjna
+	 * @return ArrayList[<b>Color</b>] - wektor kolorów
 	 */
-	public ArrayList<Color> getColorScale(ArrayList<Double> clusterTransitions, double value)
-	{
-		double max = value;
+	public ArrayList<Color> getColorScale(ArrayList<Double> clusterTransitions, double value) {
 		double blue = 0.0;
-		double green = 0.0;
-		double red = 0.0;
+		double green;
+		double red;
 		ArrayList<Color> colors = new ArrayList<Color>();
-		for(int i=0; i<clusterTransitions.size(); i++) {
-			double trValue = clusterTransitions.get(i);
-			
-			if(trValue == 0) {
-				colors.add(Color.white);
-				continue;
-			}
-			
-			double power = trValue / max; //od 0 do 1.
-			power = 1 - power;
-			
-			if(power >= 0 && power < 0.5) {
-				green = 1.0;
-				red = 2 * power;
-			} else {
-				red = 1.0;
-				green = 1.0 - 2 * (power - 0.5);
-			}
-			red *= 255;
-			blue *= 255;
-			green *= 255;   
-			
-			colors.add(new Color((int)red, (int)green, (int)blue));
-		}
+        for (double trValue : clusterTransitions) {
+            if (trValue == 0) {
+                colors.add(Color.white);
+                continue;
+            }
+
+            double power = trValue / value; //od 0 do 1.
+            power = 1 - power;
+
+            if (power >= 0 && power < 0.5) {
+                green = 1.0;
+                red = 2 * power;
+            } else {
+                red = 1.0;
+                green = 1.0 - 2 * (power - 0.5);
+            }
+            red *= 255;
+            blue *= 255;
+            green *= 255;
+
+            colors.add(new Color((int) red, (int) green, (int) blue));
+        }
 		
 	    //double H = power * 0.4; // Hue (note 0.4 = Green, see huge chart below)
-	   // double S = 0.9; // Saturation
+	    // double S = 0.9; // Saturation
 	    //double B = 0.9; // Brightness
-
 	    //return Color.getHSBColor((float)H, (float)S, (float)B);
-	    
 	    return colors;
 	}
 
@@ -371,10 +350,10 @@ public class ClusteringExtended {
 	 * Metoda zwraca wektor o liczności tranzycji w sieci. W zależności od flagi real wektor
 	 * ten zawiera sumę wszystkich odpaleń tranzycji w klastrze, lub tylko liczbę ich wystąpień
 	 * w ramach inwariantów.
-	 * @param clusterNumber int - nr klastra
-	 * @param real boolean - false, jeśli liczymy tylko wystąpienia tranzycji w inwariantach 
+	 * @param clusterNumber (<b>int</b>) - nr klastra
+	 * @param real (<b>boolean</b>) - false, jeśli liczymy tylko wystąpienia tranzycji w inwariantach
 	 * 		klastra, true - jeśli sumaryczną wartość odpaleń
-	 * @return ArrayList[Integer] - wektor wartości dla tranzycji
+	 * @return ArrayList[<b>Integer</b>] - wektor wartości dla tranzycji
 	 */
 	private ArrayList<Integer> getTransitionFromCluster(int clusterNumber, boolean real) {
 		ArrayList<Integer> result = new ArrayList<Integer>();
@@ -417,33 +396,33 @@ public class ClusteringExtended {
 	/**
 	 * Metoda ta sprawdza, czy elementy zbioru subset (nr tranzycji) znajdują się na odpowiednich
 	 * miejsach w zbiorze superset (tj. nr tranzycji z subset to indeks z superset i > 0 w tym miejscu)
-	 * @param subset ArrayList[Integer] - numery tranzycji w ramach MCT
-	 * @param superset ArrayList[Integer] - inwariant
-	 * @return boolean - true, jeśli zbiór MCT wchodzi w skład inwariantu
+	 * @param subset (ArrayList[<b>Integer</b>]) - numery tranzycji w ramach MCT
+	 * @param superset (ArrayList[<b>Integer</b>]) - inwariant
+	 * @return <b>boolean</b> - true, jeśli zbiór MCT wchodzi w skład inwariantu
 	 */
 	private boolean isSubset(ArrayList<Integer> subset, ArrayList<Integer> superset) {
-		boolean transFound = false;
+		boolean transFound;
 		//int supersetSize = superset.size();
-		for(int i=0; i<subset.size(); i++) { //dla każdej tranzycji z MCT
-			transFound = false;
-			int transId = subset.get(i);
-			for(int j=1; j<superset.size(); j++) { //dla każdej tranzycji z inwariantu
-				//przy czym I element to nr inwariantu, więc pomijamy
-				try {
-					if(superset.get(transId)>0) {
-						transFound = true;
-						break;
-					}
-				} catch (Exception e) {
-					return false; //to znaczy, że jakas tranzycja ma wyższy nr niż możliwe.
-					// To znaczy dalej, że mamy przesrane, bo gdzieś między setkami linii kodu
-					// operującymi na setkach tysięcy liczb jest błąd. Zapewne dość niewielki...
-				}
-			}
-			if(transFound == false) { //jeśli powyższa pętla nie znalazła tranzycji z MCT w inwariancie
-				return false;
-			}
-		}
+        for (Integer integer : subset) { //dla każdej tranzycji z MCT
+            transFound = false;
+            int transId = integer;
+            for (int j = 1; j < superset.size(); j++) { //dla każdej tranzycji z inwariantu
+                //przy czym I element to nr inwariantu, więc pomijamy
+                try {
+                    if (superset.get(transId) > 0) {
+                        transFound = true;
+                        break;
+                    }
+                } catch (Exception e) {
+                    return false; //to znaczy, że jakas tranzycja ma wyższy nr niż możliwe.
+                    // To znaczy dalej, że mamy przesrane, bo gdzieś między setkami linii kodu
+                    // operującymi na setkach tysięcy liczb jest błąd. Zapewne dość niewielki...
+                }
+            }
+            if (!transFound) { //jeśli powyższa pętla nie znalazła tranzycji z MCT w inwariancie
+                return false;
+            }
+        }
 		return true;
 	}
 }

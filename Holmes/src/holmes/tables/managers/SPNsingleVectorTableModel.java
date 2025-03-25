@@ -1,21 +1,25 @@
 package holmes.tables.managers;
 
 import java.awt.event.MouseEvent;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.EventObject;
 
 import javax.swing.table.DefaultTableModel;
 
-import holmes.petrinet.elements.Transition.StochaticsType;
+import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 import holmes.windows.managers.HolmesSPNeditor;
 
 /**
  * Model tabeli tranzycji dla jednego wektora danych SPN.
- * 
- * @author MR
  */
 public class SPNsingleVectorTableModel extends DefaultTableModel {
+	@Serial
 	private static final long serialVersionUID = -6898959322396110431L;
+	private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+	private static final LanguageManager lang = GUIManager.getLanguageManager();
 	private String[] columnNames;
 	private ArrayList<FRDataClass> dataMatrix;
 	private int dataSize;
@@ -25,11 +29,11 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 	private int frVectorIndex;
 	public boolean changes = false;
 	
-	public class FRDataClass {
+	public static class FRDataClass {
 		public int ID;
 		public String name;
 		public String dataVector;
-		public StochaticsType subType;
+		public TransitionSPNExtension.StochaticsType subType;
 	}
 
 	/**
@@ -63,7 +67,7 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 	 * @param SPNtransData String - dane dla SPN
 	 * @param sType StochaticsType - podtyp w SPN
 	 */
-	public void addNew(int ID, String name, String SPNtransData, StochaticsType sType) {
+	public void addNew(int ID, String name, String SPNtransData, TransitionSPNExtension.StochaticsType sType) {
 		FRDataClass row = new FRDataClass();
 		row.ID = ID;
 		row.name = name;
@@ -136,17 +140,13 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
      * @param columnIndex int - numer kolumny
      */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		switch(columnIndex) {
-			case 0:
-				return dataMatrix.get(rowIndex).ID;
-			case 1:
-				return dataMatrix.get(rowIndex).name;
-			case 2:
-				return dataMatrix.get(rowIndex).dataVector;
-			case 3:
-				return dataMatrix.get(rowIndex).subType;
-		}
-		return null;
+		return switch (columnIndex) {
+			case 0 -> dataMatrix.get(rowIndex).ID;
+			case 1 -> dataMatrix.get(rowIndex).name;
+			case 2 -> dataMatrix.get(rowIndex).dataVector;
+			case 3 -> dataMatrix.get(rowIndex).subType;
+			default -> null;
+		};
 	}
 	
 	/**
@@ -160,10 +160,10 @@ public class SPNsingleVectorTableModel extends DefaultTableModel {
 			if(col == 2) {
 				dataMatrix.get(row).dataVector = value.toString();
 			} else if(col == 3) {
-				dataMatrix.get(row).subType = (StochaticsType)value;
+				dataMatrix.get(row).subType = (TransitionSPNExtension.StochaticsType)value;
 			}
-		} catch (Exception e) {
-
+		} catch (Exception ex) {
+			overlord.log(lang.getText("LOGentry00421exception")+"\n"+ex.getMessage(), "error", true);
 		}
 	}
 }
