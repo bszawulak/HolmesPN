@@ -31,6 +31,7 @@ public class EditorResources {
 	public static final Color glowTransitonTextColor = new Color(0, 89, 0, 255);
 	
 	public static final Color graphPanelMeshColor = new Color(200, 200, 200, 50);
+	public static final Color graphPanelColor = new Color(240, 240, 240, 250);
 	
 	public static final Stroke glowStrokeLevel1 = new BasicStroke(8);
 	public static final Stroke glowStrokeLevel2 =  new BasicStroke(6);

@@ -1107,17 +1107,39 @@ public final class ElementDraw {
 
 			int xPos = (int) ((xl + xk)/2);
 	    	int yPos = (int) ((yl + yk)/2);
-	    	int xT = (int) ((xPos - xp)/3.14);
-	    	int yT = (int) ((yPos - yp)/3.14);
+			
+			
+			/*
+			jeżeli alfaSin = 1 lub -1 a w tym samym czasie alfaCos = 0, lub
+			jeżeli alfaCos = 1 lub -1 a w tym samym czasie alfaSin = 1, wtedy piiii = 3.14
+			jednak im bardziej wskazują te dwie zmienne (alfaSin i alfaCos) na kąt 45% (bo opisane
+			wyżej to kąty proste: 0, 90, 180 i 270 stopni), tym bardziej wartość piiii będzie rosnąc
+			do wartości 5.
+			 */	
+			double piiii = 3.14;
+			
+			if(!((alfaSin > -0.45 && alfaSin < 0.45) || (alfaCos > 0 && alfaCos < 0.45)) ) {
+				double angle = Math.abs(alfaSin) + Math.abs(alfaCos);
+				piiii = 3.14 + (12.52) * (angle / 2);
+			}
+	
+			int xT = (int) ((xPos - xp)/piiii);
+			int yT = (int) ((yPos - yp)/piiii);
 	    	
 	    	if(arc.arcQSimBox.qSimForcedArc) {
 				g.setColor(arc.arcQSimBox.qSimForcedColor);
 				g.setStroke(new BasicStroke(4));
 				g.drawOval(xPos-6-xT, yPos-6-yT, 12, 12);
 	    	} else {
-	    		g.drawOval(xPos-5-xT, yPos-5-yT, 10, 10);
+				//wypełnij na biało:
+				g.setColor(graphPanelColor);
+				g.fillOval(xPos-6-xT, yPos-6-yT, 12, 12);
+				g.setColor(Color.black);
+	    		g.drawOval(xPos-6-xT, yPos-6-yT, 12, 12);
 	    	}
-	    	
+
+			//g.drawString("AlfaS: " +alfaSin + " AlfaCos: "+alfaCos+" Alfa: "+alfa , 200, 100);
+			
 		} else if (arc.getArcType() == TypeOfArc.RESET) {
 			g.fillPolygon(new int[] { (int) xp, (int) xl, (int) xk }, 
 					new int[] { (int) yp, (int) yl, (int) yk }, 3);

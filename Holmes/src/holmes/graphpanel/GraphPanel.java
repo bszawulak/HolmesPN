@@ -1553,6 +1553,7 @@ public class GraphPanel extends JComponent {
 								arc2.setArcType(TypeOfArc.READARC);
 							} else if(arcType == DrawModes.ARC_INHIBITOR) {
 								arc.setArcType(TypeOfArc.INHIBITOR);
+								//arc.clearBreakPoints();
 								getArcs().add(arc);
 							} else if(arcType == DrawModes.ARC_RESET) {
 								arc.setArcType(TypeOfArc.RESET);

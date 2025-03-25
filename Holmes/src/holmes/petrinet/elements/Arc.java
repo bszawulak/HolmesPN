@@ -157,6 +157,9 @@ public class Arc extends PetriNetElement {
      * @param arc (<b>Arc</b>) inny łuk niż normal idący w drugą stronę.
      */
     private void handleComplexArcGraphics(Arc arc) {
+        if (arc == null)
+            return;
+        
         if (this.breakPoints.isEmpty()) {
             Point startP = getStartLocation().getPosition();
             Point endP = getEndLocation().getPosition();
@@ -165,8 +168,7 @@ public class Arc extends PetriNetElement {
             breakPoints.add(breakPoint);
         }
 
-        if (arc == null)
-            return;
+        
 
         if (arc.breakPoints.isEmpty()) {
             Point startP = arc.getStartLocation().getPosition();

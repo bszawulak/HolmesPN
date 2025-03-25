@@ -136,6 +136,7 @@ public class HolmesStSpRG extends JFrame {
 
         if(transitions.size() > 1) {
             Transition t1 = overlord.getWorkspace().getProject().getTransitions().get(0);
+            
             logField1stTab.append("Transition 1: "+t1.getName()+"\n");
             // pobierz miejsca wejściowe:
             ArrayList<Place> inputPlaces = t1.getInputPlaces();
