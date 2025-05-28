@@ -19,6 +19,7 @@ import holmes.petrinet.simulators.GraphicalSimulator.SimulatorMode;
 import holmes.utilities.Tools;
 import holmes.varia.NetworkTransformations;
 import holmes.windows.HolmesNotepad;
+import holmes.windows.firingalgo.HolmesFiringAlgorithm;
 import holmes.windows.statespace.HolmesStSpRG;
 import holmes.windows.statespace.HolmesStSpRGtpn;
 import holmes.windows.statespace.HolmesStSpRP;
@@ -266,7 +267,13 @@ public class Toolbar extends JPanel {
             HolmesStSpRGtpn stateSpaceWindow = new HolmesStSpRGtpn();
         });
         this.add(ssButtonRGtpn);
-        
+
+        JSeparator firingAlgoSeparator = new JSeparator();
+        firingAlgoSeparator.setOrientation(SwingConstants.VERTICAL);
+        firingAlgoSeparator.setPreferredSize(new Dimension(15,45));
+        this.add(firingAlgoSeparator);
+
+        HolmesFiringAlgorithm.DrawButtonToToolbar(this);
 
         //TODO:
         ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", "Debug2", Tools.getResIcon48("/icons/toolbar/a.png")) {
