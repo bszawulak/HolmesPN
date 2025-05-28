@@ -95,4 +95,30 @@ public class DetermineFiringDelayAlgo implements Runnable {
         markedTransitions.add(transition);
         output.add(0, transition);
     }
+
+    private double EQ1(Transition transition) {
+        ArrayList<Place> previousPlaces = transition.getInputPlaces();
+
+        double sumForPlaces = 0;
+        for (Place place : previousPlaces) {
+            ArrayList<Transition> previousTransitions = place.getInputTransitions();
+            double sumForTransitions = 0;
+            for (Transition previousTransition : previousTransitions) {
+                sumForTransitions += CalculateFiringRateForSinglePath(previousTransition);
+            }
+            sumForPlaces += sumForTransitions / transition.getInputArcWeightFrom(place);
+        }
+        return sumForPlaces;
+    }
+
+    private double CalculateFiringRateForSinglePath(Transition transition) {
+        if(transition.getInputPlaces().isEmpty())
+            return transition.spnExtension.getFiringRate();
+
+        Place previousPlace = transition.getInputPlaces().get(0);
+        Transition previousTransition = previousPlace.getInputTransitions().get(0);
+        double alpha = transition.getInputArcWeightFrom(previousPlace);
+        double beta = previousTransition.getOutputArcWeightTo(previousPlace);
+        return previousTransition.spnExtension.getFiringRate() * beta / alpha;
+    }
 }
