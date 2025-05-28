@@ -2,3 +2,7 @@
 /output/
 /.gitignore
 /tmp/
+
+holmes.cfg
+/log/
+/tools/
