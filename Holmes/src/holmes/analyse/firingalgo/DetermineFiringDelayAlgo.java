@@ -4,8 +4,11 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
+import holmes.utilities.Pair;
 
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DetermineFiringDelayAlgo implements Runnable {
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -160,19 +163,20 @@ public class DetermineFiringDelayAlgo implements Runnable {
                          HashSet<Place> markedPlaces,
                          HashSet<Transition> Te) {
         for (Place previousPlace : transition.getInputPlaces()) {
-            if(previousPlace.getOutputTransitions().size() > 1)
+            if(previousPlace.getOutputTransitions().size() > 1) {
                 markedPlaces.add(previousPlace);
+            }
 
             stack.push(previousPlace);
-            for (Transition previousTransition: previousPlace.getInputTransitions()) {
-
-                if (!markedTransitions.contains(previousTransition))
+            for (Transition previousTransition : previousPlace.getInputTransitions()) {
+                if (!markedTransitions.contains(previousTransition)) {
                     markedTransitions.add(previousTransition);
+                }
 
                 if (sourceTransitions.contains(previousTransition)
-                || syncTransitions.contains(previousTransition)
-                || Te.contains(previousTransition)) {
-                    dfsPop();
+                    || syncTransitions.contains(previousTransition)
+                    || Te.contains(previousTransition)) {
+                    dfsPop(stack, markedTransitions, markedPlaces);
                 }
                 else {
                     dfsPush(previousTransition,
@@ -185,5 +189,21 @@ public class DetermineFiringDelayAlgo implements Runnable {
         }
     }
 
-    private void dfsPop() {}
+    private void dfsPop(Stack<Place> stack, HashSet<Transition> markedTransitions, HashSet<Place> markedPlaces) {
+        while (!stack.isEmpty()) {
+            Place place = stack.peek();
+            if (!markedTransitions.containsAll(place.getInputTransitions())) {
+                break;
+            }
+            else {
+                stack.pop();
+                if (markedPlaces.contains(place)) {
+                    //EQ2
+                }
+                else {
+                    //EQ3
+                }
+            }
+        }
+    }
 }
