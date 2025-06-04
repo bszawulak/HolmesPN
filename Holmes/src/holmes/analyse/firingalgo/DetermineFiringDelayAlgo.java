@@ -115,11 +115,8 @@ public class DetermineFiringDelayAlgo implements Runnable {
 
     private ArrayList<Place> getInputPlacesByNormalArcs(Transition transition) {
         ArrayList<Place> places = transition.getInputPlaces();
-        ArrayList<Arc> arcs = transition.getInputArcs();
         for (Place place : places) {
-            ArrayList<Arc> arc = place.getOutputArcs();
-            arc.retainAll(arcs);
-            if(arc.get(0).getArcType() != Arc.TypeOfArc.NORMAL)
+            if(transition.getInputArcFrom(place).getArcType() != Arc.TypeOfArc.NORMAL)
                 places.remove(place);
         }
         return places;

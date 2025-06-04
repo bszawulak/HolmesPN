@@ -353,6 +353,34 @@ public class Transition extends Node {
     }
 
     /**
+     * Metoda zwraca łuk wyjściowy do wskazanego miejsca.
+     *
+     * @param outPlace Place - miejsce połączone z daną tranzycją (od niej)
+     * @return Arc - łuk łączący tranzycje z miejscem
+     */
+    public Arc getOutputArcTo(Place outPlace) {
+        for (Arc currentArc : getOutputArcs()) {
+            if (currentArc.getEndNode().equals(outPlace))
+                return currentArc;
+        }
+        return null;
+    }
+
+    /**
+     * Metoda zwraca łuk wejściowy do wskazanego miejsca.
+     *
+     * @param outPlace Place - miejsce połączone z daną tranzycją (od niej)
+     * @return Arc - łuk łączący tranzycje z miejscem
+     */
+    public Arc getInputArcFrom(Place outPlace) {
+        for (Arc currentArc : getInputArcs()) {
+            if (currentArc.getStartNode().equals(outPlace))
+                return currentArc;
+        }
+        return null;
+    }
+
+    /**
      * Metoda zwraca podtyp tranzycji.
      * @return TransitionType - podtyp
      */
