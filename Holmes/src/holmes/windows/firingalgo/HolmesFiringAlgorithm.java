@@ -76,6 +76,7 @@ public class HolmesFiringAlgorithm extends JFrame {
             DetermineFiringDelayAlgo algorithm = new DetermineFiringDelayAlgo();
             algorithm.run();
 
+            /*
             StringBuilder sb = new StringBuilder();
             for (Transition t : algorithm.LT) {
                 sb.append(t.getName());
@@ -83,6 +84,7 @@ public class HolmesFiringAlgorithm extends JFrame {
             }
 
             logOutput.append(sb.toString());
+             */
         });
         runAlgorithmButton.setFocusPainted(false);
         panel.add(runAlgorithmButton);

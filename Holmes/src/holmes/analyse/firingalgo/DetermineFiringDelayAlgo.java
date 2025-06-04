@@ -4,17 +4,14 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class DetermineFiringDelayAlgo implements Runnable {
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
     private ArrayList<Transition> sourceTransitions = new ArrayList<Transition>();
     private ArrayList<Transition> syncTransitions = new ArrayList<Transition>();
     private ArrayList<Transition> sinkTransitions = new ArrayList<Transition>();
-    public ArrayList<Transition> LT = new ArrayList<Transition>();
+    private LinkedList<Transition> LT = new LinkedList<Transition>();
 
     @Override
     public void run() {
@@ -61,9 +58,10 @@ public class DetermineFiringDelayAlgo implements Runnable {
             VisitTransitionLT(transition, markedTransitions, temporaryMarkedTransitions, LT);
         }
 
-        List<Transition> lt = LT.reversed();
-        ArrayList<Transition> output = new ArrayList<Transition>();
-        for (Transition transition : lt) {
+        LinkedList<Transition> output = new LinkedList<Transition>();
+        Iterator<Transition> iterator = LT.descendingIterator();
+        while (iterator.hasNext()) {
+            Transition transition = iterator.next();
             if (syncTransitions.contains(transition)) {
                 output.add(transition);
             }
@@ -76,7 +74,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
             Transition transition,
             HashSet<Transition> markedTransitions,
             HashSet<Transition> temporaryMarkedTransitions,
-            ArrayList<Transition> output) throws Exception {
+            LinkedList<Transition> output) throws Exception {
         if (markedTransitions.contains(transition)) {
             return;
         }
