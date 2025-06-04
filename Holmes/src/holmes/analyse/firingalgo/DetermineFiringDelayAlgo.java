@@ -12,11 +12,12 @@ public class DetermineFiringDelayAlgo implements Runnable {
     private ArrayList<Transition> syncTransitions = new ArrayList<Transition>();
     private ArrayList<Transition> sinkTransitions = new ArrayList<Transition>();
     private ArrayList<Transition> LT = new ArrayList<Transition>();
+    private Hashtable<Transition, ArrayList<String>> transitionToEquation6 = new Hashtable<Transition, ArrayList<String>>();
 
     @Override
     public void run() {
-//        ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
         ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
+        transitionToEquation6.clear();
 
         setupTransitions(transitions);
 
