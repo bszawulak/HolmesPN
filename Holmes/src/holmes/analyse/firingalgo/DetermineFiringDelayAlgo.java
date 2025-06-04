@@ -15,7 +15,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
 
     @Override
     public void run() {
-        ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
+//        ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
         ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
 
         setupTransitions(transitions);
@@ -25,6 +25,23 @@ public class DetermineFiringDelayAlgo implements Runnable {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        Transition t = LT.removeFirst();
+        Stack<Place> stack = new Stack<>();
+        HashSet<Transition> markedTransitions = new HashSet<Transition>();
+        HashSet<Place> markedPlaces = new HashSet<Place>();
+        HashSet<Transition> Te = new HashSet<Transition>();
+        while (t != null) {
+            dfsPush(t,
+                    stack,
+                    markedTransitions,
+                    markedPlaces,
+                    Te);
+            EQ1(t);
+            t = LT.removeFirst();
+        }
+
+
     }
 
     private void setupTransitions(ArrayList<Transition> transitions) {
@@ -119,4 +136,37 @@ public class DetermineFiringDelayAlgo implements Runnable {
         double beta = previousTransition.getOutputArcWeightTo(previousPlace);
         return previousTransition.spnExtension.getFiringRate() * beta / alpha;
     }
+
+    private void dfsPush(Transition transition,
+                         Stack<Place> stack,
+                         HashSet<Transition> markedTransitions,
+                         HashSet<Place> markedPlaces,
+                         HashSet<Transition> Te) {
+        for (Place previousPlace : transition.getInputPlaces()) {
+            if(previousPlace.getOutputTransitions().size() > 1)
+                markedPlaces.add(previousPlace);
+
+            stack.push(previousPlace);
+            for (Transition previousTransition: previousPlace.getInputTransitions()) {
+
+                if (!markedTransitions.contains(previousTransition))
+                    markedTransitions.add(previousTransition);
+
+                if (sourceTransitions.contains(previousTransition)
+                || syncTransitions.contains(previousTransition)
+                || Te.contains(previousTransition)) {
+                    dfsPop();
+                }
+                else {
+                    dfsPush(previousTransition,
+                            stack,
+                            markedTransitions,
+                            markedPlaces,
+                            Te);
+                }
+            }
+        }
+    }
+
+    private void dfsPop() {}
 }
