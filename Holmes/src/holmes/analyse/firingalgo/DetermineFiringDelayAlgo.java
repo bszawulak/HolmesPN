@@ -11,7 +11,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
     private ArrayList<Transition> sourceTransitions = new ArrayList<Transition>();
     private ArrayList<Transition> syncTransitions = new ArrayList<Transition>();
     private ArrayList<Transition> sinkTransitions = new ArrayList<Transition>();
-    private LinkedList<Transition> LT = new LinkedList<Transition>();
+    private ArrayList<Transition> LT = new ArrayList<Transition>();
 
     @Override
     public void run() {
@@ -26,19 +26,18 @@ public class DetermineFiringDelayAlgo implements Runnable {
             throw new RuntimeException(e);
         }
 
-        Transition t = LT.removeFirst();
         Stack<Place> stack = new Stack<>();
         HashSet<Transition> markedTransitions = new HashSet<Transition>();
         HashSet<Place> markedPlaces = new HashSet<Place>();
         HashSet<Transition> Te = new HashSet<Transition>();
-        while (t != null) {
-            dfsPush(t,
+
+        for (Transition transition : LT) {
+            dfsPush(transition,
                     stack,
                     markedTransitions,
                     markedPlaces,
                     Te);
-            EQ1(t);
-            t = LT.removeFirst();
+            EQ1(transition);
         }
 
 
@@ -75,10 +74,9 @@ public class DetermineFiringDelayAlgo implements Runnable {
             VisitTransitionLT(transition, markedTransitions, temporaryMarkedTransitions, LT);
         }
 
-        LinkedList<Transition> output = new LinkedList<Transition>();
-        Iterator<Transition> iterator = LT.descendingIterator();
-        while (iterator.hasNext()) {
-            Transition transition = iterator.next();
+        ArrayList<Transition> output = new ArrayList<Transition>();
+        List<Transition> reversed = LT.reversed();
+        for (Transition transition : reversed) {
             if (syncTransitions.contains(transition)) {
                 output.add(transition);
             }
@@ -91,7 +89,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
             Transition transition,
             HashSet<Transition> markedTransitions,
             HashSet<Transition> temporaryMarkedTransitions,
-            LinkedList<Transition> output) throws Exception {
+            ArrayList<Transition> output) throws Exception {
         if (markedTransitions.contains(transition)) {
             return;
         }
