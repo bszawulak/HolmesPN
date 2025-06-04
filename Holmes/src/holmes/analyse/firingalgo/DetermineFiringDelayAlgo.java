@@ -1,6 +1,7 @@
 package holmes.analyse.firingalgo;
 
 import holmes.darkgui.GUIManager;
+import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 
@@ -38,7 +39,9 @@ public class DetermineFiringDelayAlgo implements Runnable {
                     markedTransitions,
                     markedPlaces,
                     Te);
-            EQ1(transition);
+            if (syncTransitions.contains(transition)) {
+                equation6(transition);
+            }
         }
 
 
@@ -110,30 +113,48 @@ public class DetermineFiringDelayAlgo implements Runnable {
         output.add(0, transition);
     }
 
-    private double EQ1(Transition transition) {
-        ArrayList<Place> previousPlaces = transition.getInputPlaces();
-
-        double sumForPlaces = 0;
-        for (Place place : previousPlaces) {
-            ArrayList<Transition> previousTransitions = place.getInputTransitions();
-            double sumForTransitions = 0;
-            for (Transition previousTransition : previousTransitions) {
-                sumForTransitions += CalculateFiringRateForSinglePath(previousTransition);
-            }
-            sumForPlaces += sumForTransitions / transition.getInputArcWeightFrom(place);
+    private ArrayList<Place> getInputPlacesByNormalArcs(Transition transition) {
+        ArrayList<Place> places = transition.getInputPlaces();
+        ArrayList<Arc> arcs = transition.getInputArcs();
+        for (Place place : places) {
+            ArrayList<Arc> arc = place.getOutputArcs();
+            arc.retainAll(arcs);
+            if(arc.get(0).getArcType() != Arc.TypeOfArc.NORMAL)
+                places.remove(place);
         }
-        return sumForPlaces;
+        return places;
     }
 
-    private double CalculateFiringRateForSinglePath(Transition transition) {
-        if(transition.getInputPlaces().isEmpty())
-            return transition.spnExtension.getFiringRate();
+    private void equation6(Transition transition) {
+        ArrayList<String> equality = new ArrayList<String>();
+        for (Place place: getInputPlacesByNormalArcs(transition)) {
+            equality.add(equation3(place));
+        }
+        transitionToEquation6.put(transition, equality);
+    }
 
-        Place previousPlace = transition.getInputPlaces().get(0);
-        Transition previousTransition = previousPlace.getInputTransitions().get(0);
-        double alpha = transition.getInputArcWeightFrom(previousPlace);
-        double beta = previousTransition.getOutputArcWeightTo(previousPlace);
-        return previousTransition.spnExtension.getFiringRate() * beta / alpha;
+    private String equation3(Place place) {
+        StringJoiner sum = new StringJoiner("+");
+        for (Transition transition : place.getInputTransitions()) {
+            if (transition.getInputPlaces().isEmpty()) {
+                sum.add(transition.spnExtension.getFiringRate() + '*' + transition.getName());
+                continue;
+            }
+
+            Place previousPlace = getInputPlacesByNormalArcs(transition).get(0);
+            double alpha = transition.getInputArcWeightFrom(previousPlace);
+            double beta = transition.getOutputArcWeightTo(place);
+            double newWeight = beta / alpha;
+
+            if (transitionToEquation6.contains(transition)) {
+                String savedEquation6 = transitionToEquation6.get(transition).get(0);
+                sum.add(newWeight + '*' + savedEquation6);
+            }
+            else {
+                sum.add(newWeight + '*' + equation3(previousPlace));
+            }
+        }
+        return sum.toString();
     }
 
     private void dfsPush(Transition transition,
