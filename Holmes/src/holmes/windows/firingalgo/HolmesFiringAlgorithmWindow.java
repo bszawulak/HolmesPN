@@ -3,14 +3,13 @@ package holmes.windows.firingalgo;
 import holmes.analyse.firingalgo.DetermineFiringDelayAlgo;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.toolbar.Toolbar;
-import holmes.petrinet.elements.Transition;
 import holmes.utilities.Tools;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 
-public class HolmesFiringAlgorithm extends JFrame {
+public class HolmesFiringAlgorithmWindow extends JFrame {
     private static final int headerHeight = 200;
 
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -24,12 +23,12 @@ public class HolmesFiringAlgorithm extends JFrame {
         firingAlgoButton.setFocusPainted(false);
         firingAlgoButton.setOpaque(false);
         firingAlgoButton.addActionListener(e -> {
-            HolmesFiringAlgorithm firingAlgorithmWindow = new HolmesFiringAlgorithm();
+            HolmesFiringAlgorithmWindow firingAlgorithmWindow = new HolmesFiringAlgorithmWindow();
         });
         toolbar.add(firingAlgoButton);
     }
 
-    public HolmesFiringAlgorithm() {
+    public HolmesFiringAlgorithmWindow() {
         this.setTitle("Estimate firing rates algorithm");
 
         addWindowListener(new java.awt.event.WindowAdapter() {
