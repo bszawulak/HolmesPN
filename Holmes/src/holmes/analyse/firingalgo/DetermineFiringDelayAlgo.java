@@ -32,14 +32,12 @@ public class DetermineFiringDelayAlgo implements Runnable {
         }
 
         Stack<Place> stack = new Stack<>();
-        HashSet<Transition> markedTransitions = new HashSet<Transition>();
         HashSet<Place> markedPlaces = new HashSet<Place>();
         HashSet<Transition> Te = new HashSet<Transition>();
 
         for (Transition transition : LT) {
             dfsPush(transition,
                     stack,
-                    markedTransitions,
                     markedPlaces,
                     Te);
             if (syncTransitions.contains(transition)) {
@@ -156,7 +154,6 @@ public class DetermineFiringDelayAlgo implements Runnable {
 
     private void dfsPush(Transition transition,
                          Stack<Place> stack,
-                         HashSet<Transition> markedTransitions,
                          HashSet<Place> markedPlaces,
                          HashSet<Transition> Te) {
         for (Place previousPlace : transition.getInputPlaces()) {
@@ -166,19 +163,16 @@ public class DetermineFiringDelayAlgo implements Runnable {
 
             stack.push(previousPlace);
             for (Transition previousTransition : previousPlace.getInputTransitions()) {
-                if (!markedTransitions.contains(previousTransition)) {
-                    markedTransitions.add(previousTransition);
-                }
+                FiringDelayAlgoHelper.markTransition(transition);
 
                 if (sourceTransitions.contains(previousTransition)
                     || syncTransitions.contains(previousTransition)
                     || Te.contains(previousTransition)) {
-                    dfsPop(stack, markedTransitions, markedPlaces);
+                    dfsPop(stack, markedPlaces);
                 }
                 else {
                     dfsPush(previousTransition,
                             stack,
-                            markedTransitions,
                             markedPlaces,
                             Te);
                 }
@@ -186,10 +180,10 @@ public class DetermineFiringDelayAlgo implements Runnable {
         }
     }
 
-    private void dfsPop(Stack<Place> stack, HashSet<Transition> markedTransitions, HashSet<Place> markedPlaces) {
+    private void dfsPop(Stack<Place> stack, HashSet<Place> markedPlaces) {
         while (!stack.isEmpty()) {
             Place place = stack.peek();
-            if (!markedTransitions.containsAll(place.getInputTransitions())) {
+            if (!FiringDelayAlgoHelper.areMarked(place.getInputTransitions())) {
                 break;
             }
             else {
