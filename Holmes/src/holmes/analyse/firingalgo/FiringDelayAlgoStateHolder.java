@@ -6,7 +6,12 @@ import holmes.petrinet.elements.Transition;
 import java.util.HashMap;
 
 public class FiringDelayAlgoStateHolder {
-    private HashMap<Integer, HashMap<Integer, Double>> state;
+    /// HashMapa z wynikami działania algorytmu,
+    /// kluczem jest ID Tranzycji
+    private HashMap<Integer, Double> results;
+    /// HashMapa z konfliktami,
+    /// kluczem jest ID Tranzycji
+    private HashMap<Integer, FiringDelayConflict> conflicts;
 
     private static FiringDelayAlgoStateHolder instance;
     public static FiringDelayAlgoStateHolder getInstance() {
@@ -17,34 +22,30 @@ public class FiringDelayAlgoStateHolder {
     }
 
     public boolean isMarked(Transition transition) {
-        return state.containsKey(transition.getID());
+        return results.containsKey(transition.getID());
     }
 
     public void resetState() {
-        state = new HashMap<>();
+        results = new HashMap<>();
     }
 
-    public void markTransition(Transition transition, Place conflictPlace, double weight) {
-        HashMap<Integer, Double> transitionState;
-        if(!state.containsKey(transition.getID())) {
-            transitionState = new HashMap<>();
+    public void markTransition(Transition transition, double firingDealy) {
+        results.put(transition.getID(), firingDealy);
+    }
+
+    public void addConflict(Transition transition, FiringDelayConflict firingDelayConflict) {
+        if(conflicts.containsKey(transition.getID())) {
+            return;
+            //TODO zrobić tabele na konflikty, rzucać błąd albo spróbować ze zmianą docelowej maski
         }
-        else {
-            transitionState = state.get(transition.getID());
-        }
-        transitionState.putIfAbsent(conflictPlace.getID(), weight);
-        state.put(transition.getID(), transitionState);
+        conflicts.put(transition.getID(), firingDelayConflict);
     }
 
-    public void markTransition(Transition transition, HashMap<Integer, Double> transitionState) {
-        state.putIfAbsent(transition.getID(), transitionState);
-    }
-
-    public double getWeight(Transition transition, Place conflictPlace) {
-        return state.get(transition.getID()).get(conflictPlace.getID());
+    /*public double getWeight(Transition transition, Place conflictPlace) {
+        return results.get(transition.getID()).get(conflictPlace.getID());
     }
 
     public HashMap<Integer, Double> getWeight(Transition transition) {
-        return state.get(transition.getID());
-    }
+        return results.get(transition.getID());
+    }*/
 }

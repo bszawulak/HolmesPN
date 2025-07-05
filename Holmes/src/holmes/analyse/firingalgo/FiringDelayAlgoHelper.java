@@ -16,11 +16,11 @@ public class FiringDelayAlgoHelper {
         }
 
         if (isSourceTransition(transition)) {
-            stateHolder.markTransition(transition, null, 0);
+            stateHolder.markTransition(transition, transition.spnExtension.getFiringRate());
             return;
         }
 
-        HashMap<Integer, Double> markValue = new HashMap<>();
+        /*HashMap<Integer, Double> markValue = new HashMap<>();
         for (Place place : transition.getInputPlaces()) {
             for (Transition inputTransition : place.getInputTransitions()) {
                 double multiplier = (double) inputTransition.getOutputArcWeightTo(place) / transition.getInputArcWeightFrom(place);
@@ -35,7 +35,23 @@ public class FiringDelayAlgoHelper {
                 markValue.put(place.getID(), (double) transition.getInputArcWeightFrom(place));
             }
         }
-        stateHolder.markTransition(transition, markValue);
+        stateHolder.markTransition(transition, markValue);*/
+    }
+
+    public static void markPlaceAsConflict(Place place) {
+        long mask = 0;
+        HashMap<Transition, Long> masks = new HashMap<>();
+        for (Transition transition : place.getOutputTransitions()) {
+            long newMask = MaskOffsetManager.instance.getNewMask();
+            mask |= newMask;
+            masks.put(transition, newMask);
+        }
+        for (Transition transition : place.getOutputTransitions()) {
+            FiringDelayAlgoStateHolder.getInstance().addConflict(
+                    transition,
+                    new FiringDelayConflict(1, masks.get(transition), mask)
+            );
+        }
     }
 
     public static boolean areMarked(ArrayList<Transition> transitions) {

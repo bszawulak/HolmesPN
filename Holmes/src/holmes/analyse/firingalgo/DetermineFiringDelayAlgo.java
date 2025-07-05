@@ -32,13 +32,11 @@ public class DetermineFiringDelayAlgo implements Runnable {
         }
 
         Stack<Place> stack = new Stack<>();
-        HashSet<Place> markedPlaces = new HashSet<Place>();
         HashSet<Transition> Te = new HashSet<Transition>();
 
         for (Transition transition : LT) {
             dfsPush(transition,
                     stack,
-                    markedPlaces,
                     Te);
             if (syncTransitions.contains(transition)) {
                 equation6(transition);
@@ -154,11 +152,10 @@ public class DetermineFiringDelayAlgo implements Runnable {
 
     private void dfsPush(Transition transition,
                          Stack<Place> stack,
-                         HashSet<Place> markedPlaces,
                          HashSet<Transition> Te) {
         for (Place previousPlace : transition.getInputPlaces()) {
-            if(previousPlace.getOutputTransitions().size() > 1) {
-                markedPlaces.add(previousPlace);
+            if(FiringDelayAlgoHelper.isConflictPlace(previousPlace)) {
+                FiringDelayAlgoHelper.markPlaceAsConflict(previousPlace);
             }
 
             stack.push(previousPlace);
@@ -168,19 +165,18 @@ public class DetermineFiringDelayAlgo implements Runnable {
                 if (sourceTransitions.contains(previousTransition)
                     || syncTransitions.contains(previousTransition)
                     || Te.contains(previousTransition)) {
-                    dfsPop(stack, markedPlaces);
+                    dfsPop(stack);
                 }
                 else {
                     dfsPush(previousTransition,
                             stack,
-                            markedPlaces,
                             Te);
                 }
             }
         }
     }
 
-    private void dfsPop(Stack<Place> stack, HashSet<Place> markedPlaces) {
+    private void dfsPop(Stack<Place> stack) {
         while (!stack.isEmpty()) {
             Place place = stack.peek();
             if (!FiringDelayAlgoHelper.areMarked(place.getInputTransitions())) {
@@ -188,7 +184,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
             }
             else {
                 stack.pop();
-                if (markedPlaces.contains(place)) {
+                if (FiringDelayAlgoHelper.isConflictPlace(place)) {
                     //EQ2
                 }
                 else {
