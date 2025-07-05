@@ -4,6 +4,8 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 public class FiringDelayAlgoStateHolder {
     /// HashMapa z wynikami działania algorytmu,
@@ -13,13 +15,7 @@ public class FiringDelayAlgoStateHolder {
     /// kluczem jest ID Tranzycji
     private HashMap<Integer, FiringDelayConflict> conflicts;
 
-    private static FiringDelayAlgoStateHolder instance;
-    public static FiringDelayAlgoStateHolder getInstance() {
-        if (instance == null) {
-            instance = new FiringDelayAlgoStateHolder();
-        }
-        return instance;
-    }
+    public static FiringDelayAlgoStateHolder instance = new FiringDelayAlgoStateHolder();
 
     public boolean isMarked(Transition transition) {
         return results.containsKey(transition.getID());
@@ -41,11 +37,16 @@ public class FiringDelayAlgoStateHolder {
         conflicts.put(transition.getID(), firingDelayConflict);
     }
 
-    /*public double getWeight(Transition transition, Place conflictPlace) {
-        return results.get(transition.getID()).get(conflictPlace.getID());
+    public HashSet<FiringDelayConflict> getConflicts(long mask) {
+        return conflicts.values().stream().filter((conflict) -> conflict.mask == mask)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
-    public HashMap<Integer, Double> getWeight(Transition transition) {
-        return results.get(transition.getID());
-    }*/
+    public void resolveConflict(FiringDelayConflict firingDelayConflict) {
+        double res = results.get(firingDelayConflict.transactionId);
+        res *= firingDelayConflict.getResult();
+        results.put(firingDelayConflict.transactionId, res);
+
+        conflicts.remove(firingDelayConflict.transactionId);
+    }
 }

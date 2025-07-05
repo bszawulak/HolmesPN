@@ -5,12 +5,13 @@ import holmes.petrinet.elements.Transition;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class FiringDelayAlgoHelper {
 
     /// oznacza tranzycje jako odwiedzoną na podstawie poprzednich tranzycji
     public static void markTransition(Transition transition) {
-        FiringDelayAlgoStateHolder stateHolder = FiringDelayAlgoStateHolder.getInstance();
+        FiringDelayAlgoStateHolder stateHolder = FiringDelayAlgoStateHolder.instance;
         if (!stateHolder.isMarked(transition)) {
             return;
         }
@@ -47,16 +48,45 @@ public class FiringDelayAlgoHelper {
             masks.put(transition, newMask);
         }
         for (Transition transition : place.getOutputTransitions()) {
-            FiringDelayAlgoStateHolder.getInstance().addConflict(
+            FiringDelayAlgoStateHolder.instance.addConflict(
                     transition,
-                    new FiringDelayConflict(1, masks.get(transition), mask)
+                    new FiringDelayConflict(transition.getID(), 1, masks.get(transition), mask)
             );
+        }
+    }
+
+    public static void syncConflicts(FiringDelayConflict conflict1, FiringDelayConflict conflict2) {
+        long mask1 = conflict1.mask;
+        long mask2 = conflict2.mask;
+        long syncedMask = mask1 | mask2;
+
+        HashSet<FiringDelayConflict> conflicts1 = FiringDelayAlgoStateHolder.instance.getConflicts(mask1);
+        HashSet<FiringDelayConflict> conflicts2 = FiringDelayAlgoStateHolder.instance.getConflicts(mask2);
+        conflicts1.remove(conflict1);
+        conflicts2.remove(conflict2);
+
+        conflict1.sync(conflict2);
+        for (FiringDelayConflict conflict : conflicts1) {
+            conflict.mask = syncedMask;
+            conflict.s *= conflict1.s;
+
+            if (conflict.isResolved()) {
+                FiringDelayAlgoStateHolder.instance.resolveConflict(conflict);
+            }
+        }
+        for (FiringDelayConflict conflict : conflicts2) {
+            conflict.mask = syncedMask;
+            conflict.s *= conflict2.s;
+
+            if (conflict.isResolved()) {
+                FiringDelayAlgoStateHolder.instance.resolveConflict(conflict);
+            }
         }
     }
 
     public static boolean areMarked(ArrayList<Transition> transitions) {
         for (Transition transition : transitions) {
-            if(!FiringDelayAlgoStateHolder.getInstance().isMarked(transition))
+            if(!FiringDelayAlgoStateHolder.instance.isMarked(transition))
                 return false;
         }
         return true;
