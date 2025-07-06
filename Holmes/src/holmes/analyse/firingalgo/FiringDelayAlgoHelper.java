@@ -48,7 +48,7 @@ public class FiringDelayAlgoHelper {
             ArrayList<FiringDelayConflict> notResolved = (ArrayList<FiringDelayConflict>)
                     syncedConflicts.stream().filter(FiringDelayConflict::isResolved).toList();
             if(!notResolved.isEmpty()) {
-                FiringDelayAlgoStateHolder.instance.addConflict(transition, notResolved.get(0));
+                FiringDelayAlgoStateHolder.instance.addConflict(transition, notResolved.get(0).copyForOtherTransaction(transition));
             }
         }
         FiringDelayAlgoStateHolder.instance.markTransition(transition, markValue);
