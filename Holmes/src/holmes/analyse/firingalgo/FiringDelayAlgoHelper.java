@@ -6,7 +6,7 @@ import holmes.petrinet.elements.Transition;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.stream.Stream;
+import java.util.Objects;
 
 public class FiringDelayAlgoHelper {
 
@@ -22,14 +22,16 @@ public class FiringDelayAlgoHelper {
             return;
         }
 
-        double markValue = 0;
+        HashMap<Place, Double> markValues = new HashMap<>();
         ArrayList<FiringDelayConflict> syncedConflicts = new ArrayList<>();
         for (Place place : transition.getInputPlaces()) {
             HashSet<FiringDelayConflict> addedConflicts = new HashSet<>();
             for (Transition inputTransition : place.getInputTransitions()) {
                 double multiplier = (double) inputTransition.getOutputArcWeightTo(place) / transition.getInputArcWeightFrom(place);
                 double weight = stateHolder.getResult(inputTransition);
-                markValue += weight*multiplier;
+                var currentValue = (double) Objects.requireNonNullElse(markValues.get(place), 0.0);
+                currentValue += weight*multiplier;
+                markValues.put(place, currentValue);
                 addedConflicts.add(FiringDelayAlgoStateHolder.instance.getConflict(transition));
             }
             if(addedConflicts.size() > 1) {
@@ -39,6 +41,7 @@ public class FiringDelayAlgoHelper {
                 syncedConflicts.addAll(addedConflicts);
             }
         }
+
         if(syncedConflicts.size() > 1) {
             var first = syncedConflicts.get(0);
             for (FiringDelayConflict second : syncedConflicts.subList(1, syncedConflicts.size())) {
@@ -51,7 +54,9 @@ public class FiringDelayAlgoHelper {
                 FiringDelayAlgoStateHolder.instance.addConflict(transition, notResolved.get(0).copyForOtherTransaction(transition));
             }
         }
-        FiringDelayAlgoStateHolder.instance.markTransition(transition, markValue);
+
+        var max = markValues.values().stream().max(Double::compareTo).get();
+        FiringDelayAlgoStateHolder.instance.markTransition(transition, max);
     }
 
     public static void markPlaceAsConflict(Place place) {
