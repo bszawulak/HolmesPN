@@ -37,6 +37,10 @@ public class FiringDelayAlgoStateHolder {
         conflicts.put(transition.getID(), firingDelayConflict);
     }
 
+    public FiringDelayConflict getConflict(Transition transition) {
+        return conflicts.get(transition.getID());
+    }
+
     public HashSet<FiringDelayConflict> getConflicts(long mask) {
         return conflicts.values().stream().filter((conflict) -> conflict.mask == mask)
                 .collect(Collectors.toCollection(HashSet::new));
@@ -48,5 +52,9 @@ public class FiringDelayAlgoStateHolder {
         results.put(firingDelayConflict.transactionId, res);
 
         conflicts.remove(firingDelayConflict.transactionId);
+    }
+
+    public double getResult(Transition transition) {
+        return results.get(transition.getID());
     }
 }

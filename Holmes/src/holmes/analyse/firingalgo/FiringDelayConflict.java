@@ -1,5 +1,7 @@
 package holmes.analyse.firingalgo;
 
+import holmes.petrinet.elements.Transition;
+
 public class FiringDelayConflict {
     public int transactionId;
     public double weight;
@@ -8,6 +10,10 @@ public class FiringDelayConflict {
     private long targetMask;
 
     FiringDelayConflict(int transactionId, double weight, long mask, long targetMask) {
+        this(transactionId, weight, mask, targetMask, 1);
+    }
+
+    FiringDelayConflict(int transactionId, double weight, long mask, long targetMask, double s) {
         this.transactionId = transactionId;
         this.weight = weight;
         this.mask = mask;
@@ -29,5 +35,9 @@ public class FiringDelayConflict {
 
     public boolean isResolved() {
         return (mask & targetMask) == targetMask;
+    }
+
+    public FiringDelayConflict copyForOtherTransaction(Transition transition) {
+        return new FiringDelayConflict(transition.getID(), weight, mask, targetMask, s);
     }
 }
