@@ -3,10 +3,7 @@ package holmes.analyse.firingalgo;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.*;
 
 public class FiringDelayAlgoHelper {
 
@@ -60,11 +57,12 @@ public class FiringDelayAlgoHelper {
     }
 
     public static void markPlaceAsConflict(Place place) {
-        long mask = 0;
-        HashMap<Transition, Long> masks = new HashMap<>();
+        BitSet mask = new BitSet();
+        mask.clear();
+        HashMap<Transition, BitSet> masks = new HashMap<>();
         for (Transition transition : place.getOutputTransitions()) {
-            long newMask = MaskOffsetManager.instance.getNewMask();
-            mask |= newMask;
+            BitSet newMask = MaskOffsetManager.instance.getNewMask();
+            mask.or(newMask);
             masks.put(transition, newMask);
         }
         for (Transition transition : place.getOutputTransitions()) {
@@ -76,9 +74,12 @@ public class FiringDelayAlgoHelper {
     }
 
     public static void syncConflicts(FiringDelayConflict conflict1, FiringDelayConflict conflict2) {
-        long mask1 = conflict1.mask;
-        long mask2 = conflict2.mask;
-        long syncedMask = mask1 | mask2;
+        BitSet mask1 = conflict1.getMask();
+        BitSet mask2 = conflict2.getMask();
+        BitSet syncedMask = new BitSet();
+        syncedMask.clear();
+        syncedMask.or(mask1);
+        syncedMask.or(mask2);
 
         HashSet<FiringDelayConflict> conflicts1 = FiringDelayAlgoStateHolder.instance.getConflicts(mask1);
         HashSet<FiringDelayConflict> conflicts2 = FiringDelayAlgoStateHolder.instance.getConflicts(mask2);
@@ -87,7 +88,7 @@ public class FiringDelayAlgoHelper {
 
         conflict1.sync(conflict2);
         for (FiringDelayConflict conflict : conflicts1) {
-            conflict.mask = syncedMask;
+            conflict.setMask(syncedMask);
             conflict.s *= conflict1.s;
 
             if (conflict.isResolved()) {
@@ -95,7 +96,7 @@ public class FiringDelayAlgoHelper {
             }
         }
         for (FiringDelayConflict conflict : conflicts2) {
-            conflict.mask = syncedMask;
+            conflict.setMask(syncedMask);
             conflict.s *= conflict2.s;
 
             if (conflict.isResolved()) {

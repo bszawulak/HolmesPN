@@ -1,12 +1,16 @@
 package holmes.analyse.firingalgo;
 
+import java.util.BitSet;
+
 public class MaskOffsetManager {
     static MaskOffsetManager instance = new MaskOffsetManager();
     private int counter = 0;
 
-    public long getNewMask() {
+    public BitSet getNewMask() {
         counter++;
-        //TODO przygotować się na przekroczenie longa
-        return 2^counter;
+        BitSet bits = new BitSet(counter);
+        bits.clear();
+        bits.set(counter - 1);
+        return bits;
     }
 }

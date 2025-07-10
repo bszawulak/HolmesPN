@@ -4,11 +4,8 @@ import holmes.darkgui.GUIManager;
 import holmes.petrinet.elements.Arc;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
-import holmes.utilities.Pair;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DetermineFiringDelayAlgo implements Runnable {
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -74,11 +71,12 @@ public class DetermineFiringDelayAlgo implements Runnable {
         HashSet<Transition> temporaryMarkedTransitions = new HashSet<Transition>();
         while (!availableTransitions.isEmpty()) {
             Transition transition = availableTransitions.poll();
-            VisitTransitionLT(transition, markedTransitions, temporaryMarkedTransitions, LT);
+            visitTransitionLT(transition, markedTransitions, temporaryMarkedTransitions, LT);
         }
 
         ArrayList<Transition> output = new ArrayList<Transition>();
-        List<Transition> reversed = LT.reversed();
+        List<Transition> reversed = new ArrayList<Transition>(LT);
+        Collections.reverse(reversed);
         for (Transition transition : reversed) {
             if (syncTransitions.contains(transition)) {
                 output.add(transition);
@@ -88,7 +86,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
         LT = output;
     }
 
-    private void VisitTransitionLT(
+    private void visitTransitionLT(
             Transition transition,
             HashSet<Transition> markedTransitions,
             HashSet<Transition> temporaryMarkedTransitions,
@@ -104,7 +102,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
 
         for (Place place : transition.getInputPlaces()) {
             for (Transition precedingTransition: place.getInputTransitions()) {
-                VisitTransitionLT(precedingTransition, markedTransitions, temporaryMarkedTransitions, output);
+                visitTransitionLT(precedingTransition, markedTransitions, temporaryMarkedTransitions, output);
             }
         }
 

@@ -3,6 +3,7 @@ package holmes.analyse.firingalgo;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -41,8 +42,8 @@ public class FiringDelayAlgoStateHolder {
         return conflicts.get(transition.getID());
     }
 
-    public HashSet<FiringDelayConflict> getConflicts(long mask) {
-        return conflicts.values().stream().filter((conflict) -> conflict.mask == mask)
+    public HashSet<FiringDelayConflict> getConflicts(BitSet mask) {
+        return conflicts.values().stream().filter((conflict) -> conflict.getMask().equals(mask))
                 .collect(Collectors.toCollection(HashSet::new));
     }
 

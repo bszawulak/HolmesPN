@@ -2,22 +2,25 @@ package holmes.analyse.firingalgo;
 
 import holmes.petrinet.elements.Transition;
 
+import java.util.BitSet;
+
 public class FiringDelayConflict {
     public int transactionId;
     public double weight;
     public double s;
-    public long mask;
-    private long targetMask;
+    private BitSet mask;
+    private BitSet targetMask;
 
-    FiringDelayConflict(int transactionId, double weight, long mask, long targetMask) {
+    FiringDelayConflict(int transactionId, double weight, BitSet mask, BitSet targetMask) {
         this(transactionId, weight, mask, targetMask, 1);
     }
 
-    FiringDelayConflict(int transactionId, double weight, long mask, long targetMask, double s) {
+    FiringDelayConflict(int transactionId, double weight, BitSet mask, BitSet targetMask, double s) {
         this.transactionId = transactionId;
         this.weight = weight;
-        this.mask = mask;
-        this.targetMask = targetMask;
+        this.mask = (BitSet)mask.clone();
+        this.targetMask = (BitSet)targetMask.clone();
+        this.s = s;
     }
 
     public double getResult() {
@@ -29,15 +32,25 @@ public class FiringDelayConflict {
         s = s*weight/sumOfWeights;
         other.s = other.s*other.weight/sumOfWeights;
 
-        mask |= other.mask;
-        other.mask |= mask;
+        mask.or(other.mask);
+        other.mask.or(mask);
     }
 
     public boolean isResolved() {
-        return (mask & targetMask) == targetMask;
+        BitSet masked = (BitSet)mask.clone();
+        masked.and(targetMask);
+        return masked.equals(targetMask);
     }
 
     public FiringDelayConflict copyForOtherTransaction(Transition transition) {
         return new FiringDelayConflict(transition.getID(), weight, mask, targetMask, s);
+    }
+
+    public BitSet getMask() {
+        return (BitSet)mask.clone();
+    }
+
+    public void setMask(BitSet mask) {
+        this.mask = (BitSet)mask.clone();
     }
 }
