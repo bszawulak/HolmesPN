@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-public class FiringDelayAlgoStateHolder {
+class FiringDelayAlgoStateHolder {
     /// HashMapa z wynikami działania algorytmu,
     /// kluczem jest ID Tranzycji
     private HashMap<Integer, Double> results;

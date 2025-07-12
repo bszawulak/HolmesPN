@@ -2,7 +2,7 @@ package holmes.analyse.firingalgo;
 
 import java.util.BitSet;
 
-public class MaskOffsetManager {
+class MaskOffsetManager {
     static MaskOffsetManager instance = new MaskOffsetManager();
     private int counter = 0;
 

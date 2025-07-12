@@ -5,7 +5,7 @@ import holmes.petrinet.elements.Transition;
 
 import java.util.*;
 
-public class FiringDelayAlgoHelper {
+class FiringDelayAlgoHelper {
 
     /// oznacza tranzycje jako odwiedzoną na podstawie poprzednich tranzycji
     public static void markTransition(Transition transition) {

@@ -4,7 +4,7 @@ import holmes.petrinet.elements.Transition;
 
 import java.util.BitSet;
 
-public class FiringDelayConflict {
+class FiringDelayConflict {
     public int transactionId;
     public double weight;
     public double s;
