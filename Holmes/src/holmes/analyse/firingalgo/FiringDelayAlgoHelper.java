@@ -32,21 +32,29 @@ class FiringDelayAlgoHelper {
     }
 
     private static void SyncIfValid(Transition transition) {
-        if(isSourceTransition(transition)) {
-            var tmp = new HashSet<State>();
+        if(isSyncTransition(transition)) {
+            var previousTransitionStates = new ArrayList<State>();
             for (var place : transition.getInputPlaces()) {
                 //na razie nie jeszcze nie ma obsługi tokenów z dwóch źródeł TODO btw
                 var previousTransition = place.getInputTransitions().get(0);
-                tmp.add(StateHolder.instance.getState(previousTransition));
+                previousTransitionStates.add(StateHolder.instance.getState(previousTransition));
             }
-            if(tmp.stream().anyMatch(State::isResolved) &&
-                    tmp.stream().anyMatch(state -> !state.isResolved())) {
-                var maxValid = tmp.stream()
+
+            if(previousTransitionStates.size() > 1) {
+                var first = previousTransitionStates.get(0);
+                for (State second : previousTransitionStates.subList(1, previousTransitionStates.size())) {
+                    syncConflicts(first.conflict, second.conflict);
+                }
+            }
+
+            if(previousTransitionStates.stream().anyMatch(State::isResolved) &&
+                    previousTransitionStates.stream().anyMatch(state -> !state.isResolved())) {
+                var maxValid = previousTransitionStates.stream()
                         .filter(State::isResolved)
                         .map(State::getResult)
                         .max(Comparator.naturalOrder())
                         .get();
-                var notValid = tmp.stream()
+                var notValid = previousTransitionStates.stream()
                         .filter(state -> !state.isResolved())
                         .map(state -> state.tokenState)
                         .collect(Collectors.toCollection(HashSet::new));
@@ -108,6 +116,10 @@ class FiringDelayAlgoHelper {
 
     public static boolean isSourceTransition(Transition transition) {
         return transition.getInputArcs().size() <= 0;
+    }
+
+    public static boolean isSyncTransition(Transition transition) {
+        return  transition.getInputArcs().size() > 1;
     }
 
     public static boolean isConflictPlace(Place place) {
