@@ -5,18 +5,18 @@ import holmes.petrinet.elements.Transition;
 import java.util.BitSet;
 
 class Conflict {
-    public int transactionId;
+    public Transition transition;
     public double weight;
     public double s;
     private BitSet mask;
     private BitSet targetMask;
 
-    Conflict(int transactionId, double weight, BitSet mask, BitSet targetMask) {
-        this(transactionId, weight, mask, targetMask, 1);
+    Conflict(Transition transition, double weight, BitSet mask, BitSet targetMask) {
+        this(transition, weight, mask, targetMask, 1);
     }
 
-    Conflict(int transactionId, double weight, BitSet mask, BitSet targetMask, double s) {
-        this.transactionId = transactionId;
+    Conflict(Transition transition, double weight, BitSet mask, BitSet targetMask, double s) {
+        this.transition = transition;
         this.weight = weight;
         this.mask = (BitSet)mask.clone();
         this.targetMask = (BitSet)targetMask.clone();
@@ -42,8 +42,8 @@ class Conflict {
         return masked.equals(targetMask);
     }
 
-    public Conflict copyForOtherTransaction(Transition transition) {
-        return new Conflict(transition.getID(), weight, mask, targetMask, s);
+    public Conflict copyForOtherTransition(Transition transition) {
+        return new Conflict(transition, weight, mask, targetMask, s);
     }
 
     public BitSet getMask() {

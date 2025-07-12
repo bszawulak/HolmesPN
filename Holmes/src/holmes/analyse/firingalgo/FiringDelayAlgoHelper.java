@@ -4,6 +4,7 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 class FiringDelayAlgoHelper {
 
@@ -15,45 +16,45 @@ class FiringDelayAlgoHelper {
         }
 
         if (isSourceTransition(transition)) {
-            stateHolder.markTransition(transition, transition.spnExtension.getFiringRate());
+            stateHolder.markTransition(transition, new TokenSource(transition.spnExtension.getFiringRate()));
             return;
         }
 
-        HashMap<Place, Double> markValues = new HashMap<>();
-        ArrayList<Conflict> syncedConflicts = new ArrayList<>();
-        for (Place place : transition.getInputPlaces()) {
-            HashSet<Conflict> addedConflicts = new HashSet<>();
-            for (Transition inputTransition : place.getInputTransitions()) {
-                double multiplier = (double) inputTransition.getOutputArcWeightTo(place) / transition.getInputArcWeightFrom(place);
-                double weight = stateHolder.getResult(inputTransition);
-                var currentValue = (double) Objects.requireNonNullElse(markValues.get(place), 0.0);
-                currentValue += weight*multiplier;
-                markValues.put(place, currentValue);
-                addedConflicts.add(StateHolder.instance.getConflict(transition));
+        //jak jest więcej miejsc wejściowych to jest to synchronizacja,
+        //gdzie z założenia wejście obu jest równe
+        var place = transition.getInputPlaces().get(0);
+        //na razie nie jeszcze nie ma obsługi tokenów z dwóch źródeł
+        var previousTransition = place.getInputTransitions().get(0);
+        var previousTransitionState = StateHolder.instance.getState(previousTransition);
+        StateHolder.instance.markTransition(transition, previousTransitionState.copyForOtherTransition(transition));
+
+        SyncIfValid(transition);
+    }
+
+    private static void SyncIfValid(Transition transition) {
+        if(isSourceTransition(transition)) {
+            var tmp = new HashSet<State>();
+            for (var place : transition.getInputPlaces()) {
+                //na razie nie jeszcze nie ma obsługi tokenów z dwóch źródeł TODO btw
+                var previousTransition = place.getInputTransitions().get(0);
+                tmp.add(StateHolder.instance.getState(previousTransition));
             }
-            if(addedConflicts.size() > 1) {
-                //TODO tu powinno być dodawanie konfliktów
-            }
-            else {
-                syncedConflicts.addAll(addedConflicts);
+            if(tmp.stream().anyMatch(State::isResolved) &&
+                    tmp.stream().anyMatch(state -> !state.isResolved())) {
+                var maxValid = tmp.stream()
+                        .filter(State::isResolved)
+                        .map(State::getResult)
+                        .max(Comparator.naturalOrder())
+                        .get();
+                var notValid = tmp.stream()
+                        .filter(state -> !state.isResolved())
+                        .map(state -> state.tokenState)
+                        .collect(Collectors.toCollection(HashSet::new));
+                for (var tokenSource : notValid) {
+                    tokenSource.setTokenSourceValue(maxValid);
+                }
             }
         }
-
-        if(syncedConflicts.size() > 1) {
-            var first = syncedConflicts.get(0);
-            for (Conflict second : syncedConflicts.subList(1, syncedConflicts.size())) {
-                syncConflicts(first, second);
-            }
-
-            ArrayList<Conflict> notResolved = (ArrayList<Conflict>)
-                    syncedConflicts.stream().filter(Conflict::isResolved).toList();
-            if(!notResolved.isEmpty()) {
-                StateHolder.instance.addConflict(transition, notResolved.get(0).copyForOtherTransaction(transition));
-            }
-        }
-
-        var max = markValues.values().stream().max(Double::compareTo).get();
-        StateHolder.instance.markTransition(transition, max);
     }
 
     public static void markPlaceAsConflict(Place place) {
@@ -68,7 +69,7 @@ class FiringDelayAlgoHelper {
         for (Transition transition : place.getOutputTransitions()) {
             StateHolder.instance.addConflict(
                     transition,
-                    new Conflict(transition.getID(), 1, masks.get(transition), mask)
+                    new Conflict(transition, 1, masks.get(transition), mask)
             );
         }
     }
@@ -90,18 +91,10 @@ class FiringDelayAlgoHelper {
         for (Conflict conflict : conflicts1) {
             conflict.setMask(syncedMask);
             conflict.s *= conflict1.s;
-
-            if (conflict.isResolved()) {
-                StateHolder.instance.resolveConflict(conflict);
-            }
         }
         for (Conflict conflict : conflicts2) {
             conflict.setMask(syncedMask);
             conflict.s *= conflict2.s;
-
-            if (conflict.isResolved()) {
-                StateHolder.instance.resolveConflict(conflict);
-            }
         }
     }
 

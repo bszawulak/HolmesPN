@@ -8,53 +8,73 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 
 class StateHolder {
-    /// HashMapa z wynikami działania algorytmu,
+    /// HashMapa z aktualnym stanem algorytmu,
     /// kluczem jest ID Tranzycji
-    private HashMap<Integer, Double> results;
-    /// HashMapa z konfliktami,
-    /// kluczem jest ID Tranzycji
-    private HashMap<Integer, Conflict> conflicts;
+    private HashMap<Transition, State> states;
 
     public static StateHolder instance = new StateHolder();
 
     public boolean isMarked(Transition transition) {
-        return results.containsKey(transition.getID());
+        var state = states.get(transition);
+        if (state == null || state.tokenState == null) {
+            return false;
+        }
+        return true;
     }
 
     public void resetState() {
-        results = new HashMap<>();
+        states = new HashMap<>();
     }
 
-    public void markTransition(Transition transition, double firingDealy) {
-        results.put(transition.getID(), firingDealy);
+    public void markTransition(Transition transition, TokenSource tokenSource) {
+        if(states.containsKey(transition)) {
+            states.get(transition).tokenState = new TokenState(tokenSource);
+            return;
+        }
+        states.put(transition, new State(transition, tokenSource));
+    }
+
+    public void markTransition(Transition transition, State state) {
+        if(states.containsKey(transition)) {
+            if(state.conflict != null) {
+                //TODO problem
+                return;
+            }
+            state.conflict = states.get(transition).conflict;
+        }
+        states.put(transition, state);
     }
 
     public void addConflict(Transition transition, Conflict conflict) {
-        if(conflicts.containsKey(transition.getID())) {
+        if(states.containsKey(transition)) {
+            if(states.get(transition).conflict != null) {
+                //TODO problem
+                return;
+            }
+            states.get(transition).conflict = conflict;
             return;
-            //TODO zrobić tabele na konflikty, rzucać błąd albo spróbować ze zmianą docelowej maski
         }
-        conflicts.put(transition.getID(), conflict);
+        states.put(transition, new State(transition, conflict));
+    }
+
+    public State getState(Transition transition) {
+        return states.get(transition);
     }
 
     public Conflict getConflict(Transition transition) {
-        return conflicts.get(transition.getID());
+        return states.get(transition).conflict;
     }
 
     public HashSet<Conflict> getConflicts(BitSet mask) {
-        return conflicts.values().stream().filter((conflict) -> conflict.getMask().equals(mask))
-                .collect(Collectors.toCollection(HashSet::new));
-    }
-
-    public void resolveConflict(Conflict conflict) {
-        double res = results.get(conflict.transactionId);
-        res *= conflict.getResult();
-        results.put(conflict.transactionId, res);
-
-        conflicts.remove(conflict.transactionId);
+        return states.values().stream().filter((state) -> state.conflict.getMask().equals(mask))
+                .map(state -> state.conflict).collect(Collectors.toCollection(HashSet::new));
     }
 
     public double getResult(Transition transition) {
-        return results.get(transition.getID());
+        return states.get(transition).getResult();
+    }
+
+    public HashSet<Conflict> getConflicts() {
+        return states.values().stream().map(state -> state.conflict).collect(Collectors.toCollection(HashSet::new));
     }
 }
