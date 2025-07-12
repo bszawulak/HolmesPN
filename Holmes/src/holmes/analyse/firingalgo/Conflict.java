@@ -4,18 +4,18 @@ import holmes.petrinet.elements.Transition;
 
 import java.util.BitSet;
 
-class FiringDelayConflict {
+class Conflict {
     public int transactionId;
     public double weight;
     public double s;
     private BitSet mask;
     private BitSet targetMask;
 
-    FiringDelayConflict(int transactionId, double weight, BitSet mask, BitSet targetMask) {
+    Conflict(int transactionId, double weight, BitSet mask, BitSet targetMask) {
         this(transactionId, weight, mask, targetMask, 1);
     }
 
-    FiringDelayConflict(int transactionId, double weight, BitSet mask, BitSet targetMask, double s) {
+    Conflict(int transactionId, double weight, BitSet mask, BitSet targetMask, double s) {
         this.transactionId = transactionId;
         this.weight = weight;
         this.mask = (BitSet)mask.clone();
@@ -27,7 +27,7 @@ class FiringDelayConflict {
         return weight * s;
     }
 
-    public void sync(FiringDelayConflict other) {
+    public void sync(Conflict other) {
         double sumOfWeights = weight + other.weight;
         s = s*weight/sumOfWeights;
         other.s = other.s*other.weight/sumOfWeights;
@@ -42,8 +42,8 @@ class FiringDelayConflict {
         return masked.equals(targetMask);
     }
 
-    public FiringDelayConflict copyForOtherTransaction(Transition transition) {
-        return new FiringDelayConflict(transition.getID(), weight, mask, targetMask, s);
+    public Conflict copyForOtherTransaction(Transition transition) {
+        return new Conflict(transition.getID(), weight, mask, targetMask, s);
     }
 
     public BitSet getMask() {

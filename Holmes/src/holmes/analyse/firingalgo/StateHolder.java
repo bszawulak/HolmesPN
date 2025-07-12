@@ -1,6 +1,5 @@
 package holmes.analyse.firingalgo;
 
-import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 
 import java.util.BitSet;
@@ -8,15 +7,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-class FiringDelayAlgoStateHolder {
+class StateHolder {
     /// HashMapa z wynikami działania algorytmu,
     /// kluczem jest ID Tranzycji
     private HashMap<Integer, Double> results;
     /// HashMapa z konfliktami,
     /// kluczem jest ID Tranzycji
-    private HashMap<Integer, FiringDelayConflict> conflicts;
+    private HashMap<Integer, Conflict> conflicts;
 
-    public static FiringDelayAlgoStateHolder instance = new FiringDelayAlgoStateHolder();
+    public static StateHolder instance = new StateHolder();
 
     public boolean isMarked(Transition transition) {
         return results.containsKey(transition.getID());
@@ -30,29 +29,29 @@ class FiringDelayAlgoStateHolder {
         results.put(transition.getID(), firingDealy);
     }
 
-    public void addConflict(Transition transition, FiringDelayConflict firingDelayConflict) {
+    public void addConflict(Transition transition, Conflict conflict) {
         if(conflicts.containsKey(transition.getID())) {
             return;
             //TODO zrobić tabele na konflikty, rzucać błąd albo spróbować ze zmianą docelowej maski
         }
-        conflicts.put(transition.getID(), firingDelayConflict);
+        conflicts.put(transition.getID(), conflict);
     }
 
-    public FiringDelayConflict getConflict(Transition transition) {
+    public Conflict getConflict(Transition transition) {
         return conflicts.get(transition.getID());
     }
 
-    public HashSet<FiringDelayConflict> getConflicts(BitSet mask) {
+    public HashSet<Conflict> getConflicts(BitSet mask) {
         return conflicts.values().stream().filter((conflict) -> conflict.getMask().equals(mask))
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    public void resolveConflict(FiringDelayConflict firingDelayConflict) {
-        double res = results.get(firingDelayConflict.transactionId);
-        res *= firingDelayConflict.getResult();
-        results.put(firingDelayConflict.transactionId, res);
+    public void resolveConflict(Conflict conflict) {
+        double res = results.get(conflict.transactionId);
+        res *= conflict.getResult();
+        results.put(conflict.transactionId, res);
 
-        conflicts.remove(firingDelayConflict.transactionId);
+        conflicts.remove(conflict.transactionId);
     }
 
     public double getResult(Transition transition) {
