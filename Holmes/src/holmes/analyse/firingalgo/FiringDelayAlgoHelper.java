@@ -10,13 +10,12 @@ class FiringDelayAlgoHelper {
 
     /// oznacza tranzycje jako odwiedzoną na podstawie poprzednich tranzycji
     public static void markTransition(Transition transition) {
-        StateHolder stateHolder = StateHolder.instance;
-        if (!stateHolder.isMarked(transition)) {
-            return;
-        }
+        StateHolder.instance.markTransition(transition);
+    }
 
+    public static void process(Transition transition) {
         if (isSourceTransition(transition)) {
-            stateHolder.markTransition(transition, new TokenSource(transition.spnExtension.getFiringRate()));
+            StateHolder.instance.addState(transition, new TokenSource(transition.spnExtension.getFiringRate()));
             return;
         }
 
@@ -26,7 +25,7 @@ class FiringDelayAlgoHelper {
         //na razie nie jeszcze nie ma obsługi tokenów z dwóch źródeł
         var previousTransition = place.getInputTransitions().get(0);
         var previousTransitionState = StateHolder.instance.getState(previousTransition);
-        StateHolder.instance.markTransition(transition, previousTransitionState.copyForOtherTransition(transition));
+        StateHolder.instance.addState(transition, previousTransitionState.copyForOtherTransition(transition));
 
         SyncIfValid(transition);
     }
@@ -40,10 +39,13 @@ class FiringDelayAlgoHelper {
                 previousTransitionStates.add(StateHolder.instance.getState(previousTransition));
             }
 
-            if(previousTransitionStates.size() > 1) {
-                var first = previousTransitionStates.get(0);
-                for (State second : previousTransitionStates.subList(1, previousTransitionStates.size())) {
-                    syncConflicts(first.conflict, second.conflict);
+            List<Conflict> previousConflicts = previousTransitionStates.stream()
+                    .map(state -> state.conflict)
+                    .filter(Objects::nonNull).toList();
+            if(previousConflicts.size() > 1) {
+                var first = previousConflicts.get(0);
+                for (Conflict second : previousConflicts.subList(1, previousConflicts.size())) {
+                    syncConflicts(first, second);
                 }
             }
 
@@ -83,6 +85,10 @@ class FiringDelayAlgoHelper {
     }
 
     public static void syncConflicts(Conflict conflict1, Conflict conflict2) {
+        if(!conflict1.getMask().intersects(conflict2.getMask())) {
+            return;
+        }
+
         BitSet mask1 = conflict1.getMask();
         BitSet mask2 = conflict2.getMask();
         BitSet syncedMask = new BitSet();
@@ -112,6 +118,14 @@ class FiringDelayAlgoHelper {
                 return false;
         }
         return true;
+    }
+
+    public static boolean isMarked(Transition transition) {
+        return StateHolder.instance.isMarked(transition);
+    }
+
+    public static boolean isProcessed(Transition transition) {
+        return StateHolder.instance.getState(transition).tokenState != null;
     }
 
     public static boolean isSourceTransition(Transition transition) {

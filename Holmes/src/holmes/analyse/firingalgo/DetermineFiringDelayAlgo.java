@@ -29,12 +29,16 @@ public class DetermineFiringDelayAlgo implements Runnable {
         }
 
         Stack<Place> stack = new Stack<>();
-        HashSet<Transition> Te = new HashSet<Transition>();
+        HashSet<Place> markedPlaces = new HashSet<Place>();
 
         for (Transition transition : LT) {
             dfsPush(transition,
                     stack,
-                    Te);
+                    markedPlaces);
+            if(FiringDelayAlgoHelper.isSyncTransition(transition)) {
+                FiringDelayAlgoHelper.markTransition(transition);
+                FiringDelayAlgoHelper.process(transition);
+            }
             if (syncTransitions.contains(transition)) {
                 equation6(transition);
             }
@@ -150,25 +154,27 @@ public class DetermineFiringDelayAlgo implements Runnable {
 
     private void dfsPush(Transition transition,
                          Stack<Place> stack,
-                         HashSet<Transition> Te) {
+                         HashSet<Place> markedPlaces) {
         for (Place previousPlace : transition.getInputPlaces()) {
             if(FiringDelayAlgoHelper.isConflictPlace(previousPlace)) {
-                FiringDelayAlgoHelper.markPlaceAsConflict(previousPlace);
+                if(!markedPlaces.contains(previousPlace)) {
+                    FiringDelayAlgoHelper.markPlaceAsConflict(previousPlace);
+                    markedPlaces.add(previousPlace);
+                }
             }
 
             stack.push(previousPlace);
             for (Transition previousTransition : previousPlace.getInputTransitions()) {
-                FiringDelayAlgoHelper.markTransition(transition);
+                FiringDelayAlgoHelper.markTransition(previousTransition);
 
-                if (sourceTransitions.contains(previousTransition)
-                    || syncTransitions.contains(previousTransition)
-                    || Te.contains(previousTransition)) {
+                if (FiringDelayAlgoHelper.isSourceTransition(previousTransition)
+                    || FiringDelayAlgoHelper.isProcessed(previousTransition)) {
                     dfsPop(stack);
                 }
                 else {
                     dfsPush(previousTransition,
                             stack,
-                            Te);
+                            markedPlaces);
                 }
             }
         }
@@ -181,13 +187,10 @@ public class DetermineFiringDelayAlgo implements Runnable {
                 break;
             }
             else {
+                for (Transition transition : place.getInputTransitions()) {
+                    FiringDelayAlgoHelper.process(transition);
+                }
                 stack.pop();
-                if (FiringDelayAlgoHelper.isConflictPlace(place)) {
-                    //EQ2
-                }
-                else {
-                    //EQ3
-                }
             }
         }
     }

@@ -10,23 +10,29 @@ import java.util.stream.Collectors;
 class StateHolder {
     /// HashMapa z aktualnym stanem algorytmu,
     /// kluczem jest ID Tranzycji
-    private HashMap<Transition, State> states;
+    private HashMap<Transition, State> states = new HashMap<>();
 
     public static StateHolder instance = new StateHolder();
 
     public boolean isMarked(Transition transition) {
         var state = states.get(transition);
-        if (state == null || state.tokenState == null) {
-            return false;
-        }
-        return true;
+        return state != null && state.marked;
     }
 
     public void resetState() {
         states = new HashMap<>();
     }
 
-    public void markTransition(Transition transition, TokenSource tokenSource) {
+    public void markTransition(Transition transition) {
+        State state = states.get(transition);
+        if (state == null) {
+            state = new State(transition);
+        }
+        state.marked = true;
+        states.put(transition, state);
+    }
+
+    public void addState(Transition transition, TokenSource tokenSource) {
         if(states.containsKey(transition)) {
             states.get(transition).tokenState = new TokenState(tokenSource);
             return;
@@ -34,7 +40,7 @@ class StateHolder {
         states.put(transition, new State(transition, tokenSource));
     }
 
-    public void markTransition(Transition transition, State state) {
+    public void addState(Transition transition, State state) {
         if(states.containsKey(transition)) {
             if(state.conflict != null) {
                 //TODO problem
