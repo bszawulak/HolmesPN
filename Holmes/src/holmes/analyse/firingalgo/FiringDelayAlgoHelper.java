@@ -85,7 +85,8 @@ class FiringDelayAlgoHelper {
     }
 
     public static void syncConflicts(Conflict conflict1, Conflict conflict2) {
-        if(!conflict1.getMask().intersects(conflict2.getMask())) {
+        if(!conflict1.getTargetMask().intersects(conflict2.getTargetMask())
+            || conflict1.getMask().equals(conflict2.getMask())) {
             return;
         }
 
@@ -110,6 +111,14 @@ class FiringDelayAlgoHelper {
             conflict.setMask(syncedMask);
             conflict.s *= conflict2.s;
         }
+    }
+
+    public static HashMap<Transition, Double> getResult() {
+        return StateHolder.instance.getResults();
+    }
+
+    public static void resetState() {
+        StateHolder.instance.resetState();
     }
 
     public static boolean areMarked(ArrayList<Transition> transitions) {

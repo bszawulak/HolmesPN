@@ -34,7 +34,7 @@ class State {
     }
 
     public Double getResult() {
-        if(tokenState.isResolved()) {
+        if(tokenState != null && tokenState.isResolved()) {
             var conflictResult = conflict == null ? 1 : conflict.getResult();
             var tokenResult = tokenState == null ? 1 : tokenState.getTokens();
             return conflictResult * tokenResult;

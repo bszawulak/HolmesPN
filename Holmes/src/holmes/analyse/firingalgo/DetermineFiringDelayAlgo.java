@@ -15,6 +15,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
     public void run() {
         ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
         LT.clear();
+        FiringDelayAlgoHelper.resetState();
 
         try {
             setupLTArray(transitions);
@@ -29,10 +30,9 @@ public class DetermineFiringDelayAlgo implements Runnable {
             dfsPush(transition,
                     stack,
                     markedPlaces);
-            if(FiringDelayAlgoHelper.isSyncTransition(transition)) {
-                FiringDelayAlgoHelper.markTransition(transition);
-                FiringDelayAlgoHelper.process(transition);
-            }
+
+            FiringDelayAlgoHelper.markTransition(transition);
+            FiringDelayAlgoHelper.process(transition);
         }
     }
 
@@ -131,10 +131,16 @@ public class DetermineFiringDelayAlgo implements Runnable {
             }
             else {
                 for (Transition transition : place.getInputTransitions()) {
-                    FiringDelayAlgoHelper.process(transition);
+                    if(!FiringDelayAlgoHelper.isProcessed(transition)) {
+                        FiringDelayAlgoHelper.process(transition);
+                    }
                 }
                 stack.pop();
             }
         }
+    }
+
+    public HashMap<Transition, Double> getResult() {
+        return FiringDelayAlgoHelper.getResult();
     }
 }

@@ -3,6 +3,7 @@ package holmes.windows.firingalgo;
 import holmes.analyse.firingalgo.DetermineFiringDelayAlgo;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.toolbar.Toolbar;
+import holmes.petrinet.elements.Transition;
 import holmes.utilities.Tools;
 
 import javax.swing.*;
@@ -75,15 +76,18 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
             DetermineFiringDelayAlgo algorithm = new DetermineFiringDelayAlgo();
             algorithm.run();
 
-            /*
+
             StringBuilder sb = new StringBuilder();
-            for (Transition t : algorithm.LT) {
+            var result = algorithm.getResult();
+            for (Transition t : result.keySet()) {
                 sb.append(t.getName());
+                sb.append("\n");
+                sb.append(result.get(t));
                 sb.append("\n");
             }
 
             logOutput.append(sb.toString());
-             */
+
         });
         runAlgorithmButton.setFocusPainted(false);
         panel.add(runAlgorithmButton);

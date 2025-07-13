@@ -1,6 +1,7 @@
 package holmes.analyse.firingalgo;
 
 import holmes.petrinet.elements.Transition;
+import org.jfree.util.HashNMap;
 
 import java.util.BitSet;
 import java.util.HashMap;
@@ -42,11 +43,9 @@ class StateHolder {
 
     public void addState(Transition transition, State state) {
         if(states.containsKey(transition)) {
-            if(state.conflict != null) {
-                //TODO problem
-                return;
-            }
-            state.conflict = states.get(transition).conflict;
+            state.conflict = states.get(transition).conflict != null ? states.get(transition).conflict : state.conflict;
+            state.tokenState = state.tokenState != null ? state.tokenState : states.get(transition).tokenState;
+            state.marked = states.get(transition).marked;
         }
         states.put(transition, state);
     }
@@ -72,11 +71,21 @@ class StateHolder {
     }
 
     public HashSet<Conflict> getConflicts(BitSet mask) {
-        return states.values().stream().filter((state) -> state.conflict.getMask().equals(mask))
+        return states.values().stream()
+                .filter(state -> state.conflict != null)
+                .filter((state) -> state.conflict.getMask().equals(mask))
                 .map(state -> state.conflict).collect(Collectors.toCollection(HashSet::new));
     }
 
-    public double getResult(Transition transition) {
+    public HashMap<Transition, Double> getResults() {
+        var result = new HashMap<Transition, Double>();
+        for(Transition transition : states.keySet()) {
+            result.put(transition, getResult(transition));
+        }
+        return result;
+    }
+
+    public Double getResult(Transition transition) {
         return states.get(transition).getResult();
     }
 

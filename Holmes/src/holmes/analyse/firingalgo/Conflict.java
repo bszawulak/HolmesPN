@@ -53,4 +53,8 @@ class Conflict {
     public void setMask(BitSet mask) {
         this.mask = (BitSet)mask.clone();
     }
+
+    public BitSet getTargetMask() {
+        return (BitSet)targetMask.clone();
+    }
 }
