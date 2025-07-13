@@ -34,6 +34,8 @@ public class DetermineFiringDelayAlgo implements Runnable {
             FiringDelayAlgoHelper.markTransition(transition);
             FiringDelayAlgoHelper.process(transition);
         }
+
+        FiringDelayAlgoHelper.tieLooseConflicts();
     }
 
     /**

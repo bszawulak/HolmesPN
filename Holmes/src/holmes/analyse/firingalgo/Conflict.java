@@ -36,6 +36,14 @@ class Conflict {
         other.mask.or(mask);
     }
 
+    public void syncByHalf(Conflict other) {
+        s = s/2;
+        other.s = other.s/2;
+
+        mask.or(other.mask);
+        other.mask.or(mask);
+    }
+
     public boolean isResolved() {
         BitSet masked = (BitSet)mask.clone();
         masked.and(targetMask);

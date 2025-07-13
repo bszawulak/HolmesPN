@@ -4,6 +4,8 @@ import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 class FiringDelayAlgoHelper {
@@ -85,10 +87,17 @@ class FiringDelayAlgoHelper {
     }
 
     public static void syncConflicts(Conflict conflict1, Conflict conflict2) {
+        syncConflicts(conflict1, conflict2, conflict -> conflict::sync);
+    }
+
+    public static boolean syncConflicts(Conflict conflict1, Conflict conflict2, Function<Conflict, Consumer<Conflict>> syncAction) {
         if(!conflict1.getTargetMask().intersects(conflict2.getTargetMask())
             || conflict1.getMask().equals(conflict2.getMask())) {
-            return;
+            return false;
         }
+
+        StateHolder.instance.unresolvedConflicts.remove(conflict1.getMask());
+        StateHolder.instance.unresolvedConflicts.remove(conflict2.getMask());
 
         BitSet mask1 = conflict1.getMask();
         BitSet mask2 = conflict2.getMask();
@@ -102,7 +111,14 @@ class FiringDelayAlgoHelper {
         conflicts1.remove(conflict1);
         conflicts2.remove(conflict2);
 
-        conflict1.sync(conflict2);
+        syncAction.apply(conflict1).accept(conflict2);
+        if(!conflict1.isResolved()) {
+            StateHolder.instance.unresolvedConflicts.put(conflict1.getTargetMask(), conflict1);
+        }
+        if(!conflict2.isResolved() && !conflict2.getTargetMask().equals(conflict1.getTargetMask())) {
+            StateHolder.instance.unresolvedConflicts.put(conflict2.getTargetMask(), conflict2);
+        }
+
         for (Conflict conflict : conflicts1) {
             conflict.setMask(syncedMask);
             conflict.s *= conflict1.s;
@@ -111,6 +127,28 @@ class FiringDelayAlgoHelper {
             conflict.setMask(syncedMask);
             conflict.s *= conflict2.s;
         }
+        return true;
+    }
+
+    public static void tieLooseConflicts() {
+        while (!StateHolder.instance.unresolvedConflicts.isEmpty()) {
+            var reset = false;
+            for(Conflict conflict1 : StateHolder.instance.unresolvedConflicts.values()) {
+                for(Conflict conflict2 : StateHolder.instance.unresolvedConflicts.values()) {
+                    reset = tieLooseConflicts(conflict1, conflict2);
+                    if(reset) {
+                        break;
+                    }
+                }
+                if(reset) {
+                    break;
+                }
+            }
+        }
+    }
+
+    private static boolean tieLooseConflicts(Conflict conflict1, Conflict conflict2) {
+        return syncConflicts(conflict1, conflict2, conflict -> conflict::syncByHalf);
     }
 
     public static HashMap<Transition, Double> getResult() {

@@ -12,6 +12,7 @@ class StateHolder {
     /// HashMapa z aktualnym stanem algorytmu,
     /// kluczem jest ID Tranzycji
     private HashMap<Transition, State> states = new HashMap<>();
+    public HashMap<BitSet, Conflict> unresolvedConflicts = new HashMap<>();
 
     public static StateHolder instance = new StateHolder();
 
@@ -22,6 +23,7 @@ class StateHolder {
 
     public void resetState() {
         states = new HashMap<>();
+        unresolvedConflicts = new HashMap<>();
     }
 
     public void markTransition(Transition transition) {
@@ -51,6 +53,7 @@ class StateHolder {
     }
 
     public void addConflict(Transition transition, Conflict conflict) {
+        unresolvedConflicts.put(conflict.getMask(), conflict);
         if(states.containsKey(transition)) {
             if(states.get(transition).conflict != null) {
                 //TODO problem
@@ -64,10 +67,6 @@ class StateHolder {
 
     public State getState(Transition transition) {
         return states.get(transition);
-    }
-
-    public Conflict getConflict(Transition transition) {
-        return states.get(transition).conflict;
     }
 
     public HashSet<Conflict> getConflicts(BitSet mask) {
