@@ -28,6 +28,15 @@ class State {
         this.tokenState = tokenState;
     }
 
+    public void updateWeights(double multipier) {
+        if(conflict != null) {
+            conflict.weight *= multipier;
+        }
+        if (tokenState != null) {
+            tokenState.multiplier *= multipier;
+        }
+    }
+
     public boolean isResolved() {
         return (tokenState == null || tokenState.isResolved())
                 && (conflict == null || conflict.isResolved());

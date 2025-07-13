@@ -27,7 +27,12 @@ class FiringDelayAlgoHelper {
         //na razie nie jeszcze nie ma obsługi tokenów z dwóch źródeł
         var previousTransition = place.getInputTransitions().get(0);
         var previousTransitionState = StateHolder.instance.getState(previousTransition);
-        StateHolder.instance.addState(transition, previousTransitionState.copyForOtherTransition(transition));
+        var copied = previousTransitionState.copyForOtherTransition(transition);
+
+        double multiplier = (double) previousTransition.getOutputArcWeightTo(place)
+                                           / transition.getInputArcWeightFrom(place);
+        copied.updateWeights(multiplier);
+        StateHolder.instance.addState(transition, copied);
 
         SyncIfValid(transition);
     }

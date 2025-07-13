@@ -24,7 +24,7 @@ class Conflict {
     }
 
     public double getResult() {
-        return weight * s;
+        return s;
     }
 
     public void sync(Conflict other) {
