@@ -9,18 +9,12 @@ import java.util.*;
 
 public class DetermineFiringDelayAlgo implements Runnable {
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
-    private ArrayList<Transition> sourceTransitions = new ArrayList<Transition>();
-    private ArrayList<Transition> syncTransitions = new ArrayList<Transition>();
-    private ArrayList<Transition> sinkTransitions = new ArrayList<Transition>();
     private ArrayList<Transition> LT = new ArrayList<Transition>();
-    private Hashtable<Transition, ArrayList<String>> transitionToEquation6 = new Hashtable<Transition, ArrayList<String>>();
 
     @Override
     public void run() {
         ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
-        transitionToEquation6.clear();
-
-        setupTransitions(transitions);
+        LT.clear();
 
         try {
             setupLTArray(transitions);
@@ -38,28 +32,6 @@ public class DetermineFiringDelayAlgo implements Runnable {
             if(FiringDelayAlgoHelper.isSyncTransition(transition)) {
                 FiringDelayAlgoHelper.markTransition(transition);
                 FiringDelayAlgoHelper.process(transition);
-            }
-            if (syncTransitions.contains(transition)) {
-                equation6(transition);
-            }
-        }
-
-
-    }
-
-    private void setupTransitions(ArrayList<Transition> transitions) {
-        sourceTransitions.clear();
-        syncTransitions.clear();
-        sinkTransitions.clear();
-
-        for (Transition transition : transitions) {
-            if (transition.getInputArcs().size() <= 0) {
-                sourceTransitions.add(transition);
-            } else if (transition.getInputArcs().size() > 1) {
-                syncTransitions.add(transition);
-            }
-            if (transition.getOutputArcs().size() <= 0) {
-                sinkTransitions.add(transition);
             }
         }
     }
@@ -82,10 +54,13 @@ public class DetermineFiringDelayAlgo implements Runnable {
         List<Transition> reversed = new ArrayList<Transition>(LT);
         Collections.reverse(reversed);
         for (Transition transition : reversed) {
-            if (syncTransitions.contains(transition)) {
+            if (FiringDelayAlgoHelper.isSyncTransition(transition)) {
                 output.add(transition);
             }
         }
+
+        List<Transition> sinkTransitions =
+                transitions.stream().filter(FiringDelayAlgoHelper::isSinkTransition).toList();
         output.addAll(sinkTransitions);
         LT = output;
     }
@@ -118,38 +93,6 @@ public class DetermineFiringDelayAlgo implements Runnable {
         ArrayList<Place> places = transition.getInputPlaces();
         places.removeIf(place -> transition.getInputArcFrom(place).getArcType() != Arc.TypeOfArc.NORMAL);
         return places;
-    }
-
-    private void equation6(Transition transition) {
-        ArrayList<String> equality = new ArrayList<String>();
-        for (Place place: getInputPlacesByNormalArcs(transition)) {
-            equality.add(equation3(place));
-        }
-        transitionToEquation6.put(transition, equality);
-    }
-
-    private String equation3(Place place) {
-        StringJoiner sum = new StringJoiner("+");
-        for (Transition transition : place.getInputTransitions()) {
-            if (transition.getInputPlaces().isEmpty()) {
-                sum.add(transition.spnExtension.getFiringRate() + '*' + transition.getName());
-                continue;
-            }
-
-            Place previousPlace = getInputPlacesByNormalArcs(transition).get(0);
-            double alpha = transition.getInputArcWeightFrom(previousPlace);
-            double beta = transition.getOutputArcWeightTo(place);
-            double newWeight = beta / alpha;
-
-            if (transitionToEquation6.contains(transition)) {
-                String savedEquation6 = transitionToEquation6.get(transition).get(0);
-                sum.add(newWeight + '*' + savedEquation6);
-            }
-            else {
-                sum.add(newWeight + '*' + equation3(previousPlace));
-            }
-        }
-        return sum.toString();
     }
 
     private void dfsPush(Transition transition,

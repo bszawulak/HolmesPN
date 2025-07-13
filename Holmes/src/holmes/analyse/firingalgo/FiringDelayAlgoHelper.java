@@ -136,6 +136,10 @@ class FiringDelayAlgoHelper {
         return  transition.getInputArcs().size() > 1;
     }
 
+    public static boolean isSinkTransition(Transition transition) {
+        return transition.getOutputArcs().size() <=0 ;
+    }
+
     public static boolean isConflictPlace(Place place) {
         return place.getOutputTransitions().size() > 1;
     }
