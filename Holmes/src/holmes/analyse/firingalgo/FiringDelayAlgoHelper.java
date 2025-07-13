@@ -21,6 +21,8 @@ class FiringDelayAlgoHelper {
             return;
         }
 
+        SyncIfValid(transition);
+
         //jak jest więcej miejsc wejściowych to jest to synchronizacja,
         //gdzie z założenia wejście obu jest równe
         var place = transition.getInputPlaces().get(0);
@@ -33,8 +35,6 @@ class FiringDelayAlgoHelper {
                                            / transition.getInputArcWeightFrom(place);
         copied.updateWeights(multiplier);
         StateHolder.instance.addState(transition, copied);
-
-        SyncIfValid(transition);
     }
 
     private static void SyncIfValid(Transition transition) {
@@ -117,20 +117,30 @@ class FiringDelayAlgoHelper {
         conflicts2.remove(conflict2);
 
         syncAction.apply(conflict1).accept(conflict2);
-        if(!conflict1.isResolved()) {
-            StateHolder.instance.unresolvedConflicts.put(conflict1.getTargetMask(), conflict1);
-        }
-        if(!conflict2.isResolved() && !conflict2.getTargetMask().equals(conflict1.getTargetMask())) {
-            StateHolder.instance.unresolvedConflicts.put(conflict2.getTargetMask(), conflict2);
-        }
-
         for (Conflict conflict : conflicts1) {
             conflict.setMask(syncedMask);
             conflict.s *= conflict1.s;
+            if(conflict.isResolved()) {
+                StateHolder.instance.removeConflict(conflict);
+            }
         }
         for (Conflict conflict : conflicts2) {
             conflict.setMask(syncedMask);
             conflict.s *= conflict2.s;
+            if(conflict.isResolved()) {
+                StateHolder.instance.removeConflict(conflict);
+            }
+        }
+
+        if (conflict1.isResolved()) {
+            StateHolder.instance.removeConflict(conflict1);
+        } else {
+            StateHolder.instance.unresolvedConflicts.put(conflict1.getTargetMask(), conflict1);
+        }
+        if(conflict2.isResolved()) {
+            StateHolder.instance.removeConflict(conflict2);
+        } else if (conflict2.getTargetMask().equals(conflict1.getTargetMask())) {
+            StateHolder.instance.unresolvedConflicts.put(conflict2.getTargetMask(), conflict2);
         }
         return true;
     }
@@ -162,6 +172,7 @@ class FiringDelayAlgoHelper {
 
     public static void resetState() {
         StateHolder.instance.resetState();
+        MaskOffsetManager.instance.resetState();
     }
 
     public static boolean areMarked(ArrayList<Transition> transitions) {

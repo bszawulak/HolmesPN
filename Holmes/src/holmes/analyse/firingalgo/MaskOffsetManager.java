@@ -13,4 +13,8 @@ class MaskOffsetManager {
         bits.set(counter - 1);
         return bits;
     }
+
+    public void resetState() {
+        counter = 0;
+    }
 }

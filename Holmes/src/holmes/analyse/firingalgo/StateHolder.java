@@ -65,6 +65,13 @@ class StateHolder {
         states.put(transition, new State(transition, conflict));
     }
 
+    public void removeConflict(Conflict conflict) {
+        var state = states.get(conflict.transition);
+        state.tokenState.multiplier *= conflict.getResult();
+        state.conflict = null;
+        states.put(conflict.transition, state);
+    }
+
     public State getState(Transition transition) {
         return states.get(transition);
     }
