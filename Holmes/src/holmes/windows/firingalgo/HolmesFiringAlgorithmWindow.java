@@ -3,7 +3,7 @@ package holmes.windows.firingalgo;
 import holmes.analyse.firingalgo.DetermineFiringDelayAlgo;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.toolbar.Toolbar;
-import holmes.petrinet.elements.Transition;
+import holmes.analyse.firingalgo.petrinetstructure.Transition;
 import holmes.utilities.Tools;
 
 import javax.swing.*;
@@ -80,7 +80,7 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
             StringBuilder sb = new StringBuilder();
             var result = algorithm.getResult();
             for (Transition t : result.keySet()) {
-                sb.append(t.getName());
+                sb.append(t.transitionRef.getName());
                 sb.append("\n");
                 sb.append(result.get(t));
                 sb.append("\n");

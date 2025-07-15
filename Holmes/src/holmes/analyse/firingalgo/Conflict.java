@@ -1,6 +1,6 @@
 package holmes.analyse.firingalgo;
 
-import holmes.petrinet.elements.Transition;
+import holmes.analyse.firingalgo.petrinetstructure.Transition;
 
 import java.util.BitSet;
 

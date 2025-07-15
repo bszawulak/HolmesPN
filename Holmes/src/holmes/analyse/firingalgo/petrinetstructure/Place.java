@@ -3,6 +3,7 @@ package holmes.analyse.firingalgo.petrinetstructure;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class Place extends Node {
     public holmes.petrinet.elements.Place placeRef = null;
@@ -25,10 +26,22 @@ public class Place extends Node {
     }
 
     public List<Transition> getInputTransitions() {
-        return getInputNodes();
+        return getInputTransitions(__ -> true);
+    }
+
+    public List<Transition> getInputTransitions(Predicate<Arc> arcFilter) {
+        return getInputNodes(arcFilter);
     }
 
     public List<Transition> getOutputTransitions() {
-        return getOutputNodes();
+        return getOutputTransitions(__ -> true);
+    }
+
+    public List<Transition> getOutputTransitions(Predicate<Arc> arcFilter) {
+        return getOutputNodes(arcFilter);
+    }
+
+    public boolean isConflict() {
+        return outputArcs.size() > 1;
     }
 }

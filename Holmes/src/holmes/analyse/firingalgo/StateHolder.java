@@ -1,7 +1,6 @@
 package holmes.analyse.firingalgo;
 
-import holmes.petrinet.elements.Transition;
-import org.jfree.util.HashNMap;
+import holmes.analyse.firingalgo.petrinetstructure.Transition;
 
 import java.util.BitSet;
 import java.util.HashMap;

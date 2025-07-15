@@ -1,8 +1,6 @@
 package holmes.analyse.firingalgo;
 
-import holmes.petrinet.elements.Transition;
-
-import java.util.BitSet;
+import holmes.analyse.firingalgo.petrinetstructure.Transition;
 
 class State {
     public boolean marked = false;

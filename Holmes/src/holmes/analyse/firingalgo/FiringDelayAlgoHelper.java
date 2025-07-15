@@ -1,7 +1,7 @@
 package holmes.analyse.firingalgo;
 
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.analyse.firingalgo.petrinetstructure.Place;
+import holmes.analyse.firingalgo.petrinetstructure.Transition;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -16,8 +16,8 @@ class FiringDelayAlgoHelper {
     }
 
     public static void process(Transition transition) {
-        if (isSourceTransition(transition)) {
-            StateHolder.instance.addState(transition, new TokenSource(transition.spnExtension.getFiringRate()));
+        if (transition.isSource()) {
+            StateHolder.instance.addState(transition, new TokenSource(transition.transitionRef.spnExtension.getFiringRate()));
             return;
         }
 
@@ -31,14 +31,14 @@ class FiringDelayAlgoHelper {
         var previousTransitionState = StateHolder.instance.getState(previousTransition);
         var copied = previousTransitionState.copyForOtherTransition(transition);
 
-        double multiplier = (double) previousTransition.getOutputArcWeightTo(place)
-                                           / transition.getInputArcWeightFrom(place);
+        double multiplier = (double) previousTransition.getOutputArcToNode(place).get().arcRef.getWeight()
+                                           / transition.getInputArcToNode(place).get().arcRef.getWeight();
         copied.updateWeights(multiplier);
         StateHolder.instance.addState(transition, copied);
     }
 
     private static void SyncIfValid(Transition transition) {
-        if(isSyncTransition(transition)) {
+        if(transition.isSync()) {
             var previousTransitionStates = new ArrayList<State>();
             for (var place : transition.getInputPlaces()) {
                 //na razie nie jeszcze nie ma obsługi tokenów z dwóch źródeł TODO btw
@@ -175,7 +175,7 @@ class FiringDelayAlgoHelper {
         MaskOffsetManager.instance.resetState();
     }
 
-    public static boolean areMarked(ArrayList<Transition> transitions) {
+    public static boolean areMarked(List<Transition> transitions) {
         for (Transition transition : transitions) {
             if(!StateHolder.instance.isMarked(transition))
                 return false;
@@ -189,21 +189,5 @@ class FiringDelayAlgoHelper {
 
     public static boolean isProcessed(Transition transition) {
         return StateHolder.instance.getState(transition).tokenState != null;
-    }
-
-    public static boolean isSourceTransition(Transition transition) {
-        return transition.getInputArcs().size() <= 0;
-    }
-
-    public static boolean isSyncTransition(Transition transition) {
-        return  transition.getInputArcs().size() > 1;
-    }
-
-    public static boolean isSinkTransition(Transition transition) {
-        return transition.getOutputArcs().size() <=0 ;
-    }
-
-    public static boolean isConflictPlace(Place place) {
-        return place.getOutputTransitions().size() > 1;
     }
 }

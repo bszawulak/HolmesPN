@@ -1,6 +1,7 @@
 package holmes.analyse.firingalgo.petrinetstructure;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public abstract class Node {
     protected HashSet<Arc> inputArcs = new HashSet<>();
@@ -15,9 +16,14 @@ public abstract class Node {
         return Collections.unmodifiableSet(inputArcs);
     }
 
-    protected <T extends Node> List<T> getInputNodes() {
+    public Optional<Arc> getInputArcToNode(Node node) {
+        return inputArcs.stream().filter(arc -> arc.getIn() == node).findFirst();
+    }
+
+    protected <T extends Node> List<T> getInputNodes(Predicate<Arc> arcFilter) {
         ArrayList<T> result = new ArrayList<T>();
         getInputArcs().stream()
+                .filter(arcFilter)
                 .map(arc -> {return (T) arc.getIn();})
                 .forEach(result::add);
         return Collections.unmodifiableList(result);
@@ -45,9 +51,14 @@ public abstract class Node {
         return Collections.unmodifiableSet(outputArcs);
     }
 
-    protected <T extends Node> List<T> getOutputNodes() {
+    public Optional<Arc> getOutputArcToNode(Node node) {
+        return outputArcs.stream().filter(arc -> arc.getOut() == node).findFirst();
+    }
+
+    protected <T extends Node> List<T> getOutputNodes(Predicate<Arc> arcFilter) {
         ArrayList<T> result = new ArrayList<T>();
         getOutputArcs().stream()
+                .filter(arcFilter)
                 .map(arc -> {return (T) arc.getOut();})
                 .forEach(result::add);
         return Collections.unmodifiableList(result);

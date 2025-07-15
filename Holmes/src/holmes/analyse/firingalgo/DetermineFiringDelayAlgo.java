@@ -1,19 +1,24 @@
 package holmes.analyse.firingalgo;
 
+import holmes.analyse.firingalgo.petrinetstructure.PetriNetStructure;
+import holmes.analyse.firingalgo.petrinetstructure.Place;
+import holmes.analyse.firingalgo.petrinetstructure.Transition;
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.elements.Arc;
-import holmes.petrinet.elements.Place;
-import holmes.petrinet.elements.Transition;
+import holmes.petrinet.data.PetriNetData;
 
 import java.util.*;
 
 public class DetermineFiringDelayAlgo implements Runnable {
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private PetriNetStructure structure;
     private ArrayList<Transition> LT = new ArrayList<Transition>();
 
     @Override
     public void run() {
-        ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
+        PetriNetData data = overlord.getWorkspace().getProject().getDataCore();
+        structure = new PetriNetStructure(data);
+
+        List<Transition> transitions = structure.getTransitions();
         LT.clear();
         FiringDelayAlgoHelper.resetState();
 
@@ -41,7 +46,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
     /**
      * Tablica LT zawiera przejścia ułożone w taki sposób, że każde kolejne przejście zależy tylko od przejść poprzednich.
      */
-    private void setupLTArray(ArrayList<Transition> transitions) throws Exception {
+    private void setupLTArray(List<Transition> transitions) throws Exception {
         LT.clear();
 
         LinkedList<Transition> availableTransitions = new LinkedList<Transition>(transitions);
@@ -56,13 +61,13 @@ public class DetermineFiringDelayAlgo implements Runnable {
         List<Transition> reversed = new ArrayList<Transition>(LT);
         Collections.reverse(reversed);
         for (Transition transition : reversed) {
-            if (FiringDelayAlgoHelper.isSyncTransition(transition)) {
+            if (transition.isSync()) {
                 output.add(transition);
             }
         }
 
         List<Transition> sinkTransitions =
-                transitions.stream().filter(FiringDelayAlgoHelper::isSinkTransition).toList();
+                transitions.stream().filter(Transition::isSink).toList();
         output.addAll(sinkTransitions);
         LT = output;
     }
@@ -91,17 +96,11 @@ public class DetermineFiringDelayAlgo implements Runnable {
         output.add(0, transition);
     }
 
-    private ArrayList<Place> getInputPlacesByNormalArcs(Transition transition) {
-        ArrayList<Place> places = transition.getInputPlaces();
-        places.removeIf(place -> transition.getInputArcFrom(place).getArcType() != Arc.TypeOfArc.NORMAL);
-        return places;
-    }
-
     private void dfsPush(Transition transition,
                          Stack<Place> stack,
                          HashSet<Place> markedPlaces) {
         for (Place previousPlace : transition.getInputPlaces()) {
-            if(FiringDelayAlgoHelper.isConflictPlace(previousPlace)) {
+            if(previousPlace.isConflict()) {
                 if(!markedPlaces.contains(previousPlace)) {
                     FiringDelayAlgoHelper.markPlaceAsConflict(previousPlace);
                     markedPlaces.add(previousPlace);
@@ -112,7 +111,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
             for (Transition previousTransition : previousPlace.getInputTransitions()) {
                 FiringDelayAlgoHelper.markTransition(previousTransition);
 
-                if (FiringDelayAlgoHelper.isSourceTransition(previousTransition)
+                if (previousTransition.isSource()
                     || FiringDelayAlgoHelper.isProcessed(previousTransition)) {
                     dfsPop(stack);
                 }
