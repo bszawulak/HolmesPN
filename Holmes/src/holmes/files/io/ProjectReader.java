@@ -861,6 +861,16 @@ public class ProjectReader {
 				place.getTextsLocations(GUIManager.locationMoveType.GAMMA).get(eLocIndex).setNotSnappedPosition(newP);
 				return;
 			}
+
+			query = "Place invisible:";
+			if(line.contains(query)) {
+				line = line.substring(line.indexOf(query)+query.length());
+				line = line.replace(">","");
+				if(line.contains("true")) {
+					place.setInvisibility(true);
+				}
+				return;
+			}
 			
 			query = "Place colored:";
 			if(line.contains(query)) {

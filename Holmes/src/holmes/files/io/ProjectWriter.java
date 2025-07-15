@@ -195,6 +195,7 @@ public class ProjectWriter {
 					bw.write(">" + newline); //tokeny
 				}
 
+				bw.write(spaces(sp)+"<Place invisible:"+place.isInvisible()+">"+newline);
 				bw.write(spaces(sp)+"<Place colored:"+place.isColored+">"+newline);
 				if(place instanceof PlaceColored) {
 					bw.write(spaces(sp)+"<Place colors:"
