@@ -1,5 +1,6 @@
 package holmes.analyse.firingalgo;
 
+import holmes.analyse.firingalgo.petrinetstructure.Arc;
 import holmes.analyse.firingalgo.petrinetstructure.PetriNetStructure;
 import holmes.analyse.firingalgo.petrinetstructure.Place;
 import holmes.analyse.firingalgo.petrinetstructure.Transition;
@@ -22,11 +23,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
         LT.clear();
         FiringDelayAlgoHelper.resetState();
 
-        try {
-            setupLTArray(transitions);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        setupLTArray(transitions);
 
         Stack<Place> stack = new Stack<>();
         HashSet<Place> markedPlaces = new HashSet<Place>();
@@ -46,7 +43,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
     /**
      * Tablica LT zawiera przejścia ułożone w taki sposób, że każde kolejne przejście zależy tylko od przejść poprzednich.
      */
-    private void setupLTArray(List<Transition> transitions) throws Exception {
+    private void setupLTArray(List<Transition> transitions) {
         LT.clear();
 
         LinkedList<Transition> availableTransitions = new LinkedList<Transition>(transitions);
@@ -54,7 +51,7 @@ public class DetermineFiringDelayAlgo implements Runnable {
         HashSet<Transition> temporaryMarkedTransitions = new HashSet<Transition>();
         while (!availableTransitions.isEmpty()) {
             Transition transition = availableTransitions.poll();
-            visitTransitionLT(transition, markedTransitions, temporaryMarkedTransitions, LT);
+            visitTransitionLT(transition, null, markedTransitions, temporaryMarkedTransitions, LT);
         }
 
         ArrayList<Transition> output = new ArrayList<Transition>();
@@ -74,21 +71,28 @@ public class DetermineFiringDelayAlgo implements Runnable {
 
     private void visitTransitionLT(
             Transition transition,
+            Place targetPlace,
             HashSet<Transition> markedTransitions,
             HashSet<Transition> temporaryMarkedTransitions,
-            ArrayList<Transition> output) throws Exception {
+            ArrayList<Transition> output) {
         if (markedTransitions.contains(transition)) {
             return;
         }
         if (temporaryMarkedTransitions.contains(transition)) {
-            throw new Exception("Graph contains a loop");
+            // rozcięcie cyklu poprzez stworzenie nowej tranzycji
+            Transition newSource = structure.createNewTransition();
+            Arc arc = transition.getOutputArcToNode(targetPlace).get();
+            newSource.transitionRef = transition.transitionRef;
+            arc.setIn(newSource);
+            markedTransitions.add(newSource);
+            return;
         }
 
         temporaryMarkedTransitions.add(transition);
 
         for (Place place : transition.getInputPlaces()) {
             for (Transition precedingTransition: place.getInputTransitions()) {
-                visitTransitionLT(precedingTransition, markedTransitions, temporaryMarkedTransitions, output);
+                visitTransitionLT(precedingTransition, place, markedTransitions, temporaryMarkedTransitions, output);
             }
         }
 

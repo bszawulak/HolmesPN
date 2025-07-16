@@ -45,6 +45,26 @@ public class PetriNetStructure {
         return node;
     }
 
+    public Transition createNewTransition() {
+        Transition transition = new Transition();
+        transitions.add(transition);
+        return transition;
+    }
+
+    public Arc createNewArc(Transition in, Place out) {
+        return createNewArc(in, (Node)out);
+    }
+
+    public Arc createNewArc(Place in, Transition out) {
+        return createNewArc(in, (Node)out);
+    }
+
+    private Arc createNewArc(Node in, Node out) {
+        Arc arc = new Arc(in, out);
+        arcs.add(arc);
+        return arc;
+    }
+
     public List<Place> getPlaces() {
         return Collections.unmodifiableList(places);
     }
