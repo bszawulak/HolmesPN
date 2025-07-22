@@ -102,7 +102,7 @@ public class HolmesAbout extends JFrame {
 			overlord.log(lang.getText("LOGentry00438exception")+ "\n"+ex.getMessage(), "error", true);
 		}
 		
-		JLabel nameLabel = new JLabel("Holmes v2.0.1"); // Kim Kitsuragi
+		JLabel nameLabel = new JLabel("Holmes v2.0.1.1"); // Kim Kitsuragi
 		nameLabel.setFont(new Font("Consolas", Font.PLAIN, 25));
 		nameLabel.setBounds(170, 20, 300, 40);
 		panel.add(nameLabel);
@@ -112,7 +112,7 @@ public class HolmesAbout extends JFrame {
 		nameLabel1b.setBounds(170, 50, 350, 30);
 		panel.add(nameLabel1b);
 		
-		JLabel nameLabel2 = new JLabel("[build 31-07-2024]");
+		JLabel nameLabel2 = new JLabel("[build 22-07-2025]");
 		nameLabel2.setFont(new Font("Consolas", Font.PLAIN, 12));
 		nameLabel2.setBounds(170, 80, 330, 15);
 		panel.add(nameLabel2);
@@ -148,23 +148,21 @@ public class HolmesAbout extends JFrame {
 		textArea.setFont(new Font("Consolas", Font.PLAIN, 15));
 
 		textArea.append("Versions and authors:\n");
+		textArea.append("Holmes version 2.0.1, July 2025, 170k+ LOC \n");
+		textArea.append("Holmes version 2.0, February 2025, 150k+ LOC \n");
 		textArea.append("Holmes version 1.7, July 2024, 120k+ LOC \n");
 		textArea.append("Holmes version 1.6, February 2024 \n");
-		textArea.append("Holmes version 1.5, June 2022-December 2022, even more LOC \n");
-		textArea.append("  Marcin Radom, Ph.D.\n");
+		textArea.append("Holmes version 1.5, December 2022 \n");
 		textArea.append("Holmes version 1.1, June 2022, 100k+ LOC \n");
-		textArea.append("  Bartlomiej Szawulak, Ph.D.\n");
 		textArea.append("Holmes version 1.0, January 2017, 57k+ LOC \n");
-		textArea.append("  Radom Marcin, Ph.D.\n");
 		textArea.append("Holmes version 0.8, October 2015, 50k+ LOC \n");
-		textArea.append("  Radom Marcin, Ph.D.\n");
 		textArea.append("\n");
 		textArea.append("Abyss Version 1.2+, 2014-2015, 30k+ LOC \n");
-		textArea.append("  Radom Marcin, Ph.D.\n");
-		textArea.append("  Rybarczyk Agnieszka, Ph.D.\n");
+		textArea.append("  Radom Marcin,\n");
+		textArea.append("  Rybarczyk Agnieszka\n");
 		textArea.append("Abyss Version 1.1, 2013-2014, 10k LOC \n");
 		textArea.append("  Bartłomiej Szawulak, M.Sc. thesis\n");
-		textArea.append("  (supervisor: Radom Marcin, Ph.D.)\n");
+		textArea.append("  (supervisor: Radom Marcin,)\n");
 		textArea.append("Abyss Version 1.0, 2012-2013, 7k LOC \n");
 		textArea.append("  Andrzejewski Hubert, B.Sc. thesis\n");
 		textArea.append("  Chabelski Piotr, B.Sc. thesis\n");
