@@ -220,7 +220,7 @@ public class HolmesNotepad extends JFrame {
 		String lastPath = overlord.getLastPath();
 		FileFilter[] filters = new FileFilter[1];
 		filters[0] = new ExtensionFileFilter("Holmes notepad text file (.txt)",  new String[] { "TXT" });
-		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("load"), lang.getText("HNwin_entry006"), "");
+		String selectedFile = Tools.selectFileDialog(lastPath, filters, lang.getText("save"), lang.getText("HNwin_entry006"), "");
 		
 		if(!selectedFile.isEmpty()) {
 			String extension = ".txt";

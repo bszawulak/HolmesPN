@@ -1510,7 +1510,7 @@ public class HolmesSimKnockVis extends JFrame {
     				double value = refSet.transFiringsAvg.get(t1) * 100;
 					strB = "err.";
 					try {
-						strB = String.format("      "+lang.getText("HSKVwin_entry054")+" " +formatter2.format(value)+"%]  t%d_%s", t1, transitions.get(t1).getName());
+						strB = String.format("      "+lang.getText("HSKVwin_entry054")+" " +formatter2.format(value)+"%%]  t%d_%s", t1, transitions.get(t1).getName());
 					} catch (Exception e) {
 						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry054", "error", true);
 					}
@@ -1553,12 +1553,12 @@ public class HolmesSimKnockVis extends JFrame {
 
     		for(Double key: data.keySet()){
     			if(key < -20) {
-    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry056")+" "+formatter1.format(key)+"%] "
+    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry056")+" "+formatter1.format(key)+"%%] "
     						+data.get(key), "text");
     			} 
     			
     			if(key > 20) {
-    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry057")+" "+formatter1.format(key)+"%] "
+    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry057")+" "+formatter1.format(key)+"%%] "
     						+data.get(key), "text");
     			}
             }
@@ -1677,11 +1677,11 @@ public class HolmesSimKnockVis extends JFrame {
     		}
     		for(Double key: data.keySet()){
     			if(key < -20) {
-    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry063")+" "+formatter2.format(key)+"%] "
+    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry063")+" "+formatter2.format(key)+"%%] "
     						+data.get(key), "text");
     			}
     			if(key > 20) {
-    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry064")+formatter2.format(key)+"%] "
+    				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry064")+formatter2.format(key)+"%%] "
     						+data.get(key), "text");
     			}
             }
