@@ -109,7 +109,7 @@ public class HolmesAbout extends JFrame {
 		
 		JLabel nameLabel1b = new JLabel("Petri nets editor and analyzer");
 		nameLabel1b.setFont(new Font("Consolas", Font.PLAIN, 18));
-		nameLabel1b.setBounds(170, 40, 300, 30);
+		nameLabel1b.setBounds(170, 50, 350, 30);
 		panel.add(nameLabel1b);
 		
 		JLabel nameLabel2 = new JLabel("[build 31-07-2024]");
