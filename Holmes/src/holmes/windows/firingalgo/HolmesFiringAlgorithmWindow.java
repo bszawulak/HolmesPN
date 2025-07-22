@@ -2,6 +2,7 @@ package holmes.windows.firingalgo;
 
 import holmes.analyse.firingalgo.DetermineFiringDelayAlgo;
 import holmes.darkgui.GUIManager;
+import holmes.darkgui.LanguageManager;
 import holmes.darkgui.toolbar.Toolbar;
 import holmes.analyse.firingalgo.petrinetstructure.Transition;
 import holmes.utilities.Tools;
@@ -14,19 +15,18 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
     private static final int headerHeight = 200;
 
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
+    private static final LanguageManager lang = GUIManager.getLanguageManager();
     private static JTextArea logOutput = null;
 
-    public static void DrawButtonToToolbar(Toolbar toolbar) {
-        JButton firingAlgoButton = new JButton("", Tools.getResIcon48("/icons/holmesicon.png"));
-        firingAlgoButton.setPreferredSize(new Dimension(50,50));
-        firingAlgoButton.setBorderPainted(false);
-        firingAlgoButton.setContentAreaFilled(false);
-        firingAlgoButton.setFocusPainted(false);
-        firingAlgoButton.setOpaque(false);
-        firingAlgoButton.addActionListener(e -> {
+    public static JButton createButton(int x, int y, int width, int height) {
+        JButton button = new JButton(lang.getText("HSPN_determine_rates_button_label"));
+        button.setBounds(x, y, width, height);
+        button.setMargin(new Insets(0, 0,0,0));
+        button.setIcon(Tools.getResIcon48("/icons/holmesicon.png"));
+        button.addActionListener(actionEvent -> {
             HolmesFiringAlgorithmWindow firingAlgorithmWindow = new HolmesFiringAlgorithmWindow();
         });
-        toolbar.add(firingAlgoButton);
+        return button;
     }
 
     public HolmesFiringAlgorithmWindow() {
@@ -88,6 +88,8 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
 
             logOutput.append(sb.toString());
 
+            //TODO
+            //overlord.getWorkspace().getProject().accessFiringRatesManager().
         });
         runAlgorithmButton.setFocusPainted(false);
         panel.add(runAlgorithmButton);

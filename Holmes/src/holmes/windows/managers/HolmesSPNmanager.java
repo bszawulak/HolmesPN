@@ -29,6 +29,7 @@ import holmes.tables.RXTable;
 import holmes.tables.managers.SPNdataVectorsRenderer;
 import holmes.tables.managers.SPNdataVectorsTableModel;
 import holmes.utilities.Tools;
+import holmes.windows.firingalgo.HolmesFiringAlgorithmWindow;
 
 /**
  * Okno zarządzania wektorami danych SPN dla tranzycji stochastycznych.
@@ -269,6 +270,9 @@ public class HolmesSPNmanager extends JFrame {
 				new HolmesSPNeditor(ego, spnManager.getSPNdataVector(selected), selected);
 		});
 		result.add(editStateButton);
+
+		result.add(HolmesFiringAlgorithmWindow.createButton(posXda, posYda+=60, 130, 50));
+
 	    return result;
 	}
 	

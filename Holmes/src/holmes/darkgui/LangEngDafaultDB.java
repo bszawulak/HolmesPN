@@ -2796,6 +2796,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HSPNMwin_entry015","Others");
         defaultEnglish.put("HSPNMwin_entry016","State description:");
         defaultEnglish.put("LOGentry00521exception","Exception (1000250): HolmesSPNmanager.cellClickAction() failed:");
+        defaultEnglish.put("HSPN_determine_rates_button_label", "<html>Determine firing rates</html>");
 
         //HolmesSPNtransitionEditor:
         defaultEnglish.put("HSPNTEwin_entry001title","Holmes SPN transition editor");

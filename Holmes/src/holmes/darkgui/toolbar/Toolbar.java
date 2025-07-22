@@ -273,8 +273,6 @@ public class Toolbar extends JPanel {
         firingAlgoSeparator.setPreferredSize(new Dimension(15,45));
         this.add(firingAlgoSeparator);
 
-        HolmesFiringAlgorithmWindow.DrawButtonToToolbar(this);
-
         //TODO:
         ToolbarButtonAction testButton2 = new ToolbarButtonAction(this, "DEBUG2", "Debug2", Tools.getResIcon48("/icons/toolbar/a.png")) {
             //@SuppressWarnings("unused")
