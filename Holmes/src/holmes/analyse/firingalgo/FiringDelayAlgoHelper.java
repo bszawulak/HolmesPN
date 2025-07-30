@@ -17,7 +17,8 @@ class FiringDelayAlgoHelper {
 
     public static void process(Transition transition) {
         if (transition.isSource()) {
-            StateHolder.instance.addState(transition, new TokenSource(transition.transitionRef.spnExtension.getFiringRate()));
+            //TODO: firing rate may be null
+            StateHolder.instance.addState(transition, new TokenSource(transition.firingRate));
             return;
         }
 

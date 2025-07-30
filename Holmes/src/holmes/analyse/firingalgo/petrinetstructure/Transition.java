@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 
 public class Transition extends Node {
     public holmes.petrinet.elements.Transition transitionRef = null;
+    public Double firingRate = null;
 
     protected Transition() {
         this(new HashSet<>(), new HashSet<>(), null);

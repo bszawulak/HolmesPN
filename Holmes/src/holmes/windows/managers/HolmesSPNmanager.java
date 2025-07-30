@@ -3,10 +3,7 @@ package holmes.windows.managers;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.Serial;
 import java.util.ArrayList;
 
@@ -271,9 +268,26 @@ public class HolmesSPNmanager extends JFrame {
 		});
 		result.add(editStateButton);
 
-		result.add(HolmesFiringAlgorithmWindow.createButton(posXda, posYda+=60, 130, 50));
+		result.add(createFiringAlgorithmButton(this, posXda, posYda+=60, 130, 50));
 
 	    return result;
+	}
+
+	private JButton createFiringAlgorithmButton(JFrame launcherFrame, int x, int y, int width, int height) {
+		JButton button = new JButton(lang.getText("HSPN_determine_rates_button_label"));
+		button.setBounds(x, y, width, height);
+		button.setMargin(new Insets(0, 0,0,0));
+		button.setIcon(Tools.getResIcon48("/icons/holmesicon.png"));
+		button.addActionListener(actionEvent -> {
+			HolmesFiringAlgorithmWindow firingAlgorithmWindow = new HolmesFiringAlgorithmWindow(launcherFrame);
+			firingAlgorithmWindow.addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosing(WindowEvent e) {
+					fillTable();
+				}
+			});
+		});
+		return button;
 	}
 	
 	/**

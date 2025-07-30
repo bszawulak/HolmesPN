@@ -1,6 +1,7 @@
 package holmes.analyse.firingalgo.petrinetstructure;
 
-import holmes.petrinet.data.PetriNetData;
+import holmes.petrinet.data.PetriNet;
+import holmes.petrinet.data.SPNdataVector;
 
 import java.util.*;
 
@@ -12,8 +13,8 @@ public class PetriNetStructure {
     private ArrayList<Transition> transitions = new ArrayList<Transition>();
     private ArrayList<Arc> arcs = new ArrayList<Arc>();
 
-    public PetriNetStructure(PetriNetData data) {
-        data.arcs.forEach(pnArc -> {
+    public PetriNetStructure(PetriNet petriNet, SPNdataVector spnVector) {
+        petriNet.getArcs().forEach(pnArc -> {
             holmes.petrinet.elements.Node pnIn = pnArc.getStartNode();
             holmes.petrinet.elements.Node pnOut = pnArc.getEndNode();
             Node in = initializeOrGetNode(pnIn);
@@ -21,6 +22,14 @@ public class PetriNetStructure {
             Arc arc = new Arc(in, out, pnArc);
             arcs.add(arc);
         });
+
+        ArrayList<holmes.petrinet.elements.Transition> pnTransitions = petriNet.getTransitions();
+        for (int i = 0; i < pnTransitions.size(); i++) {
+            holmes.petrinet.elements.Transition pnTransition = pnTransitions.get(i);
+            double fr = spnVector.getFiringRate(i);
+            transitions.stream().filter(t -> t.transitionRef.equals(pnTransition))
+                    .forEach(t -> t.firingRate = fr >= 0 ? fr : null);
+        }
     }
 
     private Node initializeOrGetNode(holmes.petrinet.elements.Node pnNode) {
@@ -35,11 +44,11 @@ public class PetriNetStructure {
         }
 
         Node node = null;
-        if (pnNode instanceof holmes.petrinet.elements.Place) {
-            node = new Place((holmes.petrinet.elements.Place) pnNode);
+        if (pnNode instanceof holmes.petrinet.elements.Place pnPlace) {
+            node = new Place(pnPlace);
             places.add((Place) node);
-        } else if (pnNode instanceof holmes.petrinet.elements.Transition) {
-            node = new Transition((holmes.petrinet.elements.Transition) pnNode);
+        } else if (pnNode instanceof holmes.petrinet.elements.Transition pnTransition) {
+            node = new Transition(pnTransition);
             transitions.add((Transition) node);
         }
         return node;

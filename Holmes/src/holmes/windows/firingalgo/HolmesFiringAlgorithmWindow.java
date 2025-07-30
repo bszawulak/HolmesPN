@@ -1,100 +1,109 @@
 package holmes.windows.firingalgo;
 
 import holmes.analyse.firingalgo.DetermineFiringDelayAlgo;
+import holmes.analyse.firingalgo.petrinetstructure.Transition;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.LanguageManager;
-import holmes.darkgui.toolbar.Toolbar;
-import holmes.analyse.firingalgo.petrinetstructure.Transition;
-import holmes.utilities.Tools;
+import holmes.petrinet.data.PetriNet;
+import holmes.petrinet.data.SPNdataVector;
+import holmes.petrinet.data.SPNdataVectorManager;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.util.HashMap;
+import java.util.function.Function;
+import java.util.List;
 
 public class HolmesFiringAlgorithmWindow extends JFrame {
     private static final int headerHeight = 200;
+    private static final int rowHeight = 30;
+    private static final int spaceBetweenRows = 5;
+    private static final int width = 350;
+    private static final int labelWidth = 200;
+    private static final int verticalMargin = 5;
+    private static final int horizontalMargin = 5;
 
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
     private static final LanguageManager lang = GUIManager.getLanguageManager();
     private static JTextArea logOutput = null;
 
-    public static JButton createButton(int x, int y, int width, int height) {
-        JButton button = new JButton(lang.getText("HSPN_determine_rates_button_label"));
-        button.setBounds(x, y, width, height);
-        button.setMargin(new Insets(0, 0,0,0));
-        button.setIcon(Tools.getResIcon48("/icons/holmesicon.png"));
-        button.addActionListener(actionEvent -> {
-            HolmesFiringAlgorithmWindow firingAlgorithmWindow = new HolmesFiringAlgorithmWindow();
-        });
-        return button;
-    }
+    private JSpinner indexSpinner = null;
 
-    public HolmesFiringAlgorithmWindow() {
-        this.setTitle("Estimate firing rates algorithm");
+
+
+    public HolmesFiringAlgorithmWindow(JFrame launcherFrame) {
+        super("Estimate firing rates algorithm");
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                overlord.getFrame().setEnabled(true);
+                launcherFrame.setEnabled(true);
             }
         });
-        overlord.getFrame().setEnabled(false);
+        launcherFrame.setEnabled(false);
 
-        add(createDebugLayout(), BorderLayout.CENTER);
+        setLayout(null);
         setVisible(true);
-    }
 
-    private JPanel createDebugLayout() {
-        setLayout(new BorderLayout());
-        setSize(new Dimension(1024, 768));
+        JPanel panel = createWindowPanel();
+        add(panel);
+        Dimension size = panel.getSize();
+
+        Insets insets = getInsets();
+        size.width += insets.left + insets.right;
+        size.height += insets.top + insets.bottom;
+        setSize(size);
         setResizable(false);
-
-        JPanel mainPanel = new JPanel(null);
-        mainPanel.setBounds(0, 0, 1024, 768);
-        mainPanel.setLocation(0, 0);
-
-        mainPanel.add(createHeaderPanel(mainPanel));
-        mainPanel.add(createLogOutputPanel(mainPanel));
-        return mainPanel;
     }
 
-    private JPanel createHeaderPanel(JPanel parent) {
+    private JPanel createWindowPanel() {
         JPanel panel = new JPanel(null);
-        panel.setBounds(0, 0, parent.getWidth() - 20, headerHeight);
-        panel.setBorder(BorderFactory.createTitledBorder("Menu:"));
 
-        int x = 20;
-        int y = 20;
-        int buttonHeight = headerHeight - 40;
-        int buttonWidth = headerHeight - 40;
-        int space = 10;
+        List<Function<Rectangle, JPanel>> panelCreators = List.of(
+                this::createIndexSelectorPanel,
+                this::createRunButtonPanel
+        );
+        panel.setBounds(0, 0, width + horizontalMargin * 2, panelCreators.size() * (rowHeight + spaceBetweenRows) - spaceBetweenRows + verticalMargin * 2);
 
-        JButton runAlgorithmButton = new JButton("Run algorithm");
-        runAlgorithmButton.setText("<html><center>Run algorithm<center></html>");
-        runAlgorithmButton.setBounds(x, y, buttonWidth, buttonHeight);
-        runAlgorithmButton.setMargin(new Insets(0, 0, 0, 0));
-        runAlgorithmButton.addActionListener(actionEvent -> {
-            DetermineFiringDelayAlgo algorithm = new DetermineFiringDelayAlgo();
-            algorithm.run();
+        Rectangle rectangle = new Rectangle(horizontalMargin, verticalMargin, width, rowHeight);
+        for (Function<Rectangle, JPanel> createPanel : panelCreators) {
+            panel.add(createPanel.apply(rectangle));
+            rectangle.y += rowHeight + spaceBetweenRows;
+        }
 
+        return panel;
+    }
 
-            StringBuilder sb = new StringBuilder();
-            var result = algorithm.getResult();
-            for (Transition t : result.keySet()) {
-                sb.append(t.transitionRef.getName());
-                sb.append("\n");
-                sb.append(result.get(t));
-                sb.append("\n");
-            }
+    private JPanel createIndexSelectorPanel(Rectangle rectange) {
+        JPanel panel = new JPanel(null);
+        panel.setBounds(rectange);
 
-            logOutput.append(sb.toString());
+        JLabel label = new JLabel(lang.getText("HSPN_FRA_select_table_index"));
+        label.setBounds(0, 0, labelWidth, rowHeight);
+        panel.add(label);
 
-            //TODO
-            //overlord.getWorkspace().getProject().accessFiringRatesManager().
+        SPNdataVectorManager firingRatesManager = overlord.getWorkspace().getProject().accessFiringRatesManager();
+        //todo: change to combobox
+        indexSpinner = new JSpinner(new SpinnerNumberModel(0, 0, firingRatesManager.accessSPNmatrix().size() - 1, 1));
+        indexSpinner.setBounds(labelWidth, 0, width - labelWidth, rowHeight);
+        panel.add(indexSpinner);
+
+        return panel;
+    }
+
+    private JPanel createRunButtonPanel(Rectangle rectangle) {
+        JPanel panel = new JPanel(null);
+        panel.setBounds(rectangle);
+
+        JButton button = new JButton(lang.getText("HSPN_FRA_run_algorithm"));
+        button.addActionListener(actionEvent -> {
+            runAlgorithm();
         });
-        runAlgorithmButton.setFocusPainted(false);
-        panel.add(runAlgorithmButton);
-
-        x += buttonHeight + space;
+        button.setFocusPainted(false);
+        button.setBounds(labelWidth, 0, width - labelWidth, rowHeight);
+        panel.add(button);
 
         return panel;
     }
@@ -120,5 +129,41 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
         panel.add(logFieldPanel);
 
         return panel;
+    }
+
+    private int getSelectedFiringRatesVectorIndex() {
+        return (int)indexSpinner.getValue();
+    }
+
+    private void runAlgorithm() {
+        DetermineFiringDelayAlgo algorithm = new DetermineFiringDelayAlgo();
+
+        int index = getSelectedFiringRatesVectorIndex();
+        PetriNet petriNet = overlord.getWorkspace().getProject();
+        SPNdataVectorManager spnManager = petriNet.accessFiringRatesManager();
+        SPNdataVector firingRatesVector = spnManager.getSPNdataVector(index);
+
+        algorithm.run(petriNet, firingRatesVector);
+
+        HashMap<Transition, Double> result = algorithm.getResult();
+
+        SPNdataVector dataVector = new SPNdataVector();
+        for (holmes.petrinet.elements.Transition pnTransition : petriNet.getTransitions()) {
+            Double value = result.keySet().stream()
+                    .filter(t -> t.transitionRef.equals(pnTransition))
+                    .map(t -> t.firingRate)
+                    .max(Double::compare)
+                    .orElse(null);
+            if (value != null) {
+                dataVector.addTrans(value.toString(), TransitionSPNExtension.StochaticsType.ST);
+            }
+            else {
+                dataVector.addTrans("0", TransitionSPNExtension.StochaticsType.ST);
+            }
+        }
+        dataVector.setDescription("Generated");
+
+        spnManager.accessSPNmatrix().add(dataVector);
+        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 }

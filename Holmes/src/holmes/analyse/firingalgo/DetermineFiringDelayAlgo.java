@@ -5,19 +5,18 @@ import holmes.analyse.firingalgo.petrinetstructure.PetriNetStructure;
 import holmes.analyse.firingalgo.petrinetstructure.Place;
 import holmes.analyse.firingalgo.petrinetstructure.Transition;
 import holmes.darkgui.GUIManager;
-import holmes.petrinet.data.PetriNetData;
+import holmes.petrinet.data.PetriNet;
+import holmes.petrinet.data.SPNdataVector;
 
 import java.util.*;
 
-public class DetermineFiringDelayAlgo implements Runnable {
+public class DetermineFiringDelayAlgo {
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
     private PetriNetStructure structure;
     private ArrayList<Transition> LT = new ArrayList<Transition>();
 
-    @Override
-    public void run() {
-        PetriNetData data = overlord.getWorkspace().getProject().getDataCore();
-        structure = new PetriNetStructure(data);
+    public void run(PetriNet petriNet, SPNdataVector spnVector) {
+        structure = new PetriNetStructure(petriNet, spnVector);
 
         List<Transition> transitions = structure.getTransitions();
         LT.clear();
