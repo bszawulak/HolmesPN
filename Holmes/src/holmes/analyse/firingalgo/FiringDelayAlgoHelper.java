@@ -22,7 +22,7 @@ class FiringDelayAlgoHelper {
             return;
         }
 
-        SyncIfValid(transition);
+        var synced = SyncIfValid(transition);
 
         //jak jest więcej miejsc wejściowych to jest to synchronizacja,
         //gdzie z założenia wejście obu jest równe
@@ -32,13 +32,22 @@ class FiringDelayAlgoHelper {
         var previousTransitionState = StateHolder.instance.getState(previousTransition);
         var copied = previousTransitionState.copyForOtherTransition(transition);
 
-        double multiplier = (double) previousTransition.getOutputArcToNode(place).get().arcRef.getWeight()
-                                           / transition.getInputArcToNode(place).get().arcRef.getWeight();
-        copied.updateWeights(multiplier);
+        if(!place.isConflict()) {
+            double multiplier = (double) previousTransition.getOutputArcToNode(place).get().arcRef.getWeight()
+                    / transition.getInputArcToNode(place).get().arcRef.getWeight();
+            copied.updateWeights(multiplier);
+        }
+
+        if(synced && copied.conflict != null) {
+            copied.conflict.weight = transition.getInputPlaces().stream().map(place1 -> place1.getInputTransitions().get(0)).mapToDouble(
+                    transition1 -> StateHolder.instance.getState(transition1).conflict.weight).sum();
+        }
+
         StateHolder.instance.addState(transition, copied);
     }
 
-    private static void SyncIfValid(Transition transition) {
+    private static boolean SyncIfValid(Transition transition) {
+        var synced = false;
         if(transition.isSync()) {
             var previousTransitionStates = new ArrayList<State>();
             for (var place : transition.getInputPlaces()) {
@@ -53,7 +62,7 @@ class FiringDelayAlgoHelper {
             if(previousConflicts.size() > 1) {
                 var first = previousConflicts.get(0);
                 for (Conflict second : previousConflicts.subList(1, previousConflicts.size())) {
-                    syncConflicts(first, second);
+                    synced = syncConflicts(first, second);
                 }
             }
 
@@ -73,6 +82,7 @@ class FiringDelayAlgoHelper {
                 }
             }
         }
+        return synced;
     }
 
     public static void markPlaceAsConflict(Place place) {
@@ -92,8 +102,8 @@ class FiringDelayAlgoHelper {
         }
     }
 
-    public static void syncConflicts(Conflict conflict1, Conflict conflict2) {
-        syncConflicts(conflict1, conflict2, conflict -> conflict::sync);
+    public static boolean syncConflicts(Conflict conflict1, Conflict conflict2) {
+        return syncConflicts(conflict1, conflict2, conflict -> conflict::sync);
     }
 
     public static boolean syncConflicts(Conflict conflict1, Conflict conflict2, Function<Conflict, Consumer<Conflict>> syncAction) {
@@ -120,14 +130,14 @@ class FiringDelayAlgoHelper {
         syncAction.apply(conflict1).accept(conflict2);
         for (Conflict conflict : conflicts1) {
             conflict.setMask(syncedMask);
-            conflict.s *= conflict1.s;
+            conflict.s *= conflict1.multiplierForPropagation;
             if(conflict.isResolved()) {
                 StateHolder.instance.removeConflict(conflict);
             }
         }
         for (Conflict conflict : conflicts2) {
             conflict.setMask(syncedMask);
-            conflict.s *= conflict2.s;
+            conflict.s *= conflict2.multiplierForPropagation;
             if(conflict.isResolved()) {
                 StateHolder.instance.removeConflict(conflict);
             }

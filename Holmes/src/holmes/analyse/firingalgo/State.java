@@ -28,7 +28,7 @@ class State {
 
     public void updateWeights(double multipier) {
         if(conflict != null) {
-            conflict.weight *= multipier;
+            conflict.weight /= multipier;
         }
         if (tokenState != null) {
             tokenState.multiplier *= multipier;

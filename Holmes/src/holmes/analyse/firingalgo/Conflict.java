@@ -8,6 +8,7 @@ class Conflict {
     public Transition transition;
     public double weight;
     public double s;
+    public double multiplierForPropagation = 1;
     private BitSet mask;
     private BitSet targetMask;
 
@@ -29,8 +30,12 @@ class Conflict {
 
     public void sync(Conflict other) {
         double sumOfWeights = weight + other.weight;
-        s = s*weight/sumOfWeights;
-        other.s = other.s*other.weight/sumOfWeights;
+
+        multiplierForPropagation = weight/sumOfWeights;
+        s = s*multiplierForPropagation;
+
+        other.multiplierForPropagation = other.weight/sumOfWeights;
+        other.s = other.s* other.multiplierForPropagation;
 
         mask.or(other.mask);
         other.mask.or(mask);
