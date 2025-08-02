@@ -136,12 +136,12 @@ class FiringDelayAlgoHelper {
         if (conflict1.isResolved()) {
             StateHolder.instance.removeConflict(conflict1);
         } else {
-            StateHolder.instance.unresolvedConflicts.put(conflict1.getTargetMask(), conflict1);
+            StateHolder.instance.unresolvedConflicts.put(conflict1.getMask(), conflict1);
         }
         if(conflict2.isResolved()) {
             StateHolder.instance.removeConflict(conflict2);
         } else if (conflict2.getTargetMask().equals(conflict1.getTargetMask())) {
-            StateHolder.instance.unresolvedConflicts.put(conflict2.getTargetMask(), conflict2);
+            StateHolder.instance.unresolvedConflicts.put(conflict2.getMask(), conflict2);
         }
         return true;
     }
