@@ -99,8 +99,12 @@ public class SPNdataVector {
 			return null;
 		else {
 			try {
+                SPNtransitionData data = dataVector.get(index);
 				//TODO: moduł obliczania z funkcji:
-				return Double.parseDouble(dataVector.get(index).ST_function);
+				if (data.sType == TransitionSPNExtension.StochaticsType.ST) {
+					return Double.parseDouble(data.ST_function);
+				}
+				return null;
 			} catch(Exception e) {
 				String strB = "err.";
 				try {
