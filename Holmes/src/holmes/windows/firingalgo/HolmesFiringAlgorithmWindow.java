@@ -148,7 +148,7 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
         for (holmes.petrinet.elements.Transition pnTransition : petriNet.getTransitions()) {
             Double value = result.keySet().stream()
                     .filter(t -> t.transitionRef.equals(pnTransition))
-                    .map(t -> t.firingRate)
+                    .map(result::get)
                     .max(Double::compare)
                     .orElse(null);
             if (value != null) {
