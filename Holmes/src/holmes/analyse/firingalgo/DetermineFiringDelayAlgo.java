@@ -9,6 +9,7 @@ import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SPNdataVector;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DetermineFiringDelayAlgo {
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -36,7 +37,14 @@ public class DetermineFiringDelayAlgo {
             FiringDelayAlgoHelper.process(transition);
         }
 
+        ArrayList<Transition> syncTransitions = structure.getTransitions().stream()
+                .filter(Transition::isSync)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        FiringDelayAlgoHelper.tryToAssignNotResolvedTokenSourceValues(syncTransitions);
         FiringDelayAlgoHelper.tieLooseConflicts();
+        FiringDelayAlgoHelper.tryToAssignNotResolvedTokenSourceValues(syncTransitions);
+        FiringDelayAlgoHelper.assignOnesToNotResolvedTokenSources();
     }
 
     /**

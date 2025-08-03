@@ -36,7 +36,7 @@ class State {
     }
 
     public boolean isResolved() {
-        return (tokenState == null || tokenState.isResolved())
+        return (tokenState != null && tokenState.isResolved())
                 && (conflict == null || conflict.isResolved());
     }
 

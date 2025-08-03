@@ -17,8 +17,9 @@ class FiringDelayAlgoHelper {
 
     public static void process(Transition transition) {
         if (transition.isSource()) {
-            //TODO: firing rate may be null
-            StateHolder.instance.addState(transition, new TokenSource(transition.firingRate));
+            TokenSource tokenSource = new TokenSource(transition.firingRate);
+            StateHolder.instance.tokenSources.add(tokenSource);
+            StateHolder.instance.addState(transition, tokenSource);
             return;
         }
 
@@ -26,14 +27,24 @@ class FiringDelayAlgoHelper {
 
         //jak jest więcej miejsc wejściowych to jest to synchronizacja,
         //gdzie z założenia wejście obu jest równe
-        var place = transition.getInputPlaces().get(0);
+        var inputPlacesWithTokenSource = transition.getInputPlaces().stream()
+                .filter(place -> StateHolder.instance.getState(place.getInputTransitions().get(0))
+                        .tokenState.isResolved()).toList();
+
+        Place place;
+        if(!inputPlacesWithTokenSource.isEmpty()) {
+            place = inputPlacesWithTokenSource.get(0);
+        }
+        else {
+            place = transition.getInputPlaces().get(0);
+        }
         //na razie nie jeszcze nie ma obsługi tokenów z dwóch źródeł
         var previousTransition = place.getInputTransitions().get(0);
         var previousTransitionState = StateHolder.instance.getState(previousTransition);
         var copied = previousTransitionState.copyForOtherTransition(transition);
 
         if(!place.isConflict()) {
-            double multiplier = getMultiplierBetweenTransitions(previousTransition, transition, place);
+            double multiplier = getMultiplierBetweenTransitions(previousTransition, transition);
             copied.updateWeights(multiplier);
         }
 
@@ -45,7 +56,8 @@ class FiringDelayAlgoHelper {
         StateHolder.instance.addState(transition, copied);
     }
 
-    private static double getMultiplierBetweenTransitions(Transition previousTransition, Transition transition, Place place) {
+    private static double getMultiplierBetweenTransitions(Transition previousTransition, Transition transition) {
+        var place = getPlaceInBetween(previousTransition, transition);
         return (double) previousTransition.getOutputArcToNode(place).get().arcRef.getWeight()
                 / transition.getInputArcToNode(place).get().arcRef.getWeight();
     }
@@ -53,12 +65,7 @@ class FiringDelayAlgoHelper {
     private static boolean SyncIfValid(Transition transition) {
         var synced = false;
         if(transition.isSync()) {
-            var previousTransitionStates = new ArrayList<State>();
-            for (var place : transition.getInputPlaces()) {
-                //na razie nie jeszcze nie ma obsługi tokenów z dwóch źródeł TODO btw
-                var previousTransition = place.getInputTransitions().get(0);
-                previousTransitionStates.add(StateHolder.instance.getState(previousTransition));
-            }
+            var previousTransitionStates = getPreviousTransitionStates(transition);
 
             List<Conflict> previousConflicts = previousTransitionStates.stream()
                     .map(state -> state.conflict)
@@ -70,23 +77,35 @@ class FiringDelayAlgoHelper {
                 }
             }
 
-            if(previousTransitionStates.stream().anyMatch(State::isResolved) &&
-                    previousTransitionStates.stream().anyMatch(state -> !state.isResolved())) {
-                var maxValid = previousTransitionStates.stream()
-                        .filter(State::isResolved)
-                        .map(State::getResult)
-                        .max(Comparator.naturalOrder())
-                        .get();
-                var notValid = previousTransitionStates.stream()
-                        .filter(state -> !state.isResolved())
-                        .map(state -> state.tokenState)
-                        .collect(Collectors.toCollection(HashSet::new));
-                for (var tokenSource : notValid) {
-                    tokenSource.setTokenSourceValue(maxValid);
+            tryToAssignNotResolvedTokenSourceValues(transition);
+        }
+        return synced;
+    }
+
+    private static ArrayList<State> getPreviousTransitionStates(Transition transition) {
+        var previousTransitionStates = new ArrayList<State>();
+        for (var place : transition.getInputPlaces()) {
+            //na razie nie jeszcze nie ma obsługi tokenów z dwóch źródeł TODO btw
+            var previousTransition = place.getInputTransitions().get(0);
+            previousTransitionStates.add(StateHolder.instance.getState(previousTransition));
+        }
+        return previousTransitionStates;
+    }
+
+    private static void tryToAssignNotResolvedTokenSourceValues(Transition transition) {
+        var previousTransitionStates = getPreviousTransitionStates(transition);
+        if(StateHolder.instance.getState(transition).isResolved()) {
+            var notValid = previousTransitionStates.stream()
+                    .filter(state -> !state.isResolved())
+                    .map(state -> state.tokenState)
+                    .collect(Collectors.toCollection(HashSet::new));
+            for (var tokenSource : notValid) {
+                Double result = StateHolder.instance.getState(transition).getResult();
+                if(result != null) {
+                    tokenSource.setTokenSourceValue(result);
                 }
             }
         }
-        return synced;
     }
 
     public static void markPlaceAsConflict(Place place) {
@@ -128,11 +147,8 @@ class FiringDelayAlgoHelper {
 
         // uwzględnienie wag na łukach od poprzedniej tranzycji do synchronizacji
         if(transition != null) {
-            var conflict1Place = getPlaceInBetween(conflict1.transition, transition);
-            var conflict2Place = getPlaceInBetween(conflict2.transition, transition);
-
-            conflict1Copy.weight /= getMultiplierBetweenTransitions(conflict1.transition, transition, conflict1Place);
-            conflict2Copy.weight /= getMultiplierBetweenTransitions(conflict2.transition, transition, conflict2Place);
+            conflict1Copy.weight /= getMultiplierBetweenTransitions(conflict1.transition, transition);
+            conflict2Copy.weight /= getMultiplierBetweenTransitions(conflict2.transition, transition);
         }
 
         StateHolder.instance.unresolvedConflicts.remove(conflict1.getMask());
@@ -171,6 +187,18 @@ class FiringDelayAlgoHelper {
             StateHolder.instance.unresolvedConflicts.put(conflict2.getMask(), conflict2);
         }
         return true;
+    }
+
+    public static void tryToAssignNotResolvedTokenSourceValues(ArrayList<Transition> syncTransitions) {
+        for(Transition transition : syncTransitions) {
+            tryToAssignNotResolvedTokenSourceValues(transition);
+        }
+    }
+
+    public static void assignOnesToNotResolvedTokenSources() {
+        StateHolder.instance.tokenSources.stream()
+                .filter(tokenSource -> !tokenSource.isResolved())
+                .forEach(tokenSource -> tokenSource.firingRate = 1d);
     }
 
     public static void tieLooseConflicts() {
