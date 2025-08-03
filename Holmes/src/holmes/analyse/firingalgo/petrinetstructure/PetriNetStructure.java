@@ -2,6 +2,8 @@ package holmes.analyse.firingalgo.petrinetstructure;
 
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SPNdataVector;
+import holmes.petrinet.data.SPNtransitionData;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 import java.util.*;
 
@@ -26,9 +28,9 @@ public class PetriNetStructure {
         ArrayList<holmes.petrinet.elements.Transition> pnTransitions = petriNet.getTransitions();
         for (int i = 0; i < pnTransitions.size(); i++) {
             holmes.petrinet.elements.Transition pnTransition = pnTransitions.get(i);
-            double fr = spnVector.getFiringRate(i);
+            Double fr = spnVector.getNullableFiringRate(i);
             transitions.stream().filter(t -> t.transitionRef.equals(pnTransition))
-                    .forEach(t -> t.firingRate = fr >= 0 ? fr : null);
+                    .forEach(t -> t.firingRate = fr);
         }
     }
 

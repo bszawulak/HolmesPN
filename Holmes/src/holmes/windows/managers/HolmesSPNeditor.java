@@ -113,6 +113,8 @@ public class HolmesSPNeditor extends JFrame {
 						tableModel.addNew(row, postFix + transitions.get(row).getName(), "" + frBox.IM_priority, frBox.sType);
 				case SchT ->
 						tableModel.addNew(row, postFix + transitions.get(row).getName(), frBox.SCH_start + "; " + frBox.SCH_rep + "; " + frBox.SCH_end, frBox.sType);
+				case NONE ->
+						tableModel.addNew(row, postFix + transitions.get(row).getName(), "NONE", frBox.sType);
 			}
 		}
 		tableModel.fireTableDataChanged();

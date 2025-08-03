@@ -88,15 +88,15 @@ public class SPNdataVector {
 	public int getSize() {
 		return dataVector.size();
 	}
-	
+
 	/**
 	 * Zwraca wartość funkcji firing rate dla tranzycji o zadanej lokalizacji.
 	 * @param index int - nr tranzycji
-	 * @return double - firing rate
+	 * @return Double - firing rate (może być nullem w przypadku niepowodzenia)
 	 */
-	public double getFiringRate(int index) {
+	public Double getNullableFiringRate(int index) {
 		if(index >= dataVector.size())
-			return -1;
+			return null;
 		else {
 			try {
 				//TODO: moduł obliczania z funkcji:
@@ -109,8 +109,22 @@ public class SPNdataVector {
 					overlord.log(lang.getText("LOGentryLNGexc")+" "+"LOGentry00374exception", "error", true);
 				}
 				overlord.log(strB+"\n"+e.getMessage(), "warning", true);
-				return 1.0;
+				return null;
 			}
+		}
+	}
+
+	/**
+	 * Zwraca wartość funkcji firing rate dla tranzycji o zadanej lokalizacji.
+	 * @param index int - nr tranzycji
+	 * @return double - firing rate
+	 */
+	public double getFiringRate(int index) {
+		if(index >= dataVector.size())
+			return -1.0;
+		else {
+            Double firingRate = getNullableFiringRate(index);
+			return firingRate != null ? firingRate : 1.0;
 		}
 	}
 	

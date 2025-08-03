@@ -30,9 +30,7 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
     private static final LanguageManager lang = GUIManager.getLanguageManager();
     private static JTextArea logOutput = null;
 
-    private JSpinner indexSpinner = null;
-
-
+    private JComboBox<String> vectorSelect = null;
 
     public HolmesFiringAlgorithmWindow(JFrame launcherFrame) {
         super("Estimate firing rates algorithm");
@@ -80,15 +78,18 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
         JPanel panel = new JPanel(null);
         panel.setBounds(rectange);
 
-        JLabel label = new JLabel(lang.getText("HSPN_FRA_select_table_index"));
+        JLabel label = new JLabel(lang.getText("HSPN_FRA_select_table"));
         label.setBounds(0, 0, labelWidth, rowHeight);
         panel.add(label);
 
         SPNdataVectorManager firingRatesManager = overlord.getWorkspace().getProject().accessFiringRatesManager();
-        //todo: change to combobox
-        indexSpinner = new JSpinner(new SpinnerNumberModel(0, 0, firingRatesManager.accessSPNmatrix().size() - 1, 1));
-        indexSpinner.setBounds(labelWidth, 0, width - labelWidth, rowHeight);
-        panel.add(indexSpinner);
+        int vectorNumber = firingRatesManager.accessSPNmatrix().size();
+        vectorSelect = new JComboBox<String>();
+        for (int i = 0; i < vectorNumber; i++) {
+            vectorSelect.addItem(i + ": " + firingRatesManager.getSPNvectorDescription(i));
+        }
+        vectorSelect.setBounds(labelWidth, 0, width - labelWidth, rowHeight);
+        panel.add(vectorSelect);
 
         return panel;
     }
@@ -131,14 +132,10 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
         return panel;
     }
 
-    private int getSelectedFiringRatesVectorIndex() {
-        return (int)indexSpinner.getValue();
-    }
-
     private void runAlgorithm() {
         DetermineFiringDelayAlgo algorithm = new DetermineFiringDelayAlgo();
 
-        int index = getSelectedFiringRatesVectorIndex();
+        int index = vectorSelect.getSelectedIndex();
         PetriNet petriNet = overlord.getWorkspace().getProject();
         SPNdataVectorManager spnManager = petriNet.accessFiringRatesManager();
         SPNdataVector firingRatesVector = spnManager.getSPNdataVector(index);

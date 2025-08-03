@@ -48,14 +48,12 @@ public class SPNsingleVectorTableRenderer implements TableCellRenderer {
 			oLabel.setText(value.toString());
 		} else {
 			TransitionSPNExtension.StochaticsType sType = (TransitionSPNExtension.StochaticsType)value;
-			if(sType == TransitionSPNExtension.StochaticsType.ST) {
-				oLabel.setText("Stochastic");
-			} else if(sType == TransitionSPNExtension.StochaticsType.IM) {
-				oLabel.setText("Immediate");
-			}	else if(sType == TransitionSPNExtension.StochaticsType.DT) {
-				oLabel.setText("Deterministic");
-			}  else {
-				oLabel.setText("Scheduled");
+			switch (sType) {
+				case ST -> oLabel.setText("Stochastic");
+				case IM -> oLabel.setText("Immediate");
+				case DT -> oLabel.setText("Deterministic");
+				case SchT -> oLabel.setText("Scheduled");
+				case NONE -> oLabel.setText("NONE");
 			}
 		}
 

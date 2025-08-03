@@ -2797,7 +2797,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HSPNMwin_entry016","State description:");
         defaultEnglish.put("LOGentry00521exception","Exception (1000250): HolmesSPNmanager.cellClickAction() failed:");
         defaultEnglish.put("HSPN_determine_rates_button_label", "<html>Determine firing rates</html>");
-        defaultEnglish.put("HSPN_FRA_select_table_index", "Table ID of firing rates to be used");
+        defaultEnglish.put("HSPN_FRA_select_table", "Firing rate vetor to be used");
         defaultEnglish.put("HSPN_FRA_run_algorithm", "<html>Run algorithm</html>");
 
         //HolmesSPNtransitionEditor:
@@ -2823,6 +2823,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("LOGentry00525exception","Exception (1000254): HolmesSPNtransitionEditor.saveTransitionData() failed. Invalid value, either end text of non-negative value expected.");
         defaultEnglish.put("HSPNTEwin_entry017","<html>&nbsp;Change & exit</html>");
         defaultEnglish.put("HSPNTEwin_entry017t","One action back");
+        defaultEnglish.put("HSPNTEwin_entry018","NONE");
         
         //HolmesSSAplacesEditor:
         defaultEnglish.put("HSSAwin_entry001title","Holmes SSA components editor");

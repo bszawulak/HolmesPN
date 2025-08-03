@@ -129,7 +129,8 @@ public class HolmesSPNtransitionEditor extends JFrame {
 		spnTypeCombo.addItem(lang.getText("HSPNTEwin_entry007")); //Immediate Transition
 		spnTypeCombo.addItem(lang.getText("HSPNTEwin_entry008")); //Deterministic Transition
 		spnTypeCombo.addItem(lang.getText("HSPNTEwin_entry009")); //Scheduled Transition
-		
+		spnTypeCombo.addItem(lang.getText("HSPNTEwin_entry018")); //NONE
+
 		spnTypeCombo.setBounds(posX+130, posY, 250, 20);
 		spnTypeCombo.addActionListener(actionEvent -> {
 			@SuppressWarnings("unchecked")
@@ -357,7 +358,7 @@ public class HolmesSPNtransitionEditor extends JFrame {
 			SCHendValueEdit.setEnabled(false);
 			
 			myData.sType = TransitionSPNExtension.StochaticsType.DT;
-		}  else {
+		}  else if (selectedIndex == 3){
 			STfunctionValueEdit.setEnabled(false);
 			IMpriorityValueEdit.setEnabled(false);
 			DTdelayValueEdit.setEnabled(false);
@@ -366,6 +367,16 @@ public class HolmesSPNtransitionEditor extends JFrame {
 			SCHendValueEdit.setEnabled(true);
 			
 			myData.sType = TransitionSPNExtension.StochaticsType.SchT;
+		}
+		else {
+			STfunctionValueEdit.setEnabled(false);
+			IMpriorityValueEdit.setEnabled(false);
+			DTdelayValueEdit.setEnabled(false);
+			SCHstartValueEdit.setEnabled(false);
+			SCHrepValueEdit.setEnabled(false);
+			SCHendValueEdit.setEnabled(false);
+
+			myData.sType = TransitionSPNExtension.StochaticsType.NONE;
 		}
 	}
 
