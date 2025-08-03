@@ -33,8 +33,7 @@ class FiringDelayAlgoHelper {
         var copied = previousTransitionState.copyForOtherTransition(transition);
 
         if(!place.isConflict()) {
-            double multiplier = (double) previousTransition.getOutputArcToNode(place).get().arcRef.getWeight()
-                    / transition.getInputArcToNode(place).get().arcRef.getWeight();
+            double multiplier = getMultiplierBetweenTransitions(previousTransition, transition, place);
             copied.updateWeights(multiplier);
         }
 
@@ -44,6 +43,11 @@ class FiringDelayAlgoHelper {
         }
 
         StateHolder.instance.addState(transition, copied);
+    }
+
+    private static double getMultiplierBetweenTransitions(Transition previousTransition, Transition transition, Place place) {
+        return (double) previousTransition.getOutputArcToNode(place).get().arcRef.getWeight()
+                / transition.getInputArcToNode(place).get().arcRef.getWeight();
     }
 
     private static boolean SyncIfValid(Transition transition) {
@@ -62,7 +66,7 @@ class FiringDelayAlgoHelper {
             if(previousConflicts.size() > 1) {
                 var first = previousConflicts.get(0);
                 for (Conflict second : previousConflicts.subList(1, previousConflicts.size())) {
-                    synced = syncConflicts(first, second);
+                    synced = syncConflicts(first, second, transition);
                 }
             }
 
@@ -102,14 +106,33 @@ class FiringDelayAlgoHelper {
         }
     }
 
-    public static boolean syncConflicts(Conflict conflict1, Conflict conflict2) {
-        return syncConflicts(conflict1, conflict2, conflict -> conflict::sync);
+    public static boolean syncConflicts(Conflict conflict1, Conflict conflict2, Transition transition) {
+        return syncConflicts(conflict1, conflict2, transition, conflict -> conflict::sync);
     }
 
-    public static boolean syncConflicts(Conflict conflict1, Conflict conflict2, Function<Conflict, Consumer<Conflict>> syncAction) {
+    private static Place getPlaceInBetween(Transition first, Transition second) {
+        var places = second.getInputPlaces();
+        ArrayList<Place> outputPlaces = new ArrayList<>(first.getOutputPlaces());
+        outputPlaces.retainAll(places);
+        return outputPlaces.isEmpty() ? null : outputPlaces.get(0);
+    }
+
+    public static boolean syncConflicts(Conflict conflict1, Conflict conflict2, Transition transition, Function<Conflict, Consumer<Conflict>> syncAction) {
         if(!conflict1.getTargetMask().intersects(conflict2.getTargetMask())
             || conflict1.getMask().equals(conflict2.getMask())) {
             return false;
+        }
+
+        var conflict1Copy = conflict1.copyForOtherTransition(transition);
+        var conflict2Copy = conflict2.copyForOtherTransition(transition);
+
+        // uwzględnienie wag na łukach od poprzedniej tranzycji do synchronizacji
+        if(transition != null) {
+            var conflict1Place = getPlaceInBetween(conflict1.transition, transition);
+            var conflict2Place = getPlaceInBetween(conflict2.transition, transition);
+
+            conflict1Copy.weight /= getMultiplierBetweenTransitions(conflict1.transition, transition, conflict1Place);
+            conflict2Copy.weight /= getMultiplierBetweenTransitions(conflict2.transition, transition, conflict2Place);
         }
 
         StateHolder.instance.unresolvedConflicts.remove(conflict1.getMask());
@@ -124,33 +147,27 @@ class FiringDelayAlgoHelper {
 
         HashSet<Conflict> conflicts1 = StateHolder.instance.getConflicts(mask1);
         HashSet<Conflict> conflicts2 = StateHolder.instance.getConflicts(mask2);
-        conflicts1.remove(conflict1);
-        conflicts2.remove(conflict2);
 
-        syncAction.apply(conflict1).accept(conflict2);
+        syncAction.apply(conflict1Copy).accept(conflict2Copy);
         for (Conflict conflict : conflicts1) {
             conflict.setMask(syncedMask);
-            conflict.s *= conflict1.multiplierForPropagation;
+            conflict.s *= conflict1Copy.multiplierForPropagation;
             if(conflict.isResolved()) {
                 StateHolder.instance.removeConflict(conflict);
             }
         }
         for (Conflict conflict : conflicts2) {
             conflict.setMask(syncedMask);
-            conflict.s *= conflict2.multiplierForPropagation;
+            conflict.s *= conflict2Copy.multiplierForPropagation;
             if(conflict.isResolved()) {
                 StateHolder.instance.removeConflict(conflict);
             }
         }
 
-        if (conflict1.isResolved()) {
-            StateHolder.instance.removeConflict(conflict1);
-        } else {
+        if (!conflict1.isResolved()) {
             StateHolder.instance.unresolvedConflicts.put(conflict1.getMask(), conflict1);
         }
-        if(conflict2.isResolved()) {
-            StateHolder.instance.removeConflict(conflict2);
-        } else if (conflict2.getTargetMask().equals(conflict1.getTargetMask())) {
+        if (!conflict2.isResolved()) {
             StateHolder.instance.unresolvedConflicts.put(conflict2.getMask(), conflict2);
         }
         return true;
@@ -174,7 +191,7 @@ class FiringDelayAlgoHelper {
     }
 
     private static boolean tieLooseConflicts(Conflict conflict1, Conflict conflict2) {
-        return syncConflicts(conflict1, conflict2, conflict -> conflict::syncByHalf);
+        return syncConflicts(conflict1, conflict2, null, conflict -> conflict::syncByHalf);
     }
 
     public static HashMap<Transition, Double> getResult() {

@@ -45,6 +45,9 @@ class Conflict {
         s = s/2;
         other.s = other.s/2;
 
+        multiplierForPropagation = 0.5;
+        other.multiplierForPropagation = 0.5;
+
         mask.or(other.mask);
         other.mask.or(mask);
     }
