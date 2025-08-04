@@ -56,11 +56,13 @@ class StateHolder {
     public void addConflict(Transition transition, Conflict conflict) {
         unresolvedConflicts.put(conflict.getMask(), conflict);
         if(states.containsKey(transition)) {
-            if(states.get(transition).conflict != null) {
-                //TODO problem
+            State state = states.get(transition);
+            if(state.conflict != null) {
                 return;
             }
-            states.get(transition).conflict = conflict;
+            state.conflict = conflict;
+            state.tokenState = null;
+            states.put(transition, state);
             return;
         }
         states.put(transition, new State(transition, conflict));

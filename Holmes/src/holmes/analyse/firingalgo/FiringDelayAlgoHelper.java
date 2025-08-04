@@ -25,14 +25,19 @@ class FiringDelayAlgoHelper {
 
         var synced = SyncIfValid(transition);
 
-        //jak jest więcej miejsc wejściowych to jest to synchronizacja,
-        //gdzie z założenia wejście obu jest równe
+        var inputPlacesWithUnresolvedConflicts = transition.getInputPlaces().stream()
+                .filter(place -> StateHolder.instance.getState(place.getInputTransitions().get(0))
+                        .conflict != null).toList();
+
         var inputPlacesWithTokenSource = transition.getInputPlaces().stream()
                 .filter(place -> StateHolder.instance.getState(place.getInputTransitions().get(0))
                         .tokenState.isResolved()).toList();
 
         Place place;
-        if(!inputPlacesWithTokenSource.isEmpty()) {
+        if(!inputPlacesWithUnresolvedConflicts.isEmpty()) {
+            place = inputPlacesWithTokenSource.get(0);
+        }
+        else if(!inputPlacesWithTokenSource.isEmpty()) {
             place = inputPlacesWithTokenSource.get(0);
         }
         else {
@@ -97,12 +102,12 @@ class FiringDelayAlgoHelper {
         if(StateHolder.instance.getState(transition).isResolved()) {
             var notValid = previousTransitionStates.stream()
                     .filter(state -> !state.isResolved())
-                    .map(state -> state.tokenState)
                     .collect(Collectors.toCollection(HashSet::new));
-            for (var tokenSource : notValid) {
+            for (var state : notValid) {
                 Double result = StateHolder.instance.getState(transition).getResult();
-                if(result != null) {
-                    tokenSource.setTokenSourceValue(result);
+                if(result != null && !state.tokenState.isResolved()) {
+                    state.tokenState.setTokenSourceValue(
+                            result/getMultiplierBetweenTransitions(state.transition, transition));
                 }
             }
         }
