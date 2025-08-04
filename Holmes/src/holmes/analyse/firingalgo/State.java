@@ -12,8 +12,8 @@ class State {
         this(transition, null, null);
     }
 
-    public State(Transition transition, TokenSource tokenSource) {
-        this(transition, null, new TokenState(tokenSource));
+    public State(Transition transition, TokenState tokenState) {
+        this(transition, null, tokenState);
     }
 
     public State(Transition transition, Conflict conflict) {

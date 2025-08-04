@@ -18,12 +18,21 @@ class FiringDelayAlgoHelper {
     public static void process(Transition transition) {
         if (transition.isSource()) {
             TokenSource tokenSource = new TokenSource(transition.firingRate);
-            StateHolder.instance.tokenSources.add(tokenSource);
-            StateHolder.instance.addState(transition, tokenSource);
+            StateHolder.instance.naturalTokenSources.add(tokenSource);
+            StateHolder.instance.addState(transition, new TokenState(tokenSource));
             return;
         }
 
         var synced = SyncIfValid(transition);
+
+        // firingrate ustawione przez użytkownika
+        if(transition.firingRate != null) {
+            TokenState tokenState = new TokenState(new TokenSource(transition.firingRate));
+            tokenState.fixed = true;
+            StateHolder.instance.addState(transition, tokenState);
+            tryToAssignNotResolvedTokenSourceValues(transition);
+            return;
+        }
 
         var inputPlacesWithUnresolvedConflicts = transition.getInputPlaces().stream()
                 .filter(place -> StateHolder.instance.getState(place.getInputTransitions().get(0))
@@ -201,7 +210,7 @@ class FiringDelayAlgoHelper {
     }
 
     public static void assignOnesToNotResolvedTokenSources() {
-        StateHolder.instance.tokenSources.stream()
+        StateHolder.instance.naturalTokenSources.stream()
                 .filter(tokenSource -> !tokenSource.isResolved())
                 .forEach(tokenSource -> tokenSource.firingRate = 1d);
     }

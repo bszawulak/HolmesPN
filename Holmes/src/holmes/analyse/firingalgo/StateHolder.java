@@ -12,7 +12,7 @@ class StateHolder {
     /// kluczem jest ID Tranzycji
     private HashMap<Transition, State> states = new HashMap<>();
     public HashMap<BitSet, Conflict> unresolvedConflicts = new HashMap<>();
-    public HashSet<TokenSource> tokenSources = new HashSet<>();
+    public HashSet<TokenSource> naturalTokenSources = new HashSet<>();
 
     public static StateHolder instance = new StateHolder();
 
@@ -24,7 +24,7 @@ class StateHolder {
     public void resetState() {
         states = new HashMap<>();
         unresolvedConflicts = new HashMap<>();
-        tokenSources = new HashSet<>();
+        naturalTokenSources = new HashSet<>();
     }
 
     public void markTransition(Transition transition) {
@@ -36,12 +36,12 @@ class StateHolder {
         states.put(transition, state);
     }
 
-    public void addState(Transition transition, TokenSource tokenSource) {
+    public void addState(Transition transition, TokenState tokenState) {
         if(states.containsKey(transition)) {
-            states.get(transition).tokenState = new TokenState(tokenSource);
+            states.get(transition).tokenState = tokenState;
             return;
         }
-        states.put(transition, new State(transition, tokenSource));
+        states.put(transition, new State(transition, tokenState));
     }
 
     public void addState(Transition transition, State state) {
