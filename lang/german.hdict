@@ -2783,6 +2783,9 @@ HSPNMwin_entry014t, SPN-Datenvektor ersetzen?
 HSPNMwin_entry015, Andere
 HSPNMwin_entry016, Zustandsbeschreibung:
 LOGentry00521exception, Ausnahme (1000250): HolmesSPNmanager.cellClickAction() fehlgeschlagen:
+HSPN_determine_rates_button_label, <html>Feuerraten bestimmen</html>
+HSPN_FRA_select_table, Eingabe-Datenvektor
+HSPN_FRA_run_algorithm, <html>Algorithmus starten</html>
 
 //HolmesSPNtransitionEditor:
 HSPNTEwin_entry001title, Holmes SPN-Übergangseditor
@@ -2807,6 +2810,7 @@ HSPNTEwin_entry016, Ungültiger Wert, die Verzögerung muss eine nicht-negative 
 LOGentry00525exception, Ausnahme (1000254): HolmesSPNtransitionEditor.saveTransitionData() fehlgeschlagen. Ungültiger Wert, entweder Endtext oder nicht-negativer Wert erwartet.
 HSPNTEwin_entry017, <html>Ändern & beenden</html>
 HSPNTEwin_entry017t, Eine Aktion zurück
+HSPNTEwin_entry018, NONE
 
 //HolmesSSAplacesEditor:
 HSSAwin_entry001title, Holmes SSA-Komponenten-Editor

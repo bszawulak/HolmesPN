@@ -2783,6 +2783,9 @@ HSPNMwin_entry014t, ¿Reemplazar vector de datos SPN?
 HSPNMwin_entry015, Otros
 HSPNMwin_entry016, Descripción del estado:
 LOGentry00521exception, Excepción (1000250): HolmesSPNmanager.cellClickAction() falló:
+HSPN_determine_rates_button_label, <html>Estimar las tasas de disparo</html>
+HSPN_FRA_select_table, Vector de datos de entrada
+HSPN_FRA_run_algorithm, <html>Ejecutar el algoritmo</html>
 
 //HolmesSPNtransitionEditor:
 HSPNTEwin_entry001title, Editor de transiciones SPN de Holmes
@@ -2807,6 +2810,7 @@ HSPNTEwin_entry016, Valor inválido, el retraso debe ser un entero no negativo.
 LOGentry00525exception, Excepción (1000254): HolmesSPNtransitionEditor.saveTransitionData() falló. Valor inválido, se esperaba texto de finalización o valor no negativo.
 HSPNTEwin_entry017, <html>Cambiar y salir</html>
 HSPNTEwin_entry017t, Una acción atrás
+HSPNTEwin_entry018, NONE
 
 //HolmesSSAplacesEditor:
 HSSAwin_entry001title, Editor de componentes SSA de Holmes

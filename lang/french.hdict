@@ -2783,6 +2783,9 @@ HSPNMwin_entry014t, Remplacer le vecteur de données SPN ?
 HSPNMwin_entry015, Autres
 HSPNMwin_entry016, Description de l'état:
 LOGentry00521exception, Exception (1000250): HolmesSPNmanager.cellClickAction() a échoué:
+HSPN_determine_rates_button_label, <html>Estimer les taux de tir</html>
+HSPN_FRA_select_table, Vecteur de données d’entrée
+HSPN_FRA_run_algorithm, <html>Exécuter l’algorithme</html>
 
 //HolmesSPNtransitionEditor:
 HSPNTEwin_entry001title, Éditeur de transitions SPN Holmes
@@ -2807,6 +2810,7 @@ HSPNTEwin_entry016, Valeur invalide, le délai doit être un entier non négatif
 LOGentry00525exception, Exception (1000254): HolmesSPNtransitionEditor.saveTransitionData() a échoué. Valeur invalide, texte de fin ou valeur non négative attendue.
 HSPNTEwin_entry017, <html>Changer & quitter</html>
 HSPNTEwin_entry017t, Une action en arrière
+HSPNTEwin_entry018, NONE
 
 //HolmesSSAplacesEditor:
 HSSAwin_entry001title, Éditeur de composants SSA Holmes

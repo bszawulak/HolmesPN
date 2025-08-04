@@ -2783,6 +2783,9 @@ HSPNMwin_entry014t, Замінити вектор даних SPN?
 HSPNMwin_entry015, Інші
 HSPNMwin_entry016, Опис стану:
 LOGentry00521exception, Виняток (1000250): HolmesSPNmanager.cellClickAction() не вдалося:
+HSPN_determine_rates_button_label, <html>Оцінити інтенсивності спрацьовувань</html>
+HSPN_FRA_select_table, Вхідний вектор даних
+HSPN_FRA_run_algorithm, <html>Запустити алгоритм</html>
 
 //HolmesSPNtransitionEditor: 
 HSPNTEwin_entry001title, Редактор переходів Holmes SPN
@@ -2807,6 +2810,7 @@ HSPNTEwin_entry016, Неправильне значення, затримка п
 LOGentry00525exception, Виняток (1000254): HolmesSPNtransitionEditor.saveTransitionData() не вдалося. Неправильне значення, очікується текст завершення або невід'ємне значення.
 HSPNTEwin_entry017, <html>Змінити & вийти</html>
 HSPNTEwin_entry017t, Один крок назад
+HSPNTEwin_entry018, NONE
 
 //HolmesSSAplacesEditor:
 HSSAwin_entry001title, Редактор компонентів Holmes SSA

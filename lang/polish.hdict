@@ -2783,6 +2783,9 @@ HSPNMwin_entry014t, Zastąp wektor danych SPN?
 HSPNMwin_entry015, Inne
 HSPNMwin_entry016, Opis stanu:
 LOGentry00521exception, Wyjątek (1000250): HolmesSPNmanager.cellClickAction() nie powiodło się:
+HSPN_determine_rates_button_label, <html>Oszacuj częstości uruchomień</html>
+HSPN_FRA_select_table, Wejściowy wektor danych
+HSPN_FRA_run_algorithm, <html>Uruchom algorytm</html>
 
 //HolmesSPNtransitionEditor:
 HSPNTEwin_entry001title, Edytor tranzycji SPN
@@ -2807,6 +2810,7 @@ HSPNTEwin_entry016, Nieprawidłowa wartość, opóźnienie musi być nieujemną 
 LOGentry00525exception, Wyjątek (1000254): HolmesSPNtransitionEditor.saveTransitionData() nie powiodło się. Nieprawidłowa wartość, oczekiwany tekst końcowy lub nieujemna wartość.
 HSPNTEwin_entry017, <html>Zmień & wyjdź</html>
 HSPNTEwin_entry017t, Jeden krok wstecz
+HSPNTEwin_entry018, NONE
 
 //HolmesSSAplacesEditor:
 HSSAwin_entry001title, Edytor komponentów SSA

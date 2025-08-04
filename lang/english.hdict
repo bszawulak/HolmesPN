@@ -2783,6 +2783,9 @@ HSPNMwin_entry014t, Replace SPN data vector?
 HSPNMwin_entry015, Others
 HSPNMwin_entry016, State description:
 LOGentry00521exception, Exception (1000250): HolmesSPNmanager.cellClickAction() failed:
+HSPN_determine_rates_button_label, <html>Determine firing rates</html>
+HSPN_FRA_select_table, Firing rates vetor to be used
+HSPN_FRA_run_algorithm, <html>Run algorithm</html>
 
 //HolmesSPNtransitionEditor:
 HSPNTEwin_entry001title, Holmes SPN transition editor
@@ -2807,6 +2810,7 @@ HSPNTEwin_entry016, Invalid value, delay must be a non-negatice integer.
 LOGentry00525exception, Exception (1000254): HolmesSPNtransitionEditor.saveTransitionData() failed. Invalid value, either end text of non-negative value expected.
 HSPNTEwin_entry017, <html>&nbsp;Change & exit</html>
 HSPNTEwin_entry017t, One action back
+HSPNTEwin_entry018, NONE
 
 //HolmesSSAplacesEditor:
 HSSAwin_entry001title, Holmes SSA components editor
