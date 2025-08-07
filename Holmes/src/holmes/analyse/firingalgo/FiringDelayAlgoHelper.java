@@ -34,46 +34,120 @@ class FiringDelayAlgoHelper {
             return;
         }
 
-        var inputPlacesWithUnresolvedConflicts = transition.getInputPlaces().stream()
-                .filter(place -> StateHolder.instance.getState(place.getInputTransitions().get(0))
-                        .conflict != null).toList();
-
-        var inputPlacesWithTokenSource = transition.getInputPlaces().stream()
-                .filter(place -> StateHolder.instance.getState(place.getInputTransitions().get(0))
-                        .tokenState.isResolved()).toList();
-
-        Place place;
-        if(!inputPlacesWithUnresolvedConflicts.isEmpty()) {
-            place = inputPlacesWithTokenSource.get(0);
-        }
-        else if(!inputPlacesWithTokenSource.isEmpty()) {
-            place = inputPlacesWithTokenSource.get(0);
-        }
-        else {
-            place = transition.getInputPlaces().get(0);
-        }
-        //na razie nie jeszcze nie ma obsługi tokenów z dwóch źródeł
-        var previousTransition = place.getInputTransitions().get(0);
+        Place place = getPrioritizedInputPlace(transition);
+        var previousTransition = getPrioritizedInputTransition(place);
         var previousTransitionState = StateHolder.instance.getState(previousTransition);
         var copied = previousTransitionState.copyForOtherTransition(transition);
-
-        if(!place.isConflict()) {
-            double multiplier = getMultiplierBetweenTransitions(previousTransition, transition);
-            copied.updateWeights(multiplier);
+        if(copied.conflict == null && StateHolder.instance.getState(transition).conflict != null) {
+            copied.conflict = StateHolder.instance.getState(transition).conflict;
         }
 
+        if (place.isSumming()) {
+            copied.tokenState = getPlaceTokenState(place);
+        }
+        else {
+            double multiplier =  previousTransition.getOutputArcToNode(place).get().arcRef.getWeight();
+            if(place.isConflict())
+            {
+                copied.tokenState.multiplier *= multiplier;
+            }
+            else {
+                copied.updateWeights(multiplier);
+            }
+        }
+        double multiplier =  (double) 1 / getWeight(place, transition);
+        copied.updateWeights(multiplier);
+
+
         if(synced && copied.conflict != null) {
-            copied.conflict.weight = transition.getInputPlaces().stream().map(place1 -> place1.getInputTransitions().get(0)).mapToDouble(
-                    transition1 -> StateHolder.instance.getState(transition1).conflict.weight).sum();
+            double sum = 0;
+            for (Place place1 : transition.getInputPlaces()) {
+                for (Transition transition1 : place1.getInputTransitions()) {
+                    if(StateHolder.instance.getState(transition1).conflict.getTargetMask().equals(copied.conflict.getTargetMask())) {
+                        sum += StateHolder.instance.getState(transition1).conflict.weight / getWeight(place1, transition);
+                    }
+                }
+            }
+            copied.conflict.weight = sum;
         }
 
         StateHolder.instance.addState(transition, copied);
+        tryToAssignNotResolvedTokenSourceValues(transition);
+    }
+
+    private static int getWeight(Place place, Transition transition) {
+        return transition.getInputArcToNode(place).get().arcRef.getWeight();
+    }
+
+    private static TokenState getPlaceTokenState(Place place) {
+        var summedTokenState = StateHolder.instance.summedTokenStates.get(place);
+        if(summedTokenState != null) {
+            return summedTokenState.copyForOtherTransition();
+        }
+
+        TokenState newTokenState = new TokenState(new TokenSource(getPlaceTokens(place)));
+        StateHolder.instance.summedTokenStates.put(place, newTokenState);
+        return newTokenState.copyForOtherTransition();
+    }
+
+    private static Double getPlaceTokens(Place place) {
+        double sum = 0;
+        for (Transition transition : place.getInputTransitions()) {
+            if(!StateHolder.instance.getState(transition).isResolved()) {
+                return null;
+            }
+            sum += StateHolder.instance.getResult(transition);
+        }
+        return sum;
+    }
+
+    private static Place getPrioritizedInputPlace(Transition transition) {
+        var inputPlacesWithUnresolvedConflicts = transition.getInputPlaces().stream()
+                .filter(place -> place.isConflict()
+                        || place.getInputTransitions().stream().anyMatch(
+                                transition1 -> StateHolder.instance.getState(transition1).conflict != null))
+                .toList();
+
+        var inputPlacesWithTokenSource = transition.getInputPlaces().stream()
+                .filter(place -> place.getInputTransitions().stream()
+                        .anyMatch(transition1 -> StateHolder.instance.getState(transition1).tokenState.isResolved()))
+                .toList();
+
+        if(!inputPlacesWithUnresolvedConflicts.isEmpty()) {
+            return inputPlacesWithUnresolvedConflicts.get(0);
+        }
+        else if(!inputPlacesWithTokenSource.isEmpty()) {
+            return inputPlacesWithTokenSource.get(0);
+        }
+        else {
+            return transition.getInputPlaces().get(0);
+        }
+    }
+
+    private static Transition getPrioritizedInputTransition(Place place) {
+        var inputTransitionsWithUnresolvedConflicts = place.getInputTransitions().stream()
+                        .filter(transition1 -> StateHolder.instance.getState(transition1).conflict != null)
+                .toList();
+
+        var inputTransitionsWithTokenSource = place.getInputTransitions().stream()
+                        .filter(transition1 -> StateHolder.instance.getState(transition1).tokenState.isResolved())
+                .toList();
+
+        if(!inputTransitionsWithUnresolvedConflicts.isEmpty()) {
+            return inputTransitionsWithUnresolvedConflicts.get(0);
+        }
+        else if(!inputTransitionsWithTokenSource.isEmpty()) {
+            return inputTransitionsWithTokenSource.get(0);
+        }
+        else {
+            return place.getInputTransitions().get(0);
+        }
     }
 
     private static double getMultiplierBetweenTransitions(Transition previousTransition, Transition transition) {
         var place = getPlaceInBetween(previousTransition, transition);
         return (double) previousTransition.getOutputArcToNode(place).get().arcRef.getWeight()
-                / transition.getInputArcToNode(place).get().arcRef.getWeight();
+                / getWeight(place, transition);
     }
 
     private static boolean SyncIfValid(Transition transition) {
@@ -90,8 +164,6 @@ class FiringDelayAlgoHelper {
                     synced = syncConflicts(first, second, transition);
                 }
             }
-
-            tryToAssignNotResolvedTokenSourceValues(transition);
         }
         return synced;
     }
@@ -99,23 +171,36 @@ class FiringDelayAlgoHelper {
     private static ArrayList<State> getPreviousTransitionStates(Transition transition) {
         var previousTransitionStates = new ArrayList<State>();
         for (var place : transition.getInputPlaces()) {
-            //na razie nie jeszcze nie ma obsługi tokenów z dwóch źródeł TODO btw
-            var previousTransition = place.getInputTransitions().get(0);
-            previousTransitionStates.add(StateHolder.instance.getState(previousTransition));
+            for (Transition previousTransition : place.getInputTransitions())
+            {
+                previousTransitionStates.add(StateHolder.instance.getState(previousTransition));
+            }
         }
         return previousTransitionStates;
     }
 
     private static void tryToAssignNotResolvedTokenSourceValues(Transition transition) {
         var previousTransitionStates = getPreviousTransitionStates(transition);
+        if(!StateHolder.instance.getState(transition).isResolved()
+        && StateHolder.instance.getState(transition).conflict == null) {
+            for (Place place : transition.getInputPlaces()) {
+                var placeTokens = getPlaceTokens(place);
+                if(placeTokens != null) {
+                    StateHolder.instance.getState(transition).tokenState.forceSetTokenSourceValue(
+                            placeTokens / getWeight(place, transition));
+                    break;
+                }
+            }
+        }
         if(StateHolder.instance.getState(transition).isResolved()) {
             var notValid = previousTransitionStates.stream()
                     .filter(state -> !state.isResolved())
+                    .filter(state -> !getPlaceInBetween(state.transition, transition).isSumming())
                     .collect(Collectors.toCollection(HashSet::new));
             for (var state : notValid) {
                 Double result = StateHolder.instance.getState(transition).getResult();
                 if(result != null && !state.tokenState.isResolved()) {
-                    state.tokenState.setTokenSourceValue(
+                    state.tokenState.forceSetTokenSourceValue(
                             result/getMultiplierBetweenTransitions(state.transition, transition));
                 }
             }
@@ -213,6 +298,20 @@ class FiringDelayAlgoHelper {
         StateHolder.instance.naturalTokenSources.stream()
                 .filter(tokenSource -> !tokenSource.isResolved())
                 .forEach(tokenSource -> tokenSource.firingRate = 1d);
+    }
+
+    public static void tryToAssignNotResolvedArtificalTokenSourceValues() {
+        for (Place place : StateHolder.instance.summedTokenStates.sequencedKeySet()) {
+            for (Transition transition : place.getOutputTransitions()) {
+                if(!StateHolder.instance.getState(transition).tokenState.isResolved()) {
+                    var previousTokens = getPlaceTokens(place);
+                    if(previousTokens != null) {
+                        StateHolder.instance.getState(transition).tokenState
+                                .setTokenSourceValue(previousTokens/getWeight(place, transition));
+                    }
+                }
+            }
+        }
     }
 
     public static void tieLooseConflicts() {

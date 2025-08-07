@@ -33,6 +33,10 @@ class TokenState {
     }
 
     public void setTokenSourceValue(double value) {
+        tokenSource.firingRate = value;
+    }
+
+    public void forceSetTokenSourceValue(double value) {
         tokenSource.firingRate = value/multiplier;
     }
 }

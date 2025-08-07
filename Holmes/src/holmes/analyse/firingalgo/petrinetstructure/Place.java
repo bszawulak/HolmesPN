@@ -44,4 +44,8 @@ public class Place extends Node {
     public boolean isConflict() {
         return outputArcs.size() > 1;
     }
+
+    public boolean isSumming() {
+        return inputArcs.size() > 1;
+    }
 }

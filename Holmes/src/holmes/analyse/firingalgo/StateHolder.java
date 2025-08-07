@@ -1,10 +1,12 @@
 package holmes.analyse.firingalgo;
 
+import holmes.analyse.firingalgo.petrinetstructure.Place;
 import holmes.analyse.firingalgo.petrinetstructure.Transition;
 
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
 class StateHolder {
@@ -13,6 +15,7 @@ class StateHolder {
     private HashMap<Transition, State> states = new HashMap<>();
     public HashMap<BitSet, Conflict> unresolvedConflicts = new HashMap<>();
     public HashSet<TokenSource> naturalTokenSources = new HashSet<>();
+    public LinkedHashMap<Place, TokenState> summedTokenStates = new LinkedHashMap<>();
 
     public static StateHolder instance = new StateHolder();
 
@@ -25,6 +28,7 @@ class StateHolder {
         states = new HashMap<>();
         unresolvedConflicts = new HashMap<>();
         naturalTokenSources = new HashSet<>();
+        summedTokenStates = new LinkedHashMap<>();
     }
 
     public void markTransition(Transition transition) {
@@ -45,11 +49,6 @@ class StateHolder {
     }
 
     public void addState(Transition transition, State state) {
-        if(states.containsKey(transition)) {
-            state.conflict = states.get(transition).conflict != null ? states.get(transition).conflict : state.conflict;
-            state.tokenState = state.tokenState != null ? state.tokenState : states.get(transition).tokenState;
-            state.marked = states.get(transition).marked;
-        }
         states.put(transition, state);
     }
 

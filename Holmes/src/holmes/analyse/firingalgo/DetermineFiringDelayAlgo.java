@@ -41,10 +41,15 @@ public class DetermineFiringDelayAlgo {
                 .filter(Transition::isSync)
                 .collect(Collectors.toCollection(ArrayList::new));
 
+        PerformCleanupActions(syncTransitions);
+    }
+
+    private static void PerformCleanupActions(ArrayList<Transition> syncTransitions) {
         FiringDelayAlgoHelper.tryToAssignNotResolvedTokenSourceValues(syncTransitions);
         FiringDelayAlgoHelper.tieLooseConflicts();
         FiringDelayAlgoHelper.tryToAssignNotResolvedTokenSourceValues(syncTransitions);
         FiringDelayAlgoHelper.assignOnesToNotResolvedTokenSources();
+        FiringDelayAlgoHelper.tryToAssignNotResolvedArtificalTokenSourceValues();
     }
 
     /**
