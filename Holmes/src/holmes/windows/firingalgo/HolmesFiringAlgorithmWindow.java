@@ -143,20 +143,20 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
         algorithm.run(petriNet, firingRatesVector);
 
         HashMap<Transition, Double> result = algorithm.getResult();
+        HashMap<holmes.petrinet.elements.Transition, Double> remappedResult = new HashMap<holmes.petrinet.elements.Transition, Double>();
+        result.forEach((transition, firingRate) -> {
+            holmes.petrinet.elements.Transition key = transition.transitionRef;
+            Double newFiringRate = firingRate;
+            if (remappedResult.containsKey(key)) {
+                newFiringRate = Double.max(newFiringRate, remappedResult.get(key));
+            }
+            remappedResult.put(key, newFiringRate);
+        });
 
         SPNdataVector dataVector = new SPNdataVector();
         for (holmes.petrinet.elements.Transition pnTransition : petriNet.getTransitions()) {
-            Double value = result.keySet().stream()
-                    .filter(t -> t.transitionRef.equals(pnTransition))
-                    .map(result::get)
-                    .max(Double::compare)
-                    .orElse(null);
-            if (value != null) {
-                dataVector.addTrans(value.toString(), TransitionSPNExtension.StochaticsType.ST);
-            }
-            else {
-                dataVector.addTrans("0", TransitionSPNExtension.StochaticsType.ST);
-            }
+            Double value = remappedResult.get(pnTransition);
+            dataVector.addTrans(value.toString(), TransitionSPNExtension.StochaticsType.ST);
         }
         dataVector.setDescription("Generated");
 
