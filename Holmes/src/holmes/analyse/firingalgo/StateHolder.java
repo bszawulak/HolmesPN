@@ -69,6 +69,9 @@ class StateHolder {
 
     public void removeConflict(Conflict conflict) {
         var state = states.get(conflict.transition);
+        if(state.tokenState == null) {
+            state.tokenState = new TokenState(null);
+        }
         state.tokenState.multiplier *= conflict.getResult();
         state.conflict = null;
         states.put(conflict.transition, state);
@@ -82,6 +85,13 @@ class StateHolder {
         return states.values().stream()
                 .filter(state -> state.conflict != null)
                 .filter((state) -> state.conflict.getMask().equals(mask))
+                .map(state -> state.conflict).collect(Collectors.toCollection(HashSet::new));
+    }
+
+    public HashSet<Conflict> getConflictsByTargetMask(BitSet targetMask) {
+        return states.values().stream()
+                .filter(state -> state.conflict != null)
+                .filter((state) -> state.conflict.getTargetMask().equals(targetMask))
                 .map(state -> state.conflict).collect(Collectors.toCollection(HashSet::new));
     }
 

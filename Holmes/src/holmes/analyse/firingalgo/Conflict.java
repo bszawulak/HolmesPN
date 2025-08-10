@@ -52,6 +52,18 @@ class Conflict {
         other.mask.or(mask);
     }
 
+    public void forceResolve(Double newS) {
+        if(newS != null && newS > 0 && newS < 1) {
+            s = newS;
+            multiplierForPropagation = newS;
+            mask = targetMask;
+            return;
+        }
+        s = 1d/targetMask.cardinality();
+        multiplierForPropagation = 1d/targetMask.cardinality();
+        mask = targetMask;
+    }
+
     public boolean isResolved() {
         BitSet masked = (BitSet)mask.clone();
         masked.and(targetMask);
@@ -59,6 +71,10 @@ class Conflict {
     }
 
     public Conflict copyForOtherTransition(Transition transition) {
+        return new Conflict(transition, weight, mask, targetMask, s);
+    }
+
+    public Conflict copy() {
         return new Conflict(transition, weight, mask, targetMask, s);
     }
 

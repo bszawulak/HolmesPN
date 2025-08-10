@@ -78,7 +78,7 @@ public class DetermineFiringDelayAlgo {
         List<Transition> sinkTransitions =
                 transitions.stream().filter(Transition::isSink).toList();
         output.addAll(sinkTransitions);
-        LT = output;
+        LT = output.stream().distinct().collect(Collectors.toCollection(ArrayList::new));
     }
 
     private void visitTransitionLT(

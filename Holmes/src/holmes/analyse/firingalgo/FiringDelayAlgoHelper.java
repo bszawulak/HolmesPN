@@ -25,20 +25,14 @@ class FiringDelayAlgoHelper {
 
         var synced = SyncIfValid(transition);
 
-        // firingrate ustawione przez użytkownika
-        if(transition.firingRate != null) {
-            TokenState tokenState = new TokenState(new TokenSource(transition.firingRate));
-            tokenState.fixed = true;
-            StateHolder.instance.addState(transition, tokenState);
-            tryToAssignNotResolvedTokenSourceValues(transition);
-            return;
-        }
-
         Place place = getPrioritizedInputPlace(transition);
         var previousTransition = getPrioritizedInputTransition(place);
         var previousTransitionState = StateHolder.instance.getState(previousTransition);
         var copied = previousTransitionState.copyForOtherTransition(transition);
-        if(copied.conflict == null && StateHolder.instance.getState(transition).conflict != null) {
+        if(StateHolder.instance.getState(transition).conflict != null) {
+            if(copied.conflict != null) {
+                forceResolveConflictBranch(copied.conflict);
+            }
             copied.conflict = StateHolder.instance.getState(transition).conflict;
         }
 
@@ -64,7 +58,21 @@ class FiringDelayAlgoHelper {
             StateHolder.instance.unresolvedConflicts.put(copied.conflict.getMask(), copied.conflict);
         }
 
+        if(StateHolder.instance.getState(transition).tokenState != null) {
+            copied.tokenState.multiplier *= StateHolder.instance.getState(transition).tokenState.multiplier;
+        }
+
         StateHolder.instance.addState(transition, copied);
+
+        // firingrate ustawione przez użytkownika
+        if(transition.firingRate != null) {
+            if(copied.conflict != null) {
+                forceResolveConflictBranch(copied.conflict, transition.firingRate/copied.tokenState.getTokens());
+            }
+
+            copied.tokenState.multiplier *= transition.firingRate/copied.tokenState.getTokens();
+
+        }
         tryToAssignNotResolvedTokenSourceValues(transition);
     }
 
@@ -168,11 +176,11 @@ class FiringDelayAlgoHelper {
                     .map(state -> state.conflict)
                     .filter(Objects::nonNull).toList();
             if(previousConflicts.size() > 1) {
-                var copyOfFirst = previousConflicts.get(0).copyForOtherTransition(previousConflicts.get(0).transition);
+                var copyOfFirst = previousConflicts.get(0).copy();
                 copyOfFirst.weight /= getMultiplierBetweenTransitions(copyOfFirst.transition, transition);
 
                 for (Conflict second : previousConflicts.subList(1, previousConflicts.size())) {
-                    var conflict2Copy = second.copyForOtherTransition(transition);
+                    var conflict2Copy = second.copy();
                     // uwzględnienie wag na łukach od poprzedniej tranzycji do synchronizacji
                     conflict2Copy.weight /= getMultiplierBetweenTransitions(second.transition, transition);
 
@@ -260,32 +268,57 @@ class FiringDelayAlgoHelper {
         StateHolder.instance.unresolvedConflicts.remove(conflict1.getMask());
         StateHolder.instance.unresolvedConflicts.remove(conflict2.getMask());
 
-        BitSet mask1 = conflict1.getMask();
-        BitSet mask2 = conflict2.getMask();
-        BitSet syncedMask = new BitSet();
-        syncedMask.clear();
-        syncedMask.or(mask1);
-        syncedMask.or(mask2);
-
-        HashSet<Conflict> conflicts1 = StateHolder.instance.getConflicts(mask1);
-        HashSet<Conflict> conflicts2 = StateHolder.instance.getConflicts(mask2);
+        HashSet<Conflict> conflicts1 = StateHolder.instance.getConflicts(conflict1.getMask());
+        HashSet<Conflict> conflicts2 = StateHolder.instance.getConflicts(conflict2.getMask());
 
         syncAction.apply(conflict1).accept(conflict2);
+        propagateResultOfSynchronisation(conflict1, conflicts1);
+        propagateResultOfSynchronisation(conflict2, conflicts2);
+        return true;
+    }
+
+    private static void propagateResultOfSynchronisation(Conflict conflict1, HashSet<Conflict> conflicts1) {
         for (Conflict conflict : conflicts1) {
-            conflict.setMask(syncedMask);
+            conflict.setMask(conflict1.getMask());
             conflict.s *= conflict1.multiplierForPropagation;
             if(conflict.isResolved()) {
                 StateHolder.instance.removeConflict(conflict);
             }
         }
-        for (Conflict conflict : conflicts2) {
-            conflict.setMask(syncedMask);
-            conflict.s *= conflict2.multiplierForPropagation;
+    }
+
+    private static void propagateResultOfForcedSynchronisationToOtherConflicts(HashSet<Conflict> conflicts1, Conflict conflict1, BitSet originalMask) {
+        var reversedMultiplierForPropagation = 1 - conflict1.multiplierForPropagation;
+        for (Conflict conflict : conflicts1) {
+            BitSet mask = (BitSet) originalMask.clone();
+            mask.or(conflict.getMask());
+            conflict.setMask(mask);
+            conflict.s *= reversedMultiplierForPropagation;
             if(conflict.isResolved()) {
                 StateHolder.instance.removeConflict(conflict);
             }
         }
-        return true;
+    }
+
+    public static void forceResolveConflictBranch(Conflict conflict1) {
+         forceResolveConflictBranch(conflict1, null);
+    }
+
+    public static void forceResolveConflictBranch(Conflict conflict1, Double newS) {
+        var copiedConflict = conflict1.copy();
+        StateHolder.instance.unresolvedConflicts.remove(copiedConflict.getMask());
+        var conflictsToUpdate = StateHolder.instance.getConflictsByTargetMask(copiedConflict.getTargetMask());
+        var conflictsWithTheSameMask = conflictsToUpdate.stream()
+                .filter(conflict -> conflict.getMask().equals(copiedConflict.getMask()))
+                .collect(Collectors.toCollection(HashSet::new));
+        var conflictsWithOtherMask = conflictsToUpdate.stream()
+                .filter(conflict -> !conflict.getMask().equals(copiedConflict.getMask()))
+                .collect(Collectors.toCollection(HashSet::new));
+
+        var conflict1Mask = copiedConflict.getMask();
+        copiedConflict.forceResolve(newS);
+        propagateResultOfSynchronisation(copiedConflict, conflictsWithTheSameMask);
+        propagateResultOfForcedSynchronisationToOtherConflicts(conflictsWithOtherMask, copiedConflict, conflict1Mask);
     }
 
     public static void tryToAssignNotResolvedTokenSourceValues(ArrayList<Transition> syncTransitions) {
@@ -315,24 +348,15 @@ class FiringDelayAlgoHelper {
     }
 
     public static void tieLooseConflicts() {
-        while (!StateHolder.instance.unresolvedConflicts.isEmpty()) {
-            var reset = false;
-            for(Conflict conflict1 : StateHolder.instance.unresolvedConflicts.values()) {
-                for(Conflict conflict2 : StateHolder.instance.unresolvedConflicts.values()) {
-                    reset = tieLooseConflicts(conflict1, conflict2);
-                    if(reset) {
-                        break;
-                    }
-                }
-                if(reset) {
-                    break;
-                }
+        for (Conflict conflict : StateHolder.instance.unresolvedConflicts.values()) {
+            if(!conflict.isResolved()) {
+                forceResolveConflictBranch(conflict);
             }
         }
     }
 
-    private static boolean tieLooseConflicts(Conflict conflict1, Conflict conflict2) {
-        return syncConflicts(conflict1.copyForOtherTransition(null), conflict2.copyForOtherTransition(null),
+    private static boolean syncByHalf(Conflict conflict1, Conflict conflict2) {
+        return syncConflicts(conflict1.copy(), conflict2.copy(),
                 conflict -> conflict::syncByHalf);
     }
 

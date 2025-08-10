@@ -3,7 +3,6 @@ package holmes.analyse.firingalgo;
 class TokenState {
     private TokenSource tokenSource;
     public double multiplier;
-    boolean fixed = false;
 
     public TokenState(TokenSource tokenSource) {
         this(tokenSource, 1.0);
@@ -21,9 +20,6 @@ class TokenState {
     public Double getTokens() {
         if (!isResolved()) {
             return null;
-        }
-        if(fixed) {
-            return tokenSource.firingRate;
         }
         return tokenSource.firingRate * multiplier;
     }
