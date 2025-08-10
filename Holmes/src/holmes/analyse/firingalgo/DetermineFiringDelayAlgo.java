@@ -20,6 +20,16 @@ public class DetermineFiringDelayAlgo {
         structure = new PetriNetStructure(petriNet, spnVector);
 
         List<Transition> transitions = structure.getTransitions();
+
+        if(transitions.isEmpty() || structure.getPlaces().isEmpty()) {
+            return;
+        }
+
+        if(transitions.stream().noneMatch(transition -> transition.firingRate != null))
+        {
+            transitions.stream().filter(Transition::isSource).toList().get(0).firingRate = 1d;
+        }
+
         LT.clear();
         FiringDelayAlgoHelper.resetState();
 
