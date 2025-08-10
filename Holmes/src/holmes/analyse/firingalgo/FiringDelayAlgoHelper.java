@@ -32,6 +32,7 @@ class FiringDelayAlgoHelper {
         if(StateHolder.instance.getState(transition).conflict != null) {
             if(copied.conflict != null) {
                 forceResolveConflictBranch(copied.conflict);
+                copied = previousTransitionState.copyForOtherTransition(transition);
             }
             copied.conflict = StateHolder.instance.getState(transition).conflict;
         }
@@ -66,12 +67,17 @@ class FiringDelayAlgoHelper {
 
         // firingrate ustawione przez użytkownika
         if(transition.firingRate != null) {
+            Double tokens = copied.tokenState.getTokens();
             if(copied.conflict != null) {
-                forceResolveConflictBranch(copied.conflict, transition.firingRate/copied.tokenState.getTokens());
+                forceResolveConflictBranch(copied.conflict, tokens != null ? transition.firingRate/tokens : null);
             }
 
-            copied.tokenState.multiplier *= transition.firingRate/copied.tokenState.getTokens();
-
+            if(tokens != null) {
+                copied.tokenState.multiplier *= transition.firingRate/ tokens;
+            }
+            else {
+                copied.tokenState = new TokenState(new TokenSource(transition.firingRate));
+            }
         }
         tryToAssignNotResolvedTokenSourceValues(transition);
     }

@@ -70,7 +70,7 @@ class StateHolder {
     public void removeConflict(Conflict conflict) {
         var state = states.get(conflict.transition);
         if(state.tokenState == null) {
-            state.tokenState = new TokenState(null);
+            state.tokenState = new TokenState(new TokenSource(null));
         }
         state.tokenState.multiplier *= conflict.getResult();
         state.conflict = null;
