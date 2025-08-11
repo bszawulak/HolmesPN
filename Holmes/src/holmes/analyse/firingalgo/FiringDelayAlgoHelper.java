@@ -407,7 +407,7 @@ class FiringDelayAlgoHelper {
     }
 
     public static void tryToAssignNotResolvedArtificalTokenSourceValues() {
-        for (Place place : StateHolder.instance.summedTokenStates.sequencedKeySet()) {
+        for (Place place : StateHolder.instance.summedTokenStates.keySet()) {
             for (Transition transition : place.getOutputTransitions()) {
                 if(!StateHolder.instance.getState(transition).tokenState.isResolved()) {
                     var previousTokens = getPlaceTokens(place);
