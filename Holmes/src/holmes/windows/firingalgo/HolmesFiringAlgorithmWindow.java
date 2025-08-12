@@ -23,6 +23,8 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
     private static final int labelWidth = 200;
     private static final int verticalMargin = 5;
     private static final int horizontalMargin = 5;
+    private static final int descriptionHeight = 60;
+    private static final int separatorHeight = 1;
 
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
     private static final LanguageManager lang = GUIManager.getLanguageManager();
@@ -50,6 +52,9 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
         size.width += insets.left + insets.right;
         size.height += insets.top + insets.bottom;
         setSize(size);
+        Point parentLocation = launcherFrame.getLocation();
+        Dimension parentSize = launcherFrame.getSize();
+        setLocation(parentLocation.x + parentSize.height / 2, parentLocation.y + parentSize.height / 2);
         setResizable(false);
     }
 
@@ -60,15 +65,40 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
                 this::createIndexSelectorPanel,
                 this::createRunButtonPanel
         );
-        panel.setBounds(0, 0, width + horizontalMargin * 2, panelCreators.size() * (rowHeight + spaceBetweenRows) - spaceBetweenRows + verticalMargin * 2);
+        panel.setBounds(0, 0, width + horizontalMargin * 2, panelCreators.size() * (rowHeight + spaceBetweenRows) + descriptionHeight + separatorHeight + spaceBetweenRows + verticalMargin * 2);
 
-        Rectangle rectangle = new Rectangle(horizontalMargin, verticalMargin, width, rowHeight);
+        Rectangle rectangle = new Rectangle(horizontalMargin, verticalMargin, width, descriptionHeight);
+        panel.add(createDescriptionPanel(rectangle));
+        rectangle.y += rectangle.height + spaceBetweenRows;
+
+        rectangle.height = separatorHeight;
+        panel.add(createHorizontalLine(rectangle));
+        rectangle.y += rectangle.height + spaceBetweenRows;
+
+        rectangle.height = rowHeight;
         for (Function<Rectangle, JPanel> createPanel : panelCreators) {
             panel.add(createPanel.apply(rectangle));
-            rectangle.y += rowHeight + spaceBetweenRows;
+            rectangle.y += rectangle.height + spaceBetweenRows;
         }
 
         return panel;
+    }
+
+    private JPanel createDescriptionPanel(Rectangle rectangle) {
+        JPanel panel = new JPanel(null);
+        panel.setBounds(rectangle);
+
+        JLabel label = new JLabel("<html>This algorithm tries to estimate unknown firing rates that would preserve the retention-free characteristic of the net. Unknown firing rates are indicated by setting the transition data to NONE in SPN data editor.</html>");
+        label.setBounds(0, 0, rectangle.width, rectangle.height);
+        panel.add(label);
+
+        return panel;
+    }
+
+    private JSeparator createHorizontalLine(Rectangle rectangle) {
+        JSeparator separator = new JSeparator();
+        separator.setBounds(rectangle);
+        return separator;
     }
 
     private JPanel createIndexSelectorPanel(Rectangle rectange) {

@@ -279,6 +279,11 @@ public class HolmesSPNmanager extends JFrame {
 		button.setMargin(new Insets(0, 0,0,0));
 		button.setIcon(Tools.getResIcon48("/icons/holmesicon.png"));
 		button.addActionListener(actionEvent -> {
+			if(transitions.isEmpty()) {
+				noNetInfo();
+				return;
+			}
+
 			HolmesFiringAlgorithmWindow firingAlgorithmWindow = new HolmesFiringAlgorithmWindow(launcherFrame);
 			firingAlgorithmWindow.addWindowListener(new WindowAdapter() {
 				@Override
