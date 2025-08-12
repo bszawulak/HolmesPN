@@ -2788,6 +2788,7 @@ LOGentry00521exception, Excepción (1000250): HolmesSPNmanager.cellClickAction()
 HSPN_determine_rates_button_label, <html>Estimar las tasas de disparo</html>
 HSPN_FRA_select_table, Vector de datos de entrada
 HSPN_FRA_run_algorithm, <html>Ejecutar el algoritmo</html>
+HSPN_FRA_description, <html>Este algoritmo intenta estimar las tasas de disparo desconocidas que preservan la característica sin retención de la red. Las tasas de disparo desconocidas se indican configurando el tipo de transición en NONE en el editor de transiciones SPN.</html>
 
 //HolmesSPNtransitionEditor:
 HSPNTEwin_entry001title, Editor de transiciones SPN de Holmes

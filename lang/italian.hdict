@@ -2788,6 +2788,7 @@ LOGentry00521exception, Eccezione (1000250): HolmesSPNmanager.cellClickAction() 
 HSPN_determine_rates_button_label, <html>Stimare i tassi di firing</html>
 HSPN_FRA_select_table, Vettore dati in input
 HSPN_FRA_run_algorithm, <html>Esegui l’algoritmo</html>
+HSPN_FRA_description, <html>Questo algoritmo cerca di stimare le frequenze di firing sconosciute che preservano la caratteristica di assenza di ritenzione della rete. Le frequenze di firing sconosciute sono indicate impostando il tipo di transizione su NONE nell’editor delle transizioni SPN.</html>
 
 //HolmesSPNtransitionEditor:
 HSPNTEwin_entry001title, Editor delle transizioni SPN di Holmes

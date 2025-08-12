@@ -23,7 +23,7 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
     private static final int labelWidth = 200;
     private static final int verticalMargin = 5;
     private static final int horizontalMargin = 5;
-    private static final int descriptionHeight = 60;
+    private static final int descriptionHeight = 75;
     private static final int separatorHeight = 1;
 
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -88,7 +88,7 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
         JPanel panel = new JPanel(null);
         panel.setBounds(rectangle);
 
-        JLabel label = new JLabel("<html>This algorithm tries to estimate unknown firing rates that would preserve the retention-free characteristic of the net. Unknown firing rates are indicated by setting the transition data to NONE in SPN data editor.</html>");
+        JLabel label = new JLabel(lang.getText("HSPN_FRA_description"));
         label.setBounds(0, 0, rectangle.width, rectangle.height);
         panel.add(label);
 

@@ -2788,6 +2788,7 @@ LOGentry00521exception, Ausnahme (1000250): HolmesSPNmanager.cellClickAction() f
 HSPN_determine_rates_button_label, <html>Feuerraten bestimmen</html>
 HSPN_FRA_select_table, Eingabe-Datenvektor
 HSPN_FRA_run_algorithm, <html>Algorithmus starten</html>
+HSPN_FRA_description, <html>Dieser Algorithmus versucht, unbekannte Feuerraten zu schätzen, die die Rückhaltefreiheit des Netzes erhalten. Unbekannte Feuerraten werden angezeigt, indem der Transitionstyp im SPN-Transitionseditor auf NONE gesetzt wird.</html>
 
 //HolmesSPNtransitionEditor:
 HSPNTEwin_entry001title, Holmes SPN-Übergangseditor

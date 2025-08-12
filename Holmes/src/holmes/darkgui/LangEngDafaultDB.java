@@ -2801,6 +2801,7 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HSPN_determine_rates_button_label", "<html>Determine firing rates</html>");
         defaultEnglish.put("HSPN_FRA_select_table", "Firing rates vetor to be used");
         defaultEnglish.put("HSPN_FRA_run_algorithm", "<html>Run algorithm</html>");
+        defaultEnglish.put("HSPN_FRA_description", "<html>This algorithm tries to estimate unknown firing rates that would preserve the retention-free characteristic of the net. Unknown firing rates are indicated by setting the transition data to NONE in SPN data editor.</html>");
 
         //HolmesSPNtransitionEditor:
         defaultEnglish.put("HSPNTEwin_entry001title","Holmes SPN transition editor");

@@ -2788,6 +2788,7 @@ LOGentry00521exception, Exception (1000250): HolmesSPNmanager.cellClickAction() 
 HSPN_determine_rates_button_label, <html>Estimer les taux de tir</html>
 HSPN_FRA_select_table, Vecteur de données d’entrée
 HSPN_FRA_run_algorithm, <html>Exécuter l’algorithme</html>
+HSPN_FRA_description, <html>Cet algorithme tente d’estimer les taux de tir inconnus qui préservent la propriété sans rétention du réseau. Les taux de tir inconnus sont indiqués en définissant le type de transition sur NONE dans l’éditeur de transitions SPN.</html>
 
 //HolmesSPNtransitionEditor:
 HSPNTEwin_entry001title, Éditeur de transitions SPN Holmes

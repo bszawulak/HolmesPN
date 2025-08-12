@@ -2788,6 +2788,7 @@ LOGentry00521exception, Exception (1000250): HolmesSPNmanager.cellClickAction() 
 HSPN_determine_rates_button_label, <html>Determine firing rates</html>
 HSPN_FRA_select_table, Firing rates vetor to be used
 HSPN_FRA_run_algorithm, <html>Run algorithm</html>
+HSPN_FRA_description, <html>This algorithm tries to estimate unknown firing rates that would preserve the retention-free characteristic of the net. Unknown firing rates are indicated by setting the transition type to NONE in SPN data editor.</html>
 
 //HolmesSPNtransitionEditor:
 HSPNTEwin_entry001title, Holmes SPN transition editor
