@@ -2764,6 +2764,8 @@ public class LangEngDafaultDB {
         defaultEnglish.put("HSPNwin_entry002","SPN transitions data");
         defaultEnglish.put("HSPNwin_entry003","SPN data vector ID: ");
         defaultEnglish.put("HSPNwin_entry004","SPN data vector transitions table");
+        defaultEnglish.put("HSPNwin_set_all_none", "<html>Set all transitions to NONE</html>");
+        defaultEnglish.put("HSPNwin_confirm_set_all_none", "Set all transitions to NONE?");
 
         //HolmesSPNmanager:
         defaultEnglish.put("HSPNMwin_entry001title","Holmes SPN transitions data manager");

@@ -10,13 +10,7 @@ import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 
 import holmes.darkgui.GUIManager;
@@ -26,6 +20,7 @@ import holmes.petrinet.data.SPNtransitionData;
 import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.data.SPNdataVector;
 import holmes.petrinet.elements.Transition;
+import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 import holmes.tables.RXTable;
 import holmes.tables.managers.SPNsingleVectorTableModel;
 import holmes.tables.managers.SPNsingleVectorTableRenderer;
@@ -143,7 +138,7 @@ public class HolmesSPNeditor extends JFrame {
 		JPanel result = new JPanel(new BorderLayout());
 		result.setLocation(0, 0);
 		result.setBorder(BorderFactory.createTitledBorder(lang.getText("HSPNwin_entry002"))); //SPN transitions data
-		result.setPreferredSize(new Dimension(500, 100));
+		result.setPreferredSize(new Dimension(800, 100));
 		
 		JPanel filler = new JPanel(null);
 
@@ -177,6 +172,27 @@ public class HolmesSPNeditor extends JFrame {
         CreationPanel.add(new JScrollPane(vectorDescrTextArea), BorderLayout.CENTER);
         CreationPanel.setBounds(posX, posY+20, 600, 50);
         filler.add(CreationPanel);
+
+		JButton setAllToNullButton = new JButton(lang.getText("HSPNwin_set_all_none"));
+		setAllToNullButton.setBounds(posX + 600, posY + 20, 150, 50);
+		setAllToNullButton.setFocusPainted(false);
+		setAllToNullButton.addActionListener(e -> {
+			String[] options = { lang.getText("yes"), lang.getText("no") };
+			String message = lang.getText("HSPNwin_confirm_set_all_none");
+			int n = JOptionPane.showOptionDialog(null,
+					message, message, JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+
+			if (n != 0) {
+				return;
+			}
+
+			for (int i = 0; i < frData.getSize(); i++) {
+				frData.getSPNtransitionContainer(i).sType = TransitionSPNExtension.StochaticsType.NONE;
+			}
+			fillTable();
+		});
+		filler.add(setAllToNullButton);
         
         result.add(filler, BorderLayout.CENTER);
 		return result;

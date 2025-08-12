@@ -2751,6 +2751,8 @@ LOGentry00519exception, Exception (1000248): HolmesSPNeditor.HolmesSPNeditor() f
 HSPNwin_entry002, SPN transitions data
 HSPNwin_entry003, SPN data vector ID: 
 HSPNwin_entry004, SPN data vector transitions table
+HSPNwin_set_all_none, <html>Set all transitions to NONE</html>
+HSPNwin_confirm_set_all_none, Set all transitions to NONE?
 
 //HolmesSPNmanager:
 HSPNMwin_entry001title, Holmes SPN transitions data manager

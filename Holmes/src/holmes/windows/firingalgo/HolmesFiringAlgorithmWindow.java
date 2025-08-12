@@ -10,7 +10,6 @@ import holmes.petrinet.data.SPNdataVectorManager;
 import holmes.petrinet.elements.extensions.TransitionSPNExtension;
 
 import javax.swing.*;
-import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
@@ -18,7 +17,6 @@ import java.util.function.Function;
 import java.util.List;
 
 public class HolmesFiringAlgorithmWindow extends JFrame {
-    private static final int headerHeight = 200;
     private static final int rowHeight = 30;
     private static final int spaceBetweenRows = 5;
     private static final int width = 350;
@@ -28,7 +26,6 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
 
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
     private static final LanguageManager lang = GUIManager.getLanguageManager();
-    private static JTextArea logOutput = null;
 
     private JComboBox<String> vectorSelect = null;
 
@@ -99,35 +96,10 @@ public class HolmesFiringAlgorithmWindow extends JFrame {
         panel.setBounds(rectangle);
 
         JButton button = new JButton(lang.getText("HSPN_FRA_run_algorithm"));
-        button.addActionListener(actionEvent -> {
-            runAlgorithm();
-        });
+        button.addActionListener(actionEvent -> runAlgorithm());
         button.setFocusPainted(false);
         button.setBounds(labelWidth, 0, width - labelWidth, rowHeight);
         panel.add(button);
-
-        return panel;
-    }
-
-    private JPanel createLogOutputPanel(JPanel parent) {
-        JPanel panel = new JPanel(null);
-        panel.setBounds(0, 0, parent.getWidth() - 20, parent.getHeight() - headerHeight - 20);
-        panel.setLocation(0, headerHeight + 10);
-
-        panel.setBorder(BorderFactory.createTitledBorder("Output:"));
-
-        logOutput = new JTextArea();
-        logOutput.setLineWrap(true);
-        logOutput.setEditable(false);
-        logOutput.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-        DefaultCaret caret = (DefaultCaret)logOutput.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-
-        JPanel logFieldPanel = new JPanel();
-        logFieldPanel.setLayout(new BorderLayout());
-        logFieldPanel.add(new JScrollPane(logOutput), BorderLayout.CENTER);
-        logFieldPanel.setBounds(10, 20, panel.getWidth()-35, panel.getHeight()-50);
-        panel.add(logFieldPanel);
 
         return panel;
     }

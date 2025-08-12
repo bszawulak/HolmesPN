@@ -2751,6 +2751,8 @@ LOGentry00519exception, Eccezione (1000248): HolmesSPNeditor.HolmesSPNeditor() f
 HSPNwin_entry002, Dati delle transizioni SPN
 HSPNwin_entry003, ID vettore dati SPN:
 HSPNwin_entry004, Tabella delle transizioni del vettore dati SPN
+HSPNwin_set_all_none, <html>Impostare tutte le transizioni su NONE</html>
+HSPNwin_confirm_set_all_none, Impostare tutte le transizioni su NONE?
 
 //HolmesSPNmanager:
 HSPNMwin_entry001title, Gestore dati delle transizioni SPN di Holmes

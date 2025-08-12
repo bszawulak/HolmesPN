@@ -2751,6 +2751,8 @@ LOGentry00519exception, Ausnahme (1000248): HolmesSPNeditor.HolmesSPNeditor() fe
 HSPNwin_entry002, SPN-Übergangsdaten
 HSPNwin_entry003, SPN-Datenvektor-ID:
 HSPNwin_entry004, SPN-Datenvektor-Übergangstabelle
+HSPNwin_set_all_none, <html>Alle Transitionen auf NONE setzen</html>
+HSPNwin_confirm_set_all_none, Sollen alle Transitionen auf NONE gesetzt werden?
 
 //HolmesSPNmanager:
 HSPNMwin_entry001title, Holmes SPN-Übergangsdaten-Manager
