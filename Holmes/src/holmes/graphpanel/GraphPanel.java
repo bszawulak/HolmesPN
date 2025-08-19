@@ -1537,7 +1537,8 @@ public class GraphPanel extends JComponent {
 									arc.setArcType(TypeOfArc.NORMAL); 
 								getArcs().add(arc);
 							} else if(arcType == DrawModes.XARC) {
-								arc.setArcType(TypeOfArc.NORMAL);
+								if(arc.getArcType() != TypeOfArc.READARC)
+									arc.setArcType(TypeOfArc.NORMAL);
 								arc.arcXTPNbox.setXTPNstatus(true);
 								getArcs().add(arc);
 							} else if(arcType == DrawModes.XINHIBITOR) {

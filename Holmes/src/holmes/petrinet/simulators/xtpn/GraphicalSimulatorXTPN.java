@@ -552,6 +552,11 @@ public class GraphicalSimulatorXTPN {
                     transition.setLaunching(true);
                     arcs = transition.getInputArcs();
                     for (Arc arc : arcs) {
+                        if(arc.getArcType() == Arc.TypeOfArc.READARC && sg.isXTPNreadArcDontTakeTokens())  {
+                            continue; //tylko jeżeli w ogóle nie pobieramy tokenów z miejsc, to i ich nie zwracamy...
+                        }
+                        
+                        
                         arc.setSimulationForwardDirection(true); //zawsze dla tego symulatora (nie działamy wstecz)
                         arc.setTransportingTokens(true);
                         PlaceXTPN place = (PlaceXTPN) arc.getStartNode(); //miejsce, z którego zabieramy
@@ -657,6 +662,9 @@ public class GraphicalSimulatorXTPN {
                 for (Arc arc : arcs) { //read arc...
                     if(arc.getArcType() == TypeOfArc.INHIBITOR )
                         continue;
+                    if(arc.getArcType() == Arc.TypeOfArc.READARC && sg.isXTPNreadArcDontTakeTokens())  {
+                        continue; //tylko jeżeli w ogóle nie pobieramy tokenów z miejsc, to i ich nie zwracamy...
+                    }
 
                     arc.setSimulationForwardDirection(true);
                     arc.setTransportingTokens(true);

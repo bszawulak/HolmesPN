@@ -544,6 +544,10 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
                     continue; //jeśli sg.isXTPNreadArcActive() == true i readarc, to zwrotem zajmie się pętla niżej
                     //która zwraca tokeny do miejsc ze zmodyfikowanym czasem życia.
                 }
+
+                if(arc.getArcType() == Arc.TypeOfArc.READARC) {
+                    //continue; 
+                }
                 
                 if(arc.getArcType() == Arc.TypeOfArc.READARC && sg.isXTPNreadArcDontTakeTokens())  {
                     continue; //tylko jeżeli w ogóle nie pobieramy tokenów z miejsc, to i ich nie zwracamy...
