@@ -1299,7 +1299,27 @@ public class ProjectReader {
 				transition.getTextsLocations(GUIManager.locationMoveType.TAU).get(eLocIndex).setNotSnappedPosition(newP);
 				return;
 			}
-			
+
+            query = "Transition invisible:";
+            if(line.contains(query)) {
+                line = line.substring(line.indexOf(query)+query.length());
+                line = line.replace(">","");
+                if(line.contains("true")) {
+                    transition.setInvisibility(true);
+                }
+                return;
+            }
+
+            query = "Transition knockout:";
+            if(line.contains(query)) {
+                line = line.substring(line.indexOf(query)+query.length());
+                line = line.replace(">","");
+                if(line.contains("true")) {
+                    transition.setKnockout(true);
+                }
+                return;
+            }
+            
 			query = "Transition colored:";
 			if(line.contains(query)) {
 				line = line.substring(line.indexOf(query)+query.length());
