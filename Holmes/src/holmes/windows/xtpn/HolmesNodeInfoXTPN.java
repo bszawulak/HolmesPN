@@ -587,15 +587,30 @@ public class HolmesNodeInfoXTPN extends JFrame {
         checkKboundButton.setMargin(new Insets(0, 0, 0, 0));
         checkKboundButton.setBounds(subPanelX, subPanelY, 130, 32);
         checkKboundButton.addActionListener(actionEvent -> {
-            placeSecondPanelResults.setText("");
-
+            placeSecondPanelResults.setText("Simple Mode");
             long maxSteps = MaxTokensBoundCalculator.maxSteps(thePlace);
+            long result = MaxTokensBoundCalculator.computeUpperBoundForPlace(thePlace, maxSteps);
             placeSecondPanelResults.append("Place: "+thePlace.getName()+"\n");
             placeSecondPanelResults.append("Max steps: "+maxSteps+"\n");
-            
-            long result = MaxTokensBoundCalculator.computeUpperBoundForPlace(thePlace, maxSteps);
-            
             placeSecondPanelResults.append("Tokens per place: "+result+"\n");
+
+            placeSecondPanelResults.append("\n");
+            placeSecondPanelResults.append("Ext Safe Mode\n");
+            long stepsExt = MaxTokensBoundCalculator.maxStepsExtended(thePlace);
+            boolean unsafePlaces = false; // EXT_SAFE
+            int maxTokensExtSafe = MaxTokensBoundCalculator.computeUpperBoundForPlaceExtended(thePlace, stepsExt, unsafePlaces);
+            placeSecondPanelResults.append("Max steps (EXT SAFE): "+stepsExt+"\n");
+            placeSecondPanelResults.append("Tokens per place (EXT SAFE): "+maxTokensExtSafe+"\n");
+
+            /*
+            placeSecondPanelResults.append("\n");
+            placeSecondPanelResults.append("Ext UnSafe Mode\n");
+            unsafePlaces = true; // EXT_UNSAFE
+            int maxTokensExtUnsafe = MaxTokensBoundCalculator.computeUpperBoundForPlaceExtended(thePlace, stepsExt, unsafePlaces);
+            placeSecondPanelResults.append("Max steps (EXT UNSAFE): "+stepsExt+"\n");
+            placeSecondPanelResults.append("Tokens per place (EXT UNSAFE): "+maxTokensExtUnsafe+"\n");
+            */
+
         });
         analP_firstPanel.add(checkKboundButton);
 
@@ -606,7 +621,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
         CreationPanel.add(new JScrollPane(placeSecondPanelResults), BorderLayout.CENTER);
-        CreationPanel.setBounds(subPanelX, subPanelY, 755, 120);
+        CreationPanel.setBounds(subPanelX, subPanelY, 755, 240);
         analP_firstPanel.add(CreationPanel);
 
 
