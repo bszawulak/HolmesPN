@@ -593,7 +593,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             placeSecondPanelResults.append("Place: "+thePlace.getName()+"\n");
             placeSecondPanelResults.append("Max steps: "+maxSteps+"\n");
             
-            long result = MaxTokensBoundCalculator.computeUpperBoundForPlace(thePlace);
+            long result = MaxTokensBoundCalculator.computeUpperBoundForPlace(thePlace, maxSteps);
             
             placeSecondPanelResults.append("Tokens per place: "+result+"\n");
         });
