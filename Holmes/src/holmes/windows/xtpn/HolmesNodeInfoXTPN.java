@@ -1,6 +1,7 @@
 package holmes.windows.xtpn;
 
 import holmes.analyse.XTPN.AlgorithmsXTPN;
+import holmes.analyse.XTPN.MaxTokensBoundCalculator;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.LanguageManager;
 import holmes.darkgui.dockwindows.SharedActionsXTPN;
@@ -586,13 +587,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
         checkKboundButton.setMargin(new Insets(0, 0, 0, 0));
         checkKboundButton.setBounds(subPanelX, subPanelY, 130, 32);
         checkKboundButton.addActionListener(actionEvent -> {
-            AlgorithmsXTPN alg1 = new AlgorithmsXTPN();
             placeSecondPanelResults.setText("");
-            long maxSteps = alg1.calculateMaxStepsNumberPreAlg1(thePlace, 100, -1, true);
+
+            long maxSteps = MaxTokensBoundCalculator.maxSteps(thePlace);
             placeSecondPanelResults.append("Place: "+thePlace.getName()+"\n");
             placeSecondPanelResults.append("Max steps: "+maxSteps+"\n");
             
-            int result = alg1.getTokensPerPlaceAlg1(thePlace, 100, -1, true);
+            long result = MaxTokensBoundCalculator.computeUpperBoundForPlace(thePlace);
             
             placeSecondPanelResults.append("Tokens per place: "+result+"\n");
         });

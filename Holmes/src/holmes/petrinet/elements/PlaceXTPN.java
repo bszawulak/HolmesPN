@@ -357,6 +357,14 @@ public class PlaceXTPN extends Place {
     }
 
     /**
+     * Metoda zwraca kopię obiektu listy tokenów
+     * @return (<b>ArrayList[Double]</b>) - multizbiór K miejsca XTPN.
+     */
+    public ArrayList<Double> copyMultiset() {
+        return new ArrayList<>(multisetK);
+    }
+
+    /**
      * Podmienia multizbiór na nowy (np. przy zmianie stanu na jeden z przechowywanych).
      * @param newMultiset (<b>ArrayList[Double]</b>) nowy multizbiór.
      */
