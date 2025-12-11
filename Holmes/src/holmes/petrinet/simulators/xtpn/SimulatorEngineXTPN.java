@@ -122,9 +122,9 @@ public class SimulatorEngineXTPN implements IEngineXTPN {
      */
     public ArrayList<NextXTPNstep> revalidateNetState() {
         ArrayList<NextXTPNstep> classicalInputOnes = new ArrayList<>(); //klasyczne wejściowe będą uruchamiane osobno 50/50
-        for(PlaceXTPN place : places) { //czyszczenie miejsc ze starych tokenów:
-            place.removeOldTokens_XTPN();
-        }
+        //for(PlaceXTPN place : places) { //czyszczenie miejsc ze starych tokenów:
+        //    place.removeOldTokens_XTPN();
+       // }
 
         //tutaj uruchamiany tranzycje wejściowe, one są niewrażliwe na zmiany czasów w tokenach
         for(TransitionXTPN transition : transitions) {

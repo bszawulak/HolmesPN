@@ -60,6 +60,7 @@ public class HolmesSimKnockActions {
 					lang.getText("HSKAwin_entry002"), lang.getText("problem"), JOptionPane.WARNING_MESSAGE);
 			return;
 		}
+
 		
 		boolean success =  boss.ssimKnock.initiateSim(true, null);
 		if(!success) {

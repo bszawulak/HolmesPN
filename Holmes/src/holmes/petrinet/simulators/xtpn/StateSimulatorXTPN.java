@@ -296,6 +296,12 @@ public class StateSimulatorXTPN implements Runnable {
         for (PlaceXTPN place : places) {
             if (place.isGammaModeActive()) {
                 placesTokensVector.add((double) place.accessMultiset().size());
+
+                if(place.accessMultiset().size() > 990) {
+                    int x=111;
+                    int y = 2;
+                    x=3;
+                }
             } else {
                 placesTokensVector.add((double) place.getTokensNumber());
             }
@@ -480,8 +486,7 @@ public class StateSimulatorXTPN implements Runnable {
      * @return (<b>ArrayList[ArrayList[Double]]</b>) - dwa wektory, pierwszy liczy tokeny w każdym kroku, drugi
      * zawiera informację o czasie wykonania kroku.
      */
-    public ArrayList<ArrayList<Double>> simulateNetSinglePlace(SimulatorGlobals ownSettings, PlaceXTPN place
-            , int repetitions) {
+    public ArrayList<ArrayList<Double>> simulateNetSinglePlace(SimulatorGlobals ownSettings, PlaceXTPN place, int repetitions) {
 
         ArrayList<Double> tokensNumber = new ArrayList<>();
         ArrayList<Double> timeVector = new ArrayList<>();

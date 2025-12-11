@@ -818,7 +818,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
             for(int step=0; step<stepsVectorPlaces.size(); step++) {
                 double value = stepsVectorPlaces.get(step);
                 sumTokens += value;
-                if(interval++ == maxInterval) {
+                interval++;
+                if(interval == maxInterval) {
                     sumTokens /= maxInterval;
                     if(placeChartType == 0) {
                         series.add(step, (int) sumTokens);
@@ -1882,8 +1883,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 } else {
                     firing++;
                 }
-
-                if(interval++ == maxInterval) {
+                interval++;
+                if(interval == maxInterval) {
                     inactive /= maxInterval;
                     active /= maxInterval;
                     producing /= maxInterval;
