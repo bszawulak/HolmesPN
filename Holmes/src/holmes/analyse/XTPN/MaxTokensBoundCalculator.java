@@ -409,12 +409,11 @@ public final class MaxTokensBoundCalculator {
 
             // Upływ czasu
             updateMultiset(multisetK, gammaU);
-
+            
             if (multisetK.size() > maxTokens) {
                 maxTokens = multisetK.size();
             }
         }
-
         return maxTokens;
     }
 
@@ -422,7 +421,6 @@ public final class MaxTokensBoundCalculator {
         if (placeXTPN == null) {
             throw new IllegalArgumentException("placeXTPN must not be null");
         }
-
         // ================================================================
         // KROK 0: Prosty algorytm (tylko wejścia) – formalne górne ograniczenie
         // ================================================================
@@ -813,6 +811,7 @@ public final class MaxTokensBoundCalculator {
         final int gammaU = cachedGammaUExt;
         final int gammaL = cachedGammaLExt;
         HolmesNotepad notePad = null;
+        notePad = new HolmesNotepad(900,600);
 
         ArrayList<Double> initialMultiset = placeXTPN.copyMultiset();
         ArrayList<Integer> multisetK = new ArrayList<>();
@@ -880,10 +879,7 @@ public final class MaxTokensBoundCalculator {
                     timeProd[i] = fastProd[i];
                 }
             }
-
-            // 2. Upływ czasu
-            updateMultiset(multisetK, gammaU);
-
+            
             // 3. Konsumpcja – z uwzględnieniem aktywującego podzbioru
             for (int i = 0; i < numberOfConsumers; i++) {
                 int need = weightCons[i];
@@ -916,15 +912,18 @@ public final class MaxTokensBoundCalculator {
                 maxTokens = multisetK.size();
             }
 
-            //notePad = new HolmesNotepad(900,600);
-            //notePad.addTextLine(" :" + step + " |K|=" + multisetK.size() + "   ={ ", "text");
-           // for (int age : multisetK)
-            //    notePad.addTextLine(" " + age, "text");
-            //notePad.addTextLineNL(" }", "text");
+            notePad.addTextLine(" :" + step + " |K|=" + multisetK.size() + "   ={ ", "text");
+            for (int age : multisetK)
+                notePad.addTextLine(" " + age, "text");
+            notePad.addTextLineNL(" }", "text");
+
+            // 2. Upływ czasu
+            updateMultiset(multisetK, gammaU);
+            
         }
 
-        //notePad.setVisible(true);
-        //notePad.addTextLineNL("", "text");
+        notePad.setVisible(true);
+        notePad.addTextLineNL("", "text");
         return maxTokens;
     }
 
