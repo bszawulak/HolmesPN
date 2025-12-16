@@ -928,7 +928,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
         CreationPanel.add(new JScrollPane(transSecondPanelResults), BorderLayout.CENTER);
-        CreationPanel.setBounds(subPanelX, subPanelY, 755, 120);
+        CreationPanel.setBounds(subPanelX, subPanelY, 755, 240);
         analP_firstPanel.add(CreationPanel);
 
 
