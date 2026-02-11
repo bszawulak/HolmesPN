@@ -8,7 +8,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.TreeMap;
 
 import javax.swing.AbstractButton;
@@ -297,6 +299,18 @@ public class HolmesSimKnockVis extends JFrame {
 			}
 		});
 		result.add(showNotepadButton);
+
+		JButton showNotepadButton2 = new JButton("CSV"); //Show notepad summary
+		showNotepadButton2.setBounds(posXda+960, posYda+20, 60, 15);
+		showNotepadButton2.setMargin(new Insets(0, 0, 0, 0));
+		//showNotepadButton2.setIcon(Tools.getResIcon16("/icons/simulationKnockout/visRefDataSeriesNotepadButton.png"));
+		showNotepadButton2.addActionListener(actionEvent -> {
+			int selected = seriesCombo.getSelectedIndex() - 1;
+			if(selected > -1) {
+				createCompareAllTablesNotepadCSV(selected);
+			}
+		});
+		result.add(showNotepadButton2);
 		
 		JCheckBox sortedCheckBox = new JCheckBox(lang.getText("HSKVwin_entry019")); //Notepad
 		sortedCheckBox.setBounds(posXda+960, posYda, 80, 20);
@@ -1458,11 +1472,11 @@ public class HolmesSimKnockVis extends JFrame {
 		notePad.addTextLineNL("===============================================================================", "text");
 		notePad.addTextLineNL("", "text");
 
-    	for(int t=0; t<transNumber; t++) {
-    		NetSimulationData dataSet = dataPackage.get(t);
+    	for(int currentTrans=0; currentTrans<transNumber; currentTrans++) {
+    		NetSimulationData dataSet = dataPackage.get(currentTrans);
 			strB = "err.";
 			try {
-				strB = String.format(lang.getText("HSKVwin_entry051"), t, transitions.get(t).getName());
+				strB = String.format(lang.getText("HSKVwin_entry051"), currentTrans, transitions.get(currentTrans).getName()); //*** t%d_%s    disabled manually. Impact on the net:
 			} catch (Exception e) {
 				overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry051", "error", true);
 			}
@@ -1470,7 +1484,7 @@ public class HolmesSimKnockVis extends JFrame {
     		notePad.addTextLineNL(strB, "text");
     		ArrayList<Integer> transVector = new ArrayList<>();
     		for(int t1=0; t1<transNumber; t1++) {
-    			if(t == t1)
+    			if(currentTrans == t1)
     				transVector.add(0);
     			else
     				transVector.add(1);
@@ -1499,7 +1513,7 @@ public class HolmesSimKnockVis extends JFrame {
 					try {
 						strB = String.format("      "+lang.getText("HSKVwin_entry053"), formatter2.format(value), t1, transitions.get(t1).getName());
 					} catch (Exception e) {
-						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry053", "error", true);
+						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry053", "error", true); //(DEAD IN REF, ALIVE IN SERIES) [avg fire chance: %s%%]  t%d_%s
 					}
 					
     				notePad.addTextLineNL(strB, "text");
@@ -1510,6 +1524,7 @@ public class HolmesSimKnockVis extends JFrame {
     				double value = refSet.transFiringsAvg.get(t1) * 100;
 					strB = "err.";
 					try {
+						//HSKVwin_entry054:  (KNOCKED OUT IN SERIES SET) [avg fired chance in reference:
 						strB = String.format("      "+lang.getText("HSKVwin_entry054")+" " +formatter2.format(value)+"%%]  t%d_%s", t1, transitions.get(t1).getName());
 					} catch (Exception e) {
 						overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry054", "error", true);
@@ -1558,6 +1573,7 @@ public class HolmesSimKnockVis extends JFrame {
     			} 
     			
     			if(key > 20) {
+					//(INCREASED) [change +
     				notePad.addTextLineNL("      "+lang.getText("HSKVwin_entry057")+" "+formatter1.format(key)+"%%] "
     						+data.get(key), "text");
     			}
@@ -2057,5 +2073,97 @@ public class HolmesSimKnockVis extends JFrame {
 	    	text.append("</font></html>");
 	    	return text.toString();
 	    }
+	}
+
+
+	private void createCompareAllTablesNotepadCSV(int selected) {
+		long IDseries = pn.accessSimKnockoutData().accessSeries().get(selected);
+		ArrayList<NetSimulationData> dataPackage = pn.accessSimKnockoutData().getSeriesDatasets(IDseries);
+		int selRef = referencesCombo.getSelectedIndex() - 1;
+		if(selRef == -1) {
+			JOptionPane.showMessageDialog(null,
+					lang.getText("HSKVwin_entry044"), lang.getText("HSKVwin_entry044t"), JOptionPane.WARNING_MESSAGE);
+			seriesCombo.setSelectedIndex(0);
+			return;
+		}
+		NetSimulationData refSet = pn.accessSimKnockoutData().getReferenceSet(selRef);
+		if(dataPackage == null) {
+			return;
+		}
+
+		int transNumber = dataPackage.get(0).transNumber;
+		int placesNumber = dataPackage.get(0).placesNumber;
+		if(transNumber == 0 || placesNumber == 0)
+			return;
+
+		HolmesNotepad notePad = new HolmesNotepad(900,600);
+		notePad.setVisible(true);
+		String strB = "err.";
+		try {
+			strB = String.format(lang.getText("HSKVwin_entry049"), selected);
+		} catch (Exception e) {
+			overlord.log(lang.getText("LOGentryLNGexc")+" "+"HSKVwin_entry049", "error", true);
+		}
+		notePad.addTextLineNL("CSV", "text");
+		notePad.addTextLineNL("===============================================================================", "text");
+		notePad.addTextLineNL("", "text");
+
+		String csvHeader = ";";
+		for(int currentTrans=0; currentTrans<transNumber; currentTrans++) {
+			csvHeader += "t"+currentTrans+";";
+		}
+		notePad.addTextLineNL(csvHeader, "text");
+
+		ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
+		for(int currentTrans=0; currentTrans<transNumber; currentTrans++){
+			NetSimulationData dataSet = dataPackage.get(currentTrans); //odpowiedni pakiet knockoutowy
+
+			String line = "";
+			for(int secondTrans=0; secondTrans<transNumber; secondTrans++) {
+				if(currentTrans==secondTrans)
+				{
+					line += "-inf";
+					if(secondTrans != transNumber-1)
+						line += ";";
+					continue;
+				} else {
+					double refSetFiring = refSet.transFiringsAvg.get(secondTrans);
+					double dataSetFiring = dataSet.transFiringsAvg.get(secondTrans);
+					final double EPS = 1e-12; // tolerancja na "prawie zero" z obliczeń
+					String result;
+
+					boolean refZero  = Math.abs(refSetFiring)  < EPS;
+					boolean dataZero = Math.abs(dataSetFiring) < EPS;
+					if (refZero && dataZero) {
+						result = "dead";
+					} else if (refZero && dataSetFiring > EPS) {
+						result = "+inf";
+					} else if (!refZero && dataZero) {
+						result = "-inf";
+					} else {
+						double percent = ((dataSetFiring - refSetFiring) / refSetFiring) * 100.0;
+						// unikaj "-0.0%"
+						if (Math.abs(percent) < EPS) percent = 0.0;
+						// formatowanie: 1 miejsce po przecinku (zmień wzorzec, jeśli chcesz inaczej)
+						DecimalFormatSymbols sym = new DecimalFormatSymbols(Locale.forLanguageTag("pl-PL"));
+						DecimalFormat df = new DecimalFormat("0.0", sym);
+						result = df.format(percent) + "%";
+					}
+					line += result;
+					if(secondTrans != transNumber-1)
+						line += ";";
+				}
+			}
+			notePad.addTextLineNL(line, "text");
+		}
+
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("", "text");
+		notePad.addTextLineNL("===============================================================================", "text");
+		notePad.addTextLineNL(" "+lang.getText("HSKVwin_entry058"), "text");
+		notePad.addTextLineNL("===============================================================================", "text");
+		notePad.addTextLineNL("", "text");
+
 	}
 }
