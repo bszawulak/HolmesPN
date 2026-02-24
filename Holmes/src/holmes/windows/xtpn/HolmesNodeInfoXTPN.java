@@ -1,5 +1,6 @@
 package holmes.windows.xtpn;
 
+import holmes.analyse.XTPN.ActivationAnalyzerXTPN;
 import holmes.analyse.XTPN.AlgorithmsXTPN;
 import holmes.analyse.XTPN.MaxTokensBoundCalculator;
 import holmes.darkgui.GUIManager;
@@ -915,9 +916,76 @@ public class HolmesNodeInfoXTPN extends JFrame {
         checkKboundButton.setBounds(subPanelX, subPanelY, 130, 32);
         checkKboundButton.addActionListener(actionEvent -> {
             //ArrayList<Integer> result = AlgorithmsXTPN.getTokensPerPlace(thePlace, 100, -1, false);
-            //placeSecondPanelResults.setText("");
-            //placeSecondPanelResults.append("Place: "+thePlace.getName()+"\n");
-            //placeSecondPanelResults.append("Tokens per place: "+result.get(0).toString()+"\n");
+            //transSecondPanelResults.setText("");
+            //transSecondPanelResults.append("Place: "+thePlace.getName()+"\n");
+            //transSecondPanelResults.append("Tokens per place: "+result.get(0).toString()+"\n");
+
+            // Załóżmy, że jesteś wewnątrz kodu obsługi przycisku (np. actionPerformed)
+            // i masz: TransitionXTPN theTransition; JTextArea placeSecondPanelResults;
+
+            try {
+                transSecondPanelResults.setText("");
+                transSecondPanelResults.append("Transition: " + theTransition.getName() + "\n");
+
+                // --- parametry analizy (przykład) ---
+                int param = 1;                    // 1 = best, 2 = worst
+                boolean includeCompetitors = true; // czy uwzględniać competitors
+                boolean simplifiedHorizon = true;  // uproszczony horyzont (LCM + max(gammaU))
+
+                // --- 1) inicjalizacja + horyzont ---
+                long maxSteps = ActivationAnalyzerXTPN.initialize(
+                        theTransition,
+                        param,
+                        includeCompetitors,
+                        simplifiedHorizon
+                );
+
+                if (maxSteps <= 0L) {
+                    // initialize() już pokaże JOptionPane przy błędzie, ale tu dopiszmy log do JTextArea
+                    transSecondPanelResults.append("Initialization failed (maxSteps = 0).\n");
+                    return;
+                }
+
+                transSecondPanelResults.append("Max steps (horizon): " + maxSteps + "\n");
+
+                // --- 2) właściwa analiza ---
+                int result = ActivationAnalyzerXTPN.analyzeActivationChances(theTransition, maxSteps);
+
+                if (result < 0) {
+                    transSecondPanelResults.append("Analysis failed (cache mismatch or invalid args).\n");
+                    return;
+                }
+
+                // --- 3) odczyt alfa^L / alfa^U badanej tranzycji (do komunikatu) ---
+                // Uwaga: w analyzerze mogliśmy robić 0->1 dla L (po zgodzie użytkownika),
+                // a tu bierzemy "surowe" wartości z obiektu. To jest tylko opis do UI.
+                int alphaL = (int) Math.round(theTransition.getAlphaMinValue());
+                int alphaU = (int) Math.round(theTransition.getAlphaMaxValue());
+                if (alphaL < 0) alphaL = 0;
+                if (alphaU < 0) alphaU = 0;
+
+                // --- 4) interpretacja wyniku ---
+                transSecondPanelResults.append("Result (max continuous activation time): " + result + "\n");
+                transSecondPanelResults.append("Alpha window: [" + alphaL + ", " + alphaU + "]\n");
+
+                if (result >= alphaU) {
+                    transSecondPanelResults.append("Status: FULL activation window achievable (result == alpha^U).\n");
+                } else if (result >= alphaL) {
+                    transSecondPanelResults.append("Status: PARTIAL window achievable (alpha^L <= result < alpha^U).\n");
+                } else {
+                    transSecondPanelResults.append("Status: Activation does NOT reach alpha^L (result < alpha^L).\n");
+                }
+
+                transSecondPanelResults.append("\nParameters:\n");
+                transSecondPanelResults.append(" - param = " + param + " (" + (param == 1 ? "best" : "worst") + ")\n");
+                transSecondPanelResults.append(" - includeCompetitors = " + includeCompetitors + "\n");
+                transSecondPanelResults.append(" - simplifiedHorizon = " + simplifiedHorizon + "\n");
+
+            } catch (Exception ex) {
+                transSecondPanelResults.append("Exception: " + ex.getMessage() + "\n");
+                //ex.printStackTrace();
+            }
+
         });
         analP_firstPanel.add(checkKboundButton);
 
