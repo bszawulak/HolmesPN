@@ -195,6 +195,7 @@ public class ProjectWriter {
 					bw.write(">" + newline); //tokeny
 				}
 
+				bw.write(spaces(sp)+"<Place invisible:"+place.isInvisible()+">"+newline);
 				bw.write(spaces(sp)+"<Place colored:"+place.isColored+">"+newline);
 				if(place instanceof PlaceColored) {
 					bw.write(spaces(sp)+"<Place colors:"
@@ -281,7 +282,9 @@ public class ProjectWriter {
 					bw.write(spaces(sp)+"<Transition XTPN fractionSize:"+((TransitionXTPN)trans).getFraction_xTPN()+">"+newline); //dokładność po przecinku
 					bw.write(spaces(sp)+"<Transition XTPN immediate:"+((TransitionXTPN)trans).isImmediateXTPN()+">"+newline); //czy immediate (dla classXTPN)
 				}
-				
+
+                bw.write(spaces(sp)+"<Transition invisible:"+trans.isInvisible()+">"+newline);
+                bw.write(spaces(sp)+"<Transition knockout:"+trans.isKnockedOut()+">"+newline);
 				bw.write(spaces(sp)+"<Transition colored:"+trans.isColored()+">"+newline); //is colored?
 				if(trans instanceof TransitionColored) {
 					bw.write(spaces(sp)+"<Transition colors threshold:"

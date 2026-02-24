@@ -500,7 +500,7 @@ public class InvariantsCalculator implements Runnable {
             int oldSize = globalIncidenceMatrix.size();
 
             logInternal(lang.getText("IC_entry052")+ " " + cand + lang.getText("IC_entry053")+ " " 
-                    + (oldSize + rowsChange) + lang.getText("IC_entry054")+ " " + stepsToFinish, false);
+                    + (oldSize + rowsChange) + lang.getText("IC_entry054")+ " " + stepsToFinish, true);
 
             generatedRows = findNewRows(cand); // na bazie globalIncidenceMatrix i Identity
             rewriteIncidenceIntegrityMatrices(generatedRows, cand);
@@ -546,7 +546,7 @@ public class InvariantsCalculator implements Runnable {
             int oldSize = globalIncidenceMatrix.size();
 
             logInternal(lang.getText("IC_entry052")+ " " + cand + lang.getText("IC_entry053")+" " 
-                    + (oldSize + rowsChange) + lang.getText("IC_entry054")+" " + stepsToFinish, false);
+                    + (oldSize + rowsChange) + lang.getText("IC_entry054")+" " + stepsToFinish, true);
 
             generatedRows = findNewRows(cand); // na bazie globalIncidenceMatrix i Identity
             rewriteIncidenceIntegrityMatrices(generatedRows, cand);
@@ -950,7 +950,7 @@ public class InvariantsCalculator implements Runnable {
         }
         //jeśli są nowe wiersze do dodania:
         int size = newRowsMatrix.size();
-        double interval = (double) size / 50;
+        double interval = (double) size / 100;
         int steps = 0;
 
         if (size > 1000) {
@@ -1135,7 +1135,7 @@ public class InvariantsCalculator implements Runnable {
      * @param date boolean - true, jeśli ma być podany czas komunikatu
      */
     private void logInternal(String msg, boolean date) {
-        String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+        String timeStamp = new SimpleDateFormat("MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
         if (masterWindow != null) {
             JTextArea jta = masterWindow.accessLogField(t_InvMode);
             if (!date) {

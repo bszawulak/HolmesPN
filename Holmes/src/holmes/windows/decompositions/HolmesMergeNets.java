@@ -152,6 +152,7 @@ public class HolmesMergeNets extends JFrame {
 		loadHolmesButton.setFocusPainted(false);
 		loadHolmesButton.setIcon(Tools.getResIcon32("/icons/mergeWindow/importFromHolmes.png"));
 		loadHolmesButton.setToolTipText("Load net from Holmes project file to merge with current one");
+		loadHolmesButton.setEnabled(false);
 		loadHolmesButton.addActionListener(actionEvent -> {
 			;
 		});
@@ -349,9 +350,12 @@ public class HolmesMergeNets extends JFrame {
 	 * Przeprowadza procedurę łączenia sieci.
 	 */
 	private void mergeNets() {
-		if(newNodes == null || newNodes.size() == 0)
+		if (newNodes == null || newNodes.size() == 0) {
+			//pokaż komunikat o błędzie
+			JOptionPane.showMessageDialog(ego, "No imported net to merge with the project net.\nPlease load a net first.", 
+					"Merge nets", JOptionPane.ERROR_MESSAGE);
 			return;
-		
+		}
 		Dimension dimSheet0 = getSheet0NetSize(); //maksymalne rozmiary oryginalnej sieci
 		Dimension dimImportedNet = getImportedNetSize(); //maksymalne rozmiary wczytanej sieci
 
@@ -494,6 +498,15 @@ public class HolmesMergeNets extends JFrame {
 		overlord.markNetChange();
 		
 		pn.repaintAllGraphPanels();
+		
+		//pokaż messagebox z informacją o zakończeniu
+		JOptionPane.showMessageDialog(ego, "Nets merged successfully.\nPlease check the result in the main window.", 
+				"Merge nets", JOptionPane.INFORMATION_MESSAGE);
+		
+		newNodes.clear();
+		newArcs.clear();
+		newTransitions.clear();
+		newPlaces.clear();
 	}
 	
 	/**

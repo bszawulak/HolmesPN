@@ -191,52 +191,6 @@ public class PlaceXTPN extends Place {
     }
 
     /**
-     * Usuwa tokeny, których czas życia jest większy GammaMax.
-     * @return (<b>int</b>) - liczba usuniętych tokenów.
-     */
-    @SuppressWarnings("UnusedReturnValue")
-    public int removeOldTokens_XTPN() {
-        int removed = 0;
-        if(isGammaModeActive()) { //tylko gdy XTPN włączone
-            for (Iterator<Double> iterator = multisetK.iterator(); iterator.hasNext();) {
-                Double kappa = iterator.next();
-                if(kappa >= gammaMax_xTPN) {
-                    iterator.remove(); //metoda remove() iteratora
-                    removed++;
-                    continue;
-                }
-                if (Math.abs(gammaMax_xTPN - kappa) < overlord.simSettings.getCalculationsAccuracy()) {
-                    iterator.remove(); //close enough, brakuje 1e-9 lub mniej
-                    removed++;
-                    continue;
-                }
-                //czyli jeśli nie jest większy niż limit, ani nawet w okolicy, to kończymy
-                //bo cała reszta w kolejności jest jeszcze młodsza:
-                break;
-            }
-			/* //Smuteczek, nie można usuwać w pętli foreach, bo ConcurrentModificationException
-			for (Double kappa : multisetK) {
-				if(kappa >= gammaMax_xTPN) { //to na pewno
-					multisetK.remove(kappa);
-					removed++;
-					continue;
-				}
-				if (Math.abs(gammaMax_xTPN - kappa) < overlord.simSettings.getCalculationsAccuracy()) {
-					multisetK.remove(kappa); //close enough, brakuje 1e-9 lub mniej
-					removed++;
-					continue;
-				}
-				//czyli jeśli nie jest większy niż limit, ani nawet w okolicy, to kończymy
-				//bo cała reszta w kolejności jest jeszcze młodsza:
-				break;
-			}
-			 */
-        }
-        addTokensNumber(-removed);
-        return removed;
-    }
-
-    /**
      * Usuwa tokeny na potrzeby produkcji tranzycji XTPN.
      * @param howMany (<b>int</b>) ile usunąć.
      * @param mode (<b>int</b>) tryb: 0 - najstarsze, 1 - najmłodsze, 2 - losowe.
@@ -313,6 +267,8 @@ public class PlaceXTPN extends Place {
     public void incTokensTime_XTPN(double tau) {
         if(isGammaModeActive()) {
             multisetK.replaceAll(aDouble -> aDouble + tau);
+            //if multisetK element greater than gammaMax_xTPN - remove it:
+            removeOldTokens_XTPN();
         } else {
             String strB = "err.";
             try {
@@ -322,6 +278,34 @@ public class PlaceXTPN extends Place {
             }
             overlord.log(strB, "error", true);
         }
+    }
+
+    /**
+     * Usuwa tokeny, których czas życia jest większy GammaMax.
+     * @return (<b>int</b>) - liczba usuniętych tokenów.
+     */
+    public void removeOldTokens_XTPN() {
+        int removed = 0;
+        if(isGammaModeActive()) { //tylko gdy XTPN włączone
+            for (Iterator<Double> iterator = multisetK.iterator(); iterator.hasNext();) {
+                Double kappa = iterator.next();
+                if(kappa >= gammaMax_xTPN) {
+                    iterator.remove(); //metoda remove() iteratora
+                    removed++;
+                    continue;
+                }
+                if (Math.abs(gammaMax_xTPN - kappa) < overlord.simSettings.getCalculationsAccuracy()) {
+                    iterator.remove(); //close enough, brakuje 1e-9 lub mniej
+                    removed++;
+                    continue;
+                }
+                //czyli jeśli nie jest większy niż limit, ani nawet w okolicy, to kończymy
+                //bo cała reszta w kolejności jest jeszcze młodsza:
+                break;
+            }
+        }
+        addTokensNumber(-removed);
+        //return removed;
     }
 
     /**
@@ -354,6 +338,14 @@ public class PlaceXTPN extends Place {
      */
     public ArrayList<Double> accessMultiset() {
         return multisetK;
+    }
+
+    /**
+     * Metoda zwraca kopię obiektu listy tokenów
+     * @return (<b>ArrayList[Double]</b>) - multizbiór K miejsca XTPN.
+     */
+    public ArrayList<Double> copyMultiset() {
+        return new ArrayList<>(multisetK);
     }
 
     /**

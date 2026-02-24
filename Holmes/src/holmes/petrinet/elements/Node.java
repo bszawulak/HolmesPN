@@ -263,7 +263,9 @@ public abstract class Node extends PetriNetElement {
 				}
 			} else {
 				int x = metanodes.indexOf(this);
-				name = "M"+x;
+				MetaNode mn = (MetaNode)this;
+				String subnetName = mn.getName();
+				name = "M"+x+subnetName;
 			}
 		}
 		if (this instanceof Transition) {

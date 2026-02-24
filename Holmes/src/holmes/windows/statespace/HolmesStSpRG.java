@@ -1,6 +1,7 @@
 package holmes.windows.statespace;
 
 import holmes.darkgui.GUIManager;
+import holmes.petrinet.data.PetriNet;
 import holmes.petrinet.elements.Place;
 import holmes.petrinet.elements.Transition;
 import holmes.utilities.Tools;
@@ -134,8 +135,14 @@ public class HolmesStSpRG extends JFrame {
         ArrayList<Transition> transitions = overlord.getWorkspace().getProject().getTransitions();
         ArrayList<Place> places = overlord.getWorkspace().getProject().getPlaces();
 
+        
+
         if(transitions.size() > 1) {
             Transition t1 = overlord.getWorkspace().getProject().getTransitions().get(0);
+            double x = t1.spnExtension.getFiringRate();
+            
+            PetriNet pn = overlord.getWorkspace().getProject();
+            double x44 = pn.accessFiringRatesManager().getSPNdataVector(1).getFiringRate( transitions.indexOf(t1) );
             
             logField1stTab.append("Transition 1: "+t1.getName()+"\n");
             // pobierz miejsca wejściowe:
