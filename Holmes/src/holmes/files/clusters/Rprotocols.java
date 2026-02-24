@@ -7,10 +7,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.github.rcaller.rstuff.RCaller;
+import com.github.rcaller.rstuff.RCallerOptions;
+import com.github.rcaller.rstuff.RCode;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.LanguageManager;
-import rcaller.RCaller;
-import rcaller.RCode;
 
 /**
  * Klasa odpowiedzialna za uruchamianie skryptów środowiska R.
@@ -139,10 +140,13 @@ public class Rprotocols implements Runnable {
 			if(!commandsValidate.contains(line)) {
 				continue;
 			}
-			RCaller rcaller = new RCaller();
-			RCode code = new RCode();
-			rcaller.setRscriptExecutable(pathToR);
-			rcaller.cleanRCode();
+
+			RCallerOptions options = RCallerOptions.create();
+			options.setrScriptExecutable(pathToR);
+			RCaller rcaller = RCaller.create(options);
+			RCode code = RCode.create(options);
+			//rcaller.cleanRCode();
+			code.clear();
 			code.addRCode(str);
 
 			overlord.log(lang.getText("LOGentry00085")+ " "+line, "text", true);
@@ -185,10 +189,19 @@ public class Rprotocols implements Runnable {
 				continue;
 			}
 			//counter++;
+			/*
 			RCaller rcaller = new RCaller();
 			RCode code = new RCode();
 			rcaller.setRscriptExecutable(pathToR);
 			rcaller.cleanRCode();
+			code.addRCode(str);
+			*/
+			RCallerOptions options = RCallerOptions.create();
+			options.setrScriptExecutable(pathToR);
+			RCaller rcaller = RCaller.create(options);
+			RCode code = RCode.create(options);
+			//rcaller.cleanRCode();
+			code.clear();
 			code.addRCode(str);
 
 			overlord.log(lang.getText("LOGentry00087")+ " "+line, "text", true);
@@ -215,12 +228,22 @@ public class Rprotocols implements Runnable {
 		fis.close();
 		
 		String str = new String(data, "UTF-8");
-		
+
+		/*
 		RCaller rcaller = new RCaller();
 		RCode code = new RCode();
 		rcaller.setRscriptExecutable(pathToR);
 		rcaller.cleanRCode();
 		code.addRCode(str);
+		*/
+		RCallerOptions options = RCallerOptions.create();
+		options.setrScriptExecutable(pathToR);
+		RCaller rcaller = RCaller.create(options);
+		RCode code = RCode.create(options);
+		//rcaller.cleanRCode();
+		code.clear();
+		code.addRCode(str);
+
 		String function = "veni1(\"" + miara_odl + "\",\"" + algorytm_c + "\", \"" + pathOutput + "\",\"" + fileNameCSV + "\"," + nrClusters + ")";
 		code.addRCode(function);
 		String filename = pathOutput + algorytm_c + "_" + miara_odl + "_clusters_ext_" + nrClusters + ".txt";

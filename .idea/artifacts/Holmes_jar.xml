@@ -1,0 +1,23 @@
+<component name="ArtifactManager">
+    <artifact type="jar" name="Holmes:jar">
+        <output-path>$PROJECT_DIR$/output/artifacts/Holmes_jar</output-path>
+        <root id="archive" name="Holmes.jar">
+            <element id="directory" name="META-INF">
+                <element id="file-copy" path="$PROJECT_DIR$/Holmes/resources/META-INF/MANIFEST.MF" />
+            </element>
+            <element id="module-output" name="Holmes" />
+            <element id="library" level="project" name="javadoc" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/jxl.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/jep-2.23.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/Jama-1.0.3.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/exp4j-0.4.5.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/xstream-1.4.4.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/xstream-1.4.7.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/jcommon-1.0.23.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/simple-xml-2.6.9.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/jfreechart-1.0.19.jar" path-in-jar="/" />
+            <element id="extracted-dir" path="$PROJECT_DIR$/Holmes/libraries/RCaller-2.4-SNAPSHOT.jar" path-in-jar="/" />
+            <element id="library" level="project" name="lib" />
+        </root>
+    </artifact>
+</component>
