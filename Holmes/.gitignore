@@ -2,3 +2,5 @@
 /tmp/
 /abyss.cfg
 /holmes.cfg
+*.iml
+/.idea/
