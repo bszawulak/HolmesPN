@@ -350,7 +350,8 @@ public abstract class Node extends PetriNetElement {
 					} else {
 						g.setColor(Color.GRAY);
 						g.setFont(f_SmallL);
-						g.drawString("(NORMAL PLACE)", drawX, drawY);
+						// [MR 2026.03.09] usunięcie napisu
+						//g.drawString("(NORMAL PLACE)", drawX, drawY);
 					}
 				}
 			}

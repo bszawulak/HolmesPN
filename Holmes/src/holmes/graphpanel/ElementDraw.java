@@ -566,10 +566,11 @@ public final class ElementDraw {
 
 					} else {
 						g.setColor(Color.LIGHT_GRAY);
-						g.drawLine(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.x + 27, nodeBounds.y + 10);
-						g.drawLine(nodeBounds.x + 10, nodeBounds.y + 27, nodeBounds.x + 27, nodeBounds.y + 27);
-						g.drawLine(nodeBounds.x + 11, nodeBounds.y + 11, nodeBounds.x + 26, nodeBounds.y + 26);
-						g.drawLine(nodeBounds.x + 11, nodeBounds.y + 26, nodeBounds.x + 26, nodeBounds.y + 11);
+						//[MR 2026.03.09] usunięcie klepsydry
+						//g.drawLine(nodeBounds.x + 10, nodeBounds.y + 10, nodeBounds.x + 27, nodeBounds.y + 10);
+						//g.drawLine(nodeBounds.x + 10, nodeBounds.y + 27, nodeBounds.x + 27, nodeBounds.y + 27);
+						//g.drawLine(nodeBounds.x + 11, nodeBounds.y + 11, nodeBounds.x + 26, nodeBounds.y + 26);
+						//g.drawLine(nodeBounds.x + 11, nodeBounds.y + 26, nodeBounds.x + 26, nodeBounds.y + 11);
 					}
 					g.setColor(Color.black);
 
