@@ -25,8 +25,7 @@ public class NetToNotepad {
         if(transitions.isEmpty()) {
             notePad.addTextLineNL("No transitions in the net.", "text");
         } else {
-            
-            notePad.addTextLineNL("Transitions:", "text");  
+            notePad.addTextLineNL("Transitions: (format:  name (t+id) [eft: value, lft: value] )", "text");  
             notePad.addTextLineNL("", "text");
             
             for (Transition t : transitions) {
@@ -38,11 +37,14 @@ public class NetToNotepad {
             }
         }
         notePad.addTextLineNL("", "text");
-        notePad.addTextLineNL("Places:", "text");
+        notePad.addTextLineNL("Places: (format:  name (p+id) [tokens number if any] )", "text");
         notePad.addTextLineNL("", "text");
         for(Place p : places) {
             String placeText = p.getName() + " (p" + places.indexOf(p) + ")";
-            notePad.addTextLineNL(placeText, "text");
+            String tokens = "";
+            if(p.getTokensNumber() > 0)
+                tokens = " ["+p.getTokensNumber() + "]";
+            notePad.addTextLineNL(placeText+tokens, "text");
         }
         
         //list of arcs, in format tx (where x is index of transition in transitions list) -> py (where y is index of place in places list)
@@ -51,7 +53,7 @@ public class NetToNotepad {
         //łuki wyjściowe z tranzycji:
         notePad.addTextLineNL("", "text");
         notePad.addTextLineNL("Arcs:", "text");
-        notePad.addTextLineNL("Output arcs from transitions:", "text");
+        notePad.addTextLineNL("Output arcs from transitions: (when [read arc] then have counterpart in output arcs from places below)", "text");
         for(Transition t : transitions) {
             int elLocations = t.getElementLocations().size();
             for(int e=0; e<elLocations; e++) { //wszystkie lokalizacje tranzycji
@@ -78,7 +80,7 @@ public class NetToNotepad {
 
         //łuki wyjściowe z miejsc:
         notePad.addTextLineNL("", "text");
-        notePad.addTextLineNL("Output arcs from places:", "text");
+        notePad.addTextLineNL("Output arcs from places: (when [read arc] then have counterpart in output arcs from transitions above)", "text");
         for(Place p : places) {
             int elLocations = p.getElementLocations().size();
             for(int e=0; e<elLocations; e++) { //wszystkie lokalizacje miejsca
