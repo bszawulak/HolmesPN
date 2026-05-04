@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 
+import holmes.analyse.NetToNotepad;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.LanguageManager;
 import holmes.files.io.IOprotocols;
@@ -189,7 +190,8 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         netMenu.add(createMenuItem(lang.getText("SPM_entry019"), "", null, arg0 -> overlord.io.markTransitions(1))); //Show DPN transitions
         netMenu.add(createMenuItem(lang.getText("SPM_entry020"), "", null, arg0 -> overlord.io.markTransitions(2))); //Show TPN/DPN transitions
         netMenu.add(createMenuItem(lang.getText("SPM_entry021"), "", null, arg0 -> overlord.subnetsHQ.checkSnoopyCompatibility())); //Fix Snoopy compatibility
-
+        netMenu.add(createMenuItem("ShowStruct", "", null, arg0 -> showStructNotepad())); //Show struct notepad
+        
         if(sheetID != 0) {
             netMenu.add(createMenuItem(lang.getText("SPM_entry022"), "", null, arg0 -> overlord.testRemovePanel(sheetID)  ) ); //Remove panel
         }
@@ -230,6 +232,12 @@ public class SheetPopupMenu extends GraphPanelPopupMenu {
         if (getGraphPanel().getSheetId() != 0) {
             this.addMenuItem(lang.getText("SPM_entry026"), "", e ->SubnetsActions.addExistingElement(graphPanel) ); //Add existing node
         }
+    }
+
+    private void showStructNotepad() {
+        //[MR2026]
+        NetToNotepad netToNotepad = new NetToNotepad();
+        netToNotepad.exportToNotepad();
     }
 
     /**
