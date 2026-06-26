@@ -25,25 +25,62 @@ public class NetToNotepad {
         if(transitions.isEmpty()) {
             notePad.addTextLineNL("No transitions in the net.", "text");
         } else {
-            notePad.addTextLineNL("Transitions: (format:  name (t+id) [eft: value, lft: value] )", "text");  
-            notePad.addTextLineNL("", "text");
+            if(transitions.get(transitions.size() - 1) instanceof TransitionXTPN) {
+                notePad.addTextLineNL("Transitions XTPN: (format:   name (t+id) [\u03B1^L: value, \u03B1^U: value, \u03B2^L: value, \u03B2^U: value] )", "text");
+                notePad.addTextLineNL("", "text");
+            } else {
+                notePad.addTextLineNL("Transitions: (format:  name (t+id) [eft: value, lft: value] )", "text");
+                notePad.addTextLineNL("", "text");
+            }
+            
             
             for (Transition t : transitions) {
                 String transitionText = t.getName() + " (t" + transitions.indexOf(t) + ")";
-                if (t.timeExtension.isTPN()) {
+                if(t instanceof TransitionXTPN) {
+                    TransitionXTPN tX = (TransitionXTPN) t;
+                    transitionText += " [\u03B1^L: " + tX.getAlphaMinValue() + ", \u03B1^U: " + tX.getAlphaMaxValue() + ", \u03B2^L: " 
+                            + tX.getBetaMinValue() + ", \u03B2^U: " + tX.getBetaMaxValue() + "]";
+                } else if (t.timeExtension.isTPN()) {
                     transitionText += " [eft: " + t.timeExtension.getEFT() + ", lft: " + t.timeExtension.getLFT() + "]";
                 }
                 notePad.addTextLineNL(transitionText, "text");
             }
         }
         notePad.addTextLineNL("", "text");
-        notePad.addTextLineNL("Places: (format:  name (p+id) [tokens number if any] )", "text");
+        if(transitions.get(transitions.size() - 1) instanceof TransitionXTPN) {
+            notePad.addTextLineNL("Places: (format:  name (p+id) [\u03B3^L: value, \u03B1^U: value] [K multiset content] )", "text");
+        } else {
+            notePad.addTextLineNL("Places: (format:  name (p+id) [tokens number if any] )", "text");    
+        }
+        
         notePad.addTextLineNL("", "text");
+        int placesCounter = 0;
         for(Place p : places) {
             String placeText = p.getName() + " (p" + places.indexOf(p) + ")";
+            if(p instanceof PlaceXTPN) {
+                PlaceXTPN pX = (PlaceXTPN) p;
+                placeText += " [\u03B3^L: " + pX.getGammaMinValue() + ", \u03B3^U: " + pX.getGammaMaxValue() + "]";
+            }
             String tokens = "";
-            if(p.getTokensNumber() > 0)
-                tokens = " ["+p.getTokensNumber() + "]";
+            if(p instanceof PlaceXTPN) {
+                PlaceXTPN pX = (PlaceXTPN) p;
+                if(!pX.accessMultiset().isEmpty()) {
+                    placeText += " [K_p"+placesCounter+": ";
+                    for(int i=0; i<pX.accessMultiset().size(); i++) {
+                        placeText += pX.accessMultiset().get(i);
+                        if(i < pX.accessMultiset().size() - 1) {
+                            placeText += ", ";
+                        }
+                    }
+                    placeText += "]";
+                } else {
+                    placeText += " [K_p"+placesCounter+": emptyset]";
+                }
+                placesCounter++;
+            } else {
+                if(p.getTokensNumber() > 0)
+                    tokens = " ["+p.getTokensNumber() + "]";
+            }
             notePad.addTextLineNL(placeText+tokens, "text");
         }
         
@@ -68,11 +105,13 @@ public class NetToNotepad {
                     String endLoc = "p" + endNodeIndex;// + "(" + endNodeLocationIndex + ")";
                     int weight = arc.getWeight();
 
-                    String readArc="";
+                    String arcType="";
                     if(arc.getArcType() == Arc.TypeOfArc.READARC) {
-                        readArc = " [read arc]";
+                        arcType = " [read arc]";
+                    } else if(arc.getArcType() == Arc.TypeOfArc.INHIBITOR) {
+                        arcType = " [inhibitor]";
                     }
-                    String arcText = startLoc + " -> " + endLoc + " (weight: " + weight + ") "+readArc;
+                    String arcText = startLoc + " -> " + endLoc + " (weight: " + weight + ") "+arcType;
                     notePad.addTextLineNL(arcText, "text");
                 }
             }
@@ -94,12 +133,14 @@ public class NetToNotepad {
                     int endNodeIndex = transitions.indexOf(endTransition);
                     String endLoc = "t" + endNodeIndex;// + "(" + endNodeLocationIndex + ")";
                     int weight = arc.getWeight();
-
-                    String readArc="";
+                    
+                    String arcType="";
                     if(arc.getArcType() == Arc.TypeOfArc.READARC) {
-                        readArc = " [read arc]";
+                        arcType = " [read arc]";
+                    } else if(arc.getArcType() == Arc.TypeOfArc.INHIBITOR) {
+                        arcType = " [inhibitor]";
                     }
-                    String arcText = startLoc + " -> " + endLoc + " (weight: " + weight + ") "+readArc;
+                    String arcText = startLoc + " -> " + endLoc + " (weight: " + weight + ") "+arcType;
                     notePad.addTextLineNL(arcText, "text");
                 }
             }
