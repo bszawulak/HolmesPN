@@ -1,8 +1,6 @@
 package holmes.windows.xtpn;
 
-import holmes.analyse.XTPN.ActivationAnalyzerXTPN;
-import holmes.analyse.XTPN.AlgorithmsXTPN;
-import holmes.analyse.XTPN.MaxTokensBoundCalculator;
+import holmes.analyse.XTPN.*;
 import holmes.darkgui.GUIManager;
 import holmes.darkgui.LanguageManager;
 import holmes.darkgui.dockwindows.SharedActionsXTPN;
@@ -28,11 +26,16 @@ import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.StringJoiner;
+import java.util.function.Function;
 
 public class HolmesNodeInfoXTPN extends JFrame {
     private static final GUIManager overlord = GUIManager.getDefaultGUIManager();
@@ -583,7 +586,8 @@ public class HolmesNodeInfoXTPN extends JFrame {
         //analP_firstPanel.add(idTextBox);
 
         int id = overlord.getWorkspace().getProject().getPlaces().indexOf(thePlace);
-        HolmesRoundedButton checkKboundButton = new HolmesRoundedButton("<html>Check boundedness</html>" //Check boundedness
+        
+        HolmesRoundedButton checkKboundButton = new HolmesRoundedButton("<html>Check OLD</html>" //Check boundedness
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         checkKboundButton.setMargin(new Insets(0, 0, 0, 0));
         checkKboundButton.setBounds(subPanelX, subPanelY, 130, 32);
@@ -602,7 +606,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
             int maxTokensExtSafe = MaxTokensBoundCalculator.computeUpperBoundForPlaceExtended(thePlace, stepsExt, unsafePlaces);
             placeSecondPanelResults.append("Max steps (EXT SAFE): "+stepsExt+"\n");
             placeSecondPanelResults.append("Tokens per place (EXT SAFE): "+maxTokensExtSafe+"\n");
-
+            
             /*
             placeSecondPanelResults.append("\n");
             placeSecondPanelResults.append("Ext UnSafe Mode\n");
@@ -611,9 +615,67 @@ public class HolmesNodeInfoXTPN extends JFrame {
             placeSecondPanelResults.append("Max steps (EXT UNSAFE): "+stepsExt+"\n");
             placeSecondPanelResults.append("Tokens per place (EXT UNSAFE): "+maxTokensExtUnsafe+"\n");
             */
-
         });
         analP_firstPanel.add(checkKboundButton);
+
+        HolmesRoundedButton checkKboundButtonV2 = new HolmesRoundedButton("<html>Check boundedness</html>" //Check boundedness
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+        checkKboundButtonV2.setMargin(new Insets(0, 0, 0, 0));
+        checkKboundButtonV2.setBounds(subPanelX+150, subPanelY, 130, 32);
+        checkKboundButtonV2.addActionListener(actionEvent -> {
+            try {
+                MaxTokensBoundCalculatorV2.HorizonOptions horizonOptions = new MaxTokensBoundCalculatorV2.HorizonOptions(3, 100_000L);
+                // ------------------------------------------------------------
+                // 1. Direct formula and producer-only simulation
+                // ------------------------------------------------------------
+                MaxTokensBoundCalculatorV2.AnalysisModel producerModel = MaxTokensBoundCalculatorV2.prepare(thePlace, MaxTokensBoundCalculatorV2.Mode.PRODUCERS_ONLY);
+                MaxTokensBoundCalculatorV2.FormulaResult formula = MaxTokensBoundCalculatorV2.computeProducerOnlyFormula(producerModel);
+                MaxTokensBoundCalculatorV2.HorizonEstimate producerSteps = MaxTokensBoundCalculatorV2.estimateMaxSteps(producerModel, horizonOptions);
+                MaxTokensBoundCalculatorV2.CalculationResult producerSimulation = MaxTokensBoundCalculatorV2.compute(producerModel, producerSteps.getMaxSteps());
+
+                placeSecondPanelResults.append("Producer-only formula\n");
+                placeSecondPanelResults.append("B_prod(p): " + formula.getProducerOnlyMaximum() + "\n");
+                placeSecondPanelResults.append("B_safe(p): " + formula.getSafeBoundWithInitialTokens() + "\n");
+                placeSecondPanelResults.append("Formula exact for current initial K: " + formula.isExactForCurrentInitialMultiset() + "\n\n");
+
+                placeSecondPanelResults.append("Producer-only simulation\n");
+                placeSecondPanelResults.append("Max steps: " + producerSteps.getMaxSteps() + (producerSteps.isCapped() ? " (capped)" : "") + "\n");
+                placeSecondPanelResults.append("Maximum tokens: " + producerSimulation.getMaxTokens() + "\n");
+                placeSecondPanelResults.append("First maximum at scaled step: " + producerSimulation.getFirstMaximumStep() + "\n");
+                placeSecondPanelResults.append("First maximum at time: " + producerSimulation.getFirstMaximumTime() + "\n");
+                placeSecondPanelResults.append("Time scale: " + producerModel.getTimeScale() + " step(s) per original time unit.\n");
+                if (producerSteps.isCapped()) {placeSecondPanelResults.append("Estimated steps before cap: " + producerSteps.getUncappedSteps() + "\n");
+                }
+
+                if (formula.isExactForCurrentInitialMultiset() && !producerSteps.isCapped()
+                        && formula.getProducerOnlyMaximum() != producerSimulation.getMaxTokens()) {
+                    placeSecondPanelResults.append("WARNING: formula and producer-only simulation differ.\n");
+                }
+
+                // ------------------------------------------------------------
+                // 2. Simulation with all NORMAL output transitions as consumers
+                // ------------------------------------------------------------
+                MaxTokensBoundCalculatorV2.AnalysisModel consumerModel = MaxTokensBoundCalculatorV2.prepare(thePlace, MaxTokensBoundCalculatorV2.Mode.WITH_CONSUMERS);
+                MaxTokensBoundCalculatorV2.HorizonEstimate consumerSteps = MaxTokensBoundCalculatorV2.estimateMaxSteps(consumerModel, horizonOptions);
+                MaxTokensBoundCalculatorV2.CalculationResult consumerSimulation = MaxTokensBoundCalculatorV2.compute(consumerModel, consumerSteps.getMaxSteps());
+
+                placeSecondPanelResults.append("\nConsumer-aware simulation\n");
+                placeSecondPanelResults.append("Max-steps method: " + consumerSteps.getMethod() + "\n");
+                placeSecondPanelResults.append("Max steps: " + consumerSteps.getMaxSteps() + (consumerSteps.isCapped() ? " (capped)" : "") + "\n");
+                placeSecondPanelResults.append("Maximum tokens: " + consumerSimulation.getMaxTokens() + "\n");
+                placeSecondPanelResults.append("First maximum at scaled step: " + consumerSimulation.getFirstMaximumStep() + "\n");
+                placeSecondPanelResults.append("First maximum at time: " + consumerSimulation.getFirstMaximumTime() + "\n");
+                placeSecondPanelResults.append("Time scale: " + consumerModel.getTimeScale() + " step(s) per original time unit.\n");
+                if (consumerSteps.isCapped()) {placeSecondPanelResults.append("Estimated steps before cap: " + consumerSteps.getUncappedSteps() + "\n");
+                }
+
+            } catch (IllegalArgumentException | IllegalStateException | ArithmeticException exception) {
+                String message = "The token-count analysis could not be performed:\n" + exception.getMessage();
+                placeSecondPanelResults.append(message + "\n");
+                JOptionPane.showMessageDialog(null, message, "xTPN token-count analysis", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        analP_firstPanel.add(checkKboundButtonV2);
 
         subPanelY+=40;
 
@@ -910,28 +972,25 @@ public class HolmesNodeInfoXTPN extends JFrame {
         //analP_firstPanel.add(idTextBox);
 
         int id = overlord.getWorkspace().getProject().getTransitions().indexOf(theTransition);
-        HolmesRoundedButton checkKboundButton = new HolmesRoundedButton("<html>Check lifeness</html>" //Check lifeness
+        HolmesRoundedButton checkActivationWindowsForTransButton = new HolmesRoundedButton("<html>Check LEGACY</html>" //Check lifeness
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
-        checkKboundButton.setMargin(new Insets(0, 0, 0, 0));
-        checkKboundButton.setBounds(subPanelX, subPanelY, 130, 32);
-        checkKboundButton.addActionListener(actionEvent -> {
+        checkActivationWindowsForTransButton.setMargin(new Insets(0, 0, 0, 0));
+        checkActivationWindowsForTransButton.setBounds(subPanelX, subPanelY, 130, 32);
+        checkActivationWindowsForTransButton.addActionListener(actionEvent -> {
             //ArrayList<Integer> result = AlgorithmsXTPN.getTokensPerPlace(thePlace, 100, -1, false);
             //transSecondPanelResults.setText("");
             //transSecondPanelResults.append("Place: "+thePlace.getName()+"\n");
             //transSecondPanelResults.append("Tokens per place: "+result.get(0).toString()+"\n");
-
             // Załóżmy, że jesteś wewnątrz kodu obsługi przycisku (np. actionPerformed)
             // i masz: TransitionXTPN theTransition; JTextArea placeSecondPanelResults;
 
             try {
                 transSecondPanelResults.setText("");
                 transSecondPanelResults.append("Transition: " + theTransition.getName() + "\n");
-
                 // --- parametry analizy (przykład) ---
                 int param = 1;                    // 1 = best, 2 = worst
                 boolean includeCompetitors = true; // czy uwzględniać competitors
                 boolean simplifiedHorizon = true;  // uproszczony horyzont (LCM + max(gammaU))
-
                 // --- 1) inicjalizacja + horyzont ---
                 long maxSteps = ActivationAnalyzerXTPN.initialize(
                         theTransition,
@@ -939,7 +998,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
                         includeCompetitors,
                         simplifiedHorizon
                 );
-
                 if (maxSteps <= 0L) {
                     // initialize() już pokaże JOptionPane przy błędzie, ale tu dopiszmy log do JTextArea
                     transSecondPanelResults.append("Initialization failed (maxSteps = 0).\n");
@@ -947,15 +1005,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 }
 
                 transSecondPanelResults.append("Max steps (horizon): " + maxSteps + "\n");
-
                 // --- 2) właściwa analiza ---
                 int result = ActivationAnalyzerXTPN.analyzeActivationChances(theTransition, maxSteps);
-
                 if (result < 0) {
                     transSecondPanelResults.append("Analysis failed (cache mismatch or invalid args).\n");
                     return;
                 }
-
                 // --- 3) odczyt alfa^L / alfa^U badanej tranzycji (do komunikatu) ---
                 // Uwaga: w analyzerze mogliśmy robić 0->1 dla L (po zgodzie użytkownika),
                 // a tu bierzemy "surowe" wartości z obiektu. To jest tylko opis do UI.
@@ -963,7 +1018,6 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 int alphaU = (int) Math.round(theTransition.getAlphaMaxValue());
                 if (alphaL < 0) alphaL = 0;
                 if (alphaU < 0) alphaU = 0;
-
                 // --- 4) interpretacja wyniku ---
                 transSecondPanelResults.append("Result (max continuous activation time): " + result + "\n");
                 transSecondPanelResults.append("Alpha window: [" + alphaL + ", " + alphaU + "]\n");
@@ -975,19 +1029,433 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 } else {
                     transSecondPanelResults.append("Status: Activation does NOT reach alpha^L (result < alpha^L).\n");
                 }
-
                 transSecondPanelResults.append("\nParameters:\n");
                 transSecondPanelResults.append(" - param = " + param + " (" + (param == 1 ? "best" : "worst") + ")\n");
                 transSecondPanelResults.append(" - includeCompetitors = " + includeCompetitors + "\n");
                 transSecondPanelResults.append(" - simplifiedHorizon = " + simplifiedHorizon + "\n");
-
             } catch (Exception ex) {
                 transSecondPanelResults.append("Exception: " + ex.getMessage() + "\n");
                 //ex.printStackTrace();
             }
+        });
+        analP_firstPanel.add(checkActivationWindowsForTransButton);
+
+        //subPanelX += 150;
+        HolmesRoundedButton checkActivationWindowsForTransButtonV2 = new HolmesRoundedButton("<html>Check lifeness</html>" //Check lifeness
+                , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+        checkActivationWindowsForTransButtonV2.setMargin(new Insets(0, 0, 0, 0));
+        checkActivationWindowsForTransButtonV2.setBounds(subPanelX+150, subPanelY, 130, 32);
+        checkActivationWindowsForTransButtonV2.addActionListener(actionEvent -> {
+            try {
+                transSecondPanelResults.setText("");
+                ArrayList<Transition> allTransitions = overlord.getWorkspace().getProject().getTransitions();
+                int transitionID = allTransitions.indexOf(theTransition);
+                String transitionSymbol = transitionID >= 0 ? "t_" + transitionID : "t_?";
+                transSecondPanelResults.append("Transition: " + transitionSymbol + " (name: " + theTransition.getName() + ")\n");
+                // Scenario used in the article:
+                // fast producers and slow competitors.
+                ActivationAnalyzerXTPNV2.TimingScenario timingScenario = ActivationAnalyzerXTPNV2.TimingScenario.FAVORABLE_TO_TARGET;
+                boolean includeCompetitors = true;
+                // PLACE_AWARE starts with the common-period estimate and can enlarge it
+                // using the separate token-flow estimate for each target pre-place.
+                // extraBlocks = 3 follows the current article; maxSteps is capped at 100000.
+                ActivationAnalyzerXTPNV2.HorizonOptions horizonOptions =
+                        new ActivationAnalyzerXTPNV2.HorizonOptions(ActivationAnalyzerXTPNV2.HorizonStrategy.PLACE_AWARE, 3, 100_000L);
+
+                ActivationAnalyzerXTPNV2.AnalysisModel model = ActivationAnalyzerXTPNV2.prepare(theTransition, timingScenario, includeCompetitors);
+                ActivationAnalyzerXTPNV2.HorizonEstimate horizon = ActivationAnalyzerXTPNV2.estimateMaxSteps(model, horizonOptions);
+
+                // maxSteps is supplied to compute() explicitly. The analysis performs no
+                // repeated-configuration stopping. It can stop early only after alpha^U
+                // of the target has been reached.
+                ActivationAnalyzerXTPNV2.CalculationResult result = ActivationAnalyzerXTPNV2.compute(model, horizon.getMaxSteps());
+
+                transSecondPanelResults.append("Pre-places: " + model.getPrePlaceCount() + "\n");
+                transSecondPanelResults.append("Producers: " + model.getProducerCount() + "\n");
+                transSecondPanelResults.append("Competitors: " + model.getCompetitorCount() + "\n");
+                transSecondPanelResults.append("Time scale: " + model.getTimeScale() + " iteration(s) per original time unit\n");
+
+                transSecondPanelResults.append("maxSteps strategy: " + horizon.getStrategy() + "\n");
+                transSecondPanelResults.append("Estimated maxSteps before cap: " + horizon.getUncappedSteps() + "\n");
+                transSecondPanelResults.append("maxSteps used: " + horizon.getMaxSteps() + " (original time: " + horizon.getMaxTime().toPlainString() + ")\n");
+                if (horizon.isCapped()) {
+                    transSecondPanelResults.append("Warning: maxSteps was reduced by the user limit.\n");
+                }
+
+                transSecondPanelResults.append("Result (maximum continuous activation time): " + result.getMaximumActivationTime().toPlainString() + "\n");
+                transSecondPanelResults.append("Alpha window: [" + result.getAlphaL().toPlainString() + ", " + result.getAlphaU().toPlainString() + "]\n");
+                transSecondPanelResults.append("Iterations actually performed: " + result.getPerformedSteps() + "\n");
+
+                switch (result.getStatus()) {
+                    case FULL_WINDOW:
+                        transSecondPanelResults.append("Status: FULL activation window reached in the selected local simulation.\n");
+                        break;
+                    case PARTIAL_WINDOW:
+                        transSecondPanelResults.append("Status: alpha^L is reached, but alpha^U is not reached in the selected local simulation.\n");
+                        break;
+                    case BELOW_ALPHA_L:
+                        transSecondPanelResults.append("Status: POTENTIAL activation problem: the target is active, but does not reach alpha^L.\n");
+                        break;
+                    case NEVER_ACTIVE:
+                        transSecondPanelResults.append("Status: POTENTIAL activation problem: the target is never active in the tested iterations.\n");
+                        break;
+                    default:
+                        throw new IllegalStateException("Unknown activation-analysis status");
+                }
+
+                if (result.isIterationLimitReached()) {
+                    transSecondPanelResults.append("The result is limited to the tested maxSteps value.\n");
+                } else if (result.isFullWindowReached()) {
+                    transSecondPanelResults.append("The calculation stopped after the complete alpha window had been observed.\n");
+                }
+
+                transSecondPanelResults.append("\nParameters:\n");
+                transSecondPanelResults.append(" - timingScenario = " + timingScenario + "\n");
+                transSecondPanelResults.append(" - includeCompetitors = " + includeCompetitors + "\n");
+                transSecondPanelResults.append(" - horizonStrategy = " + horizonOptions.getStrategy() + "\n");
+                transSecondPanelResults.append(" - extraBlocks = " + horizonOptions.getExtraBlocks() + "\n");
+                transSecondPanelResults.append(" - maxStepsCap = " + horizonOptions.getMaxStepsCap() + "\n");
+
+            } catch (Exception ex) {
+                transSecondPanelResults.append("Activation analysis error: " + ex.getMessage() + "\n");
+                // ex.printStackTrace();
+            }
 
         });
-        analP_firstPanel.add(checkKboundButton);
+        analP_firstPanel.add(checkActivationWindowsForTransButtonV2);
+
+        HolmesRoundedButton checkKboundButtonV3 = new HolmesRoundedButton("<html>Complete report</html>", "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
+        checkKboundButtonV3.setMargin(new Insets(0, 0, 0, 0));
+        checkKboundButtonV3.setBounds(subPanelX + 300, subPanelY, 130, 32);
+
+        checkKboundButtonV3.addActionListener(actionEvent -> {
+            final TransitionXTPN target = theTransition;
+
+            final ArrayList<Transition> allTransitions = overlord.getWorkspace().getProject().getTransitions();
+            final int targetID = allTransitions.indexOf(target);
+            final String targetSymbol = targetID >= 0 ? "t_" + targetID : "t_?";
+
+            final int extraBlocks = 3;
+            final long maxStepsCap = 100_000L;
+            final boolean includeCompetitors = true;
+
+            final ActivationAnalyzerXTPNV2.TimingScenario[] timingScenarios = {
+                    ActivationAnalyzerXTPNV2.TimingScenario.FAVORABLE_TO_TARGET, ActivationAnalyzerXTPNV2.TimingScenario.OPPOSITE_ENDPOINTS
+            };
+            final ActivationAnalyzerXTPNV2.HorizonStrategy[] horizonStrategies = {
+                    ActivationAnalyzerXTPNV2.HorizonStrategy.BASE, ActivationAnalyzerXTPNV2.HorizonStrategy.PLACE_AWARE
+            };
+            final String[] timingLabels = {"FAV", "OPP"};
+            final String[] horizonLabels = {"BASE", "PLACE"};
+
+            /*
+             * prepare(...) only reads the current net and creates immutable models.
+             * It is done on the Swing event thread before the longer simulations start,
+             * so the background worker does not read a net that could be edited at the
+             * same time.
+             */
+            final ActivationAnalyzerXTPNV2.AnalysisModel[] models = new ActivationAnalyzerXTPNV2.AnalysisModel[2];
+            final String[][] errors = new String[2][2];
+
+            for (int s = 0; s < timingScenarios.length; s++) {
+                try {
+                    models[s] = ActivationAnalyzerXTPNV2.prepare(target, timingScenarios[s], includeCompetitors);
+                } catch (Exception ex) {
+                    String message = ex.getMessage();
+                    if (message == null || message.isBlank()) {
+                        message = ex.getClass().getSimpleName();
+                    }
+                    message = message.replace('\n', ' ').replace('\r', ' ');
+                    errors[s][0] = message;
+                    errors[s][1] = message;
+                }
+            }
+
+            transSecondPanelResults.setFont(new Font(Font.MONOSPACED, Font.PLAIN, transSecondPanelResults.getFont().getSize()));
+            transSecondPanelResults.setText("Calculating four activation variants for " + targetSymbol + "...\n");
+            checkKboundButtonV3.setEnabled(false);
+
+            new SwingWorker<String, Void>() {
+                @Override
+                protected String doInBackground() {
+                    ActivationAnalyzerXTPNV2.HorizonEstimate[][] horizons = new ActivationAnalyzerXTPNV2.HorizonEstimate[2][2];
+                    ActivationAnalyzerXTPNV2.CalculationResult[][] results = new ActivationAnalyzerXTPNV2.CalculationResult[2][2];
+
+                    for (int s = 0; s < timingScenarios.length; s++) {
+                        if (models[s] == null) {
+                            continue;
+                        }
+
+                        for (int h = 0; h < horizonStrategies.length; h++) {
+                            try {
+                                ActivationAnalyzerXTPNV2.HorizonOptions options = new ActivationAnalyzerXTPNV2.HorizonOptions(horizonStrategies[h], extraBlocks, maxStepsCap);
+                                horizons[s][h] = ActivationAnalyzerXTPNV2.estimateMaxSteps(models[s], options);
+                                results[s][h] = ActivationAnalyzerXTPNV2.compute(models[s], horizons[s][h].getMaxSteps());
+                            } catch (Exception ex) {
+                                String message = ex.getMessage();
+                                if (message == null || message.isBlank()) {
+                                    message = ex.getClass().getSimpleName();
+                                }
+                                errors[s][h] = message.replace('\n', ' ').replace('\r', ' ');
+                            }
+                        }
+                    }
+
+                    Function<BigDecimal, String> number = value -> {
+                        if (value == null) {
+                            return "-";
+                        }
+                        BigDecimal normalized = value.stripTrailingZeros();
+                        if (normalized.scale() < 0) {
+                            normalized = normalized.setScale(0);
+                        }
+                        return normalized.toPlainString();
+                    };
+
+                    Function<BigDecimal, String> signedNumber = value -> {
+                        String plain = number.apply(value);
+                        return value.signum() > 0 ? "+" + plain : plain;
+                    };
+
+                    Function<BigInteger, String> signedInteger = value -> value.signum() > 0 ? "+" + value : value.toString();
+                    Function<ActivationAnalyzerXTPNV2.ActivationStatus, String> shortStatus = status -> {
+                        switch (status) {
+                            case FULL_WINDOW:
+                                return "FULL";
+                            case PARTIAL_WINDOW:
+                                return "PARTIAL";
+                            case BELOW_ALPHA_L:
+                                return "BELOW aL";
+                            case NEVER_ACTIVE:
+                                return "NEVER";
+                            default:
+                                return "?";
+                        }
+                    };
+
+                    StringBuilder report = new StringBuilder(4096);
+                    report.append("Transition: ")
+                            .append(targetSymbol)
+                            .append(" (name: ")
+                            .append(target.getName()).append(")\n");
+
+                    ActivationAnalyzerXTPNV2.AnalysisModel referenceModel = models[0] != null ? models[0] : models[1];
+
+                    if (referenceModel != null) {
+                        report.append("Alpha window: [")
+                                .append(number.apply(referenceModel.getAlphaL()))
+                                .append(", ")
+                                .append(number.apply(referenceModel.getAlphaU()))
+                                .append("]\n");
+                        report.append("Pre-places: ")
+                                .append(referenceModel.getPrePlaceCount())
+                                .append(" | producers: ")
+                                .append(referenceModel.getProducerCount())
+                                .append(" | competitors: ")
+                                .append(referenceModel.getCompetitorCount())
+                                .append("\n");
+
+                        StringJoiner competitorOrder = new StringJoiner(", ");
+                        for (TransitionXTPN competitor :
+                                referenceModel.getCompetitorOrder()) {
+                            int id = allTransitions.indexOf(competitor);
+                            competitorOrder.add(id >= 0 ? "t_" + id : "t_?");
+                        }
+                        report.append("Competitor order: ")
+                                .append(competitorOrder.length() == 0
+                                        ? "none"
+                                        : competitorOrder.toString())
+                                .append("\n");
+                    }
+
+                    report.append("Settings: competitors=yes, extraBlocks=")
+                            .append(extraBlocks)
+                            .append(", maxSteps cap=")
+                            .append(maxStepsCap)
+                            .append("\n");
+
+                    report.append("Time scale: ");
+                    if (models[0] != null) {
+                        report.append("FAV=")
+                                .append(models[0].getTimeScale());
+                    } else {
+                        report.append("FAV=error");
+                    }
+                    report.append(" | ");
+                    if (models[1] != null) {
+                        report.append("OPP=")
+                                .append(models[1].getTimeScale());
+                    } else {
+                        report.append("OPP=error");
+                    }
+                    report.append(" iteration(s) per original time unit\n\n");
+
+                    report.append("RESULTS\n");
+                    report.append(String.format(
+                            Locale.ROOT, "%-12s %10s %-10s %10s %14s %10s%n", "variant", "result[t]", "status", "first@[t]", "maxSteps[it]", "done[it]"));
+                    report.append("-----------------------------------------------------------------------\n");
+
+                    for (int s = 0; s < timingScenarios.length; s++) {
+                        for (int h = 0; h < horizonStrategies.length; h++) {
+                            String variant = timingLabels[s] + " + " + horizonLabels[h];
+
+                            if (errors[s][h] != null) {
+                                report.append(String.format(Locale.ROOT, "%-12s %10s %-10s %10s %14s %10s%n", variant, "-", "ERROR", "-", "-", "-"));
+                                continue;
+                            }
+
+                            ActivationAnalyzerXTPNV2.HorizonEstimate horizon = horizons[s][h];
+                            ActivationAnalyzerXTPNV2.CalculationResult result = results[s][h];
+
+                            String maxStepsText = Long.toString(horizon.getMaxSteps()) + (horizon.isCapped() ? "*" : "");
+
+                            report.append(String.format(
+                                    Locale.ROOT, "%-12s %10s %-10s %10s %14s %10d%n", variant,
+                                    number.apply(result.getMaximumActivationTime()), shortStatus.apply(result.getStatus()), number.apply(result.getFirstMaximumTime()), maxStepsText, result.getPerformedSteps()));
+                        }
+                    }
+
+                    report.append("\n");
+                    report.append("FAV = fast producers and slow competitors\n");
+                    report.append("OPP = opposite interval endpoints (not a proven worst case)\n");
+                    report.append("BASE / PLACE = method used to calculate maxSteps\n");
+                    report.append("[t] = original time; [it] = scaled algorithm iterations\n");
+                    report.append("FULL / PARTIAL / BELOW aL / NEVER describe the observed result\n");
+                    report.append("If a non-FULL row has done=maxSteps, its result is limited by the selected iteration count.\n");
+
+                    boolean anyCapped = false;
+                    for (int s = 0; s < 2; s++) {
+                        for (int h = 0; h < 2; h++) {
+                            if (horizons[s][h] != null
+                                    && horizons[s][h].isCapped()) {
+                                if (!anyCapped) {
+                                    report.append(
+                                            "\nCAPPED maxSteps VALUES (*):\n");
+                                    anyCapped = true;
+                                }
+                                report.append("- ")
+                                        .append(timingLabels[s])
+                                        .append(" + ")
+                                        .append(horizonLabels[h])
+                                        .append(": estimated ")
+                                        .append(horizons[s][h]
+                                                .getUncappedSteps())
+                                        .append(", used ")
+                                        .append(horizons[s][h]
+                                                .getMaxSteps())
+                                        .append("\n");
+                            }
+                        }
+                    }
+
+                    report.append("\nDIFFERENCES\n");
+
+                    // Effect of changing timing endpoints, separately for each
+                    // maxSteps strategy.
+                    for (int h = 0; h < 2; h++) {
+                        if (results[0][h] == null || results[1][h] == null) {
+                            report.append("- ").append(horizonLabels[h]).append(": timing comparison unavailable\n");
+                            continue;
+                        }
+
+                        BigDecimal favorable = results[0][h].getMaximumActivationTime();
+                        BigDecimal opposite = results[1][h].getMaximumActivationTime();
+                        BigDecimal difference = opposite.subtract(favorable);
+
+                        report.append("- ")
+                                .append(horizonLabels[h])
+                                .append(", FAV -> OPP: result ")
+                                .append(number.apply(favorable))
+                                .append(" -> ")
+                                .append(number.apply(opposite))
+                                .append(" (change ")
+                                .append(signedNumber.apply(difference))
+                                .append("), status ")
+                                .append(shortStatus.apply(results[0][h].getStatus()))
+                                .append(" -> ")
+                                .append(shortStatus.apply(results[1][h].getStatus()))
+                                .append("\n");
+                    }
+
+                    // Effect of changing only the maxSteps strategy.
+                    for (int s = 0; s < 2; s++) {
+                        if (results[s][0] == null || results[s][1] == null) {
+                            report.append("- ").append(timingLabels[s]).append(": horizon comparison unavailable\n");
+                            continue;
+                        }
+
+                        BigDecimal baseResult = results[s][0].getMaximumActivationTime();
+                        BigDecimal placeResult = results[s][1].getMaximumActivationTime();
+                        BigDecimal resultDifference = placeResult.subtract(baseResult);
+
+                        BigInteger stepDifference = BigInteger.valueOf(horizons[s][1].getMaxSteps()).subtract(BigInteger.valueOf(horizons[s][0].getMaxSteps()));
+
+                        report.append("- ")
+                                .append(timingLabels[s])
+                                .append(", BASE -> PLACE: result ")
+                                .append(number.apply(baseResult))
+                                .append(" -> ")
+                                .append(number.apply(placeResult))
+                                .append(" (change ")
+                                .append(signedNumber.apply(resultDifference))
+                                .append("), maxSteps ")
+                                .append(horizons[s][0].getMaxSteps())
+                                .append(" -> ")
+                                .append(horizons[s][1].getMaxSteps())
+                                .append(" (change ")
+                                .append(signedInteger.apply(stepDifference))
+                                .append(")\n");
+                    }
+
+                    boolean anyError = false;
+                    for (int s = 0; s < 2; s++) {
+                        for (int h = 0; h < 2; h++) {
+                            if (errors[s][h] != null) {
+                                if (!anyError) {
+                                    report.append("\nERRORS\n");
+                                    anyError = true;
+                                }
+                                report.append("- ")
+                                        .append(timingLabels[s])
+                                        .append(" + ")
+                                        .append(horizonLabels[h])
+                                        .append(": ")
+                                        .append(errors[s][h])
+                                        .append("\n");
+                            }
+                        }
+                    }
+
+                    report.append("\nInterpretation: changing BASE to PLACE changes ")
+                            .append("only the number of tested iterations. Changing ")
+                            .append("FAV to OPP changes the selected transition times ")
+                            .append("and can change the simulated behavior itself.\n");
+                    return report.toString();
+                }
+
+                @Override
+                protected void done() {
+                    try {
+                        transSecondPanelResults.setText(get());
+                        transSecondPanelResults.setCaretPosition(0);
+                    } catch (Exception ex) {
+                        Throwable cause =
+                                ex.getCause() != null ? ex.getCause() : ex;
+                        String message = cause.getMessage();
+                        if (message == null || message.isBlank()) {
+                            message = cause.getClass().getSimpleName();
+                        }
+                        transSecondPanelResults.setText(
+                                "Complete activation report failed:\n"
+                                        + message);
+                    } finally {
+                        checkKboundButtonV3.setEnabled(true);
+                    }
+                }
+            }.execute();
+        });
+
+        analP_firstPanel.add(checkKboundButtonV3);
 
         subPanelY+=40;
 

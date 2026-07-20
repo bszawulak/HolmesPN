@@ -285,6 +285,7 @@ public class PlaceXTPN extends Place {
      * @return (<b>int</b>) - liczba usuniętych tokenów.
      */
     public void removeOldTokens_XTPN() {
+        /*
         int removed = 0;
         if(isGammaModeActive()) { //tylko gdy XTPN włączone
             for (Iterator<Double> iterator = multisetK.iterator(); iterator.hasNext();) {
@@ -306,6 +307,31 @@ public class PlaceXTPN extends Place {
         }
         addTokensNumber(-removed);
         //return removed;
+        */
+
+        //AI 2026-07-20
+        /* Wcześniejsza metoda: PlaceXTPN.removeOldTokens_XTPN() usuwa token, gdy: kappa >= gammaMax_xTPN oraz usuwa również wartości bardzo bliskie γ^U
+           Kod poniżej zmienia warunek na: kappa > gammaMax_xTPN + accuracy czyli zachowuje token na granicy i uwzględnia tolerancję obliczeń zmiennoprzecinkowych.
+         */
+        int removed = 0;
+        if (isGammaModeActive()) {
+            double accuracy = overlord.simSettings.getCalculationsAccuracy();
+            for (Iterator<Double> iterator = multisetK.iterator();
+                 iterator.hasNext();) {
+                double kappa = iterator.next();
+                // Equality with gammaU is still allowed.  Values only slightly
+                // above gammaU are treated as equal within numerical accuracy.
+                if (kappa > gammaMax_xTPN + accuracy) {
+                    iterator.remove();
+                    removed++;
+                } else {
+                    // multisetK is sorted from the oldest to the youngest token
+                    break;
+                }
+            }
+        }
+
+        addTokensNumber(-removed);
     }
 
     /**
