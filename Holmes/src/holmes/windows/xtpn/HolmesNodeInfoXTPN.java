@@ -569,7 +569,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         //panel informacji podstawowych
         JPanel analP_firstPanel = new JPanel(null);
         analP_firstPanel.setBackground(Color.WHITE);
-        analP_firstPanel.setBounds(mPanelX, mPanelY, secondTabPanel.getWidth()-24, 320);
+        analP_firstPanel.setBounds(mPanelX, mPanelY, secondTabPanel.getWidth()-24, 510);
         analP_firstPanel.setBorder(BorderFactory.createTitledBorder(lang.getText("HNXTPN_entry022"))); //XTPN analysis:
 
         int subPanelX = 10;
@@ -587,10 +587,10 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         int id = overlord.getWorkspace().getProject().getPlaces().indexOf(thePlace);
         
-        HolmesRoundedButton checkKboundButton = new HolmesRoundedButton("<html>Check OLD</html>" //Check boundedness
+        HolmesRoundedButton checkKboundButton = new HolmesRoundedButton("<html>Check OLD</html>" //Check boundedness //OBSOLETE
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         checkKboundButton.setMargin(new Insets(0, 0, 0, 0));
-        checkKboundButton.setBounds(subPanelX, subPanelY, 130, 32);
+        checkKboundButton.setBounds(subPanelX+150, subPanelY, 130, 32);
         checkKboundButton.addActionListener(actionEvent -> {
             placeSecondPanelResults.setText("Simple Mode");
             long maxSteps = MaxTokensBoundCalculator.maxSteps(thePlace);
@@ -606,22 +606,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
             int maxTokensExtSafe = MaxTokensBoundCalculator.computeUpperBoundForPlaceExtended(thePlace, stepsExt, unsafePlaces);
             placeSecondPanelResults.append("Max steps (EXT SAFE): "+stepsExt+"\n");
             placeSecondPanelResults.append("Tokens per place (EXT SAFE): "+maxTokensExtSafe+"\n");
-            
-            /*
-            placeSecondPanelResults.append("\n");
-            placeSecondPanelResults.append("Ext UnSafe Mode\n");
-            unsafePlaces = true; // EXT_UNSAFE
-            int maxTokensExtUnsafe = MaxTokensBoundCalculator.computeUpperBoundForPlaceExtended(thePlace, stepsExt, unsafePlaces);
-            placeSecondPanelResults.append("Max steps (EXT UNSAFE): "+stepsExt+"\n");
-            placeSecondPanelResults.append("Tokens per place (EXT UNSAFE): "+maxTokensExtUnsafe+"\n");
-            */
         });
-        analP_firstPanel.add(checkKboundButton);
+        //analP_firstPanel.add(checkKboundButton);
 
         HolmesRoundedButton checkKboundButtonV2 = new HolmesRoundedButton("<html>Check boundedness</html>" //Check boundedness
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         checkKboundButtonV2.setMargin(new Insets(0, 0, 0, 0));
-        checkKboundButtonV2.setBounds(subPanelX+150, subPanelY, 130, 32);
+        checkKboundButtonV2.setBounds(subPanelX, subPanelY, 130, 32);
         checkKboundButtonV2.addActionListener(actionEvent -> {
             try {
                 MaxTokensBoundCalculatorV2.HorizonOptions horizonOptions = new MaxTokensBoundCalculatorV2.HorizonOptions(3, 100_000L);
@@ -684,7 +675,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
         CreationPanel.add(new JScrollPane(placeSecondPanelResults), BorderLayout.CENTER);
-        CreationPanel.setBounds(subPanelX, subPanelY, 755, 240);
+        CreationPanel.setBounds(subPanelX, subPanelY, 755, 440);
         analP_firstPanel.add(CreationPanel);
 
 
@@ -710,7 +701,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         progressBar.setBorder(border);
         analP_secondPanel.add(progressBar);
 
-        secondTabPanel.add(analP_secondPanel);
+        //secondTabPanel.add(analP_secondPanel);
 
         return secondTabPanel;
     }
@@ -955,7 +946,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         //panel informacji podstawowych
         JPanel analP_firstPanel = new JPanel(null);
         analP_firstPanel.setBackground(Color.WHITE);
-        analP_firstPanel.setBounds(mPanelX, mPanelY, secondTabPanel.getWidth()-24, 320);
+        analP_firstPanel.setBounds(mPanelX, mPanelY, secondTabPanel.getWidth()-24, 650);
         analP_firstPanel.setBorder(BorderFactory.createTitledBorder("XTPN analysis:"));
 
         int subPanelX = 10;
@@ -963,27 +954,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         //************************* NEWLINE *************************
 
-        //JLabel labelID = new JLabel("ID:");
-        //labelID.setBounds(subPanelX, subPanelY, 20, 20);
-        //analP_firstPanel.add(labelID);
-        //JFormattedTextField idTextBox = new JFormattedTextField(id);
-        //idTextBox.setBounds(subPanelX+20, subPanelY, 30, 20);
-        //idTextBox.setEditable(false);
-        //analP_firstPanel.add(idTextBox);
-
-        int id = overlord.getWorkspace().getProject().getTransitions().indexOf(theTransition);
+        int id = overlord.getWorkspace().getProject().getTransitions().indexOf(theTransition);   //OBSOLETE
         HolmesRoundedButton checkActivationWindowsForTransButton = new HolmesRoundedButton("<html>Check LEGACY</html>" //Check lifeness
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         checkActivationWindowsForTransButton.setMargin(new Insets(0, 0, 0, 0));
-        checkActivationWindowsForTransButton.setBounds(subPanelX, subPanelY, 130, 32);
+        checkActivationWindowsForTransButton.setBounds(subPanelX+300, subPanelY, 130, 32);
         checkActivationWindowsForTransButton.addActionListener(actionEvent -> {
-            //ArrayList<Integer> result = AlgorithmsXTPN.getTokensPerPlace(thePlace, 100, -1, false);
-            //transSecondPanelResults.setText("");
-            //transSecondPanelResults.append("Place: "+thePlace.getName()+"\n");
-            //transSecondPanelResults.append("Tokens per place: "+result.get(0).toString()+"\n");
-            // Załóżmy, że jesteś wewnątrz kodu obsługi przycisku (np. actionPerformed)
-            // i masz: TransitionXTPN theTransition; JTextArea placeSecondPanelResults;
-
             try {
                 transSecondPanelResults.setText("");
                 transSecondPanelResults.append("Transition: " + theTransition.getName() + "\n");
@@ -1038,13 +1014,13 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 //ex.printStackTrace();
             }
         });
-        analP_firstPanel.add(checkActivationWindowsForTransButton);
+        //analP_firstPanel.add(checkActivationWindowsForTransButton);
 
         //subPanelX += 150;
         HolmesRoundedButton checkActivationWindowsForTransButtonV2 = new HolmesRoundedButton("<html>Check lifeness</html>" //Check lifeness
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         checkActivationWindowsForTransButtonV2.setMargin(new Insets(0, 0, 0, 0));
-        checkActivationWindowsForTransButtonV2.setBounds(subPanelX+150, subPanelY, 130, 32);
+        checkActivationWindowsForTransButtonV2.setBounds(subPanelX, subPanelY, 130, 32);
         checkActivationWindowsForTransButtonV2.addActionListener(actionEvent -> {
             try {
                 transSecondPanelResults.setText("");
@@ -1126,7 +1102,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         HolmesRoundedButton checkKboundButtonV3 = new HolmesRoundedButton("<html>Complete report</html>", "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         checkKboundButtonV3.setMargin(new Insets(0, 0, 0, 0));
-        checkKboundButtonV3.setBounds(subPanelX + 300, subPanelY, 130, 32);
+        checkKboundButtonV3.setBounds(subPanelX + 150, subPanelY, 130, 32);
 
         checkKboundButtonV3.addActionListener(actionEvent -> {
             final TransitionXTPN target = theTransition;
@@ -1464,7 +1440,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         JPanel CreationPanel = new JPanel();
         CreationPanel.setLayout(new BorderLayout());
         CreationPanel.add(new JScrollPane(transSecondPanelResults), BorderLayout.CENTER);
-        CreationPanel.setBounds(subPanelX, subPanelY, 755, 240);
+        CreationPanel.setBounds(subPanelX, subPanelY, 755, 580);
         analP_firstPanel.add(CreationPanel);
 
 
@@ -1473,7 +1449,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
 
         JPanel analP_secondPanel = new JPanel(null);
         analP_secondPanel.setBackground(Color.WHITE);
-        analP_secondPanel.setBounds(mPanelX, analP_firstPanel.getHeight(), secondTabPanel.getWidth()-24, 200);
+        analP_secondPanel.setBounds(mPanelX, analP_firstPanel.getHeight(), secondTabPanel.getWidth()-24, 60);
         analP_secondPanel.setBorder(BorderFactory.createTitledBorder("Analysis")); //Analysis
         subPanelX = 10;
         subPanelY = 20;
@@ -1490,7 +1466,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
         progressBar.setBorder(border);
         analP_secondPanel.add(progressBar);
 
-        secondTabPanel.add(analP_secondPanel);
+        //secondTabPanel.add(analP_secondPanel);
 
         return secondTabPanel;
     }
