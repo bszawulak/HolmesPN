@@ -26,7 +26,10 @@ public class NetToNotepad {
             notePad.addTextLineNL("No transitions in the net.", "text");
         } else {
             if(transitions.get(transitions.size() - 1) instanceof TransitionXTPN) {
-                notePad.addTextLineNL("Transitions XTPN: (format:   name (t+id) [\u03B1^L: value, \u03B1^U: value, \u03B2^L: value, \u03B2^U: value] )", "text");
+                //notePad.addTextLineNL("Transitions XTPN: (format:   name (t+id) [\u03B1^L: value, \u03B1^U: value, \u03B2^L: value, \u03B2^U: value] " +
+                 //       "[\u03B1: on/ff; \u03B2: on/off])", "text");
+                notePad.addTextLineNL("Transitions XTPN: (format:name (t+id) I(t+id)=(\u03B1^L, \u03B1^U, \u03B2^L, \u03B2^U) [\u03B1: on/off; \u03B2: on/off])", "text");
+                notePad.addTextLineNL("For \u03B1: off, ignore alphas, works like ITPN, for \u03B2: off, ingore betas, works like TPN", "text");
                 notePad.addTextLineNL("", "text");
             } else {
                 notePad.addTextLineNL("Transitions: (format:  name (t+id) [eft: value, lft: value] )", "text");
@@ -38,8 +41,12 @@ public class NetToNotepad {
                 String transitionText = t.getName() + " (t" + transitions.indexOf(t) + ")";
                 if(t instanceof TransitionXTPN) {
                     TransitionXTPN tX = (TransitionXTPN) t;
-                    transitionText += " [\u03B1^L: " + tX.getAlphaMinValue() + ", \u03B1^U: " + tX.getAlphaMaxValue() + ", \u03B2^L: " 
-                            + tX.getBetaMinValue() + ", \u03B2^U: " + tX.getBetaMaxValue() + "]";
+                    //transitionText += " [\u03B1^L: " + tX.getAlphaMinValue() + ", \u03B1^U: " + tX.getAlphaMaxValue() + ", \u03B2^L: " 
+                    //        + tX.getBetaMinValue() + ", \u03B2^U: " + tX.getBetaMaxValue() 
+                    //        + "][\u03B1: " + (tX.isAlphaModeActive() ? "on" : "off") + ", \u03B2: " + (tX.isBetaModeActive() ? "on" : "off") + "]";
+                    transitionText += " I(t"+transitions.indexOf(t)+")=(" + tX.getAlphaMinValue() + ", " + tX.getAlphaMaxValue() + ", " 
+                            + tX.getBetaMinValue() + ", " + tX.getBetaMaxValue() 
+                            + ")[\u03B1: " + (tX.isAlphaModeActive() ? "on" : "off") + ", \u03B2: " + (tX.isBetaModeActive() ? "on" : "off") + "]";
                 } else if (t.timeExtension.isTPN()) {
                     transitionText += " [eft: " + t.timeExtension.getEFT() + ", lft: " + t.timeExtension.getLFT() + "]";
                 }
@@ -48,7 +55,8 @@ public class NetToNotepad {
         }
         notePad.addTextLineNL("", "text");
         if(transitions.get(transitions.size() - 1) instanceof TransitionXTPN) {
-            notePad.addTextLineNL("Places: (format:  name (p+id) [\u03B3^L: value, \u03B1^U: value] [K multiset content] )", "text");
+            //notePad.addTextLineNL("Places: (format:  name (p+id) [\u03B3^L: value, \u03B1^U: value] [K multiset content] )", "text");
+            notePad.addTextLineNL("Places: (format:  name (p+id) J(p+id)=(\u03B3^L, \u03B3^U) [K multiset content / or number of tokens if timeless] )", "text");
         } else {
             notePad.addTextLineNL("Places: (format:  name (p+id) [tokens number if any] )", "text");    
         }
@@ -59,27 +67,35 @@ public class NetToNotepad {
             String placeText = p.getName() + " (p" + places.indexOf(p) + ")";
             if(p instanceof PlaceXTPN) {
                 PlaceXTPN pX = (PlaceXTPN) p;
-                placeText += " [\u03B3^L: " + pX.getGammaMinValue() + ", \u03B3^U: " + pX.getGammaMaxValue() + "]";
+                if(pX.isGammaModeActive()) { //jeżeli jest aktywny tryb gamma, to wyświetlamy jego wartości
+                    //placeText += " [\u03B3^L: " + pX.getGammaMinValue() + ", \u03B3^U: " + pX.getGammaMaxValue() + "]";
+                    placeText += " J(p"+placesCounter+")=(" + pX.getGammaMinValue() + ", " + pX.getGammaMaxValue() + ")";
+                } else { //jeżeli nie jest aktywny, to wyświetlamy wartości domyślne
+                    placeText += " J(p"+placesCounter+")=(0, \u221E) [\u03B3: off => timeless]";
+                }
             }
             String tokens = "";
             if(p instanceof PlaceXTPN) {
                 PlaceXTPN pX = (PlaceXTPN) p;
-                if(!pX.accessMultiset().isEmpty()) {
-                    placeText += " [K_p"+placesCounter+": ";
-                    for(int i=0; i<pX.accessMultiset().size(); i++) {
-                        placeText += pX.accessMultiset().get(i);
-                        if(i < pX.accessMultiset().size() - 1) {
-                            placeText += ", ";
+                if(pX.isGammaModeActive()) { //jeżeli jest aktywny tryb gamma, to wyświetlamy jego wartości
+                    if(!pX.accessMultiset().isEmpty()) {
+                        placeText += " K_p"+placesCounter+"={";
+                        for(int i=0; i<pX.accessMultiset().size(); i++) {
+                            placeText += pX.accessMultiset().get(i);
+                            if(i < pX.accessMultiset().size() - 1) {
+                                placeText += ", ";
+                            }
                         }
+                        placeText += "}";
+                    } else {
+                        placeText += " K_p"+placesCounter+": emptyset";
                     }
-                    placeText += "]";
                 } else {
-                    placeText += " [K_p"+placesCounter+": emptyset]";
+                    tokens = " [token number: "+p.getTokensNumber() + "]";
                 }
                 placesCounter++;
             } else {
-                if(p.getTokensNumber() > 0)
-                    tokens = " ["+p.getTokensNumber() + "]";
+                tokens = " [token number: "+p.getTokensNumber() + "]";
             }
             notePad.addTextLineNL(placeText+tokens, "text");
         }
@@ -111,7 +127,7 @@ public class NetToNotepad {
                     } else if(arc.getArcType() == Arc.TypeOfArc.INHIBITOR) {
                         arcType = " [inhibitor]";
                     }
-                    String arcText = startLoc + " -> " + endLoc + " (weight: " + weight + ") "+arcType;
+                    String arcText = startLoc + " -> " + endLoc + "; V("+startLoc+","+endLoc+")="+weight + " "+arcType;
                     notePad.addTextLineNL(arcText, "text");
                 }
             }
@@ -140,7 +156,7 @@ public class NetToNotepad {
                     } else if(arc.getArcType() == Arc.TypeOfArc.INHIBITOR) {
                         arcType = " [inhibitor]";
                     }
-                    String arcText = startLoc + " -> " + endLoc + " (weight: " + weight + ") "+arcType;
+                    String arcText = startLoc + " -> " + endLoc + "; V("+startLoc+","+endLoc+")="+weight + " "+arcType;
                     notePad.addTextLineNL(arcText, "text");
                 }
             }
