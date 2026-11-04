@@ -29,7 +29,7 @@ public class NetToNotepad {
                 //notePad.addTextLineNL("Transitions XTPN: (format:   name (t+id) [\u03B1^L: value, \u03B1^U: value, \u03B2^L: value, \u03B2^U: value] " +
                  //       "[\u03B1: on/ff; \u03B2: on/off])", "text");
                 notePad.addTextLineNL("Transitions XTPN: (format:name (t+id) I(t+id)=(\u03B1^L, \u03B1^U, \u03B2^L, \u03B2^U) [\u03B1: on/off; \u03B2: on/off])", "text");
-                notePad.addTextLineNL("For \u03B1: off, ignore alphas, works like ITPN, for \u03B2: off, ingore betas, works like TPN", "text");
+                notePad.addTextLineNL("For \u03B1: off, ignore alphas, works like ITPN, for \u03B2: off, ignore betas, works like TPN", "text");
                 notePad.addTextLineNL("", "text");
             } else {
                 notePad.addTextLineNL("Transitions: (format:  name (t+id) [eft: value, lft: value] )", "text");
