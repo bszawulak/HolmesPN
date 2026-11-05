@@ -576,17 +576,9 @@ public class HolmesNodeInfoXTPN extends JFrame {
         int subPanelY = 20;
 
         //************************* NEWLINE *************************
-
-        //JLabel labelID = new JLabel("ID:");
-        //labelID.setBounds(subPanelX, subPanelY, 20, 20);
-        //analP_firstPanel.add(labelID);
-        //JFormattedTextField idTextBox = new JFormattedTextField(id);
-        //idTextBox.setBounds(subPanelX+20, subPanelY, 30, 20);
-        //idTextBox.setEditable(false);
-        //analP_firstPanel.add(idTextBox);
-
         int id = overlord.getWorkspace().getProject().getPlaces().indexOf(thePlace);
         
+        /*
         HolmesRoundedButton checkKboundButton = new HolmesRoundedButton("<html>Check OLD</html>" //Check boundedness //OBSOLETE
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         checkKboundButton.setMargin(new Insets(0, 0, 0, 0));
@@ -608,11 +600,12 @@ public class HolmesNodeInfoXTPN extends JFrame {
             placeSecondPanelResults.append("Tokens per place (EXT SAFE): "+maxTokensExtSafe+"\n");
         });
         //analP_firstPanel.add(checkKboundButton);
-
+        */
         HolmesRoundedButton checkKboundButtonV2 = new HolmesRoundedButton("<html>Check boundedness</html>" //Check boundedness
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         checkKboundButtonV2.setMargin(new Insets(0, 0, 0, 0));
         checkKboundButtonV2.setBounds(subPanelX, subPanelY, 130, 32);
+        /* // old:
         checkKboundButtonV2.addActionListener(actionEvent -> {
             try {
                 MaxTokensBoundCalculatorV2.HorizonOptions horizonOptions = new MaxTokensBoundCalculatorV2.HorizonOptions(3, 100_000L);
@@ -666,6 +659,106 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 JOptionPane.showMessageDialog(null, message, "xTPN token-count analysis", JOptionPane.ERROR_MESSAGE);
             }
         });
+        */
+        checkKboundButtonV2.setText("<html>Analyze token count</html>");
+        checkKboundButtonV2.setToolTipText("Local token counts and a separate producer-only bound");
+        checkKboundButtonV2.addActionListener(actionEvent -> {
+            if (Boolean.TRUE.equals(placeSecondPanelResults.getClientProperty("xtpn.v3.running"))) return;
+            if (overlord.getWorkspace().getProject().isSimulationActive()
+                    || overlord.getSimulatorBox().getCurrentDockWindow().getSimulator()
+                    .getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED) {
+                JOptionPane.showMessageDialog(this, "Stop the simulator before preparing the analysis.",
+                        "xTPN local analysis", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            final long stepCap = 100_000L; // In SCALED steps.
+            // null = separate automatic horizons. Example fixed horizon: new BigDecimal("1000")
+            final BigDecimal fixedTime = null;
+            final boolean reverseConsumerOrder = false;
+            try {
+                final MaxTokensBoundCalculatorV3.AnalysisModel producerModel =
+                        MaxTokensBoundCalculatorV3.prepare(thePlace,
+                                MaxTokensBoundCalculatorV3.Mode.PRODUCERS_ONLY);
+                MaxTokensBoundCalculatorV3.AnalysisModel candidate = null;
+                String preparationError = null;
+                try {
+                    candidate = producerModel.withMode(MaxTokensBoundCalculatorV3.Mode.WITH_CONSUMERS);
+                    if (reverseConsumerOrder) {
+                        java.util.List<TransitionXTPN> order = new ArrayList<>(candidate.getConsumerOrder());
+                        java.util.Collections.reverse(order);
+                        candidate = candidate.withConsumerOrder(order);
+                    }
+                } catch (RuntimeException ex) {
+                    preparationError = ex.getMessage();
+                }
+                final MaxTokensBoundCalculatorV3.AnalysisModel consumerModel = candidate;
+                final String consumerError = preparationError;
+                placeSecondPanelResults.putClientProperty("xtpn.v3.running", Boolean.TRUE);
+                placeSecondPanelResults.setText("Calculating from CURRENT token ages; local clocks restart.\n");
+                checkKboundButtonV2.setEnabled(false);
+                new SwingWorker<String, Void>() {
+                    @Override protected String doInBackground() {
+                        StringBuilder report = new StringBuilder();
+                        report.append("Formula and simulated maximum have different meanings.\n")
+                                .append("B_safe assumes static NORMAL production weights, one production at a time ")
+                                .append("per producer, and positive minimum producer cycles.\n");
+                        try {
+                            MaxTokensBoundCalculatorV3.FormulaResult f =
+                                    MaxTokensBoundCalculatorV3.computeProducerOnlyFormula(producerModel);
+                            report.append("B_prod: ").append(f.getProducerOnlyMaximumExact())
+                                    .append("\nB_safe: ").append(f.getSafeBoundWithInitialTokensExact())
+                                    .append("\nExact for the EMPTY producer-only local model: ")
+                                    .append(f.isExactForEmptyProducerOnlyModel())
+                                    .append("\nThis is not attainability in the complete net.\n\n");
+                        } catch (RuntimeException ex) {
+                            report.append("Formula unavailable: ").append(ex.getMessage()).append("\n\n");
+                        }
+                        MaxTokensBoundCalculatorV3.AnalysisModel[] models = {producerModel, consumerModel};
+                        for (MaxTokensBoundCalculatorV3.AnalysisModel model : models) {
+                            if (model == null) {
+                                report.append("Consumer-aware variant unavailable: ").append(consumerError).append('\n');
+                                continue;
+                            }
+                            try {
+                                MaxTokensBoundCalculatorV3.HorizonEstimate h =
+                                        MaxTokensBoundCalculatorV3.estimateMaxSteps(model,
+                                                new MaxTokensBoundCalculatorV3.HorizonOptions(3, stepCap));
+                                long steps = fixedTime == null ? h.getMaxSteps()
+                                        : MaxTokensBoundCalculatorV3.stepsForTime(model, fixedTime);
+                                if (steps > stepCap)
+                                    throw new IllegalArgumentException("Requested time needs " + steps
+                                            + " scaled updates, above stepCap=" + stepCap
+                                            + ". It was NOT shortened; raise stepCap explicitly.");
+                                MaxTokensBoundCalculatorV3.CalculationResult result =
+                                        MaxTokensBoundCalculatorV3.compute(model, steps);
+                                report.append(MaxTokensBoundCalculatorV3.formatReport(model, h, result))
+                                        .append("\n----------------------------------------\n");
+                            } catch (RuntimeException ex) {
+                                report.append("Variant ").append(model.getMode()).append(" failed: ")
+                                        .append(ex.getMessage()).append('\n');
+                            }
+                        }
+                        return report.append("Full-simulator plots may average samples. Compare maxima ")
+                                .append("using unsmoothed observations from a single run, not plot peaks.\n").toString();
+                    }
+                    @Override protected void done() {
+                        try {
+                            placeSecondPanelResults.setText(get());
+                            placeSecondPanelResults.setCaretPosition(0);
+                        } catch (Exception ex) {
+                            Throwable cause = ex.getCause() == null ? ex : ex.getCause();
+                            placeSecondPanelResults.setText("Token-count analysis failed:\n" + cause);
+                        } finally {
+                            placeSecondPanelResults.putClientProperty("xtpn.v3.running", Boolean.FALSE);
+                            checkKboundButtonV2.setEnabled(true);
+                        }
+                    }
+                }.execute();
+            } catch (RuntimeException ex) {
+                placeSecondPanelResults.setText("Cannot prepare token-count analysis:\n" + ex.getMessage());
+            }
+        });
+        
         analP_firstPanel.add(checkKboundButtonV2);
 
         subPanelY+=40;
@@ -1021,6 +1114,7 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 , "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         checkActivationWindowsForTransButtonV2.setMargin(new Insets(0, 0, 0, 0));
         checkActivationWindowsForTransButtonV2.setBounds(subPanelX, subPanelY, 130, 32);
+        /* //old:
         checkActivationWindowsForTransButtonV2.addActionListener(actionEvent -> {
             try {
                 transSecondPanelResults.setText("");
@@ -1096,14 +1190,78 @@ public class HolmesNodeInfoXTPN extends JFrame {
                 transSecondPanelResults.append("Activation analysis error: " + ex.getMessage() + "\n");
                 // ex.printStackTrace();
             }
-
         });
+         */
+        checkActivationWindowsForTransButtonV2.setText("<html>Analyze local<br>activation</html>");
+        checkActivationWindowsForTransButtonV2.setToolTipText("Sampled local activation counter, not liveness");
+        checkActivationWindowsForTransButtonV2.addActionListener(actionEvent -> {
+            if (Boolean.TRUE.equals(transSecondPanelResults.getClientProperty("xtpn.v3.running"))) return;
+            if (overlord.getWorkspace().getProject().isSimulationActive()
+                    || overlord.getSimulatorBox().getCurrentDockWindow().getSimulator()
+                    .getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED) {
+                JOptionPane.showMessageDialog(this, "Stop the simulator before preparing the analysis.",
+                        "xTPN local analysis", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            final long stepCap = 100_000L;
+            final BigDecimal fixedTime = null; // null = automatic; e.g. new BigDecimal("1000")
+            final boolean includeCompetitors = true;
+            final boolean reverseCompetitorOrder = false;
+            final ActivationAnalyzerXTPNV3.TimingScenario timing =
+                    ActivationAnalyzerXTPNV3.TimingScenario.FAVORABLE_TO_TARGET;
+            try {
+                ActivationAnalyzerXTPNV3.AnalysisModel prepared =
+                        ActivationAnalyzerXTPNV3.prepare(theTransition, timing, includeCompetitors);
+                if (includeCompetitors && reverseCompetitorOrder) {
+                    java.util.List<TransitionXTPN> order = new ArrayList<>(prepared.getCompetitorOrder());
+                    java.util.Collections.reverse(order);
+                    prepared = prepared.withCompetitorOrder(order);
+                }
+                final ActivationAnalyzerXTPNV3.AnalysisModel model = prepared;
+                transSecondPanelResults.putClientProperty("xtpn.v3.running", Boolean.TRUE);
+                transSecondPanelResults.setText("Calculating from CURRENT token ages; local clocks restart.\n");
+                checkActivationWindowsForTransButtonV2.setEnabled(false);
+                new SwingWorker<String, Void>() {
+                    @Override protected String doInBackground() {
+                        ActivationAnalyzerXTPNV3.HorizonEstimate h =
+                                ActivationAnalyzerXTPNV3.estimateMaxSteps(model,
+                                        new ActivationAnalyzerXTPNV3.HorizonOptions(
+                                                ActivationAnalyzerXTPNV3.HorizonStrategy.PLACE_AWARE, 3, stepCap));
+                        long steps = fixedTime == null ? h.getMaxSteps()
+                                : ActivationAnalyzerXTPNV3.stepsForTime(model, fixedTime);
+                        if (steps > stepCap)
+                            throw new IllegalArgumentException("Requested time needs " + steps
+                                    + " scaled updates, above stepCap=" + stepCap
+                                    + ". It was NOT shortened; raise stepCap explicitly.");
+                        ActivationAnalyzerXTPNV3.CalculationResult result =
+                                ActivationAnalyzerXTPNV3.compute(model, steps);
+                        return ActivationAnalyzerXTPNV3.formatReport(model, h, result);
+                    }
+                    @Override protected void done() {
+                        try {
+                            transSecondPanelResults.setText(get());
+                            transSecondPanelResults.setCaretPosition(0);
+                        } catch (Exception ex) {
+                            Throwable cause = ex.getCause() == null ? ex : ex.getCause();
+                            transSecondPanelResults.setText("Activation analysis failed:\n" + cause);
+                        } finally {
+                            transSecondPanelResults.putClientProperty("xtpn.v3.running", Boolean.FALSE);
+                            checkActivationWindowsForTransButtonV2.setEnabled(true);
+                        }
+                    }
+                }.execute();
+            } catch (RuntimeException ex) {
+                transSecondPanelResults.setText("Cannot prepare local activation analysis:\n" + ex.getMessage());
+            }
+        });
+        
         analP_firstPanel.add(checkActivationWindowsForTransButtonV2);
 
         HolmesRoundedButton checkKboundButtonV3 = new HolmesRoundedButton("<html>Complete report</html>", "pearl_bH1_neutr.png", "pearl_bH2_hover.png", "pearl_bH3_press.png");
         checkKboundButtonV3.setMargin(new Insets(0, 0, 0, 0));
         checkKboundButtonV3.setBounds(subPanelX + 150, subPanelY, 130, 32);
 
+        /* //old:
         checkKboundButtonV3.addActionListener(actionEvent -> {
             final TransitionXTPN target = theTransition;
 
@@ -1124,12 +1282,11 @@ public class HolmesNodeInfoXTPN extends JFrame {
             final String[] timingLabels = {"FAV", "OPP"};
             final String[] horizonLabels = {"BASE", "PLACE"};
 
-            /*
-             * prepare(...) only reads the current net and creates immutable models.
-             * It is done on the Swing event thread before the longer simulations start,
-             * so the background worker does not read a net that could be edited at the
-             * same time.
-             */
+             //prepare(...) only reads the current net and creates immutable models.
+             //It is done on the Swing event thread before the longer simulations start,
+             //so the background worker does not read a net that could be edited at the
+             /same time.
+
             final ActivationAnalyzerXTPNV2.AnalysisModel[] models = new ActivationAnalyzerXTPNV2.AnalysisModel[2];
             final String[][] errors = new String[2][2];
 
@@ -1425,6 +1582,123 @@ public class HolmesNodeInfoXTPN extends JFrame {
                                 "Complete activation report failed:\n"
                                         + message);
                     } finally {
+                        checkKboundButtonV3.setEnabled(true);
+                    }
+                }
+            }.execute();
+        });
+        */
+        checkKboundButtonV3.setText("<html>Complete V3 report</html>");
+        checkKboundButtonV3.addActionListener(actionEvent -> {
+            if (Boolean.TRUE.equals(transSecondPanelResults.getClientProperty("xtpn.v3.running"))) return;
+            if (overlord.getWorkspace().getProject().isSimulationActive()
+                    || overlord.getSimulatorBox().getCurrentDockWindow().getSimulator()
+                    .getSimulatorStatus() != GraphicalSimulator.SimulatorMode.STOPPED) {
+                JOptionPane.showMessageDialog(this, "Stop the simulator before preparing the analysis.",
+                        "xTPN local analysis", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            final long stepCap = 100_000L; // Per run, in scaled steps.
+            final int extraBlocks = 3;
+            final BigDecimal commonTime = new BigDecimal("1000"); // ORIGINAL time units; edit here.
+            final boolean includeCompetitors = true;
+            final boolean reverseCompetitorOrder = false;
+            final ActivationAnalyzerXTPNV3.AnalysisModel[] models =
+                    new ActivationAnalyzerXTPNV3.AnalysisModel[2];
+            final String[] errors = new String[2];
+            try {
+                models[0] = ActivationAnalyzerXTPNV3.prepare(theTransition,
+                        ActivationAnalyzerXTPNV3.TimingScenario.FAVORABLE_TO_TARGET, includeCompetitors);
+            } catch (RuntimeException ex) {
+                errors[0] = ex.getMessage();
+            }
+            try {
+                models[1] = models[0] == null
+                        ? ActivationAnalyzerXTPNV3.prepare(theTransition,
+                        ActivationAnalyzerXTPNV3.TimingScenario.OPPOSITE_ENDPOINTS, includeCompetitors)
+                        : models[0].withTimingScenario(ActivationAnalyzerXTPNV3.TimingScenario.OPPOSITE_ENDPOINTS);
+            } catch (RuntimeException ex) {
+                errors[1] = ex.getMessage();
+            }
+            // Both models are prepared on the Swing thread. The worker reads only copies.
+            if (includeCompetitors && reverseCompetitorOrder) {
+                for (int i = 0; i < models.length; i++) {
+                    if (models[i] == null) continue;
+                    java.util.List<TransitionXTPN> order = new ArrayList<>(models[i].getCompetitorOrder());
+                    java.util.Collections.reverse(order);
+                    models[i] = models[i].withCompetitorOrder(order);
+                }
+            }
+            transSecondPanelResults.putClientProperty("xtpn.v3.running", Boolean.TRUE);
+            transSecondPanelResults.setText("Calculating native horizons and common-time comparisons...\n");
+            checkKboundButtonV3.setEnabled(false);
+            new SwingWorker<String, Void>() {
+                @Override protected String doInBackground() {
+                    StringBuilder report = new StringBuilder("COMPLETE V3 LOCAL REPORT\n");
+                    report.append("Two timing settings, not four: BASE/PLACE_AWARE select horizons only.\n")
+                            .append("Native-horizon differences can mix timing and observation-length effects.\n")
+                            .append("The additional comparison uses a common requested original-time horizon: ")
+                            .append(commonTime.toPlainString()).append("\n")
+                            .append("Reaching the counter cap may still stop a run earlier.\n")
+                            .append("No variant proves global feasibility or infeasibility.\n\n");
+                    if (models[0] != null && models[1] != null
+                            && models[0].getTimeScale() != models[1].getTimeScale())
+                        report.append("NOTE: sampling grids differ (scales ")
+                                .append(models[0].getTimeScale()).append(" and ")
+                                .append(models[1].getTimeScale())
+                                .append("). Common physical time does not make the grids equal. ")
+                                .append("V3 preserves each selected-endpoint grid; it does not silently refine it.\n\n");
+                    ActivationAnalyzerXTPNV3.HorizonStrategy[] strategies = {
+                            ActivationAnalyzerXTPNV3.HorizonStrategy.BASE,
+                            ActivationAnalyzerXTPNV3.HorizonStrategy.PLACE_AWARE};
+                    for (int i = 0; i < models.length; i++) {
+                        ActivationAnalyzerXTPNV3.AnalysisModel model = models[i];
+                        report.append("\n========== ").append(i == 0 ? "DEFAULT ENDPOINTS" : "OPPOSITE ENDPOINTS")
+                                .append(" ==========\n");
+                        if (model == null) {
+                            report.append("UNSUPPORTED / NOT RUN: ").append(errors[i]).append('\n');
+                            continue;
+                        }
+                        for (ActivationAnalyzerXTPNV3.HorizonStrategy strategy : strategies) {
+                            report.append("\n--- Automatic ").append(strategy).append(" ---\n");
+                            try {
+                                ActivationAnalyzerXTPNV3.HorizonEstimate h =
+                                        ActivationAnalyzerXTPNV3.estimateMaxSteps(model,
+                                                new ActivationAnalyzerXTPNV3.HorizonOptions(strategy, extraBlocks, stepCap));
+                                ActivationAnalyzerXTPNV3.CalculationResult r =
+                                        ActivationAnalyzerXTPNV3.compute(model, h.getMaxSteps());
+                                report.append(ActivationAnalyzerXTPNV3.formatReport(model, h, r));
+                            } catch (RuntimeException ex) {
+                                report.append("NOT RUN / FAILED: ").append(ex.getMessage()).append('\n');
+                            }
+                        }
+                        report.append("\n--- Common requested original time = ")
+                                .append(commonTime.toPlainString()).append(" ---\n");
+                        try {
+                            long steps = ActivationAnalyzerXTPNV3.stepsForTime(model, commonTime);
+                            if (steps > stepCap)
+                                throw new IllegalArgumentException("Common time needs " + steps
+                                        + " scaled updates, above stepCap=" + stepCap
+                                        + ". This variant was NOT shortened. Raise stepCap explicitly.");
+                            ActivationAnalyzerXTPNV3.CalculationResult r =
+                                    ActivationAnalyzerXTPNV3.compute(model, steps);
+                            report.append(ActivationAnalyzerXTPNV3.formatReport(model, null, r));
+                        } catch (RuntimeException ex) {
+                            report.append("COMMON-TIME COMPARISON NOT RUN / FAILED: ")
+                                    .append(ex.getMessage()).append('\n');
+                        }
+                    }
+                    return report.toString();
+                }
+                @Override protected void done() {
+                    try {
+                        transSecondPanelResults.setText(get());
+                        transSecondPanelResults.setCaretPosition(0);
+                    } catch (Exception ex) {
+                        Throwable cause = ex.getCause() == null ? ex : ex.getCause();
+                        transSecondPanelResults.setText("Complete V3 report failed:\n" + cause);
+                    } finally {
+                        transSecondPanelResults.putClientProperty("xtpn.v3.running", Boolean.FALSE);
                         checkKboundButtonV3.setEnabled(true);
                     }
                 }
